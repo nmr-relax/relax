@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 from unittest import TestCase
@@ -56,30 +57,30 @@ class Test_main(TestCase):
         """Test the model-free duplicate_data() method."""
 
         # Duplicate the data.
-        self.inst.duplicate_data('orig', 'new', model_index=0)
+        self.inst.duplicate_data('orig', 'new', model_info=0)
 
 
     def test_duplicate_data2(self):
         """Test the model-free duplicate_data() method."""
 
         # Read a model-free results file.
-        results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
+        results.read(file='final_results_trunc_1.3', directory=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
         # Duplicate the data.
-        self.inst.duplicate_data('orig', 'new', model_index=0)
+        self.inst.duplicate_data('orig', 'new', model_info=0)
 
 
     def test_duplicate_data3(self):
         """Test the model-free duplicate_data() method."""
 
         # Read a model-free results file.
-        results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
+        results.read(file='final_results_trunc_1.3', directory=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
         # Load a structure.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Duplicate the data.
-        self.inst.duplicate_data('orig', 'new', model_index=0)
+        self.inst.duplicate_data('orig', 'new', model_info=0)
 
         # Check the original data.
         self.assert_(hasattr(pipes.get_pipe('orig'), 'structure'))
@@ -92,36 +93,36 @@ class Test_main(TestCase):
         """Test the model-free duplicate_data() method."""
 
         # Read a model-free results file.
-        results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
+        results.read(file='final_results_trunc_1.3', directory=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
         # Load a structure.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Duplicate the data, model by model.
-        self.inst.duplicate_data('orig', 'new', model_index=0)
-        self.inst.duplicate_data('orig', 'new', model_index=1)
-        self.inst.duplicate_data('orig', 'new', model_index=2)
-        self.inst.duplicate_data('orig', 'new', model_index=3)
+        self.inst.duplicate_data('orig', 'new', model_info=0)
+        self.inst.duplicate_data('orig', 'new', model_info=1)
+        self.inst.duplicate_data('orig', 'new', model_info=2)
+        self.inst.duplicate_data('orig', 'new', model_info=3)
 
 
     def test_duplicate_data_fail1(self):
         """Test the failure of the model-free duplicate_data() method when the structures are not consistent."""
 
         # Read a model-free results file.
-        results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
+        results.read(file='final_results_trunc_1.3', directory=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
         # Load a structure.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Create a new model-free data pipe.
         ds.add(pipe_name='new', pipe_type='mf')
 
         # Load the structure for the second pipe.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Modify the structure.
         dp = pipes.get_pipe('new')
         dp.structure.structural_data[0].mol[0].file_name = 'test'
 
         # Duplicate the data and catch the error.
-        self.assertRaises(RelaxError, self.inst.duplicate_data, 'orig', 'new', model_index=0)
+        self.assertRaises(RelaxError, self.inst.duplicate_data, 'orig', 'new', model_info=0)

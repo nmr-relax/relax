@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,23 +21,23 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
-import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import create_molecule, create_residue, create_spin
 
 
-class Noe_restraints(TestCase):
+class Noe_restraints(SystemTestCase):
     """Class for testing various aspects specific to NOE restraints."""
 
     def setUp(self):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('test', 'N-state')
+        self.interpreter.pipe.create('test', 'N-state')
 
 
     def tearDown(self):
@@ -82,7 +82,7 @@ class Noe_restraints(TestCase):
                     create_spin(spin_names[i][j][k], res_num=res_nums[i][j], mol_name=mol_names[i])
 
         # Display the sequence for debugging.
-        self.relax.interpreter._Sequence.display()
+        self.interpreter.sequence.display()
 
 
     def test_read_generic_phthalic_acid(self):
@@ -92,7 +92,7 @@ class Noe_restraints(TestCase):
         ds.file_name = 'phthalic_acid'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'phthalic_acid_noes.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'phthalic_acid_noes.py')
 
         # The restraint data.
         restraints = [
@@ -166,7 +166,7 @@ class Noe_restraints(TestCase):
         ds.file_name = 'pseudo_atoms.dat'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'phthalic_acid_noes.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'phthalic_acid_noes.py')
 
         # The restraint data.
         restraints = [
@@ -192,7 +192,7 @@ class Noe_restraints(TestCase):
         self.rna_seq()
 
         # Read the Xplor input file.
-        self.relax.interpreter._Noe.read_restraints(file='noe_rna_hbond.dat', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'noe_restraints')
+        self.interpreter.noe.read_restraints(file='noe_rna_hbond.dat', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'noe_restraints')
 
         # The restraint data.
         restraints = [

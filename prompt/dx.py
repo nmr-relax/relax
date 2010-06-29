@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'dx' user function class for controlling the OpenDX visualisation software."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from doc_string import docs
 from generic_fns import diffusion_tensor
 import opendx.main
@@ -59,8 +56,8 @@ class OpenDX(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "dx("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "dx("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", dx_exe=" + repr(dx_exe)
@@ -68,10 +65,10 @@ class OpenDX(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_str(dx_exe, 'OpenDX executable file name')
-        check.is_bool(vp_exec, 'visual program execution flag')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(dx_exe, 'OpenDX executable file name')
+        arg_check.is_bool(vp_exec, 'visual program execution flag')
 
         # Execute the functional code.
         opendx.main.run(file_prefix=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
@@ -147,25 +144,24 @@ class OpenDX(User_fn_class):
         directory 'dx' and will be prefixed by 'map'.  In this case, the system is a protein and
         residue number 6 will be mapped.
 
-        relax> dx.map(['S2', 'S2f', 'ts'], ':6')
-        relax> dx.map(['S2', 'S2f', 'ts'], ':6', 20, 'map', 'dx')
-        relax> dx.map(['S2', 'S2f', 'ts'], spin_id=':6', file='map', dir='dx')
-        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', inc=20, file='map', dir='dx')
-        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', type='Iso3D', inc=20,
-                      file='map', dir='dx')
+        relax> dx.map(['S2', 'S2f', 'ts'], spin_id=':6')
+        relax> dx.map(['S2', 'S2f', 'ts'], spin_id=':6', file_prefix='map', dir='dx')
+        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', inc=20, file_prefix='map', dir='dx')
+        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', map_type='Iso3D', inc=20,
+                      file_prefix='map', dir='dx')
 
 
         To map the model-free space 'm4' for residue 2, spin N6 defined by the parameters {S2, te,
         Rex}, name the results 'test', and to place the files in the current directory, use one of
         the following commands:
 
-        relax> dx.map(['S2', 'te', 'Rex'], spin_id=':2@N6', file='test', dir=None)
-        relax> dx.map(params=['S2', 'te', 'Rex'], spin_id=':2@N6', inc=100, file='test', dir=None)
+        relax> dx.map(['S2', 'te', 'Rex'], spin_id=':2@N6', file_prefix='test', dir=None)
+        relax> dx.map(params=['S2', 'te', 'Rex'], spin_id=':2@N6', inc=100, file_prefix='test', dir=None)
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "map("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "map("
             text = text + "params=" + repr(params)
             text = text + ", map_type=" + repr(map_type)
             text = text + ", spin_id=" + repr(spin_id)
@@ -173,7 +169,7 @@ class OpenDX(User_fn_class):
             text = text + ", lower=" + repr(lower)
             text = text + ", upper=" + repr(upper)
             text = text + ", axis_incs=" + repr(axis_incs)
-            text = text + ", file=" + repr(file)
+            text = text + ", file_prefix=" + repr(file_prefix)
             text = text + ", dir=" + repr(dir)
             text = text + ", point=" + repr(point)
             text = text + ", point_file=" + repr(point_file)
@@ -181,23 +177,23 @@ class OpenDX(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str_list(params, 'parameters')
-        check.is_str(map_type, 'map type')
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        check.is_int(inc, 'increment')
+        arg_check.is_str_list(params, 'parameters')
+        arg_check.is_str(map_type, 'map type')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_int(inc, 'increment')
         if inc <= 1:
             raise RelaxError("The increment value needs to be greater than 1.")
-        check.is_num_list(lower, 'lower bounds', size=len(params), can_be_none=True)
-        check.is_num_list(upper, 'upper bounds', size=len(params), can_be_none=True)
-        check.is_int(axis_incs, 'axis increments')
+        arg_check.is_num_list(lower, 'lower bounds', size=len(params), can_be_none=True)
+        arg_check.is_num_list(upper, 'upper bounds', size=len(params), can_be_none=True)
+        arg_check.is_int(axis_incs, 'axis increments')
         if axis_incs <= 1:
             raise RelaxError("The axis increment value needs to be greater than 1.")
-        check.is_str(file_prefix, 'file prefix')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_num_list(point, 'point', size=len(params), can_be_none=True)
+        arg_check.is_str(file_prefix, 'file prefix')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_num_list(point, 'point', size=len(params), can_be_none=True)
         if point != None:
-            check.is_str(point_file, 'point file name')
-        check.is_func(remap, 'remap function', can_be_none=True)
+            arg_check.is_str(point_file, 'point file name')
+        arg_check.is_func(remap, 'remap function', can_be_none=True)
 
         # Execute the functional code.
         opendx.main.map(params=params, map_type=map_type, spin_id=spin_id, inc=inc, lower=lower, upper=upper, axis_incs=axis_incs, file_prefix=file_prefix, dir=dir, point=point, point_file=point_file, remap=remap)

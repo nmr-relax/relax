@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2008-2009 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2008-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'fix' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import Basic_class
-import check
+import arg_check
 from generic_fns import fix
 
 
@@ -66,15 +63,15 @@ class Fix(Basic_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "fix("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "fix("
             text = text + "element=" + repr(element)
             text = text + ", fixed=" + repr(fixed) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(element, 'element')
-        check.is_bool(fixed, 'fixed')
+        arg_check.is_str(element, 'element')
+        arg_check.is_bool(fixed, 'fixed')
 
         # Execute the functional code.
         fix.fix(element=element, fixed=fixed)

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004 Edward d'Auvergne                                        #
-# Copyright (C) 2007-2008 Sebastien Morin                                     #
+# Copyright (C) 2007-2009 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -35,18 +35,23 @@ class Consistency:
 
         These three tests are used to assess the consistency of datasets aquired at different
         magnetic fields. Inconsistency can affect extracted information from experimental data and
-        can be caused by variations in temperature, concentration, pH, water suppression, etc.
+        can be caused by variations in temperature, concentration, pH, water suppression, etc. The
+        approach is described in Morin & Gagne (2009) JBNMR, 45: 361-372.
 
         This code calculates three functions for each residue. When comparing datasets from
-        different magnetic field, the value should be the same for each function as these are field
+        different magnetic fields, the value should be the same for each function as these are field
         independent. The J(0) function is the spectral density at the zero frequency and is obtained
-        using a reduced spectral density approach. The F_eta and F_R2 functions are the
-        consistency functions proposed by Fushman D. et al. (1998) JACS, 120: 10947-10952.
+        using a reduced spectral density approach (Farrow et al. (1995) JBNMR, 6: 153-162). The
+        F_eta and F_R2 functions are the consistency functions proposed by Fushman et al. (1998)
+        JACS, 120: 10947-10952.
 
-        To assess the consistency of its datasets, one should first calculate those values (J(0),
-        F_eta and F_R2) for each field. Then, the user should compare values obtained for different
-        magnetic fields. Comparisons could proceed using correlation plots and histograms, and the
+        To assess the consistency of its datasets, one should first calculate one of those values
+        (J(0), F_eta and F_R2, preferentially J(0) as discussed in Morin & Gagne (2009) JBNMR, 45:
+        361-372) for each field. Then, the user should compare values obtained for different
+        magnetic fields. Comparisons should proceed using correlation plots and histograms, and the
         user could also calculate correlation, skewness and kurtosis coefficients.
+
+        For examples, see Morin & Gagne (2009) JBNMR, 45: 361-372.
         """
 
         # Initialise the data container.
@@ -123,7 +128,7 @@ class Consistency:
 
         # Calculate eta.
         # eta is the cross-correlation rate between 15N CSA and 15N-1H dipolar interaction. It is
-        # expressed here as proposed in Fushman D. & Cowburn D. (1998) JACS, 120: 7109-7110.
+        # expressed here as proposed in Fushman & Cowburn (1998) JACS, 120: 7109-7110.
         eta = ((d * c/3.0) ** 0.5) * (4.0 * j0 + 3.0 * jwx) * p_2
 
         # Calculate F_eta.

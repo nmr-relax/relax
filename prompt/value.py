@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,13 +24,10 @@
 """Module containing the 'value' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from doc_string import docs
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import diffusion_tensor
 from generic_fns import value
 from relax_errors import RelaxError
@@ -76,20 +73,20 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "value.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", param=" + repr(param) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_from, 'pipe from')
-        check.is_str(pipe_to, 'pipe to')
-        check.is_str(param, 'parameter')
+        arg_check.is_str(pipe_from, 'pipe from')
+        arg_check.is_str(pipe_to, 'pipe to')
+        arg_check.is_str(param, 'parameter')
 
         # Execute the functional code.
-        self.__relax__.generic.value.copy(pipe_from=pipe_from, pipe_to=pipe_to, param=param)
+        value.copy(pipe_from=pipe_from, pipe_to=pipe_to, param=param)
 
 
     def display(self, param=None):
@@ -116,16 +113,16 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "value.display("
             text = text + "param=" + repr(param) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(param, 'parameter')
+        arg_check.is_str(param, 'parameter')
 
         # Execute the functional code.
-        self.__relax__.generic.value.display(param=param)
+        value.display(param=param)
 
 
     def read(self, param=None, scaling=1.0, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
@@ -195,8 +192,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "value.read("
             text = text + "param=" + repr(param)
             text = text + ", scaling=" + repr(scaling)
             text = text + ", file=" + repr(file)
@@ -214,23 +211,23 @@ class Value(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(param, 'parameter')
-        check.is_float(scaling, 'scaling')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
-        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
-        check.is_int(res_num_col, 'residue number column', can_be_none=True)
-        check.is_int(res_name_col, 'residue name column', can_be_none=True)
-        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
-        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
-        check.is_int(data_col, 'data column', can_be_none=True)
-        check.is_int(error_col, 'error column', can_be_none=True)
-        check.is_str(sep, 'column separator', can_be_none=True)
-        check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        arg_check.is_str(param, 'parameter')
+        arg_check.is_float(scaling, 'scaling')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
+        arg_check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        arg_check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        arg_check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        arg_check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        arg_check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        arg_check.is_int(data_col, 'data column', can_be_none=True)
+        arg_check.is_int(error_col, 'error column', can_be_none=True)
+        arg_check.is_str(sep, 'column separator', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
-        self.__relax__.generic.value.read(param=param, scaling=scaling, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
+        value.read(param=param, scaling=scaling, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
     def set(self, val=None, param=None, spin_id=None):
@@ -274,8 +271,8 @@ class Value(User_fn_class):
         |       |       |                                                                          |
         |   n   | None  | This case is used to set the model parameters prior to minimisation or   |
         |       |       | calculation.  The length of the val array must be equal to the number    |
-        |       |       | of model parameters for an individual residue.  The parameters will be   |
-        |       |       | set to the corresponding number.                                         |
+        |       |       | of model parameters.  The parameters will be set to the corresponding    |
+        |       |       | number.                                                                  |
         |       |       |                                                                          |
         | None  |   1   | The parameter matching the string will be set to the default value.      |
         |       |       |                                                                          |
@@ -296,7 +293,7 @@ class Value(User_fn_class):
         ~~~~~~~~~~~~~~~~~~~
 
         If the 'spin_id' argument is left as the default of None, then the function will be applied
-        to all spins.  If the data is global non-residue specific data, such as diffusion tensor
+        to all spins.  If the data is global non-spin specific data, such as diffusion tensor
         parameters, supplying the spin identifier will terminate the program with an error.
 
 
@@ -353,17 +350,17 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.set("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "value.set("
             text = text + "val=" + repr(val)
             text = text + ", param=" + repr(param)
             text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str_or_num_or_str_num_list(val, 'value', can_be_none=True)
-        check.is_str_or_str_list(param, 'parameter', can_be_none=True)
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str_or_num_or_str_num_list(val, 'value', can_be_none=True)
+        arg_check.is_str_or_str_list(param, 'parameter', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # The invalid combination of a single value and no param argument.
         if (isinstance(val, float) or isinstance(val, int)) and param == None:
@@ -422,8 +419,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "value.write("
             text = text + "param=" + repr(param)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -431,10 +428,10 @@ class Value(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(param, 'parameter')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(param, 'parameter')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         value.write(param=param, file=file, dir=dir, force=force)

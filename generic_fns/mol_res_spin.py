@@ -54,15 +54,7 @@ id_string_doc = """
 Identification string documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The identification string is composed of three components: the molecule id token beginning with the '#' character, the residue id token beginning with the ':' character, and the atom or spin system id token beginning with the '@' character.  Each token can be composed of multiple elements separated by the ',' character and each individual element can either be a number (which must be an integer, in string format), a name, or a range of numbers separated by the '-' character.  Negative numbers are supported.  The full id string specification is
-
-    #<mol_name> :<res_id>[, <res_id>[, <res_id>, ...]] @<atom_id>[, <atom_id>[, <atom_id>, ...]],
-
-where the token elements are
-
-    <mol_name>, the name of the molecule,
-    <res_id>, the residue identifier which can be a number, name, or range of numbers,
-    <atom_id>, the atom or spin system identifier which can be a number, name, or range of numbers.
+The identification string is composed of three components: the molecule id token beginning with the '#' character, the residue id token beginning with the ':' character, and the atom or spin system id token beginning with the '@' character.  Each token can be composed of multiple elements separated by the ',' character and each individual element can either be a number (which must be an integer, in string format), a name, or a range of numbers separated by the '-' character.  Negative numbers are supported.  The full id string specification is '#<mol_name> :<res_id>[, <res_id>[, <res_id>, ...]] @<atom_id>[, <atom_id>[, <atom_id>, ...]]', where the token elements are '<mol_name>', the name of the molecule, '<res_id>', the residue identifier which can be a number, name, or range of numbers, '<atom_id>', the atom or spin system identifier which can be a number, name, or range of numbers.
 
 If one of the tokens is left out then all elements will be assumed to match.  For example if the string does not contain the '#' character then all molecules will match the string.
 
@@ -90,6 +82,10 @@ class Selection(object):
         @param select_string:   A mol-res-spin selection string.
         @type select_string:    string
         """
+
+        # Handle Unicode.
+        if isinstance(select_string, unicode):
+            select_string = str(select_string)
 
         self._union = None
         self._intersect = None
@@ -1854,6 +1850,10 @@ def return_spin(selection=None, pipe=None, full_info=False):
     @rtype:             instance of the SpinContainer class.  If full_info=True, the type is the
                         tuple (SpinContainer, str, int, str).
     """
+
+    # Handle Unicode.
+    if isinstance(selection, unicode):
+        selection = str(selection)
 
     # The data pipe.
     if pipe == None:

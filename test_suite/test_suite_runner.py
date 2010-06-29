@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,6 +32,7 @@ from system_tests import System_test_runner
 from unit_tests.unit_test_runner import Unit_test_runner
 
 # relax module imports.
+import __main__
 from relax_test_runner import RelaxTestRunner
 
 
@@ -43,14 +44,18 @@ class Test_suite_runner:
         - Unit tests.
     """
 
-    def __init__(self, relax):
-        """Run the system/functional and unit test suite components.
+    def __init__(self, tests=None):
+        """Store the list of tests to preform.
 
-        @param relax:   The relax namespace.
-        @type relax:    instance
+        The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
+
+
+        @keyword tests: The list of tests to preform.
+        @type tests:    list of str
         """
 
-        self.relax = relax
+        # Store the args.
+        self.tests = tests
 
 
     def run_all_tests(self):
@@ -73,8 +78,8 @@ class Test_suite_runner:
         heading('System / functional tests')
 
         # Run the tests.
-        system_runner = System_test_runner(self.relax)
-        self.system_result = system_runner.run()
+        system_runner = System_test_runner()
+        self.system_result = system_runner.run(self.tests)
 
 
     def run_unit_tests(self):
@@ -84,7 +89,7 @@ class Test_suite_runner:
         heading('Unit tests')
 
         # Run the tests.
-        unit_runner = Unit_test_runner(root_path=sys.path[-1]+os.sep+'test_suite'+os.sep+'unit_tests')
+        unit_runner = Unit_test_runner(root_path=__main__.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
         self.unit_result = unit_runner.run(runner=RelaxTestRunner())
 
 

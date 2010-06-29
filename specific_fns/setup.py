@@ -59,9 +59,9 @@ def get_specific_fn(eqi, function_type, raise_error=True):
 
     # Attempt to retrieve the function.
     try:
-        # Back-calculate function.
-        if eqi == 'back_calc':
-            function = inst.back_calc
+        # Back calculation of relaxation data.
+        if eqi == 'back_calc_ri':
+            function = inst.back_calc_ri
 
         # Base data loop generator function.
         if eqi == 'base_data_loop':
@@ -70,10 +70,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         # Calculate function.
         if eqi == 'calculate':
             function = inst.calculate
-
-        # Copy function.
-        if eqi == 'copy':
-            function = inst.copy
 
         # Create Monte Carlo data function.
         if eqi == 'create_mc_data':
@@ -98,6 +94,14 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         # Eliminate models.
         if eqi == 'eliminate':
             function = inst.eliminate
+
+        # Parameter names function.
+        if eqi == 'get_param_names':
+            function = inst.get_param_names
+
+        # Parameter values function.
+        if eqi == 'get_param_values':
+            function = inst.get_param_values
 
         # Grid search function.
         if eqi == 'grid_search':
@@ -151,13 +155,9 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'pack_sim_data':
             function = inst.sim_pack_data
 
-        # Parameter names function.
-        if eqi == 'param_names':
-            function = inst.get_param_names
-
-        # Parameter values function.
-        if eqi == 'param_values':
-            function = inst.get_param_values
+        # Pymol macro creation.
+        if eqi == 'pymol_macro':
+            function = inst.pymol_macro
 
         # Read results file function (Columnar format).
         if eqi == 'read_columnar_results':
@@ -215,9 +215,9 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'set_error':
             function = inst.set_error
 
-        # Set non-spin specific parameters function.
-        if eqi == 'set_non_spin_params':
-            function = inst.set_non_spin_params
+        # Set parameter values function.
+        if eqi == 'set_param_values':
+            function = inst.set_param_values
 
         # Set the selected simulations array.
         if eqi == 'set_selected_sim':
@@ -234,14 +234,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         # Deselection function.
         if eqi == 'deselect':
             function = inst.deselect
-
-        # Write results function (Columnar format).
-        if eqi == 'write_columnar_results':
-            function = inst.write_columnar_results
-
-        # Write results function (XML format).
-        #if eqi == 'write_xml_results':
-        #    function = inst.write_xml_results
 
     # Catch if the function is missing.
     except AttributeError:

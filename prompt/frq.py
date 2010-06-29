@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'frq' user function class for manipulating spectrometer frequencies."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 import generic_fns.frq
 
 
@@ -54,15 +51,15 @@ class Frq(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "frq("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "frq("
             text = text + "id=" + repr(id)
             text = text + ", frq=" + repr(frq) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'experiment identification string')
-        check.is_num(frq, 'spectrometer frequency')
+        arg_check.is_str(id, 'experiment identification string')
+        arg_check.is_num(frq, 'spectrometer frequency')
 
         # Execute the functional code.
         generic_fns.frq.set(id=id, frq=frq)

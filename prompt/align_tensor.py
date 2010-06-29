@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,11 +25,10 @@
 __docformat__ = 'plaintext'
 
 # Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import align_tensor
 
 
@@ -85,8 +84,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "align_tensor.copy("
             text = text + "tensor_from=" + repr(tensor_from)
             text = text + ", pipe_from=" + repr(pipe_from)
             text = text + ", tensor_to=" + repr(tensor_to)
@@ -94,10 +93,10 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(tensor_from, 'tensor from')
-        check.is_str(pipe_from, 'pipe from', can_be_none=True)
-        check.is_str(tensor_to, 'tensor to')
-        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        arg_check.is_str(tensor_from, 'tensor from')
+        arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        arg_check.is_str(tensor_to, 'tensor to', can_be_none=True)
+        arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.copy(tensor_from=tensor_from, pipe_from=pipe_from, tensor_to=tensor_to, pipe_to=pipe_to)
@@ -120,13 +119,13 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "align_tensor.delete("
             text = text + "tensor=" + repr(tensor) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(tensor, 'tensor')
+        arg_check.is_str(tensor, 'tensor')
 
         # Execute the functional code.
         align_tensor.delete(tensor=tensor)
@@ -142,16 +141,38 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "align_tensor.display("
             text = text + "tensor=" + repr(tensor) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(tensor, 'tensor', can_be_none=True)
+        arg_check.is_str(tensor, 'tensor', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.display(tensor=tensor)
+
+
+    def fix(self, fixed=True):
+        """Fix all alignment tensors so that they do not change during optimisation.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        fixed:  The flag specifying if the tensors should be fixed or variable.
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "align_tensor.fix("
+            text = text + "fixed=" + repr(fixed) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_bool(fixed, 'fixed')
+
+        # Execute the functional code.
+        align_tensor.fix(fixed=fixed)
 
 
     def init(self, tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=False):
@@ -215,8 +236,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.init("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "align_tensor.init("
             text = text + "tensor=" + repr(tensor)
             text = text + ", params=" + repr(params)
             text = text + ", scale=" + repr(scale)
@@ -226,12 +247,12 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(tensor, 'tensor')
-        check.is_num_tuple(params, 'alignment tensor parameters', size=5)
-        check.is_float(scale, 'scale')
-        check.is_str(angle_units, 'angle units')
-        check.is_int(param_types, 'parameter types')
-        check.is_bool(errors, 'errors flag')
+        arg_check.is_str(tensor, 'tensor')
+        arg_check.is_num_tuple(params, 'alignment tensor parameters', size=5)
+        arg_check.is_float(scale, 'scale')
+        arg_check.is_str(angle_units, 'angle units')
+        arg_check.is_int(param_types, 'parameter types')
+        arg_check.is_bool(errors, 'errors flag')
 
         # Execute the functional code.
         align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
@@ -259,15 +280,15 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.matrix_angles("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "align_tensor.matrix_angles("
             text = text + "basis_set=" + repr(basis_set)
             text = text + ", tensors=" + repr(tensors) + ")"
             print(text)
 
         # The argument checks.
-        check.is_int(basis_set, 'basis set')
-        check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
+        arg_check.is_int(basis_set, 'basis set')
+        arg_check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.matrix_angles(basis_set, tensors)
@@ -301,15 +322,15 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.reduction("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "align_tensor.reduction("
             text = text + "full_tensor=" + repr(full_tensor)
             text = text + ", red_tensor=" + repr(red_tensor) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(full_tensor, 'full tensor')
-        check.is_str(red_tensor, 'reduced tensor')
+        arg_check.is_str(full_tensor, 'full tensor')
+        arg_check.is_str(red_tensor, 'reduced tensor')
 
         # Execute the functional code.
         align_tensor.reduction(full_tensor=full_tensor, red_tensor=red_tensor)
@@ -342,15 +363,15 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.set_domain("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "align_tensor.set_domain("
             text = text + "tensor=" + repr(tensor)
             text = text + ", domain=" + repr(domain) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(tensor, 'tensor')
-        check.is_str(domain, 'domain')
+        arg_check.is_str(tensor, 'tensor')
+        arg_check.is_str(domain, 'domain')
 
         # Execute the functional code.
         align_tensor.set_domain(tensor=tensor, domain=domain)
@@ -375,6 +396,8 @@ class Align_tensor(User_fn_class):
         which SVD will be performed is composed of the unitary basis set {Sxx, Syy, Sxy, Sxz, Syz}
         layed out as:
 
+        -----
+
             | Sxx1 Syy1 Sxy1 Sxz1 Syz1 |
             | Sxx2 Syy2 Sxy2 Sxz2 Syz2 |
             | Sxx3 Syy3 Sxy3 Sxz3 Syz3 |
@@ -383,9 +406,13 @@ class Align_tensor(User_fn_class):
             |  .    .    .    .    .   |
             | SxxN SyyN SxyN SxzN SyzN |
 
+        -----
+
         If basis_set is set to 1, the geometric basis set consisting of the stretching and skewing
         parameters Szz and Sxx-yy respectively {Szz, Sxxyy, Sxy, Sxz, Syz} will be used instead.
         The matrix is:
+
+        -----
 
             | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
             | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
@@ -395,24 +422,30 @@ class Align_tensor(User_fn_class):
             |  .     .     .    .    .   |
             | SzzN SxxyyN SxyN SxzN SyzN |
 
+        -----
+
         The relationships between the geometric and unitary basis sets are:
+
+        -----
 
             Szz = - Sxx - Syy,
             Sxxyy = Sxx - Syy,
+
+        -----
 
         The SVD values and condition number are dependendent upon the basis set chosen.
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.svd("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "align_tensor.svd("
             text = text + "basis_set=" + repr(basis_set)
             text = text + ", tensors=" + repr(tensors) + ")"
             print(text)
 
         # The argument checks.
-        check.is_int(basis_set, 'basis set')
-        check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
+        arg_check.is_int(basis_set, 'basis set')
+        arg_check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.svd(basis_set, tensors)

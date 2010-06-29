@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,27 +21,28 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
+from re import search
 from shutil import rmtree
 from string import split
-import sys
 from tempfile import mkdtemp
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_index_loop, spin_loop
 from generic_fns import pipes
 
 
-class Relax_fit(TestCase):
+class Relax_fit(SystemTestCase):
     """Class for testing various aspects specific to relaxation curve-fitting."""
 
     def setUp(self):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('mf', 'mf')
+        self.interpreter.pipe.create('mf', 'mf')
 
         # Create a temporary directory for dumping files.
         ds.tmpdir = mkdtemp()
@@ -62,28 +63,33 @@ class Relax_fit(TestCase):
         """Test the relaxation curve fitting, replicating bug #12670 and bug #12679."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'1UBQ_relax_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'1UBQ_relax_fit.py')
 
         # Open the intensities.agr file.
         file = open(ds.tmpdir + sep + 'intensities.agr')
         lines = file.readlines()
         file.close()
 
-        # Split up the lines.
+        # Loop over all lines.
         for i in xrange(len(lines)):
+            # Find the "@target G0.S0" line.
+            if search('@target', lines[i]):
+                index = i + 2
+
+            # Split up the lines.
             lines[i] = split(lines[i])
 
         # Check some of the Grace data.
-        self.assertEqual(len(lines[23]), 2)
-        self.assertEqual(lines[23][0], '0.004')
-        self.assertEqual(lines[23][1], '487178.0')
+        self.assertEqual(len(lines[index]), 2)
+        self.assertEqual(lines[index][0], '0.004')
+        self.assertEqual(lines[index][1], '487178.0')
 
 
     def test_curve_fitting(self):
         """Test the relaxation curve fitting C modules."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
 
         # Data.
         relax_times = [0.0176, 0.0176, 0.0352, 0.0704, 0.0704, 0.1056, 0.1584, 0.1584, 0.1936, 0.1936]
@@ -121,19 +127,19 @@ class Relax_fit(TestCase):
         """The Sparky peak height loading test."""
 
         # Load the original state.
-        self.relax.interpreter._State.load(state='basic_heights_T2_ncyc1', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'saved_states', force=True)
+        self.interpreter.state.load(state='basic_heights_T2_ncyc1', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states', force=True)
 
         # Create a new data pipe for the new data.
-        self.relax.interpreter._Pipe.create('new', 'relax_fit')
+        self.interpreter.pipe.create('new', 'relax_fit')
 
         # Load the Lupin Ap4Aase sequence.
-        self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file="Ap4Aase.seq", dir=__main__.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Name the spins so they can be matched to the assignments.
-        self.relax.interpreter._Spin.name(name='N')
+        self.interpreter.spin.name(name='N')
 
         # Read the peak heights.
-        self.relax.interpreter._Spectrum.read_intensities(file="T2_ncyc1_ave.list", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting', spectrum_id='0.0176')
+        self.interpreter.spectrum.read_intensities(file="T2_ncyc1_ave.list", dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting', spectrum_id='0.0176')
 
 
         # Test the integrity of the data.

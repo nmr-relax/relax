@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2006-2009 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2006-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'structure' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 import generic_fns.structure.geometric
 import generic_fns.structure.main
 
@@ -133,8 +130,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.create_diff_tensor_pdb("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.create_diff_tensor_pdb("
             text = text + "scale=" + repr(scale)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -142,10 +139,10 @@ class Structure(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num(scale, 'scaling factor')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_num(scale, 'scaling factor')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         generic_fns.structure.geometric.create_diff_tensor_pdb(scale=scale, file=file, dir=dir, force=force)
@@ -184,8 +181,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.create_vector_dist("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.create_vector_dist("
             text = text + "length=" + repr(length)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -194,11 +191,11 @@ class Structure(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num(length, 'vector length')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(symmetry, 'symmetry flag')
-        check.is_bool(force, 'force flag')
+        arg_check.is_num(length, 'vector length')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(symmetry, 'symmetry flag')
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         generic_fns.structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
@@ -239,15 +236,15 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.get_pos("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.get_pos("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        check.is_bool(ave_pos, 'average position flag')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_bool(ave_pos, 'average position flag')
 
         # Execute the functional code.
         generic_fns.structure.main.get_pos(spin_id=spin_id, ave_pos=ave_pos)
@@ -272,8 +269,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.delete()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.delete()"
             print(text)
 
         # Execute the functional code.
@@ -323,24 +320,34 @@ class Structure(User_fn_class):
         N3, C5, and C6, type the following series of commands (assuming that the PDB file with this
         atom naming has already been read):
 
-        relax> structure.load_spins(spin_id=':A@C8&@C2')
-        relax> structure.load_spins(spin_id=':G@C8&@N1')
-        relax> structure.load_spins(spin_id=':C@C5&@C6')
-        relax> structure.load_spins(spin_id=':U@N3&@C5&@C6')
+        relax> structure.load_spins(spin_id=":A@C8")
+        relax> structure.load_spins(spin_id=":A@C2")
+        relax> structure.load_spins(spin_id=":G@C8")
+        relax> structure.load_spins(spin_id=":G@N1")
+        relax> structure.load_spins(spin_id=":C@C5")
+        relax> structure.load_spins(spin_id=":C@C6")
+        relax> structure.load_spins(spin_id=":U@N3")
+        relax> structure.load_spins(spin_id=":U@C5")
+        relax> structure.load_spins(spin_id=":U@C6")
+
+        Alternatively using some Python programming:
+
+        relax> for id in [":A@C8", ":A@C2", ":G@C8", ":G@N1", ":C@C5", ":C@C6", ":U@N3", ":U@C5", ":U@C6"]:
+        relax>     structure.load_spins(spin_id=id)
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.load_spins("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.load_spins("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", combine_models=" + repr(combine_models)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        check.is_bool(combine_models, 'model combining flag')
-        check.is_bool(ave_pos, 'average position flag')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_bool(combine_models, 'model combining flag')
+        arg_check.is_bool(ave_pos, 'average position flag')
 
         # Execute the functional code.
         generic_fns.structure.main.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
@@ -440,8 +447,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.read_pdb("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.read_pdb("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", read_mol=" + repr(read_mol)
@@ -452,13 +459,13 @@ class Structure(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int_or_int_list(read_mol, 'read molecule number', can_be_none=True)
-        check.is_int_or_int_list(read_model, 'read model', can_be_none=True)
-        check.is_int_or_int_list(set_model_num, 'set model numbers', can_be_none=True)
-        check.is_str_or_str_list(set_mol_name, 'set molecule names', can_be_none=True)
-        check.is_str(parser, 'PDB parser')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int_or_int_list(read_mol, 'read molecule number', can_be_none=True)
+        arg_check.is_int_or_int_list(read_model, 'read model', can_be_none=True)
+        arg_check.is_int_or_int_list(set_model_num, 'set model numbers', can_be_none=True)
+        arg_check.is_str_or_str_list(set_mol_name, 'set molecule names', can_be_none=True)
+        arg_check.is_str(parser, 'PDB parser')
 
         # Execute the functional code.
         generic_fns.structure.main.read_pdb(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
@@ -548,8 +555,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.vectors("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.vectors("
             text = text + "attached=" + repr(attached)
             text = text + ", spin_id=" + repr(spin_id)
             text = text + ", model=" + repr(model)
@@ -559,12 +566,12 @@ class Structure(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(attached, 'attached atom')
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        check.is_int(model, 'model', can_be_none=True)
-        check.is_int(verbosity, 'verbosity level')
-        check.is_bool(ave, 'average vector flag')
-        check.is_bool(unit, 'unit vector flag')
+        arg_check.is_str(attached, 'attached atom')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_int(model, 'model', can_be_none=True)
+        arg_check.is_int(verbosity, 'verbosity level')
+        arg_check.is_bool(ave, 'average vector flag')
+        arg_check.is_bool(unit, 'unit vector flag')
 
         # Execute the functional code.
         generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
@@ -608,8 +615,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.write_pdb("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.write_pdb("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", model_num=" + repr(model_num)
@@ -617,10 +624,10 @@ class Structure(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(model_num, 'model number', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int(model_num, 'model number', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         generic_fns.structure.main.write_pdb(file=file, dir=dir, model_num=model_num, force=force)

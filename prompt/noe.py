@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'noe' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import noesy
 from specific_fns.setup import noe_obj
 
@@ -83,8 +80,8 @@ class Noe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "noe.read_restraints("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "noe.read_restraints("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", proton1_col=" + repr(proton1_col)
@@ -95,13 +92,13 @@ class Noe(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(proton1_col, 'first proton column', can_be_none=True)
-        check.is_int(proton2_col, 'second proton column', can_be_none=True)
-        check.is_int(lower_col, 'lower bound column', can_be_none=True)
-        check.is_int(upper_col, 'upper bound column', can_be_none=True)
-        check.is_str(sep, 'column separator', can_be_none=True)
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int(proton1_col, 'first proton column', can_be_none=True)
+        arg_check.is_int(proton2_col, 'second proton column', can_be_none=True)
+        arg_check.is_int(lower_col, 'lower bound column', can_be_none=True)
+        arg_check.is_int(upper_col, 'upper bound column', can_be_none=True)
+        arg_check.is_str(sep, 'column separator', can_be_none=True)
 
         # Execute the functional code.
         noesy.read_restraints(file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
@@ -131,15 +128,15 @@ class Noe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "noe.spectrum_type("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "noe.spectrum_type("
             text = text + "spectrum_type=" + repr(spectrum_type)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(spectrum_type, 'spectrum type')
-        check.is_str(spectrum_id, 'spectrum identification string')
+        arg_check.is_str(spectrum_type, 'spectrum type')
+        arg_check.is_str(spectrum_id, 'spectrum identification string')
 
         # Execute the functional code.
-        noe_obj.spectrum_type(spectrum_type=spectrum_type, spectrum_id=spectrum_id)
+        noe_obj._spectrum_type(spectrum_type=spectrum_type, spectrum_id=spectrum_id)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,14 +30,13 @@ from test_suite.unit_tests.minimisation_testing_base import Minimisation_base_cl
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_minimisation(Minimisation_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.minimisation' module."""
 
     # Instantiate the user function class.
-    minimisation_fns = Minimisation(fake_relax.fake_instance())
+    minimisation_fns = Minimisation()
 
 
     def test_calc_argfail_verbosity(self):

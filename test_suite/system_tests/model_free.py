@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,15 +21,15 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from math import pi
 import platform
 import numpy
 from re import search
 from os import sep
-import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from physical_constants import N15_CSA, NH_BOND_LENGTH
@@ -56,14 +56,14 @@ if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
 
 
 
-class Mf(TestCase):
+class Mf(SystemTestCase):
     """TestCase class for the functional tests of model-free analysis."""
 
     def setUp(self):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('mf', 'mf')
+        self.interpreter.pipe.create('mf', 'mf')
 
 
     def tearDown(self):
@@ -117,12 +117,12 @@ class Mf(TestCase):
         """Run Monte Carlo simulations for the optimised model-free model."""
 
         # Monte Carlo simulations.
-        self.relax.interpreter._Monte_carlo.setup(number=3)
-        self.relax.interpreter._Monte_carlo.create_data()
-        self.relax.interpreter._Monte_carlo.initial_values()
-        self.relax.interpreter._Minimisation.minimise('newton')
-        #self.relax.interpreter._Eliminate.eliminate()
-        self.relax.interpreter._Monte_carlo.error_analysis()
+        self.interpreter.monte_carlo.setup(number=3)
+        self.interpreter.monte_carlo.create_data()
+        self.interpreter.monte_carlo.initial_values()
+        self.interpreter.minimise('newton')
+        #self.interpreter.eliminate()
+        self.interpreter.monte_carlo.error_analysis()
 
 
     def object_comparison(self, obj1=None, obj2=None, skip=None):
@@ -159,11 +159,32 @@ class Mf(TestCase):
             self.assertEqual(str(sub_obj1), str(sub_obj2))
 
 
+    def test_bug_14872_unicode_selection(self):
+        """Test catching bug #14872, the unicode string selection failure as submitted by Olivier Serve."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_14872_unicode_selection.py')
+
+
+    def test_bug_14941_local_tm_global_selection(self):
+        """Test catching bug #14941, the local tm global model selection problem as submitted by Mikaela Stewart (mikaela dot stewart att gmail dot com)."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_14941_local_tm_global_selection.py')
+
+
+    def test_bug_15050(self):
+        """Test catching bug #15050, 'PipeContainer' object has no attribute 'diff_tensor' error as submitted by Tiago Pais (https://gna.org/users/tpais)."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_15050.py')
+
+
     def test_bugs_12582_12591_12607(self):
         """Test catching bugs #12582, #12591 and #12607 as submitted by Chris Brosey."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bugs_12582_12591_12607.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bugs_12582_12591_12607.py')
 
         # Test for bug #12607 (S2 changes because it is in the grid search when it should not be).
         self.assertNotEqual(cdp.mol[0].res[1].spin[0].s2, 1.0)
@@ -173,25 +194,32 @@ class Mf(TestCase):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'create_m4.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'create_m4.py')
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
         self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['S2', 'te', 'Rex'])
 
 
+    def test_generate_ri(self):
+        """Back-calculate relaxation data."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'generate_ri.py')
+
+
     def test_latex_table(self):
         """Test the creation of a LaTeX table of model-free results, mimicking the latex_mf_table.py sample script."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'latex_mf_table.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'latex_mf_table.py')
 
 
     def test_omp_analysis(self):
         """Try a very minimal model-free analysis on the OMP relaxation data."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'omp_model_free.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'omp_model_free.py')
 
         # Alias the final data pipe.
         dp = pipes.get_pipe('final')
@@ -207,96 +235,96 @@ class Mf(TestCase):
         """Mapping the {S2, te, Rex} chi2 space through the OpenDX user function dx.map()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opendx_s2_te_rex.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opendx_s2_te_rex.py')
 
 
     def test_opendx_theta_phi_da(self):
         """Mapping the {theta, phi, Da} chi2 space through the OpenDX user function dx.map()."""
 
         # Path of the files.
-        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the PDF file and set the vectors.
-        self.relax.interpreter._Structure.read_pdb(file='pdb', dir=path, read_model=1)
-        self.relax.interpreter._Structure.load_spins('@N')
-        self.relax.interpreter._Structure.vectors(attached='H')
+        self.interpreter.structure.read_pdb(file='pdb', dir=path, read_model=1)
+        self.interpreter.structure.load_spins('@N')
+        self.interpreter.structure.vectors(attached='H')
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
-        self.relax.interpreter._Diffusion_tensor.init((1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
-        self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
-        self.relax.interpreter._Value.set([0.8, 50 * 1e-12, 0.0], ['S2', 'te', 'Rex'])
-        self.relax.interpreter._Value.set('15N', 'heteronucleus')
-        self.relax.interpreter._Value.set('1H', 'proton')
+        self.interpreter.diffusion_tensor.init((1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
+        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
+        self.interpreter.value.set([0.8, 50 * 1e-12, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set('15N', 'heteronucleus')
+        self.interpreter.value.set('1H', 'proton')
 
         # Select the model.
-        self.relax.interpreter._Model_free.select_model(model='m4')
+        self.interpreter.model_free.select_model(model='m4')
 
         # Map the space.
-        self.relax.interpreter._OpenDX.map(params=['theta', 'phi', 'Da'], spin_id=':2', inc=2, lower=[0, 0, -0.5*1e7], upper=[pi, 2.0*pi, 1.0*1e7], file_prefix='devnull')
+        self.interpreter.dx.map(params=['theta', 'phi', 'Da'], spin_id=':2', inc=2, lower=[0, 0, -0.5*1e7], upper=[pi, 2.0*pi, 1.0*1e7], file_prefix='devnull')
 
 
     def test_opendx_tm_s2_te(self):
         """Mapping the {local_tm, S2, te} chi2 space through the OpenDX user function dx.map()."""
 
         # Path of the files.
-        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
-        self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
-        self.relax.interpreter._Value.set('15N', 'heteronucleus')
-        self.relax.interpreter._Value.set('1H', 'proton')
+        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
+        self.interpreter.value.set('15N', 'heteronucleus')
+        self.interpreter.value.set('1H', 'proton')
 
         # Select the model.
-        self.relax.interpreter._Model_free.select_model(model='tm2')
+        self.interpreter.model_free.select_model(model='tm2')
 
         # Map the space.
-        self.relax.interpreter._OpenDX.map(params=['local_tm', 'S2', 'te'], spin_id=':2', inc=2, lower=[5e-9, 0.0, 0.0], file_prefix='devnull')
+        self.interpreter.dx.map(params=['local_tm', 'S2', 'te'], spin_id=':2', inc=2, lower=[5e-9, 0.0, 0.0], file_prefix='devnull')
 
 
     def test_opt_constr_bfgs_back_S2_0_970_te_2048_Rex_0_149(self):
         """Constrained BFGS opt, backtracking line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            BFGS optimisation.
-            Backtracking line search.
-            Constrained.
+            - BFGS optimisation.
+            - Backtracking line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('bfgs', 'back')
+        self.interpreter.minimise('bfgs', 'back')
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -446,24 +474,24 @@ class Mf(TestCase):
         """Constrained BFGS opt, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            BFGS optimisation.
-            More and Thuente line search.
-            Constrained.
+            - BFGS optimisation.
+            - More and Thuente line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('bfgs', 'mt')
+        self.interpreter.minimise('bfgs', 'mt')
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -608,24 +636,24 @@ class Mf(TestCase):
         """Constrained coordinate descent opt, backtracking line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Coordinate descent optimisation.
-            Backtracking line search.
-            Constrained.
+            - Coordinate descent optimisation.
+            - Backtracking line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('cd', 'back', max_iter=50)
+        self.interpreter.minimise('cd', 'back', max_iter=50)
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -677,24 +705,24 @@ class Mf(TestCase):
         """Constrained coordinate descent opt, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Coordinate descent optimisation.
-            More and Thuente line search.
-            Constrained.
+            - Coordinate descent optimisation.
+            - More and Thuente line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('cd', 'mt')
+        self.interpreter.minimise('cd', 'mt')
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -795,25 +823,25 @@ class Mf(TestCase):
         """Constrained Newton opt, GMW Hessian mod, backtracking line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Newton optimisation.
-            GMW Hessian modification.
-            Backtracking line search.
-            Constrained.
+            - Newton optimisation.
+            - GMW Hessian modification.
+            - Backtracking line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'back')
+        self.interpreter.minimise('newton', 'gmw', 'back')
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -914,25 +942,25 @@ class Mf(TestCase):
         """Constrained Newton opt, GMW Hessian mod, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Newton optimisation.
-            GMW Hessian modification.
-            More and Thuente line search.
-            Constrained.
+            - Newton optimisation.
+            - GMW Hessian modification.
+            - More and Thuente line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'mt')
+        self.interpreter.minimise('newton', 'gmw', 'mt')
 
         # Monte Carlo simulations.
         self.monte_carlo()
@@ -1066,24 +1094,24 @@ class Mf(TestCase):
         """Constrained steepest descent opt, backtracking line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Steepest descent optimisation.
-            Backtracking line search.
-            Constrained.
+            - Steepest descent optimisation.
+            - Backtracking line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('sd', 'back', max_iter=50)
+        self.interpreter.minimise('sd', 'back', max_iter=50)
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -1135,24 +1163,24 @@ class Mf(TestCase):
         """Constrained steepest descent opt, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Steepest descent optimisation.
-            More and Thuente line search.
-            Constrained.
+            - Steepest descent optimisation.
+            - More and Thuente line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('sd', 'mt', max_iter=50)
+        self.interpreter.minimise('sd', 'mt', max_iter=50)
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -1204,19 +1232,19 @@ class Mf(TestCase):
         """Constrained grid search {S2=0.970, te=2048, Rex=0.149}.
 
         The optimisation options are:
-            Constrained grid search.
+            - Constrained grid search.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Grid search.
-        self.relax.interpreter._Minimisation.grid_search(inc=11)
+        self.interpreter.grid_search(inc=11)
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -1268,13 +1296,13 @@ class Mf(TestCase):
         """Reading of relaxation data using the user function relax_data.read()."""
 
         # Path of the files.
-        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Test the data and error.
         self.assertEqual(cdp.mol[0].res[1].spin[0].relax_data[0], 1.3874977659397683)
@@ -1285,7 +1313,7 @@ class Mf(TestCase):
         """Read a relax 1.2 model-free results file using the user function results.read()."""
 
         # Read the results.
-        self.relax.interpreter._Results.read(file='results_1.2', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
+        self.interpreter.results.read(file='results_1.2', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
 
         # Debugging print out.
         print(cdp)
@@ -1420,15 +1448,15 @@ class Mf(TestCase):
         """Read a relax 1.3 model-free results file using the user function results.read()."""
 
         # Path of the files.
-        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
+        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
         # Read the results file.
-        self.relax.interpreter._Pipe.create('1.3', 'mf')
-        self.relax.interpreter._Results.read(file='final_results_trunc_1.3', dir=path)
+        self.interpreter.pipe.create('1.3', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.3', dir=path)
 
         # Read the equivalent 1.2 results file for the checks.
-        self.relax.interpreter._Pipe.create('1.2', 'mf')
-        self.relax.interpreter._Results.read(file='final_results_trunc_1.2', dir=path)
+        self.interpreter.pipe.create('1.2', 'mf')
+        self.interpreter.results.read(file='final_results_trunc_1.2', dir=path)
 
         # Get the two data pipes.
         pipe_12 = pipes.get_pipe('1.2')
@@ -1479,13 +1507,13 @@ class Mf(TestCase):
         """Selecting model m4 with parameters {S2, te, Rex} using model_free.select_model()."""
 
         # Path of the files.
-        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Select the model.
-        self.relax.interpreter._Model_free.select_model(model='m4')
+        self.interpreter.model_free.select_model(model='m4')
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
@@ -1496,13 +1524,13 @@ class Mf(TestCase):
         """Setting the bond length through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Set the CSA value.
-        self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
+        self.interpreter.value.set(NH_BOND_LENGTH, 'bond_length')
 
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
@@ -1512,13 +1540,13 @@ class Mf(TestCase):
         """Setting the CSA value through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Set the CSA value.
-        self.relax.interpreter._Value.set(N15_CSA, 'csa')
+        self.interpreter.value.set(N15_CSA, 'csa')
 
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
@@ -1528,13 +1556,13 @@ class Mf(TestCase):
         """Setting both the CSA value and bond length through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Set the CSA value and bond length simultaneously.
-        self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
+        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
@@ -1545,23 +1573,23 @@ class Mf(TestCase):
         """Try a component of model-free analysis on Tyler Reddy's peptide data (truncated)."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'tylers_peptide.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'tylers_peptide.py')
 
 
     def test_write_results(self):
         """Writing of model-free results using the user function results.write()."""
 
         # Path of the files.
-        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
+        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
         # Read the results file.
-        self.relax.interpreter._Results.read(file='final_results_trunc_1.2', dir=path)
+        self.interpreter.results.read(file='final_results_trunc_1.2', dir=path)
 
         # A dummy file object for catching the results.write() output.
         file = DummyFileObject()
 
         # Write the results file into a dummy file.
-        self.relax.interpreter._Results.write(file=file, dir=path)
+        self.interpreter.results.write(file=file, dir=path)
 
         # Now, get the contents of that file, and then 'close' that file.
         test_lines = file.readlines()

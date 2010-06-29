@@ -27,10 +27,167 @@
 from re import search
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError
 import specific_fns
+from status import Status; status = Status()
+
+
+def calc(verbosity=1):
+    """Function for calculating the function value.
+
+    @param verbosity:   The amount of information to print.  The higher the value, the greater
+                        the verbosity.
+    @type verbosity:    int
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Specific calculate function setup.
+    calculate = specific_fns.setup.get_specific_fn('calculate', cdp.pipe_type)
+    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+
+    # Deselect spins lacking data:
+    overfit_deselect()
+
+    # Monte Carlo simulation calculation.
+    if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
+        # Loop over the simulations.
+        for i in xrange(cdp.sim_number):
+            # Print out.
+            if verbosity:
+                print(("Simulation " + repr(i+1)))
+
+            # Status.
+            status.mc_number = i
+
+            # Calculation.
+            calculate(verbosity=verbosity-1, sim_index=i)
+
+        # Unset the status.
+        status.mc_number = None
+
+    # Minimisation.
+    else:
+        calculate(verbosity=verbosity)
+
+
+def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1):
+    """The grid search function.
+
+    @param lower:       The lower bounds of the grid search which must be equal to the number of
+                        parameters in the model.
+    @type lower:        array of numbers
+    @param upper:       The upper bounds of the grid search which must be equal to the number of
+                        parameters in the model.
+    @type upper:        array of numbers
+    @param inc:         The increments for each dimension of the space for the grid search.  The
+                        number of elements in the array must equal to the number of parameters in
+                        the model.
+    @type inc:          array of int
+    @param constraints: If True, constraints are applied during the grid search (elinating parts of
+                        the grid).  If False, no constraints are used.
+    @type constraints:  bool
+    @param verbosity:   The amount of information to print.  The higher the value, the greater
+                        the verbosity.
+    @type verbosity:    int
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Specific grid search function.
+    grid_search = specific_fns.setup.get_specific_fn('grid_search', cdp.pipe_type)
+    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+
+    # Deselect spins lacking data:
+    overfit_deselect()
+
+    # Monte Carlo simulation grid search.
+    if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
+        # Loop over the simulations.
+        for i in xrange(cdp.sim_number):
+            # Print out.
+            if verbosity:
+                print(("Simulation " + repr(i+1)))
+
+            # Status.
+            status.mc_number = i
+
+            # Optimisation.
+            grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
+
+        # Unset the status.
+        status.mc_number = None
+
+    # Grid search.
+    else:
+        grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
+
+
+def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
+    """Minimisation function.
+
+    @param min_algor:       The minimisation algorithm to use.
+    @type min_algor:        str
+    @param min_options:     An array of options to be used by the minimisation algorithm.
+    @type min_options:      array of str
+    @param func_tol:        The function tolerance which, when reached, terminates optimisation.
+                            Setting this to None turns of the check.
+    @type func_tol:         None or float
+    @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation.
+                            Setting this to None turns of the check.
+    @type grad_tol:         None or float
+    @param max_iterations:  The maximum number of iterations for the algorithm.
+    @type max_iterations:   int
+    @param constraints:     If True, constraints are used during optimisation.
+    @type constraints:      bool
+    @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the
+                            problem to be better conditioned.
+    @type scaling:          bool
+    @param verbosity:       The amount of information to print.  The higher the value, the greater
+                            the verbosity.
+    @type verbosity:        int
+    @param sim_index:       The index of the simulation to optimise.  This should be None if normal
+                            optimisation is desired.
+    @type sim_index:        None or int
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Specific minimisation function.
+    minimise = specific_fns.setup.get_specific_fn('minimise', cdp.pipe_type)
+    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+
+    # Deselect spins lacking data:
+    overfit_deselect()
+
+    # Single Monte Carlo simulation.
+    if sim_index != None:
+        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
+
+    # Monte Carlo simulation minimisation.
+    elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
+        for i in xrange(cdp.sim_number):
+            # Print out.
+            if verbosity:
+                print(("Simulation " + repr(i+1)))
+
+            # Status.
+            status.mc_number = i
+
+            # Optimisation.
+            minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
+
+        # Unset the status.
+        status.mc_number = None
+
+    # Standard minimisation.
+    else:
+        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)
 
 
 def reset_min_stats(data_pipe=None, spin=None):
@@ -107,136 +264,6 @@ def reset_min_stats(data_pipe=None, spin=None):
         # Warning.
         if hasattr(spin, 'warning'):
             spin.warning = None
-
-
-
-def calc(verbosity=1):
-    """Function for calculating the function value.
-
-    @param verbosity:   The amount of information to print.  The higher the value, the greater
-                        the verbosity.
-    @type verbosity:    int
-    """
-
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Specific calculate function setup.
-    calculate = specific_fns.setup.get_specific_fn('calculate', cdp.pipe_type)
-    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
-
-    # Deselect residues lacking data:
-    overfit_deselect()
-
-    # Monte Carlo simulation calculation.
-    if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
-        # Loop over the simulations.
-        for i in xrange(cdp.sim_number):
-            if verbosity:
-                print(("Simulation " + repr(i+1)))
-            calculate(verbosity=verbosity-1, sim_index=i)
-
-    # Minimisation.
-    else:
-        calculate(verbosity=verbosity)
-
-
-def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1):
-    """The grid search function.
-
-    @param lower:       The lower bounds of the grid search which must be equal to the number of
-                        parameters in the model.
-    @type lower:        array of numbers
-    @param upper:       The upper bounds of the grid search which must be equal to the number of
-                        parameters in the model.
-    @type upper:        array of numbers
-    @param inc:         The increments for each dimension of the space for the grid search.  The
-                        number of elements in the array must equal to the number of parameters in
-                        the model.
-    @type inc:          array of int
-    @param constraints: If True, constraints are applied during the grid search (elinating parts of
-                        the grid).  If False, no constraints are used.
-    @type constraints:  bool
-    @param verbosity:   The amount of information to print.  The higher the value, the greater
-                        the verbosity.
-    @type verbosity:    int
-    """
-
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Specific grid search function.
-    grid_search = specific_fns.setup.get_specific_fn('grid_search', cdp.pipe_type)
-    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
-
-    # Deselect residues lacking data:
-    overfit_deselect()
-
-    # Monte Carlo simulation grid search.
-    if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
-        # Loop over the simulations.
-        for i in xrange(cdp.sim_number):
-            if verbosity:
-                print(("Simulation " + repr(i+1)))
-            grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
-
-    # Grid search.
-    else:
-        grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
-
-
-def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
-    """Minimisation function.
-
-    @param min_algor:       The minimisation algorithm to use.
-    @type min_algor:        str
-    @param min_options:     An array of options to be used by the minimisation algorithm.
-    @type min_options:      array of str
-    @param func_tol:        The function tolerance which, when reached, terminates optimisation.
-                            Setting this to None turns of the check.
-    @type func_tol:         None or float
-    @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation.
-                            Setting this to None turns of the check.
-    @type grad_tol:         None or float
-    @param max_iterations:  The maximum number of iterations for the algorithm.
-    @type max_iterations:   int
-    @param constraints:     If True, constraints are used during optimisation.
-    @type constraints:      bool
-    @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the
-                            problem to be better conditioned.
-    @type scaling:          bool
-    @param verbosity:       The amount of information to print.  The higher the value, the greater
-                            the verbosity.
-    @type verbosity:        int
-    @param sim_index:       The index of the simulation to optimise.  This should be None if normal
-                            optimisation is desired.
-    @type sim_index:        None or int
-    """
-
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Specific minimisation function.
-    minimise = specific_fns.setup.get_specific_fn('minimise', cdp.pipe_type)
-    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
-
-    # Deselect residues lacking data:
-    overfit_deselect()
-
-    # Single Monte Carlo simulation.
-    if sim_index != None:
-        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
-
-    # Monte Carlo simulation minimisation.
-    elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
-        for i in xrange(cdp.sim_number):
-            if verbosity:
-                print(("Simulation " + repr(i+1)))
-            minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
-
-    # Standard minimisation.
-    else:
-        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)
 
 
 def return_conversion_factor(stat_type, spin):
@@ -420,7 +447,7 @@ set_doc = """
         This shouldn't really be executed by a user.
 """
 
-def set(value=None, error=None, param=None, scaling=None, spin=None):
+def set(val=None, error=None, param=None, scaling=None, spin_id=None):
     """Set global or spin specific minimisation parameters.
 
     @keyword val:       The parameter values.
@@ -429,53 +456,56 @@ def set(value=None, error=None, param=None, scaling=None, spin=None):
     @type param:        str
     @keyword scaling:   Unused.
     @type scaling:      float
-    @keyword spin:      The spin container.
-    @type spin:         SpinContainer instance
+    @keyword spin_id:   The spin identification string.
+    @type spin_id:      str
     """
 
     # Get the parameter name.
     param_name = return_data_name(param)
 
     # Global minimisation stats.
-    if spin == None:
+    if spin_id == None:
         # Chi-squared.
         if param_name == 'chi2':
-            cdp.chi2 = value
+            cdp.chi2 = val
 
         # Iteration count.
         elif param_name == 'iter':
-            cdp.iter = value
+            cdp.iter = val
 
         # Function call count.
         elif param_name == 'f_count':
-            cdp.f_count = value
+            cdp.f_count = val
 
         # Gradient call count.
         elif param_name == 'g_count':
-            cdp.g_count = value
+            cdp.g_count = val
 
         # Hessian call count.
         elif param_name == 'h_count':
-            cdp.h_count = value
+            cdp.h_count = val
 
     # Residue specific minimisation.
     else:
+        # Get the spin.
+        spin = return_spin(spin_id)
+
         # Chi-squared.
         if param_name == 'chi2':
-            spin.chi2 = value
+            spin.chi2 = val
 
         # Iteration count.
         elif param_name == 'iter':
-            spin.iter = value
+            spin.iter = val
 
         # Function call count.
         elif param_name == 'f_count':
-            spin.f_count = value
+            spin.f_count = val
 
         # Gradient call count.
         elif param_name == 'g_count':
-            spin.g_count = value
+            spin.g_count = val
 
         # Hessian call count.
         elif param_name == 'h_count':
-            spin.h_count = value
+            spin.h_count = val

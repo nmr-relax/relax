@@ -34,7 +34,7 @@ import sys
 from angles import wrap_angles
 from data.align_tensor import AlignTensorList
 from generic_fns import pipes
-from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
+from physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
@@ -63,6 +63,32 @@ def align_data_exists(tensor, pipe=None):
                 return True
     else:
         return False
+
+
+def calc_chi_tensor(A, B0, T):
+    """Convert the alignment tensor into the magnetic susceptibility (chi) tensor.
+
+    A can be either the full tensor (3D or 5D), a component Aij of the tensor, Aa, or Ar, anything that can be multiplied by the constants to convert from one to the other.
+
+
+    @param A:       The alignment tensor or alignment tensor component.
+    @type A:        numpy array or float
+    @param B0:      The magnetic field strength in Hz.
+    @type B0:       float
+    @param T:       The temperature in Kalvin.
+    @type T:        float
+    @return:        A multiplied by the PCS constant.
+    @rtype:         numpy array or float
+    """
+
+    # B0 in Tesla.
+    B0 = 2.0 * pi * B0 / g1H
+
+    # The conversion factor.
+    conv = 15.0 * mu0 * kB * T / B0**2
+
+    # Return the converted value.
+    return conv * A
 
 
 def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
@@ -226,70 +252,198 @@ def display(tensor):
         data = get_tensor_object(tensor)
 
         # Header.
-        print(("Tensor: " + tensor + "\n"))
+        head = "# Tensor: %s #" % tensor
+        print("\n\n\n" + '#' * len(head) + "\n" + head + "\n" + '#' * len(head))
+
+
+        # The Saupe matrix.
+        ###################
+
+        title = "# Saupe order matrix."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
         # The parameter set {Sxx, Syy, Sxy, Sxz, Syz}.
-        print("Parameters {Sxx, Syy, Sxy, Sxz, Syz}.")
-        print(("%-15s%15.8f" % ("Sxx:  ", data.Sxx)))
-        print(("%-15s%15.8f" % ("Syy:  ", data.Syy)))
-        print(("%-15s%15.8f" % ("Sxy:  ", data.Sxy)))
-        print(("%-15s%15.8f" % ("Sxz:  ", data.Sxz)))
-        print(("%-15s%15.8f" % ("Syz:  ", data.Syz)))
+        print("# 5D, rank-1 notation {Sxx, Syy, Sxy, Sxz, Syz}:")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Sxx, data.Syy, data.Sxy, data.Sxz, data.Syz)))
 
         # The parameter set {Szz, Sxx-yy, Sxy, Sxz, Syz}.
-        print("\nParameters {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format).")
-        print(("%-15s%15.8f" % ("Szz:  ", data.Szz)))
-        print(("%-15s%15.8f" % ("Sxx-yy:  ", data.Sxxyy)))
-        print(("%-15s%15.8f" % ("Sxy:  ", data.Sxy)))
-        print(("%-15s%15.8f" % ("Sxz:  ", data.Sxz)))
-        print(("%-15s%15.8f" % ("Syz:  ", data.Syz)))
+        print("# 5D, rank-1 notation {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format).")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Szz, data.Sxxyy, data.Sxy, data.Sxz, data.Syz)))
+
+        # 3D form.
+        print("# 3D, rank-2 notation.")
+        print("%s" % (data.S))
+
+
+        # The alignment tensor.
+        #######################
+
+        title = "# Alignment tensor."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
         # The parameter set {Axx, Ayy, Axy, Axz, Ayz}.
-        print("\nParameters {Axx, Ayy, Axy, Axz, Ayz}.")
-        print(("%-15s%15.8f" % ("Axx:  ", data.Axx)))
-        print(("%-15s%15.8f" % ("Ayy:  ", data.Ayy)))
-        print(("%-15s%15.8f" % ("Axy:  ", data.Axy)))
-        print(("%-15s%15.8f" % ("Axz:  ", data.Axz)))
-        print(("%-15s%15.8f" % ("Ayz:  ", data.Ayz)))
+        print("# 5D, rank-1 notation {Axx, Ayy, Axy, Axz, Ayz}:")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Axx, data.Ayy, data.Axy, data.Axz, data.Ayz)))
 
         # The parameter set {Azz, Axx-yy, Axy, Axz, Ayz}.
-        print("\nParameters {Azz, Axx-yy, Axy, Axz, Ayz}.")
-        print(("%-15s%15.8f" % ("Azz:  ", data.Azz)))
-        print(("%-15s%15.8f" % ("Axx-yy:  ", data.Axxyy)))
-        print(("%-15s%15.8f" % ("Axy:  ", data.Axy)))
-        print(("%-15s%15.8f" % ("Axz:  ", data.Axz)))
-        print(("%-15s%15.8f" % ("Ayz:  ", data.Ayz)))
+        print("# 5D, rank-1 notation {Azz, Axx-yy, Axy, Axz, Ayz} (the Pales default format).")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Azz, data.Axxyy, data.Axy, data.Axz, data.Ayz)))
+
+        # 3D form.
+        print("# 3D, rank-2 notation.")
+        print("%s" % data.A)
+
+
+        # The probability tensor.
+        #########################
+
+        title = "# Probability tensor."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
         # The parameter set {Pxx, Pyy, Pxy, Pxz, Pyz}.
-        print("\nParameters {Pxx, Pyy, Pxy, Pxz, Pyz}.")
-        print(("%-15s%15.8f" % ("Pxx:  ", data.Pxx)))
-        print(("%-15s%15.8f" % ("Pyy:  ", data.Pyy)))
-        print(("%-15s%15.8f" % ("Pxy:  ", data.Pxy)))
-        print(("%-15s%15.8f" % ("Pxz:  ", data.Pxz)))
-        print(("%-15s%15.8f" % ("Pyz:  ", data.Pyz)))
+        print("# 5D, rank-1 notation {Pxx, Pyy, Pxy, Pxz, Pyz}:")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Pxx, data.Pyy, data.Pxy, data.Pxz, data.Pyz)))
 
         # The parameter set {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
-        print("\nParameters {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.")
-        print(("%-15s%15.8f" % ("Pzz:  ", data.Pzz)))
-        print(("%-15s%15.8f" % ("Pxx-yy:  ", data.Pxxyy)))
-        print(("%-15s%15.8f" % ("Pxy:  ", data.Pxy)))
-        print(("%-15s%15.8f" % ("Pxz:  ", data.Pxz)))
-        print(("%-15s%15.8f" % ("Pyz:  ", data.Pyz)))
+        print("# 5D, rank-1 notation {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Pzz, data.Pxxyy, data.Pxy, data.Pxz, data.Pyz)))
+
+        # 3D form.
+        print("# 3D, rank-2 notation.")
+        print("%s" % data.P)
+
+
+        # The magnetic susceptibility tensor.
+        #####################################
+
+        title = "# Magnetic susceptibility tensor."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
+        chi_tensor = True
+
+        # The field strength.
+        print("# The magnetic field strength (MHz):")
+        if hasattr(cdp, 'frq') and tensor in cdp.frq:
+            print(("%s\n" % (cdp.frq[tensor] / 1e6)))
+        else:
+            print(("Not set.\n"))
+            chi_tensor = False
+
+        # The temperature.
+        print("# The temperature (K):")
+        if hasattr(cdp, 'temperature') and tensor in cdp.temperature:
+            print(("%s\n" % cdp.temperature[tensor]))
+        else:
+            print(("Not set.\n"))
+            chi_tensor = False
+
+        # No chi tensor.
+        if not chi_tensor:
+            print("# The chi tensor:\nN/A.\n")
+
+        # Calculate the chi tensor.
+        else:
+            # Conversions.
+            chi_xx =    calc_chi_tensor(data.Axx, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_xy =    calc_chi_tensor(data.Axy, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_xz =    calc_chi_tensor(data.Axz, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_yy =    calc_chi_tensor(data.Ayy, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_yz =    calc_chi_tensor(data.Ayz, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_zz =    calc_chi_tensor(data.Azz, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_xxyy =  calc_chi_tensor(data.Axxyy, cdp.frq[tensor], cdp.temperature[tensor])
+            chi =       calc_chi_tensor(data.A, cdp.frq[tensor], cdp.temperature[tensor])
+
+            # The parameter set {chi_xx, chi_yy, chi_xy, chi_xz, chi_yz}.
+            print("# 5D, rank-1 notation {chi_xx, chi_yy, chi_xy, chi_xz, chi_yz}:")
+            print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (chi_xx, chi_yy, chi_xy, chi_xz, chi_yz)))
+
+            # The parameter set {chi_zz, chi_xx-yy, chi_xy, chi_xz, chi_yz}.
+            print("# 5D, rank-1 notation {chi_zz, chi_xx-yy, chi_xy, chi_xz, chi_yz}.")
+            print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (chi_zz, chi_xxyy, chi_xy, chi_xz, chi_yz)))
+
+            # 3D form.
+            print("# 3D, rank-2 notation.")
+            print("%s" % chi)
+
+
+        # The Eigensystem.
+        ##################
+
+        title = "# Eigensystem."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
         # Eigenvalues.
-        print("\nEigenvalues {Axx, Ayy, Azz}.")
-        print(("%-15s%15.8f" % ("Axx:  ", data.tensor_diag[0, 0])))
-        print(("%-15s%15.8f" % ("Ayy:  ", data.tensor_diag[1, 1])))
-        print(("%-15s%15.8f" % ("Azz:  ", data.tensor_diag[2, 2])))
+        print("# Saupe order matrix eigenvalues {Sxx, Syy, Szz}.")
+        print(("[%25.12e, %25.12e, %25.12e]\n" % (data.S_diag[0, 0], data.S_diag[1, 1], data.S_diag[2, 2])))
+        print("# Alignment tensor eigenvalues {Axx, Ayy, Azz}.")
+        print(("[%25.12e, %25.12e, %25.12e]\n" % (data.A_diag[0, 0], data.A_diag[1, 1], data.A_diag[2, 2])))
+        print("# Probability tensor eigenvalues {Pxx, Pyy, Pzz}.")
+        print(("[%25.12e, %25.12e, %25.12e]\n" % (data.P_diag[0, 0], data.P_diag[1, 1], data.P_diag[2, 2])))
+        if chi_tensor:
+            chi_diag =       calc_chi_tensor(data.A_diag, cdp.frq[tensor], cdp.temperature[tensor])
+            print("# Magnetic susceptibility eigenvalues {chi_xx, chi_yy, chi_zz}.")
+            print(("[%25.12e, %25.12e, %25.12e]\n" % (chi_diag[0, 0], chi_diag[1, 1], chi_diag[2, 2])))
 
-        # Eigenvalues.
-        print("\nEigenvalues {Sxx, Syy, Szz}.")
-        print(("%-15s%15.8f" % ("Sxx:  ", 3.0/2.0 * data.tensor_diag[0, 0])))
-        print(("%-15s%15.8f" % ("Syy:  ", 3.0/2.0 * data.tensor_diag[1, 1])))
-        print(("%-15s%15.8f" % ("Szz:  ", 3.0/2.0 * data.tensor_diag[2, 2])))
+        # Eigenvectors.
+        print("# Eigenvector x.")
+        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_x[0], data.unit_x[1], data.unit_x[2])))
+        print("# Eigenvector y.")
+        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_y[0], data.unit_y[1], data.unit_y[2])))
+        print("# Eigenvector z.")
+        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_z[0], data.unit_z[1], data.unit_z[2])))
+
+        # Rotation matrix.
+        print("# Rotation matrix.")
+        print("%s\n" % data.rotation)
+
+        # zyz.
+        print("# Euler angles in zyz notation {alpha, beta, gamma}.")
+        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.euler[0], data.euler[1], data.euler[2])))
+
+
+        # Geometric description.
+        ########################
+
+        title = "# Geometric description."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
+
+        # Anisotropy.
+        print("# Alignment tensor axial component (Aa = 3/2 * Azz, where Aii are the eigenvalues).")
+        print("Aa = %-25.12e\n" % data.Aa)
+
+        # Rhombicity.
+        print("# Rhombic component (Ar = Axx - Ayy, where Aii are the eigenvalues).")
+        print("Ar = %-25.12e\n" % data.Ar)
+        print("# Rhombicity (R = Ar / Aa).")
+        print("R = %-25.12f\n" % data.R)
+        print("# Asymmetry parameter (eta = (Axx - Ayy) / Azz, where Aii are the eigenvalues).")
+        print("eta = %-25.12f\n" % data.eta)
+
+        # Magnetic susceptibility tensor.
+        if chi_tensor:
+            # Chi tensor anisotropy.
+            print("# Magnetic susceptibility axial parameter (chi_ax = chi_zz - (chi_xx + chi_yy)/2, where chi_ii are the eigenvalues).")
+            print("chi_ax = %-25.12e\n" % (chi_diag[2, 2] - (chi_diag[0, 0] + chi_diag[1, 1])/2.0))
+
+            # Chi tensor rhombicity.
+            print("# Magnetic susceptibility rhombicity parameter (chi_rh = chi_xx - chi_yy, where chi_ii are the eigenvalues).")
+            print("chi_rh = %-25.12e\n" % (chi_diag[0, 0] - chi_diag[1, 1]))
 
         # Some white space.
         print("\n\n\n")
+
+
+def fix(fixed=True):
+    """Fix the alignment tensor during optimisation.
+
+    @param fixed:   If True, the alignment tensor will be fixed during optimisation.  If False, the alignment tensors will be optimised.
+    @type fixed:    bool
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Set the flag.
+    cdp.align_tensors.fixed = fixed
 
 
 def fold_angles(sim_index=None):

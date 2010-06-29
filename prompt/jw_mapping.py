@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2009 Edward d'Auvergne                             #
+# Copyright (C) 2004-2005, 2009-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the Reduced Spectral Density Mapping 'jw_mapping' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from specific_fns.setup import jw_mapping_obj
 
 
@@ -60,13 +57,13 @@ class Jw_mapping(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "jw_mapping.set_frq("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "jw_mapping.set_frq("
             text = text + "frq=" + repr(frq) + ")"
             print(text)
 
         # The argument checks.
-        check.is_num(frq, 'spectrometer frequency')
+        arg_check.is_num(frq, 'spectrometer frequency')
 
         # Execute the functional code.
-        jw_mapping_obj.set_frq(frq=frq)
+        jw_mapping_obj._set_frq(frq=frq)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the user function class of the Frame Order theories."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from specific_fns.setup import frame_order_obj
 
 
@@ -78,8 +75,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "frame_order.cone_pdb("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "frame_order.cone_pdb("
             text = text + "size=" + repr(size)
             text = text + ", inc=" + repr(inc)
             text = text + ", file=" + repr(file)
@@ -88,14 +85,14 @@ class Frame_order(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num(size, 'geometric object size')
-        check.is_int(inc, 'increment number')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_num(size, 'geometric object size')
+        arg_check.is_int(inc, 'increment number')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        frame_order_obj.cone_pdb(size=size, inc=inc, file=file, dir=dir, force=force)
+        frame_order_obj._cone_pdb(size=size, inc=inc, file=file, dir=dir, force=force)
 
 
     def pivot(self, pivot=None):
@@ -118,16 +115,16 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "frame_order.pivot("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "frame_order.pivot("
             text = text + "pivot=" + repr(pivot) + ")"
             print(text)
 
         # The argument checks.
-        check.is_num_list(pivot_point, 'pivot point', size=3)
+        arg_check.is_num_list(pivot_point, 'pivot point', size=3)
 
         # Execute the functional code.
-        frame_order_obj.pivot(pivot=pivot)
+        frame_order_obj._pivot(pivot=pivot)
 
 
     def ref_domain(self, ref=None):
@@ -157,16 +154,16 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "frame_order.ref_domain("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "frame_order.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(ref, 'reference frame')
+        arg_check.is_str(ref, 'reference frame')
 
         # Execute the functional code.
-        frame_order_obj.ref_domain(ref=ref)
+        frame_order_obj._ref_domain(ref=ref)
 
 
     def select_model(self, model=None):
@@ -196,13 +193,13 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "frame_order.select_model("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "frame_order.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(model, 'Frame Order model')
+        arg_check.is_str(model, 'Frame Order model')
 
         # Execute the functional code.
-        frame_order_obj.select_model(model=model)
+        frame_order_obj._select_model(model=model)

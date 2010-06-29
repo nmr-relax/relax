@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,12 +30,19 @@ from numpy.linalg import norm
 
 # relax module imports.
 from float import isNaN
+from maths_fns import order_parameters
 from maths_fns.kronecker_product import kron_prod, transpose_23
 from maths_fns.rotation_matrix import two_vect_to_R
 
 
-def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, theta_cone):
+def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, s1):
     """Generate the rotated 2nd degree Frame Order matrix.
+
+    The cone axis is assumed to be parallel to the z-axis in the eigenframe.  In this model, the three order parameters are defined as::
+
+        S1 = S2,
+        S3 = 0
+
 
     @param matrix:      The Frame Order matrix, 2nd degree to be populated.
     @type matrix:       numpy 9D, rank-2 array
@@ -49,8 +56,8 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     @type theta_axis:   float
     @param phi_axis:    The cone axis azimuthal angle.
     @type phi_axis:     float
-    @param theta_cone:  The cone angle in radians.
-    @type theta_cone:   float
+    @param s1:          The cone order parameter.
+    @type s1:           float
     """
 
     # Generate the cone axis from the spherical angles.
@@ -63,7 +70,7 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     R_kron = kron_prod(R, R)
 
     # Populate the Frame Order matrix in the eigenframe.
-    populate_2nd_eigenframe_iso_cone(matrix, theta_cone)
+    populate_2nd_eigenframe_iso_cone(matrix, s1)
 
     # Perform the T23 transpose to obtain the Kronecker product matrix!
     transpose_23(matrix)
@@ -170,15 +177,19 @@ def populate_1st_eigenframe_iso_cone(matrix, angle):
     matrix[2, 2] = (cos(angle) + 1.0) / 2.0
 
 
-def populate_2nd_eigenframe_iso_cone(matrix, angle):
+def populate_2nd_eigenframe_iso_cone(matrix, s1):
     """Populate the 2nd degree Frame Order matrix in the eigenframe for an isotropic cone.
 
-    The cone axis is assumed to be parallel to the z-axis in the eigenframe.
+    The cone axis is assumed to be parallel to the z-axis in the eigenframe.  In this model, the three order parameters are defined as::
+
+        S1 = S2,
+        S3 = 0
+
 
     @param matrix:  The Frame Order matrix, 2nd degree.
     @type matrix:   numpy 9D, rank-2 array
-    @param angle:   The cone angle.
-    @type angle:    float
+    @param s1:      The cone order parameter.
+    @type s1:       float
     """
 
     # Zeros.
@@ -186,24 +197,23 @@ def populate_2nd_eigenframe_iso_cone(matrix, angle):
         for j in range(9):
             matrix[i, j] = 0.0
 
-    # Trigonometric terms.
-    cos_theta = cos(angle)
-    cos2_theta = cos_theta**2
-
     # The c11^2, c22^2, c12^2, and c21^2 elements.
-    matrix[0, 0] = (4.0 + cos_theta + cos2_theta) / 12.0
+    matrix[0, 0] = (s1 + 2.0) / 6.0
     matrix[4, 4] = matrix[0, 0]
     matrix[1, 1] = matrix[0, 0]
     matrix[3, 3] = matrix[0, 0]
 
     # The c33^2 element.
-    matrix[8, 8] = (1.0 + cos_theta + cos2_theta) / 3.0
+    matrix[8, 8] = (2.0*s1 + 1.0) / 3.0
 
     # The c13^2, c31^2, c23^2, c32^2 elements.
-    matrix[2, 2] = (2.0 + cos_theta)*(1.0 - cos_theta) / 6.0
+    matrix[2, 2] = (1.0 - s1) / 3.0
     matrix[6, 6] = matrix[2, 2]
     matrix[5, 5] = matrix[2, 2]
     matrix[7, 7] = matrix[2, 2]
+
+    # Calculate the cone angle.
+    cos_theta = order_parameters.iso_cone_S_to_cos_theta(s1)
 
     # The c11.c22 and c12.c21 elements.
     matrix[0, 4] = matrix[4, 0] = (cos_theta + 1.0) / 4.0

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -68,7 +68,7 @@ class Test_chi2(TestCase):
     def test_chi2(self):
         """Unit test for the value returned by the chi2 function.
 
-        The chi-squared value is 2.5 for the following data
+        The chi-squared value is 2.5 for the following data::
 
             data =      | 1.0  1.5  2.0  2.5  3.0 |,
 
@@ -90,7 +90,7 @@ class Test_chi2(TestCase):
     def test_dchi2(self):
         """Unit test for the chi-squared gradient created by the dchi2 function.
 
-        The chi-squared gradient is [0, 10] for the following data
+        The chi-squared gradient is [0, 10] for the following data::
 
             data =              |  1.0  1.5  2.0  2.5  3.0 |,
 
@@ -117,7 +117,7 @@ class Test_chi2(TestCase):
     def test_dchi2_element(self):
         """Unit test for the chi-squared gradient created by the dchi2_element function.
 
-        The chi-squared gradient is [0, 10] for the following data
+        The chi-squared gradient is [0, 10] for the following data::
 
             data =              |  1.0  1.5  2.0  2.5  3.0 |,
 
@@ -144,7 +144,7 @@ class Test_chi2(TestCase):
     def test_d2chi2(self):
         """Unit test for the chi-squared Hessian created by the d2chi2 function.
 
-        For the data
+        For the data::
 
             data =              | 1.0    1.5    2.0    2.5    3.0   |,
 
@@ -161,7 +161,7 @@ class Test_chi2(TestCase):
 
             errors =            | 0.1    0.1    0.1    0.1    0.1   |,
 
-        the chi-squared hessian is
+        the chi-squared hessian is::
 
             Hessian = | 38.0   0.0 |
                       |  0.0  20.0 |.
@@ -184,7 +184,7 @@ class Test_chi2(TestCase):
     def test_d2chi2_element(self):
         """Unit test for the chi-squared Hessian created by the d2chi2_element function.
 
-        For the data
+        For the data::
 
             data =              | 1.0    1.5    2.0    2.5    3.0   |,
 
@@ -201,7 +201,7 @@ class Test_chi2(TestCase):
 
             errors =            | 0.1    0.1    0.1    0.1    0.1   |,
 
-        the chi-squared hessian is
+        the chi-squared hessian is::
 
             Hessian = | 38.0   0.0 |
                       |  0.0  20.0 |.

@@ -22,21 +22,68 @@
 
 # Python module imports.
 from re import search
+from warnings import warn
 
 # relax module imports.
-from base_class import Common_functions
+from api_base import API_base
+from api_common import API_common
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from maths_fns.jw_mapping import Mapping
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
+from relax_warnings import RelaxDeselectWarning
 
 
-class Jw_mapping(Common_functions):
+class Jw_mapping(API_base, API_common):
     """Class containing functions specific to reduced spectral density mapping."""
 
-    def calculate(self, verbosity=1, sim_index=None, spin_id=None):
-        """Calculation of the spectral density values."""
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
+
+        # Place methods into the API.
+        self.base_data_loop = self._base_data_loop_spin
+        self.model_loop = self._model_loop_spin
+        self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_error = self._return_error_relax_data
+        self.return_value = self._return_value_general
+        self.set_param_values = self._set_param_values_spin
+        self.set_selected_sim = self._set_selected_sim_spin
+
+
+    def _set_frq(self, frq=None):
+        """Function for selecting which relaxation data to use in the J(w) mapping."""
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is set to 'jw'.
+        function_type = cdp.pipe_type
+        if function_type != 'jw':
+            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
+
+        # Test if the frequency has been set.
+        if hasattr(cdp, 'jw_frq'):
+            raise RelaxError("The frequency has already been set.")
+
+        # Create the data structure if it doesn't exist.
+        if not hasattr(cdp, 'jw_frq'):
+           cdp.jw_frq = {}
+
+        # Set the frequency.
+        cdp.jw_frq = frq
+
+
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+        """Calculation of the spectral density values.
+
+        @keyword spin_id:   The spin identification string.
+        @type spin_id:      None or str
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The optional MC simulation index.
+        @type sim_index:    int
+        """
 
         # Test if the frequency has been set.
         if not hasattr(cdp, 'jw_frq') or not isinstance(cdp.jw_frq, float):
@@ -146,14 +193,13 @@ class Jw_mapping(Common_functions):
                 spin.jwh_sim.append(jwh)
 
 
-    def create_mc_data(self, spin_id):
-        """Return the Ri data structure for the corresponding spin.
+    def create_mc_data(self, spin_id=None):
+        """Return the Monte Carlo Ri data structure for the corresponding spin.
 
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
-        @type spin_id:  str
-        @return:        The Monte Carlo simulation data.
-        @rtype:         list of floats
+        @keyword spin_id:   The spin identification string, as yielded by the base_data_loop() generator method.
+        @type spin_id:      str
+        @return:            The Monte Carlo simulation data.
+        @rtype:             list of floats
         """
 
         # Get the spin container.
@@ -163,8 +209,14 @@ class Jw_mapping(Common_functions):
         return spin.relax_data
 
 
-    def data_init(self, data, sim=0):
-        """Function for initialising the data structures."""
+    def data_init(self, data_cont, sim=False):
+        """Initialise the data structure.
+
+        @param data_cont:   The data container.
+        @type data_cont:    instance
+        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:          bool
+        """
 
         # Get the data names.
         data_names = self.data_names()
@@ -176,10 +228,10 @@ class Jw_mapping(Common_functions):
                 # Add '_sim' to the names.
                 name = name + '_sim'
 
-            # If the name is not in 'data', add it.
-            if not hasattr(data, name):
+            # If the name is not in 'data_cont', add it.
+            if not hasattr(data_cont, name):
                 # Set the attribute.
-                setattr(data, name, None)
+                setattr(data_cont, name, None)
 
 
     def data_names(self, set=None, error_names=False, sim_names=False):
@@ -276,21 +328,24 @@ class Jw_mapping(Common_functions):
     def overfit_deselect(self):
         """Deselect spins which have insufficient data to support calculation."""
 
+        # Print out.
+        print("\n\nOver-fit spin deselection.\n")
+
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
         # Loop over spin data.
-        for spin in spin_loop():
+        for spin, spin_id in spin_loop(return_id=True):
             # Check if data exists.
             if not hasattr(spin, 'relax_data'):
+                warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                 spin.select = False
-                continue
 
             # Require 3 or more data points.
-            if len(spin.relax_data) < 3:
+            elif len(spin.relax_data) < 3:
+                warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                 spin.select = False
-                continue
 
 
     return_data_name_doc = """
@@ -319,49 +374,57 @@ class Jw_mapping(Common_functions):
 
         """
 
-    def return_data_name(self, name):
+    def return_data_name(self, param):
         """Return a unique identifying string for the J(w) mapping parameter.
 
-        @param name:    The J(w) mapping parameter.
-        @type name:     str
+        @param param:   The J(w) mapping parameter name.
+        @type param:    str
         @return:        The unique parameter identifying string.
         @rtype:         str
         """
 
         # J(0).
-        if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
+        if search('^[Jj]0$', param) or search('[Jj]\(0\)', param):
             return 'j0'
 
         # J(wX).
-        if search('^[Jj]w[Xx]$', name) or search('[Jj]\(w[Xx]\)', name):
+        if search('^[Jj]w[Xx]$', param) or search('[Jj]\(w[Xx]\)', param):
             return 'jwx'
 
         # J(wH).
-        if search('^[Jj]w[Hh]$', name) or search('[Jj]\(w[Hh]\)', name):
+        if search('^[Jj]w[Hh]$', param) or search('[Jj]\(w[Hh]\)', param):
             return 'jwh'
 
         # Bond length.
-        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
+        if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
             return 'r'
 
         # CSA.
-        if search('^[Cc][Ss][Aa]$', name):
+        if search('^[Cc][Ss][Aa]$', param):
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Hh]eteronucleus$', name):
+        if search('^[Hh]eteronucleus$', param):
             return 'heteronuc_type'
 
         # Proton type.
-        if search('^[Pp]roton$', name):
+        if search('^[Pp]roton$', param):
             return 'proton_type'
 
 
-    def return_grace_string(self, data_type):
-        """Function for returning the Grace string representing the data type for axis labelling."""
+    def return_grace_string(self, param):
+        """Return the Grace string representing the given parameter.
+
+        This is used for axis labelling.
+
+        @param param:   The specific analysis parameter.
+        @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
+        """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # J(0).
         if object_name == 'j0':
@@ -384,26 +447,25 @@ class Jw_mapping(Common_functions):
             return '\\qCSA\\Q'
 
 
-    def return_units(self, data_type, spin=None, spin_id=None):
+    def return_units(self, param, spin=None, spin_id=None):
         """Function for returning a string representing the parameters units.
 
         For example, the internal representation of te is in seconds, whereas the external
         representation is in picoseconds, therefore this function will return the string
         'picoseconds' for te.
 
-        @param data_type:   The name of the parameter to return the units string for.
-        @type data_type:    str
-        @param spin:        The spin container.
-        @type spin:         SpinContainer instance
-        @param spin_id:     The spin identification string (ignored if the spin container is
-                            supplied).
-        @type spin_id:      str
-        @return:            The string representation of the units.
-        @rtype:             str
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string (ignored if the spin container is supplied).
+        @type spin_id:  str
+        @return:        The string representation of the units.
+        @rtype:         str
         """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # Bond length (Angstrom).
         if object_name == 'r':
@@ -423,31 +485,19 @@ class Jw_mapping(Common_functions):
         """
 
 
-    def set_frq(self, frq=None):
-        """Function for selecting which relaxation data to use in the J(w) mapping."""
+    def set_error(self, model_info, index, error):
+        """Set the parameter errors.
 
-        # Test if the current pipe exists.
-        pipes.test()
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
+        """
 
-        # Test if the pipe type is set to 'jw'.
-        function_type = cdp.pipe_type
-        if function_type != 'jw':
-            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
-
-        # Test if the frequency has been set.
-        if hasattr(cdp, 'jw_frq'):
-            raise RelaxError("The frequency has already been set.")
-
-        # Create the data structure if it doesn't exist.
-        if not hasattr(cdp, 'jw_frq'):
-           cdp.jw_frq = {}
-
-        # Set the frequency.
-        cdp.jw_frq = frq
-
-
-    def set_error(self, spin, index, error):
-        """Function for setting parameter errors."""
+        # Alias.
+        spin = model_info
 
         # Return J(0) sim data.
         if index == 0:
@@ -460,33 +510,6 @@ class Jw_mapping(Common_functions):
         # Return J(wH) sim data.
         if index == 2:
             spin.jwh_err = error
-
-
-    def sim_return_param(self, spin, index):
-        """Function for returning the array of simulation parameter values."""
-
-        # Skip deselected residues.
-        if not spin.select:
-                return
-
-        # Return J(0) sim data.
-        if index == 0:
-            return spin.j0_sim
-
-        # Return J(wX) sim data.
-        if index == 1:
-            return spin.jwx_sim
-
-        # Return J(wH) sim data.
-        if index == 2:
-            return spin.jwh_sim
-
-
-    def sim_return_selected(self, spin):
-        """Function for returning the array of selected simulation flags."""
-
-        # Multiple spins.
-        return spin.select_sim
 
 
     def sim_pack_data(self, spin_id, sim_data):
@@ -508,3 +531,50 @@ class Jw_mapping(Common_functions):
 
         # Create the data structure.
         spin.relax_sim_data = sim_data
+
+
+    def sim_return_param(self, model_info, index):
+        """Return the array of simulation parameter values.
+
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        @param index:       The index of the parameter to return the array of values for.
+        @type index:        int
+        @return:            The array of simulation parameter values.
+        @rtype:             list of float
+        """
+
+        # Alias.
+        spin = model_info
+
+        # Skip deselected residues.
+        if not spin.select:
+                return
+
+        # Return J(0) sim data.
+        if index == 0:
+            return spin.j0_sim
+
+        # Return J(wX) sim data.
+        if index == 1:
+            return spin.jwx_sim
+
+        # Return J(wH) sim data.
+        if index == 2:
+            return spin.jwh_sim
+
+
+    def sim_return_selected(self, model_info):
+        """Return the array of selected simulation flags.
+
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        @return:            The array of selected simulation flags.
+        @rtype:             list of int
+        """
+
+        # Alias.
+        spin = model_info
+
+        # Multiple spins.
+        return spin.select_sim

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,7 +29,6 @@ from relax_errors import RelaxNoneFunctionError, RelaxTupleError
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 
@@ -42,7 +41,7 @@ class Test_eliminate(TestCase):
     """Unit tests for the functions of the 'prompt.eliminate' module."""
 
     # Instantiate the user function class.
-    eliminate_fns = Eliminate(fake_relax.fake_instance())
+    eliminate_fns = Eliminate()
 
 
     def test_eliminate_function(self):

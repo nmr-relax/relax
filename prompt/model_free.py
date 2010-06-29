@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the model-free analysis 'model_free' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from specific_fns.setup import model_free_obj
 
 
@@ -116,8 +113,8 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model_free.create_model("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "model_free.create_model("
             text = text + "model=" + repr(model)
             text = text + ", equation=" + repr(equation)
             text = text + ", params=" + repr(params)
@@ -125,13 +122,13 @@ class Model_free(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(model, 'model-free model')
-        check.is_str(equation, 'model-free equation')
-        check.is_str_list(params, 'model-free parameters')
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(model, 'model-free model')
+        arg_check.is_str(equation, 'model-free equation')
+        arg_check.is_str_list(params, 'model-free parameters')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
-        model_free_obj.create_model(model=model, equation=equation, params=params, spin_id=spin_id)
+        model_free_obj._create_model(model=model, equation=equation, params=params, spin_id=spin_id)
 
 
     def delete(self):
@@ -146,12 +143,12 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model_free.delete()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "model_free.delete()"
             print(text)
 
         # Execute the functional code.
-        model_free_obj.delete()
+        model_free_obj._delete()
 
 
     def remove_tm(self, spin_id=None):
@@ -181,16 +178,16 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model_free.remove_tm("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "model_free.remove_tm("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
-        model_free_obj.remove_tm(spin_id=spin_id)
+        model_free_obj._remove_tm(spin_id=spin_id)
 
 
     def select_model(self, model=None, spin_id=None):
@@ -328,15 +325,15 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model_free.select_model("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "model_free.select_model("
             text = text + "model=" + repr(model)
             text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(model, 'preset model name')
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(model, 'preset model name')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
-        model_free_obj.select_model(model=model, spin_id=spin_id)
+        model_free_obj._select_model(model=model, spin_id=spin_id)

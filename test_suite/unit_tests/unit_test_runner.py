@@ -5,6 +5,8 @@
 #                         (see https://gna.org/users/varioustoxins             #
 #                                      for contact details)                    #
 #                                                                              #
+# Copyright (C) 2007-2010 Edward d'Auvergne                                    #
+#                                                                              #
 #                                                                              #
 # This file is part of the program relax.                                      #
 #                                                                              #
@@ -52,10 +54,10 @@ version of relax that is dependant on python 2.5.
 TODO: Split out runner part from search part.
 '''
 
-import os, re, unittest, string, sys
+from copy import copy
+import os, re, string, sys, unittest, traceback
 from optparse import OptionParser
 from textwrap import dedent
-from copy import copy
 
 
 # constants
@@ -243,15 +245,35 @@ class ExtendedException(Exception):
         result = result + '\n\n***WARNING: no tests from module %s will be run!!!' % self.module
         return result
 
+
 class ImportErrorTestCase(unittest.TestCase):
-    def __init__(self, module_name, syntax_error):
+    """TestCase class for nicely handling import errors."""
+
+    def __init__(self, module_name, message):
+        """Set up the import error class.
+
+        @param module_name: The module which could not be imported.
+        @type module_name:  str
+        @param message:     The formatted traceback message (e.g. from traceback.format_exc()).
+        @type message:      str
+        """
+
+        # Execute the base class __init__() method.
         super(ImportErrorTestCase, self).__init__('testImportError')
-        self.syntax_error=syntax_error
+
+        # Store the info for printing out at the end of the unit tests.
+        self.module_name = module_name
+        self.message = message
 
 
     def testImportError(self):
-        raise self.syntax_error
-        #self.fail(self.syntax_error.__str__())
+        """Unit test module import."""
+
+        # First print out the module to allow it to be identified and debugged.
+        print("\nImport of the %s module.\n" % self.module_name)
+
+        # Fail!
+        self.fail(self.message)
 
 
 def load_test_case(package_path,  module_name, class_name):
@@ -275,17 +297,12 @@ def load_test_case(package_path,  module_name, class_name):
     packages = None
     package_path=get_module_relative_path(package_path, module_name)
 
-    #catch syntax errors
+    # Catch import errors.
     try:
         packages = import_module(package_path)
-#    except ImportError,e:
-#        result = unittest.TestSuite()
-#        bad_syntax = ImportErrorTestCase('testImportError',e)
-#        result.addTest(bad_syntax)
-    except Exception, e:
+    except:
         result = unittest.TestSuite()
-        ee = ExtendedException(e, module_name)
-        bad_syntax = ImportErrorTestCase('testImportError', ee)
+        bad_syntax = ImportErrorTestCase(package_path, traceback.format_exc())
         result.addTest(bad_syntax)
 
 

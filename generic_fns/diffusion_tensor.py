@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,12 +26,16 @@
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin
+from numpy import cross, float64, transpose, zeros
+from numpy.linalg import eig, norm
 from re import search
 
 # relax module imports.
 from angles import wrap_angles
 from data.diff_tensor import DiffTensorData
 from generic_fns import pipes
+from generic_fns.angles import fold_spherical_angles
+from maths_fns.rotation_matrix import R_to_euler_zyz
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
@@ -348,6 +352,63 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
         # Set the parameters.
         set(value=[Dx, Dy, Dz], param=['Dx', 'Dy', 'Dz'])
 
+    # (Dxx, Dyy, Dzz, Dxy, Dxz, Dyz).
+    elif param_types == 3:
+        # Unpack the tuple.
+        Dxx, Dyy, Dzz, Dxy, Dxz, Dyz = params
+
+        # Build the tensor.
+        tensor = zeros((3, 3), float64)
+        tensor[0, 0] = Dxx
+        tensor[1, 1] = Dyy
+        tensor[2, 2] = Dzz
+        tensor[0, 1] = tensor[1, 0] = Dxy
+        tensor[0, 2] = tensor[2, 0] = Dxz
+        tensor[1, 2] = tensor[2, 1] = Dyz
+
+        # Scaling.
+        tensor = tensor * d_scale
+
+        # Eigenvalues.
+        Di, R = eig(tensor)
+
+        # Reordering structure.
+        reorder = zeros(3, int)
+        Di_sort = sorted(Di)
+        Di = Di.tolist()
+        R_new = zeros((3, 3), float64)
+
+        # Reorder columns.
+        for i in range(3):
+            R_new[:, i] = R[:, Di.index(Di_sort[i])]
+
+        # Switch from the left handed to right handed universes (if needed).
+        if norm(cross(R_new[:, 0], R_new[:, 1]) - R_new[:, 2]) > 1e-7:
+            R_new[:, 2] = -R_new[:, 2]
+        
+        # Reverse the rotation.
+        R_new = transpose(R_new)
+
+        # Euler angles (reverse rotation in the rotated axis system).
+        gamma, beta, alpha = R_to_euler_zyz(R_new)
+
+        # Collapse the pi axis rotation symmetries.
+        if alpha >= pi:
+            alpha = alpha - pi
+        if gamma >= pi:
+            alpha = pi - alpha
+            beta = pi - beta
+            gamma = gamma - pi
+        if beta >= pi:
+            alpha = pi - alpha
+            beta = beta - pi
+
+        # Set the parameters.
+        set(value=[Di_sort[0], Di_sort[1], Di_sort[2]], param=['Dx', 'Dy', 'Dz'])
+
+        # Change the angular units.
+        angle_units = 'rad'
+
     # Unknown parameter combination.
     else:
         raise RelaxUnknownParamCombError('param_types', param_types)
@@ -411,12 +472,12 @@ def fold_angles(sim_index=None):
 
         # Normal value.
         if sim_index == None:
-            cdp.diff_tensor.theta = wrap_angles(theta, 0.0, pi)
+            cdp.diff_tensor.theta = wrap_angles(theta, 0.0, 2.0*pi)
             cdp.diff_tensor.phi = wrap_angles(phi, 0.0, 2.0*pi)
 
         # Simulated theta and phi values.
         else:
-            cdp.diff_tensor.theta_sim[sim_index] = wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
+            cdp.diff_tensor.theta_sim[sim_index] = wrap_angles(theta_sim, theta - pi, theta + pi)
             cdp.diff_tensor.phi_sim[sim_index]   = wrap_angles(phi_sim, phi - pi, phi + pi)
 
     # Ellipsoid.
@@ -454,8 +515,9 @@ def fold_angles(sim_index=None):
         if sim_index == None:
             # Fold phi inside 0 and pi.
             if cdp.diff_tensor.phi >= pi:
-                cdp.diff_tensor.theta = pi - cdp.diff_tensor.theta
-                cdp.diff_tensor.phi = cdp.diff_tensor.phi - pi
+                theta, phi = fold_spherical_angles(cdp.diff_tensor.theta, cdp.diff_tensor.theta)
+                cdp.diff_tensor.theta = theta
+                cdp.diff_tensor.phi = phi
 
         # Simulated theta and phi values.
         else:

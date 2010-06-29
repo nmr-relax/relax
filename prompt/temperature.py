@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'temperature' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import Basic_class
-import check
+import arg_check
 from generic_fns import temperature
 
 
@@ -55,15 +52,15 @@ class Temp(Basic_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "temperature("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "temperature("
             text = text + "id=" + repr(id)
             text = text + ", temp=" + repr(temp) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'experiment identification string')
-        check.is_num(temp, 'experiment temparture')
+        arg_check.is_str(id, 'experiment identification string')
+        arg_check.is_num(temp, 'experiment temparture')
 
         # Execute the functional code.
         temperature.set(id=id, temp=temp)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007, 2009 Edward d'Auvergne                       #
+# Copyright (C) 2003-2005, 2007, 2009-2010 Edward d'Auvergne                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'state' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns.state import load_state, save_state
 
 
@@ -83,17 +80,17 @@ class State(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "state.load("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "state.load("
             text = text + "state=" + repr(state)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str_or_inst(state, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str_or_inst(state, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         load_state(state=state, dir=dir, force=force)
@@ -162,8 +159,8 @@ class State(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "state.save("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "state.save("
             text = text + "state=" + repr(state)
             text = text + ", dir=" + repr(dir)
             text = text + ", compress_type=" + repr(compress_type)
@@ -172,11 +169,11 @@ class State(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str_or_inst(state, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(compress_type, 'compression type')
-        check.is_bool(force, 'force flag')
-        check.is_bool(pickle, 'pickle flag')
+        arg_check.is_str_or_inst(state, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int(compress_type, 'compression type')
+        arg_check.is_bool(force, 'force flag')
+        arg_check.is_bool(pickle, 'pickle flag')
 
         # Execute the functional code.
         save_state(state=state, dir=dir, compress_type=compress_type, force=force, pickle=pickle)

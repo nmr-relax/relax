@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2008-2009 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2008-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'model_selection' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import Basic_class
-import check
+import arg_check
 from generic_fns import model_selection
 
 
@@ -96,17 +93,17 @@ class Modsel(Basic_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model_selection("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "model_selection("
             text = text + "method=" + repr(method)
             text = text + ", modsel_pipe=" + repr(modsel_pipe)
             text = text + ", pipes=" + repr(pipes) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(method, 'model selection method')
-        check.is_str(modsel_pipe, 'model selection data pipe name')
-        check.is_str_list(pipes, 'data pipes', can_be_none=True, list_of_lists=True)
+        arg_check.is_str(method, 'model selection method')
+        arg_check.is_str(modsel_pipe, 'model selection data pipe name')
+        arg_check.is_str_list(pipes, 'data pipes', can_be_none=True, list_of_lists=True)
 
         # Execute the functional code.
         model_selection.select(method=method, modsel_pipe=modsel_pipe, pipes=pipes)

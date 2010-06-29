@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2009 Edward d'Auvergne                             #
+# Copyright (C) 2004-2005, 2009-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the Monte Carlo simulation 'monte_carlo' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import monte_carlo
 
 
@@ -68,13 +65,13 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.create_data("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.create_data("
             text = text + "method=" + repr(method) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(method, 'method')
+        arg_check.is_str(method, 'method')
 
         # Execute the functional code.
         monte_carlo.create_data(method=method)
@@ -114,13 +111,13 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.error_analysis("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.error_analysis("
             text = text + "prune=" + repr(prune) + ")"
             print(text)
 
         # The argument checks.
-        check.is_num(prune, 'prune')
+        arg_check.is_num(prune, 'prune')
 
         # Execute the functional code.
         monte_carlo.error_analysis(prune=prune)
@@ -145,8 +142,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.initial_values()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.initial_values()"
             print(text)
 
         # Execute the functional code.
@@ -157,8 +154,8 @@ class Monte_carlo(User_fn_class):
         """Function for turning simulations off."""
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.off()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.off()"
             print(text)
 
         # Execute the functional code.
@@ -169,8 +166,8 @@ class Monte_carlo(User_fn_class):
         """Function for turning simulations on."""
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.on()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.on()"
             print(text)
 
         # Execute the functional code.
@@ -194,13 +191,13 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.setup("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.setup("
             text = text + "number=" + repr(number) + ")"
             print(text)
 
         # The argument checks.
-        check.is_int(number, 'number of Monte Carlo simulations')
+        arg_check.is_int(number, 'number of Monte Carlo simulations')
 
         # Execute the functional code.
         monte_carlo.setup(number=number)

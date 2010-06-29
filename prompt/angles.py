@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2009 Edward d'Auvergne                             #
+# Copyright (C) 2003-2005, 2009-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,6 @@
 __docformat__ = 'plaintext'
 
 # Python module imports.
-import sys
 
 # relax module imports.
 from base_class import Basic_class
@@ -50,8 +49,8 @@ class Angles(Basic_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "angle_diff_frame()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "angle_diff_frame()"
             print(text)
 
         # Execute the functional code.

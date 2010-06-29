@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2007-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'diffusion_tensor' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import diffusion_tensor
 from relax_errors import RelaxError
 
@@ -78,15 +75,15 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "diffusion_tensor.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "diffusion_tensor.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_from, 'pipe from', can_be_none=True)
-        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
@@ -106,8 +103,8 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "diffusion_tensor.delete()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "diffusion_tensor.delete()"
             print(text)
 
         # Execute the functional code.
@@ -118,8 +115,8 @@ class Diffusion_tensor(User_fn_class):
         """Function for displaying the diffusion tensor information."""
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "diffusion_tensor.display()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "diffusion_tensor.display()"
             print(text)
 
         # Execute the functional code.
@@ -301,6 +298,7 @@ class Diffusion_tensor(User_fn_class):
             0:  {tm, Da, Dr, alpha, beta, gamma}   (Default),
             1:  {Diso, Da, Dr, alpha, beta, gamma},
             2:  {Dx, Dy, Dz, alpha, beta, gamma},
+            3:  {Dxx, Dyy, Dzz, Dxy, Dxz, Dyz},
 
         where
 
@@ -324,6 +322,9 @@ class Diffusion_tensor(User_fn_class):
 
             0 <= theta <= pi,
             0 <= phi <= 2pi.
+
+        When param_types is set to 3, then the elements of the diffusion tensor matrix defined
+        within the PDB frame can be supplied.
 
 
         Units
@@ -379,8 +380,8 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "diffusion_tensor.init("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "diffusion_tensor.init("
             text = text + "params=" + repr(params)
             text = text + ", time_scale=" + repr(time_scale)
             text = text + ", d_scale=" + repr(d_scale)
@@ -391,13 +392,13 @@ class Diffusion_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num_or_num_tuple(params, 'diffusion parameters', size=[4, 6])
-        check.is_num(time_scale, 'time scale')
-        check.is_num(d_scale, 'D scale')
-        check.is_str(angle_units, 'angle units')
-        check.is_int(param_types, 'parameter types')
-        check.is_str(spheroid_type, 'spheroid type', can_be_none=True)
-        check.is_bool(fixed, 'fixed flag')
+        arg_check.is_num_or_num_tuple(params, 'diffusion parameters', size=[4, 6])
+        arg_check.is_num(time_scale, 'time scale')
+        arg_check.is_num(d_scale, 'D scale')
+        arg_check.is_str(angle_units, 'angle units')
+        arg_check.is_int(param_types, 'parameter types')
+        arg_check.is_str(spheroid_type, 'spheroid type', can_be_none=True)
+        arg_check.is_bool(fixed, 'fixed flag')
 
         # Execute the functional code.
         diffusion_tensor.init(params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)

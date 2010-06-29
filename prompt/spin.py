@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'spin' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin
 
 
@@ -80,8 +77,8 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spin.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", spin_from=" + repr(spin_from)
             text = text + ", pipe_to=" + repr(pipe_to)
@@ -89,10 +86,10 @@ class Spin(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_from, 'pipe from', can_be_none=True)
-        check.is_str(spin_from, 'spin from')
-        check.is_str(pipe_to, 'pipe to', can_be_none=True)
-        check.is_str(spin_to, 'spin to', can_be_none=True)
+        arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        arg_check.is_str(spin_from, 'spin from')
+        arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        arg_check.is_str(spin_to, 'spin to', can_be_none=True)
 
         # Execute the functional code.
         copy_spin(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
@@ -133,8 +130,8 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spin.create("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.create("
             text = text + "spin_num=" + repr(spin_num)
             text = text + ", spin_name=" + repr(spin_name)
             text = text + ", res_num=" + repr(res_num)
@@ -143,11 +140,11 @@ class Spin(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_int(spin_num, 'spin number', can_be_none=True)
-        check.is_str(spin_name, 'spin name', can_be_none=True)
-        check.is_int(res_num, 'residue number', can_be_none=True)
-        check.is_str(res_name, 'residue name', can_be_none=True)
-        check.is_str(mol_name, 'molecule name', can_be_none=True)
+        arg_check.is_int(spin_num, 'spin number', can_be_none=True)
+        arg_check.is_str(spin_name, 'spin name', can_be_none=True)
+        arg_check.is_int(res_num, 'residue number', can_be_none=True)
+        arg_check.is_str(res_name, 'residue name', can_be_none=True)
+        arg_check.is_str(mol_name, 'molecule name', can_be_none=True)
 
         # Execute the functional code.
         create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
@@ -190,8 +187,8 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spin.create_pseudo("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.create_pseudo("
             text = text + "spin_name=" + repr(spin_name)
             text = text + ", spin_num=" + repr(spin_num)
             text = text + ", res_id=" + repr(res_id)
@@ -200,11 +197,11 @@ class Spin(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(spin_name, 'spin name')
-        check.is_int(spin_num, 'spin number', can_be_none=True)
-        check.is_str(res_id, 'residue identification string', can_be_none=True)
-        check.is_str_list(members, 'members')
-        check.is_str(averaging, 'positional averaging technique')
+        arg_check.is_str(spin_name, 'spin name')
+        arg_check.is_int(spin_num, 'spin number', can_be_none=True)
+        arg_check.is_str(res_id, 'residue identification string', can_be_none=True)
+        arg_check.is_str_list(members, 'members')
+        arg_check.is_str(averaging, 'positional averaging technique')
 
         # Execute the functional code.
         create_pseudo_spin(spin_num=spin_num, spin_name=spin_name, res_id=res_id, members=members, averaging=averaging)
@@ -227,13 +224,13 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spin.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.delete("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(spin_id, 'spin identification string')
+        arg_check.is_str(spin_id, 'spin identification string')
 
         # Execute the functional code.
         delete_spin(spin_id=spin_id)
@@ -249,13 +246,13 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spin.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.display("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         display_spin(spin_id=spin_id)
@@ -292,17 +289,17 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spin.name("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.name("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", name=" + repr(name)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        check.is_str(name, 'new spin name')
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(name, 'new spin name')
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         name_spin(spin_id=spin_id, name=name, force=force)
@@ -341,17 +338,17 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spin.number("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.number("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", number=" + repr(number)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        check.is_int(number, 'new spin number', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_int(number, 'new spin number', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         number_spin(spin_id=spin_id, number=number, force=force)

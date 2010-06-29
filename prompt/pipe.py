@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'pipe' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import pipes
 from relax_errors import RelaxError
 from specific_fns.setup import hybrid_obj
@@ -71,15 +68,15 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_from, 'pipe from', can_be_none=True)
-        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
@@ -125,15 +122,15 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.create("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.create("
             text = text + "pipe_name=" + repr(pipe_name)
             text = text + ", pipe_type=" + repr(pipe_type) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_name, 'data pipe name')
-        check.is_str(pipe_type, 'data pipe type')
+        arg_check.is_str(pipe_name, 'data pipe name')
+        arg_check.is_str(pipe_type, 'data pipe type')
 
         # Execute the functional code.
         pipes.create(pipe_name=pipe_name, pipe_type=pipe_type)
@@ -151,8 +148,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.current()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.current()"
             print(text)
 
         # Execute the functional code.
@@ -176,13 +173,13 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.delete("
             text = text + "pipe_name=" + repr(pipe_name) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_name, 'data pipe name', can_be_none=True)
+        arg_check.is_str(pipe_name, 'data pipe name', can_be_none=True)
 
         # Execute the functional code.
         pipes.delete(pipe_name=pipe_name)
@@ -200,8 +197,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.display()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.display()"
             print(text)
 
         # Execute the functional code.
@@ -242,18 +239,18 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.hybridise("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.hybridise("
             text = text + "hybrid=" + repr(hybrid)
             text = text + ", pipes=" + repr(pipes) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(hybrid, 'hybrid pipe name')
-        check.is_str_list(pipes, 'data pipes')
+        arg_check.is_str(hybrid, 'hybrid pipe name')
+        arg_check.is_str_list(pipes, 'data pipes')
 
         # Execute the functional code.
-        hybrid_obj.hybridise(hybrid=hybrid, pipe_list=pipes)
+        hybrid_obj._hybridise(hybrid=hybrid, pipe_list=pipes)
 
 
     def switch(self, pipe_name=None):
@@ -281,13 +278,13 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.switch("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.switch("
             text = text + "pipe_name=" + repr(pipe_name) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_name, 'data pipe name')
+        arg_check.is_str(pipe_name, 'data pipe name')
 
         # Execute the functional code.
         pipes.switch(pipe_name=pipe_name)

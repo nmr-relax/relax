@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2008-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2008-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,11 +26,10 @@ __docformat__ = 'plaintext'
 
 # Python module imports.
 from string import split
-import sys
 
 # relax module imports.
 from base_class import Basic_class
-import check
+import arg_check
 from minfx.generic import generic_minimise
 from generic_fns import minimise
 from relax_errors import RelaxError, RelaxNoneError, RelaxStrError
@@ -50,13 +49,13 @@ class Minimisation(Basic_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "calc("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "calc("
             text = text + "verbosity=" + repr(verbosity) + ")"
             print(text)
 
         # The argument checks.
-        check.is_int(verbosity, 'verbosity level')
+        arg_check.is_int(verbosity, 'verbosity level')
 
         # Execute the functional code.
         minimise.calc(verbosity=verbosity)
@@ -87,8 +86,8 @@ class Minimisation(Basic_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "grid_search("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "grid_search("
             text = text + "lower=" + repr(lower)
             text = text + ", upper=" + repr(upper)
             text = text + ", inc=" + repr(inc)
@@ -97,11 +96,11 @@ class Minimisation(Basic_class):
             print(text)
 
         # The argument checks.
-        check.is_num_list(lower, 'lower bounds', can_be_none=True)
-        check.is_num_list(upper, 'upper bounds', can_be_none=True)
-        check.is_int_or_int_list(inc, 'incrementation value')
-        check.is_bool(constraints, 'constraints flag')
-        check.is_int(verbosity, 'verbosity level')
+        arg_check.is_num_list(lower, 'lower bounds', can_be_none=True)
+        arg_check.is_num_list(upper, 'upper bounds', can_be_none=True)
+        arg_check.is_int_or_int_list(inc, 'incrementation value')
+        arg_check.is_bool(constraints, 'constraints flag')
+        arg_check.is_int(verbosity, 'verbosity level')
 
         # Execute the functional code.
         minimise.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
@@ -195,8 +194,6 @@ class Minimisation(Basic_class):
         Note
         ~~~~
 
-        --------------------------------------------------------------------------------------------
-
         All the text which follows is a reproduction of the docstring of the generic_minimise
         function from the minfx python package.  Only take note of the minimisation algorithms and
         minimisation options sections, the other sections are not relevant for this function.  The
@@ -205,8 +202,6 @@ class Minimisation(Basic_class):
 
         The section entitled Keyword Arguments is also completely inaccessible therefore please
         ignore that text.
-
-        --------------------------------------------------------------------------------------------
 
         """
 
@@ -251,8 +246,8 @@ class Minimisation(Basic_class):
             verbosity = 1
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "minimise("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "minimise("
             text = text + "*args=" + repr(args)
             text = text + ", func_tol=" + repr(func_tol)
             text = text + ", max_iterations=" + repr(max_iterations)
@@ -283,12 +278,12 @@ class Minimisation(Basic_class):
                 raise RelaxError("Unknown keyword argument " + repr(key) + ".")
 
         # The argument checks.
-        check.is_num(func_tol, 'function tolerance')
-        check.is_num(grad_tol, 'gradient tolerance', can_be_none=True)
-        check.is_int(max_iterations, 'maximum number of iterations')
-        check.is_bool(constraints, 'constraints flag')
-        check.is_bool(scaling, 'diagonal scaling flag')
-        check.is_int(verbosity, 'verbosity level')
+        arg_check.is_num(func_tol, 'function tolerance')
+        arg_check.is_num(grad_tol, 'gradient tolerance', can_be_none=True)
+        arg_check.is_int(max_iterations, 'maximum number of iterations')
+        arg_check.is_bool(constraints, 'constraints flag')
+        arg_check.is_bool(scaling, 'diagonal scaling flag')
+        arg_check.is_int(verbosity, 'verbosity level')
 
         # Constraint flag.
         if constraints:

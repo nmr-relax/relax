@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006, 2009 Edward d'Auvergne                             #
+# Copyright (C) 2003-2006, 2009-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'palmer' user function class for controlling the Modelfree4 software."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import palmer
 
 
@@ -94,8 +91,8 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "palmer.create("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "palmer.create("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary)
@@ -112,18 +109,18 @@ class Palmer(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
-        check.is_str(binary, 'Modelfree executable file')
-        check.is_str(diff_search, 'diffusion search')
-        check.is_int(sims, 'number of Monte Carlo simulations')
-        check.is_str(sim_type, 'simulation type')
-        check.is_num(trim, 'trimming')
-        check.is_int(steps, 'steps')
-        check.is_bool(constraints, 'constraints flag')
-        check.is_str(heteronuc_type, 'heteronucleus')
-        check.is_str(atom1, 'atom1')
-        check.is_str(atom2, 'atom2')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+        arg_check.is_str(binary, 'Modelfree executable file')
+        arg_check.is_str(diff_search, 'diffusion search')
+        arg_check.is_int(sims, 'number of Monte Carlo simulations')
+        arg_check.is_str(sim_type, 'simulation type')
+        arg_check.is_num(trim, 'trimming')
+        arg_check.is_int(steps, 'steps')
+        arg_check.is_bool(constraints, 'constraints flag')
+        arg_check.is_str(heteronuc_type, 'heteronucleus')
+        arg_check.is_str(atom1, 'atom1')
+        arg_check.is_str(atom2, 'atom2')
 
         # Execute the functional code.
         palmer.create(dir=dir, force=force, binary=binary, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, heteronuc_type=heteronuc_type, atom1=atom1, atom2=atom2, spin_id=spin_id)
@@ -160,17 +157,17 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "palmer.execute("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "palmer.execute("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
-        check.is_str(binary, 'Modelfree executable file')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+        arg_check.is_str(binary, 'Modelfree executable file')
 
         # Execute the functional code.
         palmer.execute(dir=dir, force=force, binary=binary)
@@ -186,13 +183,13 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "palmer.extract("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "palmer.extract("
             text = text + "dir=" + repr(dir) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
         palmer.extract(dir=dir)

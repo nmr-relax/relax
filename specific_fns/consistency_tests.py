@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2009 Edward d'Auvergne                                   #
-# Copyright (C) 2007-2008 Sebastien Morin                                     #
+# Copyright (C) 2007-2009 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,21 +23,68 @@
 
 # Python module imports.
 from re import search
+from warnings import warn
 
 # relax module imports.
-from base_class import Common_functions
+from api_base import API_base
+from api_common import API_common
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from maths_fns.consistency_tests import Consistency
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
+from relax_warnings import RelaxDeselectWarning
 
 
-class Consistency_tests(Common_functions):
+class Consistency_tests(API_base, API_common):
     """Class containing functions specific to consistency testing."""
 
-    def calculate(self, verbosity=1, sim_index=None, spin_id=None):
-        """Calculation of the consistency functions."""
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
+
+        # Place methods into the API.
+        self.base_data_loop = self._base_data_loop_spin
+        self.model_loop = self._model_loop_spin
+        self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_error = self._return_error_relax_data
+        self.return_value = self._return_value_general
+        self.set_param_values = self._set_param_values_spin
+        self.set_selected_sim = self._set_selected_sim_spin
+
+
+    def _set_frq(self, frq=None):
+        """Function for selecting which relaxation data to use in the consistency tests."""
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is set to 'ct'.
+        function_type = cdp.pipe_type
+        if function_type != 'ct':
+            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
+
+        # Test if the frequency has been set.
+        if hasattr(cdp, 'ct_frq'):
+            raise RelaxError("The frequency for the run has already been set.")
+
+        # Create the data structure if it doesn't exist.
+        if not hasattr(cdp, 'ct_frq'):
+            cdp.ct_frq = {}
+
+        # Set the frequency.
+        cdp.ct_frq = frq
+
+
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+        """Calculation of the consistency functions.
+
+        @keyword spin_id:   The spin identification string.
+        @type spin_id:      None or str
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The optional MC simulation index.
+        @type sim_index:    None or int
+        """
 
         # Test if the frequency has been set.
         if not hasattr(cdp, 'ct_frq') or not isinstance(cdp.ct_frq, float):
@@ -154,14 +201,13 @@ class Consistency_tests(Common_functions):
                 spin.f_r2_sim.append(f_r2)
 
 
-    def create_mc_data(self, spin_id):
-        """Return the Ri data structure for the corresponding spin.
+    def create_mc_data(self, spin_id=None):
+        """Return the Monte Carlo Ri data structure for the corresponding spin.
 
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
-        @type spin_id:  str
-        @return:        The Monte Carlo simulation data.
-        @rtype:         list of floats
+        @keyword spin_id:   The spin identification string, as yielded by the base_data_loop() generator method.
+        @type spin_id:      str
+        @return:            The Monte Carlo simulation data.
+        @rtype:             list of floats
         """
 
         # Get the spin container.
@@ -171,8 +217,14 @@ class Consistency_tests(Common_functions):
         return spin.relax_data
 
 
-    def data_init(self, data, sim=0):
-        """Function for initialising the data structures."""
+    def data_init(self, data_cont, sim=False):
+        """Initialise the data structures.
+
+        @param data_cont:   The data container.
+        @type data_cont:    instance
+        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:          bool
+        """
 
         # Get the data names.
         data_names = self.data_names()
@@ -185,9 +237,9 @@ class Consistency_tests(Common_functions):
                 name = name + '_sim'
 
             # If the name is not in 'data', add it.
-            if not hasattr(data, name):
+            if not hasattr(data_cont, name):
                 # Set the attribute.
-                setattr(data, name, None)
+                setattr(data_cont, name, None)
 
 
     def data_names(self, set=None, error_names=False, sim_names=False):
@@ -204,9 +256,9 @@ class Consistency_tests(Common_functions):
             - 'orientation', angle between the 15N-1H vector and the principal axis of the 15N
             chemical shift tensor.
             - 'tc', correlation time.
-            - 'j0', spectral density value at 0 MHz.
-            - 'f_eta', eta-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
-            - 'f_r2', R2-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
+            - 'j0', spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162).
+            - 'f_eta', eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952).
+            - 'f_r2', R2-test (from Fushman et al. (1998) JACS, 120: 10947-10952).
 
 
         @keyword set:           An unused variable.
@@ -299,24 +351,26 @@ class Consistency_tests(Common_functions):
 
 
     def overfit_deselect(self):
-        """Function for deselecting spins without sufficient data to support calculation"""
+        """Deselect spins which have insufficient data to support calculation."""
+
+        # Print out.
+        print("\n\nOver-fit spin deselection.\n")
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
         # Loop over spin data:
-        for spin in spin_loop():
-
+        for spin, spin_id in spin_loop(return_id=True):
             # Check for sufficient data
             if not hasattr(spin, 'relax_data'):
+                warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                 spin.select = False
-                continue
 
             # Require 3 or more data points
-            if len(spin.relax_data) < 3:
+            elif len(spin.relax_data) < 3:
+                warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                 spin.select = False
-                continue
 
 
     return_data_name_doc = """
@@ -348,57 +402,66 @@ class Consistency_tests(Common_functions):
         |_______________________|__________________|_______________________________________________|
         """
 
-    def return_data_name(self, name):
+    def return_data_name(self, param):
         """Return a unique identifying string for the consistency test parameter.
 
-        @param name:    The consistency test parameter.
-        @type name:     str
+        @param param:   The consistency test parameter name.
+        @type param:    str
         @return:        The unique parameter identifying string.
         @rtype:         str
         """
 
         # J(0).
-        if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
+        if search('^[Jj]0$', param) or search('[Jj]\(0\)', param):
             return 'j0'
 
         # F_eta.
-        if search('^[Ff]_[Ee][Tt][Aa]$', name):
+        if search('^[Ff]_[Ee][Tt][Aa]$', param):
             return 'f_eta'
 
         # F_R2.
-        if search('^^[Ff]_[Rr]2$', name):
+        if search('^^[Ff]_[Rr]2$', param):
             return 'f_r2'
 
         # Bond length.
-        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
+        if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
             return 'r'
 
         # CSA.
-        if search('^[Cc][Ss][Aa]$', name):
+        if search('^[Cc][Ss][Aa]$', param):
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Hh]eteronucleus$', name):
+        if search('^[Hh]eteronucleus$', param):
             return 'heteronuc_type'
 
         # Proton type.
-        if search('^[Pp]roton$', name):
+        if search('^[Pp]roton$', param):
             return 'proton_type'
 
         # Angle Theta
-        if search('^[Oo]rientation$', name):
+        if search('^[Oo]rientation$', param):
             return 'orientation'
 
         # Correlation time
-        if search('^[Tt]c$', name):
+        if search('^[Tt]c$', param):
             return 'tc'
 
 
-    def return_grace_string(self, data_type):
-        """Function for returning the Grace string representing the data type for axis labelling."""
+    def return_grace_string(self, param):
+        """Return the Grace string representing the parameter.
+
+        This is used for axis labelling.
+
+
+        @param param:   The specific analysis parameter.
+        @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
+        """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # J(0).
         if object_name == 'j0':
@@ -429,26 +492,21 @@ class Consistency_tests(Common_functions):
             return '\\q\\xt\\f{}c\\Q'
 
 
-    def return_units(self, data_type, spin=None, spin_id=None):
-        """Function for returning a string representing the parameters units.
+    def return_units(self, param, spin=None, spin_id=None):
+        """Return a string representing the parameters units.
 
-        For example, the internal representation of te is in seconds, whereas the external
-        representation is in picoseconds, therefore this function will return the string
-        'picoseconds' for te.
-
-        @param data_type:   The name of the parameter to return the units string for.
-        @type data_type:    str
-        @param spin:        The spin container.
+        @param param:       The name of the parameter to return the units string for.
+        @type param:        str
+        @keyword spin:      The spin container.
         @type spin:         SpinContainer instance
-        @param spin_id:     The spin identification string (ignored if the spin container is
-                            supplied).
+        @keyword spin_id:   The spin identification string (ignored if the spin container is supplied).
         @type spin_id:      str
-        @return:            The string representation of the units.
+        @return:            The parameter units string.
         @rtype:             str
         """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # Bond length (Angstrom).
         if object_name == 'r':
@@ -478,31 +536,19 @@ class Consistency_tests(Common_functions):
         """
 
 
-    def set_frq(self, frq=None):
-        """Function for selecting which relaxation data to use in the consistency tests."""
+    def set_error(self, model_info, index, error):
+        """Set the parameter errors.
 
-        # Test if the current pipe exists.
-        pipes.test()
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
+        """
 
-        # Test if the pipe type is set to 'ct'.
-        function_type = cdp.pipe_type
-        if function_type != 'ct':
-            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
-
-        # Test if the frequency has been set.
-        if hasattr(cdp, 'ct_frq'):
-            raise RelaxError("The frequency for the run has already been set.")
-
-        # Create the data structure if it doesn't exist.
-        if not hasattr(cdp, 'ct_frq'):
-            cdp.ct_frq = {}
-
-        # Set the frequency.
-        cdp.ct_frq = frq
-
-
-    def set_error(self, spin, index, error):
-        """Function for setting parameter errors."""
+        # Alias.
+        spin = model_info
 
         # Return J(0) sim data.
         if index == 0:
@@ -517,8 +563,19 @@ class Consistency_tests(Common_functions):
             spin.f_r2_err = error
 
 
-    def sim_return_param(self, spin, index):
-        """Function for returning the array of simulation parameter values."""
+    def sim_return_param(self, model_info, index):
+        """Return the array of simulation parameter values.
+
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        @param index:       The index of the parameter to return the array of values for.
+        @type index:        int
+        @return:            The array of simulation parameter values.
+        @rtype:             list of float
+        """
+
+        # Alias.
+        spin = model_info
 
         # Skip deselected residues.
         if not spin.select:
@@ -537,8 +594,17 @@ class Consistency_tests(Common_functions):
             return spin.f_r2_sim
 
 
-    def sim_return_selected(self, spin):
-        """Function for returning the array of selected simulation flags."""
+    def sim_return_selected(self, model_info):
+        """Return the array of selected simulation flags.
+
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        @return:            The array of selected simulation flags.
+        @rtype:             list of int
+        """
+
+        # Alias.
+        spin = model_info
 
         # Multiple spins.
         return spin.select_sim
@@ -547,8 +613,7 @@ class Consistency_tests(Common_functions):
     def sim_pack_data(self, spin_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
-                            generator method.
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
         @type spin_id:      str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float

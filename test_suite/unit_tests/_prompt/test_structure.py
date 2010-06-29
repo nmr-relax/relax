@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2008, 2010 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,14 +30,13 @@ from test_suite.unit_tests.structure_testing_base import Structure_base_class
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_structure(Structure_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.structure' module."""
 
     # Instantiate the user function class.
-    structure_fns = Structure(fake_relax.fake_instance())
+    structure_fns = Structure()
 
 
     def test_create_diff_tensor_pdb_argfail_scale(self):

@@ -50,8 +50,8 @@ def eliminate(function=None, args=None):
     # Specific eliminate, parameter names, parameter values, number of instances, and deselect function setup.
     eliminate = get_specific_fn('eliminate', cdp.pipe_type)
     model_loop = get_specific_fn('model_loop', cdp.pipe_type)
-    param_names = get_specific_fn('param_names', cdp.pipe_type)
-    param_values = get_specific_fn('param_values', cdp.pipe_type)
+    get_param_names = get_specific_fn('get_param_names', cdp.pipe_type)
+    get_param_values = get_specific_fn('get_param_values', cdp.pipe_type)
     deselect = get_specific_fn('deselect', cdp.pipe_type)
 
     # Determine if simulations are active.
@@ -68,8 +68,8 @@ def eliminate(function=None, args=None):
 
         if not sim_state:
             # Get the parameter names and values.
-            names = param_names(model_info)
-            values = param_values(model_info)
+            names = get_param_names(model_info)
+            values = get_param_values(model_info)
 
             # No data.
             if names == None or values == None:
@@ -98,8 +98,8 @@ def eliminate(function=None, args=None):
             # Loop over the simulations.
             for j in xrange(cdp.sim_number):
                 # Get the parameter names and values.
-                names = param_names(model_info)
-                values = param_values(model_info, sim_index=j)
+                names = get_param_names(model_info)
+                values = get_param_values(model_info, sim_index=j)
 
                 # No data.
                 if names == None or values == None:

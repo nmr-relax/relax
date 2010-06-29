@@ -1,3 +1,4 @@
+import __main__
 from os import sep
 import sys
 
@@ -6,7 +7,7 @@ import sys
 pipe.create('mf', 'mf')
 
 # Read a PDB file.
-structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
 
 # Load the spins.
 structure.load_spins('@N')

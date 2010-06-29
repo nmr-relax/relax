@@ -48,8 +48,8 @@ from warnings import warn
 # relax module imports.
 import generic_fns
 from generic_fns.mol_res_spin import generate_spin_id_data_array
-from relax_errors import RelaxError, RelaxFileError, RelaxFileEmptyError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
-from relax_warnings import RelaxWarning
+from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
+from relax_warnings import RelaxWarning, RelaxFileEmptyWarning
 
 
 
@@ -540,7 +540,8 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
 
     # No data!
     if not file_data:
-        raise RelaxFileEmptyError
+        warn(RelaxFileEmptyWarning(file))
+        return
 
     # Yield the data, spin by spin.
     missing_data = True
@@ -548,13 +549,6 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         # Skip missing data.
         if len(line) < min_col_num:
             continue
-
-        # Skip invalid data.
-        if data_col or error_col:
-            if data_col and line[data_col-1] == 'None':
-                continue
-            elif error_col and line[error_col-1] == 'None':
-                continue
 
         # Validate the sequence.
         try:

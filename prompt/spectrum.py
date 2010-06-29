@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'spectrum' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import spectrum
 
 
@@ -58,17 +55,17 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spectrum.baseplane_rmsd("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spectrum.baseplane_rmsd("
             text = text + "error=" + repr(error)
             text = text + ", spectrum_id=" + repr(spectrum_id)
             text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_num(error, 'error')
-        check.is_str(spectrum_id, 'spectrum identification string')
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_num(error, 'error')
+        arg_check.is_str(spectrum_id, 'spectrum identification string')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         spectrum.baseplane_rmsd(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
@@ -216,8 +213,8 @@ class Spectrum(User_fn_class):
 
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spectrum.error_analysis()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spectrum.error_analysis()"
             print(text)
 
         # Execute the functional code.
@@ -250,17 +247,17 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spectrum.integration_points("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spectrum.integration_points("
             text = text + "N=" + repr(N)
             text = text + ", spectrum_id=" + repr(spectrum_id)
             text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_int(N, 'number of summed points')
-        check.is_str(spectrum_id, 'spectrum identification string')
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_int(N, 'number of summed points')
+        arg_check.is_str(spectrum_id, 'spectrum identification string')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         spectrum.integration_points(N=N, spectrum_id=spectrum_id, spin_id=spin_id)
@@ -398,8 +395,8 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spectrum.read_intensities("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spectrum.read_intensities("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spectrum_id=" + repr(spectrum_id)
@@ -419,22 +416,22 @@ class Spectrum(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_str_or_str_list(spectrum_id, 'spectrum identification string')
-        check.is_str(heteronuc, 'heteronucleus name')
-        check.is_str(proton, 'proton name')
-        check.is_int_or_int_list(int_col, 'intensity column', can_be_none=True)
-        check.is_str(int_method, 'integration method')
-        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
-        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
-        check.is_int(res_num_col, 'residue number column', can_be_none=True)
-        check.is_int(res_name_col, 'residue name column', can_be_none=True)
-        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
-        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
-        check.is_str(sep, 'column separator', can_be_none=True)
-        check.is_str(spin_id, 'spin ID string', can_be_none=True)
-        check.is_int(ncproc, 'Bruker ncproc parameter', can_be_none=True)
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str_or_str_list(spectrum_id, 'spectrum identification string')
+        arg_check.is_str(heteronuc, 'heteronucleus name')
+        arg_check.is_str(proton, 'proton name')
+        arg_check.is_int_or_int_list(int_col, 'intensity column', can_be_none=True)
+        arg_check.is_str(int_method, 'integration method')
+        arg_check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
+        arg_check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        arg_check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        arg_check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        arg_check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        arg_check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        arg_check.is_str(sep, 'column separator', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        arg_check.is_int(ncproc, 'Bruker ncproc parameter', can_be_none=True)
 
         # Execute the functional code.
         spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
@@ -471,13 +468,13 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spectrum.replicated("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spectrum.replicated("
             text = text + "spectrum_ids=" + repr(spectrum_ids) + ")"
             print(text)
 
         # Spectrum ids.
-        check.is_str_or_str_list(spectrum_ids, 'spectrum identification strings')
+        arg_check.is_str_or_str_list(spectrum_ids, 'spectrum identification strings')
 
         # Execute the functional code.
         spectrum.replicated(spectrum_ids=spectrum_ids)

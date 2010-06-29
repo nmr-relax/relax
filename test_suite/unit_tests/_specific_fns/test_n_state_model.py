@@ -36,8 +36,8 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
     n_state_model_fns = n_state_model.N_state_model()
 
 
-    def test___assemble_param_vector(self):
-        """Test the operation of the specific_fns.n_state_model.__assemble_param_vector() method."""
+    def test__assemble_param_vector(self):
+        """Test the operation of the specific_fns.n_state_model._assemble_param_vector() method."""
 
         # Set up the N, probabilities and Euler angles.
         cdp.N = 3
@@ -51,7 +51,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         cdp.align_tensors = None
 
         # Get the parameter vector.
-        param_vector = self.n_state_model_fns._N_state_model__assemble_param_vector()
+        param_vector = self.n_state_model_fns._assemble_param_vector()
 
         # The correct result.
         vector_true = [0.1, 0.3, 0.0, pi/2, 1.0, pi/2, pi, 3*pi/2, pi, 3*pi/2, 2*pi]
@@ -62,8 +62,8 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
             self.assertEqual(param_vector[i], vector_true[i])
 
 
-    def test___disassemble_param_vector(self):
-        """Test the operation of the specific_fns.n_state_model.__disassemble_param_vector() method."""
+    def test__disassemble_param_vector(self):
+        """Test the operation of the specific_fns.n_state_model._disassemble_param_vector() method."""
 
         # Set up the initial N, probabilities and Euler angles.
         cdp.N = 3
@@ -77,7 +77,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         param_vector = [0.1, 0.3, 0.0, pi/2, 1.0, pi/2, pi, 3*pi/2, pi, 3*pi/2, 2*pi]
 
         # Disassemble the parameter vector.
-        self.n_state_model_fns._N_state_model__disassemble_param_vector(param_vector, data_types=['tensor'])
+        self.n_state_model_fns._disassemble_param_vector(param_vector, data_types=['tensor'])
 
         # Check the probabilities.
         self.assertEqual(cdp.probs, [0.1, 0.3, 0.6])

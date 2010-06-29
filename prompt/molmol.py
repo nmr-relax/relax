@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'molmol' user function class for interacting with MOLMOL."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 import colour
 from generic_fns import molmol
 from specific_fns.model_free.molmol import Molmol
@@ -42,12 +39,12 @@ class Molmol(User_fn_class):
         """Function for clearing the Molmol command history."""
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molmol.clear_history()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.clear_history()"
             print(text)
 
         # Execute the functional code.
-        self.__relax__.generic.molmol.clear_history()
+        molmol.clear_history()
 
 
     def command(self, command=None):
@@ -75,13 +72,13 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molmol.command("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.command("
             text = text + "command=" + repr(command) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(command, 'MOLMOL command')
+        arg_check.is_str(command, 'MOLMOL command')
 
         # Execute the functional code.
         molmol.command(command=command)
@@ -142,8 +139,8 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molmol.macro_exec("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.macro_exec("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)
@@ -152,11 +149,11 @@ class Molmol(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(data_type, 'data type')
-        check.is_str(style, 'style')
-        check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
-        check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
-        check.is_str(colour_list, 'colour list', can_be_none=True)
+        arg_check.is_str(data_type, 'data type')
+        arg_check.is_str(style, 'style')
+        arg_check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str(colour_list, 'colour list', can_be_none=True)
 
         # Execute the functional code.
         molmol.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
@@ -187,8 +184,8 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molmol.ribbon()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.ribbon()"
             print(text)
 
         # Execute the functional code.
@@ -248,13 +245,13 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molmol.tensor_pdb("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.tensor_pdb("
             text = text + "file=" + repr(file) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str_or_inst(file, 'file name')
+        arg_check.is_str_or_inst(file, 'file name')
 
         # Execute the functional code.
         molmol.tensor_pdb(file=file)
@@ -271,8 +268,8 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molmol.view()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.view()"
             print(text)
 
         # Execute the functional code.
@@ -342,8 +339,8 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molmol.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.write("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)
@@ -355,14 +352,14 @@ class Molmol(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(data_type, 'data type')
-        check.is_str(style, 'style')
-        check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
-        check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
-        check.is_str(colour_list, 'colour list', can_be_none=True)
-        check.is_str_or_inst(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(data_type, 'data type')
+        arg_check.is_str(style, 'style')
+        arg_check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str(colour_list, 'colour list', can_be_none=True)
+        arg_check.is_str_or_inst(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         molmol.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
@@ -373,7 +370,7 @@ class Molmol(User_fn_class):
     #########################
 
     # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + Molmol.molmol_classic_style_doc + "\n\n"
+    write.__doc__ = write.__doc__ + "\n\n" + Molmol._molmol_classic_style_doc + "\n\n"
 
     # Molmol RGB colour list.
     write.__doc__ = write.__doc__ + "\n\n" + colour.__molmol_colours_prompt_doc__ + "\n\n"

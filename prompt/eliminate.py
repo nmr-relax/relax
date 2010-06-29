@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2009 Edward d'Auvergne                            #
+# Copyright (C) 2003, 2004, 2009-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,13 +24,9 @@
 """Module containing the 'eliminate' user function for removing failed models."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-from types import FunctionType
-
 # relax module imports.
 from base_class import Basic_class
-import check
+import arg_check
 from generic_fns import eliminate
 from relax_errors import RelaxFunctionError, RelaxListStrError, RelaxNoneStrListError, RelaxNoneTupleError
 from specific_fns.model_free import Model_free
@@ -74,16 +70,16 @@ class Eliminate(Basic_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "eliminate("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "eliminate("
             text = text + "function=" + repr(function)
             text = text + ", args=" + repr(args) + ")"
             print(text)
 
         # The argument checks.
-        check.is_func(function, 'function', can_be_none=True)
+        arg_check.is_func(function, 'function', can_be_none=True)
         if function:
-            check.is_tuple(args, 'args')
+            arg_check.is_tuple(args, 'args')
 
         # Execute the functional code.
         eliminate.eliminate(function=function, args=args)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'n_state_model' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from specific_fns.setup import n_state_model_obj
 
 
@@ -81,18 +78,18 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.CoM("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "n_state_model.CoM("
             text = text + "pivot_point=" + repr(pivot_point)
             text = text + ", centre=" + repr(centre) + ")"
             print(text)
 
         # The argument checks.
-        check.is_num_list(pivot_point, 'pivot point', size=3)
-        check.is_num_list(centre, 'centre of mass', size=3, can_be_none=True)
+        arg_check.is_num_list(pivot_point, 'pivot point', size=3)
+        arg_check.is_num_list(centre, 'centre of mass', size=3, can_be_none=True)
 
         # Execute the functional code.
-        n_state_model_obj.CoM(pivot_point=pivot_point, centre=centre)
+        n_state_model_obj._CoM(pivot_point=pivot_point, centre=centre)
 
 
     def cone_pdb(self, cone_type=None, scale=1.0, file='cone.pdb', dir=None, force=False):
@@ -146,8 +143,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.cone_pdb("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "n_state_model.cone_pdb("
             text = text + "cone_type=" + repr(cone_type)
             text = text + ", scale=" + repr(scale)
             text = text + ", file=" + repr(file)
@@ -156,14 +153,14 @@ class N_state_model(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(cone_type, 'cone type')
-        check.is_num(scale, 'scaling factor')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(cone_type, 'cone type')
+        arg_check.is_num(scale, 'scaling factor')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        n_state_model_obj.cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
+        n_state_model_obj._cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
 
 
     def number_of_states(self, N=None):
@@ -192,16 +189,16 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.number_of_states("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "n_state_model.number_of_states("
             text = text + "N=" + repr(N) + ")"
             print(text)
 
         # The argument checks.
-        check.is_int(N, 'number of states N')
+        arg_check.is_int(N, 'number of states N')
 
         # Execute the functional code.
-        n_state_model_obj.number_of_states(N=N)
+        n_state_model_obj._number_of_states(N=N)
 
 
     def ref_domain(self, ref=None):
@@ -232,16 +229,16 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.ref_domain("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "n_state_model.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(ref, 'reference frame')
+        arg_check.is_str(ref, 'reference frame')
 
         # Execute the functional code.
-        n_state_model_obj.ref_domain(ref=ref)
+        n_state_model_obj._ref_domain(ref=ref)
 
 
     def select_model(self, model=None):
@@ -281,13 +278,13 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.select_model("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "n_state_model.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(model, 'model')
+        arg_check.is_str(model, 'model')
 
         # Execute the functional code.
-        n_state_model_obj.select_model(model=model)
+        n_state_model_obj._select_model(model=model)

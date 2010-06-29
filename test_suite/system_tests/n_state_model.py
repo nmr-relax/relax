@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,37 +21,93 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from math import pi, sqrt
-from os import sep
-import sys
-from unittest import TestCase
+from numpy import array
+from numpy.linalg import norm
+from os import listdir, sep
+from shutil import rmtree
+from tempfile import mkdtemp
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.align_tensor import calc_chi_tensor
+from generic_fns.mol_res_spin import spin_loop
 
 
-class N_state_model(TestCase):
+class N_state_model(SystemTestCase):
     """Class for testing various aspects specific to the N-state model."""
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Remove the temporary directory.
+        if hasattr(ds, 'tmpdir'):
+            rmtree(ds.tmpdir)
+
+        # Reset the relax data storage object.
         ds.__reset__()
+
+
+    def check_vectors(self):
+        """Auxiliary method for checking the correct loading of bond vectors."""
+
+        # The new order.
+        ds.order_new = array([ds.order_struct[ds.order_model[ds.order_model[0]]],
+                              ds.order_struct[ds.order_model[ds.order_model[1]]],
+                              ds.order_struct[ds.order_model[ds.order_model[2]]]])
+
+        # The atom positions.
+        C_pos = []
+        C_pos.append(array([6.250,   0.948,   1.968]))
+        C_pos.append(array([6.438,  -0.139,   1.226]))
+        C_pos.append(array([6.108,  -0.169,   0.378]))
+
+        H_pos = []
+        H_pos.append(array([7.243,   0.580,   1.676]))
+        H_pos.append(array([7.271,  -0.291,   0.525]))
+        H_pos.append(array([5.735,   0.003,  -0.639]))
+
+        # The real vectors.
+        vect = []
+        for i in range(3):
+            vect.append(H_pos[i] - C_pos[i])
+
+        # Normalise.
+        for i in range(3):
+            vect[i] = vect[i] / norm(vect[i])
+
+        # Print out.
+        print("Structure order: %s" % ds.order_struct)
+        print("Model order:     %s" % ds.order_model)
+        print("New order:       %s" % ds.order_new)
+        for i in range(3):
+            print("\ni = %i" % i)
+            print("The real vector:      %s" % vect[i])
+            print("The reordered vector: %s" % vect[ds.order_new[i]])
+            print("The loaded vector:    %s" % cdp.mol[0].res[0].spin[0].xh_vect[i])
+
+        # Check.
+        for i in range(3):
+            self.assertAlmostEqual(norm(vect[ds.order_new[i]] - cdp.mol[0].res[0].spin[0].xh_vect[i]), 0.0)
+        for i in range(3):
+            self.assertAlmostEqual(norm(C_pos[ds.order_new[i]] - cdp.mol[0].res[0].spin[0].pos[i]), 0.0)
 
 
     def test_5_state_xz(self):
         """A 5-state model in the xz-plane (no pivotting of alpha).
 
         The 5 states correspond to the Euler angles (z-y-z notation):
-            State 1:    {0, pi/4, 0}
-            State 2:    {0, pi/8, 0}
-            State 3:    {0, 0, 0}
-            State 4:    {0, -pi/8, 0}
-            State 5:    {0, -pi/4, 0}
+            - State 1:    {0, pi/4, 0}
+            - State 2:    {0, pi/8, 0}
+            - State 3:    {0, 0, 0}
+            - State 4:    {0, -pi/8, 0}
+            - State 5:    {0, -pi/4, 0}
         """
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'5_state_xz.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'5_state_xz.py')
 
         # Test the optimised probabilities.
         self.assertAlmostEqual(cdp.probs[0], 0.2)
@@ -92,7 +148,7 @@ class N_state_model(TestCase):
         ds.mode = 'all'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -115,7 +171,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189412096996)
@@ -135,7 +191,7 @@ class N_state_model(TestCase):
         ds.mode = 'pcs'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -157,7 +213,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189165581069)
@@ -176,7 +232,7 @@ class N_state_model(TestCase):
         ds.mode = 'rdc'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -198,7 +254,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values (these are about ~10% different from Pales).
         # Pales:      S(zz)       S(xx-yy)      S(xy)      S(xz)      S(yz)
@@ -210,10 +266,197 @@ class N_state_model(TestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.00015125)
         self.assertAlmostEqual(cdp.chi2, 23.5877482365)                 # Pales: 23.709
         self.assertAlmostEqual(cdp.q_rdc, 0.078460000413257444)       # Pales (Q Saupe): 0.079
+        self.assertAlmostEqual(cdp.q_rdc_norm2, 0.14049691097282743)       # Pales (Q RDC_RMS): 0.141
 
 
-    def test_lactose_n_state(self):
+    def test_lactose_n_state_fixed(self):
         """The 4-state model analysis of lactose using RDCs and PCSs."""
 
+        # The model.
+        ds.model = 'fixed'
+
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'lactose_n_state.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'lactose_n_state.py')
+
+
+    def test_lactose_n_state_population(self):
+        """The 4-state model analysis of lactose using RDCs and PCSs."""
+
+        # The model.
+        ds.model = 'population'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'lactose_n_state.py')
+
+
+    def test_missing_data(self):
+        """Test the use of RDCs and PCSs to find the alignment tensor with missing data."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'missing_data_test.py')
+
+        # The actual tensors.
+        A_5D = []
+        A_5D.append([1.42219822168827662867e-04, -1.44543001566521341940e-04, -7.07796211648713973798e-04, -6.01619494082773244303e-04, 2.02008007072950861996e-04])
+        A_5D.append([3.56720663040924505435e-04, -2.68385787902088840916e-04, -1.69361406642305853832e-04, 1.71873715515064501074e-04, -3.05790155096090983822e-04])
+        A_5D.append([2.32088908680377300801e-07, 2.08076808579168379617e-06, -2.21735465435989729223e-06, -3.74311563209448033818e-06, -2.40784858070560310370e-06])
+        A_5D.append([-2.62495279588228071048e-04, 7.35617367964106275147e-04, 6.39754192258981332648e-05, 6.27880171180572523460e-05, 2.01197582457700226708e-04])
+
+        # Check the tensors.
+        for i in range(len(A_5D)):
+            self.assertAlmostEqual(cdp.align_tensors[i].Axx, A_5D[i][0])
+            self.assertAlmostEqual(cdp.align_tensors[i].Ayy, A_5D[i][1])
+            self.assertAlmostEqual(cdp.align_tensors[i].Axy, A_5D[i][2])
+            self.assertAlmostEqual(cdp.align_tensors[i].Axz, A_5D[i][3])
+            self.assertAlmostEqual(cdp.align_tensors[i].Ayz, A_5D[i][4])
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+
+
+    def test_pcs_fit_true_pos(self):
+        """Test the fit of DNA PCSs at the true Ln3+ position."""
+
+        # Set the Ln3+ position.
+        ds.para_centre = 'true'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'dna_pcs_fit.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx,  1.42219822168827662867e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, -1.44543001566521341940e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -7.07796211648713973798e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, -6.01619494082773244303e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz,  2.02008007072950861996e-04)
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+
+
+    def test_pcs_fit_zero_pos(self):
+        """Test the fit of DNA PCSs at a Ln3+ position of [0, 0, 0]."""
+
+        # Set the Ln3+ position.
+        ds.para_centre = 'zero'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'dna_pcs_fit.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx,  9.739588118243e-07)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, -1.077401299806e-05)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -2.321033328910e-06)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz,  5.105903556692e-07)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz,  1.676638764825e-05)
+        self.assertAlmostEqual(cdp.chi2, 2125.9562247877066)
+        self.assertAlmostEqual(cdp.q_pcs, 0.76065986767333704)
+
+        # The chi tensor.
+        chi_diag = calc_chi_tensor(cdp.align_tensors[0].A_diag, 799.75376122 * 1e6, 298)
+        chi_diag = chi_diag * 1e33
+        self.assertAlmostEqual((chi_diag[2, 2] - (chi_diag[0, 0] + chi_diag[1, 1])/2.0), -6.726159808496, 5)
+        self.assertAlmostEqual((chi_diag[0, 0] - chi_diag[1, 1]), -3.960936794864)
+
+
+    def test_stereochem_analysis(self):
+        """The full relative stereochemistry analysis."""
+
+        # Create a temporary directory for all result files.
+        ds.tmpdir = mkdtemp()
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'stereochem_analysis.py')
+
+        # Check the base directory files.
+        files = listdir(ds.tmpdir)
+        for file in files:
+            print("Checking file %s." % file)
+            self.assert_(file in ['NOE_viol_S_sorted', 'ensembles_superimposed', 'RDC_PAN_dist.agr', 'Q_factors_S', 'NOE_viol_curve.agr', 'NOE_viol_dist.agr', 'RDC_PAN_curve.agr', 'NOE_viol_S', 'Q_factors_R_sorted', 'NOE_results', 'Q_factors_R', 'NOE_viol_R_sorted', 'logs', 'NOE_viol_R', 'Q_factors_S_sorted', 'RDC_PAN_results', 'correlation_plot.agr', 'correlation_plot_scaled.agr'])
+
+        # Check the sub-directory files.
+        subdirs = ['ensembles_superimposed', 'logs', 'NOE_results', 'RDC_PAN_results']
+        files = [['S0.pdb', 'S2.pdb', 'R0.pdb', 'R1.pdb', 'S1.pdb', 'R2.pdb'],
+                 ['RDC_PAN_analysis.log', 'NOE_viol.log'],
+                 ['S_results_0.bz2', 'S_results_1.bz2', 'R_results_2.bz2', 'R_results_0.bz2', 'S_results_2.bz2', 'R_results_1.bz2'],
+                 ['S_results_0.bz2', 'S_results_1.bz2', 'R_results_2.bz2', 'R_results_0.bz2', 'S_results_2.bz2', 'R_results_1.bz2']]
+        for i in range(len(subdirs)):
+            for file in listdir(ds.tmpdir + sep + subdirs[i]):
+                print("Checking file %s." % file)
+                self.assert_(file in files[i])
+
+
+    def test_populations(self):
+        """Test the 'population' N-state model optimisation using RDCs and PCSs (with missing data)."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'populations.py')
+
+        # The actual tensors.
+        A_5D = []
+        A_5D.append([1.42219822168827662867e-04, -1.44543001566521341940e-04, -7.07796211648713973798e-04, -6.01619494082773244303e-04, 2.02008007072950861996e-04])
+        A_5D.append([3.56720663040924505435e-04, -2.68385787902088840916e-04, -1.69361406642305853832e-04, 1.71873715515064501074e-04, -3.05790155096090983822e-04])
+        A_5D.append([2.32088908680377300801e-07, 2.08076808579168379617e-06, -2.21735465435989729223e-06, -3.74311563209448033818e-06, -2.40784858070560310370e-06])
+        A_5D.append([-2.62495279588228071048e-04, 7.35617367964106275147e-04, 6.39754192258981332648e-05, 6.27880171180572523460e-05, 2.01197582457700226708e-04])
+
+        # Check the tensors.
+        for i in range(len(A_5D)):
+            self.assertAlmostEqual(cdp.align_tensors[i].Axx, A_5D[i][0])
+            self.assertAlmostEqual(cdp.align_tensors[i].Ayy, A_5D[i][1])
+            self.assertAlmostEqual(cdp.align_tensors[i].Axy, A_5D[i][2])
+            self.assertAlmostEqual(cdp.align_tensors[i].Axz, A_5D[i][3])
+            self.assertAlmostEqual(cdp.align_tensors[i].Ayz, A_5D[i][4])
+
+        # Check the populations.
+        self.assertEqual(len(cdp.probs), 3)
+        self.assertAlmostEqual(cdp.probs[0], 0.3)
+        self.assertAlmostEqual(cdp.probs[1], 0.6)
+        self.assertAlmostEqual(cdp.probs[2], 0.1)
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+
+
+    def test_vector_loading1(self):
+        """Test the loading of inter-atomic vectors in the 'population' N-state model."""
+
+        # Order.
+        ds.order_struct = [1, 2, 0]
+        ds.order_model  = [0, 1, 2]
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'vector_loading.py')
+
+        # Check the vectors.
+        self.check_vectors()
+
+
+    def test_vector_loading2(self):
+        """Test the loading of inter-atomic vectors in the 'population' N-state model."""
+
+        # Order.
+        ds.order_struct = [0, 1, 2]
+        ds.order_model  = [2, 0, 1]
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'vector_loading.py')
+
+        # Check the vectors.
+        self.check_vectors()
+
+
+    def test_vector_loading3(self):
+        """Test the loading of inter-atomic vectors in the 'population' N-state model."""
+
+        # Order.
+        ds.order_struct = [1, 0, 2]
+        ds.order_model  = [2, 0, 1]
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'vector_loading.py')
+
+        # Check the vectors.
+        self.check_vectors()

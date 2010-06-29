@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -95,7 +95,7 @@ def xml_to_object(elem, base_object=None, set_fn=None, blacklist=[]):
     @param elem:            The element to extract all python objects from.
     @type elem:             xml.dom.minidom.Element instance
     @keyword base_object:   The python class instance to place the objects into.
-    @type  base_bject:      instance
+    @type base_object:      instance
     @keyword set_fn:        A function used to replace setattr for placing the object into the base
                             object.
     @type set_fn:           function

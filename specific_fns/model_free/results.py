@@ -43,7 +43,7 @@ from relax_errors import RelaxError, RelaxInvalidDataError
 class Results:
     """Class containing methods specific to the model-free results files."""
 
-    def __determine_version(self, file_data, verbosity=1):
+    def _determine_version(self, file_data, verbosity=1):
         """Determine which relax version the results file belongs to.
 
         @param file_data:   The processed results file data.
@@ -73,7 +73,7 @@ class Results:
         return version
 
 
-    def __fix_params(self, spin_line, col, verbosity=1):
+    def _fix_params(self, spin_line, col, verbosity=1):
         """Fix certain parameters depending on the model type.
 
         @param spin_line:   The line of data for a single spin.
@@ -129,7 +129,7 @@ class Results:
                 spin.fixed = mf_fixed
 
 
-    def __generate_sequence(self, spin_line, col, verbosity=1):
+    def _generate_sequence(self, spin_line, col, verbosity=1):
         """Generate the sequence.
 
         @param spin_line:   The line of data for a single spin.
@@ -171,7 +171,7 @@ class Results:
             generic_fns.selection.desel_spin(spin_id)
 
 
-    def __get_spin_id(self, spin_line, col, verbosity=1):
+    def _get_spin_id(self, spin_line, col, verbosity=1):
         """Get the spin identification string corresponding to spin_line.
 
         @param spin_line:   The line of data for a single spin.
@@ -203,7 +203,7 @@ class Results:
         return generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
 
 
-    def __load_model_free_data(self, spin_line, col, data_set, spin, spin_id, verbosity=1):
+    def _load_model_free_data(self, spin_line, col, data_set, spin, spin_id, verbosity=1):
         """Read the model-free data for the spin.
 
         @param spin_line:   The line of data for a single spin.
@@ -241,7 +241,7 @@ class Results:
 
             # Set up the model-free model.
             if model and equation:
-                self.model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
+                self._model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
 
         # The model type.
         model_type = spin_line[col['param_set']]
@@ -511,7 +511,7 @@ class Results:
                     spin.warning_sim.append(replace(spin_line[col['warn']], '_', ' '))
 
 
-    def __load_relax_data(self, spin_line, col, data_set, spin, verbosity=1):
+    def _load_relax_data(self, spin_line, col, data_set, spin, verbosity=1):
         """Load the relaxation data.
 
         @param spin_line:   The line of data for a single spin.
@@ -565,7 +565,7 @@ class Results:
         add_data_to_spin(spin=spin, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, values=values, errors=errors, sim=sim)
 
 
-    def __load_structure(self, spin_line, col, verbosity=1):
+    def _load_structure(self, spin_line, col, verbosity=1):
         """Load the structure back into the current data pipe.
 
         @param spin_line:   The line of data for a single spin.
@@ -593,7 +593,7 @@ class Results:
             return False
 
 
-    def __read_1_2_results(self, file_data, verbosity=1):
+    def _read_1_2_results(self, file_data, verbosity=1):
         """Read the relax 1.2 model-free results file.
 
         @param file_data:   The processed results file data.
@@ -608,7 +608,7 @@ class Results:
         file_data = file_data[1:]
 
         # Sort the column numbers.
-        col = self.__read_col_numbers(header)
+        col = self._read_col_numbers(header)
 
         # Test the file.
         if len(col) < 2:
@@ -640,7 +640,7 @@ class Results:
                 break
 
             # Sequence.
-            self.__generate_sequence(file_line, col, verbosity)
+            self._generate_sequence(file_line, col, verbosity)
 
 
         # Loop over the lines of the file data.
@@ -649,7 +649,7 @@ class Results:
             data_set = file_line[col['data_set']]
 
             # Get the spin container.
-            spin_id = self.__get_spin_id(file_line, col, verbosity)
+            spin_id = self._get_spin_id(file_line, col, verbosity)
             spin = return_spin(spin_id)
 
             # Backwards compatibility for the reading of the results file from versions 1.2.0 to 1.2.9.
@@ -692,37 +692,37 @@ class Results:
 
             # Diffusion tensor data.
             if data_set == 'value' and not diff_data_set:
-                self.__set_diff_tensor(file_line, col, data_set, verbosity)
+                self._set_diff_tensor(file_line, col, data_set, verbosity)
                 diff_data_set = True
 
             # Diffusion tensor errors.
             elif data_set == 'error' and not diff_error_set:
-                self.__set_diff_tensor(file_line, col, data_set, verbosity)
+                self._set_diff_tensor(file_line, col, data_set, verbosity)
                 diff_error_set = True
 
             # Diffusion tensor simulation data.
             elif data_set != 'value' and data_set != 'error' and sim_num != diff_sim_set:
-                self.__set_diff_tensor(file_line, col, data_set, verbosity)
+                self._set_diff_tensor(file_line, col, data_set, verbosity)
                 diff_sim_set = sim_num
 
             # Model type.
             if model_type == None:
-                self.__fix_params(file_line, col, verbosity)
+                self._fix_params(file_line, col, verbosity)
 
             # PDB.
             if not pdb:
-                if self.__load_structure(file_line, col, verbosity):
+                if self._load_structure(file_line, col, verbosity):
                     pdb = True
 
             # XH vector, heteronucleus, and proton.
             if data_set == 'value':
-                self.__set_xh_vect(file_line, col, spin, verbosity)
+                self._set_xh_vect(file_line, col, spin, verbosity)
 
             # Relaxation data.
-            self.__load_relax_data(file_line, col, data_set, spin, verbosity)
+            self._load_relax_data(file_line, col, data_set, spin, verbosity)
 
             # Model-free data.
-            self.__load_model_free_data(file_line, col, data_set, spin, spin_id, verbosity)
+            self._load_model_free_data(file_line, col, data_set, spin, spin_id, verbosity)
 
         # Set up the simulations.
         if len(sims):
@@ -737,7 +737,7 @@ class Results:
             cdp.sim_state = False
 
 
-    def __read_col_numbers(self, header):
+    def _read_col_numbers(self, header):
         """Determine the column indices from the header line.
 
         @param header:      The header line.
@@ -859,7 +859,7 @@ class Results:
         return col
 
 
-    def __set_diff_tensor(self, spin_line, col, data_set, verbosity=1):
+    def _set_diff_tensor(self, spin_line, col, data_set, verbosity=1):
         """Set up the diffusion tensor.
 
         @param spin_line:   The line of data for a single spin.
@@ -1028,7 +1028,7 @@ class Results:
             generic_fns.diffusion_tensor.init(params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
-    def __set_xh_vect(self, spin_line, col, spin, verbosity=1):
+    def _set_xh_vect(self, spin_line, col, spin, verbosity=1):
         """Set the XH unit vector and the attached proton name.
 
         @param spin_line:   The line of data for a single spin.
@@ -1061,7 +1061,7 @@ class Results:
 
 
     def read_columnar_results(self, file_data, verbosity=1):
-        """Read the model-free results file.
+        """Read the columnar formatted model-free results file.
 
         @param file_data:   The processed results file data.
         @type file_data:    list of lists of str
@@ -1071,8 +1071,8 @@ class Results:
         """
 
         # Determine the results file version.
-        version = self.__determine_version(file_data, verbosity)
+        version = self._determine_version(file_data, verbosity)
 
         # Execute the version specific methods.
         if version == '1.2':
-            self.__read_1_2_results(file_data, verbosity)
+            self._read_1_2_results(file_data, verbosity)

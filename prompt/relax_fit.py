@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'relax_fit' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from specific_fns.setup import relax_fit_obj
 
 
@@ -57,18 +54,18 @@ class Relax_fit(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_fit.relax_time("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_fit.relax_time("
             text = text + "time=" + repr(time)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_num(time, 'relaxation time')
-        check.is_str(spectrum_id, 'spectrum identification string')
+        arg_check.is_num(time, 'relaxation time')
+        arg_check.is_str(spectrum_id, 'spectrum identification string')
 
         # Execute the functional code.
-        relax_fit_obj.relax_time(time=time, spectrum_id=spectrum_id)
+        relax_fit_obj._relax_time(time=time, spectrum_id=spectrum_id)
 
 
     def select_model(self, model='exp'):
@@ -94,13 +91,13 @@ class Relax_fit(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_fit.select_model("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_fit.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(model, 'model')
+        arg_check.is_str(model, 'model')
 
         # Execute the functional code.
-        relax_fit_obj.select_model(model=model)
+        relax_fit_obj._select_model(model=model)

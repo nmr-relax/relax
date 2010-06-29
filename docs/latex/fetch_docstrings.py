@@ -2,7 +2,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,13 +22,11 @@
 #                                                                             #
 ###############################################################################
 
-
-
-
+# Python module imports.
 from inspect import formatargspec, getargspec, getdoc
 from re import match, search
+from string import letters, lowercase, lstrip, punctuation, replace, rstrip, split, upper, whitespace
 import sys
-from string import lowercase, lstrip, punctuation, replace, rstrip, split, upper, whitespace
 
 # Add the path to the relax base directory.
 sys.path.append(sys.path[0])
@@ -47,9 +45,11 @@ class Fetch_docstrings:
         self.intro_string = ''
         self.dummy_mode = 1
 
-        # Start the interpreter!
-        self.interpreter = Interpreter(self)
-        self.interpreter.run()
+        # Global data structures.
+        self.table_count = 1
+
+        # Initialise the interpreter!
+        interpreter = Interpreter(self)
 
         # Get the blacklisted objects.
         self.get_blacklist()
@@ -58,7 +58,7 @@ class Fetch_docstrings:
         self.file = open(file, 'w')
 
         # Get the names of the data structures.
-        names = sorted(self.local.keys())
+        names = sorted(interpreter._locals.keys())
 
         # Alphabetically sort the names of the data structures.
         for name in names:
@@ -67,7 +67,7 @@ class Fetch_docstrings:
                 continue
 
             # Get the object.
-            object = self.local[name]
+            object = interpreter._locals[name]
 
             # Determine if the structure is user function containing class.
             if hasattr(object, '__relax_help__'):
@@ -84,6 +84,26 @@ class Fetch_docstrings:
 
         # Close the LaTeX file.
         self.file.close()
+
+
+    def break_functions(self, text):
+        """Allow the function text to be broken nicely across lines.
+
+        The '\' character will be added later by the latex_special_chars() method.
+        """
+
+        # Allow line breaks after the opening bracket.
+        text = replace(text, "(", "(linebreak[0]")
+
+        # Allow line breaks after periods (but not in numbers).
+        for char in letters:
+            text = replace(text, ".%s" % char, ".linebreak[0]%s" % char)
+
+        # Allow line breaks after equal signs.
+        text = replace(text, "=", "=linebreak[0]")
+
+        # Return the modified text.
+        return text
 
 
     def doc_user_class(self, parent_name, parent_object):
@@ -501,6 +521,9 @@ class Fetch_docstrings:
         # Damned backslashes!
         string = replace(string, 'This is a backslash to be replaced at the end of this functioN', '$\\backslash$')
 
+        # Add a backslash to where it really should be.
+        string = replace(string, 'linebreak[0]', '\linebreak[0]')
+
         # Return the new text.
         return string
 
@@ -588,6 +611,33 @@ class Fetch_docstrings:
         # Add the sting to the list section.
         self.section.append(string)
         self.section_type.append('list')
+
+
+    def num_to_text(self, num):
+        """Convert the number to text.
+        @param num: The number to convert.
+        @type num:  int
+        @return:    The number in the format of 'First', 'Second', 'Third', etc.
+        @rtype:     str
+        """
+
+        # The list.
+        list = ['First',
+                'Second',
+                'Third',
+                'Fourth',
+                'Fifth',
+                'Sixth',
+                'Seventh',
+                'Eighth',
+                'Ninth',
+                'Tenth',
+                'Eleventh',
+                'Twelfth'
+        ]
+
+        # Convert.
+        return list[num-1]
 
 
     def paragraph(self):
@@ -753,8 +803,9 @@ class Fetch_docstrings:
             # The section type alias.
             st = self.section_type[i]
 
-            # Translate to LaTeX quotation marks.
+            # Allow breaking and translate to LaTeX quotation marks.
             if st == 'arguments' or st == 'example':
+                self.section[i] = self.break_functions(self.section[i])
                 self.section[i] = self.latex_quotes(self.section[i])
 
             # Handle the special LaTeX characters.
@@ -794,17 +845,39 @@ class Fetch_docstrings:
         # Write to file.
         ################
 
-        # Start a new page.
-        self.file.write(" \n\n \\newpage")
+        # List of tables to be formatted using longtable.
+        longtable = {"molmol.write": [3],
+                     "pymol.write": [2]
+        }
+
+        # Some whitespace.
+        self.file.write(" \n\n\n")
+
+        # Add a spaced out rule.
+        self.file.write(" \\vspace{20pt}\n")
+        self.file.write(" \\rule{\columnwidth}{2pt}\n")
+        self.file.write(" \\vspace{-30pt}\n")
 
         # Loop over the data.
+        table_sub_count = 1
         for i in xrange(len(self.section)):
             # The section type alias.
             st = self.section_type[i]
 
             # Subsection.
             if st == 'subsection':
-                self.file.write(" \n\n \\subsection{" + self.section[i] + "}")
+                # Store the user function name.
+                user_fn = self.section[i] + '()'
+
+                # Allow for hyphenation.
+                user_fn = replace(user_fn, '.', '\-.')
+                user_fn = replace(user_fn, '\_', '\-\_')
+
+                # Write out the new subsection.
+                self.file.write(" \n\n \\subsection{" + user_fn + "}")
+
+                # Reset the sub table count.
+                table_sub_count = 1
 
             # Subsubsection.
             elif st == 'subsubsection':
@@ -812,7 +885,9 @@ class Fetch_docstrings:
 
             # Defaults.
             elif st == 'arguments':
-                self.file.write("\\textsf{\\textbf{" + self.latex_special_chars(function) + "}" + self.section[i] + "}")
+                self.file.write("\\begin{flushleft}\n")
+                self.file.write("\\textsf{\\textbf{" + self.latex_special_chars(self.break_functions(function)) + "}" + self.section[i] + "}\n")
+                self.file.write("\\end{flushleft}\n")
 
             # Keywords.
             elif st == 'keywords':
@@ -826,7 +901,7 @@ class Fetch_docstrings:
 
                     # Don't know what to do with this!
                     if len(line_elements) > 2:
-                        sys.write("Keyword failure in: " + repr(line) + " \n ")
+                        sys.stderr.write("Keyword failure in: " + repr(line) + " \n ")
                         sys.exit()
 
                     # Format the keyword.
@@ -843,39 +918,99 @@ class Fetch_docstrings:
 
             # Tables.
             elif st == 'table':
+                # Add a reference.
+                self.file.write("(see table~\\ref{table%s}) \n " % self.table_count)
+
                 # Split the lines
                 lines = split(self.section[i], '\n')
 
-                # Start the table, center it, and add the toprule.
-                self.file.write("\\begin{center} \n ")
-                self.file.write("\\begin{tabular}{" + (int(lines[0]))*"l" + "} \n ")
-                self.file.write("\\toprule \n ")
+                # Long table.
+                if function in longtable.keys() and table_sub_count in longtable[function]:
+                    # Start the longtable environment centred and add the caption and toprule.
+                    self.file.write("\\onecolumn\n ")
+                    self.file.write("\\begin{center}\n ")
+                    self.file.write("\\begin{longtable}{" + (int(lines[0]))*"l" + "}\n\n ")
+                    self.file.write("\\caption{%s table for the %s user function.}\n\n " % (self.num_to_text(table_sub_count), user_fn))
+                    self.file.write("\\\\\n \\toprule \n ")
 
-                # Generate the LaTeX headings.
-                elements = split(lines[1], 'SEPARATOR')
-                self.file.write(elements[0])
-                for j in range(1, len(elements)):
-                    self.file.write('&' + elements[j])
-                self.file.write(" \\\\ \n ")
-
-                # Add the midrule.
-                self.file.write("\\midrule \n ")
-
-                # Loop over the main table lines.
-                for line in lines[2:-1]:
-                    # Split columns.
-                    elements = split(line, 'SEPARATOR')
-
-                    # Write the columns.
+                    # Generate the LaTeX headings.
+                    elements = split(lines[1], 'SEPARATOR')
                     self.file.write(elements[0])
                     for j in range(1, len(elements)):
                         self.file.write('&' + elements[j])
                     self.file.write(" \\\\\n ")
 
-                # Add the bottomrule and terminate the tabular and center environment.
-                self.file.write("\\bottomrule \n ")
-                self.file.write("\\end{tabular} \n ")
-                self.file.write("\\end{center} \n ")
+                    # Add the midrule and bottomrule.
+                    self.file.write("\\midrule\n ")
+                    self.file.write("\\endhead\n\n ")
+                    self.file.write("\\bottomrule\n ")
+                    self.file.write("\\endfoot\n\n ")
+
+                    # Label.
+                    self.file.write("\\label{table%s}\n\n " % self.table_count)
+
+                    # Loop over the main table lines.
+                    for line in lines[2:-1]:
+                        # Split columns.
+                        elements = split(line, 'SEPARATOR')
+
+                        # Write the columns.
+                        self.file.write(elements[0])
+                        for j in range(1, len(elements)):
+                            self.file.write('&' + elements[j])
+                        self.file.write(" \\\\\n ")
+
+                    # Terminate.
+                    self.file.write("\\end{longtable}\n ")
+                    self.file.write("\\end{center}\n ")
+                    self.file.write("\\twocolumn\n ")
+
+                # Normal table.
+                else:
+                    # Start the centred table.
+                    self.file.write("\\begin{table*}\n ")
+                    self.file.write("\\begin{scriptsize}\n ")
+                    self.file.write("\\begin{center}\n ")
+
+                    # A caption.
+                    self.file.write("\\caption{%s table for the %s user function.}\n " % (self.num_to_text(table_sub_count), user_fn))
+
+                    # Start the tabular environment and add the toprule.
+                    self.file.write("\\begin{tabular}{" + (int(lines[0]))*"l" + "}\n ")
+                    self.file.write("\\toprule\n ")
+
+                    # Generate the LaTeX headings.
+                    elements = split(lines[1], 'SEPARATOR')
+                    self.file.write(elements[0])
+                    for j in range(1, len(elements)):
+                        self.file.write('&' + elements[j])
+                    self.file.write(" \\\\\n ")
+
+                    # Add the midrule.
+                    self.file.write("\\midrule\n ")
+
+                    # Loop over the main table lines.
+                    for line in lines[2:-1]:
+                        # Split columns.
+                        elements = split(line, 'SEPARATOR')
+
+                        # Write the columns.
+                        self.file.write(elements[0])
+                        for j in range(1, len(elements)):
+                            self.file.write('&' + elements[j])
+                        self.file.write(" \\\\\n ")
+
+                    # Terminate.
+                    self.file.write("\\bottomrule\n ")
+                    self.file.write("\\label{table%s}\n " % self.table_count)
+                    self.file.write("\\end{tabular}\n ")
+                    self.file.write("\\end{center}\n ")
+                    self.file.write("\\end{scriptsize}\n ")
+                    self.file.write("\\end{table*}\n ")
+
+                # Increment the table counters.
+                self.table_count = self.table_count + 1
+                table_sub_count = table_sub_count + 1
 
             # Lists.
             elif st == 'list':
@@ -919,7 +1054,7 @@ class Fetch_docstrings:
                     else:
                         # Get the description.
                         elements = split(lines[j], ':')
-                        
+
                         # End of list.
                         if len(elements) != 2:
                             continue
@@ -987,6 +1122,9 @@ class Fetch_docstrings:
 
             # Add the line to the example.
             string = string + ' ' + lstrip(self.docstring_lines[self.i])
+
+        # Allow functions to be broken across lines nicely.
+        string = self.break_functions(string)
 
         # Add the sting to the verbatim section.
         self.section.append(string)
@@ -1090,7 +1228,7 @@ class Fetch_docstrings:
 
         # Not really a table!
         if num_col == 1:
-            sys.write('Not a table!')
+            sys.stderr.write('Not a table!')
             sys.exit()
 
         # Shift to the next line.

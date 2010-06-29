@@ -58,11 +58,21 @@ class Value_base_class:
         # Add a relaxation curve fitting data pipe to the data store for testing the associated parameters.
         ds.add(pipe_name='relax_fit', pipe_type='relax_fit')
 
+        # Add a N-state model data pipe to the data store for testing the associated parameters.
+        ds.add(pipe_name='n_state', pipe_type='N-state')
+
         # Set up some spins.
         self.set_up_spins(pipe_name='ct')
         self.set_up_spins(pipe_name='mf')
         self.set_up_spins(pipe_name='jw')
         self.set_up_spins(pipe_name='relax_fit')
+
+        # Set up the N-state model.
+        N = 4
+        ds['n_state'].N = N
+        ds['n_state'].alpha = [0.0] * N
+        ds['n_state'].beta = [0.0] * N
+        ds['n_state'].gamma = [0.0] * N
 
 
     def tearDown(self):
@@ -3641,6 +3651,31 @@ class Value_base_class:
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2f, 0.7)
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2s, 0.7)
+
+
+
+    ############################
+    # N-state model parameters #
+    ############################
+
+
+    def test_set_n_state_model_rx(self):
+        """Set the N-state model curve fitting alpha2 parameter.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'n_state'.
+        pipes.switch('n_state')
+
+        # Set the parameter.
+        self.value_fns.set(param='alpha2', val=pi)
+
+        # Test the parameter.
+        self.assertEqual(cdp.alpha[0], 0.0)
+        self.assertEqual(cdp.alpha[1], 0.0)
+        self.assertEqual(cdp.alpha[2], pi)
+        self.assertEqual(cdp.alpha[3], 0.0)
 
 
 

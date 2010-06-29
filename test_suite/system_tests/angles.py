@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,15 +21,16 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 
 
-class Angles(TestCase):
+class Angles(SystemTestCase):
     """Class for testing the angle calculation function."""
 
     def tearDown(self):
@@ -42,7 +43,7 @@ class Angles(TestCase):
         """The user function angles()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'angles.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'angles.py')
 
         # Res info.
         res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
@@ -63,7 +64,7 @@ class Angles(TestCase):
             [0.820296708196, 0.570330671495, -0.0428513205774],
             [-0.223383112106, -0.034680483158, -0.974113571055]
         ]
-        alpha = [None, None, 2.8102691247870459, 2.6063738282640672, 2.9263088853837358, 2.5181004004450211, 1.3361463581932049, 1.5031623128368377, None, None, 1.0968465542222101, 1.1932423104331247]
+        alpha = [None, None, 1.9520343757367986, 2.7290472392365279, 2.419205013244329, 2.8233982819255239, 0.82721388443178889, 0.84005102282930511, None, None, 0.7056707530666082, 2.0797049142007396]
 
         # Molecule checks.
         self.assertEqual(len(cdp.mol), 1)

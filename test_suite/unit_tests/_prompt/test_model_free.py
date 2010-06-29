@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,14 +30,13 @@ from test_suite.unit_tests.model_free_testing_base import Model_free_base_class
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_model_free(Model_free_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.model_free' module."""
 
     # Instantiate the user function class.
-    model_free_fns = Model_free(fake_relax.fake_instance())
+    model_free_fns = Model_free()
 
 
     def test_create_model_argfail_model(self):

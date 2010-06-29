@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2008-2009 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2008-2010 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'results' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import results
 
 
@@ -46,8 +43,8 @@ class Results(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "results.display()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "results.display()"
             print(text)
 
         # Execute the functional code.
@@ -77,15 +74,15 @@ class Results(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "results.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "results.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
         results.read(file=file, directory=dir)
@@ -127,8 +124,8 @@ class Results(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "results.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "results.write("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", compress_type=" + repr(compress_type)
@@ -136,10 +133,10 @@ class Results(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str_or_inst(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(compress_type, 'compression type')
-        check.is_bool(force, 'force flag')
+        arg_check.is_str_or_inst(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int(compress_type, 'compression type')
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         results.write(file=file, directory=dir, force=force, compress_type=compress_type)

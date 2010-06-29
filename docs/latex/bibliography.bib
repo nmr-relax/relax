@@ -1337,90 +1337,179 @@
   year           = 2007
 }
 
-@article{dAuvergneGooley08a,
+@Article{dAuvergneGooley08a,
   Author         = {d'Auvergne, E. J. and Gooley, P. R.},
-title = "{Optimisation of NMR dynamic models I. Minimisation algorithms and their
-performance within the model-free and Brownian rotational diffusion
-spaces}",
-journal = jbnmr,
-volume = "40",
-number = "2",
-pages = "107-109",
-year = "2008",
-pmid = "18085410",
-abstract = "{
-The key to obtaining the model-free description of the dynamics of a
-macromolecule is the optimisation of the model-free and Brownian
-rotational diffusion parameters using the collected R (1), R (2) and
-steady-state NOE relaxation data. The problem of optimising the
-chi-squared value is often assumed to be trivial, however, the long chain
-of dependencies required for its calculation complicates the model-free
-chi-squared space. Convolutions are induced by the Lorentzian form of the
-spectral density functions, the linear recombinations of certain spectral
-density values to obtain the relaxation rates, the calculation of the NOE
-using the ratio of two of these rates, and finally the quadratic form of
-the chi-squared equation itself. Two major topological features of the
-model-free space complicate optimisation. The first is a long, shallow
-valley which commences at infinite correlation times and gradually
-approaches the minimum. The most severe convolution occurs for motions on
-two timescales in which the minimum is often located at the end of a long,
-deep, curved tunnel or multidimensional valley through the space. A large
-number of optimisation algorithms will be investigated and their
-performance compared to determine which techniques are suitable for use in
-model-free analysis. Local optimisation algorithms will be shown to be
-sufficient for minimisation not only within the model-free space but also
-for the minimisation of the Brownian rotational diffusion tensor. In
-addition the performance of the programs Modelfree and Dasha are
-investigated. A number of model-free optimisation failures were
-identified: the inability to slide along the limits, the singular matrix
-failure of the Levenberg-Marquardt minimisation algorithm, the low
-precision of both programs, and a bug in Modelfree. Significantly, the
-singular matrix failure of the Levenberg-Marquardt algorithm occurs when
-internal correlation times are undefined and is greatly amplified in
-model-free analysis by both the grid search and constraint algorithms. The
-program relax ( http://www.nmr-relax.com ) is also presented as a new
-software package designed for the analysis of macromolecular dynamics
-through the use of NMR relaxation data and which alleviates all of the
-problems inherent within model-free analysis.}",
+  Title          = {Optimisation of {NMR} dynamic models {I}.
+                   {M}inimisation algorithms and their performance within
+                   the model-free and {B}rownian rotational diffusion
+                   spaces.},
+  Journal        = jbnmr,
+  Volume         = {40},
+  Number         = {2},
+  Pages          = {107-119},
+  abstract       = {The key to obtaining the model-free description of the
+                   dynamics of a macromolecule is the optimisation of the
+                   model-free and Brownian rotational diffusion parameters
+                   using the collected R (1), R (2) and steady-state NOE
+                   relaxation data. The problem of optimising the
+                   chi-squared value is often assumed to be trivial,
+                   however, the long chain of dependencies required for
+                   its calculation complicates the model-free chi-squared
+                   space. Convolutions are induced by the Lorentzian form
+                   of the spectral density functions, the linear
+                   recombinations of certain spectral density values to
+                   obtain the relaxation rates, the calculation of the NOE
+                   using the ratio of two of these rates, and finally the
+                   quadratic form of the chi-squared equation itself. Two
+                   major topological features of the model-free space
+                   complicate optimisation. The first is a long, shallow
+                   valley which commences at infinite correlation times
+                   and gradually approaches the minimum. The most severe
+                   convolution occurs for motions on two timescales in
+                   which the minimum is often located at the end of a
+                   long, deep, curved tunnel or multidimensional valley
+                   through the space. A large number of optimisation
+                   algorithms will be investigated and their performance
+                   compared to determine which techniques are suitable for
+                   use in model-free analysis. Local optimisation
+                   algorithms will be shown to be sufficient for
+                   minimisation not only within the model-free space but
+                   also for the minimisation of the Brownian rotational
+                   diffusion tensor. In addition the performance of the
+                   programs Modelfree and Dasha are investigated. A number
+                   of model-free optimisation failures were identified:
+                   the inability to slide along the limits, the singular
+                   matrix failure of the Levenberg-Marquardt minimisation
+                   algorithm, the low precision of both programs, and a
+                   bug in Modelfree. Significantly, the singular matrix
+                   failure of the Levenberg-Marquardt algorithm occurs
+                   when internal correlation times are undefined and is
+                   greatly amplified in model-free analysis by both the
+                   grid search and constraint algorithms. The program
+                   relax ( http://www.nmr-relax.com ) is also presented as
+                   a new software package designed for the analysis of
+                   macromolecular dynamics through the use of NMR
+                   relaxation data and which alleviates all of the
+                   problems inherent within model-free analysis.},
+  authoraddress  = {Department of NMR-based Structural Biology, Max Planck
+                   Institute for Biophysical Chemistry, Am Fassberg 11,
+                   D-37077, Goettingen, Germany. edward@nmr-relax.com},
+  keywords       = {*Algorithms ; Cytochromes c2/chemistry ; Diffusion ;
+                   *Models, Molecular ; Nuclear Magnetic Resonance,
+                   Biomolecular/*methods ; Rhodobacter
+                   capsulatus/chemistry ; *Rotation},
+  language       = {eng},
+  medline-aid    = {10.1007/s10858-007-9214-2 [doi]},
+  medline-crdt   = {2007/12/19 09:00},
+  medline-da     = {20080109},
+  medline-dcom   = {20080917},
+  medline-dep    = {20071218},
+  medline-edat   = {2007/12/19 09:00},
+  medline-fau    = {d'Auvergne, Edward J ; Gooley, Paul R},
+  medline-is     = {0925-2738 (Print) ; 0925-2738 (Linking)},
+  medline-jid    = {9110829},
+  medline-jt     = {Journal of biomolecular NMR},
+  medline-lr     = {20091118},
+  medline-mhda   = {2008/09/18 09:00},
+  medline-oid    = {NLM: PMC2758376},
+  medline-own    = {NLM},
+  medline-phst   = {2007/02/23 [received] ; 2007/11/06 [accepted] ;
+                   2007/12/18 [aheadofprint]},
+  medline-pl     = {Netherlands},
+  medline-pmc    = {PMC2758376},
+  medline-pmid   = {18085410},
+  medline-pst    = {ppublish},
+  medline-pt     = {Journal Article},
+  medline-rn     = {9035-43-2 (Cytochromes c2)},
+  medline-sb     = {IM},
+  medline-so     = {J Biomol NMR. 2008 Feb;40(2):107-19. Epub 2007 Dec 18.},
+  medline-stat   = {MEDLINE},
+  url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks&dbfrom=pubmed&retmode=ref&id=18085410},
+  year           = 2008
 }
 
-@article{dAuvergneGooley08b,
+@Article{dAuvergneGooley08b,
   Author         = {d'Auvergne, E. J. and Gooley, P. R.},
-  Title = {Optimisation of NMR dynamic models II. A new methodology for the dual
-optimisation of the model-free parameters and the Brownian rotational
-diffusion tensor},
-journal = jbnmr,
-volume = "40",
-number = "2",
-pages = "121-123",
-year = "2008",
-pmid = "18085411",
-abstract = "{
-Finding the dynamics of an entire macromolecule is a complex problem as
-the model-free parameter values are intricately linked to the Brownian
-rotational diffusion of the molecule, mathematically through the
-autocorrelation function of the motion and statistically through model
-selection. The solution to this problem was formulated using set theory as
-an element of the universal set [Formula: see text]-the union of all
-model-free spaces (d'Auvergne EJ and Gooley PR (2007) Mol BioSyst 3(7),
-483-494). The current procedure commonly used to find the universal
-solution is to initially estimate the diffusion tensor parameters, to
-optimise the model-free parameters of numerous models, and then to choose
-the best model via model selection. The global model is then optimised and
-the procedure repeated until convergence. In this paper a new methodology
-is presented which takes a different approach to this diffusion seeded
-model-free paradigm. Rather than starting with the diffusion tensor this
-iterative protocol begins by optimising the model-free parameters in the
-absence of any global model parameters, selecting between all the
-model-free models, and finally optimising the diffusion tensor. The new
-model-free optimisation protocol will be validated using synthetic data
-from Schurr JM et al. (1994) J Magn Reson B 105(3), 211-224 and the
-relaxation data of the bacteriorhodopsin (1-36)BR fragment from Orekhov VY
-(1999) J Biomol NMR 14(4), 345-356. To demonstrate the importance of this
-new procedure the NMR relaxation data of the Olfactory Marker Protein
-(OMP) of Gitti R et al. (2005) Biochem 44(28), 9673-9679 is reanalysed.
-The result is that the dynamics for certain secondary structural elements
-is very different from those originally reported.}",
+  Title          = {Optimisation of {NMR} dynamic models {II}. {A} new
+                   methodology for the dual optimisation of the model-free
+                   parameters and the {B}rownian rotational diffusion
+                   tensor.},
+  Journal        = jbnmr,
+  Volume         = {40},
+  Number         = {2},
+  Pages          = {121-133},
+  abstract       = {Finding the dynamics of an entire macromolecule is a
+                   complex problem as the model-free parameter values are
+                   intricately linked to the Brownian rotational diffusion
+                   of the molecule, mathematically through the
+                   autocorrelation function of the motion and
+                   statistically through model selection. The solution to
+                   this problem was formulated using set theory as an
+                   element of the universal set [formula: see text]-the
+                   union of all model-free spaces (d'Auvergne EJ and
+                   Gooley PR (2007) Mol BioSyst 3(7), 483-494). The
+                   current procedure commonly used to find the universal
+                   solution is to initially estimate the diffusion tensor
+                   parameters, to optimise the model-free parameters of
+                   numerous models, and then to choose the best model via
+                   model selection. The global model is then optimised and
+                   the procedure repeated until convergence. In this paper
+                   a new methodology is presented which takes a different
+                   approach to this diffusion seeded model-free paradigm.
+                   Rather than starting with the diffusion tensor this
+                   iterative protocol begins by optimising the model-free
+                   parameters in the absence of any global model
+                   parameters, selecting between all the model-free
+                   models, and finally optimising the diffusion tensor.
+                   The new model-free optimisation protocol will be
+                   validated using synthetic data from Schurr JM et al.
+                   (1994) J Magn Reson B 105(3), 211-224 and the
+                   relaxation data of the bacteriorhodopsin (1-36)BR
+                   fragment from Orekhov VY (1999) J Biomol NMR 14(4),
+                   345-356. To demonstrate the importance of this new
+                   procedure the NMR relaxation data of the Olfactory
+                   Marker Protein (OMP) of Gitti R et al. (2005) Biochem
+                   44(28), 9673-9679 is reanalysed. The result is that the
+                   dynamics for certain secondary structural elements is
+                   very different from those originally reported.},
+  authoraddress  = {Department of NMR-based Structural Biology, Max Planck
+                   Institute for Biophysical Chemistry, Am Fassberg 11,
+                   Goettingen, D-37077, Germany. edward@nmr-relax.com},
+  keywords       = {Algorithms ; Amides/chemistry ;
+                   Bacteriorhodopsins/chemistry ; Crystallography, X-Ray ;
+                   Diffusion ; *Models, Molecular ; Nuclear Magnetic
+                   Resonance, Biomolecular/*methods ; Olfactory Marker
+                   Protein/chemistry ; Peptide Fragments/chemistry ;
+                   Protein Structure, Secondary ; *Rotation},
+  language       = {eng},
+  medline-aid    = {10.1007/s10858-007-9213-3 [doi]},
+  medline-crdt   = {2007/12/19 09:00},
+  medline-da     = {20080109},
+  medline-dcom   = {20080917},
+  medline-dep    = {20071218},
+  medline-edat   = {2007/12/19 09:00},
+  medline-fau    = {d'Auvergne, Edward J ; Gooley, Paul R},
+  medline-is     = {0925-2738 (Print) ; 0925-2738 (Linking)},
+  medline-jid    = {9110829},
+  medline-jt     = {Journal of biomolecular NMR},
+  medline-lr     = {20091118},
+  medline-mhda   = {2008/09/18 09:00},
+  medline-oid    = {NLM: PMC2758375},
+  medline-own    = {NLM},
+  medline-phst   = {2007/02/23 [received] ; 2007/11/06 [accepted] ;
+                   2007/12/18 [aheadofprint]},
+  medline-pl     = {Netherlands},
+  medline-pmc    = {PMC2758375},
+  medline-pmid   = {18085411},
+  medline-pst    = {ppublish},
+  medline-pt     = {Journal Article},
+  medline-rn     = {0 (Amides) ; 0 (Olfactory Marker Protein) ; 0 (Peptide
+                   Fragments) ; 53026-44-1 (Bacteriorhodopsins)},
+  medline-sb     = {IM},
+  medline-so     = {J Biomol NMR. 2008 Feb;40(2):121-33. Epub 2007 Dec 18.},
+  medline-stat   = {MEDLINE},
+  url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks&dbfrom=pubmed&retmode=ref&id=18085411},
+  year           = 2008
 }
 
 @Article{DellwoWand89,

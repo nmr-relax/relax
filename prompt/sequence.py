@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2007-2009 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2007-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'sequence' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import sequence
 from relax_errors import RelaxError
 
@@ -78,15 +75,15 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "sequence.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_from, 'pipe from', can_be_none=True)
-        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
@@ -117,8 +114,8 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "sequence.display("
             text = text + "sep=" + repr(sep)
             text = text + ", mol_name_flag=" + repr(mol_name_flag)
             text = text + ", res_num_flag=" + repr(res_num_flag)
@@ -128,12 +125,12 @@ class Sequence(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(sep, 'column separator', can_be_none=True)
-        check.is_bool(mol_name_flag, 'molecule name flag')
-        check.is_bool(res_num_flag, 'residue number flag')
-        check.is_bool(res_name_flag, 'residue name flag')
-        check.is_bool(spin_num_flag, 'spin number flag')
-        check.is_bool(spin_name_flag, 'spin name flag')
+        arg_check.is_str(sep, 'column separator', can_be_none=True)
+        arg_check.is_bool(mol_name_flag, 'molecule name flag')
+        arg_check.is_bool(res_num_flag, 'residue number flag')
+        arg_check.is_bool(res_name_flag, 'residue name flag')
+        arg_check.is_bool(spin_num_flag, 'spin number flag')
+        arg_check.is_bool(spin_name_flag, 'spin name flag')
 
         # Execute the functional code.
         sequence.display(sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
@@ -217,8 +214,8 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "sequence.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spin_id_col=" + repr(spin_id_col)
@@ -232,16 +229,16 @@ class Sequence(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
-        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
-        check.is_int(res_num_col, 'residue number column', can_be_none=True)
-        check.is_int(res_name_col, 'residue name column', can_be_none=True)
-        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
-        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
-        check.is_str(sep, 'column separator', can_be_none=True)
-        check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
+        arg_check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        arg_check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        arg_check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        arg_check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        arg_check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        arg_check.is_str(sep, 'column separator', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
         sequence.read(file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
@@ -279,8 +276,8 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "sequence.write("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", sep=" + repr(sep)
@@ -293,15 +290,15 @@ class Sequence(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_str(sep, 'column separator', can_be_none=True)
-        check.is_bool(mol_name_flag, 'molecule name flag')
-        check.is_bool(res_num_flag, 'residue number flag')
-        check.is_bool(res_name_flag, 'residue name flag')
-        check.is_bool(spin_num_flag, 'spin number flag')
-        check.is_bool(spin_name_flag, 'spin name flag')
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(sep, 'column separator', can_be_none=True)
+        arg_check.is_bool(mol_name_flag, 'molecule name flag')
+        arg_check.is_bool(res_num_flag, 'residue number flag')
+        arg_check.is_bool(res_name_flag, 'residue name flag')
+        arg_check.is_bool(spin_num_flag, 'spin number flag')
+        arg_check.is_bool(spin_name_flag, 'spin name flag')
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         sequence.write(file=file, dir=dir, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag, force=force)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2009 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2007-2010 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,12 +24,9 @@
 """Module containing the 'relax_data' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import relax_data
 from relax_errors import RelaxError
 
@@ -52,17 +49,17 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.back_calc("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.back_calc("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", frq=" + repr(frq) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(ri_label, 'relaxation label')
-        check.is_str(frq_label, 'frequency label')
-        check.is_num(frq, 'frequency')
+        arg_check.is_str(ri_label, 'relaxation label')
+        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_num(frq, 'frequency')
 
         # Execute the functional code.
         relax_data.back_calc(ri_label=ri_label, frq_label=frq_label, frq=frq)
@@ -109,8 +106,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", ri_label=" + repr(ri_label)
@@ -118,10 +115,10 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_from, 'pipe from', can_be_none=True)
-        check.is_str(pipe_to, 'pipe to', can_be_none=True)
-        check.is_str(ri_label, 'relaxation label', can_be_none=True)
-        check.is_str(frq_label, 'frequency label', can_be_none=True)
+        arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        arg_check.is_str(ri_label, 'relaxation label', can_be_none=True)
+        arg_check.is_str(frq_label, 'frequency label', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
@@ -151,15 +148,15 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.delete("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(ri_label, 'relaxation label')
-        check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_label, 'relaxation label')
+        arg_check.is_str(frq_label, 'frequency label')
 
         # Execute the functional code.
         relax_data.delete(ri_label=ri_label, frq_label=frq_label)
@@ -185,15 +182,15 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.display("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(ri_label, 'relaxation label')
-        check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_label, 'relaxation label')
+        arg_check.is_str(frq_label, 'frequency label')
 
         # Execute the functional code.
         relax_data.display(ri_label=ri_label, frq_label=frq_label)
@@ -282,8 +279,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.read("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", frq=" + repr(frq)
@@ -302,21 +299,21 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(ri_label, 'relaxation label')
-        check.is_str(frq_label, 'frequency label')
-        check.is_num(frq, 'frequency')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
-        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
-        check.is_int(res_num_col, 'residue number column', can_be_none=True)
-        check.is_int(res_name_col, 'residue name column', can_be_none=True)
-        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
-        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
-        check.is_int(data_col, 'data column')
-        check.is_int(error_col, 'error column')
-        check.is_str(sep, 'column separator', can_be_none=True)
-        check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        arg_check.is_str(ri_label, 'relaxation label')
+        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_num(frq, 'frequency')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
+        arg_check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        arg_check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        arg_check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        arg_check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        arg_check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        arg_check.is_int(data_col, 'data column')
+        arg_check.is_int(error_col, 'error column')
+        arg_check.is_str(sep, 'column separator', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
         relax_data.read(ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
@@ -348,8 +345,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.write("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", file=" + repr(file)
@@ -358,11 +355,11 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(ri_label, 'relaxation label')
-        check.is_str(frq_label, 'frequency label')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(ri_label, 'relaxation label')
+        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         relax_data.write(ri_label=ri_label, frq_label=frq_label, file=file, dir=dir, force=force)
