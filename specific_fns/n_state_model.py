@@ -160,7 +160,7 @@ class N_state_model(API_base, API_common):
 
         # Starting point of the populations.
         pop_start = 0
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             pop_start = pop_start + 5*len(cdp.align_ids)
 
         # Loop over the populations, and set the scaling factor.
@@ -455,7 +455,7 @@ class N_state_model(API_base, API_common):
             raise RelaxNoModelError
 
         # Unpack and strip off the alignment tensor parameters.
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
@@ -580,7 +580,7 @@ class N_state_model(API_base, API_common):
 
         # Starting point of the populations.
         pop_start = 0
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             pop_start = pop_start + 5*len(cdp.align_ids)
 
         # Initialisation (0..j..m).
@@ -1221,7 +1221,7 @@ class N_state_model(API_base, API_common):
         num = 0
 
         # Alignment tensor params.
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             # Loop over the alignments.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it is not part of the parameter set.
