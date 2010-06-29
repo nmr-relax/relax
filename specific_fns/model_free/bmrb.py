@@ -33,7 +33,7 @@ if dep_check.bmrblib_module:
     from bmrblib.nmr_star_dict import NMR_STAR
     from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
     from bmrblib.nmr_star_dict_v3_2 import NMR_STAR_v3_2
-from generic_fns import exp_info, mol_res_spin, pipes, relax_data
+from generic_fns import diffusion_tensor, exp_info, mol_res_spin, pipes, relax_data
 from generic_fns.mol_res_spin import get_molecule_names, spin_loop
 from relax_errors import RelaxError
 
@@ -284,6 +284,13 @@ class Bmrb:
 
         # Generate the model-free data saveframe.
         star.model_free.add(global_chi2=global_chi2, software_ids=[software_id], software_labels=['relax'], entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, local_tc=local_tm_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, local_tc_err=local_tm_err_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list, rex_frq=rex_frq, chi2=chi2_list, model_fit=model_list)
+
+
+        # Create Supergroup 8 : The structure determination saveframes.
+        ###############################################################
+
+        # Generate the diffusion tensor saveframes.
+        diffusion_tensor.bmrb_write(star)
 
 
         # Write the contents to the STAR formatted file.
