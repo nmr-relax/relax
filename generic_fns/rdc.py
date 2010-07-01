@@ -127,6 +127,18 @@ def corr_plot(format=None, file=None, dir=None, force=False):
         # Append a new list for this alignment.
         data.append([])
 
+        # Errors present?
+        err_flag = False
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Error present.
+            if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+                err_flag = True
+                break
+
         # Loop over the spins.
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
@@ -141,11 +153,14 @@ def corr_plot(format=None, file=None, dir=None, force=False):
             data[-1].append([spin.rdc_bc[align_id], spin.rdc[align_id]])
 
             # Errors.
-            if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err:
-                data[-1][-1].append(spin.rdc_err[align_id])
+            if err_flag:
+                if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+                    data[-1][-1].append(spin.rdc_err[align_id])
+                else:
+                    data[-1][-1].append(None)
 
             # Label.
-                data[-1][-1].append(spin_id)
+            data[-1][-1].append(spin_id)
 
     # The data size.
     size = len(data)
@@ -153,13 +168,19 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     # Only one data set.
     data = [data]
 
+    # Graph type.
+    if err_flag:
+        graph_type = 'xydy'
+    else:
+        graph_type = 'xy'
+
     # Grace file.
     if format == 'grace':
         # The header.
         grace.write_xy_header(file=file, title="RDC correlation plot", sets=size, set_names=[None]+cdp.rdc_ids, linestyle=[2]+[0]*size, data_type=['rdc_bc', 'rdc'], axis_min=[-10, -10], axis_max=[10, 10], legend_pos=[1, 0.5])
 
         # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type='xydy')
+        grace.write_xy_data(data=data, file=file, graph_type=graph_type)
 
 
 def display(align_id=None):

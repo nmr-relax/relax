@@ -165,6 +165,18 @@ def corr_plot(format=None, file=None, dir=None, force=False):
         # Append a new list for this alignment.
         data.append([])
 
+        # Errors present?
+        err_flag = False
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Error present.
+            if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                err_flag = True
+                break
+
         # Loop over the spins.
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
@@ -179,11 +191,14 @@ def corr_plot(format=None, file=None, dir=None, force=False):
             data[-1].append([spin.pcs_bc[align_id], spin.pcs[align_id]])
 
             # Errors.
-            if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err:
-                data[-1][-1].append(spin.pcs_err[align_id])
+            if err_flag:
+                if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                    data[-1][-1].append(spin.pcs_err[align_id])
+                else:
+                    data[-1][-1].append(None)
 
             # Label.
-                data[-1][-1].append(spin_id)
+            data[-1][-1].append(spin_id)
 
     # The data size.
     size = len(data)
@@ -191,13 +206,19 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     # Only one data set.
     data = [data]
 
+    # Graph type.
+    if err_flag:
+        graph_type = 'xydy'
+    else:
+        graph_type = 'xy'
+
     # Grace file.
     if format == 'grace':
         # The header.
         grace.write_xy_header(file=file, title="PCS correlation plot", sets=size, set_names=[None]+cdp.pcs_ids, linestyle=[2]+[0]*size, data_type=['pcs_bc', 'pcs'], axis_min=[-0.5, -0.5], axis_max=[0.5, 0.5], legend_pos=[1, 0.5])
 
         # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type='xydy')
+        grace.write_xy_data(data=data, file=file, graph_type=graph_type)
 
 
 def display(align_id=None):
