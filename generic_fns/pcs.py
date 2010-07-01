@@ -176,7 +176,14 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                 continue
 
             # Append the data.
-            data[-1].append([spin.pcs_bc[align_id], spin.pcs[align_id], spin.pcs_err[align_id], spin_id])
+            data[-1].append([spin.pcs_bc[align_id], spin.pcs[align_id]])
+
+            # Errors.
+            if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err:
+                data[-1][-1].append(spin.pcs_err[align_id])
+
+            # Label.
+                data[-1][-1].append(spin_id)
 
     # The data size.
     size = len(data)
