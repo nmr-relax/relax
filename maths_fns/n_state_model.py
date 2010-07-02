@@ -39,7 +39,7 @@ from rotation_matrix import euler_to_R_zyz
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, pcs=None, pcs_errors=None, pcs_weights=None, rdcs=None, rdc_errors=None, rdc_weights=None, xh_vect=None, temp=None, frq=None, dip_const=None, atomic_pos=None, paramag_centre=None, scaling_matrix=None, centre_fix=True):
+    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, pcs=None, pcs_errors=None, pcs_weights=None, rdcs=None, rdc_errors=None, rdc_weights=None, xh_vect=None, temp=None, frq=None, dip_const=None, atomic_pos=None, paramag_centre=None, scaling_matrix=None, centre_fixed=True):
         """Set up the class instance for optimisation.
 
         The N-state models
@@ -141,8 +141,8 @@ class N_state_opt:
         @type paramag_centre:       numpy rank-1 array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 array
-        @keyword centre_fix:        A flag which if False will cause the paramagnetic centre to be optimised.
-        @type centre_fix:           bool
+        @keyword centre_fixed:      A flag which if False will cause the paramagnetic centre to be optimised.
+        @type centre_fixed:         bool
         """
 
         # Store the data inside the class instance namespace.
@@ -154,6 +154,9 @@ class N_state_opt:
         self.dip_const = dip_const
         self.temp = temp
         self.frq = frq
+        self.atomic_pos = atomic_pos
+        self.paramag_centre = paramag_centre
+        self.centre_fixed = centre_fixed
         self.total_num_params = len(init_params)
 
         # Initialise the function value, gradient, and Hessian.
@@ -352,15 +355,11 @@ class N_state_opt:
                 self.paramag_unit_vect = zeros(atomic_pos.shape, float64)
                 self.paramag_dist = zeros((self.num_spins, self.N), float64)
                 self.pcs_const = zeros((self.num_align, self.num_spins, self.N), float64)
+                if self.paramag_centre == None:
+                    self.paramag_centre = zeros(3, float64)
 
-                # Get the vectors and distances.
-                paramag_data(atomic_pos, paramag_centre, self.paramag_unit_vect, self.paramag_dist)
-
-                # The PCS constants.
-                for i in range(self.num_align):
-                    for j in range(self.num_spins):
-                        for c in range(self.N):
-                            self.pcs_const[i, j, c] = pcs_constant(self.temp[i], self.frq[i], self.paramag_dist[j, c])
+                # Set up the paramagnetic info.
+                self.paramag_info()
 
             # The probability array (all structures have initial equal probability).
             self.probs = ones(self.N, float64) / self.N
@@ -376,8 +375,8 @@ class N_state_opt:
             self.d2Dij_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins), float64)
 
             # Set the target function, gradient, and Hessian (paramagnetic centre optimisation).
-            if not centre_fix:
-                self.func = self.func_paramag_centre
+            if not centre_fixed:
+                self.func = self.func_population
                 self.dfunc = None
                 self.d2func = None
 
@@ -614,6 +613,14 @@ class N_state_opt:
         # Unpack the probabilities (located at the end of the parameter array).
         if self.N > 1:
             self.probs = params[-(self.N-1):]
+
+        # Unpack the paramagnetic centre.
+        if not self.centre_fixed:
+            # The position.
+            self.paramag_centre = params[-3:]
+
+            # Update the paramagnetic info.
+            self.paramag_info()
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
@@ -1552,3 +1559,16 @@ class N_state_opt:
 
         # The gradient.
         return self.d2chi2
+
+
+    def paramag_info(self):
+        """Calculate the paramagnetic centre to spin vectors, distances and constants."""
+
+        # Get the vectors and distances.
+        paramag_data(self.atomic_pos, self.paramag_centre, self.paramag_unit_vect, self.paramag_dist)
+
+        # The PCS constants.
+        for i in range(self.num_align):
+            for j in range(self.num_spins):
+                for c in range(self.N):
+                    self.pcs_const[i, j, c] = pcs_constant(self.temp[i], self.frq[i], self.paramag_dist[j, c])

@@ -1354,16 +1354,16 @@ class N_state_model(API_base, API_common):
             full_tensors = self._minimise_setup_fixed_tensors(sim_index=sim_index)
 
         # Get the atomic_positions.
-        atomic_pos, paramag_centre, centre_fix = None, None, True
+        atomic_pos, paramag_centre, centre_fixed = None, None, True
         if 'pcs' in data_types or 'pre' in data_types:
             atomic_pos, paramag_centre = self._minimise_setup_atomic_pos()
 
             # Optimisation of the centre.
             if hasattr(cdp, 'paramag_centre_fixed'):
-                centre_fix = cdp.paramag_centre_fixed
+                centre_fixed = cdp.paramag_centre_fixed
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, xh_vect=xh_vect, temp=temp, frq=frq, dip_const=rdc_dj, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fix=centre_fix)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, xh_vect=xh_vect, temp=temp, frq=frq, dip_const=rdc_dj, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
