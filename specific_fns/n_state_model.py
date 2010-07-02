@@ -130,6 +130,18 @@ class N_state_model(API_base, API_common):
                 param_vector.append(beta[i])
                 param_vector.append(gamma[i])
 
+        # The paramagnetic centre.
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            if not hasattr(cdp, 'paramagnetic_centre'):
+                param_vector.append(0.0)
+                param_vector.append(0.0)
+                param_vector.append(0.0)
+
+            else:
+                param_vector.append(cdp.paramagnetic_centre[0])
+                param_vector.append(cdp.paramagnetic_centre[1])
+                param_vector.append(cdp.paramagnetic_centre[2])
+
         # Convert all None values to zero (to avoid conversion to NaN).
         for i in xrange(len(param_vector)):
             if param_vector[i] == None:
@@ -168,6 +180,11 @@ class N_state_model(API_base, API_common):
             factor = 100.0
             for i in xrange(pop_start, pop_start + (cdp.N-1)):
                 scaling_matrix[i, i] = factor
+
+        # The paramagnetic centre.
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            for i in range(-3, 0):
+                scaling_matrix[i, i] = 1e10
 
         # Return the matrix.
         return scaling_matrix
@@ -509,6 +526,17 @@ class N_state_model(API_base, API_common):
                 alpha[i] = param_vector[cdp.N-1 + 3*i]
                 beta[i] = param_vector[cdp.N-1 + 3*i + 1]
                 gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
+
+        # The paramagnetic centre.
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            # Create the structure if needed.
+            if not hasattr(cdp, 'paramagnetic_centre'):
+                cdp.paramagnetic_centre = zeros(3, float64)
+
+            # The position.
+            cdp.paramagnetic_centre[0] = param_vector[-3]
+            cdp.paramagnetic_centre[1] = param_vector[-2]
+            cdp.paramagnetic_centre[2] = param_vector[-1]
 
 
     def _linear_constraints(self, data_types=None, scaling_matrix=None):
@@ -1231,7 +1259,11 @@ class N_state_model(API_base, API_common):
         if cdp.model == '2-domain':
             num = num + 3*cdp.N
 
-        # Return the param number.
+        # The paramagnetic centre.
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            num = num + 3
+
+         # Return the param number.
         return num
 
 
@@ -1628,6 +1660,11 @@ class N_state_model(API_base, API_common):
                     elif search('^beta', cdp.params[i]):
                         lower.append(0.0)
                         upper.append(pi)
+
+                # The paramagnetic centre.
+                elif hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed and (n - i) <= 3:
+                    lower.append(-100e-10)
+                    upper.append(100e-10)
 
                 # Otherwise this must be an alignment tensor component.
                 else:
