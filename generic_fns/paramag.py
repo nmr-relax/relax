@@ -37,7 +37,7 @@ from relax_io import open_write_file, read_spin_data, write_spin_data
 from relax_warnings import RelaxWarning
 
 
-def centre(pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=False, force=False):
+def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=False, force=False):
     """Specify the atom in the loaded structure corresponding to the paramagnetic centre.
 
     @keyword pos:       The atomic position.  If set, the atom_id string will be ignored.
@@ -48,9 +48,12 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=False, force=
     @type pipe:         None or str
     @keyword verbosity: The amount of information to print out.  The bigger the number, the more information.
     @type verbosity:    int
+    @keyword fix:       A flag which if False causes the paramagnetic centre to be optimised during minimisation.
+    @type fix:          bool
     @keyword ave_pos:   A flag which if True causes the atomic positions from multiple models to be averaged.
     @type ave_pos:      bool
     @keyword force:     A flag which if True will cause the current paramagnetic centre to be overwritten.
+    @type force:        bool
     """
 
     # The data pipe.
@@ -124,3 +127,6 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=False, force=
         if verbosity:
             print("\nUsing all paramagnetic positions.")
         cdp.paramagnetic_centre = full_pos_list
+
+    # The fixed flag.
+    cdp.paramag_centre_fix = fix

@@ -34,7 +34,7 @@ from relax_errors import RelaxError
 class PCS(User_fn_class):
     """Class for handling paramagnetic information."""
 
-    def centre(self, pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=True, force=False):
+    def centre(self, pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=True, force=False):
         """Specify which atom is the paramagnetic centre.
 
         Keyword Arguments
@@ -47,6 +47,8 @@ class PCS(User_fn_class):
         pipe:  The data pipe containing the structures to extract the centre from.
 
         verbosity:  The amount of information to print out.
+
+        fix:  A flag specifying if the paramagnetic centre should be fixed during optimisation.
 
         ave_pos:  A flag specifying if the position of the atom is to be averaged across all models.
 
@@ -89,6 +91,10 @@ class PCS(User_fn_class):
 
         relax> pcs.centre([0.136, 12.543, 4.356])
         relax> pcs.centre(pos=[0.136, 12.543, 4.356])
+
+        To find an unknown paramagnetic centre, type:
+
+        relax> pcs.centre(fix=False)
         """
 
         # Function intro text.
@@ -98,6 +104,7 @@ class PCS(User_fn_class):
             text = text + ", atom_id=" + repr(atom_id)
             text = text + ", pipe=" + repr(pipe)
             text = text + ", verbosity=" + repr(verbosity)
+            text = text + ", fix=" + repr(fix)
             text = text + ", ave_pos=" + repr(ave_pos)
             text = text + ", force=" + repr(force) + ")"
             print(text)
@@ -107,8 +114,9 @@ class PCS(User_fn_class):
         arg_check.is_str(atom_id, 'atom ID string', can_be_none=True)
         arg_check.is_str(pipe, 'data pipe', can_be_none=True)
         arg_check.is_int(verbosity, 'verbosity level')
+        arg_check.is_bool(fix, 'fix flag')
         arg_check.is_bool(ave_pos, 'average position flag')
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        paramag.centre(pos=pos, atom_id=atom_id, pipe=pipe, verbosity=verbosity, ave_pos=ave_pos, force=force)
+        paramag.centre(pos=pos, atom_id=atom_id, pipe=pipe, verbosity=verbosity, fix=fix, ave_pos=ave_pos, force=force)
