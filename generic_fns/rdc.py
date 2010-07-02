@@ -32,6 +32,7 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns import grace, pipes
+from generic_fns.align_tensor import get_tensor_index
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
@@ -73,23 +74,21 @@ def back_calc(align_id=None):
         if type(vectors[0]) in [float, float64]:
             vectors = [vectors]
 
-        # Loop over each alignment.
-        for i in range(len(cdp.align_tensors)):
-            # Gyromagnetic ratios.
-            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
-            gh = return_gyromagnetic_ratio(spin.proton_type)
+        # Gyromagnetic ratios.
+        gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+        gh = return_gyromagnetic_ratio(spin.proton_type)
 
-            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            dj = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
+        # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+        dj = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
 
-            # Unit vectors.
-            for c in range(cdp.N):
-                unit_vect[c] = vectors[c] / norm(vectors[c])
+        # Unit vectors.
+        for c in range(cdp.N):
+            unit_vect[c] = vectors[c] / norm(vectors[c])
 
-            # Calculate the RDC.
-            if not hasattr(spin, 'rdc_bc'):
-                spin.rdc_bc = {}
-            spin.rdc_bc[align_id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[i].A, weights=weights)
+        # Calculate the RDC.
+        if not hasattr(spin, 'rdc_bc'):
+            spin.rdc_bc = {}
+        spin.rdc_bc[align_id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[get_tensor_index(align_id)].A, weights=weights)
 
 
 def corr_plot(format=None, file=None, dir=None, force=False):
