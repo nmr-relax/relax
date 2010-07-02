@@ -69,6 +69,10 @@ def back_calc(align_id=None):
         else:
             vectors = spin.xh_vect
 
+        # Single vector.
+        if type(vectors[0]) in [float, float64]:
+            vectors = [vectors]
+
         # Loop over each alignment.
         for i in range(len(cdp.align_tensors)):
             # Gyromagnetic ratios.
