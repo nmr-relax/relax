@@ -49,7 +49,7 @@ for i in xrange(len(align_list)):
     frq.set(id=align_list[i], frq=799.75376122 * 1e6)
 
 # Set the paramagnetic centre.
-pcs.centre([1, 2, -30])
+paramag.centre([1, 2, -30])
 
 # Set up the model.
 n_state_model.select_model(model='fixed')
