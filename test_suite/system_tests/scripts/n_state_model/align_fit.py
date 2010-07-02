@@ -52,7 +52,7 @@ if ds.mode in ['pcs', 'all']:
     pcs.read(align_id='synth', file=pcs_file, dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6)
 
     # Set the paramagnetic centre.
-    pcs.centre(atom_id=':1000@CA')
+    paramag.centre(atom_id=':1000@CA')
 
     # The temperature.
     temperature(id='synth', temp=303)

@@ -56,7 +56,7 @@ frq.set(id='synth', frq=600.0 * 1e6)
 n_state_model.select_model(model='fixed')
 
 # Paramagnetic centre optimisation.
-n_state_model.fix_paramag_centre(fix=False)
+paramag.centre(fix=False)
 
 # Set the tensor elements.
 #cdp.align_tensors[0].Axx = -0.351261/2000
