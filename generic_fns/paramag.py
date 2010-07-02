@@ -79,7 +79,7 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=Fal
         print("The paramagnetic centre will be fixed during optimisation.")
     else:
         print("The paramagnetic centre will be optimised.")
-    cdp.paramag_centre_fix = fix
+    cdp.paramag_centre_fixed = fix
 
     # Position is supplied.
     if pos != None:

@@ -47,7 +47,7 @@ import generic_fns.structure.mass
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.potential import quad_pot
 from maths_fns.rotation_matrix import two_vect_to_R, euler_to_R_zyz
-from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
+from physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning, RelaxDeselectWarning
@@ -673,6 +673,45 @@ class N_state_model(API_base, API_common):
                     data_index = data_index + 1
 
 
+    def _minimise_setup_atomic_pos(self):
+        """Set up the atomic position data structures for optimisation using PCSs and PREs as base data sets.
+
+        @return:    The atomic positions (the first index is the spins, the second is the structures, and the third is the atomic coordinates) and the paramagnetic centre.
+        @rtype:     numpy rank-3 array, numpy rank-1 array.
+        """
+
+        # Initialise.
+        atomic_pos = []
+
+        # Store the atomic positions.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Only use spins with alignment/paramagnetic data.
+            if not hasattr(spin, 'pcs') and not hasattr(spin, 'rdc') and not hasattr(spin, 'pre'):
+                continue
+
+            # The position list.
+            if type(spin.pos[0]) in [float, float64]:
+                atomic_pos.append([spin.pos])
+            else:
+                atomic_pos.append(spin.pos)
+
+        # Convert to numpy objects.
+        atomic_pos = array(atomic_pos, float64)
+
+        # The paramagnetic centre.
+        if hasattr(cdp, 'paramagnetic_centre'):
+            paramag_centre = cdp.paramagnetic_centre
+        else:
+            paramag_centre = zeros(3, float64)
+
+        # Return the data structures.
+        return atomic_pos, paramag_centre
+
+
     def _minimise_setup_pcs(self):
         """Set up the data structures for optimisation using PCSs as base data sets.
 
@@ -688,7 +727,7 @@ class N_state_model(API_base, API_common):
         """
 
         # Data setup tests.
-        if not hasattr(cdp, 'paramagnetic_centre'):
+        if not hasattr(cdp, 'paramagnetic_centre') and (hasattr(cdp, 'paramag_centre_fixed') and cdp.paramag_centre_fixed):
             raise RelaxError("The paramagnetic centre has not yet been specified.")
         if not hasattr(cdp, 'temperature'):
             raise RelaxError("The experimental temperatures have not been set.")
@@ -699,43 +738,8 @@ class N_state_model(API_base, API_common):
         pcs = []
         pcs_err = []
         pcs_weight = []
-        unit_vect = []
-        r = []
-        pcs_const = []
-
-        # The bond lengths and unit vectors.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Only use spins with alignment data.
-            if not hasattr(spin, 'pcs') and not hasattr(spin, 'rdc'):
-                continue
-
-            # Add empty lists to the r and unit_vector lists.
-            unit_vect.append([])
-            r.append([])
-
-            # The position list.
-            if type(spin.pos[0]) in [float, float64]:
-                pos = [spin.pos]
-            else:
-                pos = spin.pos
-
-            # Loop over the states, and calculate the paramagnetic centre to nucleus unit vectors.
-            for c in range(cdp.N):
-                # Calculate the electron spin to nuclear spin vector.
-                vect = pos[c] - cdp.paramagnetic_centre
-
-                # The length.
-                r[-1].append(norm(vect))
-
-                # Append the unit vector.
-                unit_vect[-1].append(vect/norm(vect))
-
-        # Convert the distances from Angstrom to meters.
-        r = array(r, float64) * 1e-10
+        temp = []
+        frq = []
 
         # The PCS data.
         for align_id in cdp.align_ids:
@@ -743,14 +747,12 @@ class N_state_model(API_base, API_common):
             pcs.append([])
             pcs_err.append([])
             pcs_weight.append([])
-            pcs_const.append([])
 
-            # Get the temperature and spectrometer frequency for the PCS constant.
-            temp = cdp.temperature[align_id]
-            frq = cdp.frq[align_id]
+            # Get the temperature for the PCS constant.
+            temp.append(cdp.temperature[align_id])
 
-            # Convert the frequency of Hertz into a field strength in Tesla units.
-            frq = frq * 2.0 * pi / g1H
+            # Get the spectrometer frequency in Tesla units for the PCS constant.
+            frq.append(cdp.frq[align_id] * 2.0 * pi / g1H)
 
             # Spin loop.
             j = 0
@@ -766,7 +768,6 @@ class N_state_model(API_base, API_common):
                         pcs[-1].append(None)
                         pcs_err[-1].append(None)
                         pcs_weight[-1].append(None)
-                        pcs_const[-1].append([None]*cdp.N)
                         j = j + 1
 
                     # Jump to the next spin.
@@ -784,13 +785,6 @@ class N_state_model(API_base, API_common):
                 else:
                     pcs_err[-1].append(None)
 
-                # Append an empty array to the PCS constant structure.
-                pcs_const[-1].append([])
-
-                # Loop over the states, and calculate the PCS constant for each (the distance changes each time).
-                for c in range(cdp.N):
-                    pcs_const[-1][-1].append(pcs_constant(temp, frq, r[j][c]))
-
                 # Append the weight.
                 if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
                     pcs_weight[-1].append(spin.pcs_weight[align_id])
@@ -804,15 +798,13 @@ class N_state_model(API_base, API_common):
         pcs = array(pcs, float64)
         pcs_err = array(pcs_err, float64)
         pcs_weight = array(pcs_weight, float64)
-        unit_vect = array(unit_vect, float64)
-        pcs_const = array(pcs_const, float64)
 
         # Convert the PCS from ppm to no units.
         pcs = pcs * 1e-6
         pcs_err = pcs_err * 1e-6
 
         # Return the data structures.
-        return pcs, pcs_err, pcs_weight, unit_vect, pcs_const
+        return pcs, pcs_err, pcs_weight, temp, frq
 
 
     def _minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
@@ -1348,9 +1340,9 @@ class N_state_model(API_base, API_common):
             full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index=sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
-        pcs, pcs_err, pcs_weight, pcs_vect, pcs_dj = None, None, None, None, None
+        pcs, pcs_err, pcs_weight, temp, frq = None, None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_weight, pcs_vect, pcs_dj = self._minimise_setup_pcs()
+            pcs, pcs_err, pcs_weight, temp, frq = self._minimise_setup_pcs()
 
         # Get the data structures for optimisation using RDCs as base data sets.
         rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = None, None, None, None, None
@@ -1361,8 +1353,17 @@ class N_state_model(API_base, API_common):
         if ('rdc' in data_types or 'pcs' in data_types) and (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             full_tensors = self._minimise_setup_fixed_tensors(sim_index=sim_index)
 
+        # Get the atomic_positions.
+        atomic_pos, paramag_centre, centre_fix = None, None, True
+        if 'pcs' in data_types or 'pre' in data_types:
+            atomic_pos, paramag_centre = self._minimise_setup_atomic_pos()
+
+            # Optimisation of the centre.
+            if hasattr(cdp, 'paramag_centre_fixed'):
+                centre_fix = cdp.paramag_centre_fixed
+
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, xh_vect=xh_vect, temp=temp, frq=frq, dip_const=rdc_dj, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fix=centre_fix)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
