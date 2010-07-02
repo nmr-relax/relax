@@ -74,6 +74,13 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=Fal
     if not force and hasattr(cdp, 'paramagnetic_centre'):
         raise RelaxError("The paramagnetic centre has already been set to the coordinates " + repr(cdp.paramagnetic_centre) + ".")
 
+    # The fixed flag.
+    if fix:
+        print("The paramagnetic centre will be fixed during optimisation.")
+    else:
+        print("The paramagnetic centre will be optimised.")
+    cdp.paramag_centre_fix = fix
+
     # Position is supplied.
     if pos != None:
         centre = array(pos)
@@ -81,7 +88,7 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=Fal
         full_pos_list = []
 
     # Position from a loaded structure.
-    else:
+    elif atom_id:
         # Get the positions.
         centre = zeros(3, float64)
         full_pos_list = []
@@ -107,6 +114,10 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=Fal
         if not num_pos:
             raise RelaxError("No positional information could be found for the spin '%s'." % atom_id)
 
+    # No position - so simply exit the function.
+    else:
+        return
+
     # Averaging.
     centre = centre / float(num_pos)
 
@@ -127,6 +138,3 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=Fal
         if verbosity:
             print("\nUsing all paramagnetic positions.")
         cdp.paramagnetic_centre = full_pos_list
-
-    # The fixed flag.
-    cdp.paramag_centre_fix = fix
