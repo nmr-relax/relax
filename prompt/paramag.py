@@ -31,7 +31,7 @@ from generic_fns import paramag
 from relax_errors import RelaxError
 
 
-class PCS(User_fn_class):
+class Paramag(User_fn_class):
     """Class for handling paramagnetic information."""
 
     def centre(self, pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=True, force=False):
@@ -52,7 +52,7 @@ class PCS(User_fn_class):
 
         ave_pos:  A flag specifying if the position of the atom is to be averaged across all models.
 
-        force:  A flag which if True will cause the current PCS centre to be overwritten.
+        force:  A flag which if True will cause the current paramagnetic centre to be overwritten.
 
 
         Description
@@ -68,9 +68,9 @@ class PCS(User_fn_class):
 
         If the ave_pos flag is set to True, the average position from all models will be used as the
         position of the paramagnetic centre.  If False, then the positions from all structures will
-        be used.  If multiple positions are used, then a fast PCS centre motion will be assumed so
-        that PCSs for a single tensor will be calculated for each position, and the PCS values
-        linearly averaged.
+        be used.  If multiple positions are used, then a fast paramagnetic centre motion will be
+        assumed so that PCSs for a single tensor will be calculated for each position, and the PCS
+        values linearly averaged.
 
 
         Examples
@@ -79,27 +79,27 @@ class PCS(User_fn_class):
         If the paramagnetic centre is the lanthanide Dysprosium which is labelled as Dy in a loaded
         PDB file, then type one of:
 
-        relax> pcs.centre('Dy')
-        relax> pcs.centre(atom_id='Dy')
+        relax> paramag.centre('Dy')
+        relax> paramag.centre(atom_id='Dy')
 
         If the carbon atom 'C1' of residue '4' in the PDB file is to be used as the paramagnetic
         centre, then type:
 
-        relax> pcs.centre(':4@C1')
+        relax> paramag.centre(':4@C1')
         
         To state that the Dy3+ atomic position is [0.136, 12.543, 4.356], type one of:
 
-        relax> pcs.centre([0.136, 12.543, 4.356])
-        relax> pcs.centre(pos=[0.136, 12.543, 4.356])
+        relax> paramag.centre([0.136, 12.543, 4.356])
+        relax> paramag.centre(pos=[0.136, 12.543, 4.356])
 
         To find an unknown paramagnetic centre, type:
 
-        relax> pcs.centre(fix=False)
+        relax> paramag.centre(fix=False)
         """
 
         # Function intro text.
         if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pcs.centre("
+            text = self._exec_info.ps3 + "paramag.centre("
             text = text + "pos=" + repr(pos)
             text = text + ", atom_id=" + repr(atom_id)
             text = text + ", pipe=" + repr(pipe)
