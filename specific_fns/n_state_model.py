@@ -1724,6 +1724,11 @@ class N_state_model(API_base, API_common):
         # Set up the target function for direct calculation.
         model, param_vector, data_types, scaling_matrix = self._target_fn_setup(sim_index=sim_index, scaling=scaling)
 
+        # Nothing to do!
+        if not len(param_vector):
+            warn(RelaxWarning("The model has no parameters, minimisation cannot be performed."))
+            return
+
         # Right, constraints cannot be used for the 'fixed' model.
         if constraints and cdp.model == 'fixed':
             warn(RelaxWarning("Turning constraints off.  These cannot be used for the 'fixed' model."))
