@@ -1518,6 +1518,17 @@ class N_state_model(API_base, API_common):
             # Store the global chi-squared value.
             cdp.chi2 = chi2
 
+            # Store the back-calculated data.
+            self._minimise_bc_data(model)
+
+            # Calculate the RDC Q-factors.
+            if 'rdc' in data_types:
+                rdc.q_factors()
+
+            # Calculate the PCS Q-factors.
+            if 'pcs' in data_types:
+                pcs.q_factors()
+
         # NOE potential.
         if hasattr(cdp, 'noe_restraints'):
             # Init some numpy arrays.
