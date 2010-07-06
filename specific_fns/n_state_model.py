@@ -1928,7 +1928,6 @@ class N_state_model(API_base, API_common):
         if search('^gamma', param):
             return 'gamma'
 
-
         # Bond length.
         if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
             return 'r'
@@ -1940,6 +1939,10 @@ class N_state_model(API_base, API_common):
         # Proton type.
         if search('^[Pp]roton$', param):
             return 'proton_type'
+
+        # Paramagnetic centre.
+        if search('^paramag_[xyz]$', param):
+            return param
 
 
     def return_grace_string(self, param):
