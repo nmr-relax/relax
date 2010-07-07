@@ -158,21 +158,47 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     data = []
 
     # The diagonal.
-    data.append([[-100, -100], [100, 100]])
+    data.append([[-100, -100, 0], [100, 100, 0]])
 
     # Loop over the PCS data.
     for align_id in cdp.pcs_ids:
         # Append a new list for this alignment.
         data.append([])
 
+        # Errors present?
+        err_flag = False
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Error present.
+            if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                err_flag = True
+                break
+
         # Loop over the spins.
         for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Skip if data is missing.
             if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or not align_id in spin.pcs.keys() or not align_id in spin.pcs_bc.keys():
                 continue
 
             # Append the data.
-            data[-1].append([spin.pcs[align_id], spin.pcs_bc[align_id], spin_id])
+            data[-1].append([spin.pcs_bc[align_id], spin.pcs[align_id]])
+
+            # Errors.
+            if err_flag:
+                if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                    data[-1][-1].append(spin.pcs_err[align_id])
+                else:
+                    data[-1][-1].append(None)
+
+            # Label.
+            data[-1][-1].append(spin_id)
 
     # The data size.
     size = len(data)
@@ -180,13 +206,19 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     # Only one data set.
     data = [data]
 
+    # Graph type.
+    if err_flag:
+        graph_type = 'xydy'
+    else:
+        graph_type = 'xy'
+
     # Grace file.
     if format == 'grace':
         # The header.
-        grace.write_xy_header(file=file, title="PCS correlation plot", sets=size, set_names=[None]+cdp.pcs_ids, linestyle=[2]+[0]*size, data_type=['pcs', 'pcs_bc'], axis_min=[-0.5, -0.5], axis_max=[0.5, 0.5], legend_pos=[1, 0.5])
+        grace.write_xy_header(file=file, title="PCS correlation plot", sets=size, set_names=[None]+cdp.pcs_ids, linestyle=[2]+[0]*size, data_type=['pcs_bc', 'pcs'], axis_min=[-0.5, -0.5], axis_max=[0.5, 0.5], legend_pos=[1, 0.5])
 
         # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type='xy')
+        grace.write_xy_data(data=data, file=file, graph_type=graph_type)
 
 
 def display(align_id=None):
@@ -384,6 +416,35 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         cdp.align_ids.append(align_id)
     if align_id not in cdp.pcs_ids:
         cdp.pcs_ids.append(align_id)
+
+
+def weight(align_id=None, spin_id=None, weight=1.0):
+    """Set optimisation weights on the PCS data.
+
+    @keyword align_id:  The alignment tensor ID string.
+    @type align_id:     str
+    @keyword spin_id:   The spin ID string.
+    @type spin_id:      None or str
+    @keyword weight:    The optimisation weight.  The higher the value, the more importance the PCS will have.
+    @type weight:       float or int.
+    """
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data corresponding to 'align_id' exists.
+    if not hasattr(cdp, 'pcs_ids') or align_id not in cdp.pcs_ids:
+        raise RelaxNoPCSError(align_id)
+
+    # Loop over the spins.
+    for spin in spin_loop(spin_id):
+        # No data structure.
+        if not hasattr(spin, 'pcs_weight'):
+            spin.pcs_weight = {}
+
+        # Set the weight.
+        spin.pcs_weight[align_id] = weight
 
 
 def write(align_id=None, file=None, dir=None, force=False):

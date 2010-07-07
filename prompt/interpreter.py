@@ -77,6 +77,7 @@ from noe import Noe
 from palmer import Palmer
 from residue import Residue
 from structure import Structure
+from paramag import Paramag
 from pcs import PCS
 from pymol_control import Pymol
 from rdc import RDC
@@ -197,6 +198,7 @@ class Interpreter:
         objects['n_state_model'] = N_state_model(self._exec_info)
         objects['noe'] = Noe(self._exec_info)
         objects['palmer'] = Palmer(self._exec_info)
+        objects['paramag'] = Paramag(self._exec_info)
         objects['pcs'] = PCS(self._exec_info)
         objects['pymol'] = Pymol(self._exec_info)
         objects['rdc'] = RDC(self._exec_info)

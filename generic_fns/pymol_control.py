@@ -76,8 +76,10 @@ class Pymol:
         if not self.running():
             self.open_gui()
 
-        # Write the command to the pipe.
-        if self.exec_mode == 'external':
+        # Execute the command.
+        if self.exec_mode == 'module':
+            pymol.cmd.do(command)
+        else:
             self.pymol.write(command + '\n')
 
         # Place the command in the command history.
@@ -91,7 +93,6 @@ class Pymol:
         # Use the PyMOL python modules.
         if self.exec_mode == 'module':
             # Open the GUI.
-            pymol.start_pymol()
             pymol.finish_launching()
             self.open = True
 

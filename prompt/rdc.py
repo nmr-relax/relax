@@ -50,7 +50,7 @@ class RDC(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(align_id, 'alignment ID string')
+        arg_check.is_str(align_id, 'alignment ID string', can_be_none=True)
 
         # Execute the functional code.
         rdc.back_calc(align_id=align_id)
@@ -370,6 +370,43 @@ class RDC(User_fn_class):
 
         # Execute the functional code.
         rdc.read(align_id=align_id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
+
+
+    def weight(self, align_id=None, spin_id=None, weight=1.0):
+        """Set optimisation weights on the RDC data.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        align_id:  The alignment ID string.
+
+        spin_id:  The spin ID string.
+
+        weight:  The weighting value.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function can be used to force the RDC to contribute more or less to the chi-squared
+        optimisation statistic.  The higher the value, the more importance the RDC will have.
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.weight("
+            text = text + "align_id=" + repr(align_id)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", weight=" + repr(weight) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(align_id, 'alignment ID string')
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        arg_check.is_num(weight, 'weight')
+
+        # Execute the functional code.
+        rdc.weight(align_id=align_id, spin_id=spin_id, weight=weight)
 
 
     def write(self, align_id=None, file=None, dir=None, force=False):

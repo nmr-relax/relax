@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2008-2010 Edward d'Auvergne                        #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,31 +20,38 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""Package containing all of relax's number crunching code."""
+# Module docstring.
+"""Module for functions relating to the paramagnetic centre."""
+
+# Python imports.
+from numpy.linalg import norm
 
 
-__all__ = [ 'alignment_tensor',
-            'chi2',
-            'consistency_tests',
-            'correlation_time',
-            'direction_cosine',
-            'frame_order',
-            'frame_order_matrix_ops',
-            'jw_mapping',
-            'jw_mf_comps',
-            'jw_mf',
-            'kronecker_product',
-            'mf',
-            'n_state_model',
-            'order_parameters',
-            'paramag_centre',
-            'pcs',
-            'potential',
-            'pseudo_ellipse',
-            'rdc',
-            'ri_comps',
-            'ri_prime',
-            'ri',
-            'rotation_matrix',
-            'weights' ]
+def paramag_data(atomic_pos, paramag_centre, unit_vector, r):
+    """Calculate the electron spin to nuclear spin unit vectors and distances.
+
+    @param atomic_pos:      The atomic positions.  The first index is the spins, the second is the structures, and the third is the atomic coordinates.
+    @type atomic_pos:       numpy rank-3 array
+    @param paramag_centre:  The paramagnetic centre position.
+    @type paramag_centre:   numpy rank-1, 3D array
+    @param unit_vector:     The structure to fill with the electron spin to nuclear spin unit vectors.
+    @type unit_vector:      numpy rank-3 array
+    @param r:               The structure to fill with the electron spin to nuclear spin distances.
+    @type r:                numpy rank-2 array
+    """
+
+    # Loop over the spins.
+    for i in range(len(atomic_pos)):
+        # Loop over the states.
+        for c in range(len(atomic_pos[i])):
+            # The vector.
+            vect = atomic_pos[i, c] - paramag_centre
+
+            # The length.
+            r[i, c] = norm(vect)
+
+            # The unit vector.
+            unit_vector[i, c] = vect / r[i, c]
+
+            # Convert the distances from Angstrom to meters.
+            r[i, c] = r[i, c] * 1e-10

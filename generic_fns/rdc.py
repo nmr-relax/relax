@@ -32,6 +32,7 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns import grace, pipes
+from generic_fns.align_tensor import get_tensor_index
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
@@ -46,6 +47,16 @@ def back_calc(align_id=None):
     @keyword align_id:      The alignment tensor ID string.
     @type align_id:         str
     """
+
+    # Arg check.
+    if align_id and align_id not in cdp.rdc_ids:
+        raise RelaxError, "The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids)
+
+    # Convert the align IDs to an array, or take all IDs.
+    if align_id:
+        align_ids = [align_id]
+    else:
+        align_ids = cdp.rdc_ids
 
     # The weights.
     weights = ones(cdp.N, float64) / cdp.N
@@ -65,21 +76,28 @@ def back_calc(align_id=None):
         else:
             vectors = spin.xh_vect
 
-        # Loop over each alignment.
-        for i in range(len(cdp.align_tensors)):
-            # Gyromagnetic ratios.
-            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
-            gh = return_gyromagnetic_ratio(spin.proton_type)
+        # Single vector.
+        if type(vectors[0]) in [float, float64]:
+            vectors = [vectors]
 
-            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            dj = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
+        # Gyromagnetic ratios.
+        gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+        gh = return_gyromagnetic_ratio(spin.proton_type)
 
-            # Unit vectors.
-            for c in range(cdp.N):
-                unit_vect[c] = vectors[c] / norm(vectors[c])
+        # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+        dj = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
 
-            # Calculate the RDC.
-            spin.rdc_bc = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[i].A, weights=weights)
+        # Unit vectors.
+        for c in range(cdp.N):
+            unit_vect[c] = vectors[c] / norm(vectors[c])
+
+        # Initialise if necessary.
+        if not hasattr(spin, 'rdc_bc'):
+            spin.rdc_bc = {}
+
+        # Calculate the RDCs.
+        for id in align_ids:
+            spin.rdc_bc[id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[get_tensor_index(id)].A, weights=weights)
 
 
 def corr_plot(format=None, file=None, dir=None, force=False):
@@ -114,21 +132,47 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     data = []
 
     # The diagonal.
-    data.append([[-100, -100], [100, 100]])
+    data.append([[-100, -100, 0], [100, 100, 0]])
 
     # Loop over the RDC data.
     for align_id in cdp.rdc_ids:
         # Append a new list for this alignment.
         data.append([])
 
+        # Errors present?
+        err_flag = False
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Error present.
+            if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+                err_flag = True
+                break
+
         # Loop over the spins.
         for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Skip if data is missing.
             if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or not align_id in spin.rdc.keys() or not align_id in spin.rdc_bc.keys():
                 continue
 
             # Append the data.
-            data[-1].append([spin.rdc[align_id], spin.rdc_bc[align_id], spin_id])
+            data[-1].append([spin.rdc_bc[align_id], spin.rdc[align_id]])
+
+            # Errors.
+            if err_flag:
+                if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+                    data[-1][-1].append(spin.rdc_err[align_id])
+                else:
+                    data[-1][-1].append(None)
+
+            # Label.
+            data[-1][-1].append(spin_id)
 
     # The data size.
     size = len(data)
@@ -136,13 +180,19 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     # Only one data set.
     data = [data]
 
+    # Graph type.
+    if err_flag:
+        graph_type = 'xydy'
+    else:
+        graph_type = 'xy'
+
     # Grace file.
     if format == 'grace':
         # The header.
-        grace.write_xy_header(file=file, title="RDC correlation plot", sets=size, set_names=[None]+cdp.rdc_ids, linestyle=[2]+[0]*size, data_type=['rdc', 'rdc_bc'], axis_min=[-10, -10], axis_max=[10, 10], legend_pos=[1, 0.5])
+        grace.write_xy_header(file=file, title="RDC correlation plot", sets=size, set_names=[None]+cdp.rdc_ids, linestyle=[2]+[0]*size, data_type=['rdc_bc', 'rdc'], axis_min=[-10, -10], axis_max=[10, 10], legend_pos=[1, 0.5])
 
         # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type='xy')
+        grace.write_xy_data(data=data, file=file, graph_type=graph_type)
 
 
 def display(align_id=None):
@@ -381,6 +431,35 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         cdp.align_ids.append(align_id)
     if align_id not in cdp.rdc_ids:
         cdp.rdc_ids.append(align_id)
+
+
+def weight(align_id=None, spin_id=None, weight=1.0):
+    """Set optimisation weights on the RDC data.
+
+    @keyword align_id:  The alignment tensor ID string.
+    @type align_id:     str
+    @keyword spin_id:   The spin ID string.
+    @type spin_id:      None or str
+    @keyword weight:    The optimisation weight.  The higher the value, the more importance the RDC will have.
+    @type weight:       float or int.
+    """
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data corresponding to 'align_id' exists.
+    if not hasattr(cdp, 'rdc_ids') or align_id not in cdp.rdc_ids:
+        raise RelaxNoRDCError(align_id)
+
+    # Loop over the spins.
+    for spin in spin_loop(spin_id):
+        # No data structure.
+        if not hasattr(spin, 'rdc_weight'):
+            spin.rdc_weight = {}
+
+        # Set the weight.
+        spin.rdc_weight[align_id] = weight
 
 
 def write(align_id=None, file=None, dir=None, force=False):

@@ -925,7 +925,6 @@ def stitch_cone_to_edge(mol=None, cone=None, chain_id='', dome_start=None, edge_
     @type cone:             class instance
     @keyword chain_id:      The chain identifier.
     @type chain_id:         str
-    @type limit_check:      function
     @keyword dome_start:    The starting atom number of the cone dome residue.
     @type dome_start:       int
     @keyword edge_start:    The starting atom number of the cone edge residue.

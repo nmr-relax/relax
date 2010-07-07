@@ -94,86 +94,6 @@ class PCS(User_fn_class):
         pcs.q_factors(spin_id=spin_id)
 
 
-    def centre(self, pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=True, force=False):
-        """Specify which atom is the paramagnetic centre.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        pos:  The atomic position.
-
-        atom_id:  The atom ID string.
-
-        pipe:  The data pipe containing the structures to extract the centre from.
-
-        verbosity:  The amount of information to print out.
-
-        ave_pos:  A flag specifying if the position of the atom is to be averaged across all models.
-
-        force:  A flag which if True will cause the current PCS centre to be overwritten.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function is required for specifying where the paramagnetic centre is located in the
-        loaded structure file.  If no structure number is given, then the average atom position will
-        be calculated if multiple structures are loaded.
-
-        A different set of structures than those loaded into the current data pipe can also be used
-        to determine the position, or its average.  This can be achieved by loading the alternative
-        structures into another data pipe, and then specifying that pipe through the pipe argument.
-
-        If the ave_pos flag is set to True, the average position from all models will be used as the
-        position of the paramagnetic centre.  If False, then the positions from all structures will
-        be used.  If multiple positions are used, then a fast PCS centre motion will be assumed so
-        that PCSs for a single tensor will be calculated for each position, and the PCS values
-        linearly averaged.
-
-
-        Examples
-        ~~~~~~~~
-
-        If the paramagnetic centre is the lanthanide Dysprosium which is labelled as Dy in a loaded
-        PDB file, then type one of:
-
-        relax> pcs.centre('Dy')
-        relax> pcs.centre(atom_id='Dy')
-
-        If the carbon atom 'C1' of residue '4' in the PDB file is to be used as the paramagnetic
-        centre, then type:
-
-        relax> pcs.centre(':4@C1')
-        
-        To state that the Dy3+ atomic position is [0.136, 12.543, 4.356], type one of:
-
-        relax> pcs.centre([0.136, 12.543, 4.356])
-        relax> pcs.centre(pos=[0.136, 12.543, 4.356])
-        """
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pcs.centre("
-            text = text + "pos=" + repr(pos)
-            text = text + ", atom_id=" + repr(atom_id)
-            text = text + ", pipe=" + repr(pipe)
-            text = text + ", verbosity=" + repr(verbosity)
-            text = text + ", ave_pos=" + repr(ave_pos)
-            text = text + ", force=" + repr(force) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_num_list(pos, 'atomic position', size=3, can_be_none=True)
-        arg_check.is_str(atom_id, 'atom ID string', can_be_none=True)
-        arg_check.is_str(pipe, 'data pipe', can_be_none=True)
-        arg_check.is_int(verbosity, 'verbosity level')
-        arg_check.is_bool(ave_pos, 'average position flag')
-        arg_check.is_bool(force, 'force flag')
-
-        # Execute the functional code.
-        pcs.centre(pos=pos, atom_id=atom_id, pipe=pipe, verbosity=verbosity, ave_pos=ave_pos, force=force)
-
-
     def copy(self, pipe_from=None, pipe_to=None, align_id=None):
         """Copy PCS data from pipe_from to pipe_to.
 
@@ -405,8 +325,8 @@ class PCS(User_fn_class):
         To read the 15N and 1H PCSs from the file 'Eu.txt', where the 15N values are in the 4th
         column and the 1H in the 9th, type both the following:
 
-        relax> rdc.read('Tb', 'Tb.txt', spin_id='@N', res_num_col=1, data_col=4)
-        relax> rdc.read('Tb', 'Tb.txt', spin_id='@H', res_num_col=1, data_col=9)
+        relax> pcs.read('Tb', 'Tb.txt', spin_id='@N', res_num_col=1, data_col=4)
+        relax> pcs.read('Tb', 'Tb.txt', spin_id='@H', res_num_col=1, data_col=9)
         """
 
         # Function intro text.
@@ -444,6 +364,43 @@ class PCS(User_fn_class):
 
         # Execute the functional code.
         pcs.read(align_id=align_id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
+
+
+    def weight(self, align_id=None, spin_id=None, weight=1.0):
+        """Set optimisation weights on the PCS data.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        align_id:  The alignment ID string.
+
+        spin_id:  The spin ID string.
+
+        weight:  The weighting value.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function can be used to force the PCS to contribute more or less to the chi-squared
+        optimisation statistic.  The higher the value, the more importance the PCS will have.
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.weight("
+            text = text + "align_id=" + repr(align_id)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", weight=" + repr(weight) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(align_id, 'alignment ID string')
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        arg_check.is_num(weight, 'weight')
+
+        # Execute the functional code.
+        pcs.weight(align_id=align_id, spin_id=spin_id, weight=weight)
 
 
     def write(self, align_id=None, file=None, dir=None, force=False):
