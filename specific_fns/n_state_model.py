@@ -176,9 +176,9 @@ class N_state_model(API_base, API_common):
         if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             pop_start = pop_start + 5*len(cdp.align_ids)
 
-        # The alignment parameters.
-        for i in range(5*len(cdp.align_ids)):
-            scaling_matrix[i, i] = 1e-4
+            # The alignment parameters.
+            for i in range(5*len(cdp.align_ids)):
+                scaling_matrix[i, i] = 1e-4
 
         # Loop over the populations, and set the scaling factor.
         if cdp.model in ['2-domain', 'population']:
