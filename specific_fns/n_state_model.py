@@ -544,6 +544,57 @@ class N_state_model(API_base, API_common):
             cdp.paramagnetic_centre[2] = param_vector[-1]
 
 
+    def _elim_no_prob(self):
+        """Remove all structures or states which have no probability."""
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError('N-state')
+
+        # Test if there are populations.
+        if not hasattr(cdp, 'probs'):
+            raise RelaxError("The N-state model populations do not exist.")
+
+        # Loop over the structures.
+        i = 0
+        while 1:
+            # End condition.
+            if i == cdp.N - 1:
+                break
+
+            # No probability.
+            if cdp.probs[i] < 1e-5:
+                # Remove the probability.
+                cdp.probs.pop(i)
+
+                # Remove the structure.
+                cdp.structure.structural_data.pop(i)
+
+                # Eliminate bond vectors.
+                for spin in spin_loop():
+                    # Position info.
+                    if hasattr(spin, 'pos'):
+                        spin.pos.pop(i)
+
+                    # Vector info.
+                    if hasattr(spin, 'xh_vect'):
+                        spin.xh_vect.pop(i)
+                    if hasattr(spin, 'bond_vect'):
+                        spin.bond_vect.pop(i)
+
+                # Update N.
+                cdp.N -= 1
+
+                # Start the loop again without incrementing i.
+                continue
+
+            # Increment i.
+            i += 1
+
+
     def _linear_constraints(self, data_types=None, scaling_matrix=None):
         """Function for setting up the linear constraint matrices A and b.
 
