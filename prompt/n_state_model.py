@@ -163,6 +163,26 @@ class N_state_model(User_fn_class):
         n_state_model_obj._cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
 
 
+    def elim_no_prob(self):
+        """Eliminate the structures or states with no probability.
+
+        Examples
+        ~~~~~~~~
+
+        Simply type:
+
+        relax> n_state_model.elim_no_prob(N=8)
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "n_state_model.elim_no_prob()"
+            print(text)
+
+        # Execute the functional code.
+        n_state_model_obj._elim_no_prob()
+
+
     def number_of_states(self, N=None):
         """Set the number of states in the N-state model.
 

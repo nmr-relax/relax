@@ -61,6 +61,7 @@ class N_state_model(API_base, API_common):
 
         # Place methods into the API.
         self.overfit_deselect = self._overfit_deselect_dummy
+        self.return_conversion_factor = self._return_no_conversion_factor
         self.test_grid_ops = self._test_grid_ops_general
 
 
@@ -175,16 +176,20 @@ class N_state_model(API_base, API_common):
         if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             pop_start = pop_start + 5*len(cdp.align_ids)
 
+            # The alignment parameters.
+            for i in range(5*len(cdp.align_ids)):
+                scaling_matrix[i, i] = 1.0
+
         # Loop over the populations, and set the scaling factor.
         if cdp.model in ['2-domain', 'population']:
-            factor = 100.0
+            factor = 0.1
             for i in xrange(pop_start, pop_start + (cdp.N-1)):
                 scaling_matrix[i, i] = factor
 
         # The paramagnetic centre.
         if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
             for i in range(-3, 0):
-                scaling_matrix[i, i] = 1e10
+                scaling_matrix[i, i] = 1e2
 
         # Return the matrix.
         return scaling_matrix
@@ -537,6 +542,57 @@ class N_state_model(API_base, API_common):
             cdp.paramagnetic_centre[0] = param_vector[-3]
             cdp.paramagnetic_centre[1] = param_vector[-2]
             cdp.paramagnetic_centre[2] = param_vector[-1]
+
+
+    def _elim_no_prob(self):
+        """Remove all structures or states which have no probability."""
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError('N-state')
+
+        # Test if there are populations.
+        if not hasattr(cdp, 'probs'):
+            raise RelaxError("The N-state model populations do not exist.")
+
+        # Loop over the structures.
+        i = 0
+        while 1:
+            # End condition.
+            if i == cdp.N - 1:
+                break
+
+            # No probability.
+            if cdp.probs[i] < 1e-5:
+                # Remove the probability.
+                cdp.probs.pop(i)
+
+                # Remove the structure.
+                cdp.structure.structural_data.pop(i)
+
+                # Eliminate bond vectors.
+                for spin in spin_loop():
+                    # Position info.
+                    if hasattr(spin, 'pos'):
+                        spin.pos.pop(i)
+
+                    # Vector info.
+                    if hasattr(spin, 'xh_vect'):
+                        spin.xh_vect.pop(i)
+                    if hasattr(spin, 'bond_vect'):
+                        spin.bond_vect.pop(i)
+
+                # Update N.
+                cdp.N -= 1
+
+                # Start the loop again without incrementing i.
+                continue
+
+            # Increment i.
+            i += 1
 
 
     def _linear_constraints(self, data_types=None, scaling_matrix=None):
@@ -1674,8 +1730,8 @@ class N_state_model(API_base, API_common):
 
                 # The paramagnetic centre.
                 elif hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed and (n - i) <= 3:
-                    lower.append(-100e-10)
-                    upper.append(100e-10)
+                    lower.append(-100)
+                    upper.append(100)
 
                 # Otherwise this must be an alignment tensor component.
                 else:
@@ -1683,7 +1739,7 @@ class N_state_model(API_base, API_common):
                     upper.append(1e-3)
 
         # Minimisation.
-        self.minimise(min_algor='grid', min_options=[inc, lower, upper], constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def is_spin_param(self, name):
@@ -1701,6 +1757,22 @@ class N_state_model(API_base, API_common):
 
         # All other parameters are global.
         return False
+
+
+    def map_bounds(self, param, spin_id=None):
+        """Create bounds for the OpenDX mapping function.
+
+        @param param:       The name of the parameter to return the lower and upper bounds of.
+        @type param:        str
+        @param spin_id:     The spin identification string (unused).
+        @type spin_id:      None
+        @return:            The upper and lower bounds of the parameter.
+        @rtype:             list of float
+        """
+
+        # Paramagnetic centre.
+        if search('^paramag_[xyz]$', param):
+            return [-100.0, 100.0]
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
@@ -1767,7 +1839,14 @@ class N_state_model(API_base, API_common):
 
         # Grid search.
         if search('^[Gg]rid', min_algor):
-            results = grid(func=model.func, args=(), num_incs=min_options[0], lower=min_options[1], upper=min_options[2], A=A, b=b, verbosity=verbosity)
+            # Scaling.
+            if scaling:
+                for i in xrange(len(param_vector)):
+                    lower[i] = lower[i] / scaling_matrix[i, i]
+                    upper[i] = upper[i] / scaling_matrix[i, i]
+
+            # The search.
+            results = grid(func=model.func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
 
             # Unpack the results.
             param_vector, func, iter_count, warning = results
@@ -2042,6 +2121,23 @@ class N_state_model(API_base, API_common):
                 # Set.
                 obj = getattr(cdp, obj_name)
                 obj[index] = value[i]
+
+            # The paramagnetic centre.
+            if search('^paramag_[xyz]$', obj_name):
+                # Init.
+                if not hasattr(cdp, 'paramagnetic_centre'):
+                    cdp.paramagnetic_centre = zeros(3, float64)
+
+                # Set the coordinate.
+                if obj_name == 'paramag_x':
+                    index = 0
+                elif obj_name == 'paramag_y':
+                    index = 1
+                else:
+                    index = 2
+
+                # Set the value in Angstrom.
+                cdp.paramagnetic_centre[index] = value[i]
 
             # Set the spin parameters.
             else:

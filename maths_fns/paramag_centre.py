@@ -30,9 +30,9 @@ from numpy.linalg import norm
 def paramag_data(atomic_pos, paramag_centre, unit_vector, r):
     """Calculate the electron spin to nuclear spin unit vectors and distances.
 
-    @param atomic_pos:      The atomic positions.  The first index is the spins, the second is the structures, and the third is the atomic coordinates.
+    @param atomic_pos:      The atomic positions in Angstrom.  The first index is the spins, the second is the structures, and the third is the atomic coordinates.
     @type atomic_pos:       numpy rank-3 array
-    @param paramag_centre:  The paramagnetic centre position.
+    @param paramag_centre:  The paramagnetic centre position in Angstrom.
     @type paramag_centre:   numpy rank-1, 3D array
     @param unit_vector:     The structure to fill with the electron spin to nuclear spin unit vectors.
     @type unit_vector:      numpy rank-3 array

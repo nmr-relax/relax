@@ -375,7 +375,7 @@ class N_state_opt:
             self.d2Dij_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins), float64)
 
             # Set the target function, gradient, and Hessian (paramagnetic centre optimisation).
-            if not centre_fixed:
+            if not self.centre_fixed:
                 self.func = self.func_population
                 self.dfunc = None
                 self.d2func = None
@@ -387,7 +387,7 @@ class N_state_opt:
                 self.d2func = self.d2func_population
 
         # Pure tensor optimisation overrides.
-        if model == 'fixed':
+        if model == 'fixed' and self.centre_fixed:
             # The probs are unpacked by self.func in the population model, so just override that function.
             self.func = self.func_tensor_opt
             self.dfunc = self.dfunc_tensor_opt
