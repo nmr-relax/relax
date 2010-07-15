@@ -36,7 +36,7 @@ from generic_fns.align_tensor import get_tensor_index
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxNoRDCError, RelaxNoSequenceError, RelaxNoSpinError
+from relax_errors import RelaxError, RelaxNoRDCError, RelaxNoSequenceError, RelaxNoSpinError, RelaxSpinTypeError
 from relax_io import open_write_file, read_spin_data, write_spin_data
 from relax_warnings import RelaxWarning
 
@@ -49,14 +49,14 @@ def back_calc(align_id=None):
     """
 
     # Arg check.
-    if align_id and align_id not in cdp.rdc_ids:
+    if align_id and align_id not in cdp.align_ids:
         raise RelaxError, "The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids)
 
     # Convert the align IDs to an array, or take all IDs.
     if align_id:
         align_ids = [align_id]
     else:
-        align_ids = cdp.rdc_ids
+        align_ids = cdp.align_ids
 
     # The weights.
     weights = ones(cdp.N, float64) / cdp.N
@@ -69,6 +69,10 @@ def back_calc(align_id=None):
         # Skip spins with no bond vectors.
         if not hasattr(spin, 'bond_vect') and not hasattr(spin, 'xh_vect'):
             continue
+
+        # Check.
+        if not hasattr(spin, 'heteronuc_type'):
+            raise RelaxSpinTypeError
 
         # Alias.
         if hasattr(spin, 'bond_vect'):
