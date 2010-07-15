@@ -607,7 +607,8 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     # Add the tensor ID to the current data pipe.
     if not hasattr(cdp, 'align_ids'):
         cdp.align_ids = []
-    cdp.align_ids.append(tensor)
+    if tensor not in cdp.align_ids:
+        cdp.align_ids.append(tensor)
 
     # Add the align_tensors object to the data pipe.
     if not errors:
