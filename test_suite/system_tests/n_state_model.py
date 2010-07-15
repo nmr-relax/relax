@@ -408,6 +408,18 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual((chi_diag[0, 0] - chi_diag[1, 1]), -3.960936794864)
 
 
+    def test_pcs_to_rdc(self):
+        """Test the back-calculation of RDCs from a PCS derived tensor."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pcs_to_rdc.py')
+
+        # Test the values.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].rdc_bc['A'], 4.1319413321530014)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].rdc_bc['A'], -9.5802642470087989)
+        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].rdc_bc['A'], -16.244078605100817)
+
+
     def test_stereochem_analysis(self):
         """The full relative stereochemistry analysis."""
 
