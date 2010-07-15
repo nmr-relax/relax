@@ -141,6 +141,17 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 3.15009916529e-32)
 
 
+    def test_A_to_chi(self):
+        """Test the conversion of the alignment tensor to the chi tensor."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'A_to_chi.py')
+
+        # Test the optimised values.
+        for i in range(3):
+            self.assertAlmostEqual(cdp.chi[i, i] * 1e32, cdp.chi_ref[i] * 1e32, 2)
+
+
     def test_align_fit(self):
         """Test the use of RDCs and PCSs to find the alignment tensor."""
 
