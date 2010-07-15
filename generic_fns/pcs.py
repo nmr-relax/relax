@@ -58,6 +58,16 @@ def back_calc(align_id=None):
     else:
         align_ids = cdp.align_ids
 
+    # Add the ID to the PCS IDs, if needed.
+    for align_id in align_ids:
+        # Init.
+        if not hasattr(cdp, 'pcs_ids'):
+            cdp.pcs_ids = []
+
+        # Add the ID.
+        if align_id not in cdp.pcs_ids:
+            cdp.pcs_ids.append(align_id)
+
     # The weights.
     weights = ones(cdp.N, float64) / cdp.N
 

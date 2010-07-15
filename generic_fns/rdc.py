@@ -58,6 +58,16 @@ def back_calc(align_id=None):
     else:
         align_ids = cdp.align_ids
 
+    # Add the ID to the RDC IDs, if needed.
+    for align_id in align_ids:
+        # Init.
+        if not hasattr(cdp, 'rdc_ids'):
+            cdp.rdc_ids = []
+
+        # Add the ID.
+        if align_id not in cdp.rdc_ids:
+            cdp.rdc_ids.append(align_id)
+
     # The weights.
     weights = ones(cdp.N, float64) / cdp.N
 
