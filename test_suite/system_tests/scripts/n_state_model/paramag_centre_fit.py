@@ -55,26 +55,45 @@ frq.set(id='synth', frq=600.0 * 1e6)
 # Set up the model.
 n_state_model.select_model(model='fixed')
 
-# Paramagnetic centre optimisation.
-paramag.centre(fix=False)
+# Paramagnetic centre optimisation
+real_pos = [32.555, -19.130, 27.775]
+
+#paramag.centre([  32.555,  -19.130,   27.775], fix=False)
+paramag.centre([ 32, -19, 28], fix=False)
 
 # Set the tensor elements.
-#cdp.align_tensors[0].Axx = -0.351261/2000
-#cdp.align_tensors[0].Ayy = 0.556994/2000
-#cdp.align_tensors[0].Axy = -0.506392/2000
-#cdp.align_tensors[0].Axz = 0.560544/2000
-#cdp.align_tensors[0].Ayz = -0.286367/2000
+cdp.align_tensors[0].Axx = -0.351261/2000
+cdp.align_tensors[0].Ayy = 0.556994/2000
+cdp.align_tensors[0].Axy = -0.506392/2000
+cdp.align_tensors[0].Axz = 0.560544/2000
+cdp.align_tensors[0].Ayz = -0.286367/2000
+print cdp.align_tensors[0].A
+
+#cdp.align_tensors[0].Axx = 0.0
+#cdp.align_tensors[0].Ayy = 0.0
+#cdp.align_tensors[0].Axy = 0.0
+#cdp.align_tensors[0].Axz = 0.0
+#cdp.align_tensors[0].Ayz = 0.0
 
 # Minimisation.
-grid_search(inc=3)
+#grid_search(inc=6)
 minimise('simplex', constraints=False, max_iter=500)
+#calc()
+
+print cdp.align_tensors[0].A
 
 # Write out a results file.
 results.write('devnull', force=True)
 
-# Show the tensors.
-align_tensor.display()
+## Show the tensors.
+#align_tensor.display()
+#
+# Print out
+print("A:\n" % cdp.align_tensors[0])
+print("centre: %s" % cdp.paramagnetic_centre)
+print("centre diff: %s" % (cdp.paramagnetic_centre - real_pos))
+print("chi2: %s" % cdp.chi2)
 
-# Print the contents of the current data pipe (for debugging Q-values).
-print(cdp)
-print((cdp.align_tensors[0]))
+# Map.
+#dx.map(params=['paramag_x', 'paramag_y', 'paramag_z'], inc=10, lower=[30, -20, 26], upper=[33, -18, 30])
+print cdp

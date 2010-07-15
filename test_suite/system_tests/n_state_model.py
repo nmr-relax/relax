@@ -337,9 +337,9 @@ class N_state_model(SystemTestCase):
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'paramag_centre_fit.py')
 
         # Check the paramagnetic centre position.
-        self.assertAlmostEqual(cdp.paramagnetic_centre[0], 32.555)
-        self.assertAlmostEqual(cdp.paramagnetic_centre[1], -19.130)
-        self.assertAlmostEqual(cdp.paramagnetic_centre[2], 27.775)
+        self.assertAlmostEqual(cdp.paramagnetic_centre[0], 32.555, 3)
+        self.assertAlmostEqual(cdp.paramagnetic_centre[1], -19.130, 3)
+        self.assertAlmostEqual(cdp.paramagnetic_centre[2], 27.775, 3)
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -347,9 +347,9 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
-        self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        self.assertAlmostEqual(cdp.chi2, 0.0, 3)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0, 3)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0, 3)
 
 
     def test_pcs_back_calc(self):
