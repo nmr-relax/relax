@@ -352,6 +352,18 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.q_pcs, 0.0)
 
 
+    def test_pcs_back_calc(self):
+        """Test the back-calculation of PCSs for ubiquitin."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pcs_back_calc.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pcs_bc['A'],  0.061941887563792014)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].pcs_bc['A'], -0.077886567972081502)
+        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].pcs_bc['A'], -0.13928519099517916)
+
+
     def test_pcs_fit_true_pos(self):
         """Test the fit of DNA PCSs at the true Ln3+ position."""
 
