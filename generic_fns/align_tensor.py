@@ -604,6 +604,11 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     if not angle_units in valid_types:
         raise RelaxError("The alignment tensor 'angle_units' argument " + repr(angle_units) + " should be either 'deg' or 'rad'.")
 
+    # Add the tensor ID to the current data pipe.
+    if not hasattr(cdp, 'align_ids'):
+        cdp.align_ids = []
+    cdp.align_ids.append(tensor)
+
     # Add the align_tensors object to the data pipe.
     if not errors:
         # Initialise the super structure.
