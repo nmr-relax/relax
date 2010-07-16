@@ -71,7 +71,7 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=Fal
         raise RelaxNoPdbError
 
     # Test the centre has already been set.
-    if not force and hasattr(cdp, 'paramagnetic_centre'):
+    if pos and not force and hasattr(cdp, 'paramagnetic_centre'):
         raise RelaxError("The paramagnetic centre has already been set to the coordinates " + repr(cdp.paramagnetic_centre) + ".")
 
     # The fixed flag.
