@@ -31,6 +31,17 @@ structure.read_pdb(file='bax_C_1J7P_N_H_Ca', dir=STRUCT_PATH)
 # Load the spins.
 structure.load_spins()
 
+# Deselect most spins (to speed things up).
+deselect.spin()
+select.spin(":83")
+select.spin(":84")
+select.spin(":85")
+select.spin(":111")
+select.spin(":130")
+select.spin(":131")
+select.spin(":132")
+select.spin(":148")
+
 # Load the NH vectors.
 structure.vectors(spin_id='@N', attached='H', ave=False)
 
