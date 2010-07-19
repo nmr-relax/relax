@@ -24,15 +24,39 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import cos, sin
+from math import cos, pi, sin, sqrt
 from numpy import cross, dot, transpose
 from numpy.linalg import norm
+from scipy.integrate import quad
 
 # relax module imports.
 from float import isNaN
 from maths_fns import order_parameters
 from maths_fns.kronecker_product import kron_prod, transpose_23
+from maths_fns.pseudo_ellipse import pec
 from maths_fns.rotation_matrix import two_vect_to_R
+
+
+def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
+    """Generate the rotated 1st degree Frame Order matrix for the pseudo ellipse.
+
+    @param matrix:      The Frame Order matrix, 1st degree to be populated.
+    @type matrix:       numpy 3D, rank-2 array
+    @param theta_x:     The cone opening angle along x.
+    @type theta_x:      float
+    @param theta_y:     The cone opening angle along y.
+    @type theta_y:      float
+    @param sigma_max:   The maximum torsion angle.
+    @type sigma_max:    float
+    """
+
+    # The surface area normalisation factor.
+    fact = 1.0 / (2.0 * sigma_max * pec(theta_x, theta_y))
+
+    # Numerical integration of phi of each element.
+    matrix[0, 0] = fact * quad(part_int_daeg1_pseudo_ellipse_xx, -pi, pi, args=(theta_x, theta_y, sigma_max))[0]
+    matrix[1, 1] = fact * quad(part_int_daeg1_pseudo_ellipse_yy, -pi, pi, args=(theta_x, theta_y, sigma_max))[0]
+    matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_zz, -pi, pi, args=(theta_x, theta_y, sigma_max))[0]
 
 
 def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, s1):
@@ -157,6 +181,48 @@ def generate_vector(vector, theta, phi):
     vector[2] = cos(theta)
 
 
+def part_int_daeg1_pseudo_ellipse_xx(phi, x, y, smax):
+    """The theta-sigma partial integral of the 1st degree Frame Order matrix element xx for the pseudo ellipse.
+
+    @param phi: The azimuthal tilt-torsion angle.
+    @type phi:  float
+    """
+
+    # Theta max.
+    tmax = tmax_pseudo_ellipse(phi, x, y)
+
+    # The theta-sigma integral.
+    return sin(smax) * (2 * (1 - cos(tmax)) * sin(phi)**2 + cos(phi)**2 * sin(tmax)**2)
+
+
+def part_int_daeg1_pseudo_ellipse_yy(phi, x, y, smax):
+    """The theta-sigma partial integral of the 1st degree Frame Order matrix element yy for the pseudo ellipse.
+
+    @param phi: The azimuthal tilt-torsion angle.
+    @type phi:  float
+    """
+
+    # Theta max.
+    tmax = tmax_pseudo_ellipse(phi, x, y)
+
+    # The theta-sigma integral.
+    return sin(smax) * (2.0 * cos(phi)**2 * (1.0 - cos(tmax)) + sin(phi)**2 * sin(tmax)**2)
+
+
+def part_int_daeg1_pseudo_ellipse_zz(phi, x, y, smax):
+    """The theta-sigma partial integral of the 1st degree Frame Order matrix element zz for the pseudo ellipse.
+
+    @param phi: The azimuthal tilt-torsion angle.
+    @type phi:  float
+    """
+
+    # Theta max.
+    tmax = tmax_pseudo_ellipse(phi, x, y)
+
+    # The theta-sigma integral.
+    return smax * sin(tmax)**2
+
+
 def populate_1st_eigenframe_iso_cone(matrix, angle):
     """Populate the 1st degree Frame Order matrix in the eigenframe for an isotropic cone.
 
@@ -249,24 +315,24 @@ def reduce_alignment_tensor(D, A, red_tensor):
     red_tensor[1] = red_tensor[1] + 2.0*D[4, 5]*A[4]
 
     # The reduced tensor element A2.
-    red_tensor[2] =                 (D[0, 3] - D[2, 5])*A[0] 
-    red_tensor[2] = red_tensor[2] + (D[1, 4] - D[2, 5])*A[1] 
-    red_tensor[2] = red_tensor[2] + (D[0, 4] + D[1, 3])*A[2] 
-    red_tensor[2] = red_tensor[2] + (D[0, 5] + D[2, 3])*A[3] 
+    red_tensor[2] =                 (D[0, 3] - D[2, 5])*A[0]
+    red_tensor[2] = red_tensor[2] + (D[1, 4] - D[2, 5])*A[1]
+    red_tensor[2] = red_tensor[2] + (D[0, 4] + D[1, 3])*A[2]
+    red_tensor[2] = red_tensor[2] + (D[0, 5] + D[2, 3])*A[3]
     red_tensor[2] = red_tensor[2] + (D[1, 5] + D[2, 4])*A[4]
 
     # The reduced tensor element A3.
-    red_tensor[3] =                 (D[0, 6] - D[2, 8])*A[0] 
-    red_tensor[3] = red_tensor[3] + (D[1, 7] - D[2, 8])*A[1] 
-    red_tensor[3] = red_tensor[3] + (D[0, 7] + D[1, 6])*A[2] 
-    red_tensor[3] = red_tensor[3] + (D[0, 8] + D[2, 6])*A[3] 
+    red_tensor[3] =                 (D[0, 6] - D[2, 8])*A[0]
+    red_tensor[3] = red_tensor[3] + (D[1, 7] - D[2, 8])*A[1]
+    red_tensor[3] = red_tensor[3] + (D[0, 7] + D[1, 6])*A[2]
+    red_tensor[3] = red_tensor[3] + (D[0, 8] + D[2, 6])*A[3]
     red_tensor[3] = red_tensor[3] + (D[1, 8] + D[2, 7])*A[4]
 
     # The reduced tensor element A4.
-    red_tensor[4] =                 (D[3, 6] - D[5, 8])*A[0] 
-    red_tensor[4] = red_tensor[4] + (D[4, 7] - D[5, 8])*A[1] 
-    red_tensor[4] = red_tensor[4] + (D[3, 7] + D[4, 6])*A[2] 
-    red_tensor[4] = red_tensor[4] + (D[3, 8] + D[5, 6])*A[3] 
+    red_tensor[4] =                 (D[3, 6] - D[5, 8])*A[0]
+    red_tensor[4] = red_tensor[4] + (D[4, 7] - D[5, 8])*A[1]
+    red_tensor[4] = red_tensor[4] + (D[3, 7] + D[4, 6])*A[2]
+    red_tensor[4] = red_tensor[4] + (D[3, 8] + D[5, 6])*A[3]
     red_tensor[4] = red_tensor[4] + (D[4, 8] + D[5, 7])*A[4]
 
 
@@ -299,22 +365,38 @@ def reduce_alignment_tensor_reverse(D, A, red_tensor):
     red_tensor[1] = red_tensor[1] + 2.0*D[4, 7]*A[4]
 
     # The reduced tensor element A2.
-    red_tensor[2] =                 (D[0, 1] - D[6, 7])*A[0] 
-    red_tensor[2] = red_tensor[2] + (D[3, 4] - D[6, 7])*A[1] 
-    red_tensor[2] = red_tensor[2] + (D[0, 4] + D[1, 3])*A[2] 
-    red_tensor[2] = red_tensor[2] + (D[0, 7] + D[1, 6])*A[3] 
+    red_tensor[2] =                 (D[0, 1] - D[6, 7])*A[0]
+    red_tensor[2] = red_tensor[2] + (D[3, 4] - D[6, 7])*A[1]
+    red_tensor[2] = red_tensor[2] + (D[0, 4] + D[1, 3])*A[2]
+    red_tensor[2] = red_tensor[2] + (D[0, 7] + D[1, 6])*A[3]
     red_tensor[2] = red_tensor[2] + (D[3, 7] + D[4, 6])*A[4]
 
     # The reduced tensor element A3.
-    red_tensor[3] =                 (D[0, 2] - D[6, 8])*A[0] 
-    red_tensor[3] = red_tensor[3] + (D[3, 5] - D[6, 8])*A[1] 
-    red_tensor[3] = red_tensor[3] + (D[0, 5] + D[2, 3])*A[2] 
-    red_tensor[3] = red_tensor[3] + (D[0, 8] + D[2, 6])*A[3] 
+    red_tensor[3] =                 (D[0, 2] - D[6, 8])*A[0]
+    red_tensor[3] = red_tensor[3] + (D[3, 5] - D[6, 8])*A[1]
+    red_tensor[3] = red_tensor[3] + (D[0, 5] + D[2, 3])*A[2]
+    red_tensor[3] = red_tensor[3] + (D[0, 8] + D[2, 6])*A[3]
     red_tensor[3] = red_tensor[3] + (D[3, 8] + D[5, 6])*A[4]
 
     # The reduced tensor element A4.
-    red_tensor[4] =                 (D[1, 2] - D[7, 8])*A[0] 
-    red_tensor[4] = red_tensor[4] + (D[4, 5] - D[7, 8])*A[1] 
-    red_tensor[4] = red_tensor[4] + (D[1, 5] + D[2, 4])*A[2] 
-    red_tensor[4] = red_tensor[4] + (D[1, 8] + D[2, 7])*A[3] 
+    red_tensor[4] =                 (D[1, 2] - D[7, 8])*A[0]
+    red_tensor[4] = red_tensor[4] + (D[4, 5] - D[7, 8])*A[1]
+    red_tensor[4] = red_tensor[4] + (D[1, 5] + D[2, 4])*A[2]
+    red_tensor[4] = red_tensor[4] + (D[1, 8] + D[2, 7])*A[3]
     red_tensor[4] = red_tensor[4] + (D[4, 8] + D[5, 7])*A[4]
+
+
+def tmax_pseudo_ellipse(phi, theta_x, theta_y):
+    """The pseudo ellipse tilt-torsion polar angle.
+
+    @param phi:     The azimuthal tilt-torsion angle.
+    @type phi:      float
+    @param theta_x: The cone opening angle along x.
+    @type theta_x:  float
+    @param theta_y: The cone opening angle along y.
+    @type theta_y:  float
+    @return:        The theta max angle for the given phi angle.
+    @rtype:         float
+    """
+
+    return sqrt(1.0 / (cos(phi)**2/theta_x**2 + sin(phi)**2/theta_y**2))
