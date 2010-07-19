@@ -65,4 +65,5 @@ class Test_frame_order_matrix_ops(TestCase):
         # Check the values.
         for i in range(9):
             for j in range(9):
+                print "Element %s, %s." % (i, j)
                 self.assertAlmostEqual(calc[i, j], real[i, j], 4)
