@@ -387,14 +387,6 @@ class N_state_opt:
 
         # Pure tensor optimisation overrides.
         if model == 'fixed' and self.centre_fixed:
-            # The probability array.
-            if probs:
-                self.probs = probs
-
-            # All structures have initial equal probability.
-            else:
-                self.probs = ones(self.N, float64) / self.N
-
             # The probs are unpacked by self.func in the population model, so just override that function.
             self.func = self.func_tensor_opt
             self.dfunc = self.dfunc_tensor_opt
@@ -402,6 +394,16 @@ class N_state_opt:
 
             # The zero Hessian.
             self.zero_hessian = zeros(self.num_spins, float64)
+
+        # Fixed probabilities.
+        if model == 'fixed':
+            # The probability array.
+            if probs:
+                self.probs = probs
+
+            # All structures have initial equal probability.
+            else:
+                self.probs = ones(self.N, float64) / self.N
 
 
     def func_2domain(self, params):
