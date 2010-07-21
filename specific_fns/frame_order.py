@@ -917,8 +917,34 @@ class Frame_order(API_base, API_common):
             row = self._grid_row(incs[i], lower, upper, dist_type=dist_type, end_point=end_point)
             grid.append(row)
 
+            # Remove an inc if the end point has been removed.
+            if not end_point:
+                incs[i] -= 1
+
+        # Total number of points.
+        total_pts = 1
+        for i in range(n):
+            total_pts = total_pts * len(grid[i])
+
+        # Build the points array.
+        pts = zeros((total_pts, n), float64)
+        indices = zeros(n, int)
+        for i in range(total_pts):
+            # Loop over the dimensions.
+            for j in range(n):
+                # Add the point coordinate.
+                pts[i, j] = grid[j][indices[j]]
+
+            # Increment the step positions.
+            for j in range(n):
+                if indices[j] < incs[j]-1:
+                    indices[j] += 1
+                    break    # Exit so that the other step numbers are not incremented.
+                else:
+                    indices[j] = 0
+
         # Minimisation.
-        self.minimise(min_algor='grid', min_options=grid, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', min_options=pts, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def is_spin_param(self, name):
