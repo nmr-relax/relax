@@ -27,7 +27,7 @@
 from copy import deepcopy
 from math import cos, pi
 from minfx.generic import generic_minimise
-from minfx.grid import grid
+from minfx.grid import grid_point_array
 from numpy import arccos, array, float64, ones, transpose, zeros
 from re import search
 from warnings import warn
@@ -1020,7 +1020,7 @@ class Frame_order(API_base, API_common):
 
         # Grid search.
         if search('^[Gg]rid', min_algor):
-            results = grid(func=target.func, args=(), incs=min_options, verbosity=verbosity)
+            results = grid_point_array(func=target.func, args=(), points=min_options, verbosity=verbosity)
 
         # Minimisation.
         else:
