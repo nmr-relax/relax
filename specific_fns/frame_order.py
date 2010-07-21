@@ -898,14 +898,14 @@ class Frame_order(API_base, API_common):
             # The pseudo-elliptic cone model parameters.
             if cdp.model == 'pseudo-ellipse':
                 # Cone opening angles.
-                if cdp.params[i] in ['theta_x', 'theta_y']:
-                    lower = 0.0
-                    upper = pi
+                if cdp.params[i] in ['cone_theta_x', 'cone_theta_y']:
+                    lower = pi * (1.0/incs[i])
+                    upper = pi * (1.0 - 1.0/incs[i])
 
                 # Torsion angle restriction.
-                if cdp.params[i] == 'sigma_max':
-                    lower = 0.0
-                    upper = pi
+                if cdp.params[i] == 'cone_sigma_max':
+                    lower = pi * (1.0/incs[i])
+                    upper = pi * (1.0 - 1.0/incs[i])
 
             # Over-ride the bounds.
             if lower_list:
