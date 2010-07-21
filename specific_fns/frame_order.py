@@ -77,7 +77,7 @@ class Frame_order(API_base, API_common):
             return array([cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.s1], float64)
 
         # The pseudo-elliptic cone model initial parameter vector (the average position rotation, eigenframe and cone parameters).
-        elif cdp.model == 'iso cone':
+        elif cdp.model == 'pseudo-ellipse':
             return array([cdp.alpha, cdp.beta, cdp.gamma, cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, cdp.cone_theta_x, cdp.cone_theta_y, cdp.cone_sigma_max], float64)
 
 
