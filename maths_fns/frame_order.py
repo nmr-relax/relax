@@ -46,23 +46,15 @@ class Frame_order:
         @type model:                str
         @keyword init_params:       The initial parameter values.
         @type init_params:          numpy float64 array
-        @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full
-                                    alignment tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1,
-                                    Sxx2, Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn,
-                                    Syzn].
+        @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full alignment tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2, Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn].
         @type full_tensors:         numpy nx5D, rank-1 float64 array
-        @keyword red_tensors:       An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
-                                    tensors.  The array format is the same as for full_tensors.
+        @keyword red_tensors:       An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced tensors.  The array format is the same as for full_tensors.
         @type red_tensors:          numpy nx5D, rank-1 float64 array
-        @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
-                                    tensors.  The array format is the same as for full_tensors.
+        @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced tensors.  The array format is the same as for full_tensors.
         @type red_errors:           numpy nx5D, rank-1 float64 array
-        @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference
-                                    frame is the full or reduced tensor.
+        @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
         @type full_in_ref_frame:    numpy rank-1 array
-        @keyword frame_order_2nd:   The numerical values of the 2nd degree Frame Order matrix.  If
-                                    supplied, the target functions will optimise directly to these
-                                    values.
+        @keyword frame_order_2nd:   The numerical values of the 2nd degree Frame Order matrix.  If supplied, the target functions will optimise directly to these values.
         @type frame_order_2nd:      None or numpy 9D, rank-2 array
         """
 
@@ -80,7 +72,6 @@ class Frame_order:
 
             # Alias the target function.
             self.func = self.func_rigid
-
 
         # Isotropic cone model.
         if model == 'iso cone':
@@ -108,16 +99,11 @@ class Frame_order:
     def __init_tensors(self, full_tensors, red_tensors, red_errors, full_in_ref_frame):
         """Set up isotropic cone optimisation against the alignment tensor data.
 
-        @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full
-                                    alignment tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1,
-                                    Sxx2, Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn,
-                                    Syzn].
+        @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full alignment tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2, Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn].
         @type full_tensors:         numpy nx5D, rank-1 float64 array
-        @keyword red_tensors:       An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
-                                    tensors.  The array format is the same as for full_tensors.
+        @keyword red_tensors:       An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced tensors.  The array format is the same as for full_tensors.
         @type red_tensors:          numpy nx5D, rank-1 float64 array
-        @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
-                                    tensors.  The array format is the same as for full_tensors.
+        @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced tensors.  The array format is the same as for full_tensors.
         @type red_errors:           numpy nx5D, rank-1 float64 array
         """
 
@@ -153,9 +139,7 @@ class Frame_order:
     def __init_iso_cone_elements(self, frame_order_2nd):
         """Set up isotropic cone optimisation against the 2nd degree Frame Order matrix elements.
         
-        @keyword frame_order_2nd:   The numerical values of the 2nd degree Frame Order matrix.  If
-                                    supplied, the target functions will optimise directly to these
-                                    values.
+        @keyword frame_order_2nd:   The numerical values of the 2nd degree Frame Order matrix.  If supplied, the target functions will optimise directly to these values.
         @type frame_order_2nd:      numpy 9D, rank-2 array
         """
 
@@ -182,11 +166,9 @@ class Frame_order:
     def func_rigid(self, params):
         """Target function for rigid model optimisation using the alignment tensors.
 
-        This function optimises against alignment tensors.  The Euler angles for the tensor rotation
-        are the 3 parameters optimised in this model.
+        This function optimises against alignment tensors.  The Euler angles for the tensor rotation are the 3 parameters optimised in this model.
 
-        @param params:  The vector of parameter values.  These are the tensor rotation angles
-                        {alpha, beta, gamma}.
+        @param params:  The vector of parameter values.  These are the tensor rotation angles {alpha, beta, gamma}.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
         @rtype:         float
@@ -276,9 +258,7 @@ class Frame_order:
         super matrix.  The cone axis spherical angles theta and phi and the cone angle theta are the
         3 parameters optimised in this model.
 
-        @param params:  The vector of parameter values {theta, phi, theta_cone} where the first two
-                        are the polar and azimuthal angles of the cone axis theta_cone is the
-                        isotropic cone angle.
+        @param params:  The vector of parameter values {theta, phi, theta_cone} where the first two are the polar and azimuthal angles of the cone axis theta_cone is the isotropic cone angle.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
         @rtype:         float
