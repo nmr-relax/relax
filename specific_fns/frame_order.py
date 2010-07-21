@@ -76,6 +76,10 @@ class Frame_order(API_base, API_common):
         elif cdp.model == 'iso cone':
             return array([cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.s1], float64)
 
+        # The pseudo-elliptic cone model initial parameter vector (the average position rotation, eigenframe and cone parameters).
+        elif cdp.model == 'iso cone':
+            return array([cdp.alpha, cdp.beta, cdp.gamma, cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, cdp.cone_theta_x, cdp.cone_theta_y, cdp.cone_sigma_max], float64)
+
 
     def _back_calc(self):
         """Back-calculation of the reduced alignment tensor.
@@ -204,7 +208,7 @@ class Frame_order(API_base, API_common):
             pdb_file.close()
 
 
-    def _grid_row(self, incs, lower, upper, dist_type=None):
+    def _grid_row(self, incs, lower, upper, dist_type=None, end_point=True):
         """Set up a row of the grid search for a given parameter.
 
         @param incs:        The number of increments.
@@ -213,10 +217,10 @@ class Frame_order(API_base, API_common):
         @type lower:        float
         @param upper:       The upper bounds.
         @type upper:        float
-        @keyword dist_type: The spacing or distribution type between grid nodes.  If None, then a
-                            linear grid row is returned.  If 'acos', then an inverse cos
-                            distribution of points is returned (e.g. for uniform sampling in angular space).
+        @keyword dist_type: The spacing or distribution type between grid nodes.  If None, then a linear grid row is returned.  If 'acos', then an inverse cos distribution of points is returned (e.g. for uniform sampling in angular space).
         @type dist_type:    None or str
+        @keyword end_point: A flag which if False will cause the end point to be removed.
+        @type end_point:    bool
         @return:            The row of the grid.
         @rtype:             list of float
         """
@@ -241,6 +245,10 @@ class Frame_order(API_base, API_common):
 
             # Generate the distribution.
             row = arccos(v)
+
+        # Remove the last point.
+        if not end_point:
+            row = row[:-1]
 
         # Return the row (as a list).
         return list(row)
@@ -370,7 +378,7 @@ class Frame_order(API_base, API_common):
     def _select_model(self, model=None):
         """Select the Frame Order model.
 
-        @param model:   The Frame Order model.  As of yet, this can only be 'iso cone'.
+        @param model:   The Frame Order model.  This can be one of 'rigid', 'iso cone', or 'pseudo-ellipse'.
         @type model:    str
         """
 
@@ -382,7 +390,7 @@ class Frame_order(API_base, API_common):
             raise RelaxModelError('Frame Order')
 
         # Test if the model name exists.
-        if not model in ['rigid', 'iso cone']:
+        if not model in ['rigid', 'iso cone', 'pseudo-ellipse']:
             raise RelaxError("The model name " + repr(model) + " is invalid.")
 
         # Set the model
@@ -469,6 +477,31 @@ class Frame_order(API_base, API_common):
             if not hasattr(cdp, 's1'):
                 cdp.s1 = 0.0
 
+        # Pseudo-elliptic cone model.
+        elif cdp.model == 'pseudo-ellipse':
+            # Set up the parameter arrays.
+            if init:
+                cdp.params.append('eigen_alpha')
+                cdp.params.append('eigen_beta')
+                cdp.params.append('eigen_gamma')
+                cdp.params.append('cone_theta_x')
+                cdp.params.append('cone_theta_y')
+                cdp.params.append('cone_sigma_max')
+
+            # Initialise the cone axis angles and order parameter values.
+            if not hasattr(cdp, 'eigen_alpha'):
+                cdp.eigen_alpha = 0.0
+            if not hasattr(cdp, 'eigen_beta'):
+                cdp.eigen_beta = 0.0
+            if not hasattr(cdp, 'eigen_gamma'):
+                cdp.eigen_gamma = 0.0
+            if not hasattr(cdp, 'cone_theta_x'):
+                cdp.cone_theta_x = 0.0
+            if not hasattr(cdp, 'cone_theta_y'):
+                cdp.cone_theta_y = 0.0
+            if not hasattr(cdp, 'cone_sigma_max'):
+                cdp.cone_sigma_max = 0.0
+
 
     def _unpack_opt_results(self, results, sim_index=None):
         """Unpack and store the Frame Order optimisation results.
@@ -526,6 +559,31 @@ class Frame_order(API_base, API_common):
                 cdp.theta_axis = theta_axis
                 cdp.phi_axis = phi_axis
                 cdp.s1 = s1
+
+        # Pseudo-ellipse cone model.
+        elif cdp.model == 'pseudo-ellipse':
+            # Disassemble the parameter vector.
+            alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = param_vector
+
+            # Monte Carlo simulation data structures.
+            if sim_index != None:
+                # Model parameters.
+                cdp.eigen_alpha[sim_index] = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
+                cdp.eigen_beta[sim_index] =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
+                cdp.eigen_gamma[sim_index] = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
+                cdp.cone_theta_x[sim_index] = cone_theta_x
+                cdp.cone_theta_y[sim_index] = cone_theta_y
+                cdp.cone_sigma_max[sim_index] = cone_sigma_max
+
+            # Normal data structures.
+            else:
+                # Model parameters.
+                cdp.eigen_alpha = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
+                cdp.eigen_beta =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
+                cdp.eigen_gamma = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
+                cdp.cone_theta_x = cone_theta_x
+                cdp.cone_theta_y = cone_theta_y
+                cdp.cone_sigma_max = cone_sigma_max
 
         # Wrap the Euler angles.
         alpha = wrap_angles(alpha, 0.0, 2.0*pi)
@@ -662,24 +720,44 @@ class Frame_order(API_base, API_common):
         if set == 'all' or set == 'generic':
             names.append('params')
 
+        # The parameter suffix.
+        if error_names:
+            suffix = '_err'
+        elif sim_names:
+            suffix = '_sim'
+        else:
+            suffix = ''
+
         # Parameters.
         if set == 'all' or set == 'params':
             # The isotropic cone model.
             if hasattr(cdp, 'model') and cdp.model == 'iso cone':
                 # Euler angles.
-                names.append('beta')
-                names.append('gamma')
+                names.append('beta%s' % suffix)
+                names.append('gamma%s' % suffix)
 
                 # Angular cone parameters.
-                names.append('theta_axis')
-                names.append('phi_axis')
-                names.append('s1')
+                names.append('theta_axis%s' % suffix)
+                names.append('phi_axis%s' % suffix)
+                names.append('s1%s' % suffix)
 
             # All other models.
             else:
-                names.append('alpha')
-                names.append('beta')
-                names.append('gamma')
+                names.append('alpha%s' % suffix)
+                names.append('beta%s' % suffix)
+                names.append('gamma%s' % suffix)
+
+            # The pseudo-elliptic cone model.
+            if hasattr(cdp, 'model') and cdp.model == 'pseudo-ellipse':
+                # Eigenframe
+                names.append('eigen_alpha%s' % suffix)
+                names.append('eigen_beta%s' % suffix)
+                names.append('eigen_gamma%s' % suffix)
+
+                # Cone parameters.
+                names.append('cone_theta_x%s' % suffix)
+                names.append('cone_theta_y%s' % suffix)
+                names.append('cone_sigma_max%s' % suffix)
 
         # Minimisation statistics.
         if set == 'all' or set == 'min':
@@ -689,44 +767,6 @@ class Frame_order(API_base, API_common):
             names.append('g_count')
             names.append('h_count')
             names.append('warning')
-
-        # Parameter errors.
-        if error_names and (set == 'all' or set == 'params'):
-            # The isotropic cone model.
-            if hasattr(cdp, 'model') and  cdp.model == 'iso cone':
-                # Euler angles.
-                names.append('beta_err')
-                names.append('gamma_err')
-
-                # Angular cone parameters.
-                names.append('theta_axis_err')
-                names.append('phi_axis_err')
-                names.append('s1_err')
-
-            # All other models.
-            else:
-                names.append('alpha_err')
-                names.append('beta_err')
-                names.append('gamma_err')
-
-        # Parameter simulation values.
-        if sim_names and (set == 'all' or set == 'params'):
-            # The isotropic cone model.
-            if hasattr(cdp, 'model') and  cdp.model == 'iso cone':
-                # Euler angles.
-                names.append('beta_sim')
-                names.append('gamma_sim')
-
-                # Angular cone parameters.
-                names.append('theta_axis_sim')
-                names.append('phi_axis_sim')
-                names.append('s1_sim')
-
-            # All other models.
-            else:
-                names.append('alpha_sim')
-                names.append('beta_sim')
-                names.append('gamma_sim')
 
         # Return the names.
         return names
@@ -769,28 +809,22 @@ class Frame_order(API_base, API_common):
             incs = inc
 
         # Initialise the grid increments structures.
-        default_bounds = False
-        if not lower:
-            lower = []
-            default_bounds = True
-        if not upper:
-            upper = []
+        lower_list = lower
+        upper_list = upper
         grid = []
         """This structure is a list of lists.  The first dimension corresponds to the model
         parameter.  The second dimension are the grid node positions."""
 
         # Generate the grid.
         for i in range(n):
-            # Reset the distribution type and row.
+            # Reset.
             dist_type = None
-            row = None
+            end_point = True
 
             # Alpha Euler angle.
             if cdp.params[i] == 'alpha':
-                # Set the default bounds.
-                if default_bounds:
-                    lower.append(0.0)
-                    upper.append(2*pi * (1.0 - 1.0/incs[i]))
+                lower = 0.0
+                upper = 2*pi * (1.0 - 1.0/incs[i])
 
             # Beta Euler angle.
             if cdp.params[i] == 'beta':
@@ -798,26 +832,42 @@ class Frame_order(API_base, API_common):
                 if not isinstance(inc, list):
                     incs[i] = incs[i] / 2 + 1
 
-                # The distribution type.
+                # The distribution type and end point.
                 dist_type = 'acos'
+                end_point = False
 
                 # Set the default bounds.
-                if default_bounds:
-                    lower.append(0.0)
-                    upper.append(pi)
-
-                # Get the grid row.
-                row = self._grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
-
-                # Remove the end point.
-                row = row[:-1]
+                lower = 0.0
+                upper = pi
 
             # Gamma Euler angle.
             if cdp.params[i] == 'gamma':
+                lower = 0.0
+                upper = 2*pi * (1.0 - 1.0/incs[i])
+
+            # The eigenframe alpha Euler angle.
+            if cdp.params[i] == 'eigen_alpha':
+                lower = 0.0
+                upper = 2*pi * (1.0 - 1.0/incs[i])
+
+            # The eigenframe beta Euler angle.
+            if cdp.params[i] == 'eigen_beta':
+                # Change the default increment numbers.
+                if not isinstance(inc, list):
+                    incs[i] = incs[i] / 2 + 1
+
+                # The distribution type and end point.
+                dist_type = 'acos'
+                end_point = False
+
                 # Set the default bounds.
-                if default_bounds:
-                    lower.append(0.0)
-                    upper.append(2*pi * (1.0 - 1.0/incs[i]))
+                lower = 0.0
+                upper = pi
+
+            # The eigenframe gamma Euler angle.
+            if cdp.params[i] == 'eigen_gamma':
+                lower = 0.0
+                upper = 2*pi * (1.0 - 1.0/incs[i])
 
             # The isotropic cone model.
             if cdp.model == 'iso cone':
@@ -829,31 +879,42 @@ class Frame_order(API_base, API_common):
 
                     # The distribution type.
                     dist_type = 'acos'
+                    end_point = False
 
                     # Set the default bounds.
-                    if default_bounds:
-                        lower.append(0.0)
-                        upper.append(pi)
+                    lower = 0.0
+                    upper = pi
 
                 # Cone axis azimuthal angle.
                 if cdp.params[i] == 'phi_axis':
-                    # Set the default bounds.
-                    if default_bounds:
-                        lower.append(0.0)
-                        upper.append(2*pi * (1.0 - 1.0/incs[i]))
+                    lower = 0.0
+                    upper = 2*pi * (1.0 - 1.0/incs[i])
 
                 # The cone order parameter.
                 if cdp.params[i] == 's1':
-                    # Set the default bounds.
-                    if default_bounds:
-                        lower.append(-0.5)
-                        upper.append(1.0)
+                    lower = -0.5
+                    upper = 1.0
 
-            # Get the grid row.
-            if not row:
-                row = self._grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
+            # The pseudo-elliptic cone model parameters.
+            if cdp.model == 'pseudo-ellipse':
+                # Cone opening angles.
+                if cdp.params[i] in ['theta_x', 'theta_y']:
+                    lower = 0.0
+                    upper = pi
+
+                # Torsion angle restriction.
+                if cdp.params[i] == 'sigma_max':
+                    lower = 0.0
+                    upper = pi
+
+            # Over-ride the bounds.
+            if lower_list:
+                lower = lower_list[i]
+            if upper_list:
+                upper = upper_list[i]
 
             # Append the grid row.
+            row = self._grid_row(incs[i], lower, upper, dist_type=dist_type, end_point=end_point)
             grid.append(row)
 
         # Minimisation.

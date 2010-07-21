@@ -181,7 +181,12 @@ class Frame_order(User_fn_class):
         Prior to optimisation, the Frame Order model should be selected.  The list of available
         models are:
 
-        'iso cone' - The isotropic cone model.
+            'iso cone' - The isotropic cone model.  The cone is defined by a single opening angle
+            theta.  The torsion angle sigma is unrestricted.
+
+            'pseudo-ellipse' - The pseudo-elliptic cone model.  The cone is defined by two opening
+            angles, theta_x and theta_y.  In the tilt-torsion angle system these define the
+            allowable tilt.  The torsion angle sigma is restricted.
 
 
         Examples
