@@ -37,6 +37,56 @@ from maths_fns.pseudo_ellipse import pec
 from maths_fns.rotation_matrix import two_vect_to_R
 
 
+def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, s1):
+    """Generate the rotated 2nd degree Frame Order matrix.
+
+    The cone axis is assumed to be parallel to the z-axis in the eigenframe.  In this model, the three order parameters are defined as::
+
+        S1 = S2,
+        S3 = 0
+
+
+    @param matrix:      The Frame Order matrix, 2nd degree to be populated.
+    @type matrix:       numpy 9D, rank-2 array
+    @param R:           The rotation matrix to be populated.
+    @type R:            numpy 3D, rank-2 array
+    @param z_axis:      The molecular frame z-axis from which the cone axis is rotated from.
+    @type z_axis:       numpy 3D, rank-1 array
+    @param cone_axis:   The storage structure for the cone axis.
+    @type cone_axis:    numpy 3D, rank-1 array
+    @param theta_axis:  The cone axis polar angle.
+    @type theta_axis:   float
+    @param phi_axis:    The cone axis azimuthal angle.
+    @type phi_axis:     float
+    @param s1:          The cone order parameter.
+    @type s1:           float
+    """
+
+    # Generate the cone axis from the spherical angles.
+    generate_vector(cone_axis, theta_axis, phi_axis)
+
+    # Generate the rotation matrix.
+    two_vect_to_R(z_axis, cone_axis, R)
+
+    # The outer product of R.
+    R_kron = kron_prod(R, R)
+
+    # Populate the Frame Order matrix in the eigenframe.
+    populate_2nd_eigenframe_iso_cone(matrix, s1)
+
+    # Perform the T23 transpose to obtain the Kronecker product matrix!
+    transpose_23(matrix)
+
+    # Rotate.
+    matrix = dot(R_kron, dot(matrix, transpose(R_kron)))
+
+    # Perform T23 again to return back.
+    transpose_23(matrix)
+
+    # Return the matrix.
+    return matrix
+
+
 def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
     """Generate the 1st degree Frame Order matrix for the pseudo ellipse.
 
@@ -95,56 +145,6 @@ def compile_2nd_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
     matrix[1, 3] = matrix[3, 1] = fact * quad(part_int_daeg2_pseudo_ellipse_13, -pi, pi, args=(theta_x, theta_y, sigma_max))[0]
     matrix[2, 6] = matrix[6, 2] = fact * quad(part_int_daeg2_pseudo_ellipse_26, -pi, pi, args=(theta_x, theta_y, sigma_max))[0]
     matrix[5, 7] = matrix[7, 5] = fact * quad(part_int_daeg2_pseudo_ellipse_57, -pi, pi, args=(theta_x, theta_y, sigma_max))[0]
-
-
-def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, s1):
-    """Generate the rotated 2nd degree Frame Order matrix.
-
-    The cone axis is assumed to be parallel to the z-axis in the eigenframe.  In this model, the three order parameters are defined as::
-
-        S1 = S2,
-        S3 = 0
-
-
-    @param matrix:      The Frame Order matrix, 2nd degree to be populated.
-    @type matrix:       numpy 9D, rank-2 array
-    @param R:           The rotation matrix to be populated.
-    @type R:            numpy 3D, rank-2 array
-    @param z_axis:      The molecular frame z-axis from which the cone axis is rotated from.
-    @type z_axis:       numpy 3D, rank-1 array
-    @param cone_axis:   The storage structure for the cone axis.
-    @type cone_axis:    numpy 3D, rank-1 array
-    @param theta_axis:  The cone axis polar angle.
-    @type theta_axis:   float
-    @param phi_axis:    The cone axis azimuthal angle.
-    @type phi_axis:     float
-    @param s1:          The cone order parameter.
-    @type s1:           float
-    """
-
-    # Generate the cone axis from the spherical angles.
-    generate_vector(cone_axis, theta_axis, phi_axis)
-
-    # Generate the rotation matrix.
-    two_vect_to_R(z_axis, cone_axis, R)
-
-    # The outer product of R.
-    R_kron = kron_prod(R, R)
-
-    # Populate the Frame Order matrix in the eigenframe.
-    populate_2nd_eigenframe_iso_cone(matrix, s1)
-
-    # Perform the T23 transpose to obtain the Kronecker product matrix!
-    transpose_23(matrix)
-
-    # Rotate.
-    matrix = dot(R_kron, dot(matrix, transpose(R_kron)))
-
-    # Perform T23 again to return back.
-    transpose_23(matrix)
-
-    # Return the matrix.
-    return matrix
 
 
 def daeg_to_rotational_superoperator(daeg, Rsuper):
