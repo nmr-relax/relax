@@ -199,29 +199,40 @@ __default_value_prompt_doc__ = """
 """
 
 
-def delete(tensor):
+def delete(tensor=None):
     """Function for deleting alignment tensor data.
 
     @param tensor:          The alignment tensor identification string.
-    @type tensor:           str
+    @type tensor:           str or None
     """
 
     # Test if the current data pipe exists.
     pipes.test()
 
     # Test if alignment tensor data exists.
-    if not align_data_exists(tensor):
+    if tensor and not align_data_exists(tensor):
         raise RelaxNoTensorError('alignment')
 
-    # Find the tensor index.
-    index = get_tensor_index(tensor)
+    # The tensor list.
+    if tensor:
+        tensors = [tensor]
+    else:
+        tensors = cdp.align_ids
 
-    # Delete the alignment data.
-    cdp.align_tensors.pop(index)
+    # Loop over the tensors.
+    for tensor in tensors:
+        # Print out.
+        print("Removing the '%s' tensor." % tensor)
 
-    # Delete the alignment tensor list if empty.
-    if not len(cdp.align_tensors):
-        del(cdp.align_tensors)
+        # Find the tensor index.
+        index = get_tensor_index(tensor)
+
+        # Delete the alignment data.
+        cdp.align_tensors.pop(index)
+
+        # Delete the alignment tensor list if empty.
+        if not len(cdp.align_tensors):
+            del(cdp.align_tensors)
 
 
 def display(tensor):
@@ -603,6 +614,12 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     valid_types = ['deg', 'rad']
     if not angle_units in valid_types:
         raise RelaxError("The alignment tensor 'angle_units' argument " + repr(angle_units) + " should be either 'deg' or 'rad'.")
+
+    # Add the tensor ID to the current data pipe.
+    if not hasattr(cdp, 'align_ids'):
+        cdp.align_ids = []
+    if tensor not in cdp.align_ids:
+        cdp.align_ids.append(tensor)
 
     # Add the align_tensors object to the data pipe.
     if not errors:

@@ -58,7 +58,7 @@ for i in xrange(len(align_list)):
     frq.set(id=align_list[i], frq=799.75376122 * 1e6)
 
 # Set the paramagnetic centre.
-pcs.centre([ -14.845,    0.969,    0.265])
+paramag.centre([ -14.845,    0.969,    0.265])
 
 
 # The solution.
