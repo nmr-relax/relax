@@ -186,14 +186,14 @@ class Frame_order:
 
             # Rotate the tensor (normal R.X.RT rotation).
             if self.full_in_ref_frame[i]:
-                self.tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
+                tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
 
             # Rotate the tensor (inverse RT.X.R rotation).
             else:
-                self.tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
+                tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
 
             # Convert the tensor back to 5D, rank-1 form, as the back-calculated reduced tensor.
-            to_5D(self.red_tensors_bc[index1:index2], self.tensor_3D)
+            to_5D(self.red_tensors_bc[index1:index2], tensor_3D)
 
         # Return the chi-squared value.
         return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
@@ -214,7 +214,7 @@ class Frame_order:
         beta, gamma, theta, phi, s1 = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, s1)
+        frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, s1)
 
         # Reduced alignment tensor rotation.
         euler_to_R(0.0, beta, gamma, self.rot)
@@ -226,21 +226,21 @@ class Frame_order:
             index2 = i*5+5
 
             # Reduce the tensor.
-            reduce_alignment_tensor(self.frame_order_2nd, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
+            reduce_alignment_tensor(frame_order_2nd, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
 
             # Convert the tensor to 3D, rank-2 form.
             to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
 
             # Rotate the tensor (normal R.X.RT rotation).
             if self.full_in_ref_frame[i]:
-                self.tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
+                tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
 
             # Rotate the tensor (inverse RT.X.R rotation).
             else:
-                self.tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
+                tensor_3D = dot(transpose(self.rot), dot(saelf.tensor_3D, self.rot))
 
             # Convert the tensor back to 5D, rank-1 form.
-            to_5D(self.red_tensors_bc[index1:index2], self.tensor_3D)
+            to_5D(self.red_tensors_bc[index1:index2], tensor_3D)
 
         # Return the chi-squared value.
         return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
