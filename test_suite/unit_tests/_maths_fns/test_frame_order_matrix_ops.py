@@ -51,19 +51,20 @@ class Test_frame_order_matrix_ops(TestCase):
 
         # Init.
         calc = zeros((9, 9), float64)
+        R = zeros((3, 3), float64)
         x = pi/4.0
         y = 3.0*pi/8.0
         z = pi/6.0
 
         # Calculate the matrix.
-        compile_2nd_matrix_pseudo_ellipse(calc, x, y, z)
+        f2 = compile_2nd_matrix_pseudo_ellipse(calc, R, 0, 0, 0, x, y, z)
 
         # Print out.
         print_frame_order_2nd_degree(real, "real")
-        print_frame_order_2nd_degree(calc, "calculated")
+        print_frame_order_2nd_degree(f2, "calculated")
 
         # Check the values.
         for i in range(9):
             for j in range(9):
                 print "Element %s, %s." % (i, j)
-                self.assertAlmostEqual(calc[i, j], real[i, j], 4)
+                self.assertAlmostEqual(f2[i, j], real[i, j], 4)
