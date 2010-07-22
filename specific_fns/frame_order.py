@@ -61,6 +61,21 @@ class Frame_order(API_base, API_common):
         self.set_param_values = self._set_param_values_global
 
 
+    def _assemble_limit_arrays(self):
+        """Assemble and return the limit vectors.
+
+        @return:    The lower and upper limit vectors.
+        @rtype:     numpy rank-1 array, numpy rank-1 array
+        """
+
+        # Init.
+        lower = zeros(len(cdp.params), float64)
+        upper = 2.0*pi * ones(len(cdp.params), float64)
+
+        # Return the arrays.
+        return lower, upper
+
+
     def _assemble_param_vector(self):
         """Assemble and return the parameter vector.
 
@@ -1035,6 +1050,9 @@ class Frame_order(API_base, API_common):
             # Throw a warning.
             warn(RelaxWarning("Constraints are as of yet not implemented - turning this option off."))
 
+        # Simulated annealing constraints.
+        lower, upper = self._assemble_limit_arrays()
+
         # Assemble the parameter vector.
         param_vector = self._assemble_param_vector()
 
@@ -1050,7 +1068,7 @@ class Frame_order(API_base, API_common):
 
         # Minimisation.
         else:
-            results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
+            results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, l=lower, u=upper, full_output=True, print_flag=verbosity)
 
         # Unpack the results.
         self._unpack_opt_results(results, sim_index)
