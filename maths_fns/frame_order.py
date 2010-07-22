@@ -298,7 +298,7 @@ class Frame_order:
         alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max)
 
         # Average position rotation.
         euler_to_R(alpha, beta, gamma, self.rot)
@@ -310,21 +310,21 @@ class Frame_order:
             index2 = i*5+5
 
             # Reduce the tensor.
-            reduce_alignment_tensor(self.frame_order_2nd, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
+            reduce_alignment_tensor(frame_order_2nd, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
 
             # Convert the tensor to 3D, rank-2 form.
             to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
 
             # Rotate the tensor (normal R.X.RT rotation).
             if self.full_in_ref_frame[i]:
-                self.tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
+                tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
 
             # Rotate the tensor (inverse RT.X.R rotation).
             else:
-                self.tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
+                tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
 
             # Convert the tensor back to 5D, rank-1 form.
-            to_5D(self.red_tensors_bc[index1:index2], self.tensor_3D)
+            to_5D(self.red_tensors_bc[index1:index2], tensor_3D)
 
         # Return the chi-squared value.
         return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
