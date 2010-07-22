@@ -39,7 +39,7 @@ from rotation_matrix import euler_to_R_zyz
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, pcs=None, pcs_errors=None, pcs_weights=None, rdcs=None, rdc_errors=None, rdc_weights=None, xh_vect=None, temp=None, frq=None, dip_const=None, atomic_pos=None, paramag_centre=None, scaling_matrix=None, centre_fixed=True):
+    def __init__(self, model=None, N=None, init_params=None, probs=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, pcs=None, pcs_errors=None, pcs_weights=None, rdcs=None, rdc_errors=None, rdc_weights=None, xh_vect=None, temp=None, frq=None, dip_const=None, atomic_pos=None, paramag_centre=None, scaling_matrix=None, centre_fixed=True):
         """Set up the class instance for optimisation.
 
         The N-state models
@@ -107,6 +107,8 @@ class N_state_opt:
         @type N:                    int
         @keyword init_params:       The initial parameter values.  Optimisation must start at some point!
         @type init_params:          numpy float64 array
+        @keyword probs:             The probabilities for each state c.  The length of this list should be equal to N.
+        @type probs:                list of float
         @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2, Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
         @type full_tensors:         list of rank-2, 3D numpy arrays
         @keyword red_data:          An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced tensors.  The format is the same as for full_tensors.
@@ -361,9 +363,6 @@ class N_state_opt:
                 # Set up the paramagnetic info.
                 self.paramag_info()
 
-            # The probability array (all structures have initial equal probability).
-            self.probs = ones(self.N, float64) / self.N
-
             # PCS function, gradient, and Hessian matrices.
             self.deltaij_theta = zeros((self.num_align, self.num_spins), float64)
             self.ddeltaij_theta = zeros((self.total_num_params, self.num_align, self.num_spins), float64)
@@ -395,6 +394,16 @@ class N_state_opt:
 
             # The zero Hessian.
             self.zero_hessian = zeros(self.num_spins, float64)
+
+        # Fixed probabilities.
+        if model == 'fixed':
+            # The probability array.
+            if probs:
+                self.probs = probs
+
+            # All structures have initial equal probability.
+            else:
+                self.probs = ones(self.N, float64) / self.N
 
 
     def func_2domain(self, params):

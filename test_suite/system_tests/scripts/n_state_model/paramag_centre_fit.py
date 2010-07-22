@@ -31,6 +31,17 @@ structure.read_pdb(file='bax_C_1J7P_N_H_Ca', dir=STRUCT_PATH)
 # Load the spins.
 structure.load_spins()
 
+# Deselect most spins (to speed things up).
+deselect.spin()
+select.spin(":83")
+select.spin(":84")
+select.spin(":85")
+select.spin(":111")
+select.spin(":130")
+select.spin(":131")
+select.spin(":132")
+select.spin(":148")
+
 # Load the NH vectors.
 structure.vectors(spin_id='@N', attached='H', ave=False)
 
@@ -55,26 +66,45 @@ frq.set(id='synth', frq=600.0 * 1e6)
 # Set up the model.
 n_state_model.select_model(model='fixed')
 
-# Paramagnetic centre optimisation.
-paramag.centre(fix=False)
+# Paramagnetic centre optimisation
+real_pos = [32.555, -19.130, 27.775]
+
+#paramag.centre([  32.555,  -19.130,   27.775], fix=False)
+paramag.centre([ 32, -19, 28], fix=False)
 
 # Set the tensor elements.
-#cdp.align_tensors[0].Axx = -0.351261/2000
-#cdp.align_tensors[0].Ayy = 0.556994/2000
-#cdp.align_tensors[0].Axy = -0.506392/2000
-#cdp.align_tensors[0].Axz = 0.560544/2000
-#cdp.align_tensors[0].Ayz = -0.286367/2000
+cdp.align_tensors[0].Axx = -0.351261/2000
+cdp.align_tensors[0].Ayy = 0.556994/2000
+cdp.align_tensors[0].Axy = -0.506392/2000
+cdp.align_tensors[0].Axz = 0.560544/2000
+cdp.align_tensors[0].Ayz = -0.286367/2000
+print cdp.align_tensors[0].A
+
+#cdp.align_tensors[0].Axx = 0.0
+#cdp.align_tensors[0].Ayy = 0.0
+#cdp.align_tensors[0].Axy = 0.0
+#cdp.align_tensors[0].Axz = 0.0
+#cdp.align_tensors[0].Ayz = 0.0
 
 # Minimisation.
-grid_search(inc=3)
+#grid_search(inc=6)
 minimise('simplex', constraints=False, max_iter=500)
+#calc()
+
+print cdp.align_tensors[0].A
 
 # Write out a results file.
 results.write('devnull', force=True)
 
-# Show the tensors.
-align_tensor.display()
+## Show the tensors.
+#align_tensor.display()
+#
+# Print out
+print("A:\n" % cdp.align_tensors[0])
+print("centre: %s" % cdp.paramagnetic_centre)
+print("centre diff: %s" % (cdp.paramagnetic_centre - real_pos))
+print("chi2: %s" % cdp.chi2)
 
-# Print the contents of the current data pipe (for debugging Q-values).
-print(cdp)
-print((cdp.align_tensors[0]))
+# Map.
+#dx.map(params=['paramag_x', 'paramag_y', 'paramag_z'], inc=10, lower=[30, -20, 26], upper=[33, -18, 30])
+print cdp

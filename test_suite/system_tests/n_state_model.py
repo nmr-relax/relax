@@ -141,6 +141,17 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 3.15009916529e-32)
 
 
+    def test_A_to_chi(self):
+        """Test the conversion of the alignment tensor to the chi tensor."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'A_to_chi.py')
+
+        # Test the optimised values.
+        for i in range(3):
+            self.assertAlmostEqual(cdp.chi[i, i] * 1e32, cdp.chi_ref[i] * 1e32, 2)
+
+
     def test_align_fit(self):
         """Test the use of RDCs and PCSs to find the alignment tensor."""
 
@@ -326,19 +337,31 @@ class N_state_model(SystemTestCase):
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'paramag_centre_fit.py')
 
         # Check the paramagnetic centre position.
-        self.assertAlmostEqual(cdp.paramagnetic_centre[0], 32.555)
-        self.assertAlmostEqual(cdp.paramagnetic_centre[1], -19.130)
-        self.assertAlmostEqual(cdp.paramagnetic_centre[2], 27.775)
+        self.assertAlmostEqual(cdp.paramagnetic_centre[0], 32.555, 1)
+        self.assertAlmostEqual(cdp.paramagnetic_centre[1], -19.130, 1)
+        self.assertAlmostEqual(cdp.paramagnetic_centre[2], 27.775, 1)
 
         # Test the optimised values.
-        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.556994/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
-        self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.556994/2000, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000, 5)
+        self.assertAlmostEqual(cdp.chi2, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0, 2)
+
+
+    def test_pcs_back_calc(self):
+        """Test the back-calculation of PCSs for ubiquitin."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pcs_back_calc.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pcs_bc['A'],  0.061941887563792014)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].pcs_bc['A'], -0.077886567972081502)
+        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].pcs_bc['A'], -0.13928519099517916)
 
 
     def test_pcs_fit_true_pos(self):
@@ -383,6 +406,18 @@ class N_state_model(SystemTestCase):
         chi_diag = chi_diag * 1e33
         self.assertAlmostEqual((chi_diag[2, 2] - (chi_diag[0, 0] + chi_diag[1, 1])/2.0), -6.726159808496, 5)
         self.assertAlmostEqual((chi_diag[0, 0] - chi_diag[1, 1]), -3.960936794864)
+
+
+    def test_pcs_to_rdc(self):
+        """Test the back-calculation of RDCs from a PCS derived tensor."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pcs_to_rdc.py')
+
+        # Test the values.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].rdc_bc['A'], 4.1319413321530014)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].rdc_bc['A'], -9.5802642470087989)
+        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].rdc_bc['A'], -16.244078605100817)
 
 
     def test_stereochem_analysis(self):

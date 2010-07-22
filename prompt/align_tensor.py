@@ -125,7 +125,7 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(tensor, 'tensor')
+        arg_check.is_str(tensor, 'tensor', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.delete(tensor=tensor)
