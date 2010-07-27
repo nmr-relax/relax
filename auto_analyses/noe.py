@@ -78,7 +78,10 @@ class NOE_calc:
         self.unresolved = unresolved
         self.pdb_file = pdb_file
         self.results_folder = results_folder
-        self.grace_dir = results_folder+sep+'grace'
+        if results_folder:
+            self.grace_dir = results_folder+sep+'grace'
+        else:
+            self.grace_dir = None
         self.int_method = int_method
         self.heteronuc = heteronuc
         self.proton = proton
