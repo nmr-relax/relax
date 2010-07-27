@@ -29,13 +29,15 @@ from prompt.interpreter import Interpreter
 
 
 class Relax_fit:
-    def __init__(self, filename='rx', pipe_name='rx', seq_args=None, file_names=None, relax_times=None, pdb_file=None, view_plots=True, int_method='height', mc_num=500):
+    def __init__(self, filename='rx', pipe_name='rx', results_directory = None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, view_plots=True, int_method='height', mc_num=500):
         """Perform relaxation curve fitting.
 
         @keyword filename:      Name of the output file.
         @type filename:         str
         @keyword pipe_name:     The name of the data pipe to create.
         @type pipe_name:        str
+        @keyword directory:     The directory, where results files are saved.
+        @type directory:        str
         @keyword seq_args:      The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         @type seq_args:         list of lists of [str, None or str, None or int, None or int, None or int, None or int, None or int, None or int, None or int, None or str]
         @keyword file_names:    A list of all the peak list file names.
@@ -55,6 +57,11 @@ class Relax_fit:
         # Store the args.
         self.filename = filename
         self.pipe_name = pipe_name
+        self.results_directory = results_directory
+        if results_directory:
+            self.grace_dir = results_directory+sep+'grace'
+        else:
+            self.grace_dir = None
         self.seq_args = seq_args
         self.file_names = file_names
         self.relax_times = relax_times
@@ -127,28 +134,28 @@ class Relax_fit:
         self.interpreter.monte_carlo.error_analysis()
 
         # Save the relaxation rates.
-        self.interpreter.value.write(param='rx', file=self.filename+'.out', force=True)
+        self.interpreter.value.write(param='rx', file=self.filename+'.out', dir=self.results_directory, force=True)
 
         # Save the results.
-        self.interpreter.results.write(file='results', force=True)
+        self.interpreter.results.write(file='results', dir=self.results_directory, force=True)
 
         # Create Grace plots of the data.
-        self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', force=True)    # Minimised chi-squared value.
-        self.interpreter.grace.write(y_data_type='i0', file='i0.agr', force=True)    # Initial peak intensity.
-        self.interpreter.grace.write(y_data_type='rx', file=self.filename+'.agr', force=True)    # Relaxation rate.
-        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', force=True)    # Average peak intensities.
-        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
+        self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=self.grace_dir, force=True)    # Minimised chi-squared value.
+        self.interpreter.grace.write(y_data_type='i0', file='i0.agr', dir=self.grace_dir, force=True)    # Initial peak intensity.
+        self.interpreter.grace.write(y_data_type='rx', file=self.filename+'.agr', dir=self.grace_dir, force=True)    # Relaxation rate.
+        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', dir=self.grace_dir, force=True)    # Average peak intensities.
+        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', dir=self.grace_dir, force=True)    # Average peak intensities (normalised).
 
         # Display the Grace plots if selected.
         if self.view_plots:
-            self.interpreter.grace.view(file='chi2.agr')
-            self.interpreter.grace.view(file='i0.agr')
-            self.interpreter.grace.view(file=self.filename+'.agr')
-            self.interpreter.grace.view(file='intensities.agr')
-            self.interpreter.grace.view(file='intensities_norm.agr')
+            self.interpreter.grace.view(file='chi2.agr', dir=self.grace_dir)
+            self.interpreter.grace.view(file='i0.agr', dir=self.grace_dir)
+            self.interpreter.grace.view(file=self.filename+'.agr', dir=self.grace_dir)
+            self.interpreter.grace.view(file='intensities.agr', dir=self.grace_dir)
+            self.interpreter.grace.view(file='intensities_norm.agr', dir=self.grace_dir)
 
         # Save the program state.
-        self.interpreter.state.save(self.filename+'.save', force=True)
+        self.interpreter.state.save(self.filename+'.save', dir=self.results_directory, force=True)
 
 
     def check_vars(self):
