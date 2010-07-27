@@ -29,7 +29,7 @@ from prompt.interpreter import Interpreter
 
 
 class Relax_fit:
-    def __init__(self, filename='rx', pipe_name='rx', seq_args=None, file_names=None, relax_times=None, view_plots=True, int_method='height', mc_num=500):
+    def __init__(self, filename='rx', pipe_name='rx', seq_args=None, file_names=None, relax_times=None, pdb_file=None, view_plots=True, int_method='height', mc_num=500):
         """Perform relaxation curve fitting.
 
         @keyword filename:      Name of the output file.
@@ -42,6 +42,8 @@ class Relax_fit:
         @type file_names:       list of str
         @keyword relax_times:   The list of relaxation times corresponding to file_names.  These two lists must be of the same size.
         @type relax_times:      list of float
+        @keyword pdb_file:      Name of the PDB file.
+        @type pdb_file:         str
         @keyword view_plots:    Flag to automatically viu grace plots after calculation.
         @type view_plots:       boolean
         @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
@@ -56,6 +58,7 @@ class Relax_fit:
         self.seq_args = seq_args
         self.file_names = file_names
         self.relax_times = relax_times
+        self.pdb_file = pdb_file
         self.view_plots = view_plots
         self.int_method = int_method
         self.mc_num = mc_num
@@ -79,7 +82,12 @@ class Relax_fit:
         self.interpreter.pipe.create(self.pipe_name, 'relax_fit')
 
         # Load the sequence.
-        self.interpreter.sequence.read(file=self.seq_args[0], dir=self.seq_args[1], mol_name_col=self.seq_args[2], res_num_col=self.seq_args[3], res_name_col=self.seq_args[4], spin_num_col=self.seq_args[5], spin_name_col=self.seq_args[6], sep=self.seq_args[7])
+        if self.pdb_file:   # load PDB File
+            self.interpreter.structure.read_pdb(self.pdb_file)
+            generic_fns.structure.main.load_spins(spin_id='@N')
+
+        else:
+            self.interpreter.sequence.read(file=self.seq_args[0], dir=self.seq_args[1], mol_name_col=self.seq_args[2], res_num_col=self.seq_args[3], res_name_col=self.seq_args[4], spin_num_col=self.seq_args[5], spin_name_col=self.seq_args[6], sep=self.seq_args[7])
 
         # Loop over the spectra.
         for i in xrange(len(self.file_names)):
