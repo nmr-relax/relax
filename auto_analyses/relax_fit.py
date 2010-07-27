@@ -30,7 +30,7 @@ from prompt.interpreter import Interpreter
 
 
 class Relax_fit:
-    def __init__(self, filename='rx', pipe_name='rx', results_directory = None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, view_plots=True, int_method='height', heteronuc = 'N', proton = 'H', mc_num=500):
+    def __init__(self, filename='rx', pipe_name='rx', results_directory = None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, view_plots=True, int_method='height', heteronuc = 'N', proton = 'H', mc_num=500, inc = '11'):
         """Perform relaxation curve fitting.
 
         @keyword filename:      Name of the output file.
@@ -57,6 +57,8 @@ class Relax_fit:
         @type proton:           str
         @keyword mc_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type mc_num:           int
+        @keyword inc:           Number of grid search increments.
+        @type inc:              int
         """
 
         # Store the args.
@@ -76,6 +78,7 @@ class Relax_fit:
         self.heteronuc = heteronuc
         self.proton = proton
         self.mc_num = mc_num
+        self.inc = inc
 
         # User variable checks.
         self.check_vars()
@@ -128,7 +131,7 @@ class Relax_fit:
         self.interpreter.relax_fit.select_model('exp')
 
         # Grid search.
-        self.interpreter.grid_search(inc=11)
+        self.interpreter.grid_search(inc=self.inc)
 
         # Minimise.
         self.interpreter.minimise('simplex', scaling=False, constraints=False)
