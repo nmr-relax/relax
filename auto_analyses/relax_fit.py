@@ -29,9 +29,11 @@ from prompt.interpreter import Interpreter
 
 
 class Relax_fit:
-    def __init__(self, pipe_name='rx', seq_args=None, file_names=None, relax_times=None, , view_plots=True, int_method='height', mc_num=500):
+    def __init__(self, filename='rx', pipe_name='rx', seq_args=None, file_names=None, relax_times=None, , view_plots=True, int_method='height', mc_num=500):
         """Perform relaxation curve fitting.
 
+        @keyword filename:      Name of the output file.
+        @type filename:         str
         @keyword pipe_name:     The name of the data pipe to create.
         @type pipe_name:        str
         @keyword seq_args:      The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
@@ -49,6 +51,7 @@ class Relax_fit:
         """
 
         # Store the args.
+        self.filename = filename
         self.pipe_name = pipe_name
         self.seq_args = seq_args
         self.file_names = file_names
@@ -116,7 +119,7 @@ class Relax_fit:
         self.interpreter.monte_carlo.error_analysis()
 
         # Save the relaxation rates.
-        self.interpreter.value.write(param='rx', file='rx.out', force=True)
+        self.interpreter.value.write(param='rx', file=self.filename+'.out', force=True)
 
         # Save the results.
         self.interpreter.results.write(file='results', force=True)
@@ -124,7 +127,7 @@ class Relax_fit:
         # Create Grace plots of the data.
         self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', force=True)    # Minimised chi-squared value.
         self.interpreter.grace.write(y_data_type='i0', file='i0.agr', force=True)    # Initial peak intensity.
-        self.interpreter.grace.write(y_data_type='rx', file='rx.agr', force=True)    # Relaxation rate.
+        self.interpreter.grace.write(y_data_type='rx', file=self.filename+'.agr', force=True)    # Relaxation rate.
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', force=True)    # Average peak intensities.
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
 
@@ -137,7 +140,7 @@ class Relax_fit:
             self.interpreter.grace.view(file='intensities_norm.agr')
 
         # Save the program state.
-        self.interpreter.state.save('rx.save', force=True)
+        self.interpreter.state.save(self.filename+'.save', force=True)
 
 
     def check_vars(self):
