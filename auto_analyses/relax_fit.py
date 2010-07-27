@@ -30,7 +30,7 @@ from prompt.interpreter import Interpreter
 
 
 class Relax_fit:
-    def __init__(self, filename='rx', pipe_name='rx', results_directory = None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, view_plots=True, int_method='height', mc_num=500):
+    def __init__(self, filename='rx', pipe_name='rx', results_directory = None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, view_plots=True, int_method='height', heteronuc = 'N', proton = 'H', mc_num=500):
         """Perform relaxation curve fitting.
 
         @keyword filename:      Name of the output file.
@@ -51,6 +51,10 @@ class Relax_fit:
         @type view_plots:       boolean
         @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
         @type int_method:       str
+        @keyword heteronuc:     Label of hetero nucleus.
+        @type heteronuc:        str
+        @keyword proton:        Label of proton.
+        @type proton:           str
         @keyword mc_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type mc_num:           int
         """
@@ -69,6 +73,8 @@ class Relax_fit:
         self.pdb_file = pdb_file
         self.view_plots = view_plots
         self.int_method = int_method
+        self.heteronuc = heteronuc
+        self.proton = proton
         self.mc_num = mc_num
 
         # User variable checks.
@@ -100,7 +106,7 @@ class Relax_fit:
         # Loop over the spectra.
         for i in xrange(len(self.file_names)):
             # Load the peak intensities.
-            self.interpreter.spectrum.read_intensities(file=self.file_names[i], spectrum_id=self.file_names[i], int_method=self.int_method)
+            self.interpreter.spectrum.read_intensities(file=self.file_names[i], spectrum_id=self.file_names[i], int_method=self.int_method, heteronuc=self.heteronuc, proton=self.proton)
 
             # Set the relaxation times.
             self.interpreter.relax_fit.relax_time(time=self.relax_times[i], spectrum_id=self.file_names[i])
