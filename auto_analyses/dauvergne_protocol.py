@@ -520,9 +520,9 @@ class dAuvergne_protocol:
         if len(labels) == 1:
             raise RelaxError("Relaxation data at multiple magnetic field strengths is essential for this analysis.")
 
-        # Unresolved and exclude files.
-        if self.unres and not isinstance(self.unres, str):
-            raise RelaxError("The unres user variable '%s' is incorrectly set.  It should either be a string or None." % self.unres)
+        # Unresolved and exclude files. FIXME
+        #if self.unres and not isinstance(self.unres, str):
+        #    raise RelaxError("The unres user variable '%s' is incorrectly set.  It should either be a string or None." % self.unres)
         if self.exclude and not isinstance(self.exclude, str):
             raise RelaxError("The exclude user variable '%s' is incorrectly set.  It should either be a string or None." % self.exclude)
 
