@@ -830,7 +830,7 @@ class dAuvergne_protocol:
             self.interpreter.value.set(self.bond_length, 'bond_length')
             self.interpreter.value.set(self.csa, 'csa')
             self.interpreter.value.set(self.hetnuc, 'heteronucleus')
-            self.interpreter.value.set(self.proton, 'proton')
+            self.interpreter.value.set('1H', 'proton')
 
             # Select the model-free model.
             self.interpreter.model_free.select_model(model=name)
