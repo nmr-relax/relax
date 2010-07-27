@@ -155,9 +155,11 @@ from status import Status
 
 
 class dAuvergne_protocol:
-    def __init__(self, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], pdb_file=None, seq_args=None, het_name=None, relax_data=None, unres=None, exclude=None, bond_length=None, csa=None, hetnuc=None, proton='1H', grid_inc=11, min_algor='newton', mc_num=500, max_iter=None, user_fns=None, conv_loop=True):
+    def __init__(self, save_dir=None, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], pdb_file=None, seq_args=None, het_name=None, relax_data=None, unres=None, exclude=None, bond_length=None, csa=None, hetnuc=None, proton='1H', grid_inc=11, min_algor='newton', mc_num=500, max_iter=None, user_fns=None, conv_loop=True):
         """Perform the full model-free analysis protocol of d'Auvergne and Gooley, 2008b.
 
+        @keyword save_dir:          The directory, where files are saved in.
+        @type save_dir:             str
         @keyword diff_model:        The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.
         @type diff_model:           str
         @keyword mf_models:         The model-free models.
@@ -218,6 +220,12 @@ class dAuvergne_protocol:
         self.max_iter = max_iter
         self.conv_loop = conv_loop
 
+        # Project directory (i.e. directory containing the model-free model results and the newly generated files)
+        if save_dir:
+            self.save_dir = save_dir+sep
+        else:
+            self.save_dir = ''
+
         # User variable checks.
         self.check_vars()
 
@@ -258,7 +266,7 @@ class dAuvergne_protocol:
 
         if self.diff_model == 'local_tm':
             # Base directory to place files into.
-            self.base_dir = 'local_tm'+sep
+            self.base_dir = self.save_dir+'local_tm'+sep
 
             # Sequential optimisation of all model-free models (function must be modified to suit).
             self.multi_model(local_tm=True)
@@ -284,7 +292,7 @@ class dAuvergne_protocol:
                 # Inital round of optimisation for diffusion models MII to MV.
                 if self.round == 0:
                     # Base directory to place files into.
-                    self.base_dir = self.diff_model + sep+'init'+sep
+                    self.base_dir = self.save_dir+self.diff_model+sep+'init'+sep
 
                     # Run name.
                     name = self.diff_model
@@ -293,7 +301,7 @@ class dAuvergne_protocol:
                     self.interpreter.pipe.create(name, 'mf')
 
                     # Load the local tm diffusion model MI results.
-                    self.interpreter.results.read(file='results', dir='local_tm'+sep+'aic')
+                    self.interpreter.results.read(file='results', dir=self.save_dir+'local_tm'+sep+'aic')
 
                     # Remove the tm parameter.
                     self.interpreter.model_free.remove_tm()
@@ -337,7 +345,7 @@ class dAuvergne_protocol:
                 # Normal round of optimisation for diffusion models MII to MV.
                 else:
                     # Base directory to place files into.
-                    self.base_dir = self.diff_model + sep+'round_'+repr(self.round)+sep
+                    self.base_dir = self.save_dir+self.diff_model + sep+'round_'+repr(self.round)+sep
 
                     # Load the optimised diffusion tensor from either the previous round.
                     self.load_tensor()
@@ -383,7 +391,7 @@ class dAuvergne_protocol:
             self.interpreter.pipe.create('local_tm', 'mf')
 
             # Load the local tm diffusion model MI results.
-            self.interpreter.results.read(file='results', dir='local_tm'+sep+'aic')
+            self.interpreter.results.read(file='results', dir=self.save_dir+'local_tm'+sep+'aic')
 
             # Loop over models MII to MV.
             for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
@@ -404,7 +412,7 @@ class dAuvergne_protocol:
                 self.interpreter.pipe.create(model, 'mf')
 
                 # Load the diffusion model results.
-                self.interpreter.results.read(file='results', dir=model + sep+'round_'+repr(self.round)+sep+'opt')
+                self.interpreter.results.read(file='results', dir=self.save_dir+model + sep+'round_'+repr(self.round)+sep+'opt')
 
             # Model selection between MI to MV.
             self.model_selection(modsel_pipe='final', write_flag=False)
@@ -429,7 +437,7 @@ class dAuvergne_protocol:
             # Write the final results.
             ##########################
 
-            self.interpreter.results.write(file='results', dir='final', force=True)
+            self.interpreter.results.write(file='results', dir=self.save_dir+'final', force=True)
 
 
         # Unknown script behaviour.
@@ -699,7 +707,13 @@ class dAuvergne_protocol:
 
         # Get a list of all files in the directory model.  If no directory exists, set the round to 'init' or 0.
         try:
-            dir_list = listdir(getcwd()+sep+model)
+            # Files are in same directory / no directory specified
+            if self.save_dir =='':
+                dir_list = listdir(getcwd()+sep+model)
+
+            # Directory is specified
+            else:
+                dir_list = listdir(self.save_dir+model))
         except:
             return 0
 
@@ -740,11 +754,11 @@ class dAuvergne_protocol:
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
-            self.interpreter.results.read('results', self.diff_model + sep+'init')
+            self.interpreter.results.read('results', self.save_dir+self.diff_model + sep+'init')
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            self.interpreter.results.read('results', self.diff_model + sep+'round_'+repr(self.round-1)+sep+'opt')
+            self.interpreter.results.read('results', self.save_dir+self.diff_model + sep+'round_'+repr(self.round-1)+sep+'opt')
 
 
     def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):
@@ -824,7 +838,7 @@ class dAuvergne_protocol:
             self.interpreter.minimise(self.min_algor)
 
             # Write the results.
-            dir = self.base_dir + name
+            dir = self.save_dir+self.base_dir + name
             self.interpreter.results.write(file='results', dir=dir, force=True)
 
         # Unset the status.
