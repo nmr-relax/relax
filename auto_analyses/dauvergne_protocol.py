@@ -840,7 +840,7 @@ class dAuvergne_protocol:
             self.interpreter.minimise(self.min_algor)
 
             # Write the results.
-            dir = self.save_dir+self.base_dir + name
+            dir = self.base_dir + name
             self.interpreter.results.write(file='results', dir=dir, force=True)
 
         # Unset the status.
