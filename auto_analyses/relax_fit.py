@@ -23,6 +23,9 @@
 # Module docstring.
 """The automatic relaxation curve fitting protocol."""
 
+#python modules
+from os import sep
+
 # relax module imports.
 import generic_fns.structure.main
 from generic_fns import selection
