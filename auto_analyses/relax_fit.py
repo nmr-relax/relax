@@ -24,6 +24,7 @@
 """The automatic relaxation curve fitting protocol."""
 
 # relax module imports.
+import generic_fns.structure.main
 from prompt.interpreter import Interpreter
 
 
