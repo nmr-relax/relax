@@ -143,7 +143,7 @@ class Relax_fit:
         if self.view_plots:
             self.interpreter.grace.view(file='chi2.agr')
             self.interpreter.grace.view(file='i0.agr')
-            self.interpreter.grace.view(file='rx.agr')
+            self.interpreter.grace.view(file=self.filename+'.agr')
             self.interpreter.grace.view(file='intensities.agr')
             self.interpreter.grace.view(file='intensities_norm.agr')
 
