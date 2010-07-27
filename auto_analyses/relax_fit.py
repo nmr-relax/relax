@@ -29,7 +29,7 @@ from prompt.interpreter import Interpreter
 
 
 class Relax_fit:
-    def __init__(self, pipe_name='rx', seq_args=None, file_names=None, relax_times=None, int_method='height', mc_num=500):
+    def __init__(self, pipe_name='rx', seq_args=None, file_names=None, relax_times=None, , view_plots=True, int_method='height', mc_num=500):
         """Perform relaxation curve fitting.
 
         @keyword pipe_name:     The name of the data pipe to create.
@@ -40,6 +40,8 @@ class Relax_fit:
         @type file_names:       list of str
         @keyword relax_times:   The list of relaxation times corresponding to file_names.  These two lists must be of the same size.
         @type relax_times:      list of float
+        @keyword view_plots:    Flag to automatically viu grace plots after calculation.
+        @type view_plots:       boolean
         @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
         @type int_method:       str
         @keyword mc_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
@@ -51,6 +53,7 @@ class Relax_fit:
         self.seq_args = seq_args
         self.file_names = file_names
         self.relax_times = relax_times
+        self.view_plots = view_plots
         self.int_method = int_method
         self.mc_num = mc_num
 
@@ -125,12 +128,13 @@ class Relax_fit:
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', force=True)    # Average peak intensities.
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
 
-        # Display the Grace plots.
-        self.interpreter.grace.view(file='chi2.agr')
-        self.interpreter.grace.view(file='i0.agr')
-        self.interpreter.grace.view(file='rx.agr')
-        self.interpreter.grace.view(file='intensities.agr')
-        self.interpreter.grace.view(file='intensities_norm.agr')
+        # Display the Grace plots if selected.
+        if self.view_plots:
+            self.interpreter.grace.view(file='chi2.agr')
+            self.interpreter.grace.view(file='i0.agr')
+            self.interpreter.grace.view(file='rx.agr')
+            self.interpreter.grace.view(file='intensities.agr')
+            self.interpreter.grace.view(file='intensities_norm.agr')
 
         # Save the program state.
         self.interpreter.state.save('rx.save', force=True)
