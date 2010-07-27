@@ -713,7 +713,7 @@ class dAuvergne_protocol:
 
             # Directory is specified
             else:
-                dir_list = listdir(self.save_dir+model))
+                dir_list = listdir(self.save_dir+model)
         except:
             return 0
 
