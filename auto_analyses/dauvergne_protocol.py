@@ -233,7 +233,7 @@ class dAuvergne_protocol:
         self.status = Status()
         self.status.dAuvergne_protocol.diff_model = diff_model
         self.status.dAuvergne_protocol.mf_models = mf_models
-        self.status.dAuvergne_protocol.local_mf_models = local_tm_models
+        self.status.dAuvergne_protocol.local_tm_models = local_tm_models
 
         # Initialise the convergence data structures.
         self.conv_data = Container()
