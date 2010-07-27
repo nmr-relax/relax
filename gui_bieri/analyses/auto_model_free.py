@@ -567,7 +567,12 @@ class Auto_model_free:
         global_settings = ds.relax_gui.global_setting
 
         # Hetero nucleus name.
-        data.hetnuc = global_settings[2]
+        if 'N' in global_settings[2]:
+            data.hetnuc = '15N'
+        elif 'C' in global_settings[2]:
+            data.hetnuc = '13C'
+        else:
+            data.hetnuc = global_settings[2]
 
         # Proton name.
         data.proton = global_settings[3]
