@@ -29,7 +29,7 @@ from prompt.interpreter import Interpreter
 
 
 class Relax_fit:
-    def __init__(self, filename='rx', pipe_name='rx', seq_args=None, file_names=None, relax_times=None, , view_plots=True, int_method='height', mc_num=500):
+    def __init__(self, filename='rx', pipe_name='rx', seq_args=None, file_names=None, relax_times=None, view_plots=True, int_method='height', mc_num=500):
         """Perform relaxation curve fitting.
 
         @keyword filename:      Name of the output file.
