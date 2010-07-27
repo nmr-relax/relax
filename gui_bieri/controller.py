@@ -175,15 +175,16 @@ class Redirect_text(object):
         # Update Gauge (Progress bar).
         # Local tm model:
         if self.status.dAuvergne_protocol.diff_model == 'local_tm':
-            # Current model.
-            no = self.status.dAuvergne_protocol.current_model[2:]
-            no = int(no)
+            if self.status.dAuvergne_protocol.current_model:
+                # Current model.
+                no = self.status.dAuvergne_protocol.current_model[2:]
+                no = int(no)
 
-            # Total selected models.
-            total_models = len(self.status.dAuvergne_protocol.local_tm_models)
+                # Total selected models.
+                total_models = len(self.status.dAuvergne_protocol.local_tm_models)
 
-            # update Progress bar.
-            wx.CallAfter(self.out.progress_bar.SetValue, (100*no/total_models))
+                # update Progress bar.
+                wx.CallAfter(self.out.progress_bar.SetValue, (100*no/total_models))
 
         # Sphere to Ellipsoid Models.
         elif self.status.dAuvergne_protocol.diff_model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
