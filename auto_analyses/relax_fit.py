@@ -25,12 +25,13 @@
 
 # relax module imports.
 import generic_fns.structure.main
+from generic_fns import selection
 from prompt.interpreter import Interpreter
 
 
 
 class Relax_fit:
-    def __init__(self, filename='rx', pipe_name='rx', results_directory = None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, view_plots=True, int_method='height', heteronuc = 'N', proton = 'H', mc_num=500, inc = '11'):
+    def __init__(self, filename='rx', pipe_name='rx', results_directory = None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, unresolved='unresolved', view_plots=True, int_method='height', heteronuc = 'N', proton = 'H', mc_num=500, inc = '11'):
         """Perform relaxation curve fitting.
 
         @keyword filename:      Name of the output file.
@@ -47,6 +48,8 @@ class Relax_fit:
         @type relax_times:      list of float
         @keyword pdb_file:      Name of the PDB file.
         @type pdb_file:         str
+        @keyword unresolved:    Filename of the unresolved spin list.
+        @type unresolved:       str
         @keyword view_plots:    Flag to automatically viu grace plots after calculation.
         @type view_plots:       boolean
         @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
@@ -73,6 +76,7 @@ class Relax_fit:
         self.file_names = file_names
         self.relax_times = relax_times
         self.pdb_file = pdb_file
+        self.unresolved = unresolved
         self.view_plots = view_plots
         self.int_method = int_method
         self.heteronuc = heteronuc
@@ -125,7 +129,8 @@ class Relax_fit:
         self.interpreter.spectrum.error_analysis()
 
         # Deselect unresolved spins.
-        self.interpreter.deselect.read(file=self.unresolved)
+        selection.desel_read(file=self.unresolved, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=None)
+        print 'relax> deselect.read(selected residues)'
 
         # Set the relaxation curve type.
         self.interpreter.relax_fit.select_model('exp')
