@@ -270,7 +270,7 @@ class Relax_data_store(dict):
             # Checks.
             for pipe_node in pipe_nodes:
                 # The pipe name and type.
-                pipe_name = pipe_node.getAttribute('name')
+                pipe_name = str(pipe_node.getAttribute('name'))
                 pipe_type = pipe_node.getAttribute('type')
 
                 # Existence check.
@@ -284,7 +284,7 @@ class Relax_data_store(dict):
             # Load the data pipes.
             for pipe_node in pipe_nodes:
                 # The pipe name and type.
-                pipe_name = pipe_node.getAttribute('name')
+                pipe_name = str(pipe_node.getAttribute('name'))
                 pipe_type = pipe_node.getAttribute('type')
 
                 # Add the data pipe.
