@@ -148,6 +148,7 @@ from string import lower
 from float import floatAsByteArray
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
 from generic_fns import pipes
+from generic_fns import selection
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
 from status import Status
@@ -815,7 +816,8 @@ class dAuvergne_protocol:
 
             # Deselect spins to be excluded (including unresolved and specifically excluded spins).
             if self.unres:
-                self.interpreter.deselect.read(file=self.unres, spin_id_col=1)
+                selection.desel_read(file=self.unres, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=None)
+                print 'relax> deselect.read(selected residues)'
             if self.exclude:
                 self.interpreter.deselect.read(file=self.exclude, spin_id_col=1)
 
