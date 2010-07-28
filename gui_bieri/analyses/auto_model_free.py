@@ -900,24 +900,11 @@ class Auto_model_free:
         if automatic == True:
             return 'successful'
 
-        # Feedback about successful calculation in manual mode and after final calculation in automatic mode.
+        # Enable m1-m5.
         if not automatic:
             if model == 'local_tm':
-                print ('Local Tm calculation was successful !')
-
                 # enable m1 - m5 to choose for calculation
                 return True
-
-            if model == 'sphere':
-                print ('Sphere calculation was successful !')
-            if model == 'prolate':
-                print ('Prolate calculation was successful !')
-            if model == 'oblate':
-                print ('Oblate calculation was successful !')
-            if model == 'ellipsoid':
-                print ('Ellipsoid calculation was successful !')
-            if model == 'Final':
-                print ('Final Model-free calculation was successful !')
 
 
     def link_data(self, data):
