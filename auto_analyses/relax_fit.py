@@ -34,7 +34,7 @@ from prompt.interpreter import Interpreter
 
 
 class Relax_fit:
-    def __init__(self, filename='rx', pipe_name='rx', results_directory = None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, unresolved='unresolved', view_plots=True, int_method='height', heteronuc = 'N', proton = 'H', mc_num=500, inc = '11'):
+    def __init__(self, filename='rx', pipe_name='rx', results_directory = None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, unresolved='unresolved', int_method='height', heteronuc='N', proton='H', mc_num=500, inc='11', view_plots=True):
         """Perform relaxation curve fitting.
 
         @keyword filename:      Name of the output file.
@@ -53,8 +53,6 @@ class Relax_fit:
         @type pdb_file:         str
         @keyword unresolved:    Filename of the unresolved spin list.
         @type unresolved:       str
-        @keyword view_plots:    Flag to automatically viu grace plots after calculation.
-        @type view_plots:       boolean
         @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
         @type int_method:       str
         @keyword heteronuc:     Label of hetero nucleus.
@@ -65,6 +63,8 @@ class Relax_fit:
         @type mc_num:           int
         @keyword inc:           Number of grid search increments.
         @type inc:              int
+        @keyword view_plots:    Flag to automatically view grace plots after calculation.
+        @type view_plots:       boolean
         """
 
         # Store the args.
