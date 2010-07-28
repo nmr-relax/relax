@@ -34,11 +34,11 @@ from prompt.interpreter import Interpreter
 
 
 class Relax_fit:
-    def __init__(self, filename='rx', pipe_name='rx', results_directory = None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, unresolved='unresolved', int_method='height', heteronuc='N', proton='H', mc_num=500, inc='11', view_plots=True):
+    def __init__(self, file_root='rx', pipe_name='rx', results_directory=None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, unresolved='unresolved', int_method='height', heteronuc='N', proton='H', mc_num=500, inc='11', view_plots=True):
         """Perform relaxation curve fitting.
 
-        @keyword filename:      Name of the output file.
-        @type filename:         str
+        @keyword file_root:     File root of the output filea.
+        @type file_root:        str
         @keyword pipe_name:     The name of the data pipe to create.
         @type pipe_name:        str
         @keyword directory:     The directory, where results files are saved.
@@ -68,7 +68,7 @@ class Relax_fit:
         """
 
         # Store the args.
-        self.filename = filename
+        self.file_root = file_root
         self.pipe_name = pipe_name
         self.results_directory = results_directory
         if results_directory:
@@ -152,7 +152,7 @@ class Relax_fit:
         self.interpreter.monte_carlo.error_analysis()
 
         # Save the relaxation rates.
-        self.interpreter.value.write(param='rx', file=self.filename+'.out', dir=self.results_directory, force=True)
+        self.interpreter.value.write(param='rx', file=self.file_root+'.out', dir=self.results_directory, force=True)
 
         # Save the results.
         self.interpreter.results.write(file='results', dir=self.results_directory, force=True)
@@ -160,7 +160,7 @@ class Relax_fit:
         # Create Grace plots of the data.
         self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=self.grace_dir, force=True)    # Minimised chi-squared value.
         self.interpreter.grace.write(y_data_type='i0', file='i0.agr', dir=self.grace_dir, force=True)    # Initial peak intensity.
-        self.interpreter.grace.write(y_data_type='rx', file=self.filename+'.agr', dir=self.grace_dir, force=True)    # Relaxation rate.
+        self.interpreter.grace.write(y_data_type='rx', file=self.file_root+'.agr', dir=self.grace_dir, force=True)    # Relaxation rate.
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', dir=self.grace_dir, force=True)    # Average peak intensities.
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', dir=self.grace_dir, force=True)    # Average peak intensities (normalised).
 
@@ -168,12 +168,12 @@ class Relax_fit:
         if self.view_plots:
             self.interpreter.grace.view(file='chi2.agr', dir=self.grace_dir)
             self.interpreter.grace.view(file='i0.agr', dir=self.grace_dir)
-            self.interpreter.grace.view(file=self.filename+'.agr', dir=self.grace_dir)
+            self.interpreter.grace.view(file=self.file_root+'.agr', dir=self.grace_dir)
             self.interpreter.grace.view(file='intensities.agr', dir=self.grace_dir)
             self.interpreter.grace.view(file='intensities_norm.agr', dir=self.grace_dir)
 
         # Save the program state.
-        self.interpreter.state.save(self.filename+'.save', dir=self.results_directory, force=True)
+        self.interpreter.state.save(self.file_root+'.save', dir=self.results_directory, force=True)
 
 
     def check_vars(self):
