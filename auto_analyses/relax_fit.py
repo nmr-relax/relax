@@ -34,7 +34,7 @@ from prompt.interpreter import Interpreter
 
 
 class Relax_fit:
-    def __init__(self, file_root='rx', pipe_name='rx', results_directory=None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, unresolved='unresolved', int_method='height', heteronuc='N', proton='H', mc_num=500, inc='11', view_plots=True):
+    def __init__(self, file_root='rx', pipe_name='rx', results_directory=None, seq_args=None, file_names=None, relax_times=None, pdb_file=None, unresolved='unresolved', int_method='height', heteronuc='N', proton='H', load_spin_ids=None, mc_num=500, inc='11', view_plots=True):
         """Perform relaxation curve fitting.
 
         @keyword file_root:     File root of the output filea.
@@ -59,6 +59,8 @@ class Relax_fit:
         @type heteronuc:        str
         @keyword proton:        Label of proton.
         @type proton:           str
+        @keyword load_spin_ids: Id of spin to extract in PDB file.
+        @type load_spin_ids:    str
         @keyword mc_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type mc_num:           int
         @keyword inc:           Number of grid search increments.
@@ -84,6 +86,7 @@ class Relax_fit:
         self.int_method = int_method
         self.heteronuc = heteronuc
         self.proton = proton
+        self.load_spin_ids = load_spin_ids
         self.mc_num = mc_num
         self.inc = inc
 
@@ -108,7 +111,7 @@ class Relax_fit:
         # Load the sequence.
         if self.pdb_file:   # load PDB File
             self.interpreter.structure.read_pdb(self.pdb_file)
-            generic_fns.structure.main.load_spins(spin_id='@N')
+            generic_fns.structure.main.load_spins(spin_id=self.load_spin_ids)
 
         else:
             self.interpreter.sequence.read(file=self.seq_args[0], dir=self.seq_args[1], mol_name_col=self.seq_args[2], res_num_col=self.seq_args[3], res_name_col=self.seq_args[4], spin_num_col=self.seq_args[5], spin_name_col=self.seq_args[6], sep=self.seq_args[7])
