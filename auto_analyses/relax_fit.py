@@ -28,7 +28,6 @@ from os import sep
 
 # relax module imports.
 import generic_fns.structure.main
-from generic_fns import selection
 from prompt.interpreter import Interpreter
 
 
@@ -135,8 +134,7 @@ class Relax_fit:
         self.interpreter.spectrum.error_analysis()
 
         # Deselect unresolved spins.
-        selection.desel_read(file=self.unresolved, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=None)
-        print 'relax> deselect.read(selected residues)'
+        self.interpreter.deselect.read(file=self.unresolved)
 
         # Set the relaxation curve type.
         self.interpreter.relax_fit.select_model('exp')
