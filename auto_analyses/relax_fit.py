@@ -55,9 +55,9 @@ class Relax_fit:
         @type unresolved:       str
         @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
         @type int_method:       str
-        @keyword heteronuc:     Label of hetero nucleus.
+        @keyword heteronuc:     Label of hetero nucleus in the peak intensity file.
         @type heteronuc:        str
-        @keyword proton:        Label of proton.
+        @keyword proton:        Label of proton in the peak intensity file.
         @type proton:           str
         @keyword load_spin_ids: Id of spin to extract in PDB file.
         @type load_spin_ids:    str
