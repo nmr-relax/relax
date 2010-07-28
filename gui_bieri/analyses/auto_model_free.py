@@ -575,7 +575,10 @@ class Auto_model_free:
             data.hetnuc = global_settings[2]
 
         # Proton name.
-        data.proton = global_settings[3]
+        if '2' in global_settings[3]:
+            data.proton = '2H'
+        else:
+            self.proton = '1H'
 
         # Increment size.
         data.inc = int(global_settings[4])
