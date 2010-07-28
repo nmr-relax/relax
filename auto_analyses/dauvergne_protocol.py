@@ -155,7 +155,7 @@ from status import Status
 
 
 class dAuvergne_protocol:
-    def __init__(self, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], pdb_file=None, seq_args=None, het_name=None, relax_data=None, unres=None, exclude=None, bond_length=None, csa=None, hetnuc=None, proton='1H', grid_inc=11, min_algor='newton', mc_num=500, max_iter=None, user_fns=None, conv_loop=True):
+    def __init__(self, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], pdb_file=None, seq_args=None, het_name=None, attached_name='H', relax_data=None, unres=None, exclude=None, bond_length=None, csa=None, hetnuc=None, proton='1H', grid_inc=11, min_algor='newton', mc_num=500, max_iter=None, user_fns=None, conv_loop=True):
         """Perform the full model-free analysis protocol of d'Auvergne and Gooley, 2008b.
 
         @keyword diff_model:        The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.
@@ -170,6 +170,8 @@ class dAuvergne_protocol:
         @type seq_args:             list of lists of [str, None or str, None or int, None or int, None or int, None or int, None or int, None or int, None or int, None or str]
         @keyword het_name:          The heteronucleus atom name corresponding to that of the PDB file (used if the spin name is not in the sequence data).
         @type het_name:             None or str
+        @keyword attached_name:     The name of the proton attached to the heteronucleus.
+        @type attached_name:        str
         @keyword relax_data:        The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
         @type relax_data:           list of lists of [str, str, float, str, None or str, None or int, None or int, None or int, None or int, None or int, None or int, None or int, None or str]
         @keyword unres:             The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
@@ -205,6 +207,7 @@ class dAuvergne_protocol:
         self.pdb_file = pdb_file
         self.seq_args = seq_args
         self.het_name = het_name
+        self.attached_name = attached_name
         self.relax_data = relax_data
         self.unres = unres
         self.exclude = exclude
@@ -309,7 +312,7 @@ class dAuvergne_protocol:
                     # Load the PDB file and calculate the unit vectors parallel to the XH bond.
                     if self.pdb_file:
                         self.interpreter.structure.read_pdb(self.pdb_file)
-                        self.interpreter.structure.vectors(attached='H')
+                        self.interpreter.structure.vectors(attached=self.attached_name)
 
                     # Add an arbitrary diffusion tensor which will be optimised.
                     if self.diff_model == 'sphere':
@@ -484,6 +487,8 @@ class dAuvergne_protocol:
         # Atom name.
         if not isinstance(self.het_name, str):
             raise RelaxError("The het_name heteronucleus atom name user variable '%s' must be a string." % self.het_name)
+        if not isinstance(self.attached_name, str):
+            raise RelaxError("The attached_name proton atom name user variable '%s' must be a string." % self.attached_name)
 
         # Relaxation data.
         if not isinstance(self.relax_data, list):
@@ -793,7 +798,7 @@ class dAuvergne_protocol:
             # Load the PDB file and calculate the unit vectors parallel to the XH bond.
             if not local_tm and self.pdb_file:
                 self.interpreter.structure.read_pdb(self.pdb_file)
-                self.interpreter.structure.vectors(attached='H')
+                self.interpreter.structure.vectors(attached=self.attached_name)
 
             # Load the relaxation data.
             for data in self.relax_data:
