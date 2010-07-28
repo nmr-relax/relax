@@ -36,9 +36,9 @@ from generic_fns.align_tensor import get_tensor_index
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxNoRDCError, RelaxNoSequenceError, RelaxNoSpinError, RelaxSpinTypeError
+from relax_errors import RelaxError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
 from relax_io import open_write_file, read_spin_data, write_spin_data
-from relax_warnings import RelaxWarning
+from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
 def back_calc(align_id=None):
@@ -398,7 +398,8 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         # Get the corresponding spin container.
         spin = return_spin([id, spin_id])
         if spin == None:
-            raise RelaxNoSpinError(id)
+            warn(RelaxNoSpinWarning(id))
+            continue
 
         # Add the data.
         if data_col:

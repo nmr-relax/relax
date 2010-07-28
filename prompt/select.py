@@ -172,7 +172,7 @@ class Select(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(file, 'file name')
+        arg_check.is_str_or_inst(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
         arg_check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
         arg_check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
