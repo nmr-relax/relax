@@ -41,8 +41,8 @@ class Relax_fit:
         @type file_root:        str
         @keyword pipe_name:     The name of the data pipe to create.
         @type pipe_name:        str
-        @keyword directory:     The directory, where results files are saved.
-        @type directory:        str
+        @keyword results_directory:     The directory, where results files are saved.
+        @type results_directory:        str
         @keyword seq_args:      The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         @type seq_args:         list of lists of [str, None or str, None or int, None or int, None or int, None or int, None or int, None or int, None or int, None or str]
         @keyword file_names:    A list of all the peak list file names.
