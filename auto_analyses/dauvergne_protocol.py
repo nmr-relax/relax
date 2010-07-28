@@ -151,6 +151,7 @@ from generic_fns import pipes
 from generic_fns import selection
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
+from relax_io import DummyFileObject
 from status import Status
 
 
@@ -522,8 +523,8 @@ class dAuvergne_protocol:
             raise RelaxError("Relaxation data at multiple magnetic field strengths is essential for this analysis.")
 
         # Unresolved and exclude files. FIXME
-        #if self.unres and not isinstance(self.unres, str):
-        #    raise RelaxError("The unres user variable '%s' is incorrectly set.  It should either be a string or None." % self.unres)
+        if self.unres and not isinstance(self.unres, str) and not isinstance(self.unres, DummyFileObject):
+            raise RelaxError("The unres user variable '%s' is incorrectly set.  It should either be a string or None." % self.unres)
         if self.exclude and not isinstance(self.exclude, str):
             raise RelaxError("The exclude user variable '%s' is incorrectly set.  It should either be a string or None." % self.exclude)
 
