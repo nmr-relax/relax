@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,8 +25,9 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi
+from math import pi, sqrt
 from numpy import arccos, dot, float64, linalg, zeros
+from numpy.linalg import norm
 from re import search
 import sys
 
@@ -417,6 +418,10 @@ def display(tensor):
         title = "# Geometric description."
         print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
+        # The GDO.
+        print("# Generalized degree of order (GDO).")
+        print("GDO = %-25.12e\n" % gdo(data.A))
+
         # Anisotropy.
         print("# Alignment tensor axial component (Aa = 3/2 * Azz, where Aii are the eigenvalues).")
         print("Aa = %-25.12e\n" % data.Aa)
@@ -525,6 +530,22 @@ def fold_angles(sim_index=None):
         elif cdp.align_tensors.beta_sim[sim_index] <= cdp.align_tensors.beta - pi/2.0:
             cdp.align_tensors.alpha_sim[sim_index] = pi - cdp.align_tensors.alpha_sim[sim_index]
             cdp.align_tensors.beta_sim[sim_index] = cdp.align_tensors.beta_sim[sim_index] + pi
+
+
+def gdo(A):
+    """Calculate the generalized degree of order (GDO) for the given alignment tensor.
+
+    @param A:   The alignment tensor.
+    @type A:    rank-2, 3D numpy array
+    @return:    The GDO value.
+    @rtype:     float
+    """
+
+    # The matrix norm.
+    gdo = sqrt(3.0/2.0) *  norm(A)
+
+    # Return the GDO.
+    return gdo
 
 
 def get_tensor_index(tensor, pipe=None):
