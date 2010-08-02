@@ -578,7 +578,7 @@ class Auto_model_free:
         if '2' in global_settings[3]:
             data.proton = '2H'
         else:
-            self.proton = '1H'
+            data.proton = '1H'
 
         # Increment size.
         data.inc = int(global_settings[4])
