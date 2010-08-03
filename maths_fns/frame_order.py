@@ -169,94 +169,6 @@ class Frame_order:
         self.func = self.func_iso_cone_elements
 
 
-    def func_rigid(self, params):
-        """Target function for rigid model optimisation using the alignment tensors.
-
-        This function optimises against alignment tensors.  The Euler angles for the tensor rotation are the 3 parameters optimised in this model.
-
-        @param params:  The vector of parameter values.  These are the tensor rotation angles {alpha, beta, gamma}.
-        @type params:   list of float
-        @return:        The chi-squared or SSE value.
-        @rtype:         float
-        """
-
-        # Unpack the parameters.
-        alpha, beta, gamma = params
-
-        # Alignment tensor rotation.
-        euler_to_R(alpha, beta, gamma, self.rot)
-
-        # Back calculate the rotated tensors.
-        for i in range(self.num_tensors):
-            # Tensor indices.
-            index1 = i*5
-            index2 = i*5+5
-
-            # Convert the original tensor to 3D, rank-2 form.
-            to_tensor(self.tensor_3D, self.full_tensors[index1:index2])
-
-            # Rotate the tensor (normal R.X.RT rotation).
-            if self.full_in_ref_frame[i]:
-                tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
-
-            # Rotate the tensor (inverse RT.X.R rotation).
-            else:
-                tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
-
-            # Convert the tensor back to 5D, rank-1 form, as the back-calculated reduced tensor.
-            to_5D(self.red_tensors_bc[index1:index2], tensor_3D)
-
-        # Return the chi-squared value.
-        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
-
-
-    def func_iso_cone_free_rotor(self, params):
-        """Target function for isotropic cone model optimisation using the alignment tensors.
-
-        This function optimises against alignment tensors.
-
-        @param params:  The vector of parameter values {beta, gamma, theta, phi, s1} where the first 2 are the tensor rotation Euler angles, the next two are the polar and azimuthal angles of the cone axis, and s1 is the isotropic cone order parameter.
-        @type params:   list of float
-        @return:        The chi-squared or SSE value.
-        @rtype:         float
-        """
-
-        # Unpack the parameters.
-        beta, gamma, theta, phi, s1 = params
-
-        # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, s1)
-
-        # Reduced alignment tensor rotation.
-        euler_to_R(0.0, beta, gamma, self.rot)
-
-        # Back calculate the reduced tensors.
-        for i in range(self.num_tensors):
-            # Tensor indices.
-            index1 = i*5
-            index2 = i*5+5
-
-            # Reduce the tensor.
-            reduce_alignment_tensor(frame_order_2nd, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
-
-            # Convert the tensor to 3D, rank-2 form.
-            to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
-
-            # Rotate the tensor (normal R.X.RT rotation).
-            if self.full_in_ref_frame[i]:
-                tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
-
-            # Rotate the tensor (inverse RT.X.R rotation).
-            else:
-                tensor_3D = dot(transpose(self.rot), dot(saelf.tensor_3D, self.rot))
-
-            # Convert the tensor back to 5D, rank-1 form.
-            to_5D(self.red_tensors_bc[index1:index2], tensor_3D)
-
-        # Return the chi-squared value.
-        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
-
-
     def func_iso_cone_elements(self, params):
         """Target function for isotropic cone model optimisation using the Frame Order matrix.
 
@@ -296,6 +208,30 @@ class Frame_order:
         return val
 
 
+    def func_iso_cone_free_rotor(self, params):
+        """Target function for isotropic cone model optimisation using the alignment tensors.
+
+        This function optimises against alignment tensors.
+
+        @param params:  The vector of parameter values {beta, gamma, theta, phi, s1} where the first 2 are the tensor rotation Euler angles, the next two are the polar and azimuthal angles of the cone axis, and s1 is the isotropic cone order parameter.
+        @type params:   list of float
+        @return:        The chi-squared or SSE value.
+        @rtype:         float
+        """
+
+        # Unpack the parameters.
+        ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params
+
+        # Generate the 2nd degree Frame Order super matrix.
+        frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, axis_theta, axis_phi, cone_s1)
+
+        # Reduce and rotate the tensors.
+        self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
+
+        # Return the chi-squared value.
+        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+
+
     def func_pseudo_ellipse(self, params):
         """Target function for pseudo-elliptic cone model optimisation using alignment tensors.
 
@@ -306,36 +242,13 @@ class Frame_order:
         """
 
         # Unpack the parameters.
-        alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params
+        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params
 
         # Generate the 2nd degree Frame Order super matrix.
         frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max)
 
-        # Average position rotation.
-        euler_to_R(alpha, beta, gamma, self.rot)
-
-        # Back calculate the reduced tensors.
-        for i in range(self.num_tensors):
-            # Tensor indices.
-            index1 = i*5
-            index2 = i*5+5
-
-            # Reduce the tensor.
-            reduce_alignment_tensor(frame_order_2nd, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
-
-            # Convert the tensor to 3D, rank-2 form.
-            to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
-
-            # Rotate the tensor (normal R.X.RT rotation).
-            if self.full_in_ref_frame[i]:
-                tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
-
-            # Rotate the tensor (inverse RT.X.R rotation).
-            else:
-                tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
-
-            # Convert the tensor back to 5D, rank-1 form.
-            to_5D(self.red_tensors_bc[index1:index2], tensor_3D)
+        # Reduce and rotate the tensors.
+        self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Return the chi-squared value.
         return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
@@ -351,36 +264,13 @@ class Frame_order:
         """
 
         # Unpack the parameters.
-        alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
+        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y)
 
-        # Average position rotation.
-        euler_to_R(alpha, beta, gamma, self.rot)
-
-        # Back calculate the reduced tensors.
-        for i in range(self.num_tensors):
-            # Tensor indices.
-            index1 = i*5
-            index2 = i*5+5
-
-            # Reduce the tensor.
-            reduce_alignment_tensor(frame_order_2nd, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
-
-            # Convert the tensor to 3D, rank-2 form.
-            to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
-
-            # Rotate the tensor (normal R.X.RT rotation).
-            if self.full_in_ref_frame[i]:
-                tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
-
-            # Rotate the tensor (inverse RT.X.R rotation).
-            else:
-                tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
-
-            # Convert the tensor back to 5D, rank-1 form.
-            to_5D(self.red_tensors_bc[index1:index2], tensor_3D)
+        # Reduce and rotate the tensors.
+        self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Return the chi-squared value.
         return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
@@ -401,20 +291,68 @@ class Frame_order:
         # Generate the 2nd degree Frame Order super matrix.
         frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_torsionless(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_)
 
-        # Average position rotation.
-        euler_to_R(alpha, beta, gamma, self.rot)
+        # Reduce and rotate the tensors.
+        self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
-        # Back calculate the reduced tensors.
+        # Return the chi-squared value.
+        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+
+
+    def func_rigid(self, params):
+        """Target function for rigid model optimisation using the alignment tensors.
+
+        This function optimises against alignment tensors.  The Euler angles for the tensor rotation are the 3 parameters optimised in this model.
+
+        @param params:  The vector of parameter values.  These are the tensor rotation angles {alpha, beta, gamma}.
+        @type params:   list of float
+        @return:        The chi-squared or SSE value.
+        @rtype:         float
+        """
+
+        # Unpack the parameters.
+        ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params
+
+        # Reduce and rotate the tensors.
+        self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma)
+
+        # Return the chi-squared value.
+        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+
+
+    def reduce_and_rot(ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):
+        """Reduce and rotate the alignments tensors using the frame order matrix and Euler angles.
+
+        @keyword ave_pos_alpha: The alpha Euler angle describing the average domain position, the tensor rotation.
+        @type ave_pos_alpha:    float
+        @keyword ave_pos_beta:  The beta Euler angle describing the average domain position, the tensor rotation.
+        @type ave_pos_beta:     float
+        @keyword ave_pos_gamma: The gamma Euler angle describing the average domain position, the tensor rotation.
+        @type ave_pos_gamma:    float
+        @keyword daeg:          The 2nd degree frame order matrix.
+        @type daeg:             rank-2, 9D array
+        """
+
+        # Alignment tensor rotation.
+        euler_to_R(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, self.rot)
+
+        # Back calculate the rotated tensors.
         for i in range(self.num_tensors):
             # Tensor indices.
             index1 = i*5
             index2 = i*5+5
 
-            # Reduce the tensor.
-            reduce_alignment_tensor(frame_order_2nd, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
+            # Reduction.
+            if daeg != None:
+                # Reduce the tensor.
+                reduce_alignment_tensor(daeg, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
 
-            # Convert the tensor to 3D, rank-2 form.
-            to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
+                # Convert the reduced tensor to 3D, rank-2 form.
+                to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
+
+            # No reduction:
+            else:
+                # Convert the original tensor to 3D, rank-2 form.
+                to_tensor(self.tensor_3D, self.full_tensors[index1:index2])
 
             # Rotate the tensor (normal R.X.RT rotation).
             if self.full_in_ref_frame[i]:
@@ -424,8 +362,5 @@ class Frame_order:
             else:
                 tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
 
-            # Convert the tensor back to 5D, rank-1 form.
+            # Convert the tensor back to 5D, rank-1 form, as the back-calculated reduced tensor.
             to_5D(self.red_tensors_bc[index1:index2], tensor_3D)
-
-        # Return the chi-squared value.
-        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
