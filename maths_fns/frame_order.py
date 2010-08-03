@@ -82,28 +82,35 @@ class Frame_order:
         if full_tensors != None:
             self.__init_tensors()
 
-        # The rigid model.
-        if model == 'rigid':
-            # Alias the target function.
-            self.func = self.func_rigid
+        # Optimisation to the 2nd degree Frame Order matrix components directly.
+        if model == 'iso cone, free rotor' and frame_order_2nd != None:
+            self.__init_iso_cone_elements(frame_order_2nd)
 
-        # Isotropic cone model.
-        if model == 'iso cone':
-            # Optimisation to the 2nd degree Frame Order matrix components directly.
-            if frame_order_2nd != None:
-                self.__init_iso_cone_elements(frame_order_2nd)
-
-            # The cone axis storage and molecular frame z-axis.
-            self.cone_axis = zeros(3, float64)
-            self.z_axis = array([0, 0, 1], float64)
-
-            # Alias the target function.
-            self.func = self.func_iso_cone
-
-        # Pseudo-ellipse cone model.
-        elif model == 'pseudo-ellipse':
-            # Alias the target function.
+        # The target function aliases.
+        if model == 'pseudo-ellipse':
             self.func = self.func_pseudo_ellipse
+        elif model == 'pseudo-ellipse, torsionless':
+            self.func = self.func_pseudo_ellipse_torsionless
+        elif model == 'pseudo-ellipse, free rotor':
+            self.func = self.func_pseudo_ellipse_free_rotor
+        elif model == 'iso cone':
+            self.func = self.func_iso_cone
+        elif model == 'iso cone, torsionless':
+            self.func = self.func_iso_cone_torsionless
+        elif model == 'iso cone, free rotor':
+            self.func = self.func_iso_cone_free_rotor
+        elif model == 'line':
+            self.func = self.func_line
+        elif model == 'line, torsionless':
+            self.func = self.func_line_torsionless
+        elif model == 'line, free rotor':
+            self.func = self.func_line_free_rotor
+        elif model == 'rotor':
+            self.func = self.func_rotor
+        elif model == 'rigid':
+            self.func = self.func_rigid
+        elif model == 'free rotor':
+            self.func = self.func_free_rotor
 
 
     def __init_tensors(self):
@@ -126,6 +133,10 @@ class Frame_order:
         # The rotation to the Frame Order eigenframe.
         self.rot = zeros((3, 3), float64)
         self.tensor_3D = zeros((3, 3), float64)
+
+        # The cone axis storage and molecular frame z-axis.
+        self.cone_axis = zeros(3, float64)
+        self.z_axis = array([0, 0, 1], float64)
 
         # Initialise the Frame Order matrices.
         self.frame_order_2nd = zeros((9, 9), float64)
@@ -199,7 +210,7 @@ class Frame_order:
         return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
 
 
-    def func_iso_cone(self, params):
+    def func_iso_cone_free_rotor(self, params):
         """Target function for isotropic cone model optimisation using the alignment tensors.
 
         This function optimises against alignment tensors.
