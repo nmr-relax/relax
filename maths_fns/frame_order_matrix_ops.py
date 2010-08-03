@@ -88,7 +88,7 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
 
 
 def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
-    """Generate the 1st degree Frame Order matrix for the pseudo ellipse.
+    """Generate the 1st degree Frame Order matrix for the pseudo-ellipse.
 
     @param matrix:      The Frame Order matrix, 1st degree to be populated.
     @type matrix:       numpy 3D, rank-2 array
@@ -110,7 +110,7 @@ def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
 
 
 def compile_2nd_matrix_pseudo_ellipse(matrix, R, eigen_alpha, eigen_beta, eigen_gamma, theta_x, theta_y, sigma_max):
-    """Generate the 2nd degree Frame Order matrix for the pseudo ellipse.
+    """Generate the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param matrix:      The Frame Order matrix, 2nd degree to be populated.
     @type matrix:       numpy 9D, rank-2 array
@@ -174,7 +174,7 @@ def compile_2nd_matrix_pseudo_ellipse(matrix, R, eigen_alpha, eigen_beta, eigen_
 
 
 def compile_2nd_matrix_pseudo_ellipse_free_rotor(matrix, R, eigen_alpha, eigen_beta, eigen_gamma, theta_x, theta_y):
-    """Generate the 2nd degree Frame Order matrix for the free rotor pseudo ellipse.
+    """Generate the 2nd degree Frame Order matrix for the free rotor pseudo-ellipse.
 
     @param matrix:      The Frame Order matrix, 2nd degree to be populated.
     @type matrix:       numpy 9D, rank-2 array
@@ -229,7 +229,7 @@ def compile_2nd_matrix_pseudo_ellipse_free_rotor(matrix, R, eigen_alpha, eigen_b
 
 
 def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, R, eigen_alpha, eigen_beta, eigen_gamma, theta_x, theta_y):
-    """Generate the 2nd degree Frame Order matrix for the torsionless pseudo ellipse.
+    """Generate the 2nd degree Frame Order matrix for the torsionless pseudo-ellipse.
 
     @param matrix:      The Frame Order matrix, 2nd degree to be populated.
     @type matrix:       numpy 9D, rank-2 array
@@ -363,7 +363,7 @@ def generate_vector(vector, theta, phi):
 
 
 def part_int_daeg1_pseudo_ellipse_xx(phi, x, y, smax):
-    """The theta-sigma partial integral of the 1st degree Frame Order matrix element xx for the pseudo ellipse.
+    """The theta-sigma partial integral of the 1st degree Frame Order matrix element xx for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -385,7 +385,7 @@ def part_int_daeg1_pseudo_ellipse_xx(phi, x, y, smax):
 
 
 def part_int_daeg1_pseudo_ellipse_yy(phi, x, y, smax):
-    """The theta-sigma partial integral of the 1st degree Frame Order matrix element yy for the pseudo ellipse.
+    """The theta-sigma partial integral of the 1st degree Frame Order matrix element yy for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -407,7 +407,7 @@ def part_int_daeg1_pseudo_ellipse_yy(phi, x, y, smax):
 
 
 def part_int_daeg1_pseudo_ellipse_zz(phi, x, y, smax):
-    """The theta-sigma partial integral of the 1st degree Frame Order matrix element zz for the pseudo ellipse.
+    """The theta-sigma partial integral of the 1st degree Frame Order matrix element zz for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -429,7 +429,7 @@ def part_int_daeg1_pseudo_ellipse_zz(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_00(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 11 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 11 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -454,7 +454,7 @@ def part_int_daeg2_pseudo_ellipse_00(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_04(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 22 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 22 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -478,7 +478,7 @@ def part_int_daeg2_pseudo_ellipse_04(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_08(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 33 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 33 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -502,7 +502,7 @@ def part_int_daeg2_pseudo_ellipse_08(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_11(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 15 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 15 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -527,7 +527,7 @@ def part_int_daeg2_pseudo_ellipse_11(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_13(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 24 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 24 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -551,7 +551,7 @@ def part_int_daeg2_pseudo_ellipse_13(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_22(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 19 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 19 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -573,7 +573,7 @@ def part_int_daeg2_pseudo_ellipse_22(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_26(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 37 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 37 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -595,7 +595,7 @@ def part_int_daeg2_pseudo_ellipse_26(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_33(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 51 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 51 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -620,7 +620,7 @@ def part_int_daeg2_pseudo_ellipse_33(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_44(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 55 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 55 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -645,7 +645,7 @@ def part_int_daeg2_pseudo_ellipse_44(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_48(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 66 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 66 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -669,7 +669,7 @@ def part_int_daeg2_pseudo_ellipse_48(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_55(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 59 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 59 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -691,7 +691,7 @@ def part_int_daeg2_pseudo_ellipse_55(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_57(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 68 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 68 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -713,7 +713,7 @@ def part_int_daeg2_pseudo_ellipse_57(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_66(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 91 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 91 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -735,7 +735,7 @@ def part_int_daeg2_pseudo_ellipse_66(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_77(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 91 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 91 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -757,7 +757,7 @@ def part_int_daeg2_pseudo_ellipse_77(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_88(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 99 for the pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 99 for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -779,7 +779,7 @@ def part_int_daeg2_pseudo_ellipse_88(phi, x, y, smax):
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_00(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 11 for the free rotor pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 11 for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -799,7 +799,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_00(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_08(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 19 for the free rotor pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 19 for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -819,7 +819,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_08(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_11(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 22 for the free rotor pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 22 for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -839,7 +839,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_11(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_44(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 55 for the free rotor pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 55 for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -859,7 +859,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_44(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_48(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 59 for the free rotor pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 59 for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -879,7 +879,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_48(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_88(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 99 for the free rotor pseudo ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 99 for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -897,7 +897,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_88(phi, x, y):
     # The theta-sigma integral.
     return 2.0*sin(2.0*tmax) + 4.0*tmax
 def part_int_daeg2_pseudo_ellipse_torsionless_00(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 11 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 11 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -917,7 +917,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_00(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_04(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 15 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 15 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -937,7 +937,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_04(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_08(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 19 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 19 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -957,7 +957,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_08(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_11(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 22 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 22 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -977,7 +977,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_11(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_13(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 24 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 24 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -997,7 +997,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_13(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_22(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 33 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 33 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1017,7 +1017,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_22(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_26(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 37 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 37 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1037,7 +1037,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_26(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_33(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 44 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 44 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1057,7 +1057,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_33(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_44(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 55 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 55 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1077,7 +1077,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_44(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_48(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 59 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 59 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1097,7 +1097,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_48(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_55(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 66 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 66 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1117,7 +1117,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_55(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_57(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 68 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 68 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1137,7 +1137,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_57(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_66(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 77 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 77 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1157,7 +1157,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_66(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_77(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 88 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 88 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1177,7 +1177,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_77(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 99 for the torsionless pseudo ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix element 99 for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1360,7 +1360,7 @@ def reduce_alignment_tensor_reverse(D, A, red_tensor):
 
 
 def tmax_pseudo_ellipse(phi, theta_x, theta_y):
-    """The pseudo ellipse tilt-torsion polar angle.
+    """The pseudo-ellipse tilt-torsion polar angle.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
