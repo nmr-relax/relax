@@ -36,7 +36,7 @@ from warnings import warn
 from api_base import API_base
 from api_common import API_common
 from float import isNaN, isInf
-from generic_fns import pipes
+from generic_fns import align_tensor, pipes
 from generic_fns.angles import wrap_angles
 from generic_fns.structure.cones import Iso_cone
 from generic_fns.structure.geometric import cone_edge, generate_vector_dist, generate_vector_residues, stitch_cone_to_edge
@@ -114,6 +114,9 @@ class Frame_order(API_base, API_common):
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         target.func(param_vector)
+
+        # Store the back-calculated tensors.
+        self._store_bc_tensors(target)
 
         # Return the reduced tensors.
         return target.red_tensors_bc
@@ -418,6 +421,22 @@ class Frame_order(API_base, API_common):
         self._update_model()
 
 
+    def _store_bc_tensors(self, target_fn):
+        """Store the back-calculated reduced alignment tensors.
+
+        @param target_fn:   The frame-order target function class.
+        @type target_fn:    class instance
+        """
+
+        # Loop over the reduced tensors.
+        for i, tensor in self._tensor_loop(red=True):
+            # New name.
+            name = tensor.name + ' bc'
+
+            # Initialise the new tensor.
+            align_tensor.init(tensor=name, params=(target_fn.red_tensors_bc[5*i + 0], target_fn.red_tensors_bc[5*i + 1], target_fn.red_tensors_bc[5*i + 2], target_fn.red_tensors_bc[5*i + 3], target_fn.red_tensors_bc[5*i + 4]), param_types=2)
+
+
     def _tensor_loop(self, red=False):
         """Generator method for looping over the full or reduced tensors.
 
@@ -673,6 +692,9 @@ class Frame_order(API_base, API_common):
 
         # Set the chi2.
         cdp.chi2 = chi2
+
+        # Store the back-calculated tensors.
+        self._store_bc_tensors(target)
 
 
     def create_mc_data(self, spin_id=None):
@@ -1072,6 +1094,10 @@ class Frame_order(API_base, API_common):
 
         # Unpack the results.
         self._unpack_opt_results(results, sim_index)
+
+        # Store the back-calculated tensors.
+        self._store_bc_tensors(target)
+
 
 
     def model_loop(self):
