@@ -65,26 +65,14 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     # Generate the cone axis from the spherical angles.
     generate_vector(cone_axis, theta_axis, phi_axis)
 
-    # Generate the rotation matrix.
-    two_vect_to_R(z_axis, cone_axis, R)
-
-    # The outer product of R.
-    R_kron = kron_prod(R, R)
-
     # Populate the Frame Order matrix in the eigenframe.
     populate_2nd_eigenframe_iso_cone(matrix, s1)
 
-    # Perform the T23 transpose to obtain the Kronecker product matrix!
-    transpose_23(matrix)
+    # Average position rotation.
+    two_vect_to_R(z_axis, cone_axis, R)
 
-    # Rotate.
-    matrix = dot(R_kron, dot(matrix, transpose(R_kron)))
-
-    # Perform T23 again to return back.
-    transpose_23(matrix)
-
-    # Return the matrix.
-    return matrix
+    # Rotate and return the frame order matrix.
+    return rotate_daeg(matrix, R)
 
 
 def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
@@ -154,8 +142,11 @@ def compile_2nd_matrix_pseudo_ellipse(matrix, R, eigen_alpha, eigen_beta, eigen_
     matrix[2, 6] = matrix[6, 2] = fact * quad(part_int_daeg2_pseudo_ellipse_26, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
     matrix[5, 7] = matrix[7, 5] = fact * quad(part_int_daeg2_pseudo_ellipse_57, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
 
+    # Average position rotation.
+    euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+
     # Rotate and return the frame order matrix.
-    return rotate_daeg(matrix, R, eigen_alpha, eigen_beta, eigen_gamma)
+    return rotate_daeg(matrix, R)
 
 
 def compile_2nd_matrix_pseudo_ellipse_free_rotor(matrix, R, eigen_alpha, eigen_beta, eigen_gamma, theta_x, theta_y):
@@ -194,8 +185,11 @@ def compile_2nd_matrix_pseudo_ellipse_free_rotor(matrix, R, eigen_alpha, eigen_b
     # Off diagonal set 2.
     matrix[1, 3] = matrix[3, 1] = -matrix[1, 1]
 
+    # Average position rotation.
+    euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+
     # Rotate and return the frame order matrix.
-    return rotate_daeg(matrix, R, eigen_alpha, eigen_beta, eigen_gamma)
+    return rotate_daeg(matrix, R)
 
 
 def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, R, eigen_alpha, eigen_beta, eigen_gamma, theta_x, theta_y):
@@ -241,8 +235,11 @@ def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, R, eigen_alpha, eigen_
     matrix[2, 6] = matrix[6, 2] = fact * quad(part_int_daeg2_pseudo_ellipse_torsionless_26, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
     matrix[5, 7] = matrix[7, 5] = fact * quad(part_int_daeg2_pseudo_ellipse_torsionless_57, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
 
+    # Average position rotation.
+    euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+
     # Rotate and return the frame order matrix.
-    return rotate_daeg(matrix, R, eigen_alpha, eigen_beta, eigen_gamma)
+    return rotate_daeg(matrix, R)
 
 
 def daeg_to_rotational_superoperator(daeg, Rsuper):
@@ -1314,23 +1311,14 @@ def reduce_alignment_tensor_reverse(D, A, red_tensor):
     red_tensor[4] = red_tensor[4] + (D[4, 8] + D[5, 7])*A[4]
 
 
-def rotate_daeg(matrix, R, eigen_alpha, eigen_beta, eigen_gamma):
+def rotate_daeg(matrix, R):
     """Rotate the given frame order matrix.
 
     @param matrix:      The Frame Order matrix, 2nd degree to be populated.
     @type matrix:       numpy 9D, rank-2 array
     @param R:           The rotation matrix to be populated.
     @type R:            numpy 3D, rank-2 array
-    @param eigen_alpha: The eigenframe rotation alpha Euler angle.
-    @type eigen_alpha:  float
-    @param eigen_beta:  The eigenframe rotation beta Euler angle.
-    @type eigen_beta:   float
-    @param eigen_gamma: The eigenframe rotation gamma Euler angle.
-    @type eigen_gamma:  float
     """
-
-    # Average position rotation.
-    euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
 
     # The outer product of R.
     R_kron = kron_prod(R, R)
