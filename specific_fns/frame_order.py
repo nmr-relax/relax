@@ -58,6 +58,7 @@ class Frame_order(API_base, API_common):
         # Place methods into the API.
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_data_name = self._return_data_name
         self.set_param_values = self._set_param_values_global
 
 
@@ -83,21 +84,38 @@ class Frame_order(API_base, API_common):
         @rtype:     numpy rank-1 array
         """
 
-        # The rigid model initial parameter vector (the cone axis angles and the cone angle).
-        if cdp.model == 'rigid':
-            return array([cdp.alpha, cdp.beta, cdp.gamma], float64)
+        # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
+        if cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            param_vect = [cdp.ave_pos_beta, cdp.ave_pos_gamma]
+        else:
+            param_vect = [cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma]
 
-        # The isotropic cone model initial parameter vector (the cone axis angles and the cone angle).
-        elif cdp.model == 'iso cone':
-            return array([cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.s1], float64)
+        # Frame order eigenframe - the full frame.
+        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            param_vect.append(cdp.eigen_alpha)
+            param_vect.append(cdp.eigen_beta)
+            param_vect.append(cdp.eigen_gamma)
 
-        # The torsionless pseudo-elliptic cone model initial parameter vector (the average position rotation, eigenframe and cone parameters).
-        elif cdp.model == 'torsionless pseudo-ellipse':
-            return array([cdp.alpha, cdp.beta, cdp.gamma, cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, cdp.cone_theta_x, cdp.cone_theta_y], float64)
+        # Frame order eigenframe - the isotropic cone axis.
+        elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            param_vect.append(cdp.axis_theta)
+            param_vect.append(cdp.axis_phi)
 
-        # The pseudo-elliptic cone model initial parameter vector (the average position rotation, eigenframe and cone parameters).
-        elif cdp.model == 'pseudo-ellipse':
-            return array([cdp.alpha, cdp.beta, cdp.gamma, cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, cdp.cone_theta_x, cdp.cone_theta_y, cdp.cone_sigma_max], float64)
+        # Cone parameters - pseudo-elliptic cone parameters.
+        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            param_vect.append(cdp.cone_theta_x)
+            param_vect.append(cdp.cone_theta_y)
+
+        # Cone parameters - single isotropic order parameter.
+        elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            param_vect.append(cdp.cone_s1)
+
+        # Cone parameters - torsion angle.
+        if cdp.model in ['rotor', 'line', 'iso cone', 'pseudo-ellipse']:
+            param_vect.append(cdp.cone_sigma_max)
+
+        # Return as a numpy array.
+        return array(param_vect, float64)
 
 
     def _back_calc(self):
@@ -150,18 +168,18 @@ class Frame_order(API_base, API_common):
             raise RelaxError("A cone PDB representation of the '%s' model cannot be made." % cdp.model)
 
         # Test for the data structures.
-        if not hasattr(cdp, 'theta_cone'):
-            raise RelaxError("The cone angle theta_cone does not exist.")
-        if not hasattr(cdp, 'theta_axis'):
-            raise RelaxError("The cone polar angle theta_axis does not exist.")
-        if not hasattr(cdp, 'phi_axis'):
-            raise RelaxError("The cone azimuthal angle phi_axis does not exist.")
+        if not hasattr(cdp, 'cone_theta'):
+            raise RelaxError("The cone angle cone_theta does not exist.")
+        if not hasattr(cdp, 'axis_theta'):
+            raise RelaxError("The cone polar angle axis_theta does not exist.")
+        if not hasattr(cdp, 'axis_phi'):
+            raise RelaxError("The cone azimuthal angle axis_phi does not exist.")
         if not hasattr(cdp, 'pivot'):
             raise RelaxError("The pivot point for the cone motion has not been set.")
 
         # The cone axis.
         cone_axis = zeros(3, float64)
-        generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
+        generate_vector(cone_axis, cdp.axis_theta, cdp.axis_phi)
         print(("Cone axis: %s." % cone_axis))
         print(("Cone angle: %s." % cdp.theta_cone))
 
@@ -173,7 +191,7 @@ class Frame_order(API_base, API_common):
             num_sim = cdp.sim_number
             cone_axis_sim = zeros((num_sim, 3), float64)
         for i in range(num_sim):
-            generate_vector(cone_axis_sim[i], cdp.theta_axis_sim[i], cdp.phi_axis_sim[i])
+            generate_vector(cone_axis_sim[i], cdp.axis_theta_sim[i], cdp.axis_phi_sim[i])
 
         # Create a positive and negative cone.
         for factor in [-1, 1]:
@@ -400,7 +418,7 @@ class Frame_order(API_base, API_common):
     def _select_model(self, model=None):
         """Select the Frame Order model.
 
-        @param model:   The Frame Order model.  This can be one of 'rigid', 'iso cone', 'torsionless pseudo-ellipse', or 'pseudo-ellipse'.
+        @param model:   The Frame Order model.  This can be one of 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'iso cone', 'iso cone, torsionless', 'iso cone, free rotor', 'line', 'line, torsionless', 'line, free rotor', 'rotor', 'rigid', 'free rotor'.
         @type model:    str
         """
 
@@ -412,7 +430,7 @@ class Frame_order(API_base, API_common):
             raise RelaxModelError('Frame Order')
 
         # Test if the model name exists.
-        if not model in ['rigid', 'iso cone', 'torsionless pseudo-ellipse', 'pseudo-ellipse']:
+        if not model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'iso cone', 'iso cone, torsionless', 'iso cone, free rotor', 'line', 'line, torsionless', 'line, free rotor', 'rotor', 'rigid', 'free rotor']:
             raise RelaxError("The model name " + repr(model) + " is invalid.")
 
         # Set the model
@@ -476,91 +494,42 @@ class Frame_order(API_base, API_common):
         if not hasattr(cdp, 'params'):
             cdp.params = []
 
-        # Initialisation flag.
-        init = False
+        # Build the parameter name list.
         if not len(cdp.params):
-            init = True
+            # The tensor rotation, or average domain position.
+            if cdp.model not in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+                cdp.params.append('ave_pos_alpha')
+            cdp.params.append('ave_pos_beta')
+            cdp.params.append('ave_pos_gamma')
 
-        # Set up the tensor rotation parameter arrays.
-        if init:
-            if cdp.model == 'iso cone':
-                cdp.params.append('beta')
-                cdp.params.append('gamma')
-            else:
-                cdp.params.append('alpha')
-                cdp.params.append('beta')
-                cdp.params.append('gamma')
-
-        # Initialise the tensor rotation angles.
-        if not hasattr(cdp, 'alpha'):
-            cdp.alpha = 0.0
-        if not hasattr(cdp, 'beta'):
-            cdp.beta = 0.0
-        if not hasattr(cdp, 'gamma'):
-            cdp.gamma = 0.0
-
-        # Isotropic cone model.
-        if cdp.model == 'iso cone':
-            # Set up the parameter arrays.
-            if init:
-                cdp.params.append('theta_axis')
-                cdp.params.append('phi_axis')
-                cdp.params.append('s1')
-
-            # Initialise the cone axis angles and order parameter values.
-            if not hasattr(cdp, 'theta_axis'):
-                cdp.theta_axis = 0.0
-            if not hasattr(cdp, 'phi_axis'):
-                cdp.phi_axis = 0.0
-            if not hasattr(cdp, 's1'):
-                cdp.s1 = 0.0
-
-        # Torsionless pseudo-elliptic cone model.
-        elif cdp.model == 'torsionless pseudo-ellipse':
-            # Set up the parameter arrays.
-            if init:
+            # Frame order eigenframe - the full frame.
+            if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
                 cdp.params.append('eigen_alpha')
                 cdp.params.append('eigen_beta')
                 cdp.params.append('eigen_gamma')
+
+            # Frame order eigenframe - the isotropic cone axis.
+            elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+                cdp.params.append('axis_theta')
+                cdp.params.append('axis_phi')
+
+            # Cone parameters - pseudo-elliptic cone parameters.
+            if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
                 cdp.params.append('cone_theta_x')
                 cdp.params.append('cone_theta_y')
 
-            # Initialise the cone axis angles and order parameter values.
-            if not hasattr(cdp, 'eigen_alpha'):
-                cdp.eigen_alpha = 0.0
-            if not hasattr(cdp, 'eigen_beta'):
-                cdp.eigen_beta = 0.0
-            if not hasattr(cdp, 'eigen_gamma'):
-                cdp.eigen_gamma = 0.0
-            if not hasattr(cdp, 'cone_theta_x'):
-                cdp.cone_theta_x = 0.0
-            if not hasattr(cdp, 'cone_theta_y'):
-                cdp.cone_theta_y = 0.0
+            # Cone parameters - single isotropic order parameter.
+            elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+                cdp.params.append('cone_s1')
 
-        # Pseudo-elliptic cone model.
-        elif cdp.model == 'pseudo-ellipse':
-            # Set up the parameter arrays.
-            if init:
-                cdp.params.append('eigen_alpha')
-                cdp.params.append('eigen_beta')
-                cdp.params.append('eigen_gamma')
-                cdp.params.append('cone_theta_x')
-                cdp.params.append('cone_theta_y')
+            # Cone parameters - torsion angle.
+            if cdp.model in ['rotor', 'line', 'iso cone', 'pseudo-ellipse']:
                 cdp.params.append('cone_sigma_max')
 
-            # Initialise the cone axis angles and order parameter values.
-            if not hasattr(cdp, 'eigen_alpha'):
-                cdp.eigen_alpha = 0.0
-            if not hasattr(cdp, 'eigen_beta'):
-                cdp.eigen_beta = 0.0
-            if not hasattr(cdp, 'eigen_gamma'):
-                cdp.eigen_gamma = 0.0
-            if not hasattr(cdp, 'cone_theta_x'):
-                cdp.cone_theta_x = 0.0
-            if not hasattr(cdp, 'cone_theta_y'):
-                cdp.cone_theta_y = 0.0
-            if not hasattr(cdp, 'cone_sigma_max'):
-                cdp.cone_sigma_max = 0.0
+        # Initialise the parameters in the current data pipe.
+        for param in cdp.params:
+            if not hasattr(cdp, param):
+                setattr(cdp, param, 0.0)
 
 
     def _unpack_opt_results(self, results, sim_index=None):
@@ -590,95 +559,64 @@ class Frame_order(API_base, API_common):
         if isNaN(func):
             raise RelaxNaNError('chi-squared')
 
-        # The rigid model.
-        if cdp.model == 'rigid':
-            # Disassemble the parameter vector.
-            alpha, beta, gamma = param_vector
-
-        # Isotropic cone model.
+        # Unpack the parameters.
+        ave_pos_alpha, ave_pos_beta, ave_pos_gamma = None, None, None
+        eigen_alpha, eigen_beta, eigen_gamma = None, None, None
+        axis_theta, axis_phi = None, None
+        cone_theta_x, cone_theta_y = None, None
+        cone_s1 = None
+        cone_sigma_max = None
+        if cdp.model == 'pseudo-ellipse':
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = param_vector
+        elif cdp.model in ['pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = param_vector
         elif cdp.model == 'iso cone':
-            # Disassemble the parameter vector.
-            beta, gamma, theta_axis, phi_axis, s1 = param_vector
-
-            # Alpha is zero in this model!
-            alpha = 0.0
-
-            # Calculate the cone angle.
-            cdp.theta_cone = order_parameters.iso_cone_S_to_cos_theta(s1)
-
-            # Monte Carlo simulation data structures.
-            if sim_index != None:
-                # Model parameters.
-                cdp.theta_axis_sim[sim_index] = theta_axis
-                cdp.phi_axis_sim[sim_index] = phi_axis
-                cdp.s1_sim[sim_index] = s1
-
-            # Normal data structures.
-            else:
-                # Model parameters.
-                cdp.theta_axis = theta_axis
-                cdp.phi_axis = phi_axis
-                cdp.s1 = s1
-
-        # Torsionless pseudo-ellipse cone model.
-        elif cdp.model == 'torsionless pseudo-ellipse':
-            # Disassemble the parameter vector.
-            alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = param_vector
-
-            # Monte Carlo simulation data structures.
-            if sim_index != None:
-                # Model parameters.
-                cdp.eigen_alpha[sim_index] = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
-                cdp.eigen_beta[sim_index] =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
-                cdp.eigen_gamma[sim_index] = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
-                cdp.cone_theta_x[sim_index] = cone_theta_x
-                cdp.cone_theta_y[sim_index] = cone_theta_y
-
-            # Normal data structures.
-            else:
-                # Model parameters.
-                cdp.eigen_alpha = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
-                cdp.eigen_beta =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
-                cdp.eigen_gamma = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
-                cdp.cone_theta_x = cone_theta_x
-                cdp.cone_theta_y = cone_theta_y
-
-        # Pseudo-ellipse cone model.
-        elif cdp.model == 'pseudo-ellipse':
-            # Disassemble the parameter vector.
-            alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = param_vector
-
-            # Monte Carlo simulation data structures.
-            if sim_index != None:
-                # Model parameters.
-                cdp.eigen_alpha[sim_index] = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
-                cdp.eigen_beta[sim_index] =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
-                cdp.eigen_gamma[sim_index] = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
-                cdp.cone_theta_x[sim_index] = cone_theta_x
-                cdp.cone_theta_y[sim_index] = cone_theta_y
-                cdp.cone_sigma_max[sim_index] = cone_sigma_max
-
-            # Normal data structures.
-            else:
-                # Model parameters.
-                cdp.eigen_alpha = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
-                cdp.eigen_beta =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
-                cdp.eigen_gamma = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
-                cdp.cone_theta_x = cone_theta_x
-                cdp.cone_theta_y = cone_theta_y
-                cdp.cone_sigma_max = cone_sigma_max
-
-        # Wrap the Euler angles.
-        alpha = wrap_angles(alpha, 0.0, 2.0*pi)
-        beta  = wrap_angles(beta, 0.0, 2.0*pi)
-        gamma = wrap_angles(gamma, 0.0, 2.0*pi)
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1, cone_sigma_max = param_vector
+            ave_pos_alpha = 0.0
+        elif cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = param_vector
+            ave_pos_alpha = 0.0
+        elif cdp.model == 'line':
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
+        elif cdp.model in ['line, torsionless', 'line, free rotor']:
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
+        elif cdp.model in ['rotor', 'free rotor']:
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
+        elif cdp.model == 'rigid':
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma = param_vector
 
         # Monte Carlo simulation data structures.
         if sim_index != None:
-            # Tensor rotation.
-            cdp.alpha_sim[sim_index] = alpha
-            cdp.beta_sim[sim_index] = beta
-            cdp.gamma_sim[sim_index] = gamma
+            # Average position parameters.
+            if ave_pos_alpha != None:
+                cdp.ave_pos_alpha_sim[sim_index] = wrap_angles(ave_pos_alpha, 0.0, 2.0*pi)
+            if ave_pos_beta != None:
+                cdp.ave_pos_beta_sim[sim_index] = wrap_angles(ave_pos_beta, 0.0, 2.0*pi)
+            if ave_pos_gamma != None:
+                cdp.ave_pos_gamma_sim[sim_index] = wrap_angles(ave_pos_gamma, 0.0, 2.0*pi)
+
+            # Eigenframe parameters.
+            if eigen_alpha != None:
+                cdp.eigen_alpha[sim_index] = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
+            if eigen_beta != None:
+                cdp.eigen_beta[sim_index] =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
+            if eigen_gamma != None:
+                cdp.eigen_gamma[sim_index] = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
+            if axis_theta != None:
+                cdp.axis_theta_sim[sim_index] = axis_theta
+            if axis_phi != None:
+                cdp.axis_phi_sim[sim_index] = axis_phi
+
+            # Cone parameters.
+            if cone_s1 != None:
+                cdp.cone_s1_sim[sim_index] = cone_s1
+                cdp.cone_theta[sim_index] = order_parameters.iso_cone_S_to_cos_theta(cone_s1)
+            if cone_theta_x != None:
+                cdp.cone_theta_x[sim_index] = cone_theta_x
+            if cone_theta_y != None:
+                cdp.cone_theta_y[sim_index] = cone_theta_y
+            if cone_sigma_max != None:
+                cdp.cone_sigma_max[sim_index] = cone_sigma_max
 
             # Optimisation stats.
             cdp.chi2_sim[sim_index] = func
@@ -688,12 +626,38 @@ class Frame_order(API_base, API_common):
             cdp.h_count_sim[sim_index] = h_count
             cdp.warning_sim[sim_index] = warning
 
-        # Normal optimisation data structures.
+        # Normal data structures.
         else:
-            # Tensor rotation.
-            cdp.alpha = alpha
-            cdp.beta = beta
-            cdp.gamma = gamma
+            # Average position parameters.
+            if ave_pos_alpha != None:
+                cdp.ave_pos_alpha = wrap_angles(ave_pos_alpha, 0.0, 2.0*pi)
+            if ave_pos_beta != None:
+                cdp.ave_pos_beta = wrap_angles(ave_pos_beta, 0.0, 2.0*pi)
+            if ave_pos_gamma != None:
+                cdp.ave_pos_gamma = wrap_angles(ave_pos_gamma, 0.0, 2.0*pi)
+
+            # Eigenframe parameters.
+            if eigen_alpha != None:
+                cdp.eigen_alpha = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
+            if eigen_beta != None:
+                cdp.eigen_beta =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
+            if eigen_gamma != None:
+                cdp.eigen_gamma = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
+            if axis_theta != None:
+                cdp.axis_theta = axis_theta
+            if axis_phi != None:
+                cdp.axis_phi = axis_phi
+
+            # Cone parameters.
+            if cone_s1 != None:
+                cdp.cone_s1 = cone_s1
+                cdp.cone_theta = order_parameters.iso_cone_S_to_cos_theta(cone_s1)
+            if cone_theta_x != None:
+                cdp.cone_theta_x = cone_theta_x
+            if cone_theta_y != None:
+                cdp.cone_theta_y = cone_theta_y
+            if cone_sigma_max != None:
+                cdp.cone_sigma_max = cone_sigma_max
 
             # Optimisation stats.
             cdp.chi2 = func
@@ -780,9 +744,9 @@ class Frame_order(API_base, API_common):
 
         The isotropic cone specific model parameters are:
 
-            - 'theta_axis', the cone axis polar angle (for the isotropic cone model).
-            - 'phi_axis', the cone axis azimuthal angle (for the isotropic cone model).
-            - 's1', the isotropic cone order parameter.
+            - 'axis_theta', the cone axis polar angle (for the isotropic cone model).
+            - 'axis_phi', the cone axis azimuthal angle (for the isotropic cone model).
+            - 'cone_s1', the isotropic cone order parameter.
 
 
         @keyword set:           The set of object names to return.  This can be set to 'all' for all
@@ -815,45 +779,35 @@ class Frame_order(API_base, API_common):
             suffix = ''
 
         # Parameters.
-        if set == 'all' or set == 'params':
-            # The isotropic cone model.
-            if hasattr(cdp, 'model') and cdp.model == 'iso cone':
-                # Euler angles.
-                names.append('beta%s' % suffix)
-                names.append('gamma%s' % suffix)
+        if (set == 'all' or set == 'params') and hasattr(cdp, 'model'):
+            # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
+            if cdp.model not in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+                names.append('ave_pos_alpha%s' % suffix)
+            names.append('ave_pos_beta%s' % suffix)
+            names.append('ave_pos_gamma%s' % suffix)
 
-                # Angular cone parameters.
-                names.append('theta_axis%s' % suffix)
-                names.append('phi_axis%s' % suffix)
-                names.append('s1%s' % suffix)
-
-            # All other models.
-            else:
-                names.append('alpha%s' % suffix)
-                names.append('beta%s' % suffix)
-                names.append('gamma%s' % suffix)
-
-            # The torsionless pseudo-elliptic cone model.
-            if hasattr(cdp, 'model') and cdp.model == 'torsionless pseudo-ellipse':
-                # Eigenframe
+            # Frame order eigenframe - the full frame.
+            if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
                 names.append('eigen_alpha%s' % suffix)
                 names.append('eigen_beta%s' % suffix)
                 names.append('eigen_gamma%s' % suffix)
 
-                # Cone parameters.
+            # Frame order eigenframe - the isotropic cone axis.
+            elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+                names.append('axis_theta%s' % suffix)
+                names.append('axis_phi%s' % suffix)
+
+            # Cone parameters - pseudo-elliptic cone parameters.
+            if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
                 names.append('cone_theta_x%s' % suffix)
                 names.append('cone_theta_y%s' % suffix)
 
-            # The pseudo-elliptic cone model.
-            elif hasattr(cdp, 'model') and cdp.model == 'pseudo-ellipse':
-                # Eigenframe
-                names.append('eigen_alpha%s' % suffix)
-                names.append('eigen_beta%s' % suffix)
-                names.append('eigen_gamma%s' % suffix)
+            # Cone parameters - single isotropic order parameter.
+            elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+                names.append('cone_s1%s' % suffix)
 
-                # Cone parameters.
-                names.append('cone_theta_x%s' % suffix)
-                names.append('cone_theta_y%s' % suffix)
+            # Cone parameters - torsion angle.
+            if cdp.model in ['rotor', 'line', 'iso cone', 'pseudo-ellipse']:
                 names.append('cone_sigma_max%s' % suffix)
 
         # Minimisation statistics.
@@ -918,13 +872,13 @@ class Frame_order(API_base, API_common):
             dist_type = None
             end_point = True
 
-            # Alpha Euler angle.
-            if cdp.params[i] == 'alpha':
+            # Linear angle grid from 0 to one inc before 2pi.
+            if cdp.params[i] in ['ave_pos_alpha', 'ave_pos_gamma', 'eigen_alpha', 'eigen_gamma', 'axis_phi']:
                 lower = 0.0
                 upper = 2*pi * (1.0 - 1.0/incs[i])
 
-            # Beta Euler angle.
-            if cdp.params[i] == 'beta':
+            # Arccos grid from 0 to pi.
+            if cdp.params[i] in ['ave_pos_beta', 'eigen_beta', 'axis_theta']:
                 # Change the default increment numbers.
                 if not isinstance(inc, list):
                     incs[i] = incs[i] / 2 + 1
@@ -937,72 +891,15 @@ class Frame_order(API_base, API_common):
                 lower = 0.0
                 upper = pi
 
-            # Gamma Euler angle.
-            if cdp.params[i] == 'gamma':
-                lower = 0.0
-                upper = 2*pi * (1.0 - 1.0/incs[i])
+            # The isotropic cone order parameter.
+            if cdp.params[i] == 'cone_s1':
+                lower = -0.5
+                upper = 1.0
 
-            # The eigenframe alpha Euler angle.
-            if cdp.params[i] == 'eigen_alpha':
-                lower = 0.0
-                upper = 2*pi * (1.0 - 1.0/incs[i])
-
-            # The eigenframe beta Euler angle.
-            if cdp.params[i] == 'eigen_beta':
-                # Change the default increment numbers.
-                if not isinstance(inc, list):
-                    incs[i] = incs[i] / 2 + 1
-
-                # The distribution type and end point.
-                dist_type = 'acos'
-                end_point = False
-
-                # Set the default bounds.
-                lower = 0.0
-                upper = pi
-
-            # The eigenframe gamma Euler angle.
-            if cdp.params[i] == 'eigen_gamma':
-                lower = 0.0
-                upper = 2*pi * (1.0 - 1.0/incs[i])
-
-            # The isotropic cone model.
-            if cdp.model == 'iso cone':
-                # Cone axis polar angle.
-                if cdp.params[i] == 'theta_axis':
-                    # Change the default increment numbers.
-                    if not isinstance(inc, list):
-                        incs[i] = incs[i] / 2 + 1
-
-                    # The distribution type.
-                    dist_type = 'acos'
-                    end_point = False
-
-                    # Set the default bounds.
-                    lower = 0.0
-                    upper = pi
-
-                # Cone axis azimuthal angle.
-                if cdp.params[i] == 'phi_axis':
-                    lower = 0.0
-                    upper = 2*pi * (1.0 - 1.0/incs[i])
-
-                # The cone order parameter.
-                if cdp.params[i] == 's1':
-                    lower = -0.5
-                    upper = 1.0
-
-            # The pseudo-elliptic cone models parameters.
-            if cdp.model in ['torsionless pseudo-ellipse', 'pseudo-ellipse']:
-                # Cone opening angles.
-                if cdp.params[i] in ['cone_theta_x', 'cone_theta_y']:
-                    lower = pi * (1.0/incs[i])
-                    upper = pi * (1.0 - 1.0/incs[i])
-
-                # Torsion angle restriction.
-                if cdp.params[i] == 'cone_sigma_max':
-                    lower = pi * (1.0/incs[i])
-                    upper = pi * (1.0 - 1.0/incs[i])
+            # Linear angle grid from 0 to pi excluding the outer points.
+            if cdp.params[i] in ['cone_theta_x', 'cone_theta_y', 'cone_sigma_max']:
+                lower = pi * (1.0/incs[i])
+                upper = pi * (1.0 - 1.0/incs[i])
 
             # Over-ride the bounds.
             if lower_list:
@@ -1068,20 +965,20 @@ class Frame_order(API_base, API_common):
         @rtype:             list of float
         """
 
-        # Euler angles.
-        if search('^alpha$', param) or search('^beta$', param) or search('^gamma$', param):
+        # Average position Euler angles.
+        if param in ['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma']:
             return [0.0, 2*pi]
 
         # Axis spherical coordinate theta.
-        if search('theta[ -_]axis', param):
+        if param == 'axis_theta':
             return [0.0, pi]
 
         # Axis spherical coordinate phi.
-        if search('phi[ -_]axis', param):
+        if param == 'axis_phi':
             return [0.0, 2*pi]
 
         # Cone angle.
-        if search('theta[ -_]cone', param):
+        if param == 'cone_theta':
             return [0.0, pi]
 
 
@@ -1211,40 +1108,6 @@ class Frame_order(API_base, API_common):
         return k, n, chi2
 
 
-    def return_data_name(self, param):
-        """Return a unique identifying string for the Frame order parameter.
-
-        @param param:   The Frame order parameter.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # Euler angle alpha.
-        if search('^alpha$', param):
-            return 'alpha'
-
-        # Euler angle beta.
-        if search('^beta$', param):
-            return 'beta'
-
-        # Euler angle gamma.
-        if search('^gamma$', param):
-            return 'gamma'
-
-        # Axis spherical coordinate theta.
-        if search('theta[ -_]axis', param):
-            return 'theta_axis'
-
-        # Axis spherical coordinate phi.
-        if search('phi[ -_]axis', param):
-            return 'phi_axis'
-
-        # Cone order parameter.
-        if search('[Ss]1', param):
-            return 's1'
-
-
     def return_error(self, spin_id):
         """Return the alignment tensor error structure.
 
@@ -1274,20 +1137,16 @@ class Frame_order(API_base, API_common):
         @rtype:         str
         """
 
-        # Euler angles.
-        if search('^alpha$', param) or search('^beta$', param) or search('^gamma$', param):
+        # Average position Euler angles.
+        if param in ['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma']:
             return 'rad'
 
-        # Axis spherical coordinate theta.
-        if search('theta[ -_]axis', param):
+        # Eigenframe angles.
+        if param in ['eigen_alpha', 'eigen_beta', 'eigen_gamma', 'axis_theta', 'axis_phi']:
             return 'rad'
 
-        # Axis spherical coordinate phi.
-        if search('phi[ -_]axis', param):
-            return 'rad'
-
-        # Cone angle.
-        if search('theta[ -_]cone', param):
+        # Cone angles.
+        if param in ['cone_theta_x', 'cone_theta_y', 'cone_sigma_max', 'cone_theta']:
             return 'rad'
 
 

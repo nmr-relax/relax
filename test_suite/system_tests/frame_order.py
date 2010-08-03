@@ -97,9 +97,9 @@ class Frame_order(SystemTestCase):
 
 
         # Minimisation info.
-        string = string + "\n%-15s %30.17g\n" % ('alpha:',   cdp.alpha)
-        string = string +   "%-15s %30.17g\n" % ('beta:',    cdp.beta)
-        string = string +   "%-15s %30.17g\n" % ('gamma:',   cdp.gamma)
+        string = string + "\n%-15s %30.17g\n" % ('ave_pos_alpha:',   cdp.ave_pos_alpha)
+        string = string +   "%-15s %30.17g\n" % ('ave_pos_beta:',    cdp.ave_pos_beta)
+        string = string +   "%-15s %30.17g\n" % ('ave_pos_gamma:',   cdp.ave_pos_gamma)
         string = string +   "%-15s %30.17g\n" % ('chi2:',    cdp.chi2)
         string = string +   "%-15s %30i\n" % ('iter:',    cdp.iter)
         string = string +   "%-15s %30i\n" % ('f_count:', cdp.f_count)
@@ -130,9 +130,9 @@ class Frame_order(SystemTestCase):
         # Test the values.
         self.assertEqual(cdp.iter, 92, msg=self.mesg)
         self.assertEqual(cdp.chi2, 0.0, msg=self.mesg)
-        self.assertEqual(cdp.alpha, 0.0, msg=self.mesg)
-        self.assertEqual(cdp.beta, 0.0, msg=self.mesg)
-        self.assertEqual(cdp.gamma, 0.0, msg=self.mesg)
+        self.assertEqual(cdp.ave_pos_alpha, 0.0, msg=self.mesg)
+        self.assertEqual(cdp.ave_pos_beta, 0.0, msg=self.mesg)
+        self.assertEqual(cdp.ave_pos_gamma, 0.0, msg=self.mesg)
 
 
     def test_opt_rigid_rand_rot(self):
@@ -146,6 +146,6 @@ class Frame_order(SystemTestCase):
 
         # Test the values.
         self.assertAlmostEqual(cdp.chi2, 3.085356555118994e-26, msg=self.mesg)
-        self.assertAlmostEqual(cdp.alpha, 5.0700283197712777, msg=self.mesg)
-        self.assertAlmostEqual(cdp.beta, 2.5615753919522359, msg=self.mesg)
-        self.assertAlmostEqual(cdp.gamma, 0.64895449611163691, msg=self.mesg)
+        self.assertAlmostEqual(cdp.ave_pos_alpha, 5.0700283197712777, msg=self.mesg)
+        self.assertAlmostEqual(cdp.ave_pos_beta, 2.5615753919522359, msg=self.mesg)
+        self.assertAlmostEqual(cdp.ave_pos_gamma, 0.64895449611163691, msg=self.mesg)

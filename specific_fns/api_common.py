@@ -192,6 +192,19 @@ class API_common:
         return 1.0
 
 
+    def _return_data_name(self, param):
+        """Return a unique identifying string for the parameter.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
+
+        # No name mappings.
+        return param
+
+
     def _return_data_relax_data(self, spin):
         """Return the Ri data structure for the given spin.
 
