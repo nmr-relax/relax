@@ -91,6 +91,10 @@ class Frame_order(API_base, API_common):
         elif cdp.model == 'iso cone':
             return array([cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.s1], float64)
 
+        # The torsionless pseudo-elliptic cone model initial parameter vector (the average position rotation, eigenframe and cone parameters).
+        elif cdp.model == 'torsionless pseudo-ellipse':
+            return array([cdp.alpha, cdp.beta, cdp.gamma, cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, cdp.cone_theta_x, cdp.cone_theta_y], float64)
+
         # The pseudo-elliptic cone model initial parameter vector (the average position rotation, eigenframe and cone parameters).
         elif cdp.model == 'pseudo-ellipse':
             return array([cdp.alpha, cdp.beta, cdp.gamma, cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, cdp.cone_theta_x, cdp.cone_theta_y, cdp.cone_sigma_max], float64)
@@ -396,7 +400,7 @@ class Frame_order(API_base, API_common):
     def _select_model(self, model=None):
         """Select the Frame Order model.
 
-        @param model:   The Frame Order model.  This can be one of 'rigid', 'iso cone', or 'pseudo-ellipse'.
+        @param model:   The Frame Order model.  This can be one of 'rigid', 'iso cone', 'torsionless pseudo-ellipse', or 'pseudo-ellipse'.
         @type model:    str
         """
 
@@ -408,7 +412,7 @@ class Frame_order(API_base, API_common):
             raise RelaxModelError('Frame Order')
 
         # Test if the model name exists.
-        if not model in ['rigid', 'iso cone', 'pseudo-ellipse']:
+        if not model in ['rigid', 'iso cone', 'torsionless pseudo-ellipse', 'pseudo-ellipse']:
             raise RelaxError("The model name " + repr(model) + " is invalid.")
 
         # Set the model
@@ -511,6 +515,28 @@ class Frame_order(API_base, API_common):
             if not hasattr(cdp, 's1'):
                 cdp.s1 = 0.0
 
+        # Torsionless pseudo-elliptic cone model.
+        elif cdp.model == 'torsionless pseudo-ellipse':
+            # Set up the parameter arrays.
+            if init:
+                cdp.params.append('eigen_alpha')
+                cdp.params.append('eigen_beta')
+                cdp.params.append('eigen_gamma')
+                cdp.params.append('cone_theta_x')
+                cdp.params.append('cone_theta_y')
+
+            # Initialise the cone axis angles and order parameter values.
+            if not hasattr(cdp, 'eigen_alpha'):
+                cdp.eigen_alpha = 0.0
+            if not hasattr(cdp, 'eigen_beta'):
+                cdp.eigen_beta = 0.0
+            if not hasattr(cdp, 'eigen_gamma'):
+                cdp.eigen_gamma = 0.0
+            if not hasattr(cdp, 'cone_theta_x'):
+                cdp.cone_theta_x = 0.0
+            if not hasattr(cdp, 'cone_theta_y'):
+                cdp.cone_theta_y = 0.0
+
         # Pseudo-elliptic cone model.
         elif cdp.model == 'pseudo-ellipse':
             # Set up the parameter arrays.
@@ -593,6 +619,29 @@ class Frame_order(API_base, API_common):
                 cdp.theta_axis = theta_axis
                 cdp.phi_axis = phi_axis
                 cdp.s1 = s1
+
+        # Torsionless pseudo-ellipse cone model.
+        elif cdp.model == 'torsionless pseudo-ellipse':
+            # Disassemble the parameter vector.
+            alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = param_vector
+
+            # Monte Carlo simulation data structures.
+            if sim_index != None:
+                # Model parameters.
+                cdp.eigen_alpha[sim_index] = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
+                cdp.eigen_beta[sim_index] =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
+                cdp.eigen_gamma[sim_index] = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
+                cdp.cone_theta_x[sim_index] = cone_theta_x
+                cdp.cone_theta_y[sim_index] = cone_theta_y
+
+            # Normal data structures.
+            else:
+                # Model parameters.
+                cdp.eigen_alpha = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
+                cdp.eigen_beta =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
+                cdp.eigen_gamma = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
+                cdp.cone_theta_x = cone_theta_x
+                cdp.cone_theta_y = cone_theta_y
 
         # Pseudo-ellipse cone model.
         elif cdp.model == 'pseudo-ellipse':
@@ -784,8 +833,19 @@ class Frame_order(API_base, API_common):
                 names.append('beta%s' % suffix)
                 names.append('gamma%s' % suffix)
 
+            # The torsionless pseudo-elliptic cone model.
+            if hasattr(cdp, 'model') and cdp.model == 'torsionless pseudo-ellipse':
+                # Eigenframe
+                names.append('eigen_alpha%s' % suffix)
+                names.append('eigen_beta%s' % suffix)
+                names.append('eigen_gamma%s' % suffix)
+
+                # Cone parameters.
+                names.append('cone_theta_x%s' % suffix)
+                names.append('cone_theta_y%s' % suffix)
+
             # The pseudo-elliptic cone model.
-            if hasattr(cdp, 'model') and cdp.model == 'pseudo-ellipse':
+            elif hasattr(cdp, 'model') and cdp.model == 'pseudo-ellipse':
                 # Eigenframe
                 names.append('eigen_alpha%s' % suffix)
                 names.append('eigen_beta%s' % suffix)
@@ -932,8 +992,8 @@ class Frame_order(API_base, API_common):
                     lower = -0.5
                     upper = 1.0
 
-            # The pseudo-elliptic cone model parameters.
-            if cdp.model == 'pseudo-ellipse':
+            # The pseudo-elliptic cone models parameters.
+            if cdp.model in ['torsionless pseudo-ellipse', 'pseudo-ellipse']:
                 # Cone opening angles.
                 if cdp.params[i] in ['cone_theta_x', 'cone_theta_y']:
                     lower = pi * (1.0/incs[i])

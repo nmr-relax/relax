@@ -31,7 +31,7 @@ from numpy import array, dot, float64, ones, transpose, zeros
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone, compile_2nd_matrix_pseudo_ellipse, reduce_alignment_tensor
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_torsionless, reduce_alignment_tensor
 from maths_fns.rotation_matrix import euler_to_R_zyz as euler_to_R
 from relax_errors import RelaxError
 
@@ -299,6 +299,51 @@ class Frame_order:
 
         # Generate the 2nd degree Frame Order super matrix.
         frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max)
+
+        # Average position rotation.
+        euler_to_R(alpha, beta, gamma, self.rot)
+
+        # Back calculate the reduced tensors.
+        for i in range(self.num_tensors):
+            # Tensor indices.
+            index1 = i*5
+            index2 = i*5+5
+
+            # Reduce the tensor.
+            reduce_alignment_tensor(frame_order_2nd, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
+
+            # Convert the tensor to 3D, rank-2 form.
+            to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
+
+            # Rotate the tensor (normal R.X.RT rotation).
+            if self.full_in_ref_frame[i]:
+                tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
+
+            # Rotate the tensor (inverse RT.X.R rotation).
+            else:
+                tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
+
+            # Convert the tensor back to 5D, rank-1 form.
+            to_5D(self.red_tensors_bc[index1:index2], tensor_3D)
+
+        # Return the chi-squared value.
+        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+
+
+    def func_pseudo_ellipse_torsionless(self, params):
+        """Target function for torsionless pseudo-elliptic cone model optimisation using alignment tensors.
+
+        @param params:  The vector of parameter values {alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y} where the first 3 are the average position rotation Euler angles, the next 3 are the Euler angles defining the eigenframe, and the last 2 are the torsionless pseudo-elliptic cone geometric parameters.
+        @type params:   list of float
+        @return:        The chi-squared or SSE value.
+        @rtype:         float
+        """
+
+        # Unpack the parameters.
+        alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
+
+        # Generate the 2nd degree Frame Order super matrix.
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_torsionless(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_)
 
         # Average position rotation.
         euler_to_R(alpha, beta, gamma, self.rot)
