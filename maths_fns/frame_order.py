@@ -319,7 +319,7 @@ class Frame_order:
         return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
 
 
-    def reduce_and_rot(ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):
+    def reduce_and_rot(self, ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):
         """Reduce and rotate the alignments tensors using the frame order matrix and Euler angles.
 
         @keyword ave_pos_alpha: The alpha Euler angle describing the average domain position, the tensor rotation.
