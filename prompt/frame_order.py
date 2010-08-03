@@ -178,15 +178,63 @@ class Frame_order(User_fn_class):
         Description
         ~~~~~~~~~~~
 
-        Prior to optimisation, the Frame Order model should be selected.  The list of available
-        models are:
+        Prior to optimisation, the Frame Order model should be selected.  These models consist of
+        three parameter categories:
 
-            'iso cone' - The isotropic cone model.  The cone is defined by a single opening angle
-            theta.  The torsion angle sigma is unrestricted.
+            - The average domain position.  This includes the parameters ave_pos_alpha,
+            ave_pos_beta, and ave_pos_gamma.  These Euler angles rotate the tensors from the
+            arbitrary PDB frame of the moving domain to the average domain position.
 
-            'pseudo-ellipse' - The pseudo-elliptic cone model.  The cone is defined by two opening
-            angles, theta_x and theta_y.  In the tilt-torsion angle system these define the
-            allowable tilt.  The torsion angle sigma is restricted.
+            - The frame order eigenframe.  This includes the parameters eigen_alpha, eigen_beta, and
+            eigen_gamma.  These Euler angles define the major modes of motion.  The cone central
+            axis is defined as the z-axis.  The pseudo-elliptic cone x and y-axes are defined as the
+            x and y-axes of the eigenframe.
+
+            - The cone parameters.  These are defined as the tilt-torsion angles cone_theta_x,
+            cone_theta_y, and cone_sigma_max.  The cone_theta_x and cone_theta_y parameters define
+            the two cone opening angles of the pseudo-ellipse.  The amount of domain torsion is
+            defined as the average domain position, plus and minus cone_sigma_max.  The isotropic
+            cones are defined by setting cone_theta_x = cone_theta_y and converting the single
+            parameter into a 2nd rank order parameter.
+
+        The list of available models are:
+
+            'pseudo-ellipse' - The pseudo-elliptic cone model.  This is the full model consisting of
+            the parameters ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta,
+            eigen_gamma, cone_theta_x, cone_theta_y, and cone_sigma_max.
+
+            'pseudo-ellipse, torsionless' - The pseudo-elliptic cone with the torsion angle
+            cone_sigma_max set to zero.
+
+            'pseudo-ellipse, free rotor' - The pseudo-elliptic cone with no torsion angle
+            restriction.
+
+            'iso cone' - The isotropic cone model.  The cone is defined by a single order parameter
+            s1 which is related to the single cone opening angle cone_theta_x = cone_theta_y.  Due
+            to rotational symmetry about the cone axis, the average position alpha Euler angle
+            ave_pos_alpha is dropped from the model.  The symmetry also collapses the eigenframe to
+            a single z-axis defined by the parameters axis_theta and axis_phi.
+
+            'iso cone, torsionless' - The isotropic cone model with the torsion angle cone_sigma_max
+            set to zero.
+
+            'iso cone, free rotor' - The isotropic cone model with no torsion angle restriction.
+
+            'line' - The line cone model.  This is the pseudo-elliptic cone with one of the cone
+            angles, cone_theta_y, assumed to be statistically negligible.  I.e. the cone angle is
+            so small that it cannot be distinguished from noise.
+
+            'line, torsionless' - The line cone model with the torsion angle cone_sigma_max set to
+            zero.
+
+            'line, free rotor' - The line cone model with no torsion angle restriction.
+
+            'rotor' - The only motion is a rotation about the cone axis restricted by the torsion
+            angle cone_sigma_max.
+
+            'rigid' - No domain motions.
+
+            'free rotor' - The only motion is free rotation about the cone axis.
 
 
         Examples
