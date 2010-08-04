@@ -59,8 +59,8 @@ def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
     matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_zz, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
 
 
-def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, s1):
-    """Generate the rotated 2nd degree Frame Order matrix.
+def compile_2nd_matrix_iso_cone_free_rotor(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, s1):
+    """Generate the rotated 2nd degree Frame Order matrix for the free rotor isotropic cone.
 
     The cone axis is assumed to be parallel to the z-axis in the eigenframe.  In this model, the three order parameters are defined as::
 
@@ -88,7 +88,7 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     generate_vector(cone_axis, theta_axis, phi_axis)
 
     # Populate the Frame Order matrix in the eigenframe.
-    populate_2nd_eigenframe_iso_cone(matrix, s1)
+    populate_2nd_eigenframe_iso_cone_free_rotor(matrix, s1)
 
     # Average position rotation.
     two_vect_to_R(z_axis, cone_axis, R)
@@ -1048,8 +1048,8 @@ def populate_1st_eigenframe_iso_cone(matrix, angle):
     matrix[2, 2] = (cos(angle) + 1.0) / 2.0
 
 
-def populate_2nd_eigenframe_iso_cone(matrix, s1):
-    """Populate the 2nd degree Frame Order matrix in the eigenframe for an isotropic cone.
+def populate_2nd_eigenframe_iso_cone_free_rotor(matrix, s1):
+    """Populate the 2nd degree Frame Order matrix in the eigenframe for the free rotor isotropic cone.
 
     The cone axis is assumed to be parallel to the z-axis in the eigenframe.  In this model, the three order parameters are defined as::
 

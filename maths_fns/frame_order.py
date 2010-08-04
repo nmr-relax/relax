@@ -31,7 +31,7 @@ from numpy import array, dot, float64, ones, transpose, zeros
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, reduce_alignment_tensor
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, reduce_alignment_tensor
 from maths_fns.rotation_matrix import euler_to_R_zyz as euler_to_R
 from relax_errors import RelaxError
 
@@ -223,7 +223,7 @@ class Frame_order:
         ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, axis_theta, axis_phi, cone_s1)
+        frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, axis_theta, axis_phi, cone_s1)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
