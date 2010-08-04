@@ -310,7 +310,7 @@ class Frame_order:
         """
 
         # Unpack the parameters.
-        alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
+        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
 
         # Generate the 2nd degree Frame Order super matrix.
         frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_torsionless(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y)
