@@ -1142,6 +1142,8 @@ def populate_2nd_eigenframe_iso_cone_free_rotor(matrix, s1):
         S1 = S2,
         S3 = 0
 
+    This is in the Kronecker product form.
+
 
     @param matrix:  The Frame Order matrix, 2nd degree.
     @type matrix:   numpy 9D, rank-2 array
@@ -1155,26 +1157,22 @@ def populate_2nd_eigenframe_iso_cone_free_rotor(matrix, s1):
             matrix[i, j] = 0.0
 
     # The c11^2, c22^2, c12^2, and c21^2 elements.
-    matrix[0, 0] = (s1 + 2.0) / 6.0
-    matrix[4, 4] = matrix[0, 0]
-    matrix[1, 1] = matrix[0, 0]
-    matrix[3, 3] = matrix[0, 0]
+    matrix[0, 0] = matrix[4, 4] = (s1 + 2.0) / 6.0
+    matrix[0, 4] = matrix[4, 0] = matrix[0, 0]
 
     # The c33^2 element.
     matrix[8, 8] = (2.0*s1 + 1.0) / 3.0
 
     # The c13^2, c31^2, c23^2, c32^2 elements.
-    matrix[2, 2] = (1.0 - s1) / 3.0
-    matrix[6, 6] = matrix[2, 2]
-    matrix[5, 5] = matrix[2, 2]
-    matrix[7, 7] = matrix[2, 2]
+    matrix[0, 8] = matrix[8, 0] = (1.0 - s1) / 3.0
+    matrix[4, 8] = matrix[8, 4] = matrix[0, 8]
 
     # Calculate the cone angle.
     cos_theta = order_parameters.iso_cone_S_to_cos_theta(s1)
 
     # The c11.c22 and c12.c21 elements.
-    matrix[0, 4] = matrix[4, 0] = (cos_theta + 1.0) / 4.0
-    matrix[1, 3] = matrix[3, 1] = -(cos_theta + 1.0) / 4.0
+    matrix[1, 1] = matrix[3, 3] = (cos_theta + 1.0) / 4.0
+    matrix[1, 3] = matrix[3, 1] = -matrix[1, 1]
 
 
 def reduce_alignment_tensor(D, A, red_tensor):
