@@ -1252,6 +1252,9 @@ def reduce_alignment_tensor_symmetric(D, A, red_tensor):
 def rotate_daeg(matrix, R):
     """Rotate the given frame order matrix.
 
+    It is assumed that the frame order matrix is in the Kronecker product form.
+
+
     @param matrix:      The Frame Order matrix, 2nd degree to be populated.
     @type matrix:       numpy 9D, rank-2 array
     @param R:           The rotation matrix to be populated.
@@ -1261,14 +1264,8 @@ def rotate_daeg(matrix, R):
     # The outer product of R.
     R_kron = kron_prod(R, R)
 
-    # Perform the T23 transpose to obtain the Kronecker product matrix!
-    transpose_23(matrix)
-
     # Rotate.
     matrix_rot = dot(R_kron, dot(matrix, transpose(R_kron)))
-
-    # Perform T23 again to return back.
-    transpose_23(matrix_rot)
 
     # Return the matrix.
     return matrix_rot
