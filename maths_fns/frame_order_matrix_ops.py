@@ -37,6 +37,28 @@ from maths_fns.pseudo_ellipse import pec
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
 
 
+def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
+    """Generate the 1st degree Frame Order matrix for the pseudo-ellipse.
+
+    @param matrix:      The Frame Order matrix, 1st degree to be populated.
+    @type matrix:       numpy 3D, rank-2 array
+    @param theta_x:     The cone opening angle along x.
+    @type theta_x:      float
+    @param theta_y:     The cone opening angle along y.
+    @type theta_y:      float
+    @param sigma_max:   The maximum torsion angle.
+    @type sigma_max:    float
+    """
+
+    # The surface area normalisation factor.
+    fact = 1.0 / (2.0 * sigma_max * pec(theta_x, theta_y))
+
+    # Numerical integration of phi of each element.
+    matrix[0, 0] = fact * quad(part_int_daeg1_pseudo_ellipse_xx, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    matrix[1, 1] = fact * quad(part_int_daeg1_pseudo_ellipse_yy, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_zz, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+
+
 def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, s1):
     """Generate the rotated 2nd degree Frame Order matrix.
 
@@ -73,28 +95,6 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
 
     # Rotate and return the frame order matrix.
     return rotate_daeg(matrix, R)
-
-
-def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
-    """Generate the 1st degree Frame Order matrix for the pseudo-ellipse.
-
-    @param matrix:      The Frame Order matrix, 1st degree to be populated.
-    @type matrix:       numpy 3D, rank-2 array
-    @param theta_x:     The cone opening angle along x.
-    @type theta_x:      float
-    @param theta_y:     The cone opening angle along y.
-    @type theta_y:      float
-    @param sigma_max:   The maximum torsion angle.
-    @type sigma_max:    float
-    """
-
-    # The surface area normalisation factor.
-    fact = 1.0 / (2.0 * sigma_max * pec(theta_x, theta_y))
-
-    # Numerical integration of phi of each element.
-    matrix[0, 0] = fact * quad(part_int_daeg1_pseudo_ellipse_xx, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[1, 1] = fact * quad(part_int_daeg1_pseudo_ellipse_yy, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_zz, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
 
 
 def compile_2nd_matrix_pseudo_ellipse(matrix, R, eigen_alpha, eigen_beta, eigen_gamma, theta_x, theta_y, sigma_max):
