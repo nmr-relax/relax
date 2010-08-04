@@ -155,7 +155,7 @@ def compile_2nd_matrix_pseudo_ellipse(matrix, R, eigen_alpha, eigen_beta, eigen_
     """
 
     # The surface area normalisation factor.
-    fact = 1.0 / (2.0 * sigma_max * pec(theta_x, theta_y))
+    fact = 1.0 / (24.0 * sigma_max * pec(theta_x, theta_y))
 
     # Diagonal.
     matrix[0, 0] = fact * quad(part_int_daeg2_pseudo_ellipse_00, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
@@ -169,9 +169,15 @@ def compile_2nd_matrix_pseudo_ellipse(matrix, R, eigen_alpha, eigen_beta, eigen_
     matrix[8, 8] = fact * quad(part_int_daeg2_pseudo_ellipse_88, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
 
     # Off diagonal set 1.
-    matrix[0, 4] = matrix[4, 0] = fact * quad(part_int_daeg2_pseudo_ellipse_04, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[0, 8] = matrix[8, 0] = fact * quad(part_int_daeg2_pseudo_ellipse_08, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[4, 8] = matrix[8, 4] = fact * quad(part_int_daeg2_pseudo_ellipse_48, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    m04 = fact * quad(part_int_daeg2_pseudo_ellipse_04, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    m40 = fact * quad(part_int_daeg2_pseudo_ellipse_40, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    m08 = fact * quad(part_int_daeg2_pseudo_ellipse_08, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    m80 = fact * quad(part_int_daeg2_pseudo_ellipse_80, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    m48 = fact * quad(part_int_daeg2_pseudo_ellipse_48, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    m84 = fact * quad(part_int_daeg2_pseudo_ellipse_84, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    matrix[0, 4] = matrix[4, 0] = (m04 + m40)/2.0
+    matrix[0, 8] = matrix[8, 0] = (m08 + m80)/2.0
+    matrix[4, 8] = matrix[8, 4] = (m48 + m84)/2.0
 
     # Off diagonal set 2.
     matrix[1, 3] = matrix[3, 1] = fact * quad(part_int_daeg2_pseudo_ellipse_13, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
@@ -435,10 +441,7 @@ def part_int_daeg2_pseudo_ellipse_00(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.  
-    val = 3.0*(1.0 - cos(tmax)) * (20.0*smax + 5.0*(1.0 + cos(4.0*phi))*sin(2.0*smax) - 6.0*cos(2.0*phi)*(2.0*smax + sin(2.0*smax)))
-    val = val + 24.0*sin(2.0*phi)**2 * sin(2.0*smax) * sin(tmax)**2
-    val = val + 8.0*cos(phi)**2 * (2.0*smax + cos(2.0*phi) * sin(2.0*smax)) * sin(3.0*tmax/2.0)**2
-    return 1.0/96.0 * val
+    return ((cos(f)**2*sin(2*smax + 2*f) + cos(f)**2*sin(2*smax - 2*f) + 4*cos(f)**2*smax)*cos(tmax) - 6*cos(f)*sin(f)*cos(smax + f)**2 + 6*cos(f)*sin(f)*cos(smax - f)**2)*sin(tmax)**2 + ((3 - 4*cos(f)**2)*sin(2*smax + 2*f) + (3 - 4*cos(f)**2)*sin(2*smax - 2*f) + (8*cos(f)**2 - 12)*smax)*cos(tmax) + (4*cos(f)**2 - 3)*sin(2*smax + 2*f) + (4*cos(f)**2 - 3)*sin(2*smax - 2*f) + (12 - 8*cos(f)**2)*smax
 
 
 def part_int_daeg2_pseudo_ellipse_04(phi, x, y, smax):
@@ -460,9 +463,7 @@ def part_int_daeg2_pseudo_ellipse_04(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    val = (9.0 + 2.0*cos(tmax) + cos(2.0*tmax)) * sin(2.0*phi)**2 * sin(2.0*smax) * sin(tmax/2.0)**2.0
-    val = val + 3.0*(2.0*smax + cos(2.0*phi)**2 * sin(2.0*smax)) * sin(tmax)**2
-    return 1.0/12.0 * val
+    return (( - cos(f)**2*sin(2*smax + 2*f) - cos(f)**2*sin(2*smax - 2*f) + 4*cos(f)**2*smax)*cos(tmax) + 6*cos(f)*sin(f)*cos(smax + f)**2 - 6*cos(f)*sin(f)*cos(smax - f)**2)*sin(tmax)**2 + ((4*cos(f)**2 - 3)*sin(2*smax + 2*f) + (4*cos(f)**2 - 3)*sin(2*smax - 2*f) + (8*cos(f)**2 - 12)*smax)*cos(tmax) + (3 - 4*cos(f)**2)*sin(2*smax + 2*f) + (3 - 4*cos(f)**2)*sin(2*smax - 2*f) + (12 - 8*cos(f)**2)*smax
 
 
 def part_int_daeg2_pseudo_ellipse_08(phi, x, y, smax):
@@ -484,13 +485,11 @@ def part_int_daeg2_pseudo_ellipse_08(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    val = 2.0/3.0 * cos(phi)**2 * (1.0 - cos(tmax)**3) * sin(smax)
-    val = val + sin(phi)**2 * sin(smax) * sin(tmax)**2
-    return val
+    return 8*cos(f)**2*smax*cos(tmax)**3 - 24*cos(f)**2*smax*cos(tmax) + 16*cos(f)**2*smax
 
 
 def part_int_daeg2_pseudo_ellipse_11(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 15 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -508,14 +507,11 @@ def part_int_daeg2_pseudo_ellipse_11(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    val = 3.0 * (1.0 - cos(tmax)) * (4.0*smax*(5.0 - 3.0 * cos(2.0 * phi)) - (5.0 - 6.0*cos(2.0*phi) + 5.0*cos(4.0*phi)) * sin(2.0*smax))
-    val = val - 24.0 * sin(2.0*phi)**2 * sin(2.0*smax) * sin(tmax)**2
-    val = val + 8.0*cos(phi)**2 * (2.0*smax-cos(2.0*phi) * sin(2.0*smax)) * sin(3.0*tmax/2.0)**2
-    return 1.0/96.0 * val
+    return - (((4*cos(f)*sin(f)*cos(smax + f)**2 - 4*cos(f)*sin(f)*cos(smax - f)**2)*cos(tmax) + (6*sin(f)**2 - 3)*sin(2*smax + 2*f) + (6*sin(f)**2 - 3)*sin(2*smax - 2*f) - 12*smax)*sin(tmax)**2 + (16*cos(f)*sin(f)*cos(smax - f)**2 - 16*cos(f)*sin(f)*cos(smax + f)**2)*cos(tmax) + 16*cos(f)*sin(f)*cos(smax + f)**2 - 16*cos(f)*sin(f)*cos(smax - f)**2)/(2)
 
 
 def part_int_daeg2_pseudo_ellipse_13(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 24 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -533,13 +529,11 @@ def part_int_daeg2_pseudo_ellipse_13(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    val = (9.0 + 2.0*cos(tmax) + cos(2.0*tmax)) * sin(2.0*phi)**2 * sin(2.0*smax) * sin(tmax/2.0)**2
-    val = val + 3.0*(cos(2.0*phi)**2 * sin(2.0*smax) - 2.0*smax) * sin(tmax)**2
-    return 1.0/12.0 * val
+    return - (((4*cos(f)*sin(f)*cos(smax + f)**2 - 4*cos(f)*sin(f)*cos(smax - f)**2)*cos(tmax) + (6*sin(f)**2 - 3)*sin(2*smax + 2*f) + (6*sin(f)**2 - 3)*sin(2*smax - 2*f) + 12*smax)*sin(tmax)**2 + (16*cos(f)*sin(f)*cos(smax - f)**2 - 16*cos(f)*sin(f)*cos(smax + f)**2)*cos(tmax) + 16*cos(f)*sin(f)*cos(smax + f)**2 - 16*cos(f)*sin(f)*cos(smax - f)**2)/(2)
 
 
 def part_int_daeg2_pseudo_ellipse_22(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 19 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -557,11 +551,11 @@ def part_int_daeg2_pseudo_ellipse_22(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 8.0/3.0 * smax * cos(phi)**2 * (2.0 + cos(tmax)) * sin(tmax/2.0)**4
+    return ( - 4*cos(f)*sin(smax + f) - 4*cos(f)*sin(smax - f))*cos(tmax)**3 + (6*sin(f)*cos(smax + f) - 6*sin(f)*cos(smax - f))*cos(tmax)**2 + 4*cos(f)*sin(smax + f) - 6*sin(f)*cos(smax + f) + 4*cos(f)*sin(smax - f) + 6*sin(f)*cos(smax - f)
 
 
 def part_int_daeg2_pseudo_ellipse_26(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 37 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -579,11 +573,11 @@ def part_int_daeg2_pseudo_ellipse_26(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return -8.0/3.0 * cos(phi)**2 * (2.0 + cos(tmax)) * sin(smax) * sin(tmax/2.0)**4
+    return ( - 4*cos(f)*sin(smax + f) - 4*cos(f)*sin(smax - f))*cos(tmax)**3 + (12*cos(f)*sin(smax + f) + 12*cos(f)*sin(smax - f))*cos(tmax) - 8*cos(f)*sin(smax + f) - 8*cos(f)*sin(smax - f)
 
 
 def part_int_daeg2_pseudo_ellipse_33(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 51 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -601,14 +595,33 @@ def part_int_daeg2_pseudo_ellipse_33(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    val = 3.0*(1.0 - cos(tmax)) * (4.0*smax*(5.0 + 3.0*cos(2.0*phi)) - (5.0 + 6.0*cos(2.0*phi) + 5*cos(4.0*phi)) * sin(2.0*smax))
-    val = val - 24.0*sin(2.0*phi)**2 * sin(2.0*smax) * sin(tmax)**2
-    val = val + 8.0*sin(phi)**2 * (2.0*smax + cos(2.0*phi)*sin(2.0*smax)) * sin(3.0*tmax/2.0)**2
-    return 1.0/96.0 * val
+    return - (((4*cos(f)*sin(f)*cos(smax + f)**2 - 4*cos(f)*sin(f)*cos(smax - f)**2)*cos(tmax) + (6*sin(f)**2 - 3)*sin(2*smax + 2*f) + (6*sin(f)**2 - 3)*sin(2*smax - 2*f) - 12*smax)*sin(tmax)**2 + (16*cos(f)*sin(f)*cos(smax - f)**2 - 16*cos(f)*sin(f)*cos(smax + f)**2)*cos(tmax) + 16*cos(f)*sin(f)*cos(smax + f)**2 - 16*cos(f)*sin(f)*cos(smax - f)**2)/(2)
+
+
+def part_int_daeg2_pseudo_ellipse_40(phi, x, y, smax):
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
+
+    @param phi:     The azimuthal tilt-torsion angle.
+    @type phi:      float
+    @param x:       The cone opening angle along x.
+    @type x:        float
+    @param y:       The cone opening angle along y.
+    @type y:        float
+    @param smax:    The maximum torsion angle.
+    @type smax:     float
+    @return:        The theta-sigma partial integral.
+    @rtype:         float
+    """
+
+    # Theta max.
+    tmax = tmax_pseudo_ellipse(phi, x, y)
+
+    # The theta-sigma integral.
+    return ((sin(f)**2*sin(2*smax + 2*f) + sin(f)**2*sin(2*smax - 2*f) + 4*sin(f)**2*smax)*cos(tmax) + 6*cos(f)*sin(f)*cos(smax + f)**2 - 6*cos(f)*sin(f)*cos(smax - f)**2)*sin(tmax)**2 + ((3 - 4*sin(f)**2)*sin(2*smax + 2*f) + (3 - 4*sin(f)**2)*sin(2*smax - 2*f) + (8*sin(f)**2 - 12)*smax)*cos(tmax) + (4*sin(f)**2 - 3)*sin(2*smax + 2*f) + (4*sin(f)**2 - 3)*sin(2*smax - 2*f) + (12 - 8*sin(f)**2)*smax
 
 
 def part_int_daeg2_pseudo_ellipse_44(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 55 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -626,14 +639,11 @@ def part_int_daeg2_pseudo_ellipse_44(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    val = 3.0*(1.0 - cos(tmax)) * (20.0*smax + 5.0*(1.0 + cos(4.0*phi)) * sin(2.0*smax) + 6.0*cos(2.0*phi) * (2.0*smax + sin(2.0*smax)))
-    val = val + 24.0*sin(2.0*phi)**2 * sin(2.0*smax) * sin(tmax)**2
-    val = val + 8.0*sin(phi)**2 * (2.0*smax - cos(2.0*phi)*sin(2.0*smax)) * sin(3.0*tmax/2.0)**2
-    return 1.0/96.0 * val
+    return (( - sin(f)**2*sin(2*smax + 2*f) - sin(f)**2*sin(2*smax - 2*f) + 4*sin(f)**2*smax)*cos(tmax) - 6*cos(f)*sin(f)*cos(smax + f)**2 + 6*cos(f)*sin(f)*cos(smax - f)**2)*sin(tmax)**2 + ((4*sin(f)**2 - 3)*sin(2*smax + 2*f) + (4*sin(f)**2 - 3)*sin(2*smax - 2*f) + (8*sin(f)**2 - 12)*smax)*cos(tmax) + (3 - 4*sin(f)**2)*sin(2*smax + 2*f) + (3 - 4*sin(f)**2)*sin(2*smax - 2*f) + (12 - 8*sin(f)**2)*smax
 
 
 def part_int_daeg2_pseudo_ellipse_48(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 66 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -651,13 +661,11 @@ def part_int_daeg2_pseudo_ellipse_48(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    val = 2.0/3.0 * (1.0 - cos(tmax)**3) * sin(phi)**2 * sin(smax)
-    val = val + cos(phi)**2 * sin(smax) * sin(tmax)**2
-    return val
+    return 8*sin(f)**2*smax*cos(tmax)**3 - 24*sin(f)**2*smax*cos(tmax) + 16*sin(f)**2*smax
 
 
 def part_int_daeg2_pseudo_ellipse_55(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 59 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -675,11 +683,11 @@ def part_int_daeg2_pseudo_ellipse_55(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 8.0/3.0 * smax * (2.0 + cos(tmax)) * sin(phi)**2 * sin(tmax/2.0)**4
+    return (4*sin(f)*cos(smax + f) - 4*sin(f)*cos(smax - f))*cos(tmax)**3 + ( - 6*cos(f)*sin(smax + f) - 6*cos(f)*sin(smax - f))*cos(tmax)**2 + 6*cos(f)*sin(smax + f) - 4*sin(f)*cos(smax + f) + 6*cos(f)*sin(smax - f) + 4*sin(f)*cos(smax - f)
 
 
 def part_int_daeg2_pseudo_ellipse_57(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 68 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -697,11 +705,11 @@ def part_int_daeg2_pseudo_ellipse_57(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return -8.0/3.0 * (2.0 + cos(tmax)) * sin(phi)**2 * sin(smax) * sin(tmax/2.0)**4
+    return (4*sin(f)*cos(smax + f) - 4*sin(f)*cos(smax - f))*cos(tmax)**3 + (12*sin(f)*cos(smax - f) - 12*sin(f)*cos(smax + f))*cos(tmax) + 8*sin(f)*cos(smax + f) - 8*sin(f)*cos(smax - f)
 
 
 def part_int_daeg2_pseudo_ellipse_66(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 91 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -719,11 +727,11 @@ def part_int_daeg2_pseudo_ellipse_66(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 2.0/3.0 * (2.0 + cos(tmax)) * (2.0*smax + cos(2.0*phi) * sin(2.0*smax)) * sin(tmax/2.0)**4
+    return ( - 4*cos(f)*sin(smax + f) - 4*cos(f)*sin(smax - f))*cos(tmax)**3 + (6*sin(f)*cos(smax + f) - 6*sin(f)*cos(smax - f))*cos(tmax)**2 + 4*cos(f)*sin(smax + f) - 6*sin(f)*cos(smax + f) + 4*cos(f)*sin(smax - f) + 6*sin(f)*cos(smax - f)
 
 
 def part_int_daeg2_pseudo_ellipse_77(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 91 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -741,11 +749,55 @@ def part_int_daeg2_pseudo_ellipse_77(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 2.0/3.0 * (2.0 + cos(tmax)) * (2.0*smax - cos(2.0*phi) * sin(2.0*smax)) * sin(tmax/2.0)**4
+    return (4*sin(f)*cos(smax + f) - 4*sin(f)*cos(smax - f))*cos(tmax)**3 + ( - 6*cos(f)*sin(smax + f) - 6*cos(f)*sin(smax - f))*cos(tmax)**2 + 6*cos(f)*sin(smax + f) - 4*sin(f)*cos(smax + f) + 6*cos(f)*sin(smax - f) + 4*sin(f)*cos(smax - f)
+
+
+def part_int_daeg2_pseudo_ellipse_80(phi, x, y, smax):
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
+
+    @param phi:     The azimuthal tilt-torsion angle.
+    @type phi:      float
+    @param x:       The cone opening angle along x.
+    @type x:        float
+    @param y:       The cone opening angle along y.
+    @type y:        float
+    @param smax:    The maximum torsion angle.
+    @type smax:     float
+    @return:        The theta-sigma partial integral.
+    @rtype:         float
+    """
+
+    # Theta max.
+    tmax = tmax_pseudo_ellipse(phi, x, y)
+
+    # The theta-sigma integral.
+    return (sin(2*smax + 2*f) + sin(2*smax - 2*f) + 4*smax)*cos(tmax)**3 + ( - 3*sin(2*smax + 2*f) - 3*sin(2*smax - 2*f) - 12*smax)*cos(tmax) + 2*sin(2*smax + 2*f) + 2*sin(2*smax - 2*f) + 8*smax
+
+
+def part_int_daeg2_pseudo_ellipse_84(phi, x, y, smax):
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
+
+    @param phi:     The azimuthal tilt-torsion angle.
+    @type phi:      float
+    @param x:       The cone opening angle along x.
+    @type x:        float
+    @param y:       The cone opening angle along y.
+    @type y:        float
+    @param smax:    The maximum torsion angle.
+    @type smax:     float
+    @return:        The theta-sigma partial integral.
+    @rtype:         float
+    """
+
+    # Theta max.
+    tmax = tmax_pseudo_ellipse(phi, x, y)
+
+    # The theta-sigma integral.
+    return (sin(2*smax + 2*f) + sin(2*smax - 2*f) - 4*smax)*cos(tmax)*sin(tmax)**2 + (2*sin(2*smax + 2*f) + 2*sin(2*smax - 2*f) - 8*smax)*cos(tmax) - 2*sin(2*smax + 2*f) - 2*sin(2*smax - 2*f) + 8*smax
 
 
 def part_int_daeg2_pseudo_ellipse_88(phi, x, y, smax):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 99 for the pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -763,11 +815,11 @@ def part_int_daeg2_pseudo_ellipse_88(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 2.0/3.0 * smax * (1.0 - cos(tmax)**3)
+    return 8*smax - 8*smax*cos(tmax)**3
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_00(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 11 for the free rotor pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -787,7 +839,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_00(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_08(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 19 for the free rotor pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -807,7 +859,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_08(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_11(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 22 for the free rotor pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -827,7 +879,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_11(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_44(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 55 for the free rotor pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -847,7 +899,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_44(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_48(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 59 for the free rotor pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -867,7 +919,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_48(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_88(phi, x, y):
-    """The theta-sigma partial integral of the 2nd degree Frame Order matrix element 99 for the free rotor pseudo-ellipse.
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the free rotor pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -885,7 +937,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_88(phi, x, y):
     # The theta-sigma integral.
     return 2.0*sin(2.0*tmax) + 4.0*tmax
 def part_int_daeg2_pseudo_ellipse_torsionless_00(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 11 for the torsionless pseudo-ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -905,7 +957,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_00(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_04(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 15 for the torsionless pseudo-ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -925,7 +977,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_04(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_08(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 19 for the torsionless pseudo-ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -945,7 +997,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_08(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_11(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 22 for the torsionless pseudo-ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -965,7 +1017,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_11(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_22(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 33 for the torsionless pseudo-ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -985,7 +1037,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_22(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_44(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 55 for the torsionless pseudo-ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1005,7 +1057,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_44(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_48(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 59 for the torsionless pseudo-ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1025,7 +1077,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_48(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_55(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 66 for the torsionless pseudo-ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
@@ -1045,7 +1097,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_55(phi, x, y):
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
-    """The theta partial integral of the 2nd degree Frame Order matrix element 99 for the torsionless pseudo-ellipse.
+    """The theta partial integral of the 2nd degree Frame Order matrix for the torsionless pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
     @type phi:      float
