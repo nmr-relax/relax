@@ -28,6 +28,7 @@ from unittest import TestCase
 # relax module imports.
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.frame_order_matrix_ops import *
+from maths_fns.kronecker_product import transpose_23
 
 
 class Test_frame_order_matrix_ops(TestCase):
@@ -48,6 +49,7 @@ class Test_frame_order_matrix_ops(TestCase):
                      [         0,         0,   -0.1224,         0,         0,         0,    0.1391,         0,         0],
                      [         0,         0,         0,         0,         0,   -0.2421,         0,    0.2427,         0],
                      [    0.6851,         0,         0,         0,    0.6429,         0,         0,         0,    0.6182]], float64)
+        transpose_23(real)
 
         # Init.
         calc = zeros((9, 9), float64)
