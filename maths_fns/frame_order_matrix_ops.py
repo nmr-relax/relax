@@ -1227,6 +1227,28 @@ def reduce_alignment_tensor(D, A, red_tensor):
     red_tensor[4] = red_tensor[4] + (D[5, 5] + D[7, 5])*A[4]
 
 
+def reduce_alignment_tensor_symmetric(D, A, red_tensor):
+    """Calculate the reduction in the alignment tensor caused by the Frame Order matrix.
+
+    This is both the forward rotation notation and Kronecker product arrangement.  This simplification is due to the symmetry in motion of the pseudo-elliptic and isotropic cones.  All element of the frame order matrix where an index appears only once are zero.
+
+    @param D:           The Frame Order matrix, 2nd degree to be populated.
+    @type D:            numpy 9D, rank-2 array
+    @param A:           The full alignment tensor in {Axx, Ayy, Axy, Axz, Ayz} notation.
+    @type A:            numpy 5D, rank-1 array
+    @param red_tensor:  The structure in {Axx, Ayy, Axy, Axz, Ayz} notation to place the reduced
+                        alignment tensor.
+    @type red_tensor:   numpy 5D, rank-1 array
+    """
+
+    # The reduced tensor elements.
+    red_tensor[0] = (D[0, 0] - D[8, 0])*A[0]  +  (D[4, 0] - D[8, 0])*A[1]
+    red_tensor[1] = (D[0, 4] - D[8, 4])*A[0]  +  (D[4, 4] - D[8, 4])*A[1]
+    red_tensor[2] = (D[1, 1] + D[3, 1])*A[2]
+    red_tensor[3] = (D[2, 2] + D[6, 2])*A[3]
+    red_tensor[4] = (D[5, 5] + D[7, 5])*A[4]
+
+
 def rotate_daeg(matrix, R):
     """Rotate the given frame order matrix.
 
