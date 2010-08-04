@@ -161,12 +161,12 @@ def compile_2nd_matrix_pseudo_ellipse(matrix, R, eigen_alpha, eigen_beta, eigen_
     matrix[0, 0] = fact * quad(part_int_daeg2_pseudo_ellipse_00, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
     matrix[1, 1] = fact * quad(part_int_daeg2_pseudo_ellipse_11, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
     matrix[2, 2] = fact * quad(part_int_daeg2_pseudo_ellipse_22, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[3, 3] = fact * quad(part_int_daeg2_pseudo_ellipse_33, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    #matrix[3, 3] = fact * quad(part_int_daeg2_pseudo_ellipse_33, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
     matrix[4, 4] = fact * quad(part_int_daeg2_pseudo_ellipse_44, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
     matrix[5, 5] = fact * quad(part_int_daeg2_pseudo_ellipse_55, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[6, 6] = fact * quad(part_int_daeg2_pseudo_ellipse_66, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[7, 7] = fact * quad(part_int_daeg2_pseudo_ellipse_77, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[8, 8] = fact * quad(part_int_daeg2_pseudo_ellipse_88, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    #matrix[6, 6] = fact * quad(part_int_daeg2_pseudo_ellipse_66, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    #matrix[7, 7] = fact * quad(part_int_daeg2_pseudo_ellipse_77, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    #matrix[8, 8] = fact * quad(part_int_daeg2_pseudo_ellipse_88, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
 
     # Off diagonal set 1.
     m04 = fact * quad(part_int_daeg2_pseudo_ellipse_04, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
