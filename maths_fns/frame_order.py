@@ -31,7 +31,7 @@ from numpy import array, dot, float64, ones, transpose, zeros
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, reduce_alignment_tensor
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, reduce_alignment_tensor_symmetric
 from maths_fns.rotation_matrix import euler_to_R_zyz as euler_to_R
 from relax_errors import RelaxError
 
@@ -368,7 +368,7 @@ class Frame_order:
             # Reduction.
             if daeg != None:
                 # Reduce the tensor.
-                reduce_alignment_tensor(daeg, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
+                reduce_alignment_tensor_symmetric(daeg, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
 
                 # Convert the reduced tensor to 3D, rank-2 form.
                 to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
