@@ -1244,16 +1244,16 @@ def reduce_alignment_tensor(D, A, red_tensor):
     # The reduced tensor element A0.
     red_tensor[0] =                 (D[0, 0] - D[8, 0])*A[0]
     red_tensor[0] = red_tensor[0] + (D[4, 0] - D[8, 0])*A[1]
-    red_tensor[0] = red_tensor[0] + (D[1, 0] - D[3, 0])*A[2]
-    red_tensor[0] = red_tensor[0] + (D[2, 0] - D[6, 0])*A[3]
-    red_tensor[0] = red_tensor[0] + (D[5, 0] - D[7, 0])*A[4]
+    red_tensor[0] = red_tensor[0] + (D[1, 0] + D[3, 0])*A[2]
+    red_tensor[0] = red_tensor[0] + (D[2, 0] + D[6, 0])*A[3]
+    red_tensor[0] = red_tensor[0] + (D[5, 0] + D[7, 0])*A[4]
 
     # The reduced tensor element A1.
     red_tensor[1] =                 (D[0, 4] - D[8, 4])*A[0]
     red_tensor[1] = red_tensor[1] + (D[4, 4] - D[8, 4])*A[1]
-    red_tensor[1] = red_tensor[1] + (D[1, 4] - D[3, 4])*A[2]
-    red_tensor[1] = red_tensor[1] + (D[2, 4] - D[6, 4])*A[3]
-    red_tensor[1] = red_tensor[1] + (D[5, 4] - D[7, 4])*A[4]
+    red_tensor[1] = red_tensor[1] + (D[1, 4] + D[3, 4])*A[2]
+    red_tensor[1] = red_tensor[1] + (D[2, 4] + D[6, 4])*A[3]
+    red_tensor[1] = red_tensor[1] + (D[5, 4] + D[7, 4])*A[4]
 
     # The reduced tensor element A2.
     red_tensor[2] =                 (D[0, 1] - D[8, 1])*A[0]
