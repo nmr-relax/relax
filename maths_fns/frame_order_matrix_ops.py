@@ -1180,7 +1180,7 @@ def populate_2nd_eigenframe_iso_cone_free_rotor(matrix, s1):
 def reduce_alignment_tensor(D, A, red_tensor):
     """Calculate the reduction in the alignment tensor caused by the Frame Order matrix.
 
-    This is the forward rotation notation.
+    This is both the forward rotation notation and Kronecker product arrangement.
 
     @param D:           The Frame Order matrix, 2nd degree to be populated.
     @type D:            numpy 9D, rank-2 array
@@ -1192,39 +1192,39 @@ def reduce_alignment_tensor(D, A, red_tensor):
     """
 
     # The reduced tensor element A0.
-    red_tensor[0] =                 (D[0, 0] - D[2, 2])*A[0]
-    red_tensor[0] = red_tensor[0] + (D[1, 1] - D[2, 2])*A[1]
-    red_tensor[0] = red_tensor[0] + 2.0*D[0, 1]*A[2]
-    red_tensor[0] = red_tensor[0] + 2.0*D[0, 2]*A[3]
-    red_tensor[0] = red_tensor[0] + 2.0*D[1, 2]*A[4]
+    red_tensor[0] =                 (D[0, 0] - D[8, 0])*A[0]
+    red_tensor[0] = red_tensor[0] + (D[4, 0] - D[8, 0])*A[1]
+    red_tensor[0] = red_tensor[0] + (D[1, 0] - D[3, 0])*A[2]
+    red_tensor[0] = red_tensor[0] + (D[2, 0] - D[6, 0])*A[3]
+    red_tensor[0] = red_tensor[0] + (D[5, 0] - D[7, 0])*A[4]
 
     # The reduced tensor element A1.
-    red_tensor[1] =                 (D[3, 3] - D[5, 5])*A[0]
-    red_tensor[1] = red_tensor[1] + (D[4, 4] - D[5, 5])*A[1]
-    red_tensor[1] = red_tensor[1] + 2.0*D[3, 4]*A[2]
-    red_tensor[1] = red_tensor[1] + 2.0*D[3, 5]*A[3]
-    red_tensor[1] = red_tensor[1] + 2.0*D[4, 5]*A[4]
+    red_tensor[1] =                 (D[0, 4] - D[8, 4])*A[0]
+    red_tensor[1] = red_tensor[1] + (D[4, 4] - D[8, 4])*A[1]
+    red_tensor[1] = red_tensor[1] + (D[1, 4] - D[3, 4])*A[2]
+    red_tensor[1] = red_tensor[1] + (D[2, 4] - D[6, 4])*A[3]
+    red_tensor[1] = red_tensor[1] + (D[5, 4] - D[7, 4])*A[4]
 
     # The reduced tensor element A2.
-    red_tensor[2] =                 (D[0, 3] - D[2, 5])*A[0]
-    red_tensor[2] = red_tensor[2] + (D[1, 4] - D[2, 5])*A[1]
-    red_tensor[2] = red_tensor[2] + (D[0, 4] + D[1, 3])*A[2]
-    red_tensor[2] = red_tensor[2] + (D[0, 5] + D[2, 3])*A[3]
-    red_tensor[2] = red_tensor[2] + (D[1, 5] + D[2, 4])*A[4]
+    red_tensor[2] =                 (D[0, 1] - D[8, 1])*A[0]
+    red_tensor[2] = red_tensor[2] + (D[4, 1] - D[8, 1])*A[1]
+    red_tensor[2] = red_tensor[2] + (D[1, 1] + D[3, 1])*A[2]
+    red_tensor[2] = red_tensor[2] + (D[2, 1] + D[6, 1])*A[3]
+    red_tensor[2] = red_tensor[2] + (D[5, 1] + D[7, 1])*A[4]
 
     # The reduced tensor element A3.
-    red_tensor[3] =                 (D[0, 6] - D[2, 8])*A[0]
-    red_tensor[3] = red_tensor[3] + (D[1, 7] - D[2, 8])*A[1]
-    red_tensor[3] = red_tensor[3] + (D[0, 7] + D[1, 6])*A[2]
-    red_tensor[3] = red_tensor[3] + (D[0, 8] + D[2, 6])*A[3]
-    red_tensor[3] = red_tensor[3] + (D[1, 8] + D[2, 7])*A[4]
+    red_tensor[3] =                 (D[0, 2] - D[8, 2])*A[0]
+    red_tensor[3] = red_tensor[3] + (D[4, 2] - D[8, 2])*A[1]
+    red_tensor[3] = red_tensor[3] + (D[1, 2] + D[3, 2])*A[2]
+    red_tensor[3] = red_tensor[3] + (D[2, 2] + D[6, 2])*A[3]
+    red_tensor[3] = red_tensor[3] + (D[5, 2] + D[7, 2])*A[4]
 
     # The reduced tensor element A4.
-    red_tensor[4] =                 (D[3, 6] - D[5, 8])*A[0]
-    red_tensor[4] = red_tensor[4] + (D[4, 7] - D[5, 8])*A[1]
-    red_tensor[4] = red_tensor[4] + (D[3, 7] + D[4, 6])*A[2]
-    red_tensor[4] = red_tensor[4] + (D[3, 8] + D[5, 6])*A[3]
-    red_tensor[4] = red_tensor[4] + (D[4, 8] + D[5, 7])*A[4]
+    red_tensor[4] =                 (D[0, 5] - D[8, 5])*A[0]
+    red_tensor[4] = red_tensor[4] + (D[4, 5] - D[8, 5])*A[1]
+    red_tensor[4] = red_tensor[4] + (D[1, 5] + D[3, 5])*A[2]
+    red_tensor[4] = red_tensor[4] + (D[2, 5] + D[6, 5])*A[3]
+    red_tensor[4] = red_tensor[4] + (D[5, 5] + D[7, 5])*A[4]
 
 
 def rotate_daeg(matrix, R):
