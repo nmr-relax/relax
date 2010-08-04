@@ -85,7 +85,7 @@ class Frame_order(API_base, API_common):
         """
 
         # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
-        if cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+        if cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
             param_vect = [cdp.ave_pos_beta, cdp.ave_pos_gamma]
         else:
             param_vect = [cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma]
@@ -106,8 +106,10 @@ class Frame_order(API_base, API_common):
             param_vect.append(cdp.cone_theta_x)
             param_vect.append(cdp.cone_theta_y)
 
-        # Cone parameters - single isotropic order parameter.
-        elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+        # Cone parameters - single isotropic angle or order parameter.
+        elif cdp.model in ['iso cone']:
+            param_vect.append(cdp.cone_theta)
+        elif cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
             param_vect.append(cdp.cone_s1)
 
         # Cone parameters - torsion angle.
@@ -497,7 +499,7 @@ class Frame_order(API_base, API_common):
         # Build the parameter name list.
         if not len(cdp.params):
             # The tensor rotation, or average domain position.
-            if cdp.model not in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            if cdp.model not in ['iso cone, torsionless', 'iso cone, free rotor']:
                 cdp.params.append('ave_pos_alpha')
             cdp.params.append('ave_pos_beta')
             cdp.params.append('ave_pos_gamma')
@@ -518,8 +520,10 @@ class Frame_order(API_base, API_common):
                 cdp.params.append('cone_theta_x')
                 cdp.params.append('cone_theta_y')
 
-            # Cone parameters - single isotropic order parameter.
-            elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            # Cone parameters - single isotropic angle or order parameter.
+            elif cdp.model in ['iso cone']:
+                cdp.params.append('cone_angle')
+            elif cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
                 cdp.params.append('cone_s1')
 
             # Cone parameters - torsion angle.
@@ -571,8 +575,7 @@ class Frame_order(API_base, API_common):
         elif cdp.model in ['pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = param_vector
         elif cdp.model == 'iso cone':
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1, cone_sigma_max = param_vector
-            ave_pos_alpha = 0.0
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, cone_sigma_max = param_vector
         elif cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = param_vector
             ave_pos_alpha = 0.0
@@ -781,7 +784,7 @@ class Frame_order(API_base, API_common):
         # Parameters.
         if (set == 'all' or set == 'params') and hasattr(cdp, 'model'):
             # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
-            if cdp.model not in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            if cdp.model not in ['iso cone, torsionless', 'iso cone, free rotor']:
                 names.append('ave_pos_alpha%s' % suffix)
             names.append('ave_pos_beta%s' % suffix)
             names.append('ave_pos_gamma%s' % suffix)
@@ -802,8 +805,10 @@ class Frame_order(API_base, API_common):
                 names.append('cone_theta_x%s' % suffix)
                 names.append('cone_theta_y%s' % suffix)
 
-            # Cone parameters - single isotropic order parameter.
-            elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            # Cone parameters - single isotropic angle or order parameter.
+            elif cdp.model in ['iso cone']:
+                names.append('cone_theta%s' % suffix)
+            elif cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
                 names.append('cone_s1%s' % suffix)
 
             # Cone parameters - torsion angle.

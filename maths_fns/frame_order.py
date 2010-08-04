@@ -31,7 +31,7 @@ from numpy import array, dot, float64, ones, transpose, zeros
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, reduce_alignment_tensor
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, reduce_alignment_tensor
 from maths_fns.rotation_matrix import euler_to_R_zyz as euler_to_R
 from relax_errors import RelaxError
 
@@ -186,7 +186,7 @@ class Frame_order:
         theta, phi, theta_cone = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, theta_cone)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, theta_cone)
 
         # Make the Frame Order matrix contiguous.
         self.frame_order_2nd = self.frame_order_2nd.copy()
@@ -208,8 +208,32 @@ class Frame_order:
         return val
 
 
+    def func_iso_cone(self, params):
+        """Target function for isotropic cone model optimisation.
+
+        This function optimises against alignment tensors.
+
+        @param params:  The vector of parameter values {beta, gamma, theta, phi, s1} where the first 2 are the tensor rotation Euler angles, the next two are the polar and azimuthal angles of the cone axis, and s1 is the isotropic cone order parameter.
+        @type params:   list of float
+        @return:        The chi-squared or SSE value.
+        @rtype:         float
+        """
+
+        # Unpack the parameters.
+        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params
+
+        # Generate the 2nd degree Frame Order super matrix.
+        frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, axis_theta, axis_phi, cone_theta, sigma_max)
+
+        # Reduce and rotate the tensors.
+        self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
+
+        # Return the chi-squared value.
+        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+
+
     def func_iso_cone_free_rotor(self, params):
-        """Target function for isotropic cone model optimisation using the alignment tensors.
+        """Target function for free rotor isotropic cone model optimisation.
 
         This function optimises against alignment tensors.
 
@@ -233,7 +257,7 @@ class Frame_order:
 
 
     def func_pseudo_ellipse(self, params):
-        """Target function for pseudo-elliptic cone model optimisation using alignment tensors.
+        """Target function for pseudo-elliptic cone model optimisation.
 
         @param params:  The vector of parameter values {alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max} where the first 3 are the average position rotation Euler angles, the next 3 are the Euler angles defining the eigenframe, and the last 3 are the pseudo-elliptic cone geometric parameters.
         @type params:   list of float
@@ -255,7 +279,7 @@ class Frame_order:
 
 
     def func_pseudo_ellipse_free_rotor(self, params):
-        """Target function for free_rotor pseudo-elliptic cone model optimisation using alignment tensors.
+        """Target function for free_rotor pseudo-elliptic cone model optimisation.
 
         @param params:  The vector of parameter values {alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y} where the first 3 are the average position rotation Euler angles, the next 3 are the Euler angles defining the eigenframe, and the last 2 are the free_rotor pseudo-elliptic cone geometric parameters.
         @type params:   list of float
@@ -277,7 +301,7 @@ class Frame_order:
 
 
     def func_pseudo_ellipse_torsionless(self, params):
-        """Target function for torsionless pseudo-elliptic cone model optimisation using alignment tensors.
+        """Target function for torsionless pseudo-elliptic cone model optimisation.
 
         @param params:  The vector of parameter values {alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y} where the first 3 are the average position rotation Euler angles, the next 3 are the Euler angles defining the eigenframe, and the last 2 are the torsionless pseudo-elliptic cone geometric parameters.
         @type params:   list of float
@@ -299,7 +323,7 @@ class Frame_order:
 
 
     def func_rigid(self, params):
-        """Target function for rigid model optimisation using the alignment tensors.
+        """Target function for rigid model optimisation.
 
         This function optimises against alignment tensors.  The Euler angles for the tensor rotation are the 3 parameters optimised in this model.
 

@@ -59,6 +59,42 @@ def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
     matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_zz, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
 
 
+def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, cone_theta, sigma_max):
+    """Generate the rotated 2nd degree Frame Order matrix for the isotropic cone.
+
+    The cone axis is assumed to be parallel to the z-axis in the eigenframe.
+
+    @param matrix:      The Frame Order matrix, 2nd degree to be populated.
+    @type matrix:       numpy 9D, rank-2 array
+    @param R:           The rotation matrix to be populated.
+    @type R:            numpy 3D, rank-2 array
+    @param z_axis:      The molecular frame z-axis from which the cone axis is rotated from.
+    @type z_axis:       numpy 3D, rank-1 array
+    @param cone_axis:   The storage structure for the cone axis.
+    @type cone_axis:    numpy 3D, rank-1 array
+    @param theta_axis:  The cone axis polar angle.
+    @type theta_axis:   float
+    @param phi_axis:    The cone axis azimuthal angle.
+    @type phi_axis:     float
+    @param cone_theta:  The cone opening angle.
+    @type cone_theta:   float
+    @param sigma_max:   The maximum torsion angle.
+    @type sigma_max:    float
+    """
+
+    # Generate the cone axis from the spherical angles.
+    generate_vector(cone_axis, theta_axis, phi_axis)
+
+    # Populate the Frame Order matrix in the eigenframe.
+    populate_2nd_eigenframe_iso_cone(matrix, cone_theta, sigma_max)
+
+    # Average position rotation.
+    two_vect_to_R(z_axis, cone_axis, R)
+
+    # Rotate and return the frame order matrix.
+    return rotate_daeg(matrix, R)
+
+
 def compile_2nd_matrix_iso_cone_free_rotor(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, s1):
     """Generate the rotated 2nd degree Frame Order matrix for the free rotor isotropic cone.
 
@@ -1046,6 +1082,56 @@ def populate_1st_eigenframe_iso_cone(matrix, angle):
 
     # The c33 element.
     matrix[2, 2] = (cos(angle) + 1.0) / 2.0
+
+
+def populate_2nd_eigenframe_iso_cone(matrix, tmax, smax):
+    """Populate the 2nd degree Frame Order matrix in the eigenframe for the isotropic cone.
+
+    The cone axis is assumed to be parallel to the z-axis in the eigenframe.
+
+
+    @param matrix:  The Frame Order matrix, 2nd degree.
+    @type matrix:   numpy 9D, rank-2 array
+    @param tmax:    The cone opening angle.
+    @type tmax:     float
+    @param smax:    The maximum torsion angle.
+    @type smax:     float
+    """
+
+    # Zeros.
+    for i in range(9):
+        for j in range(9):
+            matrix[i, j] = 0.0
+
+    # The surface area normalisation factor.
+    fact = 1.0 / (smax * (1.0 - cos(theta_max)))
+
+    # Repetitive trig calculations.
+    sin_smax = sin(smax)
+    sin_2smax = sin(2.0*smax)
+    sin_tmax = sin(tmax)
+    sin_2tmax = sin(2.0*tmax)
+
+    # Diagonal.
+    matrix[0, 0] = fact * ((sin_2smax + 4.0*smax)*sin_2tmax + 8.0*sin_2smax*sin_tmax + (6.0*sin_2smax + 24.0*smax)*tmax)/64.0
+    matrix[1, 1] = fact * (sin_2smax*sin_2tmax + (8.0*sin_2smax + 32.0*smax)*sin_tmax + 6.0*sin_2smax*tmax)/64.0
+    matrix[2, 2] = fact * (sin_smax*sin_2tmax + 4.0*sin_smax*sin_tmax + 2.0*sin_smax*tmax)/8.0
+    matrix[3, 3] = matrix[1, 1]
+    matrix[4, 4] = matrix[0, 0]
+    matrix[5, 5] = matrix[2, 2]
+    matrix[6, 6] = matrix[2, 2]
+    matrix[7, 7] = matrix[2, 2]
+    matrix[8, 8] = fact * (smax*sin_2tmax + 2.0*smax*tmax)/4.0
+
+    # Off diagonal set 1.
+    matrix[0, 4] = matrix[4, 0] = fact *  - ((sin_2smax - 4.0*smax)*sin_2tmax + 8.0*sin_2smax*sin_tmax + (6.0*sin_2smax - 24.0*smax)*tmax)/64.0
+    matrix[0, 8] = matrix[8, 0] = fact *  - (smax*sin_2tmax - 2.0*smax*tmax)/8.0
+    matrix[4, 8] = matrix[8, 4] = matrix[0, 8]
+
+    # Off diagonal set 2.
+    matrix[1, 3] = matrix[3, 1] = fact * (sin_2smax*sin_2tmax + (8.0*sin_2smax - 32.0*smax)*sin_tmax + 6.0*sin_2smax*tmax)/64.0
+    matrix[2, 6] = matrix[6, 2] = fact * (sin_smax*sin_2tmax - 2.0*sin_smax*tmax)/8.0
+    matrix[5, 7] = matrix[7, 5] = matrix[2, 6]
 
 
 def populate_2nd_eigenframe_iso_cone_free_rotor(matrix, s1):
