@@ -193,7 +193,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'pseudo_ellipse.py')
 
         # The reference chi2 value.
-        chi2 = 0.024064900728854425
+        chi2 = 0.061584128626659393
 
         # Check the surrounding space.
         self.space_probe(ref_chi2=chi2, params=['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'cone_theta_x', 'cone_theta_y', 'cone_sigma_max'])
