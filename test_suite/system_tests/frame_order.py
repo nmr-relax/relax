@@ -111,6 +111,41 @@ class Frame_order(SystemTestCase):
         return string
 
 
+    def space_probe(self, ref_chi2=None, params=None, delta=3.0 / 360.0 * 2.0 * pi):
+        """Probe the space around the supposed minimum."""
+
+        # No function intros.
+        self.interpreter.intro_off()
+
+        # Check the minimum.
+        self.interpreter.calc()
+        print("%-20s %10.5f" % ("chi2 minimum", cdp.chi2))
+        self.assertAlmostEqual(cdp.chi2, ref_chi2)
+
+        # Test around the minimum using small deviations.
+        for param in params:
+            print("\n\nParam: %s" % param)
+            print("%-20s %10.5f" % ("chi2 orig", ref_chi2))
+
+            # Get the current value.
+            curr = getattr(cdp, param)
+
+            # Deviate upwards.
+            setattr(cdp, param, curr+delta)
+            self.interpreter.calc()
+            print("%-20s %10.5f" % ("chi2 up", cdp.chi2))
+            self.assert_(cdp.chi2 > ref_chi2)
+
+            # Deviate downwards.
+            setattr(cdp, param, curr-delta)
+            self.interpreter.calc()
+            print("%-20s %10.5f" % ("chi2 down", cdp.chi2))
+            self.assert_(cdp.chi2 > ref_chi2)
+
+            # Reset.
+            setattr(cdp, param, curr)
+
+
     def test_opendx_map(self):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
@@ -149,3 +184,29 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.ave_pos_alpha, 5.0700283197712777, msg=self.mesg)
         self.assertAlmostEqual(cdp.ave_pos_beta, 2.5615753919522359, msg=self.mesg)
         self.assertAlmostEqual(cdp.ave_pos_gamma, 0.64895449611163691, msg=self.mesg)
+
+
+    def test_pseudo_ellipse(self):
+        """Test the pseudo-ellipse target function."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'pseudo_ellipse.py')
+
+        # The reference chi2 value.
+        chi2 = 0.024064900728854425
+
+        # Check the surrounding space.
+        self.space_probe(ref_chi2=chi2, params=['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'cone_theta_x', 'cone_theta_y', 'cone_sigma_max'])
+
+
+    def test_pseudo_ellipse_torsionless(self):
+        """Test the torsionless pseudo-ellipse target function."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'pseudo_ellipse_torsionless.py')
+
+        # The reference chi2 value.
+        chi2 = 2.8393866813588198
+
+        # Check the surrounding space.
+        self.space_probe(ref_chi2=chi2, params=['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'cone_theta_x', 'cone_theta_y'])
