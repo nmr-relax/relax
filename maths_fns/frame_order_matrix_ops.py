@@ -211,18 +211,21 @@ def compile_2nd_matrix_pseudo_ellipse_free_rotor(matrix, R, eigen_alpha, eigen_b
     """
 
     # The surface area normalisation factor.
-    fact = 0.125 / pec(theta_x, theta_y)
+    fact = 1.0 / (6.0 * pec(theta_x, theta_y))
 
     # Diagonal.
-    matrix[0, 0] = fact * quad(part_int_daeg2_pseudo_ellipse_free_rotor_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
-    matrix[1, 1] = matrix[3, 3] = fact * quad(part_int_daeg2_pseudo_ellipse_free_rotor_11, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
-    matrix[4, 4] = fact * quad(part_int_daeg2_pseudo_ellipse_free_rotor_44, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
-    matrix[8, 8] = fact * quad(part_int_daeg2_pseudo_ellipse_free_rotor_88, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
+    matrix[0, 0] = fact * (4.0*pi - quad(part_int_daeg2_pseudo_ellipse_free_rotor_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[1, 1] = matrix[3, 3] = fact * 3.0/2.0 * quad(part_int_daeg2_pseudo_ellipse_free_rotor_11, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
+    matrix[4, 4] = fact * (4.0*pi - quad(part_int_daeg2_pseudo_ellipse_free_rotor_44, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[8, 8] = fact * (4.0*pi - 2.0*quad(part_int_daeg2_pseudo_ellipse_free_rotor_88, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
 
     # Off diagonal set 1.
-    matrix[0, 4] = matrix[4, 0] = matrix[0, 0]
-    matrix[0, 8] = matrix[8, 0] = fact * quad(part_int_daeg2_pseudo_ellipse_free_rotor_08, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
-    matrix[4, 8] = matrix[8, 4] = fact * quad(part_int_daeg2_pseudo_ellipse_free_rotor_48, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
+    matrix[0, 4] = matrix[1, 1]
+    matrix[4, 0] = matrix[4, 4]
+    matrix[0, 8] = fact * (4.0*pi + quad(part_int_daeg2_pseudo_ellipse_free_rotor_08, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[8, 0] = fact * (4.0*pi + quad(part_int_daeg2_pseudo_ellipse_free_rotor_80, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[4, 8] = fact * (4.0*pi + quad(part_int_daeg2_pseudo_ellipse_free_rotor_48, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[8, 4] = matrix[8, 0]
 
     # Off diagonal set 2.
     matrix[1, 3] = matrix[3, 1] = -matrix[1, 1]
@@ -835,7 +838,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_00(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return cos(phi)**2*sin(2.0*tmax) + (4.0 - 2.0*cos(phi)**2)*tmax
+    return cos(phi)**2*cos(tmax)**3 + 3.0*sin(phi)**2*cos(tmax)
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_08(phi, x, y):
@@ -855,7 +858,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_08(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 4.0*cos(phi)**2*tmax - 2.0*cos(phi)**2*sin(2.0*tmax)
+    return cos(phi)**2*(2.0*cos(tmax)**3 - 6.0*cos(tmax))
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_11(phi, x, y):
@@ -875,7 +878,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_11(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 4.0*sin(tmax)
+    return sin(tmax)**2
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_44(phi, x, y):
@@ -895,7 +898,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_44(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return sin(phi)**2*sin(2.0*tmax) + (4.0 - 2.0*sin(phi)**2)*tmax
+    return sin(phi)**2*cos(tmax)**3 + 3*cos(phi)**2*cos(tmax)
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_48(phi, x, y):
@@ -915,7 +918,27 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_48(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 4.0*sin(phi)**2*tmax - 2.0*sin(phi)**2*sin(2.0*tmax)
+    return sin(phi)**2*(2.0*cos(tmax)**3 - 6.0*cos(tmax))
+
+
+def part_int_daeg2_pseudo_ellipse_free_rotor_80(phi, x, y):
+    """The theta-sigma partial integral of the 2nd degree Frame Order matrix for the free rotor pseudo-ellipse.
+
+    @param phi:     The azimuthal tilt-torsion angle.
+    @type phi:      float
+    @param x:       The cone opening angle along x.
+    @type x:        float
+    @param y:       The cone opening angle along y.
+    @type y:        float
+    @return:        The theta-sigma partial integral.
+    @rtype:         float
+    """
+
+    # Theta max.
+    tmax = tmax_pseudo_ellipse(phi, x, y)
+
+    # The theta-sigma integral.
+    return cos(tmax)**3 - 3.0*cos(tmax)
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_88(phi, x, y):
@@ -935,7 +958,7 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_88(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 2.0*sin(2.0*tmax) + 4.0*tmax
+    return cos(tmax)**3
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_00(phi, x, y):
