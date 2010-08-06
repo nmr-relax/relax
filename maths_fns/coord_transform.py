@@ -30,14 +30,14 @@ from numpy.linalg import norm
 
 
 def cartesian_to_spherical(vector):
-    """Convert the Cartesian vector [x, y, z] to spherical coordinates [r, phi, theta].
+    """Convert the Cartesian vector [x, y, z] to spherical coordinates [r, theta, phi].
 
-    The parameter r is the radial distance, phi is the polar angle, and theta is the azimuth.
+    The parameter r is the radial distance, theta is the polar angle, and phi is the azimuth.
 
 
     @param vector:  The Cartesian vector [x, y, z].
     @type vector:   numpy rank-1, 3D array
-    @return:        The spherical coordinate vector [r, phi, theta].
+    @return:        The spherical coordinate vector [r, theta, phi].
     @rtype:         numpy rank-1, 3D array
     """
 
@@ -48,10 +48,10 @@ def cartesian_to_spherical(vector):
     unit = vector / r
 
     # The polar angle.
-    phi = acos(unit[2])
+    theta = acos(unit[2])
 
     # The azimuth.
-    theta = atan2(unit[1], unit[0])
+    phi = atan2(unit[1], unit[0])
 
     # Return the spherical coordinate vector.
-    return array([r, phi, theta], float64)
+    return array([r, theta, phi], float64)
