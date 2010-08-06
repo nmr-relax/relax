@@ -42,7 +42,7 @@ from generic_fns.structure.cones import Iso_cone
 from generic_fns.structure.geometric import cone_edge, generate_vector_dist, generate_vector_residues, stitch_cone_to_edge
 from generic_fns.structure.internal import Internal
 from maths_fns import frame_order, order_parameters
-from maths_fns.frame_order_matrix_ops import generate_vector
+from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
@@ -181,7 +181,7 @@ class Frame_order(API_base, API_common):
 
         # The cone axis.
         cone_axis = zeros(3, float64)
-        generate_vector(cone_axis, cdp.axis_theta, cdp.axis_phi)
+        spherical_to_cartesian([1.0, cdp.axis_theta, cdp.axis_phi], cone_axis)
         print(("Cone axis: %s." % cone_axis))
         print(("Cone angle: %s." % cdp.theta_cone))
 
@@ -193,7 +193,7 @@ class Frame_order(API_base, API_common):
             num_sim = cdp.sim_number
             cone_axis_sim = zeros((num_sim, 3), float64)
         for i in range(num_sim):
-            generate_vector(cone_axis_sim[i], cdp.axis_theta_sim[i], cdp.axis_phi_sim[i])
+            spherical_to_cartesian([1.0, cdp.axis_theta_sim[i], cdp.axis_phi_sim[i]], cone_axis_sim[i])
 
         # Create a positive and negative cone.
         for factor in [-1, 1]:
