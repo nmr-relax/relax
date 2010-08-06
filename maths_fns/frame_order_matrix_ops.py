@@ -1111,34 +1111,33 @@ def populate_2nd_eigenframe_iso_cone(matrix, tmax, smax):
         for j in range(9):
             matrix[i, j] = 0.0
 
-    # The surface area normalisation factor.
-    fact = 1.0 / (smax * (1.0 - cos(theta_max)))
-
     # Repetitive trig calculations.
     sin_smax = sin(smax)
     sin_2smax = sin(2.0*smax)
-    sin_tmax = sin(tmax)
-    sin_2tmax = sin(2.0*tmax)
+    cos_tmax = cos(tmax)
+    cos_tmax2 = cos_tmax**2
+    sin_2tmax2 = sin(2.0*tmax)**2
+    denom_a = 48.0*smax*(cos_tmax - 1.0)
 
     # Diagonal.
-    matrix[0, 0] = fact * ((sin_2smax + 4.0*smax)*sin_2tmax + 8.0*sin_2smax*sin_tmax + (6.0*sin_2smax + 24.0*smax)*tmax)/64.0
-    matrix[1, 1] = fact * (sin_2smax*sin_2tmax + (8.0*sin_2smax + 32.0*smax)*sin_tmax + 6.0*sin_2smax*tmax)/64.0
-    matrix[2, 2] = fact * (sin_smax*sin_2tmax + 4.0*sin_smax*sin_tmax + 2.0*sin_smax*tmax)/8.0
+    matrix[0, 0] = ((sin_2smax + 4.0*smax)*cos_tmax2 + (4.0*sin_2smax + 4.0*smax)*cos_tmax + 7.0*sin_2smax + 16.0*smax) / (48.0*smax)
+    matrix[1, 1] = -((sin_2smax*cos_tmax + 3.0*sin_2smax + 12.0*smax)*sin_2tmax2 - 4.0*sin_2smax*cos_tmax + 4.0*sin_2smax) / demon_a
+    matrix[2, 2] = (2.0*sin_smax*cos_tmax2 + 5.0*sin_smax*cos_tmax + 5.0*sin_smax) / (12.0*smax)
     matrix[3, 3] = matrix[1, 1]
     matrix[4, 4] = matrix[0, 0]
     matrix[5, 5] = matrix[2, 2]
     matrix[6, 6] = matrix[2, 2]
     matrix[7, 7] = matrix[2, 2]
-    matrix[8, 8] = fact * (smax*sin_2tmax + 2.0*smax*tmax)/4.0
+    matrix[8, 8] = (cos_tmax2 + cos_tmax + 1.0) / 3.0
 
     # Off diagonal set 1.
-    matrix[0, 4] = matrix[4, 0] = fact *  - ((sin_2smax - 4.0*smax)*sin_2tmax + 8.0*sin_2smax*sin_tmax + (6.0*sin_2smax - 24.0*smax)*tmax)/64.0
-    matrix[0, 8] = matrix[8, 0] = fact *  - (smax*sin_2tmax - 2.0*smax*tmax)/8.0
+    matrix[0, 4] = matrix[4, 0] = (((sin_2smax - 4.0*smax)*cos_tmax + 3.0*sin_2smax)*sin_2tmax2 + (16.0*smax - 4.0*sin_2smax)*cos_tmax + 4.0*sin_2smax - 16.0*smax) / demom_a
+    matrix[0, 8] = matrix[8, 0] = -(cos_tmax2 + cos_tmax - 2.0) / 6.0
     matrix[4, 8] = matrix[8, 4] = matrix[0, 8]
 
     # Off diagonal set 2.
-    matrix[1, 3] = matrix[3, 1] = fact * (sin_2smax*sin_2tmax + (8.0*sin_2smax - 32.0*smax)*sin_tmax + 6.0*sin_2smax*tmax)/64.0
-    matrix[2, 6] = matrix[6, 2] = fact * (sin_smax*sin_2tmax - 2.0*sin_smax*tmax)/8.0
+    matrix[1, 3] = matrix[3, 1] = -((sin_2smax*cos_tmax + 3.0*sin_2smax - 12.0*smax)*sin_2tmax2 - 4.0*sin_2smax*cos_tmax + 4.0*sin_2smax) / denom_a
+    matrix[2, 6] = matrix[6, 2] = (sin_smax*cos_tmax2 + sin_smax*cos_tmax - 2.0*sin_smax) / (6.0*smax)
     matrix[5, 7] = matrix[7, 5] = matrix[2, 6]
 
 
