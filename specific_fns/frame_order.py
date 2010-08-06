@@ -522,7 +522,7 @@ class Frame_order(API_base, API_common):
 
             # Cone parameters - single isotropic angle or order parameter.
             elif cdp.model in ['iso cone']:
-                cdp.params.append('cone_angle')
+                cdp.params.append('cone_theta')
             elif cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
                 cdp.params.append('cone_s1')
 
