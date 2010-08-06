@@ -24,8 +24,8 @@
 """Module for transforming between different coordinate systems."""
 
 # Python module imports.
-from math import acos, atan2
-from numpy import array, float64
+from math import acos, atan2, cos, sin
+from numpy import array, float64, zeros
 from numpy.linalg import norm
 
 
@@ -55,3 +55,24 @@ def cartesian_to_spherical(vector):
 
     # Return the spherical coordinate vector.
     return array([r, theta, phi], float64)
+
+
+def spherical_to_cartesian(spherical_vect, cart_vect):
+    """Convert the spherical coordinate vector [r, theta, phi] to the Cartesian vector [x, y, z].
+
+    The parameter r is the radial distance, theta is the polar angle, and phi is the azimuth.
+
+
+    @param vector:  The spherical coordinate vector [r, theta, phi].
+    @type vector:   3D array or list
+    @return:        The Cartesian vector [x, y, z].
+    @rtype:         numpy rank-1, 3D array
+    """
+
+    # Trig alias.
+    sin_theta = sin(spherical_vect[1])
+
+    # The vector.
+    cart_vect[0] = spherical_vect[0] * cos(spherical_vect[2]) * sin_theta
+    cart_vect[1] = spherical_vect[0] * sin(spherical_vect[2]) * sin_theta
+    cart_vect[2] = spherical_vect[0] * cos(spherical_vect[1])

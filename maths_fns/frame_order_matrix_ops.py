@@ -32,6 +32,7 @@ from scipy.integrate import quad
 # relax module imports.
 from float import isNaN
 from maths_fns import order_parameters
+from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.kronecker_product import kron_prod, transpose_23
 from maths_fns.pseudo_ellipse import pec
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
@@ -83,7 +84,7 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     """
 
     # Generate the cone axis from the spherical angles.
-    generate_vector(cone_axis, theta_axis, phi_axis)
+    spherical_to_cartesian([1.0, theta_axis, phi_axis], cone_axis)
 
     # Populate the Frame Order matrix in the eigenframe.
     populate_2nd_eigenframe_iso_cone(matrix, cone_theta, sigma_max)
@@ -121,7 +122,7 @@ def compile_2nd_matrix_iso_cone_free_rotor(matrix, R, z_axis, cone_axis, theta_a
     """
 
     # Generate the cone axis from the spherical angles.
-    generate_vector(cone_axis, theta_axis, phi_axis)
+    spherical_to_cartesian([1.0, theta_axis, phi_axis], cone_axis)
 
     # Populate the Frame Order matrix in the eigenframe.
     populate_2nd_eigenframe_iso_cone_free_rotor(matrix, s1)
@@ -334,26 +335,6 @@ def daeg_to_rotational_superoperator(daeg, Rsuper):
 
     # Revert the shape.
     daeg.shape = orig_shape
-
-
-def generate_vector(vector, theta, phi):
-    """Generate a unit vector from the polar angle theta and azimuthal angle phi.
-
-    @param vector:  The storage structure for the vector.
-    @type vector:   numpy 3D, rank-1 array
-    @param theta:   The polar angle.
-    @type theta:    float
-    @param phi:     The azimuthal angle.
-    @type phi:      float
-    """
-
-    # Trig alias.
-    sin_theta = sin(theta)
-
-    # The vector.
-    vector[0] = cos(phi) * sin_theta
-    vector[1] = sin(phi) * sin_theta
-    vector[2] = cos(theta)
 
 
 def part_int_daeg1_pseudo_ellipse_xx(phi, x, y, smax):
