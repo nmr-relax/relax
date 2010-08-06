@@ -60,7 +60,7 @@ def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
     matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_zz, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
 
 
-def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, cone_theta, sigma_max):
+def compile_2nd_matrix_iso_cone(matrix, R, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, sigma_max):
     """Generate the rotated 2nd degree Frame Order matrix for the isotropic cone.
 
     The cone axis is assumed to be parallel to the z-axis in the eigenframe.
@@ -69,28 +69,23 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     @type matrix:       numpy 9D, rank-2 array
     @param R:           The rotation matrix to be populated.
     @type R:            numpy 3D, rank-2 array
-    @param z_axis:      The molecular frame z-axis from which the cone axis is rotated from.
-    @type z_axis:       numpy 3D, rank-1 array
-    @param cone_axis:   The storage structure for the cone axis.
-    @type cone_axis:    numpy 3D, rank-1 array
-    @param theta_axis:  The cone axis polar angle.
-    @type theta_axis:   float
-    @param phi_axis:    The cone axis azimuthal angle.
-    @type phi_axis:     float
+    @param eigen_alpha: The eigenframe rotation alpha Euler angle.
+    @type eigen_alpha:  float
+    @param eigen_beta:  The eigenframe rotation beta Euler angle.
+    @type eigen_beta:   float
+    @param eigen_gamma: The eigenframe rotation gamma Euler angle.
+    @type eigen_gamma:  float
     @param cone_theta:  The cone opening angle.
     @type cone_theta:   float
     @param sigma_max:   The maximum torsion angle.
     @type sigma_max:    float
     """
 
-    # Generate the cone axis from the spherical angles.
-    spherical_to_cartesian([1.0, theta_axis, phi_axis], cone_axis)
-
     # Populate the Frame Order matrix in the eigenframe.
     populate_2nd_eigenframe_iso_cone(matrix, cone_theta, sigma_max)
 
     # Average position rotation.
-    two_vect_to_R(z_axis, cone_axis, R)
+    euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
 
     # Rotate and return the frame order matrix.
     return rotate_daeg(matrix, R)
