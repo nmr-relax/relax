@@ -568,6 +568,7 @@ class Frame_order(API_base, API_common):
         eigen_alpha, eigen_beta, eigen_gamma = None, None, None
         axis_theta, axis_phi = None, None
         cone_theta_x, cone_theta_y = None, None
+        cone_theta = None
         cone_s1 = None
         cone_sigma_max = None
         if cdp.model == 'pseudo-ellipse':
@@ -611,6 +612,8 @@ class Frame_order(API_base, API_common):
                 cdp.axis_phi_sim[sim_index] = axis_phi
 
             # Cone parameters.
+            if cone_theta != None:
+                cdp.cone_theta_sim[sim_index] = cone_theta
             if cone_s1 != None:
                 cdp.cone_s1_sim[sim_index] = cone_s1
                 cdp.cone_theta[sim_index] = order_parameters.iso_cone_S_to_cos_theta(cone_s1)
@@ -652,6 +655,8 @@ class Frame_order(API_base, API_common):
                 cdp.axis_phi = axis_phi
 
             # Cone parameters.
+            if cone_theta != None:
+                cdp.cone_theta = cone_theta
             if cone_s1 != None:
                 cdp.cone_s1 = cone_s1
                 cdp.cone_theta = order_parameters.iso_cone_S_to_cos_theta(cone_s1)
