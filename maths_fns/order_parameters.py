@@ -23,6 +23,29 @@
 # Module docstring.
 """Module for the conversion of order parameters to specific model parameters and vice versa."""
 
+# Python module imports.
+from math import cos
+
+
+def iso_cone_theta_to_S(theta):
+    """Convert the isotropic cone angle to the order parameter S.
+
+    This uses Woessner's diffusion in a cone order parameter defined as::
+
+        S = 1/2 (1 + cos(theta)) * cos(theta)
+
+    @param theta:   The isotropic cone angle.
+    @type theta:    float
+    @return:        The order parameter value.
+    @rtype:         float
+    """
+
+    # Convert.
+    S = 0.5 * (1.0 + cos(theta)) * cos(theta)
+
+    # Return the order parameter.
+    return S
+
 
 def iso_cone_S_to_cos_theta(S):
     """Convert the isotropic cone order parameter S into the cosine of the cone angle.
