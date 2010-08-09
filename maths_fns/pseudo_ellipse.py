@@ -24,7 +24,7 @@
 """Module for the pseudo-elliptical functions."""
 
 # Python module import.
-from math import pi, sin
+from math import pi
 
 
 def factorial(n):
@@ -204,28 +204,3 @@ def pec(x, y):
 
     # Return the approximate function value.
     return fn
-
-
-def sinc(x):
-    """Implementation of the sinc() function.
-
-    The formula is::
-
-                   /  1,            for x = 0,
-        sinc(x) = <
-                   \  sin(x)/x,     otherwise.
-
-
-    @param x:   The angle x in rad.
-    @type x:    float
-    @return:    The value of sinc(x).
-    @rtype:     float
-    """
-
-    # Limit condition.
-    if x == 0:
-        return 1.0
-
-    # All other values.
-    else:
-        return sin(x) / x
