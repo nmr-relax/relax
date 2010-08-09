@@ -39,6 +39,7 @@ class Test_frame_order_matrix_ops(TestCase):
 
         # Temp storage.
         self.f2_temp = zeros((9, 9), float64)
+        self.R_temp = zeros((3, 3), float64)
 
         # Set up the identity matrices.
         self.setup_identity()
@@ -108,13 +109,8 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_iso_cone_disorder(self):
         """Check if compile_2nd_matrix_iso_cone() can return the identity matrix for disorder."""
 
-        # Init.
-        R = eye(3)
-        z_axis = array([0, 0, 1], float64)
-        cone_axis = zeros(3, float64)
-
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone(self.f2_temp, R, 0.0, 0.0, 0.0, pi, pi)
+        f2 = compile_2nd_matrix_iso_cone(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi, pi)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_disorder, "Identity for disorder")
@@ -130,13 +126,8 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_iso_cone_order(self):
         """Check if compile_2nd_matrix_iso_cone() can return the identity matrix for order."""
 
-        # Init.
-        R = eye(3)
-        z_axis = array([0, 0, 1], float64)
-        cone_axis = zeros(3, float64)
-
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone(self.f2_temp, R, 0.0, 0.0, 0.0, 1e-5, 1e-10)
+        f2 = compile_2nd_matrix_iso_cone(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, 1e-5, 1e-10)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_order, "Identity for order")
@@ -152,13 +143,8 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_iso_cone_order2(self):
         """2nd check if compile_2nd_matrix_iso_cone() can return the identity matrix for order."""
 
-        # Init.
-        R = eye(3)
-        z_axis = array([0, 0, 1], float64)
-        cone_axis = zeros(3, float64)
-
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone(self.f2_temp, R, 0.0, 0.0, 0.0, 0.0, 0.0)
+        f2 = compile_2nd_matrix_iso_cone(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, 0.0, 0.0)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_order, "Identity for order")
@@ -175,12 +161,11 @@ class Test_frame_order_matrix_ops(TestCase):
         """Check if compile_2nd_matrix_iso_cone_free_rotor() can return the identity matrix for disorder."""
 
         # Init.
-        R = eye(3)
         z_axis = array([0, 0, 1], float64)
         cone_axis = zeros(3, float64)
 
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, R, z_axis, cone_axis, 0.0, 1.0, 0.0)
+        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, z_axis, cone_axis, 0.0, 1.0, 0.0)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_disorder, "Free rotor identity for disorder")
@@ -197,12 +182,11 @@ class Test_frame_order_matrix_ops(TestCase):
         """Check if compile_2nd_matrix_iso_cone_free_rotor() can return the identity matrix for order."""
 
         # Init.
-        R = eye(3)
         z_axis = array([0, 0, 1], float64)
         cone_axis = zeros(3, float64)
 
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, R, z_axis, cone_axis, 0.0, 1.0, 1.0)
+        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, z_axis, cone_axis, 0.0, 1.0, 1.0)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_order_free_rotor, "Free rotor identity for order")
@@ -218,13 +202,8 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_pseudo_ellipse_disorder(self):
         """Check if compile_2nd_matrix_pseudo_ellipse() can return the identity matrix for disorder."""
 
-        # Init.
-        R = eye(3)
-        z_axis = array([0, 0, 1], float64)
-        cone_axis = zeros(3, float64)
-
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, R, 0.0, 0.0, 0.0, pi, pi, pi)
+        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi, pi, pi)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_disorder, "Identity for disorder")
@@ -240,13 +219,8 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_pseudo_ellipse_order(self):
         """Check if compile_2nd_matrix_pseudo_ellipse() can return the identity matrix for order."""
 
-        # Init.
-        R = eye(3)
-        z_axis = array([0, 0, 1], float64)
-        cone_axis = zeros(3, float64)
-
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, R, 0.0, 0.0, 0.0, 1e-5, 1e-10, 1e-5)
+        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, 1e-5, 1e-10, 1e-5)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_order, "Identity for order")
@@ -262,13 +236,8 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_disorder(self):
         """Check if compile_2nd_matrix_pseudo_ellipse_free_rotor() can return the identity matrix for disorder."""
 
-        # Init.
-        R = eye(3)
-        z_axis = array([0, 0, 1], float64)
-        cone_axis = zeros(3, float64)
-
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, R, 0.0, 0.0, 0.0, pi, pi)
+        f2 = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi, pi)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_disorder, "Free rotor identity for disorder")
@@ -284,13 +253,8 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_order(self):
         """Check if compile_2nd_matrix_pseudo_ellipse_free_rotor() can return the identity matrix for order."""
 
-        # Init.
-        R = eye(3)
-        z_axis = array([0, 0, 1], float64)
-        cone_axis = zeros(3, float64)
-
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, R, 0.0, 0.0, 0.0, 1e-10, 1e-10)
+        f2 = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, 1e-10, 1e-10)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_order_free_rotor, "Free rotor identity for order")
@@ -320,14 +284,13 @@ class Test_frame_order_matrix_ops(TestCase):
         transpose_23(real)
 
         # Init.
-        calc = zeros((9, 9), float64)
         R = zeros((3, 3), float64)
         x = pi/4.0
         y = 3.0*pi/8.0
         z = pi/6.0
 
         # Calculate the matrix.
-        f2 = compile_2nd_matrix_pseudo_ellipse(calc, R, 0, 0, 0, x, y, z)
+        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0, 0, 0, x, y, z)
 
         # Print out.
         print_frame_order_2nd_degree(real, "real")
