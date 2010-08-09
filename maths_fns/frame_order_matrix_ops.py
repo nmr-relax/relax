@@ -25,7 +25,7 @@
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
-from numpy import cross, dot, transpose
+from numpy import cross, dot, sinc, transpose
 from numpy.linalg import norm
 from scipy.integrate import quad
 
@@ -34,7 +34,7 @@ from float import isNaN
 from maths_fns import order_parameters
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.kronecker_product import kron_prod, transpose_23
-from maths_fns.pseudo_ellipse import pec, sinc
+from maths_fns.pseudo_ellipse import pec
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
 
 
@@ -1088,8 +1088,8 @@ def populate_2nd_eigenframe_iso_cone(matrix, tmax, smax):
             matrix[i, j] = 0.0
 
     # Repetitive trig calculations.
-    sinc_smax = sinc(smax)
-    sinc_2smax = sinc(2.0*smax)
+    sinc_smax = sinc(smax/pi)
+    sinc_2smax = sinc(2.0*smax/pi)
     cos_tmax = cos(tmax)
     cos_tmax2 = cos_tmax**2
 
