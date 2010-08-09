@@ -149,6 +149,28 @@ class Test_frame_order_matrix_ops(TestCase):
                 self.assertAlmostEqual(f2[i, j], self.I_order[i, j])
 
 
+    def test_compile_2nd_matrix_iso_cone_order2(self):
+        """2nd check if compile_2nd_matrix_iso_cone() can return the identity matrix for order."""
+
+        # Init.
+        R = eye(3)
+        z_axis = array([0, 0, 1], float64)
+        cone_axis = zeros(3, float64)
+
+        # Calculate the frame order matrix.
+        f2 = compile_2nd_matrix_iso_cone(self.f2_temp, R, 0.0, 0.0, 0.0, 0.0, 0.0)
+
+        # Print outs.
+        print_frame_order_2nd_degree(self.I_order, "Identity for order")
+        print_frame_order_2nd_degree(f2, "Compiled frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2[i, j], self.I_order[i, j])
+
+
     def test_compile_2nd_matrix_iso_cone_free_rotor_disorder(self):
         """Check if compile_2nd_matrix_iso_cone_free_rotor() can return the identity matrix for disorder."""
 
