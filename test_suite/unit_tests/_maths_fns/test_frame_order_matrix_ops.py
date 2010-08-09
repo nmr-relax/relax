@@ -362,7 +362,7 @@ class Test_frame_order_matrix_ops(TestCase):
                 self.assertAlmostEqual(f2[i, j], self.I_order_free_rotor[i, j])
 
 
-    def xest_compile_2nd_matrix_pseudo_ellipse(self):
+    def test_compile_2nd_matrix_pseudo_ellipse(self):
         """Check the operation of the compile_2nd_matrix_pseudo_ellipse() function."""
 
         # The real 2nd degree frame order matrix.
