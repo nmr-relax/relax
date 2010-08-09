@@ -47,6 +47,11 @@ class Test_frame_order_matrix_ops(TestCase):
         # Set up the identity matrices for free rotors.
         self.setup_identity_free_rotor()
 
+        # Out of frame Euler angles.
+        self.out_of_frame_alpha = 1.10714871779
+        self.out_of_frame_beta = 0.841068670568
+        self.out_of_frame_gamma = 5.81953769818
+
 
     def setup_identity(self):
         """Set up a few identity matrices."""
@@ -315,6 +320,109 @@ class Test_frame_order_matrix_ops(TestCase):
                 self.assertAlmostEqual(f2[i, j], self.I_order_free_rotor[i, j])
 
 
+    def test_compile_2nd_matrix_pseudo_ellipse_point1(self):
+        """Check the operation of the compile_2nd_matrix_pseudo_ellipse() function."""
+
+        # The real 2nd degree frame order matrix.
+        real = array(
+                    [[    0.7901,         0,         0,         0,    0.7118,         0,         0,         0,    0.6851],
+                     [         0,    0.0816,         0,   -0.0606,         0,         0,         0,         0,         0],
+                     [         0,         0,    0.1282,         0,         0,         0,   -0.1224,         0,         0],
+                     [         0,   -0.0606,         0,    0.0708,         0,         0,         0,         0,         0],
+                     [    0.7118,         0,         0,         0,    0.6756,         0,         0,         0,    0.6429],
+                     [         0,         0,         0,         0,         0,    0.2536,         0,   -0.2421,         0],
+                     [         0,         0,   -0.1224,         0,         0,         0,    0.1391,         0,         0],
+                     [         0,         0,         0,         0,         0,   -0.2421,         0,    0.2427,         0],
+                     [    0.6851,         0,         0,         0,    0.6429,         0,         0,         0,    0.6182]], float64)
+        transpose_23(real)
+
+        # Init.
+        x = pi/4.0
+        y = 3.0*pi/8.0
+        z = pi/6.0
+
+        # Calculate the matrix.
+        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0, 0, 0, x, y, z)
+
+        # Print out.
+        print_frame_order_2nd_degree(real, "real")
+        print_frame_order_2nd_degree(f2, "calculated")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2[i, j], real[i, j], 4)
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_point2(self):
+        """Check the operation of the compile_2nd_matrix_pseudo_ellipse() function."""
+
+        # The real 2nd degree frame order matrix.
+        real = array(
+                    [[    0.7379,         0,         0,         0,    0.1338,         0,         0,         0,    0.1284],
+                     [         0,    0.6637,         0,   -0.1085,         0,         0,         0,         0,         0],
+                     [         0,         0,    0.6603,         0,         0,         0,   -0.1181,         0,         0],
+                     [         0,   -0.1085,         0,    0.6637,         0,         0,         0,         0,         0],
+                     [    0.1154,         0,         0,         0,    0.6309,         0,         0,         0,    0.2536],
+                     [         0,         0,         0,         0,         0,    0.6196,         0,   -0.2336,         0],
+                     [         0,         0,   -0.1181,         0,         0,         0,    0.6603,         0,         0],
+                     [         0,         0,         0,         0,         0,   -0.2336,         0,    0.6196,         0],
+                     [    0.1467,         0,         0,         0,    0.2353,         0,         0,         0,    0.6180]], float64)
+
+        # Init.
+        x = pi/4.0
+        y = 3.0*pi/8.0
+        z = 40.0 / 360.0 * 2.0 * pi
+
+        # Calculate the matrix.
+        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0, 0, 0, x, y, z)
+
+        # Print out.
+        print_frame_order_2nd_degree(real, "real")
+        print_frame_order_2nd_degree(f2, "calculated")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2[i, j], real[i, j], 3)
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_point3(self):
+        """Check the operation of the compile_2nd_matrix_pseudo_ellipse() function."""
+
+        # The real 2nd degree frame order matrix.
+        real = array(
+                    [[    0.6314,    0.0232,   -0.0344,    0.0232,    0.1558,   -0.0222,   -0.0344,   -0.0222,    0.2128],
+                     [    0.0220,    0.6366,    0.0069,   -0.1352,    0.0243,   -0.0722,    0.0206,   -0.0277,   -0.0464],
+                     [   -0.0332,    0.0097,    0.6137,    0.0222,    0.0668,    0.0173,   -0.1967,    0.0489,   -0.0336],
+                     [    0.0220,   -0.1352,    0.0206,    0.6366,    0.0243,   -0.0277,    0.0069,   -0.0722,   -0.0464],
+                     [    0.1554,    0.0233,    0.0669,    0.0233,    0.6775,    0.0113,    0.0669,    0.0113,    0.1671],
+                     [   -0.0222,   -0.0738,    0.0188,   -0.0286,    0.0113,    0.6310,    0.0507,   -0.1502,    0.0109],
+                     [   -0.0332,    0.0222,   -0.1967,    0.0097,    0.0668,    0.0489,    0.6137,    0.0173,   -0.0336],
+                     [   -0.0222,   -0.0286,    0.0507,   -0.0738,    0.0113,   -0.1502,    0.0188,    0.6310,    0.0109],
+                     [    0.2132,   -0.0465,   -0.0324,   -0.0465,    0.1667,    0.0110,   -0.0324,    0.0110,    0.6201]], float64)
+
+        # Init.
+        x = 60.0 / 360.0 * 2.0 * pi
+        y = 3.0 * pi / 8.0
+        z = pi / 6.0
+
+        # Calculate the matrix.
+        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, self.out_of_frame_alpha, self.out_of_frame_beta, self.out_of_frame_gamma, x, y, z)
+
+        # Print out.
+        print_frame_order_2nd_degree(real, "real")
+        print_frame_order_2nd_degree(f2, "calculated")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
+                self.assertAlmostEqual(f2[i, j], real[i, j], 2)
+
+
     def test_compile_2nd_matrix_pseudo_ellipse_disorder(self):
         """Check if compile_2nd_matrix_pseudo_ellipse() can return the identity matrix for disorder."""
 
@@ -449,38 +557,3 @@ class Test_frame_order_matrix_ops(TestCase):
             for j in range(9):
                 print "Element %s, %s." % (i, j)
                 self.assertAlmostEqual(f2[i, j], self.I_order_free_rotor[i, j])
-
-
-    def test_compile_2nd_matrix_pseudo_ellipse(self):
-        """Check the operation of the compile_2nd_matrix_pseudo_ellipse() function."""
-
-        # The real 2nd degree frame order matrix.
-        real = array(
-                    [[    0.7901,         0,         0,         0,    0.7118,         0,         0,         0,    0.6851],
-                     [         0,    0.0816,         0,   -0.0606,         0,         0,         0,         0,         0],
-                     [         0,         0,    0.1282,         0,         0,         0,   -0.1224,         0,         0],
-                     [         0,   -0.0606,         0,    0.0708,         0,         0,         0,         0,         0],
-                     [    0.7118,         0,         0,         0,    0.6756,         0,         0,         0,    0.6429],
-                     [         0,         0,         0,         0,         0,    0.2536,         0,   -0.2421,         0],
-                     [         0,         0,   -0.1224,         0,         0,         0,    0.1391,         0,         0],
-                     [         0,         0,         0,         0,         0,   -0.2421,         0,    0.2427,         0],
-                     [    0.6851,         0,         0,         0,    0.6429,         0,         0,         0,    0.6182]], float64)
-        transpose_23(real)
-
-        # Init.
-        x = pi/4.0
-        y = 3.0*pi/8.0
-        z = pi/6.0
-
-        # Calculate the matrix.
-        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0, 0, 0, x, y, z)
-
-        # Print out.
-        print_frame_order_2nd_degree(real, "real")
-        print_frame_order_2nd_degree(f2, "calculated")
-
-        # Check the values.
-        for i in range(9):
-            for j in range(9):
-                print "Element %s, %s." % (i, j)
-                self.assertAlmostEqual(f2[i, j], real[i, j], 4)
