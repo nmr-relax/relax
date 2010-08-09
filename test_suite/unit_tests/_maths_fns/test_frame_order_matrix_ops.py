@@ -379,7 +379,6 @@ class Test_frame_order_matrix_ops(TestCase):
         transpose_23(real)
 
         # Init.
-        R = zeros((3, 3), float64)
         x = pi/4.0
         y = 3.0*pi/8.0
         z = pi/6.0
