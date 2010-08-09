@@ -331,8 +331,8 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_half_cone(self):
         """Check if compile_2nd_matrix_pseudo_ellipse() can return the matrix for a half cone."""
 
-        # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/2.0, pi/2.0)
+        # Calculate the frame order matrix (rotated about z by 2pi).
+        f2 = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, self.R_temp, pi, 0.0, pi, pi/2.0, pi/2.0)
 
         # Print outs.
         print_frame_order_2nd_degree(self.f2_half_cone, "The half cone frame order matrix")
