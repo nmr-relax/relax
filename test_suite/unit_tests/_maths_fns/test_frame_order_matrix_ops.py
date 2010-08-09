@@ -70,7 +70,6 @@ class Test_frame_order_matrix_ops(TestCase):
         for i, j, val in data:
             self.I_disorder[i, j] = val
 
-
         # The half cone matrix.
         data = [[0, 0, 1.0/3.0],
                 [4, 4, 1.0/3.0],
@@ -88,6 +87,24 @@ class Test_frame_order_matrix_ops(TestCase):
         self.f2_half_cone = zeros((9, 9), float64)
         for i, j, val in data:
             self.f2_half_cone[i, j] = val
+
+        # The half cone matrix rotated 90 degrees about y.
+        data = [[0, 0, 1.0/3.0],
+                [4, 4, 1.0/3.0],
+                [8, 8, 1.0/3.0],
+                [0, 4, 1.0/3.0],
+                [4, 0, 1.0/3.0],
+                [0, 8, 1.0/3.0],
+                [8, 0, 1.0/3.0],
+                [4, 8, 1.0/3.0],
+                [8, 4, 1.0/3.0],
+                [5, 7, -0.25],
+                [7, 5, -0.25],
+                [7, 7, 0.25],
+                [5, 5, 0.25]]
+        self.f2_half_cone_90_y = zeros((9, 9), float64)
+        for i, j, val in data:
+            self.f2_half_cone_90_y[i, j] = val
 
 
     def setup_identity_free_rotor(self):
@@ -157,6 +174,23 @@ class Test_frame_order_matrix_ops(TestCase):
             for j in range(9):
                 print "Element %s, %s." % (i, j)
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone[i, j])
+
+
+    def test_compile_2nd_matrix_iso_cone_half_cone_90_y(self):
+        """Check if compile_2nd_matrix_iso_cone() can return the matrix for a half cone rotated 90 degrees about y."""
+
+        # Calculate the frame order matrix.
+        f2 = compile_2nd_matrix_iso_cone(self.f2_temp, self.R_temp, 0.0, pi/2.0, 0.0, pi/2.0, pi)
+
+        # Print outs.
+        print_frame_order_2nd_degree(self.f2_half_cone_90_y, "The half cone frame order matrix")
+        print_frame_order_2nd_degree(f2, "Compiled frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2[i, j], self.f2_half_cone_90_y[i, j])
 
 
     def test_compile_2nd_matrix_iso_cone_order(self):
@@ -239,6 +273,27 @@ class Test_frame_order_matrix_ops(TestCase):
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone[i, j])
 
 
+    def test_compile_2nd_matrix_iso_cone_free_rotor_half_cone_90_y(self):
+        """Check if compile_2nd_matrix_iso_cone() can return the matrix for a half cone rotated 90 degrees about y."""
+
+        # Init.
+        z_axis = array([1, 0, 0], float64)
+        cone_axis = zeros(3, float64)
+
+        # Calculate the frame order matrix.
+        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, z_axis, cone_axis, 0.0, 1.0, 0.0)
+
+        # Print outs.
+        print_frame_order_2nd_degree(self.f2_half_cone_90_y, "The half cone frame order matrix")
+        print_frame_order_2nd_degree(f2, "Compiled frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2[i, j], self.f2_half_cone_90_y[i, j])
+
+
     def test_compile_2nd_matrix_iso_cone_free_rotor_order(self):
         """Check if compile_2nd_matrix_iso_cone_free_rotor() can return the identity matrix for order."""
 
@@ -294,6 +349,23 @@ class Test_frame_order_matrix_ops(TestCase):
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone[i, j])
 
 
+    def test_compile_2nd_matrix_pseudo_ellipse_half_cone_90_y(self):
+        """Check if compile_2nd_matrix_pseudo_ellipse() can return the matrix for a half cone rotated 90 degrees about y."""
+
+        # Calculate the frame order matrix.
+        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, pi/2.0, 0.0, pi/2.0, pi/2.0, pi)
+
+        # Print outs.
+        print_frame_order_2nd_degree(self.f2_half_cone_90_y, "The half cone frame order matrix")
+        print_frame_order_2nd_degree(f2, "Compiled frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2[i, j], self.f2_half_cone_90_y[i, j])
+
+
     def test_compile_2nd_matrix_pseudo_ellipse_order(self):
         """Check if compile_2nd_matrix_pseudo_ellipse() can return the identity matrix for order."""
 
@@ -343,6 +415,23 @@ class Test_frame_order_matrix_ops(TestCase):
             for j in range(9):
                 print "Element %s, %s." % (i, j)
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone[i, j])
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_half_cone_90_y(self):
+        """Check if compile_2nd_matrix_pseudo_ellipse() can return the matrix for a half cone rotated 90 degrees about y."""
+
+        # Calculate the frame order matrix (rotated about z by 2pi).
+        f2 = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, self.R_temp, pi, pi/2.0, pi, pi/2.0, pi/2.0)
+
+        # Print outs.
+        print_frame_order_2nd_degree(self.f2_half_cone_90_y, "The half cone frame order matrix")
+        print_frame_order_2nd_degree(f2, "Compiled frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2[i, j], self.f2_half_cone_90_y[i, j])
 
 
     def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_order(self):
