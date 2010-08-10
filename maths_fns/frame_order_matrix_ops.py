@@ -1354,4 +1354,11 @@ def tmax_pseudo_ellipse(phi, theta_x, theta_y):
     @rtype:         float
     """
 
-    return sqrt(1.0 / (cos(phi)**2/theta_x**2 + sin(phi)**2/theta_y**2))
+    # Zero points.
+    if theta_x == 0.0:
+        return 0.0
+    elif theta_y == 0.0:
+        return 0.0
+
+    # Return the maximum angle.
+    return sqrt(theta_x**2 * theta_y**2 / (cos(phi)**2*theta_y**2 + sin(phi)**2*theta_x**2))
