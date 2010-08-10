@@ -40,6 +40,8 @@ class Test_frame_order_matrix_ops(TestCase):
         # Temp storage.
         self.f2_temp = zeros((9, 9), float64)
         self.R_temp = zeros((3, 3), float64)
+        self.z_axis = array([0, 0, 1], float64)
+        self.cone_axis = zeros(3, float64)
 
         # Set up the identity matrices.
         self.setup_identity()
@@ -232,15 +234,30 @@ class Test_frame_order_matrix_ops(TestCase):
                 self.assertAlmostEqual(f2[i, j], self.I_order[i, j])
 
 
+    def test_compile_2nd_matrix_iso_cone_restriction_test(self):
+        """Check if compile_2nd_matrix_iso_cone() can approximate compile_2nd_matrix_iso_cone_free_rotor()."""
+
+        # Calculate the frame order matrix.
+        f2a = compile_2nd_matrix_iso_cone(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6, pi)
+        f2b = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 1.0, pi/4.6)
+
+        # Print outs.
+        print_frame_order_2nd_degree(f2a, "Isotropic cone frame order")
+        print_frame_order_2nd_degree(f2b, "Free rotor isotropic cone frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2a[i, j], f2b[i, j])
+
+
     def test_compile_2nd_matrix_iso_cone_free_rotor_disorder(self):
         """Check if compile_2nd_matrix_iso_cone_free_rotor() can return the identity matrix for disorder."""
 
-        # Init.
-        z_axis = array([0, 0, 1], float64)
-        cone_axis = zeros(3, float64)
 
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, z_axis, cone_axis, 0.0, 1.0, 0.0)
+        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 1.0, 0.0)
 
         # Cannot differentiate full disorder from the half cone in this model!
         f2_ref = self.f2_half_cone
@@ -260,12 +277,8 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_iso_cone_free_rotor_half_cone(self):
         """Check if compile_2nd_matrix_iso_cone() can return the matrix for a half cone."""
 
-        # Init.
-        z_axis = array([0, 0, 1], float64)
-        cone_axis = zeros(3, float64)
-
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, z_axis, cone_axis, 0.0, 1.0, 0.0)
+        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 1.0, 0.0)
 
         # Print outs.
         print_frame_order_2nd_degree(self.f2_half_cone, "The half cone frame order matrix")
@@ -283,10 +296,9 @@ class Test_frame_order_matrix_ops(TestCase):
 
         # Init.
         z_axis = array([1, 0, 0], float64)
-        cone_axis = zeros(3, float64)
 
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, z_axis, cone_axis, 0.0, 1.0, 0.0)
+        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, z_axis, self.cone_axis, 0.0, 1.0, 0.0)
 
         # Print outs.
         print_frame_order_2nd_degree(self.f2_half_cone_90_y, "The half cone frame order matrix")
@@ -302,12 +314,8 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_iso_cone_free_rotor_order(self):
         """Check if compile_2nd_matrix_iso_cone_free_rotor() can return the identity matrix for order."""
 
-        # Init.
-        z_axis = array([0, 0, 1], float64)
-        cone_axis = zeros(3, float64)
-
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, z_axis, cone_axis, 0.0, 1.0, 1.0)
+        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 1.0, 1.0)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_order_free_rotor, "Free rotor identity for order")
