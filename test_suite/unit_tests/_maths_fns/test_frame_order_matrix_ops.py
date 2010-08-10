@@ -557,3 +557,71 @@ class Test_frame_order_matrix_ops(TestCase):
             for j in range(9):
                 print "Element %s, %s." % (i, j)
                 self.assertAlmostEqual(f2[i, j], self.I_order_free_rotor[i, j])
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_point1(self):
+        """Check the operation of the compile_2nd_matrix_pseudo_ellipse_free_rotor() function."""
+
+        # The real 2nd degree frame order matrix.
+        real = array(
+                    [[    0.3428,   -0.0193,    0.0389,   -0.0193,    0.3137,   -0.0194,    0.0389,   -0.0194,    0.3435],
+                     [   -0.0225,    0.2313,    0.0034,   -0.1413,    0.0449,    0.2309,   -0.1830,   -0.1412,   -0.0224],
+                     [    0.0417,    0.0091,    0.2142,   -0.1767,   -0.0838,    0.0092,    0.1211,   -0.1770,    0.0421],
+                     [   -0.0225,   -0.1413,   -0.1830,    0.2313,    0.0449,   -0.1412,    0.0034,    0.2309,   -0.0224],
+                     [    0.3124,    0.0418,   -0.0840,    0.0418,    0.3758,    0.0418,   -0.0840,    0.0418,    0.3118],
+                     [   -0.0193,    0.2251,    0.0151,   -0.1476,    0.0389,    0.2251,   -0.1706,   -0.1468,   -0.0196],
+                     [    0.0417,   -0.1767,    0.1211,    0.0091,   -0.0838,   -0.1770,    0.2142,    0.0092,    0.0421],
+                     [   -0.0193,   -0.1476,   -0.1706,    0.2251,    0.0389,   -0.1468,    0.0151,    0.2251,   -0.0196],
+                     [    0.3448,   -0.0225,    0.0450,   -0.0225,    0.3104,   -0.0224,    0.0450,   -0.0224,    0.3447]], float64)
+
+        # Init.
+        x = pi/4.0
+        y = 50.0 / 360.0 * 2.0 * pi
+
+        # Calculate the matrix.
+        f2 = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, self.R_temp, self.out_of_frame_alpha, self.out_of_frame_beta, self.out_of_frame_gamma, x, y)
+
+        # Print out.
+        print_frame_order_2nd_degree(real, "real")
+        print_frame_order_2nd_degree(f2, "calculated")
+        print_frame_order_2nd_degree(real-f2, "difference")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assert_(f2[i, j] - real[i, j] < 1e-3)
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_point2(self):
+        """Check the operation of the compile_2nd_matrix_pseudo_ellipse_free_rotor() function."""
+
+        # The real 2nd degree frame order matrix.
+        real = array(
+                    [[    0.3251,    0.0163,   -0.0324,    0.0163,    0.3493,    0.0164,   -0.0324,    0.0164,    0.3256],
+                     [   -0.0248,    0.1481,   -0.0480,   -0.0500,    0.0492,    0.1475,   -0.1472,   -0.0500,   -0.0244],
+                     [    0.0079,    0.0328,    0.0572,   -0.0661,   -0.0163,    0.0331,    0.0074,   -0.0662,    0.0084],
+                     [   -0.0248,   -0.0500,   -0.1472,    0.1481,    0.0492,   -0.0500,   -0.0480,    0.1475,   -0.0244],
+                     [    0.3289,    0.0081,   -0.0167,    0.0081,    0.3426,    0.0080,   -0.0167,    0.0080,    0.3285],
+                     [    0.0163,    0.0669,    0.1139,   -0.1322,   -0.0324,    0.0662,    0.0157,   -0.1307,    0.0161],
+                     [    0.0079,   -0.0661,    0.0074,    0.0328,   -0.0163,   -0.0662,    0.0572,    0.0331,    0.0084],
+                     [    0.0163,   -0.1322,    0.0157,    0.0669,   -0.0324,   -0.1307,    0.1139,    0.0662,    0.0161],
+                     [    0.3459,   -0.0245,    0.0491,   -0.0245,    0.3081,   -0.0244,    0.0491,   -0.0244,    0.3460]], float64)
+
+        # Init.
+        x = pi/4.0
+        y = 150.0 / 360.0 * 2.0 * pi
+
+        # Calculate the matrix.
+        f2 = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, self.R_temp, self.out_of_frame_alpha, self.out_of_frame_beta, self.out_of_frame_gamma, x, y)
+
+        # Print out.
+        print_frame_order_2nd_degree(real, "real")
+        print_frame_order_2nd_degree(f2, "calculated")
+        print_frame_order_2nd_degree(real-f2, "difference")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assert_(f2[i, j] - real[i, j] < 1e-3)
