@@ -1093,9 +1093,14 @@ def populate_2nd_eigenframe_iso_cone(matrix, tmax, smax):
     cos_tmax = cos(tmax)
     cos_tmax2 = cos_tmax**2
 
+    # Larger factors.
+    fact_sinc_2smax = sinc_2smax*(cos_tmax2 + 4.0*cos_tmax + 7.0) / 24.0
+    fact_cos_tmax2 = (cos_tmax2 + cos_tmax + 4.0) / 12.0
+    fact_cos_tmax = (cos_tmax + 1.0) / 4.0
+
     # Diagonal.
-    matrix[0, 0] = ((sinc_2smax + 2.0)*cos_tmax2 + (4.0*sinc_2smax + 2.0)*cos_tmax + 7.0*sinc_2smax + 8.0) / 24.0
-    matrix[1, 1] = (sinc_2smax*cos_tmax2         + (4.0*sinc_2smax + 6.0)*cos_tmax + 7.0*sinc_2smax + 6.0) / 24.0
+    matrix[0, 0] = fact_sinc_2smax  +  fact_cos_tmax2
+    matrix[1, 1] = fact_sinc_2smax  +  fact_cos_tmax
     matrix[2, 2] = sinc_smax * (2.0*cos_tmax2 + 5.0*cos_tmax + 5.0) / 12.0
     matrix[3, 3] = matrix[1, 1]
     matrix[4, 4] = matrix[0, 0]
@@ -1105,12 +1110,12 @@ def populate_2nd_eigenframe_iso_cone(matrix, tmax, smax):
     matrix[8, 8] = (cos_tmax2 + cos_tmax + 1.0) / 3.0
 
     # Off diagonal set 1.
-    matrix[0, 4] = matrix[4, 0] = (-(sinc_2smax - 2.0)*cos_tmax2 - (4.0*sinc_2smax - 2.0)*cos_tmax - 7.0*sinc_2smax + 8.0) / 24.0
+    matrix[0, 4] = matrix[4, 0] = -fact_sinc_2smax  +  fact_cos_tmax2
     matrix[0, 8] = matrix[8, 0] = -(cos_tmax2 + cos_tmax - 2.0) / 6.0
     matrix[4, 8] = matrix[8, 4] = matrix[0, 8]
 
     # Off diagonal set 2.
-    matrix[1, 3] = matrix[3, 1] = (sinc_2smax*cos_tmax2 + (4.0*sinc_2smax - 6.0)*cos_tmax + 7.0*sinc_2smax - 6.0) / 24.0
+    matrix[1, 3] = matrix[3, 1] = fact_sinc_2smax  -  fact_cos_tmax
     matrix[2, 6] = matrix[6, 2] = sinc_smax * (cos_tmax2 + cos_tmax - 2.0) / 6.0
     matrix[5, 7] = matrix[7, 5] = matrix[2, 6]
 
