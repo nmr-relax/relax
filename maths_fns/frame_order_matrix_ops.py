@@ -151,31 +151,43 @@ def compile_2nd_matrix_pseudo_ellipse(matrix, R, eigen_alpha, eigen_beta, eigen_
     """
 
     # The surface area normalisation factor.
-    fact = 1.0 / (24.0 * sigma_max * pec(theta_x, theta_y))
+    fact = 12.0 * pec(theta_x, theta_y)
+
+    # Invert.
+    if fact == 0.0:
+        fact = 1e100
+    else:
+        fact = 1.0 / fact
+
+    # Sigma_max part.
+    if sigma_max == 0.0:
+        fact2 = 1e100
+    else:
+        fact2 = fact / (2.0 * sigma_max)
 
     # Diagonal.
-    matrix[0, 0] = fact * quad(part_int_daeg2_pseudo_ellipse_00, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[1, 1] = fact * quad(part_int_daeg2_pseudo_ellipse_11, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[2, 2] = fact * quad(part_int_daeg2_pseudo_ellipse_22, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    matrix[0, 0] = fact * (4.0*pi*(sinc(2.0*sigma_max/pi) + 2.0) + quad(part_int_daeg2_pseudo_ellipse_00, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[1, 1] = fact * (4.0*pi*sinc(2.0*sigma_max/pi) + quad(part_int_daeg2_pseudo_ellipse_11, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[2, 2] = fact * 2.0*sinc(sigma_max/pi) * (5.0*pi - quad(part_int_daeg2_pseudo_ellipse_22, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
     matrix[3, 3] = matrix[1, 1]
-    matrix[4, 4] = fact * quad(part_int_daeg2_pseudo_ellipse_44, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[5, 5] = fact * quad(part_int_daeg2_pseudo_ellipse_55, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    matrix[4, 4] = fact * (4.0*pi*(sinc(2.0*sigma_max/pi) + 2.0) + quad(part_int_daeg2_pseudo_ellipse_44, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[5, 5] = fact * 2.0*sinc(sigma_max/pi) * (5.0*pi - quad(part_int_daeg2_pseudo_ellipse_55, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
     matrix[6, 6] = matrix[2, 2]
     matrix[7, 7] = matrix[5, 5]
-    matrix[8, 8] = fact * quad(part_int_daeg2_pseudo_ellipse_88, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    matrix[8, 8] = 4.0 * fact * (2.0*pi - quad(part_int_daeg2_pseudo_ellipse_88, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
 
     # Off diagonal set 1.
-    matrix[0, 4] = fact * quad(part_int_daeg2_pseudo_ellipse_04, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[4, 0] = fact * quad(part_int_daeg2_pseudo_ellipse_40, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[0, 8] = fact * quad(part_int_daeg2_pseudo_ellipse_08, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[8, 0] = fact * quad(part_int_daeg2_pseudo_ellipse_80, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[4, 8] = fact * quad(part_int_daeg2_pseudo_ellipse_48, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[8, 4] = fact * quad(part_int_daeg2_pseudo_ellipse_84, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    matrix[0, 4] = fact * (4.0*pi*(2.0 - sinc(2.0*sigma_max/pi)) + quad(part_int_daeg2_pseudo_ellipse_04, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[4, 0] = fact * (4.0*pi*(2.0 - sinc(2.0*sigma_max/pi)) + quad(part_int_daeg2_pseudo_ellipse_40, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[0, 8] = 4.0 * fact * (2.0*pi - quad(part_int_daeg2_pseudo_ellipse_08, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[8, 0] = fact * (8.0*pi + quad(part_int_daeg2_pseudo_ellipse_80, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[4, 8] = 4.0 * fact * (2.0*pi - quad(part_int_daeg2_pseudo_ellipse_48, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[8, 4] = fact * (8.0*pi - quad(part_int_daeg2_pseudo_ellipse_84, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
 
     # Off diagonal set 2.
-    matrix[1, 3] = matrix[3, 1] = fact * quad(part_int_daeg2_pseudo_ellipse_13, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[2, 6] = matrix[6, 2] = fact * quad(part_int_daeg2_pseudo_ellipse_26, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[5, 7] = matrix[7, 5] = fact * quad(part_int_daeg2_pseudo_ellipse_57, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    matrix[1, 3] = matrix[3, 1] = fact * (4.0*pi*sinc(2.0*sigma_max/pi) + quad(part_int_daeg2_pseudo_ellipse_13, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[2, 6] = matrix[6, 2] = -fact * 4.0 * sinc(sigma_max/pi) * (2.0*pi + quad(part_int_daeg2_pseudo_ellipse_26, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[5, 7] = matrix[7, 5] = -fact * 4.0 * sinc(sigma_max/pi) * (2.0*pi + quad(part_int_daeg2_pseudo_ellipse_57, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
 
     # Average position rotation.
     euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
@@ -416,8 +428,17 @@ def part_int_daeg2_pseudo_ellipse_00(phi, x, y, smax):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
-    # The theta-sigma integral.  
-    return ((cos(phi)**2*sin(2*smax + 2*phi) + cos(phi)**2*sin(2*smax - 2*phi) + 4*cos(phi)**2*smax)*cos(tmax) - 6*cos(phi)*sin(phi)*cos(smax + phi)**2 + 6*cos(phi)*sin(phi)*cos(smax - phi)**2)*sin(tmax)**2 + ((3 - 4*cos(phi)**2)*sin(2*smax + 2*phi) + (3 - 4*cos(phi)**2)*sin(2*smax - 2*phi) + (8*cos(phi)**2 - 12)*smax)*cos(tmax) + (4*cos(phi)**2 - 3)*sin(2*smax + 2*phi) + (4*cos(phi)**2 - 3)*sin(2*smax - 2*phi) + (12 - 8*cos(phi)**2)*smax
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+    sin_tmax2 = sin(tmax)**2
+    cos_phi2 = cos(phi)**2
+
+    # Components.
+    a = sinc(2.0*smax/pi) * (2.0 * sin_tmax2 * cos_phi2 * ((2.0*cos_phi2 - 1.0)*cos(tmax)  -  6.0*(cos_phi2 - 1.0)) - 2.0*cos_tmax * (2.0*cos_phi2*(4.0*cos_phi2 - 5.0) + 3.0))
+    b = 2.0*cos_phi2*cos_tmax*(sin_tmax2 + 2.0) - 6.0*cos_tmax
+
+    # Return the theta-sigma integral.
+    return a + b
 
 
 def part_int_daeg2_pseudo_ellipse_04(phi, x, y, smax):
@@ -438,8 +459,18 @@ def part_int_daeg2_pseudo_ellipse_04(phi, x, y, smax):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
-    # The theta-sigma integral.
-    return (( - cos(phi)**2*sin(2*smax + 2*phi) - cos(phi)**2*sin(2*smax - 2*phi) + 4*cos(phi)**2*smax)*cos(tmax) + 6*cos(phi)*sin(phi)*cos(smax + phi)**2 - 6*cos(phi)*sin(phi)*cos(smax - phi)**2)*sin(tmax)**2 + ((4*cos(phi)**2 - 3)*sin(2*smax + 2*phi) + (4*cos(phi)**2 - 3)*sin(2*smax - 2*phi) + (8*cos(phi)**2 - 12)*smax)*cos(tmax) + (3 - 4*cos(phi)**2)*sin(2*smax + 2*phi) + (3 - 4*cos(phi)**2)*sin(2*smax - 2*phi) + (12 - 8*cos(phi)**2)*smax
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+    sin_tmax2 = sin(tmax)**2
+    cos_phi2 = cos(phi)**2
+    sin_phi2 = sin(phi)**2
+
+    # Components.
+    a = sinc(2.0*smax/pi) * (2.0 * sin_tmax2 * cos_phi2 * ((2.0*sin_phi2 - 1.0)*cos(tmax)  -  6.0*sin_phi2) + 2.0*cos_tmax * (2.0*cos_phi2*(4.0*cos_phi2 - 5.0) + 3.0))
+    b = 2.0*cos_phi2*cos_tmax*(sin_tmax2 + 2.0) - 6.0*cos_tmax
+
+    # Return the theta-sigma integral.
+    return a + b
 
 
 def part_int_daeg2_pseudo_ellipse_08(phi, x, y, smax):
@@ -461,7 +492,7 @@ def part_int_daeg2_pseudo_ellipse_08(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 8*cos(phi)**2*smax*cos(tmax)**3 - 24*cos(phi)**2*smax*cos(tmax) + 16*cos(phi)**2*smax
+    return cos(tmax) * cos(phi)**2 * (sin(tmax)**2 + 2.0)
 
 
 def part_int_daeg2_pseudo_ellipse_11(phi, x, y, smax):
@@ -482,8 +513,16 @@ def part_int_daeg2_pseudo_ellipse_11(phi, x, y, smax):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+    cos_phi2 = cos(phi)**2
+    sin_phi2 = sin(phi)**2
+
+    # The integral.
+    a = sinc(2.0*smax/pi) * ((4.0*cos_phi2*((1.0 - cos_phi2)*cos_tmax + 3.0*(cos_phi2-1)) + 3.0)*sin(tmax)**2 - 16.0*cos_phi2*sin_phi2*cos_tmax) + 3.0*sin(tmax)**2
+
     # The theta-sigma integral.
-    return - (((4*cos(phi)*sin(phi)*cos(smax + phi)**2 - 4*cos(phi)*sin(phi)*cos(smax - phi)**2)*cos(tmax) + (6*sin(phi)**2 - 3)*sin(2*smax + 2*phi) + (6*sin(phi)**2 - 3)*sin(2*smax - 2*phi) - 12*smax)*sin(tmax)**2 + (16*cos(phi)*sin(phi)*cos(smax - phi)**2 - 16*cos(phi)*sin(phi)*cos(smax + phi)**2)*cos(tmax) + 16*cos(phi)*sin(phi)*cos(smax + phi)**2 - 16*cos(phi)*sin(phi)*cos(smax - phi)**2)/(2)
+    return a
 
 
 def part_int_daeg2_pseudo_ellipse_13(phi, x, y, smax):
@@ -504,8 +543,14 @@ def part_int_daeg2_pseudo_ellipse_13(phi, x, y, smax):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+    sin_tmax2 = sin(tmax)**2
+    sinc_2smax = sinc(2.0*smax/pi)
+    cos_sin_phi2 = cos(phi)**2*sin(phi)**2
+
     # The theta-sigma integral.
-    return - (((4*cos(phi)*sin(phi)*cos(smax + phi)**2 - 4*cos(phi)*sin(phi)*cos(smax - phi)**2)*cos(tmax) + (6*sin(phi)**2 - 3)*sin(2*smax + 2*phi) + (6*sin(phi)**2 - 3)*sin(2*smax - 2*phi) + 12*smax)*sin(tmax)**2 + (16*cos(phi)*sin(phi)*cos(smax - phi)**2 - 16*cos(phi)*sin(phi)*cos(smax + phi)**2)*cos(tmax) + 16*cos(phi)*sin(phi)*cos(smax + phi)**2 - 16*cos(phi)*sin(phi)*cos(smax - phi)**2)/(2)
+    return sinc_2smax * (sin_tmax2 * (4*cos_sin_phi2*cos_tmax - 12*cos_sin_phi2 + 3) - 16*cos_sin_phi2*cos_tmax) - 3.0*sin_tmax2
 
 
 def part_int_daeg2_pseudo_ellipse_22(phi, x, y, smax):
@@ -526,8 +571,15 @@ def part_int_daeg2_pseudo_ellipse_22(phi, x, y, smax):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
-    # The theta-sigma integral.
-    return ( - 4*cos(phi)*sin(smax + phi) - 4*cos(phi)*sin(smax - phi))*cos(tmax)**3 + (6*sin(phi)*cos(smax + phi) - 6*sin(phi)*cos(smax - phi))*cos(tmax)**2 + 4*cos(phi)*sin(smax + phi) - 6*sin(phi)*cos(smax + phi) + 4*cos(phi)*sin(smax - phi) + 6*sin(phi)*cos(smax - phi)
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+    cos_phi2 = cos(phi)**2
+
+    # Components.
+    a = 2.0*cos_phi2*cos_tmax**3 + 3.0*(1.0 - cos_phi2)*cos_tmax**2
+
+    # Return the theta-sigma integral.
+    return a
 
 
 def part_int_daeg2_pseudo_ellipse_26(phi, x, y, smax):
@@ -549,7 +601,7 @@ def part_int_daeg2_pseudo_ellipse_26(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return ( - 4*cos(phi)*sin(smax + phi) - 4*cos(phi)*sin(smax - phi))*cos(tmax)**3 + (12*cos(phi)*sin(smax + phi) + 12*cos(phi)*sin(smax - phi))*cos(tmax) - 8*cos(phi)*sin(smax + phi) - 8*cos(phi)*sin(smax - phi)
+    return cos(phi)**2 * (cos(tmax)**3 - 3.0*cos(tmax))
 
 
 def part_int_daeg2_pseudo_ellipse_40(phi, x, y, smax):
@@ -570,8 +622,18 @@ def part_int_daeg2_pseudo_ellipse_40(phi, x, y, smax):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
-    # The theta-sigma integral.
-    return ((sin(phi)**2*sin(2*smax + 2*phi) + sin(phi)**2*sin(2*smax - 2*phi) + 4*sin(phi)**2*smax)*cos(tmax) + 6*cos(phi)*sin(phi)*cos(smax + phi)**2 - 6*cos(phi)*sin(phi)*cos(smax - phi)**2)*sin(tmax)**2 + ((3 - 4*sin(phi)**2)*sin(2*smax + 2*phi) + (3 - 4*sin(phi)**2)*sin(2*smax - 2*phi) + (8*sin(phi)**2 - 12)*smax)*cos(tmax) + (4*sin(phi)**2 - 3)*sin(2*smax + 2*phi) + (4*sin(phi)**2 - 3)*sin(2*smax - 2*phi) + (12 - 8*sin(phi)**2)*smax
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+    sin_tmax2 = sin(tmax)**2
+    cos_phi2 = cos(phi)**2
+    sin_phi2 = sin(phi)**2
+
+    # Components.
+    a = sinc(2.0*smax/pi) * (2.0 * sin_tmax2 * sin_phi2 * ((2.0*cos_phi2 - 1.0)*cos(tmax) - 6.0*cos_phi2) + 2.0*cos_tmax * (2.0*sin_phi2*(4.0*sin_phi2 - 5.0) + 3.0))
+    b = 2.0*sin_phi2*cos_tmax*(sin_tmax2 + 2.0) - 6.0*cos_tmax
+
+    # Return the theta-sigma integral.
+    return a + b
 
 
 def part_int_daeg2_pseudo_ellipse_44(phi, x, y, smax):
@@ -592,8 +654,18 @@ def part_int_daeg2_pseudo_ellipse_44(phi, x, y, smax):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
-    # The theta-sigma integral.
-    return (( - sin(phi)**2*sin(2*smax + 2*phi) - sin(phi)**2*sin(2*smax - 2*phi) + 4*sin(phi)**2*smax)*cos(tmax) - 6*cos(phi)*sin(phi)*cos(smax + phi)**2 + 6*cos(phi)*sin(phi)*cos(smax - phi)**2)*sin(tmax)**2 + ((4*sin(phi)**2 - 3)*sin(2*smax + 2*phi) + (4*sin(phi)**2 - 3)*sin(2*smax - 2*phi) + (8*sin(phi)**2 - 12)*smax)*cos(tmax) + (3 - 4*sin(phi)**2)*sin(2*smax + 2*phi) + (3 - 4*sin(phi)**2)*sin(2*smax - 2*phi) + (12 - 8*sin(phi)**2)*smax
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+    sin_tmax2 = sin(tmax)**2
+    cos_phi2 = cos(phi)**2
+    sin_phi2 = sin(phi)**2
+
+    # Components.
+    a = sinc(2.0*smax/pi) * (2.0 * sin_tmax2 * sin_phi2 * ((2.0*sin_phi2 - 1.0)*cos(tmax)  +  6.0*cos_phi2) - 2.0*cos_tmax * (2.0*sin_phi2*(4.0*sin_phi2 - 5.0) + 3.0))
+    b = 2.0*sin_phi2*cos_tmax*(sin_tmax2 + 2.0) - 6.0*cos_tmax
+
+    # Return the theta-sigma integral.
+    return a + b
 
 
 def part_int_daeg2_pseudo_ellipse_48(phi, x, y, smax):
@@ -615,7 +687,7 @@ def part_int_daeg2_pseudo_ellipse_48(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 8*sin(phi)**2*smax*cos(tmax)**3 - 24*sin(phi)**2*smax*cos(tmax) + 16*sin(phi)**2*smax
+    return cos(tmax) * sin(phi)**2 * (sin(tmax)**2 + 2.0)
 
 
 def part_int_daeg2_pseudo_ellipse_55(phi, x, y, smax):
@@ -636,8 +708,12 @@ def part_int_daeg2_pseudo_ellipse_55(phi, x, y, smax):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
-    # The theta-sigma integral.
-    return (4*sin(phi)*cos(smax + phi) - 4*sin(phi)*cos(smax - phi))*cos(tmax)**3 + ( - 6*cos(phi)*sin(smax + phi) - 6*cos(phi)*sin(smax - phi))*cos(tmax)**2 + 6*cos(phi)*sin(smax + phi) - 4*sin(phi)*cos(smax + phi) + 6*cos(phi)*sin(smax - phi) + 4*sin(phi)*cos(smax - phi)
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+    sin_phi2 = sin(phi)**2
+
+    # Return the theta-sigma integral.
+    return 2.0*sin_phi2*cos_tmax**3 + 3.0*(1.0 - sin_phi2)*cos_tmax**2
 
 
 def part_int_daeg2_pseudo_ellipse_57(phi, x, y, smax):
@@ -659,7 +735,7 @@ def part_int_daeg2_pseudo_ellipse_57(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return (4*sin(phi)*cos(smax + phi) - 4*sin(phi)*cos(smax - phi))*cos(tmax)**3 + (12*sin(phi)*cos(smax - phi) - 12*sin(phi)*cos(smax + phi))*cos(tmax) + 8*sin(phi)*cos(smax + phi) - 8*sin(phi)*cos(smax - phi)
+    return sin(phi)**2 * (cos(tmax)**3 - 3.0*cos(tmax))
 
 
 def part_int_daeg2_pseudo_ellipse_80(phi, x, y, smax):
@@ -680,8 +756,13 @@ def part_int_daeg2_pseudo_ellipse_80(phi, x, y, smax):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+    sin_tmax2 = sin(tmax)**2
+    cos_phi2 = cos(phi)**2
+
     # The theta-sigma integral.
-    return (sin(2*smax + 2*phi) + sin(2*smax - 2*phi) + 4*smax)*cos(tmax)**3 + ( - 3*sin(2*smax + 2*phi) - 3*sin(2*smax - 2*phi) - 12*smax)*cos(tmax) + 2*sin(2*smax + 2*phi) + 2*sin(2*smax - 2*phi) + 8*smax
+    return sinc(2.0*smax/pi) * (2.0*(1.0 - 2.0*cos_phi2)*cos_tmax*(sin_tmax2 + 2.0)) + 2.0*cos_tmax**3 - 6.0*cos_tmax
 
 
 def part_int_daeg2_pseudo_ellipse_84(phi, x, y, smax):
@@ -702,8 +783,13 @@ def part_int_daeg2_pseudo_ellipse_84(phi, x, y, smax):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+    sin_tmax2 = sin(tmax)**2
+    cos_phi2 = cos(phi)**2
+
     # The theta-sigma integral.
-    return (sin(2*smax + 2*phi) + sin(2*smax - 2*phi) - 4*smax)*cos(tmax)*sin(tmax)**2 + (2*sin(2*smax + 2*phi) + 2*sin(2*smax - 2*phi) - 8*smax)*cos(tmax) - 2*sin(2*smax + 2*phi) - 2*sin(2*smax - 2*phi) + 8*smax
+    return sinc(2.0*smax/pi) * (2.0*(1.0 - 2.0*cos_phi2)*cos_tmax*(sin_tmax2 + 2.0)) - 2.0*cos_tmax**3 + 6.0*cos_tmax
 
 
 def part_int_daeg2_pseudo_ellipse_88(phi, x, y, smax):
@@ -725,7 +811,7 @@ def part_int_daeg2_pseudo_ellipse_88(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return 8*smax - 8*smax*cos(tmax)**3
+    return cos(tmax)**3
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_00(phi, x, y):
