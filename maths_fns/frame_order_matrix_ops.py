@@ -1105,7 +1105,7 @@ def populate_2nd_eigenframe_iso_cone(matrix, tmax, smax):
     matrix[8, 8] = (cos_tmax2 + cos_tmax + 1.0) / 3.0
 
     # Off diagonal set 1.
-    matrix[0, 4] = matrix[4, 0] = (-(sinc_2smax + 2.0)*cos_tmax2 + (4.0*sinc_2smax - 2.0)*cos_tmax - 7.0*sinc_2smax + 8.0) / 24.0
+    matrix[0, 4] = matrix[4, 0] = (-(sinc_2smax - 2.0)*cos_tmax2 - (4.0*sinc_2smax - 2.0)*cos_tmax - 7.0*sinc_2smax + 8.0) / 24.0
     matrix[0, 8] = matrix[8, 0] = -(cos_tmax2 + cos_tmax - 2.0) / 6.0
     matrix[4, 8] = matrix[8, 4] = matrix[0, 8]
 
