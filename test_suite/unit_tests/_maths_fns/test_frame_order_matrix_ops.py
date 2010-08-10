@@ -374,12 +374,13 @@ class Test_frame_order_matrix_ops(TestCase):
         # Print out.
         print_frame_order_2nd_degree(real, "real")
         print_frame_order_2nd_degree(f2, "calculated")
+        print_frame_order_2nd_degree(real-f2, "difference")
 
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
-                self.assertAlmostEqual(f2[i, j], real[i, j], 4)
+                print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
+                self.assert_(f2[i, j] - real[i, j] < 1e-4)
 
 
     def test_compile_2nd_matrix_pseudo_ellipse_point2(self):
@@ -408,12 +409,13 @@ class Test_frame_order_matrix_ops(TestCase):
         # Print out.
         print_frame_order_2nd_degree(real, "real")
         print_frame_order_2nd_degree(f2, "calculated")
+        print_frame_order_2nd_degree(real-f2, "difference")
 
         # Check the values.
         for i in range(9):
             for j in range(9):
-                print "Element %s, %s." % (i, j)
-                self.assertAlmostEqual(f2[i, j], real[i, j], 3)
+                print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
+                self.assert_(f2[i, j] - real[i, j] < 1e-3)
 
 
     def test_compile_2nd_matrix_pseudo_ellipse_point3(self):
@@ -442,12 +444,13 @@ class Test_frame_order_matrix_ops(TestCase):
         # Print out.
         print_frame_order_2nd_degree(real, "real")
         print_frame_order_2nd_degree(f2, "calculated")
+        print_frame_order_2nd_degree(real-f2, "difference")
 
         # Check the values.
         for i in range(9):
             for j in range(9):
                 print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
-                self.assertAlmostEqual(f2[i, j], real[i, j], 2)
+                self.assert_(f2[i, j] - real[i, j] < 1e-3)
 
 
     def test_compile_2nd_matrix_pseudo_ellipse_disorder(self):
