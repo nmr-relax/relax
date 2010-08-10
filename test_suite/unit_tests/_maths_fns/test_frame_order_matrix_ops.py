@@ -29,6 +29,7 @@ from unittest import TestCase
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.frame_order_matrix_ops import *
 from maths_fns.kronecker_product import transpose_23
+from maths_fns.order_parameters import iso_cone_theta_to_S
 
 
 class Test_frame_order_matrix_ops(TestCase):
@@ -239,11 +240,29 @@ class Test_frame_order_matrix_ops(TestCase):
 
         # Calculate the frame order matrix.
         f2a = compile_2nd_matrix_iso_cone(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6, pi)
-        f2b = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 1.0, pi/4.6)
+        f2b = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 1.0, iso_cone_theta_to_S(pi/4.6))
 
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Isotropic cone frame order")
         print_frame_order_2nd_degree(f2b, "Free rotor isotropic cone frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2a[i, j], f2b[i, j])
+
+
+    def test_compile_2nd_matrix_iso_cone_restriction_test2(self):
+        """Check if compile_2nd_matrix_iso_cone() can approximate compile_2nd_matrix_iso_cone_torsionless()."""
+
+        # Calculate the frame order matrix.
+        f2a = compile_2nd_matrix_iso_cone(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6, 0)
+        f2b = compile_2nd_matrix_iso_cone_torsionless(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6)
+
+        # Print outs.
+        print_frame_order_2nd_degree(f2a, "Isotropic cone frame order")
+        print_frame_order_2nd_degree(f2b, "Torsionless isotropic cone frame order")
 
         # Check the values.
         for i in range(9):
@@ -499,6 +518,114 @@ class Test_frame_order_matrix_ops(TestCase):
                 self.assertAlmostEqual(f2[i, j], self.I_order[i, j])
 
 
+    def test_compile_2nd_matrix_pseudo_ellipse_restriction_test(self):
+        """Check if compile_2nd_matrix_pseudo_ellipse() can approximate compile_2nd_matrix_pseudo_ellipse_free_rotor()."""
+
+        # Calculate the frame order matrix.
+        f2a = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/1.6, pi/5.8, pi)
+        f2b = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/1.6, pi/5.8)
+
+        # Print outs.
+        print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
+        print_frame_order_2nd_degree(f2b, "Free rotor pseudo-ellipse frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2a[i, j], f2b[i, j])
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_restriction_test2(self):
+        """Check if compile_2nd_matrix_pseudo_ellipse() can approximate a pi/2 rotated compile_2nd_matrix_pseudo_ellipse_free_rotor()."""
+
+        # Calculate the frame order matrix.
+        f2a = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/1.6, pi/5.8, pi)
+        f2b = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, self.R_temp, pi/2, 0.0, 0.0, pi/5.8, pi/1.6)
+
+        # Print outs.
+        print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
+        print_frame_order_2nd_degree(f2b, "pi/2 rotated free rotor pseudo-ellipse frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2a[i, j], f2b[i, j])
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_restriction_test3(self):
+        """Check if compile_2nd_matrix_pseudo_ellipse() can approximate compile_2nd_matrix_pseudo_ellipse_torsionless()."""
+
+        # Calculate the frame order matrix.
+        f2a = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/2.1, pi/4.6, 0)
+        f2a = compile_2nd_matrix_pseudo_ellipse_torsionless(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/2.1, pi/4.6)
+
+        # Print outs.
+        print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
+        print_frame_order_2nd_degree(f2b, "Torsionless pseudo-ellipse frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2a[i, j], f2b[i, j])
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_restriction_test4(self):
+        """Check if compile_2nd_matrix_pseudo_ellipse() can approximate compile_2nd_matrix_iso_cone()."""
+
+        # Calculate the frame order matrix.
+        f2a = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6, pi/4.6, 0.2)
+        f2b = compile_2nd_matrix_iso_cone(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6, 0.2)
+
+        # Print outs.
+        print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
+        print_frame_order_2nd_degree(f2b, "Isotropic cone frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2a[i, j], f2b[i, j])
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_restriction_test5(self):
+        """Check if compile_2nd_matrix_pseudo_ellipse() can approximate compile_2nd_matrix_iso_cone_free_rotor()."""
+
+        # Calculate the frame order matrix.
+        f2a = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6, pi/4.6, pi)
+        f2b = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 1.0, iso_cone_theta_to_S(pi/4.6))
+
+        # Print outs.
+        print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
+        print_frame_order_2nd_degree(f2b, "Free rotor isotropic cone frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2a[i, j], f2b[i, j])
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_restriction_test6(self):
+        """Check if compile_2nd_matrix_pseudo_ellipse() can approximate compile_2nd_matrix_iso_cone_torsionless()."""
+
+        # Calculate the frame order matrix.
+        f2a = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/8.6, pi/8.6, 0)
+        f2a = compile_2nd_matrix_iso_cone_torsionless(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/8.6)
+
+        # Print outs.
+        print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
+        print_frame_order_2nd_degree(f2b, "Torsionless isotropic cone frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2a[i, j], f2b[i, j])
+
+
     def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_disorder(self):
         """Check if compile_2nd_matrix_pseudo_ellipse_free_rotor() can return the identity matrix for disorder."""
 
@@ -633,3 +760,39 @@ class Test_frame_order_matrix_ops(TestCase):
             for j in range(9):
                 print "Element %s, %s." % (i, j)
                 self.assert_(f2[i, j] - real[i, j] < 1e-3)
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_restriction_test(self):
+        """Check if compile_2nd_matrix_pseudo_ellipse_free_rotor() can approximate compile_2nd_matrix_iso_cone_free_rotor()."""
+
+        # Calculate the frame order matrix.
+        f2a = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6, pi/4.6)
+        f2b = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 1.0, iso_cone_theta_to_S(pi/4.6))
+
+        # Print outs.
+        print_frame_order_2nd_degree(f2a, "Free rotor pseudo-ellipse frame order")
+        print_frame_order_2nd_degree(f2b, "Free rotor isotropic cone frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2a[i, j], f2b[i, j])
+
+
+    def test_compile_2nd_matrix_pseudo_ellipse_torsionless_restriction_test(self):
+        """Check if compile_2nd_matrix_pseudo_ellipse_torsionless() can approximate compile_2nd_matrix_iso_cone_torsionless()."""
+
+        # Calculate the frame order matrix.
+        f2a = compile_2nd_matrix_pseudo_ellipse_torsionless(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6, pi/4.6)
+        f2b = compile_2nd_matrix_iso_cone_torsionless(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6)
+
+        # Print outs.
+        print_frame_order_2nd_degree(f2a, "Torsionless pseudo-ellipse frame order")
+        print_frame_order_2nd_degree(f2b, "Torsionless isotropic cone frame order")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assertAlmostEqual(f2a[i, j], f2b[i, j])
