@@ -559,7 +559,7 @@ class Test_frame_order_matrix_ops(TestCase):
 
         # Calculate the frame order matrix.
         f2a = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/2.1, pi/4.6, 0)
-        f2a = compile_2nd_matrix_pseudo_ellipse_torsionless(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/2.1, pi/4.6)
+        f2b = compile_2nd_matrix_pseudo_ellipse_torsionless(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/2.1, pi/4.6)
 
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
