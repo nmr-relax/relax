@@ -799,3 +799,48 @@ class Test_frame_order_matrix_ops(TestCase):
             for j in range(9):
                 print "Element %s, %s." % (i, j)
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
+
+
+    def test_reduce_alignment_tensor_order(self):
+        """Test the alignment tensor reduction for the order identity matrix."""
+
+        # The tensors.
+        A = array([1, 2, 3, 4, 5], float64)
+        red = zeros(5, float64)
+
+        # Reduce.
+        reduce_alignment_tensor(self.I_order, A, red)
+
+        # Check.
+        for i in range(5):
+            self.assertEqual(A[i], red[i])
+
+
+    def test_reduce_alignment_tensor_disorder(self):
+        """Test the alignment tensor reduction for the order identity matrix."""
+
+        # The tensors.
+        A = array([1, 2, 3, 4, 5], float64)
+        red = zeros(5, float64)
+
+        # Reduce.
+        reduce_alignment_tensor(self.I_disorder, A, red)
+
+        # Check.
+        for i in range(5):
+            self.assertEqual(red[i], 0.0)
+
+
+    def test_reduce_alignment_tensor_half_cone(self):
+        """Test the alignment tensor reduction for the order identity matrix."""
+
+        # The tensors.
+        A = array([1, 2, 3, 4, 5], float64)
+        red = zeros(5, float64)
+
+        # Reduce.
+        reduce_alignment_tensor(self.f2_half_cone, A, red)
+
+        # Check.
+        for i in range(5):
+            self.assertEqual(red[i], 0.0)
