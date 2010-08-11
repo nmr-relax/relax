@@ -60,6 +60,54 @@ def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
     matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_zz, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
 
 
+def compile_2nd_matrix_free_rotor(matrix, R, z_axis, axis, theta_axis, phi_axis):
+    """Generate the rotated 2nd degree Frame Order matrix for the free rotor model.
+
+    The rotor axis is assumed to be parallel to the z-axis in the eigenframe.
+
+
+    @param matrix:      The Frame Order matrix, 2nd degree to be populated.
+    @type matrix:       numpy 9D, rank-2 array
+    @param R:           The rotation matrix to be populated.
+    @type R:            numpy 3D, rank-2 array
+    @param z_axis:      The molecular frame z-axis from which the rotor axis is rotated from.
+    @type z_axis:       numpy 3D, rank-1 array
+    @param axis:        The storage structure for the axis.
+    @type axis:         numpy 3D, rank-1 array
+    @param theta_axis:  The axis polar angle.
+    @type theta_axis:   float
+    @param phi_axis:    The axis azimuthal angle.
+    @type phi_axis:     float
+    """
+
+    # Zeros.
+    for i in range(9):
+        for j in range(9):
+            matrix[i, j] = 0.0
+
+    # Diagonal.
+    matrix[0, 0] = 0.5
+    matrix[1, 1] = 0.5
+    matrix[3, 3] = 0.5
+    matrix[4, 4] = 0.5
+    matrix[8, 8] = 1
+
+    # Off diagonal set 1.
+    matrix[0, 4] = matrix[4, 0] = 0.5
+
+    # Off diagonal set 2.
+    matrix[1, 3] = matrix[3, 1] = -0.5
+
+    # Generate the cone axis from the spherical angles.
+    spherical_to_cartesian([1.0, theta_axis, phi_axis], axis)
+
+    # Average position rotation.
+    two_vect_to_R(z_axis, axis, R)
+
+    # Rotate and return the frame order matrix.
+    return rotate_daeg(matrix, R)
+
+
 def compile_2nd_matrix_iso_cone(matrix, R, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, sigma_max):
     """Generate the rotated 2nd degree Frame Order matrix for the isotropic cone.
 
