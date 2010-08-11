@@ -382,7 +382,7 @@ class Test_frame_order_matrix_ops(TestCase):
         for i in range(9):
             for j in range(9):
                 print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
-                self.assert_(f2[i, j] - real[i, j] < 1e-4)
+                self.assert_(abs(f2[i, j] - real[i, j) < 1e-4)
 
 
     def test_compile_2nd_matrix_pseudo_ellipse_point2(self):
@@ -417,7 +417,7 @@ class Test_frame_order_matrix_ops(TestCase):
         for i in range(9):
             for j in range(9):
                 print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
-                self.assert_(f2[i, j] - real[i, j] < 1e-3)
+                self.assert_(abs(f2[i, j] - real[i, j) < 1e-3)
 
 
     def test_compile_2nd_matrix_pseudo_ellipse_point3(self):
@@ -452,7 +452,7 @@ class Test_frame_order_matrix_ops(TestCase):
         for i in range(9):
             for j in range(9):
                 print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
-                self.assert_(f2[i, j] - real[i, j] < 1e-3)
+                self.assert_(abs(f2[i, j] - real[i, j) < 1e-3)
 
 
     def test_compile_2nd_matrix_pseudo_ellipse_disorder(self):
@@ -736,7 +736,7 @@ class Test_frame_order_matrix_ops(TestCase):
         for i in range(9):
             for j in range(9):
                 print "Element %s, %s." % (i, j)
-                self.assert_(f2[i, j] - real[i, j] < 1e-3)
+                self.assert_(abs(f2[i, j] - real[i, j) < 1e-3)
 
 
     def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_point2(self):
@@ -770,7 +770,7 @@ class Test_frame_order_matrix_ops(TestCase):
         for i in range(9):
             for j in range(9):
                 print "Element %s, %s." % (i, j)
-                self.assert_(f2[i, j] - real[i, j] < 1e-3)
+                self.assert_(abs(f2[i, j] - real[i, j) < 1e-3)
 
 
     def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_restriction_test(self):
