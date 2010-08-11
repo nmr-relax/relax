@@ -354,6 +354,64 @@ def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, R, eigen_alpha, eigen_
     return rotate_daeg(matrix, R)
 
 
+def compile_2nd_matrix_rotor(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, smax):
+    """Generate the rotated 2nd degree Frame Order matrix for the rotor model.
+
+    The cone axis is assumed to be parallel to the z-axis in the eigenframe.
+
+
+    @param matrix:      The Frame Order matrix, 2nd degree to be populated.
+    @type matrix:       numpy 9D, rank-2 array
+    @param R:           The rotation matrix to be populated.
+    @type R:            numpy 3D, rank-2 array
+    @param z_axis:      The molecular frame z-axis from which the cone axis is rotated from.
+    @type z_axis:       numpy 3D, rank-1 array
+    @param cone_axis:   The storage structure for the cone axis.
+    @type cone_axis:    numpy 3D, rank-1 array
+    @param theta_axis:  The cone axis polar angle.
+    @type theta_axis:   float
+    @param phi_axis:    The cone axis azimuthal angle.
+    @type phi_axis:     float
+    @param smax:        The maximum torsion angle.
+    @type smax:         float
+    """
+
+    # Zeros.
+    for i in range(9):
+        for j in range(9):
+            matrix[i, j] = 0.0
+
+    # Repetitive trig calculations.
+    sinc_smax = sinc(smax/pi)
+    sinc_2smax = sinc(2.0*smax/pi)
+
+    # Diagonal.
+    matrix[0, 0] = (sinc_2smax + 1.0) / 2.0
+    matrix[1, 1] = matrix[0, 0]
+    matrix[2, 2] = sinc_smax
+    matrix[3, 3] = matrix[0, 0]
+    matrix[4, 4] = matrix[0, 0]
+    matrix[5, 5] = matrix[2, 2]
+    matrix[6, 6] = matrix[2, 2]
+    matrix[7, 7] = matrix[2, 2]
+    matrix[8, 8] = 1.0
+
+    # Off diagonal set 1.
+    matrix[0, 4] = matrix[4, 0] = -(sinc_2smax - 1.0) / 2.0
+
+    # Off diagonal set 2.
+    matrix[1, 3] = matrix[3, 1] = -matrix[0, 4]
+
+    # Generate the cone axis from the spherical angles.
+    spherical_to_cartesian([1.0, theta_axis, phi_axis], cone_axis)
+
+    # Average position rotation.
+    two_vect_to_R(z_axis, cone_axis, R)
+
+    # Rotate and return the frame order matrix.
+    return rotate_daeg(matrix, R)
+
+
 def daeg_to_rotational_superoperator(daeg, Rsuper):
     """Convert the frame order matrix (daeg) to the rotational superoperator.
 

@@ -367,6 +367,30 @@ class Frame_order:
         return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
 
 
+    def func_rotor(self, params):
+        """Target function for rotor model optimisation.
+
+        This function optimises against alignment tensors.  The Euler angles for the tensor rotation are the first 3 parameters optimised in this model, followed by the polar and azimuthal angles of the cone axis and the torsion angle restriction.
+
+        @param params:  The vector of parameter values.  These are the tensor rotation angles {alpha, beta, gamma, theta, phi, sigma_max}.
+        @type params:   list of float
+        @return:        The chi-squared or SSE value.
+        @rtype:         float
+        """
+
+        # Unpack the parameters.
+        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params
+
+        # Generate the 2nd degree Frame Order super matrix.
+        frame_order_2nd = compile_2nd_matrix_rotor(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, axis_theta, axis_phi, sigma_max)
+
+        # Reduce and rotate the tensors.
+        self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
+
+        # Return the chi-squared value.
+        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+
+
     def reduce_and_rot(self, ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):
         """Reduce and rotate the alignments tensors using the frame order matrix and Euler angles.
 

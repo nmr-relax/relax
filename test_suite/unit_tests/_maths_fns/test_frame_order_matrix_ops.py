@@ -811,6 +811,39 @@ class Test_frame_order_matrix_ops(TestCase):
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
+    def test_compile_2nd_matrix_rotor(self):
+        """Check the operation of the compile_2nd_matrix_rotor() function."""
+
+        # The real 2nd degree frame order matrix.
+        real = array(
+                    [[    0.7069,   -0.0002,         0,   -0.0002,    0.2931,         0,         0,         0,         0],
+                     [    0.0002,    0.7069,         0,   -0.2931,   -0.0002,         0,         0,         0,         0],
+                     [         0,         0,    0.8271,         0,         0,   -0.0003,         0,         0,         0],
+                     [    0.0002,   -0.2931,         0,    0.7069,   -0.0002,         0,         0,         0,         0],
+                     [    0.2931,    0.0002,         0,    0.0002,    0.7069,         0,         0,         0,         0],
+                     [         0,         0,    0.0003,         0,         0,    0.8271,         0,         0,         0],
+                     [         0,         0,         0,         0,         0,         0,    0.8271,   -0.0003,         0],
+                     [         0,         0,         0,         0,         0,         0,    0.0003,    0.8271,         0],
+                     [         0,         0,         0,         0,         0,         0,         0,         0,    1.0000]])
+
+        # Init.
+        sigma_max = 60.0 / 180.0 * pi
+
+        # Calculate the matrix.
+        f2 = compile_2nd_matrix_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 0.0, sigma_max)
+
+        # Print out.
+        print_frame_order_2nd_degree(real, "real")
+        print_frame_order_2nd_degree(f2, "calculated")
+        print_frame_order_2nd_degree(real-f2, "difference")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s." % (i, j)
+                self.assert_(abs(f2[i, j] - real[i, j]) < 1e-3)
+
+
     def test_reduce_alignment_tensor_order(self):
         """Test the alignment tensor reduction for the order identity matrix."""
 
