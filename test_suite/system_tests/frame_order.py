@@ -366,6 +366,166 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.ave_pos_gamma, 0.64895449611163691, msg=self.mesg)
 
 
+    def test_parametric_restriction_iso_cone_to_iso_cone_free_rotor(self):
+        """Parametric restriction of the isotropic cone to the free rotor isotropic cone frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'iso_cone_to_iso_cone_free_rotor.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(0.18413354445)
+        chi2_ref.append(0.03689713827)
+        chi2_ref.append(0.0239347013157)
+        chi2_ref.append(0.108719260934)
+        chi2_ref.append(0.199246049496)
+        chi2_ref.append(0.131462939327)
+        chi2_ref.append(0.367555601906)
+        chi2_ref.append(0.194519455046)
+        chi2_ref.append(0.223512145394)
+        chi2_ref.append(0.23292851227)
+        chi2_ref.append(0.251430467176)
+        chi2_ref.append(0.28407864863)
+        chi2_ref.append(0.265629320304)
+        chi2_ref.append(0.229025747836)
+        chi2_ref.append(0.188546108192)
+        chi2_ref.append(0.154782134722)
+        chi2_ref.append(0.161386403703)
+        chi2_ref.append(0.156149576789)
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
+    def test_parametric_restriction_pseudo_ellipse_to_iso_cone(self):
+        """Parametric restriction of the pseudo-ellipse to the isotropic cone frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_to_iso_cone.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(0.131890484593)
+        chi2_ref.append(0.0539383731611)
+        chi2_ref.append(0.0135056297016)
+        chi2_ref.append(0.0163432453475)
+        chi2_ref.append(0.0775570503917)
+        chi2_ref.append(0.0535055367493)
+        chi2_ref.append(0.0994746492483)
+        chi2_ref.append(0.174830826376)
+        chi2_ref.append(0.193036744906)
+        chi2_ref.append(0.181480810794)
+        chi2_ref.append(0.215863920824)
+        chi2_ref.append(0.170088692559)
+        chi2_ref.append(0.152634493383)
+        chi2_ref.append(0.168711907446)
+        chi2_ref.append(0.168405354086)
+        chi2_ref.append(0.247439860108)
+        chi2_ref.append(0.143487410228)
+        chi2_ref.append(0.148318989268)
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
+    def test_parametric_restriction_pseudo_ellipse_to_iso_cone_free_rotor(self):
+        """Parametric restriction of the pseudo-ellipse to the free rotor isotropic cone frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_to_iso_cone_free_rotor.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(0.18413354445)
+        chi2_ref.append(0.03689713827)
+        chi2_ref.append(0.0239347013157)
+        chi2_ref.append(0.108719260934)
+        chi2_ref.append(0.199246049496)
+        chi2_ref.append(0.131462939327)
+        chi2_ref.append(0.367555601906)
+        chi2_ref.append(0.194519455046)
+        chi2_ref.append(0.223512145394)
+        chi2_ref.append(0.23292851227)
+        chi2_ref.append(0.251430467176)
+        chi2_ref.append(0.28407864863)
+        chi2_ref.append(0.265629320304)
+        chi2_ref.append(0.229025747836)
+        chi2_ref.append(0.188546108192)
+        chi2_ref.append(0.154782134722)
+        chi2_ref.append(0.161386403703)
+        chi2_ref.append(0.156149576789)
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
+    def test_parametric_restriction_pseudo_ellipse_free_rotor_to_iso_cone(self):
+        """Parametric restriction of the pseudo-ellipse to the isotropic cone frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_free_rotor_to_iso_cone.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(16957.4964577)
+        chi2_ref.append(15727.13869)
+        chi2_ref.append(13903.0982799)
+        chi2_ref.append(11719.9390681)
+        chi2_ref.append(9488.44060873)
+        chi2_ref.append(7425.57820642)
+        chi2_ref.append(5713.6467735)
+        chi2_ref.append(4393.3273949)
+        chi2_ref.append(3452.97770868)
+        chi2_ref.append(2771.90973598)
+        chi2_ref.append(2247.44444894)
+        chi2_ref.append(1788.58977266)
+        chi2_ref.append(1348.38250916)
+        chi2_ref.append(921.060703519)
+        chi2_ref.append(539.03217075)
+        chi2_ref.append(244.341444558)
+        chi2_ref.append(58.4566671195)
+        chi2_ref.append(0.148318989268)
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
+    def test_parametric_restriction_pseudo_ellipse_free_rotor_to_iso_cone_free_rotor(self):
+        """Parametric restriction of the free rotor pseudo-ellipse to the free rotor isotropic cone frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_free_rotor_to_iso_cone_free_rotor.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(0.18413354445)
+        chi2_ref.append(0.03689713827)
+        chi2_ref.append(0.0239347013157)
+        chi2_ref.append(0.108719260934)
+        chi2_ref.append(0.199246049496)
+        chi2_ref.append(0.131462939327)
+        chi2_ref.append(0.367555601906)
+        chi2_ref.append(0.194519455046)
+        chi2_ref.append(0.223512145394)
+        chi2_ref.append(0.23292851227)
+        chi2_ref.append(0.251430467176)
+        chi2_ref.append(0.28407864863)
+        chi2_ref.append(0.265629320304)
+        chi2_ref.append(0.229025747836)
+        chi2_ref.append(0.188546108192)
+        chi2_ref.append(0.154782134722)
+        chi2_ref.append(0.161386403703)
+        chi2_ref.append(0.156149576789)
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
     def test_pseudo_ellipse(self):
         """Test the pseudo-ellipse target function."""
 
