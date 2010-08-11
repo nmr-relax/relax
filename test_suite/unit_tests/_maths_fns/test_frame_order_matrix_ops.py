@@ -755,7 +755,7 @@ class Test_frame_order_matrix_ops(TestCase):
                      [    0.3459,   -0.0245,    0.0491,   -0.0245,    0.3081,   -0.0244,    0.0491,   -0.0244,    0.3460]], float64)
 
         # Init.
-        x = pi/4.0
+        x = pi / 4.0
         y = 150.0 / 360.0 * 2.0 * pi
 
         # Calculate the matrix.
@@ -770,7 +770,7 @@ class Test_frame_order_matrix_ops(TestCase):
         for i in range(9):
             for j in range(9):
                 print "Element %s, %s." % (i, j)
-                self.assert_(abs(f2[i, j] - real[i, j]) < 1e-3)
+                self.assert_(abs(f2[i, j] - real[i, j]) < 1e-2)
 
 
     def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_restriction_test(self):
