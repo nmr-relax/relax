@@ -326,6 +326,38 @@ class Frame_order(SystemTestCase):
                 self.assertAlmostEqual(ds.chi2[j][i], chi2_ref[j][i])
 
 
+    def test_model_pseudo_ellipse_torsionless(self):
+        """Test the pseudo-ellipse frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'pseudo_ellipse_torsionless.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(0.340228489225)
+        chi2_ref.append(0.260847963487)
+        chi2_ref.append(0.250610744982)
+        chi2_ref.append(0.228947619476)
+        chi2_ref.append(0.251996758815)
+        chi2_ref.append(0.238724080817)
+        chi2_ref.append(0.182383602599)
+        chi2_ref.append(0.172830852017)
+        chi2_ref.append(0.159757813028)
+        chi2_ref.append(0.173833227524)
+        chi2_ref.append(0.156168102428)
+        chi2_ref.append(0.171406869781)
+        chi2_ref.append(0.202653838515)
+        chi2_ref.append(0.198919351788)
+        chi2_ref.append(0.169463187543)
+        chi2_ref.append(0.156867571611)
+        chi2_ref.append(0.146139931983)
+        chi2_ref.append(0.13307108095 )
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
     def test_opendx_map(self):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
