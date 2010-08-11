@@ -129,6 +129,68 @@ def compile_2nd_matrix_iso_cone_free_rotor(matrix, R, z_axis, cone_axis, theta_a
     return rotate_daeg(matrix, R)
 
 
+def compile_2nd_matrix_iso_cone_torsionless(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, cone_theta):
+    """Generate the rotated 2nd degree Frame Order matrix for the torsionless isotropic cone.
+
+    The cone axis is assumed to be parallel to the z-axis in the eigenframe.
+
+
+    @param matrix:      The Frame Order matrix, 2nd degree to be populated.
+    @type matrix:       numpy 9D, rank-2 array
+    @param R:           The rotation matrix to be populated.
+    @type R:            numpy 3D, rank-2 array
+    @param z_axis:      The molecular frame z-axis from which the cone axis is rotated from.
+    @type z_axis:       numpy 3D, rank-1 array
+    @param cone_axis:   The storage structure for the cone axis.
+    @type cone_axis:    numpy 3D, rank-1 array
+    @param theta_axis:  The cone axis polar angle.
+    @type theta_axis:   float
+    @param phi_axis:    The cone axis azimuthal angle.
+    @type phi_axis:     float
+    @param cone_theta:  The cone opening angle.
+    @type cone_theta:   float
+    """
+
+    # Zeros.
+    for i in range(9):
+        for j in range(9):
+            matrix[i, j] = 0.0
+
+    # Repetitive trig calculations.
+    cos_tmax = cos(cone_theta)
+    cos_tmax2 = cos_tmax**2
+
+    # Diagonal.
+    matrix[0, 0] = (3.0*cos_tmax2 + 6.0*cos_tmax + 15.0) / 24.0
+    matrix[1, 1] = (cos_tmax2 + 10.0*cos_tmax + 13.0) / 24.0
+    matrix[2, 2] = (4.0*cos_tmax2 + 10.0*cos_tmax + 10.0) / 24.0
+    matrix[3, 3] = matrix[1, 1]
+    matrix[4, 4] = matrix[0, 0]
+    matrix[5, 5] = matrix[2, 2]
+    matrix[6, 6] = matrix[2, 2]
+    matrix[7, 7] = matrix[2, 2]
+    matrix[8, 8] = (cos_tmax2 + cos_tmax + 1.0) / 3.0
+
+    # Off diagonal set 1.
+    matrix[0, 4] = matrix[4, 0] = (cos_tmax2 - 2.0*cos_tmax + 1.0) / 24.0
+    matrix[0, 8] = matrix[8, 0] = -(cos_tmax2 + cos_tmax - 2.0) / 6.0
+    matrix[4, 8] = matrix[8, 4] = matrix[0, 8]
+
+    # Off diagonal set 2.
+    matrix[1, 3] = matrix[3, 1] = matrix[0, 4]
+    matrix[2, 6] = matrix[6, 2] = -matrix[0, 8]
+    matrix[5, 7] = matrix[7, 5] = -matrix[0, 8]
+
+    # Generate the cone axis from the spherical angles.
+    spherical_to_cartesian([1.0, theta_axis, phi_axis], cone_axis)
+
+    # Average position rotation.
+    two_vect_to_R(z_axis, cone_axis, R)
+
+    # Rotate and return the frame order matrix.
+    return rotate_daeg(matrix, R)
+
+
 def compile_2nd_matrix_pseudo_ellipse(matrix, R, eigen_alpha, eigen_beta, eigen_gamma, theta_x, theta_y, sigma_max):
     """Generate the 2nd degree Frame Order matrix for the pseudo-ellipse.
 
