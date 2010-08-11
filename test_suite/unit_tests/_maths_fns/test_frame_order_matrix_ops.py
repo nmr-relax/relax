@@ -245,6 +245,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Isotropic cone frame order")
         print_frame_order_2nd_degree(f2b, "Free rotor isotropic cone frame order")
+        print_frame_order_2nd_degree(f2b-f2a, "difference")
 
         # Check the values.
         for i in range(9):
@@ -258,11 +259,12 @@ class Test_frame_order_matrix_ops(TestCase):
 
         # Calculate the frame order matrix.
         f2a = compile_2nd_matrix_iso_cone(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6, 0)
-        f2b = compile_2nd_matrix_iso_cone_torsionless(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6)
+        f2b = compile_2nd_matrix_iso_cone_torsionless(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 0.0, pi/4.6)
 
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Isotropic cone frame order")
         print_frame_order_2nd_degree(f2b, "Torsionless isotropic cone frame order")
+        print_frame_order_2nd_degree(f2b-f2a, "difference")
 
         # Check the values.
         for i in range(9):
@@ -531,6 +533,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
         print_frame_order_2nd_degree(f2b, "Free rotor pseudo-ellipse frame order")
+        print_frame_order_2nd_degree(f2b-f2a, "difference")
 
         # Check the values.
         for i in range(9):
@@ -549,6 +552,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
         print_frame_order_2nd_degree(f2b, "pi/2 rotated free rotor pseudo-ellipse frame order")
+        print_frame_order_2nd_degree(f2b-f2a, "difference")
 
         # Check the values.
         for i in range(9):
@@ -567,6 +571,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
         print_frame_order_2nd_degree(f2b, "Torsionless pseudo-ellipse frame order")
+        print_frame_order_2nd_degree(f2b-f2a, "difference")
 
         # Check the values.
         for i in range(9):
@@ -585,6 +590,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
         print_frame_order_2nd_degree(f2b, "Isotropic cone frame order")
+        print_frame_order_2nd_degree(f2b-f2a, "difference")
 
         # Check the values.
         for i in range(9):
@@ -603,6 +609,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
         print_frame_order_2nd_degree(f2b, "Free rotor isotropic cone frame order")
+        print_frame_order_2nd_degree(f2b-f2a, "difference")
 
         # Check the values.
         for i in range(9):
@@ -616,11 +623,12 @@ class Test_frame_order_matrix_ops(TestCase):
 
         # Calculate the frame order matrix.
         f2a = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/8.6, pi/8.6, 0)
-        f2a = compile_2nd_matrix_iso_cone_torsionless(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/8.6)
+        f2b = compile_2nd_matrix_iso_cone_torsionless(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 0.0, pi/8.6)
 
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
         print_frame_order_2nd_degree(f2b, "Torsionless isotropic cone frame order")
+        print_frame_order_2nd_degree(f2b-f2a, "difference")
 
         # Check the values.
         for i in range(9):
@@ -775,6 +783,7 @@ class Test_frame_order_matrix_ops(TestCase):
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Free rotor pseudo-ellipse frame order")
         print_frame_order_2nd_degree(f2b, "Free rotor isotropic cone frame order")
+        print_frame_order_2nd_degree(f2b-f2a, "difference")
 
         # Check the values.
         for i in range(9):
@@ -788,11 +797,12 @@ class Test_frame_order_matrix_ops(TestCase):
 
         # Calculate the frame order matrix.
         f2a = compile_2nd_matrix_pseudo_ellipse_torsionless(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6, pi/4.6)
-        f2b = compile_2nd_matrix_iso_cone_torsionless(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, pi/4.6)
+        f2b = compile_2nd_matrix_iso_cone_torsionless(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 0.0, pi/4.6)
 
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Torsionless pseudo-ellipse frame order")
         print_frame_order_2nd_degree(f2b, "Torsionless isotropic cone frame order")
+        print_frame_order_2nd_degree(f2b-f2a, "difference")
 
         # Check the values.
         for i in range(9):
