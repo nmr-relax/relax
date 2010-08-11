@@ -510,17 +510,18 @@ class Test_frame_order_matrix_ops(TestCase):
         """Check if compile_2nd_matrix_pseudo_ellipse() can return the identity matrix for order."""
 
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, 1e-10, 1e-10, 1e-10)
+        f2 = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, 1e-2, 1e-2, 1e-10)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_order, "Identity for order")
         print_frame_order_2nd_degree(f2, "Compiled frame order")
+        print_frame_order_2nd_degree(f2-self.I_order, "difference")
 
         # Check the values.
         for i in range(9):
             for j in range(9):
                 print "Element %s, %s." % (i, j)
-                self.assertAlmostEqual(f2[i, j], self.I_order[i, j])
+                self.assertAlmostEqual(f2[i, j], self.I_order[i, j], 4)
 
 
     def test_compile_2nd_matrix_pseudo_ellipse_restriction_test(self):
