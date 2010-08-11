@@ -146,6 +146,186 @@ class Frame_order(SystemTestCase):
             setattr(cdp, param, curr)
 
 
+    def test_model_iso_cone(self):
+        """Test the isotropic cone frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'iso_cone.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(0.131890484593)
+        chi2_ref.append(0.0539383731611)
+        chi2_ref.append(0.0135056297016)
+        chi2_ref.append(0.0163432453475)
+        chi2_ref.append(0.0775570503917)
+        chi2_ref.append(0.0535055367493)
+        chi2_ref.append(0.0994746492483)
+        chi2_ref.append(0.174830826376)
+        chi2_ref.append(0.193036744906)
+        chi2_ref.append(0.181480810794)
+        chi2_ref.append(0.215863920824)
+        chi2_ref.append(0.170088692559)
+        chi2_ref.append(0.152634493383)
+        chi2_ref.append(0.168711907446)
+        chi2_ref.append(0.168405354086)
+        chi2_ref.append(0.247439860108)
+        chi2_ref.append(0.143487410228)
+        chi2_ref.append(0.148318989268)
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
+    def test_model_iso_cone_free_rotor(self):
+        """Test the free rotor isotropic cone frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'iso_cone_free_rotor.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(0.18413354445)
+        chi2_ref.append(0.03689713827)
+        chi2_ref.append(0.0239347013157)
+        chi2_ref.append(0.108719260934)
+        chi2_ref.append(0.199246049496)
+        chi2_ref.append(0.131462939327)
+        chi2_ref.append(0.367555601906)
+        chi2_ref.append(0.194519455046)
+        chi2_ref.append(0.223512145394)
+        chi2_ref.append(0.23292851227)
+        chi2_ref.append(0.251430467176)
+        chi2_ref.append(0.28407864863)
+        chi2_ref.append(0.265629320304)
+        chi2_ref.append(0.229025747836)
+        chi2_ref.append(0.188546108192)
+        chi2_ref.append(0.154782134722)
+        chi2_ref.append(0.161386403703)
+        chi2_ref.append(0.156149576789)
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
+    def test_model_iso_cone_free_rotor_eigenframe(self):
+        """Test the free rotor isotropic cone frame order model in the eigenframe."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'iso_cone_free_rotor_eigenframe.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(0.18413354445)
+        chi2_ref.append(0.03689713827)
+        chi2_ref.append(0.0239347013157)
+        chi2_ref.append(0.108719260934)
+        chi2_ref.append(0.199246049496)
+        chi2_ref.append(0.131462939327)
+        chi2_ref.append(0.367555601906)
+        chi2_ref.append(0.194519455046)
+        chi2_ref.append(0.223512145394)
+        chi2_ref.append(0.23292851227)
+        chi2_ref.append(0.251430467176)
+        chi2_ref.append(0.28407864863)
+        chi2_ref.append(0.265629320304)
+        chi2_ref.append(0.229025747836)
+        chi2_ref.append(0.188546108192)
+        chi2_ref.append(0.154782134722)
+        chi2_ref.append(0.161386403703)
+        chi2_ref.append(0.156149576789)
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
+    def test_model_pseudo_ellipse(self):
+        """Test the pseudo-ellipse frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'pseudo_ellipse.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(0.0208490007203)
+        chi2_ref.append(0.00958146486076)
+        chi2_ref.append(0.0405488536626)
+        chi2_ref.append(0.0370142845551)
+        chi2_ref.append(0.0204537537661)
+        chi2_ref.append(0.0186122056988)
+        chi2_ref.append(0.0177783016875)
+        chi2_ref.append(0.0311747995923)
+        chi2_ref.append(0.0225532898175)
+        chi2_ref.append(0.0212562065194)
+        chi2_ref.append(0.018939663528)
+        chi2_ref.append(0.0224686987165)
+        chi2_ref.append(0.0201247095045)
+        chi2_ref.append(0.0215343817478)
+        chi2_ref.append(0.016509302331)
+        chi2_ref.append(0.0101988814638)
+        chi2_ref.append(0.00989431182393)
+        chi2_ref.append(0.0123400971524)
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
+    def test_model_pseudo_ellipse_free_rotor(self):
+        """Test the free rotor pseudo-elliptic cone frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'pseudo_ellipse_free_rotor.py')
+
+        # The reference chi2 values.
+        chi2_ref = [[], []]
+        chi2_ref[0].append(0.0493245760341)
+        chi2_ref[0].append(0.0322727678945)
+        chi2_ref[0].append(0.0399505883966)
+        chi2_ref[0].append(0.0122539315721)
+        chi2_ref[0].append(0.0263840505182)
+        chi2_ref[0].append(0.0324871952484)
+        chi2_ref[0].append(0.0247369735031)
+        chi2_ref[0].append(0.0231896861006)
+        chi2_ref[0].append(0.0285947802273)
+        chi2_ref[0].append(0.0345542627808)
+        chi2_ref[0].append(0.0289869422491)
+        chi2_ref[0].append(0.0243038470127)
+        chi2_ref[0].append(0.0226686034191)
+        chi2_ref[0].append(0.0215714556045)
+        chi2_ref[0].append(0.0173836730495)
+        chi2_ref[0].append(0.0182530810025)
+        chi2_ref[0].append(0.0212669211551)
+        chi2_ref[0].append(0.0194359136977)
+
+        chi2_ref[1].append(0.0205287391277)
+        chi2_ref[1].append(0.0246463829816)
+        chi2_ref[1].append(0.0590186061204)
+        chi2_ref[1].append(0.0441193978727)
+        chi2_ref[1].append(0.0424299319779)
+        chi2_ref[1].append(0.032589994611)
+        chi2_ref[1].append(0.0523532207508)
+        chi2_ref[1].append(0.0488535879384)
+        chi2_ref[1].append(0.0424063218455)
+        chi2_ref[1].append(0.0553525984677)
+        chi2_ref[1].append(0.0495587286781)
+        chi2_ref[1].append(0.0446625345909)
+        chi2_ref[1].append(0.0470718361239)
+        chi2_ref[1].append(0.0493615476721)
+        chi2_ref[1].append(0.0492208206006)
+        chi2_ref[1].append(0.0429966323771)
+        chi2_ref[1].append(0.0442849187057)
+        chi2_ref[1].append(0.0436756306414)
+            
+        # Check the calculated chi2 values.
+        for j in range(2):
+            for i in range(18):
+                self.assertAlmostEqual(ds.chi2[j][i], chi2_ref[j][i])
+
+
     def test_opendx_map(self):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
