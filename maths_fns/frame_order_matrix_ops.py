@@ -1367,4 +1367,4 @@ def tmax_pseudo_ellipse(phi, theta_x, theta_y):
         return 0.0
 
     # Return the maximum angle.
-    return sqrt(theta_x**2 * theta_y**2 / (cos(phi)**2*theta_y**2 + sin(phi)**2*theta_x**2))
+    return theta_x * theta_y / sqrt((cos(phi)*theta_y)**2 + (sin(phi)*theta_x)**2)
