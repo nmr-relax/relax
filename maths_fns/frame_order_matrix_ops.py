@@ -295,11 +295,14 @@ def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, R, eigen_alpha, eigen_
 def daeg_to_rotational_superoperator(daeg, Rsuper):
     """Convert the frame order matrix (daeg) to the rotational superoperator.
 
-    @param daeg:    The second degree frame order matrix, daeg.
+    @param daeg:    The second degree frame order matrix, daeg.  This must be in the Kronecker product layout.
     @type daeg:     numpy 9D, rank-2 array or numpy 3D, rank-4 array
     @param Rsuper:  The rotational superoperator structure to be populated.
     @type Rsuper:   numpy 5D, rank-2 array
     """
+
+    # First perform the T23 transpose.
+    transpose_23(daeg)
 
     # Convert to rank-4.
     orig_shape = daeg.shape
@@ -342,6 +345,9 @@ def daeg_to_rotational_superoperator(daeg, Rsuper):
 
     # Revert the shape.
     daeg.shape = orig_shape
+
+    # Undo the T23 transpose.
+    transpose_23(daeg)
 
 
 def part_int_daeg1_pseudo_ellipse_xx(phi, x, y, smax):
