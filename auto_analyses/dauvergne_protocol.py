@@ -755,10 +755,6 @@ class dAuvergne_protocol:
     def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):
         """Model selection function."""
 
-        # Model elimination.
-        if modsel_pipe != 'final':
-            self.interpreter.eliminate()
-
         # Model selection (delete the model selection pipe if it already exists).
         if pipes.has_pipe(modsel_pipe):
             self.interpreter.pipe.delete(modsel_pipe)
@@ -827,6 +823,9 @@ class dAuvergne_protocol:
             # Minimise.
             self.interpreter.grid_search(inc=self.grid_inc)
             self.interpreter.minimise(self.min_algor)
+
+            # Model elimination.
+            self.interpreter.eliminate()
 
             # Write the results.
             dir = self.base_dir + name
