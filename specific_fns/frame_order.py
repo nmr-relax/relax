@@ -85,7 +85,7 @@ class Frame_order(API_base, API_common):
         """
 
         # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
-        if cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
+        if cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
             param_vect = [cdp.ave_pos_beta, cdp.ave_pos_gamma]
         else:
             param_vect = [cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma]
@@ -97,7 +97,7 @@ class Frame_order(API_base, API_common):
             param_vect.append(cdp.eigen_gamma)
 
         # Frame order eigenframe - the isotropic cone axis.
-        elif cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
+        elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
             param_vect.append(cdp.axis_theta)
             param_vect.append(cdp.axis_phi)
 
@@ -499,7 +499,7 @@ class Frame_order(API_base, API_common):
         # Build the parameter name list.
         if not len(cdp.params):
             # The tensor rotation, or average domain position.
-            if cdp.model not in ['iso cone, torsionless', 'iso cone, free rotor']:
+            if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
                 cdp.params.append('ave_pos_alpha')
             cdp.params.append('ave_pos_beta')
             cdp.params.append('ave_pos_gamma')
@@ -511,7 +511,7 @@ class Frame_order(API_base, API_common):
                 cdp.params.append('eigen_gamma')
 
             # Frame order eigenframe - the isotropic cone axis.
-            elif cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
+            elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
                 cdp.params.append('axis_theta')
                 cdp.params.append('axis_phi')
 
@@ -584,8 +584,11 @@ class Frame_order(API_base, API_common):
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
         elif cdp.model in ['line, torsionless', 'line, free rotor']:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
-        elif cdp.model in ['rotor', 'free rotor']:
+        elif cdp.model in ['rotor']:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
+        elif cdp.model in ['free rotor']:
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = param_vector
+            ave_pos_alpha = 0.0
         elif cdp.model == 'rigid':
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma = param_vector
 
@@ -789,7 +792,7 @@ class Frame_order(API_base, API_common):
         # Parameters.
         if (set == 'all' or set == 'params') and hasattr(cdp, 'model'):
             # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
-            if cdp.model not in ['iso cone, torsionless', 'iso cone, free rotor']:
+            if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
                 names.append('ave_pos_alpha%s' % suffix)
             names.append('ave_pos_beta%s' % suffix)
             names.append('ave_pos_gamma%s' % suffix)
@@ -801,7 +804,7 @@ class Frame_order(API_base, API_common):
                 names.append('eigen_gamma%s' % suffix)
 
             # Frame order eigenframe - the isotropic cone axis.
-            elif cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
+            elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
                 names.append('axis_theta%s' % suffix)
                 names.append('axis_phi%s' % suffix)
 
