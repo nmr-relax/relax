@@ -398,10 +398,6 @@ class Frame_order(API_base, API_common):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Test if the model is setup.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('Frame order')
-
         # Test if the reference domain exists.
         exists = False
         for tensor_cont in cdp.align_tensors:
