@@ -68,6 +68,10 @@ def iso_cone_S_to_theta(S):
     @rtype:     float
     """
 
+    # Catch bad order parameters.
+    if S > 1.0:
+        return 0.0
+
     # Convert.
     theta = acos(0.5*(sqrt(8.0*S + 1) - 1))
 
