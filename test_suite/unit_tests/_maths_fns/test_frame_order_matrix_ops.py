@@ -352,7 +352,7 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_pseudo_ellipse_point1(self):
         """Check the operation of the compile_2nd_matrix_pseudo_ellipse() function."""
 
-        # The real 2nd degree frame order matrix.
+        # The simulated in frame pseudo-ellipse 2nd degree frame order matrix.
         real = array(
                     [[    0.7901,         0,         0,         0,    0.7118,         0,         0,         0,    0.6851],
                      [         0,    0.0816,         0,   -0.0606,         0,         0,         0,         0,         0],
@@ -388,7 +388,7 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_pseudo_ellipse_point2(self):
         """Check the operation of the compile_2nd_matrix_pseudo_ellipse() function."""
 
-        # The real 2nd degree frame order matrix.
+        # The simulated in frame pseudo-ellipse 2nd degree frame order matrix (1e6 ensembles).
         real = array(
                     [[    0.7379,         0,         0,         0,    0.1338,         0,         0,         0,    0.1284],
                      [         0,    0.6637,         0,   -0.1085,         0,         0,         0,         0,         0],
@@ -423,7 +423,7 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_pseudo_ellipse_point3(self):
         """Check the operation of the compile_2nd_matrix_pseudo_ellipse() function."""
 
-        # The real 2nd degree frame order matrix.
+        # The simulated out of frame pseudo-ellipse 2nd degree frame order matrix (1e6 ensembles).
         real = array(
                     [[    0.6314,    0.0232,   -0.0344,    0.0232,    0.1558,   -0.0222,   -0.0344,   -0.0222,    0.2128],
                      [    0.0220,    0.6366,    0.0069,   -0.1352,    0.0243,   -0.0722,    0.0206,   -0.0277,   -0.0464],
@@ -709,7 +709,7 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_point1(self):
         """Check the operation of the compile_2nd_matrix_pseudo_ellipse_free_rotor() function."""
 
-        # The real 2nd degree frame order matrix.
+        # The simulated out of frame free rotor pseudo-ellipse 2nd degree frame order matrix (1e6 ensembles).
         real = array(
                     [[    0.3428,   -0.0193,    0.0389,   -0.0193,    0.3137,   -0.0194,    0.0389,   -0.0194,    0.3435],
                      [   -0.0225,    0.2313,    0.0034,   -0.1413,    0.0449,    0.2309,   -0.1830,   -0.1412,   -0.0224],
@@ -743,7 +743,7 @@ class Test_frame_order_matrix_ops(TestCase):
     def test_compile_2nd_matrix_pseudo_ellipse_free_rotor_point2(self):
         """Check the operation of the compile_2nd_matrix_pseudo_ellipse_free_rotor() function."""
 
-        # The real 2nd degree frame order matrix.
+        # The simulated out of frame free rotor pseudo-ellipse 2nd degree frame order matrix (1e6 ensembles).
         real = array(
                     [[    0.3251,    0.0163,   -0.0324,    0.0163,    0.3493,    0.0164,   -0.0324,    0.0164,    0.3256],
                      [   -0.0248,    0.1481,   -0.0480,   -0.0500,    0.0492,    0.1475,   -0.1472,   -0.0500,   -0.0244],
@@ -812,10 +812,10 @@ class Test_frame_order_matrix_ops(TestCase):
                 self.assertAlmostEqual(f2a[i, j], f2b[i, j])
 
 
-    def test_compile_2nd_matrix_rotor(self):
+    def test_compile_2nd_matrix_rotor_point1(self):
         """Check the operation of the compile_2nd_matrix_rotor() function."""
 
-        # The simulated 2nd degree frame order matrix.
+        # The simulated in frame rotor 2nd degree frame order matrix (1e7 ensembles).
         real = array(
                     [[  7.06775425e-01,  1.36710179e-04,  0.00000000e+00,  1.36710179e-04, 2.93224575e-01,  0.00000000e+00,  0.00000000e+00, 0.00000000e+00, 0.00000000e+00],
                      [ -1.36710179e-04,  7.06775425e-01,  0.00000000e+00, -2.93224575e-01, 1.36710179e-04,  0.00000000e+00,  0.00000000e+00, 0.00000000e+00, 0.00000000e+00],
