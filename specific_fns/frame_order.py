@@ -410,7 +410,8 @@ class Frame_order(API_base, API_common):
         cdp.ref_domain = ref
 
         # Update the model.
-        self._update_model()
+        if hasattr(cdp, 'model'):
+            self._update_model()
 
 
     def _select_model(self, model=None):
