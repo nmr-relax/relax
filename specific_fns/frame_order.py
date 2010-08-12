@@ -874,6 +874,11 @@ class Frame_order(API_base, API_common):
 
         # Generate the grid.
         for i in range(n):
+            # Fixed parameter.
+            if incs[i] == None:
+                grid.append(None)
+                continue
+
             # Reset.
             dist_type = None
             end_point = True
@@ -924,6 +929,10 @@ class Frame_order(API_base, API_common):
         # Total number of points.
         total_pts = 1
         for i in range(n):
+            # Fixed parameter.
+            if grid[i] == None:
+                continue
+
             total_pts = total_pts * len(grid[i])
 
         # Build the points array.
@@ -932,12 +941,18 @@ class Frame_order(API_base, API_common):
         for i in range(total_pts):
             # Loop over the dimensions.
             for j in range(n):
+                # Fixed parameter.
+                if grid[j] == None:
+                    # Get the current parameter value.
+                    pts[i, j] = getattr(cdp, cdp.params[j])
+
                 # Add the point coordinate.
-                pts[i, j] = grid[j][indices[j]]
+                else:
+                    pts[i, j] = grid[j][indices[j]]
 
             # Increment the step positions.
             for j in range(n):
-                if indices[j] < incs[j]-1:
+                if incs[j] != None and indices[j] < incs[j]-1:
                     indices[j] += 1
                     break    # Exit so that the other step numbers are not incremented.
                 else:
