@@ -27,6 +27,7 @@ from unittest import TestCase
 
 # relax module imports.
 from generic_fns.frame_order import print_frame_order_2nd_degree
+from maths_fns.coord_transform import cartesian_to_spherical
 from maths_fns.frame_order_matrix_ops import *
 from maths_fns.kronecker_product import transpose_23
 from maths_fns.order_parameters import iso_cone_theta_to_S
@@ -148,6 +149,69 @@ class Test_frame_order_matrix_ops(TestCase):
         self.I_disorder_free_rotor = zeros((9, 9), float64)
         for i, j, val in data:
             self.I_disorder_free_rotor[i, j] = val
+
+
+    def test_compile_2nd_matrix_free_rotor_point1(self):
+        """Check the operation of the compile_2nd_matrix_free_rotor() function."""
+
+        # The simulated in frame free rotor 2nd degree frame order matrix (1e6 ensembles).
+        real = array(
+                    [[    0.5001,    0.0001,         0,    0.0001,    0.4999,         0,         0,         0,         0],
+                     [   -0.0001,    0.5001,         0,   -0.4999,    0.0001,         0,         0,         0,         0],
+                     [         0,         0,    0.0006,         0,         0,   -0.0005,         0,         0,         0],
+                     [   -0.0001,   -0.4999,         0,    0.5001,    0.0001,         0,         0,         0,         0],
+                     [    0.4999,   -0.0001,         0,   -0.0001,    0.5001,         0,         0,         0,         0],
+                     [         0,         0,    0.0005,         0,         0,    0.0006,         0,         0,         0],
+                     [         0,         0,         0,         0,         0,         0,    0.0006,   -0.0005,         0],
+                     [         0,         0,         0,         0,         0,         0,    0.0005,    0.0006,         0],
+                     [         0,         0,         0,         0,         0,         0,         0,         0,    1.0000]])
+
+        # Calculate the matrix.
+        f2 = compile_2nd_matrix_free_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0, 0)
+
+        # Print out.
+        print_frame_order_2nd_degree(real, "real")
+        print_frame_order_2nd_degree(f2, "calculated")
+        print_frame_order_2nd_degree(real-f2, "difference")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
+                self.assert_(abs(f2[i, j] - real[i, j]) < 1e-3)
+
+
+    def test_compile_2nd_matrix_free_rotor_point2(self):
+        """Check the operation of the compile_2nd_matrix_free_rotor() function."""
+
+        # The simulated free rotor 2nd degree frame order matrix (1e6 ensembles, axis=[2,1,3]).
+        real = array(
+                    [[    0.3367,   -0.0100,   -0.0307,   -0.0100,    0.3521,   -0.0152,   -0.0307,   -0.0152,    0.3112],
+                     [   -0.0104,    0.3520,   -0.0152,   -0.2908,   -0.0559,    0.2602,    0.1989,   -0.1685,    0.0664],
+                     [   -0.0306,   -0.0155,    0.3112,    0.1991,   -0.1683,    0.0666,    0.2399,    0.2092,    0.1989],
+                     [   -0.0104,   -0.2908,    0.1989,    0.3520,   -0.0559,   -0.1685,   -0.0152,    0.2602,    0.0664],
+                     [    0.3520,   -0.0563,   -0.1684,   -0.0563,    0.4362,   -0.0841,   -0.1684,   -0.0841,    0.2118],
+                     [   -0.0153,    0.2602,    0.0661,   -0.1684,   -0.0844,    0.2117,    0.2093,   -0.0740,    0.0997],
+                     [   -0.0306,    0.1991,    0.2399,   -0.0155,   -0.1683,    0.2092,    0.3112,    0.0666,    0.1989],
+                     [   -0.0153,   -0.1684,    0.2093,    0.2602,   -0.0844,   -0.0740,    0.0661,    0.2117,    0.0997],
+                     [    0.3113,    0.0663,    0.1991,    0.0663,    0.2117,    0.0993,    0.1991,    0.0993,    0.4770]])
+
+        # The cone axis.
+        r, theta, phi = cartesian_to_spherical([2, 1, 3])
+
+        # Calculate the matrix.
+        f2 = compile_2nd_matrix_free_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, theta, phi)
+
+        # Print out.
+        print_frame_order_2nd_degree(real, "real")
+        print_frame_order_2nd_degree(f2, "calculated")
+        print_frame_order_2nd_degree(real-f2, "difference")
+
+        # Check the values.
+        for i in range(9):
+            for j in range(9):
+                print "Element %s, %s; diff %s." % (i, j, f2[i, j] - real[i, j])
+                self.assert_(abs(f2[i, j] - real[i, j]) < 1e-3)
 
 
     def test_compile_2nd_matrix_iso_cone_disorder(self):
