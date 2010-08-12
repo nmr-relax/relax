@@ -912,7 +912,7 @@ class Frame_order(API_base, API_common):
                 upper = 1.0
 
             # Linear angle grid from 0 to pi excluding the outer points.
-            if cdp.params[i] in ['cone_theta_x', 'cone_theta_y', 'cone_sigma_max']:
+            if cdp.params[i] in ['cone_theta', 'cone_theta_x', 'cone_theta_y', 'cone_sigma_max']:
                 lower = pi * (1.0/incs[i])
                 upper = pi * (1.0 - 1.0/incs[i])
 
