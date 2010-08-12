@@ -146,6 +146,26 @@ class Frame_order(SystemTestCase):
             setattr(cdp, param, curr)
 
 
+    def test_model_free_rotor(self):
+        """Test the free rotor frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'free_rotor.py')
+
+        # Check the calculated chi2 value.
+        self.assertAlmostEqual(ds.chi2, 0.0216067401326)
+
+
+    def test_model_free_rotor_eigenframe(self):
+        """Test the free rotor frame order model in the eigenframe."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'free_rotor_eigenframe.py')
+
+        # Check the calculated chi2 value.
+        self.assertAlmostEqual(ds.chi2, 0.00673210578744)
+
+
     def test_model_iso_cone(self):
         """Test the isotropic cone frame order model."""
 
