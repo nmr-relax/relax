@@ -612,7 +612,7 @@ class Frame_order(API_base, API_common):
                 cdp.cone_theta_sim[sim_index] = cone_theta
             if cone_s1 != None:
                 cdp.cone_s1_sim[sim_index] = cone_s1
-                cdp.cone_theta[sim_index] = order_parameters.iso_cone_S_to_cos_theta(cone_s1)
+                cdp.cone_theta[sim_index] = order_parameters.iso_cone_S_to_theta(cone_s1)
             if cone_theta_x != None:
                 cdp.cone_theta_x[sim_index] = cone_theta_x
             if cone_theta_y != None:
@@ -655,7 +655,7 @@ class Frame_order(API_base, API_common):
                 cdp.cone_theta = cone_theta
             if cone_s1 != None:
                 cdp.cone_s1 = cone_s1
-                cdp.cone_theta = order_parameters.iso_cone_S_to_cos_theta(cone_s1)
+                cdp.cone_theta = order_parameters.iso_cone_S_to_theta(cone_s1)
             if cone_theta_x != None:
                 cdp.cone_theta_x = cone_theta_x
             if cone_theta_y != None:
