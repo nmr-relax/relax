@@ -24,7 +24,7 @@ pipe.create(pipe_name='cone_10.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(-0.00040471959608955293, 0.00022992572371702139, -0.00020946041753759238, 0.0002869676962673096, 8.8035151301356867e-05), param_types=0)
+align_tensor.init(tensor='0 red', params=(-0.00040448999843536413, 0.00022991438621179725, -0.00020861842591866483, 0.00028815161598076157, 8.6762078738789462e-05), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -32,7 +32,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(0.00037813814695009486, -0.00021574865600152465, 0.00019535452138313695, -0.00027087102389390259, -8.0574416042465728e-05), param_types=0)
+align_tensor.init(tensor='1 red', params=(0.00037892689778071481, -0.00021578213028986904, 0.00019617729058758496, -0.00026965256551591372, -8.0771358908094315e-05), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -40,7 +40,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(0.00026119847515198463, -0.00014926830479743713, 0.00013425454565323198, -0.00018689766420916602, -5.51316334774126e-05), param_types=0)
+align_tensor.init(tensor='2 red', params=(0.00026123727739574227, -0.00014886493071503991, 0.00013548786798795316, -0.00018595321986810759, -5.5723444110746586e-05), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -48,7 +48,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(0.00014500348149687427, -8.2304044171410755e-05, 7.6780370454597045e-05, -0.00010462211811839118, -3.1244385890304175e-05), param_types=0)
+align_tensor.init(tensor='3 red', params=(0.00014648929770095183, -8.3481135154379058e-05, 7.5528823229628224e-05, -0.0001041781057469763, -3.0923028101754026e-05), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -56,7 +56,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(-0.00011215351430853006, 6.5308006517538684e-05, -5.8985427070603767e-05, 8.1519655067043879e-05, 2.4428722620330402e-05), param_types=0)
+align_tensor.init(tensor='4 red', params=(-0.00011378293809551907, 6.5026044097602208e-05, -5.8771848159850123e-05, 8.0361792341660218e-05, 2.4446641750867094e-05), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -64,7 +64,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(0.00055088260494072028, -0.00031283563973978743, 0.00028660057229983125, -0.00039227060303313754, -0.00011735877061005463), param_types=0)
+align_tensor.init(tensor='5 red', params=(0.00055129741499748133, -0.0003141435163491181, 0.0002849686255651539, -0.00039290788719831515, -0.00011732559004071875), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -72,7 +72,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-5.5507731776127698e-06, 3.2296385948217799e-06, -1.183099391513491e-06, 2.4110856480881648e-06, 3.7936397007477668e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(-3.8103971932408651e-06, 2.2504933874326989e-06, -2.3307146885164117e-06, 3.0245640234859198e-06, 1.0337191201265565e-06), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -80,7 +80,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(0.00039531780820322522, -0.00022568527409660212, 0.00020586955007615492, -0.00028522614460168693, -8.5080797581380801e-05), param_types=0)
+align_tensor.init(tensor='7 red', params=(0.00039818471507894007, -0.00022665379871182441, 0.00020582038327074761, -0.00028293408609173784, -8.4644414976034937e-05), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -88,7 +88,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(0.00073575273832863445, -0.0004210587075885814, 0.00037961795667039401, -0.00052399173567305971, -0.00015731330667683764), param_types=0)
+align_tensor.init(tensor='8 red', params=(0.00073574456880284302, -0.00041927735860649261, 0.00038072453914969194, -0.00052345370219897594, -0.00015778407772064015), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -96,7 +96,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(-0.0002943850404206096, 0.00016733183259833023, -0.00015162878079689776, 0.0002098748366322165, 6.3754791964974747e-05), param_types=0)
+align_tensor.init(tensor='9 red', params=(-0.00029449646634691448, 0.00016727550333978163, -0.0001521247757735895, 0.00020971915256145663, 6.3014395776592329e-05), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -114,7 +114,7 @@ pipe.create(pipe_name='cone_20.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(-0.00037714118316053351, 0.00021552119072246249, -0.0001950281389239946, 0.00026859475860681656, 8.0236050499259934e-05), param_types=0)
+align_tensor.init(tensor='0 red', params=(-0.000376840673033265, 0.00021446009694652275, -0.00019482163685381951, 0.00026846831826782866, 8.1445850785562312e-05), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -122,7 +122,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(0.00035322205216279425, -0.0002005703588403516, 0.00018278709999409052, -0.00025138563971834272, -7.5515717620045918e-05), param_types=0)
+align_tensor.init(tensor='1 red', params=(0.00035345370712250231, -0.00020119943089480676, 0.00018279563500397697, -0.00025160735863594033, -7.5169922471602941e-05), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -130,7 +130,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(0.00024343870169083251, -0.00013816770850986603, 0.00012619003621218002, -0.00017347632683634739, -5.2378753423889133e-05), param_types=0)
+align_tensor.init(tensor='2 red', params=(0.00024386309948179244, -0.00013879665137100428, 0.00012623769531726461, -0.00017348620284677937, -5.1719100923200323e-05), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -138,7 +138,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(0.00013682278659596511, -7.7669810695823912e-05, 7.0206676390538995e-05, -9.6955980428266997e-05, -2.849576967031147e-05), param_types=0)
+align_tensor.init(tensor='3 red', params=(0.00013625116506036167, -7.7677685343277933e-05, 7.0388155468603111e-05, -9.7332777083406719e-05, -2.8907144875406559e-05), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -146,7 +146,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(-0.0001058712483157345, 5.9655586832301215e-05, -5.4727687783258081e-05, 7.5094957675353715e-05, 2.2071371965395499e-05), param_types=0)
+align_tensor.init(tensor='4 red', params=(-0.00010602583694703559, 6.0972081167856485e-05, -5.4652280317376107e-05, 7.5216747815616986e-05, 2.2438741308797819e-05), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -154,7 +154,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(0.00051445602378105465, -0.00029331207383104409, 0.00026544956060918338, -0.00036634139413642847, -0.00010926323099685408), param_types=0)
+align_tensor.init(tensor='5 red', params=(0.00051361489533458828, -0.00029236654134965939, 0.0002660147729502945, -0.00036637197773888475, -0.00010967101318496312), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -162,7 +162,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-3.4274071111499698e-06, 2.2782059624346777e-06, -2.2500811225326467e-06, 3.0670914988373972e-06, 1.4987419221147088e-06), param_types=0)
+align_tensor.init(tensor='6 red', params=(-3.8798726124858319e-06, 2.0477771483383751e-06, -2.3005263322761853e-06, 2.6102625802815648e-06, 8.8822154586048228e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -170,7 +170,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(0.00037124533469277672, -0.00021027525117903287, 0.00019167699620984305, -0.00026349613461822482, -7.8607531154531045e-05), param_types=0)
+align_tensor.init(tensor='7 red', params=(0.00037113577888304831, -0.00021145328301311542, 0.0001915768087616592, -0.0002642710105044389, -7.8781519201843428e-05), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -178,7 +178,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(0.00068550238441097305, -0.00039016195059216947, 0.00035518349345335111, -0.00048868303867731218, -0.00014654946767922515), param_types=0)
+align_tensor.init(tensor='8 red', params=(0.00068624586430397847, -0.00039131762875547116, 0.00035516554771168087, -0.00048814404280193087, -0.00014674620938924881), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -186,7 +186,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(-0.00027449527471410062, 0.00015636281090167529, -0.00014213126484107766, 0.00019534007678677305, 5.8737124223010273e-05), param_types=0)
+align_tensor.init(tensor='9 red', params=(-0.000274605702181578, 0.00015607517955072196, -0.00014184858221902522, 0.00019549358666964728, 5.9032723131197893e-05), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -204,7 +204,7 @@ pipe.create(pipe_name='cone_30.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(-0.00033440894138972595, 0.00019104098470955116, -0.00017287167139593308, 0.00023789524356850701, 7.156710161202057e-05), param_types=0)
+align_tensor.init(tensor='0 red', params=(-0.00033396300979013143, 0.00019103571556309406, -0.00017285790828154115, 0.00023803055026956889, 7.2861847782560048e-05), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -212,7 +212,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(0.00031342071076362246, -0.00017796829986482386, 0.00016183530130445877, -0.00022329168376841705, -6.6911589893424076e-05), param_types=0)
+align_tensor.init(tensor='1 red', params=(0.00031312568571107726, -0.00017804324787146187, 0.00016203439295438041, -0.00022328410599175907, -6.6471911266102583e-05), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -220,7 +220,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(0.00021611048725741347, -0.0001226494011176966, 0.00011170466755033165, -0.00015407107618733146, -4.6334743441778619e-05), param_types=0)
+align_tensor.init(tensor='2 red', params=(0.0002159073325476954, -0.00012258451631060385, 0.00011183666244822155, -0.00015395471303226424, -4.5641578869982505e-05), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -228,7 +228,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(0.00012091208429866543, -6.867993348036447e-05, 6.2295275288749315e-05, -8.6362624490856417e-05, -2.5279216087849633e-05), param_types=0)
+align_tensor.init(tensor='3 red', params=(0.00012099841440863181, -6.8923058088219162e-05, 6.2455107826089526e-05, -8.648810465535379e-05, -2.5468163875577734e-05), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -236,7 +236,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(-9.3985263646143317e-05, 5.3172548194259177e-05, -4.8772814153804954e-05, 6.6720952491732552e-05, 1.9541905607844626e-05), param_types=0)
+align_tensor.init(tensor='4 red', params=(-9.4094844151869714e-05, 5.4360387856145036e-05, -4.8707284868631972e-05, 6.6964495519338741e-05, 1.9230962847863485e-05), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -244,7 +244,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(0.00045529184680637218, -0.00025954186093953973, 0.00023542686869278335, -0.00032530017862982045, -9.7005042957998158e-05), param_types=0)
+align_tensor.init(tensor='5 red', params=(0.00045526204245163591, -0.00025920871892186955, 0.00023573706264735773, -0.00032515513550394502, -9.7288877865318139e-05), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -252,7 +252,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-3.204040661401324e-06, 2.0460485213958847e-06, -1.9521198454669686e-06, 2.4748778294272444e-06, 1.2902240878627418e-06), param_types=0)
+align_tensor.init(tensor='6 red', params=(-3.1328070651174703e-06, 1.5557128604871996e-06, -1.8943893756044729e-06, 2.2125090978067682e-06, 9.1196406862666283e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -260,7 +260,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(0.00032936723877099403, -0.0001866371205827336, 0.00016970851168373143, -0.00023434874206869826, -6.966045197353944e-05), param_types=0)
+align_tensor.init(tensor='7 red', params=(0.00032909671351951807, -0.00018732211011989196, 0.0001699840398208462, -0.00023464229912610127, -6.9463287620844563e-05), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -268,7 +268,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(0.00060818186527849941, -0.00034633358657493028, 0.00031512174334337575, -0.00043325319261664538, -0.00013008795256846587), param_types=0)
+align_tensor.init(tensor='8 red', params=(0.00060782667864438472, -0.00034734816633132733, 0.00031508021707007667, -0.00043323909420769436, -0.0001295740815647452), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -276,7 +276,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(-0.00024376940106764135, 0.00013876665065341504, -0.00012569905506658446, 0.00017320559659959837, 5.2268530213760411e-05), param_types=0)
+align_tensor.init(tensor='9 red', params=(-0.00024326771888408827, 0.00013857104409978596, -0.00012578288499173057, 0.00017329240942558173, 5.2800264319813435e-05), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -294,7 +294,7 @@ pipe.create(pipe_name='cone_40.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(-0.00027816290367348363, 0.00015863967584062676, -0.00014425602480303083, 0.00019982567566933926, 5.9343756830372127e-05), param_types=0)
+align_tensor.init(tensor='0 red', params=(-0.00027957030241172585, 0.00015909664027981285, -0.00014493804445315993, 0.00019933582995364536, 5.9860738458718578e-05), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -302,7 +302,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(0.00026233179106999774, -0.00014943877894306172, 0.00013521849977568508, -0.00018775703841017146, -5.6583793258529498e-05), param_types=0)
+align_tensor.init(tensor='1 red', params=(0.00026228572489509449, -0.00014912727129215984, 0.00013612177708625036, -0.00018639432174421384, -5.623242756026001e-05), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -310,7 +310,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(0.00018138321561076421, -0.00010320095542628807, 9.3269811738715705e-05, -0.00012975320089508405, -3.9108183973575326e-05), param_types=0)
+align_tensor.init(tensor='2 red', params=(0.00018069100462031582, -0.00010274933332203665, 9.397565601829613e-05, -0.00012854610665525627, -3.8761687787001076e-05), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -318,7 +318,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(0.00010072123187933336, -5.7521949820753374e-05, 5.1987607093041937e-05, -7.2004233431388108e-05, -2.2092092342392804e-05), param_types=0)
+align_tensor.init(tensor='3 red', params=(0.00010185376398914776, -5.7784510202368893e-05, 5.2317416162852491e-05, -7.1973244995838229e-05, -2.175204530364511e-05), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -326,7 +326,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(-7.8187637728210465e-05, 4.4123769769562597e-05, -4.0266430216610597e-05, 5.6348267391276062e-05, 1.685032797754596e-05), param_types=0)
+align_tensor.init(tensor='4 red', params=(-7.9124765753981814e-05, 4.4999346625168551e-05, -4.0684164434040012e-05, 5.5856361167563638e-05, 1.6826832212804818e-05), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -334,7 +334,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(0.00038060971869059766, -0.00021691301474978047, 0.00019614561215979256, -0.00027245952958778868, -8.2424268841279691e-05), param_types=0)
+align_tensor.init(tensor='5 red', params=(0.00038170964818810149, -0.0002168719446897316, 0.00019749865257958309, -0.00027158519148104182, -8.1664757956571784e-05), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -342,7 +342,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-3.4321052242563186e-06, 1.7779250990395711e-06, -1.5011785471655178e-06, 2.4542224707384697e-06, 5.1274742432805126e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(-2.1421773368902117e-06, 1.2915461932948202e-06, -1.6014865828680801e-06, 2.1066615499034998e-06, 5.1145326579541294e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -350,7 +350,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(0.0002749423321871546, -0.00015679370014168786, 0.00014199310835046774, -0.00019676911060519472, -5.9533637680451446e-05), param_types=0)
+align_tensor.init(tensor='7 red', params=(0.00027616150251999152, -0.00015694934565410314, 0.00014284819221593598, -0.00019556029595934417, -5.9167681964807594e-05), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -358,7 +358,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(0.00050842198090938866, -0.00028879473010549341, 0.00026206321430531361, -0.00036494687891416817, -0.00010895076071340188), param_types=0)
+align_tensor.init(tensor='8 red', params=(0.00050880063894743089, -0.00028947664279851731, 0.00026404741601784105, -0.00036243555478684806, -0.00010886778295939109), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -366,7 +366,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(-0.00020319801835770918, 0.00011604005553617743, -0.00010533746522645528, 0.00014568443552124611, 4.340561672075443e-05), param_types=0)
+align_tensor.init(tensor='9 red', params=(-0.00020354615635516824, 0.00011584034085731975, -0.00010578149819048565, 0.0001449280590112333, 4.369453489735699e-05), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -384,7 +384,7 @@ pipe.create(pipe_name='cone_50.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(-0.00021674887086349832, 0.00012409040307354, -0.00011212583520138605, 0.00015584525268629314, 4.7217838651255604e-05), param_types=0)
+align_tensor.init(tensor='0 red', params=(-0.00021782411238786869, 0.00012445453899480747, -0.00011279046331879585, 0.00015562110305202722, 4.6388898043256238e-05), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -392,7 +392,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(0.00020562266129067552, -0.00011714404630328952, 0.00010569987700911101, -0.00014690211486939204, -4.4875382852988251e-05), param_types=0)
+align_tensor.init(tensor='1 red', params=(0.00020458237909890147, -0.00011627367879862086, 0.00010615867749843566, -0.00014548517016077468, -4.4273889194188164e-05), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -400,7 +400,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(0.00014248430642141256, -8.1225706948241885e-05, 7.3190219010751885e-05, -0.00010190739559834014, -3.1017102068877403e-05), param_types=0)
+align_tensor.init(tensor='2 red', params=(0.00014098726296138753, -8.0152063289066832e-05, 7.338350688901645e-05, -0.00010039982579710034, -3.0611685281345079e-05), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -408,7 +408,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(7.8149041026301578e-05, -4.4142473144266901e-05, 3.9893501512387797e-05, -5.5466818853639091e-05, -1.7033078903506996e-05), param_types=0)
+align_tensor.init(tensor='3 red', params=(7.9395243154769223e-05, -4.4764555584638795e-05, 4.0573238512739852e-05, -5.6035555960948239e-05, -1.7020118364283611e-05), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -416,7 +416,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(-6.1295666851741133e-05, 3.4939671315976596e-05, -3.1498414837024001e-05, 4.3857271607915504e-05, 1.3289563180669452e-05), param_types=0)
+align_tensor.init(tensor='4 red', params=(-6.1623448110303844e-05, 3.4719134142139444e-05, -3.1663736193916299e-05, 4.3423898736349509e-05, 1.3068434951776047e-05), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -424,7 +424,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(0.00029623491703346461, -0.00016854356944250289, 0.00015191034672666276, -0.00021217869948295866, -6.4101019009883906e-05), param_types=0)
+align_tensor.init(tensor='5 red', params=(0.00029761597713941494, -0.00016898292124632703, 0.00015360392920431848, -0.00021200225514170405, -6.3747978944717239e-05), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -432,7 +432,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-3.0411771183496349e-06, 2.0328082257368788e-06, -1.6457005721772088e-06, 2.7293844553984855e-06, 4.6170909495155085e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(-1.7299386416977875e-06, 1.2792203198525451e-06, -1.4087571523542683e-06, 1.8411461569574329e-06, 4.3089103363719626e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -440,7 +440,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(0.00021537547675573986, -0.00012238120424085526, 0.00011064448582922401, -0.00015318191936347303, -4.7282629358308048e-05), param_types=0)
+align_tensor.init(tensor='7 red', params=(0.00021535739905869831, -0.00012207013217151554, 0.00011127896112355725, -0.00015241793782610943, -4.6626667720789166e-05), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -448,7 +448,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(0.00039787239430051977, -0.00022751100506221167, 0.00020497540625916187, -0.00028600712966121467, -8.6171161454562934e-05), param_types=0)
+align_tensor.init(tensor='8 red', params=(0.00039664538623854944, -0.00022579304269469458, 0.0002058484516214034, -0.00028297219683584064, -8.4911108150438597e-05), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -456,7 +456,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(-0.00015914179882840895, 9.1004402973871487e-05, -8.2319543020488054e-05, 0.00011391985064135143, 3.4951912663005179e-05), param_types=0)
+align_tensor.init(tensor='9 red', params=(-0.00015868986684412122, 9.067295761124547e-05, -8.2483676625957469e-05, 0.00011315324473493955, 3.4225476977825446e-05), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -474,7 +474,7 @@ pipe.create(pipe_name='cone_60.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(-0.00015456739440402722, 8.8355474984580697e-05, -8.0633624450963647e-05, 0.00011126279634434394, 3.2892616904111294e-05), param_types=0)
+align_tensor.init(tensor='0 red', params=(-0.00015521471335057949, 8.8554764892827346e-05, -8.0326021419659764e-05, 0.00011001512106558958, 3.2897239761457846e-05), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -482,7 +482,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(0.00014463916806705594, -8.240562662023413e-05, 7.4615823122801327e-05, -0.0001042018075898083, -3.1871004932864156e-05), param_types=0)
+align_tensor.init(tensor='1 red', params=(0.00014524156863952081, -8.262453669099392e-05, 7.5550325749805609e-05, -0.00010329944521458888, -3.1367973686099663e-05), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -490,7 +490,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(0.00010004041424271299, -5.7109218599248822e-05, 5.1474492218553055e-05, -7.218680759770059e-05, -2.2145566459406009e-05), param_types=0)
+align_tensor.init(tensor='2 red', params=(9.9985695900641175e-05, -5.6860661203058066e-05, 5.2144462285152854e-05, -7.135278313106983e-05, -2.1694453236889615e-05), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -498,7 +498,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(5.5118393083525483e-05, -3.0991988933944414e-05, 2.8373742278183554e-05, -3.9449571762901932e-05, -1.189041742664149e-05), param_types=0)
+align_tensor.init(tensor='3 red', params=(5.6442401906931698e-05, -3.1993335472271155e-05, 2.9036701675696819e-05, -3.9663450078289067e-05, -1.2105228735202137e-05), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -506,7 +506,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(-4.2909953439833329e-05, 2.4157886536883966e-05, -2.2245330614692214e-05, 3.1247518619541491e-05, 9.6623349199367667e-06), param_types=0)
+align_tensor.init(tensor='4 red', params=(-4.380880166932377e-05, 2.4723007926979894e-05, -2.2727038648423957e-05, 3.0861152740593287e-05, 9.2375023850264153e-06), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -514,7 +514,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(0.00021011950679671924, -0.00011948643282226542, 0.00010841534351024837, -0.00015100856493776793, -4.4776984780291458e-05), param_types=0)
+align_tensor.init(tensor='5 red', params=(0.0002115358397411897, -0.00012022704776991976, 0.00010936871890012322, -0.00014998809809837427, -4.5376756046084266e-05), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -522,7 +522,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-2.3605555772542302e-06, 1.7467195115951223e-06, -1.1472372338207739e-06, 1.8931646145396802e-06, 3.7705426205751698e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(-1.1343632059482355e-06, 7.0782993682877344e-07, -7.9632487325651082e-07, 1.3136141608278452e-06, 3.333695886000597e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -530,7 +530,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(0.00015101971989870601, -8.5613142574892913e-05, 7.7962382516259888e-05, -0.00010863512117492286, -3.3625353468536169e-05), param_types=0)
+align_tensor.init(tensor='7 red', params=(0.00015295491897520069, -8.6945884169805447e-05, 7.941616783986855e-05, -0.00010828408393103784, -3.2980908400752561e-05), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -538,7 +538,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(0.00028156417125353445, -0.0001607533016912227, 0.00014583763298585002, -0.00020356145178249957, -6.1084134482220322e-05), param_types=0)
+align_tensor.init(tensor='8 red', params=(0.00028192626574085038, -0.00016029523883795326, 0.00014650079938991782, -0.00020056537393858625, -6.0240874289604437e-05), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -546,7 +546,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(-0.00011260024708098124, 6.4413289162186865e-05, -5.8569746476581802e-05, 8.1005277854493456e-05, 2.4599893723351292e-05), param_types=0)
+align_tensor.init(tensor='9 red', params=(-0.00011290688878585491, 6.4480184966218061e-05, -5.8689113560786263e-05, 8.0233011412907161e-05, 2.4197561570252843e-05), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -564,7 +564,7 @@ pipe.create(pipe_name='cone_70.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(-9.4592030675318221e-05, 5.4183431542222725e-05, -5.0059982173524006e-05, 6.7170534593103301e-05, 1.9802100886633264e-05), param_types=0)
+align_tensor.init(tensor='0 red', params=(-9.5427234386953713e-05, 5.4214762537680656e-05, -4.8777473666497502e-05, 6.7358304823754862e-05, 2.0121335641135374e-05), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -572,7 +572,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(8.7071503991061023e-05, -4.983370916624482e-05, 4.4606168990777412e-05, -6.4504134122280886e-05, -2.0097413798606282e-05), param_types=0)
+align_tensor.init(tensor='1 red', params=(8.8526550946495212e-05, -5.022303980398801e-05, 4.6293590228725356e-05, -6.306434826911265e-05, -1.9291492783811358e-05), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -580,7 +580,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(6.0335966859799618e-05, -3.4576176693109846e-05, 3.0644852989456839e-05, -4.4881902813656956e-05, -1.424282188570903e-05), param_types=0)
+align_tensor.init(tensor='2 red', params=(6.0788814762866009e-05, -3.4413436232635895e-05, 3.1914960871786339e-05, -4.3508396119113494e-05, -1.3387445034090843e-05), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -588,7 +588,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(3.2754333959281587e-05, -1.8804422280225901e-05, 1.6817829416203645e-05, -2.4560982147745794e-05, -6.9830207328216001e-06), param_types=0)
+align_tensor.init(tensor='3 red', params=(3.4569507075799529e-05, -1.9672642490712373e-05, 1.7992867943147397e-05, -2.4290969952184478e-05, -7.4137575126617056e-06), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -596,7 +596,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(-2.4405115526105766e-05, 1.3596243271241738e-05, -1.3693172302667255e-05, 1.999337826301541e-05, 6.2298863913565447e-06), param_types=0)
+align_tensor.init(tensor='4 red', params=(-2.6573606866824725e-05, 1.5029023491646064e-05, -1.4095248459476317e-05, 1.8630435938382519e-05, 5.6098896464721558e-06), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -604,7 +604,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(0.00012790338137674923, -7.3778674932840584e-05, 6.5542571778565565e-05, -9.2930448759900598e-05, -2.7135754999905128e-05), param_types=0)
+align_tensor.init(tensor='5 red', params=(0.00012952743420047817, -7.3370720529718122e-05, 6.6898721342771263e-05, -9.1789811831508361e-05, -2.7960463076403615e-05), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -612,7 +612,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-2.3816692452206692e-06, 1.5433714254085879e-06, -8.742613624127732e-07, 1.0270636403385581e-06, 5.9560823079885452e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(-5.919358499590066e-07, 1.9055633811714596e-07, -2.4156162416294321e-07, 7.6884075311564199e-07, 2.9161551832544155e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -620,7 +620,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(8.9651086677314861e-05, -5.1044864769297791e-05, 4.6286105802251756e-05, -6.7517963962291375e-05, -2.0953838896368777e-05), param_types=0)
+align_tensor.init(tensor='7 red', params=(9.3251775416895602e-05, -5.3071520786810954e-05, 4.8957713603639991e-05, -6.6111726425366763e-05, -2.0184679846603348e-05), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -628,7 +628,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(0.00017009465792106656, -9.7227144256033628e-05, 8.9392517049568729e-05, -0.00012566879812011018, -3.8527732875004694e-05), param_types=0)
+align_tensor.init(tensor='8 red', params=(0.00017208913777619993, -9.7328726126202461e-05, 8.9334176196477814e-05, -0.00012222158450768078, -3.7029069591183443e-05), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -636,7 +636,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(-6.8541894404763664e-05, 3.9169130795561072e-05, -3.5629346506034769e-05, 4.9118230788293444e-05, 1.5193271057837486e-05), param_types=0)
+align_tensor.init(tensor='9 red', params=(-6.9170226912936754e-05, 3.9379205472841585e-05, -3.5739191520292123e-05, 4.9113949723512448e-05, 1.480748033201772e-05), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -654,7 +654,7 @@ pipe.create(pipe_name='cone_80.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(-4.1891403613990207e-05, 2.4094341565191214e-05, -2.2586774095582631e-05, 2.9259903727741661e-05, 8.3525830780883761e-06), param_types=0)
+align_tensor.init(tensor='0 red', params=(-4.2200141872748869e-05, 2.4165650429831078e-05, -2.1683202821521157e-05, 2.9653115070042805e-05, 9.1152794772041694e-06), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -662,7 +662,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(3.8264047528345698e-05, -2.1456515261949477e-05, 1.9627415956018388e-05, -2.8893404101970035e-05, -9.3669747885387484e-06), param_types=0)
+align_tensor.init(tensor='1 red', params=(3.9257006506452272e-05, -2.2508029955017699e-05, 2.0494329849610113e-05, -2.7749703234465426e-05, -8.6677369267234724e-06), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -670,7 +670,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(2.6560495067624319e-05, -1.4965801391501121e-05, 1.3273992824213199e-05, -2.0284038444099627e-05, -6.9847286520703982e-06), param_types=0)
+align_tensor.init(tensor='2 red', params=(2.6886695606396966e-05, -1.53946153831794e-05, 1.4139338370557401e-05, -1.9105534892490473e-05, -5.9978928606282585e-06), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -678,7 +678,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(1.4259641991969411e-05, -7.9773352410291694e-06, 7.7664718133039953e-06, -1.0912082077178887e-05, -2.5336225163885032e-06), param_types=0)
+align_tensor.init(tensor='3 red', params=(1.5382619455098222e-05, -8.7581870500242426e-06, 7.9627343934013104e-06, -1.0801405064904332e-05, -3.3038181962325393e-06), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -686,7 +686,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(-1.0432151477735009e-05, 5.396352141264999e-06, -6.6093501630175704e-06, 9.10461876791491e-06, 2.6775404693857112e-06), param_types=0)
+align_tensor.init(tensor='4 red', params=(-1.1724925404672994e-05, 6.8415246382312581e-06, -6.315325197473207e-06, 7.9653523133324512e-06, 2.4016493224453051e-06), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -694,7 +694,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(5.648280848125653e-05, -3.2784854052773635e-05, 2.922352029513787e-05, -4.1392605196429415e-05, -1.1476467063438723e-05), param_types=0)
+align_tensor.init(tensor='5 red', params=(5.7118881110301167e-05, -3.238415370501987e-05, 2.9734280575502383e-05, -4.0608303002663882e-05, -1.2507084380510665e-05), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -702,7 +702,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-1.2989159792243771e-06, 1.1566743886619284e-06, 4.2058422789359679e-08, 6.1881038813575916e-07, 8.7467165932233772e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(-6.8708054919754332e-08, -3.982972123966483e-08, -1.4694883229127078e-07, 2.8712563739097586e-07, 1.3106533722101659e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -710,7 +710,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(3.9080010648615655e-05, -2.1306474781632899e-05, 2.0789428282319725e-05, -3.0117567778685277e-05, -9.2542635334494673e-06), param_types=0)
+align_tensor.init(tensor='7 red', params=(4.1599385013669871e-05, -2.3978773499672055e-05, 2.1616870006777322e-05, -2.9118940564250591e-05, -9.0708281760521706e-06), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -718,7 +718,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(7.4963836525151985e-05, -4.265617486527709e-05, 3.9962361605940369e-05, -5.6254002986061587e-05, -1.7812470501542073e-05), param_types=0)
+align_tensor.init(tensor='8 red', params=(7.5747134993311334e-05, -4.3381131393530018e-05, 3.9816212313393367e-05, -5.3384324139660522e-05, -1.647900145528176e-05), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -726,7 +726,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(-3.0271027635766778e-05, 1.7028237954241228e-05, -1.5740011657191083e-05, 2.1502746328720072e-05, 6.9100904569966192e-06), param_types=0)
+align_tensor.init(tensor='9 red', params=(-3.0785680338749168e-05, 1.7726928878549896e-05, -1.5793058786671446e-05, 2.1653962809152867e-05, 6.7631018219675363e-06), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -744,7 +744,7 @@ pipe.create(pipe_name='cone_90.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(1.1958310550013465e-06, -3.2576821712855861e-07, 8.773164880365331e-07, -1.0398982299165047e-06, -8.2121771103416608e-07), param_types=0)
+align_tensor.init(tensor='0 red', params=(-3.584055417842233e-07, 4.4072215625989361e-07, 1.1205010229029206e-07, -3.0827448115035046e-07, -6.574441630036864e-08), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -752,7 +752,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(-1.1792937076603336e-06, 1.6280334963813604e-06, -6.6082389815585773e-07, -9.3064678108965876e-07, -4.8245822065721529e-07), param_types=0)
+align_tensor.init(tensor='1 red', params=(-7.1836901648381614e-08, -2.003372983688717e-07, 2.2720266126671748e-07, 3.1752823664621702e-07, -2.8030583847318679e-07), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -760,7 +760,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(-6.1248128313773681e-07, 9.7126904161905864e-07, -4.4993473959775225e-07, -8.5549159131920944e-07, -7.3968093419110288e-07), param_types=0)
+align_tensor.init(tensor='2 red', params=(-2.990377494384207e-07, 4.1980263906518063e-08, 1.8337390512297003e-07, 2.0679654883068616e-07, -2.4039538991336908e-07), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -768,7 +768,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(-8.6982110611801586e-07, 9.5950998189188777e-07, 7.3955292268365359e-08, -3.3253019382590634e-07, 5.8405633838454614e-07), param_types=0)
+align_tensor.init(tensor='3 red', params=(2.7037848124277718e-07, -2.5646042583026362e-07, 1.3748335961931758e-07, 1.4016581158905322e-07, -8.633902821237698e-08), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -776,7 +776,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(5.3868014422842562e-07, -1.4996925179333571e-06, -7.0286219829232501e-07, 6.5760571687067813e-07, 7.9578923168336985e-08), param_types=0)
+align_tensor.init(tensor='4 red', params=(-1.1636343314442968e-07, 1.7555722638755443e-07, -2.0651467206931442e-07, -3.1293725450686519e-07, -3.2245457466273637e-09), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -784,7 +784,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(-1.7616804251704874e-06, 7.3350292372728744e-07, -4.147308976050371e-07, -1.3678214322839669e-07, 8.327219144352417e-07), param_types=0)
+align_tensor.init(tensor='5 red', params=(-1.2365439936440379e-07, -7.1830960552232676e-08, 2.0187109255257146e-07, 3.4756631943308506e-07, -2.3429397384792667e-07), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -792,7 +792,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-5.1453110331670908e-07, 9.3189885486023967e-07, 1.8565869883109012e-07, -1.5007592936541441e-07, 5.8280690695685904e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(4.8875886891419997e-07, -3.7954843217304646e-07, 6.1897359335599807e-08, 6.9996604621929237e-08, 2.0042691173676572e-08), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -800,7 +800,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(-1.8142159184137467e-06, 2.9711334695175583e-06, -5.3549312488957988e-07, -1.3365492037409538e-06, -6.8359005302904992e-08), param_types=0)
+align_tensor.init(tensor='7 red', params=(4.5138436733777421e-07, -6.4683631348239575e-07, 3.3357439173955827e-07, 4.3035255908485359e-07, -3.0128268200938274e-07), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -808,7 +808,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(-1.6687300723641137e-06, 1.9506322412450377e-06, -1.2351971725700935e-07, -6.5614134015597888e-07, -6.5951393785989265e-07), param_types=0)
+align_tensor.init(tensor='8 red', params=(-4.9279981631081486e-07, -9.6775187762569827e-09, 3.1391178948746303e-07, 7.9381609881801305e-07, -1.7884943950936236e-07), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -816,7 +816,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(9.2169605094217949e-07, -8.2399045881558185e-07, 1.1178082814271494e-06, -1.5455460961264385e-07, 2.7582695448564053e-11), param_types=0)
+align_tensor.init(tensor='9 red', params=(-2.6700181658739122e-07, 4.0813926544664601e-07, 2.4789537667025301e-08, -1.9687320166440426e-07, 9.7148748057532242e-08), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -834,7 +834,7 @@ pipe.create(pipe_name='cone_100.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(3.1482385395725215e-05, -1.7179412379800147e-05, 1.586373771959847e-05, -2.23383975113737e-05, -8.1180837092317164e-06), param_types=0)
+align_tensor.init(tensor='0 red', params=(2.9434782181510354e-05, -1.6690846469511439e-05, 1.5363659631632094e-05, -2.1519361943831194e-05, -6.3808739022158153e-06), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -842,7 +842,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(-2.8922321769901788e-05, 1.7405857464741978e-05, -1.516201134800308e-05, 1.9152737370772737e-05, 5.5686767902474637e-06), param_types=0)
+align_tensor.init(tensor='1 red', params=(-2.7846845039999598e-05, 1.5216853124405557e-05, -1.4152655759882242e-05, 2.027479203363873e-05, 5.6311817548540066e-06), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -850,7 +850,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(-1.9611951381297516e-05, 1.1933285915212695e-05, -1.0523317331319788e-05, 1.3125678490378412e-05, 3.4178528818869007e-06), param_types=0)
+align_tensor.init(tensor='2 red', params=(-1.9371097261118228e-05, 1.0498548778004569e-05, -9.7169503583346441e-06, 1.3961884108296837e-05, 3.9425575735659234e-06), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -858,7 +858,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(-1.1746416124584686e-05, 6.8352105809745962e-06, -5.3192650787201235e-06, 7.181981530944998e-06, 2.7448823096919224e-06), param_types=0)
+align_tensor.init(tensor='3 red', params=(-1.0551030199581122e-05, 5.9991321589661959e-06, -5.518302262856635e-06, 7.8505512077346914e-06, 1.9748318503405499e-06), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -866,7 +866,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(8.568112028305796e-06, -6.0373881561431441e-06, 4.1933410015119612e-06, -5.2533890129038866e-06, -1.5335557355637979e-06), param_types=0)
+align_tensor.init(tensor='4 red', params=(8.1217338166733119e-06, -4.1463071484080731e-06, 3.9868117548307087e-06, -6.3393355418345473e-06, -1.6160734820943661e-06), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -874,7 +874,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(-4.2710245862709263e-05, 2.3544506143978668e-05, -2.0584636742196944e-05, 2.8946407108870534e-05, 9.9785771505183257e-06), param_types=0)
+align_tensor.init(tensor='5 red', params=(-4.0563165640529692e-05, 2.3138710472902292e-05, -2.0873445133230716e-05, 2.9239966669629237e-05, 8.3244018192736181e-06), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -882,7 +882,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-2.8822446289884813e-07, 5.3679688656440433e-07, 2.7611380025921413e-07, -6.5205287399566596e-07, 2.7298591864171319e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(6.4510866486534152e-07, -3.7637919830878781e-07, 1.6596302474156442e-07, -8.8343048782359693e-08, -3.2298036620078292e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -890,7 +890,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(-3.0941288924171881e-05, 1.9303751747341759e-05, -1.5953514799415181e-05, 1.9455346816088146e-05, 5.9582406064272351e-06), param_types=0)
+align_tensor.init(tensor='7 red', params=(-2.8860925850301937e-05, 1.5622615767435855e-05, -1.4805303731649194e-05, 2.146604760745395e-05, 5.6022345933482914e-06), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -898,7 +898,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(-5.5501892223132923e-05, 3.2639267329052873e-05, -2.8538204261602231e-05, 3.854071437979266e-05, 1.1758792791581562e-05), param_types=0)
+align_tensor.init(tensor='8 red', params=(-5.4144334065626746e-05, 2.97502789820516e-05, -2.7319055814356921e-05, 3.9437682699445074e-05, 1.1512768195137545e-05), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -906,7 +906,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(2.2810452087664708e-05, -1.3163215753911787e-05, 1.2206648065551553e-05, -1.570156868505741e-05, -5.0911895763301463e-06), param_types=0)
+align_tensor.init(tensor='9 red', params=(2.146494766393649e-05, -1.186663203253355e-05, 1.115360588485924e-05, -1.5698813558216645e-05, -4.5089909254081178e-06), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -924,7 +924,7 @@ pipe.create(pipe_name='cone_110.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(4.9017233106104401e-05, -2.6899591960684485e-05, 2.4305469317829918e-05, -3.4415660180907014e-05, -1.1952486531223167e-05), param_types=0)
+align_tensor.init(tensor='0 red', params=(4.6207706449223515e-05, -2.6570592667940737e-05, 2.3995617970759888e-05, -3.3045688916509722e-05, -9.7577661727296999e-06), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -932,7 +932,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(-4.4753639812873536e-05, 2.6182941067476876e-05, -2.2869743148506634e-05, 3.0487675601756744e-05, 8.8211104368007725e-06), param_types=0)
+align_tensor.init(tensor='1 red', params=(-4.3614448904250651e-05, 2.4339768950464465e-05, -2.2312948125893584e-05, 3.1630053267840761e-05, 8.772672382338553e-06), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -940,7 +940,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(-3.0397021567123667e-05, 1.7913274261041533e-05, -1.5750631579103124e-05, 2.0917633530467802e-05, 5.5363262458102845e-06), param_types=0)
+align_tensor.init(tensor='2 red', params=(-3.0263610824939123e-05, 1.6804008334939655e-05, -1.5306746242857854e-05, 2.1874988673448209e-05, 6.1717865122777634e-06), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -948,7 +948,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(-1.7993312342055654e-05, 1.0228709886786488e-05, -8.468726455823564e-06, 1.1546973715576572e-05, 4.2133624376163098e-06), param_types=0)
+align_tensor.init(tensor='3 red', params=(-1.6635057149805788e-05, 9.461303827455951e-06, -8.8589539787670594e-06, 1.2199829260601413e-05, 3.1031190936437066e-06), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -956,7 +956,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(1.316969528977327e-05, -8.7834930465996945e-06, 6.7201117418291245e-06, -9.0509466186372936e-06, -2.5646223841287539e-06), param_types=0)
+align_tensor.init(tensor='4 red', params=(1.2807306405774233e-05, -6.7144278221707474e-06, 6.7474358949997326e-06, -9.7848983522223708e-06, -2.433766870721023e-06), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -964,7 +964,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(-6.6155941039928008e-05, 3.6273316471179622e-05, -3.200509287253562e-05, 4.5117174746088715e-05, 1.5050185929043927e-05), param_types=0)
+align_tensor.init(tensor='5 red', params=(-6.3540295808948603e-05, 3.6507629428163881e-05, -3.2928295899191468e-05, 4.5448232469927608e-05, 1.3039735888233234e-05), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -972,7 +972,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-2.2250719760005129e-07, 5.3153866891620356e-07, 1.7788352386921488e-07, -6.4153699898598635e-07, 4.3512271403143217e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(8.4705521162273254e-07, -5.7601911755608662e-07, 8.9959700999530684e-08, -2.2058930217503809e-07, -5.3354557412635148e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -980,7 +980,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(-4.7617586749662347e-05, 2.8615276633254467e-05, -2.4221879169921614e-05, 3.1543716594551411e-05, 9.5452340051072014e-06), param_types=0)
+align_tensor.init(tensor='7 red', params=(-4.5379130403335984e-05, 2.5074643167274973e-05, -2.3541421224482957e-05, 3.3426697115588577e-05, 8.6898432489108302e-06), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -988,7 +988,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(-8.6312285698323895e-05, 4.9913466514783667e-05, -4.3719630069437406e-05, 6.087635957684217e-05, 1.8125127327023308e-05), param_types=0)
+align_tensor.init(tensor='8 red', params=(-8.4729231993848375e-05, 4.7479425900657349e-05, -4.3387057593484963e-05, 6.1149554241405436e-05, 1.776290185836257e-05), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -996,7 +996,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(3.5427708549822112e-05, -2.0175896617385852e-05, 1.8208625863495391e-05, -2.4475425554590273e-05, -7.7408194360261566e-06), param_types=0)
+align_tensor.init(tensor='9 red', params=(3.3682508402163759e-05, -1.9048929104078956e-05, 1.7302440742227746e-05, -2.4266777340868359e-05, -6.9220542420699378e-06), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -1014,7 +1014,7 @@ pipe.create(pipe_name='cone_120.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(5.3376660377438549e-05, -3.0247693275262912e-05, 2.7328663074316194e-05, -3.824394473304782e-05, -1.3449556345979937e-05), param_types=0)
+align_tensor.init(tensor='0 red', params=(5.121445995542075e-05, -2.9336689155301536e-05, 2.692754469243886e-05, -3.675032765483056e-05, -1.102354959114522e-05), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -1022,7 +1022,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(-4.9550356221113315e-05, 2.9136845625713611e-05, -2.4569786781427899e-05, 3.4293136152267356e-05, 9.9821064317743709e-06), param_types=0)
+align_tensor.init(tensor='1 red', params=(-4.8307777211059403e-05, 2.7203540926631982e-05, -2.4934069683966617e-05, 3.488717892281851e-05, 9.8744400390449028e-06), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -1030,7 +1030,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(-3.383286306181731e-05, 2.0033718396806056e-05, -1.6705238560989248e-05, 2.3571236105730892e-05, 6.2552736011797119e-06), param_types=0)
+align_tensor.init(tensor='2 red', params=(-3.3516026540070328e-05, 1.8820336383492973e-05, -1.7024089249290421e-05, 2.4092746977456898e-05, 6.9414171968029223e-06), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -1038,7 +1038,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(-1.9914951616942655e-05, 1.1275378400231553e-05, -9.396749471496057e-06, 1.2957865854080393e-05, 4.9096205157016545e-06), param_types=0)
+align_tensor.init(tensor='3 red', params=(-1.8455069059799473e-05, 1.0523307269728198e-05, -1.0020914096852667e-05, 1.3504603257602019e-05, 3.4364902073109024e-06), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -1046,7 +1046,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(1.48762622317788e-05, -9.5445325580195787e-06, 7.0922794058547007e-06, -9.7851533382324282e-06, -2.8929611261930014e-06), param_types=0)
+align_tensor.init(tensor='4 red', params=(1.4282450096055336e-05, -7.7126497841868282e-06, 7.5735966512488952e-06, -1.0715068110352558e-05, -2.7114613560837082e-06), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -1054,7 +1054,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(-7.3131759574555124e-05, 4.0979621580139954e-05, -3.545593607517748e-05, 5.0516129728735318e-05, 1.7326132543286317e-05), param_types=0)
+align_tensor.init(tensor='5 red', params=(-7.0450321894912626e-05, 4.0410405118207455e-05, -3.683872880275262e-05, 5.0432404079815114e-05, 1.4530984194614822e-05), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -1062,7 +1062,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-1.3528681805020384e-07, 2.2173770892137155e-07, 6.1589724737396922e-08, -7.4657423459017815e-07, 5.354674410607356e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(9.2316140321366774e-07, -5.9541967570801807e-07, -6.3671783153526028e-08, -2.635082760560513e-07, -6.03272295810133e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -1070,7 +1070,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(-5.2639340719991658e-05, 3.1363433444184927e-05, -2.6019282612105907e-05, 3.548231428623006e-05, 1.0819306493975467e-05), param_types=0)
+align_tensor.init(tensor='7 red', params=(-5.0272120074150244e-05, 2.8131558826928778e-05, -2.6479579380090418e-05, 3.6806042580041137e-05, 9.7921032577046925e-06), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -1078,7 +1078,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(-9.5667311024662111e-05, 5.6132809092102165e-05, -4.75171451308328e-05, 6.7558445572805045e-05, 2.044865510766508e-05), param_types=0)
+align_tensor.init(tensor='8 red', params=(-9.4013042583927618e-05, 5.3010510756817979e-05, -4.8336467292707024e-05, 6.760680762406195e-05, 1.9942828129863173e-05), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -1086,7 +1086,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(3.860047383024406e-05, -2.2428502688881565e-05, 1.9988792904527371e-05, -2.7494277801951925e-05, -8.6319631354207614e-06), param_types=0)
+align_tensor.init(tensor='9 red', params=(3.7266853644791782e-05, -2.114119925144225e-05, 1.9413449749454925e-05, -2.6864294602737773e-05, -7.8741738534902261e-06), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -1104,7 +1104,7 @@ pipe.create(pipe_name='cone_130.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(4.8853165225057548e-05, -2.7166582922460356e-05, 2.5727892610971061e-05, -3.4805413580643816e-05, -1.2678658560703225e-05), param_types=0)
+align_tensor.init(tensor='0 red', params=(4.7157129326543265e-05, -2.7038263585741813e-05, 2.4834014380983403e-05, -3.3807669759496449e-05, -1.0492867929428066e-05), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -1112,7 +1112,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(-4.5638861652386112e-05, 2.6678742823414302e-05, -2.234307844146026e-05, 3.2228459344833875e-05, 8.8128072666299295e-06), param_types=0)
+align_tensor.init(tensor='1 red', params=(-4.420148888256247e-05, 2.4770037548932251e-05, -2.3108739032276273e-05, 3.2079505601780362e-05, 9.0239776365689606e-06), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -1120,7 +1120,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(-3.1318697321147576e-05, 1.8381880496320412e-05, -1.5062935344386769e-05, 2.2323485255242882e-05, 5.5010410787130193e-06), param_types=0)
+align_tensor.init(tensor='2 red', params=(-3.0619244674438302e-05, 1.7038701952427806e-05, -1.5745825263272219e-05, 2.2190759393572445e-05, 6.3222162177523254e-06), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -1128,7 +1128,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(-1.8104423623388723e-05, 1.056690021779361e-05, -8.6120272248237018e-06, 1.2150430662054619e-05, 4.2274913448921202e-06), param_types=0)
+align_tensor.init(tensor='3 red', params=(-1.6967986407836531e-05, 9.7578266851432054e-06, -9.3320804439415232e-06, 1.2233993820241816e-05, 3.0253098157430785e-06), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -1136,7 +1136,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(1.3713940378659778e-05, -8.9711727118270849e-06, 6.1821598410940937e-06, -9.3474748989972992e-06, -2.4518395427237681e-06), param_types=0)
+align_tensor.init(tensor='4 red', params=(1.3031386409287442e-05, -7.0213543364834108e-06, 7.0757401653830899e-06, -9.7116494825924928e-06, -2.5821789876909757e-06), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -1144,7 +1144,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(-6.7146414758464888e-05, 3.7818749320248011e-05, -3.2772787351753447e-05, 4.7054126602910834e-05, 1.5746519501795292e-05), param_types=0)
+align_tensor.init(tensor='5 red', params=(-6.4777097075389116e-05, 3.7145731421410063e-05, -3.3957950478878749e-05, 4.6080992375584905e-05, 1.3230910146855274e-05), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -1152,7 +1152,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(1.5405182476379847e-07, 3.0469656603905844e-07, 5.5017051601307441e-08, -7.4700078272548466e-07, 2.6670662206112572e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(8.2579150453788137e-07, -4.067792765010596e-07, -1.8147266633987867e-07, -3.5618931501406172e-07, -6.0798863429733514e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -1160,7 +1160,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(-4.8209772935465895e-05, 2.8814648280922209e-05, -2.3580288292044914e-05, 3.3371232385602958e-05, 9.2581205586456743e-06), param_types=0)
+align_tensor.init(tensor='7 red', params=(-4.5978485519121698e-05, 2.5718122974322958e-05, -2.4698186709764308e-05, 3.3747316285253495e-05, 8.8835915308619834e-06), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -1168,7 +1168,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(-8.8372310634174416e-05, 5.1353663082568001e-05, -4.3424266242082474e-05, 6.3041345951624927e-05, 1.8817784373970566e-05), param_types=0)
+align_tensor.init(tensor='8 red', params=(-8.61795844397379e-05, 4.8312301152972738e-05, -4.4565770116510613e-05, 6.2073163662929278e-05, 1.8721048855849493e-05), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -1176,7 +1176,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(3.5371099306045575e-05, -2.0063862874187111e-05, 1.8613610722362089e-05, -2.5252605058592975e-05, -7.9235415563328797e-06), param_types=0)
+align_tensor.init(tensor='9 red', params=(3.4184023960809021e-05, -1.9355122760037189e-05, 1.7990948842202487e-05, -2.4837566173060891e-05, -7.3963206948946435e-06), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -1194,7 +1194,7 @@ pipe.create(pipe_name='cone_140.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(3.8017366731710712e-05, -2.0884534847327575e-05, 2.0134522074515852e-05, -2.7464169717811768e-05, -1.0289289881529489e-05), param_types=0)
+align_tensor.init(tensor='0 red', params=(3.6514041052553016e-05, -2.0867947354847688e-05, 1.9146533051581952e-05, -2.6506377841659826e-05, -8.4027810585605308e-06), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -1202,7 +1202,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(-3.5929348962488498e-05, 2.1301612909911007e-05, -1.7426781995807676e-05, 2.493833786158935e-05, 6.5310114053549386e-06), param_types=0)
+align_tensor.init(tensor='1 red', params=(-3.4406850400647235e-05, 1.9130039929581859e-05, -1.808417097737001e-05, 2.5263094555453957e-05, 7.1498956905375103e-06), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -1210,7 +1210,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(-2.4842682637019608e-05, 1.473525446233996e-05, -1.173058201896542e-05, 1.7331441334760296e-05, 3.9213354658029782e-06), param_types=0)
+align_tensor.init(tensor='2 red', params=(-2.3834565805258754e-05, 1.3146769283814114e-05, -1.2319329049180547e-05, 1.7491732361962713e-05, 5.0132601605732577e-06), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -1218,7 +1218,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(-1.3933882431136475e-05, 8.5638946604664068e-06, -6.7689319286586921e-06, 9.2156444957425214e-06, 3.2426395906711393e-06), param_types=0)
+align_tensor.init(tensor='3 red', params=(-1.3272321270139712e-05, 7.6948310171481221e-06, -7.4045853156191832e-06, 9.6214217036340723e-06, 2.357462222711956e-06), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -1226,7 +1226,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(1.034109151393987e-05, -7.1420582545442231e-06, 4.8825512242806649e-06, -7.0147283739410488e-06, -1.5873367969098264e-06), param_types=0)
+align_tensor.init(tensor='4 red', params=(1.026672843018228e-05, -5.2422622233946297e-06, 5.548987430319384e-06, -7.7303487219618842e-06, -2.0338279314713795e-06), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -1234,7 +1234,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(-5.2578528415167752e-05, 3.0038640826074943e-05, -2.5673629752686992e-05, 3.679197505854828e-05, 1.2190258156501566e-05), param_types=0)
+align_tensor.init(tensor='5 red', params=(-5.0372744077241409e-05, 2.9140948285336467e-05, -2.6554909030896259e-05, 3.6185635301347316e-05, 1.0484310211147456e-05), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -1242,7 +1242,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(5.0714483979558502e-07, 3.4131715981163089e-07, 1.0994217623417552e-08, -9.0981205909548991e-07, 2.640387802122547e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(5.6609776520186067e-07, -3.1133458740381082e-07, -2.3630990758875885e-07, -2.7056363624473706e-07, -5.1973250582646512e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -1250,7 +1250,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(-3.7564036379986976e-05, 2.315000651655648e-05, -1.8414315648536761e-05, 2.5403193402538851e-05, 6.852771149267333e-06), param_types=0)
+align_tensor.init(tensor='7 red', params=(-3.5886136487352624e-05, 1.9814814066123028e-05, -1.9440315440794047e-05, 2.6602668593946294e-05, 6.9946277807881001e-06), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -1258,7 +1258,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(-6.9171851031550927e-05, 4.0293317586861318e-05, -3.3978316437837304e-05, 4.93969669996345e-05, 1.4116567622445364e-05), param_types=0)
+align_tensor.init(tensor='8 red', params=(-6.7023456496880253e-05, 3.711964165781886e-05, -3.4561620917905555e-05, 4.8903847403734093e-05, 1.4930609606622883e-05), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -1266,7 +1266,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(2.7774807837792214e-05, -1.5641741281855067e-05, 1.4502730399942855e-05, -1.9724883396215987e-05, -6.3225099372520982e-06), param_types=0)
+align_tensor.init(tensor='9 red', params=(2.6483706236696721e-05, -1.4863220805605174e-05, 1.3938978396172313e-05, -1.9495834008438159e-05, -5.9065020709987156e-06), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -1284,7 +1284,7 @@ pipe.create(pipe_name='cone_150.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(2.4208361179297427e-05, -1.3772011165080128e-05, 1.3560850081630767e-05, -1.8368508392298282e-05, -6.9401798854879594e-06), param_types=0)
+align_tensor.init(tensor='0 red', params=(2.3588627067513012e-05, -1.3619994696722308e-05, 1.234939762518536e-05, -1.7254120598206325e-05, -5.7323374297245836e-06), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -1292,7 +1292,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(-2.3495375377157504e-05, 1.3996649756954464e-05, -1.1069763926561314e-05, 1.6528878992792782e-05, 3.7494566016236732e-06), param_types=0)
+align_tensor.init(tensor='1 red', params=(-2.2137406675704215e-05, 1.2183502149175611e-05, -1.1872375936549385e-05, 1.648079976197436e-05, 4.7417416365980024e-06), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -1300,7 +1300,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(-1.6399867213607599e-05, 9.7172783535693678e-06, -7.3616033631649753e-06, 1.1539366333110074e-05, 2.0672630030018857e-06), param_types=0)
+align_tensor.init(tensor='2 red', params=(-1.5302494015246188e-05, 8.3312857509616284e-06, -8.0548394430336183e-06, 1.1416044766096431e-05, 3.3635965514583382e-06), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -1308,7 +1308,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(-9.0930638009787019e-06, 5.5406415859971224e-06, -4.127720785006162e-06, 5.936083468023985e-06, 2.1927032857591145e-06), param_types=0)
+align_tensor.init(tensor='3 red', params=(-8.6866416377444769e-06, 5.0493570469721572e-06, -4.9598160535553064e-06, 6.2094917848718615e-06, 1.3781020289986744e-06), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -1316,7 +1316,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(6.7306107867012649e-06, -4.7332302050115002e-06, 2.930848088722325e-06, -4.2286363824496327e-06, -6.7916326843407839e-07), param_types=0)
+align_tensor.init(tensor='4 red', params=(6.6987905833075386e-06, -3.31238670077465e-06, 3.7409524908381036e-06, -5.1402556772664577e-06, -1.3021297136843894e-06), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -1324,7 +1324,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(-3.4468203647130872e-05, 1.9705418493973032e-05, -1.6185833437046714e-05, 2.4458457301721934e-05, 8.1789096823644689e-06), param_types=0)
+align_tensor.init(tensor='5 red', params=(-3.274807275523425e-05, 1.9140671232627843e-05, -1.7289019662640057e-05, 2.3360662408713449e-05, 6.7889261131154138e-06), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -1332,7 +1332,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(5.1158610550510904e-07, 1.3222066214810889e-07, 4.8478701934560158e-08, -8.4427044335001428e-07, 2.4147427698032952e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(3.0117600044546908e-07, -2.0365262267910314e-07, -3.1532615422208704e-07, -1.6072440047234882e-07, -4.9157503523530538e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -1340,7 +1340,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(-2.4374267966539133e-05, 1.5113544696587276e-05, -1.1642568455462455e-05, 1.6554044344551371e-05, 3.878901591633018e-06), param_types=0)
+align_tensor.init(tensor='7 red', params=(-2.3121927085712013e-05, 1.2544183147091863e-05, -1.2959993487074382e-05, 1.7400417231484299e-05, 4.4908032582063855e-06), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -1348,7 +1348,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(-4.5123942275179813e-05, 2.6716524705366846e-05, -2.1806181157881432e-05, 3.2592726251104328e-05, 8.4703468580316599e-06), param_types=0)
+align_tensor.init(tensor='8 red', params=(-4.3300961027399501e-05, 2.3939475691108017e-05, -2.241167572874135e-05, 3.1950764255922217e-05, 1.0130383217014727e-05), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -1356,7 +1356,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(1.7726854800522228e-05, -1.0277263118829533e-05, 9.7560222077785826e-06, -1.3255420933878249e-05, -3.9474165282633717e-06), param_types=0)
+align_tensor.init(tensor='9 red', params=(1.6959501371205855e-05, -9.4710561143283207e-06, 9.0726244718443899e-06, -1.2742959863107397e-05, -4.0459805697341785e-06), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -1374,7 +1374,7 @@ pipe.create(pipe_name='cone_160.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(1.1858614328378074e-05, -6.9152696577167991e-06, 7.3101895809590385e-06, -9.3993971908120983e-06, -4.2886716562759852e-06), param_types=0)
+align_tensor.init(tensor='0 red', params=(1.1471166479457785e-05, -6.7822516557464613e-06, 5.9357400409865327e-06, -8.6117725834607779e-06, -3.0162229230057398e-06), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -1382,7 +1382,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(-1.1633068615736018e-05, 7.1724283199459292e-06, -5.127332765412573e-06, 8.2357539189270436e-06, 1.2376148317695831e-06), param_types=0)
+align_tensor.init(tensor='1 red', params=(-1.0440843742946848e-05, 5.5855067515505839e-06, -5.8955264790702704e-06, 8.3522866446851513e-06, 2.4523459019739843e-06), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -1390,7 +1390,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(-8.1570389018299453e-06, 4.936117641961988e-06, -3.2010852334863712e-06, 5.8876639905891686e-06, 3.772038580182762e-07), param_types=0)
+align_tensor.init(tensor='2 red', params=(-7.207987811575892e-06, 3.7747502228432974e-06, -3.9854143123998599e-06, 5.7669070954019e-06, 1.8061900247726613e-06), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -1398,7 +1398,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(-4.5976147653331879e-06, 2.9525447319613382e-06, -1.9471129110592909e-06, 2.6308250222801686e-06, 1.1284423645802601e-06), param_types=0)
+align_tensor.init(tensor='3 red', params=(-4.1730833375365919e-06, 2.497352893503673e-06, -2.53421334706829e-06, 3.1409046887120709e-06, 5.4041579340761486e-07), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -1406,7 +1406,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(3.2081728383483076e-06, -2.6680625278240394e-06, 1.0289495239422288e-06, -1.6352759120337398e-06, 1.4296023906392973e-07), param_types=0)
+align_tensor.init(tensor='4 red', params=(3.0777264651820138e-06, -1.3664230224590531e-06, 1.8541750683039956e-06, -2.7674085924015989e-06, -6.005746284028297e-07), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -1414,7 +1414,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(-1.7454234050551552e-05, 9.9780695081276523e-06, -7.6860220097901482e-06, 1.2355080895950863e-05, 4.5202892433768193e-06), param_types=0)
+align_tensor.init(tensor='5 red', params=(-1.6016543822742762e-05, 9.7022519824653717e-06, -8.5148279520583453e-06, 1.1529591917555521e-05, 3.4275869571531809e-06), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -1422,7 +1422,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(3.2541219882304744e-07, 2.5267798055084563e-07, -1.1641689373822642e-07, -8.9924844730568698e-07, 1.4773932799846819e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(2.3820481815513065e-07, -1.7481184222355828e-07, -2.4916802399551817e-07, 2.9518761669818108e-08, -4.39700188688785e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -1430,7 +1430,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(-1.1949564125639758e-05, 7.9672288872552729e-06, -5.4932272003881314e-06, 7.6932529699407449e-06, 1.1079094511042021e-06), param_types=0)
+align_tensor.init(tensor='7 red', params=(-1.0730242512402918e-05, 5.5486319066797948e-06, -6.548870385987126e-06, 8.9782201281807687e-06, 2.1261791701656556e-06), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -1438,7 +1438,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(-2.2283135643287147e-05, 1.3652335170551191e-05, -9.9927414392840941e-06, 1.64825135670073e-05, 3.7026340780102466e-06), param_types=0)
+align_tensor.init(tensor='8 red', params=(-2.0793458354307761e-05, 1.1406619804447968e-05, -1.0835050477759017e-05, 1.6112041349436629e-05, 5.4468884749949721e-06), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -1446,7 +1446,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(8.6066850538607811e-06, -5.1721223068466774e-06, 5.2166479472023152e-06, -6.7630740828956572e-06, -2.0116194920701414e-06), param_types=0)
+align_tensor.init(tensor='9 red', params=(8.0162769125260438e-06, -4.3838214916865359e-06, 4.440274619503617e-06, -6.4466097795694893e-06, -2.1332457069616532e-06), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -1464,7 +1464,7 @@ pipe.create(pipe_name='cone_170.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(3.2640008999948914e-06, -2.1553914505729884e-06, 2.9383845956731581e-06, -3.1347521318197663e-06, -2.2719086253107913e-06), param_types=0)
+align_tensor.init(tensor='0 red', params=(2.7911771270814098e-06, -1.9187185740122885e-06, 1.540144710551895e-06, -2.3500846027941756e-06, -1.2895503280720149e-06), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -1472,7 +1472,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(-3.7612935631365298e-06, 2.6395219629593484e-06, -9.6512058170740263e-07, 2.3268765887632808e-06, -3.4805660987807876e-07), param_types=0)
+align_tensor.init(tensor='1 red', params=(-2.3844838190697922e-06, 1.0168669225081351e-06, -1.6971084835176053e-06, 2.6016658777314792e-06, 7.7240663305978521e-07), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -1480,7 +1480,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(-2.6949278381765702e-06, 1.7678675185026689e-06, -2.6676891043883582e-07, 1.798033457071322e-06, -6.9820642447278473e-07), param_types=0)
+align_tensor.init(tensor='2 red', params=(-1.6608029225065961e-06, 6.4116757069379091e-07, -1.1061491243179899e-06, 1.8156484393366656e-06, 6.390808721895319e-07), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -1488,7 +1488,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(-1.6722201014645904e-06, 1.1821894268545739e-06, -4.5099306910124718e-07, 4.3184812754966025e-07, 5.7261543441987233e-07), param_types=0)
+align_tensor.init(tensor='3 red', params=(-1.0950807147963226e-06, 6.7385444415350031e-07, -8.5154425981359733e-07, 9.3972756069993604e-07, -1.116045462066678e-07), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -1496,7 +1496,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(9.9015841621078456e-07, -1.513051961235751e-06, -2.1921578134154134e-07, 2.8470802277594585e-07, 3.4699167302594906e-07), param_types=0)
+align_tensor.init(tensor='4 red', params=(6.8822876571007787e-07, -5.521805638813603e-08, 5.4012104292326222e-07, -1.0266951729133164e-06, -1.5480073398720355e-07), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -1504,7 +1504,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(-5.9171223276506075e-06, 3.1168068811703377e-06, -1.6983582424647634e-06, 4.0208297239373013e-06, 2.0489219384665074e-06), param_types=0)
+align_tensor.init(tensor='5 red', params=(-4.3475731796218712e-06, 2.9641791453309277e-06, -2.4171258887136545e-06, 3.1736826493042655e-06, 9.7994641353574182e-07), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -1512,7 +1512,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(8.1683112929585295e-08, 4.1189806220148176e-07, -2.9175673882024245e-07, -8.3880400892801973e-07, 2.6168890181792434e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(1.4551924503327935e-07, -1.6117790640978979e-07, -2.2104254560347947e-07, 8.9946424333961486e-08, -4.119088650701383e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -1520,7 +1520,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(-3.8737070988793117e-06, 3.3578661732423476e-06, -1.2564241895553982e-06, 1.4539198796919854e-06, -4.2112609249369683e-07), param_types=0)
+align_tensor.init(tensor='7 red', params=(-2.2742250822668564e-06, 7.228806539051246e-07, -2.0560628035581083e-06, 2.9398272608903926e-06, 3.7257982970883421e-07), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -1528,7 +1528,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(-6.8200786523896862e-06, 4.9700558196587443e-06, -1.7464369071088137e-06, 4.8635955272299905e-06, 6.6167934423789819e-07), param_types=0)
+align_tensor.init(tensor='8 red', params=(-5.1435301709701805e-06, 2.6730543773257408e-06, -2.7700937895890718e-06, 4.8499849071911886e-06, 2.2982087991875362e-06), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -1536,7 +1536,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(2.388565679314973e-06, -1.7278449948916709e-06, 2.0329531752473335e-06, -2.1675419611183805e-06, -5.6120332966699517e-07), param_types=0)
+align_tensor.init(tensor='9 red', params=(1.6823221715605927e-06, -8.3837667888842542e-07, 1.2274427211917163e-06, -1.9092811509979057e-06, -8.4589499589333238e-07), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
@@ -1554,7 +1554,7 @@ pipe.create(pipe_name='cone_180.0_deg', pipe_type='frame order')
 
 # Load tensor 0.
 align_tensor.init(tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-align_tensor.init(tensor='0 red', params=(2.1920189845604641e-07, -3.4614391917367191e-07, 1.3620937740968749e-06, -1.115819544420444e-06, -1.4869597408549182e-06), param_types=0)
+align_tensor.init(tensor='0 red', params=(-3.6193143049957629e-07, -1.2364511559434247e-07, -7.2569462709506853e-08, -1.1059429590466985e-07, -6.0731679991732212e-07), param_types=0)
 align_tensor.init(tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='0 full', domain='full')
@@ -1562,7 +1562,7 @@ align_tensor.set_domain(tensor='0 red', domain='red')
 
 # Load tensor 1.
 align_tensor.init(tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-align_tensor.init(tensor='1 red', params=(-7.5181226999362722e-07, 8.9172168191491984e-07, 4.9234252125193419e-07, 1.5396472355651284e-07, -9.9127885538535149e-07), param_types=0)
+align_tensor.init(tensor='1 red', params=(4.8307140359097214e-07, -6.1536391100192014e-07, -1.972353551540971e-07, 5.6080062130170956e-07, 1.1380379233439697e-07), param_types=0)
 align_tensor.init(tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='1 full', domain='full')
@@ -1570,7 +1570,7 @@ align_tensor.set_domain(tensor='1 red', domain='red')
 
 # Load tensor 2.
 align_tensor.init(tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-align_tensor.init(tensor='2 red', params=(-5.4509338800763815e-07, 5.3347839154886371e-07, 7.2112350519783947e-07, 2.9059269375795699e-07, -1.1141265295229612e-06), param_types=0)
+align_tensor.init(tensor='2 red', params=(2.9669886931242173e-07, -4.702433468058182e-07, -7.2694272316509143e-08, 4.0594620496465374e-07, 1.8513162542261381e-07), param_types=0)
 align_tensor.init(tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='2 full', domain='full')
@@ -1578,7 +1578,7 @@ align_tensor.set_domain(tensor='2 red', domain='red')
 
 # Load tensor 3.
 align_tensor.init(tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-align_tensor.init(tensor='3 red', params=(-6.1679728021873784e-07, 5.8757805719974256e-07, 1.6384003761938013e-07, -4.8630066942200208e-07, 3.0068731924193033e-07), param_types=0)
+align_tensor.init(tensor='3 red', params=(3.9331842069610935e-08, 2.632449132044197e-08, -2.6597408781499673e-07, 1.6563865455694423e-07, -3.5925446873608508e-07), param_types=0)
 align_tensor.init(tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='3 full', domain='full')
@@ -1586,7 +1586,7 @@ align_tensor.set_domain(tensor='3 red', domain='red')
 
 # Load tensor 4.
 align_tensor.init(tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-align_tensor.init(tensor='4 red', params=(9.9834506232678814e-08, -1.0465547702283028e-06, -6.7367777210612767e-07, 9.6776881566097044e-07, 6.4000096787891879e-07), param_types=0)
+align_tensor.init(tensor='4 red', params=(-1.5244590109098534e-07, 3.6071857219741667e-07, 9.6676904313713523e-08, -4.598319201794203e-07, 8.9975557008302e-08), param_types=0)
 align_tensor.init(tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='4 full', domain='full')
@@ -1594,7 +1594,7 @@ align_tensor.set_domain(tensor='4 red', domain='red')
 
 # Load tensor 5.
 align_tensor.init(tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-align_tensor.init(tensor='5 red', params=(-1.6357935130014647e-06, 7.0119499197183425e-07, 5.0235548440620104e-07, 9.0354006067112809e-07, 1.1177850372853967e-06), param_types=0)
+align_tensor.init(tensor='5 red', params=(-9.757934276265887e-08, 5.3427047756007488e-07, -2.0630798203008977e-07, 1.5539712873486724e-07, 8.0195295666558704e-08), param_types=0)
 align_tensor.init(tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='5 full', domain='full')
@@ -1602,7 +1602,7 @@ align_tensor.set_domain(tensor='5 red', domain='red')
 
 # Load tensor 6.
 align_tensor.init(tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-align_tensor.init(tensor='6 red', params=(-7.9523339413733298e-08, 4.9167168983568958e-07, -2.6984066615207346e-07, -8.8889955980886444e-07, 2.1576817751497876e-07), param_types=0)
+align_tensor.init(tensor='6 red', params=(1.3208411641623229e-07, -1.5012398793975577e-07, -2.3943752557469333e-07, 1.4256359116892778e-07, -4.1945049191062849e-07), param_types=0)
 align_tensor.init(tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='6 full', domain='full')
@@ -1610,7 +1610,7 @@ align_tensor.set_domain(tensor='6 red', domain='red')
 
 # Load tensor 7.
 align_tensor.init(tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-align_tensor.init(tensor='7 red', params=(-8.4022625360374292e-07, 1.5755026360833167e-06, 3.0643501442499264e-07, -9.205443431879215e-07, -1.1541705336325136e-06), param_types=0)
+align_tensor.init(tensor='7 red', params=(7.4506660321059013e-07, -9.8970959023968902e-07, -4.8700186168721332e-07, 8.377766117346499e-07, -3.4247006991209853e-07), param_types=0)
 align_tensor.init(tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='7 full', domain='full')
@@ -1618,7 +1618,7 @@ align_tensor.set_domain(tensor='7 red', domain='red')
 
 # Load tensor 8.
 align_tensor.init(tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-align_tensor.init(tensor='8 red', params=(-8.984966748944838e-07, 1.627544057292182e-06, 1.0795516421532087e-06, 9.0434353856168738e-07, -7.1424783367033346e-07), param_types=0)
+align_tensor.init(tensor='8 red', params=(4.3846633561057044e-07, -4.1323931644339286e-07, 1.503528428651337e-07, 8.5881227950739858e-07, 9.9466585550403828e-07), param_types=0)
 align_tensor.init(tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='8 full', domain='full')
@@ -1626,7 +1626,7 @@ align_tensor.set_domain(tensor='8 red', domain='red')
 
 # Load tensor 9.
 align_tensor.init(tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-align_tensor.init(tensor='9 red', params=(1.4110500982886623e-07, -3.5130106957456801e-07, 9.1291061466885707e-07, -6.3142008911694246e-07, -3.0780703407899486e-08), param_types=0)
+align_tensor.init(tensor='9 red', params=(-5.8543363575056137e-07, 4.7370461670207181e-07, 6.2624916535254618e-08, -2.9375454629879852e-07, -3.4213318467975671e-07), param_types=0)
 align_tensor.init(tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.init(tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
 align_tensor.set_domain(tensor='9 full', domain='full')
