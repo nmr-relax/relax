@@ -908,7 +908,7 @@ class Frame_order(API_base, API_common):
 
             # The isotropic cone order parameter.
             if cdp.params[i] == 'cone_s1':
-                lower = -0.5
+                lower = -0.125
                 upper = 1.0
 
             # Linear angle grid from 0 to pi excluding the outer points.
