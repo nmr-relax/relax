@@ -378,6 +378,70 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
+    def test_model_rotor(self):
+        """Test the rotor frame order model."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'rotor.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(0.00410277546707 )
+        chi2_ref.append(0.00112443204411 )
+        chi2_ref.append(0.00759196190331 )
+        chi2_ref.append(0.0956596925692  )
+        chi2_ref.append(0.223717470059   )
+        chi2_ref.append(0.136723330704   )
+        chi2_ref.append(0.0588253217034  )
+        chi2_ref.append(0.0774693384156  )
+        chi2_ref.append(0.0855477856492  )
+        chi2_ref.append(0.198089516589   )
+        chi2_ref.append(0.227537351664   )
+        chi2_ref.append(0.202005777915   )
+        chi2_ref.append(0.192550395736   )
+        chi2_ref.append(0.126007906472   )
+        chi2_ref.append(0.124053264662   )
+        chi2_ref.append(0.18203965973    )
+        chi2_ref.append(0.191062017006   )
+        chi2_ref.append(0.13580013153    )
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
+    def test_model_rotor_eigenframe(self):
+        """Test the rotor frame order model in the eigenframe."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'rotor_eigenframe.py')
+
+        # The reference chi2 values.
+        chi2_ref = []
+        chi2_ref.append(0.00308229284128)
+        chi2_ref.append(0.0117874014708 )
+        chi2_ref.append(0.0016108171487 )
+        chi2_ref.append(0.00532862954549)
+        chi2_ref.append(0.097784753109  )
+        chi2_ref.append(0.157147901966  )
+        chi2_ref.append(0.182397051711  )
+        chi2_ref.append(0.338977916543  )
+        chi2_ref.append(0.208516866654  )
+        chi2_ref.append(0.137660115226  )
+        chi2_ref.append(0.0580816149373 )
+        chi2_ref.append(0.0476543367845 )
+        chi2_ref.append(0.0360689584006 )
+        chi2_ref.append(0.0118024492136 )
+        chi2_ref.append(0.0824307041139 )
+        chi2_ref.append(0.0920614159956 )
+        chi2_ref.append(0.0936464288916 )
+        chi2_ref.append(0.0823025718101 )
+
+        # Check the calculated chi2 values.
+        for i in range(18):
+            self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
+
+
     def test_opendx_map(self):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
