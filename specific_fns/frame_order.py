@@ -424,10 +424,6 @@ class Frame_order(API_base, API_common):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Test if the model is already setup.
-        if hasattr(cdp, 'model'):
-            raise RelaxModelError('Frame Order')
-
         # Test if the model name exists.
         if not model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'iso cone', 'iso cone, torsionless', 'iso cone, free rotor', 'line', 'line, torsionless', 'line, free rotor', 'rotor', 'rigid', 'free rotor']:
             raise RelaxError("The model name " + repr(model) + " is invalid.")
