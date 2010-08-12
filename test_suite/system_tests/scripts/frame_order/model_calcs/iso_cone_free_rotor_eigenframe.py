@@ -31,23 +31,6 @@ def get_angle(index, incs=None, deg=False):
 # Init.
 INC = 18
 
-# Generate 3 orthogonal vectors.
-vect_z = array([2, 1, 3], float64)
-vect_x = cross(vect_z, array([1, 1, 1], float64))
-vect_y = cross(vect_z, vect_x)
-
-# Normalise.
-vect_x = vect_x / norm(vect_x)
-vect_y = vect_y / norm(vect_y)
-vect_z = vect_z / norm(vect_z)
-
-# Build the frame.
-EIG_FRAME = zeros((3, 3), float64)
-EIG_FRAME[:,0] = vect_x
-EIG_FRAME[:,1] = vect_y
-EIG_FRAME[:,2] = vect_z
-a, b, g = R_to_euler_zyz(EIG_FRAME)
-
 # Load the tensors.
 execfile(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'isotropic_cone_free_rotor_in_frame_tensors_beta101.25.py')
 
@@ -63,9 +46,6 @@ for i in range(INC):
 
     # Data init.
     cdp.ave_pos_beta  = 101.25 / 360.0 * 2.0 * pi
-    cdp.ave_pos_gamma = 0.0
-    cdp.axis_theta  = b
-    cdp.axis_phi = g
     cdp.cone_theta = get_angle(i, incs=INC, deg=False)
     cdp.cone_s1 = iso_cone_theta_to_S(get_angle(i, incs=INC, deg=False))
 
