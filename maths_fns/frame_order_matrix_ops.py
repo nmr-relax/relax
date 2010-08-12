@@ -402,7 +402,7 @@ def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, R, eigen_alpha, eigen_
     return rotate_daeg(matrix, R)
 
 
-def compile_2nd_matrix_rotor(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, smax):
+def compile_2nd_matrix_rotor(matrix, R, eigen_alpha, eigen_beta, eigen_gamma, smax):
     """Generate the rotated 2nd degree Frame Order matrix for the rotor model.
 
     The cone axis is assumed to be parallel to the z-axis in the eigenframe.
@@ -412,14 +412,12 @@ def compile_2nd_matrix_rotor(matrix, R, z_axis, cone_axis, theta_axis, phi_axis,
     @type matrix:       numpy 9D, rank-2 array
     @param R:           The rotation matrix to be populated.
     @type R:            numpy 3D, rank-2 array
-    @param z_axis:      The molecular frame z-axis from which the cone axis is rotated from.
-    @type z_axis:       numpy 3D, rank-1 array
-    @param cone_axis:   The storage structure for the cone axis.
-    @type cone_axis:    numpy 3D, rank-1 array
-    @param theta_axis:  The cone axis polar angle.
-    @type theta_axis:   float
-    @param phi_axis:    The cone axis azimuthal angle.
-    @type phi_axis:     float
+    @param eigen_alpha: The eigenframe rotation alpha Euler angle.
+    @type eigen_alpha:  float
+    @param eigen_beta:  The eigenframe rotation beta Euler angle.
+    @type eigen_beta:   float
+    @param eigen_gamma: The eigenframe rotation gamma Euler angle.
+    @type eigen_gamma:  float
     @param smax:        The maximum torsion angle.
     @type smax:         float
     """
@@ -450,11 +448,8 @@ def compile_2nd_matrix_rotor(matrix, R, z_axis, cone_axis, theta_axis, phi_axis,
     # Off diagonal set 2.
     matrix[1, 3] = matrix[3, 1] = -matrix[0, 4]
 
-    # Generate the cone axis from the spherical angles.
-    spherical_to_cartesian([1.0, theta_axis, phi_axis], cone_axis)
-
     # Average position rotation.
-    two_vect_to_R(z_axis, cone_axis, R)
+    euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
 
     # Rotate and return the frame order matrix.
     return rotate_daeg(matrix, R)
