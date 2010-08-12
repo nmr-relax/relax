@@ -865,6 +865,10 @@ class Frame_order(API_base, API_common):
         else:
             incs = inc
 
+        # Sanity check.
+        if len(incs) != n:
+            raise RelaxError("The size of the increment list %s does not match the number of parameters in %s." % (incs, cdp.params))
+
         # Initialise the grid increments structures.
         lower_list = lower
         upper_list = upper
