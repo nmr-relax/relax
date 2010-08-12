@@ -91,7 +91,7 @@ class Frame_order(API_base, API_common):
             param_vect = [cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma]
 
         # Frame order eigenframe - the full frame.
-        if cdp.model in ['iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+        if cdp.model in ['rotor', 'iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
             param_vect.append(cdp.eigen_alpha)
             param_vect.append(cdp.eigen_beta)
             param_vect.append(cdp.eigen_gamma)
@@ -505,7 +505,7 @@ class Frame_order(API_base, API_common):
             cdp.params.append('ave_pos_gamma')
 
             # Frame order eigenframe - the full frame.
-            if cdp.model in ['iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            if cdp.model in ['rotor', 'iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
                 cdp.params.append('eigen_alpha')
                 cdp.params.append('eigen_beta')
                 cdp.params.append('eigen_gamma')
@@ -585,7 +585,7 @@ class Frame_order(API_base, API_common):
         elif cdp.model in ['line, torsionless', 'line, free rotor']:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
         elif cdp.model in ['rotor']:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_sigma_max = param_vector
         elif cdp.model in ['free rotor']:
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = param_vector
             ave_pos_alpha = 0.0
@@ -798,7 +798,7 @@ class Frame_order(API_base, API_common):
             names.append('ave_pos_gamma%s' % suffix)
 
             # Frame order eigenframe - the full frame.
-            if cdp.model in ['iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            if cdp.model in ['rotor', 'iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
                 names.append('eigen_alpha%s' % suffix)
                 names.append('eigen_beta%s' % suffix)
                 names.append('eigen_gamma%s' % suffix)
