@@ -435,7 +435,7 @@ class API_common:
         """Set the simulation selection flag (for a single global model).
 
         @param model_info:  The model information originating from model_loop().  This should be zero for the single global model.
-        @type model_info:   unknown
+        @type model_info:   int
         @param select_sim:  The selection flag for the simulations.
         @type select_sim:   bool
         """
@@ -595,6 +595,19 @@ class API_common:
 
             # Increment.
             inc = inc + 1
+
+
+    def _sim_return_selected_global(self, model_info):
+        """Return the array of selected simulation flags for the global model.
+
+        @param model_info:  The model information originating from model_loop().  This should be zero for the single global model.
+        @type model_info:   int
+        @return:            The array of selected simulation flags.
+        @rtype:             list of int
+        """
+
+        # Return the array.
+        return cdp.select_sim
 
 
     def _sim_return_selected_spin(self, model_info):
