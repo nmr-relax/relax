@@ -431,6 +431,19 @@ class API_common:
                 setattr(spin, obj_name, value[i])
 
 
+    def _set_selected_sim_global(self, model_info, select_sim):
+        """Set the simulation selection flag (for a single global model).
+
+        @param model_info:  The model information originating from model_loop().  This should be zero for the single global model.
+        @type model_info:   unknown
+        @param select_sim:  The selection flag for the simulations.
+        @type select_sim:   bool
+        """
+
+        # Set the array.
+        cdp.select_sim = deepcopy(select_sim)
+
+
     def _set_selected_sim_spin(self, model_info, select_sim):
         """Set the simulation selection flag (spin system specific).
 
