@@ -24,7 +24,7 @@
 """Module for the conversion of order parameters to specific model parameters and vice versa."""
 
 # Python module imports.
-from math import acos, cos, sqrt
+from math import acos, cos, pi, sqrt
 
 
 def iso_cone_theta_to_S(theta):
