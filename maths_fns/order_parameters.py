@@ -71,6 +71,8 @@ def iso_cone_S_to_theta(S):
     # Catch bad order parameters.
     if S > 1.0:
         return 0.0
+    if S < -0.125:
+        return 2*pi
 
     # Convert.
     theta = acos(0.5*(sqrt(8.0*S + 1) - 1))
