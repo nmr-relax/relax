@@ -159,6 +159,20 @@ class API_common:
             yield spin
 
 
+    def _model_loop_single_global(self):
+        """Default generator method for looping over a single global (non-spin specific) model.
+
+        The loop will yield a single index, zero, once to indicate a single model.
+
+
+        @return:    The global model index of zero.
+        @rtype:     int
+        """
+
+        # Yield the index zero.
+        yield 0
+
+
     def _num_instances_spin(self):
         """Return the number of instances, equal to the number of selected spins.
 
