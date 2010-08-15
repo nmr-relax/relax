@@ -399,7 +399,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
                 spin.rdc = {}
 
             # Correction for the negative gyromagnetic ratio of 15N.
-            if neg_g_corr:
+            if neg_g_corr and value != None:
                 value = -value
 
             # Append the value.
