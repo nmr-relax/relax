@@ -312,7 +312,9 @@ class Relax_data_store(dict):
         """
 
         # The pipes to include in the XML file.
+        all = False
         if not pipes:
+            all = True
             pipes = self.keys()
         elif isinstance(pipes, str):
             pipes = [pipes]
@@ -334,7 +336,8 @@ class Relax_data_store(dict):
         top_element.setAttribute('time', asctime())
 
         # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(xmldoc, top_element, object=self, blacklist=list(self.__class__.__dict__.keys() + dict.__dict__.keys()))
+        if all:
+            fill_object_contents(xmldoc, top_element, object=self, blacklist=list(self.__class__.__dict__.keys() + dict.__dict__.keys()))
 
         # Loop over the pipes.
         for pipe in pipes:
