@@ -570,7 +570,10 @@ class Frame_order(API_base, API_common):
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = param_vector
         elif cdp.model == 'iso cone':
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, cone_sigma_max = param_vector
-        elif cdp.model in ['iso cone, torsionless', 'iso cone, free rotor']:
+        elif cdp.model in ['iso cone, torsionless']:
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = param_vector
+            ave_pos_alpha = 0.0
+        elif cdp.model in ['iso cone, free rotor']:
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = param_vector
             ave_pos_alpha = 0.0
         elif cdp.model == 'line':
