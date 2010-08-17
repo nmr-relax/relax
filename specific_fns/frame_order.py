@@ -28,8 +28,9 @@ from copy import deepcopy
 from math import cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
-from numpy import arccos, array, float64, ones, transpose, zeros
+from numpy import arccos, array, dot, eye, float64, ones, transpose, zeros
 from re import search
+from string import upper
 from warnings import warn
 
 # relax module imports.
@@ -38,12 +39,12 @@ from api_common import API_common
 from float import isNaN, isInf
 from generic_fns import align_tensor, pipes
 from generic_fns.angles import wrap_angles
-from generic_fns.structure.cones import Iso_cone
-from generic_fns.structure.geometric import cone_edge, generate_vector_dist, generate_vector_residues, stitch_cone_to_edge
+from generic_fns.structure.cones import Iso_cone, Pseudo_elliptic
+from generic_fns.structure.geometric import create_cone_pdb, generate_vector_dist, generate_vector_residues
 from generic_fns.structure.internal import Internal
 from maths_fns import frame_order, order_parameters
 from maths_fns.coord_transform import spherical_to_cartesian
-from maths_fns.rotation_matrix import two_vect_to_R
+from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning, RelaxDeselectWarning
@@ -165,89 +166,172 @@ class Frame_order(API_base, API_common):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Test the model.
-        if not cdp.model in ['iso cone']:
-            raise RelaxError("A cone PDB representation of the '%s' model cannot be made." % cdp.model)
+        # The rigid model cannot be used here.
+        if cdp.model == 'rigid':
+            raise RelaxError("The 'rigid' frame order model has no cone representation.")
 
-        # Test for the data structures.
-        if not hasattr(cdp, 'cone_theta'):
-            raise RelaxError("The cone angle cone_theta does not exist.")
-        if not hasattr(cdp, 'axis_theta'):
-            raise RelaxError("The cone polar angle axis_theta does not exist.")
-        if not hasattr(cdp, 'axis_phi'):
-            raise RelaxError("The cone azimuthal angle axis_phi does not exist.")
+        # Test for the necessary data structures.
         if not hasattr(cdp, 'pivot'):
-            raise RelaxError("The pivot point for the cone motion has not been set.")
+            raise RelaxError("The pivot point for the domain motion has not been set.")
 
-        # The cone axis.
-        cone_axis = zeros(3, float64)
-        spherical_to_cartesian([1.0, cdp.axis_theta, cdp.axis_phi], cone_axis)
-        print(("Cone axis: %s." % cone_axis))
-        print(("Cone angle: %s." % cdp.theta_cone))
-
-        # Cone axis from simulations.
+        # Monte Carlo simulation flag.
+        sim = False
         num_sim = 0
-        cone_axis_sim = None
-        cone_axis_sim_new = None
         if hasattr(cdp, 'sim_number'):
+            sim = True
             num_sim = cdp.sim_number
-            cone_axis_sim = zeros((num_sim, 3), float64)
-        for i in range(num_sim):
-            spherical_to_cartesian([1.0, cdp.axis_theta_sim[i], cdp.axis_phi_sim[i]], cone_axis_sim[i])
 
-        # Create a positive and negative cone.
-        for factor in [-1, 1]:
-            # Negative prefix.
-            prefix = ''
-            if factor == -1:
-                prefix = 'neg_'
+        # The inversion matrix.
+        inv_mat = -eye(3)
 
-            # The rotation matrix (rotation from the z-axis to the cone axis).
-            R = zeros((3, 3), float64)
-            two_vect_to_R(array([0, 0, 1], float64), cone_axis, R)
+        # The rotation to the average position. out of the eigenframe.
+        ave_pos_R = zeros((3, 3), float64)
+        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, ave_pos_R)
 
-            # Mirroring.
-            cone_axis_new = factor*cone_axis
-            if cone_axis_sim != None:
-                cone_axis_sim_new = factor*cone_axis_sim
-            if factor == -1:
-                R = -R
+        # Create the structural object.
+        structure = Internal()
 
-            # The isotropic cone object.
-            cone = Iso_cone(cdp.theta_cone)
+        # Create the molecule.
+        structure.add_molecule(name=cdp.model)
+        mol = structure.structural_data[0].mol[0]
 
-            # Create the structural object.
-            structure = Internal()
 
-            # Add a molecule.
-            structure.add_molecule(name='iso cone')
+        # The pivot point.
+        ##################
 
-            # Alias the single molecule from the single model.
-            mol = structure.structural_data[0].mol[0]
+        # Add the pivot point.
+        mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
 
-            # Add the pivot point.
-            mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
+
+        # The central axis.
+        ###################
+
+        # Print out.
+        print("\nGenerating the central axis.")
+
+        # The spherical angles.
+        if cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+            theta_name = 'axis_theta'
+            phi_name = 'axis_phi'
+        else:
+            theta_name = 'eigen_beta'
+            phi_name = 'eigen_gamma'
+
+        # The axis.
+        axis = zeros(3, float64)
+        spherical_to_cartesian([1.0, getattr(cdp, theta_name), getattr(cdp, phi_name)], axis)
+        print(("Central axis: %s." % axis))
+
+        # Rotations and inversions.
+        axis_pos = dot(ave_pos_R, axis)
+        axis_neg = dot(ave_pos_R, dot(inv_mat, axis))
+
+        # Simulation central axis.
+        axis_sim_pos = None
+        axis_sim_neg = None
+        if sim:
+            # Init.
+            axis_sim = zeros((cdp.sim_number, 3), float64)
+
+            # Fill the structure.
+            for i in range(cdp.sim_number):
+                spherical_to_cartesian([1.0, getattr(cdp, theta_name+'_sim')[i], getattr(cdp, phi_name+'_sim')[i]], axis_sim[i])
+
+            # Inversion.
+            axis_sim_pos = dot(ave_pos_R, axis_sim_pos)
+            axis_sim_neg = dot(ave_pos_R, dot(inv_mat, axis_sim_pos))
+
+        # Generate the axis vectors.
+        print("\nGenerating the axis vectors.")
+        res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
+        res_num = generate_vector_residues(mol=mol, vector=axis_neg, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_neg, res_num=res_num+1, origin=cdp.pivot, scale=size)
+
+
+        # The x and y axes.
+        ###################
+
+        # Skip models missing the full eigenframe.
+        if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+            # Print out.
+            print("\nGenerating the x and y axes.")
+
+            # The axis system.
+            axes = zeros((3, 3), float64)
+            euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, axes)
+            print(("Axis system:\n%s" % axes))
+
+            # Rotations and inversions.
+            axes_pos = dot(ave_pos_R, axes)
+            axes_neg = dot(ave_pos_R, dot(inv_mat, axes))
+
+            # Simulation central axis.
+            axes_sim_pos = None
+            axes_sim_neg = None
+            if sim:
+                # Init.
+                axes_sim = zeros((3, cdp.sim_number, 3), float64)
+
+                # Fill the structure.
+                for i in range(cdp.sim_number):
+                    euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim[:,i])
+
+                # Rotation and inversion.
+                axes_sim_pos = dot(ave_pos_R, axes_sim)
+                axes_sim_neg = dot(ave_pos_R, dot(inv_mat, axes_sim_pos))
 
             # Generate the axis vectors.
             print("\nGenerating the axis vectors.")
-            res_num = generate_vector_residues(mol=mol, vector=cone_axis_new, atom_name='Axis', res_name_vect='AXE', sim_vectors=cone_axis_sim_new, res_num=2, origin=cdp.pivot, scale=size)
+            label = ['x', 'y']
+            for i in range(2):
+                # Simulation structures.
+                if sim:
+                    axis_sim_pos = axes_sim_pos[:,i]
+                    axis_sim_neg = axes_sim_neg[:,i]
 
-            # Generate the cone outer edge.
-            print("\nGenerating the cone outer edge.")
-            edge_start_atom = mol.atom_num[-1]+1
-            cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, phi_max_fn=cone.phi_max, length=size, inc=inc)
+                # The vectors.
+                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:,i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_pos, res_num=res_num+1, origin=cdp.pivot, scale=size)
+                res_num = generate_vector_residues(mol=mol, vector=axes_neg[:,i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_neg, res_num=res_num+1, origin=cdp.pivot, scale=size)
 
-            # Generate the cone cap, and stitch it to the cone edge.
-            print("\nGenerating the cone cap.")
-            cone_start_atom = mol.atom_num[-1]+1
-            generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=size, inc=inc)
-            stitch_cone_to_edge(mol=mol, cone_start=cone_start_atom, edge_start=edge_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
 
-            # Create the PDB file.
-            print("\nGenerating the PDB file.")
-            pdb_file = open_write_file(prefix+file, dir, force=force)
-            structure.write_pdb(pdb_file)
-            pdb_file.close()
+        # The cone object.
+        ##################
+
+        # Skip models missing a cone.
+        if cdp.model not in ['rotor', 'free rotor']:
+            # The rotation matrix (rotation from the z-axis to the cone axis).
+            if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+                R = axes
+            else:
+                R = zeros((3, 3), float64)
+                two_vect_to_R(array([0, 0, 1], float64), axis, R)
+
+            # Average position rotation.
+            R_pos = dot(ave_pos_R, R)
+            R_neg = dot(ave_pos_R, dot(inv_mat, R))
+
+            # The pseudo-ellipse cone object.
+            if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+                cone = Pseudo_elliptic(cdp.cone_theta_x, cdp.cone_theta_y)
+
+            # The isotropic cone object.
+            else:
+                cone = Iso_cone(cdp.cone_theta)
+
+            # Create the positive and negative cones.
+            create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_pos, inc=inc, distribution='regular')
+            create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_neg, inc=inc, distribution='regular')
+
+
+        # Create the PDB file.
+        ######################
+
+        # Print out.
+        print("\nGenerating the PDB file.")
+
+        # Write the file.
+        pdb_file = open_write_file(file, dir, force=force)
+        structure.write_pdb(pdb_file)
+        pdb_file.close()
 
 
     def _grid_row(self, incs, lower, upper, dist_type=None, end_point=True):
