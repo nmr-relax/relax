@@ -355,6 +355,10 @@ class Frame_order(API_base, API_common):
         if not hasattr(cdp, 'domain_to_pdb'):
             cdp.domain_to_pdb = []
 
+        # Strip the file ending if given.
+        if search('.pdb$', pdb):
+            pdb = pdb[:-4]
+
         # Add the data.
         cdp.domain_to_pdb.append([domain, pdb])
 
