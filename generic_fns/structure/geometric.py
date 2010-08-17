@@ -312,7 +312,7 @@ def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', ap
     mol.atom_connect(index1=atom_num-2, index2=origin_atom)
 
 
-def create_cone_pdb(mol=None, cone=None, start_res=0, apex=None, axis=None, R=None, inc=None, scale=30.0, distribution='regular', file=None, dir=None, force=False):
+def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=None, inc=None, scale=30.0, distribution='regular', file=None, dir=None, force=False):
     """Create a PDB representation of the given cone object.
 
     @keyword mol:           The molecule container.
@@ -366,21 +366,21 @@ def create_cone_pdb(mol=None, cone=None, start_res=0, apex=None, axis=None, R=No
         start_atom = mol.atom_num[-1]+1
 
     # Add the apex.
-    mol.atom_add(pdb_record='HETATM', atom_num=start_atom, atom_name='R', res_name='APX', res_num=start_res+1, pos=apex, element='C')
+    mol.atom_add(pdb_record='HETATM', atom_num=start_atom, atom_name='R', res_name='APX', res_num=start_res, pos=apex, element='C')
 
     # Generate the axis vectors.
     print("\nGenerating the axis vectors.")
-    res_num = generate_vector_residues(mol=mol, vector=dot(R, axis), atom_name='Axis', res_name_vect='AXE', res_num=start_res+2, origin=apex, scale=scale)
+    res_num = generate_vector_residues(mol=mol, vector=dot(R, axis), atom_name='Axis', res_name_vect='AXE', res_num=start_res+1, origin=apex, scale=scale)
 
     # Generate the cone outer edge.
     print("\nGenerating the cone outer edge.")
     edge_start_atom = mol.atom_num[-1]+1
-    cone_edge(mol=mol, cone=cone, res_name='EDG', res_num=start_res+3, apex=apex, R=R, scale=scale, inc=inc, distribution=distribution)
+    cone_edge(mol=mol, cone=cone, res_name='EDG', res_num=start_res+2, apex=apex, R=R, scale=scale, inc=inc, distribution=distribution)
 
     # Generate the cone cap, and stitch it to the cone edge.
     print("\nGenerating the cone cap.")
     cone_start_atom = mol.atom_num[-1]+1
-    generate_vector_dist(mol=mol, res_name='CON', res_num=start_res+4, centre=apex, R=R, limit_check=cone.limit_check, scale=scale, inc=inc, distribution=distribution)
+    generate_vector_dist(mol=mol, res_name='CON', res_num=start_res+3, centre=apex, R=R, limit_check=cone.limit_check, scale=scale, inc=inc, distribution=distribution)
     stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=edge_start_atom+1, scale=scale, inc=inc, distribution=distribution)
 
     # Create the PDB file.
