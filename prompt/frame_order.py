@@ -95,6 +95,49 @@ class Frame_order(User_fn_class):
         frame_order_obj._cone_pdb(size=size, inc=inc, file=file, dir=dir, force=force)
 
 
+    def domain_to_pdb(self, domain=None, pdb=None):
+        """Match the domains to PDB files.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        domain:  The domain to associate the PDB file to.
+
+        pdb:  The PDB file to associate the domain to.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        To display the frame order cone models within Pymol, the two domains need to be associated
+        with PDB files.  Then the reference domain will be fixed in the PDB frame, and the moving
+        domain will be rotated to its average position.
+
+
+        Examples
+        ~~~~~~~~
+
+        To set the 'N' domain to the PDB file 'bax_N_1J7O_1st.pdb', type one of:
+
+        relax> frame_order.domain_to_pdb('N', 'bax_N_1J7O_1st.pdb')
+        relax> frame_order.domain_to_pdb(domain='N', pdb='bax_N_1J7O_1st.pdb')
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "frame_order.domain_to_pdb("
+            text = text + "domain=" + repr(domain)
+            text = text + ", pdb=" + repr(pdb) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(domain, 'domain')
+        arg_check.is_str(pdb, 'PDB file')
+
+        # Execute the functional code.
+        frame_order_obj._domain_to_pdb(domain=domain, pdb=pdb)
+
+
     def pivot(self, pivot=None):
         """Set the pivot point for the two body motion in the structural coordinate system.
 

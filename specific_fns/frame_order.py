@@ -334,6 +334,31 @@ class Frame_order(API_base, API_common):
         pdb_file.close()
 
 
+    def _domain_to_pdb(self, domain=None, pdb=None):
+        """Match domains to PDB files.
+
+        @keyword domain:    The domain to associate the PDB file to.
+        @type domain:       str
+        @keyword pdb:       The PDB file to associate the domain to.
+        @type pdb:          str
+        """
+
+        # Check that the domain exists.
+        exists = False
+        for i in range(len(cdp.align_tensors)):
+            if hasattr(cdp.align_tensors[i], 'domain') and domain == cdp.align_tensors[i].domain:
+                exists = True
+        if not exists:
+            raise RelaxError("The domain '%s' cannot be found" % domain)
+
+        # Init if needed.
+        if not hasattr(cdp, 'domain_to_pdb'):
+            cdp.domain_to_pdb = []
+
+        # Add the data.
+        cdp.domain_to_pdb.append([domain, pdb])
+
+
     def _grid_row(self, incs, lower, upper, dist_type=None, end_point=True):
         """Set up a row of the grid search for a given parameter.
 
