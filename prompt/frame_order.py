@@ -121,7 +121,7 @@ class Frame_order(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_num_list(pivot_point, 'pivot point', size=3)
+        arg_check.is_num_list(pivot, 'pivot point', size=3)
 
         # Execute the functional code.
         frame_order_obj._pivot(pivot=pivot)
