@@ -276,6 +276,9 @@ def cone_pdb(file=None):
     # Shorten the stick width from 0.25 to 0.15.
     pymol_obj.exec_cmd("set stick_radius,0.15000")
 
+    # Set a bit of transparency.
+    pymol_obj.exec_cmd("set stick_transparency, 0.3")
+
 
     # Clean up.
     ###########
