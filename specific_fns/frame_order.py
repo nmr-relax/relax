@@ -184,10 +184,6 @@ class Frame_order(API_base, API_common):
         # The inversion matrix.
         inv_mat = -eye(3)
 
-        # The rotation to the average position. out of the eigenframe.
-        ave_pos_R = zeros((3, 3), float64)
-        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, ave_pos_R)
-
         # Create the structural object.
         structure = Internal()
 
@@ -223,8 +219,8 @@ class Frame_order(API_base, API_common):
         print(("Central axis: %s." % axis))
 
         # Rotations and inversions.
-        axis_pos = dot(ave_pos_R, axis)
-        axis_neg = dot(ave_pos_R, dot(inv_mat, axis))
+        axis_pos = axis
+        axis_neg = dot(inv_mat, axis)
 
         # Simulation central axis.
         axis_sim_pos = None
@@ -238,8 +234,8 @@ class Frame_order(API_base, API_common):
                 spherical_to_cartesian([1.0, getattr(cdp, theta_name+'_sim')[i], getattr(cdp, phi_name+'_sim')[i]], axis_sim[i])
 
             # Inversion.
-            axis_sim_pos = dot(ave_pos_R, axis_sim_pos)
-            axis_sim_neg = dot(ave_pos_R, dot(inv_mat, axis_sim_pos))
+            axis_sim_pos = axis_sim_pos
+            axis_sim_neg = dot(inv_mat, axis_sim_pos)
 
         # Generate the axis vectors.
         print("\nGenerating the axis vectors.")
@@ -261,8 +257,8 @@ class Frame_order(API_base, API_common):
             print(("Axis system:\n%s" % axes))
 
             # Rotations and inversions.
-            axes_pos = dot(ave_pos_R, axes)
-            axes_neg = dot(ave_pos_R, dot(inv_mat, axes))
+            axes_pos = axes
+            axes_neg = dot(inv_mat, axes)
 
             # Simulation central axis.
             axes_sim_pos = None
@@ -276,8 +272,8 @@ class Frame_order(API_base, API_common):
                     euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim[:,i])
 
                 # Rotation and inversion.
-                axes_sim_pos = dot(ave_pos_R, axes_sim)
-                axes_sim_neg = dot(ave_pos_R, dot(inv_mat, axes_sim_pos))
+                axes_sim_pos = axes_sim
+                axes_sim_neg = dot(inv_mat, axes_sim_pos)
 
             # Generate the axis vectors.
             print("\nGenerating the axis vectors.")
@@ -306,8 +302,8 @@ class Frame_order(API_base, API_common):
                 two_vect_to_R(array([0, 0, 1], float64), axis, R)
 
             # Average position rotation.
-            R_pos = dot(ave_pos_R, R)
-            R_neg = dot(ave_pos_R, dot(inv_mat, R))
+            R_pos = R
+            R_neg = dot(inv_mat, R)
 
             # The pseudo-ellipse cone object.
             if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
