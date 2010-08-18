@@ -240,7 +240,10 @@ class Frame_order(API_base, API_common):
         # Generate the axis vectors.
         print("\nGenerating the axis vectors.")
         res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
-        res_num = generate_vector_residues(mol=mol, vector=axis_neg, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_neg, res_num=res_num+1, origin=cdp.pivot, scale=size)
+
+        # The negative.
+        if cdp.model not in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            res_num = generate_vector_residues(mol=mol, vector=axis_neg, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_neg, res_num=res_num+1, origin=cdp.pivot, scale=size)
 
 
         # The x and y axes.
@@ -315,7 +318,10 @@ class Frame_order(API_base, API_common):
 
             # Create the positive and negative cones.
             create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_pos, inc=inc, distribution='regular')
-            create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_neg, inc=inc, distribution='regular')
+
+            # The negative.
+            if cdp.model not in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+                create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_neg, inc=inc, distribution='regular')
 
 
         # Create the PDB file.
