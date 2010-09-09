@@ -212,25 +212,29 @@ def model_free_results(self, directory, pdbfile):
     ##################################################################################################
 
     #Create Diffusion Tensor
+    try:
+        # Display the diffusion tensor.
+        interpreter.diffusion_tensor.display()
 
-    # Display the diffusion tensor.
-    interpreter.diffusion_tensor.display()
+        # Create the tensor PDB file.
+        tensor_file = 'tensor.pdb'
+        interpreter.structure.create_diff_tensor_pdb(file=tensor_file, dir=str(directory) + sep, force=True)
 
-    # Create the tensor PDB file.
-    tensor_file = 'tensor.pdb'
-    interpreter.structure.create_diff_tensor_pdb(file=tensor_file, dir=str(directory) + sep, force=True)
+        # create diffusion tensor macro
+        file = open(str(directory) + sep + 'diffusion_tensor.pml', 'w')
+        file.write('load ' + pdbfile + '\n')
+        file.write('color red, ss h\n')
+        file.write('color yellow, ss s\n')
+        file.write('color green, ss l+''\n')
+        file.write('set cartoon_discrete_colors, 1\n')
+        file.write('hide all\n')
+        file.write('show cartoon\n')
+        file.write('load ' + str(directory) + sep + 'tensor.pdb' + '\n')
+        file.close()
 
-    # create diffusion tensor macro
-    file = open(str(directory) + sep + 'diffusion_tensor.pml', 'w')
-    file.write('load ' + pdbfile + '\n')
-    file.write('color red, ss h\n')
-    file.write('color yellow, ss s\n')
-    file.write('color green, ss l+''\n')
-    file.write('set cartoon_discrete_colors, 1\n')
-    file.write('hide all\n')
-    file.write('show cartoon\n')
-    file.write('load ' + str(directory) + sep + 'tensor.pdb' + '\n')
-    file.close()
+    # No diffusion tensor (local tm model was selected)
+    except:
+        print "\nModel without diffusion tensor was selected (local TM)!\nNo diffusion tensor was created!\n\n"
 
     ##################################################################################################
 
