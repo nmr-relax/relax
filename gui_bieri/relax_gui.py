@@ -324,7 +324,7 @@ class Main(wx.Frame):
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(menu, id=40, text="&Manual\tF1", icon=MANUAL_ICON))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=30, text="&Contact relaxGUI", icon=CONTACT_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=30, text="&Contact relaxGUI (relax-users@gna.org)", icon=CONTACT_ICON))
         menu.AppendItem(self.build_menu_sub_item(menu, id=31, text="&References", icon=REF_ICON))
         menu.AppendSeparator()
         menu.AppendItem(self.build_menu_sub_item(menu, id=41, text="About relaxG&UI", icon=ABOUT_RELAXGUI_ICON))
@@ -332,6 +332,7 @@ class Main(wx.Frame):
         menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.
+        self.Bind(wx.EVT_MENU, self.contact_relax, id=30)
         self.Bind(wx.EVT_MENU, self.references, id=31)
         self.Bind(wx.EVT_MENU, self.about_gui,  id=41)
         self.Bind(wx.EVT_MENU, self.about_relax, id=42)
@@ -415,6 +416,11 @@ class Main(wx.Frame):
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         main_sizer.Add(self.notebook_left, 1, wx.EXPAND, 0)
         self.SetSizer(main_sizer)
+
+
+    def contact_relax(self, event):
+        """Write an email to the relax mailing-list using the standard mailing program."""
+        webbrowser.open_new('mailto:relax-users@gna.org')
 
 
     def exit_gui(self, event):
