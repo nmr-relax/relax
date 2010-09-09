@@ -119,7 +119,12 @@ def model_free_results(self, directory, pdbfile):
 
         # The model-free model.
         if hasattr(spin, 'model'):
-            spin.model = spin.model[1:2]
+            # Tm0-9 models
+            if 'tm' in spin.model:
+                spin.model = spin.model[2:3]
+            # m0-9
+            else:
+                spin.model = spin.model[1:2]
             file.write(";" + spin.model)
             model.append(spin.model)
 
