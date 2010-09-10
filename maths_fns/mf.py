@@ -39,7 +39,7 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, init_params=None, model_type=None, diff_type=None, diff_params=None, scaling_matrix=None, num_spins=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, h_bar=0, mu0=0, num_params=None, vectors=None):
+    def __init__(self, init_params=None, model_type=None, diff_type=None, diff_params=None, scaling_matrix=None, num_spins=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, num_interactions=None, interactions=None, internuclei_distance=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, gratio_ext=0, h_bar=0, mu0=0, num_params=None, unit_vector=None):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -56,9 +56,18 @@ class Mf:
 
         errors:  An array containing the experimental errors.
 
-        bond_length:  The fixed bond length in meters.
+        interactions: An array containing the types of interactions (either dipole-dipole or CSA).
 
-        csa:  The fixed CSA value.
+        gratio_ext:  An array containing the gyromagnetic ratios of interacting nuclei (None is included
+	in case of CSA interaction)
+
+        internuclei_distance:  An array containing the fixed internuclei_distances in meters. 
+	(None is included in case of CSA interaction)
+
+        csa:  An array containing the fixed CSA value. (None is included in case of dipole-dipole
+	interaction)
+
+        unit_vector:  An array containing the fixed unit eigenvectors of interactions
 
         diff_type:  The diffusion tensor string which should be either 'sphere', 'spheroid', or
         'ellipsoid'.
@@ -244,98 +253,107 @@ class Mf:
             # Total number of ri.
             self.total_num_ri = self.total_num_ri + num_ri[i]
 
+            self.data.append([])
+
             # The ratio of gyromagnetic ratios.
             g_ratio = gh[i] / gx[i]
 
-            # Append the class instance Data to the data array.
-            self.data.append(Data())
 
-            # Number of indices.
-            self.data[i].num_indices = self.diff_data.num_indices
+	    # loop over interactions
+            for j in xrange(self.num_interactions[i]):
+                self.data[i].append(Data())
+                self.data[i][j].interactions=interactions[i][j]
+                self.data[i][j].internuclei_distance=internuclei_distance[i][j]
+                self.data[i][j].gratio_ext=gratio_ext[i][j]
+                self.data[i][j].csa=csa[i][j]
+                self.data[i][j].unit_vector=unit_vector[i][j]
 
-            # Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
-            self.data[i].frq_list = zeros((num_frq[i], 5), float64)
-            self.data[i].frq_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indices), float64)
-            self.data[i].frq_sqrd_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indices), float64)
-            for j in xrange(num_frq[i]):
-                frqH = 2.0 * pi * frq[i][j]
-                frqX = frqH / g_ratio
-                self.data[i].frq_list[j, 1] = frqX
-                self.data[i].frq_list[j, 2] = frqH - frqX
-                self.data[i].frq_list[j, 3] = frqH
-                self.data[i].frq_list[j, 4] = frqH + frqX
-            self.data[i].frq_sqrd_list = self.data[i].frq_list ** 2
-            for j in xrange(self.diff_data.num_indices):
-                self.data[i].frq_list_ext[:,:, j] = self.data[i].frq_list
-                self.data[i].frq_sqrd_list_ext[:,:, j] = self.data[i].frq_sqrd_list
+                # Number of indices.
+                self.data[i][j].num_indices = self.diff_data.num_indices
 
-            # Store supplied data in self.data
-            self.data[i].gh = gh[i]
-            self.data[i].gx = gx[i]
-            self.data[i].g_ratio = g_ratio
-            self.data[i].h_bar = h_bar
-            self.data[i].mu0 = mu0
-            self.data[i].equations = equations[i]
-            self.data[i].param_types = param_types[i]
-            self.data[i].relax_data = relax_data[i]
-            self.data[i].errors = errors[i]
-            self.data[i].bond_length = bond_length[i]
-            self.data[i].csa = csa[i]
-            self.data[i].num_ri = num_ri[i]
-            self.data[i].num_frq = num_frq[i]
-            self.data[i].frq = frq[i]
-            self.data[i].remap_table = remap_table[i]
-            self.data[i].noe_r1_table = noe_r1_table[i]
-            self.data[i].ri_labels = ri_labels[i]
-            self.data[i].num_params = num_params[i]
-            self.data[i].xh_unit_vector = vectors[i]
+                # Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
+                self.data[i][j].frq_list = zeros((num_frq[i], 5), float64)
+                self.data[i][j].frq_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indices), float64)
+                self.data[i][j].frq_sqrd_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indices), float64)
+                for k in xrange(num_frq[i]):
+                    frqH = 2.0 * pi * frq[i][k]
+                    frqX = frqH / g_ratio
+                    frqY = frqH * gratio_ext[i][j] / gh[i]
+                    self.data[i][j].frq_list[k, 1] = frqX
+                    self.data[i][j].frq_list[k, 2] = frqY - frqX
+                    self.data[i][j].frq_list[k, 3] = frqY
+                    self.data[i][j].frq_list[k, 4] = frqY + frqX
+                self.data[i][j].frq_sqrd_list = self.data[i].frq_list ** 2
+                for k in xrange(self.diff_data.num_indices):
+                    self.data[i][j].frq_list_ext[:,:, k] = self.data[i][j].frq_list
+                    self.data[i][j].frq_sqrd_list_ext[:,:, k] = self.data[i][j].frq_sqrd_list
 
-            # Parameter values for minimising solely the diffusion tensor parameters.
-            if self.model_type == 'diff':
-                self.data[i].param_values = param_values[i]
+	        
 
-            # Indices for constructing the global generic model-free gradient and Hessian kite.
-            if i == 0:
-                self.data[i].start_index = self.diff_data.num_params
-            else:
-                self.data[i].start_index = self.data[i-1].end_index
-            self.data[i].end_index = self.data[i].start_index + self.data[i].num_params
+                # Store supplied data in self.data
+                self.data[i][j].gh = gh[i]
+                self.data[i][j].gx = gx[i]
+                self.data[i][j].g_ratio = g_ratio
+                self.data[i][j].h_bar = h_bar
+                self.data[i][j].mu0 = mu0
+                self.data[i][j].equations = equations[i]
+                self.data[i][j].param_types = param_types[i]
+                self.data[i][j].relax_data = relax_data[i]
+                self.data[i][j].errors = errors[i]
+                self.data[i][j].num_ri = num_ri[i]
+                self.data[i][j].num_frq = num_frq[i]
+                self.data[i][j].frq = frq[i]
+                self.data[i][j].remap_table = remap_table[i]
+                self.data[i][j].noe_r1_table = noe_r1_table[i]
+                self.data[i][j].ri_labels = ri_labels[i]
+                self.data[i][j].num_params = num_params[i]
 
-            # Total number of parameters.
-            if self.model_type == 'mf' or self.model_type == 'local_tm':
-                self.data[i].total_num_params = self.data[i].num_params
-            elif self.model_type == 'diff':
-                self.data[i].total_num_params = self.diff_data.num_params
-            else:
-                self.data[i].total_num_params = self.data[i].num_params + self.diff_data.num_params
+                # Parameter values for minimising solely the diffusion tensor parameters.
+                if self.model_type == 'diff':
+                    self.data[i][j].param_values = param_values[i]
 
-            # Initialise the residue specific data.
-            self.init_res_data(self.data[i], self.diff_data)
+                # Indices for constructing the global generic model-free gradient and Hessian kite.
+                if i == 0:
+                    self.data[i][j].start_index = self.diff_data.num_params
+                else:
+                    self.data[i][j].start_index = self.data[i-1][0].end_index
+                self.data[i][j].end_index = self.data[i][j].start_index + self.data[i][j].num_params
 
-            # Setup the residue specific equations.
-            if not self.setup_equations(self.data[i]):
-                raise RelaxError("The model-free equations could not be setup.")
+                # Total number of parameters.
+                if self.model_type == 'mf' or self.model_type == 'local_tm':
+                    self.data[i][j].total_num_params = self.data[i][j].num_params
+                elif self.model_type == 'diff':
+                    self.data[i][j].total_num_params = self.diff_data.num_params
+                else:
+                    self.data[i][j].total_num_params = self.data[i][j].num_params + self.diff_data.num_params
 
-            # Diffusion tensor parameters.
-            if self.model_type == 'local_tm':
-                self.diff_data.params = self.params[0:1]
-            elif self.model_type == 'diff' or self.model_type == 'all':
-                self.diff_data.params = self.params[0:self.diff_end_index]
+                # Initialise the residue specific data.
+                self.init_res_data(self.data[i][j], self.diff_data)
 
-            # Calculate the correlation times ti.
-            self.diff_data.calc_ti(self.data[i], self.diff_data)
+                # Setup the residue specific equations.
+                if not self.setup_equations(self.data[i][j]):
+                    raise RelaxError("The model-free equations could not be setup.")
 
-            # ti spectral density components.
-            self.data[i].w_ti_sqrd = self.data[i].frq_sqrd_list_ext * self.data[i].ti ** 2
-            self.data[i].fact_ti = 1.0 / (1.0 + self.data[i].w_ti_sqrd)
+                # Diffusion tensor parameters.
+                if self.model_type == 'local_tm':
+                    self.diff_data.params = self.params[0:1]
+                elif self.model_type == 'diff' or self.model_type == 'all':
+                    self.diff_data.params = self.params[0:self.diff_end_index]
 
-            # Initialise the R1 data class.  This is used only if an NOE data set is collected but the R1 data of the same frequency has not.
-            missing_r1 = 0
-            for j in xrange(self.data[i].num_ri):
-                if self.data[i].ri_labels[j] == 'NOE' and self.data[i].noe_r1_table[j] == None:
-                    missing_r1 = 1
-            if missing_r1:
-                self.init_res_r1_data(self.data[i])
+                # Calculate the correlation times ti.
+                self.diff_data.calc_ti(self.data[i][j], self.diff_data)
+
+                # ti spectral density components.
+                self.data[i][j].w_ti_sqrd = self.data[i][j].frq_sqrd_list_ext * self.data[i][j].ti ** 2
+                self.data[i][j].fact_ti = 1.0 / (1.0 + self.data[i][j].w_ti_sqrd)
+
+                # Initialise the R1 data class.  This is used only if an NOE data set is collected but the R1 data of the same frequency has not.
+                missing_r1 = 0
+                for k in xrange(self.data[i][j].num_ri):
+                    if self.data[i][j].ri_labels[k] == 'NOE' and self.data[i][j].noe_r1_table[k] == None:
+                        missing_r1 = 1
+                if missing_r1:
+                    self.init_res_r1_data(self.data[i][j])
 
         # Scaling initialisation.
         if self.scaling_matrix != None:
