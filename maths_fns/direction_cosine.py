@@ -61,7 +61,7 @@ def calc_spheroid_di(data, diff_data):
     diff_data.dpar[2] = diff_data.cos_theta
 
     # Direction cosine.
-    data.dz = dot(data.xh_unit_vector, diff_data.dpar)
+    data.dz = dot(data.unit_vector, diff_data.dpar)
 
 
 
@@ -97,8 +97,8 @@ def calc_spheroid_ddi(data, diff_data):
     diff_data.dpar_dphi[2] = 0.0
 
     # Direction cosine gradient.
-    data.ddz_dO[0] = dot(data.xh_unit_vector, diff_data.dpar_dtheta)
-    data.ddz_dO[1] = dot(data.xh_unit_vector, diff_data.dpar_dphi)
+    data.ddz_dO[0] = dot(data.unit_vector, diff_data.dpar_dtheta)
+    data.ddz_dO[1] = dot(data.unit_vector, diff_data.dpar_dphi)
 
 
 
@@ -145,9 +145,9 @@ def calc_spheroid_d2di(data, diff_data):
     diff_data.dpar_dphi2[2] = 0.0
 
     # Direction cosine Hessian.
-    data.d2dz_dO2[0, 0] = dot(data.xh_unit_vector, diff_data.dpar_dtheta2)
-    data.d2dz_dO2[0, 1] = data.d2dz_dO2[1, 0] = dot(data.xh_unit_vector, diff_data.dpar_dthetadphi)
-    data.d2dz_dO2[1, 1] = dot(data.xh_unit_vector, diff_data.dpar_dphi2)
+    data.d2dz_dO2[0, 0] = dot(data.unit_vector, diff_data.dpar_dtheta2)
+    data.d2dz_dO2[0, 1] = data.d2dz_dO2[1, 0] = dot(data.unit_vector, diff_data.dpar_dthetadphi)
+    data.d2dz_dO2[1, 1] = dot(data.unit_vector, diff_data.dpar_dphi2)
 
 
 
@@ -230,9 +230,9 @@ def calc_ellipsoid_di(data, diff_data):
     diff_data.dz[2] =  data.cos_b
 
     # Direction cosines.
-    data.dx = dot(data.xh_unit_vector, diff_data.dx)
-    data.dy = dot(data.xh_unit_vector, diff_data.dy)
-    data.dz = dot(data.xh_unit_vector, diff_data.dz)
+    data.dx = dot(data.unit_vector, diff_data.dx)
+    data.dy = dot(data.unit_vector, diff_data.dy)
+    data.dz = dot(data.unit_vector, diff_data.dz)
 
 
 
@@ -360,16 +360,16 @@ def calc_ellipsoid_ddi(data, diff_data):
     # Direction cosine gradients
     ############################
 
-    data.ddx_dO[0] = dot(data.xh_unit_vector, diff_data.ddx_dalpha)
-    data.ddx_dO[1] = dot(data.xh_unit_vector, diff_data.ddx_dbeta)
-    data.ddx_dO[2] = dot(data.xh_unit_vector, diff_data.ddx_dgamma)
+    data.ddx_dO[0] = dot(data.unit_vector, diff_data.ddx_dalpha)
+    data.ddx_dO[1] = dot(data.unit_vector, diff_data.ddx_dbeta)
+    data.ddx_dO[2] = dot(data.unit_vector, diff_data.ddx_dgamma)
 
-    data.ddy_dO[0] = dot(data.xh_unit_vector, diff_data.ddy_dalpha)
-    data.ddy_dO[1] = dot(data.xh_unit_vector, diff_data.ddy_dbeta)
-    data.ddy_dO[2] = dot(data.xh_unit_vector, diff_data.ddy_dgamma)
+    data.ddy_dO[0] = dot(data.unit_vector, diff_data.ddy_dalpha)
+    data.ddy_dO[1] = dot(data.unit_vector, diff_data.ddy_dbeta)
+    data.ddy_dO[2] = dot(data.unit_vector, diff_data.ddy_dgamma)
 
-    data.ddz_dO[1] = dot(data.xh_unit_vector, diff_data.ddz_dbeta)
-    data.ddz_dO[2] = dot(data.xh_unit_vector, diff_data.ddz_dgamma)
+    data.ddz_dO[1] = dot(data.unit_vector, diff_data.ddz_dbeta)
+    data.ddz_dO[2] = dot(data.unit_vector, diff_data.ddz_dgamma)
 
 
 
@@ -581,20 +581,20 @@ def calc_ellipsoid_d2di(data, diff_data):
     # Direction cosine Hessians
     ###########################
 
-    data.d2dx_dO2[0, 0] =                       dot(data.xh_unit_vector, diff_data.d2dx_dalpha2)
-    data.d2dx_dO2[0, 1] = data.d2dx_dO2[1, 0] = dot(data.xh_unit_vector, diff_data.d2dx_dalpha_dbeta)
-    data.d2dx_dO2[0, 2] = data.d2dx_dO2[2, 0] = dot(data.xh_unit_vector, diff_data.d2dx_dalpha_dgamma)
-    data.d2dx_dO2[1, 1] =                       dot(data.xh_unit_vector, diff_data.d2dx_dbeta2)
-    data.d2dx_dO2[1, 2] = data.d2dx_dO2[2, 1] = dot(data.xh_unit_vector, diff_data.d2dx_dbeta_dgamma)
-    data.d2dx_dO2[2, 2] =                       dot(data.xh_unit_vector, diff_data.d2dx_dgamma2)
+    data.d2dx_dO2[0, 0] =                       dot(data.unit_vector, diff_data.d2dx_dalpha2)
+    data.d2dx_dO2[0, 1] = data.d2dx_dO2[1, 0] = dot(data.unit_vector, diff_data.d2dx_dalpha_dbeta)
+    data.d2dx_dO2[0, 2] = data.d2dx_dO2[2, 0] = dot(data.unit_vector, diff_data.d2dx_dalpha_dgamma)
+    data.d2dx_dO2[1, 1] =                       dot(data.unit_vector, diff_data.d2dx_dbeta2)
+    data.d2dx_dO2[1, 2] = data.d2dx_dO2[2, 1] = dot(data.unit_vector, diff_data.d2dx_dbeta_dgamma)
+    data.d2dx_dO2[2, 2] =                       dot(data.unit_vector, diff_data.d2dx_dgamma2)
 
-    data.d2dy_dO2[0, 0] =                       dot(data.xh_unit_vector, diff_data.d2dy_dalpha2)
-    data.d2dy_dO2[0, 1] = data.d2dy_dO2[1, 0] = dot(data.xh_unit_vector, diff_data.d2dy_dalpha_dbeta)
-    data.d2dy_dO2[0, 2] = data.d2dy_dO2[2, 0] = dot(data.xh_unit_vector, diff_data.d2dy_dalpha_dgamma)
-    data.d2dy_dO2[1, 1] =                       dot(data.xh_unit_vector, diff_data.d2dy_dbeta2)
-    data.d2dy_dO2[1, 2] = data.d2dy_dO2[2, 1] = dot(data.xh_unit_vector, diff_data.d2dy_dbeta_dgamma)
-    data.d2dy_dO2[2, 2] =                       dot(data.xh_unit_vector, diff_data.d2dy_dgamma2)
+    data.d2dy_dO2[0, 0] =                       dot(data.unit_vector, diff_data.d2dy_dalpha2)
+    data.d2dy_dO2[0, 1] = data.d2dy_dO2[1, 0] = dot(data.unit_vector, diff_data.d2dy_dalpha_dbeta)
+    data.d2dy_dO2[0, 2] = data.d2dy_dO2[2, 0] = dot(data.unit_vector, diff_data.d2dy_dalpha_dgamma)
+    data.d2dy_dO2[1, 1] =                       dot(data.unit_vector, diff_data.d2dy_dbeta2)
+    data.d2dy_dO2[1, 2] = data.d2dy_dO2[2, 1] = dot(data.unit_vector, diff_data.d2dy_dbeta_dgamma)
+    data.d2dy_dO2[2, 2] =                       dot(data.unit_vector, diff_data.d2dy_dgamma2)
 
-    data.d2dz_dO2[1, 1] =                       dot(data.xh_unit_vector, diff_data.d2dz_dbeta2)
-    data.d2dz_dO2[1, 2] = data.d2dz_dO2[2, 1] = dot(data.xh_unit_vector, diff_data.d2dz_dbeta_dgamma)
-    data.d2dz_dO2[2, 2] =                       dot(data.xh_unit_vector, diff_data.d2dz_dgamma2)
+    data.d2dz_dO2[1, 1] =                       dot(data.unit_vector, diff_data.d2dz_dbeta2)
+    data.d2dz_dO2[1, 2] = data.d2dz_dO2[2, 1] = dot(data.unit_vector, diff_data.d2dz_dbeta_dgamma)
+    data.d2dz_dO2[2, 2] =                       dot(data.unit_vector, diff_data.d2dz_dgamma2)
