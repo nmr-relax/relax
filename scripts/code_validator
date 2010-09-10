@@ -58,9 +58,6 @@ class Validate:
         # Empty line after docstring.
         self.docstring_clearance()
 
-        # Docstring length.
-        self.docstring_length()
-
 
         # Variable, function, and class names.
         ######################################
@@ -173,7 +170,7 @@ class Validate:
         """Test for proper class naming."""
 
         # Heading.
-        sys.stdout.write(self.indent + "Class naming (must start with a capital).\n")
+        sys.stdout.write(self.indent + "Class naming (should start with a capital).\n")
 
         # Flags.
         ok = 1
@@ -456,72 +453,6 @@ class Validate:
                 # Print the line number.
                 else:
                     sys.stdout.write(", " + `i+2`)
-
-        # Termination.
-        self.terminate(ok)
-
-
-    def docstring_length(self):
-        """Test that the docstring is less than 100 char long."""
-
-        # Heading.
-        sys.stdout.write(self.indent + "Docstring length.  Should be less than 100 characters including all leading whitespace (equations can be longer).\n")
-
-        # Flags.
-        ok = 1
-
-        # Loop over the file.
-        for i in xrange(len(self.lines)):
-            # Flags.
-            too_long = 0
-
-            # Find the functions.
-            if search("^ *def ", self.lines[i]):
-                # Skip functions without docstrings!
-                if not search("^ *\"\"\"", self.lines[i+1]) and not search("^ *\'\'\'", self.lines[i+1]):
-                    continue
-
-                # Split the docstring line.
-                if search("^ *\"\"\"", self.lines[i+1]):
-                    row = split(self.lines[i+1], "\"\"\"")
-                else:
-                    row = split(self.lines[i+1], "\'\'\'")
-
-                # Loop over the docstring.
-                j = 0
-                while 1:
-                    # Single line docstring.
-                    if len(row) == 3:
-                        # Test the length of the line.
-                        if len(row[0]) + 3 + len(row[1]) > 101:
-                            too_long = 1
-                        break
-
-                    # Test the length of the line.
-                    if len(self.lines[i+1+j]) > 101:
-                        too_long = 1
-                        break
-
-                    # Increment the line counter.
-                    j = j + 1
-
-                    # End of the docstring.
-                    if search("\"\"\"", self.lines[i+1+j]) or search("\'\'\'", self.lines[i+1+j]):
-                        break
-
-                # Docstring is ok.
-                if not too_long:
-                    continue
-
-                # Initial print out.
-                if ok:
-                    sys.stdout.write(self.indent + "    Line num: ")
-                    sys.stdout.write(`i+1+j+2`)
-                    ok = 0
-
-                # Print the line number.
-                else:
-                    sys.stdout.write(", " + `i+1+j+2`)
 
         # Termination.
         self.terminate(ok)

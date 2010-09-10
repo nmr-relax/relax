@@ -94,7 +94,7 @@ DATA_TYPES.append(['function', dummy_fn2])
 
 # Lists.
 DATA_TYPES.append(['list', []])
-DATA_TYPES.append(['list', [None, None]])
+DATA_TYPES.append(['none list', [None, None]])
 
 # List of integers.
 DATA_TYPES.append(['int list', [-1, 0, 1]])

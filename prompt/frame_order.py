@@ -95,6 +95,49 @@ class Frame_order(User_fn_class):
         frame_order_obj._cone_pdb(size=size, inc=inc, file=file, dir=dir, force=force)
 
 
+    def domain_to_pdb(self, domain=None, pdb=None):
+        """Match the domains to PDB files.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        domain:  The domain to associate the PDB file to.
+
+        pdb:  The PDB file to associate the domain to.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        To display the frame order cone models within Pymol, the two domains need to be associated
+        with PDB files.  Then the reference domain will be fixed in the PDB frame, and the moving
+        domain will be rotated to its average position.
+
+
+        Examples
+        ~~~~~~~~
+
+        To set the 'N' domain to the PDB file 'bax_N_1J7O_1st.pdb', type one of:
+
+        relax> frame_order.domain_to_pdb('N', 'bax_N_1J7O_1st.pdb')
+        relax> frame_order.domain_to_pdb(domain='N', pdb='bax_N_1J7O_1st.pdb')
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "frame_order.domain_to_pdb("
+            text = text + "domain=" + repr(domain)
+            text = text + ", pdb=" + repr(pdb) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(domain, 'domain')
+        arg_check.is_str(pdb, 'PDB file')
+
+        # Execute the functional code.
+        frame_order_obj._domain_to_pdb(domain=domain, pdb=pdb)
+
+
     def pivot(self, pivot=None):
         """Set the pivot point for the two body motion in the structural coordinate system.
 
@@ -121,7 +164,7 @@ class Frame_order(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_num_list(pivot_point, 'pivot point', size=3)
+        arg_check.is_num_list(pivot, 'pivot point', size=3)
 
         # Execute the functional code.
         frame_order_obj._pivot(pivot=pivot)
@@ -178,10 +221,63 @@ class Frame_order(User_fn_class):
         Description
         ~~~~~~~~~~~
 
-        Prior to optimisation, the Frame Order model should be selected.  The list of available
-        models are:
+        Prior to optimisation, the Frame Order model should be selected.  These models consist of
+        three parameter categories:
 
-        'iso cone' - The isotropic cone model.
+            - The average domain position.  This includes the parameters ave_pos_alpha,
+            ave_pos_beta, and ave_pos_gamma.  These Euler angles rotate the tensors from the
+            arbitrary PDB frame of the moving domain to the average domain position.
+
+            - The frame order eigenframe.  This includes the parameters eigen_alpha, eigen_beta, and
+            eigen_gamma.  These Euler angles define the major modes of motion.  The cone central
+            axis is defined as the z-axis.  The pseudo-elliptic cone x and y-axes are defined as the
+            x and y-axes of the eigenframe.
+
+            - The cone parameters.  These are defined as the tilt-torsion angles cone_theta_x,
+            cone_theta_y, and cone_sigma_max.  The cone_theta_x and cone_theta_y parameters define
+            the two cone opening angles of the pseudo-ellipse.  The amount of domain torsion is
+            defined as the average domain position, plus and minus cone_sigma_max.  The isotropic
+            cones are defined by setting cone_theta_x = cone_theta_y and converting the single
+            parameter into a 2nd rank order parameter.
+
+        The list of available models are:
+
+            'pseudo-ellipse' - The pseudo-elliptic cone model.  This is the full model consisting of
+            the parameters ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta,
+            eigen_gamma, cone_theta_x, cone_theta_y, and cone_sigma_max.
+
+            'pseudo-ellipse, torsionless' - The pseudo-elliptic cone with the torsion angle
+            cone_sigma_max set to zero.
+
+            'pseudo-ellipse, free rotor' - The pseudo-elliptic cone with no torsion angle
+            restriction.
+
+            'iso cone' - The isotropic cone model.  The cone is defined by a single order parameter
+            s1 which is related to the single cone opening angle cone_theta_x = cone_theta_y.  Due
+            to rotational symmetry about the cone axis, the average position alpha Euler angle
+            ave_pos_alpha is dropped from the model.  The symmetry also collapses the eigenframe to
+            a single z-axis defined by the parameters axis_theta and axis_phi.
+
+            'iso cone, torsionless' - The isotropic cone model with the torsion angle cone_sigma_max
+            set to zero.
+
+            'iso cone, free rotor' - The isotropic cone model with no torsion angle restriction.
+
+            'line' - The line cone model.  This is the pseudo-elliptic cone with one of the cone
+            angles, cone_theta_y, assumed to be statistically negligible.  I.e. the cone angle is
+            so small that it cannot be distinguished from noise.
+
+            'line, torsionless' - The line cone model with the torsion angle cone_sigma_max set to
+            zero.
+
+            'line, free rotor' - The line cone model with no torsion angle restriction.
+
+            'rotor' - The only motion is a rotation about the cone axis restricted by the torsion
+            angle cone_sigma_max.
+
+            'rigid' - No domain motions.
+
+            'free rotor' - The only motion is free rotation about the cone axis.
 
 
         Examples

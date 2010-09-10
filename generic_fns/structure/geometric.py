@@ -312,11 +312,15 @@ def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', ap
     mol.atom_connect(index1=atom_num-2, index2=origin_atom)
 
 
-def create_cone_pdb(cone=None, apex=None, axis=None, R=None, inc=None, scale=30.0, distribution='regular', file=None, dir=None, force=False):
+def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=None, inc=None, scale=30.0, distribution='regular', file=None, dir=None, force=False):
     """Create a PDB representation of the given cone object.
 
+    @keyword mol:           The molecule container.
+    @type mol:              MolContainer instance
     @keyword cone:          The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the theta_max() method for returning the theta value for the given phi, the phi_max() method for returning the phi value for the given theta.
     @type cone:             class instance
+    @keyword start_res:     The starting residue number.
+    @type start_res:        str
     @keyword apex:          The apex of the cone.
     @type apex:             rank-1, 3D numpy array
     @keyword axis:          The central axis of the cone.  If not supplied, the z-axis will be used.
@@ -345,38 +349,46 @@ def create_cone_pdb(cone=None, apex=None, axis=None, R=None, inc=None, scale=30.
     if R == None:
         R = eye(3)
 
-    # Create the structural object.
-    structure = Internal()
+    # No molecule supplied.
+    if mol == None:
+        # Create the structural object.
+        structure = Internal()
 
-    # Add a molecule.
-    structure.add_molecule(name='cone')
+        # Add a molecule.
+        structure.add_molecule(name='cone')
 
-    # Alias the single molecule from the single model.
-    mol = structure.structural_data[0].mol[0]
+        # Alias the single molecule from the single model.
+        mol = structure.structural_data[0].mol[0]
+
+    # The first atom number.
+    start_atom = 1
+    if hasattr(mol, 'atom_num'):
+        start_atom = mol.atom_num[-1]+1
 
     # Add the apex.
-    mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='APX', res_num=1, pos=apex, element='C')
+    mol.atom_add(pdb_record='HETATM', atom_num=start_atom, atom_name='R', res_name='APX', res_num=start_res, pos=apex, element='C')
 
     # Generate the axis vectors.
     print("\nGenerating the axis vectors.")
-    res_num = generate_vector_residues(mol=mol, vector=dot(R, axis), atom_name='Axis', res_name_vect='AXE', res_num=2, origin=apex, scale=scale)
+    res_num = generate_vector_residues(mol=mol, vector=dot(R, axis), atom_name='Axis', res_name_vect='AXE', res_num=start_res+1, origin=apex, scale=scale)
 
     # Generate the cone outer edge.
     print("\nGenerating the cone outer edge.")
     edge_start_atom = mol.atom_num[-1]+1
-    cone_edge(mol=mol, cone=cone, res_name='EDG', res_num=3, apex=apex, R=R, scale=scale, inc=inc, distribution=distribution)
+    cone_edge(mol=mol, cone=cone, res_name='EDG', res_num=start_res+2, apex=apex, R=R, scale=scale, inc=inc, distribution=distribution)
 
     # Generate the cone cap, and stitch it to the cone edge.
     print("\nGenerating the cone cap.")
     cone_start_atom = mol.atom_num[-1]+1
-    generate_vector_dist(mol=mol, res_name='CON', res_num=4, centre=apex, R=R, limit_check=cone.limit_check, scale=scale, inc=inc, distribution=distribution)
+    generate_vector_dist(mol=mol, res_name='CON', res_num=start_res+3, centre=apex, R=R, limit_check=cone.limit_check, scale=scale, inc=inc, distribution=distribution)
     stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=edge_start_atom+1, scale=scale, inc=inc, distribution=distribution)
 
     # Create the PDB file.
-    print("\nGenerating the PDB file.")
-    pdb_file = open_write_file(file_name=file, dir=dir, force=force)
-    structure.write_pdb(pdb_file)
-    pdb_file.close()
+    if file != None:
+        print("\nGenerating the PDB file.")
+        pdb_file = open_write_file(file_name=file, dir=dir, force=force)
+        structure.write_pdb(pdb_file)
+        pdb_file.close()
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):

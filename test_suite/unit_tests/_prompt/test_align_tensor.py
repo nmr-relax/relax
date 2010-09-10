@@ -105,11 +105,11 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.align_tensor_fns.delete, tensor=data[1])
+            self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.delete, tensor=data[1])
 
 
     def test_display_argfail_tensor(self):

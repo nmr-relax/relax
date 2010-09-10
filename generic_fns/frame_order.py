@@ -25,7 +25,7 @@
 
 # Python module imports.
 from numpy import array, matrix
-from sys import stdout
+import sys
 
 # relax module imports.
 from float import isNaN
@@ -53,8 +53,8 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
         name = 'Frame Order matrix, 2nd degree'
 
     # Header and first row start.
-    stdout.write("\n%s:\n" % name)
-    stdout.write('[[')
+    sys.stdout.write("\n%s:\n" % name)
+    sys.stdout.write('[[')
 
     # Convert to an array, if necessary.
     if isinstance(daeg, matrix):
@@ -64,7 +64,7 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
     for i in range(len(daeg)):
         # 2nd to last row start.
         if i != 0:
-            stdout.write(' [')
+            sys.stdout.write(' [')
 
         # Row end character.
         char2 = ''
@@ -119,4 +119,4 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
                     val = '0'
 
             # Write.
-            stdout.write(format % (val, char1))
+            sys.stdout.write(format % (val, char1))

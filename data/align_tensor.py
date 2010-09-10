@@ -24,7 +24,7 @@
 from re import search
 from math import cos, sin
 from numpy import array, dot, eye, float64, identity, transpose, zeros
-from numpy.linalg import eig, eigvals
+from numpy.linalg import det, eig, eigvals
 from types import ListType
 
 # relax module imports.
@@ -799,6 +799,10 @@ def calc_rotation(A):
     for i in range(3):
         for j in range(3):
             rot_perm[i, j] = rot[i, perm[j]]
+
+    # Switch from the left handed to right handed universe if required.
+    if abs(det(rot_perm) - 1.0) > 1e-7:
+        rot_perm[:,0] = -rot_perm[:,0]
 
     # Return the permuted rotation matrix.
     return rot_perm

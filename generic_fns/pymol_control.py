@@ -29,12 +29,15 @@ import dep_check
 # Python module imports.
 if dep_check.pymol_module:
     import pymol
+from math import pi
+from numpy import float64, transpose, zeros
 from os import sep
 from subprocess import PIPE, Popen
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
+from maths_fns.rotation_matrix import euler_to_R_zyz, R_to_axis_angle
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import file_root, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
@@ -233,11 +236,11 @@ def cone_pdb(file=None):
     pymol_obj.exec_cmd("load " + file)
 
 
-    # The cone axis.
+    # The cone axes.
     ################
 
-    # Select the AVE, AXE, and SIM residues.
-    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM)")
+    # Select the AVE, XAX, YAX, ZAX, and SIM residues.
+    pymol_obj.exec_cmd("select (resn AVE,XAX,YAX,ZAX,SIM)")
 
     # Show the vector as a stick.
     pymol_obj.exec_cmd("show stick, 'sele'")
@@ -246,7 +249,7 @@ def cone_pdb(file=None):
     pymol_obj.exec_cmd("color cyan, 'sele'")
 
     # Select the atom used for labelling.
-    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM and symbol N)")
+    pymol_obj.exec_cmd("select (resn AVE,XAX,YAX,ZAX,SIM and symbol N)")
 
     # Hide the atom.
     pymol_obj.exec_cmd("hide ('sele')")
@@ -273,12 +276,37 @@ def cone_pdb(file=None):
     # Shorten the stick width from 0.25 to 0.15.
     pymol_obj.exec_cmd("set stick_radius,0.15000")
 
+    # Set a bit of transparency.
+    pymol_obj.exec_cmd("set stick_transparency, 0.3")
+
 
     # Clean up.
     ###########
 
     # Remove the selection.
     pymol_obj.exec_cmd("cmd.delete('sele')")
+
+
+    # Rotate to the average position.
+    #################################
+
+    # The average position rotation.
+    ave_pos_R = zeros((3, 3), float64)
+    euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, ave_pos_R)
+
+    # The rotation is passive (need to rotated the moving domain back into the average position defined in the non-moving domain PDB frame).
+    R = transpose(ave_pos_R)
+
+    # Convert to axis-angle notation.
+    axis, angle = R_to_axis_angle(R)
+
+    # The PDB file to rotate.
+    for i in range(len(cdp.domain_to_pdb)):
+        if cdp.domain_to_pdb[i][0] != cdp.ref_domain:
+            pdb = cdp.domain_to_pdb[i][1]
+
+    # Execute the pymol command to rotate.
+    pymol_obj.exec_cmd("cmd.rotate([%s, %s, %s], %s, '%s', origin=[%s, %s, %s])" % (axis[0], axis[1], axis[2], angle/pi*180.0, pdb, cdp.pivot[0], cdp.pivot[1], cdp.pivot[2]))
 
 
 def create_macro(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):

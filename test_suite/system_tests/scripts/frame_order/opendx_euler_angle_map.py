@@ -97,7 +97,7 @@ for i in range(len(full_list)):
     align_tensor.reduction(full_tensor=full_list[i], red_tensor=red_list[i])
 
 # Select the Frame Order model.
-frame_order.select_model(model='iso cone')
+frame_order.select_model(model='iso cone, free rotor')
 
 # Set the reference domain.
 frame_order.ref_domain('full')
@@ -105,9 +105,9 @@ frame_order.ref_domain('full')
 # Set the exact cone axis.
 axis = array([2, 1, 3], float64)
 axis = axis / norm(axis)
-cdp.theta_axis = acos(axis[2])
-cdp.phi_axis = atan2(axis[1], axis[0])
-cdp.theta_cone = 40.0 / 360.0 * 2 * pi
+cdp.axis_theta = acos(axis[2])
+cdp.axis_phi = atan2(axis[1], axis[0])
+cdp.cone_theta = 40.0 / 360.0 * 2 * pi
 
 # Map the Euler angle space.
-dx.map(['alpha', 'beta', 'gamma'], lower=[0, 0, 0], upper=[2*pi, 2*pi, 2*pi], inc=3, file_prefix='devnull', point_file='devnull')
+dx.map(['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma'], lower=[0, 0, 0], upper=[2*pi, 2*pi, 2*pi], inc=3, file_prefix='devnull', point_file='devnull')

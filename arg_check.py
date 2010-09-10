@@ -138,7 +138,7 @@ def is_int(arg, name, can_be_none=False):
         raise RelaxNoneIntError(name, arg)
 
 
-def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
+def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False, none_elements=False):
     """Test if the argument is an integer or a list of integers.
 
     @param arg:                         The argument.
@@ -151,6 +151,8 @@ def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
     @type can_be_none:                  bool
     @keyword can_be_empty:              A flag which if True allows the list to be empty.
     @type can_be_empty:                 bool
+    @keyword none_elements:             A flag which if True allows the list to contain None.
+    @type none_elements:                bool
     @raise RelaxIntListIntError:        If not an integer or a list of integers.
     @raise RelaxNoneIntListIntError:    If not an integer, a list of integers, or None.
     """
@@ -180,8 +182,12 @@ def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
         if not can_be_empty and arg == []:
             fail = True
 
-       # Check the arguments.
+        # Check the arguments.
         for i in range(len(arg)):
+            # None.
+            if arg[i] == None and none_elements:
+                continue
+
             # Check if it is an integer.
             try:
                 is_int(arg[i], name)
