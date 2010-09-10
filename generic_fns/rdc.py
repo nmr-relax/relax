@@ -317,38 +317,28 @@ def q_factors(spin_id=None):
     cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
-def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
     """Read the RDC data from file.
 
     @keyword align_id:      The alignment tensor ID string.
     @type align_id:         str
     @keyword file:          The name of the file to open.
     @type file:             str
-    @keyword dir:           The directory containing the file (defaults to the current directory
-                            if None).
+    @keyword dir:           The directory containing the file (defaults to the current directory if None).
     @type dir:              str or None
-    @keyword file_data:     An alternative to opening a file, if the data already exists in the
-                            correct format.  The format is a list of lists where the first index
-                            corresponds to the row and the second the column.
+    @keyword file_data:     An alternative to opening a file, if the data already exists in the correct format.  The format is a list of lists where the first index corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
-                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
-                            arguments must be none.
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
-    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied, spin_id_col must be None.
     @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword res_name_col:  The column containing the residue name information.  If supplied, spin_id_col must be None.
     @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information.  If supplied,
-                            spin_id_col must be None.
+    @keyword res_num_col:   The column containing the residue number information.  If supplied, spin_id_col must be None.
     @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword spin_name_col: The column containing the spin name information.  If supplied, spin_id_col must be None.
     @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
-                            spin_id_col must be None.
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied, spin_id_col must be None.
     @type spin_num_col:     int or None
     @keyword data_col:      The column containing the RDC data in Hz.
     @type data_col:         int or None
@@ -356,9 +346,10 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
     @type error_col:        int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
-                            spins.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
     @type spin_id:          None or str
+    @keyword neg_g_corr:    A flag which is used to correct for the negative gyromagnetic ratio of 15N.  If True, a sign inversion will be applied to all RDC values to be loaded.
+    @type neg_g_corr:       bool
     """
 
     # Test if the current data pipe exists.
@@ -406,6 +397,10 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
             # Initialise.
             if not hasattr(spin, 'rdc'):
                 spin.rdc = {}
+
+            # Correction for the negative gyromagnetic ratio of 15N.
+            if neg_g_corr and value != None:
+                value = -value
 
             # Append the value.
             spin.rdc[align_id] = value

@@ -21,61 +21,58 @@
 ###############################################################################
 
 # Module docstring.
-"""Module for the conversion of order parameters to specific model parameters and vice versa."""
+"""Module for transforming between different coordinate systems."""
 
 # Python module imports.
-from math import acos, cos, pi, sqrt
+from math import acos, atan2, cos, sin
+from numpy import array, float64, zeros
+from numpy.linalg import norm
 
 
-def iso_cone_theta_to_S(theta):
-    """Convert the isotropic cone angle to the order parameter S.
+def cartesian_to_spherical(vector):
+    """Convert the Cartesian vector [x, y, z] to spherical coordinates [r, theta, phi].
 
-    This uses Woessner's diffusion in a cone order parameter defined as::
-
-        S = 1/2 (1 + cos(theta)) * cos(theta)
+    The parameter r is the radial distance, theta is the polar angle, and phi is the azimuth.
 
 
-    @param theta:   The isotropic cone angle.
-    @type theta:    float
-    @return:        The order parameter value.
-    @rtype:         float
+    @param vector:  The Cartesian vector [x, y, z].
+    @type vector:   numpy rank-1, 3D array
+    @return:        The spherical coordinate vector [r, theta, phi].
+    @rtype:         numpy rank-1, 3D array
     """
 
-    # Convert.
-    S = 0.5 * (1.0 + cos(theta)) * cos(theta)
+    # The radial distance.
+    r = norm(vector)
 
-    # Return the order parameter.
-    return S
+    # Unit vector.
+    unit = vector / r
 
+    # The polar angle.
+    theta = acos(unit[2])
 
-def iso_cone_S_to_theta(S):
-    """Convert the isotropic cone order parameter S into the cone angle.
+    # The azimuth.
+    phi = atan2(unit[1], unit[0])
 
-    This uses Woessner's diffusion in a cone order parameter defined as::
-
-        S = 1/2 (1 + cos(theta)) * cos(theta)
-
-    The conversion equation is::
-
-        theta = acos((sqrt(8.0*S + 1) - 1)/2)
-
-    Hence the cone angle is only between 0 and 2pi/3, as the order parameter for higher cone angles is ambiguous.
+    # Return the spherical coordinate vector.
+    return array([r, theta, phi], float64)
 
 
-    @param S:   The order parameter value (not squared).
-    @type S:    float
-    @return:    The value of cos(theta).
-    @rtype:     float
+def spherical_to_cartesian(spherical_vect, cart_vect):
+    """Convert the spherical coordinate vector [r, theta, phi] to the Cartesian vector [x, y, z].
+
+    The parameter r is the radial distance, theta is the polar angle, and phi is the azimuth.
+
+
+    @param vector:  The spherical coordinate vector [r, theta, phi].
+    @type vector:   3D array or list
+    @return:        The Cartesian vector [x, y, z].
+    @rtype:         numpy rank-1, 3D array
     """
 
-    # Catch bad order parameters.
-    if S > 1.0:
-        return 0.0
-    if S < -0.125:
-        return 2*pi
+    # Trig alias.
+    sin_theta = sin(spherical_vect[1])
 
-    # Convert.
-    theta = acos(0.5*(sqrt(8.0*S + 1) - 1))
-
-    # Return theta.
-    return theta
+    # The vector.
+    cart_vect[0] = spherical_vect[0] * cos(spherical_vect[2]) * sin_theta
+    cart_vect[1] = spherical_vect[0] * sin(spherical_vect[2]) * sin_theta
+    cart_vect[2] = spherical_vect[0] * cos(spherical_vect[1])

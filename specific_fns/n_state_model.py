@@ -60,8 +60,11 @@ class N_state_model(API_base, API_common):
         """Initialise the class by placing API_common methods into the API."""
 
         # Place methods into the API.
+        self.model_loop = self._model_loop_single_global
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
+        self.set_selected_sim = self._set_selected_sim_global
+        self.sim_return_selected = self._sim_return_selected_global
         self.test_grid_ops = self._test_grid_ops_general
 
 
@@ -458,17 +461,13 @@ class N_state_model(API_base, API_common):
     def _disassemble_param_vector(self, param_vector=None, data_types=None, sim_index=None):
         """Disassemble the parameter vector and place the values into the relevant variables.
 
-        For the 2-domain N-state model, the parameters are stored in the probability and Euler angle
-        data structures.  For the population N-state model, only the probabilities are stored.  If
-        RDCs are present and alignment tensors are optimised, then these are stored as well.
+        For the 2-domain N-state model, the parameters are stored in the probability and Euler angle data structures.  For the population N-state model, only the probabilities are stored.  If RDCs are present and alignment tensors are optimised, then these are stored as well.
 
-        @keyword data_types:    The base data types used in the optimisation.  This list can contain
-                                the elements 'rdc', 'pcs' or 'tensor'.
+        @keyword data_types:    The base data types used in the optimisation.  This list can contain the elements 'rdc', 'pcs' or 'tensor'.
         @type data_types:       list of str
         @keyword param_vector:  The parameter vector returned from optimisation.
         @type param_vector:     numpy array
-        @keyword sim_index:     The index of the simulation to optimise.  This should be None if
-                                normal optimisation is desired.
+        @keyword sim_index:     The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:        None or int
         """
 
@@ -484,11 +483,21 @@ class N_state_model(API_base, API_common):
                 if cdp.align_tensors[i].name not in cdp.align_ids:
                     continue
 
-                cdp.align_tensors[i].Axx = param_vector[5*i]
-                cdp.align_tensors[i].Ayy = param_vector[5*i+1]
-                cdp.align_tensors[i].Axy = param_vector[5*i+2]
-                cdp.align_tensors[i].Axz = param_vector[5*i+3]
-                cdp.align_tensors[i].Ayz = param_vector[5*i+4]
+                # Normal tensors.
+                if sim_index == None:
+                    cdp.align_tensors[i].Axx = param_vector[5*i]
+                    cdp.align_tensors[i].Ayy = param_vector[5*i+1]
+                    cdp.align_tensors[i].Axy = param_vector[5*i+2]
+                    cdp.align_tensors[i].Axz = param_vector[5*i+3]
+                    cdp.align_tensors[i].Ayz = param_vector[5*i+4]
+
+                # Monte Carlo simulated tensors.
+                else:
+                    cdp.align_tensors[i].Axx_sim[sim_index] = param_vector[5*i]
+                    cdp.align_tensors[i].Ayy_sim[sim_index] = param_vector[5*i+1]
+                    cdp.align_tensors[i].Axy_sim[sim_index] = param_vector[5*i+2]
+                    cdp.align_tensors[i].Axz_sim[sim_index] = param_vector[5*i+3]
+                    cdp.align_tensors[i].Ayz_sim[sim_index] = param_vector[5*i+4]
 
             # Create a new parameter vector without the tensors.
             param_vector = param_vector[5*len(cdp.align_ids):]
@@ -796,18 +805,18 @@ class N_state_model(API_base, API_common):
         return atomic_pos, paramag_centre
 
 
-    def _minimise_setup_pcs(self):
+    def _minimise_setup_pcs(self, sim_index=None):
         """Set up the data structures for optimisation using PCSs as base data sets.
 
-        @return:    The assembled data structures for using PCSs as the base data for optimisation.
-                    These include:
-                        - the PCS values.
-                        - the unit vectors connecting the paramagnetic centre (the electron spin) to
-                        - the PCS weight.
-                        the nuclear spin.
-                        - the pseudocontact shift constants.
-        @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy
-                    rank-1 array, numpy rank-1 array)
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for using PCSs as the base data for optimisation.  These include:
+                                - the PCS values.
+                                - the unit vectors connecting the paramagnetic centre (the electron spin) to
+                                - the PCS weight.
+                                - the nuclear spin.
+                                - the pseudocontact shift constants.
+        @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy rank-1 array, numpy rank-1 array)
         """
 
         # Data setup tests.
@@ -859,7 +868,10 @@ class N_state_model(API_base, API_common):
 
                 # Append the PCSs to the list.
                 if align_id in spin.pcs.keys():
-                    pcs[-1].append(spin.pcs[align_id])
+                    if sim_index != None:
+                        pcs[-1].append(spin.pcs_sim[align_id][sim_index])
+                    else:
+                        pcs[-1].append(spin.pcs[align_id])
                 else:
                     pcs[-1].append(None)
 
@@ -891,17 +903,18 @@ class N_state_model(API_base, API_common):
         return pcs, pcs_err, pcs_weight, temp, frq
 
 
-    def _minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
+    def _minimise_setup_rdcs(self, sim_index=None):
         """Set up the data structures for optimisation using RDCs as base data sets.
 
-        @return:    The assembled data structures for using RDCs as the base data for optimisation.
-                    These include:
-                        - rdc, the RDC values.
-                        - rdc_err, the RDC errors.
-                        - rdc_weight, the RDC weights.
-                        - vectors, the heteronucleus to proton vectors.
-                        - rdc_const, the dipolar constants.
-        @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for using RDCs as the base data for optimisation.  These include:
+                                - rdc, the RDC values.
+                                - rdc_err, the RDC errors.
+                                - rdc_weight, the RDC weights.
+                                - vectors, the heteronucleus to proton vectors.
+                                - rdc_const, the dipolar constants.
+        @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
         """
 
         # Initialise.
@@ -1051,7 +1064,10 @@ class N_state_model(API_base, API_common):
                     # The RDC for the Me-pseudo spin where:
                     #     <D> = -1/3 Dpar.
                     # See Verdier, et al., JMR, 2003, 163, 353-359.
-                    value = -3.0 * spin.rdc[align_id]
+                    if sim_index != None:
+                        value = -3.0 * spin.rdc_sim[align_id][sim_index]
+                    else:
+                        value = -3.0 * spin.rdc[align_id]
 
                     # The error.
                     if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
@@ -1060,7 +1076,10 @@ class N_state_model(API_base, API_common):
                 # Normal spin set up.
                 elif align_id in spin.rdc.keys():
                     # The RDC.
-                    value = spin.rdc[align_id]
+                    if sim_index != None:
+                        value = spin.rdc_sim[align_id][sim_index]
+                    else:
+                        value = spin.rdc[align_id]
 
                     # The error.
                     if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
@@ -1435,12 +1454,12 @@ class N_state_model(API_base, API_common):
         # Get the data structures for optimisation using PCSs as base data sets.
         pcs, pcs_err, pcs_weight, temp, frq = None, None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_weight, temp, frq = self._minimise_setup_pcs()
+            pcs, pcs_err, pcs_weight, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
 
         # Get the data structures for optimisation using RDCs as base data sets.
         rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = None, None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs()
+            rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Get the fixed tensors.
         if ('rdc' in data_types or 'pcs' in data_types) and (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
@@ -1554,6 +1573,61 @@ class N_state_model(API_base, API_common):
                     generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
+    def base_data_loop(self):
+        """Loop over the base data of the spins - RDCs, PCSs, and NOESY data.
+
+        This loop iterates for each data point (RDC, PCS, NOESY) for each spin, returning the identification information.
+
+        @return:            A list of the spin ID string, the data type ('rdc', 'pcs', 'noesy'), and the alignment ID if required.
+        @rtype:             list of str
+        """
+
+        # Loop over the spins.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Re-initialise the data structure.
+            base_ids = [spin_id, None, None]
+
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # RDC data.
+            if hasattr(spin, 'rdc'):
+                base_ids[1] = 'rdc'
+
+                # Loop over the alignment IDs.
+                for id in cdp.rdc_ids:
+                    # Add the ID.
+                    base_ids[2] = id
+
+                    # Yield the set.
+                    yield base_ids
+
+            # PCS data.
+            if hasattr(spin, 'pcs'):
+                base_ids[1] = 'pcs'
+
+                # Loop over the alignment IDs.
+                for id in cdp.pcs_ids:
+                    # Add the ID.
+                    base_ids[2] = id
+
+                    # Yield the set.
+                    yield base_ids
+
+            # NOESY data.
+            if hasattr(spin, 'noesy'):
+                base_ids[1] = 'noesy'
+
+                # Loop over the alignment IDs.
+                for id in cdp.noesy_ids:
+                    # Add the ID.
+                    base_ids[2] = id
+
+                    # Yield the set.
+                    yield base_ids
+
+
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
         """Calculation function.
 
@@ -1617,6 +1691,110 @@ class N_state_model(API_base, API_common):
             for i in range(num_restraints):
                 cdp.ave_dist.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], dist[i]])
                 cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
+
+
+    def create_mc_data(self, data_id=None):
+        """Create the Monte Carlo Ri data by back-calculation.
+
+        @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
+        @return:            The Monte Carlo Ri data.
+        @rtype:             list of floats
+        """
+
+        # Initialise the MC data structure.
+        mc_data = []
+
+        # Get the spin container and global spin index.
+        spin = return_spin(data_id[0])
+
+        # RDC data.
+        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+            # Does back-calculated data exist?
+            if not hasattr(spin, 'rdc_bc'):
+                self.calculate()
+
+            # Append the data.
+            mc_data.append(spin.rdc_bc[data_id[2]])
+
+        # PCS data.
+        elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+            # Does back-calculated data exist?
+            if not hasattr(spin, 'pcs_bc'):
+                self.calculate()
+
+            # Append the data.
+            mc_data.append(spin.pcs_bc[data_id[2]])
+
+        # NOESY data.
+        elif data_id[1] == 'noesy' and hasattr(spin, 'noesy'):
+            # Does back-calculated data exist?
+            if not hasattr(spin, 'noesy_bc'):
+                self.calculate()
+
+            # Append the data.
+            mc_data.append(spin.noesy_bc)
+
+        # Return the data.
+        return mc_data
+
+
+    def data_names(self, set='all', error_names=False, sim_names=False):
+        """Return a list of names of data structures.
+
+        Description
+        ===========
+
+        The names are as follows:
+
+            - 'chi2', chi-squared value.
+            - 'iter', iterations.
+            - 'f_count', function count.
+            - 'g_count', gradient count.
+            - 'h_count', hessian count.
+            - 'warning', minimisation warning.
+
+
+        @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @type set:              str
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
+        """
+
+        # Initialise.
+        names = []
+
+        # Generic.
+        if set == 'all' or set == 'generic':
+            pass
+
+        # Parameters.
+        if set == 'all' or set == 'params':
+            pass
+
+        # Minimisation statistics.
+        if set == 'all' or set == 'min':
+            names.append('chi2')
+            names.append('iter')
+            names.append('f_count')
+            names.append('g_count')
+            names.append('h_count')
+            names.append('warning')
+
+        # Parameter errors.
+        if error_names and (set == 'all' or set == 'params'):
+            pass
+
+        # Parameter simulation values.
+        if sim_names and (set == 'all' or set == 'params'):
+            pass
+
+        # Return the names.
+        return names
 
 
     default_value_doc = """
@@ -2029,6 +2207,56 @@ class N_state_model(API_base, API_common):
             return param
 
 
+    def return_error(self, data_id=None):
+        """Create and return the spin specific Monte Carlo Ri error structure.
+
+        @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
+        @return:            The Monte Carlo simulation data errors.
+        @rtype:             list of floats
+        """
+
+        # Initialise the MC data structure.
+        mc_errors = []
+
+        # Get the spin container and global spin index.
+        spin = return_spin(data_id[0])
+
+        # Skip deselected spins.
+        if not spin.select:
+            return
+
+        # RDC data.
+        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+            # Do errors exist?
+            if not hasattr(spin, 'rdc_err'):
+                raise(RelaxError, "The RDC errors are missing for spin '%s'." % spin_id)
+
+            # Append the data.
+            mc_errors.append(spin.rdc_err[data_id[2]])
+
+        # PCS data.
+        elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+            # Do errors exist?
+            if not hasattr(spin, 'pcs_err'):
+                raise(RelaxError, "The PCS errors are missing for spin '%s'." % spin_id)
+
+            # Append the data.
+            mc_errors.append(spin.pcs_err[data_id[2]])
+
+        # NOESY data.
+        elif hasattr(spin, 'noesy'):
+            # Do errors exist?
+            if not hasattr(spin, 'noesy_err'):
+                raise(RelaxError, "The NOESY errors are missing for spin '%s'." % spin_id)
+
+            # Append the data.
+            mc_errors.append(spin.noesy_err)
+
+        # Return the errors.
+        return mc_errors
+
+
     def return_grace_string(self, param):
         """Return the Grace string representation of the parameter.
 
@@ -2092,6 +2320,30 @@ class N_state_model(API_base, API_common):
         """
 
 
+    def set_error(self, model_info, index, error):
+        """Set the parameter errors.
+
+        @param model_info:  The global model index originating from model_loop().
+        @type model_info:   int
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
+        """
+
+        # Align parameters.
+        names = ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz']
+
+        # Alignment tensor parameters.
+        if index < len(cdp.align_ids)*5:
+            # The tensor and parameter index.
+            param_index = index % 5
+            tensor_index = (index - index % 5) / 5
+
+            # Set the error.
+            return setattr(cdp.align_tensors[tensor_index], names[param_index]+'_err', error)
+
+
     def set_param_values(self, param=None, value=None, spin_id=None, force=True):
         """Set the N-state model parameter values.
 
@@ -2148,3 +2400,118 @@ class N_state_model(API_base, API_common):
             else:
                 for spin in spin_loop(spin_id):
                     setattr(spin, obj_name, value[i])
+
+
+    def sim_init_values(self):
+        """Initialise the Monte Carlo parameter values."""
+
+        # Get the minimisation statistic object names.
+        min_names = self.data_names(set='min')
+
+        # Alignments.
+        if hasattr(cdp, 'align_tensors'):
+            # The parameter names.
+            names = ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz']
+
+            # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
+            for i in xrange(len(cdp.align_tensors)):
+                # Loop over all the parameter names.
+                for object_name in names:
+                    # Name for the simulation object.
+                    sim_object_name = object_name + '_sim'
+
+                    # Create the simulation object.
+                    setattr(cdp.align_tensors[i], sim_object_name, [])
+
+                    # Get the simulation object.
+                    sim_object = getattr(cdp.align_tensors[i], sim_object_name)
+
+                    # Set the initial simulation values to the optimised tensor parameter values.
+                    for j in xrange(cdp.sim_number):
+                        sim_object.append(getattr(cdp.align_tensors[i], object_name))
+
+            # Loop over all the minimisation object names.
+            for object_name in min_names:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Create the simulation object.
+                setattr(cdp, sim_object_name, [])
+
+                # Get the simulation object.
+                sim_object = getattr(cdp, sim_object_name)
+
+                # Loop over the simulations.
+                for j in xrange(cdp.sim_number):
+                    # Append None to fill the structure.
+                    sim_object.append(None)
+
+
+    def sim_pack_data(self, data_id, sim_data):
+        """Pack the Monte Carlo simulation data.
+
+        @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
+        @type data_id:      list of str
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
+
+        # Get the spin container.
+        spin = return_spin(data_id[0])
+
+        # Test if the simulation data already exists.
+        if hasattr(spin, 'sim_intensities'):
+            raise RelaxError("Monte Carlo simulation data already exists.")
+
+        # RDC data.
+        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+            # Initialise.
+            if not hasattr(spin, 'rdc_sim'):
+                spin.rdc_sim = {}
+                
+            # Store the data structure.
+            spin.rdc_sim[data_id[2]] = []
+            for i in range(cdp.sim_number):
+                spin.rdc_sim[data_id[2]].append(sim_data[i][0])
+
+        # PCS data.
+        if data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+            # Initialise.
+            if not hasattr(spin, 'pcs_sim'):
+                spin.pcs_sim = {}
+                
+            # Store the data structure.
+            spin.pcs_sim[data_id[2]] = []
+            for i in range(cdp.sim_number):
+                spin.pcs_sim[data_id[2]].append(sim_data[i][0])
+
+        # NOESY data.
+        if data_id[1] == 'noesy' and hasattr(spin, 'noesy'):
+            # Store the data structure.
+            spin.noesy_sim = []
+            for i in range(cdp.sim_number):
+                spin.noesy_sim[data_id[2]].append(sim_data[i][0])
+
+
+    def sim_return_param(self, model_info, index):
+        """Return the array of simulation parameter values.
+
+        @param model_info:  The global model index originating from model_loop().
+        @type data_id:      int
+        @param index:       The index of the parameter to return the array of values for.
+        @type index:        int
+        @return:            The array of simulation parameter values.
+        @rtype:             list of float
+        """
+
+        # Align parameters.
+        names = ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz']
+
+        # Alignment tensor parameters.
+        if index < len(cdp.align_ids)*5:
+            # The tensor and parameter index.
+            param_index = index % 5
+            tensor_index = (index - index % 5) / 5
+
+            # Return the simulation parameter array.
+            return getattr(cdp.align_tensors[tensor_index], names[param_index]+'_sim')

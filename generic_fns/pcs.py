@@ -83,7 +83,7 @@ def back_calc(align_id=None):
         # Atom positions.
         pos = spin.pos
         if type(pos[0]) in [float, float64]:
-            pos = [pos]
+            pos = [pos] * cdp.N
 
         # Loop over the alignments.
         for id in align_ids:
@@ -93,7 +93,7 @@ def back_calc(align_id=None):
             dj = zeros(cdp.N, float64)
             for c in range(cdp.N):
                 # The vector.
-                vect[c] = pos - cdp.paramagnetic_centre
+                vect[c] = pos[c] - cdp.paramagnetic_centre
 
                 # The length.
                 r[c] = norm(vect[c])
