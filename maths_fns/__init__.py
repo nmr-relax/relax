@@ -26,6 +26,7 @@
 
 __all__ = [ 'alignment_tensor',
             'chi2',
+            'coord_transform',
             'consistency_tests',
             'correlation_time',
             'direction_cosine',

@@ -84,7 +84,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the bin, int, and interger list arguments, and skip them.
-            if data[0] == 'bin' or data[0] == 'int' or data[0] == 'int list':
+            if data[0] == 'bin' or data[0] == 'int' or data[0] == 'int list' or data[0] == 'none list':
                 continue
 
             # The argument test.

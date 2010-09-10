@@ -267,7 +267,7 @@ class RDC(User_fn_class):
         rdc.display(align_id=align_id)
 
 
-    def read(self, align_id=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+    def read(self, align_id=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
         """Read the RDC data from file.
 
         Keyword Arguments
@@ -300,7 +300,9 @@ class RDC(User_fn_class):
 
         spin_id:  The spin ID string to restrict the loading of data to certain spin subsets.
 
-
+        neg_g_corr:  A flag which is used to correct for the negative gyromagnetic ratio of 15N.
+        
+        
         Description
         ~~~~~~~~~~~
 
@@ -311,6 +313,9 @@ class RDC(User_fn_class):
         in separate columns.  Note that the numbering of columns starts at one.  The spin_id
         argument can be used to restrict the reading to certain spin types, for example only 15N
         spins when only residue information is in the file.
+
+        If neg_g_corr is set to True, a sign inversion will be applied to all RDC values to be
+        loaded.
 
 
         Examples
@@ -350,7 +355,8 @@ class RDC(User_fn_class):
             text = text + ", data_col=" + repr(data_col)
             text = text + ", error_col=" + repr(error_col)
             text = text + ", sep=" + repr(sep)
-            text = text + ", spin_id=" + repr(spin_id) + ")"
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", neg_g_corr=" + repr(neg_g_corr) + ")"
             print(text)
 
         # The argument checks.
@@ -367,9 +373,10 @@ class RDC(User_fn_class):
         arg_check.is_int(error_col, 'error column', can_be_none=True)
         arg_check.is_str(sep, 'column separator', can_be_none=True)
         arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        arg_check.is_bool(neg_g_corr, 'negative gyromagnetic ratio correction')
 
         # Execute the functional code.
-        rdc.read(align_id=align_id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
+        rdc.read(align_id=align_id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id, neg_g_corr=neg_g_corr)
 
 
     def weight(self, align_id=None, spin_id=None, weight=1.0):
