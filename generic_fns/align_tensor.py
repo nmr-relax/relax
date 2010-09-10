@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,8 +25,9 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi
+from math import pi, sqrt
 from numpy import arccos, dot, float64, linalg, zeros
+from numpy.linalg import norm
 from re import search
 import sys
 
@@ -199,29 +200,40 @@ __default_value_prompt_doc__ = """
 """
 
 
-def delete(tensor):
+def delete(tensor=None):
     """Function for deleting alignment tensor data.
 
     @param tensor:          The alignment tensor identification string.
-    @type tensor:           str
+    @type tensor:           str or None
     """
 
     # Test if the current data pipe exists.
     pipes.test()
 
     # Test if alignment tensor data exists.
-    if not align_data_exists(tensor):
+    if tensor and not align_data_exists(tensor):
         raise RelaxNoTensorError('alignment')
 
-    # Find the tensor index.
-    index = get_tensor_index(tensor)
+    # The tensor list.
+    if tensor:
+        tensors = [tensor]
+    else:
+        tensors = cdp.align_ids
 
-    # Delete the alignment data.
-    cdp.align_tensors.pop(index)
+    # Loop over the tensors.
+    for tensor in tensors:
+        # Print out.
+        print("Removing the '%s' tensor." % tensor)
 
-    # Delete the alignment tensor list if empty.
-    if not len(cdp.align_tensors):
-        del(cdp.align_tensors)
+        # Find the tensor index.
+        index = get_tensor_index(tensor)
+
+        # Delete the alignment data.
+        cdp.align_tensors.pop(index)
+
+        # Delete the alignment tensor list if empty.
+        if not len(cdp.align_tensors):
+            del(cdp.align_tensors)
 
 
 def display(tensor):
@@ -406,6 +418,10 @@ def display(tensor):
         title = "# Geometric description."
         print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
+        # The GDO.
+        print("# Generalized degree of order (GDO).")
+        print("GDO = %-25.12e\n" % gdo(data.A))
+
         # Anisotropy.
         print("# Alignment tensor axial component (Aa = 3/2 * Azz, where Aii are the eigenvalues).")
         print("Aa = %-25.12e\n" % data.Aa)
@@ -516,6 +532,22 @@ def fold_angles(sim_index=None):
             cdp.align_tensors.beta_sim[sim_index] = cdp.align_tensors.beta_sim[sim_index] + pi
 
 
+def gdo(A):
+    """Calculate the generalized degree of order (GDO) for the given alignment tensor.
+
+    @param A:   The alignment tensor.
+    @type A:    rank-2, 3D numpy array
+    @return:    The GDO value.
+    @rtype:     float
+    """
+
+    # The matrix norm.
+    gdo = sqrt(3.0/2.0) *  norm(A)
+
+    # Return the GDO.
+    return gdo
+
+
 def get_tensor_index(tensor, pipe=None):
     """Function for returning the index corresponding to the 'tensor' argument.
 
@@ -603,6 +635,12 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     valid_types = ['deg', 'rad']
     if not angle_units in valid_types:
         raise RelaxError("The alignment tensor 'angle_units' argument " + repr(angle_units) + " should be either 'deg' or 'rad'.")
+
+    # Add the tensor ID to the current data pipe.
+    if not hasattr(cdp, 'align_ids'):
+        cdp.align_ids = []
+    if tensor not in cdp.align_ids:
+        cdp.align_ids.append(tensor)
 
     # Add the align_tensors object to the data pipe.
     if not errors:

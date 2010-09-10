@@ -307,15 +307,28 @@ class Internal(Base_struct_API):
         # Init.
         mol_num = 1
         mol_records = []
+        end = False
 
         # Loop over the data.
-        for record in records:
+        for i in range(len(records)):
             # A PDB termination record.
-            if search('^END', record):
+            if search('^END', records[i]):
                 break
 
-            # A molecule termination record.
-            if search('^TER', record):
+            # A model termination record.
+            if search('^ENDMDL', records[i]):
+                end = True
+
+            # A molecule termination record with no trailing HETATM.
+            elif i < len(records)-1 and search('^TER', records[i]) and not search('^HETATM', records[i+1]):
+                end = True
+
+            # A HETATM followed by an ATOM record.
+            elif i < len(records)-1 and search('^HETATM', records[i]) and search('^ATOM', records[i+1]):
+                end = True
+
+            # End.
+            if end:
                 # Yield the info.
                 yield mol_num, mol_records
 
@@ -325,11 +338,14 @@ class Internal(Base_struct_API):
                 # Increment the molecule number.
                 mol_num = mol_num + 1
 
+                # Reset the flag.
+                end = False
+
                 # Skip the rest of this loop.
                 continue
 
             # Append the line as a record of the molecule.
-            mol_records.append(record)
+            mol_records.append(records[i])
 
         # If records is not empty then there is only a single molecule, so yield the lot.
         if len(mol_records):

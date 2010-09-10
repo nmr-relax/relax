@@ -47,7 +47,7 @@ import generic_fns.structure.mass
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.potential import quad_pot
 from maths_fns.rotation_matrix import two_vect_to_R, euler_to_R_zyz
-from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
+from physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning, RelaxDeselectWarning
@@ -60,7 +60,11 @@ class N_state_model(API_base, API_common):
         """Initialise the class by placing API_common methods into the API."""
 
         # Place methods into the API.
+        self.model_loop = self._model_loop_single_global
         self.overfit_deselect = self._overfit_deselect_dummy
+        self.return_conversion_factor = self._return_no_conversion_factor
+        self.set_selected_sim = self._set_selected_sim_global
+        self.sim_return_selected = self._sim_return_selected_global
         self.test_grid_ops = self._test_grid_ops_general
 
 
@@ -130,6 +134,18 @@ class N_state_model(API_base, API_common):
                 param_vector.append(beta[i])
                 param_vector.append(gamma[i])
 
+        # The paramagnetic centre.
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            if not hasattr(cdp, 'paramagnetic_centre'):
+                param_vector.append(0.0)
+                param_vector.append(0.0)
+                param_vector.append(0.0)
+
+            else:
+                param_vector.append(cdp.paramagnetic_centre[0])
+                param_vector.append(cdp.paramagnetic_centre[1])
+                param_vector.append(cdp.paramagnetic_centre[2])
+
         # Convert all None values to zero (to avoid conversion to NaN).
         for i in xrange(len(param_vector)):
             if param_vector[i] == None:
@@ -163,11 +179,20 @@ class N_state_model(API_base, API_common):
         if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             pop_start = pop_start + 5*len(cdp.align_ids)
 
+            # The alignment parameters.
+            for i in range(5*len(cdp.align_ids)):
+                scaling_matrix[i, i] = 1.0
+
         # Loop over the populations, and set the scaling factor.
         if cdp.model in ['2-domain', 'population']:
-            factor = 100.0
+            factor = 0.1
             for i in xrange(pop_start, pop_start + (cdp.N-1)):
                 scaling_matrix[i, i] = factor
+
+        # The paramagnetic centre.
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            for i in range(-3, 0):
+                scaling_matrix[i, i] = 1e2
 
         # Return the matrix.
         return scaling_matrix
@@ -436,17 +461,13 @@ class N_state_model(API_base, API_common):
     def _disassemble_param_vector(self, param_vector=None, data_types=None, sim_index=None):
         """Disassemble the parameter vector and place the values into the relevant variables.
 
-        For the 2-domain N-state model, the parameters are stored in the probability and Euler angle
-        data structures.  For the population N-state model, only the probabilities are stored.  If
-        RDCs are present and alignment tensors are optimised, then these are stored as well.
+        For the 2-domain N-state model, the parameters are stored in the probability and Euler angle data structures.  For the population N-state model, only the probabilities are stored.  If RDCs are present and alignment tensors are optimised, then these are stored as well.
 
-        @keyword data_types:    The base data types used in the optimisation.  This list can contain
-                                the elements 'rdc', 'pcs' or 'tensor'.
+        @keyword data_types:    The base data types used in the optimisation.  This list can contain the elements 'rdc', 'pcs' or 'tensor'.
         @type data_types:       list of str
         @keyword param_vector:  The parameter vector returned from optimisation.
         @type param_vector:     numpy array
-        @keyword sim_index:     The index of the simulation to optimise.  This should be None if
-                                normal optimisation is desired.
+        @keyword sim_index:     The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:        None or int
         """
 
@@ -462,11 +483,21 @@ class N_state_model(API_base, API_common):
                 if cdp.align_tensors[i].name not in cdp.align_ids:
                     continue
 
-                cdp.align_tensors[i].Axx = param_vector[5*i]
-                cdp.align_tensors[i].Ayy = param_vector[5*i+1]
-                cdp.align_tensors[i].Axy = param_vector[5*i+2]
-                cdp.align_tensors[i].Axz = param_vector[5*i+3]
-                cdp.align_tensors[i].Ayz = param_vector[5*i+4]
+                # Normal tensors.
+                if sim_index == None:
+                    cdp.align_tensors[i].Axx = param_vector[5*i]
+                    cdp.align_tensors[i].Ayy = param_vector[5*i+1]
+                    cdp.align_tensors[i].Axy = param_vector[5*i+2]
+                    cdp.align_tensors[i].Axz = param_vector[5*i+3]
+                    cdp.align_tensors[i].Ayz = param_vector[5*i+4]
+
+                # Monte Carlo simulated tensors.
+                else:
+                    cdp.align_tensors[i].Axx_sim[sim_index] = param_vector[5*i]
+                    cdp.align_tensors[i].Ayy_sim[sim_index] = param_vector[5*i+1]
+                    cdp.align_tensors[i].Axy_sim[sim_index] = param_vector[5*i+2]
+                    cdp.align_tensors[i].Axz_sim[sim_index] = param_vector[5*i+3]
+                    cdp.align_tensors[i].Ayz_sim[sim_index] = param_vector[5*i+4]
 
             # Create a new parameter vector without the tensors.
             param_vector = param_vector[5*len(cdp.align_ids):]
@@ -509,6 +540,68 @@ class N_state_model(API_base, API_common):
                 alpha[i] = param_vector[cdp.N-1 + 3*i]
                 beta[i] = param_vector[cdp.N-1 + 3*i + 1]
                 gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
+
+        # The paramagnetic centre.
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            # Create the structure if needed.
+            if not hasattr(cdp, 'paramagnetic_centre'):
+                cdp.paramagnetic_centre = zeros(3, float64)
+
+            # The position.
+            cdp.paramagnetic_centre[0] = param_vector[-3]
+            cdp.paramagnetic_centre[1] = param_vector[-2]
+            cdp.paramagnetic_centre[2] = param_vector[-1]
+
+
+    def _elim_no_prob(self):
+        """Remove all structures or states which have no probability."""
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError('N-state')
+
+        # Test if there are populations.
+        if not hasattr(cdp, 'probs'):
+            raise RelaxError("The N-state model populations do not exist.")
+
+        # Loop over the structures.
+        i = 0
+        while 1:
+            # End condition.
+            if i == cdp.N - 1:
+                break
+
+            # No probability.
+            if cdp.probs[i] < 1e-5:
+                # Remove the probability.
+                cdp.probs.pop(i)
+
+                # Remove the structure.
+                cdp.structure.structural_data.pop(i)
+
+                # Eliminate bond vectors.
+                for spin in spin_loop():
+                    # Position info.
+                    if hasattr(spin, 'pos'):
+                        spin.pos.pop(i)
+
+                    # Vector info.
+                    if hasattr(spin, 'xh_vect'):
+                        spin.xh_vect.pop(i)
+                    if hasattr(spin, 'bond_vect'):
+                        spin.bond_vect.pop(i)
+
+                # Update N.
+                cdp.N -= 1
+
+                # Start the loop again without incrementing i.
+                continue
+
+            # Increment i.
+            i += 1
 
 
     def _linear_constraints(self, data_types=None, scaling_matrix=None):
@@ -673,22 +766,61 @@ class N_state_model(API_base, API_common):
                     data_index = data_index + 1
 
 
-    def _minimise_setup_pcs(self):
+    def _minimise_setup_atomic_pos(self):
+        """Set up the atomic position data structures for optimisation using PCSs and PREs as base data sets.
+
+        @return:    The atomic positions (the first index is the spins, the second is the structures, and the third is the atomic coordinates) and the paramagnetic centre.
+        @rtype:     numpy rank-3 array, numpy rank-1 array.
+        """
+
+        # Initialise.
+        atomic_pos = []
+
+        # Store the atomic positions.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Only use spins with alignment/paramagnetic data.
+            if not hasattr(spin, 'pcs') and not hasattr(spin, 'rdc') and not hasattr(spin, 'pre'):
+                continue
+
+            # The position list.
+            if type(spin.pos[0]) in [float, float64]:
+                atomic_pos.append([spin.pos])
+            else:
+                atomic_pos.append(spin.pos)
+
+        # Convert to numpy objects.
+        atomic_pos = array(atomic_pos, float64)
+
+        # The paramagnetic centre.
+        if hasattr(cdp, 'paramagnetic_centre'):
+            paramag_centre = cdp.paramagnetic_centre
+        else:
+            paramag_centre = zeros(3, float64)
+
+        # Return the data structures.
+        return atomic_pos, paramag_centre
+
+
+    def _minimise_setup_pcs(self, sim_index=None):
         """Set up the data structures for optimisation using PCSs as base data sets.
 
-        @return:    The assembled data structures for using PCSs as the base data for optimisation.
-                    These include:
-                        - the PCS values.
-                        - the unit vectors connecting the paramagnetic centre (the electron spin) to
-                        - the PCS weight.
-                        the nuclear spin.
-                        - the pseudocontact shift constants.
-        @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy
-                    rank-1 array, numpy rank-1 array)
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for using PCSs as the base data for optimisation.  These include:
+                                - the PCS values.
+                                - the unit vectors connecting the paramagnetic centre (the electron spin) to
+                                - the PCS weight.
+                                - the nuclear spin.
+                                - the pseudocontact shift constants.
+        @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy rank-1 array, numpy rank-1 array)
         """
 
         # Data setup tests.
-        if not hasattr(cdp, 'paramagnetic_centre'):
+        if not hasattr(cdp, 'paramagnetic_centre') and (hasattr(cdp, 'paramag_centre_fixed') and cdp.paramag_centre_fixed):
             raise RelaxError("The paramagnetic centre has not yet been specified.")
         if not hasattr(cdp, 'temperature'):
             raise RelaxError("The experimental temperatures have not been set.")
@@ -699,43 +831,8 @@ class N_state_model(API_base, API_common):
         pcs = []
         pcs_err = []
         pcs_weight = []
-        unit_vect = []
-        r = []
-        pcs_const = []
-
-        # The bond lengths and unit vectors.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Only use spins with alignment data.
-            if not hasattr(spin, 'pcs') and not hasattr(spin, 'rdc'):
-                continue
-
-            # Add empty lists to the r and unit_vector lists.
-            unit_vect.append([])
-            r.append([])
-
-            # The position list.
-            if type(spin.pos[0]) in [float, float64]:
-                pos = [spin.pos]
-            else:
-                pos = spin.pos
-
-            # Loop over the states, and calculate the paramagnetic centre to nucleus unit vectors.
-            for c in range(cdp.N):
-                # Calculate the electron spin to nuclear spin vector.
-                vect = pos[c] - cdp.paramagnetic_centre
-
-                # The length.
-                r[-1].append(norm(vect))
-
-                # Append the unit vector.
-                unit_vect[-1].append(vect/norm(vect))
-
-        # Convert the distances from Angstrom to meters.
-        r = array(r, float64) * 1e-10
+        temp = []
+        frq = []
 
         # The PCS data.
         for align_id in cdp.align_ids:
@@ -743,14 +840,12 @@ class N_state_model(API_base, API_common):
             pcs.append([])
             pcs_err.append([])
             pcs_weight.append([])
-            pcs_const.append([])
 
-            # Get the temperature and spectrometer frequency for the PCS constant.
-            temp = cdp.temperature[align_id]
-            frq = cdp.frq[align_id]
+            # Get the temperature for the PCS constant.
+            temp.append(cdp.temperature[align_id])
 
-            # Convert the frequency of Hertz into a field strength in Tesla units.
-            frq = frq * 2.0 * pi / g1H
+            # Get the spectrometer frequency in Tesla units for the PCS constant.
+            frq.append(cdp.frq[align_id] * 2.0 * pi / g1H)
 
             # Spin loop.
             j = 0
@@ -766,7 +861,6 @@ class N_state_model(API_base, API_common):
                         pcs[-1].append(None)
                         pcs_err[-1].append(None)
                         pcs_weight[-1].append(None)
-                        pcs_const[-1].append([None]*cdp.N)
                         j = j + 1
 
                     # Jump to the next spin.
@@ -774,7 +868,10 @@ class N_state_model(API_base, API_common):
 
                 # Append the PCSs to the list.
                 if align_id in spin.pcs.keys():
-                    pcs[-1].append(spin.pcs[align_id])
+                    if sim_index != None:
+                        pcs[-1].append(spin.pcs_sim[align_id][sim_index])
+                    else:
+                        pcs[-1].append(spin.pcs[align_id])
                 else:
                     pcs[-1].append(None)
 
@@ -783,13 +880,6 @@ class N_state_model(API_base, API_common):
                     pcs_err[-1].append(spin.pcs_err[align_id])
                 else:
                     pcs_err[-1].append(None)
-
-                # Append an empty array to the PCS constant structure.
-                pcs_const[-1].append([])
-
-                # Loop over the states, and calculate the PCS constant for each (the distance changes each time).
-                for c in range(cdp.N):
-                    pcs_const[-1][-1].append(pcs_constant(temp, frq, r[j][c]))
 
                 # Append the weight.
                 if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
@@ -804,28 +894,27 @@ class N_state_model(API_base, API_common):
         pcs = array(pcs, float64)
         pcs_err = array(pcs_err, float64)
         pcs_weight = array(pcs_weight, float64)
-        unit_vect = array(unit_vect, float64)
-        pcs_const = array(pcs_const, float64)
 
         # Convert the PCS from ppm to no units.
         pcs = pcs * 1e-6
         pcs_err = pcs_err * 1e-6
 
         # Return the data structures.
-        return pcs, pcs_err, pcs_weight, unit_vect, pcs_const
+        return pcs, pcs_err, pcs_weight, temp, frq
 
 
-    def _minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
+    def _minimise_setup_rdcs(self, sim_index=None):
         """Set up the data structures for optimisation using RDCs as base data sets.
 
-        @return:    The assembled data structures for using RDCs as the base data for optimisation.
-                    These include:
-                        - rdc, the RDC values.
-                        - rdc_err, the RDC errors.
-                        - rdc_weight, the RDC weights.
-                        - vectors, the heteronucleus to proton vectors.
-                        - rdc_const, the dipolar constants.
-        @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for using RDCs as the base data for optimisation.  These include:
+                                - rdc, the RDC values.
+                                - rdc_err, the RDC errors.
+                                - rdc_weight, the RDC weights.
+                                - vectors, the heteronucleus to proton vectors.
+                                - rdc_const, the dipolar constants.
+        @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
         """
 
         # Initialise.
@@ -975,7 +1064,10 @@ class N_state_model(API_base, API_common):
                     # The RDC for the Me-pseudo spin where:
                     #     <D> = -1/3 Dpar.
                     # See Verdier, et al., JMR, 2003, 163, 353-359.
-                    value = -3.0 * spin.rdc[align_id]
+                    if sim_index != None:
+                        value = -3.0 * spin.rdc_sim[align_id][sim_index]
+                    else:
+                        value = -3.0 * spin.rdc[align_id]
 
                     # The error.
                     if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
@@ -984,7 +1076,10 @@ class N_state_model(API_base, API_common):
                 # Normal spin set up.
                 elif align_id in spin.rdc.keys():
                     # The RDC.
-                    value = spin.rdc[align_id]
+                    if sim_index != None:
+                        value = spin.rdc_sim[align_id][sim_index]
+                    else:
+                        value = spin.rdc[align_id]
 
                     # The error.
                     if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
@@ -1239,7 +1334,11 @@ class N_state_model(API_base, API_common):
         if cdp.model == '2-domain':
             num = num + 3*cdp.N
 
-        # Return the param number.
+        # The paramagnetic centre.
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            num = num + 3
+
+         # Return the param number.
         return num
 
 
@@ -1336,6 +1435,11 @@ class N_state_model(API_base, API_common):
         # Determine if alignment tensors or RDCs are to be used.
         data_types = self._base_data_types()
 
+        # The probabilities.
+        probs = None
+        if hasattr(cdp, 'probs'):
+            probs = cdp.probs
+
         # Diagonal scaling.
         scaling_matrix = None
         if len(param_vector):
@@ -1348,21 +1452,30 @@ class N_state_model(API_base, API_common):
             full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index=sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
-        pcs, pcs_err, pcs_weight, pcs_vect, pcs_dj = None, None, None, None, None
+        pcs, pcs_err, pcs_weight, temp, frq = None, None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_weight, pcs_vect, pcs_dj = self._minimise_setup_pcs()
+            pcs, pcs_err, pcs_weight, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
 
         # Get the data structures for optimisation using RDCs as base data sets.
         rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = None, None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs()
+            rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Get the fixed tensors.
         if ('rdc' in data_types or 'pcs' in data_types) and (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             full_tensors = self._minimise_setup_fixed_tensors(sim_index=sim_index)
 
+        # Get the atomic_positions.
+        atomic_pos, paramag_centre, centre_fixed = None, None, True
+        if 'pcs' in data_types or 'pre' in data_types:
+            atomic_pos, paramag_centre = self._minimise_setup_atomic_pos()
+
+            # Optimisation of the centre.
+            if hasattr(cdp, 'paramag_centre_fixed'):
+                centre_fixed = cdp.paramag_centre_fixed
+
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, xh_vect=xh_vect, temp=temp, frq=frq, dip_const=rdc_dj, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
@@ -1460,6 +1573,61 @@ class N_state_model(API_base, API_common):
                     generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
+    def base_data_loop(self):
+        """Loop over the base data of the spins - RDCs, PCSs, and NOESY data.
+
+        This loop iterates for each data point (RDC, PCS, NOESY) for each spin, returning the identification information.
+
+        @return:            A list of the spin ID string, the data type ('rdc', 'pcs', 'noesy'), and the alignment ID if required.
+        @rtype:             list of str
+        """
+
+        # Loop over the spins.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Re-initialise the data structure.
+            base_ids = [spin_id, None, None]
+
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # RDC data.
+            if hasattr(spin, 'rdc'):
+                base_ids[1] = 'rdc'
+
+                # Loop over the alignment IDs.
+                for id in cdp.rdc_ids:
+                    # Add the ID.
+                    base_ids[2] = id
+
+                    # Yield the set.
+                    yield base_ids
+
+            # PCS data.
+            if hasattr(spin, 'pcs'):
+                base_ids[1] = 'pcs'
+
+                # Loop over the alignment IDs.
+                for id in cdp.pcs_ids:
+                    # Add the ID.
+                    base_ids[2] = id
+
+                    # Yield the set.
+                    yield base_ids
+
+            # NOESY data.
+            if hasattr(spin, 'noesy'):
+                base_ids[1] = 'noesy'
+
+                # Loop over the alignment IDs.
+                for id in cdp.noesy_ids:
+                    # Add the ID.
+                    base_ids[2] = id
+
+                    # Yield the set.
+                    yield base_ids
+
+
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
         """Calculation function.
 
@@ -1484,6 +1652,17 @@ class N_state_model(API_base, API_common):
 
             # Store the global chi-squared value.
             cdp.chi2 = chi2
+
+            # Store the back-calculated data.
+            self._minimise_bc_data(model)
+
+            # Calculate the RDC Q-factors.
+            if 'rdc' in data_types:
+                rdc.q_factors()
+
+            # Calculate the PCS Q-factors.
+            if 'pcs' in data_types:
+                pcs.q_factors()
 
         # NOE potential.
         if hasattr(cdp, 'noe_restraints'):
@@ -1512,6 +1691,110 @@ class N_state_model(API_base, API_common):
             for i in range(num_restraints):
                 cdp.ave_dist.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], dist[i]])
                 cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
+
+
+    def create_mc_data(self, data_id=None):
+        """Create the Monte Carlo Ri data by back-calculation.
+
+        @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
+        @return:            The Monte Carlo Ri data.
+        @rtype:             list of floats
+        """
+
+        # Initialise the MC data structure.
+        mc_data = []
+
+        # Get the spin container and global spin index.
+        spin = return_spin(data_id[0])
+
+        # RDC data.
+        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+            # Does back-calculated data exist?
+            if not hasattr(spin, 'rdc_bc'):
+                self.calculate()
+
+            # Append the data.
+            mc_data.append(spin.rdc_bc[data_id[2]])
+
+        # PCS data.
+        elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+            # Does back-calculated data exist?
+            if not hasattr(spin, 'pcs_bc'):
+                self.calculate()
+
+            # Append the data.
+            mc_data.append(spin.pcs_bc[data_id[2]])
+
+        # NOESY data.
+        elif data_id[1] == 'noesy' and hasattr(spin, 'noesy'):
+            # Does back-calculated data exist?
+            if not hasattr(spin, 'noesy_bc'):
+                self.calculate()
+
+            # Append the data.
+            mc_data.append(spin.noesy_bc)
+
+        # Return the data.
+        return mc_data
+
+
+    def data_names(self, set='all', error_names=False, sim_names=False):
+        """Return a list of names of data structures.
+
+        Description
+        ===========
+
+        The names are as follows:
+
+            - 'chi2', chi-squared value.
+            - 'iter', iterations.
+            - 'f_count', function count.
+            - 'g_count', gradient count.
+            - 'h_count', hessian count.
+            - 'warning', minimisation warning.
+
+
+        @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @type set:              str
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
+        """
+
+        # Initialise.
+        names = []
+
+        # Generic.
+        if set == 'all' or set == 'generic':
+            pass
+
+        # Parameters.
+        if set == 'all' or set == 'params':
+            pass
+
+        # Minimisation statistics.
+        if set == 'all' or set == 'min':
+            names.append('chi2')
+            names.append('iter')
+            names.append('f_count')
+            names.append('g_count')
+            names.append('h_count')
+            names.append('warning')
+
+        # Parameter errors.
+        if error_names and (set == 'all' or set == 'params'):
+            pass
+
+        # Parameter simulation values.
+        if sim_names and (set == 'all' or set == 'params'):
+            pass
+
+        # Return the names.
+        return names
 
 
     default_value_doc = """
@@ -1628,13 +1911,18 @@ class N_state_model(API_base, API_common):
                         lower.append(0.0)
                         upper.append(pi)
 
+                # The paramagnetic centre.
+                elif hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed and (n - i) <= 3:
+                    lower.append(-100)
+                    upper.append(100)
+
                 # Otherwise this must be an alignment tensor component.
                 else:
                     lower.append(-1e-3)
                     upper.append(1e-3)
 
         # Minimisation.
-        self.minimise(min_algor='grid', min_options=[inc, lower, upper], constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def is_spin_param(self, name):
@@ -1652,6 +1940,22 @@ class N_state_model(API_base, API_common):
 
         # All other parameters are global.
         return False
+
+
+    def map_bounds(self, param, spin_id=None):
+        """Create bounds for the OpenDX mapping function.
+
+        @param param:       The name of the parameter to return the lower and upper bounds of.
+        @type param:        str
+        @param spin_id:     The spin identification string (unused).
+        @type spin_id:      None
+        @return:            The upper and lower bounds of the parameter.
+        @rtype:             list of float
+        """
+
+        # Paramagnetic centre.
+        if search('^paramag_[xyz]$', param):
+            return [-100.0, 100.0]
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
@@ -1686,6 +1990,11 @@ class N_state_model(API_base, API_common):
         # Set up the target function for direct calculation.
         model, param_vector, data_types, scaling_matrix = self._target_fn_setup(sim_index=sim_index, scaling=scaling)
 
+        # Nothing to do!
+        if not len(param_vector):
+            warn(RelaxWarning("The model has no parameters, minimisation cannot be performed."))
+            return
+
         # Right, constraints cannot be used for the 'fixed' model.
         if constraints and cdp.model == 'fixed':
             warn(RelaxWarning("Turning constraints off.  These cannot be used for the 'fixed' model."))
@@ -1713,7 +2022,14 @@ class N_state_model(API_base, API_common):
 
         # Grid search.
         if search('^[Gg]rid', min_algor):
-            results = grid(func=model.func, args=(), num_incs=min_options[0], lower=min_options[1], upper=min_options[2], A=A, b=b, verbosity=verbosity)
+            # Scaling.
+            if scaling:
+                for i in xrange(len(param_vector)):
+                    lower[i] = lower[i] / scaling_matrix[i, i]
+                    upper[i] = upper[i] / scaling_matrix[i, i]
+
+            # The search.
+            results = grid(func=model.func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
 
             # Unpack the results.
             param_vector, func, iter_count, warning = results
@@ -1874,7 +2190,6 @@ class N_state_model(API_base, API_common):
         if search('^gamma', param):
             return 'gamma'
 
-
         # Bond length.
         if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
             return 'r'
@@ -1886,6 +2201,60 @@ class N_state_model(API_base, API_common):
         # Proton type.
         if search('^[Pp]roton$', param):
             return 'proton_type'
+
+        # Paramagnetic centre.
+        if search('^paramag_[xyz]$', param):
+            return param
+
+
+    def return_error(self, data_id=None):
+        """Create and return the spin specific Monte Carlo Ri error structure.
+
+        @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
+        @return:            The Monte Carlo simulation data errors.
+        @rtype:             list of floats
+        """
+
+        # Initialise the MC data structure.
+        mc_errors = []
+
+        # Get the spin container and global spin index.
+        spin = return_spin(data_id[0])
+
+        # Skip deselected spins.
+        if not spin.select:
+            return
+
+        # RDC data.
+        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+            # Do errors exist?
+            if not hasattr(spin, 'rdc_err'):
+                raise(RelaxError, "The RDC errors are missing for spin '%s'." % spin_id)
+
+            # Append the data.
+            mc_errors.append(spin.rdc_err[data_id[2]])
+
+        # PCS data.
+        elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+            # Do errors exist?
+            if not hasattr(spin, 'pcs_err'):
+                raise(RelaxError, "The PCS errors are missing for spin '%s'." % spin_id)
+
+            # Append the data.
+            mc_errors.append(spin.pcs_err[data_id[2]])
+
+        # NOESY data.
+        elif hasattr(spin, 'noesy'):
+            # Do errors exist?
+            if not hasattr(spin, 'noesy_err'):
+                raise(RelaxError, "The NOESY errors are missing for spin '%s'." % spin_id)
+
+            # Append the data.
+            mc_errors.append(spin.noesy_err)
+
+        # Return the errors.
+        return mc_errors
 
 
     def return_grace_string(self, param):
@@ -1951,6 +2320,30 @@ class N_state_model(API_base, API_common):
         """
 
 
+    def set_error(self, model_info, index, error):
+        """Set the parameter errors.
+
+        @param model_info:  The global model index originating from model_loop().
+        @type model_info:   int
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
+        """
+
+        # Align parameters.
+        names = ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz']
+
+        # Alignment tensor parameters.
+        if index < len(cdp.align_ids)*5:
+            # The tensor and parameter index.
+            param_index = index % 5
+            tensor_index = (index - index % 5) / 5
+
+            # Set the error.
+            return setattr(cdp.align_tensors[tensor_index], names[param_index]+'_err', error)
+
+
     def set_param_values(self, param=None, value=None, spin_id=None, force=True):
         """Set the N-state model parameter values.
 
@@ -1986,7 +2379,139 @@ class N_state_model(API_base, API_common):
                 obj = getattr(cdp, obj_name)
                 obj[index] = value[i]
 
+            # The paramagnetic centre.
+            if search('^paramag_[xyz]$', obj_name):
+                # Init.
+                if not hasattr(cdp, 'paramagnetic_centre'):
+                    cdp.paramagnetic_centre = zeros(3, float64)
+
+                # Set the coordinate.
+                if obj_name == 'paramag_x':
+                    index = 0
+                elif obj_name == 'paramag_y':
+                    index = 1
+                else:
+                    index = 2
+
+                # Set the value in Angstrom.
+                cdp.paramagnetic_centre[index] = value[i]
+
             # Set the spin parameters.
             else:
                 for spin in spin_loop(spin_id):
                     setattr(spin, obj_name, value[i])
+
+
+    def sim_init_values(self):
+        """Initialise the Monte Carlo parameter values."""
+
+        # Get the minimisation statistic object names.
+        min_names = self.data_names(set='min')
+
+        # Alignments.
+        if hasattr(cdp, 'align_tensors'):
+            # The parameter names.
+            names = ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz']
+
+            # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
+            for i in xrange(len(cdp.align_tensors)):
+                # Loop over all the parameter names.
+                for object_name in names:
+                    # Name for the simulation object.
+                    sim_object_name = object_name + '_sim'
+
+                    # Create the simulation object.
+                    setattr(cdp.align_tensors[i], sim_object_name, [])
+
+                    # Get the simulation object.
+                    sim_object = getattr(cdp.align_tensors[i], sim_object_name)
+
+                    # Set the initial simulation values to the optimised tensor parameter values.
+                    for j in xrange(cdp.sim_number):
+                        sim_object.append(getattr(cdp.align_tensors[i], object_name))
+
+            # Loop over all the minimisation object names.
+            for object_name in min_names:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Create the simulation object.
+                setattr(cdp, sim_object_name, [])
+
+                # Get the simulation object.
+                sim_object = getattr(cdp, sim_object_name)
+
+                # Loop over the simulations.
+                for j in xrange(cdp.sim_number):
+                    # Append None to fill the structure.
+                    sim_object.append(None)
+
+
+    def sim_pack_data(self, data_id, sim_data):
+        """Pack the Monte Carlo simulation data.
+
+        @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
+        @type data_id:      list of str
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
+
+        # Get the spin container.
+        spin = return_spin(data_id[0])
+
+        # Test if the simulation data already exists.
+        if hasattr(spin, 'sim_intensities'):
+            raise RelaxError("Monte Carlo simulation data already exists.")
+
+        # RDC data.
+        if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+            # Initialise.
+            if not hasattr(spin, 'rdc_sim'):
+                spin.rdc_sim = {}
+                
+            # Store the data structure.
+            spin.rdc_sim[data_id[2]] = []
+            for i in range(cdp.sim_number):
+                spin.rdc_sim[data_id[2]].append(sim_data[i][0])
+
+        # PCS data.
+        if data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+            # Initialise.
+            if not hasattr(spin, 'pcs_sim'):
+                spin.pcs_sim = {}
+                
+            # Store the data structure.
+            spin.pcs_sim[data_id[2]] = []
+            for i in range(cdp.sim_number):
+                spin.pcs_sim[data_id[2]].append(sim_data[i][0])
+
+        # NOESY data.
+        if data_id[1] == 'noesy' and hasattr(spin, 'noesy'):
+            # Store the data structure.
+            spin.noesy_sim = []
+            for i in range(cdp.sim_number):
+                spin.noesy_sim[data_id[2]].append(sim_data[i][0])
+
+
+    def sim_return_param(self, model_info, index):
+        """Return the array of simulation parameter values.
+
+        @param model_info:  The global model index originating from model_loop().
+        @type data_id:      int
+        @param index:       The index of the parameter to return the array of values for.
+        @type index:        int
+        @return:            The array of simulation parameter values.
+        @rtype:             list of float
+        """
+
+        # Align parameters.
+        names = ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz']
+
+        # Alignment tensor parameters.
+        if index < len(cdp.align_ids)*5:
+            # The tensor and parameter index.
+            param_index = index % 5
+            tensor_index = (index - index % 5) / 5
+
+            # Return the simulation parameter array.
+            return getattr(cdp.align_tensors[tensor_index], names[param_index]+'_sim')

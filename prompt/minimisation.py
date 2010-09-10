@@ -98,7 +98,7 @@ class Minimisation(Basic_class):
         # The argument checks.
         arg_check.is_num_list(lower, 'lower bounds', can_be_none=True)
         arg_check.is_num_list(upper, 'upper bounds', can_be_none=True)
-        arg_check.is_int_or_int_list(inc, 'incrementation value')
+        arg_check.is_int_or_int_list(inc, 'incrementation value', none_elements=True)
         arg_check.is_bool(constraints, 'constraints flag')
         arg_check.is_int(verbosity, 'verbosity level')
 
