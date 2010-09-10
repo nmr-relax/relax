@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2010 Pavel Kaderavek                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -59,13 +60,13 @@ class Mf:
         interactions: An array containing the types of interactions (either dipole-dipole or CSA).
 
         gratio_ext:  An array containing the gyromagnetic ratios of interacting nuclei (None is included
-	in case of CSA interaction)
+        in case of CSA interaction)
 
         internuclei_distance:  An array containing the fixed internuclei_distances in meters. 
-	(None is included in case of CSA interaction)
+        (None is included in case of CSA interaction)
 
         csa:  An array containing the fixed CSA value. (None is included in case of dipole-dipole
-	interaction)
+        interaction)
 
         unit_vector:  An array containing the fixed unit eigenvectors of interactions
 
@@ -259,7 +260,7 @@ class Mf:
             g_ratio = gh[i] / gx[i]
 
 
-	    # loop over interactions
+            # loop over interactions
             for j in xrange(self.num_interactions[i]):
                 self.data[i].append(Data())
                 self.data[i][j].interactions=interactions[i][j]
@@ -287,8 +288,6 @@ class Mf:
                 for k in xrange(self.diff_data.num_indices):
                     self.data[i][j].frq_list_ext[:,:, k] = self.data[i][j].frq_list
                     self.data[i][j].frq_sqrd_list_ext[:,:, k] = self.data[i][j].frq_sqrd_list
-
-	        
 
                 # Store supplied data in self.data
                 self.data[i][j].gh = gh[i]

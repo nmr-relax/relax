@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2010 Pavel Kaderavek                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
