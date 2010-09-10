@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.deselect import Deselect
-from relax_errors import RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrFileError
 
 # Unit test imports.
 from data_types import DATA_TYPES
@@ -44,11 +44,11 @@ class Test_deselect(TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            if data[0] == 'str' or data[0] == 'file':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.deselect_fns.read, file=data[1])
+            self.assertRaises(RelaxStrFileError, self.deselect_fns.read, file=data[1])
 
 
     def test_read_argfail_dir(self):

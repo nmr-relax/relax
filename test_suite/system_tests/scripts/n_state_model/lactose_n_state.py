@@ -80,7 +80,7 @@ structure.load_spins(spin_id='@C1', combine_models=False, ave_pos=False)
 pipe.switch('lactose')
 
 # Calculate the paramagnetic centre (from the structures in the 'tag' data pipe).
-pcs.centre(atom_id=':4@C1', pipe='tag')
+paramag.centre(atom_id=':4@C1', pipe='tag')
 
 # Set up the model.
 n_state_model.select_model(model=ds.model)

@@ -159,6 +159,20 @@ class API_common:
             yield spin
 
 
+    def _model_loop_single_global(self):
+        """Default generator method for looping over a single global (non-spin specific) model.
+
+        The loop will yield a single index, zero, once to indicate a single model.
+
+
+        @return:    The global model index of zero.
+        @rtype:     int
+        """
+
+        # Yield the index zero.
+        yield 0
+
+
     def _num_instances_spin(self):
         """Return the number of instances, equal to the number of selected spins.
 
@@ -190,6 +204,19 @@ class API_common:
         """
 
         return 1.0
+
+
+    def _return_data_name(self, param):
+        """Return a unique identifying string for the parameter.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
+
+        # No name mappings.
+        return param
 
 
     def _return_data_relax_data(self, spin):
@@ -404,6 +431,19 @@ class API_common:
                 setattr(spin, obj_name, value[i])
 
 
+    def _set_selected_sim_global(self, model_info, select_sim):
+        """Set the simulation selection flag (for a single global model).
+
+        @param model_info:  The model information originating from model_loop().  This should be zero for the single global model.
+        @type model_info:   int
+        @param select_sim:  The selection flag for the simulations.
+        @type select_sim:   bool
+        """
+
+        # Set the array.
+        cdp.select_sim = deepcopy(select_sim)
+
+
     def _set_selected_sim_spin(self, model_info, select_sim):
         """Set the simulation selection flag (spin system specific).
 
@@ -555,6 +595,19 @@ class API_common:
 
             # Increment.
             inc = inc + 1
+
+
+    def _sim_return_selected_global(self, model_info):
+        """Return the array of selected simulation flags for the global model.
+
+        @param model_info:  The model information originating from model_loop().  This should be zero for the single global model.
+        @type model_info:   int
+        @return:            The array of selected simulation flags.
+        @rtype:             list of int
+        """
+
+        # Return the array.
+        return cdp.select_sim
 
 
     def _sim_return_selected_spin(self, model_info):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -271,6 +271,11 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
                 spin_cont.pos = []
             spin_cont.pos.append(pos)
         spin_cont.element = element
+
+    # Catch no data.
+    if len(mol_names) == 0:
+        warn(RelaxWarning("No spins matching the '%s' ID string could be found." % spin_id))
+        return
 
     # Print out.
     write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)

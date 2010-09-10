@@ -24,17 +24,92 @@
 """Module for the manipulation of pseudocontact shift data."""
 
 # Python module imports.
-from math import sqrt
-from numpy import array, float64, zeros
+from math import pi, sqrt
+from numpy import array, float64, ones, zeros
+from numpy.linalg import norm
 import sys
 from warnings import warn
 
 # relax module imports.
 from generic_fns import grace, pipes
+from generic_fns.align_tensor import get_tensor_index
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
-from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError
+from maths_fns.pcs import ave_pcs_tensor
+from physical_constants import g1H, pcs_constant
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import open_write_file, read_spin_data, write_spin_data
-from relax_warnings import RelaxWarning
+from relax_warnings import RelaxWarning, RelaxNoSpinWarning
+
+
+def back_calc(align_id=None):
+    """Back calculate the PCS from the alignment tensor.
+
+    @keyword align_id:      The alignment tensor ID string.
+    @type align_id:         str
+    """
+
+    # Arg check.
+    if align_id and align_id not in cdp.align_ids:
+        raise RelaxError, "The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids)
+
+    # Convert the align IDs to an array, or take all IDs.
+    if align_id:
+        align_ids = [align_id]
+    else:
+        align_ids = cdp.align_ids
+
+    # Add the ID to the PCS IDs, if needed.
+    for align_id in align_ids:
+        # Init.
+        if not hasattr(cdp, 'pcs_ids'):
+            cdp.pcs_ids = []
+
+        # Add the ID.
+        if align_id not in cdp.pcs_ids:
+            cdp.pcs_ids.append(align_id)
+
+    # The weights.
+    weights = ones(cdp.N, float64) / cdp.N
+
+    # Unit vector data structure init.
+    unit_vect = zeros((cdp.N, 3), float64)
+
+    # Loop over the spins.
+    for spin in spin_loop():
+        # Skip spins with no position.
+        if not hasattr(spin, 'pos'):
+            continue
+
+        # Atom positions.
+        pos = spin.pos
+        if type(pos[0]) in [float, float64]:
+            pos = [pos] * cdp.N
+
+        # Loop over the alignments.
+        for id in align_ids:
+            # Vectors.
+            vect = zeros((cdp.N, 3), float64)
+            r = zeros(cdp.N, float64)
+            dj = zeros(cdp.N, float64)
+            for c in range(cdp.N):
+                # The vector.
+                vect[c] = pos[c] - cdp.paramagnetic_centre
+
+                # The length.
+                r[c] = norm(vect[c])
+
+                # Normalise.
+                vect[c] = vect[c] / r[c]
+
+                # Calculate the PCS constant.
+                dj[c] = pcs_constant(cdp.temperature[id], cdp.frq[id] * 2.0 * pi / g1H, r[c]/1e10)
+
+            # Initialise if necessary.
+            if not hasattr(spin, 'pcs_bc'):
+                spin.pcs_bc = {}
+
+            # Calculate the PCSs (in ppm).
+            spin.pcs_bc[id] = ave_pcs_tensor(dj, vect, cdp.N, cdp.align_tensors[get_tensor_index(id)].A, weights=weights) * 1e6
 
 
 def centre(pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=False, force=False):
@@ -165,6 +240,18 @@ def corr_plot(format=None, file=None, dir=None, force=False):
         # Append a new list for this alignment.
         data.append([])
 
+        # Errors present?
+        err_flag = False
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Error present.
+            if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                err_flag = True
+                break
+
         # Loop over the spins.
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
@@ -176,7 +263,17 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                 continue
 
             # Append the data.
-            data[-1].append([spin.pcs[align_id], spin.pcs_bc[align_id], spin.pcs_err[align_id], spin_id])
+            data[-1].append([spin.pcs_bc[align_id], spin.pcs[align_id]])
+
+            # Errors.
+            if err_flag:
+                if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                    data[-1][-1].append(spin.pcs_err[align_id])
+                else:
+                    data[-1][-1].append(None)
+
+            # Label.
+            data[-1][-1].append(spin_id)
 
     # The data size.
     size = len(data)
@@ -184,13 +281,19 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     # Only one data set.
     data = [data]
 
+    # Graph type.
+    if err_flag:
+        graph_type = 'xydy'
+    else:
+        graph_type = 'xy'
+
     # Grace file.
     if format == 'grace':
         # The header.
-        grace.write_xy_header(file=file, title="PCS correlation plot", sets=size, set_names=[None]+cdp.pcs_ids, linestyle=[2]+[0]*size, data_type=['pcs', 'pcs_bc'], axis_min=[-0.5, -0.5], axis_max=[0.5, 0.5], legend_pos=[1, 0.5])
+        grace.write_xy_header(file=file, title="PCS correlation plot", sets=size, set_names=[None]+cdp.pcs_ids, linestyle=[2]+[0]*size, data_type=['pcs_bc', 'pcs'], axis_min=[-0.5, -0.5], axis_max=[0.5, 0.5], legend_pos=[1, 0.5])
 
         # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type='xydy')
+        grace.write_xy_data(data=data, file=file, graph_type=graph_type)
 
 
 def display(align_id=None):
@@ -341,7 +444,8 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         # Get the corresponding spin container.
         spin = return_spin([id, spin_id])
         if spin == None:
-            raise RelaxNoSpinError(id)
+            warn(RelaxNoSpinWarning(id))
+            continue
 
         # Add the data.
         if data_col:

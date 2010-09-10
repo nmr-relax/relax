@@ -33,9 +33,9 @@ frq.set(id='Dy', frq=799.75376122 * 1e6)
 
 # The paramagnetic centre location.
 if ds.para_centre == 'true':
-    pcs.centre(pos=[25.8279, -11.6382, -2.5931])
+    paramag.centre(pos=[25.8279, -11.6382, -2.5931])
 elif ds.para_centre == 'zero':
-    pcs.centre(pos=[0, 0, 0])
+    paramag.centre(pos=[0, 0, 0])
 
 # Set up the model.
 n_state_model.select_model(model='fixed')

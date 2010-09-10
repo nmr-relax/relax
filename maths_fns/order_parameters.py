@@ -23,9 +23,44 @@
 # Module docstring.
 """Module for the conversion of order parameters to specific model parameters and vice versa."""
 
+# Python module imports.
+from math import acos, cos, pi, sqrt
 
-def iso_cone_S_to_cos_theta(S):
-    """Convert the isotropic cone order parameter S into the cosine of the cone angle.
+
+def iso_cone_theta_to_S(theta):
+    """Convert the isotropic cone angle to the order parameter S.
+
+    This uses Woessner's diffusion in a cone order parameter defined as::
+
+        S = 1/2 (1 + cos(theta)) * cos(theta)
+
+
+    @param theta:   The isotropic cone angle.
+    @type theta:    float
+    @return:        The order parameter value.
+    @rtype:         float
+    """
+
+    # Convert.
+    S = 0.5 * (1.0 + cos(theta)) * cos(theta)
+
+    # Return the order parameter.
+    return S
+
+
+def iso_cone_S_to_theta(S):
+    """Convert the isotropic cone order parameter S into the cone angle.
+
+    This uses Woessner's diffusion in a cone order parameter defined as::
+
+        S = 1/2 (1 + cos(theta)) * cos(theta)
+
+    The conversion equation is::
+
+        theta = acos((sqrt(8.0*S + 1) - 1)/2)
+
+    Hence the cone angle is only between 0 and 2pi/3, as the order parameter for higher cone angles is ambiguous.
+
 
     @param S:   The order parameter value (not squared).
     @type S:    float
@@ -33,8 +68,14 @@ def iso_cone_S_to_cos_theta(S):
     @rtype:     float
     """
 
-    # Convert.
-    cos_theta = S
+    # Catch bad order parameters.
+    if S > 1.0:
+        return 0.0
+    if S < -0.125:
+        return 2*pi
 
-    # Return cos(theta).
-    return cos_theta
+    # Convert.
+    theta = acos(0.5*(sqrt(8.0*S + 1) - 1))
+
+    # Return theta.
+    return theta
