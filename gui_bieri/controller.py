@@ -42,14 +42,14 @@ from gui_bieri.paths import IMAGE_PATH
 from message import question
 
 
-class Controller(wx.Dialog):
+class Controller(wx.Frame):
     """The relax controller window."""
 
     def __init__(self, *args, **kwds):
 
         # Create GUI elements
         kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX
-        wx.Dialog.__init__(self, *args, **kwds)
+        wx.Frame.__init__(self, *args, **kwds)
 
         # header
         self.relax_logo = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
@@ -92,6 +92,7 @@ class Controller(wx.Dialog):
         self.SetSizer(main_sizer)
         self.Layout()
         self.SetSize((600, 600))
+        self.Centre()
 
 
     def __set_properties(self):
@@ -126,9 +127,6 @@ class Controller(wx.Dialog):
         if doexit:
             sys.exit(0)
 
-        # Terminate the event.
-        event.Skip()
-
 
     def handler_close(self, event):
         """Event handler for the close window action.
@@ -138,10 +136,7 @@ class Controller(wx.Dialog):
         """
 
         # Close the window.
-        self.Close()
-
-        # Terminate the event.
-        event.Skip()
+        self.Hide()
 
 
 
