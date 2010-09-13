@@ -35,7 +35,7 @@ from paths import IMAGE_PATH
 
 
 
-class About_base(wx.Dialog):
+class About_base(wx.Frame):
     """The about dialog base class."""
 
     # The background colour (gradient if second colour is given).
@@ -71,6 +71,9 @@ class About_base(wx.Dialog):
 
         # Let the dialog be closable with a left button click.
         self.Bind(wx.EVT_LEFT_DOWN, self.process_click)
+
+        # Center Window
+        self.Centre()
 
 
     def cursor_style(self, event):
@@ -222,10 +225,6 @@ class About_relax(About_base):
 
             # Reset the cursor type.
             self.cursor_type = 'normal'
-
-
-        # Terminate the event.
-        event.Skip()
 
 
     def draw_copyright(self):
@@ -405,7 +404,3 @@ class About_relax(About_base):
 
         # Close the dialog on all clicks.
         self.Close()
-
-        # Terminate the event.
-        event.Skip()
-
