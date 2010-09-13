@@ -170,9 +170,6 @@ class Main(wx.Frame):
         # The dialog.
         self.dialog_about_gui.Show()
 
-        # Terminate the event.
-        event.Skip()
-
 
     def about_relax(self, event):
         """The about message for relax.
@@ -183,9 +180,6 @@ class Main(wx.Frame):
 
         # The dialog.
         self.dialog_about_relax.Show()
-
-        # Terminate the event.
-        event.Skip()
 
 
     def action_state_save(self, event):
@@ -203,9 +197,6 @@ class Main(wx.Frame):
         # Save.
         self.state_save()
 
-        # Skip the event.
-        event.Skip()
-
 
     def action_state_save_as(self, event):
         """Save the program state with file name selection.
@@ -222,9 +213,6 @@ class Main(wx.Frame):
 
         # Save.
         self.state_save()
-
-        # Skip the event.
-        event.Skip()
 
 
     def build_main_window(self):
@@ -464,9 +452,6 @@ class Main(wx.Frame):
             # Destroy the main window.
             self.Destroy()
 
-        # Terminate the event.
-        event.Skip()
-
 
     def import_seq(self, event): # open load sequence panel
         temp = load_sequence(self)
@@ -493,8 +478,6 @@ class Main(wx.Frame):
             # Load sequencefile in relax data storage.
             for i in range(10):
              ds.relax_gui.analyses[i].sequence_file = sequencefile
-
-        event.Skip()
 
 
     def init_data(self):
@@ -582,26 +565,22 @@ class Main(wx.Frame):
             self.resultsdir_r21_copy_2.SetValue(newdir + sep + 'model_free')
 
             dir_message('Folder structure created for Model-free analysis:\n\n\n' + newdir + sep + 'NOE_1\n' + newdir + sep + 'NOE_2\n' + newdir + sep + 'NOE_3\n' + newdir + sep + 'R1_1\n' + newdir + sep + 'R1_2\n' + newdir + sep + 'R1_3\n' + newdir + sep + 'R2_1\n' + newdir + sep + 'R2_2\n' + newdir + sep + 'R2_3\n' + newdir + sep + 'model-free')
-        event.Skip()
 
 
     def open_model_results_exe(self, event):    # open model-free results
         choice = self.list_modelfree.GetStringSelection()
         model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te] # relax results values
         see_results(choice, model_result)
-        event.Skip()
 
 
     def open_noe_results_exe(self, event): #open results of noe run
         choice = self.list_noe.GetStringSelection()
         see_results(choice, None)
-        event.Skip()
 
 
     def open_rx_results_exe(self, event): # open results of r1 and r2 runs
         choice = self.list_rx.GetStringSelection()
         see_results(choice, None)
-        event.Skip()
 
 
     def param_file_setting(self, event): # set up parameter files
@@ -609,7 +588,6 @@ class Main(wx.Frame):
         if not tmp_setting == None:
             if question('Do you realy want to change import file settings?'):
                 ds.relax_gui.file_setting = tmp_setting
-        event.Skip()
 
 
     def references(self, event):
@@ -622,9 +600,6 @@ class Main(wx.Frame):
         # Build and show the references window.
         self.references = References(self)
         self.references.Show()
-
-        # Terminate the event.
-        event.Skip()
 
 
     def reset_setting(self, event): #reset all settings
@@ -639,7 +614,6 @@ class Main(wx.Frame):
         if not tmp_global == None:
             if question('Do you realy want to change relax settings?'):
                 ds.relax_gui.global_setting = tmp_global
-        event.Skip()
 
 
     def show_controller(self, event):
@@ -651,9 +625,6 @@ class Main(wx.Frame):
 
         # Open the window.
         self.controller.Show()
-
-        # Terminate the event.
-        event.Skip()
 
 
     def state_load(self, event):
@@ -668,9 +639,6 @@ class Main(wx.Frame):
 
         # No file has been selected.
         if not filename:
-            # Skip the event.
-            event.Skip()
-
             # Don't do anything.
             return
 
@@ -717,9 +685,6 @@ class Main(wx.Frame):
             if hasattr(analysis, 'sync_ds'):
                 analysis.sync_ds(upload=False)
 
-        # Skip the event.
-        event.Skip()
-
 
     def state_save(self):
         """Save the program state."""
@@ -756,8 +721,6 @@ class Main(wx.Frame):
             self.analysis_frames[self.hardcoded_index_r2_1].field_structure.SetValue(structure_file_pdb)
             self.analysis_frames[self.hardcoded_index_r2_2].field_structure.SetValue(structure_file_pdb)
             self.analysis_frames[self.hardcoded_index_r2_3].field_structure.SetValue(structure_file_pdb)
-
-        event.Skip()
 
 
     def sync_ds(self, upload=False):
