@@ -86,6 +86,7 @@ class Globalparam(wx.Dialog):
 
         self.Bind(wx.EVT_BUTTON, self.accept_settings, self.ok_copy)
         self.Bind(wx.EVT_BUTTON, self.cancel_settings, self.cancel_copy)
+        self.Bind(wx.EVT_CLOSE, self.cancel_settings)
 
 
     def __do_layout(self):
@@ -188,6 +189,7 @@ class Inputfile(wx.Dialog):
 
         self.Bind(wx.EVT_BUTTON, self.accept_settings, self.ok_copy_copy)
         self.Bind(wx.EVT_BUTTON, self.cancel_settings, self.cancel_copy_copy)
+        self.Bind(wx.EVT_CLOSE, self.cancel_settings)
 
 
     def __do_layout(self):
