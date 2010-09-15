@@ -62,21 +62,21 @@ class Globalparam(wx.Dialog):
         # begin globalparam.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
-        self.label_1_copy = wx.StaticText(self, -1, "Global Parameters for relax")
+        self.label_1_copy = wx.StaticText(self, -1, "Set the parameters for optimisation")
         self.bitmap_1_copy = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
-        self.label_2_copy = wx.StaticText(self, -1, "Bond Length-:")
+        self.label_2_copy = wx.StaticText(self, -1, "Bond length")
         self.bond = wx.TextCtrl(self, -1, old_settings[0])
-        self.label_3_copy = wx.StaticText(self, -1, "CSA")
+        self.label_3_copy = wx.StaticText(self, -1, "Chemical shift anisotropy (CSA)")
         self.csa = wx.TextCtrl(self, -1, old_settings[1])
-        self.label_5_copy = wx.StaticText(self, -1, "Hetero Nucleus")
+        self.label_5_copy = wx.StaticText(self, -1, "Heteronucleus name")
         self.hetero = wx.TextCtrl(self, -1, old_settings[2])
-        self.label_6_copy = wx.StaticText(self, -1, "Proton")
+        self.label_6_copy = wx.StaticText(self, -1, "Proton name")
         self.prot = wx.TextCtrl(self, -1, old_settings[3])
-        self.label_9_copy = wx.StaticText(self, -1, "Grid Search Increase")
+        self.label_9_copy = wx.StaticText(self, -1, "Grid search increments")
         self.grid = wx.TextCtrl(self, -1, old_settings[4])
-        self.label_7_copy = wx.StaticText(self, -1, "Minimisation Algrithm")
+        self.label_7_copy = wx.StaticText(self, -1, "Minimisation algorithm")
         self.minim = wx.TextCtrl(self, -1, old_settings[5])
-        self.label_8_copy = wx.StaticText(self, -1, "Monte Carlo Simulations")
+        self.label_8_copy = wx.StaticText(self, -1, "Monte Carlo simulation number")
         self.monte = wx.TextCtrl(self, -1, old_settings[6])
         self.ok_copy = wx.Button(self, -1, "Ok")
         self.cancel_copy = wx.Button(self, -1, "Cancel")
@@ -118,7 +118,7 @@ class Globalparam(wx.Dialog):
 
     def __set_properties(self):
         # begin globalparam.__set_properties
-        self.SetTitle("relaxGUI")
+        self.SetTitle("Global parameters")
         _icon = wx.EmptyIcon()
         _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
