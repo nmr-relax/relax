@@ -518,23 +518,23 @@ class Ref:
 
         # Build the citation.
         cite = ''
-        if author and hasattr(self, 'author'):
+        if author and hasattr(self, 'author') and self.author:
             cite = cite + self.author
-        if year and hasattr(self, 'year'):
+        if year and hasattr(self, 'year') and self.year:
             cite = cite + ' (' + repr(self.year) + ').'
-        if title and hasattr(self, 'title'):
+        if title and hasattr(self, 'title') and self.title:
             cite = cite + ' ' + self.title
-        if journal and hasattr(self, 'journal'):
+        if journal and hasattr(self, 'journal') and self.journal:
             cite = cite + ' <em>' + self.journal + '</em>,'
-        if volume and hasattr(self, 'volume'):
+        if volume and hasattr(self, 'volume') and self.volume:
             cite = cite + ' <strong>' + self.volume + '</strong>'
-        if number and hasattr(self, 'number'):
+        if number and hasattr(self, 'number') and self.number:
             cite = cite + '(' + self.number + '),'
-        if pages and hasattr(self, 'pages'):
+        if pages and hasattr(self, 'pages') and self.pages:
             cite = cite + ' ' + self.pages
-        if doi and hasattr(self, 'doi'):
+        if doi and hasattr(self, 'doi') and self.doi:
             cite = cite + ' (<a href="http://dx.doi.org/%s">abstract</a>)' % self.doi
-        if url and hasattr(self, 'url'):
+        if url and hasattr(self, 'url') and self.url:
             cite = cite + ' (<a href="http://dx.doi.org/%s">url</a>)' % self.url
 
         # End.
