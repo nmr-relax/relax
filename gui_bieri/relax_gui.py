@@ -25,7 +25,9 @@
 """Main module for the relax graphical user interface."""
 
 # Python module imports.
-from os import getcwd, mkdir, sep
+import __main__
+import os
+from os import F_OK, access, getcwd, mkdir, sep
 import platform
 from re import search
 from string import lower, lowercase, replace
@@ -58,7 +60,7 @@ from base_classes import Container
 from controller import Controller
 from derived_wx_classes import StructureTextCtrl
 from filedialog import multi_openfile, opendir, openfile, savefile
-from message import dir_message, exec_relax, missing_data, question, relax_run_ok
+from message import dir_message, error_message, exec_relax, missing_data, question, relax_run_ok
 from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, CONTROLLER_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, SAVE_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
 from references import References
 from settings import import_file_settings, load_sequence, relax_global_settings
@@ -324,6 +326,7 @@ class Main(wx.Frame):
         menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.
+        self.Bind(wx.EVT_MENU, self.relax_manual,  id=40)
         self.Bind(wx.EVT_MENU, self.contact_relax, id=30)
         self.Bind(wx.EVT_MENU, self.references, id=31)
         self.Bind(wx.EVT_MENU, self.about_gui,  id=41)
@@ -592,6 +595,35 @@ class Main(wx.Frame):
         if not tmp_setting == None:
             if question('Do you realy want to change import file settings?'):
                 ds.relax_gui.file_setting = tmp_setting
+
+
+    def relax_manual(self, event):
+        """Display the relax manual.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The PDF manual.
+        file = __main__.install_path + sep+"docs"+sep+"relax.pdf"
+
+        # Test if it exists.
+        if not access(file, F_OK):
+            error_message("The relax manual '%s' cannot be found.  Please compile using the scons program." % file)
+
+        # Open the relax PDF manual using the native PDF reader.
+        else:
+            # Windows.
+            if platform.uname()[0] in ['Windows', 'Microsoft']:
+                os.startfile(file)
+
+            # Mac OS X.
+            elif platform.uname()[0] == 'Darwin':
+                os.system('open %s' % file)
+
+            # POSIX Systems with xdg-open.
+            else:
+                os.system('/usr/bin/xdg-open %s' % file)
 
 
     def references(self, event):
