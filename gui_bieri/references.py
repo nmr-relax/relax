@@ -24,6 +24,7 @@
 """The relax related references window."""
 
 # Python module imports.
+import webbrowser
 import wx
 import wx.html
 
@@ -76,15 +77,24 @@ class References(wx.Dialog):
         self.SetSizer(box)
 
         # Add some buttons.
-        self.add_buttons(box)
+        #self.add_buttons(box)
 
         # The HTML window.
-        self.html = wx.html.HtmlWindow(self, -1, size=(500, -1))
+        self.html = RefWindow(self, -1, size=(500, -1))
         box.Add(self.html, 1, wx.GROW)
+
+        # Catch clicks.
+        self.Bind(wx.EVT_LEFT_DOWN, self.process_click)
+
+        # Centre the window.
+        self.Centre()
 
         # Show the front page.
         self.front_page()
 
+
+    def process_click(self):
+        pass
 
     def add_buttons(self, box):
         """Add forwards, backwards, and close buttons.
@@ -182,3 +192,14 @@ class References(wx.Dialog):
         # The footer.
         text = text + HTML_FOOTER
         self.html.SetPage(text)
+
+
+
+class RefWindow(wx.html.HtmlWindow):
+    """New HTML window class to catch clicks on links and open in a browser."""
+
+    def OnLinkClicked(self, url):
+        """Redefine the link clicking behaviour."""
+
+        # Open a new browser window instead.
+        webbrowser.open(url.GetHref())
