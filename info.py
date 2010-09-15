@@ -535,7 +535,7 @@ class Ref:
         if doi and hasattr(self, 'doi') and self.doi:
             cite = cite + ' (<a href="http://dx.doi.org/%s">abstract</a>)' % self.doi
         if url and hasattr(self, 'url') and self.url:
-            cite = cite + ' (<a href="http://dx.doi.org/%s">url</a>)' % self.url
+            cite = cite + ' (<a href="%s">url</a>)' % self.url
 
         # End.
         if cite[-1] != '.':
