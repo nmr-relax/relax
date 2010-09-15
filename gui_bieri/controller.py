@@ -73,6 +73,9 @@ class Controller(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.cancel_calculation, self.cancel_button)
         self.Bind(wx.EVT_BUTTON, self.handler_close, self.close_button)
 
+        # Close the window cleanly (hide so it can be reopened).
+        self.Bind(wx.EVT_CLOSE, self.handler_close)
+
         # Integrate Singleton object.
         status = Status()
 
