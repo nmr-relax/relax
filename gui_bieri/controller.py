@@ -49,8 +49,13 @@ class Controller(wx.Frame):
         """Set up the relax controller frame."""
 
         # Create GUI elements
-        kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX
+        kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
+
+        # Some default values.
+        self.size_x = 600
+        self.size_y = 600
+        self.boarder = 5
 
         # Set up the frame.
         sizer = self.setup_frame()
@@ -80,7 +85,7 @@ class Controller(wx.Frame):
 
         # Create a horizontal layout for the buttons.
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(button_sizer, 5, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer.Add(button_sizer, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, self.boarder)
 
         # The cancel button.
         cancel_button = wx.Button(self, -1, "Kill and Exit")
@@ -105,11 +110,8 @@ class Controller(wx.Frame):
         # Log panel
         log_panel = wx.TextCtrl(self, -1, "", style=wx.TE_MULTILINE|wx.TE_READONLY)
 
-        # Set a size to the log panel.
-        log_panel.SetMinSize((590, 410))
-
         # Add to the sizer.
-        sizer.Add(log_panel, 0, wx.ALL|wx.ADJUST_MINSIZE, 5)
+        sizer.Add(log_panel, 1, wx.EXPAND|wx.ALL, self.boarder)
 
 
     def add_log_header(self, sizer):
@@ -123,7 +125,7 @@ class Controller(wx.Frame):
         header_log = wx.StaticText(self, -1, "", style=wx.ALIGN_CENTRE)
 
         # Set the minimum size.
-        header_log.SetMinSize((600, 18))
+        header_log.SetSize((self.size_x, 18))
 
         # Set the font info.
         header_log.SetFont(wx.Font(11, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
@@ -143,10 +145,10 @@ class Controller(wx.Frame):
         progress_bar = wx.Gauge(self, -1, 100)
 
         # Set the size of the progress bar.
-        progress_bar.SetMinSize((590, 20))
+        progress_bar.SetSize((self.size_x - 2*self.boarder, 20))
 
         # Add the progress bar.
-        sizer.Add(progress_bar, 0, wx.ALL|wx.ADJUST_MINSIZE, 5)
+        sizer.Add(progress_bar, 0, wx.EXPAND|wx.ALL, self.boarder)
 
 
     def add_relax_logo(self, sizer):
@@ -160,7 +162,7 @@ class Controller(wx.Frame):
         logo = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
 
         # Add the relax logo.
-        sizer.Add(logo, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL|wx.ADJUST_MINSIZE, 5)
+        sizer.Add(logo, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, self.boarder)
 
 
     def cancel_calculation(self, event):
@@ -201,7 +203,7 @@ class Controller(wx.Frame):
         self.SetTitle("The relax controller")
 
         # Use a grid sizer for packing the elements.
-        main_sizer = wx.FlexGridSizer(5, 1, 0, 0)
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Pack the sizer into the frame.
         self.SetSizer(main_sizer)
@@ -210,10 +212,7 @@ class Controller(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.handler_close)
 
         # Set the default size of the controller.
-        self.SetSize((600, 600))
-
-        # Handle window resizing.
-        self.Layout()
+        self.SetSize((self.size_x, self.size_y))
 
         # Centre the frame.
         self.Centre()
