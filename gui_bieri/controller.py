@@ -46,72 +46,121 @@ class Controller(wx.Frame):
     """The relax controller window."""
 
     def __init__(self, *args, **kwds):
+        """Set up the relax controller frame."""
 
         # Create GUI elements
         kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX
         wx.Frame.__init__(self, *args, **kwds)
 
-        # header
-        self.relax_logo = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
-        self.header_log = wx.StaticText(self, -1, "", style=wx.ALIGN_CENTRE)
+        # Set up the frame.
+        sizer = self.setup_frame()
+
+        # Add the relax logo.
+        self.add_relax_logo(sizer)
+
+        # Add the header for the log.
+        self.add_log_header(sizer)
+
+        # Add the log panel.
+        self.add_log(sizer)
+
+        # Add the progress bar.
+        self.add_progress(sizer)
+
+        # Add the buttons.
+        self.add_buttons(sizer)
+
+
+    def add_buttons(self, sizer):
+        """Add the buttons to the sizer.
+
+        @param sizer:   The sizer element to pack the buttons into.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Create a horizontal layout for the buttons.
+        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(button_sizer, 5, wx.ALIGN_CENTER_HORIZONTAL, 0)
+
+        # The cancel button.
+        cancel_button = wx.Button(self, -1, "Kill and Exit")
+        cancel_button.SetToolTipString("Abort relax calculation")
+        button_sizer.Add(cancel_button, 0, wx.ADJUST_MINSIZE, 0)
+        self.Bind(wx.EVT_BUTTON, self.cancel_calculation, cancel_button)
+
+        # The close button.
+        close_button = wx.Button(self, -1, "Close")
+        close_button.SetToolTipString("Close log window")
+        button_sizer.Add(close_button, 0, wx.ADJUST_MINSIZE, 0)
+        self.Bind(wx.EVT_BUTTON, self.handler_close, close_button)
+
+
+    def add_log(self, sizer):
+        """Add the log panel to the sizer.
+
+        @param sizer:   The sizer element to pack the log panel into.
+        @type sizer:    wx.Sizer instance
+        """
 
         # Log panel
-        self.log_panel = wx.TextCtrl(self, -1, "", style=wx.TE_MULTILINE|wx.TE_READONLY)
+        log_panel = wx.TextCtrl(self, -1, "", style=wx.TE_MULTILINE|wx.TE_READONLY)
 
-        # progress bar
-        self.progress_bar = wx.Gauge(self, -1, 100)
+        # Set a size to the log panel.
+        log_panel.SetMinSize((590, 410))
 
-        # buttons
-        self.cancel_button = wx.Button(self, -1, "Kill and Exit")
-        self.close_button = wx.Button(self, -1, "Close")
-
-        # Create Objects (see below)
-        self.__set_properties()
-        self.__do_layout()
-
-        # Button actions
-        self.Bind(wx.EVT_BUTTON, self.cancel_calculation, self.cancel_button)
-        self.Bind(wx.EVT_BUTTON, self.handler_close, self.close_button)
-
-        # Close the window cleanly (hide so it can be reopened).
-        self.Bind(wx.EVT_CLOSE, self.handler_close)
-
-        # Integrate Singleton object.
-        status = Status()
+        # Add to the sizer.
+        sizer.Add(log_panel, 0, wx.ALL|wx.ADJUST_MINSIZE, 5)
 
 
-    def __do_layout(self):
+    def add_log_header(self, sizer):
+        """Add the log header to the sizer.
 
-        # create the lay out
-        main_sizer = wx.FlexGridSizer(5, 1, 0, 0)
-        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        main_sizer.Add(self.relax_logo, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL|wx.ADJUST_MINSIZE, 5)
-        main_sizer.Add(self.header_log, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ADJUST_MINSIZE, 0)
-        main_sizer.Add(self.log_panel, 0, wx.ALL|wx.ADJUST_MINSIZE, 5)
-        main_sizer.Add(self.progress_bar, 0, wx.ALL|wx.ADJUST_MINSIZE, 5)
-        button_sizer.Add(self.cancel_button, 0, wx.ADJUST_MINSIZE, 0)
-        button_sizer.Add(self.close_button, 0, wx.ADJUST_MINSIZE, 0)
-        main_sizer.Add(button_sizer, 5, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        self.SetSizer(main_sizer)
-        self.Layout()
-        self.SetSize((600, 600))
-        self.Centre()
+        @param sizer:   The sizer element to pack the log header into.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The log header text.
+        header_log = wx.StaticText(self, -1, "", style=wx.ALIGN_CENTRE)
+
+        # Set the minimum size.
+        header_log.SetMinSize((600, 18))
+
+        # Set the font info.
+        header_log.SetFont(wx.Font(11, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+
+        # Add to the sizer.
+        sizer.Add(header_log, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ADJUST_MINSIZE, 0)
 
 
-    def __set_properties(self):
+    def add_progress(self, sizer):
+        """Add the progress bar to the sizer.
 
-        # properties of GUI elements (used at start up)
-        self.SetTitle("relaxGUI - Log Window")
-        _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
-        self.SetIcon(_icon)
-        self.SetSize((600, 600))
-        self.header_log.SetMinSize((600, 18))
-        self.header_log.SetFont(wx.Font(11, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.log_panel.SetMinSize((590, 410))
-        self.progress_bar.SetMinSize((590, 20))
-        self.cancel_button.SetToolTipString("Abort relax calculation")
-        self.close_button.SetToolTipString("Close log window")
+        @param sizer:   The sizer element to pack the progress bar into.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The progress bar.
+        progress_bar = wx.Gauge(self, -1, 100)
+
+        # Set the size of the progress bar.
+        progress_bar.SetMinSize((590, 20))
+
+        # Add the progress bar.
+        sizer.Add(progress_bar, 0, wx.ALL|wx.ADJUST_MINSIZE, 5)
+
+
+    def add_relax_logo(self, sizer):
+        """Add the relax logo to the sizer.
+
+        @param sizer:   The sizer element to pack the relax logo into.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The logo.
+        logo = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+
+        # Add the relax logo.
+        sizer.Add(logo, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL|wx.ADJUST_MINSIZE, 5)
 
 
     def cancel_calculation(self, event):
@@ -142,13 +191,47 @@ class Controller(wx.Frame):
         self.Hide()
 
 
+    def setup_frame(self):
+        """Set up the relax controller frame.
+        @return:    The sizer object.
+        @rtype:     wx.Sizer instance
+        """
+
+        # Set the frame title.
+        self.SetTitle("The relax controller")
+
+        # Use a grid sizer for packing the elements.
+        main_sizer = wx.FlexGridSizer(5, 1, 0, 0)
+
+        # Pack the sizer into the frame.
+        self.SetSizer(main_sizer)
+
+        # Close the window cleanly (hide so it can be reopened).
+        self.Bind(wx.EVT_CLOSE, self.handler_close)
+
+        # Set the default size of the controller.
+        self.SetSize((600, 600))
+
+        # Handle window resizing.
+        self.Layout()
+
+        # Centre the frame.
+        self.Centre()
+
+        # Return the sizer.
+        return main_sizer
+
+
 
 class Redirect_text(object):
     """Class to redirect relax output to relaxGUI - log panel and progress bar."""
 
     def __init__(self,aWxTextCtrl):
         self.out=aWxTextCtrl
+
+        # Integrate the status singleton object.
         self.status = Status()
+
 
     def limit_entries(self):
         """ Function to overcome feedback problem of wx.CallAfter() command"""
