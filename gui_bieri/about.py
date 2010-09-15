@@ -61,7 +61,7 @@ class About_base(wx.Frame):
         # The total size.
         self.total_x = self.dim_x + 2*self.boarder
         self.total_y = self.dim_y + 2*self.boarder
-        self.SetMinSize((self.total_x, self.total_y))
+        self.SetSize((self.total_x, self.total_y))
 
         # Draw everything.
         self.Bind(wx.EVT_PAINT, self.generate)
