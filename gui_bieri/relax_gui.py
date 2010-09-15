@@ -208,6 +208,10 @@ class Main(wx.Frame):
         # Open the dialog.
         filename = savefile(msg='Select file to save', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
 
+        # Do nothing - no file was selected.
+        if not filename:
+            return
+
         # Set the file name.
         self.save_file = filename
 
