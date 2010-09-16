@@ -41,6 +41,9 @@ class Prompt(wx.Frame):
     def __init__(self, *args, **kwds):
         """Set up the relax prompt."""
 
+        # Store the parent object.
+        self.gui = kwds.pop('parent')
+
         # Create GUI elements
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
@@ -79,6 +82,10 @@ class Prompt(wx.Frame):
         self.prompt.StyleSetSpec(stc.STC_P_WORD, "fore:#a52a2a")
         self.prompt.StyleSetSpec(stc.STC_P_DEFNAME, "fore:#008b8b")
         self.prompt.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:#008b8b")
+
+        # Override the exiting commands.
+        for name in ['exit', 'bye', 'quit', 'q']:
+            self.prompt.interp.locals[name] = self.gui.exit_gui
 
         # Add the shell to the sizer.
         sizer.Add(self.prompt, 1, wx.EXPAND|wx.ALL, self.border)

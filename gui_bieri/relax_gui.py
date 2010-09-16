@@ -31,6 +31,7 @@ from os import F_OK, access, getcwd, mkdir, sep
 import platform
 from re import search
 from string import lower, lowercase, replace
+import sys
 from textwrap import wrap
 import time
 import webbrowser
@@ -45,6 +46,7 @@ from generic_fns import pipes, state
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
 from generic_fns.reset import reset
 from relax_errors import RelaxError
+from relax_io import io_streams_restore
 from version import version
 
 # relaxGUI module imports.
@@ -129,7 +131,7 @@ class Main(wx.Frame):
         self.controller = Controller(None, -1, "")
 
         # Build the relax prompt, but don't show it.
-        self.relax_prompt = Prompt(None, -1, "")
+        self.relax_prompt = Prompt(None, -1, "", parent=self)
 
         rx_data = ds.relax_gui.analyses[self.noe_index[0]]
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
@@ -424,7 +426,7 @@ class Main(wx.Frame):
         webbrowser.open_new('mailto:relax-users@gna.org')
 
 
-    def exit_gui(self, event):
+    def exit_gui(self, event=None):
         """Catch the main window closure and perform the exit procedure.
 
         @param event:   The wx event.
@@ -436,6 +438,9 @@ class Main(wx.Frame):
 
         # Exit.
         if doexit:
+            # Restore the IO streams.
+            io_streams_restore(verbosity=0)
+
             # The relax information box.
             info = Info_box()
 
@@ -457,7 +462,7 @@ class Main(wx.Frame):
             for line in wrap(info.bib['dAuvergneGooley08b'].cite_short(), width):
                 text = text + line + '\n'
             text = text + '\n'
-            print(text)
+            sys.__stdout__.write(text)
 
             # Destroy all dialogs.
             self.controller.Destroy()
