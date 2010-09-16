@@ -68,13 +68,17 @@ class Prompt(wx.Frame):
         self.prompt = wx.py.shell.Shell(self, InterpClass=InterpClass)
 
         # Colours.
-        self.prompt.StyleSetBackground(style=stc.STC_STYLE_DEFAULT, back='black')
-        self.prompt.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:light grey")
+        self.prompt.StyleSetBackground(style=stc.STC_STYLE_DEFAULT, back='white')
+        self.prompt.SetCaretForeground(fore="black")
         self.prompt.StyleClearAll()
-        self.prompt.StyleSetSpec(stc.STC_P_NUMBER, "fore:cyan")
-        self.prompt.StyleSetSpec(stc.STC_P_OPERATOR, "fore:white")
-        self.prompt.StyleSetSpec(stc.STC_P_DEFNAME, "fore:green")
-        self.prompt.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:green")
+        self.prompt.StyleSetSpec(stc.STC_STYLE_DEFAULT, "fore:black")
+        self.prompt.StyleSetSpec(stc.STC_P_COMMENTLINE, "fore:#0000ff")
+        self.prompt.StyleSetSpec(stc.STC_P_NUMBER, "fore:#125a0a")
+        self.prompt.StyleSetSpec(stc.STC_P_STRING, "fore:#ff00ff")
+        self.prompt.StyleSetSpec(stc.STC_P_CHARACTER, "fore:#ff00ff")
+        self.prompt.StyleSetSpec(stc.STC_P_WORD, "fore:#a52a2a")
+        self.prompt.StyleSetSpec(stc.STC_P_DEFNAME, "fore:#008b8b")
+        self.prompt.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:#008b8b")
 
         # Add the shell to the sizer.
         sizer.Add(self.prompt, 1, wx.EXPAND|wx.ALL, self.border)
