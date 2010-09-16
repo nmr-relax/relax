@@ -318,7 +318,7 @@ class Main(wx.Frame):
 
         # The 'Help' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=40, text="&Manual\tF1", icon=MANUAL_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=40, text="relax user &manual\tF1", icon=MANUAL_ICON))
         menu.AppendSeparator()
         menu.AppendItem(self.build_menu_sub_item(menu, id=30, text="&Contact relaxGUI (relax-users@gna.org)", icon=CONTACT_ICON))
         menu.AppendItem(self.build_menu_sub_item(menu, id=31, text="&References", icon=REF_ICON))
