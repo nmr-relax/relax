@@ -127,11 +127,11 @@ class Relax:
             self.interpreter = interpreter.Interpreter()
             self.interpreter.run(self.script_file)
 
-        # Execute the relax GUI.
-        elif mode == 'gui':
+        # Execute the Bieri GUI.
+        elif mode == 'gui_bieri':
             # Dependency check.
             if not dep_check.wx_module:
-                sys.stderr.write("Please install the wx Python module to access the relax GUI.\n\n")
+                sys.stderr.write("Please install the wx Python module to access the Bieri GUI.\n\n")
                 sys.exit()
 
             # Start the relax GUI wx application.
@@ -188,7 +188,8 @@ class Relax:
         parser.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output to the file LOG_FILE', metavar='LOG_FILE')
         parser.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
         parser.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to stdout and the file LOG_FILE', metavar='LOG_FILE')
-        parser.add_option('-g', '--gui', action='store_true', dest='gui', default=0, help='launch the relax GUI')
+        parser.add_option('-g', '--gui', action='store', type='string', dest='gui', default=None, help='launch the specified GUI for relax')
+        parser.add_option('-b', '--bieri', action='store_true', dest='gui_bieri', default=0, help='launch the Bieri GUI for relax')
         parser.add_option('-p', '--pedantic', action='store_true', dest='pedantic', default=0, help='escalate all warnings to errors')
         parser.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
         parser.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
@@ -320,23 +321,28 @@ class Relax:
             mode = 'script'
 
         # GUI.
-        elif options.gui:
+        elif options.gui or options.gui_bieri:
             # Make sure no script is supplied.
             if self.script_file:
                 parser.error("a script should not be supplied in test mode")
 
             # Exclusive models.
-            if options.test_suite or options.system_tests or options.unit_tests:
+            if options.gui and options.gui != 'bieri' and options.gui_bieri:
+                parser.error("specifying multiple GUIs is not allowed")
+            elif options.test_suite or options.system_tests or options.unit_tests:
                 parser.error("the relax GUI mode and testing modes are mutually exclusive")
             elif options.licence:
                 parser.error("the relax GUI mode and licence mode are mutually exclusive")
 
             # Missing wx module.
             if not dep_check.wx_module:
-                parser.error("To use the GUI, the wx python module must be installed.")
+                parser.error("To use the Bieri GUI, the wx python module must be installed.")
 
             # Set the mode.
-            mode = 'gui'
+            if options.gui == 'bieri' or options.gui_bieri:
+                mode = 'gui_bieri'
+            else:
+                parser.error("the '%s' GUI interface is unknown" % options.gui)
 
         # Prompt mode (default).
         else:
