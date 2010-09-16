@@ -85,7 +85,7 @@ class Prompt(wx.Frame):
 
         # Override the exiting commands.
         for name in ['exit', 'bye', 'quit', 'q']:
-            self.prompt.interp.locals[name] = self.gui.exit_gui
+            self.prompt.interp.locals[name] = _Exit(fn=self.gui.exit_gui)
 
         # Add the shell to the sizer.
         sizer.Add(self.prompt, 1, wx.EXPAND|wx.ALL, self.border)
@@ -124,6 +124,28 @@ class Prompt(wx.Frame):
 
         # Return the sizer.
         return sizer
+
+
+class _Exit:
+    def __init__(self, fn=None):
+        """Store the exiting function.
+
+        @keyword fn:    The exiting function.
+        @type fn:       func
+        """
+
+        # Store.
+        self.fn = fn
+
+
+    def __repr__(self):
+        """Exit the program."""
+
+        # Execute the exiting function.
+        self.fn()
+
+        # Return nothing.
+        return ''
 
 
 class InterpClass(wx.py.interpreter.Interpreter):
