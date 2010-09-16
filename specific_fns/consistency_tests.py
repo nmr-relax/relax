@@ -201,17 +201,17 @@ class Consistency_tests(API_base, API_common):
                 spin.f_r2_sim.append(f_r2)
 
 
-    def create_mc_data(self, spin_id=None):
+    def create_mc_data(self, data_id=None):
         """Return the Monte Carlo Ri data structure for the corresponding spin.
 
-        @keyword spin_id:   The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:      str
+        @keyword data_id:   The spin identification string, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
         @return:            The Monte Carlo simulation data.
         @rtype:             list of floats
         """
 
         # Get the spin container.
-        spin = return_spin(spin_id)
+        spin = return_spin(data_id)
 
         # Return the data.
         return spin.relax_data
@@ -610,17 +610,17 @@ class Consistency_tests(API_base, API_common):
         return spin.select_sim
 
 
-    def sim_pack_data(self, spin_id, sim_data):
+    def sim_pack_data(self, data_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:      str
+        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
 
         # Get the spin container.
-        spin = return_spin(spin_id)
+        spin = return_spin(data_id)
 
         # Test if the simulation data already exists.
         if hasattr(spin, 'relax_sim_data'):
