@@ -61,7 +61,7 @@ from controller import Controller
 from derived_wx_classes import StructureTextCtrl
 from filedialog import multi_openfile, opendir, openfile, savefile
 from message import dir_message, error_message, exec_relax, missing_data, question, relax_run_ok
-from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, CONTROLLER_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, SAVE_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
+from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, CONTROLLER_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, RELAX_PROMPT_ICON, SAVE_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
 from references import References
 from settings import import_file_settings, load_sequence, relax_global_settings
 
@@ -287,10 +287,12 @@ class Main(wx.Frame):
         # The 'View' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(menu, id=50, text="&Controller\tCtrl+Z", icon=CONTROLLER_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=RELAX_PROMPT_ICON))
         menubar.Append(menu, "&View")
 
         # The 'View' actions.
         self.Bind(wx.EVT_MENU, self.show_controller,    id=50)
+        self.Bind(wx.EVT_MENU, self.relax_prompt,       id=51)
 
         # The 'Molecule' menu entries.
         menu = wx.Menu()
@@ -599,6 +601,18 @@ class Main(wx.Frame):
                 ds.relax_gui.file_setting = tmp_setting
 
 
+    def references(self, event):
+        """Display the references relevant for relax.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Build and show the references window.
+        self.references = References(self)
+        self.references.Show()
+
+
     def relax_manual(self, event):
         """Display the relax manual.
 
@@ -628,16 +642,12 @@ class Main(wx.Frame):
                 os.system('/usr/bin/xdg-open %s' % file)
 
 
-    def references(self, event):
-        """Display the references relevant for relax.
+    def relax_prompt(self, event):
+        """Display the relax prompt.
 
         @param event:   The wx event.
         @type event:    wx event
         """
-
-        # Build and show the references window.
-        self.references = References(self)
-        self.references.Show()
 
 
     def reset_setting(self, event): #reset all settings
