@@ -35,11 +35,9 @@ import generic_fns.structure.main
 
 
 class NOE_calc:
-    def __init__(self, output_file='noe.out', seq_args=None, pipe_name='noe', noe_ref=None, noe_ref_rmsd=None, noe_sat=None, noe_sat_rmsd=None, unresolved=None, pdb_file=None, results_folder=None, int_method='height', heteronuc='N', proton='H', heteronuc_pdb='N'):
+    def __init__(self, seq_args=None, pipe_name='noe', noe_ref=None, noe_ref_rmsd=None, noe_sat=None, noe_sat_rmsd=None, unresolved=None, pdb_file=None, output_file='noe.out', results_dir=None, int_method='height', heteronuc='N', proton='H', heteronuc_pdb='N'):
         """Perform relaxation curve fitting.
 
-        @keyword output_file:   Name of the output file.
-        @type output_file:      str
         @keyword seq_args:      The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         @type seq_args:         list of lists of [str, None or str, None or int, None or int, None or int, None or int, None or int, None or int, None or int, None or str]
         @keyword pipe_name:     The name of the data pipe to create.
@@ -56,8 +54,10 @@ class NOE_calc:
         @type unresolved:       str
         @keyword pdb_file:      Structure file in pdb format.
         @type pdb_file:         str
-        @keyword results_folder:Folder where results files are placed in.
-        @type results_folder:   str
+        @keyword output_file:   Name of the output file.
+        @type output_file:      str
+        @keyword results_dir:   Folder where results files are placed in.
+        @type results_dir:      str
         @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
         @type int_method:       str
         @keyword heteronuc:     Name of heteronucleus of peak list.
@@ -70,16 +70,16 @@ class NOE_calc:
 
         # Store the args.
         self.pipe_name = pipe_name
-        self.output_file = output_file
         self.noe_sat = noe_sat
         self.noe_sat_rmsd = noe_sat_rmsd
         self.noe_ref = noe_ref
         self.noe_ref_rmsd =noe_ref_rmsd
         self.unresolved = unresolved
         self.pdb_file = pdb_file
-        self.results_folder = results_folder
-        if results_folder:
-            self.grace_dir = results_folder+sep+'grace'
+        self.output_file = output_file
+        self.results_dir = results_dir
+        if results_dir:
+            self.grace_dir = results_dir+sep+'grace'
         else:
             self.grace_dir = None
         self.int_method = int_method
@@ -135,7 +135,7 @@ class NOE_calc:
         self.interpreter.calc()
 
         # Save the NOEs.
-        self.interpreter.value.write(param='noe', file=self.output_file, dir = self.results_folder, force=True)
+        self.interpreter.value.write(param='noe', file=self.output_file, dir = self.results_dir, force=True)
 
         # Create grace files.
         self.interpreter.grace.write(y_data_type='ref', file='ref.agr', dir=self.grace_dir, force=True)
@@ -143,10 +143,10 @@ class NOE_calc:
         self.interpreter.grace.write(y_data_type='noe', file='noe.agr', dir=self.grace_dir, force=True)
 
         # Write the results.
-        self.interpreter.results.write(file='results', dir=self.results_folder, force=True)
+        self.interpreter.results.write(file='results', dir=self.results_dir, force=True)
 
         # Save the program state.
-        self.interpreter.state.save(state = 'save', dir=self.results_folder, force=True)
+        self.interpreter.state.save(state = 'save', dir=self.results_dir, force=True)
 
 
     def check_vars(self):
