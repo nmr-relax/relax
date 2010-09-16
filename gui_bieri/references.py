@@ -56,18 +56,18 @@ HTML_FOOTER = """\
 """
 
 
-class References(wx.Dialog):
-    """The references dialog."""
+class References(wx.Frame):
+    """The references window."""
 
     def __init__(self, parent):
-        """Build the dialog.
+        """Build the window.
 
         @param parent:  The parent wx object.
         @type parent:   wx object
         """
 
-        # Init the base class wx.Dialog.
-        super(References, self).__init__(parent, -1, "relax references", style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
+        # Init the base class.
+        super(References, self).__init__(parent, -1, "relax references", style=wx.DEFAULT_FRAME_STYLE)
 
         # Set an initial window size.
         self.SetSize((800, 800))
