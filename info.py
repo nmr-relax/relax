@@ -435,7 +435,7 @@ class Ref:
         raise AttributeError, name
 
 
-    def cite_short(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True):
+    def cite_short(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True, status=True):
         """Compile a short citation.
         
         The returned text will have the form of:
@@ -461,6 +461,8 @@ class Ref:
         @type doi:          bool
         @keyword url:       The url flag.
         @type url:          bool
+        @keyword status:    The status flag.  This will only be shown if not 'published'.
+        @type status:       bool
         @return:            The full citation.
         @rtype:             str
         """
@@ -484,7 +486,9 @@ class Ref:
         if doi and self.doi and hasattr(self, 'doi'):
             cite = cite + ' (http://dx.doi.org/'+self.doi + ')'
         if url and self.url and hasattr(self, 'url'):
-            cite = cite + ' ('+self.url + ')'
+            cite = cite + ' (' + self.url + ')'
+        if status and hasattr(self, 'status') and self.status != 'published':
+            cite = cite + ' (' + self.status + ')'
 
         # End.
         if cite[-1] != '.':
@@ -494,7 +498,7 @@ class Ref:
         return cite
 
 
-    def cite_html(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True):
+    def cite_html(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True, status=True):
         """Compile a citation for HTML display.
 
         @keyword author:    The author flag.
@@ -513,6 +517,10 @@ class Ref:
         @type year:         bool
         @keyword doi:       The doi flag.
         @type doi:          bool
+        @keyword url:       The url flag.
+        @type url:          bool
+        @keyword status:    The status flag.  This will only be shown if not 'published'.
+        @type status:       bool
         @return:            The full citation.
         @rtype:             str
         """
@@ -537,6 +545,8 @@ class Ref:
             cite = cite + ' (<a href="http://dx.doi.org/%s">abstract</a>)' % self.doi
         if url and hasattr(self, 'url') and self.url:
             cite = cite + ' (<a href="%s">url</a>)' % self.url
+        if status and hasattr(self, 'status') and self.status != 'published':
+            cite = cite + ' (<i>%s</i>)' % self.status
 
         # End.
         if cite[-1] != '.':
