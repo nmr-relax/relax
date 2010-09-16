@@ -63,6 +63,7 @@ from filedialog import multi_openfile, opendir, openfile, savefile
 from message import dir_message, error_message, exec_relax, missing_data, question, relax_run_ok
 from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, CONTROLLER_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, RELAX_PROMPT_ICON, SAVE_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
 from references import References
+from relax_prompt import Prompt
 from settings import import_file_settings, load_sequence, relax_global_settings
 
 
@@ -126,6 +127,9 @@ class Main(wx.Frame):
 
         # Build the controller, but don't show it.
         self.controller = Controller(None, -1, "")
+
+        # Build the relax prompt, but don't show it.
+        self.relax_prompt = Prompt(None, -1, "")
 
         rx_data = ds.relax_gui.analyses[self.noe_index[0]]
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
@@ -292,7 +296,7 @@ class Main(wx.Frame):
 
         # The 'View' actions.
         self.Bind(wx.EVT_MENU, self.show_controller,    id=50)
-        self.Bind(wx.EVT_MENU, self.relax_prompt,       id=51)
+        self.Bind(wx.EVT_MENU, self.show_prompt,        id=51)
 
         # The 'Molecule' menu entries.
         menu = wx.Menu()
@@ -459,6 +463,7 @@ class Main(wx.Frame):
             self.controller.Destroy()
             self.dialog_about_gui.Destroy()
             self.dialog_about_relax.Destroy()
+            self.relax_prompt.Destroy()
 
             # Destroy the main window.
             self.Destroy()
@@ -642,14 +647,6 @@ class Main(wx.Frame):
                 os.system('/usr/bin/xdg-open %s' % file)
 
 
-    def relax_prompt(self, event):
-        """Display the relax prompt.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-
     def reset_setting(self, event): #reset all settings
         global global_setting #import global variable
         if question('Do you realy want to change relax settings?'):
@@ -673,6 +670,17 @@ class Main(wx.Frame):
 
         # Open the window.
         self.controller.Show()
+
+
+    def show_prompt(self, event):
+        """Display the relax prompt window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Open the window.
+        self.relax_prompt.Show()
 
 
     def state_load(self, event):
