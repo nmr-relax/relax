@@ -547,13 +547,12 @@ class Ref:
 
 
 
-class Bieri(Ref):
+class Bieri10(Ref):
     """Bibliography container."""
 
     type           = "journal"
     author         = "Bieri, M., d'Auvergne, E. J. and Gooley, P. R."
-    title          = "relaxGUI: a new software for fast and simple NMR relaxation data analysis and calculation of
-ps-ns and micro-s motion of proteins"
+    title          = "relaxGUI: a new software for fast and simple NMR relaxation data analysis and calculation of ps-ns and micro-s motion of proteins"
     status         = "submitted"
     year           = 2010
 
