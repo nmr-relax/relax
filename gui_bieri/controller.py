@@ -108,10 +108,10 @@ class Controller(wx.Frame):
         """
 
         # Log panel
-        log_panel = wx.TextCtrl(self, -1, "", style=wx.TE_MULTILINE|wx.TE_READONLY)
+        self.log_panel = wx.TextCtrl(self, -1, "", style=wx.TE_MULTILINE|wx.TE_READONLY)
 
         # Add to the sizer.
-        sizer.Add(log_panel, 1, wx.EXPAND|wx.ALL, self.border)
+        sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, self.border)
 
 
     def add_log_header(self, sizer):
