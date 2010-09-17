@@ -435,10 +435,10 @@ class Auto_noe:
         data.unresolved = file
 
         # Structure file.
-        if self.data.structure_file == self.gui.structure_file_pdb_msg:
-            data.structure_file = None
-        else:
+        if hasattr(self.data, 'structure_file') and self.data.structure_file != self.gui.structure_file_pdb_msg:
             data.structure_file = self.data.structure_file
+        else:
+            data.structure_file = None
 
         # Set Structure file as None if a sequence file is loaded.
         if data.structure_file == '!!! Sequence file selected !!!':
