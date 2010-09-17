@@ -107,12 +107,19 @@ class NOE_calc:
         self.interpreter.pipe.create(self.pipe_name, 'noe')
 
         # Load the sequence.
-        if self.pdb_file:   # load PDB File
+        if self.pdb_file:
+            # Load the PDB file.
             self.interpreter.structure.read_pdb(self.pdb_file)
+
+            # Read the spin information.
             generic_fns.structure.main.load_spins(spin_id=heteronuc_pdb)
 
         else:
+            # Read the sequence file.
             self.interpreter.sequence.read(file=self.seq_args[0], dir=self.seq_args[1], mol_name_col=self.seq_args[2], res_num_col=self.seq_args[3], res_name_col=self.seq_args[4], spin_num_col=self.seq_args[5], spin_name_col=self.seq_args[6], sep=self.seq_args[7])
+
+            # Name the spins.
+            self.interpreter.spin.name(name=self.heteronuc)
 
         # Load the reference spectrum and saturated spectrum peak intensities.
         self.interpreter.spectrum.read_intensities(file=self.noe_ref, spectrum_id='ref', int_method=self.int_method, heteronuc=self.heteronuc, proton=self.proton)
