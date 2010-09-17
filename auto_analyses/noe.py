@@ -35,11 +35,9 @@ import generic_fns.structure.main
 
 
 class NOE_calc:
-    def __init__(self, seq_args=None, pipe_name='noe', noe_ref=None, noe_ref_rmsd=None, noe_sat=None, noe_sat_rmsd=None, unresolved=None, pdb_file=None, output_file='noe.out', results_dir=None, int_method='height', heteronuc='N', proton='H', heteronuc_pdb='N'):
+    def __init__(self, pipe_name='noe', noe_ref=None, noe_ref_rmsd=None, noe_sat=None, noe_sat_rmsd=None, seq_args=None, unresolved=None, pdb_file=None, output_file='noe.out', results_dir=None, int_method='height', heteronuc='N', proton='H', heteronuc_pdb='N'):
         """Perform relaxation curve fitting.
 
-        @keyword seq_args:      The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        @type seq_args:         list of lists of [str, None or str, None or int, None or int, None or int, None or int, None or int, None or int, None or int, None or str]
         @keyword pipe_name:     The name of the data pipe to create.
         @type pipe_name:        str
         @keyword noe_ref:       The NOE reference peak file.
@@ -50,6 +48,8 @@ class NOE_calc:
         @type sat_ref:          file
         @keyword noe_sat_rmsd:  Background RMSD of saturated NOE spectrum.
         @type noe_sat_rmsd:     int
+        @keyword seq_args:      The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
+        @type seq_args:         list of lists of [str, None or str, None or int, None or int, None or int, None or int, None or int, None or int, None or int, None or str]
         @keyword unresolved:    Residues to exclude.
         @type unresolved:       str
         @keyword pdb_file:      Structure file in pdb format.
@@ -73,12 +73,16 @@ class NOE_calc:
         self.noe_sat = noe_sat
         self.noe_sat_rmsd = noe_sat_rmsd
         self.noe_ref = noe_ref
-        self.noe_ref_rmsd =noe_ref_rmsd
+        self.noe_ref_rmsd = noe_ref_rmsd
+        self.seq_args = seq_args
         self.unresolved = unresolved
         self.pdb_file = pdb_file
         self.output_file = output_file
         self.results_dir = results_dir
-        self.grace_dir = results_dir+sep+'grace'
+        if self.results_dir:
+            self.grace_dir = results_dir + sep + 'grace'
+        else:
+            self.grace_dir = 'grace'
         self.int_method = int_method
         self.heteronuc = heteronuc
         self.proton = proton
