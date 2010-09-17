@@ -25,6 +25,7 @@
 """Module containing the base class for the automatic NOE analysis frames."""
 
 # Python module imports.
+import __main__
 from os import sep
 from string import replace
 import sys
@@ -487,11 +488,15 @@ class Auto_noe:
         # Synchronise the frame data to the relax data store.
         self.sync_ds(upload=True)
 
-        # Display the relax controller.
-        self.gui.controller.Show()
+        # Display the relax controller (if not debugging).
+        if not __main__.debug:
+            self.gui.controller.Show()
 
-        # Start the thread.
-        id = thread.start_new_thread(self.execute_thread, ())
+        # Start the thread (if not debugging).
+        if __main__.debug:
+            self.execute_thread()
+        else:
+            id = thread.start_new_thread(self.execute_thread, ())
 
         # Terminate the event.
         event.Skip()
@@ -500,18 +505,20 @@ class Auto_noe:
     def execute_thread(self):
         """Execute the calculation in a thread."""
 
-        # Redirect relax output and errors to the controller.
-        redir = Redirect_text(self.gui.controller)
-        sys.stdout = redir
-        sys.stderr = redir
+        # Controller.
+        if not __main__.debug:
+            # Redirect relax output and errors to the controller.
+            redir = Redirect_text(self.gui.controller)
+            sys.stdout = redir
+            sys.stderr = redir
 
-        # Print a header in the controller.
-        header = 'Starting NOE calculation'
-        underline = '-' * len(header)
-        wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
-        time.sleep(0.5)
+            # Print a header in the controller.
+            header = 'Starting NOE calculation'
+            underline = '-' * len(header)
+            wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
+            time.sleep(0.5)
 
-        # Assemble all the data needed for the Relax_fit class.
+        # Assemble all the data needed for the auto-analysis.
         data = self.assemble_data()
 
         # Execute.
