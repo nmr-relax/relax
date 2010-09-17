@@ -251,7 +251,7 @@ class Relax_data_store(dict):
             self.relax_gui.from_xml(gui_nodes[0])
 
         # Recreate all the data store data structures.
-        xml_to_object(relax_node, self, blacklist=['pipe'])
+        xml_to_object(relax_node, self, blacklist=['pipe', 'relax_gui'])
 
         # Get the pipe nodes.
         pipe_nodes = relax_node.getElementsByTagName('pipe')
@@ -365,7 +365,7 @@ class Relax_data_store(dict):
 
         # Add all simple python objects within the PipeContainer to the pipe element.
         if all:
-            fill_object_contents(xmldoc, top_element, object=self, blacklist=list(self.__class__.__dict__.keys() + dict.__dict__.keys()))
+            fill_object_contents(xmldoc, top_element, object=self, blacklist=blacklist)
 
         # Loop over the pipes.
         for pipe in pipes:
