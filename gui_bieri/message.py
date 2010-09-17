@@ -55,7 +55,10 @@ def exec_relax():
 
 
 def missing_data():
-    wx.MessageBox('Missing Data!', style = wx.OK | wx.ICON_ERROR)
+    """Message box GUI element for when a setup is incomplete or there is missing data."""
+
+    # The GUI element.
+    wx.MessageBox('The set up is incomplete,\nplease check for missing data.', caption='Missing data', style=wx.OK|wx.ICON_ERROR)
 
 
 def question(msg, default=False):
