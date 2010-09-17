@@ -83,10 +83,10 @@ class Relax:
         self.pid = getpid()
 
         # Debugging flag (default is off).
-        self.Debug = 0
+        __main__.debug = False
 
         # Pedantic flag (default is off).
-        self.Pedantic = 0
+        __main__.pedantic = False
 
         # Setup the object containing the generic functions.
         self.generic = generic_fns
@@ -94,13 +94,8 @@ class Relax:
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
 
-        # Place the debugging flag in a number of modules which don't have access to this class's namespace.
-        relax_errors.Debug = self.Debug
-        relax_warnings.Debug = self.Debug
-        interpreter.Debug = self.Debug
-
-        # Set up the pedantic flag.
-        relax_warnings.Pedantic = self.Pedantic
+        # Set up the warning system.
+        relax_warnings.setup()
 
         # Show the version number and exit.
         if mode == 'version':
@@ -203,11 +198,11 @@ class Relax:
 
         # Debugging flag.
         if options.debug:
-            self.Debug = 1
+            __main__.debug = True
 
         # Pedantic flag.
         if options.pedantic:
-            self.Pedantic = 1
+            __main__.pedantic = True
 
         # Logging.
         if options.log:
