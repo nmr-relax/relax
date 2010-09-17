@@ -25,6 +25,7 @@
 """Module containing the base class for the automatic R1 and R2 analysis frames."""
 
 # Python module imports.
+import __main__
 from os import sep
 from string import replace
 import sys
@@ -421,10 +422,14 @@ class Auto_rx:
         self.sync_ds(upload=True)
 
         # Display the relax controller.
-        self.gui.controller.Show()
+        if not __main__.debug:
+            self.gui.controller.Show()
 
         # Start the thread.
-        id = thread.start_new_thread(self.execute_thread, ('dummy',))
+        if __main__.debug:
+            self.execute_thread('dummy')
+        else:
+            id = thread.start_new_thread(self.execute_thread, ('dummy',))
 
         # Terminate the event.
         event.Skip()
@@ -433,19 +438,26 @@ class Auto_rx:
     def execute_thread(self, dummy_string):
         """Execute the calculation in a thread."""
 
-        # Redirect relax output and errors to the controller.
-        redir = Redirect_text(self.gui.controller)
-        sys.stdout = redir
-        sys.stderr = redir
+        # Controller.
+        if not __main__.debug:
+            # Redirect relax output and errors to the controller.
+            redir = Redirect_text(self.gui.controller)
+            sys.stdout = redir
+            sys.stderr = redir
 
-        # Print a header in the controller.
-        header = 'Starting %s calculation' % self.label
-        underline = '-' * len(header)
-        wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
-        time.sleep(0.5)
+            # Print a header in the controller.
+            header = 'Starting %s calculation' % self.label
+            underline = '-' * len(header)
+            wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
+            time.sleep(0.5)
 
         # Assemble all the data needed for the Relax_fit class.
-        data = self.assemble_data()
+        data, complete = self.assemble_data()
+
+        # Incomplete.
+        if not complete:
+            missing_data()
+            return
 
         # Execute.
         Relax_fit(filename=self.filename, pipe_name='rx'+'_'+str(time.asctime(time.localtime())),seq_args=data.seq_args, results_directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, load_spin_ids=data.load_spin_ids, inc=data.inc)

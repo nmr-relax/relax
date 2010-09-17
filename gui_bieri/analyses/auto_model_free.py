@@ -25,6 +25,7 @@
 """Module for the automatic model-free protocol frame."""
 
 # Python module imports.
+import __main__
 from os import getcwd, sep
 from string import replace
 import sys
@@ -652,7 +653,8 @@ class Auto_model_free:
         which_model = self.choose_global_model(False)
 
         # Display the relax controller.
-        self.gui.controller.Show()
+        if not __main__.debug:
+            self.gui.controller.Show()
 
         # Solve for all global models.
         if which_model == 'full':
@@ -828,12 +830,15 @@ class Auto_model_free:
         thread_cont = self.gui.calc_threads[-1]
 
         # Start the thread.
-        id = thread.start_new_thread(self.execute_thread, (), {'global_model': global_model, 'automatic': automatic})
+        if __main__.debug:
+            self.execute_thread(global_model=global_model, automatic=automatic)
+        else:
+            id = thread.start_new_thread(self.execute_thread, (), {'global_model': global_model, 'automatic': automatic})
 
-        # Add the thread info to the container.
-        thread_cont.id = id
-        thread_cont.analysis_type = 'model-free'
-        thread_cont.global_model = global_model
+            # Add the thread info to the container.
+            thread_cont.id = id
+            thread_cont.analysis_type = 'model-free'
+            thread_cont.global_model = global_model
 
 
     def execute_thread(self, global_model=None, automatic=True):
@@ -852,14 +857,16 @@ class Auto_model_free:
         # Value for progress bar during Monte Carlo simulation.
         self.gui.calc_threads[-1].progress = 5.0
 
-        # Redirect relax output and errors to the controller.
-        redir = Redirect_text(self.gui.controller)
-        sys.stdout = redir
-        #sys.stderr = redir
+        # Controller.
+        if not __main__.debug:
+            # Redirect relax output and errors to the controller.
+            redir = Redirect_text(self.gui.controller)
+            sys.stdout = redir
+            #sys.stderr = redir
 
-        # Print a header in the controller.
-        wx.CallAfter(self.gui.controller.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
-        time.sleep(0.5)
+            # Print a header in the controller.
+            wx.CallAfter(self.gui.controller.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
+            time.sleep(0.5)
 
         # Start the protocol.
         dAuvergne_protocol(save_dir=data.save_dir, diff_model=global_model, mf_models=data.mf_models, local_tm_models=data.local_tm_models, pdb_file=data.structure_file, seq_args=data.seq_args, het_name=data.het_name, relax_data=data.relax_data, unres=data.unres, exclude=data.exclude, bond_length=data.bond_length, csa=data.csa, hetnuc=data.hetnuc, proton=data.proton, grid_inc=data.inc, min_algor=data.min_algor, mc_num=data.mc_num, max_iter=data.max_iter, conv_loop=data.conv_loop)
