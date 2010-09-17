@@ -386,13 +386,14 @@ class Auto_noe:
 
         See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
-        @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a flag stating if the data is complete.
-        @rtype:     class instance, bool
+        @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a flag stating if the data is complete and a list of missing data types.
+        @rtype:     class instance, bool, list of str
         """
 
         # The data container and flag.
         data = Container()
         complete = True
+        missing = []
 
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         if hasattr(self.data, 'sequence_file'):
@@ -402,10 +403,16 @@ class Auto_noe:
 
         # Reference peak list and background noe.
         data.ref_file = self.data.ref_file
+        if not data.ref_file:
+            complete = False
+            missing.append('Reference peak list')
         data.ref_rmsd = int(self.data.ref_rmsd)
 
         # Saturated peak list and background noe.
         data.sat_file = self.data.sat_file
+        if not data.sat_file:
+            complete = False
+            missing.append('Saturated peak list')
         data.sat_rmsd = int(self.data.sat_rmsd)
 
         # Results directory.
@@ -447,9 +454,10 @@ class Auto_noe:
         # No sequence data.
         if not data.seq_args and not data.structure_file:
             complete = False
+            missing.append('Sequence data files (text or PDB)')
 
-        # Return the container and flat.
-        return data, complete
+        # Return the container, flag, and list of missing data.
+        return data, complete, missing
 
 
     def build_main_box(self):
@@ -565,11 +573,11 @@ class Auto_noe:
             time.sleep(0.5)
 
         # Assemble all the data needed for the auto-analysis.
-        data, complete = self.assemble_data()
+        data, complete, missing = self.assemble_data()
 
         # Incomplete.
         if not complete:
-            missing_data()
+            missing_data(missing)
             return
 
         # Execute.
