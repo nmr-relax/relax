@@ -27,7 +27,7 @@
 # Python module imports.
 import __main__
 import os
-from os import F_OK, access, getcwd, mkdir, sep
+from os import F_OK, access, getcwd, mkdir, path, sep
 import platform
 from re import search
 from string import lower, lowercase, replace
@@ -474,31 +474,40 @@ class Main(wx.Frame):
             self.Destroy()
 
 
-    def import_seq(self, event): # open load sequence panel
-        temp = load_sequence(self)
-        if not temp == None:
-            sequencefile = str(temp) #set sequence file
+    def import_seq(self, event):
+        """Open sequence loading GUI element."""
 
-            # Set entries in pdb text box.
-            structure_file_pdb = '!!! Sequence file selected !!!'
-            # Add file to NOE tabs.
-            self.analysis_frames[self.hardcoded_index_noe_1].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_noe_2].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_noe_3].field_structure.SetValue(structure_file_pdb)
+        # The dialog.
+        file = load_sequence(self)
 
-            # Add file to R1 tabs.
-            self.analysis_frames[self.hardcoded_index_r1_1].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r1_2].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r1_3].field_structure.SetValue(structure_file_pdb)
+        # Nothing selected.
+        if file == None:
+            return
 
-            # Add file to R2 tabs.
-            self.analysis_frames[self.hardcoded_index_r2_1].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r2_2].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r2_3].field_structure.SetValue(structure_file_pdb)
+        # The selected file.
+        sequencefile = str(file)
 
-            # Load sequencefile in relax data storage.
-            for i in range(10):
-             ds.relax_gui.analyses[i].sequence_file = sequencefile
+        # Set entries in pdb text box.
+        structure_file_pdb = '!!! Sequence file selected !!!'
+
+        # Add file to NOE tabs.
+        self.analysis_frames[self.hardcoded_index_noe_1].field_structure.SetValue(structure_file_pdb)
+        self.analysis_frames[self.hardcoded_index_noe_2].field_structure.SetValue(structure_file_pdb)
+        self.analysis_frames[self.hardcoded_index_noe_3].field_structure.SetValue(structure_file_pdb)
+
+        # Add file to R1 tabs.
+        self.analysis_frames[self.hardcoded_index_r1_1].field_structure.SetValue(structure_file_pdb)
+        self.analysis_frames[self.hardcoded_index_r1_2].field_structure.SetValue(structure_file_pdb)
+        self.analysis_frames[self.hardcoded_index_r1_3].field_structure.SetValue(structure_file_pdb)
+
+        # Add file to R2 tabs.
+        self.analysis_frames[self.hardcoded_index_r2_1].field_structure.SetValue(structure_file_pdb)
+        self.analysis_frames[self.hardcoded_index_r2_2].field_structure.SetValue(structure_file_pdb)
+        self.analysis_frames[self.hardcoded_index_r2_3].field_structure.SetValue(structure_file_pdb)
+
+        # Load sequence file into the relax data store.
+        for i in range(10):
+            ds.relax_gui.analyses[i].sequence_file = sequencefile
 
 
     def init_data(self):

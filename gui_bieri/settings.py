@@ -22,12 +22,13 @@
 ###############################################################################
 
 # Python module imports.
-from os import sep
+from os import F_OK, access, path, sep
 import sys
 import wx
 
 # relax GUI module imports.
 from filedialog import openfile
+from message import error_message
 from paths import IMAGE_PATH
 
 
@@ -52,7 +53,22 @@ def import_file_settings(oldsettings):
 
 
 def load_sequence(self):
-    seqfile = openfile('Choose Sequence File', sys.path[-1], '', 'all files (*.*)|*.*')
+    """GUI element for loading the sequence file."""
+
+    # The dialog.
+    seqfile = openfile('Choose a sequence file', '', '', 'all files (*.*)|*.*')
+
+    # Does not exist.
+    if not access(seqfile, F_OK):
+        error_message("The file '%s' does not exist." % seqfile)
+        return None
+
+    # Not a file.
+    if path.isdir(seqfile):
+        error_message("The selection '%s' is a directory, not a file." % seqfile)
+        return None
+
+    # Return the file.
     return seqfile
 
 
