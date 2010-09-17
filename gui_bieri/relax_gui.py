@@ -78,6 +78,7 @@ class Main(wx.Frame):
     """The main GUI class."""
 
     # Hard coded variables.
+    sequence_file_msg = "please insert sequence file"
     structure_file_pdb_msg = "please insert .pdb file"
 
     def __init__(self, *args, **kwds):
@@ -478,7 +479,7 @@ class Main(wx.Frame):
         """Open sequence loading GUI element."""
 
         # The dialog.
-        file = load_sequence(self)
+        file = load_sequence()
 
         # Nothing selected.
         if file == None:
@@ -509,6 +510,9 @@ class Main(wx.Frame):
         for i in range(10):
             ds.relax_gui.analyses[i].sequence_file = sequencefile
 
+        # Update the core of the GUI to match the new data store.
+        self.sync_ds(upload=False)
+
 
     def init_data(self):
         """Initialise the data used by the GUI interface."""
@@ -526,7 +530,6 @@ class Main(wx.Frame):
         ds.relax_gui.results_model_free = []
         ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
         ds.relax_gui.file_setting = ['1', '2', '3', '4', '5', '6', '7']
-        ds.relax_gui.sequencefile = ''
 
         # Table of relax Results
         ds.relax_gui.table_residue = []
@@ -802,4 +805,6 @@ class Main(wx.Frame):
         @type upload:       bool
         """
 
-        # Dummy function (for the time being).
+        # Synchronise each frame.
+        for frame in self.analysis_frames:
+            frame.sync_ds(upload)

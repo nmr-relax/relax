@@ -52,11 +52,15 @@ def import_file_settings(oldsettings):
     return settings
 
 
-def load_sequence(self):
+def load_sequence():
     """GUI element for loading the sequence file."""
 
     # The dialog.
     seqfile = openfile('Choose a sequence file', '', '', 'all files (*.*)|*.*')
+
+    # No file.
+    if not seqfile:
+        return None
 
     # Does not exist.
     if not access(seqfile, F_OK):

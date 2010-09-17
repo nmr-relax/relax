@@ -45,8 +45,9 @@ from gui_bieri.base_classes import Container
 from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import multi_openfile, opendir, openfile
-from gui_bieri.message import error_message
+from gui_bieri.message import error_message, missing_data
 from gui_bieri.paths import IMAGE_PATH
+from gui_bieri.settings import load_sequence
 
 
 
@@ -294,6 +295,37 @@ class Auto_noe:
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
+    def add_sequence_selection(self, box):
+        """Create and add the sequence file selection GUI element to the given box.
+
+        @param box:     The box element to pack the sequence file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Sequence file", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.field_sequence = wx.TextCtrl(self.parent, -1, str(self.gui.sequence_file_msg))
+        self.field_sequence.SetEditable(False)
+        self.field_sequence.SetMinSize((350, 27))
+        sizer.Add(self.field_sequence, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The button.
+        button = wx.Button(self.parent, -1, "Change")
+        button.SetMinSize((103, 27))
+        self.gui.Bind(wx.EVT_BUTTON, self.load_sequence, button)
+        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
+
+        # Add the element to the box.
+        box.Add(sizer, 1, wx.EXPAND, 0)
+
+
     def add_structure_selection(self, box):
         """Create and add the structure file selection GUI element to the given box.
 
@@ -305,7 +337,7 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Sequence from PDB structure file", style=wx.ALIGN_RIGHT)
         label.SetMinSize((230, 17))
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
@@ -354,15 +386,19 @@ class Auto_noe:
 
         See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
-        @return:    A container with all the data required for Relax_fit, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.
-        @rtype:     class instance
+        @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a flag stating if the data is complete.
+        @rtype:     class instance, bool
         """
 
-        # The data container.
+        # The data container and flag.
         data = Container()
+        complete = True
 
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
+        if hasattr(self.data, 'sequence_file'):
+            data.seq_args = [self.data.sequence_file, None, None, 1, None, None, None, None]
+        else:
+            data.seq_args = None
 
         # Reference peak list and background noe.
         data.ref_file = self.data.ref_file
@@ -390,7 +426,7 @@ class Auto_noe:
         # Proton name.
         data.proton = global_settings[3]
 
-        # Unresolved resiudes
+        # Unresolved spins.
         file = DummyFileObject()
         entries = self.data.unresolved
         entries = replace(entries, ',', '\n')
@@ -398,15 +434,22 @@ class Auto_noe:
         file.close()
         data.unresolved = file
 
-        # Structure File
-        data.structure_file = self.data.structure_file
+        # Structure file.
+        if self.data.structure_file == self.gui.structure_file_pdb_msg:
+            data.structure_file = None
+        else:
+            data.structure_file = self.data.structure_file
 
-        # Set Structure file as None if a structure file is loaded.
+        # Set Structure file as None if a sequence file is loaded.
         if data.structure_file == '!!! Sequence file selected !!!':
             data.structure_file = None
 
-        # Return the container.
-        return data
+        # No sequence data.
+        if not data.seq_args and not data.structure_file:
+            complete = False
+
+        # Return the container and flat.
+        return data, complete
 
 
     def build_main_box(self):
@@ -449,6 +492,9 @@ class Auto_noe:
 
         # Add the results directory GUI element.
         self.add_results_dir(box)
+
+        # Add the sequence file selection GUI element.
+        self.add_sequence_selection(box)
 
         # Add the structure file selection GUI element.
         self.add_structure_selection(box)
@@ -519,10 +565,15 @@ class Auto_noe:
             time.sleep(0.5)
 
         # Assemble all the data needed for the auto-analysis.
-        data = self.assemble_data()
+        data, complete = self.assemble_data()
+
+        # Incomplete.
+        if not complete:
+            missing_data()
+            return
 
         # Execute.
-        NOE_calc(filename=data.filename, seq_args=data.seq_args, pipe_name='noe'+'_'+str(time.asctime(time.localtime())), noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, results_folder=data.save_dir, int_method='height', heteronuc=data.heteronuc, proton=data.proton, hetnuc_pdb='@N')
+        NOE_calc(seq_args=data.seq_args, pipe_name='noe'+'_'+str(time.asctime(time.localtime())), noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, output_file=data.filename, results_dir=data.save_dir, int_method='height', heteronuc=data.heteronuc, proton=data.proton, heteronuc_pdb='@N')
 
         # Feedback about success.
         wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
@@ -543,8 +594,33 @@ class Auto_noe:
         ds.relax_gui.results_noe.append(data.save_dir+sep+'noe.pml')
 
 
+    def load_sequence(self, event):
+        """The sequence loading GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Select the file.
+        file = load_sequence()
+
+        # Nothing selected.
+        if file == None:
+            return
+
+        # Store the file.
+        self.data.sequence_file = file
+
+        # Sync.
+        self.sync_ds(upload=False)
+
+        # Terminate the event.
+        event.Skip()
+
+
     def link_data(self, data):
         """Re-alias the storage container in the relax data store.
+
         @keyword data:      The data storage container.
         @type data:         class instance
         """
@@ -666,38 +742,48 @@ class Auto_noe:
         else:
             self.field_results_dir.SetValue(str(self.data.save_dir))
 
+        # The sequence file.
+        if upload:
+            file = str(self.field_sequence.GetValue())
+            if file != self.gui.sequence_file_msg:
+                self.data.sequence_file = str(self.field_sequence.GetValue())
+        elif hasattr(self.data, 'sequence_file'):
+            self.field_sequence.SetValue(str(self.data.sequence_file))
+
         # The structure file.
         if upload:
-            self.data.structure_file = str(self.field_structure.GetValue())
-        else:
+            file = str(self.field_structure.GetValue())
+            if file != self.gui.structure_file_pdb_msg:
+                self.data.structure_file = str(self.field_structure.GetValue())
+        elif hasattr(self.data, 'structure_file'):
             self.field_structure.SetValue(str(self.data.structure_file))
 
         # Unresolved residues.
         if upload:
             self.data.unresolved = str(self.field_unresolved.GetValue())
-        else:
+        elif hasattr(self.data, 'unresolved'):
             self.field_unresolved.SetValue(str(self.data.unresolved))
 
         # Reference peak file.
         if upload:
             self.data.ref_file = str(self.field_ref_noe.GetValue())
-        else:
+        elif hasattr(self.data, 'ref_file'):
             self.field_ref_noe.SetValue(str(self.data.ref_file))
 
         # Reference rmsd.
         if upload:
             self.data.ref_rmsd = str(self.field_ref_rmsd.GetValue())
-        else:
+        elif hasattr(self.data, 'ref_rmsd'):
             self.field_ref_rmsd.SetValue(str(self.data.ref_rmsd))
 
         # Saturated peak file.
         if upload:
             self.data.sat_file = str(self.field_sat_noe.GetValue())
-        else:
+        elif hasattr(self.data, 'sat_file'):
             self.field_sat_noe.SetValue(str(self.data.sat_file))
 
         # Saturated rmsd.
         if upload:
             self.data.sat_rmsd = str(self.field_sat_rmsd.GetValue())
-        else:
+        elif hasattr(self.data, 'sat_rmsd'):
             self.field_sat_rmsd.SetValue(str(self.data.sat_rmsd))

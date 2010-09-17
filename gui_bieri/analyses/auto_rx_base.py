@@ -46,6 +46,7 @@ from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import multi_openfile, opendir
 from gui_bieri.message import error_message
 from gui_bieri.paths import ADD_ICON, CANCEL_ICON, IMAGE_PATH, REMOVE_ICON
+from gui_bieri.settings import load_sequence
 
 
 
@@ -182,6 +183,37 @@ class Auto_rx:
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
+    def add_sequence_selection(self, box):
+        """Create and add the sequence file selection GUI element to the given box.
+
+        @param box:     The box element to pack the sequence file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Sequence file", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.field_sequence = wx.TextCtrl(self.parent, -1, str(self.gui.sequence_file_msg))
+        self.field_sequence.SetEditable(False)
+        self.field_sequence.SetMinSize((350, 27))
+        sizer.Add(self.field_sequence, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The button.
+        button = wx.Button(self.parent, -1, "Change")
+        button.SetMinSize((103, 27))
+        self.gui.Bind(wx.EVT_BUTTON, self.load_sequence, button)
+        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
+
+        # Add the element to the box.
+        box.Add(sizer, 1, wx.EXPAND, 0)
+
+
     def add_structure_selection(self, box):
         """Create and add the structure file selection GUI element to the given box.
 
@@ -193,7 +225,7 @@ class Auto_rx:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Sequence from PDB structure file", style=wx.ALIGN_RIGHT)
         label.SetMinSize((230, 17))
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
@@ -242,15 +274,19 @@ class Auto_rx:
 
         See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
-        @return:    A container with all the data required for Relax_fit, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.
-        @rtype:     class instance
+        @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a flag stating if the data is complete.
+        @rtype:     class instance, bool
         """
 
         # The data container.
         data = Container()
+        complete = True
 
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
+        if hasattr(self.data, 'sequence_file'):
+            data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
+        else:
+            data.seq_args = None
 
         # The file names and relaxation times.
         for i in range(len(self.data.file_list)):
@@ -285,7 +321,7 @@ class Auto_rx:
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         data.mc_num = int(global_settings[6])
 
-        # Unresolved resiudes
+        # Unresolved residues
         file = DummyFileObject()
         entries = self.data.unresolved
         entries = replace(entries, ',', '\n')
@@ -293,8 +329,11 @@ class Auto_rx:
         file.close()
         data.unresolved = file
 
-        # Structure File
-        data.structure_file = self.data.structure_file
+        # Structure file.
+        if self.data.structure_file == self.gui.structure_file_pdb_msg:
+            data.structure_file = None
+        else:
+            data.structure_file = self.data.structure_file
 
         # Set Structure file as None if a structure file is loaded.
         if data.structure_file == '!!! Sequence file selected !!!':
@@ -303,8 +342,12 @@ class Auto_rx:
         # Results directory.
         data.save_dir = self.data.save_dir
 
-        # Return the container.
-        return data
+        # No sequence data.
+        if not data.seq_args and not data.structure_file:
+            complete = False
+
+        # Return the container and flat.
+        return data, complete
 
 
     def build_main_box(self):
@@ -347,6 +390,9 @@ class Auto_rx:
 
         # Add the results directory GUI element.
         self.add_results_dir(box)
+
+        # Add the sequence file selection GUI element.
+        self.add_sequence_selection(box)
 
         # Add the structure file selection GUI element.
         self.add_structure_selection(box)
@@ -429,6 +475,30 @@ class Auto_rx:
         self.peak_intensity.data = data
 
 
+    def load_sequence(self, event):
+        """The sequence loading GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Select the file.
+        file = load_sequence()
+
+        # Nothing selected.
+        if file == None:
+            return
+
+        # Store the file.
+        self.data.sequence_file = file
+
+        # Sync.
+        self.sync_ds(upload=False)
+
+        # Terminate the event.
+        event.Skip()
+
+
     def results_directory(self, event):
         """The results directory selection.
 
@@ -465,25 +535,33 @@ class Auto_rx:
         # The frequency.
         if upload:
             self.data.frq = str(self.field_nmr_frq.GetValue())
-        else:
+        elif hasattr(self.data, 'frq'):
             self.field_nmr_frq.SetValue(str(self.data.frq))
 
         # The results directory.
         if upload:
             self.data.save_dir = str(self.field_results_dir.GetValue())
-        else:
+        elif hasattr(self.data, 'save_dir'):
             self.field_results_dir.SetValue(str(self.data.save_dir))
+
+        # The sequence file.
+        if upload:
+            file = str(self.field_sequence.GetValue())
+            if file != self.gui.sequence_file_msg:
+                self.data.sequence_file = str(self.field_sequence.GetValue())
+        elif hasattr(self.data, 'sequence_file'):
+            self.field_sequence.SetValue(str(self.data.sequence_file))
 
         # The structure file.
         if upload:
             self.data.structure_file = str(self.field_structure.GetValue())
-        else:
+        elif hasattr(self.data, 'structure_file'):
             self.field_structure.SetValue(str(self.data.structure_file))
 
         # Unresolved residues.
         if upload:
             self.data.unresolved = str(self.field_unresolved.GetValue())
-        else:
+        elif hasattr(self.data, 'unresolved'):
             self.field_unresolved.SetValue(str(self.data.unresolved))
 
         # The peak lists and relaxation times.
