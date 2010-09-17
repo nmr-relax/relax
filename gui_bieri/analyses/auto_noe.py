@@ -584,7 +584,8 @@ class Auto_noe:
         NOE_calc(seq_args=data.seq_args, pipe_name='noe'+'_'+str(time.asctime(time.localtime())), noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, output_file=data.filename, results_dir=data.save_dir, int_method='height', heteronuc=data.heteronuc, proton=data.proton, heteronuc_pdb='@N')
 
         # Feedback about success.
-        wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
+        if not __main__.debug:
+            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
 
         # Add noe grace plot to results list.
         self.gui.list_noe.Append(data.save_dir+sep+'grace'+sep+'noe.agr')

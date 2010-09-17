@@ -465,7 +465,8 @@ class Auto_rx:
         Relax_fit(filename=self.filename, pipe_name='rx'+'_'+str(time.asctime(time.localtime())),seq_args=data.seq_args, results_directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, load_spin_ids=data.load_spin_ids, inc=data.inc)
         
         # Feedback about success.
-        wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated Rx values\n__________________________________________________________')
+        if not __main__.debug:
+            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated Rx values\n__________________________________________________________')
 
         # Add noe grace plot to results list.
         self.gui.list_rx.Append(data.save_dir+sep+'grace'+sep+self.filename+'.agr')
