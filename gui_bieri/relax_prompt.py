@@ -83,6 +83,9 @@ class Prompt(wx.Frame):
         self.prompt.StyleSetSpec(stc.STC_P_DEFNAME, "fore:#008b8b")
         self.prompt.StyleSetSpec(stc.STC_P_CLASSNAME, "fore:#008b8b")
 
+        # Set the focus.
+        self.prompt.setFocus()
+
         # Override the exiting commands.
         for name in ['exit', 'bye', 'quit', 'q']:
             self.prompt.interp.locals[name] = _Exit(fn=self.gui.exit_gui)
