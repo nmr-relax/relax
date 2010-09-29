@@ -54,6 +54,7 @@ from analyses.results_analysis import see_results
 from base_classes import Container
 from controller import Controller
 from filedialog import opendir, openfile, savefile
+from message import dir_message, error_message, question
 from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, CONTROLLER_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, RELAX_PROMPT_ICON, SAVE_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
 from references import References
 from relax_prompt import Prompt
