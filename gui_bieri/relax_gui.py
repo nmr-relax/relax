@@ -27,13 +27,10 @@
 # Python module imports.
 import __main__
 import os
-from os import F_OK, access, getcwd, mkdir, path, sep
+from os import F_OK, access, getcwd, mkdir, sep
 import platform
-from re import search
-from string import lower, lowercase, replace
 import sys
 from textwrap import wrap
-import time
 import webbrowser
 import wx
 
@@ -41,11 +38,8 @@ import wx
 from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 from info import Info_box
-from float import floatAsByteArray
-from generic_fns import pipes, state
-from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
+from generic_fns import state
 from generic_fns.reset import reset
-from relax_errors import RelaxError
 from relax_io import io_streams_restore
 from version import version
 
@@ -55,14 +49,11 @@ from analyses.auto_model_free import Auto_model_free
 from analyses.auto_noe import Auto_noe
 from analyses.auto_r1 import Auto_r1
 from analyses.auto_r2 import Auto_r2
-from analyses.project import create_save_file, open_file
 from analyses.results import Results_summary
-from analyses.results_analysis import color_code_noe, model_free_results, see_results
+from analyses.results_analysis import see_results
 from base_classes import Container
 from controller import Controller
-from derived_wx_classes import StructureTextCtrl
-from filedialog import multi_openfile, opendir, openfile, savefile
-from message import dir_message, error_message, exec_relax, missing_data, question, relax_run_ok
+from filedialog import opendir, openfile, savefile
 from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, CONTROLLER_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, RELAX_PROMPT_ICON, SAVE_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
 from references import References
 from relax_prompt import Prompt
