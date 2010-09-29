@@ -210,6 +210,10 @@ def __errors_repl(verbosity=0):
             cdp.var_I[indices[0]] = cdp.var_I[indices[0]] + var_I
             count = count + 1
 
+        # No data catch.
+        if not count:
+            raise RelaxError("No data is present, unable to calculate errors from replicated spectra.")
+
         # Average variance.
         cdp.var_I[indices[0]] = cdp.var_I[indices[0]] / float(count)
 
