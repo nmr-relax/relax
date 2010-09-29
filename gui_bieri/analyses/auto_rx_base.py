@@ -311,8 +311,8 @@ class Auto_rx:
         # Hetero nucleus name.
         data.heteronuc = global_settings[2]
 
-        # Spin id og hetero nucleus
-        data.load_spin_ids = global_settings[2]
+        # Spin id of the heteronucleus.
+        data.load_spin_ids = '@' + global_settings[2]
 
         # Proton name.
         data.proton = global_settings[3]
@@ -463,7 +463,7 @@ class Auto_rx:
 
         # Execute.
         Relax_fit(file_root=self.filename, pipe_name='rx'+'_'+str(time.asctime(time.localtime())), seq_args=data.seq_args, results_directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, load_spin_ids=data.load_spin_ids, inc=data.inc)
-        
+
         # Feedback about success.
         if not __main__.debug:
             wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated Rx values\n__________________________________________________________')
