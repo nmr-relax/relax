@@ -462,7 +462,7 @@ class Auto_rx:
             return
 
         # Execute.
-        Relax_fit(filename=self.filename, pipe_name='rx'+'_'+str(time.asctime(time.localtime())),seq_args=data.seq_args, results_directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, load_spin_ids=data.load_spin_ids, inc=data.inc)
+        Relax_fit(file_root=self.filename, pipe_name='rx'+'_'+str(time.asctime(time.localtime())), seq_args=data.seq_args, results_directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, load_spin_ids=data.load_spin_ids, inc=data.inc)
         
         # Feedback about success.
         if not __main__.debug:
