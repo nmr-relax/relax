@@ -182,14 +182,15 @@ class Relax_fit:
         """Check that the user has set the variables correctly."""
 
         # Sequence data.
-        if not isinstance(self.seq_args, list):
-            raise RelaxError("The seq_args user variable '%s' must be a list." % self.seq_args)
-        if len(self.seq_args) != 8:
-            raise RelaxError("The seq_args user variable '%s' must be a list with eight elements." % self.seq_args)
-        if not isinstance(self.seq_args[0], str):
-            raise RelaxError("The file name component of the seq_args user variable '%s' must be a string." % self.seq_args)
-        for i in range(1, 8):
-            if self.seq_args[i] != None and not isinstance(self.seq_args[i], int):
-                raise RelaxError("The column components of the seq_args user variable '%s' must be either None or integers." % self.seq_args)
+        if not self.pdb_file:
+            if not isinstance(self.seq_args, list):
+                raise RelaxError("The seq_args user variable '%s' must be a list if a PDB file is not specified." % self.seq_args)
+            if len(self.seq_args) != 8:
+                raise RelaxError("The seq_args user variable '%s' must be a list with eight elements." % self.seq_args)
+            if not isinstance(self.seq_args[0], str):
+                raise RelaxError("The file name component of the seq_args user variable '%s' must be a string." % self.seq_args)
+            for i in range(1, 8):
+                if self.seq_args[i] != None and not isinstance(self.seq_args[i], int):
+                    raise RelaxError("The column components of the seq_args user variable '%s' must be either None or integers." % self.seq_args)
 
 
