@@ -38,39 +38,47 @@ from gui_bieri.paths import IMAGE_PATH
 def color_code_noe(self, target_dir, pdb_file):
     """Create PyMol Macro for NOE colouring."""
 
-    directory = target_dir
+    # Open the macro file.
+    file = open(target_dir + sep + 'noe.pml', 'w')
 
-    #create file
-    file = open(directory + sep + 'noe.pml', 'w')
+    # PDB loading.
     if pdb_file:
         file.write("load " + pdb_file + '\n')
+
+    # PyMOL set up commands.
     file.write("bg_color white\n")
     file.write("color gray90\n")
     file.write("hide all\n")
     file.write("show ribbon\n")
 
-    for spin, spin_id in spin_loop(return_id=True):
-        #select residue
-        spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
+    # Loop over the spins.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
 
-        #ribbon color
-        if hasattr(spin, 'noe'):
-            noe = str(spin.noe)
-            if spin.noe == None:
-                file.write("")
-            else:
-                width = ((1-spin.noe) * 2)
-                green = 1 - ((spin.noe)**3)
-                green = green * green * green #* green * green
-                green = 1 - green
-                file.write("set_color resicolor" + spin_no + ", [0," + str(green) + ",1]\n")
-                file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
-                file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
+        # Skip spins with no data.
+        if not hasattr(spin, 'noe') or spin.noe == None:
+            continue
 
+        # Ribbon colour.
+        width = ((1.0 - spin.noe) * 2.0)
+        colour = 1.0 - ((spin.noe)**3)
+        colour = colour ** 3
+        colour = 1.0 - colour
+
+        # Write out the PyMOL commands.
+        file.write("set_color resicolor%s, [0, %s, 1]\n" % (res_num, colour))
+        file.write("color resicolor%s, resi %s\n" % (res_num, res_num))
+        file.write("set_bond stick_radius, %s, resi %s\n" % (width, res_num))
+
+    # Final PyMOL commands.
     file.write("hide all\n")
     file.write("show sticks, name C+N+CA\n")
     file.write("set stick_quality, 10\n")
     file.write("ray\n")
+
+    # Close the macro.
     file.close()
 
 
