@@ -787,12 +787,10 @@ class Auto_model_free:
         # two field strength ok
         if counter == 8:
             check = True
-            print '\n\n\nTwo different field strength detected !!\n\n\n'
 
         # three field strength ok
         elif counter == 12:
             check = True
-            print '\n\n\nThree different field strength detected !!\n\n\n'
 
         # missing data
         else:
