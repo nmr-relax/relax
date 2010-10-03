@@ -656,35 +656,21 @@ class Auto_model_free:
         if not __main__.debug:
             self.gui.controller.Show()
 
+        # Cancel.
+        if which_model == None:
+            return
+
         # Solve for all global models.
-        if which_model == 'full':
+        elif which_model == 'full':
             # The global model list.
             global_models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', 'final']
 
-            # Loop over the global models solving for each, one after the other.
-            for global_model in global_models:
-                status = self.execute(global_model=global_model, automatic=True)
-
-                # A problem was encountered, so do not continue (a dialog should probably appear here).
-                if not status:
-                    print("Optimisation failed.")
-                    return
-
-        elif which_model == None:
-            # Cancel.
-            return
-
-        # Single global model selected.
+        # Any global model selected.
         else:
-            # All models, excluding the final run.
-            if which_model != 'final':
-                # Solve for the local_tm, sphere, prolate, oblate, or ellipsoid global models.
-                enable_models = self.execute(global_model=which_model, automatic=False)
+            global_models = [which_model]
 
-            # The final run.
-            else:
-                # Execute the final run.
-                results_for_table = self.execute(global_model=which_model, automatic=False)
+        # Run the models.
+        self.execute(global_models=global_models, automatic=False)
 
         # Skip the event.
         event.Skip()
@@ -816,11 +802,11 @@ class Auto_model_free:
         return dlg.selection
 
 
-    def execute(self, global_model=None, automatic=True):
+    def execute(self, global_models=None, automatic=True):
         """Execute the calculations by running execute_thread() within a thread.
 
-        @keyword global_model:  The global model to solve.  This must be one of 'local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', or 'final'.
-        @type global_model:     str
+        @keyword global_models: The list of global models to solve.  The elements must be one of 'local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', or 'final'.
+        @type global_models:    list of str
         """
 
         # The thread object storage.
@@ -829,80 +815,79 @@ class Auto_model_free:
 
         # Start the thread.
         if __main__.debug:
-            self.execute_thread(global_model=global_model, automatic=automatic)
+            self.execute_thread(global_models=global_models, automatic=automatic)
         else:
-            id = thread.start_new_thread(self.execute_thread, (), {'global_model': global_model, 'automatic': automatic})
+            id = thread.start_new_thread(self.execute_thread, (), {'global_models': global_models, 'automatic': automatic})
 
             # Add the thread info to the container.
             thread_cont.id = id
             thread_cont.analysis_type = 'model-free'
-            thread_cont.global_model = global_model
+            thread_cont.global_models = global_models
 
 
-    def execute_thread(self, global_model=None, automatic=True):
+    def execute_thread(self, global_models=None, automatic=True):
         """Execute the calculation in a thread.
 
-        @keyword global_model:  The global model to solve.  This must be one of 'local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', or 'final'.
-        @type global_model:     str
+        @keyword global_models: The list of global models to solve.  The elements must be one of 'local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', or 'final'.
+        @type global_models:    list of str
         """
 
-        # Combine Parameters.
-        model = global_model
+        # Loop over the models.
+        for global_model in global_models:
+            # Assemble all the data needed for the dAuvergne_protocol class.
+            data = self.assemble_data()
 
-        # Assemble all the data needed for the dAuvergne_protocol class.
-        data = self.assemble_data()
+            # Value for progress bar during Monte Carlo simulation.
+            self.gui.calc_threads[-1].progress = 5.0
 
-        # Value for progress bar during Monte Carlo simulation.
-        self.gui.calc_threads[-1].progress = 5.0
+            # Controller.
+            if not __main__.debug:
+                # Redirect relax output and errors to the controller.
+                redir = Redirect_text(self.gui.controller)
+                sys.stdout = redir
+                sys.stderr = redir
 
-        # Controller.
-        if not __main__.debug:
-            # Redirect relax output and errors to the controller.
-            redir = Redirect_text(self.gui.controller)
-            sys.stdout = redir
-            sys.stderr = redir
+                # Print a header in the controller.
+                wx.CallAfter(self.gui.controller.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
+                time.sleep(0.5)
 
-            # Print a header in the controller.
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
-            time.sleep(0.5)
+            # Start the protocol.
+            dAuvergne_protocol(save_dir=data.save_dir, diff_model=global_model, mf_models=data.mf_models, local_tm_models=data.local_tm_models, pdb_file=data.structure_file, seq_args=data.seq_args, het_name=data.het_name, relax_data=data.relax_data, unres=data.unres, exclude=data.exclude, bond_length=data.bond_length, csa=data.csa, hetnuc=data.hetnuc, proton=data.proton, grid_inc=data.inc, min_algor=data.min_algor, mc_num=data.mc_num, max_iter=data.max_iter, conv_loop=data.conv_loop)
 
-        # Start the protocol.
-        dAuvergne_protocol(save_dir=data.save_dir, diff_model=global_model, mf_models=data.mf_models, local_tm_models=data.local_tm_models, pdb_file=data.structure_file, seq_args=data.seq_args, het_name=data.het_name, relax_data=data.relax_data, unres=data.unres, exclude=data.exclude, bond_length=data.bond_length, csa=data.csa, hetnuc=data.hetnuc, proton=data.proton, grid_inc=data.inc, min_algor=data.min_algor, mc_num=data.mc_num, max_iter=data.max_iter, conv_loop=data.conv_loop)
+            # Feedback about success.
+            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated '+global_model+' Model\n__________________________________________________________')
 
-        # Feedback about success.
-        wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated '+global_model+' Model\n__________________________________________________________')
+            # Create the results file.
+            if global_model == 'final':
+                # Feedback.
+                wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\nCreating results files\n\n')
+                time.sleep(3)
 
-        # Create the results file.
-        if model == 'final':
-            # Feedback.
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\nCreating results files\n\n')
-            time.sleep(3)
+                results_analysis = model_free_results(self, data.save_dir, data.structure_file)
+                
+                # Add grace plots to results tab.
+                directory = data.save_dir+sep+'final'
+                self.gui.list_modelfree.Append(directory+sep+'grace'+sep+'s2.agr')
+                self.gui.list_modelfree.Append(directory+sep+'Model-free_Results.csv')
+                self.gui.list_modelfree.Append(directory+sep+'diffusion_tensor.pml')
+                self.gui.list_modelfree.Append(directory+sep+'s2.pml')
+                self.gui.list_modelfree.Append(directory+sep+'rex.pml')
+                self.gui.list_modelfree.Append('Table_of_Results')
+                
+                # Add results to relax data storage.
+                ds.relax_gui.results_model_free.append(directory+sep+'grace'+sep+'s2.agr')
+                ds.relax_gui.results_model_free.append(directory+sep+'Model-free_Results.txt')
+                ds.relax_gui.results_model_free.append(directory+sep+'diffusion_tensor.pml')
+                ds.relax_gui.results_model_free.append(directory+sep+'s2.pml')
+                ds.relax_gui.results_model_free.append(directory+sep+'rex.pml')
+                ds.relax_gui.results_model_free.append('Table_of_Results')
 
-            results_analysis = model_free_results(self, data.save_dir, data.structure_file)
-            
-            # Add grace plots to results tab.
-            directory = data.save_dir+sep+'final'
-            self.gui.list_modelfree.Append(directory+sep+'grace'+sep+'s2.agr')
-            self.gui.list_modelfree.Append(directory+sep+'Model-free_Results.csv')
-            self.gui.list_modelfree.Append(directory+sep+'diffusion_tensor.pml')
-            self.gui.list_modelfree.Append(directory+sep+'s2.pml')
-            self.gui.list_modelfree.Append(directory+sep+'rex.pml')
-            self.gui.list_modelfree.Append('Table_of_Results')
-            
-            # Add results to relax data storage.
-            ds.relax_gui.results_model_free.append(directory+sep+'grace'+sep+'s2.agr')
-            ds.relax_gui.results_model_free.append(directory+sep+'Model-free_Results.txt')
-            ds.relax_gui.results_model_free.append(directory+sep+'diffusion_tensor.pml')
-            ds.relax_gui.results_model_free.append(directory+sep+'s2.pml')
-            ds.relax_gui.results_model_free.append(directory+sep+'rex.pml')
-            ds.relax_gui.results_model_free.append('Table_of_Results')
-
-            # set global results variables
-            ds.relax_gui.table_residue = results_analysis[0]
-            ds.relax_gui.table_model = results_analysis[1]
-            ds.relax_gui.table_s2 = results_analysis[2]
-            ds.relax_gui.table_rex = results_analysis[3]
-            ds.relax_gui.table_te = results_analysis[4]
+                # set global results variables
+                ds.relax_gui.table_residue = results_analysis[0]
+                ds.relax_gui.table_model = results_analysis[1]
+                ds.relax_gui.table_s2 = results_analysis[2]
+                ds.relax_gui.table_rex = results_analysis[3]
+                ds.relax_gui.table_te = results_analysis[4]
 
         # Return successful value to automatic mode to proceed to next step.
         if automatic == True:
@@ -910,7 +895,7 @@ class Auto_model_free:
 
         # Enable m1-m5.
         if not automatic:
-            if model == 'local_tm':
+            if global_model == 'local_tm':
                 # enable m1 - m5 to choose for calculation
                 return True
 
