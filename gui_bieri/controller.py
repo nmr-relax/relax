@@ -142,13 +142,13 @@ class Controller(wx.Frame):
         """
 
         # The progress bar.
-        progress_bar = wx.Gauge(self, -1, 100)
+        self.progress_bar = wx.Gauge(self, -1, 100)
 
         # Set the size of the progress bar.
-        progress_bar.SetSize((self.size_x - 2*self.border, 20))
+        self.progress_bar.SetSize((self.size_x - 2*self.border, 20))
 
         # Add the progress bar.
-        sizer.Add(progress_bar, 0, wx.EXPAND|wx.ALL, self.border)
+        sizer.Add(self.progress_bar, 0, wx.EXPAND|wx.ALL, self.border)
 
 
     def add_relax_logo(self, sizer):
