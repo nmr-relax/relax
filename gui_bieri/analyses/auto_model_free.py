@@ -848,14 +848,16 @@ class Auto_model_free:
                 sys.stderr = redir
 
                 # Print a header in the controller.
-                wx.CallAfter(self.gui.controller.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
+                str = 'Starting model-free calculation'
+                wx.CallAfter(self.gui.controller.log_panel.AppendText, ('\n\n\n' + str + '\n' + '-'*len(str) + '\n\n') )
                 time.sleep(0.5)
 
             # Start the protocol.
             dAuvergne_protocol(save_dir=data.save_dir, diff_model=global_model, mf_models=data.mf_models, local_tm_models=data.local_tm_models, pdb_file=data.structure_file, seq_args=data.seq_args, het_name=data.het_name, relax_data=data.relax_data, unres=data.unres, exclude=data.exclude, bond_length=data.bond_length, csa=data.csa, hetnuc=data.hetnuc, proton=data.proton, grid_inc=data.inc, min_algor=data.min_algor, mc_num=data.mc_num, max_iter=data.max_iter, conv_loop=data.conv_loop)
 
             # Feedback about success.
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated '+global_model+' Model\n__________________________________________________________')
+            str = 'Successfully calculated the %s global model.' % global_model
+            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n' + '_'*len(str) + '\n\n' + str + '\n' + '_'*len(str))
 
             # Create the results file.
             if global_model == 'final':
