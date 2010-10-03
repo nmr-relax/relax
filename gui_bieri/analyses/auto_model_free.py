@@ -860,7 +860,7 @@ class Auto_model_free:
             # Redirect relax output and errors to the controller.
             redir = Redirect_text(self.gui.controller)
             sys.stdout = redir
-            #sys.stderr = redir
+            sys.stderr = redir
 
             # Print a header in the controller.
             wx.CallAfter(self.gui.controller.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
