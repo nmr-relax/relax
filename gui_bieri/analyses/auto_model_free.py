@@ -1104,6 +1104,6 @@ class Auto_model_free:
 
         # Maximum iterations.
         if upload:
-            self.data.max_iter = str(self.max_iter.GetValue())
+            self.data.max_iter = int(self.max_iter.GetValue())
         else:
             self.max_iter.SetValue(int(self.data.max_iter))
