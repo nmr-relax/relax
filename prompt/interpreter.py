@@ -27,6 +27,7 @@
 import dep_check
 
 # Python module imports.
+import __main__
 from code import InteractiveConsole, softspace
 from os import F_OK, access
 import platform
