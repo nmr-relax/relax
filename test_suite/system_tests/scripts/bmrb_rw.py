@@ -1,6 +1,7 @@
 # Script for testing the reading and writing of BMRB files.
 
 # Python module imports.
+import __main__
 import sys
 from os import sep
 
@@ -20,7 +21,7 @@ if not hasattr(ds, 'tmpfile'):
 pipe.create(pipe_name='results', pipe_type='mf')
 
 # Read the results.
-results.read(file='final_results_trunc_1.3', dir=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
+results.read(file='final_results_trunc_1.3', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
 # Play with the data.
 deselect.all()
