@@ -435,7 +435,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
     # Catch ctrl-C.
     except KeyboardInterrupt:
         # Throw the error.
-        if Debug:
+        if __main__.debug:
             raise
 
         # Be nicer to the user.
@@ -454,7 +454,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         # Nice output for the user.
         else:
             # Print the scary traceback normally hidden from the user.
-            if Debug:
+            if __main__.debug:
                 self.showtraceback()
 
             # Print the RelaxError message line.

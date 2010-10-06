@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005,2007-2009 Edward d'Auvergne                         #
+# Copyright (C) 2004-2005,2007-2010 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,24 +26,14 @@ from re import match
 from warnings import warn
 
 # relax module imports.
-from api_base import API_base
-from api_common import API_common
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxNoSequenceError
 from relax_warnings import RelaxDeselectWarning
 
 
-class Noe(API_base, API_common):
+class Noe_main:
     """Class containing functions for relaxation data."""
-
-    def __init__(self):
-        """Initialise the class by placing API_common methods into the API."""
-
-        # Place methods into the API.
-        self.return_conversion_factor = self._return_no_conversion_factor
-        self.return_value = self._return_value_general
-
 
     def _assign_function(self, spin=None, intensity=None, spectrum_type=None):
         """Place the peak intensity data into the spin container.

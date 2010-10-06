@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,6 +25,7 @@
 
 
 # Python module imports.
+import __main__
 try:
     from bz2 import BZ2File
     bz2 = True
@@ -36,9 +37,6 @@ from sys import stderr
 import time
 from types import ClassType
 
-
-# Global variables.
-Debug = False
 
 # Text variables.
 BIN = 'a binary number (0 or 1)'
@@ -102,7 +100,7 @@ class BaseError(Exception):
         """Modify the behaviour of the error system."""
 
         # Save the state if debugging is turned on.
-        if Debug:
+        if __main__.debug:
             save_state()
 
         # Modify the error message to include 'RelaxError' at the start.

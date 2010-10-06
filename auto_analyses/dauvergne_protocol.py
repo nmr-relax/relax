@@ -274,6 +274,11 @@ class dAuvergne_protocol:
         #############################
 
         elif self.diff_model == 'sphere' or self.diff_model == 'prolate' or self.diff_model == 'oblate' or self.diff_model == 'ellipsoid':
+            # No local_tm directory!
+            dir_list = listdir(getcwd())
+            if 'local_tm' not in dir_list:
+                raise RelaxError("The local_tm model must be optimised first.")
+
             # The initial round of optimisation - not zero if calculations were interrupted.
             self.start_round = self.determine_rnd(model=self.diff_model)
 
@@ -381,6 +386,12 @@ class dAuvergne_protocol:
 
             # All the global diffusion models to be used in the model selection.
             self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
+
+            # Missing optimised model.
+            dir_list = listdir(getcwd())
+            for name in self.pipes:
+                if name not in dir_list:
+                    raise RelaxError("The %s model must be optimised first." % name)
 
             # Create the local_tm data pipe.
             self.interpreter.pipe.create('local_tm', 'mf')
