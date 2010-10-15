@@ -51,9 +51,9 @@ bmrb.software_select('NMRPipe')
 bmrb.software_select('Sparky', version='3.106')
 bmrb.citation(cite_id='test', authors=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]], doi="10.1039/b702202f", pubmed_id="17579774", full_citation="d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494.", title="Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm.", status="published", type="journal", journal_abbrev="Mol. Biosyst.", journal_full="Molecular Biosystems", volume=3, issue=7, page_first=483, page_last=498, year=2007)
 bmrb.software(name='X', url='http://nmr-relax.com', vendor_name='me', cite_ids=['test'], tasks=['procrastinating', 'nothing much', 'wasting time'])
-bmrb.script(file='noe.py', dir=sys.path[-1]+sep+'sample_scripts', analysis_type='noe', engine='relax')
-bmrb.script(file='relax_fit.py', dir=sys.path[-1]+sep+'sample_scripts', analysis_type='relax_fit', engine='relax')
-bmrb.script(file='full_analysis.py', dir=sys.path[-1]+sep+'sample_scripts', analysis_type='mf', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)
+bmrb.script(file='noe.py', dir=__main__.install_path+sep+'sample_scripts', analysis_type='noe', engine='relax')
+bmrb.script(file='relax_fit.py', dir=__main__.install_path+sep+'sample_scripts', analysis_type='relax_fit', engine='relax')
+bmrb.script(file='full_analysis.py', dir=__main__.install_path+sep+'sample_scripts', analysis_type='mf', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)
 
 # Write, then read the data to a new data pipe.
 bmrb.write(file=ds.tmpfile, dir=None, version=ds.version, force=True)
