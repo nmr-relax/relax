@@ -21,16 +21,17 @@
 ###############################################################################
 
 # Python module imports.
-from os import remove
+import __main__
+from os import remove, sep
 import sys
 from tempfile import mktemp
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 
 
-class Bmrb(TestCase):
+class Bmrb(SystemTestCase):
     """TestCase class for functional tests of the reading and writing of BMRB STAR formatted files."""
 
     def setUp(self):
@@ -60,7 +61,7 @@ class Bmrb(TestCase):
         ds.version = '3.0'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bmrb_rw.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
 
 
     def test_rw_bmrb_3_1_model_free(self):
@@ -70,7 +71,7 @@ class Bmrb(TestCase):
         ds.version = '3.1'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bmrb_rw.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
 
 
     def test_rw_bmrb_3_2_model_free(self):
@@ -80,4 +81,4 @@ class Bmrb(TestCase):
         ds.version = '3.2'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bmrb_rw.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
