@@ -162,6 +162,14 @@ class RelaxError(BaseError):
         self.text = text
 
 
+# Module import errors.
+#######################
+
+class RelaxNoModuleInstallError(BaseError):
+    def __init__(self, desc, name):
+        self.text = "The %s module '%s' cannot be found.  Please check that it is installed." % (desc, name)
+
+
 # Fault.
 ########
 
