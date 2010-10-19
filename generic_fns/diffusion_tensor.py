@@ -26,17 +26,92 @@
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin
-from numpy import cross, float64, transpose, zeros
+from numpy import cross, float64, int32, ones, transpose, zeros
 from numpy.linalg import eig, norm
 from re import search
+import string
 
 # relax module imports.
 from angles import wrap_angles
 from data.diff_tensor import DiffTensorData
 from generic_fns import pipes
 from generic_fns.angles import fold_spherical_angles
+from generic_fns.mol_res_spin import get_molecule_names, spin_loop
 from maths_fns.rotation_matrix import R_to_euler_zyz
+from physical_constants import element_from_isotope, number_from_isotope
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+
+
+def bmrb_write(star):
+    """Generate the diffusion tensor saveframes for the NMR-STAR dictionary object.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    """
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # Initialise the spin specific data lists.
+    mol_name_list = []
+    res_num_list = []
+    res_name_list = []
+    atom_name_list = []
+    isotope_list = []
+    element_list = []
+    attached_atom_name_list = []
+    attached_isotope_list = []
+    attached_element_list = []
+
+    # Relax data labels.
+    labels = []
+    for i in range(cdp.num_ri):
+        labels.append(cdp.ri_labels[i] + '_' + cdp.frq_labels[cdp.remap_table[i]])
+
+    # Store the spin specific data in lists for later use.
+    for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Check the data for None (not allowed in BMRB!).
+        if res_num == None:
+            raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
+        if res_name == None:
+            raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
+        if spin.name == None:
+            raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
+        if spin.heteronuc_type == None:
+            raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
+
+        # The molecule/residue/spin info.
+        mol_name_list.append(mol_name)
+        res_num_list.append(str(res_num))
+        res_name_list.append(str(res_name))
+        atom_name_list.append(str(spin.name))
+
+        # The attached atom info.
+        if hasattr(spin, 'attached_atom'):
+            attached_atom_name_list.append(str(spin.attached_atom))
+        else:
+            attached_atom_name_list.append(str(spin.attached_proton))
+        attached_element_list.append(element_from_isotope(spin.proton_type))
+        attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
+
+        # Other info.
+        isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
+        element_list.append(spin.element)
+
+    # Convert the molecule names into the entity IDs.
+    entity_ids = zeros(len(mol_name_list), int32)
+    mol_names = get_molecule_names()
+    for i in range(len(mol_name_list)):
+        for j in range(len(mol_names)):
+            if mol_name_list[i] == mol_names[j]:
+                entity_ids[i] = j+1
+
+    # Add the diffusion tensor.
+    star.tensor.add(entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list)
 
 
 def copy(pipe_from=None, pipe_to=None):
