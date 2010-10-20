@@ -32,7 +32,6 @@ import string
 if dep_check.bmrblib_module:
     from bmrblib.nmr_star_dict import NMR_STAR
     from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
-    from bmrblib.nmr_star_dict_v3_2 import NMR_STAR_v3_2
 from generic_fns import diffusion_tensor, exp_info, mol_res_spin, pipes, relax_data
 from generic_fns.mol_res_spin import get_molecule_names, spin_loop
 from relax_errors import RelaxError
@@ -49,9 +48,7 @@ class Bmrb:
         """
 
         # Initialise the NMR-STAR data object.
-        if version == '3.2':
-            star = NMR_STAR_v3_2('relax_model_free_results', file_path)
-        elif version == '3.1':
+        if version == '3.1':
             star = NMR_STAR_v3_1('relax_model_free_results', file_path)
         else:
             star = NMR_STAR('relax_model_free_results', file_path)
@@ -79,9 +76,7 @@ class Bmrb:
         cdp = pipes.get_pipe()
 
         # Initialise the NMR-STAR data object.
-        if version == '3.2':
-            star = NMR_STAR_v3_2('relax_model_free_results', file_path)
-        elif version == '3.1':
+        if version == '3.1':
             star = NMR_STAR_v3_1('relax_model_free_results', file_path)
         else:
             star = NMR_STAR('relax_model_free_results', file_path)

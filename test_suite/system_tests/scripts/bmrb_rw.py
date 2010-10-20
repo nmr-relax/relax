@@ -14,7 +14,7 @@ state_file = 'devnull'
 if not hasattr(ds, 'tmpfile'):
     stand_alone = True
     ds.tmpfile = 'temp_bmrb'
-    ds.version = '3.2'
+    ds.version = '3.1'
     state_file = 'temp_bmrb_state'
 
 # Create the data pipe.
