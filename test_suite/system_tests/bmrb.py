@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,6 +23,7 @@
 # Python module imports.
 import __main__
 from os import remove, sep
+from re import search
 import sys
 from tempfile import mktemp
 
@@ -54,6 +55,69 @@ class Bmrb(SystemTestCase):
         ds.__reset__()
 
 
+    def data_check(self, old_pipe_name='results', new_pipe_name='new'):
+        """Check that all data has been successfully restored from the BMRB files."""
+
+        # Print out.
+        print "\n\nComparing data pipe contents:\n"
+
+        # The data pipes.
+        old_pipe = ds[old_pipe_name]
+        new_pipe = ds[new_pipe_name]
+
+        # The global data structures.
+        names = dir(old_pipe)
+        for name in names:
+            # Skip special names.
+            if search('^__', name):
+                continue
+
+            # Print out.
+            print "Object: %s" % name
+
+            # Check.
+            self.assert_(hasattr(new_pipe, name))
+
+        # The molecule data structure.
+        self.assertEqual(len(old_pipe.mol), len(new_pipe.mol))
+        for i in range(len(old_pipe.mol)):
+            # Check the attributes.
+            self.assertEqual(old_pipe.mol[i].name, old_pipe.mol[i].name)
+            self.assertEqual(old_pipe.mol[i].type, old_pipe.mol[i].type)
+
+            # The residue data structure.
+            self.assertEqual(len(old_pipe.mol[i].res), len(new_pipe.mol[i].res))
+            for j in range(len(old_pipe.mol[i].res)):
+                # Check the attributes.
+                self.assertEqual(old_pipe.mol[i].res[j].name, old_pipe.mol[i].res[j].name)
+                self.assertEqual(old_pipe.mol[i].res[j].num, old_pipe.mol[i].res[j].num)
+
+                # The spin data structure.
+                self.assertEqual(len(old_pipe.mol[i].res[j].spin), len(new_pipe.mol[i].res[j].spin))
+                for k in range(len(old_pipe.mol[i].res[j].spin)):
+                    # Check the attributes.
+                    names = dir(old_pipe.mol[i].res[j].spin[k])
+                    for name in names:
+                        # Skip special names.
+                        if search('^__', name):
+                            continue
+
+                        # Print out.
+                        print "Spin object: %s" % name
+
+                        # Does it exist?
+                        self.assert_(hasattr(new_pipe.mol[i].res[j].spin[k], name))
+
+                        # Get the objects.
+                        obj_old = getattr(old_pipe.mol[i].res[j].spin[k], name)
+                        obj_new = getattr(new_pipe.mol[i].res[j].spin[k], name)
+
+                        # Compare values.
+                        self.assertEqual(obj_old, obj_new)
+
+
+
+
     def test_rw_bmrb_3_0_model_free(self):
         """Write and then read a BRMB STAR formatted file containing model-free results."""
 
@@ -62,6 +126,9 @@ class Bmrb(SystemTestCase):
 
         # Execute the script.
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
+
+        # Test the data.
+        self.data_check()
 
 
     def test_rw_bmrb_3_1_model_free(self):
@@ -73,12 +140,5 @@ class Bmrb(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
 
-
-    def test_rw_bmrb_3_2_model_free(self):
-        """Write and then read a BRMB STAR formatted file containing model-free results."""
-
-        # Set the NMR-STAR version.
-        ds.version = '3.2'
-
-        # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
+        # Test the data.
+        self.data_check()
