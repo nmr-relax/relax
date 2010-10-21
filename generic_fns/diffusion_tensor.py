@@ -50,29 +50,82 @@ def bmrb_read(star):
     """
 
     # Get the diffusion tensor data.
-    found = False
-    for tensor_type, geometric_shape in star.tensor.loop():
+    found = 0
+    for data in star.tensor.loop():
         # Not a diffusion tensor.
-        if tensor_type != 'diffusion':
+        if data['tensor_type'] != 'diffusion':
             continue
 
-        print geometric_shape
+        # Found.
+        found = found + 1
 
-    asdf
+    # No diffusion tensor data.
+    if not found:
+        return
 
-    #for data_type, frq, entity_ids, res_nums, res_names, spin_names, val, err in star.tensor.loop():
-    #    # Create the labels.
-    #    ri_label = data_type
-    #    frq_label = str(int(frq*1e-6))
+    # Check.
+    if found != 1:
+        raise RelaxError("More than one diffusion tensor found.")
 
-    #    # Convert entity IDs to molecule names.
-    #    mol_names = []
-    #    names = get_molecule_names()
-    #    for id in entity_ids:
-    #        mol_names.append(names[int(id)-1])
+    # Rebuild the tensor.
+    tensor = zeros((3, 3), float64)
+    tensor[0, 0] = data['tensor_11'][0]
+    tensor[0, 1] = data['tensor_12'][0]
+    tensor[0, 2] = data['tensor_13'][0]
+    tensor[1, 0] = data['tensor_21'][0]
+    tensor[1, 1] = data['tensor_22'][0]
+    tensor[1, 2] = data['tensor_23'][0]
+    tensor[2, 0] = data['tensor_31'][0]
+    tensor[2, 1] = data['tensor_32'][0]
+    tensor[2, 2] = data['tensor_33'][0]
 
-    #    # Pack the data.
-    #    pack_data(ri_label, frq_label, frq, val, err, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
+    # Eigenvalues.
+    Di, R, alpha, beta, gamma = tensor_eigen_system(tensor)
+
+    # X-Y eigenvalue comparison.
+    xy_match = False
+    epsilon = 1e-1
+    if abs(Di[0] - Di[1]) < epsilon:
+        xy_match = True
+
+    # Y-Z eigenvalue comparison.
+    yz_match = False
+    if abs(Di[1] - Di[2]) < epsilon:
+        yz_match = True
+
+    # Determine the tensor type.
+    if xy_match and yz_match:
+        shape = ['sphere']
+    elif xy_match:
+        shape = ['spheroid', 'oblate spheroid']
+        type = 'oblate'
+        Dpar = Di[0]
+        Dper = Di[1]
+    elif yz_match:
+        shape = ['spheroid', 'prolate spheroid']
+        type = 'prolate'
+        Dper = Di[0]
+        Dpar = Di[2]
+    else:
+        shape = ['ellipsoid']
+
+    # Check the shape.
+    if data['geometric_shape'] not in shape:
+        raise RelaxError("The tensor with eigenvalues %s does not match the %s geometric shape." % (Di, shape[0]))
+
+    # Add the diff_tensor object to the data pipe.
+    cdp.diff_tensor = DiffTensorData()
+
+    # Set the fixed flag.
+    cdp.diff_tensor.fixed = True
+
+    # Set up the tensor.
+    if data['geometric_shape'] == 'sphere':
+        sphere(params=Di[0], d_scale=1.0, param_types=1)
+    elif data['geometric_shape'] in ['spheroid', 'oblate spheroid', 'prolate spheroid']:
+        spheroid(params=(Dpar, Dper, beta, gamma), d_scale=1.0, param_types=3, spheroid_type=type)
+    elif data['geometric_shape'] == 'ellipsoid':
+        ellipsoid(params=(Di[0], Di[1], Di[2], alpha, beta, gamma), d_scale=1.0, param_types=3)
 
 
 def bmrb_write(star):
@@ -526,38 +579,7 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
         tensor = tensor * d_scale
 
         # Eigenvalues.
-        Di, R = eig(tensor)
-
-        # Reordering structure.
-        reorder = zeros(3, int)
-        Di_sort = sorted(Di)
-        Di = Di.tolist()
-        R_new = zeros((3, 3), float64)
-
-        # Reorder columns.
-        for i in range(3):
-            R_new[:, i] = R[:, Di.index(Di_sort[i])]
-
-        # Switch from the left handed to right handed universes (if needed).
-        if norm(cross(R_new[:, 0], R_new[:, 1]) - R_new[:, 2]) > 1e-7:
-            R_new[:, 2] = -R_new[:, 2]
-        
-        # Reverse the rotation.
-        R_new = transpose(R_new)
-
-        # Euler angles (reverse rotation in the rotated axis system).
-        gamma, beta, alpha = R_to_euler_zyz(R_new)
-
-        # Collapse the pi axis rotation symmetries.
-        if alpha >= pi:
-            alpha = alpha - pi
-        if gamma >= pi:
-            alpha = pi - alpha
-            beta = pi - beta
-            gamma = gamma - pi
-        if beta >= pi:
-            alpha = pi - alpha
-            beta = beta - pi
+        Di, R, alpha, beta, gamma = tensor_eigen_system(tensor)
 
         # Set the parameters.
         set(value=[Di_sort[0], Di_sort[1], Di_sort[2]], param=['Dx', 'Dy', 'Dz'])
@@ -1708,6 +1730,51 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
 
     # Set the orientational parameters.
     set(value=[theta, phi], param=['theta', 'phi'])
+
+
+def tensor_eigen_system(tensor):
+    """Determine the eigenvalues and vectors for the tensor, sorting the entries.
+
+    @return:    The eigenvalues, rotation matrix, and the Euler angles in zyz notation.
+    @rtype:     3D rank-1 array, 3D rank-2 array, float, float, float
+    """
+
+    # Eigenvalues.
+    Di, R = eig(tensor)
+
+    # Reordering structure.
+    reorder = zeros(3, int)
+    Di_sort = sorted(Di)
+    Di = Di.tolist()
+    R_new = zeros((3, 3), float64)
+
+    # Reorder columns.
+    for i in range(3):
+        R_new[:, i] = R[:, Di.index(Di_sort[i])]
+
+    # Switch from the left handed to right handed universes (if needed).
+    if norm(cross(R_new[:, 0], R_new[:, 1]) - R_new[:, 2]) > 1e-7:
+        R_new[:, 2] = -R_new[:, 2]
+    
+    # Reverse the rotation.
+    R_new = transpose(R_new)
+
+    # Euler angles (reverse rotation in the rotated axis system).
+    gamma, beta, alpha = R_to_euler_zyz(R_new)
+
+    # Collapse the pi axis rotation symmetries.
+    if alpha >= pi:
+        alpha = alpha - pi
+    if gamma >= pi:
+        alpha = pi - alpha
+        beta = pi - beta
+        gamma = gamma - pi
+    if beta >= pi:
+        alpha = pi - alpha
+        beta = beta - pi
+
+    # Return the values.
+    return Di, R_new, alpha, beta, gamma
 
 
 def test_params(num_params):
