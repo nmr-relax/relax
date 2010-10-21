@@ -42,6 +42,39 @@ from physical_constants import element_from_isotope, number_from_isotope
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
+def bmrb_read(star):
+    """Read the relaxation data from the NMR-STAR dictionary object.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    """
+
+    # Get the diffusion tensor data.
+    found = False
+    for tensor_type, geometric_shape in star.tensor.loop():
+        # Not a diffusion tensor.
+        if tensor_type != 'diffusion':
+            continue
+
+        print geometric_shape
+
+    asdf
+
+    #for data_type, frq, entity_ids, res_nums, res_names, spin_names, val, err in star.tensor.loop():
+    #    # Create the labels.
+    #    ri_label = data_type
+    #    frq_label = str(int(frq*1e-6))
+
+    #    # Convert entity IDs to molecule names.
+    #    mol_names = []
+    #    names = get_molecule_names()
+    #    for id in entity_ids:
+    #        mol_names.append(names[int(id)-1])
+
+    #    # Pack the data.
+    #    pack_data(ri_label, frq_label, frq, val, err, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
+
+
 def bmrb_write(star):
     """Generate the diffusion tensor saveframes for the NMR-STAR dictionary object.
 
@@ -110,8 +143,56 @@ def bmrb_write(star):
             if mol_name_list[i] == mol_names[j]:
                 entity_ids[i] = j+1
 
+    # The tensor geometric shape.
+    geometric_shape = cdp.diff_tensor.type
+    if geometric_shape == 'spheroid':
+        geometric_shape = "%s %s" % (cdp.diff_tensor.spheroid_type, geometric_shape)
+
+    # The tensor symmetry.
+    shapes = ['sphere', 'oblate spheroid', 'prolate spheroid', 'ellipsoid']
+    sym = ['isotropic', 'axial symmetry', 'axial symmetry', 'rhombic']
+    for i in range(len(shapes)):
+        if geometric_shape == shapes[i]:
+            tensor_symmetry = sym[i]
+
+    # Axial symmetry axis.
+    theta = None
+    phi = None
+    if tensor_symmetry == 'axial symmetry':
+        theta = cdp.diff_tensor.theta
+        phi = cdp.diff_tensor.phi
+
+    # Euler angles.
+    alpha, beta, gamma = None, None, None
+    if tensor_symmetry == 'rhombic':
+        alpha = cdp.diff_tensor.alpha
+        beta =  cdp.diff_tensor.beta
+        gamma = cdp.diff_tensor.gamma
+
+    # The tensor eigenvalues.
+    Diso = cdp.diff_tensor.Diso
+    Da = None
+    Dr = None
+    if tensor_symmetry == 'axial symmetry':
+        Da = cdp.diff_tensor.Da
+    elif tensor_symmetry == 'rhombic':
+        Dr = cdp.diff_tensor.Dr
+
+    # The full tensor.
+    tensor_11 = cdp.diff_tensor.tensor[0, 0]
+    tensor_12 = cdp.diff_tensor.tensor[0, 1]
+    tensor_13 = cdp.diff_tensor.tensor[0, 2]
+    tensor_21 = cdp.diff_tensor.tensor[1, 0]
+    tensor_22 = cdp.diff_tensor.tensor[1, 1]
+    tensor_23 = cdp.diff_tensor.tensor[1, 2]
+    tensor_31 = cdp.diff_tensor.tensor[2, 0]
+    tensor_32 = cdp.diff_tensor.tensor[2, 1]
+    tensor_33 = cdp.diff_tensor.tensor[2, 2]
+
+
     # Add the diffusion tensor.
-    star.tensor.add(entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list)
+    star.tensor.add(tensor_type='diffusion', euler_type='zyz', geometric_shape=geometric_shape, tensor_symmetry=tensor_symmetry, matrix_val_units='s-1', angle_units='rad', iso_val_formula='Diso = 1/(6.tm)', aniso_val_formula='Da = Dpar - Dper', rhomb_val_formula='Dr = (Dy - Dx)/2Da', entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, axial_sym_axis_polar_angle=theta, axial_sym_axis_azimuthal_angle=phi, iso_val=Diso, aniso_val=Da, rhombic_val=Dr, euler_alpha=alpha, euler_beta=beta, euler_gamma=gamma, tensor_11=tensor_11, tensor_12=tensor_12, tensor_13=tensor_13, tensor_21=tensor_21, tensor_22=tensor_22, tensor_23=tensor_23, tensor_31=tensor_31, tensor_32=tensor_32, tensor_33=tensor_33)
+
 
 
 def copy(pipe_from=None, pipe_to=None):

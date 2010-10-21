@@ -56,6 +56,9 @@ class Bmrb:
         # Read the contents of the STAR formatted file.
         star.read()
 
+        # The diffusion tensor.
+        diffusion_tensor.bmrb_read(star)
+
         # Generate the molecule and residue containers from the entity records.
         mol_res_spin.bmrb_read(star)
 
