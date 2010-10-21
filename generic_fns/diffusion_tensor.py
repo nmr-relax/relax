@@ -37,6 +37,7 @@ from data.diff_tensor import DiffTensorData
 from generic_fns import pipes
 from generic_fns.angles import fold_spherical_angles
 from generic_fns.mol_res_spin import get_molecule_names, spin_loop
+from maths_fns.coord_transform import cartesian_to_spherical
 from maths_fns.rotation_matrix import R_to_euler_zyz
 from physical_constants import element_from_isotope, number_from_isotope
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
@@ -97,15 +98,15 @@ def bmrb_read(star):
     if xy_match and yz_match:
         shape = ['sphere']
     elif xy_match:
+        shape = ['spheroid', 'prolate spheroid']
+        type = 'prolate'
+        Dpar = Di[2]
+        Dper = Di[0]
+    elif yz_match:
         shape = ['spheroid', 'oblate spheroid']
         type = 'oblate'
         Dpar = Di[0]
-        Dper = Di[1]
-    elif yz_match:
-        shape = ['spheroid', 'prolate spheroid']
-        type = 'prolate'
-        Dper = Di[0]
-        Dpar = Di[2]
+        Dper = Di[2]
     else:
         shape = ['ellipsoid']
 
@@ -119,11 +120,19 @@ def bmrb_read(star):
     # Set the fixed flag.
     cdp.diff_tensor.fixed = True
 
-    # Set up the tensor.
+    # Sphere.
     if data['geometric_shape'] == 'sphere':
         sphere(params=Di[0], d_scale=1.0, param_types=1)
+
+    # Spheroid.
     elif data['geometric_shape'] in ['spheroid', 'oblate spheroid', 'prolate spheroid']:
-        spheroid(params=(Dpar, Dper, beta, gamma), d_scale=1.0, param_types=3, spheroid_type=type)
+        # The spherical angles.
+        r, theta, phi = cartesian_to_spherical(R[:, 2])
+
+        # Set up the tensor.
+        spheroid(params=(Dpar, Dper, theta, phi), d_scale=1.0, param_types=3, spheroid_type=type)
+
+    # Ellipsoid.
     elif data['geometric_shape'] == 'ellipsoid':
         ellipsoid(params=(Di[0], Di[1], Di[2], alpha, beta, gamma), d_scale=1.0, param_types=3)
 
@@ -693,7 +702,7 @@ def fold_angles(sim_index=None):
         if sim_index == None:
             # Fold phi inside 0 and pi.
             if cdp.diff_tensor.phi >= pi:
-                theta, phi = fold_spherical_angles(cdp.diff_tensor.theta, cdp.diff_tensor.theta)
+                theta, phi = fold_spherical_angles(cdp.diff_tensor.theta, cdp.diff_tensor.phi)
                 cdp.diff_tensor.theta = theta
                 cdp.diff_tensor.phi = phi
 
@@ -1755,9 +1764,6 @@ def tensor_eigen_system(tensor):
     # Switch from the left handed to right handed universes (if needed).
     if norm(cross(R_new[:, 0], R_new[:, 1]) - R_new[:, 2]) > 1e-7:
         R_new[:, 2] = -R_new[:, 2]
-    
-    # Reverse the rotation.
-    R_new = transpose(R_new)
 
     # Euler angles (reverse rotation in the rotated axis system).
     gamma, beta, alpha = R_to_euler_zyz(R_new)
@@ -1774,7 +1780,7 @@ def tensor_eigen_system(tensor):
         beta = beta - pi
 
     # Return the values.
-    return Di, R_new, alpha, beta, gamma
+    return Di_sort, R_new, alpha, beta, gamma
 
 
 def test_params(num_params):
