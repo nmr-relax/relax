@@ -80,7 +80,21 @@ def bmrb_write_citations(star):
     # Loop over the citations.
     if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'citations'):
         for citations in cdp.exp_info.citations:
-            star.citations.add(citation_label=citations.cite_id, authors=citations.authors, doi=citations.doi, pubmed_id=citations.pubmed_id, full_citation=citations.full_citation, title=citations.title, status=citations.status, type=citations.type, journal_abbrev=citations.journal_abbrev, journal_full=citations.journal_full, volume=citations.volume, issue=citations.issue, page_first=citations.page_first, page_last=citations.page_last, year=citations.year)
+            # Rearrange the author list.
+            author_given_name = []
+            author_family_name = []
+            author_first_init = []
+            author_mid_init = []
+            author_family_title = []
+            for i in range(len(citations.authors)):
+                author_given_name.append(citations.authors[i][0])
+                author_family_name.append(citations.authors[i][1])
+                author_first_init.append(citations.authors[i][2])
+                author_mid_init.append(citations.authors[i][3])
+                author_family_title.append(None)
+
+            # Add the citation.
+            star.citations.add(citation_label=citations.cite_id, author_given_name=author_given_name, author_family_name=author_family_name, author_first_init=author_first_init, author_mid_init=author_mid_init, author_family_title=author_family_title, doi=citations.doi, pubmed_id=citations.pubmed_id, full_citation=citations.full_citation, title=citations.title, status=citations.status, type=citations.type, journal_abbrev=citations.journal_abbrev, journal_full=citations.journal_full, volume=citations.volume, issue=citations.issue, page_first=citations.page_first, page_last=citations.page_last, year=citations.year)
 
 
 def bmrb_write_methods(star):
