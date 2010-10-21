@@ -495,10 +495,10 @@ def bmrb_read(star):
     """
 
     # Get the entities.
-    for mol_name, mol_type, res_nums, res_names in star.entity.loop():
+    for data in star.entity.loop():
         # Add the residues.
-        for i in range(len(res_nums)):
-            create_residue(res_nums[i], res_names[i], mol_name=mol_name)
+        for i in range(len(data['res_nums'])):
+            create_residue(data['res_nums'][i], data['res_names'][i], mol_name=data['mol_name'])
 
 
 def bmrb_write_entity(star, version=None):
