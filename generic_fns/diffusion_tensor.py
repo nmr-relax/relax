@@ -53,6 +53,10 @@ def bmrb_read(star):
     # Get the diffusion tensor data.
     found = 0
     for data in star.tensor.loop():
+        # No data.
+        if data == None:
+            continue
+
         # Not a diffusion tensor.
         if data['tensor_type'] != 'diffusion':
             continue
