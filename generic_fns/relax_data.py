@@ -220,19 +220,20 @@ def bmrb_read(star):
     """
 
     # Get the relaxation data.
-    for data_type, frq, entity_ids, res_nums, res_names, spin_names, val, err in star.relaxation.loop():
+    for data in star.relaxation.loop():
         # Create the labels.
-        ri_label = data_type
-        frq_label = str(int(frq*1e-6))
+        ri_label = data['data_type']
+        frq = float(data['frq']) * 1e6
+        frq_label = str(int(float(data['frq'])))
 
         # Convert entity IDs to molecule names.
         mol_names = []
         names = get_molecule_names()
-        for id in entity_ids:
+        for id in data['entity_ids']:
             mol_names.append(names[int(id)-1])
 
         # Pack the data.
-        pack_data(ri_label, frq_label, frq, val, err, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
+        pack_data(ri_label, frq_label, frq, data['data'], data['errors'], res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
 
 
 
