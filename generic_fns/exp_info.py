@@ -115,8 +115,11 @@ def bmrb_write_methods(star):
                 for cite in script.cite_ids:
                     cite_id_nums.append(cdp.exp_info.get_cite_id_num(cite))
 
+            # The name.
+            name = script.file + " relax script"
+
             # The method info.
-            star.method.add(name=script.file, details=None, cite_ids=cite_id_nums, file_name=script.file, file_text=script.text)
+            star.method.add(name=name, details=None, cite_ids=cite_id_nums, file_name=script.file, file_text=script.text)
 
 
 def bmrb_write_software(star):
