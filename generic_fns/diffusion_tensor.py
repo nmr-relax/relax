@@ -595,7 +595,7 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
         Di, R, alpha, beta, gamma = tensor_eigen_system(tensor)
 
         # Set the parameters.
-        set(value=[Di_sort[0], Di_sort[1], Di_sort[2]], param=['Dx', 'Dy', 'Dz'])
+        set(value=[Di[0], Di[1], Di[2]], param=['Dx', 'Dy', 'Dz'])
 
         # Change the angular units.
         angle_units = 'rad'
