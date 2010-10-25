@@ -40,6 +40,139 @@ from relax_errors import RelaxError
 class Bmrb:
     """Class containing methods related to BMRB STAR file reading and writing."""
 
+    def _bmrb_model_map(self, model_name=None, bmrb_name=None):
+        """The model-free model name to BMRB name mapping.
+
+        @return:    Either the bmrb_name or model_name corresponding to the given model_name or bmrb_name respectively.  Both args cannot be given.
+        @rtype:     str
+        """
+
+        # Check.
+        if model_name != None and bmrb_name != None:
+            raise RelaxError, "Either the model_name or bmrb_name args can be supplied, but not both together."
+
+        # The relax to BMRB model-free model name map.
+        map = {'m0':  '',
+               'm1':  'S2',
+               'm2':  'S2, te',
+               'm3':  'S2, Rex',
+               'm4':  'S2, te, Rex',
+               'm5':  'S2f, S2, ts',
+               'm6':  'S2f, tf, S2, ts',
+               'm7':  'S2f, S2, ts, Rex',
+               'm8':  'S2f, tf, S2, ts, Rex',
+               'm9':  'Rex',
+               'tm0': 'tm',
+               'tm1': 'tm, S2',
+               'tm2': 'tm, S2, te',
+               'tm3': 'tm, S2, Rex',
+               'tm4': 'tm, S2, te, Rex',
+               'tm5': 'tm, S2f, S2, ts',
+               'tm6': 'tm, S2f, tf, S2, ts',
+               'tm7': 'tm, S2f, S2, ts, Rex',
+               'tm8': 'tm, S2f, tf, S2, ts, Rex',
+               'tm9': 'tm, Rex'
+        }
+
+        # Indicies.
+        if model_name:
+            search_text = model_name
+            search_index = 0
+            return_index = 1
+        else:
+            search_text = bmrb_name
+            search_index = 1
+            return_index = 0
+
+        # Loop over the dictionary.
+        for item in map.items():
+            if item[search_index] == search_text:
+                return item[return_index]
+
+        # Should not be here!
+        if model_name:
+            raise RelaxError("The model-free model '%s' is unknown.")
+        else:
+            warn(RelaxWarning("The BMRB model-free model name '%s' is unknown."))
+
+
+    def _sf_model_free_read(self, star):
+        """Fill the spin containers with the model-free data from the saveframe records.
+
+        @param star:    The NMR-STAR dictionary object.
+        @type star:     NMR_STAR instance
+        """
+
+        # Init the list of model-free parameters.
+        mf_params = ['local_tm', 's2', 's2f', 's2s', 'te', 'tf', 'ts', 'rex', 'chi2']
+
+        # Get the entities.
+        for data in star.model_free.loop():
+            # Store the keys.
+            keys = data.keys()
+
+            # Global data.
+            if 'global_chi2' in keys:
+                setattr(cdp, 'chi2', data['global_chi2'])
+
+            # Loop over the spins.
+            for i in range(len(data['data_ids'])):
+                # Generate a spin ID.
+                spin_id = mol_res_spin.generate_spin_id(res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
+
+                # Obtain the spin.
+                spin = mol_res_spin.return_spin(spin_id)
+
+                # Loop over and set the model-free parameters.
+                for param in mf_params:
+                    # Set the parameter.
+                    if param in keys:
+                        setattr(spin, param, data[param][i])
+
+                    # Set the error.
+                    param_err = param + '_err'
+                    if param_err in keys:
+                        setattr(spin, param_err, data[param_err][i])
+
+                # The model.
+                model = self._bmrb_model_map(bmrb_name=data['model_fit'][i])
+                setattr(spin, 'model', model)
+
+                # The equation and parameters.
+                equation, params = self._model_map(model)
+                setattr(spin, 'equation', equation)
+                setattr(spin, 'params', params)
+
+                # The element.
+                if'atom_types' in keys:
+                    setattr(spin, 'element', data['atom_types'][i])
+
+                # Heteronucleus type.
+                if'atom_types' in keys and 'isotope' in keys:
+                    setattr(spin, 'heteronuc_type', str(data['isotope'][i]) + data['atom_types'][i])
+
+
+    def _sf_csa_read(self, star):
+        """Place the CSA data from the saveframe records into the spin container.
+
+        @param star:    The NMR-STAR dictionary object.
+        @type star:     NMR_STAR instance
+        """
+
+        # Get the entities.
+        for data in star.chem_shift_anisotropy.loop():
+            # Loop over the spins.
+            for i in range(len(data['data_ids'])):
+                # Generate a spin ID.
+                spin_id = mol_res_spin.generate_spin_id(res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
+
+                # Obtain the spin.
+                spin = mol_res_spin.return_spin(spin_id)
+
+                # The CSA value (converted from ppm).
+                setattr(spin, 'csa', data['csa'][i] * 1e-6)
+
+
     def bmrb_read(self, file_path, version='3.1'):
         """Read the model-free results from a BMRB NMR-STAR v3.1 formatted file.
 
@@ -64,6 +197,12 @@ class Bmrb:
 
         # Read the relaxation data saveframes.
         relax_data.bmrb_read(star)
+
+        # Read the model-free data saveframes.
+        self._sf_model_free_read(star)
+
+        # Read the CSA data saveframes.
+        self._sf_csa_read(star)
 
 
     def bmrb_write(self, file_path, version=None):
@@ -91,29 +230,6 @@ class Bmrb:
 
         # Rex frq.
         rex_frq = cdp.frq[0]
-
-        # The relax to BMRB model-free model name map.
-        model_map = {'m0':  '',
-                     'm1':  'S2',
-                     'm2':  'S2, te',
-                     'm3':  'S2, Rex',
-                     'm4':  'S2, te, Rex',
-                     'm5':  'S2f, S2, ts',
-                     'm6':  'S2f, tf, S2, ts',
-                     'm7':  'S2f, S2, ts, Rex',
-                     'm8':  'S2f, tf, S2, ts, Rex',
-                     'm9':  'Rex',
-                     'tm0': 'tm',
-                     'tm1': 'tm, S2',
-                     'tm2': 'tm, S2, te',
-                     'tm3': 'tm, S2, Rex',
-                     'tm4': 'tm, S2, te, Rex',
-                     'tm5': 'tm, S2f, S2, ts',
-                     'tm6': 'tm, S2f, tf, S2, ts',
-                     'tm7': 'tm, S2f, S2, ts, Rex',
-                     'tm8': 'tm, S2f, tf, S2, ts, Rex',
-                     'tm9': 'tm, Rex'
-        }
 
         # Initialise the spin specific data lists.
         mol_name_list = []
@@ -223,7 +339,7 @@ class Bmrb:
             chi2_list.append(spin.chi2)
 
             # Model-free model.
-            model_list.append(model_map[spin.model])
+            model_list.append(self._bmrb_model_map(model_name=spin.model))
 
         # Convert the molecule names into the entity IDs.
         entity_ids = zeros(len(mol_name_list), int32)
