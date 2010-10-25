@@ -64,7 +64,7 @@ class Bmrb(SystemTestCase):
         print("\n\nComparing data pipe contents:")
 
         # Blacklists (data that is not restored, and relaxation data which has been reordered).
-        blacklist_spin = ['name'] + ['attached_proton', 'element', 'equation', 'fixed', 'heteronuc_type', 'nucleus', 'proton_type', 'relax_sim_data', 'select', 'xh_vect'] + ['local_tm', 'local_tm_err', 'model', 'params', 'rex', 'rex_err', 's2', 's2_err', 's2f', 's2f_err', 's2s', 's2s_err', 'te', 'te_err', 'tf', 'tf_err', 'ts', 'ts_err'] + ['r', 'r_err', 'csa', 'csa_err'] + ['chi2', 'chi2_sim', 'f_count', 'g_count', 'h_count', 'iter', 'warning'] + ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels', 'relax_data', 'relax_error']
+        blacklist_spin = ['attached_proton', 'fixed', 'nucleus', 'proton_type', 'relax_sim_data', 'select', 'xh_vect'] + ['r', 'r_err', 'csa_err'] + ['chi2_sim', 'f_count', 'g_count', 'h_count', 'iter', 'warning'] + ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels', 'relax_data', 'relax_error']
         blacklist_diff = []
         blacklist_global = ['diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'sim_number', 'sim_state'] + ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels']
 
