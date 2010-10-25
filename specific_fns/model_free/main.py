@@ -761,121 +761,14 @@ class Model_free_main:
             return 'all'
 
 
-    def _model_setup(self, model=None, equation=None, params=None, spin_id=None):
-        """Function for updating various data structures depending on the model selected.
+    def _model_map(self, model):
+        """Return the equation name and parameter list corresponding to the given model.
 
-        @param model:       The name of the model.
-        @type model:        str
-        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the
-                            original model-free equations with parameters {S2, te}; 'mf_ext' for the
-                            extended model-free equations with parameters {S2f, tf, S2, ts}; and
-                            'mf_ext2' for the extended model-free equations with parameters {S2f,
-                            tf, S2s, ts}.
-        @type equation:     str
-        @param params:      A list of the parameters to include in the model.  The allowed parameter
-                            names includes those for the equation type as well as chemical exchange
-                            'Rex', the bond length 'r', and the chemical shift anisotropy 'CSA'.
-        @type params:       list of str
-        @param spin_id:     The spin identification string.
-        @type spin_id:      str
-        """
-
-        # Test that no diffusion tensor exists if local tm is a parameter in the model.
-        for param in params:
-            if param == 'local_tm' and hasattr(pipes.get_pipe(), 'diff_tensor'):
-                raise RelaxTensorError('diffusion')
-
-        # Loop over the sequence.
-        for spin in spin_loop(spin_id):
-            # Initialise the data structures (if needed).
-            self.data_init(spin)
-
-            # Model-free model, equation, and parameter types.
-            spin.model = model
-            spin.equation = equation
-            spin.params = params
-
-
-    def _remove_tm(self, spin_id=None):
-        """Remove local tm from the set of model-free parameters for the given spins.
-
-        @param spin_id: The spin identification string.
-        @type spin_id:  str or None
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is 'mf'.
-        function_type = pipes.get_type()
-        if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Loop over the spins.
-        for spin in spin_loop(spin_id):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Test if a local tm parameter exists.
-            if not hasattr(spin, 'params') or not 'local_tm' in spin.params:
-                continue
-
-            # Remove tm.
-            spin.params.remove('local_tm')
-
-            # Model name.
-            if match('^tm', spin.model):
-                spin.model = spin.model[1:]
-
-            # Delete the local tm variable.
-            del spin.local_tm
-
-            # Set all the minimisation stats to None.
-            spin.chi2 = None
-            spin.iter = None
-            spin.f_count = None
-            spin.g_count = None
-            spin.h_count = None
-            spin.warning = None
-
-        # Set the global minimisation stats to None.
-        cdp.chi2 = None
-        cdp.iter = None
-        cdp.f_count = None
-        cdp.g_count = None
-        cdp.h_count = None
-        cdp.warning = None
-
-
-    def _select_model(self, model=None, spin_id=None):
-        """Function for the selection of a preset model-free model.
-
-        @param model:   The name of the model.
+        @param model:   The model-free model.
         @type model:    str
-        @param spin_id: The spin identification string.
-        @type spin_id:  str
+        @return:        The equation type (either 'mf_orig' or 'mf_ext') and the model-free parameter list corresponding to the model.
+        @rtype:         str, list
         """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is 'mf'.
-        function_type = pipes.get_type()
-        if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-
-        # Preset models.
-        ################
 
         # Block 1.
         if model == 'm0':
@@ -1140,6 +1033,125 @@ class Model_free_main:
         # Invalid model.
         else:
             raise RelaxError("The model '" + model + "' is invalid.")
+
+        # Return the values.
+        return equation, params
+
+
+    def _model_setup(self, model=None, equation=None, params=None, spin_id=None):
+        """Function for updating various data structures depending on the model selected.
+
+        @param model:       The name of the model.
+        @type model:        str
+        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the
+                            original model-free equations with parameters {S2, te}; 'mf_ext' for the
+                            extended model-free equations with parameters {S2f, tf, S2, ts}; and
+                            'mf_ext2' for the extended model-free equations with parameters {S2f,
+                            tf, S2s, ts}.
+        @type equation:     str
+        @param params:      A list of the parameters to include in the model.  The allowed parameter
+                            names includes those for the equation type as well as chemical exchange
+                            'Rex', the bond length 'r', and the chemical shift anisotropy 'CSA'.
+        @type params:       list of str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        """
+
+        # Test that no diffusion tensor exists if local tm is a parameter in the model.
+        for param in params:
+            if param == 'local_tm' and hasattr(pipes.get_pipe(), 'diff_tensor'):
+                raise RelaxTensorError('diffusion')
+
+        # Loop over the sequence.
+        for spin in spin_loop(spin_id):
+            # Initialise the data structures (if needed).
+            self.data_init(spin)
+
+            # Model-free model, equation, and parameter types.
+            spin.model = model
+            spin.equation = equation
+            spin.params = params
+
+
+    def _remove_tm(self, spin_id=None):
+        """Remove local tm from the set of model-free parameters for the given spins.
+
+        @param spin_id: The spin identification string.
+        @type spin_id:  str or None
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is 'mf'.
+        function_type = pipes.get_type()
+        if function_type != 'mf':
+            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Loop over the spins.
+        for spin in spin_loop(spin_id):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Test if a local tm parameter exists.
+            if not hasattr(spin, 'params') or not 'local_tm' in spin.params:
+                continue
+
+            # Remove tm.
+            spin.params.remove('local_tm')
+
+            # Model name.
+            if match('^tm', spin.model):
+                spin.model = spin.model[1:]
+
+            # Delete the local tm variable.
+            del spin.local_tm
+
+            # Set all the minimisation stats to None.
+            spin.chi2 = None
+            spin.iter = None
+            spin.f_count = None
+            spin.g_count = None
+            spin.h_count = None
+            spin.warning = None
+
+        # Set the global minimisation stats to None.
+        cdp.chi2 = None
+        cdp.iter = None
+        cdp.f_count = None
+        cdp.g_count = None
+        cdp.h_count = None
+        cdp.warning = None
+
+
+    def _select_model(self, model=None, spin_id=None):
+        """Function for the selection of a preset model-free model.
+
+        @param model:   The name of the model.
+        @type model:    str
+        @param spin_id: The spin identification string.
+        @type spin_id:  str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is 'mf'.
+        function_type = pipes.get_type()
+        if function_type != 'mf':
+            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Obtain the model info.
+        equation, params = self._model_map(model)
 
         # Set up the model.
         self._model_setup(model, equation, params, spin_id)
