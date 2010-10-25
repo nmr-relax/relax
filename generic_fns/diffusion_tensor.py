@@ -1769,6 +1769,9 @@ def tensor_eigen_system(tensor):
     if norm(cross(R_new[:, 0], R_new[:, 1]) - R_new[:, 2]) > 1e-7:
         R_new[:, 2] = -R_new[:, 2]
 
+    # Reverse the rotation.
+    R_new = transpose(R_new)
+
     # Euler angles (reverse rotation in the rotated axis system).
     gamma, beta, alpha = R_to_euler_zyz(R_new)
 
