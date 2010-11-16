@@ -480,9 +480,14 @@ def calc_tensor_diag(diff_type, *args):
         tensor = zeros((3, 3), float64)
 
         # Populate the diagonal elements.
-        tensor[0, 0] = Dper
-        tensor[1, 1] = Dper
-        tensor[2, 2] = Dpar
+        if Dpar > Dper:
+            tensor[0, 0] = Dper
+            tensor[1, 1] = Dper
+            tensor[2, 2] = Dpar
+        else:
+            tensor[0, 0] = Dpar
+            tensor[1, 1] = Dper
+            tensor[2, 2] = Dper
 
         # Return the tensor.
         return tensor
