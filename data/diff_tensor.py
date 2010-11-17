@@ -682,7 +682,7 @@ class DiffTensorData(Element):
                 dep_obj = getattr(self, dep_name)
 
                 # The diffusion tensor type.
-                if dep_name == 'type':
+                if dep_name in ['type', 'spheroid_type']:
                     deps = deps+(dep_obj,)
                     continue
 
@@ -742,7 +742,7 @@ class DiffTensorData(Element):
                 dep_obj = getattr(self, dep_name)
 
                 # The diffusion tensor type.
-                if dep_name == 'type':
+                if dep_name in ['type', 'spheroid_type']:
                     deps = deps+(dep_obj,)
                     continue
 
@@ -860,7 +860,7 @@ class DiffTensorData(Element):
             deps = []
             for dep_name in depends:
                 # Modify the dependency name.
-                if dep_name != 'type':
+                if dep_name not in ['type', 'spheroid_type']:
                     dep_name = dep_name+'_sim'
 
                 # Test if the MC sim object exists.
