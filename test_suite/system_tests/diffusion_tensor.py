@@ -720,7 +720,6 @@ class Diffusion_tensor(SystemTestCase):
 
         # Check the spheroid.
         self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
-        asdf
 
 
     def test_opt_ellipsoid(self):
