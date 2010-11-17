@@ -24,11 +24,13 @@
 from copy import deepcopy
 from re import search
 from math import cos, sin
-from numpy import float64, dot, identity, transpose, zeros
+from numpy import array, float64, dot, identity, transpose, zeros
 from types import ListType
 
 # relax module imports.
 from data_classes import Element
+from maths_fns.coord_transform import spherical_to_cartesian
+from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError
 from relax_xml import fill_object_contents, xml_to_object
 
@@ -295,8 +297,7 @@ def calc_rotation(diff_type, *args):
     Spherical diffusion
     ===================
 
-    As the orientation of the diffusion tensor within the structural frame is undefined when the
-    molecule diffuses as a sphere, the rotation matrix is simply the identity matrix::
+    As the orientation of the diffusion tensor within the structural frame is undefined when the molecule diffuses as a sphere, the rotation matrix is simply the identity matrix::
 
               | 1  0  0 |
         R  =  | 0  1  0 |.
@@ -306,19 +307,13 @@ def calc_rotation(diff_type, *args):
     Spheroidal diffusion
     ====================
 
-    The rotation matrix required to shift from the diffusion tensor frame to the structural
-    frame is equal to::
-
-              |  cos(theta) * cos(phi)  -sin(phi)   sin(theta) * cos(phi) |
-        R  =  |  cos(theta) * sin(phi)   cos(phi)   sin(theta) * sin(phi) |.
-              | -sin(theta)              0          cos(theta)            |
+    The rotation matrix required to shift from the diffusion tensor frame to the structural frame is generated from the unique axis of the diffusion tensor.
 
 
     Ellipsoidal diffusion
     =====================
 
-    The rotation matrix required to shift from the diffusion tensor frame to the structural
-    frame is equal to::
+    The rotation matrix required to shift from the diffusion tensor frame to the structural frame is equal to::
 
         R  =  | Dx_unit  Dy_unit  Dz_unit |,
 
@@ -351,25 +346,29 @@ def calc_rotation(diff_type, *args):
     # The rotation matrix for the spheroid.
     elif diff_type == 'spheroid':
         # Unpack the arguments.
-        theta, phi, Dpar_unit = args
+        spheroid_type, theta, phi, Dpar_unit = args
 
         # Initialise the rotation matrix.
-        rotation = identity(3, float64)
+        R = zeros((3, 3), float64)
 
-        # First row of the rotation matrix.
-        rotation[0, 0] = cos(theta) * cos(phi)
-        rotation[1, 0] = cos(theta) * sin(phi)
-        rotation[2, 0] = -sin(theta)
+        # The unique axis in the diffusion frame.
+        if spheroid_type == 'prolate':
+            axis = array([0, 0, 1], float64)
+        else:
+            axis = array([1, 0, 0], float64)
 
-        # Second row of the rotation matrix.
-        rotation[0, 1] = -sin(phi)
-        rotation[1, 1] = cos(phi)
+        # The spherical coordinate vector.
+        spher_vect = array([1, theta, phi], float64)
 
-        # Replace the last row of the rotation matrix with the Dpar unit vector.
-        rotation[:, 2] = Dpar_unit
+        # The diffusion tensor axis in the PDB frame.
+        diff_axis = zeros(3, float64)
+        spherical_to_cartesian(spher_vect, diff_axis)
 
-        # Return the tensor.
-        return rotation
+        # The rotation matrix.
+        two_vect_to_R(diff_axis, axis, R)
+
+        # Return the rotation.
+        return R
 
     # The rotation matrix for the ellipsoid.
     elif diff_type == 'ellipsoid':
@@ -536,7 +535,7 @@ def dependency_generator(diff_type):
         yield ('Dratio',        ['tm', 'Da'],                   ['Dpar', 'Dper'])
         yield ('Dpar_unit',     ['theta', 'phi'],               ['theta', 'phi'])
         yield ('tensor_diag',   ['tm', 'Da'],                   ['type', 'Dpar', 'Dper'])
-        yield ('rotation',      ['theta', 'phi'],               ['type', 'theta', 'phi', 'Dpar_unit'])
+        yield ('rotation',      ['theta', 'phi'],               ['type', 'spheroid_type', 'theta', 'phi', 'Dpar_unit'])
         yield ('tensor',        ['tm', 'Da', 'theta', 'phi'],   ['rotation', 'tensor_diag'])
 
     # Ellipsoidal diffusion.
