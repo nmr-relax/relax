@@ -23,7 +23,7 @@
 # Python module imports.
 import __main__
 from math import pi
-from numpy import array, float64, transpose, zeros
+from numpy import array, dot, float64, transpose, zeros
 from os import sep
 import sys
 
@@ -33,7 +33,8 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.diff_tensor import DiffTensorSimList
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import get_pipe
-from maths_fns.rotation_matrix import euler_to_R_zyz
+from maths_fns.coord_transform import spherical_to_cartesian
+from maths_fns.rotation_matrix import axis_angle_to_R, euler_to_R_zyz, two_vect_to_R
 from relax_io import delete
 from tempfile import mktemp
 
@@ -186,7 +187,7 @@ class Diffusion_tensor(SystemTestCase):
                 self.assertAlmostEqual(cdp.diff_tensor.rotation[i, j], R[i, j])
 
 
-    def check_spheroid(self, tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime):
+    def check_spheroid(self, tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R):
         """Check if the spheroid in the cdp has the same values as given."""
 
         # Print outs.
@@ -195,6 +196,8 @@ class Diffusion_tensor(SystemTestCase):
         print("\nThe tensor in relax:\n%s" % cdp.diff_tensor.tensor)
         print("\nThe real tensor (in eig frame):\n%s" % D_prime)
         print("\nThe tensor in relax (in eig frame):\n%s" % cdp.diff_tensor.tensor_diag)
+        print("\nThe real rotation matrix:\n%s" % R)
+        print("\nThe rotation matrix in relax:\n%s" % cdp.diff_tensor.rotation)
 
         # Check the Euler angles.
         self.assertAlmostEqual(tm * 1e8, cdp.diff_tensor.tm * 1e8)
@@ -206,11 +209,24 @@ class Diffusion_tensor(SystemTestCase):
         self.assertAlmostEqual(theta, cdp.diff_tensor.theta)
         self.assertAlmostEqual(phi, cdp.diff_tensor.phi)
 
-        # Check the elements.
+        # Check the diagonalised tensor.
         for i in range(3):
             for j in range(3):
-                self.assertAlmostEqual(cdp.diff_tensor.tensor[i, j] * 1e-7, D[i, j] * 1e-7)
                 self.assertAlmostEqual(cdp.diff_tensor.tensor_diag[i, j] * 1e-7, D_prime[i, j] * 1e-7)
+
+        # Check the orientation.
+        vects = []
+        vects.append([1, 0, 0])
+        vects.append([0, 1, 0])
+        vects.append([0, 0, 1])
+        vects = array(vects)
+        for vect in vects:
+            # The projections.
+            proj1 = dot(vect,dot(cdp.diff_tensor.tensor, vect)) 
+            proj2 = dot(vect,dot(D, vect)) 
+
+            # Compare projections.
+            self.assertAlmostEqual(proj1, proj2)
 
 
     def get_ellipsoid(self):
@@ -259,9 +275,13 @@ class Diffusion_tensor(SystemTestCase):
         phi = 1.0
 
         # The actual tensor in the PDB frame.
-        D = array([[ 34830650.53276667,  11295234.65303453,    880899.67391431],
-                   [ 11295234.65303453,  15319462.01822666,  -1924800.90303685],
-                   [   880899.67391431,  -1924800.90303685,  39849887.44900668]], float64)
+        R = zeros((3, 3), float64)
+        x_axis = array([1, 0, 0], float64)
+        spher_vect = array([1, theta, phi], float64)
+        diff_axis = zeros(3, float64)
+        D = zeros((3, 3), float64)
+        spherical_to_cartesian(spher_vect, diff_axis)
+        two_vect_to_R(diff_axis, x_axis, R)
 
         # The tensor in the eigenframe.
         D_prime = zeros((3, 3), float64)
@@ -269,8 +289,15 @@ class Diffusion_tensor(SystemTestCase):
         D_prime[1, 1] = Dper
         D_prime[2, 2] = Dper
 
+        # The tensor in the PDB frame.
+        D = dot(transpose(R), dot(D_prime, R))
+
+        # Rotate a little about the unique axis!
+        axis_angle_to_R(diff_axis, 0.3, R)
+        D = dot(transpose(R), dot(D, R))
+
         # Return the data.
-        return 1.0/(6.0*Diso), Dpar, Dper, Diso, Da, Dpar/Dper, theta, phi, D, D_prime
+        return 1.0/(6.0*Diso), Dpar, Dper, Diso, Da, Dpar/Dper, theta, phi, D, D_prime, R
 
 
     def test_back_calc_ellipsoid(self):
@@ -557,7 +584,7 @@ class Diffusion_tensor(SystemTestCase):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 4."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime = self.get_spheroid()
+        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -579,19 +606,31 @@ class Diffusion_tensor(SystemTestCase):
         self.assertAlmostEqual(Dper * 1e-7, cdp.diff_tensor.Dz * 1e-7)
         self.assertAlmostEqual(Diso * 1e-7, cdp.diff_tensor.Diso * 1e-7)
 
-        # Check the elements.
+        # Check the diagonalised tensor.
         for i in range(3):
             for j in range(3):
-                self.assert_(abs(cdp.diff_tensor.tensor[i, j] - D[i, j]) < 3e5)
-                print cdp.diff_tensor.tensor[i, j] - D[i, j]
                 self.assertAlmostEqual(cdp.diff_tensor.tensor_diag[i, j] * 1e-7, D_prime[i, j] * 1e-7)
+
+        # Check the orientation.
+        vects = []
+        vects.append([1, 0, 0])
+        vects.append([0, 1, 0])
+        vects.append([0, 0, 1])
+        vects = array(vects)
+        for vect in vects:
+            # The projections.
+            proj1 = dot(vect,dot(cdp.diff_tensor.tensor, vect)) 
+            proj2 = dot(vect,dot(D, vect)) 
+
+            # Compare projections.
+            self.assertAlmostEqual(proj1, proj2)
 
 
     def test_init_spheroid_param_types_0(self):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 0."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime = self.get_spheroid()
+        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -600,14 +639,14 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((tm, Da, theta, phi), param_types=0, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
 
 
     def test_init_spheroid_param_types_1(self):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 1."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime = self.get_spheroid()
+        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -616,14 +655,14 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Da, theta, phi), param_types=1, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
 
 
     def test_init_spheroid_param_types_1_deg(self):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 1, and angles in deg."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime = self.get_spheroid()
+        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -632,14 +671,14 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Da, theta/2.0/pi*360.0, phi/2.0/pi*360.0), param_types=1, angle_units='deg')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
 
 
     def test_init_spheroid_param_types_2(self):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 2."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime = self.get_spheroid()
+        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -648,14 +687,14 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((tm, Dratio, theta, phi), param_types=2, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
 
 
     def test_init_spheroid_param_types_3(self):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 3."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime = self.get_spheroid()
+        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -664,14 +703,14 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Dpar, Dper, theta, phi), param_types=3, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
 
 
     def test_init_spheroid_param_types_4(self):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 4."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime = self.get_spheroid()
+        tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -680,7 +719,8 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Dratio, theta, phi), param_types=4, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        asdf
 
 
     def test_opt_ellipsoid(self):
