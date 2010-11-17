@@ -327,8 +327,6 @@ def calc_rotation(diff_type, *args):
     @type theta:        float
     @param phi:         The polar angle in radians.
     @type phi:          float
-    @param Dpar_unit:   The Dpar unit vector.
-    @type Dpar_unit:    numpy array
     @param Dx_unit:     The Dx unit vector.
     @type Dx_unit:      numpy array
     @param Dy_unit:     The Dy unit vector.
@@ -346,7 +344,7 @@ def calc_rotation(diff_type, *args):
     # The rotation matrix for the spheroid.
     elif diff_type == 'spheroid':
         # Unpack the arguments.
-        spheroid_type, theta, phi, Dpar_unit = args
+        spheroid_type, theta, phi = args
 
         # Initialise the rotation matrix.
         R = zeros((3, 3), float64)
@@ -535,7 +533,7 @@ def dependency_generator(diff_type):
         yield ('Dratio',        ['tm', 'Da'],                   ['Dpar', 'Dper'])
         yield ('Dpar_unit',     ['theta', 'phi'],               ['theta', 'phi'])
         yield ('tensor_diag',   ['tm', 'Da'],                   ['type', 'Dpar', 'Dper'])
-        yield ('rotation',      ['theta', 'phi'],               ['type', 'spheroid_type', 'theta', 'phi', 'Dpar_unit'])
+        yield ('rotation',      ['theta', 'phi'],               ['type', 'spheroid_type', 'theta', 'phi'])
         yield ('tensor',        ['tm', 'Da', 'theta', 'phi'],   ['rotation', 'tensor_diag'])
 
     # Ellipsoidal diffusion.
