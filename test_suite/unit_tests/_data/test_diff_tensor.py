@@ -46,9 +46,14 @@ class Test_diff_tensor(TestCase):
         Dpar_unit = array([sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)])
 
         # Matrices.
-        tensor_diag = array([[ Dper,  0.0,  0.0],
-                             [  0.0, Dper,  0.0],
-                             [  0.0,  0.0, Dpar]])
+        if Dpar > Dper:
+            tensor_diag = array([[ Dper,  0.0,  0.0],
+                                 [  0.0, Dper,  0.0],
+                                 [  0.0,  0.0, Dpar]])
+        else:
+            tensor_diag = array([[ Dpar,  0.0,  0.0],
+                                 [  0.0, Dper,  0.0],
+                                 [  0.0,  0.0, Dper]])
         rotation = array([[ cos(theta) * cos(phi), -sin(phi), sin(theta) * cos(phi) ],
                           [ cos(theta) * sin(phi),  cos(phi), sin(theta) * sin(phi) ],
                           [           -sin(theta),       0.0,            cos(theta) ]])
