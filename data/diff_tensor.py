@@ -670,7 +670,7 @@ class DiffTensorData(Element):
             deps = ()
             for dep_name in depends:
                 # Modify the dependency name.
-                if dep_name != 'type':
+                if dep_name not in ['type', 'spheroid_type']:
                     dep_name = dep_name+'_sim'
 
                 # Test if the MC sim object exists.
