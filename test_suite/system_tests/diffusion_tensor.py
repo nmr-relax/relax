@@ -273,10 +273,12 @@ class Diffusion_tensor(SystemTestCase):
         Dratio = Dpar / Dper
 
         # The eigenvalues and unique axis in the eigenframe.
-        Dx = Dpar
-        Dy = Dper
-        Dz = Dper
-        axis = array([1, 0, 0], float64)
+        if Dpar > Dper:
+            Dx, Dy, Dz = Dper, Dper, Dpar
+            axis = array([0, 0, 1], float64)
+        else:
+            Dx, Dy, Dz = Dpar, Dper, Dper
+            axis = array([1, 0, 0], float64)
 
         # The actual tensor in the PDB frame.
         R = zeros((3, 3), float64)
@@ -295,8 +297,9 @@ class Diffusion_tensor(SystemTestCase):
         D = dot(transpose(R), dot(D_prime, R))
 
         # Rotate a little about the unique axis!
-        axis_angle_to_R(diff_axis, 0.3, R)
-        D = dot(transpose(R), dot(D, R))
+        twist = zeros((3, 3), float64)
+        axis_angle_to_R(diff_axis, 0.3, twist)
+        D = dot(transpose(twist), dot(D, twist))
 
         # Return the data.
         return tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R
@@ -629,8 +632,8 @@ class Diffusion_tensor(SystemTestCase):
             self.assertAlmostEqual(proj1, proj2)
 
 
-    def test_init_spheroid_param_types_0(self):
-        """Test the initialisation of the spheroid diffusion tensor using parameter set 0."""
+    def test_init_oblate_spheroid_param_types_0(self):
+        """Test the initialisation of the oblate spheroid diffusion tensor using parameter set 0."""
 
         # Get the spheroid data.
         Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
@@ -646,8 +649,8 @@ class Diffusion_tensor(SystemTestCase):
         self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
 
 
-    def test_init_spheroid_param_types_1(self):
-        """Test the initialisation of the spheroid diffusion tensor using parameter set 1."""
+    def test_init_oblate_spheroid_param_types_1(self):
+        """Test the initialisation of the oblate spheroid diffusion tensor using parameter set 1."""
 
         # Get the spheroid data.
         Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
@@ -663,8 +666,8 @@ class Diffusion_tensor(SystemTestCase):
         self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
 
 
-    def test_init_spheroid_param_types_1_deg(self):
-        """Test the initialisation of the spheroid diffusion tensor using parameter set 1, and angles in deg."""
+    def test_init_oblate_spheroid_param_types_1_deg(self):
+        """Test the initialisation of the oblate spheroid diffusion tensor using parameter set 1, and angles in deg."""
 
         # Get the spheroid data.
         Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
@@ -680,8 +683,8 @@ class Diffusion_tensor(SystemTestCase):
         self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
 
 
-    def test_init_spheroid_param_types_2(self):
-        """Test the initialisation of the spheroid diffusion tensor using parameter set 2."""
+    def test_init_oblate_spheroid_param_types_2(self):
+        """Test the initialisation of the oblate spheroid diffusion tensor using parameter set 2."""
 
         # Get the spheroid data.
         Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
@@ -697,8 +700,8 @@ class Diffusion_tensor(SystemTestCase):
         self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
 
 
-    def test_init_spheroid_param_types_3(self):
-        """Test the initialisation of the spheroid diffusion tensor using parameter set 3."""
+    def test_init_oblate_spheroid_param_types_3(self):
+        """Test the initialisation of the oblate spheroid diffusion tensor using parameter set 3."""
 
         # Get the spheroid data.
         Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
@@ -714,11 +717,113 @@ class Diffusion_tensor(SystemTestCase):
         self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
 
 
-    def test_init_spheroid_param_types_4(self):
-        """Test the initialisation of the spheroid diffusion tensor using parameter set 4."""
+    def test_init_oblate_spheroid_param_types_4(self):
+        """Test the initialisation of the oblate spheroid diffusion tensor using parameter set 4."""
 
         # Get the spheroid data.
         Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('spheroid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((Diso, Dratio, theta, phi), param_types=4, angle_units='rad')
+
+        # Check the spheroid.
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+
+
+    def test_init_prolate_spheroid_param_types_0(self):
+        """Test the initialisation of the prolate spheroid diffusion tensor using parameter set 0."""
+
+        # Get the spheroid data.
+        Dpar, Dper, theta, phi = 8e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('spheroid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((tm, Da, theta, phi), param_types=0, angle_units='rad')
+
+        # Check the spheroid.
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+
+
+    def test_init_prolate_spheroid_param_types_1(self):
+        """Test the initialisation of the prolate spheroid diffusion tensor using parameter set 1."""
+
+        # Get the spheroid data.
+        Dpar, Dper, theta, phi = 8e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('spheroid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((Diso, Da, theta, phi), param_types=1, angle_units='rad')
+
+        # Check the spheroid.
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+
+
+    def test_init_prolate_spheroid_param_types_1_deg(self):
+        """Test the initialisation of the prolate spheroid diffusion tensor using parameter set 1, and angles in deg."""
+
+        # Get the spheroid data.
+        Dpar, Dper, theta, phi = 8e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('spheroid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((Diso, Da, theta/2.0/pi*360.0, phi/2.0/pi*360.0), param_types=1, angle_units='deg')
+
+        # Check the spheroid.
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+
+
+    def test_init_prolate_spheroid_param_types_2(self):
+        """Test the initialisation of the prolate spheroid diffusion tensor using parameter set 2."""
+
+        # Get the spheroid data.
+        Dpar, Dper, theta, phi = 8e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('spheroid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((tm, Dratio, theta, phi), param_types=2, angle_units='rad')
+
+        # Check the spheroid.
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+
+
+    def test_init_prolate_spheroid_param_types_3(self):
+        """Test the initialisation of the prolate spheroid diffusion tensor using parameter set 3."""
+
+        # Get the spheroid data.
+        Dpar, Dper, theta, phi = 8e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('spheroid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((Dpar, Dper, theta, phi), param_types=3, angle_units='rad')
+
+        # Check the spheroid.
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+
+
+    def test_init_prolate_spheroid_param_types_4(self):
+        """Test the initialisation of the prolate spheroid diffusion tensor using parameter set 4."""
+
+        # Get the spheroid data.
+        Dpar, Dper, theta, phi = 8e7, 4e7, 0.5, 1.0
         tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
 
         # Create a new data pipe.
