@@ -263,18 +263,14 @@ class Diffusion_tensor(SystemTestCase):
         return Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R
 
 
-    def get_spheroid(self):
-        """Return all the diffusion tensor info about the {Dpar, Dper, theta, phi} = {1e7, 2e7, 1.5, 2} spheroid tensor."""
+    def get_spheroid(self, Dpar=None, Dper=None, theta=None, phi=None):
+        """Return all the diffusion tensor info about the given spheroid tensor."""
 
         # The tensor info.
-        Dpar = 1e7
-        Dper = 4e7
         Diso = (Dpar + 2*Dper) / 3.0
         tm = 1.0/(6.0 * Diso)
         Da = Dpar - Dper
         Dratio = Dpar / Dper
-        theta = 0.5
-        phi = 1.0
 
         # The eigenvalues and unique axis in the eigenframe.
         Dx = Dpar
@@ -303,7 +299,7 @@ class Diffusion_tensor(SystemTestCase):
         D = dot(transpose(R), dot(D, R))
 
         # Return the data.
-        return tm, Dpar, Dper, Dx, Dy, Dz, Diso, Da, Dratio, theta, phi, D, D_prime, R
+        return tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R
 
 
     def test_back_calc_ellipsoid(self):
@@ -590,7 +586,8 @@ class Diffusion_tensor(SystemTestCase):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 4."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Dx, Dy, Dz, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
+        Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -636,7 +633,8 @@ class Diffusion_tensor(SystemTestCase):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 0."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Dx, Dy, Dz, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
+        Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -652,7 +650,8 @@ class Diffusion_tensor(SystemTestCase):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 1."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Dx, Dy, Dz, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
+        Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -668,7 +667,8 @@ class Diffusion_tensor(SystemTestCase):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 1, and angles in deg."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Dx, Dy, Dz, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
+        Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -684,7 +684,8 @@ class Diffusion_tensor(SystemTestCase):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 2."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Dx, Dy, Dz, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
+        Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -700,7 +701,8 @@ class Diffusion_tensor(SystemTestCase):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 3."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Dx, Dy, Dz, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
+        Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
@@ -716,7 +718,8 @@ class Diffusion_tensor(SystemTestCase):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 4."""
 
         # Get the spheroid data.
-        tm, Dpar, Dper, Dx, Dy, Dz, Diso, Da, Dratio, theta, phi, D, D_prime, R = self.get_spheroid()
+        Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
 
         # Create a new data pipe.
         self.interpreter.pipe.create('spheroid2', 'mf')
