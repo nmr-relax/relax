@@ -381,7 +381,7 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
         # The indices.
         reorder_data = sorted(tup_struct, key=itemgetter(1))
         reorder = zeros(3, int)
-        Di_sort = zeros(3, int)
+        Di_sort = zeros(3, float)
         for i in range(3):
             reorder[i], Di_sort[i] = reorder_data[i]
 
