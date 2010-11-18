@@ -28,6 +28,7 @@ from copy import deepcopy
 from math import cos, pi, sin
 from numpy import cross, float64, transpose, zeros
 from numpy.linalg import eig, norm
+from operator import itemgetter
 from re import search
 
 # relax module imports.
@@ -373,19 +374,26 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
         Di, R = eig(tensor)
 
         # Reordering structure.
+        tup_struct = []
+        for i in range(3):
+            tup_struct.append((i, Di[i]))
+
+        # The indices.
+        reorder_data = sorted(tup_struct, key=itemgetter(1))
         reorder = zeros(3, int)
-        Di_sort = sorted(Di)
-        Di = Di.tolist()
-        R_new = zeros((3, 3), float64)
+        Di_sort = zeros(3, int)
+        for i in range(3):
+            reorder[i], Di_sort[i] = reorder_data[i]
 
         # Reorder columns.
+        R_new = zeros((3, 3), float64)
         for i in range(3):
-            R_new[:, i] = R[:, Di.index(Di_sort[i])]
+            R_new[:, i] = R[:, reorder[i]]
 
         # Switch from the left handed to right handed universes (if needed).
         if norm(cross(R_new[:, 0], R_new[:, 1]) - R_new[:, 2]) > 1e-7:
             R_new[:, 2] = -R_new[:, 2]
-        
+
         # Reverse the rotation.
         R_new = transpose(R_new)
 
