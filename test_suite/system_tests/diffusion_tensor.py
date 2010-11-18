@@ -629,6 +629,23 @@ class Diffusion_tensor(SystemTestCase):
         self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
 
 
+    def test_init_oblate_spheroid_as_ellipsoid(self):
+        """Test the initialisation of the spheroid diffusion tensor using parameter set 4."""
+
+        # Get the spheroid data.
+        Dpar, Dper, theta, phi = 1e7, 4e7, pi/4.0, 0.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('spheroid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((D[0, 0], D[1, 1], D[2, 2], D[0, 1], D[0, 2], D[1, 2]), param_types=3)
+
+        # Check the ellipsoid.
+        self.check_spheroid_as_ellipsoid(tm, Dx, Dy, Dz, Diso, Da, D, D_prime, R)
+
+
     def test_init_oblate_spheroid_param_types_0(self):
         """Test the initialisation of the oblate spheroid diffusion tensor using parameter set 0."""
 
