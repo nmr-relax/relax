@@ -393,6 +393,22 @@ def calc_rotation(diff_type, *args):
         raise RelaxError('The diffusion tensor has not been specified')
 
 
+def calc_spheroid_type(Da):
+    """Determine the spheroid type.
+
+    @keyword Da:    The diffusion tensor anisotropy.
+    @type Da:       float
+    @return:        The spheroid type, either 'oblate' or 'prolate'.
+    @rtype:         str
+    """
+
+    # The spheroid type.
+    if Da > 0.0:
+        return 'prolate'
+    else:
+        return 'oblate'
+
+
 def calc_tensor(rotation, tensor_diag):
     """Function for calculating the diffusion tensor (in the structural frame).
 
@@ -513,9 +529,7 @@ def dependency_generator(diff_type):
 
     @param diff_type:   The type of Brownian rotational diffusion.
     @type diff_type:    str
-    @return:            This generator successively yields three objects, the target object to
-                        update, the list of parameters which if modified cause the target to be
-                        updated, and the list of parameters that the target depends upon.
+    @return:            This generator successively yields three objects, the target object to update, the list of parameters which if modified cause the target to be updated, and the list of parameters that the target depends upon.
     """
 
     # Spherical diffusion.
@@ -535,6 +549,7 @@ def dependency_generator(diff_type):
         yield ('tensor_diag',   ['tm', 'Da'],                   ['type', 'Dpar', 'Dper'])
         yield ('rotation',      ['theta', 'phi'],               ['type', 'spheroid_type', 'theta', 'phi'])
         yield ('tensor',        ['tm', 'Da', 'theta', 'phi'],   ['rotation', 'tensor_diag'])
+        yield ('spheroid_type', ['Da'],                         ['Da'])
 
     # Ellipsoidal diffusion.
     elif diff_type == 'ellipsoid':
