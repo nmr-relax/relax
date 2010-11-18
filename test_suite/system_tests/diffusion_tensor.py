@@ -293,13 +293,13 @@ class Diffusion_tensor(SystemTestCase):
         D_prime[1, 1] = Dy
         D_prime[2, 2] = Dz
 
-        # The tensor in the PDB frame.
-        D = dot(transpose(R), dot(D_prime, R))
-
         # Rotate a little about the unique axis!
         twist = zeros((3, 3), float64)
-        axis_angle_to_R(diff_axis, 0.3, twist)
-        D = dot(transpose(twist), dot(D, twist))
+        axis_angle_to_R(axis, 0.3, twist)
+        D = dot(twist, dot(D_prime, transpose(twist)))
+
+        # The tensor in the PDB frame.
+        D = dot(R, dot(D, transpose(R)))
 
         # Return the data.
         return tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R
