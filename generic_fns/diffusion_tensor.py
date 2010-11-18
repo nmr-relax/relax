@@ -26,8 +26,8 @@
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin
-from numpy import cross, float64, transpose, zeros
-from numpy.linalg import eig, norm
+from numpy import cross, dot, float64, transpose, zeros
+from numpy.linalg import norm, svd
 from operator import itemgetter
 from re import search
 
@@ -371,7 +371,10 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
         tensor = tensor * d_scale
 
         # Eigenvalues.
-        Di, R = eig(tensor)
+        R, Di, A = svd(tensor)
+        D_diag = zeros((3, 3), float64)
+        for i in range(3):
+            D_diag[i, i] = Di[i]
 
         # Reordering structure.
         tup_struct = []
