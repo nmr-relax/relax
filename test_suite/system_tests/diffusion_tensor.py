@@ -585,11 +585,11 @@ class Diffusion_tensor(SystemTestCase):
         self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
 
 
-    def test_init_spheroid_as_ellipsoid(self):
+    def test_init_prolate_spheroid_as_ellipsoid(self):
         """Test the initialisation of the spheroid diffusion tensor using parameter set 4."""
 
         # Get the spheroid data.
-        Dpar, Dper, theta, phi = 1e7, 4e7, 0.5, 1.0
+        Dpar, Dper, theta, phi = 4e7, 2e7, 0.5, 1.0
         tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
 
         # Create a new data pipe.
@@ -604,6 +604,8 @@ class Diffusion_tensor(SystemTestCase):
         print("\nThe tensor in relax:\n%s" % cdp.diff_tensor.tensor)
         print("\nThe real tensor (in eig frame):\n%s" % D_prime)
         print("\nThe tensor in relax (in eig frame):\n%s" % cdp.diff_tensor.tensor_diag)
+        print("\nThe real rotation matrix:\n%s" % R)
+        print("\nThe rotation matrix in relax:\n%s" % cdp.diff_tensor.rotation)
 
         # Check the Euler angles.
         self.assertAlmostEqual(tm * 1e8, cdp.diff_tensor.tm * 1e8)
@@ -627,6 +629,11 @@ class Diffusion_tensor(SystemTestCase):
             # The projections.
             proj1 = dot(vect,dot(cdp.diff_tensor.tensor, vect)) 
             proj2 = dot(vect,dot(D, vect)) 
+
+            # Print out.
+            print("\nVector: %s" % vect)
+            print("Real proj:     %s" % proj1)
+            print("Proj in relax: %s" % proj2)
 
             # Compare projections.
             self.assertAlmostEqual(proj1, proj2)
