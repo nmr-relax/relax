@@ -22,6 +22,7 @@
 
 # Python module imports.
 from re import search
+from numpy import ndarray
 from types import ListType
 
 # relax module imports.
@@ -48,8 +49,17 @@ class Element(object):
             if search("^_", name):
                 continue
 
+            # Get the object.
+            obj = getattr(self, name)
+
+            # Numpy matrices.
+            if isinstance(obj, ndarray) and  isinstance(obj[0], ndarray):
+                spacer = '\n'
+            else:
+                spacer = ''
+
             # Generate the text.
-            text = text + "%-25s%-100s\n" % (name, repr(getattr(self, name)))
+            text = text + "%-25s%s%-100s\n" % (name, spacer, repr(obj))
 
         # Return the lot.
         return text
