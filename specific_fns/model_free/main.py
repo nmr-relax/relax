@@ -1145,11 +1145,11 @@ class Model_free_main:
         self._model_setup(model, equation, params, spin_id)
 
 
-    def create_mc_data(self, spin_id=None):
+    def create_mc_data(self, data_id=None):
         """Create the Monte Carlo Ri data.
 
-        @keyword spin_id:   The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:      str
+        @keyword data_id:   The spin identification string, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
         @return:            The Monte Carlo simulation data.
         @rtype:             list of floats
         """
@@ -1158,8 +1158,8 @@ class Model_free_main:
         mc_data = []
 
         # Get the spin container and global spin index.
-        spin = return_spin(spin_id)
-        global_index = find_index(spin_id)
+        spin = return_spin(data_id)
+        global_index = find_index(data_id)
 
         # Skip deselected spins.
         if not spin.select:
@@ -2770,17 +2770,17 @@ class Model_free_main:
                         sim_object.append(deepcopy(getattr(spin, object_name)))
 
 
-    def sim_pack_data(self, spin_id, sim_data):
+    def sim_pack_data(self, data_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:      str
+        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
 
         # Get the spin container.
-        spin = return_spin(spin_id)
+        spin = return_spin(data_id)
 
         # Test if the simulation data already exists.
         if hasattr(spin, 'relax_sim_data'):
