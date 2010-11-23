@@ -832,11 +832,11 @@ class Frame_order(API_base, API_common):
         self._store_bc_tensors(target)
 
 
-    def create_mc_data(self, spin_id=None):
+    def create_mc_data(self, data_id=None):
         """Create the Monte Carlo data by back calculating the reduced tensor data.
 
-        @keyword spin_id:   The spin identification string (unused).
-        @type spin_id:      None
+        @keyword data_id:   Unused.
+        @type data_id:      None
         @return:            The Monte Carlo simulation data.
         @rtype:             list of floats
         """
@@ -1251,11 +1251,11 @@ class Frame_order(API_base, API_common):
         return k, n, chi2
 
 
-    def return_error(self, spin_id):
+    def return_error(self, data_id):
         """Return the alignment tensor error structure.
 
-        @param spin_id: The information yielded by the base_data_loop() generator method.
-        @type spin_id:  None
+        @param data_id: The information yielded by the base_data_loop() generator method.
+        @type data_id:  None
         @return:        The array of tensor error values.
         @rtype:         list of float
         """
@@ -1389,11 +1389,11 @@ class Frame_order(API_base, API_common):
                 sim_object.append(deepcopy(getattr(cdp, object_name)))
 
 
-    def sim_pack_data(self, spin_id, sim_data):
+    def sim_pack_data(self, data_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:      None
+        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
+        @type data_id:      None
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """

@@ -231,17 +231,17 @@ class API_common:
         return spin.relax_data
 
 
-    def _return_error_relax_data(self, spin_id):
+    def _return_error_relax_data(self, data_id):
         """Return the Ri error structure for the corresponding spin.
 
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:  str
+        @param data_id: The data identification information, as yielded by the base_data_loop() generator method.
+        @type data_id:  str
         @return:        The array of relaxation data error values.
         @rtype:         list of float
         """
 
         # Get the spin container.
-        spin = return_spin(spin_id)
+        spin = return_spin(data_id)
 
         # Return the data.
         return spin.relax_error

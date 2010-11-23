@@ -121,17 +121,27 @@ def delete(pipe_name=None):
     @type pipe_name:    str
     """
 
-    # Test if the data pipe exists.
+    # Pipe name is supplied.
     if pipe_name != None:
+        # Test if the data pipe exists.
         test(pipe_name)
 
-    # Delete the data pipe.
-    del ds[pipe_name]
+        # Convert to a list.
+        pipes = [pipe_name]
 
-    # Set the current data pipe to None if it is the deleted data pipe.
-    if ds.current_pipe == pipe_name:
-        ds.current_pipe = None
-        __builtin__.cdp = None
+    # All pipes.
+    else:
+        pipes = ds.keys()
+
+    # Loop over the pipes.
+    for pipe in pipes:
+        # Delete the data pipe.
+        del ds[pipe]
+
+        # Set the current data pipe to None if it is the deleted data pipe.
+        if ds.current_pipe == pipe:
+            ds.current_pipe = None
+            __builtin__.cdp = None
 
 
 def display():

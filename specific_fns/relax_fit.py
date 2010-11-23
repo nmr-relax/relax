@@ -462,11 +462,11 @@ class Relax_fit(API_base, API_common):
         self._model_setup(model, params)
 
 
-    def create_mc_data(self, spin_id=None):
+    def create_mc_data(self, data_id=None):
         """Create the Monte Carlo peak intensity data.
 
-        @keyword spin_id:   The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:      str
+        @keyword data_id:   The spin identification string, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
         @return:            The Monte Carlo simulation data.
         @rtype:             list of floats
         """
@@ -475,7 +475,7 @@ class Relax_fit(API_base, API_common):
         mc_data = []
 
         # Get the spin container.
-        spin = return_spin(spin_id)
+        spin = return_spin(data_id)
 
         # Skip deselected spins.
         if not spin.select:
@@ -925,18 +925,18 @@ class Relax_fit(API_base, API_common):
             return 'relax_times'
 
 
-    def return_error(self, spin_id):
+    def return_error(self, data_id):
         """Return the standard deviation data structure.
 
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+        @param data_id: The spin identification string, as yielded by the base_data_loop() generator
                         method.
-        @type spin_id:  str
+        @type data_id:  str
         @return:        The standard deviation data structure.
         @rtype:         list of float
         """
 
         # Get the spin container.
-        spin = return_spin(spin_id)
+        spin = return_spin(data_id)
 
         # Return the error list.
         return spin.intensity_err
@@ -1007,17 +1007,17 @@ class Relax_fit(API_base, API_common):
         """
 
 
-    def sim_pack_data(self, spin_id, sim_data):
+    def sim_pack_data(self, data_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:      str
+        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
 
         # Get the spin container.
-        spin = return_spin(spin_id)
+        spin = return_spin(data_id)
 
         # Test if the simulation data already exists.
         if hasattr(spin, 'sim_intensities'):
