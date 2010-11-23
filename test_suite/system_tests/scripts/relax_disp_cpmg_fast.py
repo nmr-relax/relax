@@ -1,17 +1,19 @@
 # Script for CPMG relaxation dispersion curve fitting in the fast-exchange limit.
 
-import sys
+# Python module imports.
+import __main__
+from os import sep
 
 
 # Create the data pipe.
 pipe.create('rex', 'relax_disp')
 
 # The path to the data files.
-data_path_1 = sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/Hansen/500_MHz'
-data_path_2 = sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/Hansen/800_MHz'
+data_path1 = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'Hansen'+sep+'500_MHz'
+data_path2 = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'Hansen'+sep+'800_MHz'
 
 # Load the sequence.
-sequence.read('fake_sequence.in', dir=sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/Hansen')
+sequence.read('fake_sequence.in', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting_disp'+sep+'Hansen', res_num_col=1, res_name_col=2)
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')

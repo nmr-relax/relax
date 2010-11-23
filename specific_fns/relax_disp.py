@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -30,8 +30,9 @@ from numpy.linalg import inv
 from re import match, search
 
 # relax module imports.
+from api_base import API_base
+from api_common import API_common
 from dep_check import C_module_disp
-from base_class import Common_functions
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from minfx.generic import generic_minimise
@@ -42,7 +43,7 @@ if C_module_disp:
     from maths_fns.relax_disp import setup, func, dfunc, d2func, back_calc_I
 
 
-class Relax_disp(Common_functions):
+class Relax_disp(API_base, API_common):
     """Class containing functions for relaxation dispersion curve fitting."""
 
     def assemble_param_vector(self, spin=None, sim_index=None):

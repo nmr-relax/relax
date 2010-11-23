@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -25,27 +25,14 @@
 """Module containing the 'relax_disp' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
-import help
+from base_class import User_fn_class
 from relax_errors import RelaxNoneNumError, RelaxNumError, RelaxStrError
 from specific_fns.setup import relax_disp_obj
 
 
-class Relax_disp:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for relaxation dispersion curve fitting."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Relax_disp(User_fn_class):
+    """Class for relaxation dispersion user functions."""
 
     def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=1.0, int_ref=1.0):
         """Calculate the effective transversal relaxation rate from the peak intensities.
@@ -89,8 +76,8 @@ class Relax_disp:
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_disp.calc_r2eff("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_disp.calc_r2eff("
             text = text + "exp_type=" + `exp_type`
             text = text + ", id=" + `id`
             text = text + ", delayT=" + `delayT`
@@ -149,8 +136,8 @@ class Relax_disp:
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "delayT("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "delayT("
             text = text + "id=" + `id`
             text = text + ", delayT=" + `delayT` + ")"
             print text
@@ -201,8 +188,8 @@ class Relax_disp:
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_disp.cpmg_frq("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_disp.cpmg_frq("
             text = text + ", cpmg_frq=" + `cpmg_frq`
             text = text + "spectrum_id=" + `spectrum_id` + ")"
             print text
@@ -244,8 +231,8 @@ class Relax_disp:
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_disp.exp_type("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_disp.exp_type("
             text = text + "exp_type=" + `exp_type` + ")"
             print text
 
@@ -303,8 +290,8 @@ class Relax_disp:
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_disp.select_model("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_disp.select_model("
             text = text + "model=" + `model` + ")"
             print text
 

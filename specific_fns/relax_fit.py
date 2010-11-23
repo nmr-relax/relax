@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -41,7 +41,7 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNo
 from relax_warnings import RelaxDeselectWarning
 
 # C modules.
-if C_module_fit:
+if C_module_exp_fn:
     from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
 
 

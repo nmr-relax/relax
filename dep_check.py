@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -173,7 +173,7 @@ except ImportError, message:
 try:
     from maths_fns.relax_fit import setup
     del setup
-    C_module_fit = True
+    C_module_exp_fn = True
 except ImportError, message:
     # The OS.
     system = platform.system()
@@ -183,14 +183,14 @@ except ImportError, message:
     if system == 'Windows' or system == 'Microsoft':
         file = 'relax_fit.pyd'
     if not access('maths_fns' + sep + file, F_OK):
-        C_module_fit_mesg = "ImportError: relaxation curve fitting is unavailable, the corresponding C modules have not been compiled."
+        C_module_exp_fn_mesg = "ImportError: relaxation curve fitting is unavailable, the corresponding C modules have not been compiled."
 
     # Show the full error.
     else:
-        C_module_fit_mesg = "ImportError: " + message[0] + "\nRelaxation curve fitting is unavailable, try compiling the C modules."
+        C_module_exp_fn_mesg = "ImportError: " + message[0] + "\nRelaxation curve fitting is unavailable, try compiling the C modules."
 
     # Set the flag.
-    C_module_fit = False
+    C_module_exp_fn = False
 
 # Relaxation dispersion.
 try:
