@@ -25,8 +25,10 @@ import __main__
 from math import pi
 import platform
 import numpy
-from re import search
 from os import sep
+from re import search
+from shutil import copytree, rmtree
+from tempfile import mkdtemp
 
 # relax module imports.
 from base_classes import SystemTestCase
@@ -69,6 +71,11 @@ class Mf(SystemTestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Remove temporary directories.
+        if hasattr(ds, 'tmpdir'):
+            rmtree(ds.tmpdir)
+
+        # Reset the relax data storage object.
         ds.__reset__()
 
 
@@ -199,6 +206,21 @@ class Mf(SystemTestCase):
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
         self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['S2', 'te', 'Rex'])
+
+
+    # FIXME!
+    def xxx_test_dauvergne_protocol(self):
+        """Check the execution of auto_analyses.dauvergne_protocol."""
+
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
+
+        # Copy the files into the temporary directory.
+        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data'+sep+'13259_bug_reproducing_data'
+        copytree(path, ds.tmpdir + sep + 'data')
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'full_analysis_trunc.py')
 
 
     def test_generate_ri(self):

@@ -101,6 +101,7 @@ class Info_box(object):
         self.bib = {}
 
         # Place the containers into the dictionary.
+        self.bib['Bieri10'] = Bieri10()
         self.bib['Clore90'] = Clore90()
         self.bib['dAuvergne06'] = dAuvergne06()
         self.bib['dAuvergneGooley03'] = dAuvergneGooley03()
@@ -440,7 +441,7 @@ class Ref:
         raise AttributeError, name
 
 
-    def cite_short(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True):
+    def cite_short(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True, status=True):
         """Compile a short citation.
         
         The returned text will have the form of:
@@ -466,6 +467,8 @@ class Ref:
         @type doi:          bool
         @keyword url:       The url flag.
         @type url:          bool
+        @keyword status:    The status flag.  This will only be shown if not 'published'.
+        @type status:       bool
         @return:            The full citation.
         @rtype:             str
         """
@@ -489,7 +492,9 @@ class Ref:
         if doi and self.doi and hasattr(self, 'doi'):
             cite = cite + ' (http://dx.doi.org/'+self.doi + ')'
         if url and self.url and hasattr(self, 'url'):
-            cite = cite + ' ('+self.url + ')'
+            cite = cite + ' (' + self.url + ')'
+        if status and hasattr(self, 'status') and self.status != 'published':
+            cite = cite + ' (' + self.status + ')'
 
         # End.
         if cite[-1] != '.':
@@ -499,7 +504,7 @@ class Ref:
         return cite
 
 
-    def cite_html(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True):
+    def cite_html(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True, status=True):
         """Compile a citation for HTML display.
 
         @keyword author:    The author flag.
@@ -518,30 +523,36 @@ class Ref:
         @type year:         bool
         @keyword doi:       The doi flag.
         @type doi:          bool
+        @keyword url:       The url flag.
+        @type url:          bool
+        @keyword status:    The status flag.  This will only be shown if not 'published'.
+        @type status:       bool
         @return:            The full citation.
         @rtype:             str
         """
 
         # Build the citation.
         cite = ''
-        if author and hasattr(self, 'author'):
+        if author and hasattr(self, 'author') and self.author:
             cite = cite + self.author
-        if year and hasattr(self, 'year'):
+        if year and hasattr(self, 'year') and self.year:
             cite = cite + ' (' + repr(self.year) + ').'
-        if title and hasattr(self, 'title'):
+        if title and hasattr(self, 'title') and self.title:
             cite = cite + ' ' + self.title
-        if journal and hasattr(self, 'journal'):
+        if journal and hasattr(self, 'journal') and self.journal:
             cite = cite + ' <em>' + self.journal + '</em>,'
-        if volume and hasattr(self, 'volume'):
+        if volume and hasattr(self, 'volume') and self.volume:
             cite = cite + ' <strong>' + self.volume + '</strong>'
-        if number and hasattr(self, 'number'):
+        if number and hasattr(self, 'number') and self.number:
             cite = cite + '(' + self.number + '),'
-        if pages and hasattr(self, 'pages'):
+        if pages and hasattr(self, 'pages') and self.pages:
             cite = cite + ' ' + self.pages
-        if doi and hasattr(self, 'doi'):
+        if doi and hasattr(self, 'doi') and self.doi:
             cite = cite + ' (<a href="http://dx.doi.org/%s">abstract</a>)' % self.doi
-        if url and hasattr(self, 'url'):
-            cite = cite + ' (<a href="http://dx.doi.org/%s">url</a>)' % self.url
+        if url and hasattr(self, 'url') and self.url:
+            cite = cite + ' (<a href="%s">url</a>)' % self.url
+        if status and hasattr(self, 'status') and self.status != 'published':
+            cite = cite + ' (<i>%s</i>)' % self.status
 
         # End.
         if cite[-1] != '.':
@@ -549,6 +560,17 @@ class Ref:
 
         # Return the citation.
         return cite
+
+
+
+class Bieri10(Ref):
+    """Bibliography container."""
+
+    type           = "journal"
+    author         = "Bieri, M., d'Auvergne, E. J. and Gooley, P. R."
+    title          = "relaxGUI: a new software for fast and simple NMR relaxation data analysis and calculation of ps-ns and micro-s motion of proteins"
+    status         = "submitted"
+    year           = 2010
 
 
 

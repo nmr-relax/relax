@@ -22,11 +22,12 @@
 
 # Python module imports.
 from math import cos, pi, sin
-from numpy import array, dot, transpose
+from numpy import array, dot, float64, transpose, zeros
 from unittest import TestCase
 
 # relax module imports.
 from data.diff_tensor import DiffTensorData, DiffTensorSimList
+from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError
 
 
@@ -46,12 +47,22 @@ class Test_diff_tensor(TestCase):
         Dpar_unit = array([sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)])
 
         # Matrices.
-        tensor_diag = array([[ Dper,  0.0,  0.0],
-                             [  0.0, Dper,  0.0],
-                             [  0.0,  0.0, Dpar]])
-        rotation = array([[ cos(theta) * cos(phi), -sin(phi), sin(theta) * cos(phi) ],
-                          [ cos(theta) * sin(phi),  cos(phi), sin(theta) * sin(phi) ],
-                          [           -sin(theta),       0.0,            cos(theta) ]])
+        if Dpar > Dper:
+            axis = array([0, 0, 1], float64)
+            tensor_diag = array([[ Dper,  0.0,  0.0],
+                                 [  0.0, Dper,  0.0],
+                                 [  0.0,  0.0, Dpar]])
+        else:
+            axis = array([1, 0, 0], float64)
+            tensor_diag = array([[ Dpar,  0.0,  0.0],
+                                 [  0.0, Dper,  0.0],
+                                 [  0.0,  0.0, Dper]])
+
+        # The rotation.
+        rotation = zeros((3, 3), float64)
+        two_vect_to_R(Dpar_unit, axis, rotation)
+
+        # The diffusion tensor.
         tensor = dot(rotation, dot(tensor_diag, transpose(rotation)))
 
         # Return the objects.
@@ -82,6 +93,7 @@ class Test_diff_tensor(TestCase):
 
         # Set the diffusion type.
         self.diff_data.type = 'spheroid'
+        self.diff_data.spheroid_type = 'oblate'
 
         # Set the MC sim diffusion parameter lists.
         self.diff_data.tm_sim = DiffTensorSimList('tm', self.diff_data)
@@ -154,6 +166,7 @@ class Test_diff_tensor(TestCase):
 
         # Set the diffusion type.
         self.diff_data.type = 'spheroid'
+        self.diff_data.spheroid_type = 'prolate'
 
         # Set the diffusion parameters.
         self.diff_data.tm_err = tm
@@ -199,6 +212,7 @@ class Test_diff_tensor(TestCase):
 
         # Set the diffusion type.
         self.diff_data.type = 'spheroid'
+        self.diff_data.spheroid_type = 'prolate'
 
         # Set the diffusion parameters.
         self.diff_data.tm = tm
@@ -250,6 +264,7 @@ class Test_diff_tensor(TestCase):
 
         # Set the diffusion type.
         self.diff_data.type = 'spheroid'
+        self.diff_data.spheroid_type = 'prolate'
 
         # Set the MC sim diffusion parameter lists.
         self.diff_data.tm_sim = DiffTensorSimList('tm', self.diff_data)

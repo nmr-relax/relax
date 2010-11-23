@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,16 +25,12 @@
 
 
 # Python module imports.
-import warnings
+import __main__
 import inspect
+import warnings
 
 # relax module imports.
 from relax_errors import BaseError
-
-
-# Global variables.
-Debug = False
-Pedantic = False
 
 
 # The warning formatting function.
@@ -46,7 +42,7 @@ def format(message, category, filename, lineno, line=None):
     message = "RelaxWarning: %s\n" % message
 
     # Print stack-trace in debug mode.
-    if Debug:
+    if __main__.debug:
         tb = ""
         for frame in inspect.stack()[4:]:
             file = frame[1]
@@ -65,6 +61,20 @@ def format(message, category, filename, lineno, line=None):
 
     # Return the warning message.
     return message
+
+
+def setup():
+    """Set up the warning system."""
+
+    # Format warning messages.
+    warnings.formatwarning = format
+
+    # Set warning filters.
+    if __main__.pedantic:
+        warnings.filterwarnings('error', category=BaseWarning)
+    else:
+        warnings.filterwarnings('always', category=BaseWarning)
+
 
 
 # Base class for all warnings.
@@ -129,16 +139,3 @@ class RelaxFileEmptyWarning(BaseWarning):
 class RelaxDeselectWarning(BaseWarning):
     def __init__(self, spin_id, reason):
         self.text = "The spin '%s' has been deselected because of %s." % (spin_id, reason)
-
-
-
-# Format warning messages.
-warnings.formatwarning = format
-
-# Set warning filters.
-if Pedantic:
-    warnings.filterwarnings('error', category=BaseWarning)
-else:
-    warnings.filterwarnings('always', category=BaseWarning)
-
-

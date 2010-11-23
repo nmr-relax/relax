@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import cos, pi, sin
-from numpy import arccos, array, dot, eye, float64, zeros
+from numpy import arccos, array, dot, eye, float64, transpose, zeros
 from string import ascii_uppercase
 from warnings import warn
 
@@ -483,8 +483,25 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         # Print out.
         print("\nGenerating the geometric object.")
 
+        # Swap the x and z axes for the oblate spheroid (the vector distributions are centred on the z-axis).
+        if pipe.diff_tensor.type == 'spheroid' and pipe.diff_tensor.spheroid_type == 'oblate':
+            # 90 deg rotation about the diffusion frame y-axis.
+            y_rot = array([[  0, 0,  1],
+                           [  0, 1,  0],
+                           [ -1, 0,  0]], float64)
+
+            # Rotate the tensor and rotation matrix.
+            rotation = dot(transpose(pipe.diff_tensor.rotation), y_rot)
+            tensor = dot(y_rot, dot(pipe.diff_tensor.tensor_diag, transpose(y_rot)))
+            tensor = dot(rotation, dot(tensor, transpose(rotation)))
+
+        # All other systems stay as normal.
+        else:
+            tensor = pipe.diff_tensor.tensor
+            rotation = pipe.diff_tensor.rotation
+
         # The distribution.
-        generate_vector_dist(mol=mol, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff_tensor.rotation, warp=pipe.diff_tensor.tensor, scale=scale, inc=20)
+        generate_vector_dist(mol=mol, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=rotation, warp=tensor, scale=scale, inc=20)
 
         # Increment the residue number.
         res_num = res_num + 1
