@@ -265,6 +265,9 @@ def bmrb_write(star):
 
     # Relax data labels.
     labels = []
+    exp_label = []
+    spectro_ids = []
+    spectro_labels = []
     for i in range(cdp.num_ri):
         labels.append(cdp.ri_labels[i] + '_' + cdp.frq_labels[cdp.remap_table[i]])
 
@@ -373,6 +376,24 @@ def bmrb_write(star):
 
         # Add the relaxation data.
         star.relaxation.add(data_type=ri_label, frq=frq, entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, entity_ids_2=entity_ids, res_nums_2=res_num_list, res_names_2=res_name_list, atom_names_2=attached_atom_name_list, atom_types_2=attached_element_list, isotope_2=attached_isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control, peak_intensity_type=peak_intensity_type)
+
+        # The experimental label.
+        if ri_label == 'NOE':
+            exp_name = 'steady-state NOE'
+        else:
+            exp_name = ri_label
+        exp_label.append("%s MHz %s" % (frq_label, exp_name))
+
+        # Spectrometer info.
+        spectro_ids.append(cdp.remap_table[i] + 1)
+        spectro_labels.append("$spectrometer_%s" % spectro_ids[-1])
+
+    # Add the spectrometer info.
+    for i in range(cdp.num_frq):
+        star.nmr_spectrometer.add(name="$spectrometer_%s" % (i+1), manufacturer=None, model=None, frq=int(cdp.frq[i]/1e6))
+
+    # Add the experiment saveframe.
+    star.experiment.add(name=exp_label, spectrometer_ids=spectro_ids, spectrometer_labels=spectro_labels)
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
