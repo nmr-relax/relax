@@ -669,7 +669,7 @@ class Auto_noe:
         backup = self.field_ref_noe.GetValue()
 
         # Select the file.
-        self.data.ref_file = openfile('Select reference NOE peak list', directory=self.field_ref_noe.GetValue(), default = 'all files (*.*)|*.*')
+        self.data.ref_file = openfile('Select reference NOE peak list', directory=self.field_ref_noe.GetValue(), default = 'all files (*.*)|*')
 
         # Restore the backup file if no file was chosen.
         if not self.data.ref_file:
@@ -717,7 +717,7 @@ class Auto_noe:
         backup = self.field_sat_noe.GetValue()
 
         # Select the file.
-        self.data.sat_file = openfile('Select saturated NOE peak list', directory=self.field_sat_noe.GetValue(), default = 'all files (*.*)|*.*')
+        self.data.sat_file = openfile('Select saturated NOE peak list', directory=self.field_sat_noe.GetValue(), default = 'all files (*.*)|*')
 
         # Restore the backup file if no file was chosen.
         if not self.data.sat_file:

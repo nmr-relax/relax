@@ -914,7 +914,7 @@ class Auto_model_free:
 
     def model_noe1(self, event): # load noe1
         backup = self.m_noe_1.GetValue()
-        self.data.paramfiles1[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*.*')
+        self.data.paramfiles1[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*')
         if self.data.paramfiles1[0] == None:
             self.data.paramfiles1[0] = backup
         self.m_noe_1.SetValue(self.data.paramfiles1[0])
@@ -923,7 +923,7 @@ class Auto_model_free:
 
     def model_noe2(self, event): # load noe1
         backup = self.m_noe_2.GetValue()
-        self.data.paramfiles2[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*.*')
+        self.data.paramfiles2[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*')
         if self.data.paramfiles2[0] == None:
             self.data.paramfiles2[0] = backup
         self.m_noe_2.SetValue(self.data.paramfiles2[0])
@@ -932,7 +932,7 @@ class Auto_model_free:
 
     def model_noe3(self, event): # load noe1
         backup = self.m_noe_3.GetValue()
-        self.data.paramfiles3[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*.*')
+        self.data.paramfiles3[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*')
         if self.data.paramfiles3[0] == None:
             self.data.paramfiles3[0] = backup
         self.m_noe_3.SetValue(self.data.paramfiles3[0])
@@ -941,7 +941,7 @@ class Auto_model_free:
 
     def model_r11(self, event): #
         backup = self.m_r1_1.GetValue()
-        self.data.paramfiles1[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*.*')
+        self.data.paramfiles1[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*')
         if self.data.paramfiles1[1] == None:
             self.data.paramfiles1[1] = backup
         self.m_r1_1.SetValue(self.data.paramfiles1[1])
@@ -950,7 +950,7 @@ class Auto_model_free:
 
     def model_r12(self, event): #
         backup = self.m_r1_2.GetValue()
-        self.data.paramfiles2[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*.*')
+        self.data.paramfiles2[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*')
         if self.data.paramfiles2[1] == None:
             self.data.paramfiles2[1] = backup
         self.m_r1_2.SetValue(self.data.paramfiles2[1])
@@ -959,7 +959,7 @@ class Auto_model_free:
 
     def model_r13(self, event):
         backup = self.m_r1_3.GetValue()
-        self.data.paramfiles3[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*.*')
+        self.data.paramfiles3[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*')
         if self.data.paramfiles3[1] == None:
             self.data.paramfiles3[1] = backup
         self.m_r1_3.SetValue(self.data.paramfiles3[1])
@@ -968,7 +968,7 @@ class Auto_model_free:
 
     def model_r21(self, event): #
         backup = self.m_r2_1.GetValue()
-        self.data.paramfiles1[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*.*')
+        self.data.paramfiles1[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*')
         if self.data.paramfiles1[2] == None:
             self.data.paramfiles1[2] = backup
         self.m_r2_1.SetValue(self.data.paramfiles1[2])
@@ -977,7 +977,7 @@ class Auto_model_free:
 
     def model_r22(self, event): #
         backup = self.m_r2_2.GetValue()
-        self.data.paramfiles2[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*.*')
+        self.data.paramfiles2[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*')
         if self.data.paramfiles2[2] == None:
             self.data.paramfiles2[2] = backup
         self.m_r2_2.SetValue(self.data.paramfiles2[2])
@@ -986,7 +986,7 @@ class Auto_model_free:
 
     def model_r23(self, event):
         backup = self.m_r2_3.GetValue()
-        self.data.paramfiles3[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*.*')
+        self.data.paramfiles3[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*')
         if self.data.paramfiles3[2] == None:
             self.data.paramfiles3[2] = backup
         self.m_r2_3.SetValue(self.data.paramfiles3[2])
