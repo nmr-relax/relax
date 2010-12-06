@@ -47,6 +47,9 @@ class Mol_res_spin_tree(wx.Panel):
         # Execute the base class method.
         wx.Panel.__init__(self, parent, id, style=wx.WANTS_CHARS)
 
+        # Some default values.
+        self.icon_size = 48
+
         # The tree.
         self.tree = wx.TreeCtrl(parent=self, id=-1, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TR_DEFAULT_STYLE)
 
@@ -55,6 +58,15 @@ class Mol_res_spin_tree(wx.Panel):
 
         # The tree roots.
         self.root = self.tree.AddRoot("Spin system information")
+        self.tree.SetPyData(self.root, None)
+
+        # Build the icon list.
+        icon_list = wx.ImageList(self.icon_size, self.icon_size)
+        self.icon_mol_index = icon_list.Add(wx.Bitmap(paths.MOLECULE_ICON, wx.BITMAP_TYPE_ANY))
+        self.tree.SetImageList(icon_list)
+
+        # Some weird black magic (this is essential)!!
+        self.icon_list = icon_list
 
         # Populate the tree.
         self._tree_update()
@@ -93,9 +105,8 @@ class Mol_res_spin_tree(wx.Panel):
             mol_branch = self.tree.AppendItem(self.root, "Molecule %s" % mol.name)
             self.tree.SetPyData(mol_branch, None)
 
-            # The icon.
-            bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(paths.MOLECULE_ICON, wx.BITMAP_TYPE_ANY))
-            self.tree.SetItemImage(mol_branch, bitmap, wx.TreeItemIcon_Normal)
+            # Set the bitmap.
+            self.tree.SetItemImage(mol_branch, self.icon_mol_index, wx.TreeItemIcon_Normal|wx.TreeItemIcon_Expanded)
 
             # The residues.
             for res in mol.res:
