@@ -61,6 +61,7 @@ from gui_bieri import paths
 from references import References
 from relax_prompt import Prompt
 from settings import import_file_settings, load_sequence, relax_global_settings
+from user_functions import User_functions
 
 
 # Variables.
@@ -112,6 +113,9 @@ class Main(wx.Frame):
 
         # Initialise the GUI data.
         self.init_data()
+
+        # The user function GUI elements.
+        self.user_functions = User_functions(self)
 
         # Build the main window.
         self.build_main_window()
@@ -302,11 +306,11 @@ class Main(wx.Frame):
 
         # The 'User functions' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=10, text="&Script", icon=paths.UF_SCRIPT_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=30, text="&script", icon=paths.UF_SCRIPT_ICON))
         menubar.Append(menu, "&User functions")
 
         # The 'User functions' menu actions.
-        #self.Bind(wx.EVT_MENU, self.user_functions.script,  id=10)
+        self.Bind(wx.EVT_MENU, self.user_functions.script.run,  id=30)
 
         # The 'Molecule' menu entries.
         menu = wx.Menu()

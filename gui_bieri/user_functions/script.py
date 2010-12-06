@@ -20,33 +20,40 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""User function GUI elements."""
-
-# relax module imports.
-from prompt.interpreter import Interpreter
+# Module docstring.
+"""The script user functions."""
 
 # GUI module imports.
-from script import Script
+from gui_bieri.filedialog import openfile
 
 
-# The package __all__ list.
-__all__ = ['script']
+class Script:
+    """The script user function GUI class."""
 
-
-class User_functions:
-    """Container for all the user function GUI elements."""
-
-    def __init__(self, gui):
-        """Set up the container."""
+    def __init__(self, gui, interpreter):
+        """Set up the user function class."""
 
         # Store the args.
         self.gui = gui
+        self.interpreter = interpreter
 
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=True, quit=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
 
-        # The user functions.
-        self.script = Script(self.gui, self.interpreter)
+    def run(self, event):
+        """The script user function GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # User selection of the file.
+        file = openfile(msg='Select the relax script to execute')
+
+        # Show the relax controller.
+        self.gui.controller.Show()
+
+        # Check the file.
+        if not file:
+            return
+
+        # Execute the user function.
+        self.interpreter.script(str(file))
