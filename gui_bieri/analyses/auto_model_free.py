@@ -613,10 +613,13 @@ class Auto_model_free:
             if frq == '':
                 continue
 
-            # Append the relaxation data.
-            data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, param_tmp[1], param_tmp[2], param_tmp[3], param_tmp[4], param_tmp[5], param_tmp[6], None])
-            data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, param_tmp[1], param_tmp[2], param_tmp[3], param_tmp[4], param_tmp[5], param_tmp[6], None])
-            data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, param_tmp[1], param_tmp[2], param_tmp[3], param_tmp[4], param_tmp[5], param_tmp[6], None])
+            # Append the relaxation data if present.
+            if not files[1] == '':
+                data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, param_tmp[1], param_tmp[2], param_tmp[3], param_tmp[4], param_tmp[5], param_tmp[6], None])
+            if not files[2] == '':
+                data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, param_tmp[1], param_tmp[2], param_tmp[3], param_tmp[4], param_tmp[5], param_tmp[6], None])
+            if not files[0] == '':
+                data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, param_tmp[1], param_tmp[2], param_tmp[3], param_tmp[4], param_tmp[5], param_tmp[6], None])
 
         # Unresolved resiudes
         file = DummyFileObject()
