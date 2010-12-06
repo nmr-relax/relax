@@ -412,28 +412,29 @@ class Mf:
         if self.scaling_flag:
             params = dot(params, self.scaling_matrix)
 
-        # Direction cosine calculations.
-        if self.diff_data.calc_di:
-            self.diff_data.calc_di(data, self.diff_data)
+        for j in xrange(self.num_interactions[0])
+            # Direction cosine calculations.
+            if self.diff_data.calc_di:
+                self.diff_data.calc_di(data[j], self.diff_data)
 
-        # Diffusion tensor weight calculations.
-        self.diff_data.calc_ci(data, self.diff_data)
+            # Diffusion tensor weight calculations.
+            self.diff_data.calc_ci(data[j], self.diff_data)
 
-        # Diffusion tensor correlation times.
-        self.diff_data.calc_ti(data, self.diff_data)
+            # Diffusion tensor correlation times.
+            self.diff_data.calc_ti(data[j], self.diff_data)
 
-        # Calculate the components of the spectral densities.
-        if data.calc_jw_comps:
-            data.calc_jw_comps(data, params)
+            # Calculate the components of the spectral densities.
+            if data[j].calc_jw_comps:
+                data[j].calc_jw_comps(data[j], params)
 
-        # Calculate the spectral density values.
-        data.jw = data.calc_jw(data, params)
+            # Calculate the spectral density values.
+            data[j].jw = data[j].calc_jw(data[j], params)
 
-        # Calculate the relaxation formula components.
-        data.create_ri_comps(data, params)
+            # Calculate the relaxation formula components.
+            data[j].create_ri_comps(data[j], params)
 
-        # Calculate the R1, R2, and sigma_noe values.
-        data.ri_prime = data.create_ri_prime(data)
+            # Calculate the R1, R2, and sigma_noe values.
+            data[j].ri_prime = data[j].create_ri_prime(data[j])
 
         # Calculate the NOE values.
         data.ri = data.ri_prime * 1.0
@@ -466,28 +467,29 @@ class Mf:
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:1]
 
-        # Diffusion tensor weight calculations.
-        self.diff_data.calc_ci(data, self.diff_data)
+        for j in xrange(self.num_interactions[0])
+            # Diffusion tensor weight calculations.
+            self.diff_data.calc_ci(data[j], self.diff_data)
 
-        # Diffusion tensor correlation times.
-        self.diff_data.calc_ti(data, self.diff_data)
+            # Diffusion tensor correlation times.
+            self.diff_data.calc_ti(data[j], self.diff_data)
 
-        # ti spectral density components.
-        data.w_ti_sqrd = data.frq_sqrd_list_ext * data.ti ** 2
-        data.fact_ti = 1.0 / (1.0 + data.w_ti_sqrd)
+            # ti spectral density components.
+            data[j].w_ti_sqrd = data[j].frq_sqrd_list_ext * data[j].ti ** 2
+            data[j].fact_ti = 1.0 / (1.0 + data[j].w_ti_sqrd)
 
-        # Calculate the components of the spectral densities.
-        if data.calc_jw_comps:
-            data.calc_jw_comps(data, params)
+            # Calculate the components of the spectral densities.
+            if data[j].calc_jw_comps:
+                data[j].calc_jw_comps(data[j], params)
 
-        # Calculate the spectral density values.
-        data.jw = data.calc_jw(data, params)
+            # Calculate the spectral density values.
+            data[j].jw = data[j].calc_jw(data[j], params)
 
-        # Calculate the relaxation formula components.
-        data.create_ri_comps(data, params)
+            # Calculate the relaxation formula components.
+            data[j].create_ri_comps(data[j], params)
 
-        # Calculate the R1, R2, and sigma_noe values.
-        data.ri_prime = data.create_ri_prime(data)
+            # Calculate the R1, R2, and sigma_noe values.
+            data[j].ri_prime = data[j].create_ri_prime(data[j])
 
         # Calculate the NOE values.
         data.ri = data.ri_prime * 1.0
@@ -525,33 +527,33 @@ class Mf:
         for i in xrange(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
+            for j in xrange(self.num_interactions[i])
+                # Direction cosine calculations.
+                if self.diff_data.calc_di:
+                    self.diff_data.calc_di(data[j], self.diff_data)
 
-            # Direction cosine calculations.
-            if self.diff_data.calc_di:
-                self.diff_data.calc_di(data, self.diff_data)
+                # Diffusion tensor weight calculations.
+                self.diff_data.calc_ci(data[j], self.diff_data)
 
-            # Diffusion tensor weight calculations.
-            self.diff_data.calc_ci(data, self.diff_data)
+                # Diffusion tensor correlation times.
+                self.diff_data.calc_ti(data[j], self.diff_data)
 
-            # Diffusion tensor correlation times.
-            self.diff_data.calc_ti(data, self.diff_data)
+                # ti spectral density components.
+                data[j].w_ti_sqrd = data[j].frq_sqrd_list_ext * data[j].ti ** 2
+                data[j].fact_ti = 1.0 / (1.0 + data[j].w_ti_sqrd)
 
-            # ti spectral density components.
-            data.w_ti_sqrd = data.frq_sqrd_list_ext * data.ti ** 2
-            data.fact_ti = 1.0 / (1.0 + data.w_ti_sqrd)
+                # Calculate the components of the spectral densities.
+                if data[j].calc_jw_comps:
+                    data[j].calc_jw_comps(data[j], data[j].param_values)
 
-            # Calculate the components of the spectral densities.
-            if data.calc_jw_comps:
-                data.calc_jw_comps(data, data.param_values)
+                # Calculate the spectral density values.
+                data[j].jw = data[j].calc_jw(data[j], data[j].param_values)
 
-            # Calculate the spectral density values.
-            data.jw = data.calc_jw(data, data.param_values)
+                # Calculate the relaxation formula components.
+                data[j].create_ri_comps(data[j], data[j].param_values)
 
-            # Calculate the relaxation formula components.
-            data.create_ri_comps(data, data.param_values)
-
-            # Calculate the R1, R2, and sigma_noe values.
-            data.ri_prime = data.create_ri_prime(data)
+                # Calculate the R1, R2, and sigma_noe values.
+                data[j].ri_prime = data[j].create_ri_prime(data[j])
 
             # Calculate the NOE values.
             data.ri = data.ri_prime * 1.0
@@ -592,33 +594,33 @@ class Mf:
         for i in xrange(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
+            for j in xrange(self.num_interactions[i])
+                # Direction cosine calculations.
+                if self.diff_data.calc_di:
+                    self.diff_data.calc_di(data[j], self.diff_data)
 
-            # Direction cosine calculations.
-            if self.diff_data.calc_di:
-                self.diff_data.calc_di(data, self.diff_data)
+                # Diffusion tensor weight calculations.
+                self.diff_data.calc_ci(data[j], self.diff_data)
 
-            # Diffusion tensor weight calculations.
-            self.diff_data.calc_ci(data, self.diff_data)
+                # Diffusion tensor correlation times.
+                self.diff_data.calc_ti(data[j], self.diff_data)
 
-            # Diffusion tensor correlation times.
-            self.diff_data.calc_ti(data, self.diff_data)
+                # ti spectral density components.
+                data[j].w_ti_sqrd = data[j].frq_sqrd_list_ext * data[j].ti ** 2
+                data[j].fact_ti = 1.0 / (1.0 + data[j].w_ti_sqrd)
 
-            # ti spectral density components.
-            data.w_ti_sqrd = data.frq_sqrd_list_ext * data.ti ** 2
-            data.fact_ti = 1.0 / (1.0 + data.w_ti_sqrd)
+                # Calculate the components of the spectral densities.
+                if data[j].calc_jw_comps:
+                    data[j].calc_jw_comps(data[j], params)
 
-            # Calculate the components of the spectral densities.
-            if data.calc_jw_comps:
-                data.calc_jw_comps(data, params)
+                # Calculate the spectral density values.
+                data[j].jw = data[j].calc_jw(data[j], params)
 
-            # Calculate the spectral density values.
-            data.jw = data.calc_jw(data, params)
+                # Calculate the relaxation formula components.
+                data[j].create_ri_comps(data[j], params)
 
-            # Calculate the relaxation formula components.
-            data.create_ri_comps(data, params)
-
-            # Calculate the R1, R2, and sigma_noe values.
-            data.ri_prime = data.create_ri_prime(data)
+                # Calculate the R1, R2, and sigma_noe values.
+                data[j].ri_prime = data[j].create_ri_prime(data[j])
 
             # Calculate the NOE values.
             data.ri = data.ri_prime * 1.0
@@ -655,23 +657,27 @@ class Mf:
         if self.scaling_flag:
             params = dot(params, self.scaling_matrix)
 
-        # Calculate the spectral density gradient components.
-        if data.calc_djw_comps:
-            data.calc_djw_comps(data, params)
+        # Loop over the interactions
+        for k in xrange(self.num_interactions[0])
+            # Calculate the spectral density gradient components.
+            if data[k].calc_djw_comps:
+                data[k].calc_djw_comps(data[k], params)
 
         # Loop over the gradient.
         for j in xrange(data.total_num_params):
-            # Calculate the spectral density gradients.
-            if data.calc_djw[j]:
-                data.djw = data.calc_djw[j](data, params, j)
-            else:
-                data.djw = data.djw * 0.0
+            # Loop over the interactions
+            for k in xrange(self.num_interactions[0])
+                # Calculate the spectral density gradients.
+                if data[k].calc_djw[j]:
+                    data[k].djw = data[k].calc_djw[j](data[k], params, j)
+                else:
+                    data[k].djw = data[k].djw * 0.0
 
-            # Calculate the relaxation gradient components.
-            data.create_dri_comps(data, params)
+                # Calculate the relaxation gradient components.
+                data[k].create_dri_comps(data[k], params)
 
-            # Calculate the R1, R2, and sigma_noe gradients.
-            data.dri_prime[j] = data.create_dri_prime[j](data)
+                # Calculate the R1, R2, and sigma_noe gradients.
+                data[k].dri_prime[j] = data[k].create_dri_prime[j](data[k])
 
             # Loop over the relaxation values and modify the NOE gradients.
             data.dri[j] = data.dri_prime[j]
@@ -713,26 +719,30 @@ class Mf:
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:1]
 
-        # Calculate the spectral density gradient components.
-        if data.calc_djw_comps:
-            data.calc_djw_comps(data, params)
+        # Loop over the interactions
+        for k in xrange(self.num_interactions[0])
+            # Calculate the spectral density gradient components.
+            if data.calc_djw_comps:
+                data.calc_djw_comps(data[k], params)
 
-        # Diffusion tensor correlation times.
-        self.diff_data.calc_dti(data, self.diff_data)
+            # Diffusion tensor correlation times.
+            self.diff_data.calc_dti(data[k], self.diff_data)
 
         # Loop over the gradient.
         for j in xrange(data.total_num_params):
-            # Calculate the spectral density gradients.
-            if data.calc_djw[j]:
-                data.djw = data.calc_djw[j](data, params, j)
-            else:
-                data.djw = data.djw * 0.0
+            # Loop over the interactions
+            for k in xrange(self.num_interactions[0])
+                # Calculate the spectral density gradients.
+                if data[k].calc_djw[j]:
+                    data[k].djw = data[k].calc_djw[j](data[k], params, j)
+                else:
+                    data[k].djw = data[k].djw * 0.0
 
-            # Calculate the relaxation gradient components.
-            data.create_dri_comps(data, params)
+                # Calculate the relaxation gradient components.
+                data[k].create_dri_comps(data[k], params)
 
-            # Calculate the R1, R2, and sigma_noe gradients.
-            data.dri_prime[j] = data.create_dri_prime[j](data)
+                # Calculate the R1, R2, and sigma_noe gradients.
+                data[k].dri_prime[j] = data[k].create_dri_prime[j](data[k])
 
             # Loop over the relaxation values and modify the NOE gradients.
             data.dri[j] = data.dri_prime[j]
@@ -792,23 +802,27 @@ class Mf:
             # Diffusion tensor correlation times.
             self.diff_data.calc_dti(data, self.diff_data)
 
-            # Calculate the spectral density gradient components.
-            if data.calc_djw_comps:
-                data.calc_djw_comps(data, data.param_values)
+            # Loop over the interactions
+            for k in xrange(self.num_interactions[i])
+                # Calculate the spectral density gradient components.
+                if data[k].calc_djw_comps:
+                    data[k].calc_djw_comps(data[k], data[k].param_values)
 
             # Loop over the gradient.
             for j in xrange(data.total_num_params):
-                # Calculate the spectral density gradients.
-                if data.calc_djw[j]:
-                    data.djw = data.calc_djw[j](data, data.param_values, j)
-                else:
-                    data.djw = data.djw * 0.0
+                # Loop over the interactions
+                for k in xrange(self.num_interactions[i])
+                    # Calculate the spectral density gradients.
+                    if data[k].calc_djw[j]:
+                        data[k].djw = data[k].calc_djw[j](data[k], data[k].param_values, j)
+                    else:
+                        data[k].djw = data[k].djw * 0.0
 
-                # Calculate the relaxation gradient components.
-                data.create_dri_comps(data, data.param_values)
+                    # Calculate the relaxation gradient components.
+                    data[k].create_dri_comps(data[k], data[k].param_values)
 
-                # Calculate the R1, R2, and sigma_noe gradients.
-                data.dri_prime[j] = data.create_dri_prime[j](data)
+                    # Calculate the R1, R2, and sigma_noe gradients.
+                    data[k].dri_prime[j] = data[k].create_dri_prime[j](data[k])
 
                 # Loop over the relaxation values and modify the NOE gradients.
                 data.dri[j] = data.dri_prime[j]
@@ -879,17 +893,19 @@ class Mf:
 
             # Loop over the gradient.
             for j in xrange(data.total_num_params):
-                # Calculate the spectral density gradients.
-                if data.calc_djw[j]:
-                    data.djw = data.calc_djw[j](data, params, j)
-                else:
-                    data.djw = data.djw * 0.0
+                # Loop over the interactions
+                for k in xrange(self.num_interactions[i])
+                    # Calculate the spectral density gradients.
+                    if data[k].calc_djw[j]:
+                        data[k].djw = data[k].calc_djw[j](data[k], params, j)
+                    else:
+                        data[k].djw = data[k].djw * 0.0
 
-                # Calculate the relaxation gradient components.
-                data.create_dri_comps(data, params)
+                    # Calculate the relaxation gradient components.
+                    data[k].create_dri_comps(data[k], params)
 
-                # Calculate the R1, R2, and sigma_noe gradients.
-                data.dri_prime[j] = data.create_dri_prime[j](data)
+                    # Calculate the R1, R2, and sigma_noe gradients.
+                    data[k].dri_prime[j] = data[k].create_dri_prime[j](data[k])
 
                 # Loop over the relaxation values and modify the NOE gradients.
                 data.dri[j] = data.dri_prime[j]
@@ -937,18 +953,20 @@ class Mf:
         # Loop over the lower triangle of the Hessian.
         for j in xrange(data.total_num_params):
             for k in xrange(j + 1):
-                # Calculate the spectral density Hessians.
-                if data.calc_d2jw[j][k]:
-                    data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
-                else:
-                    data.d2jw = data.d2jw * 0.0
+                # Loop over the interactions
+                for m in xrange(self.num_interactions[0])
+                    # Calculate the spectral density Hessians.
+                    if data[m].calc_d2jw[j][k]:
+                        data[m].d2jw = data[m].calc_d2jw[j][k](data[m], params, j, k)
+                    else:
+                        data[m].d2jw = data[m].d2jw * 0.0
 
-                # Calculate the relaxation Hessian components.
-                data.create_d2ri_comps(data, params)
+                    # Calculate the relaxation Hessian components.
+                    data[m].create_d2ri_comps(data[m], params)
 
-                # Calculate the R1, R2, and sigma_noe Hessians.
-                if data.create_d2ri_prime[j][k]:
-                    data.d2ri_prime[j, k] = data.create_d2ri_prime[j][k](data)
+                    # Calculate the R1, R2, and sigma_noe Hessians.
+                    if data[m].create_d2ri_prime[j][k]:
+                        data[m].d2ri_prime[j, k] = data[m].create_d2ri_prime[j][k](data[m])
 
                 # Loop over the relaxation values and modify the NOE Hessians.
                 data.d2ri[j, k] = data.d2ri_prime[j, k]
@@ -990,18 +1008,20 @@ class Mf:
         # Loop over the lower triangle of the Hessian.
         for j in xrange(data.total_num_params):
             for k in xrange(j + 1):
-                # Calculate the spectral density Hessians.
-                if data.calc_d2jw[j][k]:
-                    data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
-                else:
-                    data.d2jw = data.d2jw * 0.0
+                # Loop over the interactions
+                for m in xrange(self.num_interactions[0])
+                    # Calculate the spectral density Hessians.
+                    if data[m].calc_d2jw[j][k]:
+                        data[m].d2jw = data[m].calc_d2jw[j][k](data[m], params, j, k)
+                    else:
+                        data[m].d2jw = data[m].d2jw * 0.0
 
-                # Calculate the relaxation Hessian components.
-                data.create_d2ri_comps(data, params)
+                    # Calculate the relaxation Hessian components.
+                    data[m].create_d2ri_comps(data[m], params)
 
-                # Calculate the R1, R2, and sigma_noe Hessians.
-                if data.create_d2ri_prime[j][k]:
-                    data.d2ri_prime[j, k] = data.create_d2ri_prime[j][k](data)
+                    # Calculate the R1, R2, and sigma_noe Hessians.
+                    if data[m].create_d2ri_prime[j][k]:
+                        data[m].d2ri_prime[j, k] = data[m].create_d2ri_prime[j][k](data[m])
 
                 # Loop over the relaxation values and modify the NOE Hessians.
                 data.d2ri[j, k] = data.d2ri_prime[j, k]
@@ -1061,18 +1081,20 @@ class Mf:
             # Loop over the lower triangle of the Hessian.
             for j in xrange(data.total_num_params):
                 for k in xrange(j + 1):
-                    # Calculate the spectral density Hessians.
-                    if data.calc_d2jw[j][k]:
-                        data.d2jw = data.calc_d2jw[j][k](data, data.param_values, j, k)
-                    else:
-                        data.d2jw = data.d2jw * 0.0
+                    # Loop over the interactions
+                    for m in xrange(self.num_interactions[i])
+                        # Calculate the spectral density Hessians.
+                        if data[m].calc_d2jw[j][k]:
+                            data[m].d2jw = data[m].calc_d2jw[j][k](data[m], data[m].param_values, j, k)
+                        else:
+                            data[m].d2jw = data[m].d2jw * 0.0
 
-                    # Calculate the relaxation Hessian components.
-                    data.create_d2ri_comps(data, data.param_values)
+                        # Calculate the relaxation Hessian components.
+                        data[m].create_d2ri_comps(data[m], data[m].param_values)
 
-                    # Calculate the R1, R2, and sigma_noe Hessians.
-                    if data.create_d2ri_prime[j][k]:
-                        data.d2ri_prime[j, k] = data.create_d2ri_prime[j][k](data)
+                        # Calculate the R1, R2, and sigma_noe Hessians.
+                        if data[m].create_d2ri_prime[j][k]:
+                            data[m].d2ri_prime[j, k] = data[m].create_d2ri_prime[j][k](data[m])
 
                     # Loop over the relaxation values and modify the NOE Hessians.
                     data.d2ri[j, k] = data.d2ri_prime[j, k]
@@ -1135,18 +1157,20 @@ class Mf:
             # Loop over the lower triangle of the Hessian.
             for j in xrange(data.total_num_params):
                 for k in xrange(j + 1):
-                    # Calculate the spectral density Hessians.
-                    if data.calc_d2jw[j][k]:
-                        data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
-                    else:
-                        data.d2jw = data.d2jw * 0.0
+                    # Loop over the interactions
+                    for m in xrange(self.num_interactions[i])
+                        # Calculate the spectral density Hessians.
+                        if data[m].calc_d2jw[j][k]:
+                            data[m].d2jw = data[m].calc_d2jw[j][k](data[m], params, j, k)
+                        else:
+                            data[m].d2jw = data[m].d2jw * 0.0
 
-                    # Calculate the relaxation Hessian components.
-                    data.create_d2ri_comps(data, params)
+                        # Calculate the relaxation Hessian components.
+                        data[m].create_d2ri_comps(data[m], params)
 
-                    # Calculate the R1, R2, and sigma_noe Hessians.
-                    if data.create_d2ri_prime[j][k]:
-                        data.d2ri_prime[j, k] = data.create_d2ri_prime[j][k](data)
+                        # Calculate the R1, R2, and sigma_noe Hessians.
+                        if data[m].create_d2ri_prime[j][k]:
+                            data[m].d2ri_prime[j, k] = data[m].create_d2ri_prime[j][k](data[m])
 
                     # Loop over the relaxation values and modify the NOE Hessians.
                     data.d2ri[j, k] = data.d2ri_prime[j, k]
