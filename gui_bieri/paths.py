@@ -66,4 +66,5 @@ BACKWARDS_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'go-previous-view.png'
 #CANCEL_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'dialog-cancel.png'
 FORWARDS_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'go-next-view.png'
 #REMOVE_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-remove.png'
-MOLECULE_ICON = ICON_RELAX_PATH + '48x48'+sep+'molecule.png'
+
+MOLECULE_ICON = ICON_RELAX_PATH + '22x22'+sep+'molecule.png'

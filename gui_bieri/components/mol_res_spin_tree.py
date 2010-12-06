@@ -48,7 +48,7 @@ class Mol_res_spin_tree(wx.Panel):
         wx.Panel.__init__(self, parent, id, style=wx.WANTS_CHARS)
 
         # Some default values.
-        self.icon_size = 48
+        self.icon_size = 22
 
         # The tree.
         self.tree = wx.TreeCtrl(parent=self, id=-1, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TR_DEFAULT_STYLE)
