@@ -72,7 +72,7 @@ def opendir(msg, default): # select directory, msg is message to display, defaul
         return newdir
 
 
-def openfile(msg=None, directory=None, filetype='', default=None):
+def openfile(msg=None, directory=None, filetype='*', default='all files (*.*)|*'):
     """Open a file.
 
     For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
