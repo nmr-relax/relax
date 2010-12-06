@@ -58,6 +58,7 @@ SETTINGS_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-properties.png'
 SETTINGS_GLOBAL_ICON = ICON_PATH + '16x16'+sep+'categories'+sep+'preferences-system.png'
 SETTINGS_RESET_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'edit-delete.png'
 REF_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'flag-blue.png'
+UF_SCRIPT_ICON = ICON_PATH + '16x16'+sep+'mimetypes'+sep+'application-x-desktop.png'
 
 # 48x48 icons.
 #ADD_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-add-relax-blue.png'
