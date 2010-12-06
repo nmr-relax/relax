@@ -738,44 +738,43 @@ class Auto_model_free:
 
     def check_entries(self):
         check = False
-        counter = 0
+        counter_frq = 0
+        counter_noe = 0
+        counter_r1 = 0
+        counter_r2 = 0
 
         # check frq 1
         if not self.modelfreefreq1.GetValue() == '':
-            counter = counter + 1
+            counter_frq = counter_frq + 1
         if not self.m_noe_1.GetValue() == '':
-            counter = counter + 1
+            counter_noe = counter_noe + 1
         if not self.m_r1_1.GetValue() == '':
-            counter = counter + 1
+            counter_r1 = counter_r1 + 1
         if not self.m_r2_1.GetValue() == '':
-            counter = counter + 1
+            counter_r2 = counter_r2 + 1
 
         # check frq 1
         if not self.modelfreefreq2.GetValue() == '':
-            counter = counter + 1
+            counter_frq = counter_frq + 1
         if not self.m_noe_2.GetValue() == '':
-            counter = counter + 1
+            counter_noe = counter_noe + 1
         if not self.m_r1_2.GetValue() == '':
-            counter = counter + 1
+            counter_r1 = counter_r1 + 1
         if not self.m_r2_2.GetValue() == '':
-            counter = counter + 1
+            counter_r2 = counter_r2 + 1
 
         # check frq 1
         if not self.modelfreefreq3.GetValue() == '':
-            counter = counter + 1
+            counter_frq = counter_frq + 1
         if not self.m_noe_3.GetValue() == '':
-            counter = counter + 1
+            counter_noe = counter_noe + 1
         if not self.m_r1_3.GetValue() == '':
-            counter = counter + 1
+            counter_r1 = counter_r1 + 1
         if not self.m_r2_3.GetValue() == '':
-            counter = counter + 1
+            counter_r2 = counter_r2 + 1
 
-        # two field strength ok
-        if counter == 8:
-            check = True
-
-        # three field strength ok
-        elif counter == 12:
+        # each parameter has to be present at least in doublicates
+        if counter_frq > 1 and counter_noe > 1 and counter_r1 > 1 and counter_r2 > 1:
             check = True
 
         # missing data
