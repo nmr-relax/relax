@@ -561,8 +561,16 @@ class Auto_model_free:
         # Import parameter file settings.
         param = ds.relax_gui.file_setting
 
+        # Read parameter file parameters and convert them to integers if not None.
+        param_tmp = param
+        for i in range(0, len(param_tmp)):
+            if str(param_tmp[i]) in ['', '0', 'None']:
+                param_tmp[i] = None
+            else:
+                param_tmp[i] = int(param_tmp[i])
+
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        data.seq_args = [sequence_file, None, None, int(param[1]), int(param[2]),int(param[3]), int(param[4]), None]
+        data.seq_args = [sequence_file, None, None, param_tmp[1], param_tmp[2], param_tmp[3], param_tmp[4], None]
 
         # Import golbal settings.
         global_settings = ds.relax_gui.global_setting
@@ -606,9 +614,9 @@ class Auto_model_free:
                 continue
 
             # Append the relaxation data.
-            data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, int(param[1]), int(param[2]), int(param[3]), int(param[4]), int(param[5]), int(param[6]), None])
-            data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, int(param[1]), int(param[2]), int(param[3]), int(param[4]), int(param[5]), int(param[6]), None])
-            data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, int(param[1]), int(param[2]), int(param[3]), int(param[4]), int(param[5]), int(param[6]), None])
+            data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, param_tmp[1], param_tmp[2], param_tmp[3], param_tmp[4], param_tmp[5], param_tmp[6], None])
+            data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, param_tmp[1], param_tmp[2], param_tmp[3], param_tmp[4], param_tmp[5], param_tmp[6], None])
+            data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, param_tmp[1], param_tmp[2], param_tmp[3], param_tmp[4], param_tmp[5], param_tmp[6], None])
 
         # Unresolved resiudes
         file = DummyFileObject()
