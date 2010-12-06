@@ -325,19 +325,19 @@ class Main(wx.Frame):
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(menu, id=40, text="relax user &manual\tF1", icon=MANUAL_ICON))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=30, text="&Contact relaxGUI (relax-users@gna.org)", icon=CONTACT_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=31, text="&References", icon=REF_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=41, text="&Contact relaxGUI (relax-users@gna.org)", icon=CONTACT_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=42, text="&References", icon=REF_ICON))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=41, text="About relaxG&UI", icon=ABOUT_RELAXGUI_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=42, text="About rela&x", icon=ABOUT_RELAX_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=43, text="About relaxG&UI", icon=ABOUT_RELAXGUI_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=44, text="About rela&x", icon=ABOUT_RELAX_ICON))
         menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.
-        self.Bind(wx.EVT_MENU, self.relax_manual,  id=40)
-        self.Bind(wx.EVT_MENU, self.contact_relax, id=30)
-        self.Bind(wx.EVT_MENU, self.references, id=31)
-        self.Bind(wx.EVT_MENU, self.about_gui,  id=41)
-        self.Bind(wx.EVT_MENU, self.about_relax, id=42)
+        self.Bind(wx.EVT_MENU, self.relax_manual,   id=40)
+        self.Bind(wx.EVT_MENU, self.contact_relax,  id=41)
+        self.Bind(wx.EVT_MENU, self.references,     id=42)
+        self.Bind(wx.EVT_MENU, self.about_gui,      id=43)
+        self.Bind(wx.EVT_MENU, self.about_relax,    id=44)
 
 
     def build_menu_sub_item(self, menu, id=None, text='', tooltip='', icon=None):
