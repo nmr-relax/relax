@@ -36,6 +36,7 @@ import sys
 # GUI image and icon paths.
 ICON_PATH = __main__.install_path +sep+'gui_bieri'+sep+'oxygen_icons'+sep
 IMAGE_PATH = __main__.install_path +sep+'gui_bieri'+sep+'images'+sep
+ICON_RELAX_PATH = __main__.install_path +sep+'graphics'+sep+'relax_icons'+sep
 
 # 16x16 icons.
 ABOUT_RELAX_ICON = IMAGE_PATH + 'relax_16x16.png'
@@ -64,3 +65,4 @@ BACKWARDS_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'go-previous-view.png'
 #CANCEL_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'dialog-cancel.png'
 FORWARDS_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'go-next-view.png'
 #REMOVE_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-remove.png'
+MOLECULE_ICON = ICON_RELAX_PATH + '48x48'+sep+'molecule.png'
