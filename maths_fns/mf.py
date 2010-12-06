@@ -259,8 +259,7 @@ class Mf:
             # The ratio of gyromagnetic ratios.
             g_ratio = gh[i] / gx[i]
 
-
-            # loop over interactions
+            # Loop over the relaxation interactions.
             for j in xrange(self.num_interactions[i]):
                 self.data[i].append(Data())
                 self.data[i][j].interactions=interactions[i][j]
@@ -412,7 +411,8 @@ class Mf:
         if self.scaling_flag:
             params = dot(params, self.scaling_matrix)
 
-        for j in xrange(self.num_interactions[0])
+        # Loop over the relaxation interactions.
+        for j in xrange(self.num_interactions[0]):
             # Direction cosine calculations.
             if self.diff_data.calc_di:
                 self.diff_data.calc_di(data[j], self.diff_data)
@@ -467,7 +467,8 @@ class Mf:
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:1]
 
-        for j in xrange(self.num_interactions[0])
+        # Loop over the relaxation interactions.
+        for j in xrange(self.num_interactions[0]):
             # Diffusion tensor weight calculations.
             self.diff_data.calc_ci(data[j], self.diff_data)
 
@@ -527,7 +528,9 @@ class Mf:
         for i in xrange(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
-            for j in xrange(self.num_interactions[i])
+
+            # Loop over the relaxation interactions.
+            for j in xrange(self.num_interactions[i]):
                 # Direction cosine calculations.
                 if self.diff_data.calc_di:
                     self.diff_data.calc_di(data[j], self.diff_data)
@@ -594,7 +597,9 @@ class Mf:
         for i in xrange(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
-            for j in xrange(self.num_interactions[i])
+
+            # Loop over the relaxation interactions.
+            for j in xrange(self.num_interactions[i]):
                 # Direction cosine calculations.
                 if self.diff_data.calc_di:
                     self.diff_data.calc_di(data[j], self.diff_data)
@@ -657,16 +662,16 @@ class Mf:
         if self.scaling_flag:
             params = dot(params, self.scaling_matrix)
 
-        # Loop over the interactions
-        for k in xrange(self.num_interactions[0])
+        # Loop over the relaxation interactions.
+        for k in xrange(self.num_interactions[0]):
             # Calculate the spectral density gradient components.
             if data[k].calc_djw_comps:
                 data[k].calc_djw_comps(data[k], params)
 
         # Loop over the gradient.
         for j in xrange(data.total_num_params):
-            # Loop over the interactions
-            for k in xrange(self.num_interactions[0])
+            # Loop over the relaxation interactions.
+            for k in xrange(self.num_interactions[0]):
                 # Calculate the spectral density gradients.
                 if data[k].calc_djw[j]:
                     data[k].djw = data[k].calc_djw[j](data[k], params, j)
@@ -719,8 +724,8 @@ class Mf:
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:1]
 
-        # Loop over the interactions
-        for k in xrange(self.num_interactions[0])
+        # Loop over the relaxation interactions.
+        for k in xrange(self.num_interactions[0]):
             # Calculate the spectral density gradient components.
             if data.calc_djw_comps:
                 data.calc_djw_comps(data[k], params)
@@ -730,8 +735,8 @@ class Mf:
 
         # Loop over the gradient.
         for j in xrange(data.total_num_params):
-            # Loop over the interactions
-            for k in xrange(self.num_interactions[0])
+            # Loop over the relaxation interactions.
+            for k in xrange(self.num_interactions[0]):
                 # Calculate the spectral density gradients.
                 if data[k].calc_djw[j]:
                     data[k].djw = data[k].calc_djw[j](data[k], params, j)
@@ -802,16 +807,16 @@ class Mf:
             # Diffusion tensor correlation times.
             self.diff_data.calc_dti(data, self.diff_data)
 
-            # Loop over the interactions
-            for k in xrange(self.num_interactions[i])
+            # Loop over the relaxation interactions.
+            for k in xrange(self.num_interactions[i]):
                 # Calculate the spectral density gradient components.
                 if data[k].calc_djw_comps:
                     data[k].calc_djw_comps(data[k], data[k].param_values)
 
             # Loop over the gradient.
             for j in xrange(data.total_num_params):
-                # Loop over the interactions
-                for k in xrange(self.num_interactions[i])
+                # Loop over the relaxation interactions.
+                for k in xrange(self.num_interactions[i]):
                     # Calculate the spectral density gradients.
                     if data[k].calc_djw[j]:
                         data[k].djw = data[k].calc_djw[j](data[k], data[k].param_values, j)
@@ -893,8 +898,8 @@ class Mf:
 
             # Loop over the gradient.
             for j in xrange(data.total_num_params):
-                # Loop over the interactions
-                for k in xrange(self.num_interactions[i])
+                # Loop over the relaxation interactions.
+                for k in xrange(self.num_interactions[i]):
                     # Calculate the spectral density gradients.
                     if data[k].calc_djw[j]:
                         data[k].djw = data[k].calc_djw[j](data[k], params, j)
@@ -953,8 +958,8 @@ class Mf:
         # Loop over the lower triangle of the Hessian.
         for j in xrange(data.total_num_params):
             for k in xrange(j + 1):
-                # Loop over the interactions
-                for m in xrange(self.num_interactions[0])
+                # Loop over the relaxation interactions.
+                for m in xrange(self.num_interactions[0]):
                     # Calculate the spectral density Hessians.
                     if data[m].calc_d2jw[j][k]:
                         data[m].d2jw = data[m].calc_d2jw[j][k](data[m], params, j, k)
@@ -1008,8 +1013,8 @@ class Mf:
         # Loop over the lower triangle of the Hessian.
         for j in xrange(data.total_num_params):
             for k in xrange(j + 1):
-                # Loop over the interactions
-                for m in xrange(self.num_interactions[0])
+                # Loop over the relaxation interactions.
+                for m in xrange(self.num_interactions[0]):
                     # Calculate the spectral density Hessians.
                     if data[m].calc_d2jw[j][k]:
                         data[m].d2jw = data[m].calc_d2jw[j][k](data[m], params, j, k)
@@ -1081,8 +1086,8 @@ class Mf:
             # Loop over the lower triangle of the Hessian.
             for j in xrange(data.total_num_params):
                 for k in xrange(j + 1):
-                    # Loop over the interactions
-                    for m in xrange(self.num_interactions[i])
+                    # Loop over the relaxation interactions.
+                    for m in xrange(self.num_interactions[i]):
                         # Calculate the spectral density Hessians.
                         if data[m].calc_d2jw[j][k]:
                             data[m].d2jw = data[m].calc_d2jw[j][k](data[m], data[m].param_values, j, k)
@@ -1157,8 +1162,8 @@ class Mf:
             # Loop over the lower triangle of the Hessian.
             for j in xrange(data.total_num_params):
                 for k in xrange(j + 1):
-                    # Loop over the interactions
-                    for m in xrange(self.num_interactions[i])
+                    # Loop over the relaxation interactions.
+                    for m in xrange(self.num_interactions[i]):
                         # Calculate the spectral density Hessians.
                         if data[m].calc_d2jw[j][k]:
                             data[m].d2jw = data[m].calc_d2jw[j][k](data[m], params, j, k)
