@@ -30,6 +30,8 @@ import wx
 # relax module imports.
 from generic_fns.pipes import get_pipe
 
+# GUI module imports.
+from gui_bieri import paths
 
 
 class Mol_res_spin_tree(wx.Panel):
@@ -90,6 +92,10 @@ class Mol_res_spin_tree(wx.Panel):
             # Append a molecule with name to the tree.
             mol_branch = self.tree.AppendItem(self.root, "Molecule %s" % mol.name)
             self.tree.SetPyData(mol_branch, None)
+
+            # The icon.
+            bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(paths.MOLECULE_ICON, wx.BITMAP_TYPE_ANY))
+            self.tree.SetItemImage(mol_branch, bitmap, wx.TreeItemIcon_Normal)
 
             # The residues.
             for res in mol.res:
