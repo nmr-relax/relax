@@ -52,6 +52,7 @@ from analyses.auto_r2 import Auto_r2
 from analyses.results import Results_summary
 from analyses.results_analysis import see_results
 from base_classes import Container
+from components.mol_res_spin_tree import Tree_window
 from controller import Controller
 from filedialog import opendir, openfile, savefile
 from message import dir_message, error_message, question
@@ -125,6 +126,9 @@ class Main(wx.Frame):
 
         # Build the relax prompt, but don't show it.
         self.relax_prompt = Prompt(None, -1, "", parent=self)
+
+        # Build the tree view window, but don't show it.
+        self.mol_res_spin_tree = Tree_window(None, -1, "", parent=self)
 
         rx_data = ds.relax_gui.analyses[self.noe_index[0]]
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
@@ -287,11 +291,13 @@ class Main(wx.Frame):
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(menu, id=50, text="&Controller\tCtrl+Z", icon=CONTROLLER_ICON))
         menu.AppendItem(self.build_menu_sub_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=RELAX_PROMPT_ICON))
+        #menu.AppendItem(self.build_menu_sub_item(menu, id=52, text="Spin &tree view\tCtrl+T"))
         menubar.Append(menu, "&View")
 
         # The 'View' actions.
         self.Bind(wx.EVT_MENU, self.show_controller,    id=50)
         self.Bind(wx.EVT_MENU, self.show_prompt,        id=51)
+        #self.Bind(wx.EVT_MENU, self.show_tree,          id=52)
 
         # The 'Molecule' menu entries.
         menu = wx.Menu()
@@ -462,6 +468,7 @@ class Main(wx.Frame):
             self.dialog_about_gui.Destroy()
             self.dialog_about_relax.Destroy()
             self.relax_prompt.Destroy()
+            self.mol_res_spin_tree.Destroy()
 
             # Destroy the main window.
             self.Destroy()
@@ -690,6 +697,17 @@ class Main(wx.Frame):
 
         # Open the window.
         self.relax_prompt.Show()
+
+
+    def show_tree(self, event):
+        """Display the molecule, residue, and spin tree window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Open the window.
+        self.mol_res_spin_tree.Show()
 
 
     def state_load(self, event):
