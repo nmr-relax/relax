@@ -20,34 +20,19 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""User function GUI elements."""
+# Module docstring.
+"""Base class module for the user function GUI elements."""
 
-# relax module imports.
-from prompt.interpreter import Interpreter
-
-# GUI module imports.
-from script import Script
+# relax GUI module imports.
+from gui_bieri.controller import Redirect_text
 
 
-# The package __all__ list.
-__all__ = ['base',
-           'script']
+class UF_base:
+    """User function GUI element base class."""
 
-
-class User_functions:
-    """Container for all the user function GUI elements."""
-
-    def __init__(self, gui):
-        """Set up the container."""
+    def __init__(self, gui, interpreter):
+        """Set up the user function class."""
 
         # Store the args.
         self.gui = gui
-
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=True, quit=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
-
-        # The user functions.
-        self.script = Script(self.gui, self.interpreter)
+        self.interpreter = interpreter

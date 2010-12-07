@@ -24,19 +24,12 @@
 """The script user functions."""
 
 # GUI module imports.
+from base import UF_base
 from gui_bieri.filedialog import openfile
 
 
-class Script:
+class Script(UF_base):
     """The script user function GUI class."""
-
-    def __init__(self, gui, interpreter):
-        """Set up the user function class."""
-
-        # Store the args.
-        self.gui = gui
-        self.interpreter = interpreter
-
 
     def run(self, event):
         """The script user function GUI element.
