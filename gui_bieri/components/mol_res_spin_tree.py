@@ -64,6 +64,7 @@ class Mol_res_spin_tree(wx.Panel):
         icon_list = wx.ImageList(self.icon_size, self.icon_size)
         self.icon_mol_index = icon_list.Add(wx.Bitmap(paths.MOLECULE_ICON, wx.BITMAP_TYPE_ANY))
         self.icon_res_index = icon_list.Add(wx.Bitmap(paths.RESIDUE_ICON, wx.BITMAP_TYPE_ANY))
+        self.icon_spin_index = icon_list.Add(wx.Bitmap(paths.SPIN_ICON, wx.BITMAP_TYPE_ANY))
         self.tree.SetImageList(icon_list)
 
         # Some weird black magic (this is essential)!!
@@ -123,6 +124,9 @@ class Mol_res_spin_tree(wx.Panel):
                     # Append a spin with name and number to the tree.
                     spin_branch = self.tree.AppendItem(res_branch, "Spin %s %s" % (spin.num, spin.name))
                     self.tree.SetPyData(spin_branch, None)
+
+                    # Set the bitmap.
+                    self.tree.SetItemImage(spin_branch, self.icon_spin_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
 
             # Expand the molecule view.
             self.tree.Expand(mol_branch)
