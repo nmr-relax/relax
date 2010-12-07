@@ -101,6 +101,9 @@ class Mol_res_spin_tree(wx.Panel):
         if not pipe:
             return
 
+        # Clear all.
+        self.tree.DeleteChildren(self.root)
+
         # The molecules.
         for mol in pipe.mol:
             # Append a molecule with name to the tree.
