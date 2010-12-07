@@ -25,6 +25,7 @@
 """Log window of relax GUI controlling all calculations."""
 
 # Python module imports.
+import __main__
 from os import sep
 from string import split, replace
 import sys
@@ -56,6 +57,12 @@ class Controller(wx.Frame):
         self.size_x = 600
         self.size_y = 600
         self.border = 5
+
+        # IO redirection.
+        if not __main__.debug:
+            redir = Redirect_text(self)
+            sys.stdout = redir
+            sys.stderr = redir
 
         # Set up the frame.
         sizer = self.setup_frame()
