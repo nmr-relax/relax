@@ -106,7 +106,7 @@ class Mol_res_spin_tree(wx.Panel):
             self.tree.SetPyData(mol_branch, None)
 
             # Set the bitmap.
-            self.tree.SetItemImage(mol_branch, self.icon_mol_index, wx.TreeItemIcon_Normal|wx.TreeItemIcon_Expanded)
+            self.tree.SetItemImage(mol_branch, self.icon_mol_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
 
             # The residues.
             for res in mol.res:
