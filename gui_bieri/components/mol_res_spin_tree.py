@@ -63,6 +63,7 @@ class Mol_res_spin_tree(wx.Panel):
         # Build the icon list.
         icon_list = wx.ImageList(self.icon_size, self.icon_size)
         self.icon_mol_index = icon_list.Add(wx.Bitmap(paths.MOLECULE_ICON, wx.BITMAP_TYPE_ANY))
+        self.icon_res_index = icon_list.Add(wx.Bitmap(paths.RESIDUE_ICON, wx.BITMAP_TYPE_ANY))
         self.tree.SetImageList(icon_list)
 
         # Some weird black magic (this is essential)!!
@@ -113,6 +114,9 @@ class Mol_res_spin_tree(wx.Panel):
                 # Append a residue with name and number to the tree.
                 res_branch = self.tree.AppendItem(mol_branch, "Residue %s %s" % (res.num, res.name))
                 self.tree.SetPyData(res_branch, None)
+
+                # Set the bitmap.
+                self.tree.SetItemImage(res_branch, self.icon_res_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
 
                 # The spins.
                 for spin in res.spin:

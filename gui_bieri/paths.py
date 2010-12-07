@@ -68,3 +68,4 @@ FORWARDS_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'go-next-view.png'
 #REMOVE_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-remove.png'
 
 MOLECULE_ICON = ICON_RELAX_PATH + '22x22'+sep+'molecule.png'
+RESIDUE_ICON = ICON_RELAX_PATH + '22x22'+sep+'residue.png'
