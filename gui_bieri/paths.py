@@ -47,8 +47,12 @@ class I16x16:
         """Initialise all paths."""
 
         # relax icons.
-        self.about_relax = IMAGE_PATH + 'relax_16x16.png'
-        self.about_relaxgui = IMAGE_PATH + 'relax_16x16.png'
+        path = ICON_RELAX_PATH + '16x16' + sep
+        self.about_relax =      IMAGE_PATH + 'relax_16x16.png'
+        self.about_relaxgui =   IMAGE_PATH + 'relax_16x16.png'
+        self.manual =           path + 'molecule.png'
+        self.residue =          path + 'residue.png'
+        self.spin =             path + 'spin.png'
 
         # Oxygen icons.
         path = OXY_ICON_PATH + '16x16' + sep
