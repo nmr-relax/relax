@@ -295,7 +295,7 @@ class Main(wx.Frame):
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(menu, id=50, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.controller))
         menu.AppendItem(self.build_menu_sub_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=52, text="Spin &tree view\tCtrl+T"))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=52, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
         menubar.Append(menu, "&View")
 
         # The 'View' actions.
