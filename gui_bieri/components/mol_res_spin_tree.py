@@ -63,6 +63,7 @@ class Mol_res_spin_tree(wx.Panel):
         # Build the icon list.
         icon_list = wx.ImageList(self.icon_size, self.icon_size)
         self.icon_mol_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.molecule, wx.BITMAP_TYPE_ANY))
+        self.icon_mol_unfold_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.molecule_unfolded, wx.BITMAP_TYPE_ANY))
         self.icon_res_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.residue, wx.BITMAP_TYPE_ANY))
         self.icon_spin_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.spin, wx.BITMAP_TYPE_ANY))
         self.tree.SetImageList(icon_list)
@@ -111,7 +112,8 @@ class Mol_res_spin_tree(wx.Panel):
             self.tree.SetPyData(mol_branch, None)
 
             # Set the bitmap.
-            self.tree.SetItemImage(mol_branch, self.icon_mol_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+            self.tree.SetItemImage(mol_branch, self.icon_mol_index, wx.TreeItemIcon_Normal)
+            self.tree.SetItemImage(mol_branch, self.icon_mol_unfold_index, wx.TreeItemIcon_Expanded)
 
             # The residues.
             for res in mol.res:
