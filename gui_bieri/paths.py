@@ -34,39 +34,76 @@ import sys
 
 
 # GUI image and icon paths.
-ICON_PATH = __main__.install_path +sep+'gui_bieri'+sep+'oxygen_icons'+sep
-IMAGE_PATH = __main__.install_path +sep+'gui_bieri'+sep+'images'+sep
-ICON_RELAX_PATH = __main__.install_path +sep+'graphics'+sep+'relax_icons'+sep
+OXY_ICON_PATH = __main__.install_path + sep + 'gui_bieri' + sep + 'oxygen_icons' + sep
+IMAGE_PATH = __main__.install_path + sep + 'gui_bieri' + sep + 'images' + sep
+ICON_RELAX_PATH = __main__.install_path + sep + 'graphics' + sep + 'relax_icons' + sep
 
-# 16x16 icons.
-ABOUT_RELAX_ICON = IMAGE_PATH + 'relax_16x16.png'
-ABOUT_RELAXGUI_ICON = IMAGE_PATH + 'relax_16x16.png'
-ADD_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'list-add-relax-blue.png'
-CANCEL_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'dialog-cancel.png'
-CONTACT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'mail-mark-unread-new.png'
-CONTROLLER_ICON = ICON_PATH + '16x16'+sep+'apps'+sep+'preferences-system-performance.png'
-EXIT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'system-shutdown.png'
-LOAD_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'arrow-right.png'
-MANUAL_ICON = ICON_PATH + '16x16'+sep+'mimetypes'+sep+'application-pdf.png'
-NEW_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-new.png'
-OPEN_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-open.png'
-RELAX_PROMPT_ICON = ICON_PATH + '16x16'+sep+'mimetypes'+sep+'application-x-executable-script.png'
-REMOVE_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'list-remove.png'
-SAVE_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-save.png'
-SAVE_AS_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-save-as.png'
-SETTINGS_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-properties.png'
-SETTINGS_GLOBAL_ICON = ICON_PATH + '16x16'+sep+'categories'+sep+'preferences-system.png'
-SETTINGS_RESET_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'edit-delete.png'
-REF_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'flag-blue.png'
-UF_SCRIPT_ICON = ICON_PATH + '16x16'+sep+'mimetypes'+sep+'application-x-desktop.png'
 
-# 48x48 icons.
-#ADD_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-add-relax-blue.png'
-BACKWARDS_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'go-previous-view.png'
-#CANCEL_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'dialog-cancel.png'
-FORWARDS_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'go-next-view.png'
-#REMOVE_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-remove.png'
 
-MOLECULE_ICON = ICON_RELAX_PATH + '22x22'+sep+'molecule.png'
-RESIDUE_ICON = ICON_RELAX_PATH + '22x22'+sep+'residue.png'
-SPIN_ICON = ICON_RELAX_PATH + '22x22'+sep+'spin.png'
+class I16x16:
+    """The 16x16 pixel icons."""
+
+    def __init__(self):
+        """Initialise all paths."""
+
+        # relax icons.
+        self.about_relax = IMAGE_PATH + 'relax_16x16.png'
+        self.about_relaxgui = IMAGE_PATH + 'relax_16x16.png'
+
+        # Oxygen icons.
+        path = OXY_ICON_PATH + '16x16' + sep
+        self.add =                  path + 'actions'    + sep + 'list-add-relax-blue.png'
+        self.cancel =               path + 'actions'    + sep + 'dialog-cancel.png'
+        self.contact =              path + 'actions'    + sep + 'mail-mark-unread-new.png'
+        self.controller =           path + 'apps'       + sep + 'preferences-system-performance.png'
+        self.exit =                 path + 'actions'    + sep + 'system-shutdown.png'
+        self.load =                 path + 'actions'    + sep + 'arrow-right.png'
+        self.manual =               path + 'mimetypes'  + sep + 'application-pdf.png'
+        self.new =                  path + 'actions'    + sep + 'document-new.png'
+        self.open =                 path + 'actions'    + sep + 'document-open.png'
+        self.relax_prompt =         path + 'mimetypes'  + sep + 'application-x-executable-script.png'
+        self.remove =               path + 'actions'    + sep + 'list-remove.png'
+        self.save =                 path + 'actions'    + sep + 'document-save.png'
+        self.save_as =              path + 'actions'    + sep + 'document-save-as.png'
+        self.settings =             path + 'actions'    + sep + 'document-properties.png'
+        self.settings_global =      path + 'categories' + sep + 'preferences-system.png'
+        self.settings_reset =       path + 'actions'    + sep + 'edit-delete.png'
+        self.ref =                  path + 'actions'    + sep + 'flag-blue.png'
+        self.uf_script =            path + 'mimetypes'  + sep + 'application-x-desktop.png'
+
+
+
+class I22x22:
+    """The 22x22 pixel icons."""
+
+    def __init__(self):
+        """Initialise all paths."""
+
+        # relax icons.
+        path = ICON_RELAX_PATH + '22x22' + sep
+        self.molecule =     path + 'molecule.png'
+        self.residue =      path + 'residue.png'
+        self.spin =         path + 'spin.png'
+
+
+
+class I48x48:
+    """The 48x48 pixel icons."""
+
+    def __init__(self):
+        """Initialise all paths."""
+
+        # Oxygen icons.
+        path = OXY_ICON_PATH + '48x48' + sep
+        self.add =          path + 'actions' + sep + 'list-add-relax-blue.png'
+        self.backwards =    path + 'actions' + sep + 'go-previous-view.png'
+        self.cancel =       path + 'actions' + sep + 'dialog-cancel.png'
+        self.forwards =     path + 'actions' + sep + 'go-next-view.png'
+        self.remove =       path + 'actions' + sep + 'list-remove.png'
+
+
+
+# Set up all icon classes.
+icon_16x16 = I16x16()
+icon_22x22 = I22x22()
+icon_48x48 = I48x48()

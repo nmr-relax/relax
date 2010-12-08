@@ -32,7 +32,7 @@ import wx.html
 from info import Info_box
 
 # relax GUI module imports.
-from gui_bieri.paths import IMAGE_PATH, BACKWARDS_ICON, FORWARDS_ICON
+from gui_bieri import paths
 
 # HTML header.
 HTML_HEADER = """\
@@ -107,13 +107,13 @@ class References(wx.Frame):
         button_box = wx.BoxSizer(wx.HORIZONTAL)
 
         # Backwards button.
-        button = wx.BitmapButton(self, -1, wx.Bitmap(BACKWARDS_ICON, wx.BITMAP_TYPE_ANY), style=wx.NO_BORDER)
+        button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icons_48x48.backwards, wx.BITMAP_TYPE_ANY), style=wx.NO_BORDER)
         button.SetSize(button.GetBestSize())
         self.Bind(wx.EVT_BUTTON, self.backwards, button)
         button_box.Add(button)
 
         # Forwards button.
-        button = wx.BitmapButton(self, -1, wx.Bitmap(FORWARDS_ICON, wx.BITMAP_TYPE_ANY), style=wx.NO_BORDER)
+        button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icons_48x48.forwards, wx.BITMAP_TYPE_ANY), style=wx.NO_BORDER)
         button.SetSize(button.GetBestSize())
         self.Bind(wx.EVT_BUTTON, self.forwards, button)
         button_box.Add(button)
@@ -155,7 +155,7 @@ class References(wx.Frame):
 
         # The reference header.
         text = text + "<center>"
-        text = text + "<img src=%s%s></img>" % (IMAGE_PATH, 'ulysses_shadowless_400x168.png')
+        text = text + "<img src=%s%s></img>" % (paths.IMAGE_PATH, 'ulysses_shadowless_400x168.png')
         text = text + "<h1>relax references</h1>"
         text = text + "</center>"
 

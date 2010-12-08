@@ -56,7 +56,6 @@ from components.mol_res_spin_tree import Tree_window
 from controller import Controller
 from filedialog import opendir, openfile, savefile
 from message import dir_message, error_message, question
-from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, CONTROLLER_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, RELAX_PROMPT_ICON, SAVE_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
 from gui_bieri import paths
 from references import References
 from relax_prompt import Prompt
@@ -160,7 +159,7 @@ class Main(wx.Frame):
         # begin wxGlade: main.__set_properties
         self.SetTitle("relaxGUI " + GUI_version)
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.SetSize((1000, 600))
         self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
@@ -276,13 +275,13 @@ class Main(wx.Frame):
 
         # The 'File' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=0, text="&New\tCtrl+N", icon=NEW_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=1, text="&Open\tCtrl+O", icon=OPEN_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=0, text="&New\tCtrl+N", icon=paths.icon_16x16.new))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=1, text="&Open\tCtrl+O", icon=paths.icon_16x16.open))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=2, text="S&ave\tCtrl+S", icon=SAVE_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=3, text="Save as...\tCtrl+Shift+S", icon=SAVE_AS_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=2, text="S&ave\tCtrl+S", icon=paths.icon_16x16.save))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=3, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.save_as))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=4, text="E&xit\tCtrl+Q", icon=EXIT_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=4, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
         menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
@@ -294,8 +293,8 @@ class Main(wx.Frame):
 
         # The 'View' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=50, text="&Controller\tCtrl+Z", icon=CONTROLLER_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=RELAX_PROMPT_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=50, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.controller))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
         menu.AppendItem(self.build_menu_sub_item(menu, id=52, text="Spin &tree view\tCtrl+T"))
         menubar.Append(menu, "&View")
 
@@ -306,7 +305,7 @@ class Main(wx.Frame):
 
         # The 'User functions' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=30, text="&script", icon=paths.UF_SCRIPT_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=30, text="&script", icon=paths.icon_16x16.uf_script))
         menubar.Append(menu, "&User functions")
 
         # The 'User functions' menu actions.
@@ -314,8 +313,8 @@ class Main(wx.Frame):
 
         # The 'Molecule' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=10, text="Load &PDB File", icon=LOAD_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=11, text="Load se&quence file", icon=LOAD_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=10, text="Load &PDB File", icon=paths.icon_16x16.load))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=11, text="Load se&quence file", icon=paths.icon_16x16.load))
         menubar.Append(menu, "&Molecule")
 
         # The 'Molecule' menu actions.
@@ -324,9 +323,9 @@ class Main(wx.Frame):
 
         # The 'Settings' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=20, text="&Global relax settings", icon=SETTINGS_GLOBAL_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=21, text="&Parameter file settings", icon=SETTINGS_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=22, text="Reset a&ll settings", icon=SETTINGS_RESET_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=20, text="&Global relax settings", icon=paths.icon_16x16.settings_global))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=21, text="&Parameter file settings", icon=paths.icon_16x16.settings))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=22, text="Reset a&ll settings", icon=paths.icon_16x16.settings_reset))
         menubar.Append(menu, "&Settings")
 
         # The 'Settings' menu actions.
@@ -336,13 +335,13 @@ class Main(wx.Frame):
 
         # The 'Help' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=40, text="relax user &manual\tF1", icon=MANUAL_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=40, text="relax user &manual\tF1", icon=paths.icon_16x16.manual))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=41, text="&Contact relaxGUI (relax-users@gna.org)", icon=CONTACT_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=42, text="&References", icon=REF_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=41, text="&Contact relaxGUI (relax-users@gna.org)", icon=paths.icon_16x16.contact))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=42, text="&References", icon=paths.icon_16x16.ref))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=43, text="About relaxG&UI", icon=ABOUT_RELAXGUI_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=44, text="About rela&x", icon=ABOUT_RELAX_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=43, text="About relaxG&UI", icon=paths.icon_16x16.about_relaxgui))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=44, text="About rela&x", icon=paths.icon_16x16.about_relax))
         menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.

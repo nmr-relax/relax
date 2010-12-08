@@ -62,9 +62,9 @@ class Mol_res_spin_tree(wx.Panel):
 
         # Build the icon list.
         icon_list = wx.ImageList(self.icon_size, self.icon_size)
-        self.icon_mol_index = icon_list.Add(wx.Bitmap(paths.MOLECULE_ICON, wx.BITMAP_TYPE_ANY))
-        self.icon_res_index = icon_list.Add(wx.Bitmap(paths.RESIDUE_ICON, wx.BITMAP_TYPE_ANY))
-        self.icon_spin_index = icon_list.Add(wx.Bitmap(paths.SPIN_ICON, wx.BITMAP_TYPE_ANY))
+        self.icon_mol_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.molecule, wx.BITMAP_TYPE_ANY))
+        self.icon_res_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.residue, wx.BITMAP_TYPE_ANY))
+        self.icon_spin_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.spin, wx.BITMAP_TYPE_ANY))
         self.tree.SetImageList(icon_list)
 
         # Some weird black magic (this is essential)!!

@@ -46,7 +46,7 @@ from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import multi_openfile, opendir
 from gui_bieri.message import error_message, missing_data
-from gui_bieri.paths import ADD_ICON, CANCEL_ICON, IMAGE_PATH, REMOVE_ICON
+from gui_bieri import paths
 from gui_bieri.settings import load_sequence
 
 
@@ -103,7 +103,7 @@ class Auto_rx:
         sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The button.
-        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         button.SetName('hello')
         button.SetSize(button.GetBestSize())
         self.gui.Bind(wx.EVT_BUTTON, self.execute, button)
