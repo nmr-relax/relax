@@ -27,11 +27,13 @@
 from prompt.interpreter import Interpreter
 
 # GUI module imports.
+from molecule import Molecule
 from script import Script
 
 
 # The package __all__ list.
 __all__ = ['base',
+           'molecule',
            'script']
 
 
@@ -50,4 +52,5 @@ class User_functions:
         self.interpreter.on(verbose=False)
 
         # The user functions.
+        self.molecule = Molecule(self.gui, self.interpreter)
         self.script = Script(self.gui, self.interpreter)
