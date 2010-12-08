@@ -46,13 +46,13 @@ class Menu:
 
         # The 'File' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=0, text="&New\tCtrl+N", icon=paths.icon_16x16.new))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=1, text="&Open\tCtrl+O", icon=paths.icon_16x16.open))
+        menu.AppendItem(self._build_menu_item(menu, id=0, text="&New\tCtrl+N", icon=paths.icon_16x16.new))
+        menu.AppendItem(self._build_menu_item(menu, id=1, text="&Open\tCtrl+O", icon=paths.icon_16x16.open))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=2, text="S&ave\tCtrl+S", icon=paths.icon_16x16.save))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=3, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.save_as))
+        menu.AppendItem(self._build_menu_item(menu, id=2, text="S&ave\tCtrl+S", icon=paths.icon_16x16.save))
+        menu.AppendItem(self._build_menu_item(menu, id=3, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.save_as))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=4, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
+        menu.AppendItem(self._build_menu_item(menu, id=4, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
         self.menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
@@ -64,9 +64,9 @@ class Menu:
 
         # The 'View' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=50, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.controller))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=52, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
+        menu.AppendItem(self._build_menu_item(menu, id=50, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.controller))
+        menu.AppendItem(self._build_menu_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
+        menu.AppendItem(self._build_menu_item(menu, id=52, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
         self.menubar.Append(menu, "&View")
 
         # The 'View' actions.
@@ -79,8 +79,8 @@ class Menu:
 
         # The 'Molecule' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=10, text="Load &PDB File", icon=paths.icon_16x16.load))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=11, text="Load se&quence file", icon=paths.icon_16x16.load))
+        menu.AppendItem(self._build_menu_item(menu, id=10, text="Load &PDB File", icon=paths.icon_16x16.load))
+        menu.AppendItem(self._build_menu_item(menu, id=11, text="Load se&quence file", icon=paths.icon_16x16.load))
         self.menubar.Append(menu, "&Molecule")
 
         # The 'Molecule' menu actions.
@@ -89,9 +89,9 @@ class Menu:
 
         # The 'Settings' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=20, text="&Global relax settings", icon=paths.icon_16x16.settings_global))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=21, text="&Parameter file settings", icon=paths.icon_16x16.settings))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=22, text="Reset a&ll settings", icon=paths.icon_16x16.settings_reset))
+        menu.AppendItem(self._build_menu_item(menu, id=20, text="&Global relax settings", icon=paths.icon_16x16.settings_global))
+        menu.AppendItem(self._build_menu_item(menu, id=21, text="&Parameter file settings", icon=paths.icon_16x16.settings))
+        menu.AppendItem(self._build_menu_item(menu, id=22, text="Reset a&ll settings", icon=paths.icon_16x16.settings_reset))
         self.menubar.Append(menu, "&Settings")
 
         # The 'Settings' menu actions.
@@ -101,13 +101,13 @@ class Menu:
 
         # The 'Help' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=40, text="relax user &manual\tF1", icon=paths.icon_16x16.manual))
+        menu.AppendItem(self._build_menu_item(menu, id=40, text="relax user &manual\tF1", icon=paths.icon_16x16.manual))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=41, text="&Contact relaxGUI (relax-users@gna.org)", icon=paths.icon_16x16.contact))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=42, text="&References", icon=paths.icon_16x16.ref))
+        menu.AppendItem(self._build_menu_item(menu, id=41, text="&Contact relaxGUI (relax-users@gna.org)", icon=paths.icon_16x16.contact))
+        menu.AppendItem(self._build_menu_item(menu, id=42, text="&References", icon=paths.icon_16x16.ref))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=43, text="About relaxG&UI", icon=paths.icon_16x16.about_relaxgui))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=44, text="About rela&x", icon=paths.icon_16x16.about_relax))
+        menu.AppendItem(self._build_menu_item(menu, id=43, text="About relaxG&UI", icon=paths.icon_16x16.about_relaxgui))
+        menu.AppendItem(self._build_menu_item(menu, id=44, text="About rela&x", icon=paths.icon_16x16.about_relax))
         self.menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.
@@ -118,13 +118,41 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.about_relax,    id=44)
 
 
+    def _build_menu_item(self, menu, id=None, text='', tooltip='', icon=None):
+        """Construct and return the menu sub-item.
+
+        @param menu:        The menu object to place this entry in.
+        @type menu:         wx.Menu instance
+        @keyword id:        The element identification number.
+        @type id:           int
+        @keyword text:      The text for the menu entry.
+        @type text:         None or str
+        @keyword tooltip:   A tool tip.
+        @type tooltip:      str
+        @keyword icon:      The bitmap icon path.
+        @type icon:         None or str
+        @return:            The initialised wx.MenuItem() instance.
+        @rtype:             wx.MenuItem() instance
+        """
+
+        # Initialise the GUI element.
+        element = wx.MenuItem(menu, id, text, tooltip)
+
+        # Set the icon.
+        if icon:
+            element.SetBitmap(wx.Bitmap(icon))
+
+        # Return the element.
+        return element
+
+
     def _create_menu(self, menu, entries):
         """Build the menu."""
 
         # Loop over the menu entries.
         for item in entries:
             # Build the menu entry.
-            menu_item = self.build_menu_sub_item(menu, id=item[0], text=item[1], icon=item[2])
+            menu_item = self._build_menu_item(menu, id=item[0], text=item[1], icon=item[2])
 
             # A sub-menu.
             if len(item[4]):
@@ -134,7 +162,7 @@ class Menu:
                 # Loop over the sub-menus.
                 for sub_item in item[4]:
                     # Build the menu entry.
-                    sub_menu_item = self.build_menu_sub_item(sub_menu, id=sub_item[0], text=sub_item[1], icon=sub_item[2])
+                    sub_menu_item = self._build_menu_item(sub_menu, id=sub_item[0], text=sub_item[1], icon=sub_item[2])
                     sub_menu.AppendItem(sub_menu_item)
 
                     # The menu actions.
@@ -174,31 +202,3 @@ class Menu:
 
         # Add the sub-menu.
         self.menubar.Append(menu, "&User functions")
-
-
-    def build_menu_sub_item(self, menu, id=None, text='', tooltip='', icon=None):
-        """Construct and return the menu sub-item.
-
-        @param menu:        The menu object to place this entry in.
-        @type menu:         wx.Menu instance
-        @keyword id:        The element identification number.
-        @type id:           int
-        @keyword text:      The text for the menu entry.
-        @type text:         None or str
-        @keyword tooltip:   A tool tip.
-        @type tooltip:      str
-        @keyword icon:      The bitmap icon path.
-        @type icon:         None or str
-        @return:            The initialised wx.MenuItem() instance.
-        @rtype:             wx.MenuItem() instance
-        """
-
-        # Initialise the GUI element.
-        element = wx.MenuItem(menu, id, text, tooltip)
-
-        # Set the icon.
-        if icon:
-            element.SetBitmap(wx.Bitmap(icon))
-
-        # Return the element.
-        return element
