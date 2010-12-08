@@ -118,16 +118,38 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.about_relax,    id=44)
 
 
-    def _create_sub_menu(self, menu, entries):
-        """Build the sub-menu."""
+    def _create_menu(self, menu, entries):
+        """Build the menu."""
 
-        # Loop over the sub-menu entries.
-        for i in range(len(entries)):
-            # Build the sub-menu entry.
-            menu.AppendItem(self.build_menu_sub_item(menu, id=entries[i][0], text=entries[i][1], icon=entries[i][2]))
+        # Loop over the menu entries.
+        for item in entries:
+            # Build the menu entry.
+            menu_item = self.build_menu_sub_item(menu, id=item[0], text=item[1], icon=item[2])
 
-            # The menu actions.
-            self.gui.Bind(wx.EVT_MENU, entries[i][3], id=entries[i][0])
+            # A sub-menu.
+            if len(item[4]):
+                # The sub-menu.
+                sub_menu = wx.Menu()
+
+                # Loop over the sub-menus.
+                for sub_item in item[4]:
+                    # Build the menu entry.
+                    sub_menu_item = self.build_menu_sub_item(sub_menu, id=sub_item[0], text=sub_item[1], icon=sub_item[2])
+                    sub_menu.AppendItem(sub_menu_item)
+
+                    # The menu actions.
+                    self.gui.Bind(wx.EVT_MENU, sub_item[3], id=sub_item[0])
+
+                # Append the sub-menu.
+                menu_item.SetSubMenu(sub_menu)
+
+            # A normal menu item.
+            else:
+                # The menu actions.
+                self.gui.Bind(wx.EVT_MENU, item[3], id=item[0])
+
+            # Append the menu item.
+            menu.AppendItem(menu_item)
 
 
     def _user_functions(self):
@@ -141,11 +163,14 @@ class Menu:
 
         # The list of entries to build.
         entries = [
-            [id_base + 000, "&script", paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []]
+            [id_base + 000, "&molecule", paths.icon_16x16.molecule, self.gui.user_functions.script.run, [
+                [id_base + 001, "&add", paths.icon_16x16.add, self.gui.user_functions.script.run]
+            ]],
+            [id_base + 100, "&script",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []]
         ]
 
         # Build.
-        self._create_sub_menu(menu, entries)
+        self._create_menu(menu, entries)
 
         # Add the sub-menu.
         self.menubar.Append(menu, "&User functions")
