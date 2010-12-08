@@ -25,6 +25,7 @@
 
 # GUI module imports.
 from base import UF_base, UF_window
+from gui_bieri.paths import WIZARD_IMAGE_PATH
 
 
 # The container class.
@@ -58,5 +59,8 @@ class Add_window(UF_window):
     """The molecule.add() user function window."""
 
     # Some class variables.
+    size_x = 400
+    size_y = 400
+    border = 5
+    image_path = WIZARD_IMAGE_PATH + 'molecule.png'
     title = 'Molecule addition'
-
