@@ -118,6 +118,18 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.about_relax,    id=44)
 
 
+    def _create_sub_menu(self, entries):
+        """Build the sub-menu."""
+
+        # Loop over the sub-menu entries.
+        for i in range(len(entries)):
+            # Build the sub-menu entry.
+            menu.AppendItem(self.build_menu_sub_item(menu, id=entries[i][0], text=entries[i][1], icon=entries[i][2]))
+
+            # The menu actions.
+            self.gui.Bind(wx.EVT_MENU, entries[i][3], id=entries[i][0])
+
+
     def _user_functions(self):
         """Build the user function sub-menu."""
 
@@ -132,13 +144,8 @@ class Menu:
             [id_base + 000, "&script", paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []]
         ]
 
-        # Loop over the sub-menu entries.
-        for i in range(len(entries)):
-            # Build the sub-menu entry.
-            menu.AppendItem(self.build_menu_sub_item(menu, id=entries[i][0], text=entries[i][1], icon=entries[i][2]))
-
-            # The menu actions.
-            self.gui.Bind(wx.EVT_MENU, entries[i][3], id=entries[i][0])
+        # Build.
+        self._create_sub_menu(entries)
 
         # Add the sub-menu.
         self.menubar.Append(menu, "&User functions")
