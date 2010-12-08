@@ -41,8 +41,8 @@ class Menu:
         self.gui = gui
 
         # Create the menu bar GUI item and add it to the main frame.
-        menubar = wx.MenuBar()
-        self.gui.SetMenuBar(menubar)
+        self.menubar = wx.MenuBar()
+        self.gui.SetMenuBar(self.menubar)
 
         # The 'File' menu entries.
         menu = wx.Menu()
@@ -53,7 +53,7 @@ class Menu:
         menu.AppendItem(self.build_menu_sub_item(menu, id=3, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.save_as))
         menu.AppendSeparator()
         menu.AppendItem(self.build_menu_sub_item(menu, id=4, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
-        menubar.Append(menu, "&File")
+        self.menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
         self.gui.Bind(wx.EVT_MENU, self.gui.newGUI,     id=0)
@@ -67,7 +67,7 @@ class Menu:
         menu.AppendItem(self.build_menu_sub_item(menu, id=50, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.controller))
         menu.AppendItem(self.build_menu_sub_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
         menu.AppendItem(self.build_menu_sub_item(menu, id=52, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
-        menubar.Append(menu, "&View")
+        self.menubar.Append(menu, "&View")
 
         # The 'View' actions.
         self.gui.Bind(wx.EVT_MENU, self.gui.show_controller,    id=50)
@@ -75,18 +75,13 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.show_tree,          id=52)
 
         # The 'User functions' menu entries.
-        menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=30, text="&script", icon=paths.icon_16x16.uf_script))
-        menubar.Append(menu, "&User functions")
-
-        # The 'User functions' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.user_functions.script.run,  id=30)
+        self._user_functions()
 
         # The 'Molecule' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(menu, id=10, text="Load &PDB File", icon=paths.icon_16x16.load))
         menu.AppendItem(self.build_menu_sub_item(menu, id=11, text="Load se&quence file", icon=paths.icon_16x16.load))
-        menubar.Append(menu, "&Molecule")
+        self.menubar.Append(menu, "&Molecule")
 
         # The 'Molecule' menu actions.
         self.gui.Bind(wx.EVT_MENU, self.gui.structure_pdb,  id=10)
@@ -97,7 +92,7 @@ class Menu:
         menu.AppendItem(self.build_menu_sub_item(menu, id=20, text="&Global relax settings", icon=paths.icon_16x16.settings_global))
         menu.AppendItem(self.build_menu_sub_item(menu, id=21, text="&Parameter file settings", icon=paths.icon_16x16.settings))
         menu.AppendItem(self.build_menu_sub_item(menu, id=22, text="Reset a&ll settings", icon=paths.icon_16x16.settings_reset))
-        menubar.Append(menu, "&Settings")
+        self.menubar.Append(menu, "&Settings")
 
         # The 'Settings' menu actions.
         self.gui.Bind(wx.EVT_MENU, self.gui.settings,           id=20)
@@ -113,7 +108,7 @@ class Menu:
         menu.AppendSeparator()
         menu.AppendItem(self.build_menu_sub_item(menu, id=43, text="About relaxG&UI", icon=paths.icon_16x16.about_relaxgui))
         menu.AppendItem(self.build_menu_sub_item(menu, id=44, text="About rela&x", icon=paths.icon_16x16.about_relax))
-        menubar.Append(menu, "&Help")
+        self.menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.
         self.gui.Bind(wx.EVT_MENU, self.gui.relax_manual,   id=40)
@@ -121,6 +116,32 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.references,     id=42)
         self.gui.Bind(wx.EVT_MENU, self.gui.about_gui,      id=43)
         self.gui.Bind(wx.EVT_MENU, self.gui.about_relax,    id=44)
+
+
+    def _user_functions(self):
+        """Build the user function sub-menu."""
+
+        # Assign the IDs to the 10000 range.
+        id_base = 10000
+
+        # The menu.
+        menu = wx.Menu()
+
+        # The list of entries to build.
+        entries = [
+            [id_base + 000, "&script", paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []]
+        ]
+
+        # Loop over the sub-menu entries.
+        for i in range(len(entries)):
+            # Build the sub-menu entry.
+            menu.AppendItem(self.build_menu_sub_item(menu, id=entries[i][0], text=entries[i][1], icon=entries[i][2]))
+
+            # The menu actions.
+            self.gui.Bind(wx.EVT_MENU, entries[i][3], id=entries[i][0])
+
+        # Add the sub-menu.
+        self.menubar.Append(menu, "&User functions")
 
 
     def build_menu_sub_item(self, menu, id=None, text='', tooltip='', icon=None):
