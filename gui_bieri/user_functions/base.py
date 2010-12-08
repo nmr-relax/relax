@@ -23,6 +23,9 @@
 # Module docstring.
 """Base class module for the user function GUI elements."""
 
+# Python module imports.
+import wx
+
 # relax GUI module imports.
 from gui_bieri.controller import Redirect_text
 
@@ -36,3 +39,28 @@ class UF_base:
         # Store the args.
         self.gui = gui
         self.interpreter = interpreter
+
+        # Specific set up.
+        self.setup()
+
+
+    def setup(self):
+        """Dummy method to be overwritten."""
+
+
+
+class UF_window(wx.Frame):
+    """User function window GUI element base class."""
+
+    # Some class variables.
+    title = ''
+
+    def __init__(self, gui, interpreter, style=wx.DEFAULT_FRAME_STYLE):
+        """Set up the user function class."""
+
+        # Store the args.
+        self.gui = gui
+        self.interpreter = interpreter
+
+        # Execute the base class method.
+        wx.Frame.__init__(self, None, id=-1, title=self.title, style=style)
