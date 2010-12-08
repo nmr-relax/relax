@@ -41,12 +41,12 @@ class Script(UF_base):
         # User selection of the file.
         file = openfile(msg='Select the relax script to execute')
 
-        # Show the relax controller.
-        self.gui.controller.Show()
-
         # Check the file.
         if not file:
             return
+
+        # Show the relax controller.
+        self.gui.controller.Show()
 
         # Execute the user function.
         self.interpreter.script(str(file))
