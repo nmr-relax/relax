@@ -54,3 +54,10 @@ class User_functions:
         # The user functions.
         self.molecule = Molecule(self.gui, self.interpreter)
         self.script = Script(self.gui, self.interpreter)
+
+
+    def destroy(self):
+        """Close all windows."""
+
+        # Send the commands onwards to the user function classes.
+        self.molecule.destroy()

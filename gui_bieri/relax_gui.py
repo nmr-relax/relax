@@ -368,6 +368,7 @@ class Main(wx.Frame):
             self.dialog_about_relax.Destroy()
             self.relax_prompt.Destroy()
             self.mol_res_spin_tree.Destroy()
+            self.user_functions.destroy()
 
             # Destroy the main window.
             self.Destroy()

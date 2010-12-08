@@ -191,8 +191,8 @@ class Menu:
 
         # The list of entries to build.
         entries = [
-            [id_base + 000, "&molecule", paths.icon_16x16.molecule, self.gui.user_functions.script.run, [
-                [id_base + 001, "&add", paths.icon_16x16.add, self.gui.user_functions.script.run]
+            [id_base + 000, "&molecule", paths.icon_16x16.molecule, None, [
+                [id_base + 001, "&add", paths.icon_16x16.add, self.gui.user_functions.molecule.add]
             ]],
             [id_base + 100, "&script",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []]
         ]
