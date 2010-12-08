@@ -48,11 +48,12 @@ class I16x16:
 
         # relax icons.
         path = ICON_RELAX_PATH + '16x16' + sep
-        self.about_relax =      IMAGE_PATH + 'relax_16x16.png'
-        self.about_relaxgui =   IMAGE_PATH + 'relax_16x16.png'
-        self.manual =           path + 'molecule.png'
-        self.residue =          path + 'residue.png'
-        self.spin =             path + 'spin.png'
+        self.about_relax =          IMAGE_PATH + 'relax_16x16.png'
+        self.about_relaxgui =       IMAGE_PATH + 'relax_16x16.png'
+        self.molecule =             path + 'molecule.png'
+        self.molecule_unfolded =    path + 'molecule_unfolded.png'
+        self.residue =              path + 'residue.png'
+        self.spin =                 path + 'spin.png'
 
         # Oxygen icons.
         path = OXY_ICON_PATH + '16x16' + sep
@@ -85,9 +86,10 @@ class I22x22:
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
-        self.molecule =     path + 'molecule.png'
-        self.residue =      path + 'residue.png'
-        self.spin =         path + 'spin.png'
+        self.molecule =             path + 'molecule.png'
+        self.molecule_unfolded =    path + 'molecule_unfolded.png'
+        self.residue =              path + 'residue.png'
+        self.spin =                 path + 'spin.png'
 
 
 
