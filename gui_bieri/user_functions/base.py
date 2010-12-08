@@ -53,6 +53,10 @@ class UF_window(wx.Frame):
     """User function window GUI element base class."""
 
     # Some class variables.
+    size_x = 600
+    size_y = 400
+    boarder = 5
+    image_path = None
     title = ''
 
     def __init__(self, gui, interpreter, style=wx.DEFAULT_FRAME_STYLE):
@@ -64,3 +68,38 @@ class UF_window(wx.Frame):
 
         # Execute the base class method.
         wx.Frame.__init__(self, None, id=-1, title=self.title, style=style)
+
+        # Set up the frame.
+        sizer = self.setup_frame()
+
+
+    def setup_frame(self, layout=wx.VERTICAL):
+        """Set up the relax controller frame.
+
+        @return:    The sizer object.
+        @rtype:     wx.Sizer instance
+        """
+
+        # Use a grid sizer for packing the elements.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Pack the sizer into the frame.
+        self.SetSizer(sizer)
+
+        # Set the default size of the controller.
+        self.SetSize((self.size_x, self.size_y))
+
+        # Centre the frame.
+        self.Centre()
+
+        # Add the graphics.
+        if self.image_path:
+            image = wx.StaticBitmap(self, -1, wx.Bitmap(self.image_path, wx.BITMAP_TYPE_ANY))
+
+            # Add the relax logo.
+            sizer.Add(image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, self.border)
+
+        # Return the sizer.
+        return sizer
+
+
