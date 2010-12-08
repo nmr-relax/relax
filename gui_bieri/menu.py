@@ -118,7 +118,7 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.about_relax,    id=44)
 
 
-    def _create_sub_menu(self, entries):
+    def _create_sub_menu(self, menu, entries):
         """Build the sub-menu."""
 
         # Loop over the sub-menu entries.
@@ -145,7 +145,7 @@ class Menu:
         ]
 
         # Build.
-        self._create_sub_menu(entries)
+        self._create_sub_menu(menu, entries)
 
         # Add the sub-menu.
         self.menubar.Append(menu, "&User functions")
