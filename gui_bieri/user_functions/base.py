@@ -49,7 +49,7 @@ class UF_base:
 
 
 
-class UF_window(wx.Frame):
+class UF_window(wx.Dialog):
     """User function window GUI element base class."""
 
     # Some class variables.
@@ -67,7 +67,7 @@ class UF_window(wx.Frame):
         self.interpreter = interpreter
 
         # Execute the base class method.
-        wx.Frame.__init__(self, None, id=-1, title=self.title, style=style)
+        wx.Dialog.__init__(self, None, id=-1, title=self.title, style=style)
 
         # Set up the frame.
         sizer = self.setup_frame()
