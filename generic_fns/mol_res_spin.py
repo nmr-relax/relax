@@ -50,6 +50,14 @@ from relax_errors import RelaxError, RelaxNoSpinError, RelaxResSelectDisallowErr
 from relax_warnings import RelaxWarning
 
 
+ALLOWED_MOL_TYPES = ['protein',
+                     'DNA',
+                     'RNA',
+                     'organic molecule',
+                     'inorganic molecule'
+]
+"""The list of allowable molecule types."""
+
 id_string_doc = """
 Identification string documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -803,15 +811,21 @@ def count_spins(selection=None, pipe=None, skip_desel=True):
     return spin_num
 
 
-def create_molecule(mol_name=None):
+def create_molecule(mol_name=None, mol_type=None):
     """Add a molecule into the relax data store.
 
     @keyword mol_name:  The name of the molecule.
     @type mol_name:     str
+    @keyword mol_type:  The type of molecule.
+    @type mol_type:     str
     """
 
     # Test if the current data pipe exists.
     pipes.test()
+
+    # Test the molecule type.
+    if mol_type and mol_type not in ALLOWED_MOL_TYPES:
+        raise RelaxError("The molecule type '%s' must be one of %s" % (mol_type, ALLOWED_MOL_TYPES))
 
     # Test if the molecule name already exists.
     for i in xrange(len(cdp.mol)):
@@ -819,7 +833,7 @@ def create_molecule(mol_name=None):
             raise RelaxError("The molecule '" + repr(mol_name) + "' already exists in the relax data store.")
 
     # Append the molecule.
-    cdp.mol.add_item(mol_name=mol_name)
+    cdp.mol.add_item(mol_name=mol_name, mol_type=mol_type)
 
 
 def create_residue(res_num=None, res_name=None, mol_name=None):
