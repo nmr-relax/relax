@@ -26,8 +26,12 @@
 # Python module imports.
 import wx
 
+# relax module imports.
+from relax_errors import AllRelaxErrors, RelaxImplementError
+
 # relax GUI module imports.
 from gui_bieri.controller import Redirect_text
+from gui_bieri.message import error_message
 
 
 class UF_base:
@@ -50,13 +54,18 @@ class UF_base:
 
 
 class UF_window(wx.Dialog):
-    """User function window GUI element base class."""
+    """User function window GUI element base class.
+
+    To inherit from this class, you must supply the add_uf() and execute() methods.  The add_uf() method should build the GUI elements specific to the user function, which the execute() method runs the user function.
+    """
 
     # Some class variables.
     size_x = 600
     size_y = 400
-    boarder = 5
+    border = 5
+    frame_title = ''
     image_path = None
+    main_text = ''
     title = ''
 
     def __init__(self, gui, interpreter, style=wx.DEFAULT_FRAME_STYLE):
@@ -67,21 +76,232 @@ class UF_window(wx.Dialog):
         self.interpreter = interpreter
 
         # Execute the base class method.
-        wx.Dialog.__init__(self, None, id=-1, title=self.title, style=style)
+        wx.Dialog.__init__(self, None, id=-1, title=self.frame_title, style=style)
 
         # Set up the frame.
-        sizer = self.setup_frame()
+        frame_sizer = self.setup_frame()
+
+        # Add the central part.
+        centre_sizer = self.build_central_section(frame_sizer)
+
+        # Add the final buttons.
+        self.add_buttons(frame_sizer)
+
+        # Add the artwork.
+        self.add_artwork(centre_sizer)
+
+        # Add the main sizer.
+        main_sizer = self.build_main_section(centre_sizer)
+        
+        # Add the title.
+        self.add_title(main_sizer)
+
+        # Add the description.
+        self.add_desc(main_sizer)
+
+        # Add the user function specific GUI elements.
+        self.add_uf(main_sizer)
 
 
-    def setup_frame(self, layout=wx.VERTICAL):
-        """Set up the relax controller frame.
+    def add_artwork(self, sizer):
+        """Add the artwork to the dialog.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Add the graphics.
+        if self.image_path:
+            self.image = wx.StaticBitmap(self, -1, wx.Bitmap(self.image_path, wx.BITMAP_TYPE_ANY))
+
+            # Add the relax logo.
+            sizer.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, self.border)
+
+
+    def add_buttons(self, sizer):
+        """Add the buttons to the sizer.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Create a horizontal layout for the buttons.
+        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT|wx.ALL, self.border)
+
+        # The apply button.
+        apply_button = wx.Button(self, -1, "Apply")
+        apply_button.SetToolTipString("Apply the user function")
+        button_sizer.Add(apply_button, 0, wx.ADJUST_MINSIZE, 0)
+        self.Bind(wx.EVT_BUTTON, self.apply, apply_button)
+
+        # Spacer.
+        button_sizer.AddSpacer(5)
+
+        # The OK button.
+        ok_button = wx.Button(self, -1, "OK")
+        ok_button.SetToolTipString("Accept the user function")
+        button_sizer.Add(ok_button, 0, wx.ADJUST_MINSIZE, 0)
+        self.Bind(wx.EVT_BUTTON, self.ok, ok_button)
+
+        # Spacer.
+        button_sizer.AddSpacer(15)
+
+        # The cancel button.
+        cancel_button = wx.Button(self, -1, "Cancel")
+        cancel_button.SetToolTipString("Abort the user function")
+        button_sizer.Add(cancel_button, 0, wx.ADJUST_MINSIZE, 0)
+        self.Bind(wx.EVT_BUTTON, self.cancel, cancel_button)
+
+
+    def add_desc(self, sizer):
+        """Add the description to the dialog.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The text.
+        text = wx.StaticText(self, -1, self.main_text, style=wx.TE_MULTILINE)
+
+        # Font.
+        #text.SetFont(wx.Font(18, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
+
+        # The size of the image.
+        image_x, image_y = self.image.GetSize()
+
+        # Wrap the text.
+        text.Wrap(self.size_x - image_x - 4*self.border)
+
+        # Add the text.
+        sizer.Add(text, 0, wx.ALIGN_CENTRE|wx.ALL, self.border)
+
+        # A line.
+        sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, self.border)
+
+
+    def add_title(self, sizer):
+        """Add the title to the dialog.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The text.
+        title = wx.StaticText(self, -1, self.title)
+
+        # Font.
+        title.SetFont(wx.Font(18, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
+
+        # Add the title.
+        sizer.Add(title, 0, wx.ALIGN_CENTRE|wx.ALL, self.border)
+
+        # A line.
+        sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, self.border)
+
+
+    def add_uf(self, sizer):
+        """Add the user function specific GUI elements (dummy method).
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        raise RelaxImplementError
+
+
+    def apply(self, event):
+        """Apply the user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Execute the user function.
+        try:
+            self.execute()
+        except AllRelaxErrors, instance:
+            error_message(instance.__str__())
+
+
+    def build_central_section(self, sizer):
+        """Add the centre part of the dialog.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        @return:        The sizer object for the centre part of the dialog.
+        @rtype:         wx.Sizer instance
+        """
+
+        # Use a grid sizer for packing the elements.
+        centre_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Pack the sizer into the frame.
+        sizer.Add(centre_sizer, 1, wx.EXPAND|wx.ALL, self.border)
+
+        # Return the sizer.
+        return centre_sizer
+
+
+    def build_main_section(self, sizer):
+        """Add the main part of the dialog.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        @return:        The sizer object for the main part of the dialog.
+        @rtype:         wx.Sizer instance
+        """
+
+        # Use a grid sizer for packing the elements.
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # Pack the sizer.
+        sizer.Add(main_sizer, 1, wx.EXPAND|wx.ALL, self.border)
+
+        # Return the sizer.
+        return main_sizer
+
+
+    def cancel(self, event):
+        """Cancel the user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Close.
+        self.Close()
+
+
+    def execute(self):
+        """Execute the user function (dummy method)."""
+
+        raise RelaxImplementError
+
+
+    def ok(self, event):
+        """Accept the user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Execute the apply method.
+        self.apply(event)
+
+        # Then close.
+        self.Close()
+
+
+    def setup_frame(self):
+        """Set up the generic user function frame.
 
         @return:    The sizer object.
         @rtype:     wx.Sizer instance
         """
 
         # Use a grid sizer for packing the elements.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Pack the sizer into the frame.
         self.SetSizer(sizer)
@@ -92,14 +312,5 @@ class UF_window(wx.Dialog):
         # Centre the frame.
         self.Centre()
 
-        # Add the graphics.
-        if self.image_path:
-            image = wx.StaticBitmap(self, -1, wx.Bitmap(self.image_path, wx.BITMAP_TYPE_ANY))
-
-            # Add the relax logo.
-            sizer.Add(image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, self.border)
-
         # Return the sizer.
         return sizer
-
-
