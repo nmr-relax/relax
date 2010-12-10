@@ -26,6 +26,9 @@
 # Python module imports.
 import wx
 
+# relax module imports.
+from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES
+
 # GUI module imports.
 from base import UF_base, UF_window
 from gui_bieri.paths import WIZARD_IMAGE_PATH
@@ -70,6 +73,17 @@ class Add_window(UF_window):
     title = 'Addition of new molecules'
 
 
+    def _evt_mol_type(self, event):
+        """Selection of the molecule type.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Store the choice.
+        self.mol_type = str(event.GetString())
+
+
     def add_uf(self, sizer):
         """Add the molecule specific GUI elements.
 
@@ -89,10 +103,9 @@ class Add_window(UF_window):
 
         # Get the name and type.
         mol_name = str(self.mol_name.GetValue())
-        mol_type = str(self.mol_type.GetValue())
 
         # Set the name.
-        self.interpreter.molecule.create(mol_name=mol_name, mol_type=mol_type)
+        self.interpreter.molecule.create(mol_name=mol_name, type=self.mol_type)
 
 
     def mol_name_element(self):
@@ -132,8 +145,9 @@ class Add_window(UF_window):
         sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The input field.
-        self.mol_type = wx.Choice(self, -1, style=wx.ALIGN_RIGHT, choices=[''] + ['protein', 'RNA'])
-        sizer.Add(self.mol_type, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        type_choice = wx.Choice(self, -1, style=wx.ALIGN_RIGHT, choices=[''] + ALLOWED_MOL_TYPES)
+        sizer.Add(type_choice, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.Bind(wx.EVT_CHOICE, self._evt_mol_type, type_choice)
 
         # Return the sizer.
         return sizer
