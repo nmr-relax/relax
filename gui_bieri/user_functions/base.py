@@ -221,7 +221,7 @@ class UF_window(wx.Dialog):
         try:
             self.execute()
         except AllRelaxErrors, instance:
-            error_message(instance.__str__())
+            error_message(instance.text, instance.__class__.__name__)
 
 
     def build_central_section(self, sizer):
