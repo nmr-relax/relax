@@ -77,22 +77,30 @@ class Add_window(UF_window):
         @type sizer:    wx.Sizer instance
         """
 
-        # The molecule name.
+        # The molecule name input.
         sizer.Add(self.mol_name_element(), 1, wx.EXPAND|wx.SHAPED, 5)
+
+        # The type selection.
+        sizer.Add(self.mol_type_element(), 1, wx.EXPAND|wx.SHAPED, 5)
 
 
     def execute(self):
         """Execute the user function."""
 
-        # Get the name.
+        # Get the name and type.
         mol_name = str(self.mol_name.GetValue())
+        mol_type = str(self.mol_type.GetValue())
 
         # Set the name.
-        self.interpreter.molecule.create(mol_name=mol_name)
+        self.interpreter.molecule.create(mol_name=mol_name, mol_type=mol_type)
 
 
     def mol_name_element(self):
-        """Build the molecule name element."""
+        """Build the molecule name element.
+
+        @return:    The box sizer.
+        @rtype:     wx.Sizer instance
+        """
 
         # Init.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -104,6 +112,28 @@ class Add_window(UF_window):
         # The input field.
         self.mol_name = wx.TextCtrl(self, -1, '')
         sizer.Add(self.mol_name, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Return the sizer.
+        return sizer
+
+
+    def mol_type_element(self):
+        """Build the molecule type element.
+
+        @return:    The box sizer.
+        @rtype:     wx.Sizer instance
+        """
+
+        # Init.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The molecule typ.
+        text = wx.StaticText(self, -1, "The type of molecule:", style=wx.ALIGN_RIGHT)
+        sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The input field.
+        self.mol_type = wx.Choice(self, -1, style=wx.ALIGN_RIGHT, choices=[''] + ['protein', 'RNA'])
+        sizer.Add(self.mol_type, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Return the sizer.
         return sizer
