@@ -65,6 +65,7 @@ class UF_window(wx.Dialog):
     border = 5
     frame_title = ''
     image_path = None
+    input_size = 27
     main_text = ''
     title = ''
 

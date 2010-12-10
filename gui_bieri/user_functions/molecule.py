@@ -72,6 +72,9 @@ class Add_window(UF_window):
     main_text = 'This dialog allows you to add new molecules to the relax data store.  The molecule will be added to the current data pipe.'
     title = 'Addition of new molecules'
 
+    # Some private class variables.
+    _spacing = 20
+
 
     def _evt_mol_type(self, event):
         """Selection of the molecule type.
@@ -91,11 +94,20 @@ class Add_window(UF_window):
         @type sizer:    wx.Sizer instance
         """
 
+        # Spacer.
+        sizer.AddSpacer(self._spacing)
+
         # The molecule name input.
-        sizer.Add(self.mol_name_element(), 1, wx.EXPAND|wx.SHAPED, 5)
+        sizer.Add(self.mol_name_element(), 1, wx.ALIGN_TOP|wx.SHAPED, self.border)
+
+        # Spacer.
+        sizer.AddSpacer(self._spacing)
 
         # The type selection.
-        sizer.Add(self.mol_type_element(), 1, wx.EXPAND|wx.SHAPED, 5)
+        sizer.Add(self.mol_type_element(), 1, wx.ALIGN_TOP, self.border)
+
+        # Spacer.
+        sizer.AddSpacer(self._spacing)
 
 
     def execute(self):
@@ -120,11 +132,12 @@ class Add_window(UF_window):
 
         # The molecule name.
         text = wx.StaticText(self, -1, "The name of the molecule:", style=wx.ALIGN_RIGHT)
-        sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, self.border)
 
         # The input field.
         self.mol_name = wx.TextCtrl(self, -1, '')
-        sizer.Add(self.mol_name, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.mol_name.SetMinSize((50, self.input_size))
+        sizer.Add(self.mol_name, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, self.border)
 
         # Return the sizer.
         return sizer
@@ -141,12 +154,12 @@ class Add_window(UF_window):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The molecule typ.
-        text = wx.StaticText(self, -1, "The type of molecule:", style=wx.ALIGN_RIGHT)
-        sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        text = wx.StaticText(self, -1, "The type of molecule:", style=wx.ALIGN_LEFT)
+        sizer.Add(text, 1, wx.LEFT, self.border)
 
         # The input field.
-        type_choice = wx.Choice(self, -1, style=wx.ALIGN_RIGHT, choices=[''] + ALLOWED_MOL_TYPES)
-        sizer.Add(type_choice, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        type_choice = wx.Choice(self, -1, style=wx.ALIGN_LEFT, choices=[''] + ALLOWED_MOL_TYPES)
+        sizer.Add(type_choice, 1, wx.LEFT, self.border)
         self.Bind(wx.EVT_CHOICE, self._evt_mol_type, type_choice)
 
         # Return the sizer.
