@@ -23,6 +23,9 @@
 # Module docstring.
 """The molecule user function GUI elements."""
 
+# Python module imports.
+import wx
+
 # GUI module imports.
 from base import UF_base, UF_window
 from gui_bieri.paths import WIZARD_IMAGE_PATH
@@ -59,8 +62,48 @@ class Add_window(UF_window):
     """The molecule.add() user function window."""
 
     # Some class variables.
-    size_x = 400
+    size_x = 600
     size_y = 400
-    border = 5
+    frame_title = 'Add a molecule'
     image_path = WIZARD_IMAGE_PATH + 'molecule.png'
-    title = 'Molecule addition'
+    main_text = 'This dialog allows you to add new molecules to the relax data store.  The molecule will be added to the current data pipe.'
+    title = 'Addition of new molecules'
+
+
+    def add_uf(self, sizer):
+        """Add the molecule specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The molecule name.
+        sizer.Add(self.mol_name_element(), 1, wx.EXPAND|wx.SHAPED, 5)
+
+
+    def execute(self):
+        """Execute the user function."""
+
+        # Get the name.
+        mol_name = str(self.mol_name.GetValue())
+
+        # Set the name.
+        self.interpreter.molecule.create(mol_name=mol_name)
+
+
+    def mol_name_element(self):
+        """Build the molecule name element."""
+
+        # Init.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The molecule name.
+        text = wx.StaticText(self, -1, "The name of the molecule:", style=wx.ALIGN_RIGHT)
+        sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The input field.
+        self.mol_name = wx.TextCtrl(self, -1, '')
+        sizer.Add(self.mol_name, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Return the sizer.
+        return sizer
