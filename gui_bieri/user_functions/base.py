@@ -99,6 +99,9 @@ class UF_window(wx.Dialog):
         # Add the description.
         self.add_desc(main_sizer)
 
+        # Add a spacer.
+        main_sizer.AddSpacer(20)
+
         # Add the user function specific GUI elements.
         self.add_uf(main_sizer)
 
@@ -171,7 +174,7 @@ class UF_window(wx.Dialog):
         image_x, image_y = self.image.GetSize()
 
         # Wrap the text.
-        text.Wrap(self.size_x - image_x - 4*self.border)
+        text.Wrap(self.size_x - image_x - 3*self.border)
 
         # Add the text.
         sizer.Add(text, 0, wx.ALIGN_CENTRE|wx.ALL, self.border)
