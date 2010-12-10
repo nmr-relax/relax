@@ -28,12 +28,14 @@ from prompt.interpreter import Interpreter
 
 # GUI module imports.
 from molecule import Molecule
+from pipes import Pipes
 from script import Script
 
 
 # The package __all__ list.
 __all__ = ['base',
            'molecule',
+           'pipes',
            'script']
 
 
@@ -53,6 +55,7 @@ class User_functions:
 
         # The user functions.
         self.molecule = Molecule(self.gui, self.interpreter)
+        self.pipes = Pipes(self.gui, self.interpreter)
         self.script = Script(self.gui, self.interpreter)
 
 
@@ -61,3 +64,4 @@ class User_functions:
 
         # Send the commands onwards to the user function classes.
         self.molecule.destroy()
+        self.pipes.destroy()
