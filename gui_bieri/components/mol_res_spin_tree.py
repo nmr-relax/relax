@@ -37,12 +37,15 @@ from gui_bieri import paths
 class Mol_res_spin_tree(wx.Panel):
     """The tree view class."""
 
-    def __init__(self, parent=None, id=None):
+    def __init__(self, gui, parent=None, id=None):
         """Set up the tree GUI element.
 
         @keyword parent:    The parent GUI element that this is to be attached to.
         @type parent:       wx object
         """
+
+        # Store the args.
+        self.gui = gui
 
         # Execute the base class method.
         wx.Panel.__init__(self, parent, id, style=wx.WANTS_CHARS)
@@ -58,7 +61,7 @@ class Mol_res_spin_tree(wx.Panel):
 
         # The tree roots.
         self.root = self.tree.AddRoot("Spin system information")
-        self.tree.SetPyData(self.root, None)
+        self.tree.SetPyData(self.root, "root")
 
         # Build the icon list.
         icon_list = wx.ImageList(self.icon_size, self.icon_size)
@@ -74,6 +77,9 @@ class Mol_res_spin_tree(wx.Panel):
         # Populate the tree.
         self._tree_update()
 
+        # Catch mouse events.
+        self.tree.Bind(wx.EVT_RIGHT_DOWN, self._right_click)
+
 
     def _resize(self, event):
         """Resize the tree element.
@@ -87,6 +93,47 @@ class Mol_res_spin_tree(wx.Panel):
 
         # Set the tree dimensions.
         self.tree.SetDimensions(0, 0, width, height)
+
+
+    def _right_click(self, event):
+        """Handle right clicks in the tree.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Obtain the position.
+        pos = event.GetPosition()
+
+        # Find the item clicked on.
+        item, flags = self.tree.HitTest(pos)
+
+        # The python data.
+        info = self.tree.GetItemPyData(item)
+
+        # Bring up the root menu.
+        if info == 'root':
+            self._root_menu()
+
+
+    def _root_menu(self):
+        """The right click root menu."""
+
+        # Some ids.
+        ids = []
+        for i in range(1):
+            ids.append(wx.NewId())
+
+        # The menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add molecule", icon=paths.icon_16x16.add))
+
+        # The menu actions.
+        self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.add, id=ids[0])
+
+        # Show the menu.
+        self.PopupMenu(menu)
+        menu.Destroy()
 
 
     def _tree_update(self, pipe_name=None):
@@ -108,7 +155,7 @@ class Mol_res_spin_tree(wx.Panel):
         # The molecules.
         for mol in pipe.mol:
             # Append a molecule with name to the tree.
-            mol_branch = self.tree.AppendItem(self.root, "Molecule %s" % mol.name)
+            mol_branch = self.tree.AppendItem(self.root, "Molecule: %s" % mol.name)
             self.tree.SetPyData(mol_branch, None)
 
             # Set the bitmap.
@@ -118,7 +165,7 @@ class Mol_res_spin_tree(wx.Panel):
             # The residues.
             for res in mol.res:
                 # Append a residue with name and number to the tree.
-                res_branch = self.tree.AppendItem(mol_branch, "Residue %s %s" % (res.num, res.name))
+                res_branch = self.tree.AppendItem(mol_branch, "Residue: %s %s" % (res.name, res.num))
                 self.tree.SetPyData(res_branch, None)
 
                 # Set the bitmap.
@@ -127,7 +174,7 @@ class Mol_res_spin_tree(wx.Panel):
                 # The spins.
                 for spin in res.spin:
                     # Append a spin with name and number to the tree.
-                    spin_branch = self.tree.AppendItem(res_branch, "Spin %s %s" % (spin.num, spin.name))
+                    spin_branch = self.tree.AppendItem(res_branch, "Spin: %s %s" % (spin.name, spin.num))
                     self.tree.SetPyData(spin_branch, None)
 
                     # Set the bitmap.
@@ -163,7 +210,7 @@ class Tree_window(wx.Frame):
         sizer = self.setup_window()
 
         # Add the tree view panel.
-        self.tree_panel = Mol_res_spin_tree(parent=self, id=-1)
+        self.tree_panel = Mol_res_spin_tree(self.gui, parent=self, id=-1)
         sizer.Add(self.tree_panel, 1, wx.EXPAND|wx.ALL, self.border)
 
 
