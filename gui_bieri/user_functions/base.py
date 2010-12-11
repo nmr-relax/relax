@@ -283,6 +283,36 @@ class UF_window(wx.Dialog):
         raise RelaxImplementError
 
 
+    def input_field(self, sizer, desc):
+        """Build the input field.
+
+        @param sizer:   The sizer to put the input field into.
+        @type sizer:    wx.Sizer instance
+        @param desc:    The text description.
+        @type desc:     str
+        @return:        The input field object.
+        @rtype:         wx.TextCtrl instance
+        """
+
+        # Init.
+        field_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The molecule name.
+        text = wx.StaticText(self, -1, desc, style=wx.ALIGN_RIGHT)
+        field_sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, self.border)
+
+        # The input field.
+        field = wx.TextCtrl(self, -1, '')
+        field.SetMinSize((50, self.input_size))
+        field_sizer.Add(field, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, self.border)
+
+        # Add to the main sizer.
+        sizer.Add(field_sizer)
+
+        # Return the object.
+        return field
+
+
     def ok(self, event):
         """Accept the user function.
 
