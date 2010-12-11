@@ -98,13 +98,13 @@ class Add_window(UF_window):
         sizer.AddSpacer(self._spacing)
 
         # The pipe name input.
-        sizer.Add(self.pipe_name_element(), 1, wx.ALIGN_TOP|wx.SHAPED, self.border)
+        self.pipe_name = self.input_field(sizer, "The data pipe name:")
 
         # Spacer.
         sizer.AddSpacer(self._spacing)
 
         # The type selection.
-        sizer.Add(self.pipe_type_element(), 1, wx.ALIGN_TOP, self.border)
+        self.chooser(sizer, "The type of data pipe:", self._evt_pipe_type, [''] + VALID_TYPES)
 
         # Spacer.
         sizer.AddSpacer(self._spacing)
@@ -118,49 +118,3 @@ class Add_window(UF_window):
 
         # Set the name.
         self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=self.pipe_type)
-
-
-    def pipe_name_element(self):
-        """Build the pipe name element.
-
-        @return:    The box sizer.
-        @rtype:     wx.Sizer instance
-        """
-
-        # Init.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The pipe name.
-        text = wx.StaticText(self, -1, "The data pipe name:", style=wx.ALIGN_RIGHT)
-        sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, self.border)
-
-        # The input field.
-        self.pipe_name = wx.TextCtrl(self, -1, '')
-        self.pipe_name.SetMinSize((50, self.input_size))
-        sizer.Add(self.pipe_name, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, self.border)
-
-        # Return the sizer.
-        return sizer
-
-
-    def pipe_type_element(self):
-        """Build the pipe type element.
-
-        @return:    The box sizer.
-        @rtype:     wx.Sizer instance
-        """
-
-        # Init.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The pipe type.
-        text = wx.StaticText(self, -1, "The type of data pipe:", style=wx.ALIGN_LEFT)
-        sizer.Add(text, 1, wx.LEFT, self.border)
-
-        # The input field.
-        type_choice = wx.Choice(self, -1, style=wx.ALIGN_LEFT, choices=[''] + VALID_TYPES)
-        sizer.Add(type_choice, 1, wx.LEFT, self.border)
-        self.Bind(wx.EVT_CHOICE, self._evt_pipe_type, type_choice)
-
-        # Return the sizer.
-        return sizer
