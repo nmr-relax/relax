@@ -277,6 +277,35 @@ class UF_window(wx.Dialog):
         self.Close()
 
 
+    def chooser(self, sizer, desc, func, choices):
+        """Build the choice element.
+
+        @param sizer:   The sizer to put the input field into.
+        @type sizer:    wx.Sizer instance
+        @param desc:    The text description.
+        @type desc:     str
+        @param func:    The function to bind the event to
+        @type func:     func
+        @param choices: The list of choices.
+        @type choices:  list of str
+        """
+
+        # Init.
+        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The description.
+        text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        sub_sizer.Add(text, 1, wx.LEFT, self.border)
+
+        # The choice element.
+        type_choice = wx.Choice(self, -1, style=wx.ALIGN_LEFT, choices=choices)
+        sub_sizer.Add(type_choice, 1, wx.LEFT, self.border)
+        self.Bind(wx.EVT_CHOICE, func, type_choice)
+
+        # Add to the main sizer.
+        sizer.Add(sub_sizer)
+
+
     def execute(self):
         """Execute the user function (dummy method)."""
 
@@ -297,7 +326,7 @@ class UF_window(wx.Dialog):
         # Init.
         field_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        # The molecule name.
+        # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_RIGHT)
         field_sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, self.border)
 

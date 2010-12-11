@@ -104,7 +104,7 @@ class Add_window(UF_window):
         sizer.AddSpacer(self._spacing)
 
         # The type selection.
-        sizer.Add(self.mol_type_element(), 1, wx.ALIGN_TOP, self.border)
+        self.chooser(sizer, "The type of molecule:", self._evt_mol_type, [''] + ALLOWED_MOL_TYPES)
 
         # Spacer.
         sizer.AddSpacer(self._spacing)
@@ -118,26 +118,3 @@ class Add_window(UF_window):
 
         # Set the name.
         self.interpreter.molecule.create(mol_name=mol_name, type=self.mol_type)
-
-
-    def mol_type_element(self):
-        """Build the molecule type element.
-
-        @return:    The box sizer.
-        @rtype:     wx.Sizer instance
-        """
-
-        # Init.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The molecule typ.
-        text = wx.StaticText(self, -1, "The type of molecule:", style=wx.ALIGN_LEFT)
-        sizer.Add(text, 1, wx.LEFT, self.border)
-
-        # The input field.
-        type_choice = wx.Choice(self, -1, style=wx.ALIGN_LEFT, choices=[''] + ALLOWED_MOL_TYPES)
-        sizer.Add(type_choice, 1, wx.LEFT, self.border)
-        self.Bind(wx.EVT_CHOICE, self._evt_mol_type, type_choice)
-
-        # Return the sizer.
-        return sizer
