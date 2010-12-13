@@ -199,6 +199,10 @@ class Menu:
                 [id_base + 101, "&create", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
                 [id_base + 102, "&delete", paths.icon_16x16.cancel, self.gui.user_functions.pipes.delete]
             ]],
+            [id_base + 000, "&residue", paths.icon_16x16.residue, None, [
+                [id_base + 001, "&create", paths.icon_16x16.add, self.gui.user_functions.residue.create],
+                [id_base + 002, "&delete", paths.icon_16x16.cancel, self.gui.user_functions.residue.delete]
+            ]],
             [id_base + 200, "&script",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
             [id_base + 100, "&spin", paths.icon_16x16.spin, None, [
                 [id_base + 101, "&create", paths.icon_16x16.add, self.gui.user_functions.spin.create],
