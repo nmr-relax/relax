@@ -33,6 +33,7 @@ from relax_errors import AllRelaxErrors, RelaxImplementError
 # relax GUI module imports.
 from gui_bieri.controller import Redirect_text
 from gui_bieri.message import error_message
+from gui_bieri import paths
 
 
 class UF_base:
@@ -146,30 +147,33 @@ class UF_window(wx.Dialog):
 
         # The apply button.
         if self.button_apply:
-            apply_button = wx.Button(self, -1, "Apply")
-            apply_button.SetToolTipString("Apply the user function")
-            button_sizer.Add(apply_button, 0, wx.ADJUST_MINSIZE, 0)
-            self.Bind(wx.EVT_BUTTON, self.apply, apply_button)
+            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Apply")
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_32x32.apply, wx.BITMAP_TYPE_ANY))
+            button.SetToolTipString("Apply the user function")
+            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.apply, button)
 
             # Spacer.
             button_sizer.AddSpacer(5)
 
         # The OK button.
         if self.button_ok:
-            ok_button = wx.Button(self, -1, "OK")
-            ok_button.SetToolTipString("Accept the user function")
-            button_sizer.Add(ok_button, 0, wx.ADJUST_MINSIZE, 0)
-            self.Bind(wx.EVT_BUTTON, self.ok, ok_button)
+            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "OK")
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_32x32.ok, wx.BITMAP_TYPE_ANY))
+            button.SetToolTipString("Accept the user function")
+            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.ok, button)
 
             # Spacer.
             button_sizer.AddSpacer(15)
 
         # The cancel button.
         if self.button_cancel:
-            cancel_button = wx.Button(self, -1, "Cancel")
-            cancel_button.SetToolTipString("Abort the user function")
-            button_sizer.Add(cancel_button, 0, wx.ADJUST_MINSIZE, 0)
-            self.Bind(wx.EVT_BUTTON, self.cancel, cancel_button)
+            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Cancel")
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_32x32.cancel, wx.BITMAP_TYPE_ANY))
+            button.SetToolTipString("Abort the user function")
+            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.cancel, button)
 
 
     def add_desc(self, sizer):
