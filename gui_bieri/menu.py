@@ -183,30 +183,27 @@ class Menu:
     def _user_functions(self):
         """Build the user function sub-menu."""
 
-        # Assign the IDs to the 10000 range.
-        id_base = 10000
-
         # The menu.
         menu = wx.Menu()
 
         # The list of entries to build.
         entries = [
-            [id_base + 000, "&molecule", paths.icon_16x16.molecule, None, [
-                [id_base + 001, "&create", paths.icon_16x16.add, self.gui.user_functions.molecule.create],
-                [id_base + 002, "&delete", paths.icon_16x16.cancel, self.gui.user_functions.molecule.delete]
+            [wx.NewId(), "&molecule", paths.icon_16x16.molecule, None, [
+                [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.molecule.create],
+                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.molecule.delete]
             ]],
-            [id_base + 100, "&pipe", paths.icon_16x16.pipe, None, [
-                [id_base + 101, "&create", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
-                [id_base + 102, "&delete", paths.icon_16x16.cancel, self.gui.user_functions.pipes.delete]
+            [wx.NewId(), "&pipe", paths.icon_16x16.pipe, None, [
+                [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
+                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipes.delete]
             ]],
-            [id_base + 000, "&residue", paths.icon_16x16.residue, None, [
-                [id_base + 001, "&create", paths.icon_16x16.add, self.gui.user_functions.residue.create],
-                [id_base + 002, "&delete", paths.icon_16x16.cancel, self.gui.user_functions.residue.delete]
+            [wx.NewId(), "&residue", paths.icon_16x16.residue, None, [
+                [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.residue.create],
+                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.residue.delete]
             ]],
-            [id_base + 200, "&script",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
-            [id_base + 100, "&spin", paths.icon_16x16.spin, None, [
-                [id_base + 101, "&create", paths.icon_16x16.add, self.gui.user_functions.spin.create],
-                [id_base + 102, "&delete", paths.icon_16x16.cancel, self.gui.user_functions.spin.delete]
+            [wx.NewId(), "&script",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
+            [wx.NewId(), "&spin", paths.icon_16x16.spin, None, [
+                [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.spin.create],
+                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.spin.delete]
             ]],
         ]
 
