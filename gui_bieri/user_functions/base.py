@@ -25,6 +25,7 @@
 
 # Python module imports.
 import wx
+from wx.lib import buttons
 
 # relax module imports.
 from relax_errors import AllRelaxErrors, RelaxImplementError
@@ -63,6 +64,9 @@ class UF_window(wx.Dialog):
     size_x = 600
     size_y = 400
     border = 10
+    button_apply = True
+    button_cancel = True
+    button_ok = True
     frame_title = ''
     image_path = None
     input_size = 27
@@ -140,28 +144,31 @@ class UF_window(wx.Dialog):
         sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT|wx.ALL, 0)
 
         # The apply button.
-        apply_button = wx.Button(self, -1, "Apply")
-        apply_button.SetToolTipString("Apply the user function")
-        button_sizer.Add(apply_button, 0, wx.ADJUST_MINSIZE, 0)
-        self.Bind(wx.EVT_BUTTON, self.apply, apply_button)
+        if self.button_apply:
+            apply_button = wx.Button(self, -1, "Apply")
+            apply_button.SetToolTipString("Apply the user function")
+            button_sizer.Add(apply_button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.apply, apply_button)
 
-        # Spacer.
-        button_sizer.AddSpacer(5)
+            # Spacer.
+            button_sizer.AddSpacer(5)
 
         # The OK button.
-        ok_button = wx.Button(self, -1, "OK")
-        ok_button.SetToolTipString("Accept the user function")
-        button_sizer.Add(ok_button, 0, wx.ADJUST_MINSIZE, 0)
-        self.Bind(wx.EVT_BUTTON, self.ok, ok_button)
+        if self.button_ok:
+            ok_button = wx.Button(self, -1, "OK")
+            ok_button.SetToolTipString("Accept the user function")
+            button_sizer.Add(ok_button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.ok, ok_button)
 
-        # Spacer.
-        button_sizer.AddSpacer(15)
+            # Spacer.
+            button_sizer.AddSpacer(15)
 
         # The cancel button.
-        cancel_button = wx.Button(self, -1, "Cancel")
-        cancel_button.SetToolTipString("Abort the user function")
-        button_sizer.Add(cancel_button, 0, wx.ADJUST_MINSIZE, 0)
-        self.Bind(wx.EVT_BUTTON, self.cancel, cancel_button)
+        if self.button_cancel:
+            cancel_button = wx.Button(self, -1, "Cancel")
+            cancel_button.SetToolTipString("Abort the user function")
+            button_sizer.Add(cancel_button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.cancel, cancel_button)
 
 
     def add_desc(self, sizer):
