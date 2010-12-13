@@ -148,7 +148,7 @@ class UF_window(wx.Dialog):
         # The apply button.
         if self.button_apply:
             button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Apply")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_32x32.apply, wx.BITMAP_TYPE_ANY))
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.apply, wx.BITMAP_TYPE_ANY))
             button.SetToolTipString("Apply the user function")
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self.apply, button)
@@ -159,7 +159,7 @@ class UF_window(wx.Dialog):
         # The OK button.
         if self.button_ok:
             button = buttons.ThemedGenBitmapTextButton(self, -1, None, "OK")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_32x32.ok, wx.BITMAP_TYPE_ANY))
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
             button.SetToolTipString("Accept the user function")
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self.ok, button)
@@ -170,7 +170,7 @@ class UF_window(wx.Dialog):
         # The cancel button.
         if self.button_cancel:
             button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Cancel")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_32x32.cancel, wx.BITMAP_TYPE_ANY))
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
             button.SetToolTipString("Abort the user function")
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self.cancel, button)

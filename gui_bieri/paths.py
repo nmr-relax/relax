@@ -88,6 +88,13 @@ class I22x22:
     def __init__(self):
         """Initialise all paths."""
 
+        # Oxygen icons.
+        path = OXY_ICON_PATH + '22x22' + sep
+        self.apply =                path + 'actions' + sep + 'dialog-ok-apply.png'
+        self.cancel =               path + 'actions' + sep + 'dialog-cancel.png'
+        self.close =                path + 'actions' + sep + 'dialog-close.png'
+        self.ok =                   path + 'actions' + sep + 'dialog-ok.png'
+
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
         self.molecule =             path + 'molecule.png'
