@@ -63,11 +63,13 @@ class I16x16:
         self.cancel =               path + 'actions'    + sep + 'dialog-cancel.png'
         self.contact =              path + 'actions'    + sep + 'mail-mark-unread-new.png'
         self.controller =           path + 'apps'       + sep + 'preferences-system-performance.png'
+        self.edit_delete =          path + 'actions'    + sep + 'edit-delete.png'
         self.exit =                 path + 'actions'    + sep + 'system-shutdown.png'
         self.load =                 path + 'actions'    + sep + 'arrow-right.png'
         self.manual =               path + 'mimetypes'  + sep + 'application-pdf.png'
         self.new =                  path + 'actions'    + sep + 'document-new.png'
         self.open =                 path + 'actions'    + sep + 'document-open.png'
+        self.pipe_switch =          path + 'actions'    + sep + 'system-switch-user.png'
         self.relax_prompt =         path + 'mimetypes'  + sep + 'application-x-executable-script.png'
         self.remove =               path + 'actions'    + sep + 'list-remove.png'
         self.save =                 path + 'actions'    + sep + 'document-save.png'
@@ -96,6 +98,21 @@ class I22x22:
 
 
 
+class I32x32:
+    """The 32x32 pixel icons."""
+
+    def __init__(self):
+        """Initialise all paths."""
+
+        # Oxygen icons.
+        path = OXY_ICON_PATH + '32x32' + sep
+        self.apply =        path + 'actions' + sep + 'dialog-ok-apply.png'
+        self.cancel =       path + 'actions' + sep + 'dialog-cancel.png'
+        self.close =        path + 'actions' + sep + 'dialog-close.png'
+        self.ok =           path + 'actions' + sep + 'dialog-ok.png'
+
+
+
 class I48x48:
     """The 48x48 pixel icons."""
 
@@ -118,4 +135,5 @@ class I48x48:
 # Set up all icon classes.
 icon_16x16 = I16x16()
 icon_22x22 = I22x22()
+icon_32x32 = I32x32()
 icon_48x48 = I48x48()
