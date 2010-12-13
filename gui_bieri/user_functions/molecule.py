@@ -170,12 +170,8 @@ class Delete_window(UF_window):
         # Spacer.
         sizer.AddSpacer(self._spacing)
 
-        # The type selection.
-        names = []
-        if pipes.cdp_name():
-            for mol in molecule_loop():
-                names.append(mol.name)
-        self.chooser(sizer, "The molecule:", self._evt_mol_sel, names)
+        # The molecule selection.
+        self.mol_name = self.combo_box(sizer, "The molecule:", [])
 
         # Spacer.
         sizer.AddSpacer(self._spacing)
@@ -184,8 +180,24 @@ class Delete_window(UF_window):
     def execute(self):
         """Execute the user function."""
 
+        # Get the name.
+        mol_name = str(self.mol_name.GetValue())
+
         # The molecule ID.
-        id = '#' + self.mol
+        id = '#' + mol_name
 
         # Delete the molecule.
         self.interpreter.molecule.delete(mol_id=id)
+
+
+    def update(self, event):
+        """Update the UI."""
+
+        # Clear the previous data.
+        self.mol_name.Clear()
+
+        # The list of molecule names.
+        if pipes.cdp_name():
+            for mol in molecule_loop():
+                self.mol_name.Append(mol.name)
+
