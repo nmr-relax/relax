@@ -27,7 +27,7 @@
 import wx
 
 # relax module imports.
-from generic_fns.pipes import VALID_TYPES
+from generic_fns.pipes import VALID_TYPES, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_window
@@ -43,6 +43,7 @@ class Pipes(UF_base):
 
         # The dialogs.
         self._create_window = Add_window(self.gui, self.interpreter)
+        self._delete_window = Delete_window(self.gui, self.interpreter)
 
 
     def create(self, event):
@@ -53,6 +54,16 @@ class Pipes(UF_base):
         """
 
         self._create_window.Show()
+
+
+    def delete(self, event):
+        """The pipe.delete user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        self._delete_window.Show()
 
 
     def destroy(self):
@@ -96,3 +107,58 @@ class Add_window(UF_window):
 
         # Set the name.
         self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
+
+
+
+class Delete_window(UF_window):
+    """The pipe.delete() user function window."""
+
+    # Some class variables.
+    size_x = 600
+    size_y = 400
+    frame_title = 'Delete a data pipe'
+    image_path = WIZARD_IMAGE_PATH + 'molecule.png'
+    main_text = 'This dialog allows you to delete data pipes from the relax data store.'
+    title = 'Data pipe deletion'
+
+
+    def add_uf(self, sizer):
+        """Add the pipe specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The pipe selection.
+        self.pipe_name = self.combo_box(sizer, "The pipe:", [])
+
+
+    def execute(self):
+        """Execute the user function."""
+
+        # Get the name.
+        pipe_name = str(self.pipe_name.GetValue())
+
+        # Delete the data pipe.
+        self.interpreter.pipe.delete(pipe_name)
+
+        # Update.
+        self.update(None)
+
+
+    def update(self, event):
+        """Update the UI.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Clear the previous data.
+        self.pipe_name.Clear()
+
+        # Clear the pipe name.
+        self.pipe_name.SetValue('')
+
+        # The list of pipe names.
+        for name in pipe_names():
+            self.pipe_name.Append(name)

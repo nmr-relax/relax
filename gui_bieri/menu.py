@@ -196,7 +196,8 @@ class Menu:
                 [id_base + 002, "&delete", paths.icon_16x16.cancel, self.gui.user_functions.molecule.delete]
             ]],
             [id_base + 100, "&pipe", paths.icon_16x16.load, None, [
-                [id_base + 101, "&create", paths.icon_16x16.add, self.gui.user_functions.pipes.create]
+                [id_base + 101, "&create", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
+                [id_base + 102, "&delete", paths.icon_16x16.cancel, self.gui.user_functions.pipes.delete]
             ]],
             [id_base + 200, "&script",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []]
         ]
