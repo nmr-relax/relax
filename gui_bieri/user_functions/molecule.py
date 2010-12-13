@@ -71,6 +71,7 @@ class Molecule(UF_base):
         """Close all windows."""
 
         self._add_window.Destroy()
+        self._delete_window.Destroy()
 
 
 
