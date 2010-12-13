@@ -30,13 +30,15 @@ from prompt.interpreter import Interpreter
 from molecule import Molecule
 from pipes import Pipes
 from script import Script
+from spin import Spin
 
 
 # The package __all__ list.
 __all__ = ['base',
            'molecule',
            'pipes',
-           'script']
+           'script',
+           'spin']
 
 
 class User_functions:
@@ -57,6 +59,7 @@ class User_functions:
         self.molecule = Molecule(self.gui, self.interpreter)
         self.pipes = Pipes(self.gui, self.interpreter)
         self.script = Script(self.gui, self.interpreter)
+        self.spin = Spin(self.gui, self.interpreter)
 
 
     def destroy(self):
@@ -65,3 +68,4 @@ class User_functions:
         # Send the commands onwards to the user function classes.
         self.molecule.destroy()
         self.pipes.destroy()
+        self.spin.destroy()

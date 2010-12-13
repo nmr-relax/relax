@@ -326,7 +326,7 @@ class UF_window(wx.Dialog):
         sizer.AddStretchSpacer()
 
 
-    def combo_box(self, sizer, desc, choices):
+    def combo_box(self, sizer, desc, choices, evt_fn=None):
         """Build the combo box element for list selections.
 
         @param sizer:   The sizer to put the input field into.
@@ -335,6 +335,8 @@ class UF_window(wx.Dialog):
         @type desc:     str
         @param choices: The list of choices.
         @type choices:  list of str
+        @param evt_fn:  The event handling function.
+        @type evt_fn:   func
         """
 
         # Init.
@@ -354,6 +356,10 @@ class UF_window(wx.Dialog):
         # Add to the main sizer (followed by stretchable spacing).
         sizer.Add(sub_sizer)
         sizer.AddStretchSpacer()
+
+        # Bind events.
+        if evt_fn:
+            self.Bind(wx.EVT_COMBOBOX, evt_fn, combo)
 
         # Return the combo box element.
         return combo
