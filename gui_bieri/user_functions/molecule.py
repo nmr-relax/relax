@@ -27,7 +27,7 @@
 import wx
 
 # relax module imports.
-from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, molecule_loop
+from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, generate_spin_id, molecule_loop
 from generic_fns import pipes
 
 # GUI module imports.
@@ -57,14 +57,21 @@ class Molecule(UF_base):
         self._create_window.Show()
 
 
-    def delete(self, event):
+    def delete(self, event, mol_name=None):
         """The molecule.delete user function.
 
         @param event:   The wx event.
         @type event:    wx event
+        @param mol_name:    The starting molecule name.
+        @type mol_name:     str
         """
 
+        # Show the dialog.
         self._delete_window.Show()
+
+        # Default molecule name.
+        if mol_name:
+            self._delete_window.mol.SetValue(mol_name)
 
 
     def destroy(self):
@@ -95,7 +102,7 @@ class Add_window(UF_window):
         """
 
         # The molecule name input.
-        self.mol_name = self.input_field(sizer, "The name of the molecule:")
+        self.mol = self.input_field(sizer, "The name of the molecule:")
 
         # The type selection.
         self.mol_type = self.combo_box(sizer, "The type of molecule:", [''] + ALLOWED_MOL_TYPES)
@@ -105,7 +112,7 @@ class Add_window(UF_window):
         """Execute the user function."""
 
         # Get the name and type.
-        mol_name = str(self.mol_name.GetValue())
+        mol_name = str(self.mol.GetValue())
         mol_type = str(self.mol_type.GetValue())
 
         # Set the name.
@@ -133,17 +140,17 @@ class Delete_window(UF_window):
         """
 
         # The molecule selection.
-        self.mol_name = self.combo_box(sizer, "The molecule:", [])
+        self.mol = self.combo_box(sizer, "The molecule:", [])
 
 
     def execute(self):
         """Execute the user function."""
 
         # Get the name.
-        mol_name = str(self.mol_name.GetValue())
+        mol_name = str(self.mol.GetValue())
 
         # The molecule ID.
-        id = '#' + mol_name
+        id = generate_spin_id(mol_name=mol_name)
 
         # Delete the molecule.
         self.interpreter.molecule.delete(mol_id=id)
@@ -160,12 +167,12 @@ class Delete_window(UF_window):
         """
 
         # Clear the previous data.
-        self.mol_name.Clear()
+        self.mol.Clear()
 
         # Clear the molecule name.
-        self.mol_name.SetValue('')
+        self.mol.SetValue('')
 
         # The list of molecule names.
         if pipes.cdp_name():
             for mol in molecule_loop():
-                self.mol_name.Append(mol.name)
+                self.mol.Append(mol.name)

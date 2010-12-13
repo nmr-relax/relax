@@ -34,6 +34,7 @@ from generic_fns import pipes
 # GUI module imports.
 from base import UF_base, UF_window
 from gui_bieri.paths import WIZARD_IMAGE_PATH
+from gui_bieri.user_functions.mol_res_spin import Mol_res_spin
 
 
 # The container class.
@@ -44,28 +45,66 @@ class Spin(UF_base):
         """Place all the GUI classes into this class for storage."""
 
         # The dialogs.
-        self._create_window = Add_window(self.gui, self.interpreter)
+        self._create_window = Create_window(self.gui, self.interpreter)
         self._delete_window = Delete_window(self.gui, self.interpreter)
 
 
-    def create(self, event):
+    def create(self, event, mol_name=None, res_num=None, res_name=None):
         """The spin.create user function.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param event:       The wx event.
+        @type event:        wx event
+        @param mol_name:    The starting molecule name.
+        @type mol_name:     str
+        @param res_num:     The starting residue number.
+        @type res_num:      str
+        @param res_name:    The starting residue name.
+        @type res_name:     str
         """
 
+        # Show the dialog.
         self._create_window.Show()
 
+        # Default molecule name.
+        if mol_name:
+            self._create_window.mol.SetValue(mol_name)
 
-    def delete(self, event):
+        # Default residue.
+        if res_num or res_name:
+            self._create_window.res.SetValue("%s %s" % (res_num, res_name))
+
+
+    def delete(self, event, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
         """The spin.delete user function.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param event:       The wx event.
+        @type event:        wx event
+        @param mol_name:    The starting molecule name.
+        @type mol_name:     str
+        @param res_num:     The starting residue number.
+        @type res_num:      str
+        @param res_name:    The starting residue name.
+        @type res_name:     str
+        @param spin_num:    The starting spin number.
+        @type spin_num:     str
+        @param spin_name:   The starting spin name.
+        @type spin_name:    str
         """
 
+        # Show the dialog.
         self._delete_window.Show()
+
+        # Default molecule name.
+        if mol_name:
+            self._delete_window.mol.SetValue(mol_name)
+
+        # Default residue.
+        if res_num or res_name:
+            self._delete_window.res.SetValue("%s %s" % (res_num, res_name))
+
+        # Default spin.
+        if spin_num or spin_name:
+            self._delete_window.spin.SetValue("%s %s" % (spin_num, spin_name))
 
 
     def destroy(self):
@@ -76,7 +115,7 @@ class Spin(UF_base):
 
 
 
-class Add_window(UF_window):
+class Create_window(UF_window, Mol_res_spin):
     """The spin.create() user function window."""
 
     # Some class variables.
@@ -86,26 +125,6 @@ class Add_window(UF_window):
     image_path = WIZARD_IMAGE_PATH + 'spin.png'
     main_text = 'This dialog allows you to add new spins to the relax data store.  The spin will be added to the current data pipe.'
     title = 'Addition of new spins'
-
-
-    def _update_residues(self, event):
-        """Update the residue combo box.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Clear the previous data.
-        self.res.Clear()
-
-        # Clear the text.
-        self.res.SetValue('')
-
-        # The list of residue names.
-        mol_id = '#' + str(self.mol.GetValue())
-        for res in residue_loop(mol_id):
-            self.res.Append("%s %s" % (res.num, res.name))
-
 
     def add_uf(self, sizer):
         """Add the spin specific GUI elements.
@@ -128,20 +147,13 @@ class Add_window(UF_window):
     def execute(self):
         """Execute the user function."""
 
-        # Get the spin info.
+        # Get the molecule info.
         mol_name = str(self.mol.GetValue())
         if mol_name == '':
             mol_name = None
 
         # The residue info.
-        res = str(self.res.GetValue())
-        res_num, res_name = split(res)
-        if res_name == '':
-            res_name = None
-        if res_num == '':
-            res_num = None
-        else:
-            res_num = int(res_num)
+        res_num, res_name = self._get_res_info()
 
         # The spin number.
         spin_num = str(self.spin_num.GetValue())
@@ -181,7 +193,7 @@ class Add_window(UF_window):
 
 
 
-class Delete_window(UF_window):
+class Delete_window(UF_window, Mol_res_spin):
     """The spin.delete() user function window."""
 
     # Some class variables.
@@ -200,24 +212,27 @@ class Delete_window(UF_window):
         @type sizer:    wx.Sizer instance
         """
 
-        # The spin selection.
-        self.spin_name = self.combo_box(sizer, "The spin:", [])
+        # Molecule, residue and spin selections.
+        self.mol = self.combo_box(sizer, "The molecule:", [], self._update_residues)
+        self.res = self.combo_box(sizer, "The residue:", [], self._update_spins)
+        self.spin = self.combo_box(sizer, "The spin:", [])
 
 
     def execute(self):
         """Execute the user function."""
 
-        # Get the name.
-        spin_name = str(self.spin_name.GetValue())
+        # Get the spin ID.
+        id = self._get_spin_id()
 
-        # The spin ID.
-        id = '@' + spin_name
+        # Nothing to do.
+        if not id:
+            return
 
         # Delete the spin.
         self.interpreter.spin.delete(spin_id=id)
 
-        # Update.
-        self.update(None)
+        # Update the spin list.
+        self._update_spins(None)
 
 
     def update(self, event):
@@ -228,12 +243,16 @@ class Delete_window(UF_window):
         """
 
         # Clear the previous data.
-        self.spin_name.Clear()
+        self.mol.Clear()
+        self.res.Clear()
+        self.spin.Clear()
 
-        # Clear the spin name.
-        self.spin_name.SetValue('')
+        # Clear the text.
+        self.mol.SetValue('')
+        self.res.SetValue('')
+        self.spin.SetValue('')
 
-        # The list of spin names.
+        # The list of molecule names.
         if pipes.cdp_name():
-            for spin in spin_loop():
-                self.spin_name.Append(spin.name)
+            for mol in molecule_loop():
+                self.mol.Append(mol.name)

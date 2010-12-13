@@ -28,12 +28,13 @@ from string import split
 import wx
 
 # relax module imports.
-from generic_fns.mol_res_spin import molecule_loop, residue_loop
+from generic_fns.mol_res_spin import generate_spin_id, molecule_loop, residue_loop
 from generic_fns import pipes
 
 # GUI module imports.
 from base import UF_base, UF_window
 from gui_bieri.paths import WIZARD_IMAGE_PATH
+from gui_bieri.user_functions.mol_res_spin import Mol_res_spin
 
 
 # The container class.
@@ -44,28 +45,50 @@ class Residue(UF_base):
         """Place all the GUI classes into this class for storage."""
 
         # The dialogs.
-        self._create_window = Add_window(self.gui, self.interpreter)
+        self._create_window = Create_window(self.gui, self.interpreter)
         self._delete_window = Delete_window(self.gui, self.interpreter)
 
 
-    def create(self, event):
+    def create(self, event, mol_name=None):
         """The residue.create user function.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param event:       The wx event.
+        @type event:        wx event
+        @param mol_name:    The starting molecule name.
+        @type mol_name:     str
         """
 
+        # Show the dialog.
         self._create_window.Show()
 
+        # Default molecule name.
+        if mol_name:
+            self._create_window.mol.SetValue(mol_name)
 
-    def delete(self, event):
+
+    def delete(self, event, mol_name=None, res_num=None, res_name=None):
         """The residue.delete user function.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param event:       The wx event.
+        @type event:        wx event
+        @param mol_name:    The starting molecule name.
+        @type mol_name:     str
+        @param res_num:     The starting residue number.
+        @type res_num:      str
+        @param res_name:    The starting residue name.
+        @type res_name:     str
         """
 
+        # Show the dialog.
         self._delete_window.Show()
+
+        # Default molecule name.
+        if mol_name:
+            self._delete_window.mol.SetValue(mol_name)
+
+        # Default residue.
+        if res_num or res_name:
+            self._delete_window.res.SetValue("%s %s" % (res_num, res_name))
 
 
     def destroy(self):
@@ -76,7 +99,7 @@ class Residue(UF_base):
 
 
 
-class Add_window(UF_window):
+class Create_window(UF_window, Mol_res_spin):
     """The residue.create() user function window."""
 
     # Some class variables.
@@ -149,7 +172,7 @@ class Add_window(UF_window):
 
 
 
-class Delete_window(UF_window):
+class Delete_window(UF_window, Mol_res_spin):
     """The residue.delete() user function window."""
 
     # Some class variables.
@@ -160,7 +183,6 @@ class Delete_window(UF_window):
     main_text = 'This dialog allows you to delete residues from the relax data store.  The residue will be deleted from the current data pipe.'
     title = 'Residue deletion'
 
-
     def add_uf(self, sizer):
         """Add the residue specific GUI elements.
 
@@ -169,23 +191,25 @@ class Delete_window(UF_window):
         """
 
         # The residue selection.
-        self.res_name = self.combo_box(sizer, "The residue:", [])
+        self.mol = self.combo_box(sizer, "The molecule:", [], self._update_residues)
+        self.res = self.combo_box(sizer, "The residue:", [])
 
 
     def execute(self):
         """Execute the user function."""
 
-        # Get the name.
-        res_name = str(self.res_name.GetValue())
-
         # The residue ID.
-        id = ':' + res_name
+        id = self._get_res_id()
+
+        # Nothing to do.
+        if not id:
+            return
 
         # Delete the residue.
         self.interpreter.residue.delete(res_id=id)
 
         # Update.
-        self.update(None)
+        self._update_residues(None)
 
 
     def update(self, event):
@@ -196,12 +220,14 @@ class Delete_window(UF_window):
         """
 
         # Clear the previous data.
-        self.res_name.Clear()
+        self.mol.Clear()
+        self.res.Clear()
 
-        # Clear the residue name.
-        self.res_name.SetValue('')
+        # Clear the text.
+        self.mol.SetValue('')
+        self.res.SetValue('')
 
-        # The list of residue names.
+        # The list of molecule names.
         if pipes.cdp_name():
-            for res in res_loop():
-                self.res_name.Append(res.name)
+            for mol in molecule_loop():
+                self.mol.Append(mol.name)
