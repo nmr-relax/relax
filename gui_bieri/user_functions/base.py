@@ -124,6 +124,9 @@ class UF_window(wx.Dialog):
             # Add the relax logo.
             sizer.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
+        # A spacer.
+        sizer.AddSpacer(20)
+
 
     def add_buttons(self, sizer):
         """Add the buttons to the sizer.
