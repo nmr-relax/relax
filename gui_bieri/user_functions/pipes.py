@@ -70,6 +70,7 @@ class Pipes(UF_base):
         """Close all windows."""
 
         self._create_window.Destroy()
+        self._delete_window.Destroy()
 
 
 class Add_window(UF_window):
