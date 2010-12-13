@@ -73,17 +73,6 @@ class Add_window(UF_window):
     title = 'Addition of new data pipes'
 
 
-    def _evt_pipe_type(self, event):
-        """Selection of the pipe type.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the choice.
-        self.pipe_type = str(event.GetString())
-
-
     def add_uf(self, sizer):
         """Add the pipe specific GUI elements.
 
@@ -95,7 +84,7 @@ class Add_window(UF_window):
         self.pipe_name = self.input_field(sizer, "The data pipe name:")
 
         # The type selection.
-        self.chooser(sizer, "The type of data pipe:", self._evt_pipe_type, [''] + VALID_TYPES)
+        self.pipe_type = self.combo_box(sizer, "The type of data pipe:", [''] + VALID_TYPES)
 
 
     def execute(self):
@@ -103,6 +92,7 @@ class Add_window(UF_window):
 
         # Get the name and type.
         pipe_name = str(self.pipe_name.GetValue())
+        pipe_type = str(self.pipe_type.GetValue())
 
         # Set the name.
-        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=self.pipe_type)
+        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
