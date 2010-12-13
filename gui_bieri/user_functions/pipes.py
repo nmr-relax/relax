@@ -184,10 +184,10 @@ class Switch_window(UF_window):
 
     # Some class variables.
     size_x = 600
-    size_y = 400
+    size_y = 450
     button_apply = False
     frame_title = 'Data pipe switching'
-    image_path = WIZARD_IMAGE_PATH + 'pipe.png'
+    image_path = WIZARD_IMAGE_PATH + 'pipe_switch.png'
     main_text = 'This dialog allows you to switch between the various data pipes within the relax data store.'
     title = 'Switch between data pipes'
 
