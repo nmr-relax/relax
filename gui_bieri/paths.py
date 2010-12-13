@@ -53,6 +53,7 @@ class I16x16:
         self.about_relaxgui =       IMAGE_PATH + 'relax_16x16.png'
         self.molecule =             path + 'molecule.png'
         self.molecule_unfolded =    path + 'molecule_unfolded.png'
+        self.pipe =                 path + 'pipe.png'
         self.residue =              path + 'residue.png'
         self.spin =                 path + 'spin.png'
 
@@ -89,6 +90,7 @@ class I22x22:
         path = ICON_RELAX_PATH + '22x22' + sep
         self.molecule =             path + 'molecule.png'
         self.molecule_unfolded =    path + 'molecule_unfolded.png'
+        self.pipe =                 path + 'pipe.png'
         self.residue =              path + 'residue.png'
         self.spin =                 path + 'spin.png'
 
@@ -108,6 +110,9 @@ class I48x48:
         self.forwards =     path + 'actions' + sep + 'go-next-view.png'
         self.remove =       path + 'actions' + sep + 'list-remove.png'
 
+        # relax icons.
+        path = ICON_RELAX_PATH + '48x48' + sep
+        self.pipe =                 path + 'pipe.png'
 
 
 # Set up all icon classes.

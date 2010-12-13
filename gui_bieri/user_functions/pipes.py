@@ -79,7 +79,7 @@ class Add_window(UF_window):
     size_x = 600
     size_y = 400
     frame_title = 'Add a data pipe'
-    image_path = WIZARD_IMAGE_PATH + 'molecule.png'
+    image_path = WIZARD_IMAGE_PATH + 'pipe.png'
     main_text = 'This dialog allows you to add new data pipes to the relax data store.'
     title = 'Addition of new data pipes'
 
@@ -117,7 +117,7 @@ class Delete_window(UF_window):
     size_x = 600
     size_y = 400
     frame_title = 'Delete a data pipe'
-    image_path = WIZARD_IMAGE_PATH + 'molecule.png'
+    image_path = WIZARD_IMAGE_PATH + 'pipe.png'
     main_text = 'This dialog allows you to delete data pipes from the relax data store.'
     title = 'Data pipe deletion'
 
