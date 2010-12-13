@@ -194,7 +194,8 @@ class Menu:
             ]],
             [wx.NewId(), "&pipe", paths.icon_16x16.pipe, None, [
                 [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipes.delete]
+                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipes.delete],
+                [wx.NewId(), "&switch", paths.icon_16x16.pipe_switch, self.gui.user_functions.pipes.switch]
             ]],
             [wx.NewId(), "&residue", paths.icon_16x16.residue, None, [
                 [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.residue.create],
