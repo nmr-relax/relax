@@ -61,6 +61,7 @@ class UF_window(wx.Dialog):
     """
 
     # Some class variables.
+    art_spacing = 20
     size_x = 600
     size_y = 400
     border = 10
@@ -129,7 +130,7 @@ class UF_window(wx.Dialog):
             sizer.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
         # A spacer.
-        sizer.AddSpacer(20)
+        sizer.AddSpacer(self.art_spacing)
 
 
     def add_buttons(self, sizer):
@@ -193,10 +194,10 @@ class UF_window(wx.Dialog):
         image_x, image_y = self.image.GetSize()
 
         # Wrap the text.
-        text.Wrap(self.size_x - image_x - 2*self.border)
+        text.Wrap(self.size_x - image_x - self.art_spacing - 2*self.border)
 
         # Add the text.
-        sizer.Add(text, 0, wx.ALIGN_CENTRE|wx.ALL, 0)
+        sizer.Add(text, 0, wx.ALIGN_LEFT|wx.ALL, 0)
 
         # A line with spacing.
         sizer.AddSpacer(5)
