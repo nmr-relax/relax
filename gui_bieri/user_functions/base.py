@@ -325,11 +325,14 @@ class UF_window(wx.Dialog):
 
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
-        sub_sizer.Add(text, 1, wx.LEFT, self.border)
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, self.border)
+
+        # Spacing.
+        sub_sizer.AddSpacer(10)
 
         # The combo box element.
         combo = wx.ComboBox(self, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=choices)
-        sub_sizer.Add(combo, 1, wx.LEFT, self.border)
+        sub_sizer.Add(combo, 1, wx.EXPAND, self.border)
 
         # Add to the main sizer.
         sizer.Add(sub_sizer)
