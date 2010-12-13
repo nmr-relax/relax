@@ -211,7 +211,7 @@ class Delete_window(UF_window):
         spin_name = str(self.spin_name.GetValue())
 
         # The spin ID.
-        id = '#' + spin_name
+        id = '@' + spin_name
 
         # Delete the spin.
         self.interpreter.spin.delete(spin_id=id)
