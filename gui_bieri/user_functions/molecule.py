@@ -89,17 +89,6 @@ class Add_window(UF_window):
     _spacing = 20
 
 
-    def _evt_mol_type(self, event):
-        """Selection of the molecule type.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the choice.
-        self.mol_type = str(event.GetString())
-
-
     def add_uf(self, sizer):
         """Add the molecule specific GUI elements.
 
@@ -117,7 +106,7 @@ class Add_window(UF_window):
         sizer.AddSpacer(self._spacing)
 
         # The type selection.
-        self.chooser(sizer, "The type of molecule:", self._evt_mol_type, [''] + ALLOWED_MOL_TYPES)
+        self.mol_type = self.combo_box(sizer, "The type of molecule:", [''] + ALLOWED_MOL_TYPES)
 
         # Spacer.
         sizer.AddSpacer(self._spacing)
@@ -128,9 +117,10 @@ class Add_window(UF_window):
 
         # Get the name and type.
         mol_name = str(self.mol_name.GetValue())
+        mol_type = str(self.mol_type.GetValue())
 
         # Set the name.
-        self.interpreter.molecule.create(mol_name=mol_name, type=self.mol_type)
+        self.interpreter.molecule.create(mol_name=mol_name, type=mol_type)
 
 
 
