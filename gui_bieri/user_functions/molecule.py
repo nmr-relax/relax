@@ -85,9 +85,6 @@ class Add_window(UF_window):
     main_text = 'This dialog allows you to add new molecules to the relax data store.  The molecule will be added to the current data pipe.'
     title = 'Addition of new molecules'
 
-    # Some private class variables.
-    _spacing = 20
-
 
     def add_uf(self, sizer):
         """Add the molecule specific GUI elements.
@@ -96,20 +93,11 @@ class Add_window(UF_window):
         @type sizer:    wx.Sizer instance
         """
 
-        # Spacer.
-        sizer.AddSpacer(self._spacing)
-
         # The molecule name input.
         self.mol_name = self.input_field(sizer, "The name of the molecule:")
 
-        # Spacer.
-        sizer.AddSpacer(self._spacing)
-
         # The type selection.
         self.mol_type = self.combo_box(sizer, "The type of molecule:", [''] + ALLOWED_MOL_TYPES)
-
-        # Spacer.
-        sizer.AddSpacer(self._spacing)
 
 
     def execute(self):
@@ -135,9 +123,6 @@ class Delete_window(UF_window):
     main_text = 'This dialog allows you to delete molecules from the relax data store.  The molecule will be deleted from the current data pipe.'
     title = 'Molecule deletion'
 
-    # Some private class variables.
-    _spacing = 20
-
 
     def add_uf(self, sizer):
         """Add the molecule specific GUI elements.
@@ -146,14 +131,8 @@ class Delete_window(UF_window):
         @type sizer:    wx.Sizer instance
         """
 
-        # Spacer.
-        sizer.AddSpacer(self._spacing)
-
         # The molecule selection.
         self.mol_name = self.combo_box(sizer, "The molecule:", [])
-
-        # Spacer.
-        sizer.AddSpacer(self._spacing)
 
 
     def execute(self):
@@ -179,4 +158,3 @@ class Delete_window(UF_window):
         if pipes.cdp_name():
             for mol in molecule_loop():
                 self.mol_name.Append(mol.name)
-

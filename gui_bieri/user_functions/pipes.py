@@ -72,9 +72,6 @@ class Add_window(UF_window):
     main_text = 'This dialog allows you to add new data pipes to the relax data store.'
     title = 'Addition of new data pipes'
 
-    # Some private class variables.
-    _spacing = 20
-
 
     def _evt_pipe_type(self, event):
         """Selection of the pipe type.
@@ -94,20 +91,11 @@ class Add_window(UF_window):
         @type sizer:    wx.Sizer instance
         """
 
-        # Spacer.
-        sizer.AddSpacer(self._spacing)
-
         # The pipe name input.
         self.pipe_name = self.input_field(sizer, "The data pipe name:")
 
-        # Spacer.
-        sizer.AddSpacer(self._spacing)
-
         # The type selection.
         self.chooser(sizer, "The type of data pipe:", self._evt_pipe_type, [''] + VALID_TYPES)
-
-        # Spacer.
-        sizer.AddSpacer(self._spacing)
 
 
     def execute(self):

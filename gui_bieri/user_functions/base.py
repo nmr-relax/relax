@@ -62,7 +62,7 @@ class UF_window(wx.Dialog):
     # Some class variables.
     size_x = 600
     size_y = 400
-    border = 5
+    border = 10
     frame_title = ''
     image_path = None
     input_size = 27
@@ -80,31 +80,31 @@ class UF_window(wx.Dialog):
         wx.Dialog.__init__(self, None, id=-1, title=self.frame_title, style=style)
 
         # Set up the frame.
-        frame_sizer = self.setup_frame()
+        sizer = self.setup_frame()
 
         # Add the central part.
-        centre_sizer = self.build_central_section(frame_sizer)
+        centre_sizer = self.build_central_section(sizer)
 
         # Add the final buttons.
-        self.add_buttons(frame_sizer)
+        self.add_buttons(sizer)
 
         # Add the artwork.
         self.add_artwork(centre_sizer)
 
         # Add the main sizer.
         main_sizer = self.build_main_section(centre_sizer)
-        
+
         # Add the title.
         self.add_title(main_sizer)
 
         # Add the description.
         self.add_desc(main_sizer)
 
-        # Add a spacer.
-        main_sizer.AddSpacer(20)
-
-        # Add the user function specific GUI elements.
+        # Add the user function specific GUI elements (bounded by spacers).
+        main_sizer.AddStretchSpacer()
         self.add_uf(main_sizer)
+        main_sizer.AddStretchSpacer()
+        main_sizer.AddStretchSpacer()
 
         # Bind some events.
         self.Bind(wx.EVT_SHOW, self.update)
@@ -122,7 +122,7 @@ class UF_window(wx.Dialog):
             self.image = wx.StaticBitmap(self, -1, wx.Bitmap(self.image_path, wx.BITMAP_TYPE_ANY))
 
             # Add the relax logo.
-            sizer.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, self.border)
+            sizer.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
 
     def add_buttons(self, sizer):
@@ -134,7 +134,7 @@ class UF_window(wx.Dialog):
 
         # Create a horizontal layout for the buttons.
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT|wx.ALL, self.border)
+        sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT|wx.ALL, 0)
 
         # The apply button.
         apply_button = wx.Button(self, -1, "Apply")
@@ -168,6 +168,11 @@ class UF_window(wx.Dialog):
         @type sizer:    wx.Sizer instance
         """
 
+        # A line with spacing.
+        sizer.AddSpacer(5)
+        sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, 0)
+        sizer.AddSpacer(5)
+
         # The text.
         text = wx.StaticText(self, -1, self.main_text, style=wx.TE_MULTILINE)
 
@@ -178,13 +183,15 @@ class UF_window(wx.Dialog):
         image_x, image_y = self.image.GetSize()
 
         # Wrap the text.
-        text.Wrap(self.size_x - image_x - 3*self.border)
+        text.Wrap(self.size_x - image_x - 2*self.border)
 
         # Add the text.
-        sizer.Add(text, 0, wx.ALIGN_CENTRE|wx.ALL, self.border)
+        sizer.Add(text, 0, wx.ALIGN_CENTRE|wx.ALL, 0)
 
-        # A line.
-        sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, self.border)
+        # A line with spacing.
+        sizer.AddSpacer(5)
+        sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, 0)
+        sizer.AddSpacer(5)
 
 
     def add_title(self, sizer):
@@ -194,6 +201,9 @@ class UF_window(wx.Dialog):
         @type sizer:    wx.Sizer instance
         """
 
+        # Spacing.
+        sizer.AddSpacer(10)
+
         # The text.
         title = wx.StaticText(self, -1, self.title)
 
@@ -201,10 +211,10 @@ class UF_window(wx.Dialog):
         title.SetFont(wx.Font(18, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
 
         # Add the title.
-        sizer.Add(title, 0, wx.ALIGN_CENTRE|wx.ALL, self.border)
+        sizer.Add(title, 0, wx.ALIGN_CENTRE|wx.ALL, 0)
 
-        # A line.
-        sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, self.border)
+        # Spacing.
+        sizer.AddSpacer(10)
 
 
     def add_uf(self, sizer):
@@ -244,7 +254,7 @@ class UF_window(wx.Dialog):
         centre_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # Pack the sizer into the frame.
-        sizer.Add(centre_sizer, 1, wx.EXPAND|wx.ALL, self.border)
+        sizer.Add(centre_sizer, 1, wx.EXPAND|wx.ALL, 0)
 
         # Return the sizer.
         return centre_sizer
@@ -263,7 +273,7 @@ class UF_window(wx.Dialog):
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Pack the sizer.
-        sizer.Add(main_sizer, 1, wx.EXPAND|wx.ALL, self.border)
+        sizer.Add(main_sizer, 1, wx.EXPAND|wx.ALL, 0)
 
         # Return the sizer.
         return main_sizer
@@ -298,15 +308,19 @@ class UF_window(wx.Dialog):
 
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
-        sub_sizer.Add(text, 1, wx.LEFT, self.border)
+        sub_sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        sub_sizer.AddSpacer(10)
 
         # The choice element.
         type_choice = wx.Choice(self, -1, style=wx.ALIGN_LEFT, choices=choices)
-        sub_sizer.Add(type_choice, 1, wx.LEFT, self.border)
+        sub_sizer.Add(type_choice, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
         self.Bind(wx.EVT_CHOICE, func, type_choice)
 
-        # Add to the main sizer.
+        # Add to the main sizer (followed by stretchable spacing).
         sizer.Add(sub_sizer)
+        sizer.AddStretchSpacer()
 
 
     def combo_box(self, sizer, desc, choices):
@@ -325,17 +339,18 @@ class UF_window(wx.Dialog):
 
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
-        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, self.border)
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacing.
         sub_sizer.AddSpacer(10)
 
         # The combo box element.
         combo = wx.ComboBox(self, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=choices)
-        sub_sizer.Add(combo, 1, wx.EXPAND, self.border)
+        sub_sizer.Add(combo, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 0)
 
-        # Add to the main sizer.
+        # Add to the main sizer (followed by stretchable spacing).
         sizer.Add(sub_sizer)
+        sizer.AddStretchSpacer()
 
         # Return the combo box element.
         return combo
@@ -362,16 +377,19 @@ class UF_window(wx.Dialog):
         field_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The description.
-        text = wx.StaticText(self, -1, desc, style=wx.ALIGN_RIGHT)
-        field_sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, self.border)
+        text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        field_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        field_sizer.AddSpacer(10)
 
         # The input field.
         field = wx.TextCtrl(self, -1, '')
-        field.SetMinSize((50, self.input_size))
-        field_sizer.Add(field, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, self.border)
+        field_sizer.Add(field, 3, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 0)
 
-        # Add to the main sizer.
+        # Add to the main sizer (followed by stretchable spacing).
         sizer.Add(field_sizer)
+        sizer.AddStretchSpacer()
 
         # Return the object.
         return field
@@ -398,20 +416,32 @@ class UF_window(wx.Dialog):
         @rtype:     wx.Sizer instance
         """
 
-        # Use a grid sizer for packing the elements.
-        sizer = wx.BoxSizer(wx.VERTICAL)
+        # Some sizers.
+        sizer_hori = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_vert = wx.BoxSizer(wx.VERTICAL)
+        sizer_cent = wx.BoxSizer(wx.VERTICAL)
 
         # Pack the sizer into the frame.
-        self.SetSizer(sizer)
+        self.SetSizer(sizer_hori)
 
         # Set the default size of the controller.
         self.SetSize((self.size_x, self.size_y))
+
+        # Left and right borders.
+        sizer_hori.AddSpacer(self.border)
+        sizer_hori.Add(sizer_vert, 1, wx.EXPAND|wx.ALL)
+        sizer_hori.AddSpacer(self.border)
+
+        # Top and bottom borders.
+        sizer_vert.AddSpacer(self.border)
+        sizer_vert.Add(sizer_cent, 1, wx.EXPAND|wx.ALL)
+        sizer_vert.AddSpacer(self.border)
 
         # Centre the frame.
         self.Centre()
 
         # Return the sizer.
-        return sizer
+        return sizer_cent
 
 
     def update(self, event):
