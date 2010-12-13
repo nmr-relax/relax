@@ -147,12 +147,22 @@ class Delete_window(UF_window):
         # Delete the molecule.
         self.interpreter.molecule.delete(mol_id=id)
 
+        # Update.
+        self.update(None)
+
 
     def update(self, event):
-        """Update the UI."""
+        """Update the UI.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
 
         # Clear the previous data.
         self.mol_name.Clear()
+
+        # Clear the molecule name.
+        self.mol_name.SetValue('')
 
         # The list of molecule names.
         if pipes.cdp_name():
