@@ -28,6 +28,7 @@
 import wx
 
 # relax module imports.
+from generic_fns.mol_res_spin import molecule_loop, residue_loop, spin_loop
 from generic_fns.pipes import get_pipe
 
 # GUI module imports.
@@ -81,6 +82,50 @@ class Mol_res_spin_tree(wx.Panel):
         self.tree.Bind(wx.EVT_RIGHT_DOWN, self._right_click)
 
 
+    def _mol_menu(self):
+        """The right click molecule menu."""
+
+        # Some ids.
+        ids = []
+        for i in range(2):
+            ids.append(wx.NewId())
+
+        # The menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add residue", icon=paths.icon_16x16.add))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Delete molecule", icon=paths.icon_16x16.remove))
+
+        # The menu actions.
+        self.Bind(wx.EVT_MENU, self.residue_create, id=ids[0])
+        self.Bind(wx.EVT_MENU, self.molecule_delete, id=ids[1])
+
+        # Show the menu.
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+
+    def _res_menu(self):
+        """The right click molecule menu."""
+
+        # Some ids.
+        ids = []
+        for i in range(2):
+            ids.append(wx.NewId())
+
+        # The menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add spin", icon=paths.icon_16x16.add))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Delete residue", icon=paths.icon_16x16.remove))
+
+        # The menu actions.
+        self.Bind(wx.EVT_MENU, self.spin_create, id=ids[0])
+        self.Bind(wx.EVT_MENU, self.residue_delete, id=ids[1])
+
+        # Show the menu.
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+
     def _resize(self, event):
         """Resize the tree element.
 
@@ -109,11 +154,23 @@ class Mol_res_spin_tree(wx.Panel):
         item, flags = self.tree.HitTest(pos)
 
         # The python data.
-        info = self.tree.GetItemPyData(item)
+        self.info = self.tree.GetItemPyData(item)
 
         # Bring up the root menu.
-        if info == 'root':
+        if self.info == 'root':
             self._root_menu()
+
+        # Bring up the molecule menu.
+        elif self.info[0] == 'mol':
+            self._mol_menu()
+
+        # Bring up the residue menu.
+        elif self.info[0] == 'res':
+            self._res_menu()
+
+        # Bring up the spin menu.
+        elif self.info[0] == 'spin':
+            self._spin_menu()
 
 
     def _root_menu(self):
@@ -129,7 +186,27 @@ class Mol_res_spin_tree(wx.Panel):
         menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add molecule", icon=paths.icon_16x16.add))
 
         # The menu actions.
-        self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.add, id=ids[0])
+        self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.create, id=ids[0])
+
+        # Show the menu.
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+
+    def _spin_menu(self):
+        """The right click spin menu."""
+
+        # Some ids.
+        ids = []
+        for i in range(1):
+            ids.append(wx.NewId())
+
+        # The menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Delete spin", icon=paths.icon_16x16.remove))
+
+        # The menu actions.
+        self.Bind(wx.EVT_MENU, self.spin_delete, id=ids[0])
 
         # Show the menu.
         self.PopupMenu(menu)
@@ -153,29 +230,29 @@ class Mol_res_spin_tree(wx.Panel):
         self.tree.DeleteChildren(self.root)
 
         # The molecules.
-        for mol in pipe.mol:
+        for mol, mol_id in molecule_loop(return_id=True):
             # Append a molecule with name to the tree.
             mol_branch = self.tree.AppendItem(self.root, "Molecule: %s" % mol.name)
-            self.tree.SetPyData(mol_branch, None)
+            self.tree.SetPyData(mol_branch, ['mol', mol.name])
 
             # Set the bitmap.
             self.tree.SetItemImage(mol_branch, self.icon_mol_index, wx.TreeItemIcon_Normal)
             self.tree.SetItemImage(mol_branch, self.icon_mol_unfold_index, wx.TreeItemIcon_Expanded)
 
             # The residues.
-            for res in mol.res:
+            for res, res_id in residue_loop(mol_id, return_id=True):
                 # Append a residue with name and number to the tree.
-                res_branch = self.tree.AppendItem(mol_branch, "Residue: %s %s" % (res.name, res.num))
-                self.tree.SetPyData(res_branch, None)
+                res_branch = self.tree.AppendItem(mol_branch, "Residue: %s %s" % (res.num, res.name))
+                self.tree.SetPyData(res_branch, ['res', mol.name, res.num, res.name])
 
                 # Set the bitmap.
                 self.tree.SetItemImage(res_branch, self.icon_res_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
 
                 # The spins.
-                for spin in res.spin:
+                for spin, spin_id in spin_loop(res_id, return_id=True):
                     # Append a spin with name and number to the tree.
-                    spin_branch = self.tree.AppendItem(res_branch, "Spin: %s %s" % (spin.name, spin.num))
-                    self.tree.SetPyData(spin_branch, None)
+                    spin_branch = self.tree.AppendItem(res_branch, "Spin: %s %s" % (spin.num, spin.name))
+                    self.tree.SetPyData(spin_branch, ['spin', mol.name, res.num, res.name, spin.num, spin.name])
 
                     # Set the bitmap.
                     self.tree.SetItemImage(spin_branch, self.icon_spin_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
@@ -185,6 +262,61 @@ class Mol_res_spin_tree(wx.Panel):
 
         # Expand the root.
         self.tree.Expand(self.root)
+
+
+    def molecule_delete(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the dialog.
+        self.gui.user_functions.molecule.delete(event, mol_name=self.info[1])
+
+
+    def residue_create(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the dialog.
+        self.gui.user_functions.residue.create(event, mol_name=self.info[1])
+
+
+    def residue_delete(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the dialog.
+        self.gui.user_functions.residue.delete(event, mol_name=self.info[1], res_num=self.info[2], res_name=self.info[3])
+
+
+    def spin_create(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the dialog.
+        self.gui.user_functions.spin.create(event, mol_name=self.info[1], res_num=self.info[2], res_name=self.info[3])
+
+
+    def spin_delete(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the dialog.
+        self.gui.user_functions.spin.delete(event, mol_name=self.info[1], res_num=self.info[2], res_name=self.info[3], spin_num=self.info[4], spin_name=self.info[5])
 
 
 
