@@ -106,6 +106,9 @@ class UF_window(wx.Dialog):
         # Add the user function specific GUI elements.
         self.add_uf(main_sizer)
 
+        # Bind some events.
+        self.Bind(wx.EVT_SHOW, self.update)
+
 
     def add_artwork(self, sizer):
         """Add the artwork to the dialog.
@@ -306,6 +309,35 @@ class UF_window(wx.Dialog):
         sizer.Add(sub_sizer)
 
 
+    def combo_box(self, sizer, desc, choices):
+        """Build the combo box element for list selections.
+
+        @param sizer:   The sizer to put the input field into.
+        @type sizer:    wx.Sizer instance
+        @param desc:    The text description.
+        @type desc:     str
+        @param choices: The list of choices.
+        @type choices:  list of str
+        """
+
+        # Init.
+        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The description.
+        text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        sub_sizer.Add(text, 1, wx.LEFT, self.border)
+
+        # The combo box element.
+        combo = wx.ComboBox(self, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=choices)
+        sub_sizer.Add(combo, 1, wx.LEFT, self.border)
+
+        # Add to the main sizer.
+        sizer.Add(sub_sizer)
+
+        # Return the combo box element.
+        return combo
+
+
     def execute(self):
         """Execute the user function (dummy method)."""
 
@@ -377,3 +409,7 @@ class UF_window(wx.Dialog):
 
         # Return the sizer.
         return sizer
+
+
+    def update(self, event):
+        """Dummy method for updating the UI."""
