@@ -139,17 +139,6 @@ class Delete_window(UF_window):
     _spacing = 20
 
 
-    def _evt_mol_sel(self, event):
-        """Select the molecule.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the choice.
-        self.mol = str(event.GetString())
-
-
     def add_uf(self, sizer):
         """Add the molecule specific GUI elements.
 
