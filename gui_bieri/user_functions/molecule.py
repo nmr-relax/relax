@@ -43,18 +43,18 @@ class Molecule(UF_base):
         """Place all the GUI classes into this class for storage."""
 
         # The dialogs.
-        self._add_window = Add_window(self.gui, self.interpreter)
+        self._create_window = Add_window(self.gui, self.interpreter)
         self._delete_window = Delete_window(self.gui, self.interpreter)
 
 
-    def add(self, event):
-        """The molecule.add user function.
+    def create(self, event):
+        """The molecule.create user function.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
-        self._add_window.Show()
+        self._create_window.Show()
 
 
     def delete(self, event):
@@ -70,13 +70,13 @@ class Molecule(UF_base):
     def destroy(self):
         """Close all windows."""
 
-        self._add_window.Destroy()
+        self._create_window.Destroy()
         self._delete_window.Destroy()
 
 
 
 class Add_window(UF_window):
-    """The molecule.add() user function window."""
+    """The molecule.create() user function window."""
 
     # Some class variables.
     size_x = 600
