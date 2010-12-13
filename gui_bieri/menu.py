@@ -192,7 +192,8 @@ class Menu:
         # The list of entries to build.
         entries = [
             [id_base + 000, "&molecule", paths.icon_16x16.molecule, None, [
-                [id_base + 001, "&add", paths.icon_16x16.add, self.gui.user_functions.molecule.add]
+                [id_base + 001, "&add", paths.icon_16x16.add, self.gui.user_functions.molecule.add],
+                [id_base + 002, "&delete", paths.icon_16x16.cancel, self.gui.user_functions.molecule.delete]
             ]],
             [id_base + 100, "&pipe", paths.icon_16x16.load, None, [
                 [id_base + 101, "&create", paths.icon_16x16.add, self.gui.user_functions.pipes.create]

@@ -27,7 +27,8 @@
 import wx
 
 # relax module imports.
-from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES
+from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, molecule_loop
+from generic_fns import pipes
 
 # GUI module imports.
 from base import UF_base, UF_window
@@ -43,6 +44,7 @@ class Molecule(UF_base):
 
         # The dialogs.
         self._add_window = Add_window(self.gui, self.interpreter)
+        self._delete_window = Delete_window(self.gui, self.interpreter)
 
 
     def add(self, event):
@@ -55,10 +57,21 @@ class Molecule(UF_base):
         self._add_window.Show()
 
 
+    def delete(self, event):
+        """The molecule.delete user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        self._delete_window.Show()
+
+
     def destroy(self):
         """Close all windows."""
 
         self._add_window.Destroy()
+
 
 
 class Add_window(UF_window):
@@ -118,3 +131,61 @@ class Add_window(UF_window):
 
         # Set the name.
         self.interpreter.molecule.create(mol_name=mol_name, type=self.mol_type)
+
+
+
+class Delete_window(UF_window):
+    """The molecule.delete() user function window."""
+
+    # Some class variables.
+    size_x = 600
+    size_y = 400
+    frame_title = 'Delete a molecule'
+    image_path = WIZARD_IMAGE_PATH + 'molecule.png'
+    main_text = 'This dialog allows you to delete molecules from the relax data store.  The molecule will be deleted from the current data pipe.'
+    title = 'Molecule deletion'
+
+    # Some private class variables.
+    _spacing = 20
+
+
+    def _evt_mol_sel(self, event):
+        """Select the molecule.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Store the choice.
+        self.mol = str(event.GetString())
+
+
+    def add_uf(self, sizer):
+        """Add the molecule specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Spacer.
+        sizer.AddSpacer(self._spacing)
+
+        # The type selection.
+        names = []
+        if pipes.cdp_name():
+            for mol in molecule_loop():
+                names.append(mol.name)
+        self.chooser(sizer, "The molecule:", self._evt_mol_sel, names)
+
+        # Spacer.
+        sizer.AddSpacer(self._spacing)
+
+
+    def execute(self):
+        """Execute the user function."""
+
+        # The molecule ID.
+        id = '#' + self.mol
+
+        # Delete the molecule.
+        self.interpreter.molecule.delete(mol_id=id)
