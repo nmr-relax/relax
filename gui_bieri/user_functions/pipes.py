@@ -27,7 +27,7 @@
 import wx
 
 # relax module imports.
-from generic_fns.pipes import VALID_TYPES, pipe_names
+from generic_fns.pipes import VALID_TYPES, cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_window
@@ -199,6 +199,9 @@ class Switch_window(UF_window):
         @type sizer:    wx.Sizer instance
         """
 
+        # The current data pipe.
+        self.cdp = self.text(sizer, "The current data pipe (cdp):")
+
         # The pipe selection.
         self.pipe_name = self.combo_box(sizer, "The pipe:", [])
 
@@ -222,9 +225,11 @@ class Switch_window(UF_window):
 
         # Clear the previous data.
         self.pipe_name.Clear()
+        self.cdp.Clear()
 
         # Clear the pipe name.
         self.pipe_name.SetValue('')
+        self.cdp.SetValue(str(cdp_name()))
 
         # The list of pipe names.
         for name in pipe_names():
