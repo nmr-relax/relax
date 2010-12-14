@@ -465,5 +465,43 @@ class UF_window(wx.Dialog):
         return sizer_cent
 
 
+    def text(self, sizer, desc, default=''):
+        """Build the input field.
+
+        @param sizer:       The sizer to put the input field into.
+        @type sizer:        wx.Sizer instance
+        @param desc:        The text description.
+        @type desc:         str
+        @keyword default:   The default text.   
+        @type default:      str
+        @return:            The input field object.
+        @rtype:             wx.TextCtrl instance
+        """
+
+        # Init.
+        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The description.
+        text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        sub_sizer.AddSpacer(10)
+
+        # The non-editable text.
+        text = wx.TextCtrl(self, -1, default, style=wx.ALIGN_LEFT)
+        text.SetEditable(False)
+        colour = self.GetBackgroundColour()
+        text.SetOwnBackgroundColour(colour)
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Add to the main sizer (followed by stretchable spacing).
+        sizer.Add(sub_sizer)
+        sizer.AddStretchSpacer()
+
+        # Return the object.
+        return text
+
+
     def update(self, event):
         """Dummy method for updating the UI."""
