@@ -362,16 +362,8 @@ class Main(wx.Frame):
             text = text + '\n'
             sys.__stdout__.write(text)
 
-            # Destroy all dialogs.
-            self.controller.Destroy()
-            self.dialog_about_gui.Destroy()
-            self.dialog_about_relax.Destroy()
-            self.relax_prompt.Destroy()
-            self.mol_res_spin_tree.Destroy()
-            self.user_functions.destroy()
-
-            # Destroy the main window.
-            self.Destroy()
+            # End application.
+            sys.exit()
 
 
     def import_seq(self, event):
