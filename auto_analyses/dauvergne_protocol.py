@@ -200,6 +200,12 @@ class dAuvergne_protocol:
         @type conv_loop:            bool
         """
 
+        # Initialise the status.
+        self.status = Status()
+
+        # Execution lock.
+        self.status.exec_lock.acquire('auto dauvergne protocol')
+
         # Store the args.
         self.diff_model = diff_model
         self.mf_models = mf_models
@@ -224,8 +230,7 @@ class dAuvergne_protocol:
         # User variable checks.
         self.check_vars()
 
-        # Initialise the status.
-        self.status = Status()
+        # Some info for the status.
         self.status.dAuvergne_protocol.diff_model = diff_model
         self.status.dAuvergne_protocol.mf_models = mf_models
         self.status.dAuvergne_protocol.local_tm_models = local_tm_models
@@ -456,6 +461,9 @@ class dAuvergne_protocol:
         self.status.dAuvergne_protocol.diff_model = None
         self.status.dAuvergne_protocol.mf_models = None
         self.status.dAuvergne_protocol.local_tm_models = None
+
+        # Unlock execution.
+        self.status.exec_lock.release()
 
 
     def check_vars(self):
