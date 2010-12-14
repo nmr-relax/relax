@@ -116,8 +116,7 @@ def __errors_height_no_repl():
 def __errors_repl(verbosity=0):
     """Calculate the errors for peak intensities from replicated spectra.
 
-    @keyword verbosity: The amount of information to print.  The higher the value, the greater the
-                        verbosity.
+    @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:    int
     """
 
@@ -133,7 +132,6 @@ def __errors_repl(verbosity=0):
         print("All spectra replicated:  Yes.")
     else:
         print("All spectra replicated:  No.")
-
 
     # Test if the standard deviation has already been calculated.
     if hasattr(cdp, 'sigma_I'):
@@ -183,16 +181,24 @@ def __errors_repl(verbosity=0):
                 spin.select = False
                 continue
 
+            # Missing data.
+            missing = False
+            for j in xrange(num_spectra):
+                if not spin.intensities.has_key(spectra[j]):
+                    missing = True
+            if missing:
+                continue
+
             # Average intensity.
             ave_intensity = 0.0
             for j in xrange(num_spectra):
-                ave_intensity = ave_intensity + spin.intensities[indices[j]]
+                ave_intensity = ave_intensity + spin.intensities[spectra[j]]
             ave_intensity = ave_intensity / num_spectra
 
             # Sum of squared errors.
             SSE = 0.0
             for j in xrange(num_spectra):
-                SSE = SSE + (spin.intensities[indices[j]] - ave_intensity) ** 2
+                SSE = SSE + (spin.intensities[spectra[j]] - ave_intensity) ** 2
 
             # Variance.
             #
@@ -757,39 +763,29 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type dir:              str
     @keyword spectrum_id:   The spectrum identification string.
     @type spectrum_id:      str
-    @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
-                            file.
+    @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity file.
     @type heteronuc:        str
     @keyword proton:        The name of the proton as specified in the peak intensity file.
     @type proton:           str
-    @keyword int_col:       The column containing the peak intensity data (used by the generic
-                            intensity file format).
+    @keyword int_col:       The column containing the peak intensity data (used by the generic intensity file format).
     @type int_col:          int
     @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
     @type int_method:       str
-    @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity
-                            file format).  If supplied, the mol_name_col, res_name_col, res_num_col,
-                            spin_name_col, and spin_num_col arguments must be none.
+    @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity file format).  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
-    @keyword mol_name_col:  The column containing the molecule name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword mol_name_col:  The column containing the molecule name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword res_name_col:  The column containing the residue name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information (used by the
-                            generic intensity file format).  If supplied, spin_id_col must be None.
+    @keyword res_num_col:   The column containing the residue number information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword spin_name_col: The column containing the spin name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword spin_num_col:  The column containing the spin number information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type spin_num_col:     int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
-                            spins.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
     @type spin_id:          None or str
     @keyword ncproc:        The Bruker ncproc binary intensity scaling factor.
     @type ncproc:           int or None
@@ -894,14 +890,14 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Initialise.
         if not hasattr(spin, 'intensities'):
-            spin.intensities = []
+            spin.intensities = {}
 
         # Intensity scaling.
         if ncproc != None:
             intensity = intensity / float(2**ncproc)
 
         # Add the data.
-        spin.intensities.append(intensity)
+        spin.intensities[spectrum_id] = intensity
 
 
 def replicated(spectrum_ids=None):
