@@ -168,4 +168,5 @@ class Relax_fit(SystemTestCase):
 
             # Check intensities (if they exist).
             if hasattr(orig_spin, 'intensities'):
-                self.assertEqual(orig_spin.intensities[0], new_spin.intensities[0])
+                for id in dp_new.spectrum_ids:
+                    self.assertEqual(orig_spin.intensities[id], new_spin.intensities[id])
