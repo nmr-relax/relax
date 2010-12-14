@@ -47,6 +47,13 @@ class Peak_lists(SystemTestCase):
         ds.__reset__()
 
 
+    def test_bug_17276_peak_lists(self):
+        """Test catching bug #17276, the duplicated peak list reading failure submitted by Leanne Minall."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_17276_peak_lists.py')
+
+
     def test_read_peak_list_generic(self):
         """Test the reading of a generic peak intensity list."""
 
