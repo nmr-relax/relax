@@ -23,6 +23,11 @@
 # Module docstring.
 """Module containing the status singleton object."""
 
+# Python module imports.
+from threading import Lock
+
+# relax module imports.
+from relax_errors import RelaxError
 
 
 class Status(object):
@@ -33,6 +38,9 @@ class Status(object):
 
     def __init__(self):
         """Initialise all the status data structures."""
+
+        # Execution lock object.
+        self.exec_lock = Exec_lock()
 
         # The Monte Carlo simulation status.
         self.mc_number = None
@@ -59,5 +67,51 @@ class Status(object):
         return self._instance
 
 
+
 class Status_container:
     """The generic empty container for the status data."""
+
+
+
+class Exec_lock:
+    """A type of locking object for locking execution of relax."""
+
+    def __init__(self):
+        """Set up the lock-like object."""
+
+        # Init a threading.Lock object.
+        self._lock = Lock()
+
+        # The name of the locker.
+        self._name = None
+
+
+    def acquire(self, name):
+        """Simulate the Lock.acquire() mechanism.
+
+        @param name:    The name of the locking code.
+        @type name:     str
+        """
+
+        # Store the name.
+        self._name = name
+
+        # Acquire the real lock.
+        return self._lock.acquire()
+
+
+    def locked(self):
+        """Simulate the Lock.locked() mechanism."""
+
+        # Call the real method.
+        return self._lock.locked()
+
+
+    def release(self):
+        """Simulate the Lock.release() mechanism."""
+
+        # Reset the name.
+        self._name = None
+
+        # Release the real lock.
+        return self._lock.release()
