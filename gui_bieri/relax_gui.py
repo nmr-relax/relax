@@ -60,7 +60,7 @@ from message import dir_message, error_message, question
 from gui_bieri import paths
 from references import References
 from relax_prompt import Prompt
-from settings import import_file_settings, load_sequence, relax_global_settings
+from settings import Inputfile, load_sequence, relax_global_settings
 from user_functions import User_functions
 
 
@@ -420,7 +420,7 @@ class Main(wx.Frame):
         ds.relax_gui.results_rx = []
         ds.relax_gui.results_model_free = []
         ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
-        ds.relax_gui.file_setting = ['1', '2', '3', '4', '5', '6', '7']
+        ds.relax_gui.file_setting = [1, 2, 3, 4, 5, 6, 7]
 
         # Table of relax Results
         ds.relax_gui.table_residue = []
@@ -508,10 +508,8 @@ class Main(wx.Frame):
 
 
     def param_file_setting(self, event): # set up parameter files
-        tmp_setting = import_file_settings(ds.relax_gui.file_setting)
-        if not tmp_setting == None:
-            if question('Do you realy want to change import file settings?'):
-                ds.relax_gui.file_setting = tmp_setting
+        set_relax_params = Inputfile(ds.relax_gui.file_setting, self, -1, "")
+        set_relax_params.Show()
 
 
     def references(self, event):
@@ -559,7 +557,7 @@ class Main(wx.Frame):
         global global_setting #import global variable
         if question('Do you realy want to change relax settings?'):
             ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
-            ds.relax_gui.file_setting = ['1', '2', '3', '4', '5', '6', '7']
+            ds.relax_gui.file_setting = [1, 2, 3, 4, 5, 6, 7]
 
 
     def settings(self, event): # set up for relax variables

@@ -42,16 +42,6 @@ def relax_global_settings(oldsettings):
     return settings
 
 
-def import_file_settings(oldsettings):
-    global settings
-    global old_settings
-    settings = []
-    old_settings = oldsettings
-    set_relax_params = Inputfile(None, -1, "")
-    set_relax_params.ShowModal()
-    return settings
-
-
 def load_sequence():
     """GUI element for loading the sequence file."""
 
@@ -180,7 +170,10 @@ class Globalparam(wx.Dialog):
 
 
 class Inputfile(wx.Dialog):
-    def __init__(self, *args, **kwds):
+    def __init__(settings, self, *args, **kwds):
+        # Link settings list.
+        self.settings = settings
+
         # begin inputfile.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
@@ -188,19 +181,19 @@ class Inputfile(wx.Dialog):
         self.bitmap_1_copy_copy = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.subheader = wx.StaticText(self, -1, "Please specify column number below:\n")
         self.label_2_copy_copy = wx.StaticText(self, -1, "Molecule name")
-        self.mol_nam = wx.TextCtrl(self, -1, old_settings[0])
+        self.mol_nam = wx.TextCtrl(self, -1, str(self.settings[0]))
         self.label_3_copy_copy = wx.StaticText(self, -1, "Residue number")
-        self.res_num_col = wx.TextCtrl(self, -1, old_settings[1])
+        self.res_num_col = wx.TextCtrl(self, -1, str(self.settings[1]))
         self.label_5_copy_copy = wx.StaticText(self, -1, "Residue name")
-        self.res_nam_col = wx.TextCtrl(self, -1, old_settings[2])
+        self.res_nam_col = wx.TextCtrl(self, -1, str(self.settings[2]))
         self.label_6_copy_copy = wx.StaticText(self, -1, "Spin number")
-        self.spin_num_col = wx.TextCtrl(self, -1, old_settings[3])
+        self.spin_num_col = wx.TextCtrl(self, -1, str(self.settings[3]))
         self.label_9_copy_copy = wx.StaticText(self, -1, "Spin name")
-        self.spin_nam_col = wx.TextCtrl(self, -1, old_settings[4])
+        self.spin_nam_col = wx.TextCtrl(self, -1, str(self.settings[4]))
         self.label_7_copy_copy = wx.StaticText(self, -1, "Values")
-        self.value_col = wx.TextCtrl(self, -1, old_settings[5])
+        self.value_col = wx.TextCtrl(self, -1, str(self.settings[5]))
         self.label_8_copy_copy = wx.StaticText(self, -1, "Errors")
-        self.error_col = wx.TextCtrl(self, -1, old_settings[6])
+        self.error_col = wx.TextCtrl(self, -1, str(self.settings[6]))
         self.ok_copy_copy = wx.Button(self, -1, "Ok")
         self.cancel_copy_copy = wx.Button(self, -1, "Cancel")
 
@@ -262,21 +255,16 @@ class Inputfile(wx.Dialog):
 
 
     def accept_settings(self, event): # change settings
-        global settings
-        settings = []
-        settings.append(str(self.mol_nam.GetValue()))
-        settings.append(str(self.res_num_col.GetValue()))
-        settings.append(str(self.res_nam_col.GetValue()))
-        settings.append(str(self.spin_num_col.GetValue()))
-        settings.append(str(self.spin_nam_col.GetValue()))
-        settings.append(str(self.value_col.GetValue()))
-        settings.append(str(self.error_col.GetValue()))
+        self.settings = []
+        self.settings.append(int(self.mol_nam.GetValue()))
+        self.settings.append(int(self.res_num_col.GetValue()))
+        self.settings.append(int(self.res_nam_col.GetValue()))
+        self.settings.append(int(self.spin_num_col.GetValue()))
+        self.settings.append(int(self.spin_nam_col.GetValue()))
+        self.settings.append(int(self.value_col.GetValue()))
+        self.settings.append(int(self.error_col.GetValue()))
         self.Destroy()
-        event.Skip()
 
 
     def cancel_settings(self, event): # cancel
-        global settings
-        settings = None
         self.Destroy()
-        event.Skip()
