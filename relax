@@ -59,6 +59,7 @@ from prompt import interpreter
 import relax_errors
 from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
+from status import Status
 from test_suite.test_suite_runner import Test_suite_runner
 from version import version
 
@@ -345,6 +346,10 @@ class RelaxParser(OptionParser):
 
 
 if __name__ == "__main__":
+    # Initialise the status singleton.
+    status = Status()
+    status.setup()
+
     # Change this flag to True for code profiling.
     profile_flag = False
 
