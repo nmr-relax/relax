@@ -456,8 +456,11 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         file.close()
 
-    # The execution status.
-    status = True
+    # The status object.
+    status = Status()
+
+    # The execution flag.
+    exec_pass = True
 
     # Execute the script.
     try:
@@ -465,6 +468,9 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
 
     # Catch ctrl-C.
     except KeyboardInterrupt:
+        # Unlock execution.
+        status.exec_lock.release()
+
         # Throw the error.
         if __main__.debug:
             raise
@@ -474,10 +480,16 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
             sys.stderr.write("\nScript execution cancelled.\n")
 
         # The script failed.
-        status = False
+        exec_pass = False
+
+        # Unlock execution.
+        status.exec_lock.release()
 
     # Catch the RelaxErrors.
     except AllRelaxErrors, instance:
+        # Unlock execution.
+        status.exec_lock.release()
+
         # Throw the error.
         if raise_relax_error:
             raise
@@ -493,10 +505,14 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
                 sys.stderr.write(instance.__str__())
 
             # The script failed.
-            status = False
+            exec_pass = False
 
     # Throw all other errors.
     except:
+        # Unlock execution.
+        status.exec_lock.release()
+
+        # Raise the error.
         raise
 
     # Add an empty line to make exiting relax look better.
@@ -507,8 +523,8 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
     if quit:
         sys.exit()
 
-    # Return the status.
-    return status
+    # Return the execution flag.
+    return exec_pass
 
 
 def prompt(intro=None, local=None):
