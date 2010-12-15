@@ -657,6 +657,10 @@ class Auto_model_free:
             event.Skip()
             return
 
+        # PDB file is given.
+        if str(self.textctrl_structure.GetValue()) in ['', 'please insert .pdb file']:
+            missing_data(missing=['No PDB file selected.'])
+
         # Synchronise the frame data to the relax data store.
         self.sync_ds(upload=True)
 
