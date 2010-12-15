@@ -397,6 +397,12 @@ class dAuvergne_protocol:
             # All the global diffusion models to be used in the model selection.
             self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
 
+            # Close all pipes that might be craeted.
+            for name in self.pipes:
+                # Close the pipe
+                if pipes.has_pipe(name):
+                    self.interpreter.pipe.delete(name)
+
             # Missing optimised model.
             dir_list = listdir(getcwd())
             for name in self.pipes:
