@@ -36,7 +36,19 @@ class Status(object):
     # Class variable for storing the class instance (for the singleton).
     _instance = None
 
-    def __init__(self):
+    def __new__(self, *args, **kargs):
+        """Replacement method for implementing the singleton design pattern."""
+
+        # First instantiation.
+        if self._instance is None:
+            # Instantiate.
+            self._instance = object.__new__(self, *args, **kargs)
+
+        # Already instantiated, so return the instance.
+        return self._instance
+
+
+    def setup(self):
         """Initialise all the status data structures."""
 
         # Execution lock object.
@@ -53,18 +65,6 @@ class Status(object):
         self.dAuvergne_protocol.local_tm_models = None   # The list of model-free local tm models for optimisation, i.e. the global iteration.
         self.dAuvergne_protocol.current_model = None     # The current model-free model.
         self.dAuvergne_protocol.convergence = False      # The convergence of the global model.
-
-
-    def __new__(self, *args, **kargs):
-        """Replacement method for implementing the singleton design pattern."""
-
-        # First instantiation.
-        if self._instance is None:
-            # Instantiate.
-            self._instance = object.__new__(self, *args, **kargs)
-
-        # Already instantiated, so return the instance.
-        return self._instance
 
 
 
