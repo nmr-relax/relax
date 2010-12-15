@@ -121,16 +121,17 @@ def __errors_repl(verbosity=0):
     """
 
     # replicated spectra.
-    repl = [False] * len(cdp.spectrum_ids)
+    repl = {}
     for i in xrange(len(cdp.replicates)):
         for j in xrange(len(cdp.replicates[i])):
-            repl[cdp.spectrum_ids.index(cdp.replicates[i][j])] = True
+            repl[cdp.replicates[i][j]] = True
 
     # Are all spectra replicated?
-    all_repl = not (False in repl)
-    if all_repl:
+    if len(repl.keys()) == len(cdp.spectrum_ids):
+        all_repl = True
         print("All spectra replicated:  Yes.")
     else:
+        all_repl = False
         print("All spectra replicated:  No.")
 
     # Test if the standard deviation has already been calculated.
@@ -138,31 +139,26 @@ def __errors_repl(verbosity=0):
         raise RelaxError("The peak intensity standard deviation of all spectra has already been calculated.")
 
     # Initialise.
-    cdp.sigma_I = [0.0] * len(cdp.spectrum_ids)
-    cdp.var_I = [0.0] * len(cdp.spectrum_ids)
+    cdp.sigma_I = {}
+    cdp.var_I = {}
 
     # Loop over the spectra.
-    for i in xrange(len(cdp.spectrum_ids)):
+    for id in cdp.spectrum_ids:
         # Skip non-replicated spectra.
-        if not repl[i]:
+        if not repl.has_key(id):
             continue
 
         # Skip replicated spectra which already have been used.
-        if cdp.var_I[i] != 0.0:
+        if cdp.var_I.has_key(id) and cdp.var_I[id] != 0.0:
             continue
 
         # The replicated spectra.
         for j in xrange(len(cdp.replicates)):
-            if cdp.spectrum_ids[i] in cdp.replicates[j]:
+            if id in cdp.replicates[j]:
                 spectra = cdp.replicates[j]
 
         # Number of spectra.
         num_spectra = len(spectra)
-
-        # Indices of the spectra.
-        indices = [None] * num_spectra
-        for j in xrange(num_spectra):
-            indices[j] = cdp.spectrum_ids.index(spectra[j])
 
         # Print out.
         print(("\nReplicated spectra:  " + repr(spectra)))
@@ -213,7 +209,9 @@ def __errors_repl(verbosity=0):
                 print(("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I))))
 
             # Sum of variances (for average).
-            cdp.var_I[indices[0]] = cdp.var_I[indices[0]] + var_I
+            if not cdp.var_I.has_key(id):
+                cdp.var_I[id] = 0.0
+            cdp.var_I[id] = cdp.var_I[id] + var_I
             count = count + 1
 
         # No data catch.
@@ -221,14 +219,14 @@ def __errors_repl(verbosity=0):
             raise RelaxError("No data is present, unable to calculate errors from replicated spectra.")
 
         # Average variance.
-        cdp.var_I[indices[0]] = cdp.var_I[indices[0]] / float(count)
+        cdp.var_I[id] = cdp.var_I[id] / float(count)
 
         # Set all spectra variances.
-        for j in xrange(num_spectra):
-            cdp.var_I[indices[j]] = cdp.var_I[indices[0]]
+        for j in xrange(1, num_spectra):
+            cdp.var_I[spectra[j]] = cdp.var_I[spectra[0]]
 
         # Print out.
-        print(("Standard deviation:  %s" % sqrt(cdp.var_I[indices[0]])))
+        print(("Standard deviation:  %s" % sqrt(cdp.var_I[id])))
 
 
     # Average across all spectra if there are time points with a single spectrum.
@@ -241,29 +239,29 @@ def __errors_repl(verbosity=0):
         num_dups = 0
 
         # Loop over all time points.
-        for i in xrange(len(cdp.spectrum_ids)):
+        for id in cdp.var_I.keys():
             # Single spectrum (or extraordinarily accurate NMR spectra!).
-            if cdp.var_I[i] == 0.0:
+            if cdp.var_I[id] == 0.0:
                 continue
 
             # Sum and count.
-            var_I = var_I + cdp.var_I[i]
+            var_I = var_I + cdp.var_I[id]
             num_dups = num_dups + 1
 
         # Average value.
         var_I = var_I / float(num_dups)
 
         # Assign the average value to all time points.
-        for i in xrange(len(cdp.spectrum_ids)):
-            cdp.var_I[i] = var_I
+        for id in cdp.spectrum_ids:
+            cdp.var_I[id] = var_I
 
         # Print out.
         print(("Standard deviation for all spins:  " + repr(sqrt(var_I))))
 
     # Loop over the spectra.
-    for i in xrange(len(cdp.spectrum_ids)):
+    for id in cdp.var_I.keys():
         # Create the standard deviation data structure.
-        cdp.sigma_I[i] = sqrt(cdp.var_I[i])
+        cdp.sigma_I[id] = sqrt(cdp.var_I[id])
 
     # Set the spin specific errors.
     for spin in spin_loop():
@@ -297,7 +295,8 @@ def __errors_volume_no_repl():
             raise RelaxError("The total number of points used in the volume integration has not been specified for spin '%s'." % spin_id)
 
         # Set the error to the RMSD multiplied by the square root of the total number of points.
-        spin.intensity_err = spin.baseplane_rmsd * sqrt(spin.N)
+        for key in spin.intensity.keys():
+            spin.intensity_err[key] = spin.baseplane_rmsd[key] * sqrt(spin.N)
 
 
 def autodetect_format(file_data):
@@ -351,9 +350,6 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     if spectrum_id not in cdp.spectrum_ids:
         raise RelaxError("The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id)
 
-    # The spectrum id index.
-    spect_index = cdp.spectrum_ids.index(spectrum_id)
-
     # The scaling by NC_proc.
     if hasattr(cdp, 'ncproc') and spectrum_id in cdp.ncproc:
         scale = 1.0 / 2**cdp.ncproc[spectrum_id]
@@ -368,12 +364,10 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
 
         # Initialise or update the baseplane_rmsd data structure as necessary.
         if not hasattr(spin, 'baseplane_rmsd'):
-            spin.baseplane_rmsd = [None] * len(cdp.spectrum_ids)
-        elif len(spin.baseplane_rmsd) < len(cdp.spectrum_ids):
-            spin.baseplane_rmsd.append([None] * (len(cdp.spectrum_ids) - len(spin.baseplane_rmsd)))
+            spin.baseplane_rmsd = {}
 
         # Set the error.
-        spin.baseplane_rmsd[spect_index] = float(error) * scale
+        spin.baseplane_rmsd[spectrum_id] = float(error) * scale
 
 
 def error_analysis():
