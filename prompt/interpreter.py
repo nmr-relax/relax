@@ -29,10 +29,13 @@ import dep_check
 # Python module imports.
 import __main__
 from code import InteractiveConsole, softspace
-from os import F_OK, access
+from os import F_OK, access, getcwd, path
 import platform
+from re import search
 if dep_check.readline_module:
     import readline
+import runpy
+from string import split
 import sys
 
 # Python modules accessible on the command prompt.
@@ -48,6 +51,7 @@ from help import _Helper, _Helper_python
 from info import Info_box
 if dep_check.readline_module:
     from tab_completion import Tab_completion
+from status import Status
 
 # User functions.
 from angles import Angles
@@ -337,6 +341,33 @@ class _Exit:
         sys.exit()
 
 
+
+def exec_script(name, globals):
+    """Execute the script."""
+
+    # Check if the script name is ok.
+    if not search('\.py$', name):
+        raise RelaxError("The relax script must end in '*.py'.")
+
+    # Execution lock.
+    status = Status()
+    status.exec_lock.acquire('script UI')
+
+    # The module path.
+    head, tail = path.split(name)
+    script_path = path.join(getcwd(), head)
+    sys.path.append(script_path)
+
+    # The module name.
+    module, extension = split(tail, '.')
+
+    # Execute the module.
+    runpy.run_module(module, globals)
+
+    # Unlock execution.
+    status.exec_lock.release()
+
+
 def interact_prompt(self, intro=None, local={}):
     """Replacement function for 'code.InteractiveConsole.interact'.
 
@@ -418,6 +449,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
                 sys.stdout.write(instance.__str__())
                 sys.stdout.write("\n")
                 return
+
         sys.stdout.write("script = " + repr(script_file) + "\n")
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         sys.stdout.write(file.read())
@@ -429,7 +461,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
 
     # Execute the script.
     try:
-        execfile(script_file, local)
+        exec_script(script_file, local)
 
     # Catch ctrl-C.
     except KeyboardInterrupt:
