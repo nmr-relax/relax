@@ -36,6 +36,7 @@ import wx
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
+from relax_errors import RelaxError
 from relax_io import DummyFileObject
 
 # relaxGUI module imports.
@@ -577,7 +578,10 @@ class Auto_noe:
 
         # Incomplete.
         if not complete:
-            missing_data(missing)
+            print 'Aborting NOE caclulation as the following informations are missing:\n'
+            for i in range(len(missing)):
+                print '\t'+missing[i]
+            print ''
             return
 
         # Execute.
