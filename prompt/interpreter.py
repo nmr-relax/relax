@@ -356,7 +356,8 @@ def exec_script(name, globals):
 
     # Execution lock.
     status = Status()
-    status.exec_lock.acquire('script UI')
+    if not (status.exec_lock.locked() and status.exec_lock._name == 'script UI'):
+        status.exec_lock.acquire('script UI')
 
     # The module path.
     head, tail = path.split(name)
@@ -369,7 +370,7 @@ def exec_script(name, globals):
     # Execute the module.
     runpy.run_module(module, globals)
 
-    # Unlock execution.
+    # Unlock execution if needed.
     if status.exec_lock.locked():
         status.exec_lock.release()
 
