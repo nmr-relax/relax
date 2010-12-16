@@ -96,6 +96,10 @@ class Relax:
         # Set up the warning system.
         relax_warnings.setup()
 
+        # Initialise the status singleton.
+        status = Status()
+        status.setup()
+
         # Show the version number and exit.
         if mode == 'version':
             print(('relax ' + version))
@@ -346,10 +350,6 @@ class RelaxParser(OptionParser):
 
 
 if __name__ == "__main__":
-    # Initialise the status singleton.
-    status = Status()
-    status.setup()
-
     # Change this flag to True for code profiling.
     profile_flag = False
 
