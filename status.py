@@ -86,6 +86,9 @@ class Exec_lock:
         # The name of the locker.
         self._name = None
 
+        # Script nesting level.
+        self._script_nest = 0
+
         # Debugging.
         if __main__.debug:
             self.log = open('lock.log', 'w')
@@ -98,13 +101,18 @@ class Exec_lock:
         @type name:     str
         """
 
-        # Store the name.
-        self._name = name
-
         # Debugging.
         if __main__.debug:
             self.log.write("Acquired by %s\n" % self._name)
             return
+
+        # Do not acquire if lunching a script from a script.
+        if name == 'script UI' and self._name == 'script UI' and self._lock.locked():
+            self._script_nest += 1
+            return
+
+        # Store the new name.
+        self._name = name
 
         # Acquire the real lock.
         return self._lock.acquire()
@@ -133,6 +141,14 @@ class Exec_lock:
             if hasattr(self, 'test_name'):
                 text = text + 'd by %s' % self.test_name
             self.log.write("%s\n\n" % text)
+            return
+
+        # Nested scripting.
+        if self._script_nest:
+            # Decrement.
+            self._script_nest -= 1
+
+            # Return without releasing the lock.
             return
 
         # Release the real lock.

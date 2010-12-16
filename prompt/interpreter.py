@@ -326,11 +326,6 @@ class Interpreter:
         orig_intro_state = self._exec_info.intro
         self._exec_info.intro = True
 
-        # Unlock if necessary.
-        status = Status()
-        if status.exec_lock.locked():
-            status.exec_lock.release()
-
         # Execute the script.
         run_script(local=self._locals, script_file=file, quit=quit)
 
@@ -356,8 +351,7 @@ def exec_script(name, globals):
 
     # Execution lock.
     status = Status()
-    if not (status.exec_lock.locked() and status.exec_lock._name == 'script UI'):
-        status.exec_lock.acquire('script UI')
+    status.exec_lock.acquire('script UI')
 
     # The module path.
     head, tail = path.split(name)
@@ -371,8 +365,7 @@ def exec_script(name, globals):
     runpy.run_module(module, globals)
 
     # Unlock execution if needed.
-    if status.exec_lock.locked():
-        status.exec_lock.release()
+    status.exec_lock.release()
 
 
 def interact_prompt(self, intro=None, local={}):
@@ -488,9 +481,6 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
 
         # The script failed.
         exec_pass = False
-
-        # Unlock execution.
-        status.exec_lock.release()
 
     # Catch the RelaxErrors.
     except AllRelaxErrors, instance:
