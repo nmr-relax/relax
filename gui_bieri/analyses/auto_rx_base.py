@@ -458,7 +458,10 @@ class Auto_rx:
 
         # Incomplete.
         if not complete:
-            missing_data(missing)
+            print 'Aborting NOE caclulation as the following informations are missing:\n'
+            for i in range(len(missing)):
+                print '\t'+missing[i]
+            print ''
             return
 
         # Execute.
