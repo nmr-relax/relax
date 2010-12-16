@@ -129,7 +129,10 @@ class Exec_lock:
 
         # Debugging.
         if __main__.debug:
-            self.log.write("Release\n\n")
+            text = 'Release'
+            if hasattr(self, 'test_name'):
+                text = text + 'd by %s' % self.test_name
+            self.log.write("%s\n\n" % text)
             return
 
         # Release the real lock.
