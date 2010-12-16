@@ -85,6 +85,10 @@ class Exec_lock:
         # The name of the locker.
         self._name = None
 
+        # Debugging.
+        if __main__.debug:
+            self.log = open('lock.log', 'w')
+
 
     def acquire(self, name):
         """Simulate the Lock.acquire() mechanism.
@@ -96,12 +100,21 @@ class Exec_lock:
         # Store the name.
         self._name = name
 
+        # Debugging.
+        if __main__.debug:
+            self.log.write("Acquired by %s\n" % self._name)
+            return
+
         # Acquire the real lock.
         return self._lock.acquire()
 
 
     def locked(self):
         """Simulate the Lock.locked() mechanism."""
+
+        # Debugging.
+        if __main__.debug:
+            return False
 
         # Call the real method.
         return self._lock.locked()
@@ -112,6 +125,11 @@ class Exec_lock:
 
         # Reset the name.
         self._name = None
+
+        # Debugging.
+        if __main__.debug:
+            self.log.write("Release\n\n")
+            return
 
         # Release the real lock.
         return self._lock.release()
