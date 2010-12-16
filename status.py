@@ -24,6 +24,7 @@
 """Module containing the status singleton object."""
 
 # Python module imports.
+import __main__
 from threading import Lock
 
 # relax module imports.
