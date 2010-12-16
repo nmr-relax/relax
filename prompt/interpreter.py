@@ -326,6 +326,11 @@ class Interpreter:
         orig_intro_state = self._exec_info.intro
         self._exec_info.intro = True
 
+        # Unlock if necessary.
+        status = Status()
+        if status.exec_lock.locked():
+            status.exec_lock.release()
+
         # Execute the script.
         run_script(local=self._locals, script_file=file, quit=quit)
 
@@ -365,7 +370,8 @@ def exec_script(name, globals):
     runpy.run_module(module, globals)
 
     # Unlock execution.
-    status.exec_lock.release()
+    if status.exec_lock.locked():
+        status.exec_lock.release()
 
 
 def interact_prompt(self, intro=None, local={}):
