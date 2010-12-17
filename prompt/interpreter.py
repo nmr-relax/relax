@@ -364,7 +364,7 @@ def exec_script(name, globals):
     # Check if the script name is ok.
     if search('\.', module):
         raise RelaxError("The relax script must not contain the '.' character (except before the extension '*.py').")
-    if ext != 'py':
+    if ext != '.py':
         raise RelaxError("The script must have the extension *.py.")
 
     # Execute the module.
