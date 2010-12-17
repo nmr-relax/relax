@@ -101,8 +101,10 @@ class Relax_fit(SystemTestCase):
         self.assertEqual(cdp.curve_type, 'exp')
         self.assertEqual(cdp.int_method, 'height')
         self.assertEqual(len(cdp.relax_times), 10)
+        cdp_relax_times = cdp.relax_times.values()
+        cdp_relax_times.sort()
         for i in range(10):
-            self.assertEqual(cdp.relax_times[i], relax_times[i])
+            self.assertEqual(cdp_relax_times[i], relax_times[i])
 
         # Spin data check.
         i = 0
