@@ -14,7 +14,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 ds.add(pipe_name='rx', pipe_type='relax_fit')
 
 # Load the Lupin Ap4Aase sequence.
-sequence.read(file="Ap4Aase.seq", dir=__main__.install_path + sep+'test_suite'+sep+'shared_data')
+sequence.read(file="Ap4Aase.seq", dir=__main__.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')

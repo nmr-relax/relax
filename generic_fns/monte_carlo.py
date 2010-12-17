@@ -26,6 +26,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import sqrt
+from numpy import ndarray
 from random import gauss
 
 # relax module imports.
@@ -75,19 +76,37 @@ def create_data(method=None):
         # Get the errors.
         error = return_error(data_index)
 
-        # Loop over the Monte Carlo simulations.
-        random = []
-        for j in xrange(cdp.sim_number):
-            # Randomise the data.
-            random.append([])
-            for k in xrange(len(data)):
-                # No data or errors.
-                if data[k] == None or error[k] == None:
-                    random[j].append(None)
-                    continue
+        # List type data.
+        if isinstance(data, list) or isinstance(data, ndarray):
+            # Loop over the Monte Carlo simulations.
+            random = []
+            for j in xrange(cdp.sim_number):
+                # Randomise the data.
+                random.append([])
+                for k in xrange(len(data)):
+                    # No data or errors.
+                    if data[k] == None or error[k] == None:
+                        random[j].append(None)
+                        continue
 
-                # Gaussian randomisation.
-                random[j].append(gauss(data[k], error[k]))
+                    # Gaussian randomisation.
+                    random[j].append(gauss(data[k], error[k]))
+
+        # Dictionary type data.
+        if isinstance(data, dict):
+            # Loop over the Monte Carlo simulations.
+            random = []
+            for j in xrange(cdp.sim_number):
+                # Randomise the data.
+                random.append({})
+                for id in data.keys():
+                    # No data or errors.
+                    if data[id] == None or error[id] == None:
+                        random[j][id] = None
+                        continue
+
+                    # Gaussian randomisation.
+                    random[j][id] = gauss(data[id], error[id])
 
         # Pack the simulation data.
         pack_sim_data(data_index, random)
