@@ -29,7 +29,7 @@ import dep_check
 # Python module imports.
 import __main__
 from code import InteractiveConsole, softspace
-from os import F_OK, access, getcwd, path
+from os import F_OK, access, chdir, getcwd, path
 import platform
 from re import search
 if dep_check.readline_module:
@@ -353,6 +353,11 @@ def exec_script(name, globals):
     script_path = path.join(getcwd(), head)
     sys.path.append(script_path)
 
+    # Switch directories for nested scripting.
+    if head:
+        orig_dir = getcwd()
+        chdir(head)
+
     # The module name.
     module, ext = path.splitext(tail)
 
@@ -362,6 +367,10 @@ def exec_script(name, globals):
 
     # Execute the module.
     runpy.run_module(module, globals)
+
+    # Switch back to the original working directory.
+    if head:
+        chdir(orig_dir)
 
     # Remove the script path.
     sys.path.pop(sys.path.index(script_path))
