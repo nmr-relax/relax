@@ -107,13 +107,13 @@ class Exec_lock:
 
         # Do not acquire if lunching a script from a script.
         if name == 'script UI' and self._name == 'script UI' and self.locked():
-            # Debugging.
-            if __main__.debug:
-                self.log.write("Nested by %s\n" % name)
-                self.log.flush()
-
             # Increment the nesting counter.
             self._script_nest += 1
+
+            # Debugging.
+            if __main__.debug:
+                self.log.write("Nested by %s (to level %s)\n" % (name, self._script_nest))
+                self.log.flush()
 
             # Return without doing anything.
             return
