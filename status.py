@@ -25,6 +25,7 @@
 
 # Python module imports.
 import __main__
+from re import search
 from threading import Lock
 
 # relax module imports.
@@ -89,6 +90,9 @@ class Exec_lock:
         # Script nesting level.
         self._script_nest = 0
 
+        # Auto-analysis from script launch.
+        self._auto_from_script = False
+
         # Debugging.
         if __main__.debug:
             self.log = open('lock.log', 'w')
@@ -101,18 +105,40 @@ class Exec_lock:
         @type name:     str
         """
 
-        # Debugging.
-        if __main__.debug:
-            self.log.write("Acquired by %s\n" % self._name)
+        # Do not acquire if lunching a script from a script.
+        if name == 'script UI' and self._name == 'script UI' and self.locked():
+            # Debugging.
+            if __main__.debug:
+                self.log.write("Nested by %s\n" % name)
+                self.log.flush()
+
+            # Increment the nesting counter.
+            self._script_nest += 1
+
+            # Return without doing anything.
             return
 
-        # Do not acquire if lunching a script from a script.
-        if name == 'script UI' and self._name == 'script UI' and self._lock.locked():
-            self._script_nest += 1
-            return
+        # Unlock and re-lock if an auto-analysis is called from a script.
+        if self.locked() and self._name == 'script UI' and search('^auto', name):
+            # Debugging.
+            if __main__.debug:
+                self.log.write("Forced release of script UI lock by %s\n" % name)
+                self.log.flush()
+
+            # Release the lock.
+            self._lock.release()
+
+            # Switch the flag.
+            self._auto_from_script = True
 
         # Store the new name.
         self._name = name
+
+        # Debugging.
+        if __main__.debug:
+            self.log.write("Acquired by %s\n" % self._name)
+            self.log.flush()
+            return
 
         # Acquire the real lock.
         return self._lock.acquire()
@@ -121,9 +147,12 @@ class Exec_lock:
     def locked(self):
         """Simulate the Lock.locked() mechanism."""
 
-        # Debugging.
+        # Debugging (pseudo-locking based on _name).
         if __main__.debug:
-            return False
+            if self._name:
+                return True
+            else:
+                return False
 
         # Call the real method.
         return self._lock.locked()
@@ -132,23 +161,47 @@ class Exec_lock:
     def release(self):
         """Simulate the Lock.release() mechanism."""
 
+        # Nested scripting.
+        if self._script_nest:
+            # Debugging.
+            if __main__.debug:
+                self.log.write("Nest decrement (%s -> %s)\n" % (self._script_nest, self._script_nest-1))
+                self.log.flush()
+
+            # Decrement.
+            self._script_nest -= 1
+
+            # Return without releasing the lock.
+            return
+
+        # Prior forced release, so let the script release.
+        if self._auto_from_script:
+            # Debugging.
+            if __main__.debug:
+                self.log.write("Prior forced release, skipping release.")
+                self.log.flush()
+
+            # Unset the flag.
+            self._auto_from_script = False
+
+            # Return without releasing the lock.
+            return
+
         # Reset the name.
         self._name = None
 
         # Debugging.
         if __main__.debug:
+            # Main text.
             text = 'Release'
+
+            # Test suite info.
             if hasattr(self, 'test_name'):
                 text = text + 'd by %s' % self.test_name
+
+            # Write out, flush, and exit the method.
             self.log.write("%s\n\n" % text)
-            return
-
-        # Nested scripting.
-        if self._script_nest:
-            # Decrement.
-            self._script_nest -= 1
-
-            # Return without releasing the lock.
+            self.log.flush()
             return
 
         # Release the real lock.
