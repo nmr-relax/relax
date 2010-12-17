@@ -1149,10 +1149,10 @@ class MolContainer:
         element = strip(element, digits)
 
         # Amino acid atom translation table (note, numbers have been stripped already!).
-        table = {'C': ['CA', 'CB', 'CG', 'CD', 'CE', 'CZ'],
+        table = {'C': ['CA', 'CB', 'CG', 'CD', 'CE', 'CH2', 'CZ'],
                  'N': ['ND', 'NE', 'NH', 'NZ'],
                  'H': ['HA', 'HB', 'HG', 'HD', 'HE', 'HH', 'HT', 'HZ'],
-                 'O': ['OG', 'OD', 'OE', 'OH'],
+                 'O': ['OG', 'OD', 'OE', 'OH', 'OT'],
                  'S': ['SD', 'SG']
         }
 
