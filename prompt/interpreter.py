@@ -363,6 +363,9 @@ def exec_script(name, globals):
     # Execute the module.
     runpy.run_module(module, globals)
 
+    # Remove the script path.
+    sys.path.pop(sys.path.index(script_path))
+
     # Unlock execution if needed.
     status.exec_lock.release()
 
