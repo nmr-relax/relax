@@ -170,7 +170,7 @@ class Globalparam(wx.Dialog):
 
 
 class Inputfile(wx.Dialog):
-    def __init__(settings, self, *args, **kwds):
+    def __init__(self, settings, *args, **kwds):
         # Link settings list.
         self.settings = settings
 
