@@ -99,7 +99,7 @@ class Peak_lists(SystemTestCase):
 
             # Check the values.
             for i in range(len(times)):
-                self.assertEqual(spin.intensities[name[i]], heights[index][i])
+                self.assertEqual(spin.intensities[names[i]], heights[index][i])
 
 
     def test_read_peak_list_generic(self):
