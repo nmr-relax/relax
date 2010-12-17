@@ -26,6 +26,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import sqrt
+from numpy import ndarray
 from random import gauss
 
 # relax module imports.
@@ -76,7 +77,7 @@ def create_data(method=None):
         error = return_error(data_index)
 
         # List type data.
-        if isinstance(data, list):
+        if isinstance(data, list) or isinstance(data, ndarray):
             # Loop over the Monte Carlo simulations.
             random = []
             for j in xrange(cdp.sim_number):
