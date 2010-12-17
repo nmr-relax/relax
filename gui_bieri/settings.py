@@ -29,6 +29,7 @@ import wx
 # relax GUI module imports.
 from filedialog import openfile
 from message import error_message
+from misc import gui_to_int
 from paths import IMAGE_PATH
 
 
@@ -256,13 +257,13 @@ class Inputfile(wx.Dialog):
 
     def accept_settings(self, event): # change settings
         self.settings = []
-        self.settings.append(int(self.mol_nam.GetValue()))
-        self.settings.append(int(self.res_num_col.GetValue()))
-        self.settings.append(int(self.res_nam_col.GetValue()))
-        self.settings.append(int(self.spin_num_col.GetValue()))
-        self.settings.append(int(self.spin_nam_col.GetValue()))
-        self.settings.append(int(self.value_col.GetValue()))
-        self.settings.append(int(self.error_col.GetValue()))
+        self.settings.append(gui_to_int(self.mol_nam.GetValue()))
+        self.settings.append(gui_to_int(self.res_num_col.GetValue()))
+        self.settings.append(gui_to_int(self.res_nam_col.GetValue()))
+        self.settings.append(gui_to_int(self.spin_num_col.GetValue()))
+        self.settings.append(gui_to_int(self.spin_nam_col.GetValue()))
+        self.settings.append(gui_to_int(self.value_col.GetValue()))
+        self.settings.append(gui_to_int(self.error_col.GetValue()))
         self.Destroy()
 
 
