@@ -132,7 +132,7 @@ results.write(file='devnull', force=True)
 grace.write(y_data_type='rx', file='devnull', force=True)    # Relaxation rate.
 
 # Display the Grace plots.
-grace.view(file='rx.agr', grace_exe='')
+#grace.view(file='rx.agr', grace_exe='')
 
 # Save the program state.
 state.save('devnull', force=True)

@@ -54,6 +54,54 @@ class Peak_lists(SystemTestCase):
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_17276_peak_lists.py')
 
 
+    def test_ccpn_analysis(self):
+        """Test bug #17341 (https://gna.org/bugs/index.php?17341), the CCPN Analysis 2.1 peak list reading submitted by Madeleine Strickland."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'peak_lists'+sep+'ccpn_analysis.py')
+
+        # Spectrum names.
+        names = ['T1A_0010', 'T1A_0020', 'T1A_0030', 'T1A_0050', 'T1A_0070', 'T1A_0100', 'T1A_0150', 'T1A_0200', 'T1A_0300', 'T1A_0400', 'T1A_0600', 'T1A_0800', 'T1A_1000', 'T1A_1200']
+
+        # Relaxation times (in seconds).
+        times = [0.01, 0.02, 0.03, 0.05, 0.07, 0.1, 0.15, 0.2, 0.3, 0.4, 0.6, 0.8, 1.0, 1.2]
+
+        # Check the spectrum IDs and relaxation times.
+        for i in range(len(times)):
+            self.assertEqual(cdp.spectrum_ids[i], names[i])
+            self.assertEqual(cdp.relax_times[names[i]], times[i])
+
+        # The peak heights.
+        heights = [
+                [1.41e06, 1.33e06, 1.31e06, 1.31e06, 1.28e06, 1.20e06, 1.18e06, 1.07e06, 9.70e05, 8.47e05, 7.00e05, 5.25e05, 4.23e05, 3.10e05],
+                [1.79e06, 1.76e06, 1.71e06, 1.70e06, 1.66e06, 1.56e06, 1.51e06, 1.41e06, 1.24e06, 1.11e06, 8.43e05, 6.79e05, 5.04e05, 4.18e05]
+        ]
+
+        # Check the heights.
+        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+            print spin
+            # The data.
+            if res_num == 1501:
+                index = 0
+            elif res_num == 1504:
+                index = 1
+
+            # No data.
+            else:
+                # There should be no intensity data.
+                self.assert_(not hasattr(spin, 'intensities'))
+
+                # Do not perform the height checks.
+                continue
+
+            # Check the data.
+            self.assert_(hasattr(spin, 'intensities'))
+
+            # Check the values.
+            for i in range(len(times)):
+                self.assertEqual(spin.intensities[name[i]], heights[index][i])
+
+
     def test_read_peak_list_generic(self):
         """Test the reading of a generic peak intensity list."""
 
