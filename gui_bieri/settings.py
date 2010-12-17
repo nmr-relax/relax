@@ -26,10 +26,13 @@ from os import F_OK, access, path, sep
 import sys
 import wx
 
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+
 # relax GUI module imports.
 from filedialog import openfile
 from message import error_message
-from misc import gui_to_int
+from misc import gui_to_int, int_to_gui
 from paths import IMAGE_PATH
 
 
@@ -171,10 +174,7 @@ class Globalparam(wx.Dialog):
 
 
 class Inputfile(wx.Dialog):
-    def __init__(self, settings, *args, **kwds):
-        # Link settings list.
-        self.settings = settings
-
+    def __init__(self, *args, **kwds):
         # begin inputfile.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
@@ -182,21 +182,17 @@ class Inputfile(wx.Dialog):
         self.bitmap_1_copy_copy = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.subheader = wx.StaticText(self, -1, "Please specify column number below:\n")
         self.label_2_copy_copy = wx.StaticText(self, -1, "Molecule name")
-        self.mol_nam = wx.TextCtrl(self, -1, str(self.settings[0]))
         self.label_3_copy_copy = wx.StaticText(self, -1, "Residue number")
-        self.res_num_col = wx.TextCtrl(self, -1, str(self.settings[1]))
         self.label_5_copy_copy = wx.StaticText(self, -1, "Residue name")
-        self.res_nam_col = wx.TextCtrl(self, -1, str(self.settings[2]))
         self.label_6_copy_copy = wx.StaticText(self, -1, "Spin number")
-        self.spin_num_col = wx.TextCtrl(self, -1, str(self.settings[3]))
         self.label_9_copy_copy = wx.StaticText(self, -1, "Spin name")
-        self.spin_nam_col = wx.TextCtrl(self, -1, str(self.settings[4]))
         self.label_7_copy_copy = wx.StaticText(self, -1, "Values")
-        self.value_col = wx.TextCtrl(self, -1, str(self.settings[5]))
         self.label_8_copy_copy = wx.StaticText(self, -1, "Errors")
-        self.error_col = wx.TextCtrl(self, -1, str(self.settings[6]))
         self.ok_copy_copy = wx.Button(self, -1, "Ok")
         self.cancel_copy_copy = wx.Button(self, -1, "Cancel")
+
+        # Update the fields.
+        self.update()
 
         self.__set_properties()
         self.__do_layout()
@@ -256,16 +252,32 @@ class Inputfile(wx.Dialog):
 
 
     def accept_settings(self, event): # change settings
-        self.settings = []
-        self.settings.append(gui_to_int(self.mol_nam.GetValue()))
-        self.settings.append(gui_to_int(self.res_num_col.GetValue()))
-        self.settings.append(gui_to_int(self.res_nam_col.GetValue()))
-        self.settings.append(gui_to_int(self.spin_num_col.GetValue()))
-        self.settings.append(gui_to_int(self.spin_nam_col.GetValue()))
-        self.settings.append(gui_to_int(self.value_col.GetValue()))
-        self.settings.append(gui_to_int(self.error_col.GetValue()))
+        ds.relax_gui.file_setting = []
+        ds.relax_gui.file_setting.append(gui_to_int(self.mol_nam.GetValue()))
+        ds.relax_gui.file_setting.append(gui_to_int(self.res_num_col.GetValue()))
+        ds.relax_gui.file_setting.append(gui_to_int(self.res_nam_col.GetValue()))
+        ds.relax_gui.file_setting.append(gui_to_int(self.spin_num_col.GetValue()))
+        ds.relax_gui.file_setting.append(gui_to_int(self.spin_nam_col.GetValue()))
+        ds.relax_gui.file_setting.append(gui_to_int(self.value_col.GetValue()))
+        ds.relax_gui.file_setting.append(gui_to_int(self.error_col.GetValue()))
+
+        # Update the fields.
+        self.update()
+
         self.Destroy()
 
 
     def cancel_settings(self, event): # cancel
         self.Destroy()
+
+
+    def update(self):
+        """Update all the fields."""
+
+        self.mol_nam =      wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[0]))
+        self.res_num_col =  wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[1]))
+        self.res_nam_col =  wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[2]))
+        self.spin_num_col = wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[3]))
+        self.spin_nam_col = wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[4]))
+        self.value_col =    wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[5]))
+        self.error_col =    wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[6]))

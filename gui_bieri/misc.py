@@ -71,3 +71,20 @@ def gui_to_int(string):
 
     # Convert.
     return int(string)
+
+
+def int_to_gui(num):
+    """Convert the int into the GUI string.
+
+    @param num:     The number in int or None form.
+    @type num:      int or None
+    @return:        The GUI string.
+    @rtype:         str
+    """
+
+    # No input.
+    if num == None:
+        return ''
+
+    # Convert.
+    return str(num)

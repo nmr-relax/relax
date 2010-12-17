@@ -508,7 +508,7 @@ class Main(wx.Frame):
 
 
     def param_file_setting(self, event): # set up parameter files
-        set_relax_params = Inputfile(ds.relax_gui.file_setting, self, -1, "")
+        set_relax_params = Inputfile(self, -1, "")
         set_relax_params.Show()
 
 
