@@ -36,7 +36,7 @@ vect_z = array([2, 1, 3], float64)
 r, theta, phi = cartesian_to_spherical(vect_z)
 
 # Load the tensors.
-execfile(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'iso_cone_free_rotor_axis2_1_3_tensors_beta78.75.py')
+script(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'iso_cone_free_rotor_axis2_1_3_tensors_beta78.75.py')
 
 # Data stores.
 ds.chi2 = []

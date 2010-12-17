@@ -54,7 +54,7 @@ for round in range(len(files)):
     reset()
 
     # Load the tensors.
-    execfile(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+files[round])
+    script(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+files[round])
 
     # New set of chi2 values.
     chi2.append([])
