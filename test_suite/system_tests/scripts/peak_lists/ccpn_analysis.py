@@ -116,7 +116,7 @@ grid_search(inc=11)
 minimise('simplex', scaling=False, constraints=False)
 
 # Monte Carlo simulations.
-monte_carlo.setup(number=500)
+monte_carlo.setup(number=2)
 monte_carlo.create_data()
 monte_carlo.initial_values()
 minimise('simplex', scaling=False, constraints=False)
