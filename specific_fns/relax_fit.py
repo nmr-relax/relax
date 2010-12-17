@@ -151,13 +151,13 @@ class Relax_fit(API_base, API_common):
         return scaling_matrix
 
 
-    def _back_calc(self, spin=None, relax_time_index=None):
+    def _back_calc(self, spin=None, relax_time_id=None):
         """Back-calculation of peak intensity for the given relaxation time.
 
         @keyword spin:              The spin container.
         @type spin:                 SpinContainer instance
-        @keyword relax_time_index:  The index for the desired relaxation time.
-        @type relax_time_index:     int
+        @keyword relax_time_id:     The ID string for the desired relaxation time.
+        @type relax_time_id:        str
         @return:                    The peak intensity for the desired relaxation time.
         @rtype:                     float
         """
@@ -168,8 +168,20 @@ class Relax_fit(API_base, API_common):
         # Create a scaling matrix.
         scaling_matrix = self._assemble_scaling_matrix(spin=spin, scaling=False)
 
+        # The keys.
+        keys = spin.intensities.keys()
+
+        # The peak intensities and times.
+        values = []
+        errors = []
+        times = []
+        for key in keys:
+            values.append(spin.intensities[key])
+            errors.append(spin.intensity_err[key])
+            times.append(cdp.relax_times[key])
+
         # Initialise the relaxation fit functions.
-        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=spin.intensities, sd=spin.intensity_err, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
+        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
         func(param_vector)
@@ -178,7 +190,7 @@ class Relax_fit(API_base, API_common):
         results = back_calc_I()
 
         # Return the correct peak height.
-        return results[relax_time_index]
+        return results[keys.index(relax_time_id)]
 
 
     def _disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
@@ -282,12 +294,16 @@ class Relax_fit(API_base, API_common):
 
                 # Intensity
                 elif search('^I', spin.params[i]):
-                    # Find the position of the first time point.
-                    pos = cdp.relax_times.index(min(cdp.relax_times))
+                    # Find the ID of the first time point.
+                    min_time = min(cdp.relax_times.values())
+                    for key in cdp.relax_times.keys():
+                        if cdp.relax_times[key] == min_time:
+                            id = key
+                            break
 
                     # Defaults.
                     lower.append(0.0)
-                    upper.append(average(spin.intensities[pos]))
+                    upper.append(average(spin.intensities[id]))
 
         # Parameter scaling.
         for i in range(n):
@@ -407,22 +423,12 @@ class Relax_fit(API_base, API_common):
         if spectrum_id not in cdp.spectrum_ids:
             raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
 
-        # The index.
-        index = cdp.spectrum_ids.index(spectrum_id)
-
         # Initialise the global relaxation time data structure if needed.
         if not hasattr(cdp, 'relax_times'):
-            cdp.relax_times = [None] * len(cdp.spectrum_ids)
-
-        # Index not present in the global relaxation time data structure.
-        while True:
-            if index > len(cdp.relax_times) - 1:
-                cdp.relax_times.append(None)
-            else:
-                break
+            cdp.relax_times = {}
 
         # Add the time at the correct position.
-        cdp.relax_times[index] = time
+        cdp.relax_times[spectrum_id] = time
 
 
     def _select_model(self, model='exp'):
@@ -472,7 +478,7 @@ class Relax_fit(API_base, API_common):
         """
 
         # Initialise the MC data data structure.
-        mc_data = []
+        mc_data = {}
 
         # Get the spin container.
         spin = return_spin(data_id)
@@ -490,12 +496,12 @@ class Relax_fit(API_base, API_common):
             raise RelaxNoModelError
 
         # Loop over the spectral time points.
-        for j in xrange(len(cdp.relax_times)):
+        for id in cdp.relax_times.keys():
             # Back calculate the value.
-            value = self._back_calc(spin=spin, relax_time_index=j)
+            value = self._back_calc(spin=spin, relax_time_id=id)
 
             # Append the value.
-            mc_data.append(value)
+            mc_data[id] = value
 
         # Return the MC data.
         return mc_data
@@ -736,12 +742,27 @@ class Relax_fit(API_base, API_common):
             # Initialise the function to minimise.
             ######################################
 
-            if sim_index == None:
-                values = spin.intensities
-            else:
-                values = spin.sim_intensities[sim_index]
+            # The keys.
+            keys = spin.intensities.keys()
 
-            setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=spin.intensity_err, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
+            # The peak intensities and times.
+            values = []
+            errors = []
+            times = []
+            for key in keys:
+                # The values.
+                if sim_index == None:
+                    values.append(spin.intensities[key])
+                else:
+                    values.append(spin.sim_intensities[sim_index][key])
+
+                # The errors.
+                errors.append(spin.intensity_err[key])
+
+                # The relaxation times.
+                times.append(cdp.relax_times[key])
+
+            setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_matrix)
 
 
             # Setup the minimisation algorithm when constraints are present.
