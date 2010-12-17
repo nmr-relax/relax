@@ -28,7 +28,7 @@ def get_angle(index, incs=None, deg=False):
 INC = 18
 
 # Load the tensors.
-execfile(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'rotor_in_frame_tensors_beta22.5.py')
+script(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'rotor_in_frame_tensors_beta22_5.py')
 
 # Data stores.
 ds.chi2 = []

@@ -48,7 +48,7 @@ EIG_FRAME[:,2] = vect_z
 a, b, g = R_to_euler_zyz(EIG_FRAME)
 
 # Load the tensors.
-execfile(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'iso_cone_free_rotor_axis2_1_3_tensors_beta78.75.py')
+script(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'iso_cone_free_rotor_axis2_1_3_tensors_beta78_75.py')
 
 # Data stores.
 ds.chi2 = []

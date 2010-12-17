@@ -407,6 +407,14 @@ class Main:
                     if search('\.' + ext + '$', file):
                         remove(path.join(root, file))
 
+        # Remove relax save state files.
+        print "Removing temporary relax save state files (of the form relax_state_xxxxxxxx_xxxxxx.bz2).\n"
+        for root, dirs, files in walk(getcwd()):
+            # Loop over the files in the current directory.
+            for file in files:
+                if search('^relax_state_.*.bz2', file):
+                    remove(path.join(root, file))
+
         # Final print out.
         print "\n\n\n"
 

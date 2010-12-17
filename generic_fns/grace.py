@@ -87,6 +87,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     x_err_flag = False
     y_err_flag = False
     data_list = False
+    data_dict = False
 
     # Specific x and y value returning functions.
     x_return_value = y_return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type())
@@ -171,6 +172,37 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 # Data list flag.
                 data_list = True
 
+            # One set per spin (dictionary data has been returned).
+            if data_dict or isinstance(x_val, dict):
+                # Append a new set structure and set the name to the spin ID.
+                data[0].append([])
+                set_labels.append("Spin %s" % spin_id)
+
+                # The set index.
+                index = len(data[0]) - 1
+
+                # Convert to lists.
+                list_data = []
+                for key in x_val.keys():
+                    list_data.append([x_val[key], y_val[key]])
+                list_data.sort()
+
+                # Overwrite the data structures.
+                x_val = []
+                y_val = []
+                for i in range(len(list_data)):
+                    x_val.append(list_data[i][0])
+                    y_val.append(list_data[i][1])
+
+                # No errors.
+                if x_err == None:
+                    x_err = [None]*len(x_val)
+                if y_err == None:
+                    y_err = [None]*len(y_val)
+
+                # Data list flag.
+                data_dict = True
+
             # Convert the data to lists for packing into 1 point.
             else:
                 x_val = [x_val]
@@ -178,8 +210,8 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 x_err = [x_err]
                 y_err = [y_err]
 
-            # A new spin type (on data set per spin type).
-            if not data_list and spin.name not in spin_names:
+            # A new spin type (one data set per spin type).
+            if not data_list and not data_dict and spin.name not in spin_names:
                 # Append a new set structure.
                 data[0].append([])
 
