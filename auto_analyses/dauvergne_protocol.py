@@ -233,9 +233,9 @@ class dAuvergne_protocol:
 
         # Project directory (i.e. directory containing the model-free model results and the newly generated files)
         if save_dir:
-            self.save_dir = save_dir+sep
+            self.save_dir = save_dir + sep
         else:
-            self.save_dir = ''
+            self.save_dir = getcwd()
 
         # User variable checks.
         self.check_vars()
@@ -290,7 +290,7 @@ class dAuvergne_protocol:
 
         elif self.diff_model == 'sphere' or self.diff_model == 'prolate' or self.diff_model == 'oblate' or self.diff_model == 'ellipsoid':
             # No local_tm directory!
-            dir_list = listdir(getcwd())
+            dir_list = listdir(self.save_dir)
             if 'local_tm' not in dir_list:
                 raise RelaxError("The local_tm model must be optimised first.")
 
@@ -409,7 +409,7 @@ class dAuvergne_protocol:
                     self.interpreter.pipe.delete(name)
 
             # Missing optimised model.
-            dir_list = listdir(getcwd())
+            dir_list = listdir(self.save_dir)
             for name in self.pipes:
                 if name not in dir_list:
                     raise RelaxError("The %s model must be optimised first." % name)
@@ -741,7 +741,7 @@ class dAuvergne_protocol:
         try:
             # Files are in same directory / no directory specified
             if self.save_dir =='':
-                dir_list = listdir(getcwd()+sep+model)
+                dir_list = listdir(self.save_dir+sep+model)
 
             # Directory is specified
             else:
