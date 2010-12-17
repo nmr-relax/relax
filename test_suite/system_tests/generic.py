@@ -40,6 +40,16 @@ class Generic(SystemTestCase):
         ds.__reset__()
 
 
+    def test_nested_scripting(self):
+        """Test nested scripting."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'nested_scripting'+sep+'main.py')
+
+        # Check.
+        self.assertEqual(cdp.nest, ['a', 'b', 'c', 'd'])
+
+
     def test_value_diff(self):
         """S2 difference stored in a new data pipe."""
 
