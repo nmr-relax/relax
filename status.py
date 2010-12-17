@@ -118,18 +118,18 @@ class Exec_lock:
             # Return without doing anything.
             return
 
-        # Unlock and re-lock if an auto-analysis is called from a script.
+        # Skip locking if an auto-analysis is called from a script.
         if self.locked() and self._name == 'script UI' and search('^auto', name):
             # Debugging.
             if __main__.debug:
-                self.log.write("Forced release of script UI lock by %s\n" % name)
+                self.log.write("Skipped unlocking of '%s' lock by '%s'\n" % (self._name, name))
                 self.log.flush()
-
-            # Release the lock.
-            self._lock.release()
 
             # Switch the flag.
             self._auto_from_script = True
+
+            # Return without doing anything.
+            return
 
         # Store the new name.
         self._name = name
@@ -174,11 +174,11 @@ class Exec_lock:
             # Return without releasing the lock.
             return
 
-        # Prior forced release, so let the script release.
+        # Auto-analysis launched from script.
         if self._auto_from_script:
             # Debugging.
             if __main__.debug:
-                self.log.write("Prior forced release, skipping release.")
+                self.log.write("Auto-analysis launched from script, skipping release.\n")
                 self.log.flush()
 
             # Unset the flag.
