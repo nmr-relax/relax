@@ -36,7 +36,7 @@ EIG_FRAME = array([[ 2, -1,  2],
 a, b, g = R_to_euler_zyz(EIG_FRAME)
 
 # Load the tensors.
-script(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'pseudo_ellipse_out_of_frame_theta_x_tensors_beta112.5.py')
+script(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'pseudo_ellipse_out_of_frame_theta_x_tensors_beta112_5.py')
 
 # Data stores.
 ds.chi2 = []
