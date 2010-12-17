@@ -368,14 +368,15 @@ def exec_script(name, globals):
         raise RelaxError("The relax script must not contain the '.' character (except before the extension '*.py').")
 
     # Execute the module.
-    runpy.run_module(module, globals)
+    try:
+        runpy.run_module(module, globals)
+    finally:
+        # Switch back to the original working directory.
+        if head:
+            chdir(orig_dir)
 
-    # Switch back to the original working directory.
-    if head:
-        chdir(orig_dir)
-
-    # Remove the script path.
-    sys.path.pop(sys.path.index(script_path))
+        # Remove the script path.
+        sys.path.pop(sys.path.index(script_path))
 
     # Unlock execution if needed.
     status.exec_lock.release()
