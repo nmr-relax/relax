@@ -35,7 +35,6 @@ from re import search
 if dep_check.readline_module:
     import readline
 import runpy
-from string import split
 import sys
 
 # Python modules accessible on the command prompt.
@@ -345,10 +344,6 @@ class _Exit:
 def exec_script(name, globals):
     """Execute the script."""
 
-    # Check if the script name is ok.
-    if not search('\.py$', name):
-        raise RelaxError("The relax script must end in '*.py'.")
-
     # Execution lock.
     status = Status()
     status.exec_lock.acquire('script UI')
@@ -359,7 +354,11 @@ def exec_script(name, globals):
     sys.path.append(script_path)
 
     # The module name.
-    module, extension = split(tail, '.')
+    module, ext = path.splitext(tail)
+
+    # Check if the script name is ok.
+    if search('\.', module):
+        raise RelaxError("The relax script must not contain the '.' character (except before the extension '*.py').")
 
     # Execute the module.
     runpy.run_module(module, globals)
