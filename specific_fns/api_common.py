@@ -299,22 +299,30 @@ class API_common:
         # The spin value.
         if hasattr(spin, object_name):
             value = getattr(spin, object_name)
-            error = getattr(spin, object_error)
+
+            # The error.
+            if hasattr(spin, object_error):
+                error = getattr(spin, object_error)
 
         # The global value.
         elif hasattr(cdp, object_name):
             value = getattr(cdp, object_name)
-            error = getattr(cdp, object_error)
+
+            # The error.
+            if hasattr(cdp, object_error):
+                error = getattr(cdp, object_error)
 
         # List object.
         if index != None:
             value = value[index]
-            error = error[index]
+            if error:
+                error = error[index]
 
         # Dictionary object.
         if key:
             value = value[key]
-            error = error[key]
+            if error:
+                error = error[key]
 
         # Return the data.
         if sim == None:
