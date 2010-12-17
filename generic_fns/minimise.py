@@ -31,7 +31,7 @@ from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError
 import specific_fns
-from status import Status; status = Status()
+from status import Status
 
 
 def calc(verbosity=1):
@@ -48,6 +48,9 @@ def calc(verbosity=1):
     # Specific calculate function setup.
     calculate = specific_fns.setup.get_specific_fn('calculate', cdp.pipe_type)
     overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+
+    # The status object.
+    status = Status()
 
     # Deselect spins lacking data:
     overfit_deselect()
@@ -101,6 +104,9 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     # Specific grid search function.
     grid_search = specific_fns.setup.get_specific_fn('grid_search', cdp.pipe_type)
     overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+
+    # The status object.
+    status = Status()
 
     # Deselect spins lacking data:
     overfit_deselect()
@@ -161,6 +167,9 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     # Specific minimisation function.
     minimise = specific_fns.setup.get_specific_fn('minimise', cdp.pipe_type)
     overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+
+    # The status object.
+    status = Status()
 
     # Deselect spins lacking data:
     overfit_deselect()

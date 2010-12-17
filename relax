@@ -61,6 +61,7 @@ from prompt import interpreter
 import relax_errors
 from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
+from status import Status
 from test_suite.test_suite_runner import Test_suite_runner
 from version import version
 
@@ -96,6 +97,10 @@ class Relax:
 
         # Set up the warning system.
         relax_warnings.setup()
+
+        # Initialise the status singleton.
+        status = Status()
+        status.setup()
 
         # Show the version number and exit.
         if mode == 'version':

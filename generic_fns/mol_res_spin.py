@@ -1425,12 +1425,6 @@ def molecule_loop(selection=None, pipe=None, return_id=False):
     # Parse the selection string.
     select_obj = Selection(selection)
 
-    # Disallowed selections.
-    if select_obj.residues:
-        raise RelaxResSelectDisallowError
-    if select_obj.spins:
-        raise RelaxSpinSelectDisallowError
-
     # Loop over the molecules.
     for mol in dp.mol:
         # Skip the molecule if there is no match to the selection.

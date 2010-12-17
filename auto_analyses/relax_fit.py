@@ -30,6 +30,7 @@ from os import sep
 import generic_fns.structure.main
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
+from status import Status
 
 
 
@@ -69,6 +70,12 @@ class Relax_fit:
         @type view_plots:       boolean
         """
 
+        # Initialise the status.
+        self.status = Status()
+
+        # Execution lock.
+        self.status.exec_lock.acquire('auto relax fit')
+
         # Store the args.
         self.file_root = file_root
         self.pipe_name = pipe_name
@@ -100,6 +107,9 @@ class Relax_fit:
 
         # Execute.
         self.run()
+
+        # Unlock execution.
+        self.status.exec_lock.release()
 
 
     def run(self):
