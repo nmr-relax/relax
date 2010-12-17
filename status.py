@@ -165,7 +165,7 @@ class Exec_lock:
         if self._script_nest:
             # Debugging.
             if __main__.debug:
-                self.log.write("Nest decrement (%s -> %s)\n" % (self._script_nest, self._script_nest-1))
+                self.log.write("Script termination, nest decrement (%s -> %s)\n" % (self._script_nest, self._script_nest-1))
                 self.log.flush()
 
             # Decrement.
