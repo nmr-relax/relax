@@ -15,7 +15,7 @@ vect_z = array([2, 1, 3], float64)
 r, theta, phi = cartesian_to_spherical(vect_z)
 
 # Load the tensors.
-execfile(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'free_rotor_axis2_1_3_rot_tensors.py')
+script(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'free_rotor_axis2_1_3_rot_tensors.py')
 
 # Data init.
 cdp.ave_pos_beta = 0.5

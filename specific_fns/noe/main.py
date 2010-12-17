@@ -73,17 +73,12 @@ class Noe_main:
         if spectrum_id not in cdp.spectrum_ids:
             raise RelaxError("The peak intensities corresponding to the spectrum id '%s' does not exist." % spectrum_id)
 
-        # The spectrum id index.
-        spect_index = cdp.spectrum_ids.index(spectrum_id)
-
         # Initialise or update the spectrum_type data structure as necessary.
         if not hasattr(cdp, 'spectrum_type'):
-            cdp.spectrum_type = [None] * len(cdp.spectrum_ids)
-        elif len(cdp.spectrum_type) < len(cdp.spectrum_ids):
-            cdp.spectrum_type.append([None] * (len(cdp.spectrum_ids) - len(cdp.spectrum_type)))
+            cdp.spectrum_type = {}
 
         # Set the error.
-        cdp.spectrum_type[spect_index] = spectrum_type
+        cdp.spectrum_type[spectrum_id] = spectrum_type
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
@@ -111,7 +106,7 @@ class Noe_main:
             raise RelaxError("The spectrum types have not been set.")
 
         # Test if the 2 spectra types 'ref' and 'sat' exist.
-        if not 'ref' in cdp.spectrum_type or not 'sat' in cdp.spectrum_type:
+        if not 'ref' in cdp.spectrum_type.values() or not 'sat' in cdp.spectrum_type.values():
             raise RelaxError("The reference and saturated NOE spectra have not been loaded.")
 
         # Loop over the spins.
@@ -125,16 +120,16 @@ class Noe_main:
             sat_err = 0.0
             ref = 0.0
             ref_err = 0.0
-            for i in xrange(len(cdp.spectrum_type)):
+            for id in cdp.spectrum_ids:
                 # Sat spectra.
-                if cdp.spectrum_type[i] == 'sat':
-                    sat = sat + spin.intensities[i]
-                    sat_err = sat_err + spin.intensity_err[i]
+                if cdp.spectrum_type[id] == 'sat':
+                    sat = sat + spin.intensities[id]
+                    sat_err = sat_err + spin.intensity_err[id]
 
                 # Ref spectra.
-                if cdp.spectrum_type[i] == 'ref':
-                    ref = ref + spin.intensities[i]
-                    ref_err = ref_err + spin.intensity_err[i]
+                if cdp.spectrum_type[id] == 'ref':
+                    ref = ref + spin.intensities[id]
+                    ref_err = ref_err + spin.intensity_err[id]
 
             # Calculate the NOE.
             spin.noe = sat / ref

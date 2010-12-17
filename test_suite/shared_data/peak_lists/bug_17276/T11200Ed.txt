@@ -1,0 +1,4 @@
+      Assignment         w1         w2       Intensity			
+		
+			A1649N-HN				130.724						7.934			4.69E+06														
+			R1615N-HN				131.136						7.235			2.23E+05												
