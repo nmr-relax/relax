@@ -273,15 +273,16 @@ class API_common:
         if object_name:
             object_error = object_name + '_err'
             object_sim = object_name + '_sim'
+            key = None
 
         # The data type does not exist.
         else:
             # Is it a spectrum id?
             if param in cdp.spectrum_ids:
-                index = cdp.spectrum_ids.index(param)
                 object_name = 'intensities'
                 object_error = 'intensity_err'
                 object_sim = 'intensity_sim'
+                key = param
 
             # Unknown data type.
             else:
@@ -291,44 +292,35 @@ class API_common:
         value = None
         error = None
 
-        # Value and error.
-        if sim == None:
-            # Get the value.
-            if hasattr(spin, object_name):
-                value = getattr(spin, object_name)
-                if index != None:
-                    value = value[index]
-            elif hasattr(cdp, object_name):
-                value = getattr(cdp, object_name)
-                if index != None:
-                    value = value[index]
+        # Value or sim value?
+        if sim != None:
+            object_name = object_sim
 
-            # Get the error.
-            if hasattr(spin, object_error):
-                error = getattr(spin, object_error)
-                if index != None:
-                    error = error[index]
-            elif hasattr(cdp, object_error):
-                error = getattr(cdp, object_error)
-                if index != None:
-                    error = error[index]
+        # The spin value.
+        if hasattr(spin, object_name):
+            value = getattr(spin, object_name)
+            error = getattr(spin, object_error)
 
-        # Simulation value.
-        else:
-            # Get the value.
-            if hasattr(spin, object_sim):
-                object = getattr(spin, object_sim)
-                if index != None:
-                    object = object[index]
-                value = object[sim]
-            elif hasattr(cdp, object_sim):
-                object = getattr(cdp, object_sim)
-                if index != None:
-                    object = object[index]
-                value = object[sim]
+        # The global value.
+        elif hasattr(cdp, object_name):
+            value = getattr(cdp, object_name)
+            error = getattr(cdp, object_error)
+
+        # List object.
+        if index != None:
+            value = value[index]
+            error = error[index]
+
+        # Dictionary object.
+        if key:
+            value = value[key]
+            error = error[key]
 
         # Return the data.
-        return value, error
+        if sim == None:
+            return value, error
+        else:
+            return value[sim], error
 
 
     def _set_error_spin(self, model_info, index, error):
