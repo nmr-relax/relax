@@ -46,7 +46,6 @@ class Menu:
 
         # The 'File' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_item(menu, id=0, text="&New\tCtrl+N", icon=paths.icon_16x16.new))
         menu.AppendItem(self.build_menu_item(menu, id=1, text="&Open\tCtrl+O", icon=paths.icon_16x16.open))
         menu.AppendSeparator()
         menu.AppendItem(self.build_menu_item(menu, id=2, text="S&ave\tCtrl+S", icon=paths.icon_16x16.save))
@@ -56,7 +55,6 @@ class Menu:
         self.menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.newGUI,     id=0)
         self.gui.Bind(wx.EVT_MENU, self.gui.state_load, id=1)
         self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save, id=2)
         self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save_as, id=3)

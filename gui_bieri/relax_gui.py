@@ -461,36 +461,6 @@ class Main(wx.Frame):
             ds.relax_gui.analyses[i].save_dir = getcwd()
 
 
-    def newGUI(self, event): # New
-        newdir = opendir('Select results directory', '*')
-        if not newdir == None:
-            #create directories
-            mkdir(newdir + sep + 'NOE_1')
-            mkdir(newdir + sep + 'NOE_2')
-            mkdir(newdir + sep + 'NOE_3')
-            mkdir(newdir + sep + 'R1_1')
-            mkdir(newdir + sep + 'R1_2')
-            mkdir(newdir + sep + 'R1_3')
-            mkdir(newdir + sep + 'R2_1')
-            mkdir(newdir + sep + 'R2_2')
-            mkdir(newdir + sep + 'R2_3')
-            mkdir(newdir + sep + 'model_free')
-
-            #insert directories in set up menu
-            self.res_noe1.SetValue(newdir + sep + 'NOE_1')
-            self.res_noe1_copy.SetValue(newdir + sep + 'NOE_2')
-            self.res_noe1_copy_1.SetValue(newdir + sep + 'NOE_3')
-            self.resultsdir_r11.SetValue(newdir + sep + 'R1_1')
-            self.resultsdir_r11_copy.SetValue(newdir + sep + 'R1_2')
-            self.resultsdir_r11_copy_1.SetValue(newdir + sep + 'R1_3')
-            self.resultsdir_r21.SetValue(newdir + sep + 'R2_1')
-            self.resultsdir_r21_copy.SetValue(newdir + sep + 'R2_2')
-            self.resultsdir_r21_copy_1.SetValue(newdir + sep + 'R2_3')
-            self.resultsdir_r21_copy_2.SetValue(newdir + sep + 'model_free')
-
-            dir_message('Folder structure created for Model-free analysis:\n\n\n' + newdir + sep + 'NOE_1\n' + newdir + sep + 'NOE_2\n' + newdir + sep + 'NOE_3\n' + newdir + sep + 'R1_1\n' + newdir + sep + 'R1_2\n' + newdir + sep + 'R1_3\n' + newdir + sep + 'R2_1\n' + newdir + sep + 'R2_2\n' + newdir + sep + 'R2_3\n' + newdir + sep + 'model-free')
-
-
     def open_model_results_exe(self, event):    # open model-free results
         choice = self.list_modelfree.GetStringSelection()
         model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te] # relax results values
