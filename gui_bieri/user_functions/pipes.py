@@ -38,15 +38,6 @@ from gui_bieri.paths import WIZARD_IMAGE_PATH
 class Pipes(UF_base):
     """The container class for holding all GUI elements."""
 
-    def setup(self):
-        """Place all the GUI classes into this class for storage."""
-
-        # The dialogs.
-        self._create_window = Add_window(self.gui, self.interpreter)
-        self._delete_window = Delete_window(self.gui, self.interpreter)
-        self._switch_window = Switch_window(self.gui, self.interpreter)
-
-
     def create(self, event):
         """The pipe.create user function.
 
@@ -54,7 +45,14 @@ class Pipes(UF_base):
         @type event:    wx event
         """
 
-        self._create_window.Show()
+        # Initialise the dialog.
+        self._create_window = Add_window(self.gui, self.interpreter)
+
+        # Show the dialog.
+        self._create_window.ShowModal()
+
+        # Destroy.
+        self._create_window.Destroy()
 
 
     def delete(self, event):
@@ -64,7 +62,14 @@ class Pipes(UF_base):
         @type event:    wx event
         """
 
-        self._delete_window.Show()
+        # Initialise the dialog.
+        self._delete_window = Delete_window(self.gui, self.interpreter)
+
+        # Show the dialog.
+        self._delete_window.ShowModal()
+
+        # Destroy.
+        self._delete_window.Destroy()
 
 
     def switch(self, event):
@@ -74,14 +79,13 @@ class Pipes(UF_base):
         @type event:    wx event
         """
 
-        self._switch_window.Show()
+        # Initialise the dialog.
+        self._switch_window = Switch_window(self.gui, self.interpreter)
 
+        # Show the dialog.
+        self._switch_window.ShowModal()
 
-    def destroy(self):
-        """Close all windows."""
-
-        self._create_window.Destroy()
-        self._delete_window.Destroy()
+        # Destroy.
         self._switch_window.Destroy()
 
 

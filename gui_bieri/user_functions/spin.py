@@ -41,14 +41,6 @@ from gui_bieri.user_functions.mol_res_spin import Mol_res_spin
 class Spin(UF_base):
     """The container class for holding all GUI elements."""
 
-    def setup(self):
-        """Place all the GUI classes into this class for storage."""
-
-        # The dialogs.
-        self._create_window = Create_window(self.gui, self.interpreter)
-        self._delete_window = Delete_window(self.gui, self.interpreter)
-
-
     def create(self, event, mol_name=None, res_num=None, res_name=None):
         """The spin.create user function.
 
@@ -62,8 +54,11 @@ class Spin(UF_base):
         @type res_name:     str
         """
 
+        # Initialise the dialog.
+        self._create_window = Create_window(self.gui, self.interpreter)
+
         # Show the dialog.
-        self._create_window.Show()
+        self._create_window.ShowModal()
 
         # Default molecule name.
         if mol_name:
@@ -72,6 +67,9 @@ class Spin(UF_base):
         # Default residue.
         if res_num or res_name:
             self._create_window.res.SetValue("%s %s" % (res_num, res_name))
+
+        # Destroy.
+        self._create_window.Destroy()
 
 
     def delete(self, event, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
@@ -91,8 +89,11 @@ class Spin(UF_base):
         @type spin_name:    str
         """
 
+        # Initialise the dialog.
+        self._delete_window = Delete_window(self.gui, self.interpreter)
+
         # Show the dialog.
-        self._delete_window.Show()
+        self._delete_window.ShowModal()
 
         # Default molecule name.
         if mol_name:
@@ -106,11 +107,7 @@ class Spin(UF_base):
         if spin_num or spin_name:
             self._delete_window.spin.SetValue("%s %s" % (spin_num, spin_name))
 
-
-    def destroy(self):
-        """Close all windows."""
-
-        self._create_window.Destroy()
+        # Destroy.
         self._delete_window.Destroy()
 
 
