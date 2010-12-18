@@ -75,7 +75,7 @@ class UF_window(wx.Dialog):
     main_text = ''
     title = ''
 
-    def __init__(self, gui, interpreter, style=wx.DEFAULT_FRAME_STYLE):
+    def __init__(self, gui, interpreter, style=wx.DEFAULT_DIALOG_STYLE):
         """Set up the user function class."""
 
         # Store the args.

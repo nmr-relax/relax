@@ -39,14 +39,6 @@ from gui_bieri.paths import WIZARD_IMAGE_PATH
 class Molecule(UF_base):
     """The container class for holding all GUI elements."""
 
-    def setup(self):
-        """Place all the GUI classes into this class for storage."""
-
-        # The dialogs.
-        self._create_window = Add_window(self.gui, self.interpreter)
-        self._delete_window = Delete_window(self.gui, self.interpreter)
-
-
     def create(self, event):
         """The molecule.create user function.
 
@@ -54,7 +46,14 @@ class Molecule(UF_base):
         @type event:    wx event
         """
 
-        self._create_window.Show()
+        # Initialise the dialog.
+        self._create_window = Add_window(self.gui, self.interpreter)
+
+        # Show the dialog.
+        self._create_window.ShowModal()
+
+        # Destroy.
+        self._create_window.Destroy()
 
 
     def delete(self, event, mol_name=None):
@@ -66,18 +65,17 @@ class Molecule(UF_base):
         @type mol_name:     str
         """
 
+        # Initialise the dialog.
+        self._delete_window = Delete_window(self.gui, self.interpreter)
+
         # Show the dialog.
-        self._delete_window.Show()
+        self._delete_window.ShowModal()
 
         # Default molecule name.
         if mol_name:
             self._delete_window.mol.SetValue(mol_name)
 
-
-    def destroy(self):
-        """Close all windows."""
-
-        self._create_window.Destroy()
+        # Destroy.
         self._delete_window.Destroy()
 
 
