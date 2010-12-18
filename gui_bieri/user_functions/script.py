@@ -23,6 +23,9 @@
 # Module docstring.
 """The script user functions."""
 
+# Python module imports.
+import thread
+
 # GUI module imports.
 from base import UF_base
 from gui_bieri.filedialog import openfile
@@ -47,6 +50,17 @@ class Script(UF_base):
 
         # Show the relax controller.
         self.gui.controller.Show()
+
+        # Execute the script in a thread.
+        id = thread.start_new_thread(self.script_exec, (file,))
+
+
+    def script_exec(self, file):
+        """Execute the script in a thread.
+
+        @param file:    The script file name.
+        @type file:     str
+        """
 
         # Execute the user function.
         self.interpreter.script(str(file))
