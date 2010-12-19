@@ -33,7 +33,7 @@ def dir_message(msg):
     wx.MessageBox(msg, style = wx.OK | wx.ICON_INFORMATION)
 
 
-def error_message(msg, caption=None):
+def error_message(msg, caption=''):
     """Message box for general errors.
 
     @param msg:     The message to display.
