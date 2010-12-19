@@ -38,6 +38,7 @@ from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError
 from relax_io import DummyFileObject
+from status import Status
 
 # relaxGUI module imports.
 from gui_bieri.analyses.project import open_file
@@ -539,6 +540,13 @@ class Auto_noe:
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # relax execution lock.
+        status = Status()
+        if status.exec_lock.locked():
+            error_message("relax is currently executing.", "relax execution lock")
+            event.Skip()
+            return
 
         # Synchronise the frame data to the relax data store.
         self.sync_ds(upload=True)

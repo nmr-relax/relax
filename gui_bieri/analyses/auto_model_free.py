@@ -37,6 +37,7 @@ import wx
 from auto_analyses.dauvergne_protocol import dAuvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_io import DummyFileObject
+from status import Status
 
 
 # relax GUI module imports.
@@ -47,7 +48,7 @@ from gui_bieri.components.conversion import str_to_float
 from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
-from gui_bieri.message import missing_data
+from gui_bieri.message import error_message, missing_data
 from gui_bieri.paths import IMAGE_PATH
 
 
@@ -651,6 +652,13 @@ class Auto_model_free:
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # relax execution lock.
+        status = Status()
+        if status.exec_lock.locked():
+            error_message("relax is currently executing.", "relax execution lock")
+            event.Skip()
+            return
 
         # The required data has not been set up correctly or has not all been given, so clean up and exit.
         if not self.check_entries():
