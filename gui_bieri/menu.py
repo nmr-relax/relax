@@ -24,6 +24,9 @@
 # Module docstring.
 """Module for the main relax menu bar."""
 
+# relax module imports.
+from status import Status
+
 # Python module imports.
 import wx
 
@@ -115,6 +118,9 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.about_gui,      id=43)
         self.gui.Bind(wx.EVT_MENU, self.gui.about_relax,    id=44)
 
+        # Menu update.
+        self.gui.Bind(wx.EVT_MENU_OPEN, self.update_menus)
+
 
     def build_menu_item(self, menu, id=None, text='', tooltip='', icon=None):
         """Construct and return the menu sub-item.
@@ -185,7 +191,7 @@ class Menu:
         menu = wx.Menu()
 
         # The list of entries to build.
-        entries = [
+        self.entries_uf = [
             [wx.NewId(), "&molecule", paths.icon_16x16.molecule, None, [
                 [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.molecule.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.molecule.delete]
@@ -207,7 +213,30 @@ class Menu:
         ]
 
         # Build.
-        self._create_menu(menu, entries)
+        self._create_menu(menu, self.entries_uf)
 
         # Add the sub-menu.
-        self.menubar.Append(menu, "&User functions")
+        title = "&User functions"
+        self.menubar.Append(menu, title)
+        self.menu_uf_id = self.menubar.FindMenu(title)
+
+
+    def update_menus(self, event):
+        """Update the menus dependent on the relax state.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The status object.
+        status = Status()
+
+        # Loop over the user function menu items.
+        for i in range(len(self.entries_uf)):
+            # Enable the menu entries.
+            if not status.exec_lock.locked():
+                self.menubar.Enable(self.entries_uf[i][0], True)
+
+            # Disable the menu entries.
+            else:
+                self.menubar.Enable(self.entries_uf[i][0], False)
