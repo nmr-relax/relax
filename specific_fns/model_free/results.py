@@ -488,6 +488,14 @@ class Results:
 
             # Minimisation details (global minimisation results).
             if model_type == 'diff' or model_type == 'all':
+                # The simulation index.
+                index = int(split(data_set, '_')[1])
+
+                # Already loaded.
+                if len(cdp.chi2_sim) == index + 1:
+                    return
+
+                # Set the values.
                 cdp.chi2_sim.append(eval(spin_line[col['chi2']]))
                 cdp.iter_sim.append(eval(spin_line[col['iter']]))
                 cdp.f_count_sim.append(eval(spin_line[col['f_count']]))
