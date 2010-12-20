@@ -128,13 +128,25 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
             spin.remap_table.pop(index)
 
         # Associated data structures.
-        spin.frq_labels = frq_labels
-        spin.frq = frq
-        spin.num_ri = len(ri_labels)
-        spin.num_frq = len(frq)
+        spin.frq_labels = []
+        spin.frq = []
+        for index in spin.remap_table:
+            if not frq_labels[index] in spin.frq_labels:
+                spin.frq_labels.append(frq_labels[index])
+                spin.frq.append(frq[index])
+
+        # Counts.
+        spin.num_ri = len(spin.relax_data)
+        spin.num_frq = len(spin.frq)
 
         # Update the NOE R1 translation table.
         update_noe_r1_table(spin)
+
+        # Convert to None.
+        if spin.num_ri == 0:
+            spin.num_ri = None
+        if spin.num_frq == 0:
+            spin.num_frq = None
 
     # Simulation data.
     else:
