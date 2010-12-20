@@ -418,7 +418,7 @@ class Results:
 
                 # Create the simulation object.
                 if model_type == 'diff' or model_type == 'all':
-                    setattr(cdp, sim_object_name, {})
+                    setattr(cdp, sim_object_name, [])
                     object = getattr(cdp, sim_object_name)
                     object = []
                 else:
