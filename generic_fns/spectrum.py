@@ -576,9 +576,13 @@ def intensity_sparky(file_data=None, int_col=None):
     @rtype:             list of lists of str, str, str, float
     """
 
-    # Assume the Sparky file has two header lines!
-    num = 2
-    print(("Number of header lines found: " + repr(num)))
+    # The number of header lines.
+    num = 0
+    if file_data[0][0] == 'Assignment':
+        num = num + 1
+    if file_data[1] == '':
+        num = num + 1
+    print("Number of header lines found: %s" % num)
 
     # Remove the header.
     file_data = file_data[num:]
@@ -595,36 +599,36 @@ def intensity_sparky(file_data=None, int_col=None):
         h_name = ''
         x_name = ''
         intensity = ''
-        if line[0]!='?-?':
-            assignment = split('([A-Z]+)', line[0])
-            if assignment[0] == '':
-                assignment = assignment[1:]
-            if assignment[-1] == '':
-                assignment = assignment[:-1]
-            try:
-                int(assignment[0])
-            except ValueError:
-                assignment = assignment[1:]
 
-            # The residue number.
-            try:
-                res_num = int(assignment[0])
-            except:
-                raise RelaxError("Improperly formatted Sparky file.")
+        # Skip non-assigned peaks.
+        if line[0] == '?-?':
+            continue
 
-            # Nuclei names.
-            x_name = assignment[1]
-            h_name = assignment[3]
+        # First split by the 2D separator.
+        x_assign, h_assign = split('-', line[0])
 
-            # The peak intensity column.
-            if int_col == None:
-                int_col = 3
+        # The proton info.
+        h_name = split('([A-Z]+)', h_assign)[-2]
 
-            # Intensity.
-            try:
-                intensity = float(line[int_col])
-            except ValueError:
-                raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
+        # The heteronucleus info.
+        x_row = split('([A-Z]+)', x_assign)
+        x_name = x_row[-2]
+
+        # The residue number.
+        try:
+            res_num = int(x_row[-3])
+        except:
+            raise RelaxError("Improperly formatted Sparky file.")
+
+        # The peak intensity column.
+        if int_col == None:
+            int_col = 3
+
+        # Intensity.
+        try:
+            intensity = float(line[int_col])
+        except ValueError:
+            raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
         # Generate the spin_id.
         spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
