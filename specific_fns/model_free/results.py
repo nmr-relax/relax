@@ -226,9 +226,13 @@ class Results:
         if data_set == 'value':
             # Get the model-free model.
             model = spin_line[col['model']]
+            if model == 'None':
+                model = None
 
             # Get the model-free equation.
             equation = spin_line[col['eqi']]
+            if equation == 'None':
+                equation = None
 
             # Get the model-free parameters.
             params = eval(spin_line[col['params']])
@@ -240,8 +244,7 @@ class Results:
                         params[i] = 'local_tm'
 
             # Set up the model-free model.
-            if model and equation:
-                self._model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
+            self._model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
 
         # The model type.
         model_type = spin_line[col['param_set']]
@@ -418,7 +421,7 @@ class Results:
 
                 # Create the simulation object.
                 if model_type == 'diff' or model_type == 'all':
-                    setattr(cdp, sim_object_name, {})
+                    setattr(cdp, sim_object_name, [])
                     object = getattr(cdp, sim_object_name)
                     object = []
                 else:
@@ -488,6 +491,14 @@ class Results:
 
             # Minimisation details (global minimisation results).
             if model_type == 'diff' or model_type == 'all':
+                # The simulation index.
+                index = int(split(data_set, '_')[1])
+
+                # Already loaded.
+                if len(cdp.chi2_sim) == index + 1:
+                    return
+
+                # Set the values.
                 cdp.chi2_sim.append(eval(spin_line[col['chi2']]))
                 cdp.iter_sim.append(eval(spin_line[col['iter']]))
                 cdp.f_count_sim.append(eval(spin_line[col['f_count']]))
