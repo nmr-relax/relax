@@ -28,6 +28,7 @@ from tempfile import mktemp
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+from relax_errors import RelaxError
 from relax_io import delete
 
 
@@ -59,6 +60,16 @@ class Results(SystemTestCase):
 
         # Read the results.
         self.interpreter.results.read(file='empty', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'results_files'+sep)
+
+
+    def test_read_save_as_results(self):
+        """Test the reading of a relax save state as a result file."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('save', 'mf')
+
+        # Read the results.
+        self.assertRaises(RelaxError, self.interpreter.results.read, file='basic_single_pipe', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
 
     def test_write_empty_results(self):
