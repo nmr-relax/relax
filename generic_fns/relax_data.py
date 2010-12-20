@@ -104,20 +104,28 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
         spin.remap_table = remap_table
 
         # Remove any data with the value None.
+        indices = []
         for index, Ri in enumerate(spin.relax_data):
             if Ri == None:
-                spin.relax_data.pop(index)
-                spin.relax_error.pop(index)
-                spin.ri_labels.pop(index)
-                spin.remap_table.pop(index)
+                indices.append(index)
+        indices.reverse()
+        for index in indices:
+            spin.relax_data.pop(index)
+            spin.relax_error.pop(index)
+            spin.ri_labels.pop(index)
+            spin.remap_table.pop(index)
 
         # Remove any data with error of None.
+        indices = []
         for index, error in enumerate(spin.relax_error):
             if error == None:
-                spin.relax_data.pop(index)
-                spin.relax_error.pop(index)
-                spin.ri_labels.pop(index)
-                spin.remap_table.pop(index)
+                indices.append(index)
+        indices.reverse()
+        for index in indices:
+            spin.relax_data.pop(index)
+            spin.relax_error.pop(index)
+            spin.ri_labels.pop(index)
+            spin.remap_table.pop(index)
 
         # Associated data structures.
         spin.frq_labels = frq_labels
