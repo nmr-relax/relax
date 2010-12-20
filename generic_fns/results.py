@@ -37,28 +37,6 @@ from relax_io import extract_data, get_file_path, open_read_file, open_write_fil
 from specific_fns.setup import get_specific_fn
 
 
-def check_xml(file_path, file):
-    """Check the XML results file.
-
-    @param file_path:   The path of the file.
-    @type file_path:    str
-    @param file:        The file object representing the results file.
-    @type file:         file object
-    """
-
-    # Header line.
-    lines = []
-    lines.append(file.readline())
-    lines.append(file.readline())
-
-    # Be nice and go back to the start of the file.
-    file.seek(0)
-
-    # A saved state!.
-    if search("<relax", lines[1]):
-        raise RelaxError("The file '%s' is a relax saved state and not a results file." % file_path)
-
-
 def determine_format(file):
     """Determine the format of the results file.
 
@@ -115,10 +93,6 @@ def read(file='results', directory=None):
 
     # XML results.
     if format == 'xml':
-        # Is this a results or save file?
-        check_xml(file_path, file)
-
-        # Execute the data store XML parser.
         ds.from_xml(file, dir=dirname(file_path), pipe_to=pipes.cdp_name())
 
     # Columnar results.
