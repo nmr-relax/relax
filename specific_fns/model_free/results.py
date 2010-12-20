@@ -226,9 +226,13 @@ class Results:
         if data_set == 'value':
             # Get the model-free model.
             model = spin_line[col['model']]
+            if model == 'None':
+                model = None
 
             # Get the model-free equation.
             equation = spin_line[col['eqi']]
+            if equation == 'None':
+                equation = None
 
             # Get the model-free parameters.
             params = eval(spin_line[col['params']])
@@ -240,8 +244,7 @@ class Results:
                         params[i] = 'local_tm'
 
             # Set up the model-free model.
-            if model and equation:
-                self._model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
+            self._model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
 
         # The model type.
         model_type = spin_line[col['param_set']]
