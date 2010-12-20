@@ -82,7 +82,7 @@ class Grace(User_fn_class):
         arg_check.is_str(grace_exe, 'Grace executable file')
 
         # Execute the functional code.
-        self._exec_infoce.view(file=file, dir=dir, grace_exe=grace_exe)
+        grace.view(file=file, dir=dir, grace_exe=grace_exe)
 
 
     def write(self, x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value', file=None, dir='grace', force=False, norm=False):
