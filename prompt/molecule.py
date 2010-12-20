@@ -108,7 +108,7 @@ class Molecule(User_fn_class):
         This function will add a new molecule data container to the relax data storage object.  The
         same molecule name cannot be used more than once.  The molecule type need not be specified.
         However if it given, it should be one of 'protein', 'RNA', 'DNA', 'organic molecule',
-        'inorganic molecule'.
+        'inorganic molecule', 'other'.
 
 
         Examples
@@ -234,7 +234,7 @@ class Molecule(User_fn_class):
 
 
     def type(self, mol_id=None, type=None, force=False):
-        """Set the molecule type (mainly used for BMRB submission).
+        """Set the molecule type.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -251,6 +251,7 @@ class Molecule(User_fn_class):
 
         This function allows the type of the molecule to be specified.  It can be one of:
 
+            'protein'
             'organic molecule',
             'DNA/RNA hybrid',
             'polydeoxyribonucleotide',

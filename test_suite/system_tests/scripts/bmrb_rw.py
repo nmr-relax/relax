@@ -32,7 +32,7 @@ select.spin(':11')
 spin.name(name='N')
 spin.element(element='N')
 molecule.name(name='OMP')
-molecule.type(type='polypeptide(L)')
+molecule.type(type='protein')
 bmrb.thiol_state(state='reduced')
 
 # Display the data (as a test).
