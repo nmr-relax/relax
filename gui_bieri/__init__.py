@@ -43,7 +43,19 @@ from relax_gui import Main
 from paths import IMAGE_PATH
 
 
-__all__ = ['relax_gui']
+__all__ = ['about',
+           'base_classes',
+           'controller',
+           'derived_wx_classes',
+           'filedialog',
+           'menu',
+           'message',
+           'misc',
+           'paths',
+           'references',
+           'relax_gui',
+           'relax_prompt',
+           'settings']
 
 
 
