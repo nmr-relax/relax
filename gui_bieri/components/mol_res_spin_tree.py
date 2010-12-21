@@ -76,7 +76,7 @@ class Mol_res_spin_tree(wx.Window):
         self.icon_list = icon_list
 
         # Populate the tree.
-        self._tree_update()
+        self.update()
 
         # Catch mouse events.
         self.tree.Bind(wx.EVT_RIGHT_DOWN, self._right_click)
@@ -213,57 +213,6 @@ class Mol_res_spin_tree(wx.Window):
         menu.Destroy()
 
 
-    def _tree_update(self, pipe_name=None):
-        """Update the tree view using the given data pipe."""
-
-        # The data pipe.
-        if not pipe_name:
-            pipe = cdp
-        else:
-            pipe = get_pipe(pipe_name)
-
-        # No data pipe, so do nothing.
-        if not pipe:
-            return
-
-        # Clear all.
-        self.tree.DeleteChildren(self.root)
-
-        # The molecules.
-        for mol, mol_id in molecule_loop(return_id=True):
-            # Append a molecule with name to the tree.
-            mol_branch = self.tree.AppendItem(self.root, "Molecule: %s" % mol.name)
-            self.tree.SetPyData(mol_branch, ['mol', mol.name])
-
-            # Set the bitmap.
-            self.tree.SetItemImage(mol_branch, self.icon_mol_index, wx.TreeItemIcon_Normal)
-            self.tree.SetItemImage(mol_branch, self.icon_mol_unfold_index, wx.TreeItemIcon_Expanded)
-
-            # The residues.
-            for res, res_id in residue_loop(mol_id, return_id=True):
-                # Append a residue with name and number to the tree.
-                res_branch = self.tree.AppendItem(mol_branch, "Residue: %s %s" % (res.num, res.name))
-                self.tree.SetPyData(res_branch, ['res', mol.name, res.num, res.name])
-
-                # Set the bitmap.
-                self.tree.SetItemImage(res_branch, self.icon_res_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
-
-                # The spins.
-                for spin, spin_id in spin_loop(res_id, return_id=True):
-                    # Append a spin with name and number to the tree.
-                    spin_branch = self.tree.AppendItem(res_branch, "Spin: %s %s" % (spin.num, spin.name))
-                    self.tree.SetPyData(spin_branch, ['spin', mol.name, res.num, res.name, spin.num, spin.name])
-
-                    # Set the bitmap.
-                    self.tree.SetItemImage(spin_branch, self.icon_spin_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
-
-            # Expand the molecule view.
-            self.tree.Expand(mol_branch)
-
-        # Expand the root.
-        self.tree.Expand(self.root)
-
-
     def molecule_delete(self, event):
         """Wrapper method.
 
@@ -318,6 +267,56 @@ class Mol_res_spin_tree(wx.Window):
         # Call the dialog.
         self.gui.user_functions.spin.delete(event, mol_name=self.info[1], res_num=self.info[2], res_name=self.info[3], spin_num=self.info[4], spin_name=self.info[5])
 
+
+    def update(self, pipe_name=None):
+        """Update the tree view using the given data pipe."""
+
+        # The data pipe.
+        if not pipe_name:
+            pipe = cdp
+        else:
+            pipe = get_pipe(pipe_name)
+
+        # No data pipe, so do nothing.
+        if not pipe:
+            return
+
+        # Clear all.
+        self.tree.DeleteChildren(self.root)
+
+        # The molecules.
+        for mol, mol_id in molecule_loop(return_id=True):
+            # Append a molecule with name to the tree.
+            mol_branch = self.tree.AppendItem(self.root, "Molecule: %s" % mol.name)
+            self.tree.SetPyData(mol_branch, ['mol', mol.name])
+
+            # Set the bitmap.
+            self.tree.SetItemImage(mol_branch, self.icon_mol_index, wx.TreeItemIcon_Normal)
+            self.tree.SetItemImage(mol_branch, self.icon_mol_unfold_index, wx.TreeItemIcon_Expanded)
+
+            # The residues.
+            for res, res_id in residue_loop(mol_id, return_id=True):
+                # Append a residue with name and number to the tree.
+                res_branch = self.tree.AppendItem(mol_branch, "Residue: %s %s" % (res.num, res.name))
+                self.tree.SetPyData(res_branch, ['res', mol.name, res.num, res.name])
+
+                # Set the bitmap.
+                self.tree.SetItemImage(res_branch, self.icon_res_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+
+                # The spins.
+                for spin, spin_id in spin_loop(res_id, return_id=True):
+                    # Append a spin with name and number to the tree.
+                    spin_branch = self.tree.AppendItem(res_branch, "Spin: %s %s" % (spin.num, spin.name))
+                    self.tree.SetPyData(spin_branch, ['spin', mol.name, res.num, res.name, spin.num, spin.name])
+
+                    # Set the bitmap.
+                    self.tree.SetItemImage(spin_branch, self.icon_spin_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+
+            # Expand the molecule view.
+            self.tree.Expand(mol_branch)
+
+        # Expand the root.
+        self.tree.Expand(self.root)
 
 
 
@@ -405,7 +404,7 @@ class Tree_window(wx.Frame):
         self.update_pipes()
 
         # Update the tree.
-        self.tree_panel._tree_update()
+        self.tree_panel.update()
 
 
     def handler_close(self, event):
@@ -499,4 +498,4 @@ class Tree_window(wx.Frame):
             self.gui.user_functions.interpreter.pipe.switch(pipe)
 
             # Update the tree view.
-            self.tree_panel._tree_update()
+            self.tree_panel.update()
