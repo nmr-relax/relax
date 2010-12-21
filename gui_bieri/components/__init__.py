@@ -24,4 +24,6 @@
 """Package for the different GUI components for packing into sizer boxes."""
 
 
-__all__ = ['spectrum', 'conversion']
+__all__ = ['conversion',
+           'spectrum',
+           'spin_view']
