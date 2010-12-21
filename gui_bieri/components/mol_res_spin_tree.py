@@ -29,7 +29,7 @@ import wx
 
 # relax module imports.
 from generic_fns.mol_res_spin import molecule_loop, residue_loop, spin_loop
-from generic_fns.pipes import get_pipe
+from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
 from gui_bieri import paths
@@ -320,6 +320,7 @@ class Mol_res_spin_tree(wx.Panel):
 
 
 
+
 class Tree_window(wx.Frame):
     """A window element for the tree view."""
 
@@ -335,11 +336,14 @@ class Tree_window(wx.Frame):
 
         # Some default values.
         self.size_x = 500
-        self.size_y = 1000
+        self.size_y = 800
         self.border = 0
 
         # Set up the window.
         sizer = self.setup_window()
+
+        # Build the toolbar.
+        self.toolbar()
 
         # Add the tree view panel.
         self.tree_panel = Mol_res_spin_tree(self.gui, parent=self, id=-1)
@@ -354,10 +358,24 @@ class Tree_window(wx.Frame):
         """
 
         # First update.
-        self.tree_panel._tree_update()
+        self.refresh()
 
         # Then show the window using the baseclass method.
         wx.Frame.Show(self, show)
+
+
+    def refresh(self, event=None):
+        """Event handler for the refresh action.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Update the data pipe selector.
+        self.update_pipes()
+
+        # Update the tree.
+        self.tree_panel._tree_update()
 
 
     def handler_close(self, event):
@@ -393,3 +411,62 @@ class Tree_window(wx.Frame):
 
         # Return the sizer.
         return sizer
+
+
+    def toolbar(self):
+        """Create the toolbar."""
+
+        # Init.
+        self.bar = self.CreateToolBar(wx.TB_HORIZONTAL)
+
+        # The refresh button.
+        id = wx.NewId()
+        self.bar.AddLabelTool(id, "Refresh", wx.Bitmap(paths.icon_32x32.view_refresh, wx.BITMAP_TYPE_ANY), shortHelp="Refresh", longHelp="Refresh the spin view")
+        self.Bind(wx.EVT_TOOL, self.refresh, id=id)
+
+        # A separator.
+        self.bar.AddSeparator()
+
+        # asdf
+        text = wx.StaticText(self.bar, -1, ' Current data pipe:  ', style=wx.ALIGN_LEFT)
+        self.bar.AddControl(text)
+
+        # The pipe selection.
+        self.pipe_name = wx.ComboBox(self.bar, -1, "", style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=[])
+        self.bar.AddControl(self.pipe_name)
+        self.Bind(wx.EVT_COMBOBOX, self.update_pipes, self.pipe_name)
+        self.update_pipes(None)
+
+
+    def update_pipes(self, event=None):
+        """Update the spin view data pipe selector.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The selected pipe.
+        if event:
+            pipe = str(event.GetString())
+        else:
+            pipe = cdp_name()
+        if not pipe:
+            pipe = ''
+
+        # Clear the previous data.
+        self.pipe_name.Clear()
+
+        # Set the pipe name to the cdp.
+        self.pipe_name.SetValue(pipe)
+
+        # The list of pipe names.
+        for name in pipe_names():
+            self.pipe_name.Append(name)
+
+        # Switch.
+        if pipe:
+            # Switch data pipes.
+            self.gui.user_functions.interpreter.pipe.switch(pipe)
+
+            # Update the tree view.
+            self.tree_panel._tree_update()

@@ -79,6 +79,7 @@ class I16x16:
         self.settings_reset =       path + 'actions'    + sep + 'edit-delete.png'
         self.ref =                  path + 'actions'    + sep + 'flag-blue.png'
         self.uf_script =            path + 'mimetypes'  + sep + 'application-x-desktop.png'
+        self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
 
 
 
@@ -102,6 +103,7 @@ class I22x22:
         self.pipe =                 path + 'pipe.png'
         self.residue =              path + 'residue.png'
         self.spin =                 path + 'spin.png'
+        self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
 
 
 
@@ -117,6 +119,7 @@ class I32x32:
         self.cancel =       path + 'actions' + sep + 'dialog-cancel.png'
         self.close =        path + 'actions' + sep + 'dialog-close.png'
         self.ok =           path + 'actions' + sep + 'dialog-ok.png'
+        self.view_refresh = path + 'actions' + sep + 'view-refresh.png'
 
 
 
@@ -133,6 +136,7 @@ class I48x48:
         self.cancel =       path + 'actions' + sep + 'dialog-cancel.png'
         self.forwards =     path + 'actions' + sep + 'go-next-view.png'
         self.remove =       path + 'actions' + sep + 'list-remove.png'
+        self.view_refresh = path + 'actions' + sep + 'view-refresh.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '48x48' + sep
