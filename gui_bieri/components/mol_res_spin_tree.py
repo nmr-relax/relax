@@ -35,7 +35,7 @@ from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 from gui_bieri import paths
 
 
-class Mol_res_spin_tree(wx.Panel):
+class Mol_res_spin_tree(wx.Window):
     """The tree view class."""
 
     def __init__(self, gui, parent=None, id=None):
@@ -49,7 +49,7 @@ class Mol_res_spin_tree(wx.Panel):
         self.gui = gui
 
         # Execute the base class method.
-        wx.Panel.__init__(self, parent, id, style=wx.WANTS_CHARS)
+        wx.Window.__init__(self, parent, id, style=wx.WANTS_CHARS)
 
         # Some default values.
         self.icon_size = 22
@@ -321,6 +321,36 @@ class Mol_res_spin_tree(wx.Panel):
 
 
 
+class Tree_splitter(wx.SplitterWindow):
+    """This splits the view of the tree view and spin container."""
+
+    def __init__(self, parent, id):
+        """Initialise the tree splitter window.
+
+        @param parent:  The parent wx object.
+        @type parent:   wx object
+        @param id:      The ID number.
+        @type id:       int
+        """
+
+        # Execute the base class __init__() method.
+        wx.SplitterWindow.__init__(self, parent, id, style = wx.SP_LIVE_UPDATE)
+
+        # The container window.
+        parent.container = wx.Window(self, style=wx.BORDER_SUNKEN)
+        wx.StaticText(parent.container, -1, "The spin view window", (5,5))
+
+        # Add the tree view panel.
+        parent.tree_panel = Mol_res_spin_tree(self, parent=self, id=-1)
+
+        # Make sure the panes cannot be hidden.
+        self.SetMinimumPaneSize(100)
+
+        # Split.
+        self.SplitVertically(parent.tree_panel, parent.container, 400)
+
+
+
 class Tree_window(wx.Frame):
     """A window element for the tree view."""
 
@@ -335,7 +365,7 @@ class Tree_window(wx.Frame):
         wx.Frame.__init__(self, *args, **kwds)
 
         # Some default values.
-        self.size_x = 500
+        self.size_x = 1000
         self.size_y = 800
         self.border = 0
 
@@ -345,9 +375,9 @@ class Tree_window(wx.Frame):
         # Build the toolbar.
         self.toolbar()
 
-        # Add the tree view panel.
-        self.tree_panel = Mol_res_spin_tree(self.gui, parent=self, id=-1)
-        sizer.Add(self.tree_panel, 1, wx.EXPAND|wx.ALL, self.border)
+        # The splitter window.
+        splitter = Tree_splitter(self, -1)
+        sizer.Add(splitter, 1, wx.EXPAND|wx.ALL, self.border)
 
 
     def Show(self, show=True):
@@ -427,7 +457,7 @@ class Tree_window(wx.Frame):
         # A separator.
         self.bar.AddSeparator()
 
-        # asdf
+        # The pipe text.
         text = wx.StaticText(self.bar, -1, ' Current data pipe:  ', style=wx.ALIGN_LEFT)
         self.bar.AddControl(text)
 
