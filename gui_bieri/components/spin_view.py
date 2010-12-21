@@ -379,7 +379,7 @@ class Spin_view_window(wx.Frame):
         self.toolbar()
 
         # The splitter window.
-        splitter = Tree_splitter(self, -1)
+        splitter = Tree_splitter(self.gui, self, -1)
         sizer.Add(splitter, 1, wx.EXPAND|wx.ALL, self.border)
 
 
@@ -509,9 +509,11 @@ class Spin_view_window(wx.Frame):
 class Tree_splitter(wx.SplitterWindow):
     """This splits the view of the tree view and spin container."""
 
-    def __init__(self, parent, id):
+    def __init__(self, gui, parent, id):
         """Initialise the tree splitter window.
 
+        @param gui:     The gui object.
+        @type gui:      wx object
         @param parent:  The parent wx object.
         @type parent:   wx object
         @param id:      The ID number.
@@ -526,7 +528,7 @@ class Tree_splitter(wx.SplitterWindow):
         wx.StaticText(parent.container, -1, "The spin view window", (5,5))
 
         # Add the tree view panel.
-        parent.tree_panel = Mol_res_spin_tree(self, parent=self, id=-1)
+        parent.tree_panel = Mol_res_spin_tree(gui, parent=self, id=-1)
 
         # Make sure the panes cannot be hidden.
         self.SetMinimumPaneSize(100)
