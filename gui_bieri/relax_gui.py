@@ -52,7 +52,7 @@ from analyses.auto_r2 import Auto_r2
 from analyses.results import Results_summary
 from analyses.results_analysis import see_results
 from base_classes import Container
-from components.mol_res_spin_tree import Tree_window
+from components.spin_view import Spin_view_window
 from controller import Controller
 from filedialog import opendir, openfile, savefile
 from menu import Menu
@@ -132,8 +132,8 @@ class Main(wx.Frame):
         # Build the relax prompt, but don't show it.
         self.relax_prompt = Prompt(None, -1, "", parent=self)
 
-        # Build the tree view window, but don't show it.
-        self.mol_res_spin_tree = Tree_window(None, -1, "", parent=self)
+        # Build the spin view window, but don't show it.
+        self.spin_view = Spin_view_window(None, -1, "", parent=self)
 
         rx_data = ds.relax_gui.analyses[self.noe_index[0]]
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
@@ -567,7 +567,7 @@ class Main(wx.Frame):
         """
 
         # Open the window.
-        self.mol_res_spin_tree.Show()
+        self.spin_view.Show()
 
 
     def state_load(self, event):

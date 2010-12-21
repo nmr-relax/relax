@@ -320,37 +320,7 @@ class Mol_res_spin_tree(wx.Window):
 
 
 
-class Tree_splitter(wx.SplitterWindow):
-    """This splits the view of the tree view and spin container."""
-
-    def __init__(self, parent, id):
-        """Initialise the tree splitter window.
-
-        @param parent:  The parent wx object.
-        @type parent:   wx object
-        @param id:      The ID number.
-        @type id:       int
-        """
-
-        # Execute the base class __init__() method.
-        wx.SplitterWindow.__init__(self, parent, id, style = wx.SP_LIVE_UPDATE)
-
-        # The container window.
-        parent.container = wx.Window(self, style=wx.BORDER_SUNKEN)
-        wx.StaticText(parent.container, -1, "The spin view window", (5,5))
-
-        # Add the tree view panel.
-        parent.tree_panel = Mol_res_spin_tree(self, parent=self, id=-1)
-
-        # Make sure the panes cannot be hidden.
-        self.SetMinimumPaneSize(100)
-
-        # Split.
-        self.SplitVertically(parent.tree_panel, parent.container, 400)
-
-
-
-class Tree_window(wx.Frame):
+class Spin_view_window(wx.Frame):
     """A window element for the tree view."""
 
     def __init__(self, *args, **kwds):
@@ -499,3 +469,33 @@ class Tree_window(wx.Frame):
 
             # Update the tree view.
             self.tree_panel.update()
+
+
+
+class Tree_splitter(wx.SplitterWindow):
+    """This splits the view of the tree view and spin container."""
+
+    def __init__(self, parent, id):
+        """Initialise the tree splitter window.
+
+        @param parent:  The parent wx object.
+        @type parent:   wx object
+        @param id:      The ID number.
+        @type id:       int
+        """
+
+        # Execute the base class __init__() method.
+        wx.SplitterWindow.__init__(self, parent, id, style = wx.SP_LIVE_UPDATE)
+
+        # The container window.
+        parent.container = wx.Window(self, style=wx.BORDER_SUNKEN)
+        wx.StaticText(parent.container, -1, "The spin view window", (5,5))
+
+        # Add the tree view panel.
+        parent.tree_panel = Mol_res_spin_tree(self, parent=self, id=-1)
+
+        # Make sure the panes cannot be hidden.
+        self.SetMinimumPaneSize(100)
+
+        # Split.
+        self.SplitVertically(parent.tree_panel, parent.container, 400)
