@@ -34,7 +34,7 @@ import sys
 
 
 # GUI image and icon paths.
-OXY_ICON_PATH = __main__.install_path + sep + 'gui_bieri' + sep + 'oxygen_icons' + sep
+OXY_ICON_PATH = __main__.install_path + sep + 'graphics' + sep + 'oxygen_icons' + sep
 IMAGE_PATH = __main__.install_path + sep + 'gui_bieri' + sep + 'images' + sep
 ICON_RELAX_PATH = __main__.install_path + sep + 'graphics' + sep + 'relax_icons' + sep
 WIZARD_IMAGE_PATH = __main__.install_path + sep + 'graphics' + sep + 'wizards' + sep
