@@ -79,7 +79,41 @@ class Mol_res_spin_tree(wx.Window):
         self.update()
 
         # Catch mouse events.
+        self.tree.Bind(wx.EVT_LEFT_DOWN, self._left_click)
         self.tree.Bind(wx.EVT_RIGHT_DOWN, self._right_click)
+
+
+    def _left_click(self, event):
+        """Handle left clicks in the tree.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Obtain the position.
+        pos = event.GetPosition()
+
+        # Find the item clicked on.
+        item, flags = self.tree.HitTest(pos)
+
+        # The python data.
+        self.info = self.tree.GetItemPyData(item)
+
+        # Bring up the root menu.
+        if self.info == 'root':
+            self._root_menu()
+
+        # Bring up the molecule menu.
+        elif self.info[0] == 'mol':
+            self._mol_menu()
+
+        # Bring up the residue menu.
+        elif self.info[0] == 'res':
+            self._res_menu()
+
+        # Bring up the spin menu.
+        elif self.info[0] == 'spin':
+            self._spin_menu()
 
 
     def _mol_menu(self):
