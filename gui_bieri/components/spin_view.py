@@ -60,6 +60,9 @@ class Container(wx.Window):
         # Execute the base class method.
         wx.Window.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
 
+        # Set a minimum size for the window.
+        self.SetMinSize((500, 500))
+
         # Add a sizer.
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.main_sizer)
@@ -811,7 +814,7 @@ class Spin_view_window(wx.Frame):
         wx.Frame.__init__(self, *args, **kwds)
 
         # Some default values.
-        self.size_x = 1000
+        self.size_x = 1200
         self.size_y = 800
 
         # Set up the window.
@@ -883,6 +886,9 @@ class Spin_view_window(wx.Frame):
 
         # Set the default size of the controller.
         self.SetSize((self.size_x, self.size_y))
+
+        # Start maximised.
+        self.Maximize(True)
 
         # Return the sizer.
         return sizer
