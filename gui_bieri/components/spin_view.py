@@ -25,10 +25,11 @@
 
 
 # Python module imports.
+from string import replace
 import wx
 
 # relax module imports.
-from generic_fns.mol_res_spin import molecule_loop, residue_loop, spin_loop
+from generic_fns.mol_res_spin import generate_spin_id, molecule_loop, residue_loop, spin_loop
 from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
@@ -89,6 +90,12 @@ class Container(wx.Window):
         @return:        The subtitle object.
         @rtype:         wx.StaticText instance
         """
+
+        # Fix for the '&' character.
+        text = replace(text, '&', '&&')
+
+        # Unicode.
+        text = unicode(text)
 
         # The object.
         obj = wx.StaticText(self, -1, text)
@@ -170,6 +177,9 @@ class Container(wx.Window):
         # Store the args.
         self.mol_name = mol_name
 
+        # The molecule ID.
+        self.mol_id = generate_spin_id(mol_name=mol_name)
+
         # Create the header.
         sizer = self.mol_header()
 
@@ -205,6 +215,8 @@ class Container(wx.Window):
         grid_sizer = wx.FlexGridSizer(1, 2, 5, 50)
         grid_sizer.Add(self.create_subtitle("Molecule:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(self.mol_name), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("Molecule ID string:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("'%s'" % self.mol_id), 0, wx.ADJUST_MINSIZE, 0)
         text_sizer.Add(grid_sizer, 0, wx.LEFT, 0)
 
         # Add the text sizer to the main header sizer.
@@ -236,6 +248,9 @@ class Container(wx.Window):
         self.mol_name = mol_name
         self.res_num = res_num
         self.res_name = res_name
+
+        # The residue ID.
+        self.res_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name)
 
         # Create the header.
         sizer = self.res_header()
@@ -269,13 +284,15 @@ class Container(wx.Window):
         text_sizer.AddSpacer(30)
 
         # The info grid.
-        grid_sizer = wx.FlexGridSizer(3, 2, 5, 50)
+        grid_sizer = wx.FlexGridSizer(4, 2, 5, 50)
         grid_sizer.Add(self.create_subtitle("Molecule:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(self.mol_name), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Residue number:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(str(self.res_num)), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Residue name:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(self.res_name), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("Residue ID string:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("'%s'" % self.res_id), 0, wx.ADJUST_MINSIZE, 0)
         text_sizer.Add(grid_sizer, 0, wx.LEFT, 0)
 
         # Add the text sizer to the main header sizer.
@@ -314,6 +331,9 @@ class Container(wx.Window):
         self.spin_num = spin_num
         self.spin_name = spin_name
 
+        # The spin ID.
+        self.spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+
         # Create the header.
         sizer = self.spin_header()
 
@@ -346,7 +366,7 @@ class Container(wx.Window):
         text_sizer.AddSpacer(30)
 
         # The info grid.
-        grid_sizer = wx.FlexGridSizer(5, 2, 5, 50)
+        grid_sizer = wx.FlexGridSizer(6, 2, 5, 50)
         grid_sizer.Add(self.create_subtitle("Molecule:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(self.mol_name), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Residue number:"), 0, wx.ADJUST_MINSIZE, 0)
@@ -357,6 +377,8 @@ class Container(wx.Window):
         grid_sizer.Add(self.create_subtitle(str(self.spin_num)), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Spin name:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(self.spin_name), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("Spin ID string:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("'%s'" % self.spin_id), 0, wx.ADJUST_MINSIZE, 0)
         text_sizer.Add(grid_sizer, 0, wx.LEFT, 0)
 
         # Add the text sizer to the main header sizer.
