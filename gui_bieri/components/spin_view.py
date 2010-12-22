@@ -78,6 +78,7 @@ class Container(wx.Window):
 
         # Re-perform the window layout.
         self.Layout()
+        self.Refresh()
 
 
     def create_subtitle(self, text):
@@ -146,6 +147,7 @@ class Container(wx.Window):
 
         # Re-perform the window layout.
         self.Layout()
+        self.Refresh()
 
 
     def display_root(self):
