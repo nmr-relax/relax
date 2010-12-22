@@ -91,6 +91,9 @@ class Container(wx.Window):
         elif info[0] == 'spin':
             self.spin_container(info[1], info[2], info[3], info[4], info[5])
 
+        # Re-perform the window layout.
+        self.Layout()
+
 
     def display_root(self):
         """Build and display the root window."""
@@ -151,15 +154,25 @@ class Container(wx.Window):
 
         # A sizer for the header.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.main_sizer.Add(sizer, flag=wx.EXPAND)
 
         # Some text.
-        text = wx.StaticText(self, -1, "The spin container", (5,5))
-        sizer.Add(text, flag=wx.ALIGN_LEFT)
+        text = wx.StaticText(self, -1, "The spin container")
+        sizer.Add(text, 0, wx.LEFT, 0)
+
+        # Stretch spacer.
+        sizer.AddStretchSpacer()
 
         # The graphic.
         image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.WIZARD_IMAGE_PATH + 'spin.png', wx.BITMAP_TYPE_ANY))
-        sizer.Add(image, 0, wx.TOP|wx.ALIGN_RIGHT, 0)
+        sizer.Add(image, 0, wx.RIGHT, 0)
+
+        # Add to the main sizer.
+        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
+
+        # A divider.
+        line = wx.StaticLine(self, -1, (25, 50))
+        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, 0)
+
 
 
 
@@ -637,7 +650,7 @@ class Tree_splitter(wx.SplitterWindow):
         """
 
         # Execute the base class __init__() method.
-        wx.SplitterWindow.__init__(self, parent, id, style = wx.SP_LIVE_UPDATE)
+        wx.SplitterWindow.__init__(self, parent, id, style=wx.SP_LIVE_UPDATE)
 
         # Add the tree view panel.
         parent.tree_panel = Mol_res_spin_tree(gui, parent=self, id=-1)
