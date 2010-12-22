@@ -66,7 +66,7 @@ class Container(wx.Window):
         self.display_root()
 
 
-    def add_item(self, item):
+    def add_item(self, item, proportion=0, flag=0):
         """Add the given item to the main sizer, and keep track of it.
 
         @param item:    The item to add to the main sizer.
@@ -74,7 +74,7 @@ class Container(wx.Window):
         """
 
         # Add to the sizer.
-        self.main_sizer.Add(item)
+        self.main_sizer.Add(item, proportion=proportion, flag=flag)
 
         # Append it to the sizer list.
         self.sizer_items.append(item)
@@ -177,11 +177,17 @@ class Container(wx.Window):
         @type spin_name:     str
         """
 
+        # A sizer for the header.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.add_item(sizer, flag=wx.EXPAND)
+
         # Some text.
         text = wx.StaticText(self, -1, "The spin container", (5,5))
+        sizer.Add(text, flag=wx.ALIGN_LEFT)
 
-        # Add to the sizer.
-        self.add_item(text)
+        # The graphic.
+        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.WIZARD_IMAGE_PATH + 'spin.png', wx.BITMAP_TYPE_ANY))
+        sizer.Add(image, 0, wx.TOP|wx.ALIGN_RIGHT, 0)
 
 
 
