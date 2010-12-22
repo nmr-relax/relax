@@ -83,12 +83,8 @@ class Container(wx.Window):
     def clear(self):
         """Clear the contents of the window."""
 
-        # Loop over the sizer items, destroying them.
-        for item in self.sizer_items:
-            item.Destroy()
-
-        # Reset the sizer content list.
-        self.sizer_items = []
+        # Destroy all contents.
+        self.main_sizer.Clear(deleteWindows=True)
 
 
     def display(self, info):
