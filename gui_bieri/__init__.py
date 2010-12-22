@@ -62,14 +62,36 @@ __all__ = ['about',
 class App(wx.App):
     """The relax GUI wx application."""
 
-    def OnInit(self):
+    def __init__(self, script=None, redirect=False, filename=None, useBestVisual=False, clearSigInt=True):
+        """Initialise the wx.App.
+
+        @keyword redirect:      Should sys.stdout and sys.stderr be redirected? Defaults to True on Windows and Mac, False otherwise. If filename is None then output will be redirected to a window that pops up as needed. (You can control what kind of window is created for the output by resetting the class variable outputWindowClass to a class of your choosing.)
+        @type redirect:         bool
+        @keyword filename:      The name of a file to redirect output to, if redirect is True.
+        @type filename:         file object
+        @keyword useBestVisual: Should the app try to use the best available visual provided by the system (only relevant on systems that have more than one visual.) This parameter must be used instead of calling SetUseBestVisual later on because it must be set before the underlying GUI toolkit is initialized.
+        @type useBestVisual:    bool
+        @keyword clearSigInt:   Should SIGINT be cleared? This allows the app to terminate upon a Ctrl-C in the console like other GUI apps will.
+        @type clearSigInt:      bool
+        @keyword script:        The path of a relax script to execute.
+        @type script:           str
+        """
+
+        # Store the script.
+        self.script = script
+
+        # Execute the base class method.
+        super(App, self).__init__(redirect=redirect, filename=filename, useBestVisual=useBestVisual, clearSigInt=clearSigInt)
+
+
+    def OnInit(self, script_file=None):
         """Build the application, showing a splash screen first."""
 
         # Show the splash screen.
         self.show_splash()
 
         # Build the GUI.
-        main = Main(parent=None, id=-1, title="")
+        main = Main(parent=None, id=-1, title="", script=self.script)
 
         # Make it the main application component.
         self.SetTopWindow(main)

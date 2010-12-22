@@ -135,7 +135,7 @@ class Relax:
                 sys.exit()
 
             # Start the relax GUI wx application.
-            app = gui_bieri.App()
+            app = gui_bieri.App(script=self.script_file)
             app.MainLoop()
 
         # Execute the relax test suite
@@ -315,16 +315,8 @@ class Relax:
             # Set the mode.
             mode = 'licence'
 
-        # Script mode.
-        elif self.script_file:
-            mode = 'script'
-
         # GUI.
         elif options.gui:
-            # Make sure no script is supplied.
-            if self.script_file:
-                parser.error("a script should not be supplied in test mode")
-
             # Exclusive models.
             if options.test_suite or options.system_tests or options.unit_tests:
                 parser.error("the relax GUI mode and testing modes are mutually exclusive")
@@ -337,6 +329,10 @@ class Relax:
 
             # Set the mode.
             mode = 'gui'
+
+        # Script mode.
+        elif self.script_file:
+            mode = 'script'
 
         # Prompt mode (default).
         else:

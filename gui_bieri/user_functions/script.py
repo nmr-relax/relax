@@ -34,15 +34,18 @@ from gui_bieri.filedialog import openfile
 class Script(UF_base):
     """The script user function GUI class."""
 
-    def run(self, event):
+    def run(self, event, file=None):
         """The script user function GUI element.
 
         @param event:   The wx event.
         @type event:    wx event
+        @param file:    The path of the script to execute, if already known.  If not given, a file selection dialog will appear.
+        @type file:     str
         """
 
         # User selection of the file.
-        file = openfile(msg='Select the relax script to execute', default='relax scripts (*.py)|*.py')
+        if not file:
+            file = openfile(msg='Select the relax script to execute', default='relax scripts (*.py)|*.py')
 
         # Check the file.
         if not file:

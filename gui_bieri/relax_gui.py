@@ -76,14 +76,14 @@ class Main(wx.Frame):
     sequence_file_msg = "please insert sequence file"
     structure_file_pdb_msg = "please insert .pdb file"
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, parent=None, id=-1, title="", script=None):
         """Initialise the main relax GUI frame."""
 
-        # Add the style keyword value.
-        kwds["style"] = wx.CLOSE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN
+        # The window style.
+        style = wx.CLOSE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN
 
         # Execute the base class __init__ method.
-        super(Main, self).__init__(*args, **kwds)
+        super(Main, self).__init__(parent=parent, id=id, title=title, style=style)
 
         # The analysis frame object storage.
         self.analysis_frames = []
@@ -147,6 +147,10 @@ class Main(wx.Frame):
         # Pre-build the about dialogs, but do not show them.
         self.dialog_about_gui = About_gui(None, -1, "")
         self.dialog_about_relax = About_relax(None, -1, "")
+
+        # Run a script.
+        if script:
+            self.user_functions.script.script_exec(script)
 
 
     def __do_layout(self):
