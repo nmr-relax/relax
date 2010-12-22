@@ -92,11 +92,11 @@ class Container(wx.Window):
         @rtype:         wx.StaticText instance
         """
 
-        # Fix for the '&' character.
-        text = replace(text, '&', '&&')
-
         # Unicode.
         text = unicode(text)
+
+        # Fix for the '&' character.
+        text = replace(text, '&', '&&')
 
         # The object.
         obj = wx.StaticText(self, -1, text)
@@ -289,7 +289,7 @@ class Container(wx.Window):
         grid_sizer.Add(self.create_subtitle("Molecule:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(self.mol_name), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Residue number:"), 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer.Add(self.create_subtitle(str(self.res_num)), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(self.res_num), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Residue name:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(self.res_name), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Residue ID string:"), 0, wx.ADJUST_MINSIZE, 0)
@@ -375,11 +375,11 @@ class Container(wx.Window):
         grid_sizer.Add(self.create_subtitle("Molecule:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(self.mol_name), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Residue number:"), 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer.Add(self.create_subtitle(str(self.res_num)), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(self.res_num), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Residue name:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(self.res_name), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Spin number:"), 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer.Add(self.create_subtitle(str(self.spin_num)), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(self.spin_num), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Spin name:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(self.spin_name), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Spin ID string:"), 0, wx.ADJUST_MINSIZE, 0)
