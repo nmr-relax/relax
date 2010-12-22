@@ -111,8 +111,6 @@ class Container(wx.Window):
         @type info:     list of str and int
         """
 
-        print "Displaying %s" % info
-
         # Destroy all the original contents.
         self.main_sizer.Clear(deleteWindows=True)
 
@@ -153,11 +151,58 @@ class Container(wx.Window):
         @type mol_name:     str
         """
 
-        # Some text.
-        text = wx.StaticText(self, -1, "The molecule container", (5,5))
+        # Store the args.
+        self.mol_name = mol_name
+
+        # Create the header.
+        sizer = self.mol_header()
 
         # Add to the sizer.
-        self.main_sizer.Add(text, border=self.border)
+        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
+
+        # A divider.
+        line = wx.StaticLine(self, -1, (25, 50))
+        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
+
+
+    def mol_header(self):
+        """Create the header for the molecule container.
+
+        @return:    The sizer containing the header.
+        @rtype:     wx.Sizer instance
+        """
+
+        # A sizer for the header.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # A sizer for the text component of the header.
+        text_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # The title
+        title = self.create_title("Molecule container")
+        text_sizer.Add(title, 0, wx.LEFT, 0)
+
+        # Spacer.
+        text_sizer.AddSpacer(30)
+
+        # The info grid.
+        grid_sizer = wx.FlexGridSizer(1, 2, 5, 50)
+        grid_sizer.Add(self.create_subtitle("Molecule:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(self.mol_name), 0, wx.ADJUST_MINSIZE, 0)
+        text_sizer.Add(grid_sizer, 0, wx.LEFT, 0)
+
+        # Add the text sizer to the main header sizer.
+        sizer.Add(text_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Stretch spacer.
+        sizer.AddStretchSpacer()
+
+        # The graphic.
+        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.WIZARD_IMAGE_PATH + 'molecule.png', wx.BITMAP_TYPE_ANY))
+        sizer.Add(image, 0, wx.RIGHT, 0)
+
+        # Return the sizer.
+        return sizer
 
 
     def res_container(self, mol_name=None, res_num=None, res_name=None):
@@ -171,11 +216,64 @@ class Container(wx.Window):
         @type res_name:     str
         """
 
-        # Some text.
-        text = wx.StaticText(self, -1, "The residue container", (5,5))
+        # Store the args.
+        self.mol_name = mol_name
+        self.res_num = res_num
+        self.res_name = res_name
 
-        # Add to the sizer.
-        self.main_sizer.Add(text, border=self.border)
+        # Create the header.
+        sizer = self.res_header()
+
+        # Add to the main sizer.
+        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
+
+        # A divider.
+        line = wx.StaticLine(self, -1, (25, 50))
+        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
+
+
+    def res_header(self):
+        """Create the header for the residue container.
+
+        @return:    The sizer containing the header.
+        @rtype:     wx.Sizer instance
+        """
+
+        # A sizer for the header.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # A sizer for the text component of the header.
+        text_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # The title
+        title = self.create_title("Residue container")
+        text_sizer.Add(title, 0, wx.LEFT, 0)
+
+        # Spacer.
+        text_sizer.AddSpacer(30)
+
+        # The info grid.
+        grid_sizer = wx.FlexGridSizer(3, 2, 5, 50)
+        grid_sizer.Add(self.create_subtitle("Molecule:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(self.mol_name), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("Residue number:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(str(self.res_num)), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("Residue name:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(self.res_name), 0, wx.ADJUST_MINSIZE, 0)
+        text_sizer.Add(grid_sizer, 0, wx.LEFT, 0)
+
+        # Add the text sizer to the main header sizer.
+        sizer.Add(text_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Stretch spacer.
+        sizer.AddStretchSpacer()
+
+        # The graphic.
+        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.WIZARD_IMAGE_PATH + 'residue.png', wx.BITMAP_TYPE_ANY))
+        sizer.Add(image, 0, wx.RIGHT, 0)
+
+        # Return the sizer.
+        return sizer
 
 
     def spin_container(self, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
@@ -232,7 +330,7 @@ class Container(wx.Window):
         text_sizer.AddSpacer(30)
 
         # The info grid.
-        grid_sizer = wx.FlexGridSizer(3, 2, 5, 50)
+        grid_sizer = wx.FlexGridSizer(5, 2, 5, 50)
         grid_sizer.Add(self.create_subtitle("Molecule:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle(self.mol_name), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_subtitle("Residue number:"), 0, wx.ADJUST_MINSIZE, 0)
