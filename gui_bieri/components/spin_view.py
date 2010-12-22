@@ -26,7 +26,7 @@
 
 # Python module imports.
 from re import search
-from string import replace
+from string import replace, split
 import wx
 
 # relax module imports.
@@ -451,8 +451,11 @@ class Container(wx.Window):
             # Get the object.
             obj = getattr(spin, name)
 
+            # The type.
+            obj_type = split(str(type(obj)), "'")[1]
+
             # Add the data to the list.
-            table.Append((name, obj, type(obj)))
+            table.Append((name, obj, obj_type))
 
         # Add the table to the sizer.
         sizer.Add(table, 1, wx.ALL|wx.EXPAND, 0)
