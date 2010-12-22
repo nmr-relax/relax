@@ -25,6 +25,7 @@
 
 
 # Python module imports.
+from re import search
 from string import replace
 import wx
 
@@ -399,11 +400,13 @@ class Container(wx.Window):
         return sizer
 
 
-    def spin_vars(self):
+    def spin_vars(self, blacklist=[]):
         """Create the variable table for the spin container.
 
-        @return:    The sizer containing the table.
-        @rtype:     wx.Sizer instance
+        @keyword blacklist: A list of spin container objects to blacklist from the variable display table.
+        @type blacklist:    list of str
+        @return:            The sizer containing the table.
+        @rtype:             wx.Sizer instance
         """
 
         # A sizer for the table.
@@ -432,8 +435,19 @@ class Container(wx.Window):
         # The spin container.
         spin = return_spin(self.spin_id)
 
+        # Add some names to the blacklist.
+        blacklist += ['is_empty']
+
         # Loop over the contents of the spin container.
         for name in dir(spin):
+            # Skip special objects.
+            if search('^_', name):
+                continue
+
+            # Blacklisted names.
+            if name in blacklist:
+                continue
+
             # Get the object.
             obj = getattr(spin, name)
 
