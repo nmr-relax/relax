@@ -42,7 +42,7 @@ class Script(UF_base):
         """
 
         # User selection of the file.
-        file = openfile(msg='Select the relax script to execute')
+        file = openfile(msg='Select the relax script to execute', default='relax scripts (*.py)|*.py')
 
         # Check the file.
         if not file:
