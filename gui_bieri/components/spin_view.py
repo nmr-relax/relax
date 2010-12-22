@@ -52,6 +52,9 @@ class Container(wx.Window):
         # Store the args.
         self.gui = gui
 
+        # Some variables.
+        self.border = 10
+
         # Execute the base class method.
         wx.Window.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
 
@@ -102,7 +105,7 @@ class Container(wx.Window):
         text = wx.StaticText(self, -1, "The spin view window", (5,5))
 
         # Add to the sizer.
-        self.main_sizer.Add(text)
+        self.main_sizer.Add(text, border=self.border)
 
 
     def mol_container(self, mol_name=None):
@@ -116,7 +119,7 @@ class Container(wx.Window):
         text = wx.StaticText(self, -1, "The molecule container", (5,5))
 
         # Add to the sizer.
-        self.main_sizer.Add(text)
+        self.main_sizer.Add(text, border=self.border)
 
 
     def res_container(self, mol_name=None, res_num=None, res_name=None):
@@ -134,7 +137,7 @@ class Container(wx.Window):
         text = wx.StaticText(self, -1, "The residue container", (5,5))
 
         # Add to the sizer.
-        self.main_sizer.Add(text)
+        self.main_sizer.Add(text, border=self.border)
 
 
     def spin_container(self, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
@@ -167,11 +170,11 @@ class Container(wx.Window):
         sizer.Add(image, 0, wx.RIGHT, 0)
 
         # Add to the main sizer.
-        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
+        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
 
         # A divider.
         line = wx.StaticLine(self, -1, (25, 50))
-        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, 0)
+        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
 
 
 
@@ -499,7 +502,6 @@ class Spin_view_window(wx.Frame):
         # Some default values.
         self.size_x = 1000
         self.size_y = 800
-        self.border = 0
 
         # Set up the window.
         sizer = self.setup_window()
@@ -509,7 +511,7 @@ class Spin_view_window(wx.Frame):
 
         # The splitter window.
         splitter = Tree_splitter(self.gui, self, -1)
-        sizer.Add(splitter, 1, wx.EXPAND|wx.ALL, self.border)
+        sizer.Add(splitter, 1, wx.EXPAND|wx.ALL, 0)
 
 
     def Show(self, show=True):
