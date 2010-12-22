@@ -66,6 +66,44 @@ class Container(wx.Window):
         self.display_root()
 
 
+    def create_subtitle(self, text):
+        """Generate the subtitle wx.StaticText object.
+
+        @param text:    The text of the subtitle.
+        @type text:     str
+        @return:        The subtitle object.
+        @rtype:         wx.StaticText instance
+        """
+
+        # The object.
+        obj = wx.StaticText(self, -1, text)
+
+        # Formatting.
+        obj.SetFont(wx.Font(pointSize=12, family=wx.FONTFAMILY_ROMAN, style=wx.ITALIC, weight=wx.NORMAL, face='Times'))
+
+        # Return the object.
+        return obj
+
+
+    def create_title(self, text):
+        """Generate the title wx.StaticText object.
+
+        @param text:    The text of the subtitle.
+        @type text:     str
+        @return:        The subtitle object.
+        @rtype:         wx.StaticText instance
+        """
+
+        # The object.
+        title = wx.StaticText(self, -1, text)
+
+        # Formatting.
+        title.SetFont(wx.Font(pointSize=32, family=wx.FONTFAMILY_ROMAN, style=wx.ITALIC, weight=wx.NORMAL, face='Times'))
+
+        # Return the object.
+        return title
+
+
     def display(self, info):
         """Display the info for the selected container.
 
@@ -155,19 +193,15 @@ class Container(wx.Window):
         @type spin_name:     str
         """
 
-        # A sizer for the header.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        # Store the args.
+        self.mol_name = mol_name
+        self.res_num = res_num
+        self.res_name = res_name
+        self.spin_num = spin_num
+        self.spin_name = spin_name
 
-        # Some text.
-        text = wx.StaticText(self, -1, "The spin container")
-        sizer.Add(text, 0, wx.LEFT, 0)
-
-        # Stretch spacer.
-        sizer.AddStretchSpacer()
-
-        # The graphic.
-        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.WIZARD_IMAGE_PATH + 'spin.png', wx.BITMAP_TYPE_ANY))
-        sizer.Add(image, 0, wx.RIGHT, 0)
+        # Create the header.
+        sizer = self.spin_header()
 
         # Add to the main sizer.
         self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
@@ -176,6 +210,53 @@ class Container(wx.Window):
         line = wx.StaticLine(self, -1, (25, 50))
         self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
 
+
+    def spin_header(self):
+        """Create the header for the spin container.
+
+        @return:    The sizer containing the header.
+        @rtype:     wx.Sizer instance
+        """
+
+        # A sizer for the header.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # A sizer for the text component of the header.
+        text_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # The title
+        title = self.create_title("Spin container")
+        text_sizer.Add(title, 0, wx.LEFT, 0)
+
+        # Spacer.
+        text_sizer.AddSpacer(30)
+
+        # The info grid.
+        grid_sizer = wx.FlexGridSizer(3, 2, 5, 50)
+        grid_sizer.Add(self.create_subtitle("Molecule:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(self.mol_name), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("Residue number:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(str(self.res_num)), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("Residue name:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(self.res_name), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("Spin number:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(str(self.spin_num)), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle("Spin name:"), 0, wx.ADJUST_MINSIZE, 0)
+        grid_sizer.Add(self.create_subtitle(self.spin_name), 0, wx.ADJUST_MINSIZE, 0)
+        text_sizer.Add(grid_sizer, 0, wx.LEFT, 0)
+
+        # Add the text sizer to the main header sizer.
+        sizer.Add(text_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Stretch spacer.
+        sizer.AddStretchSpacer()
+
+        # The graphic.
+        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.WIZARD_IMAGE_PATH + 'spin.png', wx.BITMAP_TYPE_ANY))
+        sizer.Add(image, 0, wx.RIGHT, 0)
+
+        # Return the sizer.
+        return sizer
 
 
 
