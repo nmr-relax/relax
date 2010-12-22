@@ -59,32 +59,8 @@ class Container(wx.Window):
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.main_sizer)
 
-        # Init the sizer content list.
-        self.sizer_items = []
-
         # Display the root window.
         self.display_root()
-
-
-    def add_item(self, item, proportion=0, flag=0):
-        """Add the given item to the main sizer, and keep track of it.
-
-        @param item:    The item to add to the main sizer.
-        @type item:     wx object
-        """
-
-        # Add to the sizer.
-        self.main_sizer.Add(item, proportion=proportion, flag=flag)
-
-        # Append it to the sizer list.
-        self.sizer_items.append(item)
-
-
-    def clear(self):
-        """Clear the contents of the window."""
-
-        # Destroy all contents.
-        self.main_sizer.Clear(deleteWindows=True)
 
 
     def display(self, info):
@@ -97,7 +73,7 @@ class Container(wx.Window):
         print "Displaying %s" % info
 
         # Destroy all the original contents.
-        self.clear()
+        self.main_sizer.Clear(deleteWindows=True)
 
         # The root window display.
         if info == 'root':
@@ -123,7 +99,7 @@ class Container(wx.Window):
         text = wx.StaticText(self, -1, "The spin view window", (5,5))
 
         # Add to the sizer.
-        self.add_item(text)
+        self.main_sizer.Add(text)
 
 
     def mol_container(self, mol_name=None):
@@ -137,7 +113,7 @@ class Container(wx.Window):
         text = wx.StaticText(self, -1, "The molecule container", (5,5))
 
         # Add to the sizer.
-        self.add_item(text)
+        self.main_sizer.Add(text)
 
 
     def res_container(self, mol_name=None, res_num=None, res_name=None):
@@ -155,7 +131,7 @@ class Container(wx.Window):
         text = wx.StaticText(self, -1, "The residue container", (5,5))
 
         # Add to the sizer.
-        self.add_item(text)
+        self.main_sizer.Add(text)
 
 
     def spin_container(self, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
@@ -175,7 +151,7 @@ class Container(wx.Window):
 
         # A sizer for the header.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.add_item(sizer, flag=wx.EXPAND)
+        self.main_sizer.Add(sizer, flag=wx.EXPAND)
 
         # Some text.
         text = wx.StaticText(self, -1, "The spin container", (5,5))
