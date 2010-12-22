@@ -29,7 +29,7 @@ from string import replace
 import wx
 
 # relax module imports.
-from generic_fns.mol_res_spin import generate_spin_id, molecule_loop, residue_loop, spin_loop
+from generic_fns.mol_res_spin import generate_spin_id, molecule_loop, residue_loop, return_spin, spin_loop
 from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
@@ -344,6 +344,10 @@ class Container(wx.Window):
         line = wx.StaticLine(self, -1, (25, 50))
         self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
 
+        # The spin container variables.
+        sizer2 = self.spin_vars()
+        self.main_sizer.Add(sizer2, 1, wx.ALL|wx.EXPAND, border=self.border)
+
 
     def spin_header(self):
         """Create the header for the spin container.
@@ -390,6 +394,54 @@ class Container(wx.Window):
         # The graphic.
         image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.WIZARD_IMAGE_PATH + 'spin.png', wx.BITMAP_TYPE_ANY))
         sizer.Add(image, 0, wx.RIGHT, 0)
+
+        # Return the sizer.
+        return sizer
+
+
+    def spin_vars(self):
+        """Create the variable table for the spin container.
+
+        @return:    The sizer containing the table.
+        @rtype:     wx.Sizer instance
+        """
+
+        # A sizer for the table.
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # The title
+        title = self.create_subtitle("Spin container contents:")
+        sizer.Add(title, 0, wx.LEFT, 0)
+
+        # Add a spacer.
+        sizer.AddSpacer(20)
+
+        # The table.
+        table = wx.ListCtrl(self, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
+
+        # The headers.
+        table.InsertColumn(0, "Variable")
+        table.InsertColumn(1, "Value")
+        table.InsertColumn(2, "Type")
+
+        # The widths.
+        table.SetColumnWidth(0, 300)
+        table.SetColumnWidth(1, 200)
+        table.SetColumnWidth(2, 200)
+
+        # The spin container.
+        spin = return_spin(self.spin_id)
+
+        # Loop over the contents of the spin container.
+        for name in dir(spin):
+            # Get the object.
+            obj = getattr(spin, name)
+
+            # Add the data to the list.
+            table.Append((name, obj, type(obj)))
+
+        # Add the table to the sizer.
+        sizer.Add(table, 1, wx.ALL|wx.EXPAND, 0)
 
         # Return the sizer.
         return sizer
