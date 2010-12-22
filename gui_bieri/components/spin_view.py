@@ -65,6 +65,20 @@ class Container(wx.Window):
         # Display the root window.
         self.display_root()
 
+        # Resizing.
+        self.Bind(wx.EVT_SIZE, self._resize)
+
+
+    def _resize(self, event):
+        """Resize the tree element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Re-perform the window layout.
+        self.Layout()
+
 
     def create_subtitle(self, text):
         """Generate the subtitle wx.StaticText object.
