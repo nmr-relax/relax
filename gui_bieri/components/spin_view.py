@@ -35,14 +35,135 @@ from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 from gui_bieri import paths
 
 
+class Container(wx.Window):
+    """The molecule, residue, and spin container window."""
+
+    def __init__(self, gui, parent=None, id=None):
+        """Set up the tree GUI element.
+
+        @param gui:         The gui object.
+        @type gui:          wx object
+        @keyword parent:    The parent GUI element that this is to be attached to.
+        @type parent:       wx object
+        @keyword id:        The ID number.
+        @type id:           int
+        """
+
+        # Store the args.
+        self.gui = gui
+
+        # Execute the base class method.
+        wx.Window.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
+
+        # Add a sizer.
+        self.main_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self.main_sizer)
+
+        # Display the root window.
+        self.display_root()
+
+
+    def display(self, info):
+        """Display the info for the selected container.
+
+        @param info:    The information list consisting of the container type ('root', 'mol', 'res', or 'spin'), the molecule name, the residue number, the residue name, the spin number, and the spin name.  The name and number information is dropped when not needed.
+        @type info:     list of str and int
+        """
+
+        # The root window display.
+        if info == 'root':
+            self.display_root()
+
+        # The molecule container display.
+        elif info[0] == 'mol':
+            self.mol_container(info[1])
+
+        # The residue container display.
+        elif info[0] == 'res':
+            self.res_container(info[1], info[2], info[3])
+
+        # The spin container display.
+        elif info[0] == 'spin':
+            self.spin_container(info[1], info[2], info[3], info[4], info[5])
+
+
+    def display_root(self):
+        """Build and display the root window."""
+
+        # Some text.
+        text = wx.StaticText(self, -1, "The spin view window", (5,5))
+
+        # Add to the sizer.
+        self.main_sizer.Add(text)
+
+
+    def mol_container(self, mol_name=None):
+        """Build and display the molecule container
+
+        @keyword mol_name:  The name of the molecule.
+        @type mol_name:     str
+        """
+
+        # Some text.
+        text = wx.StaticText(self, -1, "The molecule container", (5,5))
+
+        # Add to the sizer.
+        self.main_sizer.Add(text)
+
+
+    def res_container(self, mol_name=None, res_num=None, res_name=None):
+        """Build and display the residue container
+
+        @keyword mol_name:  The molecule name.
+        @type mol_name:     str
+        @keyword res_num:   The residue number.
+        @type res_num:      str
+        @keyword res_name:  The residue name.
+        @type res_name:     str
+        """
+
+        # Some text.
+        text = wx.StaticText(self, -1, "The residue container", (5,5))
+
+        # Add to the sizer.
+        self.main_sizer.Add(text)
+
+
+    def spin_container(self, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+        """Build and display the spin container
+
+        @keyword mol_name:  The molecule name.
+        @type mol_name:     str
+        @keyword res_num:   The residue number.
+        @type res_num:      str
+        @keyword res_name:  The residue name.
+        @type res_name:     str
+        @keyword spin_num:   The spin number.
+        @type spin_num:      str
+        @keyword spin_name:  The spin name.
+        @type spin_name:     str
+        """
+
+        # Some text.
+        text = wx.StaticText(self, -1, "The spin container", (5,5))
+
+        # Add to the sizer.
+        self.main_sizer.Add(text)
+
+
+
 class Mol_res_spin_tree(wx.Window):
     """The tree view class."""
 
     def __init__(self, gui, parent=None, id=None):
         """Set up the tree GUI element.
 
+        @param gui:         The gui object.
+        @type gui:          wx object
         @keyword parent:    The parent GUI element that this is to be attached to.
         @type parent:       wx object
+        @keyword id:        The ID number.
+        @type id:           int
         """
 
         # Store the args.
@@ -205,7 +326,10 @@ class Mol_res_spin_tree(wx.Window):
         item = event.GetItem()
 
         # The python data.
-        self.info = self.tree.GetItemPyData(item)
+        info = self.tree.GetItemPyData(item)
+
+        # Display the container.
+        self.gui.spin_view.container.display(info)
 
 
     def _spin_menu(self):
@@ -504,12 +628,11 @@ class Tree_splitter(wx.SplitterWindow):
         # Execute the base class __init__() method.
         wx.SplitterWindow.__init__(self, parent, id, style = wx.SP_LIVE_UPDATE)
 
-        # The container window.
-        parent.container = wx.Window(self, style=wx.BORDER_SUNKEN)
-        wx.StaticText(parent.container, -1, "The spin view window", (5,5))
-
         # Add the tree view panel.
         parent.tree_panel = Mol_res_spin_tree(gui, parent=self, id=-1)
+
+        # The container window.
+        parent.container = Container(gui, parent=self, id=-1)
 
         # Make sure the panes cannot be hidden.
         self.SetMinimumPaneSize(100)
