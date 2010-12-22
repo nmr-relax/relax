@@ -189,11 +189,15 @@ class Container(wx.Window):
     def display_root(self):
         """Build and display the root window."""
 
-        # Some text.
-        text = wx.StaticText(self, -1, "The spin view window", (5,5))
+        # A sizer for the header.
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # The title
+        title = self.create_title("The spin view window")
+        sizer.Add(title, 0, wx.LEFT, 0)
 
         # Add to the sizer.
-        self.main_sizer.Add(text, border=self.border)
+        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
 
 
     def mol_container(self, mol_name=None):
