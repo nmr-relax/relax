@@ -956,6 +956,9 @@ class Spin_view_window(wx.Frame):
         self.Bind(wx.EVT_COMBOBOX, self.update_pipes, self.pipe_name)
         self.update_pipes(None)
 
+        # Build the toolbar.
+        self.bar.Realize()
+
 
     def update_pipes(self, event=None):
         """Update the spin view data pipe selector.
