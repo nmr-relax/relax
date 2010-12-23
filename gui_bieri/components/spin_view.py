@@ -936,7 +936,7 @@ class Spin_view_window(wx.Frame):
         """Create the toolbar."""
 
         # Init.
-        self.bar = self.CreateToolBar(wx.TB_HORIZONTAL)
+        self.bar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT)
 
         # The refresh button.
         id = wx.NewId()
