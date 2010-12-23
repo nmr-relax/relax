@@ -103,7 +103,7 @@ class Add_window(UF_window):
         self.mol = self.input_field(sizer, "The name of the molecule:")
 
         # The type selection.
-        self.mol_type = self.combo_box(sizer, "The type of molecule:", [''] + ALLOWED_MOL_TYPES)
+        self.mol_type = self.combo_box(sizer, "The type of molecule:", ALLOWED_MOL_TYPES)
 
 
     def execute(self):
