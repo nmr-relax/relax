@@ -113,7 +113,7 @@ class Add_window(UF_window):
         self.pipe_name = self.input_field(sizer, "The data pipe name:")
 
         # The type selection.
-        self.pipe_type = self.combo_box(sizer, "The type of data pipe:", [''] + VALID_TYPES)
+        self.pipe_type = self.combo_box(sizer, "The type of data pipe:", VALID_TYPES)
 
 
     def execute(self):
