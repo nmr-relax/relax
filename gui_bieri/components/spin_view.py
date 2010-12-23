@@ -486,8 +486,42 @@ class Container(wx.Window):
             # The type.
             obj_type = split(str(type(obj)), "'")[1]
 
-            # Add the data to the list.
-            table.Append((name, obj, obj_type))
+            # List types.
+            if obj_type in ['list', 'numpy.ndarray'] and len(obj) > 1:
+                # The first row.
+                table.Append((name, "[%s," % obj[0], obj_type))
+
+                # The rest of the rows.
+                for i in range(1, len(obj)-1):
+                    table.Append(('', " %s," % obj[i], ''))
+
+                # The last row.
+                table.Append(('', " %s]" % obj[-1], ''))
+
+            # Dictionary types.
+            elif obj_type == 'dict':
+                # The keys.
+                keys = obj.keys()
+                keys.sort()
+
+                # Single entry (or None).
+                if len(keys) < 2:
+                    table.Append((name, obj, obj_type))
+                    continue
+
+                # The first row.
+                table.Append((name, "{'%s': %s," % (keys[0], obj[keys[0]]), obj_type))
+
+                # The rest of the rows.
+                for i in range(1, len(keys)-1):
+                    table.Append(('', " '%s': %s," % (keys[i], obj[keys[i]]), ''))
+
+                # The last row.
+                table.Append(('', " '%s': %s}" % (keys[-1], obj[keys[-1]]), ''))
+
+            # All other data types.
+            else:
+                table.Append((name, obj, obj_type))
 
         # Add the table to the sizer.
         sizer.Add(table, 1, wx.ALL|wx.EXPAND, 0)
