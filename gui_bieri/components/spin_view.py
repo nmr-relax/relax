@@ -978,9 +978,6 @@ class Spin_view_window(wx.Frame):
         # Clear the previous data.
         self.pipe_name.Clear()
 
-        # Set the pipe name to the cdp.
-        self.pipe_name.SetValue(pipe)
-
         # The list of pipe names.
         for name in pipe_names():
             self.pipe_name.Append(name)
@@ -992,6 +989,9 @@ class Spin_view_window(wx.Frame):
 
             # Update the tree view.
             self.tree_panel.update()
+
+        # Set the pipe name to the cdp.
+        self.pipe_name.SetValue(pipe)
 
 
 
