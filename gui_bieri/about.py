@@ -83,6 +83,41 @@ class About_base(wx.Frame):
         event.Skip()
 
 
+    def draw_wrapped_text(self, text, text_size=10, width=69, spacer=10):
+        """Generic method for drawing wrapped text in the relax about widget.
+
+        @param text:        The text to wrap and draw.
+        @type text:         str
+        @keyword spacer:    The pixel width of the spacer to place above the text block.
+        @type spacer:       int
+        """
+
+        # Set the font.
+        font = wx.Font(text_size, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
+        self.dc.SetFont(font)
+
+        # Wrap the text.
+        lines = wrap(text, width)
+
+        # Find the max y extent.
+        max_y = 0
+        for line in lines:
+            x, y = self.dc.GetTextExtent(text)
+            if y > max_y:
+                max_y = y
+
+        # Add a top spacer.
+        self.offset(10)
+
+        # Draw.
+        for line in lines:
+            # Draw the text.
+            self.dc.DrawText(line, self.boarder, self.offset())
+
+            # Update the offset.
+            self.offset(max_y + 1)
+
+
     def generate(self, event):
         """Build the device context, add the background, and build the dialog.
 
@@ -98,6 +133,28 @@ class About_base(wx.Frame):
 
         # Build the rest of the about widget.
         self.build_widget()
+
+
+    def offset(self, val=0, init=False):
+        """Shift the offset by the given value and return the offset.
+
+        @keyword val:   The value to add to the offset (can be negative).
+        @type val:      int
+        @keyword init:  Flag for initialising the offset.
+        @type init:     bool
+        @return:        The current offset.
+        @rtype:         int
+        """
+
+        # Initialisation.
+        if init or not hasattr(self, '_offset_val'):
+            self._offset_val = 0
+
+        # Shift.
+        self._offset_val = self._offset_val + val
+
+        # Return.
+        return self._offset_val
 
 
     def process_click(self, event):
@@ -325,63 +382,6 @@ class About_relax(About_base):
 
         # Add the text extent.
         self.offset(y)
-
-
-    def draw_wrapped_text(self, text, spacer=10):
-        """Generic method for drawing wrapped text in the relax about widget.
-
-        @param text:        The text to wrap and draw.
-        @type text:         str
-        @keyword spacer:    The pixel width of the spacer to place above the text block.
-        @type spacer:       int
-        """
-
-        # Set the font.
-        font = wx.Font(10, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
-        self.dc.SetFont(font)
-
-        # Wrap the text.
-        lines = wrap(text, 69)
-
-        # Find the max y extent.
-        max_y = 0
-        for line in lines:
-            x, y = self.dc.GetTextExtent(text)
-            if y > max_y:
-                max_y = y
-
-        # Add a top spacer.
-        self.offset(10)
-
-        # Draw.
-        for line in lines:
-            # Draw the text.
-            self.dc.DrawText(line, self.boarder, self.offset())
-
-            # Update the offset.
-            self.offset(max_y + 1)
-
-
-    def offset(self, val=0, init=False):
-        """Shift the offset by the given value and return the offset.
-
-        @keyword val:   The value to add to the offset (can be negative).
-        @type val:      int
-        @keyword init:  Flag for initialising the offset.
-        @type init:     bool
-        @return:        The current offset.
-        @rtype:         int
-        """
-
-        # Initialisation.
-        if init or not hasattr(self, '_offset_val'):
-            self._offset_val = 0
-
-        # Shift.
-        self._offset_val = self._offset_val + val
-
-        # Return.
-        return self._offset_val
 
 
     def process_click(self, event):
