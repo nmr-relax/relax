@@ -49,7 +49,7 @@ from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
 from gui_bieri.message import error_message, missing_data
-from gui_bieri.paths import IMAGE_PATH
+from gui_bieri import paths
 
 
 class Auto_model_free:
@@ -112,7 +112,7 @@ class Auto_model_free:
         sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The button.
-        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         button.SetName('hello')
         button.SetSize(button.GetBestSize())
         self.gui.Bind(wx.EVT_BUTTON, self.automatic_protocol_controller, button)
@@ -710,9 +710,36 @@ class Auto_model_free:
         # Use a horizontal packing of elements.
         box = wx.BoxSizer(wx.HORIZONTAL)
 
+        # Build the left hand box.
+        left_box = wx.BoxSizer(wx.VERTICAL)
+
         # Add the model-free bitmap picture.
-        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
-        box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 0)
+        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
+        left_box.Add(bitmap, 0, wx.ALL, 0)
+
+        # A spacer.
+        left_box.AddStretchSpacer()
+
+        # A button sizer, with some initial spacing.
+        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        button_sizer.AddSpacer(10)
+
+        # An about button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self.parent, -1, None, "About")
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.about, wx.BITMAP_TYPE_ANY))
+        button.SetToolTipString("Information about this automatic analysis")
+        button_sizer.Add(button, 0, 0, 0)
+        left_box.Add(button_sizer, 0, wx.ALL, 0)
+
+        # A cursor for the button.
+        cursor = wx.StockCursor(wx.CURSOR_QUESTION_ARROW)
+        button.SetCursor(cursor)
+
+        # Spacer.
+        left_box.AddSpacer(10)
+
+        # Add to the main box.
+        box.Add(left_box, 0, wx.ALL|wx.EXPAND, 0)
 
         # Build the right hand box and pack it next to the bitmap.
         right_box = self.build_right_box()
