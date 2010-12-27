@@ -58,6 +58,9 @@ class About_base(wx.Frame):
         # Execute the base class __init__() method.
         super(About_base, self).__init__(*args, **kwds)
 
+        # Initialise the y-offset variable.
+        self._offset_val = 0
+
         # The total size.
         self.total_x = self.dim_x + 2*self.boarder
         self.total_y = self.dim_y + 2*self.boarder
@@ -135,20 +138,14 @@ class About_base(wx.Frame):
         self.build_widget()
 
 
-    def offset(self, val=0, init=False):
-        """Shift the offset by the given value and return the offset.
+    def offset(self, val=0):
+        """Shift the y-offset by the given value and return the new offset.
 
         @keyword val:   The value to add to the offset (can be negative).
         @type val:      int
-        @keyword init:  Flag for initialising the offset.
-        @type init:     bool
-        @return:        The current offset.
+        @return:        The new offset.
         @rtype:         int
         """
-
-        # Initialisation.
-        if init or not hasattr(self, '_offset_val'):
-            self._offset_val = 0
 
         # Shift.
         self._offset_val = self._offset_val + val
