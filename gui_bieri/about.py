@@ -86,6 +86,23 @@ class About_base(wx.Frame):
         event.Skip()
 
 
+    def draw_title(self, text, point_size=14, family=wx.FONTFAMILY_ROMAN):
+        """Draw the title."""
+
+        # Set the font.
+        font = wx.Font(point_size, family, wx.NORMAL, wx.NORMAL)
+        self.dc.SetFont(font)
+
+        # The text extent.
+        x, y = self.dc.GetTextExtent(text)
+
+        # Draw the text, with a spacer.
+        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, self.offset(15))
+
+        # Add the text extent.
+        self.offset(y)
+
+
     def draw_wrapped_text(self, text, text_size=10, width=69, spacer=10):
         """Generic method for drawing wrapped text in the relax about widget.
 
@@ -237,7 +254,7 @@ class About_relax(About_base):
         self.offset(self.boarder)
 
         # Draw all the elements.
-        self.draw_title()
+        self.draw_title(self.info.title + ' ' + self.info.version)
         self.draw_description()
         self.draw_copyright()
         self.draw_link()
@@ -359,26 +376,6 @@ class About_relax(About_base):
 
         # Restore the old font colour (black).
         self.dc.SetTextForeground('black')
-
-
-    def draw_title(self):
-        """Draw the relax title with name and version."""
-
-        # The text.
-        text = self.info.title + ' ' + self.info.version
-
-        # Set the font.
-        font = wx.Font(14, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
-        self.dc.SetFont(font)
-
-        # The text extent.
-        x, y = self.dc.GetTextExtent(text)
-
-        # Draw the text, with a spacer.
-        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, self.offset(15))
-
-        # Add the text extent.
-        self.offset(y)
 
 
     def process_click(self, event):
