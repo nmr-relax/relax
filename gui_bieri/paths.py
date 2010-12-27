@@ -32,6 +32,9 @@ import __main__
 from os import sep
 import sys
 
+# Install path.
+if not hasattr(__main__, 'install_path'):
+    __main__.install_path = sys.path[0]
 
 # GUI image and icon paths.
 OXY_ICON_PATH = __main__.install_path + sep + 'graphics' + sep + 'oxygen_icons' + sep

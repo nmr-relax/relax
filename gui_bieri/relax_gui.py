@@ -508,6 +508,8 @@ class Main(wx.Frame):
         """
 
         # The PDF manual.
+        if not hasattr(__main__, 'install_path'):
+            __main__.install_path = sys.path[0]
         file = __main__.install_path + sep+"docs"+sep+"relax.pdf"
 
         # Test if it exists.
