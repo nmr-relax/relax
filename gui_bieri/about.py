@@ -58,6 +58,9 @@ class About_base(wx.Frame):
         # Execute the base class __init__() method.
         super(About_base, self).__init__(*args, **kwds)
 
+        # Create a scrolled window.
+        self.window = wx.ScrolledWindow(self, -1)
+
         # Initialise the y-offset variable.
         self._offset_val = 0
 
@@ -67,13 +70,13 @@ class About_base(wx.Frame):
         self.SetSize((self.total_x, self.total_y))
 
         # Draw everything.
-        self.Bind(wx.EVT_PAINT, self.generate)
+        self.window.Bind(wx.EVT_PAINT, self.generate)
 
         # Let the dialog be closable with a left button click.
-        self.Bind(wx.EVT_MOUSE_EVENTS, self.cursor_style)
+        self.window.Bind(wx.EVT_MOUSE_EVENTS, self.cursor_style)
 
         # Let the dialog be closable with a left button click.
-        self.Bind(wx.EVT_LEFT_DOWN, self.process_click)
+        self.window.Bind(wx.EVT_LEFT_DOWN, self.process_click)
 
         # Center Window
         self.Centre()
@@ -146,7 +149,7 @@ class About_base(wx.Frame):
         """
 
         # Create the device context.
-        self.dc = wx.PaintDC(self)
+        self.dc = wx.PaintDC(self.window)
 
         # Set a background.
         self.set_background()
