@@ -162,7 +162,7 @@ class About_base(wx.Frame):
         """
 
         # Close the widget.
-        self.Hide()
+        self.Destroy()
 
 
     def set_background(self):
@@ -397,4 +397,4 @@ class About_relax(About_base):
             webbrowser.open_new(self.info.website)
 
         # Close the dialog on all clicks.
-        self.Hide()
+        self.Destroy()
