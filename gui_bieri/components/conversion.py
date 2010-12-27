@@ -32,8 +32,8 @@ def str_to_float(string):
     such as:    "3.5 * 1e6" to 3.5*1e6
 
 
-    @keyword string     Float in string that will be converted to float object.
-    @type string        str
+    @param string:  Float in string that will be converted to float object.
+    @type string:   str
     """
 
     # Delete whitespace.

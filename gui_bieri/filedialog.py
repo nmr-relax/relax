@@ -32,8 +32,10 @@ import wx
 def multi_openfile(msg=None, directory=None, filetype='', default=None):
     """Open multiple files.
 
-    For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
+    For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*::
+
         multi_openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+
 
     @keyword msg:       The message to display.
     @type msg:          str
@@ -75,7 +77,8 @@ def opendir(msg, default): # select directory, msg is message to display, defaul
 def openfile(msg=None, directory=None, filetype='*', default='all files (*.*)|*'):
     """Open a file.
 
-    For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
+    For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*::
+
         openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
 
 
@@ -111,7 +114,8 @@ def openfile(msg=None, directory=None, filetype='*', default='all files (*.*)|*'
 def savefile(msg=None, directory=None, filetype='', default=None):
     """Save a file.
 
-    For example to save /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
+    For example to save /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*::
+
         savefile('select file to save', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
 
 

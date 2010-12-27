@@ -88,11 +88,7 @@ class About_base(wx.Frame):
 
 
     def create_buffered_dc(self):
-        """Build the buffered dc containing the window contents.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+        """Build the buffered dc containing the window contents."""
 
         # Dimensions of the drawing area.
         if self.max_x:

@@ -36,7 +36,7 @@ def to_docstring(data):
     """Convert the text to that of a docstring, dependent on the text level.
 
     @param data:    The lists of constants and text to convert into a properly formatted docstring.
-    @type text:     list of lists of int and str
+    @type data:     list of lists of int and str
     """
 
     # Init.
