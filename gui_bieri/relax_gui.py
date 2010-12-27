@@ -144,10 +144,6 @@ class Main(wx.Frame):
         # Close Box event
         self.Bind(wx.EVT_CLOSE, self.exit_gui)
 
-        # Pre-build the about dialogs, but do not show them.
-        self.dialog_about_gui = About_gui(None, -1, "")
-        self.dialog_about_relax = About_relax(None, -1, "")
-
         # Run a script.
         if script:
             self.user_functions.script.script_exec(script)
@@ -181,8 +177,11 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
+        # Build the dialog.
+        dialog = About_gui(None, -1, "")
+
         # The dialog.
-        self.dialog_about_gui.Show()
+        dialog.Show()
 
 
     def about_relax(self, event):
@@ -192,8 +191,11 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
+        # Build the dialog.
+        dialog = About_relax(None, -1, "")
+
         # The dialog.
-        self.dialog_about_relax.Show()
+        dialog.Show()
 
 
     def action_state_save(self, event):
