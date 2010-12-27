@@ -69,6 +69,7 @@ class UF_window(wx.Dialog):
     button_apply = True
     button_cancel = True
     button_ok = True
+    divider = None
     frame_title = ''
     image_path = None
     input_size = 27
@@ -96,6 +97,17 @@ class UF_window(wx.Dialog):
 
         # Add the artwork.
         self.add_artwork(centre_sizer)
+
+        # The size of the image.
+        image_x, image_y = self.image.GetSize()
+
+        # Calculate the size of the main section, and the subdivisions.
+        self.main_size = self.size_x - image_x - self.art_spacing - 2*self.border
+        if self.divider:
+            self.div_left = self.divider
+            self.div_right = self.main_size - self.divider
+        else:
+            self.div_left = self.div_right = self.main_size / 2
 
         # Add the main sizer.
         main_sizer = self.build_main_section(centre_sizer)
@@ -194,11 +206,8 @@ class UF_window(wx.Dialog):
         # Font.
         #text.SetFont(wx.Font(18, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
 
-        # The size of the image.
-        image_x, image_y = self.image.GetSize()
-
         # Wrap the text.
-        text.Wrap(self.size_x - image_x - self.art_spacing - 2*self.border)
+        text.Wrap(self.main_size)
 
         # Add the text.
         sizer.Add(text, 0, wx.ALIGN_LEFT|wx.ALL, 0)
@@ -359,11 +368,14 @@ class UF_window(wx.Dialog):
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacing.
-        sub_sizer.AddSpacer(10)
+        x, y = text.GetSize()
+        sub_sizer.AddSpacer((self.div_left - x, 0))
 
         # The combo box element.
         combo = wx.ComboBox(self, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=choices)
-        sub_sizer.Add(combo, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 0)
+        combo.SetMinSize((self.div_right, 27))
+        combo.SetMaxSize((self.div_right, 27))
+        sub_sizer.Add(combo, 0, wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Add to the main sizer (followed by stretchable spacing).
         sizer.Add(sub_sizer)
@@ -402,11 +414,13 @@ class UF_window(wx.Dialog):
         field_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacing.
-        field_sizer.AddSpacer(10)
+        x, y = text.GetSize()
+        field_sizer.AddSpacer((self.div_left - x, 0))
 
         # The input field.
         field = wx.TextCtrl(self, -1, '')
-        field_sizer.Add(field, 3, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 0)
+        field.SetMinSize((self.div_right, 27))
+        field_sizer.Add(field, 0, wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Add to the main sizer (followed by stretchable spacing).
         sizer.Add(field_sizer)
@@ -486,14 +500,16 @@ class UF_window(wx.Dialog):
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacing.
-        sub_sizer.AddSpacer(10)
+        x, y = text.GetSize()
+        sub_sizer.AddSpacer((self.div_left - x, 0))
 
         # The non-editable text.
         text = wx.TextCtrl(self, -1, default, style=wx.ALIGN_LEFT)
         text.SetEditable(False)
         colour = self.GetBackgroundColour()
         text.SetOwnBackgroundColour(colour)
-        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+        text.SetMinSize((self.div_right, 27))
+        sub_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Add to the main sizer (followed by stretchable spacing).
         sizer.Add(sub_sizer)
