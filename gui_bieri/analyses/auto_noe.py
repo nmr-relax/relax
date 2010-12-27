@@ -126,7 +126,7 @@ class Auto_noe:
         """
 
         # The title.
-        label = wx.StaticText(self.parent, -1, "Set-up for steady-state NOE analysis:")
+        label = wx.StaticText(self.parent, -1, "Setup for steady-state NOE analysis")
 
         # The font properties.
         label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))

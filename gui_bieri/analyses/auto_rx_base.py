@@ -122,7 +122,7 @@ class Auto_rx:
         """
 
         # The title.
-        label = wx.StaticText(self.parent, -1, "Set-up for %s relaxation analysis:" % self.label)
+        label = wx.StaticText(self.parent, -1, "Setup for %s relaxation analysis" % self.label)
 
         # The font properties.
         label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))

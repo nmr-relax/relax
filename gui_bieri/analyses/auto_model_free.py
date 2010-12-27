@@ -130,7 +130,7 @@ class Auto_model_free:
         """
 
         # The title.
-        label = wx.StaticText(self.parent, -1, "Set-up for Model-free analysis:")
+        label = wx.StaticText(self.parent, -1, "Setup for model-free analysis")
 
         # The font properties.
         label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
