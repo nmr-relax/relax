@@ -27,20 +27,22 @@
 # Python module imports.
 import __main__
 from os import getcwd, sep
-from string import replace
+from string import replace, split
 import sys
 import thread
 import time
 import wx
 
 # relax module imports.
-from auto_analyses.dauvergne_protocol import dAuvergne_protocol
+from auto_analyses import dauvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
+from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from relax_io import DummyFileObject
 from status import Status
 
 
 # relax GUI module imports.
+from gui_bieri.about import About_base
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
 from gui_bieri.analyses.select_model_calc import Select_tensor
 from gui_bieri.base_classes import Container
@@ -50,6 +52,70 @@ from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
 from gui_bieri.message import error_message, missing_data
 from gui_bieri import paths
+
+
+class About_window(About_base):
+    """The model-free about window."""
+
+    # The relax background colour.
+    colour1 = '#e5feff'
+    colour2 = '#88cbff'
+
+    # Dimensions.
+    dim_x = 800
+    dim_y = 800
+    max_y = 3000
+
+    # Spacer size (px).
+    border = 10
+
+    def __init__(self, parent):
+        """Set up the user function class."""
+
+        # Execute the base class method.
+        super(About_window, self).__init__(parent, id=-1, title="Automatic model-free analysis about window")
+
+
+    def build_widget(self):
+        """Build the dialog using the dauvergne_protocol docstring."""
+
+        # The text width (number of characters).
+        width = 125
+
+        # Loop over the lines.
+        for i in range(len(dauvergne_protocol.doc)):
+            # The level and text.
+            level, text = dauvergne_protocol.doc[i]
+
+            # The title.
+            if level == TITLE:
+                self.draw_title(text, point_size=18)
+
+            # The section.
+            elif level == SECTION:
+                self.draw_title(text, point_size=14)
+
+            # The section.
+            elif level == SUBSECTION:
+                self.draw_title(text, point_size=12)
+
+            # Paragraphs.
+            elif level == PARAGRAPH:
+                self.draw_wrapped_text(text, width=width)
+
+            # Lists.
+            elif level == LIST:
+                # Start of list.
+                if i and dauvergne_protocol.doc[i-1][0] != LIST:
+                    self.offset(10)
+
+                # The text.
+                self.draw_wrapped_text("    - %s" % text, width=width)
+
+                # End of list.
+                if i < len(dauvergne_protocol.doc) and dauvergne_protocol.doc[i+1][0] == PARAGRAPH:
+                    self.offset(10)
+
 
 
 class Auto_model_free:
@@ -93,6 +159,20 @@ class Auto_model_free:
 
         # Set the frame font size.
         self.parent.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+
+
+    def _about(self, event):
+        """The about window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Initialise the dialog.
+        dialog = About_window(self.parent)
+
+        # Show the dialog.
+        dialog.Show()
 
 
     def add_execute_relax(self, box):
@@ -148,19 +228,19 @@ class Auto_model_free:
 
         # Sizer.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
-        
+
         # Text.
         label_maxiter = wx.StaticText(self.parent, -1, "Maximum interations:")
         label_maxiter.SetMinSize((240, 17))
         sizer.Add(label_maxiter, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
-        
+
         # Spinner.
         self.max_iter = wx.SpinCtrl(self.parent, -1, self.data.max_iter, min=25, max=100)
         sizer.Add(self.max_iter, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
-        
+
         # Add the element to the box.
         box.Add(sizer, 1, wx.EXPAND, 0)
-        
+
 
     def add_mf_models(self, box):
         """Create and add the model-free model picking GUI element to the given box.
@@ -728,12 +808,17 @@ class Auto_model_free:
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self.parent, -1, None, "About")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.about, wx.BITMAP_TYPE_ANY))
         button.SetToolTipString("Information about this automatic analysis")
-        button_sizer.Add(button, 0, 0, 0)
-        left_box.Add(button_sizer, 0, wx.ALL, 0)
+
+        # Bind the click.
+        self.parent.Bind(wx.EVT_BUTTON, self._about, button)
 
         # A cursor for the button.
         cursor = wx.StockCursor(wx.CURSOR_QUESTION_ARROW)
         button.SetCursor(cursor)
+
+        # Pack the button.
+        button_sizer.Add(button, 0, 0, 0)
+        left_box.Add(button_sizer, 0, wx.ALL, 0)
 
         # Spacer.
         left_box.AddSpacer(10)
@@ -903,7 +988,7 @@ class Auto_model_free:
                 time.sleep(0.5)
 
             # Start the protocol.
-            dAuvergne_protocol(save_dir=data.save_dir, diff_model=global_model, mf_models=data.mf_models, local_tm_models=data.local_tm_models, pdb_file=data.structure_file, seq_args=data.seq_args, het_name=data.het_name, relax_data=data.relax_data, unres=data.unres, exclude=data.exclude, bond_length=data.bond_length, csa=data.csa, hetnuc=data.hetnuc, proton=data.proton, grid_inc=data.inc, min_algor=data.min_algor, mc_num=data.mc_num, max_iter=data.max_iter, conv_loop=data.conv_loop)
+            dauvergne_protocol.dAuvergne_protocol(save_dir=data.save_dir, diff_model=global_model, mf_models=data.mf_models, local_tm_models=data.local_tm_models, pdb_file=data.structure_file, seq_args=data.seq_args, het_name=data.het_name, relax_data=data.relax_data, unres=data.unres, exclude=data.exclude, bond_length=data.bond_length, csa=data.csa, hetnuc=data.hetnuc, proton=data.proton, grid_inc=data.inc, min_algor=data.min_algor, mc_num=data.mc_num, max_iter=data.max_iter, conv_loop=data.conv_loop)
 
             # Feedback about success.
             str = 'Successfully calculated the %s global model.' % global_model
@@ -916,7 +1001,7 @@ class Auto_model_free:
                 time.sleep(3)
 
                 results_analysis = model_free_results(self, data.save_dir, data.structure_file)
-                
+
                 # Add grace plots to results tab.
                 directory = data.save_dir+sep+'final'
                 self.gui.list_modelfree.Append(directory+sep+'grace'+sep+'s2.agr')
@@ -925,7 +1010,7 @@ class Auto_model_free:
                 self.gui.list_modelfree.Append(directory+sep+'s2.pml')
                 self.gui.list_modelfree.Append(directory+sep+'rex.pml')
                 self.gui.list_modelfree.Append('Table_of_Results')
-                
+
                 # Add results to relax data storage.
                 ds.relax_gui.results_model_free.append(directory+sep+'grace'+sep+'s2.agr')
                 ds.relax_gui.results_model_free.append(directory+sep+'Model-free_Results.txt')
@@ -1133,7 +1218,7 @@ class Auto_model_free:
 
                 # Download from the store.
                 obj.SetValue(self.data.model_toggle[i])
- 
+
         # The structure file.
         if upload:
             self.data.structure_file = str(self.textctrl_structure.GetValue())
