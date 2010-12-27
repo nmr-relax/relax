@@ -63,10 +63,10 @@ def spherical_to_cartesian(spherical_vect, cart_vect):
     The parameter r is the radial distance, theta is the polar angle, and phi is the azimuth.
 
 
-    @param vector:  The spherical coordinate vector [r, theta, phi].
-    @type vector:   3D array or list
-    @return:        The Cartesian vector [x, y, z].
-    @rtype:         numpy rank-1, 3D array
+    @param spherical_vect:  The spherical coordinate vector [r, theta, phi].
+    @type spherical_vect:   3D array or list
+    @param cart_vect:       The Cartesian vector [x, y, z].
+    @type cart_vect:        3D array or list
     """
 
     # Trig alias.
