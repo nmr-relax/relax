@@ -234,7 +234,7 @@ class About_relax(About_base):
         """Build the about dialog."""
 
         # A global Y offset for packing the elements together (initialise to the boarder position).
-        self.offset(self.boarder, init=True)
+        self.offset(self.boarder)
 
         # Draw all the elements.
         self.draw_title()
