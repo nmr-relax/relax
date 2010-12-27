@@ -78,6 +78,6 @@ def to_docstring(data):
             # End of list.
             if i < len(data) and data[i+1][0] == PARAGRAPH:
                 doc += '\n'
- 
+
     # Return the docstring.
     return doc
