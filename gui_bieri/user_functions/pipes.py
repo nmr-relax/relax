@@ -187,7 +187,7 @@ class Switch_window(UF_window):
     """The pipe.switch() user function window."""
 
     # Some class variables.
-    size_x = 600
+    size_x = 650
     size_y = 450
     button_apply = False
     frame_title = 'Data pipe switching'
