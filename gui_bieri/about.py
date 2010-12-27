@@ -47,7 +47,7 @@ class About_base(wx.Frame):
     dim_y = 600
 
     # Spacer size (px).
-    boarder = 0
+    border = 0
 
     def __init__(self, *args, **kwds):
         """Build the dialog."""
@@ -65,8 +65,8 @@ class About_base(wx.Frame):
         self._offset_val = 0
 
         # The total size.
-        self.total_x = self.dim_x + 2*self.boarder
-        self.total_y = self.dim_y + 2*self.boarder
+        self.total_x = self.dim_x + 2*self.border
+        self.total_y = self.dim_y + 2*self.border
         self.SetSize((self.total_x, self.total_y))
 
         # Draw everything.
@@ -100,7 +100,7 @@ class About_base(wx.Frame):
         x, y = self.dc.GetTextExtent(text)
 
         # Draw the text, with a spacer.
-        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, self.offset(15))
+        self.dc.DrawText(text, self.border + (self.dim_x - x)/2, self.offset(15))
 
         # Add the text extent.
         self.offset(y)
@@ -135,7 +135,7 @@ class About_base(wx.Frame):
         # Draw.
         for line in lines:
             # Draw the text.
-            self.dc.DrawText(line, self.boarder, self.offset())
+            self.dc.DrawText(line, self.border, self.offset())
 
             # Update the offset.
             self.offset(max_y + 1)
@@ -215,7 +215,7 @@ class About_gui(About_base):
         bitmap = wx.Bitmap(IMAGE_PATH+'start.png', wx.BITMAP_TYPE_ANY)
 
         # Draw it.
-        self.dc.DrawBitmap(bitmap, self.boarder, self.boarder, True)
+        self.dc.DrawBitmap(bitmap, self.border, self.border, True)
 
 
 
@@ -231,7 +231,7 @@ class About_relax(About_base):
     dim_y = 580
 
     # Spacer size (px).
-    boarder = 10
+    border = 10
 
     def __init__(self, *args, **kwds):
         """Build the dialog."""
@@ -253,8 +253,8 @@ class About_relax(About_base):
     def build_widget(self):
         """Build the about dialog."""
 
-        # A global Y offset for packing the elements together (initialise to the boarder position).
-        self.offset(self.boarder)
+        # A global Y offset for packing the elements together (initialise to the border position).
+        self.offset(self.border)
 
         # Draw all the elements.
         self.draw_title(self.info.title + ' ' + self.info.version)
@@ -310,8 +310,8 @@ class About_relax(About_base):
         x2, y2 = self.dc.GetTextExtent(self.info.copyright[1])
 
         # Draw the text, with a starting spacer.
-        self.dc.DrawText(self.info.copyright[0], self.boarder + (self.dim_x - x1)/2, self.offset(15))
-        self.dc.DrawText(self.info.copyright[1], self.boarder + (self.dim_x - x2)/2, self.offset(y1+3))
+        self.dc.DrawText(self.info.copyright[0], self.border + (self.dim_x - x1)/2, self.offset(15))
+        self.dc.DrawText(self.info.copyright[1], self.border + (self.dim_x - x2)/2, self.offset(y1+3))
 
         # Add the text extent.
         self.offset(y2)
@@ -334,7 +334,7 @@ class About_relax(About_base):
         x, y = self.dc.GetTextExtent(self.info.desc)
 
         # Draw the text, with a spacer.
-        self.dc.DrawText(self.info.desc, self.boarder + (self.dim_x - x)/2, self.offset(15))
+        self.dc.DrawText(self.info.desc, self.border + (self.dim_x - x)/2, self.offset(15))
 
         # Add the text extent.
         self.offset(y)
@@ -344,7 +344,7 @@ class About_relax(About_base):
         """Draw the relax icon on the canvas."""
 
         # Add the relax logo.
-        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.boarder + (self.dim_x - 400)/2, self.offset(20), True)
+        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.border + (self.dim_x - 400)/2, self.offset(20), True)
 
         # Add the bitmap width to the offset.
         self.offset(168)
@@ -371,10 +371,10 @@ class About_relax(About_base):
         x, y = self.dc.GetTextExtent(self.info.website)
 
         # Draw the text, with a spacer.
-        text = self.dc.DrawText(self.info.website, self.boarder + (self.dim_x - x)/2, self.offset())
+        text = self.dc.DrawText(self.info.website, self.border + (self.dim_x - x)/2, self.offset())
 
         # Store the position of the text (and shift the offset down).
-        self.link_pos_x = [self.boarder + (self.dim_x - x)/2, self.boarder + (self.dim_x + x)/2]
+        self.link_pos_x = [self.border + (self.dim_x - x)/2, self.border + (self.dim_x + x)/2]
         self.link_pos_y = [self.offset(), self.offset(y)]
 
         # Restore the old font colour (black).
