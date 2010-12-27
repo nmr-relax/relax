@@ -45,6 +45,8 @@ class About_base(wx.Frame):
     # Dimensions.
     dim_x = 400
     dim_y = 600
+    max_x = None
+    max_y = None
 
     # Spacer size (px).
     border = 0
@@ -69,6 +71,9 @@ class About_base(wx.Frame):
         self.total_y = self.dim_y + 2*self.border
         self.SetSize((self.total_x, self.total_y))
 
+        # Create the buffered device context.
+        self.create_buffered_dc()
+
         # Draw everything.
         self.window.Bind(wx.EVT_PAINT, self.generate)
 
@@ -80,6 +85,46 @@ class About_base(wx.Frame):
 
         # Center Window
         self.Centre()
+
+
+    def create_buffered_dc(self):
+        """Build the buffered dc containing the window contents.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Dimensions of the drawing area.
+        if self.max_x:
+            x = self.max_x
+        else:
+            x = self.dim_x
+        if self.max_y:
+            y = self.max_y
+        else:
+            y = self.dim_y
+
+        # Borders.
+        x = x + 2*self.border
+        y = y + 2*self.border
+
+        # Set the window virtual size.
+        self.window.SetVirtualSize((x, y))
+
+        # The buffer for buffered drawing.
+        self.buffer = wx.EmptyBitmap(x, y)
+
+        # Create the device context.
+        self.dc = wx.BufferedDC(None, self.buffer)
+
+        # Set a background.
+        self.set_background()
+
+        # Build the rest of the about widget.
+        self.build_widget()
+
+        # Finish.
+        self.dc.EndDrawing()
 
 
     def cursor_style(self, event):
@@ -149,13 +194,7 @@ class About_base(wx.Frame):
         """
 
         # Create the device context.
-        self.dc = wx.PaintDC(self.window)
-
-        # Set a background.
-        self.set_background()
-
-        # Build the rest of the about widget.
-        self.build_widget()
+        wx.BufferedPaintDC(self.window, self.buffer, wx.BUFFER_VIRTUAL_AREA)
 
 
     def offset(self, val=0):
