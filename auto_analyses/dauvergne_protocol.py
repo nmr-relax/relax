@@ -39,32 +39,37 @@ from status import Status
 
 
 doc = [
-        [TITLE, "Script for black-box model-free analysis."],
-        [PARAGRAPH, "This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the molecule in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., see the python tutorial."],
-        [PARAGRAPH, "If you have obtained this script without the program relax, please visit http://nmr-relax.com."],
+        [TITLE, "Automatic analysis for black-box model-free results."],
+        [PARAGRAPH, "The dauvergne_protocol auto-analysis is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly, data at multiple magnetic field strengths is essential for this analysis.  If you would like to change how model-free analysis is performed, the code in the file auto_analyses/dauvergne_protocol.py in the base relax directory can be copied and modified as needed and used with the relax script interface.  This file is simply a complex relax script.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., please see the python tutorial."],
+
         [SECTION, "References"],
+
+        [SUBSECTION, "Auto-analysis primary reference"],
         [PARAGRAPH, "The model-free optimisation methodology herein is that of:"],
         [LIST, info.bib['dAuvergneGooley08b'].cite_short()],
-        [PARAGRAPH, "Other references for features of this script include model-free model selection using Akaike's Information Criterion:"],
+
+        [SUBSECTION, "Techniques used in the auto-analysis"],
+        [PARAGRAPH, "Other references for features of this dauvergne_protocol auto-analysis include model-free model selection using Akaike's Information Criterion:"],
         [LIST, info.bib['dAuvergneGooley03'].cite_short()],
         [PARAGRAPH, "The elimination of failed model-free models and Monte Carlo simulations:"],
         [LIST, info.bib['dAuvergneGooley06'].cite_short()],
         [PARAGRAPH, "Significant model-free optimisation improvements:"],
         [LIST, info.bib['dAuvergneGooley08a'].cite_short()],
-        [PARAGRAPH, "Rather than searching for the lowest chi-squared value, this script searches for the model with the lowest AIC criterion.  This complex multi-universe, multi-dimensional search is formulated using set theory as the universal solution:"],
+        [PARAGRAPH, "Rather than searching for the lowest chi-squared value, this auto-analysis searches for the model with the lowest AIC criterion.  This complex multi-universe, multi-dimensional problem is formulated, using set theory, as the universal solution:"],
         [LIST, info.bib['dAuvergneGooley07'].cite_short()],
         [PARAGRAPH, "The basic three references for the original and extended model-free theories are:"],
         [LIST, info.bib['LipariSzabo82a'].cite_short()],
         [LIST, info.bib['LipariSzabo82b'].cite_short()],
         [LIST, info.bib['Clore90'].cite_short()],
-        [SECTION, "How to use this script"],
-        [PARAGRAPH, "The value of the variable diff_model will determine the behaviour of this script.  The five diffusion models used in this script are:"],
+
+        [SECTION, "How to use this auto-analysis"],
+        [PARAGRAPH, "The five diffusion models used in this auto-analysis are:"],
         [LIST, "Model I   (MI)   - Local tm."],
         [LIST, "Model II  (MII)  - Sphere."],
         [LIST, "Model III (MIII) - Prolate spheroid."],
         [LIST, "Model IV  (MIV)  - Oblate spheroid."],
         [LIST, "Model V   (MV)   - Ellipsoid."],
-        [PARAGRAPH, "Model I must be optimised prior to any of the other diffusion models, while the Models II to V can be optimised in any order.  To select the various models, set the variable diff_model to the following strings:"],
+        [PARAGRAPH, "If using the script-based user interface (UI), changing the value of the variable diff_model will determine the behaviour of this auto-analysis.  Model I must be optimised prior to any of the other diffusion models, while the Models II to V can be optimised in any order.  To select the various models, set the variable diff_model to the following strings:"],
         [LIST, "MI   - 'local_tm'"],
         [LIST, "MII  - 'sphere'"],
         [LIST, "MIII - 'prolate'"],
@@ -72,11 +77,13 @@ doc = [
         [LIST, "MV   - 'ellipsoid'"],
         [PARAGRAPH, "This approach has the advantage of eliminating the need for an initial estimate of a global diffusion tensor and removing all the problems associated with the initial estimate."],
         [PARAGRAPH, "It is important that the number of parameters in a model does not exceed the number of relaxation data sets for that spin.  If this is the case, the list of models in the mf_models and local_tm_models variables will need to be trimmed."],
+
         [SUBSECTION, "Model I - Local tm"],
         [PARAGRAPH, "This will optimise the diffusion model whereby all spin of the molecule have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each spin is fitted to the multiple model-free models separately, where the parameter tm is included in each model."],
         [PARAGRAPH, "AIC model selection is used to select the models for each spin."],
+
         [SUBSECTION, "Model II - Sphere"],
-        [PARAGRAPH, "This will optimise the isotropic diffusion model.  Multiple steps are required, an initial optimisation of the diffusion tensor, followed by a repetitive optimisation until convergence of the diffusion tensor.  Each of these steps requires this script to be rerun. For the initial optimisation, which will be placed in the directory './sphere/init/', the following steps are used:"],
+        [PARAGRAPH, "This will optimise the isotropic diffusion model.  Multiple steps are required, an initial optimisation of the diffusion tensor, followed by a repetitive optimisation until convergence of the diffusion tensor.  In the relax script UI each of these steps requires this script to be rerun, unless the conv_loop flag is True.  In the GUI (graphical user interface), the procedure is repeated automatically until convergence.  For the initial optimisation, which will be placed in the directory './sphere/init/', the following steps are used:"],
         [PARAGRAPH, "The model-free models and parameter values for each spin are set to those of diffusion model MI."],
         [PARAGRAPH, "The local tm parameter is removed from the models."],
         [PARAGRAPH, "The model-free parameters are fixed and a global spherical diffusion tensor is minimised."],
@@ -84,12 +91,16 @@ doc = [
         [PARAGRAPH, "The global diffusion tensor is fixed and the multiple model-free models are fitted to each spin."],
         [PARAGRAPH, "AIC model selection is used to select the models for each spin."],
         [PARAGRAPH, "All model-free and diffusion parameters are allowed to vary and a global optimisation of all parameters is carried out."],
+
         [SUBSECTION, "Model III - Prolate spheroid"],
         [PARAGRAPH, "The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da >= 0 is used.  The base directory containing all the results is './prolate/'."],
+
         [SUBSECTION, "Model IV - Oblate spheroid"],
         [PARAGRAPH, "The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da <= 0 is used.  The base directory containing all the results is './oblate/'."],
+
         [SUBSECTION, "Model V - Ellipsoid"],
         [PARAGRAPH, "The methods used are identical to those of diffusion model MII, except that a fully anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The base directory is './ellipsoid/'."],
+
         [SUBSECTION, "Final run"],
         [PARAGRAPH, "Once all the diffusion models have converged, the final run can be executed.  This is done by setting the variable diff_model to 'final'.  This consists of two steps, diffusion tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to select between the diffusion tensor models.  Monte Carlo simulations are then run solely on this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that the model is already fully optimised (if this is not the case the final run is not yet appropriate)."],
         [PARAGRAPH, "The final black-box model-free results will be placed in the file 'final/results'."]
