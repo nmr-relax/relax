@@ -211,7 +211,7 @@ class About_base(wx.Frame):
         """
 
         # Get the original font.
-        orig_font = deepcopy(self.dc.GetFont())
+        orig_font = self.dc.GetFont()
         orig_fg = deepcopy(self.dc.GetTextForeground())
 
         # Set the font.
