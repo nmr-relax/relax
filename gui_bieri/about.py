@@ -22,6 +22,7 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from copy import deepcopy
 from numpy import uint8, zeros
 from os import sep
@@ -150,6 +151,21 @@ class About_base(wx.Frame):
 
         # Set a background.
         self.set_background()
+
+        # Debugging lines.
+        if __main__.debug:
+            # Cross.
+            self.dc.DrawLine(0, 0, self.virt_x, self.virt_y)
+            self.dc.DrawLine(self.virt_x, 0, 0, self.virt_y)
+
+            # Lines every 200 pixels.
+            num = self.virt_y / 200
+            for i in range(num):
+                pos = i * 200
+                self.dc.DrawLine(0, pos, self.virt_x, pos) 
+                self.dc.SetFont(wx.Font(8, wx.FONTFAMILY_SCRIPT, wx.NORMAL, wx.NORMAL))
+                self.dc.DrawText(str(pos), self.virt_x-40, pos-10)
+
 
         # Build the rest of the about widget.
         self.build_widget()
