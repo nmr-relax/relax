@@ -293,7 +293,7 @@ class About_base(wx.Frame):
             for i in range(len(text_elements)):
                 # URL text.
                 if url[i]:
-                    self.draw_url(url_text=text_elements[i], pos_x=pos_x)
+                    self.draw_url(point_size=point_size, family=family, url_text=text_elements[i], pos_x=pos_x)
 
                 # Add the text.
                 else:
