@@ -80,7 +80,7 @@ class About_window(About_base):
         """Build the dialog using the dauvergne_protocol docstring."""
 
         # The text width (number of characters).
-        width = 125
+        width = 120
 
         # Loop over the lines.
         for i in range(len(dauvergne_protocol.doc)):
