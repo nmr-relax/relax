@@ -123,6 +123,33 @@ class About_window(About_base):
                     self.offset(10)
 
 
+    def virtual_size(self):
+        """Determine the virtual size of the window."""
+
+        # A temp window.
+        frame = wx.Frame(None, -1)
+        win = wx.Window(frame)
+
+        # A temp DC.
+        self.dc = wx.PaintDC(win)
+
+        # Build the widget within the temp DC.
+        self.build_widget()
+
+        # The virtual size.
+        self.virt_x = self.dim_x + 2*self.border
+        size_y = self.offset()
+        remainder = size_y - size_y / self.SCROLL_RATE * self.SCROLL_RATE
+        self.virt_y = size_y + remainder + self.border
+
+        # Destroy the temporary objects.
+        frame.Destroy()
+        win.Destroy()
+        self.dc.Destroy()
+
+        # Reset the offset.
+        self.offset(-self.offset())
+
 
 class Auto_model_free:
     def __init__(self, gui, notebook):
