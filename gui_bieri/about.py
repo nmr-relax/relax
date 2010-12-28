@@ -78,6 +78,10 @@ class About_base(wx.Frame):
         self.total_y = self.dim_y + 2*self.border
         self.SetSize((self.total_x, self.total_y))
 
+        # Initialise URL data structures.
+        self.url_text = []
+        self.url_pos = []
+
         # Create the buffered device context.
         self.create_buffered_dc()
 
@@ -154,17 +158,15 @@ class About_base(wx.Frame):
         event.Skip()
 
 
-    def draw_link(self, link_text=None, point_size=11, family=wx.FONTFAMILY_ROMAN):
-        """Draw a hyperlink.
+    def draw_url(self, url_text=None, point_size=11, family=wx.FONTFAMILY_ROMAN):
+        """Draw a URL as a hyperlink.
 
-        @keyword link_text:     The text of the link.
-        @type link_text:        str
+        @keyword url_text:      The text of the url.
+        @type url_text:         str
         @keyword point_size:    The size of the text in points.
         @type point_size:       int
         @keyword family:        The font family.
         @type family:           int
-        @return:                The position of the hyperlink, with index 0 giving the x range, and index 1 giving the y range.
-        @rtype:                 rank-2, 2D numpy array
         """
 
         # Set the font.
@@ -173,21 +175,21 @@ class About_base(wx.Frame):
         self.dc.SetTextForeground('#0017aa')
 
         # The text extent.
-        x, y = self.dc.GetTextExtent(link_text)
+        x, y = self.dc.GetTextExtent(url_text)
 
         # Draw the text, with a spacer.
-        text = self.dc.DrawText(link_text, self.border + (self.dim_x - x)/2, self.offset())
+        text = self.dc.DrawText(url_text, self.border + (self.dim_x - x)/2, self.offset())
 
         # Store the position of the text (and shift the offset down).
-        link_pos = zeros((2, 2), int)
-        link_pos[0] = [self.border + (self.dim_x - x)/2, self.border + (self.dim_x + x)/2]
-        link_pos[1] = [self.offset(), self.offset(y)]
+        self.url_pos.append(zeros((2, 2), int))
+        self.url_pos[-1][0] = [self.border + (self.dim_x - x)/2, self.border + (self.dim_x + x)/2]
+        self.url_pos[-1][1] = [self.offset(), self.offset(y)]
+
+        # Store the URL.
+        self.url_text.append(url_text)
 
         # Restore the old font colour (black).
         self.dc.SetTextForeground('black')
-
-        # Return the link position box.
-        return link_pos
 
 
     def draw_title(self, text, point_size=14, family=wx.FONTFAMILY_ROMAN):
@@ -243,7 +245,7 @@ class About_base(wx.Frame):
             for i in range(len(text_elements)):
                 # URL text.
                 if url[i]:
-                    self.draw_link(link_text=text_elements[i])
+                    self.draw_url(url_text=text_elements[i])
 
                 # Add the text.
                 else:
@@ -444,39 +446,45 @@ class About_relax(About_base):
         self.draw_description()
         self.draw_copyright()
         self.offset(10)
-        self.link_pos = self.draw_link(link_text=self.info.website)
+        self.draw_url(url_text=self.info.website)
         self.draw_icon()
         self.draw_desc_long()
         self.draw_licence()
 
 
     def cursor_style(self, event):
-        """Change the mouse cursor when over the link."""
+        """Change the mouse cursor when over the url."""
 
         # Determine the mouse position.
         x = event.GetX()
         y = event.GetY()
 
         # Selection cursor.
-        if x > self.link_pos[0, 0] and x < self.link_pos[0, 1] and y > self.link_pos[1, 0] and y < self.link_pos[1, 1]:
-            # Only change if needed.
-            if self.cursor_type == 'normal':
-                # Build the cursor.
-                select_cursor = wx.StockCursor(wx.CURSOR_HAND)
+        over_url = False
+        for i in range(len(self.url_pos)):
+            if x > self.url_pos[i][0, 0] and x < self.url_pos[i][0, 1] and y > self.url_pos[i][1, 0] and y < self.url_pos[i][1, 1]:
+                over_url = True
 
-                # Set the cursor.
-                self.window.SetCursor(select_cursor)
+        # Only change if needed.
+        if over_url and self.cursor_type == 'normal':
+            # Build the cursor.
+            select_cursor = wx.StockCursor(wx.CURSOR_HAND)
 
-                # Reset the cursor type.
-                self.cursor_type = 'select'
+            # Set the cursor.
+            self.window.SetCursor(select_cursor)
+
+            # Reset the cursor type.
+            self.cursor_type = 'select'
+
+            # The flag.
 
         # Normal cursor.
-        elif self.cursor_type == 'select':
+        if not over_url and self.cursor_type == 'select':
             # Build the cursor.
             select_cursor = wx.StockCursor(wx.CURSOR_ARROW)
 
             # Set the cursor.
-            self.SetCursor(select_cursor)
+            self.window.SetCursor(select_cursor)
 
             # Reset the cursor type.
             self.cursor_type = 'normal'
@@ -551,9 +559,10 @@ class About_relax(About_base):
         x = event.GetX()
         y = event.GetY()
 
-        # A click on the relax link.
-        if x > self.link_pos[0, 0] and x < self.link_pos[0, 1] and y > self.link_pos[1, 0] and y < self.link_pos[1, 1]:
-            webbrowser.open_new(self.info.website)
+        # A click on a URL.
+        for i in range(len(self.url_pos)):
+            if x > self.url_pos[i][0, 0] and x < self.url_pos[i][0, 1] and y > self.url_pos[i][1, 0] and y < self.url_pos[i][1, 1]:
+                webbrowser.open_new(self.url_text[i])
 
         # Close the dialog on all clicks.
         if self.DESTROY_ON_CLICK:
