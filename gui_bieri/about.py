@@ -235,8 +235,23 @@ class About_base(wx.Frame):
 
         # Draw.
         for line in lines:
+            # Find and break out the URLs from the text.
+            text_elements, url = self.split_refs(line)
+
             # Draw the text.
-            self.dc.DrawText(line, self.border, self.offset())
+            x_pos = self.border
+            for i in range(len(text_elements)):
+                # URL text.
+                if url[i]:
+                    self.draw_link(link_text=text_elements[i])
+
+                # Add the text.
+                else:
+                    self.dc.DrawText(text_elements[i], x_pos, self.offset())
+
+                # The new x position.
+                x, y = self.dc.GetTextExtent(text_elements[i])
+                x_pos += x
 
             # Update the offset.
             self.offset(max_y + 1)
@@ -291,6 +306,58 @@ class About_base(wx.Frame):
         # A gradient.
         elif self.colour1 and self.colour2:
             self.dc.GradientFillLinear((0, 0, self.virt_x, self.virt_y), self.colour1, self.colour2, wx.SOUTH)
+
+
+    def split_refs(self, text):
+        """Split up text based on the location of URLs.
+
+        @param text:    The text to parse and split up.
+        @type text:     str
+        @return:        The list of text elements, and a list of flags which if True indicates a corresponding URL in the text list.
+        @rtype:         list of str, list of bool
+        """
+
+        # Init.
+        elements = []
+        url = []
+
+        # Walk over the characters.
+        for i in range(len(text)):
+            # End.
+            if len(text) - i < 7:
+                break
+
+            # Search for a url.
+            if text[i:i+7] == 'http://':
+                # Add the text up to here to the list.
+                elements.append(text[0:i])
+                url.append(False)
+
+                # Find the end.
+                end_char = [')', ' ']
+                for j in range(i+7, len(text)):
+                    if text[j] in end_char:
+                        end_i = j
+                        break
+
+                # The url.
+                elements.append(text[i:j])
+                url.append(True)
+
+                # The rest of the text.
+                elements.append(text[j:])
+                url.append(False)
+                
+                # Terminate.
+                break
+
+        # No URLs.
+        if not len(elements):
+            elements.append(text)
+            url.append(False)
+
+        # Return the data structures.
+        return elements, url
 
 
     def virtual_size(self):
