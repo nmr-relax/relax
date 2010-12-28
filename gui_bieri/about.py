@@ -231,7 +231,7 @@ class About_base(wx.Frame):
 
         # Store the position of the text.
         self.url_pos.append(zeros((2, 2), int))
-        self.url_pos[-1][0] = [self.border + (self.dim_x - x)/2, self.border + (self.dim_x + x)/2]
+        self.url_pos[-1][0] = [pos_x, pos_x + x]
         self.url_pos[-1][1] = [self.offset(), self.offset()+y]
 
         # Shift down.
