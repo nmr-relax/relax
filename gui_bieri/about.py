@@ -26,6 +26,7 @@ from os import sep
 from textwrap import wrap
 import webbrowser
 import wx
+import wx.html
 
 # relax module imports.
 from info import Info_box
@@ -56,7 +57,7 @@ class About_base(wx.Frame):
     # Destroy on clicking.
     DESTROY_ON_CLICK = True
 
-    def __init__(self, parent=None, id=-1, title=''):
+    def __init__(self, parent=None, id=-1, title='', html_text=None):
         """Build the dialog."""
 
         # Execute the base class __init__() method.
@@ -79,6 +80,10 @@ class About_base(wx.Frame):
         # Create the buffered device context.
         self.create_buffered_dc()
 
+        # Add HTML content.
+        if html_text:
+            self.add_html(html_text)
+
         # Draw everything.
         self.window.Bind(wx.EVT_PAINT, self.generate)
 
@@ -90,6 +95,29 @@ class About_base(wx.Frame):
 
         # Center Window
         self.Centre()
+
+
+    def add_html(self, text):
+        """Add the given HTML text to the DC.
+
+        @param text:    The HTML text.
+        @type text:     str
+        """
+
+        # The HTML renderer.
+        self.html = wx.html.HtmlDCRenderer()
+
+        # Set the DC.
+        self.html.SetDC(self.dc, 1.0)
+
+        # Set the size of the HTML object.
+        self.html.SetSize(self.virt_x, self.virt_y)
+
+        # Add the text.
+        self.html.SetHtmlText(text)
+
+        # Render the HTML.
+        self.html.Render(0, 0, known_pagebreaks=[])
 
 
     def create_buffered_dc(self):
