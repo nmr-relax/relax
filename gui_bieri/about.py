@@ -34,7 +34,6 @@ from info import Info_box
 from paths import IMAGE_PATH
 
 
-
 class About_base(wx.Frame):
     """The about dialog base class."""
 
@@ -51,14 +50,14 @@ class About_base(wx.Frame):
     # Spacer size (px).
     border = 0
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, parent=None, id=-1, title=''):
         """Build the dialog."""
 
         # Change the dialog style.
-        kwds["style"] = wx.BORDER_NONE | wx.STAY_ON_TOP
+        style = wx.BORDER_NONE | wx.STAY_ON_TOP
 
         # Execute the base class __init__() method.
-        super(About_base, self).__init__(*args, **kwds)
+        super(About_base, self).__init__(parent=parent, id=id, title=title, style=style)
 
         # Create a scrolled window.
         self.window = wx.ScrolledWindow(self, -1)
@@ -278,7 +277,7 @@ class About_relax(About_base):
     # Spacer size (px).
     border = 10
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, parent=None, id=-1, title=''):
         """Build the dialog."""
 
         # Initialise the program information container.
@@ -292,7 +291,7 @@ class About_relax(About_base):
         self.link_pos_y = [0, 0]
 
         # Execute the base class __init__() method.
-        super(About_relax, self).__init__(*args, **kwds)
+        super(About_relax, self).__init__(parent=parent, id=id, title=title)
 
 
     def build_widget(self):
