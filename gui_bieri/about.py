@@ -78,6 +78,9 @@ class About_base(wx.Frame):
         self.total_y = self.dim_y + 2*self.border
         self.SetSize((self.total_x, self.total_y))
 
+        # The starting cursor type.
+        self.cursor_type = 'normal'
+
         # Initialise URL data structures.
         self.url_text = []
         self.url_pos = []
@@ -152,10 +155,41 @@ class About_base(wx.Frame):
 
 
     def cursor_style(self, event):
-        """Dummy method for not changing the mouse cursor!"""
+        """Change the mouse cursor when over the url."""
 
-        # Terminate the event.
-        event.Skip()
+        # Determine the mouse position.
+        x = event.GetX()
+        y = event.GetY()
+
+        # Selection cursor.
+        over_url = False
+        for i in range(len(self.url_pos)):
+            if x > self.url_pos[i][0, 0] and x < self.url_pos[i][0, 1] and y > self.url_pos[i][1, 0] and y < self.url_pos[i][1, 1]:
+                over_url = True
+
+        # Only change if needed.
+        if over_url and self.cursor_type == 'normal':
+            # Build the cursor.
+            select_cursor = wx.StockCursor(wx.CURSOR_HAND)
+
+            # Set the cursor.
+            self.window.SetCursor(select_cursor)
+
+            # Reset the cursor type.
+            self.cursor_type = 'select'
+
+            # The flag.
+
+        # Normal cursor.
+        if not over_url and self.cursor_type == 'select':
+            # Build the cursor.
+            select_cursor = wx.StockCursor(wx.CURSOR_ARROW)
+
+            # Set the cursor.
+            self.window.SetCursor(select_cursor)
+
+            # Reset the cursor type.
+            self.cursor_type = 'normal'
 
 
     def draw_url(self, url_text=None, point_size=11, family=wx.FONTFAMILY_ROMAN):
@@ -437,9 +471,6 @@ class About_relax(About_base):
         # Initialise the program information container.
         self.info = Info_box()
 
-        # The starting cursor type.
-        self.cursor_type = 'normal'
-
         # Execute the base class __init__() method.
         super(About_relax, self).__init__(parent=parent, id=id, title=title)
 
@@ -459,44 +490,6 @@ class About_relax(About_base):
         self.draw_icon()
         self.draw_desc_long()
         self.draw_licence()
-
-
-    def cursor_style(self, event):
-        """Change the mouse cursor when over the url."""
-
-        # Determine the mouse position.
-        x = event.GetX()
-        y = event.GetY()
-
-        # Selection cursor.
-        over_url = False
-        for i in range(len(self.url_pos)):
-            if x > self.url_pos[i][0, 0] and x < self.url_pos[i][0, 1] and y > self.url_pos[i][1, 0] and y < self.url_pos[i][1, 1]:
-                over_url = True
-
-        # Only change if needed.
-        if over_url and self.cursor_type == 'normal':
-            # Build the cursor.
-            select_cursor = wx.StockCursor(wx.CURSOR_HAND)
-
-            # Set the cursor.
-            self.window.SetCursor(select_cursor)
-
-            # Reset the cursor type.
-            self.cursor_type = 'select'
-
-            # The flag.
-
-        # Normal cursor.
-        if not over_url and self.cursor_type == 'select':
-            # Build the cursor.
-            select_cursor = wx.StockCursor(wx.CURSOR_ARROW)
-
-            # Set the cursor.
-            self.window.SetCursor(select_cursor)
-
-            # Reset the cursor type.
-            self.cursor_type = 'normal'
 
 
     def draw_copyright(self):
