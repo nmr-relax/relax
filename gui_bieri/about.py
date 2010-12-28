@@ -53,6 +53,9 @@ class About_base(wx.Frame):
     # Window styles.
     style = wx.BORDER_NONE | wx.STAY_ON_TOP
 
+    # Destroy on clicking.
+    DESTROY_ON_CLICK = True
+
     def __init__(self, parent=None, id=-1, title=''):
         """Build the dialog."""
 
@@ -202,7 +205,8 @@ class About_base(wx.Frame):
         """
 
         # Close the widget.
-        self.Destroy()
+        if self.DESTROY_ON_CLICK:
+            self.Destroy()
 
 
     def set_background(self):
@@ -441,4 +445,5 @@ class About_relax(About_base):
             webbrowser.open_new(self.info.website)
 
         # Close the dialog on all clicks.
-        self.Destroy()
+        if self.DESTROY_ON_CLICK:
+            self.Destroy()

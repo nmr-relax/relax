@@ -72,6 +72,9 @@ class About_window(About_base):
     # Window style.
     style = wx.DEFAULT_DIALOG_STYLE
 
+    # Destroy on clicking.
+    DESTROY_ON_CLICK = False
+
     def __init__(self, parent):
         """Set up the user function class."""
 
