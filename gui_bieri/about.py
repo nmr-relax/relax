@@ -50,14 +50,14 @@ class About_base(wx.Frame):
     # Spacer size (px).
     border = 0
 
+    # Window styles.
+    style = wx.BORDER_NONE | wx.STAY_ON_TOP
+
     def __init__(self, parent=None, id=-1, title=''):
         """Build the dialog."""
 
-        # Change the dialog style.
-        style = wx.BORDER_NONE | wx.STAY_ON_TOP
-
         # Execute the base class __init__() method.
-        super(About_base, self).__init__(parent=parent, id=id, title=title, style=style)
+        super(About_base, self).__init__(parent=parent, id=id, title=title, style=self.style)
 
         # Create a scrolled window.
         self.window = wx.ScrolledWindow(self, -1)

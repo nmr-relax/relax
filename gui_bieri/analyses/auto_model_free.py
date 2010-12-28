@@ -69,6 +69,9 @@ class About_window(About_base):
     # Spacer size (px).
     border = 10
 
+    # Window style.
+    style = wx.DEFAULT_DIALOG_STYLE
+
     def __init__(self, parent):
         """Set up the user function class."""
 
