@@ -120,6 +120,10 @@ class About_base(wx.Frame):
         self.html.Render(0, 0, known_pagebreaks=[])
 
 
+    def build_widget(self):
+        """Dummy widget building method."""
+
+
     def create_buffered_dc(self):
         """Build the buffered dc containing the window contents."""
 
