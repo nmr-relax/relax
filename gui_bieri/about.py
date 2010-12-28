@@ -149,7 +149,8 @@ class About_base(wx.Frame):
         """Build the buffered dc containing the window contents."""
 
         # The buffer for buffered drawing (work around for a GTK bug, the bitmap must be square!!!).
-        self.buffer = wx.EmptyBitmap(self.virt_y, self.virt_y)
+        size = max(self.virt_x, self.virt_y)
+        self.buffer = wx.EmptyBitmap(size, size)
 
         # Create the device context.
         self.dc = wx.BufferedDC(None, self.buffer)
