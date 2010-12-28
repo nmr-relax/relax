@@ -192,7 +192,7 @@ class About_base(wx.Frame):
             self.cursor_type = 'normal'
 
 
-    def draw_url(self, url_text=None, point_size=11, family=wx.FONTFAMILY_ROMAN, carriage_ret=False):
+    def draw_url(self, url_text=None, point_size=11, family=wx.FONTFAMILY_ROMAN, pos_x=0, carriage_ret=False, centre=False):
         """Draw a URL as a hyperlink.
 
         @keyword url_text:      The text of the url.
@@ -201,6 +201,12 @@ class About_base(wx.Frame):
         @type point_size:       int
         @keyword family:        The font family.
         @type family:           int
+        @keyword pos_x:         The starting x position for the text.
+        @type pos_x:            int
+        @keyword carriage_ret:  A flag which if True will cause a carriage return, by shifting the offset by y.
+        @type carriage_ret:     bool
+        @keyword centre:        A flag which if True will cause the URL to be centred in the window.
+        @type centre:           bool
         """
 
         # Set the font.
@@ -211,8 +217,12 @@ class About_base(wx.Frame):
         # The text extent.
         x, y = self.dc.GetTextExtent(url_text)
 
-        # Draw the text, with a spacer.
-        text = self.dc.DrawText(url_text, self.border + (self.dim_x - x)/2, self.offset())
+        # Draw the text centred.
+        if centre:
+            pos_x = self.border + (self.dim_x - x)/2
+
+        # Draw the text.
+        text = self.dc.DrawText(url_text, pos_x, self.offset())
 
         # Store the position of the text.
         self.url_pos.append(zeros((2, 2), int))
@@ -279,19 +289,19 @@ class About_base(wx.Frame):
             text_elements, url = self.split_refs(line)
 
             # Draw the text.
-            x_pos = self.border
+            pos_x = self.border
             for i in range(len(text_elements)):
                 # URL text.
                 if url[i]:
-                    self.draw_url(url_text=text_elements[i])
+                    self.draw_url(url_text=text_elements[i], pos_x=pos_x)
 
                 # Add the text.
                 else:
-                    self.dc.DrawText(text_elements[i], x_pos, self.offset())
+                    self.dc.DrawText(text_elements[i], pos_x, self.offset())
 
                 # The new x position.
                 x, y = self.dc.GetTextExtent(text_elements[i])
-                x_pos += x
+                pos_x += x
 
             # Update the offset.
             self.offset(max_y + 1)
@@ -490,7 +500,7 @@ class About_relax(About_base):
         self.draw_description()
         self.draw_copyright()
         self.offset(10)
-        self.draw_url(url_text=self.info.website, carriage_ret=True)
+        self.draw_url(url_text=self.info.website, carriage_ret=True, centre=True)
         self.draw_icon()
         self.draw_desc_long()
         self.draw_licence()
