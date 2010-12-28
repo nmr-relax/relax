@@ -63,6 +63,9 @@ class About_base(wx.Frame):
         # Create a scrolled window.
         self.window = wx.ScrolledWindow(self, -1)
 
+        # Determine the virtual size of the window.
+        self.virtual_size()
+
         # Initialise the y-offset variable.
         self._offset_val = 0
 
@@ -90,25 +93,8 @@ class About_base(wx.Frame):
     def create_buffered_dc(self):
         """Build the buffered dc containing the window contents."""
 
-        # Dimensions of the drawing area.
-        if self.max_x:
-            x = self.max_x
-        else:
-            x = self.dim_x
-        if self.max_y:
-            y = self.max_y
-        else:
-            y = self.dim_y
-
-        # Borders.
-        x = x + 2*self.border
-        y = y + 2*self.border
-
-        # Set the window virtual size.
-        self.window.SetVirtualSize((x, y))
-
         # The buffer for buffered drawing.
-        self.buffer = wx.EmptyBitmap(x, y)
+        self.buffer = wx.EmptyBitmap(self.virt_x, self.virt_y)
 
         # Create the device context.
         self.dc = wx.BufferedDC(None, self.buffer)
@@ -229,7 +215,31 @@ class About_base(wx.Frame):
 
         # A gradient.
         elif self.colour1 and self.colour2:
-            self.dc.GradientFillLinear((0, 0, self.total_x, self.total_y), self.colour1, self.colour2, wx.SOUTH)
+            self.dc.GradientFillLinear((0, 0, self.virt_x, self.virt_y), self.colour1, self.colour2, wx.SOUTH)
+
+
+    def virtual_size(self):
+        """Determine the virtual size of the window."""
+
+        # Dimensions of the drawing area.
+        if self.max_x:
+            x = self.max_x
+        else:
+            x = self.dim_x
+        if self.max_y:
+            y = self.max_y
+        else:
+            y = self.dim_y
+
+        # Borders.
+        self.virt_x = x + 2*self.border
+        self.virt_y = y + 2*self.border
+
+        # Set the window virtual size.
+        self.window.SetVirtualSize((self.virt_x, self.virt_y))
+
+        # Add y scrolling, if needed.
+        self.window.SetScrollRate(0,20)
 
 
 
