@@ -76,72 +76,15 @@ class References(wx.Frame):
         box = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(box)
 
-        # Add some buttons.
-        #self.add_buttons(box)
-
         # The HTML window.
         self.html = RefWindow(self, -1, size=(500, -1))
         box.Add(self.html, 1, wx.GROW)
-
-        # Catch clicks.
-        self.Bind(wx.EVT_LEFT_DOWN, self.process_click)
 
         # Centre the window.
         self.Centre()
 
         # Show the front page.
         self.front_page()
-
-
-    def process_click(self):
-        pass
-
-    def add_buttons(self, box):
-        """Add forwards, backwards, and close buttons.
-
-        @param box:     The box sizer element to pack the relax execution GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Create a horizontal box sizer to pack the buttons into.
-        button_box = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Backwards button.
-        button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icons_48x48.backwards, wx.BITMAP_TYPE_ANY), style=wx.NO_BORDER)
-        button.SetSize(button.GetBestSize())
-        self.Bind(wx.EVT_BUTTON, self.backwards, button)
-        button_box.Add(button)
-
-        # Forwards button.
-        button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icons_48x48.forwards, wx.BITMAP_TYPE_ANY), style=wx.NO_BORDER)
-        button.SetSize(button.GetBestSize())
-        self.Bind(wx.EVT_BUTTON, self.forwards, button)
-        button_box.Add(button)
-
-        # Add the buttons.
-        box.Add(button_box)
-
-
-    def backwards(self, event):
-        """Go backwards.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Go backwards.
-        self.html.HistoryBack()
-
-
-    def forwards(self, event):
-        """Go forwards.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Go backwards.
-        self.html.HistoryForward()
 
 
     def front_page(self):
