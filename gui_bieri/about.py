@@ -107,6 +107,9 @@ class About_base(wx.Frame):
         # The HTML renderer.
         self.html = wx.html.HtmlDCRenderer()
 
+        # Set the font.
+        self.html.SetFonts("Roman", "Courier")
+
         # Set the DC.
         self.html.SetDC(self.dc, 1.0)
 
@@ -167,7 +170,7 @@ class About_base(wx.Frame):
         self.offset(y)
 
 
-    def draw_wrapped_text(self, text, text_size=10, width=69, spacer=10):
+    def draw_wrapped_text(self, text, point_size=10, family=wx.FONTFAMILY_ROMAN, width=69, spacer=10):
         """Generic method for drawing wrapped text in the relax about widget.
 
         @param text:        The text to wrap and draw.
@@ -177,7 +180,7 @@ class About_base(wx.Frame):
         """
 
         # Set the font.
-        font = wx.Font(text_size, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
+        font = wx.Font(point_size, family, wx.NORMAL, wx.NORMAL)
         self.dc.SetFont(font)
 
         # Wrap the text.
