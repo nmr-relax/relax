@@ -282,7 +282,7 @@ class About_base(wx.Frame):
         x, y = self.dc.GetTextExtent(text)
 
         # Draw the text, with a spacer.
-        self.dc.DrawText(text, self.border + (self.dim_x - x)/2, self.offset(15))
+        self.dc.DrawText(text, self.border + (self.virt_x - x)/2, self.offset(15))
 
         # Add the text extent.
         self.offset(y)

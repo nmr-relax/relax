@@ -134,6 +134,7 @@ class About_window(About_base):
         self.dc = wx.ClientDC(win)
 
         # Build the widget within the temp DC.
+        self.virt_x = self.dim_x
         self.build_widget()
 
         # The virtual size.
