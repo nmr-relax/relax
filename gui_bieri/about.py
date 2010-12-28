@@ -111,13 +111,13 @@ class About_base(wx.Frame):
         self.html.SetDC(self.dc, 1.0)
 
         # Set the size of the HTML object.
-        self.html.SetSize(self.virt_x, self.virt_y)
+        self.html.SetSize(self.virt_x - 2*self.border, self.virt_y - 2*self.border)
 
         # Add the text.
         self.html.SetHtmlText(text)
 
         # Render the HTML.
-        self.html.Render(0, 0, known_pagebreaks=[])
+        self.html.Render(self.border, self.border, known_pagebreaks=[])
 
 
     def build_widget(self):
