@@ -287,11 +287,20 @@ class About_base(wx.Frame):
 
 
     def process_click(self, event):
-        """Base method which just closes the widget on a click event.
+        """Determine what to do with the mouse click.
 
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Determine the mouse position.
+        x = event.GetX()
+        y = event.GetY()
+
+        # A click on a URL.
+        for i in range(len(self.url_pos)):
+            if x > self.url_pos[i][0, 0] and x < self.url_pos[i][0, 1] and y > self.url_pos[i][1, 0] and y < self.url_pos[i][1, 1]:
+                webbrowser.open_new(self.url_text[i])
 
         # Close the widget.
         if self.DESTROY_ON_CLICK:
@@ -546,24 +555,3 @@ class About_relax(About_base):
         """Draw the relax licence text."""
 
         self.draw_wrapped_text(self.info.licence, spacer=10)
-
-
-    def process_click(self, event):
-        """Determine what to do with the mouse click.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Determine the mouse position.
-        x = event.GetX()
-        y = event.GetY()
-
-        # A click on a URL.
-        for i in range(len(self.url_pos)):
-            if x > self.url_pos[i][0, 0] and x < self.url_pos[i][0, 1] and y > self.url_pos[i][1, 0] and y < self.url_pos[i][1, 1]:
-                webbrowser.open_new(self.url_text[i])
-
-        # Close the dialog on all clicks.
-        if self.DESTROY_ON_CLICK:
-            self.Destroy()
