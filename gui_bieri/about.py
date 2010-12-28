@@ -22,6 +22,7 @@
 ###############################################################################
 
 # Python module imports.
+from copy import deepcopy
 from numpy import uint8, zeros
 from os import sep
 from textwrap import wrap
@@ -209,6 +210,10 @@ class About_base(wx.Frame):
         @type centre:           bool
         """
 
+        # Get the original font.
+        orig_font = self.dc.GetFont()
+        orig_fg = deepcopy(self.dc.GetTextForeground())
+
         # Set the font.
         font = wx.Font(pointSize=point_size, family=family, style=wx.FONTSTYLE_ITALIC, weight=wx.NORMAL, underline=True)
         self.dc.SetFont(font)
@@ -236,8 +241,9 @@ class About_base(wx.Frame):
         # Store the URL.
         self.url_text.append(url_text)
 
-        # Restore the old font colour (black).
-        self.dc.SetTextForeground('black')
+        # Restore the original font.
+        self.dc.SetFont(orig_font)
+        self.dc.SetTextForeground(orig_fg)
 
 
     def draw_title(self, text, point_size=14, family=wx.FONTFAMILY_ROMAN):
