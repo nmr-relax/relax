@@ -59,6 +59,9 @@ class About_base(wx.Frame):
     # Destroy on clicking.
     DESTROY_ON_CLICK = True
 
+    # Scrolling rate.
+    SCROLL_RATE = 20
+
     def __init__(self, parent=None, id=-1, title='', html_text=None):
         """Build the dialog."""
 
@@ -162,6 +165,9 @@ class About_base(wx.Frame):
         x = event.GetX()
         y = event.GetY()
 
+        # Scrolling.
+        y = y + self.window.GetViewStart()[1]*self.SCROLL_RATE
+
         # Selection cursor.
         over_url = False
         for i in range(len(self.url_pos)):
@@ -178,8 +184,6 @@ class About_base(wx.Frame):
 
             # Reset the cursor type.
             self.cursor_type = 'select'
-
-            # The flag.
 
         # Normal cursor.
         if not over_url and self.cursor_type == 'select':
@@ -351,6 +355,9 @@ class About_base(wx.Frame):
         x = event.GetX()
         y = event.GetY()
 
+        # Scrolling.
+        y = y + self.window.GetViewStart()[1]*self.SCROLL_RATE
+
         # A click on a URL.
         for i in range(len(self.url_pos)):
             if x > self.url_pos[i][0, 0] and x < self.url_pos[i][0, 1] and y > self.url_pos[i][1, 0] and y < self.url_pos[i][1, 1]:
@@ -446,7 +453,7 @@ class About_base(wx.Frame):
         self.window.SetVirtualSize((self.virt_x, self.virt_y))
 
         # Add y scrolling, if needed.
-        self.window.SetScrollRate(0,20)
+        self.window.SetScrollRate(0, self.SCROLL_RATE)
 
 
 
