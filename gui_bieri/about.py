@@ -192,7 +192,7 @@ class About_base(wx.Frame):
             self.cursor_type = 'normal'
 
 
-    def draw_url(self, url_text=None, point_size=11, family=wx.FONTFAMILY_ROMAN):
+    def draw_url(self, url_text=None, point_size=11, family=wx.FONTFAMILY_ROMAN, carriage_ret=False):
         """Draw a URL as a hyperlink.
 
         @keyword url_text:      The text of the url.
@@ -214,10 +214,14 @@ class About_base(wx.Frame):
         # Draw the text, with a spacer.
         text = self.dc.DrawText(url_text, self.border + (self.dim_x - x)/2, self.offset())
 
-        # Store the position of the text (and shift the offset down).
+        # Store the position of the text.
         self.url_pos.append(zeros((2, 2), int))
         self.url_pos[-1][0] = [self.border + (self.dim_x - x)/2, self.border + (self.dim_x + x)/2]
-        self.url_pos[-1][1] = [self.offset(), self.offset(y)]
+        self.url_pos[-1][1] = [self.offset(), self.offset()+y]
+
+        # Shift down.
+        if carriage_ret:
+            self.offset(y)
 
         # Store the URL.
         self.url_text.append(url_text)
@@ -486,7 +490,7 @@ class About_relax(About_base):
         self.draw_description()
         self.draw_copyright()
         self.offset(10)
-        self.draw_url(url_text=self.info.website)
+        self.draw_url(url_text=self.info.website, carriage_ret=True)
         self.draw_icon()
         self.draw_desc_long()
         self.draw_licence()
