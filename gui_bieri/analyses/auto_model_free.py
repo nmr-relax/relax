@@ -64,7 +64,7 @@ class About_window(About_base):
     # Dimensions.
     dim_x = 800
     dim_y = 800
-    max_y = 3000
+    max_y = 2500
 
     # Spacer size (px).
     border = 10
