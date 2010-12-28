@@ -72,16 +72,8 @@ class About_base(wx.Frame):
         # Create a scrolled window.
         self.window = wx.ScrolledWindow(self, -1)
 
-        # Determine the virtual size of the window.
-        self.virtual_size()
-
         # Initialise the y-offset variable.
         self._offset_val = 0
-
-        # The total size.
-        self.total_x = self.dim_x + 2*self.border
-        self.total_y = self.dim_y + 2*self.border
-        self.SetSize((self.total_x, self.total_y))
 
         # The starting cursor type.
         self.cursor_type = 'normal'
@@ -89,6 +81,18 @@ class About_base(wx.Frame):
         # Initialise URL data structures.
         self.url_text = []
         self.url_pos = []
+
+        # Determine the virtual size of the window.
+        self.virtual_size()
+
+        # Set the window size.
+        self.SetSize((self.virt_x, self.dim_y + 2*self.border))
+
+        # Set the window virtual size.
+        self.window.SetVirtualSize((self.virt_x, self.virt_y))
+
+        # Add y scrolling, if needed.
+        self.window.SetScrollRate(0, self.SCROLL_RATE)
 
         # Create the buffered device context.
         self.create_buffered_dc()
@@ -464,12 +468,6 @@ class About_base(wx.Frame):
         # Borders.
         self.virt_x = x + 2*self.border
         self.virt_y = y + 2*self.border
-
-        # Set the window virtual size.
-        self.window.SetVirtualSize((self.virt_x, self.virt_y))
-
-        # Add y scrolling, if needed.
-        self.window.SetScrollRate(0, self.SCROLL_RATE)
 
 
 
