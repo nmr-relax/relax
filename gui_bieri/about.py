@@ -398,7 +398,7 @@ class About_relax(About_base):
                 select_cursor = wx.StockCursor(wx.CURSOR_HAND)
 
                 # Set the cursor.
-                self.SetCursor(select_cursor)
+                self.window.SetCursor(select_cursor)
 
                 # Reset the cursor type.
                 self.cursor_type = 'select'
