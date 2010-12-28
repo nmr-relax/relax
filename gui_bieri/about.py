@@ -22,6 +22,7 @@
 ###############################################################################
 
 # Python module imports.
+from numpy import uint8, zeros
 from os import sep
 from textwrap import wrap
 import webbrowser
@@ -151,6 +152,42 @@ class About_base(wx.Frame):
 
         # Terminate the event.
         event.Skip()
+
+
+    def draw_link(self, link_text=None, point_size=11, family=wx.FONTFAMILY_ROMAN):
+        """Draw a hyperlink.
+
+        @keyword link_text:     The text of the link.
+        @type link_text:        str
+        @keyword point_size:    The size of the text in points.
+        @type point_size:       int
+        @keyword family:        The font family.
+        @type family:           int
+        @return:                The position of the hyperlink, with index 0 giving the x range, and index 1 giving the y range.
+        @rtype:                 rank-2, 2D numpy array
+        """
+
+        # Set the font.
+        font = wx.Font(pointSize=point_size, family=family, style=wx.FONTSTYLE_ITALIC, weight=wx.NORMAL, underline=True)
+        self.dc.SetFont(font)
+        self.dc.SetTextForeground('#0017aa')
+
+        # The text extent.
+        x, y = self.dc.GetTextExtent(link_text)
+
+        # Draw the text, with a spacer.
+        text = self.dc.DrawText(link_text, self.border + (self.dim_x - x)/2, self.offset())
+
+        # Store the position of the text (and shift the offset down).
+        link_pos = zeros((2, 2), int)
+        link_pos[0] = [self.border + (self.dim_x - x)/2, self.border + (self.dim_x + x)/2]
+        link_pos[1] = [self.offset(), self.offset(y)]
+
+        # Restore the old font colour (black).
+        self.dc.SetTextForeground('black')
+
+        # Return the link position box.
+        return link_pos
 
 
     def draw_title(self, text, point_size=14, family=wx.FONTFAMILY_ROMAN):
@@ -325,10 +362,6 @@ class About_relax(About_base):
         # The starting cursor type.
         self.cursor_type = 'normal'
 
-        # The link position initialisation.
-        self.link_pos_x = [0, 0]
-        self.link_pos_y = [0, 0]
-
         # Execute the base class __init__() method.
         super(About_relax, self).__init__(parent=parent, id=id, title=title)
 
@@ -343,7 +376,8 @@ class About_relax(About_base):
         self.draw_title(self.info.title + ' ' + self.info.version)
         self.draw_description()
         self.draw_copyright()
-        self.draw_link()
+        self.offset(10)
+        self.link_pos = self.draw_link(link_text=self.info.website)
         self.draw_icon()
         self.draw_desc_long()
         self.draw_licence()
@@ -357,7 +391,7 @@ class About_relax(About_base):
         y = event.GetY()
 
         # Selection cursor.
-        if x > self.link_pos_x[0] and x < self.link_pos_x[1] and y > self.link_pos_y[0] and y < self.link_pos_y[1]:
+        if x > self.link_pos[0, 0] and x < self.link_pos[0, 1] and y > self.link_pos[1, 0] and y < self.link_pos[1, 1]:
             # Only change if needed.
             if self.cursor_type == 'normal':
                 # Build the cursor.
@@ -439,31 +473,6 @@ class About_relax(About_base):
         self.draw_wrapped_text(self.info.licence, spacer=10)
 
 
-    def draw_link(self):
-        """Draw the relax description text."""
-
-        # Set the font.
-        font = wx.Font(pointSize=11, family=wx.FONTFAMILY_ROMAN, style=wx.FONTSTYLE_ITALIC, weight=wx.NORMAL, underline=True)
-        self.dc.SetFont(font)
-        self.dc.SetTextForeground('#0017aa')
-
-        # Add a spacer.
-        self.offset(10)
-
-        # The text extent.
-        x, y = self.dc.GetTextExtent(self.info.website)
-
-        # Draw the text, with a spacer.
-        text = self.dc.DrawText(self.info.website, self.border + (self.dim_x - x)/2, self.offset())
-
-        # Store the position of the text (and shift the offset down).
-        self.link_pos_x = [self.border + (self.dim_x - x)/2, self.border + (self.dim_x + x)/2]
-        self.link_pos_y = [self.offset(), self.offset(y)]
-
-        # Restore the old font colour (black).
-        self.dc.SetTextForeground('black')
-
-
     def process_click(self, event):
         """Determine what to do with the mouse click.
 
@@ -476,7 +485,7 @@ class About_relax(About_base):
         y = event.GetY()
 
         # A click on the relax link.
-        if x > self.link_pos_x[0] and x < self.link_pos_x[1] and y > self.link_pos_y[0] and y < self.link_pos_y[1]:
+        if x > self.link_pos[0, 0] and x < self.link_pos[0, 1] and y > self.link_pos[1, 0] and y < self.link_pos[1, 1]:
             webbrowser.open_new(self.info.website)
 
         # Close the dialog on all clicks.
