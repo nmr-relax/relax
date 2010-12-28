@@ -131,7 +131,7 @@ class About_window(About_base):
         win = wx.Window(frame)
 
         # A temp DC.
-        self.dc = wx.PaintDC(win)
+        self.dc = wx.ClientDC(win)
 
         # Build the widget within the temp DC.
         self.build_widget()
