@@ -137,7 +137,7 @@ class About_window(About_base):
         self.build_widget()
 
         # The virtual size.
-        self.virt_x = self.dim_x + 2*self.border
+        self.virt_x = self.text_max_x + 2*self.border + 20
         size_y = self.offset()
         remainder = size_y - size_y / self.SCROLL_RATE * self.SCROLL_RATE
         self.virt_y = size_y + remainder + self.border

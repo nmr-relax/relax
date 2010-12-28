@@ -83,6 +83,7 @@ class About_base(wx.Frame):
         self.url_pos = []
 
         # Determine the virtual size of the window.
+        self.text_max_x = 0
         self.virtual_size()
 
         # Set the window size.
@@ -303,10 +304,12 @@ class About_base(wx.Frame):
         # Wrap the text.
         lines = wrap(text, width)
 
-        # Find the max y extent.
+        # Find the max extents.
         max_y = 0
         for line in lines:
-            x, y = self.dc.GetTextExtent(text)
+            x, y = self.dc.GetTextExtent(line)
+            if x > self.text_max_x:
+                self.text_max_x = x
             if y > max_y:
                 max_y = y
 
