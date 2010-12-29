@@ -1087,6 +1087,7 @@ class Auto_model_free:
         if self.data.paramfiles1[0] == None:
             self.data.paramfiles1[0] = backup
         self.m_noe_1.SetValue(self.data.paramfiles1[0])
+        self.m_noe_1.SetInsertionPoint(len(self.data.paramfiles1[0]))
         event.Skip()
 
 
@@ -1096,6 +1097,7 @@ class Auto_model_free:
         if self.data.paramfiles2[0] == None:
             self.data.paramfiles2[0] = backup
         self.m_noe_2.SetValue(self.data.paramfiles2[0])
+        self.m_noe_2.SetInsertionPoint(len(self.data.paramfiles2[0]))
         event.Skip()
 
 
@@ -1105,6 +1107,7 @@ class Auto_model_free:
         if self.data.paramfiles3[0] == None:
             self.data.paramfiles3[0] = backup
         self.m_noe_3.SetValue(self.data.paramfiles3[0])
+        self.m_noe_3.SetInsertionPoint(len(self.data.paramfiles3[0]))
         event.Skip()
 
 
@@ -1114,6 +1117,7 @@ class Auto_model_free:
         if self.data.paramfiles1[1] == None:
             self.data.paramfiles1[1] = backup
         self.m_r1_1.SetValue(self.data.paramfiles1[1])
+        self.m_r1_1.SetInsertionPoint(len(self.data.paramfiles1[1]))
         event.Skip()
 
 
@@ -1123,6 +1127,7 @@ class Auto_model_free:
         if self.data.paramfiles2[1] == None:
             self.data.paramfiles2[1] = backup
         self.m_r1_2.SetValue(self.data.paramfiles2[1])
+        self.m_r1_2.SetInsertionPoint(len(self.data.paramfiles2[1]))
         event.Skip()
 
 
@@ -1132,6 +1137,7 @@ class Auto_model_free:
         if self.data.paramfiles3[1] == None:
             self.data.paramfiles3[1] = backup
         self.m_r1_3.SetValue(self.data.paramfiles3[1])
+        self.m_r1_3.SetInsertionPoint(len(self.data.paramfiles3[1]))
         event.Skip()
 
 
@@ -1141,6 +1147,7 @@ class Auto_model_free:
         if self.data.paramfiles1[2] == None:
             self.data.paramfiles1[2] = backup
         self.m_r2_1.SetValue(self.data.paramfiles1[2])
+        self.m_r2_1.SetInsertionPoint(len(self.data.paramfiles1[2]))
         event.Skip()
 
 
@@ -1150,6 +1157,7 @@ class Auto_model_free:
         if self.data.paramfiles2[2] == None:
             self.data.paramfiles2[2] = backup
         self.m_r2_2.SetValue(self.data.paramfiles2[2])
+        self.m_r2_2.SetInsertionPoint(len(self.data.paramfiles2[2]))
         event.Skip()
 
 
@@ -1159,6 +1167,7 @@ class Auto_model_free:
         if self.data.paramfiles3[2] == None:
             self.data.paramfiles3[2] = backup
         self.m_r2_3.SetValue(self.data.paramfiles3[2])
+        self.m_r2_3.SetInsertionPoint(len(self.data.paramfiles3[2]))
         event.Skip()
 
 
