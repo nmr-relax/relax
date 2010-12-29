@@ -32,8 +32,42 @@ from relax_errors import AllRelaxErrors, RelaxImplementError
 
 # relax GUI module imports.
 from gui_bieri.controller import Redirect_text
+from gui_bieri.filedialog import openfile
 from gui_bieri.message import error_message
 from gui_bieri import paths
+
+
+class File_selector:
+    """Class for handling file selection dialogs and updating the respective fields."""
+
+    def __init__(self, field):
+        """Setup the class and store the field.
+
+        @param field:   The field to update with the file selection.
+        @type field:    wx.TextCtrl instance
+        """
+
+        # Store the args.
+        self.field = field
+
+
+    def select(self, event):
+        """The script user function GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Open the file selection dialog.
+        file = openfile(msg='Select the relax script to execute', default='relax scripts (*.py)|*.py')
+
+        # Check the file.
+        if not file:
+            return
+
+        # Update the field.
+        self.field.SetValue(file)
+
 
 
 class UF_base:
@@ -393,6 +427,51 @@ class UF_window(wx.Dialog):
         """Execute the user function (dummy method)."""
 
         raise RelaxImplementError
+
+
+    def file_selection(self, sizer, desc):
+        """Build the file selection element.
+
+        @param sizer:   The sizer to put the input field into.
+        @type sizer:    wx.Sizer instance
+        @param desc:    The text description.
+        @type desc:     str
+        @return:        The file selection GUI element.
+        @rtype:         wx.TextCtrl
+        """
+
+        # Init.
+        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The description.
+        text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        x, y = text.GetSize()
+        sub_sizer.AddSpacer((self.div_left - x, 0))
+
+        # The input field.
+        field = wx.TextCtrl(self, -1, '')
+        field.SetMinSize((self.div_right - 27, 27))
+        sub_sizer.Add(field, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # The file selection object.
+        obj = File_selector(field)
+
+        # The file selection button.
+        button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icon_16x16.open, wx.BITMAP_TYPE_ANY))
+        button.SetToolTipString("Select the file")
+        button.SetMinSize((27, 27))
+        sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+        self.Bind(wx.EVT_BUTTON, obj.select, button)
+
+        # Add to the main sizer (followed by stretchable spacing).
+        sizer.Add(sub_sizer)
+        sizer.AddStretchSpacer()
+
+        # Return the field element.
+        return field
 
 
     def input_field(self, sizer, desc):
