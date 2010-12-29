@@ -241,7 +241,7 @@ class About_base(wx.Frame):
         orig_fg = deepcopy(self.dc.GetTextForeground())
 
         # Set the font.
-        font = wx.Font(pointSize=point_size, family=family, style=wx.FONTSTYLE_ITALIC, weight=wx.NORMAL, underline=True)
+        font = wx.Font(pointSize=point_size, family=family, style=wx.NORMAL, weight=wx.NORMAL)
         self.dc.SetFont(font)
         self.dc.SetTextForeground('#0017aa')
 
