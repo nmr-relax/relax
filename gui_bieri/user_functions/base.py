@@ -68,6 +68,9 @@ class File_selector:
         # Update the field.
         self.field.SetValue(file)
 
+        # Scroll the text to the end.
+        self.field.SetInsertionPoint(len(file))
+
 
 
 class UF_base:
