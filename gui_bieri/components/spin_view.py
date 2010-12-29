@@ -954,7 +954,6 @@ class Spin_view_window(wx.Frame):
         self.pipe_name = wx.ComboBox(self.bar, -1, "", style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=[])
         self.bar.AddControl(self.pipe_name)
         self.Bind(wx.EVT_COMBOBOX, self.update_pipes, self.pipe_name)
-        self.update_pipes(None)
 
         # Build the toolbar.
         self.bar.Realize()
