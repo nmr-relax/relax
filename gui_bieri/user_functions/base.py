@@ -477,15 +477,17 @@ class UF_window(wx.Dialog):
         return field
 
 
-    def input_field(self, sizer, desc):
+    def input_field(self, sizer, desc, tooltip=None):
         """Build the input field.
 
-        @param sizer:   The sizer to put the input field into.
-        @type sizer:    wx.Sizer instance
-        @param desc:    The text description.
-        @type desc:     str
-        @return:        The input field object.
-        @rtype:         wx.TextCtrl instance
+        @param sizer:       The sizer to put the input field into.
+        @type sizer:        wx.Sizer instance
+        @param desc:        The text description.
+        @type desc:         str
+        @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
+        @type tooltip:      str
+        @return:            The input field object.
+        @rtype:             wx.TextCtrl instance
         """
 
         # Init.
@@ -507,6 +509,11 @@ class UF_window(wx.Dialog):
         # Add to the main sizer (followed by stretchable spacing).
         sizer.Add(field_sizer)
         sizer.AddStretchSpacer()
+
+        # Tooltip.
+        if tooltip:
+            text.SetToolTipString(tooltip)
+            field.SetToolTipString(tooltip)
 
         # Return the object.
         return field
