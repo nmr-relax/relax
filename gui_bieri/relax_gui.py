@@ -129,12 +129,6 @@ class Main(wx.Frame):
         # Build the controller, but don't show it.
         self.controller = Controller(None, -1, "")
 
-        # Build the relax prompt, but don't show it.
-        self.relax_prompt = Prompt(None, -1, "", parent=self)
-
-        # Build the spin view window, but don't show it.
-        self.spin_view = Spin_view_window(None, -1, "", parent=self)
-
         rx_data = ds.relax_gui.analyses[self.noe_index[0]]
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
 
@@ -563,6 +557,10 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
+        # Build the relax prompt if needed.
+        if not hasattr(self, 'relax_prompt'):
+            self.relax_prompt = Prompt(None, -1, "", parent=self)
+
         # Open the window.
         self.relax_prompt.Show()
 
@@ -573,6 +571,10 @@ class Main(wx.Frame):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Build the spin view window.
+        if not hasattr(self, 'spin_view'):
+            self.spin_view = Spin_view_window(None, -1, "", parent=self)
 
         # Open the window.
         self.spin_view.Show()
