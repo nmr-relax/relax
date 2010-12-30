@@ -40,6 +40,23 @@ from gui_bieri.misc import gui_to_float, gui_to_int, gui_to_str
 class Relax_data(UF_base):
     """The container class for holding all GUI elements."""
 
+    def delete(self, event):
+        """The relax_data.delete user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Initialise the dialog.
+        window = Delete_window(self.gui, self.interpreter)
+
+        # Show the dialog.
+        window.ShowModal()
+
+        # Destroy.
+        window.Destroy()
+
+
     def read(self, event):
         """The relax_data.read user function.
 
@@ -48,13 +65,73 @@ class Relax_data(UF_base):
         """
 
         # Initialise the dialog.
-        self._read_window = Read_window(self.gui, self.interpreter)
+        window = Read_window(self.gui, self.interpreter)
 
         # Show the dialog.
-        self._read_window.ShowModal()
+        window.ShowModal()
 
         # Destroy.
-        self._read_window.Destroy()
+        window.Destroy()
+
+
+
+class Delete_window(UF_window):
+    """The relax_data.read() user function window."""
+
+    # Some class variables.
+    size_x = 600
+    size_y = 400
+    frame_title = 'Delete the relaxation data'
+    image_path = WIZARD_IMAGE_PATH + 'fid.png'
+    main_text = 'This dialog allows you to delete read relaxation data.'
+    title = 'Relaxation data deletion'
+
+
+    def add_uf(self, sizer):
+        """Add the relaxation data deletion specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The data labels.
+        self.ri_label = self.combo_box(sizer, "The relaxation data label:", choices=[])
+        self.frq_label = self.combo_box(sizer, "The frequency label in MHz:", choices=[])
+
+
+    def execute(self):
+        """Execute the user function."""
+
+        # The labels and frq.
+        ri_label = gui_to_str(self.ri_label.GetValue())
+        frq_label = gui_to_str(self.frq_label.GetValue())
+
+        # Read the relaxation data.
+        self.interpreter.relax_data.delete(ri_label=ri_label, frq_label=frq_label)
+
+
+    def update(self, event):
+        """Update the UI.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Clear the previous data.
+        self.ri_label.Clear()
+        self.frq_label.Clear()
+
+        # No data, so don't try to fill the combo boxes.
+        if not hasattr(cdp, 'ri_labels'):
+            return
+
+        # The relaxation data labels.
+        for i in range(len(cdp.ri_labels)):
+            self.ri_label.Append(cdp.ri_labels[i])
+
+        # The frq labels.
+        for i in range(len(cdp.frq_labels)):
+            self.frq_label.Append(cdp.frq_labels[i])
 
 
 
