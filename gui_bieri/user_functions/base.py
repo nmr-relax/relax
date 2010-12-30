@@ -392,7 +392,7 @@ class UF_window(wx.Dialog):
         sizer.AddStretchSpacer()
 
 
-    def combo_box(self, sizer, desc, choices, evt_fn=None, divider=None, padding=0, spacer=None, read_only=True):
+    def combo_box(self, sizer, desc, choices, tooltip=None, evt_fn=None, divider=None, padding=0, spacer=None, read_only=True):
         """Build the combo box widget for list selections.
 
         @param sizer:       The sizer to put the combo box widget into.
@@ -401,6 +401,8 @@ class UF_window(wx.Dialog):
         @type desc:         str
         @param choices:     The list of choices.
         @type choices:      list of str
+        @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
+        @type tooltip:      str
         @param evt_fn:      The event handling function.
         @type evt_fn:       func
         @keyword divider:   The optional position of the divider.  If None, the class variable div_left will be used.
@@ -456,6 +458,11 @@ class UF_window(wx.Dialog):
         # Bind events.
         if evt_fn:
             self.Bind(wx.EVT_COMBOBOX, evt_fn, combo)
+
+        # Tooltip.
+        if tooltip:
+            text.SetToolTipString(tooltip)
+            combo.SetToolTipString(tooltip)
 
         # Return the combo box element.
         return combo
