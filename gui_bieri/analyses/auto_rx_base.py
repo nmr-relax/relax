@@ -40,7 +40,6 @@ from relax_io import DummyFileObject
 from status import Status
 
 # relaxGUI module imports.
-from gui_bieri.analyses.project import open_file
 from gui_bieri.base_classes import Container
 from gui_bieri.components.spectrum import Peak_intensity
 from gui_bieri.controller import Redirect_text, Thread_container

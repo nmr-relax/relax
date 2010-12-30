@@ -33,7 +33,6 @@ import wx.lib.buttons
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
-from gui_bieri.analyses.project import open_file
 from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import multi_openfile, opendir
