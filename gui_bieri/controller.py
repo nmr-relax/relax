@@ -26,19 +26,14 @@
 
 # Python module imports.
 import __main__
-from os import sep
-from string import split, replace
 import sys
 import time
-import thread
 import wx
 
 # relax module imports.
 from status import Status
 
 # relaxGUI module imports.
-from gui_bieri.execution.calc_noe import make_noe
-from gui_bieri.execution.calc_rx import make_rx
 from gui_bieri.paths import IMAGE_PATH
 from message import question
 
