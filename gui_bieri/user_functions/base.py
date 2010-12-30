@@ -35,6 +35,7 @@ from relax_errors import AllRelaxErrors, RelaxImplementError
 from gui_bieri.controller import Redirect_text
 from gui_bieri.filedialog import openfile
 from gui_bieri.message import error_message
+from gui_bieri.misc import int_to_gui, str_to_gui
 from gui_bieri import paths
 
 
@@ -533,8 +534,23 @@ class UF_window(wx.Dialog):
             data_col = self.input_field(sub_sizer, "Data column:", divider=divider, padding=padding, spacer=spacer)
             err_col = self.input_field(sub_sizer, "Error column:", divider=divider, padding=padding, spacer=spacer)
 
+        # Set the values.
+        spin_id_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_id_col))
+        mol_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.mol_name_col))
+        res_num_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.res_num_col))
+        res_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.res_name_col))
+        spin_num_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_num_col))
+        spin_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_name_col))
+        if data_cols:
+            data_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.data_col))
+            err_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.err_col))
+
         # The column separator.
         sep = self.combo_box(sub_sizer, "Column separator:", ["white space", ",", ";", ":", ""], divider=divider, padding=padding, spacer=0, read_only=False)
+        if not ds.relax_gui.free_file_format.sep:
+            sep.SetValue("white space")
+        else:
+            sep.SetValue(str_to_gui(ds.relax_gui.free_file_format.sep))
 
         # Set the size of the widget.
         sub_sizer.AddSpacer(10)
