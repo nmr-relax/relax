@@ -56,6 +56,23 @@ def convert_to_float(string):
     return result
 
 
+def gui_to_float(string):
+    """Convert the GUI obtained string to an float.
+
+    @param string:  The number in string form.
+    @type string:   str
+    @return:        The float
+    @rtype:         float or None
+    """
+
+    # No input.
+    if string == '':
+        return None
+
+    # Convert.
+    return float(string)
+
+
 def gui_to_int(string):
     """Convert the GUI obtained string to an int.
 
