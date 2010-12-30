@@ -197,13 +197,14 @@ class Menu:
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.molecule.delete]
             ]],
             [wx.NewId(), "&pipe", paths.icon_16x16.pipe, None, [
+                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.pipes.copy],
                 [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipes.delete],
                 [wx.NewId(), "&switch", paths.icon_16x16.pipe_switch, self.gui.user_functions.pipes.switch]
             ]],
             [wx.NewId(), "&relax_data", paths.icon_16x16.relax_data, None, [
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.relax_data.delete],
-                [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.relax_data.read]
+                [wx.NewId(), "&read",   paths.icon_16x16.open, self.gui.user_functions.relax_data.read]
             ]],
             [wx.NewId(), "resid&ue", paths.icon_16x16.residue, None, [
                 [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.residue.create],

@@ -31,6 +31,7 @@ from generic_fns.pipes import VALID_TYPES, cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_window
+from gui_bieri.misc import gui_to_str
 from gui_bieri.paths import WIZARD_IMAGE_PATH
 
 
@@ -53,6 +54,23 @@ class Pipes(UF_base):
 
         # Destroy.
         self._create_window.Destroy()
+
+
+    def copy(self, event):
+        """The pipe.copy user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Initialise the dialog.
+        window = Copy_window(self.gui, self.interpreter)
+
+        # Show the dialog.
+        window.ShowModal()
+
+        # Destroy.
+        window.Destroy()
 
 
     def delete(self, event):
@@ -125,6 +143,65 @@ class Add_window(UF_window):
 
         # Set the name.
         self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
+
+
+
+class Copy_window(UF_window):
+    """The pipe.copy() user function window."""
+
+    # Some class variables.
+    size_x = 600
+    size_y = 400
+    frame_title = 'Copy a data pipe'
+    image_path = WIZARD_IMAGE_PATH + 'pipe.png'
+    main_text = 'This dialog allows you to copy data pipes.'
+    title = 'Data pipe copy'
+
+
+    def add_uf(self, sizer):
+        """Add the pipe specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The source pipe.
+        self.pipe_from = self.combo_box(sizer, "The source pipe:", [])
+
+        # The destination pipe.
+        self.pipe_to = self.input_field(sizer, "The destination pipe name:")
+
+
+    def execute(self):
+        """Execute the user function."""
+
+        # Get the pipe names.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        pipe_to = gui_to_str(self.pipe_to.GetValue())
+
+        # Copy the data pipe.
+        self.interpreter.pipe.copy(pipe_from, pipe_to)
+
+        # Update.
+        self.update(None)
+
+
+    def update(self, event):
+        """Update the UI.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Clear the previous data.
+        self.pipe_from.Clear()
+
+        # Clear the pipe name.
+        self.pipe_from.SetValue('')
+
+        # The list of pipe names.
+        for name in pipe_names():
+            self.pipe_from.Append(name)
 
 
 
