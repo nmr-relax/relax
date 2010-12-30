@@ -30,6 +30,7 @@ from prompt.interpreter import Interpreter
 from molecule import Molecule
 from pipes import Pipes
 from residue import Residue
+from relax_data import Relax_data
 from script import Script
 from sequence import Sequence
 from spin import Spin
@@ -40,6 +41,7 @@ __all__ = ['base',
            'molecule',
            'pipes',
            'residue',
+           'relax_data',
            'script',
            'sequence',
            'spin']
@@ -63,6 +65,7 @@ class User_functions:
         self.molecule = Molecule(self.gui, self.interpreter)
         self.pipes = Pipes(self.gui, self.interpreter)
         self.residue = Residue(self.gui, self.interpreter)
+        self.relax_data = Relax_data(self.gui, self.interpreter)
         self.script = Script(self.gui, self.interpreter)
         self.sequence = Sequence(self.gui, self.interpreter)
         self.spin = Spin(self.gui, self.interpreter)
@@ -75,5 +78,6 @@ class User_functions:
         self.molecule.destroy()
         self.pipes.destroy()
         self.residue.destroy()
+        self.relax_data.destroy()
         self.sequence.destroy()
         self.spin.destroy()

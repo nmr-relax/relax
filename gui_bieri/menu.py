@@ -201,6 +201,9 @@ class Menu:
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipes.delete],
                 [wx.NewId(), "&switch", paths.icon_16x16.pipe_switch, self.gui.user_functions.pipes.switch]
             ]],
+            [wx.NewId(), "relax_data", paths.icon_16x16.relax_data, None, [
+                [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.relax_data.read]
+            ]],
             [wx.NewId(), "&residue", paths.icon_16x16.residue, None, [
                 [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.residue.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.residue.delete]
