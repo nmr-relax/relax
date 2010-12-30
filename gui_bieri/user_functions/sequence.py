@@ -81,7 +81,7 @@ class Read_window(UF_window):
         self.file = self.file_selection(sizer, "The sequence file:")
 
         # The parameter file settings.
-        self.spin_id_col, self.mol_name_col, self.res_num_col, self.res_name_col, self.spin_num_col, self.spin_name_col, self.sep = self.free_file_format(sizer)
+        self.free_file_format(sizer)
 
         # The spin ID restriction.
         self.spin_id = self.input_field(sizer, "Restrict data loading to certain spins:", tooltip="This must be a valid spin ID.  Multiple spins can be selected using ranges, the '|' operator, residue ranges, etc.")

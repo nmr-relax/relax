@@ -35,7 +35,7 @@ from relax_errors import AllRelaxErrors, RelaxImplementError
 from gui_bieri.controller import Redirect_text
 from gui_bieri.filedialog import openfile
 from gui_bieri.message import error_message
-from gui_bieri.misc import int_to_gui, str_to_gui
+from gui_bieri.misc import gui_to_int, int_to_gui, str_to_gui
 from gui_bieri import paths
 
 
@@ -506,11 +506,15 @@ class UF_window(wx.Dialog):
         return field
 
 
-    def free_file_format(self, sizer, data_cols=False):
+    def free_file_format(self, sizer, data_cols=False, save=True):
         """Build the free format file settings widget.
 
         @param sizer:       The sizer to put the input field into.
         @type sizer:        wx.Sizer instance
+        @keyword data_cols: A flag which if True causes the data and error column elements to be displayed.
+        @type data_cols:    bool
+        @keyword save:      A flag which if True will cause the save button to be displayed.
+        @type save:         bool
         """
 
         # A static box to hold all the widgets.
@@ -524,33 +528,56 @@ class UF_window(wx.Dialog):
         spacer = 3
 
         # The columns.
-        spin_id_col = self.input_field(sub_sizer, "Spin ID column:", divider=divider, padding=padding, spacer=spacer)
-        mol_name_col = self.input_field(sub_sizer, "Molecule name column:", divider=divider, padding=padding, spacer=spacer)
-        res_num_col = self.input_field(sub_sizer, "Residue number column:", divider=divider, padding=padding, spacer=spacer)
-        res_name_col = self.input_field(sub_sizer, "Residue name column:", divider=divider, padding=padding, spacer=spacer)
-        spin_num_col = self.input_field(sub_sizer, "Spin number column:", divider=divider, padding=padding, spacer=spacer)
-        spin_name_col = self.input_field(sub_sizer, "Spin name column:", divider=divider, padding=padding, spacer=spacer)
+        self.spin_id_col = self.input_field(sub_sizer, "Spin ID column:", divider=divider, padding=padding, spacer=spacer)
+        self.mol_name_col = self.input_field(sub_sizer, "Molecule name column:", divider=divider, padding=padding, spacer=spacer)
+        self.res_num_col = self.input_field(sub_sizer, "Residue number column:", divider=divider, padding=padding, spacer=spacer)
+        self.res_name_col = self.input_field(sub_sizer, "Residue name column:", divider=divider, padding=padding, spacer=spacer)
+        self.spin_num_col = self.input_field(sub_sizer, "Spin number column:", divider=divider, padding=padding, spacer=spacer)
+        self.spin_name_col = self.input_field(sub_sizer, "Spin name column:", divider=divider, padding=padding, spacer=spacer)
         if data_cols:
-            data_col = self.input_field(sub_sizer, "Data column:", divider=divider, padding=padding, spacer=spacer)
-            err_col = self.input_field(sub_sizer, "Error column:", divider=divider, padding=padding, spacer=spacer)
+            self.data_col = self.input_field(sub_sizer, "Data column:", divider=divider, padding=padding, spacer=spacer)
+            self.err_col = self.input_field(sub_sizer, "Error column:", divider=divider, padding=padding, spacer=spacer)
 
         # Set the values.
-        spin_id_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_id_col))
-        mol_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.mol_name_col))
-        res_num_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.res_num_col))
-        res_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.res_name_col))
-        spin_num_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_num_col))
-        spin_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_name_col))
+        self.spin_id_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_id_col))
+        self.mol_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.mol_name_col))
+        self.res_num_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.res_num_col))
+        self.res_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.res_name_col))
+        self.spin_num_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_num_col))
+        self.spin_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_name_col))
         if data_cols:
-            data_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.data_col))
-            err_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.err_col))
+            self.data_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.data_col))
+            self.err_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.err_col))
 
         # The column separator.
-        sep = self.combo_box(sub_sizer, "Column separator:", ["white space", ",", ";", ":", ""], divider=divider, padding=padding, spacer=0, read_only=False)
+        self.sep = self.combo_box(sub_sizer, "Column separator:", ["white space", ",", ";", ":", ""], divider=divider, padding=padding, spacer=spacer, read_only=False)
         if not ds.relax_gui.free_file_format.sep:
-            sep.SetValue("white space")
+            self.sep.SetValue("white space")
         else:
-            sep.SetValue(str_to_gui(ds.relax_gui.free_file_format.sep))
+            self.sep.SetValue(str_to_gui(ds.relax_gui.free_file_format.sep))
+
+        # Add a save button.
+        if save:
+            # A sizer.
+            button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+            # Build the button.
+            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "  Save")
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.save, wx.BITMAP_TYPE_ANY))
+            button.SetToolTipString("Save the free file format settings within the relax data store")
+
+            # Add the button.
+            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+
+            # Right padding.
+            button_sizer.AddSpacer(padding)
+
+            # Bind the click event.
+            self.Bind(wx.EVT_BUTTON, self.free_file_format_save, button)
+
+            # Add the button sizer to the widget (with spacing).
+            sub_sizer.AddSpacer(10-spacer)
+            sub_sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT|wx.ALL, 0)
 
         # Set the size of the widget.
         sub_sizer.AddSpacer(10)
@@ -567,11 +594,26 @@ class UF_window(wx.Dialog):
         sizer.Add(border, 0, wx.EXPAND)
         sizer.AddStretchSpacer()
 
-        # Return the field element.
-        if data_cols:
-            return spin_id_col, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, err_col, sep
-        else:
-            return spin_id_col, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep
+
+    def free_file_format_save(self, event):
+        """Save the free file format widget contents into the relax data store.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Get the column numbers.
+        ds.relax_gui.free_file_format.spin_id_col =   gui_to_int(self.spin_id_col.GetValue())
+        ds.relax_gui.free_file_format.mol_name_col =  gui_to_int(self.mol_name_col.GetValue())
+        ds.relax_gui.free_file_format.res_num_col =   gui_to_int(self.res_num_col.GetValue())
+        ds.relax_gui.free_file_format.res_name_col =  gui_to_int(self.res_name_col.GetValue())
+        ds.relax_gui.free_file_format.spin_num_col =  gui_to_int(self.spin_num_col.GetValue())
+        ds.relax_gui.free_file_format.spin_name_col = gui_to_int(self.spin_name_col.GetValue())
+
+        # The column separator.
+        ds.relax_gui.free_file_format.sep = str(self.sep.GetValue())
+        if ds.relax_gui.free_file_format.sep == 'white space':
+            ds.relax_gui.free_file_format.sep = None
 
 
     def input_field(self, sizer, desc, tooltip=None, divider=None, padding=0, spacer=None):
