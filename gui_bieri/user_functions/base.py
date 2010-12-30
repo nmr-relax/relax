@@ -42,15 +42,21 @@ from gui_bieri import paths
 class File_selector:
     """Class for handling file selection dialogs and updating the respective fields."""
 
-    def __init__(self, field):
+    def __init__(self, field, title='File selection', default="all files (*.*)|*"):
         """Setup the class and store the field.
 
         @param field:   The field to update with the file selection.
         @type field:    wx.TextCtrl instance
+        @keyword title:     The text title to put at the top of the dialog window.
+        @type title:        str
+        @keyword default:   The default file type.
+        @type default:      str
         """
 
         # Store the args.
         self.field = field
+        self.title = title
+        self.default = default
 
 
     def select(self, event):
@@ -61,7 +67,7 @@ class File_selector:
         """
 
         # Open the file selection dialog.
-        file = openfile(msg='Select the relax script to execute', default='relax scripts (*.py)|*.py')
+        file = openfile(msg=self.title, default=self.default)
 
         # Check the file.
         if not file:
@@ -461,15 +467,19 @@ class UF_window(wx.Dialog):
         raise RelaxImplementError
 
 
-    def file_selection(self, sizer, desc):
+    def file_selection(self, sizer, desc, title='File selection', default="all files (*.*)|*"):
         """Build the file selection element.
 
-        @param sizer:   The sizer to put the input field into.
-        @type sizer:    wx.Sizer instance
-        @param desc:    The text description.
-        @type desc:     str
-        @return:        The file selection GUI element.
-        @rtype:         wx.TextCtrl
+        @param sizer:       The sizer to put the input field into.
+        @type sizer:        wx.Sizer instance
+        @param desc:        The text description.
+        @type desc:         str
+        @keyword title:     The text title to put at the top of the dialog window.
+        @type title:        str
+        @keyword default:   The default file type.
+        @type default:      str
+        @return:            The file selection GUI element.
+        @rtype:             wx.TextCtrl
         """
 
         # Init.
@@ -489,7 +499,7 @@ class UF_window(wx.Dialog):
         sub_sizer.Add(field, 0, wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The file selection object.
-        obj = File_selector(field)
+        obj = File_selector(field, title=title, default=default)
 
         # The file selection button.
         button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icon_16x16.open, wx.BITMAP_TYPE_ANY))

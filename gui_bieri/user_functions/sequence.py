@@ -78,7 +78,7 @@ class Read_window(UF_window):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The sequence file:")
+        self.file = self.file_selection(sizer, "The sequence file:", title="Sequence file selection")
 
         # The parameter file settings.
         self.free_file_format(sizer)
