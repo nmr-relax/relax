@@ -101,6 +101,7 @@ class I22x22:
         self.cancel =               path + 'actions' + sep + 'dialog-cancel.png'
         self.close =                path + 'actions' + sep + 'dialog-close.png'
         self.ok =                   path + 'actions' + sep + 'dialog-ok.png'
+        self.save =                 path + 'actions' + sep + 'document-save.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
@@ -127,6 +128,7 @@ class I32x32:
         self.cancel =       path + 'actions' + sep + 'dialog-cancel.png'
         self.close =        path + 'actions' + sep + 'dialog-close.png'
         self.ok =           path + 'actions' + sep + 'dialog-ok.png'
+        self.save =         path + 'actions' + sep + 'document-save.png'
         self.view_refresh = path + 'actions' + sep + 'view-refresh.png'
 
 
@@ -145,6 +147,7 @@ class I48x48:
         self.cancel =       path + 'actions' + sep + 'dialog-cancel.png'
         self.forwards =     path + 'actions' + sep + 'go-next-view.png'
         self.remove =       path + 'actions' + sep + 'list-remove.png'
+        self.save =         path + 'actions' + sep + 'document-save.png'
         self.view_refresh = path + 'actions' + sep + 'view-refresh.png'
 
         # relax icons.
