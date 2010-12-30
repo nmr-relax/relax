@@ -106,7 +106,7 @@ class About_base(wx.Frame):
         self.window.Bind(wx.EVT_PAINT, self.generate)
 
         # Let the dialog be closable with a left button click.
-        self.window.Bind(wx.EVT_MOUSE_EVENTS, self.cursor_style)
+        self.window.Bind(wx.EVT_MOTION, self.cursor_style)
 
         # Let the dialog be closable with a left button click.
         self.window.Bind(wx.EVT_LEFT_DOWN, self.process_click)
