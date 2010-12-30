@@ -68,12 +68,12 @@ class Molecule(UF_base):
         # Initialise the dialog.
         self._delete_window = Delete_window(self.gui, self.interpreter)
 
-        # Show the dialog.
-        self._delete_window.ShowModal()
-
         # Default molecule name.
         if mol_name:
             self._delete_window.mol.SetValue(mol_name)
+
+        # Show the dialog.
+        self._delete_window.ShowModal()
 
         # Destroy.
         self._delete_window.Destroy()
@@ -166,9 +166,6 @@ class Delete_window(UF_window):
 
         # Clear the previous data.
         self.mol.Clear()
-
-        # Clear the molecule name.
-        self.mol.SetValue('')
 
         # The list of molecule names.
         if pipes.cdp_name():

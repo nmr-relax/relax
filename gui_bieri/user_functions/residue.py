@@ -53,12 +53,12 @@ class Residue(UF_base):
         # Initialise the dialog.
         self._create_window = Create_window(self.gui, self.interpreter)
 
-        # Show the dialog.
-        self._create_window.ShowModal()
-
         # Default molecule name.
         if mol_name:
             self._create_window.mol.SetValue(mol_name)
+
+        # Show the dialog.
+        self._create_window.ShowModal()
 
         # Destroy.
         self._create_window.Destroy()
@@ -80,9 +80,6 @@ class Residue(UF_base):
         # Initialise the dialog.
         self._delete_window = Delete_window(self.gui, self.interpreter)
 
-        # Show the dialog.
-        self._delete_window.ShowModal()
-
         # Default molecule name.
         if mol_name:
             self._delete_window.mol.SetValue(mol_name)
@@ -90,6 +87,9 @@ class Residue(UF_base):
         # Default residue.
         if res_num or res_name:
             self._delete_window.res.SetValue("%s %s" % (res_num, res_name))
+
+        # Show the dialog.
+        self._delete_window.ShowModal()
 
         # Destroy.
         self._delete_window.Destroy()
@@ -159,9 +159,6 @@ class Create_window(UF_window, Mol_res_spin):
         # Clear the previous data.
         self.mol.Clear()
 
-        # Clear the text.
-        self.mol.SetValue('')
-
         # The list of molecule names.
         if pipes.cdp_name():
             for mol in molecule_loop():
@@ -219,10 +216,6 @@ class Delete_window(UF_window, Mol_res_spin):
         # Clear the previous data.
         self.mol.Clear()
         self.res.Clear()
-
-        # Clear the text.
-        self.mol.SetValue('')
-        self.res.SetValue('')
 
         # The list of molecule names.
         if pipes.cdp_name():
