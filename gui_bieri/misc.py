@@ -84,7 +84,37 @@ def int_to_gui(num):
 
     # No input.
     if num == None:
-        return ''
+        num = ''
 
     # Convert.
-    return str(num)
+    return unicode(num)
+
+
+def gui_to_str(string):
+    """Convert the GUI obtained string to a string.
+
+    @param string:  The number in string form.
+    @type string:   str
+    @return:        The string.
+    @rtype:         str
+    """
+
+    # Convert.
+    return str(string)
+
+
+def str_to_gui(string):
+    """Convert the string into the GUI string.
+
+    @param num:     The number in int or None form.
+    @type num:      int or None
+    @return:        The GUI string.
+    @rtype:         str
+    """
+
+    # No input.
+    if string == None:
+        string = ''
+
+    # Convert.
+    return unicode(string)
