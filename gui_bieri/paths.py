@@ -57,6 +57,7 @@ class I16x16:
         self.molecule =             path + 'molecule.png'
         self.molecule_unfolded =    path + 'molecule_unfolded.png'
         self.pipe =                 path + 'pipe.png'
+        self.relax_data =           path + 'fid.png'
         self.residue =              path + 'residue.png'
         self.sequence =             path + 'sequence.png'
         self.spin =                 path + 'spin.png'
@@ -109,6 +110,7 @@ class I22x22:
         self.molecule =             path + 'molecule.png'
         self.molecule_unfolded =    path + 'molecule_unfolded.png'
         self.pipe =                 path + 'pipe.png'
+        self.relax_data =           path + 'fid.png'
         self.residue =              path + 'residue.png'
         self.sequence =             path + 'sequence.png'
         self.spin =                 path + 'spin.png'
@@ -153,6 +155,7 @@ class I48x48:
         # relax icons.
         path = ICON_RELAX_PATH + '48x48' + sep
         self.pipe =                 path + 'pipe.png'
+        self.relax_data =           path + 'fid.png'
         self.sequence =             path + 'sequence.png'
 
 
