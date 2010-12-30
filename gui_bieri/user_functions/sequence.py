@@ -114,4 +114,4 @@ class Read_window(UF_window):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the sequence.
-        self.interpreter.sequence.read(file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
+        self.interpreter.sequence.read(file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
