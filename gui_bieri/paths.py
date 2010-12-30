@@ -58,6 +58,7 @@ class I16x16:
         self.molecule_unfolded =    path + 'molecule_unfolded.png'
         self.pipe =                 path + 'pipe.png'
         self.residue =              path + 'residue.png'
+        self.sequence =             path + 'sequence.png'
         self.spin =                 path + 'spin.png'
 
         # Oxygen icons.
@@ -107,6 +108,7 @@ class I22x22:
         self.molecule_unfolded =    path + 'molecule_unfolded.png'
         self.pipe =                 path + 'pipe.png'
         self.residue =              path + 'residue.png'
+        self.sequence =             path + 'sequence.png'
         self.spin =                 path + 'spin.png'
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
 
@@ -148,6 +150,7 @@ class I48x48:
         # relax icons.
         path = ICON_RELAX_PATH + '48x48' + sep
         self.pipe =                 path + 'pipe.png'
+        self.sequence =             path + 'sequence.png'
 
 
 # Set up all icon classes.
