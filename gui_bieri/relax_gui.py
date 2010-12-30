@@ -420,7 +420,6 @@ class Main(wx.Frame):
         ds.relax_gui.results_rx = []
         ds.relax_gui.results_model_free = []
         ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
-        ds.relax_gui.file_setting = [1, 2, 3, 4, 5, 6, 7]
 
         # Table of relax Results
         ds.relax_gui.table_residue = []
@@ -529,7 +528,7 @@ class Main(wx.Frame):
         global global_setting #import global variable
         if question('Do you realy want to change relax settings?'):
             ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
-            ds.relax_gui.file_setting = [1, 2, 3, 4, 5, 6, 7]
+            ds.relax_gui.free_file_format.reset()
 
 
     def settings(self, event): # set up for relax variables

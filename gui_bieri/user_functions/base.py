@@ -28,6 +28,7 @@ import wx
 from wx.lib import buttons
 
 # relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import AllRelaxErrors, RelaxImplementError
 
 # relax GUI module imports.

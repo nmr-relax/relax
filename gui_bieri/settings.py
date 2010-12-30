@@ -252,14 +252,13 @@ class Inputfile(wx.Dialog):
 
 
     def accept_settings(self, event): # change settings
-        ds.relax_gui.file_setting = []
-        ds.relax_gui.file_setting.append(gui_to_int(self.mol_nam.GetValue()))
-        ds.relax_gui.file_setting.append(gui_to_int(self.res_num_col.GetValue()))
-        ds.relax_gui.file_setting.append(gui_to_int(self.res_nam_col.GetValue()))
-        ds.relax_gui.file_setting.append(gui_to_int(self.spin_num_col.GetValue()))
-        ds.relax_gui.file_setting.append(gui_to_int(self.spin_nam_col.GetValue()))
-        ds.relax_gui.file_setting.append(gui_to_int(self.value_col.GetValue()))
-        ds.relax_gui.file_setting.append(gui_to_int(self.error_col.GetValue()))
+        ds.relax_gui.free_file_format.mol_name_col =  gui_to_int(self.mol_nam.GetValue())
+        ds.relax_gui.free_file_format.res_num_col =   gui_to_int(self.res_num_col.GetValue())
+        ds.relax_gui.free_file_format.res_name_col =  gui_to_int(self.res_nam_col.GetValue())
+        ds.relax_gui.free_file_format.spin_num_col =  gui_to_int(self.spin_num_col.GetValue())
+        ds.relax_gui.free_file_format.spin_name_col = gui_to_int(self.spin_nam_col.GetValue())
+        ds.relax_gui.free_file_format.data_col =      gui_to_int(self.value_col.GetValue())
+        ds.relax_gui.free_file_format.err_col =       gui_to_int(self.error_col.GetValue())
 
         # Update the fields.
         self.update()
@@ -274,10 +273,10 @@ class Inputfile(wx.Dialog):
     def update(self):
         """Update all the fields."""
 
-        self.mol_nam =      wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[0]))
-        self.res_num_col =  wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[1]))
-        self.res_nam_col =  wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[2]))
-        self.spin_num_col = wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[3]))
-        self.spin_nam_col = wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[4]))
-        self.value_col =    wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[5]))
-        self.error_col =    wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.file_setting[6]))
+        self.mol_nam =      wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.mol_name_col))
+        self.res_num_col =  wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.res_num_col))
+        self.res_nam_col =  wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.res_name_col))
+        self.spin_num_col = wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.spin_num_col))
+        self.spin_nam_col = wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.spin_name_col))
+        self.value_col =    wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.data_col))
+        self.error_col =    wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.err_col))

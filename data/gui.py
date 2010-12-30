@@ -40,6 +40,9 @@ class Gui(Element):
         # Add the analysis list object.
         self.analyses = Analyses()
 
+        # The free format file settings.
+        self.free_file_format = Free_file_format()
+
         # Set the name and description.
         self.name = 'relax_gui'
         self.desc = 'The relax GUI information store.'
@@ -52,17 +55,20 @@ class Gui(Element):
         @type gui_node:     xml.dom.minicompat.Element instance
         """
 
-        # Add the analysis list object.
+        # Init.
         self.analyses = Analyses()
+        self.free_file_format = Free_file_format()
 
-        # Get the analyses node.
+        # Get the analyses node and recreate the analyses structure.
         analyses_nodes = gui_node.getElementsByTagName('analyses')
-
-        # Recreate the analyses structure.
         self.analyses.from_xml(analyses_nodes[0])
 
+        # Get the file settings node and recreate the structure.
+        format_nodes = gui_node.getElementsByTagName('free_file_format')
+        self.free_file_format.from_xml(format_nodes[0])
+
         # Recreate all the other data structures.
-        xml_to_object(gui_node, self, blacklist=['analyses'])
+        xml_to_object(gui_node, self, blacklist=['analyses', 'free_file_format'])
 
 
 
@@ -116,3 +122,33 @@ class Analyses(RelaxListType):
 
             # Recreate the analysis container.
             cont.from_xml(node)
+
+
+class Free_file_format(Element):
+    """Container for the free format file settings (column numbers, column separators, etc.)."""
+
+    def __init__(self):
+        """Set up the initial values."""
+
+        # Execute the base class __init__() method.
+        super(Free_file_format, self).__init__(name='free_file_format', desc='The column numbers and separator for the free format file.')
+
+        # Reset.
+        self.reset()
+
+
+    def reset(self):
+        """Reset all variables to the initial values."""
+
+        # The default column numbers.
+        self.spin_id_col =   None
+        self.mol_name_col =  1
+        self.res_num_col =   2
+        self.res_name_col =  3
+        self.spin_num_col =  4
+        self.spin_name_col = 5
+        self.data_col =      6
+        self.err_col =       7
+
+        # The column separator (set to None for white space).
+        self.sep = None

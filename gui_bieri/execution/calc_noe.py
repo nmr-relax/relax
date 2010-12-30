@@ -52,12 +52,6 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
 
     hetero = global_setting[2]
     prot = global_setting[3]
-    intcol = int(file_setting[5])
-    mol_name = int(file_setting[0])
-    res_num = int(file_setting[1])
-    res_name = int(file_setting[2])
-    spin_num = int(file_setting[3])
-    spin_name = int(file_setting[4])
     resultsdir = str(target_dir)
     gracedir = str(target_dir) + sep + 'grace'
     save_file = str(target_dir) + sep + 'noe.' + str(nmr_freq) + '.out'
