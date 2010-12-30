@@ -384,7 +384,7 @@ class UF_window(wx.Dialog):
         sizer.AddStretchSpacer()
 
 
-    def combo_box(self, sizer, desc, choices, evt_fn=None, divider=None, padding=0, spacer=None):
+    def combo_box(self, sizer, desc, choices, evt_fn=None, divider=None, padding=0, spacer=None, read_only=True):
         """Build the combo box widget for list selections.
 
         @param sizer:       The sizer to put the combo box widget into.
@@ -401,6 +401,8 @@ class UF_window(wx.Dialog):
         @type padding:      int
         @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
         @type spacer:       None or int
+        @keyword read_only: A flag which if True means that text cannot be typed into the combo box widget.
+        @type read_only:    bool
         @return:            The combo box object.
         @rtype:             wx.ComboBox instance
         """
@@ -424,7 +426,10 @@ class UF_window(wx.Dialog):
         sub_sizer.AddSpacer((divider - x, 0))
 
         # The combo box element.
-        combo = wx.ComboBox(self, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=choices)
+        style = wx.CB_DROPDOWN
+        if read_only:
+            style = style | wx.CB_READONLY
+        combo = wx.ComboBox(self, -1, value='', style=style, choices=choices)
         combo.SetMinSize((50, 27))
         sub_sizer.Add(combo, 1, wx.ALIGN_CENTER_VERTICAL, 0)
 
@@ -528,7 +533,7 @@ class UF_window(wx.Dialog):
             err_col = self.input_field(sub_sizer, "Error column:", divider=divider, padding=padding, spacer=spacer)
 
         # The column separator.
-        sep = self.combo_box(sub_sizer, "Column separator:", ["white space", "','", ""], divider=divider, padding=padding, spacer=0)
+        sep = self.combo_box(sub_sizer, "Column separator:", ["white space", ",", ";", ":", ""], divider=divider, padding=padding, spacer=0, read_only=False)
 
         # Set the size of the widget.
         sub_sizer.AddSpacer(10)
