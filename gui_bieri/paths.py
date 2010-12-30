@@ -102,6 +102,7 @@ class I22x22:
         self.close =                path + 'actions' + sep + 'dialog-close.png'
         self.ok =                   path + 'actions' + sep + 'dialog-ok.png'
         self.save =                 path + 'actions' + sep + 'document-save.png'
+        self.view_refresh =         path + 'actions' + sep + 'view-refresh.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
@@ -111,7 +112,6 @@ class I22x22:
         self.residue =              path + 'residue.png'
         self.sequence =             path + 'sequence.png'
         self.spin =                 path + 'spin.png'
-        self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
 
 
 
