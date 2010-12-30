@@ -163,9 +163,6 @@ class dAuvergne_protocol:
         # Initialise the status.
         self.status = Status()
 
-        # Execution lock.
-        self.status.exec_lock.acquire('auto dauvergne protocol')
-
         # Store the args.
         self.diff_model = diff_model
         self.mf_models = mf_models
@@ -226,216 +223,15 @@ class dAuvergne_protocol:
             for name in user_fns:
                 setattr(self.interpreter, name, user_fns[name])
 
+        # Execution lock.
+        self.status.exec_lock.acquire('auto dauvergne protocol')
 
-        # MI - Local tm.
-        ################
-
-        if self.diff_model == 'local_tm':
-            # Base directory to place files into.
-            self.base_dir = self.save_dir+'local_tm'+sep
-
-            # Sequential optimisation of all model-free models (function must be modified to suit).
-            self.multi_model(local_tm=True)
-
-            # Model selection.
-            self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
-
-
-        # Diffusion models MII to MV.
-        #############################
-
-        elif self.diff_model == 'sphere' or self.diff_model == 'prolate' or self.diff_model == 'oblate' or self.diff_model == 'ellipsoid':
-            # No local_tm directory!
-            dir_list = listdir(self.save_dir)
-            if 'local_tm' not in dir_list:
-                raise RelaxError("The local_tm model must be optimised first.")
-
-            # The initial round of optimisation - not zero if calculations were interrupted.
-            self.start_round = self.determine_rnd(model=self.diff_model)
-
-            # Loop until convergence if conv_loop is set, otherwise just loop once.
-            # This looping could be made much cleaner by removing the dependence on the determine_rnd() function.
-            while True:
-                # Determine which round of optimisation to do (init, round_1, round_2, etc).
-                self.round = self.determine_rnd(model=self.diff_model)
-                self.status.dAuvergne_protocol.round = self.round
-
-                # Inital round of optimisation for diffusion models MII to MV.
-                if self.round == 0:
-                    # Base directory to place files into.
-                    self.base_dir = self.save_dir+self.diff_model+sep+'init'+sep
-
-                    # Run name.
-                    name = self.diff_model
-
-                    # Create the data pipe.
-                    self.interpreter.pipe.create(name, 'mf')
-
-                    # Load the local tm diffusion model MI results.
-                    self.interpreter.results.read(file='results', dir=self.save_dir+'local_tm'+sep+'aic')
-
-                    # Remove the tm parameter.
-                    self.interpreter.model_free.remove_tm()
-
-                    # Deselect the spins in the exclude list.
-                    if self.exclude:
-                        self.interpreter.deselect.read(file=self.exclude)
-
-                    # Name the spins if necessary.
-                    if self.seq_args[6] == None:
-                        self.interpreter.spin.name(name=self.het_name)
-
-                    # Load the PDB file and calculate the unit vectors parallel to the XH bond.
-                    if self.pdb_file:
-                        self.interpreter.structure.read_pdb(self.pdb_file)
-                        self.interpreter.structure.vectors(attached=self.attached_name)
-
-                    # Add an arbitrary diffusion tensor which will be optimised.
-                    if self.diff_model == 'sphere':
-                        self.interpreter.diffusion_tensor.init(10e-9, fixed=False)
-                        inc = 11
-                    elif self.diff_model == 'prolate':
-                        self.interpreter.diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=False)
-                        inc = 11
-                    elif self.diff_model == 'oblate':
-                        self.interpreter.diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=False)
-                        inc = 11
-                    elif self.diff_model == 'ellipsoid':
-                        self.interpreter.diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=False)
-                        inc = 6
-
-                    # Minimise just the diffusion tensor.
-                    self.interpreter.fix('all_spins')
-                    self.interpreter.grid_search(inc=inc)
-                    self.interpreter.minimise(self.min_algor)
-
-                    # Write the results.
-                    self.interpreter.results.write(file='results', dir=self.base_dir, force=True)
-
-
-                # Normal round of optimisation for diffusion models MII to MV.
-                else:
-                    # Base directory to place files into.
-                    self.base_dir = self.save_dir+self.diff_model + sep+'round_'+repr(self.round)+sep
-
-                    # Load the optimised diffusion tensor from either the previous round.
-                    self.load_tensor()
-
-                    # Sequential optimisation of all model-free models (function must be modified to suit).
-                    self.multi_model()
-
-                    # Model selection.
-                    self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
-
-                    # Final optimisation of all diffusion and model-free parameters.
-                    self.interpreter.fix('all', fixed=False)
-
-                    # Minimise all parameters.
-                    self.interpreter.minimise(self.min_algor)
-
-                    # Write the results.
-                    dir = self.base_dir + 'opt'
-                    self.interpreter.results.write(file='results', dir=dir, force=True)
-
-                    # Test for convergence.
-                    converged = self.convergence()
-
-                    # Break out of the infinite while loop if automatic looping is not activated or if convergence has occurred.
-                    if converged or not self.conv_loop:
-                        break
-
-                # Unset the status.
-                self.status.dAuvergne_protocol.round = None
-
-
-        # Final run.
-        ############
-
-        elif self.diff_model == 'final':
-            # Diffusion model selection.
-            ############################
-
-            # All the global diffusion models to be used in the model selection.
-            self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
-
-            # Close all pipes that might be craeted.
-            for name in self.pipes:
-                # Close the pipe
-                if pipes.has_pipe(name):
-                    self.interpreter.pipe.delete(name)
-
-            # Missing optimised model.
-            dir_list = listdir(self.save_dir)
-            for name in self.pipes:
-                if name not in dir_list:
-                    raise RelaxError("The %s model must be optimised first." % name)
-
-            # Create the local_tm data pipe.
-            self.interpreter.pipe.create('local_tm', 'mf')
-
-            # Load the local tm diffusion model MI results.
-            self.interpreter.results.read(file='results', dir=self.save_dir+'local_tm'+sep+'aic')
-
-            # Loop over models MII to MV.
-            for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
-                # Determine which was the last round of optimisation for each of the models.
-                self.round = self.determine_rnd(model=model) - 1
-
-                # If no directories begining with 'round_' exist, the script has not been properly utilised!
-                if self.round < 1:
-                    # Construct the name of the diffusion tensor.
-                    name = model
-                    if model == 'prolate' or model == 'oblate':
-                        name = name + ' spheroid'
-
-                    # Throw an error to prevent misuse of the script.
-                    raise RelaxError("Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script.")
-
-                # Create the data pipe.
-                self.interpreter.pipe.create(model, 'mf')
-
-                # Load the diffusion model results.
-                self.interpreter.results.read(file='results', dir=self.save_dir+model + sep+'round_'+repr(self.round)+sep+'opt')
-
-            # Model selection between MI to MV.
-            self.model_selection(modsel_pipe='final', write_flag=False)
-
-
-            # Monte Carlo simulations.
-            ##########################
-
-            # Fix the diffusion tensor, if it exists.
-            if hasattr(pipes.get_pipe('final'), 'diff_tensor'):
-                self.interpreter.fix('diff')
-
-            # Simulations.
-            self.interpreter.monte_carlo.setup(number=self.mc_num)
-            self.interpreter.monte_carlo.create_data()
-            self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise(self.min_algor)
-            self.interpreter.eliminate()
-            self.interpreter.monte_carlo.error_analysis()
-
-
-            # Write the final results.
-            ##########################
-
-            self.interpreter.results.write(file='results', dir=self.save_dir+'final', force=True)
-
-
-        # Unknown script behaviour.
-        ###########################
-
-        else:
-            raise RelaxError("Unknown diffusion model, change the value of 'self.diff_model'")
-
-        # Unset the status info.
-        self.status.dAuvergne_protocol.diff_model = None
-        self.status.dAuvergne_protocol.mf_models = None
-        self.status.dAuvergne_protocol.local_tm_models = None
-
-        # Unlock execution.
-        self.status.exec_lock.release()
+        # Execute the protocol.
+        try:
+            self.execute()
+        finally:
+            # Unlock execution.
+            self.status.exec_lock.release()
 
 
     def check_vars(self):
@@ -730,6 +526,217 @@ class dAuvergne_protocol:
 
         # Determine the number for the next round (add 1 to the highest number).
         return numbers[-1] + 1
+
+
+    def execute(self):
+        """Execute the protocol."""
+
+        # MI - Local tm.
+        ################
+
+        if self.diff_model == 'local_tm':
+            # Base directory to place files into.
+            self.base_dir = self.save_dir+'local_tm'+sep
+
+            # Sequential optimisation of all model-free models (function must be modified to suit).
+            self.multi_model(local_tm=True)
+
+            # Model selection.
+            self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
+
+
+        # Diffusion models MII to MV.
+        #############################
+
+        elif self.diff_model == 'sphere' or self.diff_model == 'prolate' or self.diff_model == 'oblate' or self.diff_model == 'ellipsoid':
+            # No local_tm directory!
+            dir_list = listdir(self.save_dir)
+            if 'local_tm' not in dir_list:
+                raise RelaxError("The local_tm model must be optimised first.")
+
+            # The initial round of optimisation - not zero if calculations were interrupted.
+            self.start_round = self.determine_rnd(model=self.diff_model)
+
+            # Loop until convergence if conv_loop is set, otherwise just loop once.
+            # This looping could be made much cleaner by removing the dependence on the determine_rnd() function.
+            while True:
+                # Determine which round of optimisation to do (init, round_1, round_2, etc).
+                self.round = self.determine_rnd(model=self.diff_model)
+                self.status.dAuvergne_protocol.round = self.round
+
+                # Inital round of optimisation for diffusion models MII to MV.
+                if self.round == 0:
+                    # Base directory to place files into.
+                    self.base_dir = self.save_dir+self.diff_model+sep+'init'+sep
+
+                    # Run name.
+                    name = self.diff_model
+
+                    # Create the data pipe.
+                    self.interpreter.pipe.create(name, 'mf')
+
+                    # Load the local tm diffusion model MI results.
+                    self.interpreter.results.read(file='results', dir=self.save_dir+'local_tm'+sep+'aic')
+
+                    # Remove the tm parameter.
+                    self.interpreter.model_free.remove_tm()
+
+                    # Deselect the spins in the exclude list.
+                    if self.exclude:
+                        self.interpreter.deselect.read(file=self.exclude)
+
+                    # Name the spins if necessary.
+                    if self.seq_args[6] == None:
+                        self.interpreter.spin.name(name=self.het_name)
+
+                    # Load the PDB file and calculate the unit vectors parallel to the XH bond.
+                    if self.pdb_file:
+                        self.interpreter.structure.read_pdb(self.pdb_file)
+                        self.interpreter.structure.vectors(attached=self.attached_name)
+
+                    # Add an arbitrary diffusion tensor which will be optimised.
+                    if self.diff_model == 'sphere':
+                        self.interpreter.diffusion_tensor.init(10e-9, fixed=False)
+                        inc = 11
+                    elif self.diff_model == 'prolate':
+                        self.interpreter.diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=False)
+                        inc = 11
+                    elif self.diff_model == 'oblate':
+                        self.interpreter.diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=False)
+                        inc = 11
+                    elif self.diff_model == 'ellipsoid':
+                        self.interpreter.diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=False)
+                        inc = 6
+
+                    # Minimise just the diffusion tensor.
+                    self.interpreter.fix('all_spins')
+                    self.interpreter.grid_search(inc=inc)
+                    self.interpreter.minimise(self.min_algor)
+
+                    # Write the results.
+                    self.interpreter.results.write(file='results', dir=self.base_dir, force=True)
+
+
+                # Normal round of optimisation for diffusion models MII to MV.
+                else:
+                    # Base directory to place files into.
+                    self.base_dir = self.save_dir+self.diff_model + sep+'round_'+repr(self.round)+sep
+
+                    # Load the optimised diffusion tensor from either the previous round.
+                    self.load_tensor()
+
+                    # Sequential optimisation of all model-free models (function must be modified to suit).
+                    self.multi_model()
+
+                    # Model selection.
+                    self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
+
+                    # Final optimisation of all diffusion and model-free parameters.
+                    self.interpreter.fix('all', fixed=False)
+
+                    # Minimise all parameters.
+                    self.interpreter.minimise(self.min_algor)
+
+                    # Write the results.
+                    dir = self.base_dir + 'opt'
+                    self.interpreter.results.write(file='results', dir=dir, force=True)
+
+                    # Test for convergence.
+                    converged = self.convergence()
+
+                    # Break out of the infinite while loop if automatic looping is not activated or if convergence has occurred.
+                    if converged or not self.conv_loop:
+                        break
+
+                # Unset the status.
+                self.status.dAuvergne_protocol.round = None
+
+
+        # Final run.
+        ############
+
+        elif self.diff_model == 'final':
+            # Diffusion model selection.
+            ############################
+
+            # All the global diffusion models to be used in the model selection.
+            self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
+
+            # Close all pipes that might be craeted.
+            for name in self.pipes:
+                # Close the pipe
+                if pipes.has_pipe(name):
+                    self.interpreter.pipe.delete(name)
+
+            # Missing optimised model.
+            dir_list = listdir(self.save_dir)
+            for name in self.pipes:
+                if name not in dir_list:
+                    raise RelaxError("The %s model must be optimised first." % name)
+
+            # Create the local_tm data pipe.
+            self.interpreter.pipe.create('local_tm', 'mf')
+
+            # Load the local tm diffusion model MI results.
+            self.interpreter.results.read(file='results', dir=self.save_dir+'local_tm'+sep+'aic')
+
+            # Loop over models MII to MV.
+            for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
+                # Determine which was the last round of optimisation for each of the models.
+                self.round = self.determine_rnd(model=model) - 1
+
+                # If no directories begining with 'round_' exist, the script has not been properly utilised!
+                if self.round < 1:
+                    # Construct the name of the diffusion tensor.
+                    name = model
+                    if model == 'prolate' or model == 'oblate':
+                        name = name + ' spheroid'
+
+                    # Throw an error to prevent misuse of the script.
+                    raise RelaxError("Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script.")
+
+                # Create the data pipe.
+                self.interpreter.pipe.create(model, 'mf')
+
+                # Load the diffusion model results.
+                self.interpreter.results.read(file='results', dir=self.save_dir+model + sep+'round_'+repr(self.round)+sep+'opt')
+
+            # Model selection between MI to MV.
+            self.model_selection(modsel_pipe='final', write_flag=False)
+
+
+            # Monte Carlo simulations.
+            ##########################
+
+            # Fix the diffusion tensor, if it exists.
+            if hasattr(pipes.get_pipe('final'), 'diff_tensor'):
+                self.interpreter.fix('diff')
+
+            # Simulations.
+            self.interpreter.monte_carlo.setup(number=self.mc_num)
+            self.interpreter.monte_carlo.create_data()
+            self.interpreter.monte_carlo.initial_values()
+            self.interpreter.minimise(self.min_algor)
+            self.interpreter.eliminate()
+            self.interpreter.monte_carlo.error_analysis()
+
+
+            # Write the final results.
+            ##########################
+
+            self.interpreter.results.write(file='results', dir=self.save_dir+'final', force=True)
+
+
+        # Unknown script behaviour.
+        ###########################
+
+        else:
+            raise RelaxError("Unknown diffusion model, change the value of 'self.diff_model'")
+
+        # Unset the status info.
+        self.status.dAuvergne_protocol.diff_model = None
+        self.status.dAuvergne_protocol.mf_models = None
+        self.status.dAuvergne_protocol.local_tm_models = None
 
 
     def load_tensor(self):
