@@ -31,6 +31,7 @@ from molecule import Molecule
 from pipes import Pipes
 from residue import Residue
 from script import Script
+from sequence import Sequence
 from spin import Spin
 
 
@@ -40,6 +41,7 @@ __all__ = ['base',
            'pipes',
            'residue',
            'script',
+           'sequence',
            'spin']
 
 
@@ -62,6 +64,7 @@ class User_functions:
         self.pipes = Pipes(self.gui, self.interpreter)
         self.residue = Residue(self.gui, self.interpreter)
         self.script = Script(self.gui, self.interpreter)
+        self.sequence = Sequence(self.gui, self.interpreter)
         self.spin = Spin(self.gui, self.interpreter)
 
 
@@ -72,4 +75,5 @@ class User_functions:
         self.molecule.destroy()
         self.pipes.destroy()
         self.residue.destroy()
+        self.sequence.destroy()
         self.spin.destroy()

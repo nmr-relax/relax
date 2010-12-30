@@ -205,7 +205,10 @@ class Menu:
                 [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.residue.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.residue.delete]
             ]],
-            [wx.NewId(), "&script",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
+            [wx.NewId(), "s&cript",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
+            [wx.NewId(), "se&quence", paths.icon_16x16.sequence, None, [
+                [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.sequence.read]
+            ]],
             [wx.NewId(), "&spin", paths.icon_16x16.spin, None, [
                 [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.spin.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.spin.delete]
