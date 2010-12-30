@@ -384,39 +384,61 @@ class UF_window(wx.Dialog):
         sizer.AddStretchSpacer()
 
 
-    def combo_box(self, sizer, desc, choices, evt_fn=None):
-        """Build the combo box element for list selections.
+    def combo_box(self, sizer, desc, choices, evt_fn=None, divider=None, padding=0, spacer=None):
+        """Build the combo box widget for list selections.
 
-        @param sizer:   The sizer to put the input field into.
-        @type sizer:    wx.Sizer instance
-        @param desc:    The text description.
-        @type desc:     str
-        @param choices: The list of choices.
-        @type choices:  list of str
-        @param evt_fn:  The event handling function.
-        @type evt_fn:   func
+        @param sizer:       The sizer to put the combo box widget into.
+        @type sizer:        wx.Sizer instance
+        @param desc:        The text description.
+        @type desc:         str
+        @param choices:     The list of choices.
+        @type choices:      list of str
+        @param evt_fn:      The event handling function.
+        @type evt_fn:       func
+        @keyword divider:   The optional position of the divider.  If None, the class variable div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
+        @return:            The combo box object.
+        @rtype:             wx.ComboBox instance
         """
 
         # Init.
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        # Left padding.
+        sub_sizer.AddSpacer(padding)
+
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
+        # The divider.
+        if not divider:
+            divider = self.div_left
+
         # Spacing.
         x, y = text.GetSize()
-        sub_sizer.AddSpacer((self.div_left - x, 0))
+        sub_sizer.AddSpacer((divider - x, 0))
 
         # The combo box element.
         combo = wx.ComboBox(self, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=choices)
-        combo.SetMinSize((self.div_right, 27))
-        combo.SetMaxSize((self.div_right, 27))
-        sub_sizer.Add(combo, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        combo.SetMinSize((50, 27))
+        sub_sizer.Add(combo, 1, wx.ALIGN_CENTER_VERTICAL, 0)
 
-        # Add to the main sizer (followed by stretchable spacing).
-        sizer.Add(sub_sizer)
-        sizer.AddStretchSpacer()
+        # Right padding.
+        sub_sizer.AddSpacer(padding)
+
+        # Add to the main sizer.
+        sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
+
+        # Spacing below the widget.
+        if spacer == None:
+            sizer.AddStretchSpacer()
+        else:
+            sizer.AddSpacer(spacer)
 
         # Bind events.
         if evt_fn:
@@ -477,38 +499,112 @@ class UF_window(wx.Dialog):
         return field
 
 
-    def input_field(self, sizer, desc, tooltip=None):
-        """Build the input field.
+    def free_file_format(self, sizer, data_cols=False):
+        """Build the free format file settings widget.
 
         @param sizer:       The sizer to put the input field into.
+        @type sizer:        wx.Sizer instance
+        """
+
+        # A static box to hold all the widgets.
+        box = wx.StaticBox(self, -1, "Free format file settings")
+
+        # Init.
+        sub_sizer = wx.StaticBoxSizer(box, wx.VERTICAL)
+        sub_sizer.AddSpacer(10)
+        divider = self.div_left - 15
+        padding = 10
+        spacer = 3
+
+        # The columns.
+        spin_id_col = self.input_field(sub_sizer, "Spin ID column:", divider=divider, padding=padding, spacer=spacer)
+        mol_name_col = self.input_field(sub_sizer, "Molecule name column:", divider=divider, padding=padding, spacer=spacer)
+        res_num_col = self.input_field(sub_sizer, "Residue number column:", divider=divider, padding=padding, spacer=spacer)
+        res_name_col = self.input_field(sub_sizer, "Residue name column:", divider=divider, padding=padding, spacer=spacer)
+        spin_num_col = self.input_field(sub_sizer, "Spin number column:", divider=divider, padding=padding, spacer=spacer)
+        spin_name_col = self.input_field(sub_sizer, "Spin name column:", divider=divider, padding=padding, spacer=spacer)
+        if data_cols:
+            data_col = self.input_field(sub_sizer, "Data column:", divider=divider, padding=padding, spacer=spacer)
+            err_col = self.input_field(sub_sizer, "Error column:", divider=divider, padding=padding, spacer=spacer)
+
+        # The column separator.
+        sep = self.combo_box(sub_sizer, "Column separator:", ["white space", "','", ""], divider=divider, padding=padding, spacer=0)
+
+        # Set the size of the widget.
+        sub_sizer.AddSpacer(10)
+        x, y = box.GetSize()
+        box.SetMinSize((self.main_size, y))
+
+        # The border of the widget.
+        border = wx.BoxSizer()
+
+        # Place the box sizer inside the border.
+        border.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Add to the main sizer (followed by stretchable spacing).
+        sizer.Add(border, 0, wx.EXPAND)
+        sizer.AddStretchSpacer()
+
+        # Return the field element.
+        if data_cols:
+            return spin_id_col, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, err_col, sep
+        else:
+            return spin_id_col, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep
+
+
+    def input_field(self, sizer, desc, tooltip=None, divider=None, padding=0, spacer=None):
+        """Build the input field widget.
+
+        @param sizer:       The sizer to put the input field widget into.
         @type sizer:        wx.Sizer instance
         @param desc:        The text description.
         @type desc:         str
         @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
         @type tooltip:      str
+        @keyword divider:   The optional position of the divider.  If None, the class variable div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
         @return:            The input field object.
         @rtype:             wx.TextCtrl instance
         """
 
         # Init.
-        field_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Left padding.
+        sub_sizer.AddSpacer(padding)
 
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
-        field_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # The divider.
+        if not divider:
+            divider = self.div_left
 
         # Spacing.
         x, y = text.GetSize()
-        field_sizer.AddSpacer((self.div_left - x, 0))
+        sub_sizer.AddSpacer((divider - x, 0))
 
         # The input field.
         field = wx.TextCtrl(self, -1, '')
-        field.SetMinSize((self.div_right, 27))
-        field_sizer.Add(field, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        field.SetMinSize((50, 27))
+        sub_sizer.Add(field, 1, wx.ALIGN_CENTER_VERTICAL, 0)
 
-        # Add to the main sizer (followed by stretchable spacing).
-        sizer.Add(field_sizer)
-        sizer.AddStretchSpacer()
+        # Right padding.
+        sub_sizer.AddSpacer(padding)
+
+        # Add to the main sizer.
+        sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
+
+        # Spacing below the widget.
+        if spacer == None:
+            sizer.AddStretchSpacer()
+        else:
+            sizer.AddSpacer(spacer)
 
         # Tooltip.
         if tooltip:
