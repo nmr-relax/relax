@@ -30,10 +30,11 @@ import wx
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relax GUI module imports.
-from filedialog import openfile
-from message import error_message
-from misc import gui_to_int, int_to_gui
-from paths import IMAGE_PATH
+from gui_bieri.filedialog import openfile
+from gui_bieri.message import error_message
+from gui_bieri.misc import gui_to_int, int_to_gui
+from gui_bieri import paths
+from gui_bieri.user_functions.base import UF_window
 
 
 def relax_global_settings(oldsettings):
@@ -71,13 +72,195 @@ def load_sequence():
 
 
 
+class Base_window(wx.Frame):
+    """Base class for the settings windows."""
+
+    # The window size.
+    SIZE = (600, 600)
+
+    # A border.
+    BORDER = 10
+
+    def __init__(self, parent=None, id=-1, title='', heading='', style=wx.DEFAULT_FRAME_STYLE):
+        """Set up the window."""
+
+        # Execute the base __init__() method.
+        super(Base_window, self).__init__(parent=parent, id=id, title=title, style=style)
+
+        # The main sizer.
+        self.main_sizer = self.build_frame()
+
+        # The heading.
+        text = wx.StaticText(self, -1, heading)
+        text.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.main_sizer.Add(text, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
+        self.main_sizer.AddStretchSpacer()
+
+        # The relax logo.
+        bmp = wx.StaticBitmap(self, -1, wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+        self.main_sizer.Add(bmp, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
+        self.main_sizer.AddStretchSpacer()
+
+        # The centre section.
+        self.add_centre(self.main_sizer)
+
+        # The bottom buttons.
+        self.add_buttons(self.main_sizer)
+
+        # Set the window size.
+        self.SetSize(self.SIZE)
+
+        # Centre the window.
+        self.Center()
+
+
+    def add_buttons(self, sizer):
+        """Add the buttons to the sizer.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Create a horizontal layout for the buttons.
+        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(button_sizer, 0, wx.ALIGN_CENTER|wx.ALL, 0)
+
+        # The save button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Save")
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.save, wx.BITMAP_TYPE_ANY))
+        button.SetToolTipString("Save the settings")
+        button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+        self.Bind(wx.EVT_BUTTON, self.save, button)
+
+        # Spacer.
+        button_sizer.AddSpacer(20)
+
+        # The cancel button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Cancel")
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
+        button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+        self.Bind(wx.EVT_BUTTON, self.cancel, button)
+
+
+    def add_centre(self, sizer):
+        """Dummy base class method for adding the centre of the settings window.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+
+    def build_frame(self):
+        """Create the main part of the frame, returning the central sizer."""
+
+        # The sizers.
+        sizer1 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer2 = wx.BoxSizer(wx.VERTICAL)
+        central_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # Left and right borders.
+        sizer1.AddSpacer(self.BORDER)
+        sizer1.Add(sizer2, 1, wx.EXPAND|wx.ALL, 0)
+        sizer1.AddSpacer(self.BORDER)
+
+        # Top and bottom borders.
+        sizer2.AddSpacer(self.BORDER)
+        sizer2.Add(central_sizer, 1, wx.EXPAND|wx.ALL, 0)
+        sizer2.AddSpacer(self.BORDER)
+
+        # Set the sizer for the frame.
+        self.SetSizer(sizer1)
+
+        # Return the central sizer.
+        return central_sizer
+
+
+    def save(self, event):
+        """Dummy base class save method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Destroy the window.
+        self.Destroy()
+
+
+    def cancel(self, event):
+        """Close the window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Destroy the window.
+        self.Destroy()
+
+
+
+class Free_file_format(Base_window, UF_window):
+    """The free file format setting window."""
+
+    # The window size.
+    SIZE = (500, 550)
+
+    def __init__(self, parent=None):
+        """Set up the window."""
+
+        # The sizes.
+        self.main_size = self.SIZE[0] - 2*self.BORDER
+        self.div_left = self.main_size / 2
+
+        # Execute the base __init__() method.
+        super(Free_file_format, self).__init__(parent=parent, id=-1, title="Free file format", heading="Settings for the free file format")
+
+
+    def add_centre(self, sizer):
+        """Add the centre of the free file format settings window.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The widget.
+        self.free_file_format(sizer, data_cols=True, save=False)
+
+        # Spacing.
+        self.main_sizer.AddStretchSpacer()
+
+
+    def save(self, event):
+        """Save the free file format widget contents into the relax data store.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Get the column numbers.
+        ds.relax_gui.free_file_format.spin_id_col =   gui_to_int(self.spin_id_col.GetValue())
+        ds.relax_gui.free_file_format.mol_name_col =  gui_to_int(self.mol_name_col.GetValue())
+        ds.relax_gui.free_file_format.res_num_col =   gui_to_int(self.res_num_col.GetValue())
+        ds.relax_gui.free_file_format.res_name_col =  gui_to_int(self.res_name_col.GetValue())
+        ds.relax_gui.free_file_format.spin_num_col =  gui_to_int(self.spin_num_col.GetValue())
+        ds.relax_gui.free_file_format.spin_name_col = gui_to_int(self.spin_name_col.GetValue())
+
+        # The column separator.
+        ds.relax_gui.free_file_format.sep = str(self.sep.GetValue())
+        if ds.relax_gui.free_file_format.sep == 'white space':
+            ds.relax_gui.free_file_format.sep = None
+
+        # Destroy the window.
+        self.Destroy()
+
+
+
 class Globalparam(wx.Dialog):
     def __init__(self, *args, **kwds):
         # begin globalparam.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
         self.label_1_copy = wx.StaticText(self, -1, "Set the parameters for optimisation")
-        self.bitmap_1_copy = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy = wx.StaticBitmap(self, -1, wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.label_2_copy = wx.StaticText(self, -1, "Bond length")
         self.bond = wx.TextCtrl(self, -1, old_settings[0])
         self.label_3_copy = wx.StaticText(self, -1, "Chemical shift anisotropy (CSA)")
@@ -138,7 +321,7 @@ class Globalparam(wx.Dialog):
         # begin globalparam.__set_properties
         self.SetTitle("Global parameters")
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.label_1_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.bond.SetMinSize((250, 27))
@@ -170,113 +353,3 @@ class Globalparam(wx.Dialog):
         settings = None
         self.Destroy()
         event.Skip()
-
-
-
-class Inputfile(wx.Dialog):
-    def __init__(self, *args, **kwds):
-        # begin inputfile.__init__
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
-        wx.Dialog.__init__(self, *args, **kwds)
-        self.label_1_copy_copy = wx.StaticText(self, -1, "Parameter file settings")
-        self.bitmap_1_copy_copy = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
-        self.subheader = wx.StaticText(self, -1, "Please specify column number below:\n")
-        self.label_2_copy_copy = wx.StaticText(self, -1, "Molecule name")
-        self.label_3_copy_copy = wx.StaticText(self, -1, "Residue number")
-        self.label_5_copy_copy = wx.StaticText(self, -1, "Residue name")
-        self.label_6_copy_copy = wx.StaticText(self, -1, "Spin number")
-        self.label_9_copy_copy = wx.StaticText(self, -1, "Spin name")
-        self.label_7_copy_copy = wx.StaticText(self, -1, "Values")
-        self.label_8_copy_copy = wx.StaticText(self, -1, "Errors")
-        self.ok_copy_copy = wx.Button(self, -1, "Ok")
-        self.cancel_copy_copy = wx.Button(self, -1, "Cancel")
-
-        # Update the fields.
-        self.update()
-
-        self.__set_properties()
-        self.__do_layout()
-
-        self.Bind(wx.EVT_BUTTON, self.accept_settings, self.ok_copy_copy)
-        self.Bind(wx.EVT_BUTTON, self.cancel_settings, self.cancel_copy_copy)
-        self.Bind(wx.EVT_CLOSE, self.cancel_settings)
-
-
-    def __do_layout(self):
-        # begin inputfile.__do_layout
-        sizer_1_copy_copy = wx.BoxSizer(wx.VERTICAL)
-        grid_sizer_1_copy_copy = wx.FlexGridSizer(8, 2, 0, 0)
-        sizer_1_copy_copy.Add(self.label_1_copy_copy, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
-        sizer_1_copy_copy.Add(self.bitmap_1_copy_copy, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
-        sizer_1_copy_copy.Add(self.subheader, 0, wx.ALIGN_CENTER_HORIZONTAL, 5)
-        grid_sizer_1_copy_copy.Add(self.label_2_copy_copy, 1, wx.LEFT, 5)
-        grid_sizer_1_copy_copy.Add(self.mol_nam, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy_copy.Add(self.label_3_copy_copy, 1, wx.LEFT, 5)
-        grid_sizer_1_copy_copy.Add(self.res_num_col, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy_copy.Add(self.label_5_copy_copy, 1, wx.LEFT, 5)
-        grid_sizer_1_copy_copy.Add(self.res_nam_col, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy_copy.Add(self.label_6_copy_copy, 1, wx.LEFT, 5)
-        grid_sizer_1_copy_copy.Add(self.spin_num_col, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy_copy.Add(self.label_9_copy_copy, 1, wx.LEFT, 5)
-        grid_sizer_1_copy_copy.Add(self.spin_nam_col, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy_copy.Add(self.label_7_copy_copy, 1, wx.LEFT, 5)
-        grid_sizer_1_copy_copy.Add(self.value_col, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy_copy.Add(self.label_8_copy_copy, 1, wx.LEFT, 5)
-        grid_sizer_1_copy_copy.Add(self.error_col, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy_copy.AddGrowableCol(1)
-        sizer_1_copy_copy.Add(grid_sizer_1_copy_copy, 1, wx.EXPAND|wx.ALL, 5)
-        sizer2 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer2.Add(self.ok_copy_copy, 0, wx.ALL|wx.ALIGN_RIGHT, 5)
-        sizer2.Add(self.cancel_copy_copy, 0, wx.ALL, 5)
-        sizer_1_copy_copy.Add(sizer2, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        self.SetSizer(sizer_1_copy_copy)
-        sizer_1_copy_copy.Fit(self)
-        self.Layout()
-
-
-    def __set_properties(self):
-        # begin inputfile.__set_properties
-        self.SetTitle("File settings")
-        _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-        self.SetIcon(_icon)
-        self.label_1_copy_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.mol_nam.SetMinSize((150, 27))
-        self.res_num_col.SetMinSize((150, 27))
-        self.res_nam_col.SetMinSize((150, 27))
-        self.spin_num_col.SetMinSize((150, 27))
-        self.spin_nam_col.SetMinSize((150, 27))
-        self.value_col.SetMinSize((150, 27))
-        self.label_8_copy_copy.SetMinSize((156, 17))
-        self.error_col.SetMinSize((150, 27))
-
-
-    def accept_settings(self, event): # change settings
-        ds.relax_gui.free_file_format.mol_name_col =  gui_to_int(self.mol_nam.GetValue())
-        ds.relax_gui.free_file_format.res_num_col =   gui_to_int(self.res_num_col.GetValue())
-        ds.relax_gui.free_file_format.res_name_col =  gui_to_int(self.res_nam_col.GetValue())
-        ds.relax_gui.free_file_format.spin_num_col =  gui_to_int(self.spin_num_col.GetValue())
-        ds.relax_gui.free_file_format.spin_name_col = gui_to_int(self.spin_nam_col.GetValue())
-        ds.relax_gui.free_file_format.data_col =      gui_to_int(self.value_col.GetValue())
-        ds.relax_gui.free_file_format.err_col =       gui_to_int(self.error_col.GetValue())
-
-        # Update the fields.
-        self.update()
-
-        self.Destroy()
-
-
-    def cancel_settings(self, event): # cancel
-        self.Destroy()
-
-
-    def update(self):
-        """Update all the fields."""
-
-        self.mol_nam =      wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.mol_name_col))
-        self.res_num_col =  wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.res_num_col))
-        self.res_nam_col =  wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.res_name_col))
-        self.spin_num_col = wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.spin_num_col))
-        self.spin_nam_col = wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.spin_name_col))
-        self.value_col =    wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.data_col))
-        self.error_col =    wx.TextCtrl(self, -1, int_to_gui(ds.relax_gui.free_file_format.err_col))

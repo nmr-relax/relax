@@ -60,7 +60,7 @@ from message import dir_message, error_message, question
 from gui_bieri import paths
 from references import References
 from relax_prompt import Prompt
-from settings import Inputfile, load_sequence, relax_global_settings
+from settings import Free_file_format, load_sequence, relax_global_settings
 from user_functions import User_functions
 
 
@@ -476,9 +476,18 @@ class Main(wx.Frame):
         see_results(choice, None)
 
 
-    def param_file_setting(self, event): # set up parameter files
-        set_relax_params = Inputfile(self, -1, "")
-        set_relax_params.Show()
+    def free_file_format_settings(self, event):
+        """Open the free file format settings window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Build the window.
+        win = Free_file_format(self)
+
+        # Show the window.
+        win.Show()
 
 
     def references(self, event):

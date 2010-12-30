@@ -91,13 +91,13 @@ class Menu:
         # The 'Settings' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_item(menu, id=20, text="&Global relax settings", icon=paths.icon_16x16.settings_global))
-        menu.AppendItem(self.build_menu_item(menu, id=21, text="&Parameter file settings", icon=paths.icon_16x16.settings))
+        menu.AppendItem(self.build_menu_item(menu, id=21, text="&Free file format settings", icon=paths.icon_16x16.settings))
         menu.AppendItem(self.build_menu_item(menu, id=22, text="Reset a&ll settings", icon=paths.icon_16x16.settings_reset))
         self.menubar.Append(menu, "&Settings")
 
         # The 'Settings' menu actions.
         self.gui.Bind(wx.EVT_MENU, self.gui.settings,           id=20)
-        self.gui.Bind(wx.EVT_MENU, self.gui.param_file_setting, id=21)
+        self.gui.Bind(wx.EVT_MENU, self.gui.free_file_format_settings, id=21)
         self.gui.Bind(wx.EVT_MENU, self.gui.reset_setting,      id=22)
 
         # The 'Help' menu entries.
