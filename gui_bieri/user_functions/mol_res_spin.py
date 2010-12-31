@@ -54,7 +54,7 @@ class Mol_res_spin:
             mol_name = None
 
         # The residue info.
-        res_info = self._get_res_info()
+        res_info = self._get_res_info(suffix)
         if not res_info:
             return
         res_num, res_name = res_info
