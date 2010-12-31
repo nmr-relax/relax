@@ -36,7 +36,9 @@ then add the manual to the repository:
 
 $ svn add docs/relax.pdf
 
-and commit all the changes.
+and commit all the changes.  Clean up the temporary files with:
+
+$ scons clean
 
 
 
