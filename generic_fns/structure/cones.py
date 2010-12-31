@@ -50,7 +50,7 @@ class Base:
         @param phi:     The polar angle.
         @type phi:      float
         @param theta:   The azimuthal angle.
-        @type phi:      float
+        @type theta:    float
         @return:        True if the point is within the cone, False otherwise.
         @rtype:         bool
         """
