@@ -208,7 +208,8 @@ class Menu:
                 [wx.NewId(), "&read",   paths.icon_16x16.open, self.gui.user_functions.relax_data.read]
             ]],
             [wx.NewId(), "resid&ue", paths.icon_16x16.residue, None, [
-                [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.residue.create],
+                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.residue.copy],
+                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.residue.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.residue.delete]
             ]],
             [wx.NewId(), "s&cript",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
