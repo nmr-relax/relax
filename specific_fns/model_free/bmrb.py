@@ -103,8 +103,9 @@ class Bmrb:
         @type star:     NMR_STAR instance
         """
 
-        # Init the list of model-free parameters.
-        mf_params = ['local_tm', 's2', 's2f', 's2s', 'te', 'tf', 'ts', 'rex', 'chi2']
+        # The list of model-free parameters (both bmrblib names and relax names).
+        mf_bmrb_key = ['bond_length', 'local_tm', 's2', 's2f', 's2s', 'te', 'tf', 'ts', 'rex', 'chi2']
+        mf_params =   ['r', 'local_tm', 's2', 's2f', 's2s', 'te', 'tf', 'ts', 'rex', 'chi2']
 
         # Get the entities.
         for data in star.model_free.loop():
@@ -124,15 +125,16 @@ class Bmrb:
                 spin = mol_res_spin.return_spin(spin_id)
 
                 # Loop over and set the model-free parameters.
-                for param in mf_params:
+                for j in range(len(mf_params)):
                     # Set the parameter.
-                    if param in keys:
-                        setattr(spin, param, data[param][i])
+                    if mf_bmrb_key[j] in keys:
+                        setattr(spin, mf_params[j], data[mf_bmrb_key[j]][i])
 
                     # Set the error.
-                    param_err = param + '_err'
-                    if param_err in keys:
-                        setattr(spin, param_err, data[param_err][i])
+                    mf_bmrb_key_err = mf_bmrb_key[j] + '_err'
+                    mf_param_err = mf_params[j] + '_err'
+                    if mf_bmrb_key_err in keys:
+                        setattr(spin, mf_param_err, data[mf_bmrb_key_err][i])
 
                 # The model.
                 model = self._bmrb_model_map(bmrb_name=data['model_fit'][i])
