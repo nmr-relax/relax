@@ -38,11 +38,18 @@ from gui_bieri.paths import WIZARD_IMAGE_PATH
 class Mol_res_spin:
     """The molecule, residue, spin base class."""
 
-    def _get_res_id(self):
-        """Generate the residue ID from the residue selection."""
+    def _get_res_id(self, suffix=''):
+        """Generate the residue ID from the residue selection.
+
+        @keyword suffix:    The suffix to be added to the residue data structure name.
+        @type suffix:       str
+        @return:            The residue ID string.
+        @rtype:             str
+        """
 
         # The molecule name.
-        mol_name = str(self.mol.GetValue())
+        obj = getattr(self, 'mol'+suffix)
+        mol_name = str(obj.GetValue())
         if mol_name == '':
             mol_name = None
 
@@ -56,15 +63,18 @@ class Mol_res_spin:
         return generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name)
 
 
-    def _get_res_info(self):
+    def _get_res_info(self, suffix=''):
         """Extract the residue info from the residue selection.
 
-        @return:    The residue number and name from the residue selection self.res.
-        @rtype:     int, str
+        @keyword suffix:    The suffix to be added to the residue data structure name.
+        @type suffix:       str
+        @return:            The residue number and name from the residue selection self.res.
+        @rtype:             int, str
         """
 
         # The residue info.
-        res = str(self.res.GetValue())
+        obj = getattr(self, 'res'+suffix)
+        res = str(obj.GetValue())
 
         # Nothing.
         if res == '':
