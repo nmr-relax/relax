@@ -2,8 +2,6 @@ Version 1.3.6
 (31 December 2010, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.6
 
-r11211
-
     Features:
         * Addition of Michael Bieri's model-free data extraction script.
         * Added support for CCPN Analysis 2.1 peak lists (exported in Sparky format).
