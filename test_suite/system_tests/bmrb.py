@@ -66,7 +66,7 @@ class Bmrb(SystemTestCase):
         # Blacklists (data that is not restored, and relaxation data which has been reordered and will be checked in data_ri_comp()).
         blacklist_spin = ['attached_proton', 'fixed', 'nucleus', 'proton_type', 'relax_sim_data', 'select', 'xh_vect'] + ['r_err', 'csa_err'] + ['chi2_sim', 'f_count', 'g_count', 'h_count', 'iter', 'warning'] + ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels', 'relax_data', 'relax_error']
         if version == '3.0':
-            blacklist_spin = blacklist_spin + ['local_tm', 'local_tm_err']
+            blacklist_spin = blacklist_spin + ['r', 'local_tm', 'local_tm_err']
         blacklist_diff = []
         blacklist_global = ['diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'sim_number', 'sim_state'] + ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels']
 
