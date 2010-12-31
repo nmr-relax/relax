@@ -116,6 +116,10 @@ def gui_to_str(string):
     @rtype:         str
     """
 
+    # No value.
+    if string == '':
+        return None
+
     # Convert.
     return str(string)
 
