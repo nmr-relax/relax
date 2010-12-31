@@ -28,16 +28,30 @@ import wx
 
 # relax module imports.
 from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, generate_spin_id, molecule_loop
-from generic_fns import pipes
+from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_window
 from gui_bieri.paths import WIZARD_IMAGE_PATH
+from gui_bieri.misc import gui_to_str, str_to_gui
 
 
 # The container class.
 class Molecule(UF_base):
     """The container class for holding all GUI elements."""
+
+    def copy(self, event):
+        """The molecule.copy user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The dialog.
+        window = Copy_window(self.gui, self.interpreter)
+        window.ShowModal()
+        window.Destroy()
+
 
     def create(self, event):
         """The molecule.create user function.
@@ -118,6 +132,99 @@ class Add_window(UF_window):
 
 
 
+class Copy_window(UF_window):
+    """The molecule.copy() user function window."""
+
+    # Some class variables.
+    size_x = 700
+    size_y = 400
+    frame_title = 'Copy a molecule'
+    image_path = WIZARD_IMAGE_PATH + 'molecule.png'
+    main_text = 'This dialog allows you to copy molecules.'
+    title = 'Molecule copy'
+
+
+    def add_uf(self, sizer):
+        """Add the molecule specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The source pipe.
+        self.pipe_from = self.combo_box(sizer, "The source data pipe:", [], evt_fn=self.update_mol_list)
+
+        # The molecule selection.
+        self.mol_from = self.combo_box(sizer, "The source molecule:", [])
+
+        # The destination pipe.
+        self.pipe_to = self.combo_box(sizer, "The destination data pipe name:", [])
+
+        # The new molecule name.
+        self.mol_to = self.input_field(sizer, "The new molecule name:", tooltip='If left blank, the new molecule will have the same name as the old.')
+
+
+    def execute(self):
+        """Execute the user function."""
+
+        # Get the pipe names.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        pipe_to = gui_to_str(self.pipe_to.GetValue())
+
+        # The molecule names.
+        mol_from = "#" + gui_to_str(self.mol_from.GetValue())
+        mol_to = gui_to_str(self.mol_to.GetValue())
+        if mol_to:
+            mol_to = "#" + mol_to
+
+        # Copy the molecule.
+        self.interpreter.molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
+
+        # Update.
+        self.update(None)
+
+
+    def update(self, event):
+        """Update the UI.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the default pipe name.
+        if not gui_to_str(self.pipe_from.GetValue()):
+            self.pipe_from.SetValue(str_to_gui(cdp_name()))
+        if not gui_to_str(self.pipe_to.GetValue()):
+            self.pipe_to.SetValue(str_to_gui(cdp_name()))
+
+        # The list of pipe names.
+        for name in pipe_names():
+            self.pipe_from.Append(name)
+            self.pipe_to.Append(name)
+
+        # Update the molecule list.
+        self.update_mol_list()
+
+
+    def update_mol_list(self, event=None):
+        """Update the list of molecules.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The source data pipe.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+
+        # Clear the previous data.
+        self.mol_from.Clear()
+
+        # The list of molecule names.
+        for mol in molecule_loop(pipe=pipe_from):
+            self.mol_from.Append(str_to_gui(mol.name))
+
+
+
 class Delete_window(UF_window):
     """The molecule.delete() user function window."""
 
@@ -168,6 +275,6 @@ class Delete_window(UF_window):
         self.mol.Clear()
 
         # The list of molecule names.
-        if pipes.cdp_name():
+        if cdp_name():
             for mol in molecule_loop():
                 self.mol.Append(mol.name)

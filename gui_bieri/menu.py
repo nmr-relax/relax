@@ -193,12 +193,13 @@ class Menu:
         # The list of entries to build.
         self.entries_uf = [
             [wx.NewId(), "&molecule", paths.icon_16x16.molecule, None, [
-                [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.molecule.create],
+                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.molecule.copy],
+                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.molecule.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.molecule.delete]
             ]],
             [wx.NewId(), "&pipe", paths.icon_16x16.pipe, None, [
                 [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.pipes.copy],
-                [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
+                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipes.delete],
                 [wx.NewId(), "&switch", paths.icon_16x16.pipe_switch, self.gui.user_functions.pipes.switch]
             ]],
