@@ -392,7 +392,7 @@ class UF_window(wx.Dialog):
         sizer.AddStretchSpacer()
 
 
-    def combo_box(self, sizer, desc, choices, evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True):
+    def combo_box(self, sizer, desc, choices=[], evt_fn=None, tooltip=None, divider=None, padding=0, spacer=None, read_only=True):
         """Build the combo box widget for list selections.
 
         @param sizer:       The sizer to put the combo box widget into.
