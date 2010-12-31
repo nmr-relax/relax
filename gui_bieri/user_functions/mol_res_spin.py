@@ -32,6 +32,7 @@ from generic_fns import pipes
 
 # GUI module imports.
 from base import UF_base, UF_window
+from gui_bieri.misc import gui_to_int, gui_to_str
 from gui_bieri.paths import WIZARD_IMAGE_PATH
 
 
@@ -72,24 +73,36 @@ class Mol_res_spin:
         @rtype:             int, str
         """
 
-        # The residue info.
-        obj = getattr(self, 'res'+suffix)
-        res = str(obj.GetValue())
+        # Single residue object.
+        if hasattr(self, 'res'+suffix):
+            # The residue info.
+            obj = getattr(self, 'res'+suffix)
+            res = gui_to_str(obj.GetValue())
 
-        # Nothing.
-        if res == '':
-            return
+            # Nothing.
+            if not res:
+                return
 
-        # Split.
-        res_num, res_name = split(res)
+            # Split.
+            res_num, res_name = split(res)
 
-        # Convert.
-        if res_name == '':
-            res_name = None
-        if res_num == '':
-            res_num = None
+            # Convert.
+            if res_name == '':
+                res_name = None
+            if res_num == '':
+                res_num = None
+            else:
+                res_num = int(res_num)
+
+        # 2 objects.
         else:
-            res_num = int(res_num)
+            # The residue number.
+            obj = getattr(self, 'res_num'+suffix)
+            res_num = gui_to_int(obj.GetValue())
+
+            # The residue name.
+            obj = getattr(self, 'res_name'+suffix)
+            res_name = gui_to_str(obj.GetValue())
 
         # Return the number and name.
         return res_num, res_name
