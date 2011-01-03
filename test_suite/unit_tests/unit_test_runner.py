@@ -277,42 +277,44 @@ class ImportErrorTestCase(unittest.TestCase):
         self.fail(self.message)
 
 
-def load_test_case(package_path,  module_name, class_name):
-    '''Load a testCase from the file system using a package path, file name and class name.
+def load_test_case(package_path, module_name, class_name):
+    """Load a testCase from the file system using a package path, file name and class name.
 
-    @type package_path: string with . separated fields
-    @param package_path: path to the module as a list of package names
-                         separated by dots
+    @param package_path:    Full system path of the module file.
+    @type package_path:     str
+    @param module_name:     Name of the module to load the class from.
+    @type module_name:      str
+    @param class_name:      Name of the class to load.
+    @type class_name:       str
+    @return:                The suite of test cases.
+    @rtype:                 TestSuite instance
+    """
 
-    @type module_name: string
-    @param module_name: name of the module to load the class from
+    # Determine the full name of the module.
+    print package_path
+    module = get_module_relative_path(package_path, module_name)
 
-    @type class_name: string
-    @param class_name: name of the class to load
-
-    @rtype:
-    @return:
-    '''
-
-    result = None
-    packages = None
-    package_path=get_module_relative_path(package_path, module_name)
-
-    # Catch import errors.
+    # Catch import errors, adding the ImportErrorTestCase class to the test suite.
     try:
-        packages = import_module(package_path)
+        packages = import_module(module)
     except:
         result = unittest.TestSuite()
-        bad_syntax = ImportErrorTestCase(package_path, traceback.format_exc())
+        bad_syntax = ImportErrorTestCase(module, traceback.format_exc())
         result.addTest(bad_syntax)
 
+    # Nothing to do.
+    if not packages:
+        return
 
-    if packages != None:
-        # some input packages may not contain the required class
-        if hasattr(packages[-1], class_name):
-            clazz =  getattr(packages[-1], class_name)
-            result = unittest.TestLoader().loadTestsFromTestCase(clazz)
-    return result
+    # Some input packages may not contain the required class.
+    if not hasattr(packages[-1], class_name):
+        return
+
+    # Get the class object.
+    clazz = getattr(packages[-1], class_name)
+
+    # Load the test cases and return the suite of test cases.
+    return unittest.TestLoader().loadTestsFromTestCase(clazz)
 
 
 
@@ -706,6 +708,7 @@ class Unit_test_runner(object):
                 break
 
 
+        # Execute specific tests.
         if tests == None:
             for module_path in module_paths:
                 print(module_path)
