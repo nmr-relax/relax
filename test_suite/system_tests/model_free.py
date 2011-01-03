@@ -1466,11 +1466,11 @@ class Mf(SystemTestCase):
             j = j + 1
 
 
-    def test_read_results_1_2_pse(self):
+    def test_read_results_1_2_pse4(self):
         """Read the truncated relax 1.2 model-free results file for PSE-4."""
 
         # Read the results.
-        self.interpreter.results.read(file='pse_trunc', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'results_files')
+        self.interpreter.results.read(file='pse4_trunc', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
 
         # Debugging print out.
         print(cdp)
