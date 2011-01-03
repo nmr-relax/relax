@@ -81,11 +81,9 @@ class Relax:
         # Get and store the PID of this process.
         self.pid = getpid()
 
-        # Debugging flag (default is off).
-        __main__.debug = False
-
-        # Pedantic flag (default is off).
-        __main__.pedantic = False
+        # Initialise the status singleton.
+        self.status = Status()
+        self.status.setup()
 
         # Setup the object containing the generic functions.
         self.generic = generic_fns
@@ -94,11 +92,7 @@ class Relax:
         mode, log_file, tee_file = self.arguments()
 
         # Set up the warning system.
-        relax_warnings.setup()
-
-        # Initialise the status singleton.
-        status = Status()
-        status.setup()
+        relax_warnings.setup(self.pedantic)
 
         # Show the version number and exit.
         if mode == 'version':
@@ -184,11 +178,12 @@ class Relax:
 
         # Debugging flag.
         if options.debug:
-            __main__.debug = True
+            self.status.debug = True
 
         # Pedantic flag.
+        self.pedantic = False
         if options.pedantic:
-            __main__.pedantic = True
+            self.pedantic = True
 
         # Logging.
         if options.log:

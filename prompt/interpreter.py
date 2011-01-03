@@ -27,7 +27,6 @@
 import dep_check
 
 # Python module imports.
-import __main__
 from code import InteractiveConsole, softspace
 from os import F_OK, access, chdir, getcwd, path
 import platform
@@ -486,7 +485,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         status.exec_lock.release()
 
         # Throw the error.
-        if __main__.debug:
+        if Status().debug:
             raise
 
         # Be nicer to the user.
@@ -508,7 +507,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         # Nice output for the user.
         else:
             # Print the scary traceback normally hidden from the user.
-            if __main__.debug:
+            if Status().debug:
                 self.showtraceback()
 
             # Print the RelaxError message line.

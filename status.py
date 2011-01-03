@@ -24,12 +24,8 @@
 """Module containing the status singleton object."""
 
 # Python module imports.
-import __main__
 from re import search
 from threading import Lock
-
-# relax module imports.
-from relax_errors import RelaxError
 
 
 class Status(object):
@@ -50,8 +46,11 @@ class Status(object):
         return self._instance
 
 
-    def setup(self):
+    def setup(self, debug=False):
         """Initialise all the status data structures."""
+
+        # Store the args.
+        self.debug = debug
 
         # Execution lock object.
         self.exec_lock = Exec_lock()
@@ -78,8 +77,11 @@ class Status_container:
 class Exec_lock:
     """A type of locking object for locking execution of relax."""
 
-    def __init__(self):
+    def __init__(self, debug=False):
         """Set up the lock-like object."""
+
+        # Store the arg.
+        self.debug = debug
 
         # Init a threading.Lock object.
         self._lock = Lock()
@@ -94,7 +96,7 @@ class Exec_lock:
         self._auto_from_script = False
 
         # Debugging.
-        if __main__.debug:
+        if self.debug:
             self.log = open('lock.log', 'w')
 
 
@@ -111,7 +113,7 @@ class Exec_lock:
             self._script_nest += 1
 
             # Debugging.
-            if __main__.debug:
+            if self.debug:
                 self.log.write("Nested by %s (to level %s)\n" % (name, self._script_nest))
                 self.log.flush()
 
@@ -121,7 +123,7 @@ class Exec_lock:
         # Skip locking if an auto-analysis is called from a script.
         if self.locked() and self._name == 'script UI' and search('^auto', name):
             # Debugging.
-            if __main__.debug:
+            if self.debug:
                 self.log.write("Skipped unlocking of '%s' lock by '%s'\n" % (self._name, name))
                 self.log.flush()
 
@@ -135,7 +137,7 @@ class Exec_lock:
         self._name = name
 
         # Debugging.
-        if __main__.debug:
+        if self.debug:
             self.log.write("Acquired by %s\n" % self._name)
             self.log.flush()
             return
@@ -148,7 +150,7 @@ class Exec_lock:
         """Simulate the Lock.locked() mechanism."""
 
         # Debugging (pseudo-locking based on _name).
-        if __main__.debug:
+        if self.debug:
             if self._name:
                 return True
             else:
@@ -164,7 +166,7 @@ class Exec_lock:
         # Nested scripting.
         if self._script_nest:
             # Debugging.
-            if __main__.debug:
+            if self.debug:
                 self.log.write("Script termination, nest decrement (%s -> %s)\n" % (self._script_nest, self._script_nest-1))
                 self.log.flush()
 
@@ -177,7 +179,7 @@ class Exec_lock:
         # Auto-analysis launched from script.
         if self._auto_from_script:
             # Debugging.
-            if __main__.debug:
+            if self.debug:
                 self.log.write("Auto-analysis launched from script, skipping release.\n")
                 self.log.flush()
 
@@ -191,7 +193,7 @@ class Exec_lock:
         self._name = None
 
         # Debugging.
-        if __main__.debug:
+        if self.debug:
             # Main text.
             text = 'Release'
 

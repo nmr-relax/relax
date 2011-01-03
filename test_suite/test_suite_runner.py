@@ -34,6 +34,7 @@ from unit_tests.unit_test_runner import Unit_test_runner
 # relax module imports.
 import __main__
 from relax_test_runner import RelaxTestRunner
+from status import Status
 
 
 class Test_suite_runner:
@@ -57,9 +58,16 @@ class Test_suite_runner:
         # Store the args.
         self.tests = tests
 
+        # The status object.
+        self.status = Status()
+
+        # A list for skipped tests.
+        self.status.skip = []
+
 
     def run_all_tests(self):
         """Execute all of the test suite test types."""
+
 
         # Execute the system/functional tests.
         self.run_system_tests()
