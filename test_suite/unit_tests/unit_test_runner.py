@@ -752,32 +752,18 @@ class Unit_test_runner(object):
         #Return the result of all the tests.
         return result_string
 
+
+
+# Command line usage.
 if __name__ == '__main__':
-
-# should be unit tests ;-)
-#    print '1',get_module_relative_path('/A/B/C', ('/A/B',))
-#    print '2',get_module_relative_path('/A/B/C', ('/A/B/C',))
-#    print '3',get_module_relative_path('/A/B/C', ('/A/B/D/W',))
-#    print get_common_prefix(('A','B','C'), ('A','B','C'))
-#    print get_common_prefix(('A','B','C'), ('A','B','C','D'))
-#    print get_common_prefix(('D','E'), ('A','B','C','D'))
-#    print get_common_prefix(('A','B','C','F'), ('A','B','C','D'))
-#    print get_common_prefix((),('A','B','C','D'))
-#    print ('A','B','C') == ('A','B','C')
+    # Set up the parser options.
     parser = OptionParser()
+    parser.add_option("-v", "--verbose", dest="verbose", help="verbose test ouput", default=False, action='store_true')
+    parser.add_option("-u", "--system", dest="system_directory", help="path to relax top directory which contains test_suite", default=None)
+    parser.add_option("-s", "--utest", dest="unit_test_directory", help="default unit test directory", default=None)
 
-    parser.add_option("-v", "--verbose", dest="verbose",
-                      help="verbose test ouput", default=False, action='store_true')
-
-    parser.add_option("-u", "--system", dest="system_directory",
-                      help="path to relax top directory which contains test_suite", default=None)
-
-    parser.add_option("-s", "--utest", dest="unit_test_directory", help="default unit test directory",
-                      default=None)
-
-#    parser.add_option("-g", "--gui", dest="gui",help="run with a gui",default=False, action='store_true')
-
-    usage="""
+    # Set the help string.
+    usage = """
     %%prog [options] [<file-or-dir>...]
 
       a program to find and run subsets of the relax unit test suite using pyunit.
@@ -796,52 +782,51 @@ if __name__ == '__main__':
                       a test case class called Test_chi2
 
       <dir-path>   =  a path which will be recursivley searched for <file-path>s
-                      which end in %s
-      """ % PY_FILE_EXTENSION
-
+                      which end in "*.py".
+      """
     parser.set_usage(dedent(usage))
 
+    # Parse the args.
     (options, args) = parser.parse_args()
 
-    search_system=True
-    search_unit=True
+    # Initalise some flags.
+    search_system = True
+    search_unit = True
 
+    # The system directory.
     if options.system_directory != None:
         if not os.path.exists(options.system_directory):
             print("The path to the system directory doeesn't exist")
             print(("provided path: %s" % options.system_directory))
             print("exiting...")
             sys.exit(0)
-        search_system=False
+        search_system = False
 
+    # A unit test directory.
     if options.unit_test_directory != None:
         if not os.path.exists(options.unit_test_directory):
             print("The path to the system directory doeesn't exist")
             print(("provided path: %s" % options.unit_test_directory))
             print("exiting...")
             sys.exit(0)
-        search_unit=False
+        search_unit = False
 
+    # No arguments.
     if len(args) < 1:
         args = [None]
 
+    # Loop over the arguments.
     for arg in args:
-        runner = Unit_test_runner(test_module=arg, verbose=options.verbose,
-                                  search_for_unit_test_path = search_unit,
-                                  search_for_root_path=search_system)
+        # Initialise the unit test runner.
+        runner = Unit_test_runner(test_module=arg, verbose=options.verbose, search_for_unit_test_path=search_unit, search_for_root_path=search_system)
 
+        # Add the system directory to the runner.
         if not search_system:
             runner.system_directory = options.system_directory
 
+        # Add the unit test directory to the runner.
         if not search_unit:
             runner.unit_test_directory = options.unit_test_directory
 
+        # Execute the tests.
         runner.run()
-
-#    root = tk.Tk()
-#    root.title("relax unit tests")
-#    gui = unitgui.TkTestRunner(root)
-#    runner.run()
-
-
-
