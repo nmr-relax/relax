@@ -348,54 +348,35 @@ class Test_finder:
 
 
     def scan_paths(self):
-        '''Scan directories and paths for unit test classes and load them into TestSuites.
+        """Scan directories and paths for unit test classes and load them into TestSuites."""
 
-        @return:    A hierachy of pyunit testSuites and testCases.
-        @rtype:     TestSuite instance
-        '''
-
-        print((self.root_path))
+        # Initialise the TestSuite object.
         self.suite = unittest.TestSuite()
-        suite_dictionary = {'':self.suite}
-        for (dir_path, dir_names, file_names) in os.walk(self.root_path):
-            # to remove warnings of unused names
-            if __debug__:
-                dir_names=dir_names
 
+        # Loop over all directories recursively.
+        for (dir_path, dir_names, file_names) in os.walk(self.root_path):
+            # Loop over the files.
             for file_name in file_names:
-                module_found = None
+                # Is the file part of the test.
+                module_found = False
                 for pattern in self.patterns:
                     if pattern.match(file_name):
-                        module_found = file_name
+                        module_found = True
                         break
 
-                if module_found != None:
-                    # build class name
-                    module_found = os.path.splitext(module_found)[0]
-                    class_name = string.upper(module_found[0]) + module_found[1:]
+                # If not, skip the file.
+                if not module_found:
+                    continue
 
+                # Build the class name from the file name.
+                module_name = os.path.splitext(file_name)[0]
+                class_name = string.upper(module_name[0]) + module_name[1:]
 
-                    module_path = get_module_relative_path(dir_path, module_found)
-                    #FIXME add verbose search option
-                    #if self.verbose:
-                    #    print 'loading module: ' + module_path
+                # Load the test case into the test suite.
+                test_case = load_test_case(dir_path, module_name, class_name)
+                if test_case != None:
+                    self.suite.addTest(test_case)
 
-
-                    path  = ['']
-                    for elem in module_path.split('.'):
-                        old_path_key  =  '.'.join(path)
-                        path.append(elem)
-                        path_key = '.'.join(path)
-                        if path_key not in suite_dictionary:
-                            test_suite = unittest.TestSuite()
-                            suite_dictionary[path_key]=test_suite
-                            suite_dictionary[old_path_key].addTest(test_suite)
-
-                    found_test_case = load_test_case(dir_path, module_found, class_name)
-                    if found_test_case != None:
-                        suite_dictionary[path_key].addTest(found_test_case)
-
-        return self.suite
 
 
 class Unit_test_runner(object):
