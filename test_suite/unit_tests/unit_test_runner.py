@@ -291,16 +291,20 @@ def load_test_case(package_path, module_name, class_name):
     """
 
     # Determine the full name of the module.
-    print package_path
     module = get_module_relative_path(package_path, module_name)
 
     # Catch import errors, adding the ImportErrorTestCase class to the test suite.
     try:
         packages = import_module(module)
     except:
-        result = unittest.TestSuite()
-        bad_syntax = ImportErrorTestCase(module, traceback.format_exc())
-        result.addTest(bad_syntax)
+        # Initialise a test suite.
+        suite = unittest.TestSuite()
+
+        # Add the ImportErrorTestCase.
+        suite.addTest(ImportErrorTestCase(module, traceback.format_exc()))
+
+        # Return the suite.
+        return suite
 
     # Nothing to do.
     if not packages:
@@ -653,19 +657,15 @@ class Unit_test_runner(object):
 
 
     def run(self, runner=None):
-        '''Run a unit test or set of unit tests.
+        """Run a unit test or set of unit tests.
 
-        @keyword runner:    A unit test runner such as TextTestRunner.  None indicates use of the
-                            default unit test runner for an example of how to write a test runner
-                            see the python documentation for TextTestRunner in the python source.
+        @keyword runner:    A unit test runner such as TextTestRunner.  None indicates use of the default unit test runner.  For an example of how to write a test runner see the python documentation for TextTestRunner in the python source.
         @type runner:       Unit test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
         @return:            A string indicating success or failure of the unit tests run.
         @rtype:             str
-        '''
+        """
 
-        msg = ''' Either set self.%s to a %s directory or set search_for_%s_path in
-                  self.__init__ to True'''
-        msg=dedent(msg)
+        msg = "Either set self.%s to a %s directory or set search_for_%s_path in self.__init__ to True"
         if self.unit_test_directory ==  None:
             raise Exception(msg % ('unit_test_directory', 'unit test', 'unit_test'))
         if self.system_directory == None:
