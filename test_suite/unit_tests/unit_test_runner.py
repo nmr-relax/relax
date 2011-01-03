@@ -671,11 +671,11 @@ class Unit_test_runner(object):
         if self.system_directory == None:
             raise Exception(msg % ('system_directory', 'system', 'root'))
 
-
-        print('testing units...')
-        print('----------------')
-        print('')
-
+        # Title printout.
+        if self.verbose:
+            print('testing units...')
+            print('----------------')
+            print('')
 
         module_paths = self.paths_from_test_module(self.test_module)
         if self.verbose:
