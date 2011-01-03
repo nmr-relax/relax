@@ -1622,34 +1622,53 @@ class Mf(SystemTestCase):
         # Debugging print out.
         print(cdp)
 
+
+
         # The spin specific data.
-        num = [24, 27]
-        name = ['ser', 'gln']
-        eqi = [None, 'mf_ext']
-        select = [False, True]
-        model = [None, 'm5']
-        params = [[], ['S2f','S2','ts']]
-        s2 = [None, 0.86578779694713515]
-        s2f = [None, 0.88618694421409949]
-        s2s = [None, 0.97698098871784322]
-        s2s_sim = [[None, None, None],
-                [0.95852080081635382, 0.97574415413309512, 0.97293450506144197]]
-        tf = [None, None]
-        ts = [None, 598.8142249659868e-12]
-        rex = [None, None]
-        r = [None, 1.0200000000000001e-10]
-        csa = [None, -0.00017199999999999998]
-        ri_labels = [[], ['R1', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']]
-        remap_table = [[], [0, 0, 1, 1, 1, 2, 2, 2]]
-        frq_labels = [[], ['800', '600', '500']]
-        frq = [[], [799744000.0, 599737000.0, 499719000.0]]
-        noe_r1_table = [[], [None, 0, None, None, 2, None, None, 5]]
-        num_frq = [None, 3]
-        num_ri = [None, 8]
+        num = [26, 27, 29, 30, 31, 32, 33, 34]
+        name = ['His', 'Pro', 'Thr', 'Leu', 'Val', 'Lys', 'Val', 'Lys']
+        eqi = [None, None, None, 'mf_ext', 'mf_orig', 'mf_orig', None, 'mf_orig']
+        select = [False, False, False, True, True, True, False, True]
+        model = [None, None, None, 'm5', 'm2', 'm1', None, 'm1']
+        params = [None, None, None, ['S2f','S2','ts'], ['S2', 'te'], ['S2'], None, ['S2']]
+        s2 = [None, None, None, 0.85674161305142216, 0.89462664243726608, 0.90201790111143165, None, 0.92099297347361675]
+        s2f = [None, None, None, 0.88220054271390302, None, None, None, None]
+        s2s = [None, None, None, 0.97114156200339452, None, None, None, None]
+        te = [None, None, None, None, 43.262426916926735*1e-12, None, None, None]
+        tf = [None, None, None, None, None, None, None, None]
+        ts = [None, None, None, 2385.912514843546*1e-12, None, None, None, None]
+        rex = [None, None, None, None, None, None, None, None]
+        r = [None, None, None, 1.0200000000000001e-10, 1.0200000000000001e-10, 1.0200000000000001e-10, None, 1.0200000000000001e-10]
+        csa = [None, None, None, -0.00017199999999999998, -0.00017199999999999998, -0.00017199999999999998, None, -0.00017199999999999998]
+        ri_labels = [[], [], [], ['R1','R2','R1','R2','NOE','R1','R2','NOE'], ['R1','R2','R1','R2','NOE','R1','R2','NOE'], ['R1','R2','R1','R2','NOE','R1','R2','NOE'], [], ['R1','R2','R1','R2','NOE','R1','R2','NOE']]
+        remap_table = [[], [], [], [0, 0, 1, 1, 1, 2, 2, 2], [0, 0, 1, 1, 1, 2, 2, 2], [0, 0, 1, 1, 1, 2, 2, 2], [], [0, 0, 1, 1, 1, 2, 2, 2]]
+        frq_labels = [[], [], [], ['800', '600', '500'], ['800', '600', '500'], ['800', '600', '500'], [], ['800', '600', '500']]
+        frq = [[], [], [], [799812000.0, 599739000.0, 499827000.0], [799812000.0, 599739000.0, 499827000.0], [799812000.0, 599739000.0, 499827000.0], [], [799812000.0, 599739000.0, 499827000.0]]
+        noe_r1_table = [[], [], [], [None, None, None, None, 2, None, None, 5], [None, None, None, None, 2, None, None, 5], [None, None, None, None, 2, None, None, 5], [], [None, None, None, None, 2, None, None, 5]]
+        num_frq = [None, None, None, 3, 3, 3, None, 3]
+        num_ri = [None, None, None, 8, 8, 8, None, 8]
         relax_data = [[],
-                [0.6835, 0.81850000000000001, 0.98409999999999997, 16.5107, 0.79796699999999998, 1.3174999999999999, 15.381500000000001, 0.73046900000000003]]
+                      [],
+                      [],
+                      [0.75680000000000003, 18.797999999999998, 1.0747, 16.477, 0.86873100000000003, 1.2625999999999999, 15.3367, 0.77803197999999996],
+                      [0.75019999999999998, 19.201599999999999, 1.0617000000000001, 17.652899999999999, 0.73757200000000001, 1.3165, 15.949, 0.72442474000000001],
+                      [0.75860000000000005, 19.303799999999999, 1.0605, 16.593699999999998, 0.79137500000000005, 1.3425, 15.327199999999999, 0.83449132000000004],
+                      [],
+                      [0.71919999999999995, 20.165400000000002, 1.0729, 17.291899999999998, 0.80444599999999999, 1.2971999999999999, 15.9963, 0.73164684999999996]]
         relax_error = [[],
-                [0.026957200000000001, 0.025881000000000001, 0.0243073, 0.497137, 0.028663000000000001, 0.038550000000000001, 0.40883999999999998, 0.022016299999999999]]
+                      [],
+                      [],
+                      [0.028001600000000001, 0.21729999999999999, 0.031166300000000001, 0.44487900000000002, 0.043210699999999998, 0.054291800000000001, 0.69015199999999999, 0.038901600000000001],
+                      [0.028899999999999999, 0.25640000000000002, 0.030789299999999999, 0.476628, 0.036686799999999999, 0.0566095, 0.71770500000000004, 0.036221200000000002],
+                      [0.033399999999999999, 0.2233, 0.030754500000000001, 0.44802999999999998, 0.039363000000000002, 0.057727500000000001, 0.689724, 0.041724600000000001],
+                      [],
+                      [0.027699999999999999, 0.52810000000000001, 0.031399999999999997, 0.46688099999999999, 0.040013100000000003, 0.055779599999999999, 0.71983399999999997, 0.036582299999999998]]
+
+        chi2 = [None, None, None, 7.9383923597292441, 10.93852890925343, 3.1931459495488084, None, 8.3598891989018611]
+        iter = [None, None, None, 55, 10, 3, None, 3]
+        f_count = [None, None, None, 170, 148, 10, None, 10]
+        g_count = [None, None, None, 60, 14, 6, None, 6]
+        h_count = [None, None, None, 55, 10, 3, None, 3]
 
         # Misc tests.
         self.assertEqual(cdp.pipe_type, 'mf')
@@ -1657,44 +1676,19 @@ class Mf(SystemTestCase):
 
         # Diffusion tensor tests.
         self.assertEqual(cdp.diff_tensor.type, 'ellipsoid')
-        self.assertEqual(cdp.diff_tensor.tm, 1.2682770910095516e-08)
-        self.assertEqual(cdp.diff_tensor.tm_err, 2.4053909822304126e-11)
-        self.assertEqual(cdp.diff_tensor.tm_sim[0], 1.2666656725867738e-08)
-        self.assertEqual(cdp.diff_tensor.tm_sim[1], 1.2689812011679408e-08)
-        self.assertEqual(cdp.diff_tensor.tm_sim[2], 1.2698266641804573e-08)
-
-        # Global minimisation statistic tests.
-        self.assertEqual(cdp.chi2, 935.13348627485448)
-        self.assertEqual(cdp.chi2_sim[0], 898.0981500197106)
-        self.assertEqual(cdp.chi2_sim[1], 904.11113814725172)
-        self.assertEqual(cdp.chi2_sim[2], 902.03890817023728)
-        self.assertEqual(cdp.iter, 1)
-        self.assertEqual(cdp.iter_sim[0], 23)
-        self.assertEqual(cdp.iter_sim[1], 30)
-        self.assertEqual(cdp.iter_sim[2], 16)
-        self.assertEqual(cdp.f_count, 21)
-        self.assertEqual(cdp.f_count_sim[0], 61)
-        self.assertEqual(cdp.f_count_sim[1], 501)
-        self.assertEqual(cdp.f_count_sim[2], 59)
-        self.assertEqual(cdp.g_count, 2)
-        self.assertEqual(cdp.g_count_sim[0], 27)
-        self.assertEqual(cdp.g_count_sim[1], 34)
-        self.assertEqual(cdp.g_count_sim[2], 20)
-        self.assertEqual(cdp.h_count, 1)
-        self.assertEqual(cdp.h_count_sim[0], 23)
-        self.assertEqual(cdp.h_count_sim[1], 30)
-        self.assertEqual(cdp.h_count_sim[2], 16)
-        self.assertEqual(cdp.warning, None)
-        self.assertEqual(cdp.warning_sim[0], None)
-        self.assertEqual(cdp.warning_sim[1], None)
-        self.assertEqual(cdp.warning_sim[2], None)
+        self.assertEqual(cdp.diff_tensor.tm, 1.2526607261882971e-08)
+        self.assertEqual(cdp.diff_tensor.Da, 2784606.8835473624)
+        self.assertEqual(cdp.diff_tensor.Dr, 0.097243698709517518)
+        self.assertEqual(cdp.diff_tensor.alpha, 48.852555276419558 / 360.0 * 2.0 * pi)
+        self.assertEqual(cdp.diff_tensor.beta, 9.7876096346750447 / 360.0 * 2.0 * pi)
+        self.assertEqual(cdp.diff_tensor.gamma, 42.15815798778408 / 360.0 * 2.0 * pi)
 
         # Global relaxation data tests.
-        self.assertEqual(cdp.ri_labels, ['R1','NOE','R1','R2','NOE','R1','R2','NOE'])
+        self.assertEqual(cdp.ri_labels, ['R1','R2','R1','R2','NOE','R1','R2','NOE'])
         self.assertEqual(cdp.remap_table, [0, 0, 1, 1, 1, 2, 2, 2])
         self.assertEqual(cdp.frq_labels, ['800', '600', '500'])
-        self.assertEqual(cdp.frq, [799744000.0, 599737000.0, 499719000.0])
-        self.assertEqual(cdp.noe_r1_table, [None, 0, None, None, 2, None, None, 5])
+        self.assertEqual(cdp.frq, [799812000.0, 599739000.0, 499827000.0])
+        self.assertEqual(cdp.noe_r1_table, [None, None, None, None, 2, None, None, 5])
         self.assertEqual(cdp.num_frq, 3)
         self.assertEqual(cdp.num_ri, 8)
 
@@ -1731,21 +1725,19 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.s2f, s2f[i])
             self.assertEqual(spin.s2s, s2s[i])
             self.assertEqual(spin.local_tm, None)
-            self.assertEqual(spin.te, None)
+            self.assertEqual(spin.te, te[i])
             self.assertEqual(spin.tf, tf[i])
             self.assertEqual(spin.ts, ts[i])
             self.assertEqual(spin.rex, rex[i])
             self.assertEqual(spin.r, r[i])
             self.assertEqual(spin.csa, csa[i])
-            for j in range(3):
-                self.assertEqual(spin.s2s_sim[j], s2s_sim[i][j])
 
             # Minimisation statistic tests.
-            self.assertEqual(spin.chi2, None)
-            self.assertEqual(spin.iter, None)
-            self.assertEqual(spin.f_count, None)
-            self.assertEqual(spin.g_count, None)
-            self.assertEqual(spin.h_count, None)
+            self.assertEqual(spin.chi2, chi2[i])
+            self.assertEqual(spin.iter, iter[i])
+            self.assertEqual(spin.f_count, f_count[i])
+            self.assertEqual(spin.g_count, g_count[i])
+            self.assertEqual(spin.h_count, h_count[i])
             self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
