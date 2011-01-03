@@ -62,8 +62,9 @@ from textwrap import dedent
 
 # constants
 ###########
+
 PY_FILE_EXTENSION='.py'
-PY_UNIT_TEST_PATTERN='test_.*\.py$'
+
 
 # utility functions
 ###################
@@ -327,7 +328,7 @@ class Test_finder:
     suite = unittest.TestSuite()
     '''The root test suite to which testSuites and cases are added.'''
 
-    def __init__(self, root_path=None, pattern_list=[PY_UNIT_TEST_PATTERN]):
+    def __init__(self, root_path=None, pattern_list=[]):
         '''Initialise the unit test finder.
 
         @keyword root_path:     The path to starts searching for unit tests from, all sub
