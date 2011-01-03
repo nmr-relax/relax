@@ -1613,6 +1613,153 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.relax_error, relax_error[i])
 
 
+    def test_read_results_1_2_tem1(self):
+        """Read the truncated relax 1.2 model-free results file for TEM-1."""
+
+        # Read the results.
+        self.interpreter.results.read(file='tem1_trunc', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
+
+        # Debugging print out.
+        print(cdp)
+
+        # The spin specific data.
+        num = [24, 27]
+        name = ['ser', 'gln']
+        eqi = [None, 'mf_ext']
+        select = [False, True]
+        model = [None, 'm5']
+        params = [[], ['S2f','S2','ts']]
+        s2 = [None, 0.86578779694713515]
+        s2f = [None, 0.88618694421409949]
+        s2s = [None, 0.97698098871784322]
+        s2s_sim = [[None, None, None],
+                [0.95852080081635382, 0.97574415413309512, 0.97293450506144197]]
+        tf = [None, None]
+        ts = [None, 598.8142249659868e-12]
+        rex = [None, None]
+        r = [None, 1.0200000000000001e-10]
+        csa = [None, -0.00017199999999999998]
+        ri_labels = [[], ['R1', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']]
+        remap_table = [[], [0, 0, 1, 1, 1, 2, 2, 2]]
+        frq_labels = [[], ['800', '600', '500']]
+        frq = [[], [799744000.0, 599737000.0, 499719000.0]]
+        noe_r1_table = [[], [None, 0, None, None, 2, None, None, 5]]
+        num_frq = [None, 3]
+        num_ri = [None, 8]
+        relax_data = [[],
+                [0.6835, 0.81850000000000001, 0.98409999999999997, 16.5107, 0.79796699999999998, 1.3174999999999999, 15.381500000000001, 0.73046900000000003]]
+        relax_error = [[],
+                [0.026957200000000001, 0.025881000000000001, 0.0243073, 0.497137, 0.028663000000000001, 0.038550000000000001, 0.40883999999999998, 0.022016299999999999]]
+
+        # Misc tests.
+        self.assertEqual(cdp.pipe_type, 'mf')
+        self.assertEqual(cdp.hybrid_pipes, [])
+
+        # Diffusion tensor tests.
+        self.assertEqual(cdp.diff_tensor.type, 'ellipsoid')
+        self.assertEqual(cdp.diff_tensor.tm, 1.2682770910095516e-08)
+        self.assertEqual(cdp.diff_tensor.tm_err, 2.4053909822304126e-11)
+        self.assertEqual(cdp.diff_tensor.tm_sim[0], 1.2666656725867738e-08)
+        self.assertEqual(cdp.diff_tensor.tm_sim[1], 1.2689812011679408e-08)
+        self.assertEqual(cdp.diff_tensor.tm_sim[2], 1.2698266641804573e-08)
+
+        # Global minimisation statistic tests.
+        self.assertEqual(cdp.chi2, 935.13348627485448)
+        self.assertEqual(cdp.chi2_sim[0], 898.0981500197106)
+        self.assertEqual(cdp.chi2_sim[1], 904.11113814725172)
+        self.assertEqual(cdp.chi2_sim[2], 902.03890817023728)
+        self.assertEqual(cdp.iter, 1)
+        self.assertEqual(cdp.iter_sim[0], 23)
+        self.assertEqual(cdp.iter_sim[1], 30)
+        self.assertEqual(cdp.iter_sim[2], 16)
+        self.assertEqual(cdp.f_count, 21)
+        self.assertEqual(cdp.f_count_sim[0], 61)
+        self.assertEqual(cdp.f_count_sim[1], 501)
+        self.assertEqual(cdp.f_count_sim[2], 59)
+        self.assertEqual(cdp.g_count, 2)
+        self.assertEqual(cdp.g_count_sim[0], 27)
+        self.assertEqual(cdp.g_count_sim[1], 34)
+        self.assertEqual(cdp.g_count_sim[2], 20)
+        self.assertEqual(cdp.h_count, 1)
+        self.assertEqual(cdp.h_count_sim[0], 23)
+        self.assertEqual(cdp.h_count_sim[1], 30)
+        self.assertEqual(cdp.h_count_sim[2], 16)
+        self.assertEqual(cdp.warning, None)
+        self.assertEqual(cdp.warning_sim[0], None)
+        self.assertEqual(cdp.warning_sim[1], None)
+        self.assertEqual(cdp.warning_sim[2], None)
+
+        # Global relaxation data tests.
+        self.assertEqual(cdp.ri_labels, ['R1','NOE','R1','R2','NOE','R1','R2','NOE'])
+        self.assertEqual(cdp.remap_table, [0, 0, 1, 1, 1, 2, 2, 2])
+        self.assertEqual(cdp.frq_labels, ['800', '600', '500'])
+        self.assertEqual(cdp.frq, [799744000.0, 599737000.0, 499719000.0])
+        self.assertEqual(cdp.noe_r1_table, [None, 0, None, None, 2, None, None, 5])
+        self.assertEqual(cdp.num_frq, 3)
+        self.assertEqual(cdp.num_ri, 8)
+
+        # Loop over the residues of the original data.
+        for i in xrange(len(cdp.mol[0].res)):
+            # Aliases
+            res = cdp.mol[0].res[i]
+            spin = cdp.mol[0].res[i].spin[0]
+
+            # Debugging print out.
+            print(res)
+            print(spin)
+
+            # Spin info tests.
+            self.assertEqual(res.num, num[i])
+            self.assertEqual(res.name, name[i])
+            self.assertEqual(spin.num, None)
+            self.assertEqual(spin.name, None)
+            self.assertEqual(spin.select, select[i])
+            self.assertEqual(spin.fixed, False)
+
+            # Structural info.
+            self.assertEqual(spin.heteronuc_type, '15N')
+            self.assertEqual(spin.proton_type, '1H')
+            self.assertEqual(spin.attached_proton, 'H')
+            #FIXME
+            #self.assertEqual(spin.nucleus, 'N')
+
+            # Model-free tests.
+            self.assertEqual(spin.model, model[i])
+            self.assertEqual(spin.equation, eqi[i])
+            self.assertEqual(spin.params, params[i])
+            self.assertEqual(spin.s2, s2[i])
+            self.assertEqual(spin.s2f, s2f[i])
+            self.assertEqual(spin.s2s, s2s[i])
+            self.assertEqual(spin.local_tm, None)
+            self.assertEqual(spin.te, None)
+            self.assertEqual(spin.tf, tf[i])
+            self.assertEqual(spin.ts, ts[i])
+            self.assertEqual(spin.rex, rex[i])
+            self.assertEqual(spin.r, r[i])
+            self.assertEqual(spin.csa, csa[i])
+            for j in range(3):
+                self.assertEqual(spin.s2s_sim[j], s2s_sim[i][j])
+
+            # Minimisation statistic tests.
+            self.assertEqual(spin.chi2, None)
+            self.assertEqual(spin.iter, None)
+            self.assertEqual(spin.f_count, None)
+            self.assertEqual(spin.g_count, None)
+            self.assertEqual(spin.h_count, None)
+            self.assertEqual(spin.warning, None)
+
+            # Relaxation data tests.
+            self.assertEqual(spin.ri_labels, ri_labels[i])
+            self.assertEqual(spin.remap_table, remap_table[i])
+            self.assertEqual(spin.frq_labels, frq_labels[i])
+            self.assertEqual(spin.frq, frq[i])
+            self.assertEqual(spin.noe_r1_table, noe_r1_table[i])
+            self.assertEqual(spin.num_frq, num_frq[i])
+            self.assertEqual(spin.num_ri, num_ri[i])
+            self.assertEqual(spin.relax_data, relax_data[i])
+            self.assertEqual(spin.relax_error, relax_error[i])
+
+
     def test_read_results_1_3(self):
         """Read a relax 1.3 model-free results file using the user function results.read()."""
 
