@@ -314,37 +314,6 @@ def load_test_case(package_path,  module_name, class_name):
     return result
 
 
-#def load_test_case(package_path,  module_name, class_name):
-#    ''' load a testCase from the file system using a package path, file name
-#        and class name
-#
-#        @type package_path: string with . separated fields
-#        @param package_path: path to the module as a list of package names
-#                             separated by dots
-#
-#        @type module_name: string
-#        @param module_name: name of the module to load the class from
-#
-#        @type class_name: string
-#        @param class_name: name of the class to load
-#
-#        FIXME:
-#        @rtype:
-#        @return:
-#        '''
-#    result = None
-#    package_path=get_module_relative_path(package_path, module_name)
-#    packages = import_module(package_path)
-#
-#
-#    if packages != None:
-#        # some input packages may not contain the required class
-#        if hasattr(packages[-1], class_name):
-#            clazz =  getattr(packages[-1], class_name)
-#            result = unittest.TestLoader().loadTestsFromTestCase(clazz)
-#    return result
-
-
 
 class Test_finder:
     '''Find and load unit test classes as a hierarchy of TestSuites and TestCases.
@@ -422,10 +391,6 @@ class Test_finder:
                             suite_dictionary[path_key]=test_suite
                             suite_dictionary[old_path_key].addTest(test_suite)
 
-#                     modules = import_module(module_path)
-#                     print 'modules: ', modules
-#                     clazz =  getattr(modules[-1], class_name)
-#                     suite_dictionary[path_key].addTest(unittest.TestLoader().loadTestsFromTestCase(clazz))
                     found_test_case = load_test_case(dir_path, module_found, class_name)
                     if found_test_case != None:
                         suite_dictionary[path_key].addTest(found_test_case)
