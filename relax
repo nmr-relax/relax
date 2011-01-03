@@ -82,8 +82,8 @@ class Relax:
         self.pid = getpid()
 
         # Initialise the status singleton.
-        self.status = Status()
-        self.status.setup()
+        status = Status()
+        status.setup()
 
         # Setup the object containing the generic functions.
         self.generic = generic_fns
@@ -178,7 +178,7 @@ class Relax:
 
         # Debugging flag.
         if options.debug:
-            self.status.debug = True
+            Status().debug = True
 
         # Pedantic flag.
         self.pedantic = False
