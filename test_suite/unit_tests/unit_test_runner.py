@@ -235,17 +235,6 @@ def join_path_segments(segments):
     return result
 
 
-class ExtendedException(Exception):
-    def __init__(self, e, module):
-        self.e=e
-        self.module=module
-
-
-    def __str__(self):
-        result = self.e.__str__()
-        result = result + '\n\n***WARNING: no tests from module %s will be run!!!' % self.module
-        return result
-
 
 class ImportErrorTestCase(unittest.TestCase):
     """TestCase class for nicely handling import errors."""
