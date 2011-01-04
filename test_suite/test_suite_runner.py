@@ -25,7 +25,7 @@ import os
 import sys
 
 # Formatting.
-from formatting import heading, summary_line
+from formatting import subtitle, summary_line, title
 
 # Import the test suite categories.
 from system_tests import System_test_runner
@@ -79,7 +79,7 @@ class Test_suite_runner:
         """Function for executing the system/functional tests."""
 
         # Print a header.
-        heading('System / functional tests')
+        title('System / functional tests')
 
         # Run the tests.
         system_runner = System_test_runner()
@@ -93,7 +93,7 @@ class Test_suite_runner:
         """Function for executing the unit tests."""
 
         # Print a header.
-        heading('Unit tests')
+        title('Unit tests')
 
         # Run the tests.
         unit_runner = Unit_test_runner(root_path=status.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
@@ -106,17 +106,14 @@ class Test_suite_runner:
     def summary(self):
         """Print out a summary of the relax test suite."""
 
-        # Heading.
-        print("\n\n\n")
-        print("###################################")
-        print("# Summary of the relax test suite #")
-        print("###################################\n")
+        # Title.
+        title("Summary of the relax test suite")
 
         # The skipped tests.
         self.summary_skipped()
 
-        # Title.
-        print("\nSynopsis:\n")
+        # Subtitle.
+        subtitle("Synopsis")
 
         # System/functional test summary.
         if hasattr(self, 'system_result'):
@@ -161,11 +158,22 @@ class Test_suite_runner:
         missing_modules = system_count.keys()
         missing_modules.sort()
 
+        # Sub-title.
+        subtitle("Optional modules")
+
+        # Nothing missing.
+        if not missing_modules:
+            # Print out.
+            print("No tests skipped due to missing modules.\n")
+
+            # The skip the table.
+            return
+
         # The formatting string.
         format = "%-30s %20s %20s"
 
         # Header.
-        print("\nTests skipped due to missing optional modules:\n")
+        print("\nCount of tests skipped due to missing modules:\n")
         header = format % ("Module", "System tests", "Unit tests")
         print('-'*len(header))
         print(header)
@@ -177,4 +185,4 @@ class Test_suite_runner:
 
         # End the table.
         print('-'*len(header))
-        print("\n\n")
+        print("\n")
