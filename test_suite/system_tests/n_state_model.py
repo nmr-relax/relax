@@ -405,7 +405,7 @@ class N_state_model(SystemTestCase):
         chi_diag = calc_chi_tensor(cdp.align_tensors[0].A_diag, 799.75376122 * 1e6, 298)
         chi_diag = chi_diag * 1e33
         self.assertAlmostEqual((chi_diag[2, 2] - (chi_diag[0, 0] + chi_diag[1, 1])/2.0), -6.726159808496, 5)
-        self.assertAlmostEqual((chi_diag[0, 0] - chi_diag[1, 1]), -3.960936794864)
+        self.assertAlmostEqual((chi_diag[0, 0] - chi_diag[1, 1]), -3.960936794864, 6)
 
 
     def test_pcs_to_rdc(self):
