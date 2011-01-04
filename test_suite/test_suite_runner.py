@@ -170,18 +170,31 @@ class Test_suite_runner:
             return
 
         # The formatting string.
-        format = "%-30s %20s %20s"
+        if hasattr(self, 'system_result') and hasattr(self, 'unit_result'):
+            format = "%-30s %20s %20s"
+        else:
+            format = "%-30s %20s"
 
         # Header.
         print("\nCount of tests skipped due to missing modules:\n")
-        header = format % ("Module", "System tests", "Unit tests")
+        if hasattr(self, 'system_result') and hasattr(self, 'unit_result'):
+            header = format % ("Module", "System tests", "Unit tests")
+        elif hasattr(self, 'system_result'):
+            header = format % ("Module", "System tests")
+        else:
+            header = format % ("Module", "Unit tests")
         print('-'*len(header))
         print(header)
         print('-'*len(header))
 
         # The table.
         for module in missing_modules:
-            print(format % (module, system_count[module], unit_count[module]) )
+            if hasattr(self, 'system_result') and hasattr(self, 'unit_result'):
+                print(format % (module, system_count[module], unit_count[module]))
+            elif hasattr(self, 'system_result'):
+                print(format % (module, system_count[module]))
+            else:
+                print(format % (module, unit_count[module]))
 
         # End the table.
         print('-'*len(header))
