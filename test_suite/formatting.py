@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,7 +20,28 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
+
+
+def subtitle(text):
+    """Function for printing the subtitles.
+
+    @param text:    The text of the subtitle to be printed.
+    @type text:     str
+    """
+
+    # The width of the subtitle string.
+    width = len(text) + 2
+
+    # Text.
+    sys.stdout.write("# %s\n" % text)
+
+    # Bottom bar.
+    sys.stdout.write("#" * width)
+
+    # Spacing.
+    sys.stdout.write("\n\n")
 
 
 def summary_line(name, passed, width=64):
@@ -48,26 +69,6 @@ def summary_line(name, passed, width=64):
     # Failed.
     else:
         sys.stdout.write(" %-10s\n" % "[ Failed ]")
-
-
-def subtitle(text):
-    """Function for printing the subtitles.
-
-    @param text:    The text of the subtitle to be printed.
-    @type text:     str
-    """
-
-    # The width of the subtitle string.
-    width = len(text) + 2
-
-    # Text.
-    sys.stdout.write("# %s\n" % text)
-
-    # Bottom bar.
-    sys.stdout.write("#" * width)
-
-    # Spacing.
-    sys.stdout.write("\n\n")
 
 
 def title(text):
