@@ -31,6 +31,7 @@ import sys
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_io import DummyFileObject, open_read_file
 from status import Status; status = Status()
@@ -58,6 +59,23 @@ if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
 
 class Frame_order(SystemTestCase):
     """TestCase class for the functional tests of the frame order theories."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip the tests if scipy is not installed.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Missing module.
+        if not dep_check.scipy_module:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Scipy', 'system'])
+
+        # Execute the base class method.
+        super(Test_scientific, self).__init__(methodName)
+
+
 
     def setUp(self):
         """Set up for all the functional tests."""
