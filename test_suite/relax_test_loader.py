@@ -28,8 +28,32 @@ This is to handle skipping of tests when Python modules are not installed.
 """
 
 # Python module imports
-from unittest import TestLoader
+from unittest import TestLoader, TestSuite
 
 
 class RelaxTestLoader(TestLoader):
     """Replacement TestLoader class."""
+
+    def loadTestsFromTestCase(self, testCaseClass):
+        """Replacement method for skipping tests."""
+
+        # A check from the original function.
+        if issubclass(testCaseClass, TestSuite):
+            raise TypeError("Test cases should not be derived from TestSuite. Maybe you meant to derive from TestCase?")
+
+        # Get the test names.
+        testCaseNames = self.getTestCaseNames(testCaseClass)
+
+        # Again from the original function.
+        if not testCaseNames and hasattr(testCaseClass, 'runTest'):
+            testCaseNames = ['runTest']
+
+        # Generate a list of test cases.
+        case_list = []
+        for i in range(len(testCaseNames)):
+            case_list.append(testCaseClass(testCaseNames[i]))
+
+        # Return the test suite.
+        return self.suiteClass(case_list)
+
+
