@@ -112,6 +112,12 @@ class Test_suite_runner:
         print("# Summary of the relax test suite #")
         print("###################################\n")
 
+        # The skipped tests.
+        self.summary_skipped()
+
+        # Title.
+        print("\nSynopsis:\n")
+
         # System/functional test summary.
         if hasattr(self, 'system_result'):
             summary_line("System/functional tests", self.system_result)
@@ -123,3 +129,52 @@ class Test_suite_runner:
         # Synopsis.
         if hasattr(self, 'system_result') and hasattr(self, 'unit_result'):
             summary_line("Synopsis", self.system_result and self.unit_result)
+
+        # End.
+        print('\n\n')
+
+
+    def summary_skipped(self):
+        """Print out information about skipped tests.""" 
+
+        # Counts.
+        system_count = {}
+        unit_count = {}
+        for i in range(len(status.skipped_tests)):
+            # Alias.
+            test = status.skipped_tests[i]
+
+            # Initialise in needed.
+            if not system_count.has_key(test[1]):
+                system_count[test[1]] = 0
+                unit_count[test[1]] = 0
+
+            # A system test.
+            if test[2] == 'system':
+                system_count[test[1]] += 1
+
+            # A unit test.
+            if test[2] == 'unit':
+                unit_count[test[1]] += 1
+
+        # The missing modules.
+        missing_modules = system_count.keys()
+        missing_modules.sort()
+
+        # The formatting string.
+        format = "%-30s %20s %20s"
+
+        # Header.
+        print("\nTests skipped due to missing optional modules:\n")
+        header = format % ("Module", "System tests", "Unit tests")
+        print('-'*len(header))
+        print(header)
+        print('-'*len(header))
+
+        # The table.
+        for module in missing_modules:
+            print(format % (module, system_count[module], unit_count[module]) )
+
+        # End the table.
+        print('-'*len(header))
+        print("\n\n")
