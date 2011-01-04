@@ -29,6 +29,9 @@ This is to handle skipping of tests when Python modules are not installed.
 # Python module imports
 from unittest import TestLoader, TestSuite
 
+# relax module imports.
+from status import Status; status = Status()
+
 
 class RelaxTestLoader(TestLoader):
     """Replacement TestLoader class."""
@@ -54,7 +57,7 @@ class RelaxTestLoader(TestLoader):
             test_case = testCaseClass(testCaseNames[i])
 
             # Skip.
-            if hasattr(test_case, 'skip') and test_case.skip:
+            if status.skipped_tests and testCaseNames[i] in zip(*status.skipped_tests)[0]:
                 continue
 
             # Append the test case.
