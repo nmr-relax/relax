@@ -27,6 +27,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns.mol_res_spin import Selection
 from generic_fns.structure.scientific import Scientific_data
 from relax_io import file_root
@@ -35,6 +36,23 @@ from status import Status; status = Status()
 
 class Test_scientific(TestCase):
     """Unit tests for the functions of the 'generic_fns.structure.scientific' module."""
+
+    def __init__(self, methodName='runTest'):
+        """Set up the tests, if scientific Python is installed.
+
+        @keyword methodName:    The keyword for unittest.TestCase.
+        @type methodName:       str
+        """
+
+        # Missing module.
+        if not dep_check.scientific_module:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Scientific Python', 'unit'])
+
+        # Execute the base class method.
+        super(Test_scientific, self).__init__(methodName)
+
+
 
     def setUp(self):
         """Set up for all the Scientific Python PDB structural object unit tests."""
