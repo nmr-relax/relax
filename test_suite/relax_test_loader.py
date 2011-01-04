@@ -1,6 +1,6 @@
 ################################################################################
 #                                                                              #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                    #
+# Copyright (C) 2011 Edward d'Auvergne                                         #
 #                                                                              #
 #                                                                              #
 # This file is part of the program relax.                                      #
