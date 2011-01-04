@@ -47,21 +47,22 @@ def heading(text):
     sys.stdout.write("\n\n\n")
 
 
-def summary_line(name, passed):
+def summary_line(name, passed, width=84):
     """Print a summary line.
 
     @param name:    The name of the test, test category, etc.
     @type name:     str
-    @param passed:  An argment which if True causes '[ OK ]' to be printed and if False causes
-                    '[ Failed ]' to be printed.
-    @type passed:   Any objects which evaluates to either True or False.
+    @param passed:  An argument which if True causes '[ OK ]' to be printed and if False causes '[ Failed ]' to be printed.
+    @type passed:   bool
+    @keyword width: The width of the line, excluding the terminal '[ OK ]' or '[ Failed ]'.
+    @type width:    int
     """
 
     # Name.
-    sys.stdout.write("    " + name + " ")
+    sys.stdout.write(name + " ")
 
     # Dots.
-    for j in xrange(84 - len(name)):
+    for j in xrange(width - len(name)):
         sys.stdout.write(".")
 
     # Passed.
