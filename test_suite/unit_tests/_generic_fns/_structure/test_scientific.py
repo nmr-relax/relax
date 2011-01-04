@@ -38,7 +38,7 @@ class Test_scientific(TestCase):
     """Unit tests for the functions of the 'generic_fns.structure.scientific' module."""
 
     def __init__(self, methodName='runTest'):
-        """Set up the tests, if scientific Python is installed.
+        """Skip scientific Python tests if not installed.
 
         @keyword methodName:    The keyword for unittest.TestCase.
         @type methodName:       str
