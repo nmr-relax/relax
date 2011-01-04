@@ -60,9 +60,6 @@ def subtitle(text):
     # The width of the subtitle string.
     width = len(text) + 2
 
-    # Top spacing.
-    sys.stdout.write("\n\n")
-
     # Text.
     sys.stdout.write("# %s\n" % text)
 
