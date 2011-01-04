@@ -188,7 +188,7 @@ class dAuvergne_protocol:
         if save_dir:
             self.save_dir = save_dir + sep
         else:
-            self.save_dir = getcwd()
+            self.save_dir = getcwd() + sep
 
         # User variable checks.
         self.check_vars()
