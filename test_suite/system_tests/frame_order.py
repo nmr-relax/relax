@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -74,7 +74,6 @@ class Frame_order(SystemTestCase):
 
         # Execute the base class method.
         super(Frame_order, self).__init__(methodName)
-
 
 
     def setUp(self):
