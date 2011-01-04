@@ -23,30 +23,6 @@
 import sys
 
 
-def heading(text):
-    """Function for printing the headings.
-
-    @param text:    The text of the heading to be printed.
-    @type text:     str
-    """
-
-    # Spacing.
-    sys.stdout.write("\n\n\n\n")
-
-    # Top bar.
-    for i in xrange(len(text) + 4):
-        sys.stdout.write("#")
-    sys.stdout.write("\n")
-
-    # Text.
-    sys.stdout.write("# " + text + " #\n")
-
-    # Bottom bar.
-    for i in xrange(len(text) + 4):
-        sys.stdout.write("#")
-    sys.stdout.write("\n\n\n")
-
-
 def summary_line(name, passed, width=64):
     """Print a summary line.
 
@@ -72,3 +48,30 @@ def summary_line(name, passed, width=64):
     # Failed.
     else:
         sys.stdout.write(" %-10s\n" % "[ Failed ]")
+
+
+def title(text):
+    """Function for printing the titles.
+
+    @param text:    The text of the title to be printed.
+    @type text:     str
+    """
+
+    # The width of the title string.
+    width = len(text) + 4
+
+    # Top spacing.
+    sys.stdout.write("\n\n\n\n")
+
+    # Top bar.
+    sys.stdout.write("#" * width)
+    sys.stdout.write("\n")
+
+    # Text.
+    sys.stdout.write("# %s #\n" % text)
+
+    # Bottom bar.
+    sys.stdout.write("#" * width)
+
+    # Spacing.
+    sys.stdout.write("\n\n\n")
