@@ -32,7 +32,6 @@ from system_tests import System_test_runner
 from unit_tests.unit_test_runner import Unit_test_runner
 
 # relax module imports.
-import __main__
 from relax_test_runner import RelaxTestRunner
 from status import Status
 
@@ -97,7 +96,7 @@ class Test_suite_runner:
         heading('Unit tests')
 
         # Run the tests.
-        unit_runner = Unit_test_runner(root_path=__main__.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
+        unit_runner = Unit_test_runner(root_path=Status().install_path+os.sep+'test_suite'+os.sep+'unit_tests')
         self.unit_result = unit_runner.run(runner=RelaxTestRunner())
 
 

@@ -22,7 +22,6 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 from shutil import rmtree
@@ -32,6 +31,7 @@ from tempfile import mkdtemp
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_io import test_binary
+from status import Status
 
 
 class Dasha(SystemTestCase):
@@ -71,4 +71,4 @@ class Dasha(SystemTestCase):
             return
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')
+        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')

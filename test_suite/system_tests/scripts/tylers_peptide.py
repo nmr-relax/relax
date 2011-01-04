@@ -1,12 +1,15 @@
 # System test constructed from Tyler Reddy's bug report at https://gna.org/bugs/?12487.
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
+# relax module imports.
+from status import Status; status = Status()
+
+
 # Path of the relaxation data.
-DATA_PATH = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep
+DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep
 
 # A set of user functions executed by the full_analysis.py script.
 pipe.create(pipe_name='ellipsoid', pipe_type='mf') 

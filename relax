@@ -34,9 +34,8 @@
 ###############################################################################
 
 # First of all, store the relax installation path before the site-packages mangle sys.path.
-import __main__
 import sys
-__main__.install_path = sys.path[0]
+install_path = sys.path[0]
 
 # Dependency checks.
 import dep_check
@@ -83,7 +82,7 @@ class Relax:
 
         # Initialise the status singleton.
         status = Status()
-        status.setup()
+        status.setup(install_path)
 
         # Setup the object containing the generic functions.
         self.generic = generic_fns

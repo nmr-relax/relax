@@ -1,16 +1,16 @@
 """Script for mapping the {S2, te, Rex} chi2 space for visualisation using OpenDX."""
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
 # relax module imports.
 from physical_constants import N15_CSA, NH_BOND_LENGTH
+from status import Status; status = Status()
 
 
 # Path of the files.
-path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
 # Read the sequence.
 sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)

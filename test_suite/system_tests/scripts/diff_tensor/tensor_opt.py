@@ -1,13 +1,13 @@
 """Script for testing diffusion tensor optimisation."""
 
 # Python module imports.
-import __main__
 from numpy import array, float64
 from os import sep
 import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 # Stand alone operation.
@@ -18,7 +18,7 @@ if not hasattr(ds, 'diff_type'):
 pipe.create('diff_opt', 'mf')
 
 # Path of the files.
-path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+ds.diff_type
+path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+ds.diff_type
 
 # Load the sequence.
 sequence.read('NOE.500.out', dir=path, res_num_col=1)

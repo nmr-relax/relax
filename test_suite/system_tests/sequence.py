@@ -21,12 +21,12 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import sep
 
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status
 
 
 class Sequence(SystemTestCase):
@@ -49,7 +49,7 @@ class Sequence(SystemTestCase):
         """Load all aspartic acid atoms from the single residue in a loaded protein PDB file."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
 
         # Load all the ASP atoms (1 molecule, 1 ASP residue, and all atoms).
         self.interpreter.structure.load_spins(spin_id=':ASP')
@@ -93,7 +93,7 @@ class Sequence(SystemTestCase):
         """Load the glycine backbone amide N and Ca spins from a loaded protein PDB file."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
 
         # Generate the sequence of nitrogen spins (1 molecule, all GLY residues, and only N spins).
         self.interpreter.structure.load_spins(spin_id=':GLY@N')
@@ -138,7 +138,7 @@ class Sequence(SystemTestCase):
         """Load the glycine backbone amide N spins from a loaded protein PDB file."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
 
         # Generate the sequence (1 molecule, all GLY residues, and only N spins).
         self.interpreter.structure.load_spins(spin_id=':GLY@N')
@@ -174,7 +174,7 @@ class Sequence(SystemTestCase):
         """Load the protein backbone amide N spins from a loaded PDB file."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
 
         # Generate the sequence (1 molecule, all residues, and only N spins).
         self.interpreter.structure.load_spins(spin_id='@N')
@@ -273,4 +273,4 @@ class Sequence(SystemTestCase):
         """The sequence.read() test."""
 
         # Read the sequence.
-        self.interpreter.sequence.read(file='test_seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='test_seq', dir=Status().install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)

@@ -21,7 +21,6 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from math import pi
 from numpy import array, dot, float64, transpose, zeros
 from os import sep
@@ -36,6 +35,7 @@ from generic_fns.pipes import get_pipe
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import axis_angle_to_R, euler_to_R_zyz, two_vect_to_R
 from relax_io import delete
+from status import Status
 from tempfile import mktemp
 
 
@@ -45,6 +45,9 @@ class Diffusion_tensor(SystemTestCase):
     def setUp(self):
         """Function for initialising a spherical, spheroidal, and ellipsoidal diffusion tensor."""
 
+        # The status object.
+        status = Status()
+
         # Create three data pipes for spherical, spheroidal, and ellipsoidal diffusion.
         self.interpreter.pipe.create('sphere', 'mf')
         self.interpreter.pipe.create('spheroid', 'mf')
@@ -52,22 +55,22 @@ class Diffusion_tensor(SystemTestCase):
 
         # Sphere tensor initialization.
         self.interpreter.pipe.switch('sphere')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init(10e-9, fixed=True)
         self.tmpfile_sphere = mktemp()
 
         # Spheroid tensor initialization.
         self.interpreter.pipe.switch('spheroid')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init((5e-09, -10000000., 1.6, 2.7), angle_units='rad', spheroid_type='oblate', fixed=True)
         self.tmpfile_spheroid = mktemp()
 
         # Ellipsoid tensor initialization.
         self.interpreter.pipe.switch('ellipsoid')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init((9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=False)
         self.tmpfile_ellipsoid = mktemp()
 
@@ -359,7 +362,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'ellipsoid'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
 
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
@@ -382,7 +385,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'sphere'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
 
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
@@ -405,7 +408,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'spheroid'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
 
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
@@ -487,7 +490,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'ellipsoid.pdb')
+        file = open(Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'ellipsoid.pdb')
         real_data = file.readlines()
         file.close()
 
@@ -519,7 +522,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'sphere.pdb')
+        file = open(Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'sphere.pdb')
         real_data = file.readlines()
         file.close()
 
@@ -551,7 +554,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'spheroid.pdb')
+        file = open(Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'spheroid.pdb')
         real_data = file.readlines()
         file.close()
 
@@ -877,7 +880,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'ellipsoid'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
         # Print out.
         print cdp.diff_tensor
@@ -904,7 +907,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'sphere'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
         # Check the values.
         self.assertAlmostEqual(cdp.chi2, 0.0)
@@ -932,7 +935,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'spheroid'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
         # Check the values.
         self.assertAlmostEqual(cdp.chi2, 0.0)

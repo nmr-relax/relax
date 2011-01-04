@@ -36,7 +36,6 @@ with the command:
 """
 
 # Python module imports.
-import __main__
 from os import sep
 from string import replace
 import sys
@@ -45,9 +44,10 @@ import sys
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns import pipes
 from relax_io import open_write_file
+from status import Status; status = Status()
 
 # Path to the files.
-DATA_PATH = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
+DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
 
 class Latex:

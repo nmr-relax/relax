@@ -21,13 +21,13 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import sep
 
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins
+from status import Status
 
 
 class Structure(SystemTestCase):
@@ -50,7 +50,7 @@ class Structure(SystemTestCase):
         """Load the PDB file using the information in a results file (using the internal structural object)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the results file.
         self.interpreter.results.read(file='str_internal', dir=path)
@@ -100,7 +100,7 @@ class Structure(SystemTestCase):
         """Load the PDB file using the information in a results file (using the internal structural object)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the results file.
         self.interpreter.results.read(file=path+sep+'str_internal')
@@ -110,7 +110,7 @@ class Structure(SystemTestCase):
         """Load the PDB file using the information in a results file (using the Scientific python structural object)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the results file.
         self.interpreter.results.read(file='str_scientific', dir=path)
@@ -146,7 +146,7 @@ class Structure(SystemTestCase):
         """Load the '1F35_N_H_molmol.pdb' PDB file (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.interpreter.structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='internal')
@@ -175,7 +175,7 @@ class Structure(SystemTestCase):
         """Load the 'Ap4Aase_res1-12.pdb' PDB file (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=path, parser='internal')
@@ -191,7 +191,7 @@ class Structure(SystemTestCase):
         """Load the 'gromacs.pdb' PDB file (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
 
         # Read the PDB.
         self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, parser='internal')
@@ -210,7 +210,7 @@ class Structure(SystemTestCase):
         """Load the 'tylers_peptide_trunc.pdb' PDB file (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.interpreter.structure.read_pdb(file='tylers_peptide_trunc.pdb', dir=path, parser='internal')
@@ -226,7 +226,7 @@ class Structure(SystemTestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' PDB file (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB.
         self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
@@ -242,7 +242,7 @@ class Structure(SystemTestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' and 'lactose_MCMM4_S1_2.pdb' PDB files as 2 separate structures (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB twice.
         self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
@@ -259,7 +259,7 @@ class Structure(SystemTestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' PDB file twice as 2 separate structures (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB twice.
         self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
@@ -276,7 +276,7 @@ class Structure(SystemTestCase):
         """Load a few 'lactose_MCMM4_S1_*.pdb' PDB files as models (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Files.
         files = ['lactose_MCMM4_S1_1.pdb',
@@ -313,7 +313,7 @@ class Structure(SystemTestCase):
         """Load the 2 models of the 'gromacs.pdb' PDB file as separate molecules of the same model (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
 
         # Read the PDB models.
         self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, parser='internal', read_model=1, set_model_num=1)
@@ -344,7 +344,7 @@ class Structure(SystemTestCase):
         """Test the packing of models and molecules using 'gromacs.pdb' and 'lactose_MCMM4_S1_*.pdb' (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB models.
         self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path+sep+'phthalic_acid', parser='internal')
@@ -385,7 +385,7 @@ class Structure(SystemTestCase):
         """Load the '1F35_N_H_molmol.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.interpreter.structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='scientific')
@@ -409,7 +409,7 @@ class Structure(SystemTestCase):
         """Load the 'Ap4Aase_res1-12.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=path, parser='scientific')
@@ -425,7 +425,7 @@ class Structure(SystemTestCase):
         """Load the 'gromacs.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
 
         # Read the PDB.
         self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, parser='scientific')
@@ -444,7 +444,7 @@ class Structure(SystemTestCase):
         """Load the 'tylers_peptide_trunc.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.interpreter.structure.read_pdb(file='tylers_peptide_trunc.pdb', dir=path, parser='scientific')
@@ -460,7 +460,7 @@ class Structure(SystemTestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB.
         self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')
@@ -476,7 +476,7 @@ class Structure(SystemTestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' and 'lactose_MCMM4_S1_2.pdb' PDB files as 2 separate structures (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB twice.
         self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')
@@ -493,7 +493,7 @@ class Structure(SystemTestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' PDB file twice as 2 separate structures (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB twice.
         self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')
@@ -510,7 +510,7 @@ class Structure(SystemTestCase):
         """Load a few 'lactose_MCMM4_S1_*.pdb' PDB files as models (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Files.
         files = ['lactose_MCMM4_S1_1.pdb',
@@ -547,7 +547,7 @@ class Structure(SystemTestCase):
         """Load the 2 models of the 'gromacs.pdb' PDB file as separate molecules of the same model (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
 
         # Read the PDB models.
         self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, parser='scientific', read_model=1, set_model_num=1)
@@ -578,7 +578,7 @@ class Structure(SystemTestCase):
         """Test the packing of models and molecules using 'gromacs.pdb' and 'lactose_MCMM4_S1_*.pdb' (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB models.
         self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path+sep+'phthalic_acid', parser='scientific')
