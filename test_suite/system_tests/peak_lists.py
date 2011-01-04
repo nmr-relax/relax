@@ -28,7 +28,7 @@ from os import sep
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_loop
-from status import Status
+from status import Status; status = Status()
 
 
 class Peak_lists(SystemTestCase):
@@ -51,14 +51,14 @@ class Peak_lists(SystemTestCase):
         """Test catching bug #17276, the duplicated peak list reading failure submitted by Leanne Minall."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_17276_peak_lists.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_17276_peak_lists.py')
 
 
     def test_ccpn_analysis(self):
         """Test bug #17341 (https://gna.org/bugs/index.php?17341), the CCPN Analysis 2.1 peak list reading submitted by Madeleine Strickland."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'peak_lists'+sep+'ccpn_analysis.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'peak_lists'+sep+'ccpn_analysis.py')
 
         # Spectrum names.
         names = ['T1A_0010', 'T1A_0020', 'T1A_0030', 'T1A_0050', 'T1A_0070', 'T1A_0100', 'T1A_0150', 'T1A_0200', 'T1A_0300', 'T1A_0400', 'T1A_0600', 'T1A_0800', 'T1A_1000', 'T1A_1200']
@@ -128,7 +128,7 @@ class Peak_lists(SystemTestCase):
         # Load the data.
         for i in range(10):
             # Read the peak intensities.
-            self.interpreter.spectrum.read_intensities(file="generic_intensity.txt", dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id=repr(i), int_method='height', int_col=i+3, res_num_col=1, res_name_col=2)
+            self.interpreter.spectrum.read_intensities(file="generic_intensity.txt", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id=repr(i), int_method='height', int_col=i+3, res_num_col=1, res_name_col=2)
 
             # Set the relaxation times.
             self.interpreter.relax_fit.relax_time(time=delays[i], spectrum_id=repr(i))
@@ -156,7 +156,7 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spin.name(name='N')
 
         # Read the peak list.
-        self.interpreter.spectrum.read_intensities(file="cNTnC.xpk", dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="cNTnC.xpk", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities.values()[0], -0.1694)
@@ -174,7 +174,7 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spin.name(name='N')
 
         # Read the peak list.
-        self.interpreter.spectrum.read_intensities(file="ref_ave.list", dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="ref_ave.list", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities.values()[0], 6262)
@@ -211,7 +211,7 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spin.name(name='N')
 
         # Read the peak list.
-        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[ 0].spin[0].intensities.values()[0], 9.714e+03)
@@ -243,7 +243,7 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spin.name(name='NE1')
 
         # Read the peak list.
-        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='NE1', proton='HE1', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='NE1', proton='HE1', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities.values()[0], 1.532e+04)
@@ -257,7 +257,7 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spin.name(name='C')
 
         # Read the peak list.
-        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities.values()[0], 6.877e+03)
@@ -271,7 +271,7 @@ class Peak_lists(SystemTestCase):
         self.interpreter.spin.name(name='C')
 
         # Read the peak list.
-        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', proton='HE1', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', proton='HE1', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities.values()[0], 7.123e+03)

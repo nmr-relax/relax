@@ -26,7 +26,7 @@ from os import sep, tmpfile
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
-from status import Status
+from status import Status; status = Status()
 
 
 class State_base_class:
@@ -68,7 +68,7 @@ class State_base_class:
         self.assert_(not hasattr(ds, 'y'))
 
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir=Status().install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -92,7 +92,7 @@ class State_base_class:
         self.assert_(not hasattr(ds, 'y'))
 
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir=Status().install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Add a new data pipe and some data to it.
         ds.add('new', 'jw_mapping')
@@ -122,7 +122,7 @@ class State_base_class:
         self.assert_(not hasattr(ds, 'y'))
 
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir=Status().install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Reset.
         ds.__reset__()

@@ -27,7 +27,7 @@ import sys
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
-from status import Status
+from status import Status; status = Status()
 
 
 class Load_spins(SystemTestCase):
@@ -50,7 +50,7 @@ class Load_spins(SystemTestCase):
         """Test the loading of spins from a small molecule using the Scientific Python PDB data object."""
 
         # Execute a relax script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'load_spins_from_small_molecule.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'load_spins_from_small_molecule.py')
 
         # Test the molecule and residue data.
         self.assertEqual(len(cdp.mol), 1)

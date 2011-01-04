@@ -34,7 +34,7 @@ from generic_fns import pipes
 from generic_fns.mol_res_spin import return_spin
 from relax_errors import RelaxError
 from relax_io import test_binary
-from status import Status
+from status import Status; status = Status()
 
 
 class Palmer(SystemTestCase):
@@ -70,7 +70,7 @@ class Palmer(SystemTestCase):
             return
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer.py')
 
         # Determine if the Gnu gcc or Portland C compiler version is being used.
         spin = return_spin(':0', pipe='m2')
@@ -170,7 +170,7 @@ class Palmer(SystemTestCase):
             return
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer_omp.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer_omp.py')
 
         # Catch a the old, buggy modelfree4 versions and complain loudly!
         spin = return_spin(':9', pipe='m2')

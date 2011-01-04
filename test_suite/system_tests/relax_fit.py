@@ -32,7 +32,7 @@ from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_index_loop, spin_loop
 from generic_fns import pipes
-from status import Status
+from status import Status; status = Status()
 
 
 class Relax_fit(SystemTestCase):
@@ -63,7 +63,7 @@ class Relax_fit(SystemTestCase):
         """Test the relaxation curve fitting, replicating bug #12670 and bug #12679."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'1UBQ_relax_fit.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'1UBQ_relax_fit.py')
 
         # Open the intensities.agr file.
         file = open(ds.tmpdir + sep + 'intensities.agr')
@@ -89,7 +89,7 @@ class Relax_fit(SystemTestCase):
         """Test the relaxation curve fitting C modules."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
 
         # Data.
         relax_times = [0.0176, 0.0176, 0.0352, 0.0704, 0.0704, 0.1056, 0.1584, 0.1584, 0.1936, 0.1936]
@@ -129,19 +129,19 @@ class Relax_fit(SystemTestCase):
         """The Sparky peak height loading test."""
 
         # Load the original state.
-        self.interpreter.state.load(state='basic_heights_T2_ncyc1', dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states', force=True)
+        self.interpreter.state.load(state='basic_heights_T2_ncyc1', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states', force=True)
 
         # Create a new data pipe for the new data.
         self.interpreter.pipe.create('new', 'relax_fit')
 
         # Load the Lupin Ap4Aase sequence.
-        self.interpreter.sequence.read(file="Ap4Aase.seq", dir=Status().install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file="Ap4Aase.seq", dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Name the spins so they can be matched to the assignments.
         self.interpreter.spin.name(name='N')
 
         # Read the peak heights.
-        self.interpreter.spectrum.read_intensities(file="T2_ncyc1_ave.list", dir=Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting', spectrum_id='0.0176')
+        self.interpreter.spectrum.read_intensities(file="T2_ncyc1_ave.list", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting', spectrum_id='0.0176')
 
 
         # Test the integrity of the data.

@@ -33,7 +33,7 @@ from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_io import DummyFileObject, open_read_file
-from status import Status
+from status import Status; status = Status()
 
 
 # Get the platform information.
@@ -150,7 +150,7 @@ class Frame_order(SystemTestCase):
         """Test the free rotor frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'free_rotor.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'free_rotor.py')
 
         # Check the calculated chi2 value.
         self.assertAlmostEqual(ds.chi2, 0.0216067401326)
@@ -160,7 +160,7 @@ class Frame_order(SystemTestCase):
         """Test the free rotor frame order model in the eigenframe."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'free_rotor_eigenframe.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'free_rotor_eigenframe.py')
 
         # Check the calculated chi2 value.
         self.assertAlmostEqual(ds.chi2, 0.00673210578744)
@@ -170,7 +170,7 @@ class Frame_order(SystemTestCase):
         """Test the isotropic cone frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'iso_cone.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'iso_cone.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -202,7 +202,7 @@ class Frame_order(SystemTestCase):
         """Test the free rotor isotropic cone frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'iso_cone_free_rotor.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'iso_cone_free_rotor.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -234,7 +234,7 @@ class Frame_order(SystemTestCase):
         """Test the free rotor isotropic cone frame order model in the eigenframe."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'iso_cone_free_rotor_eigenframe.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'iso_cone_free_rotor_eigenframe.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -266,7 +266,7 @@ class Frame_order(SystemTestCase):
         """Test the pseudo-ellipse frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'pseudo_ellipse.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'pseudo_ellipse.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -298,7 +298,7 @@ class Frame_order(SystemTestCase):
         """Test the free rotor pseudo-elliptic cone frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'pseudo_ellipse_free_rotor.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'pseudo_ellipse_free_rotor.py')
 
         # The reference chi2 values.
         chi2_ref = [[], []]
@@ -350,7 +350,7 @@ class Frame_order(SystemTestCase):
         """Test the pseudo-ellipse frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'pseudo_ellipse_torsionless.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'pseudo_ellipse_torsionless.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -382,7 +382,7 @@ class Frame_order(SystemTestCase):
         """Test the rotor frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'rotor.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'rotor.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -414,7 +414,7 @@ class Frame_order(SystemTestCase):
         """Test the rotor frame order model in the eigenframe."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'rotor_eigenframe.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'model_calcs'+sep+'rotor_eigenframe.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -446,14 +446,14 @@ class Frame_order(SystemTestCase):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
 
 
     def test_opt_rigid_no_rot(self):
         """Test the 'rigid' model for unrotated tensors with no motion."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_no_rot.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_no_rot.py')
 
         # Get the debugging message.
         self.mesg = self.mesg_opt_debug()
@@ -470,7 +470,7 @@ class Frame_order(SystemTestCase):
         """Test the 'rigid' model for randomly rotated tensors with no motion."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_rand_rot.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_rand_rot.py')
 
         # Get the debugging message.
         self.mesg = self.mesg_opt_debug()
@@ -486,7 +486,7 @@ class Frame_order(SystemTestCase):
         """Parametric restriction of the isotropic cone to the free rotor isotropic cone frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'iso_cone_to_iso_cone_free_rotor.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'iso_cone_to_iso_cone_free_rotor.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -518,7 +518,7 @@ class Frame_order(SystemTestCase):
         """Parametric restriction of the pseudo-ellipse to the isotropic cone frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_to_iso_cone.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_to_iso_cone.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -550,7 +550,7 @@ class Frame_order(SystemTestCase):
         """Parametric restriction of the pseudo-ellipse to the free rotor isotropic cone frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_to_iso_cone_free_rotor.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_to_iso_cone_free_rotor.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -582,7 +582,7 @@ class Frame_order(SystemTestCase):
         """Parametric restriction of the pseudo-ellipse to the isotropic cone frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_free_rotor_to_iso_cone.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_free_rotor_to_iso_cone.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -614,7 +614,7 @@ class Frame_order(SystemTestCase):
         """Parametric restriction of the free rotor pseudo-ellipse to the free rotor isotropic cone frame order model."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_free_rotor_to_iso_cone_free_rotor.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'parametric_restriction'+sep+'pseudo_ellipse_free_rotor_to_iso_cone_free_rotor.py')
 
         # The reference chi2 values.
         chi2_ref = []
@@ -646,7 +646,7 @@ class Frame_order(SystemTestCase):
         """Test the pseudo-ellipse target function."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'pseudo_ellipse.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'pseudo_ellipse.py')
 
         # The reference chi2 value.
         chi2 = 0.015865464136741975
@@ -659,7 +659,7 @@ class Frame_order(SystemTestCase):
         """Test the torsionless pseudo-ellipse target function."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'pseudo_ellipse_torsionless.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'pseudo_ellipse_torsionless.py')
 
         # The reference chi2 value.
         chi2 = 2.8393866813588198

@@ -27,7 +27,7 @@ from os import sep
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
-from status import Status
+from status import Status; status = Status()
 
 
 class Modsel(SystemTestCase):
@@ -47,7 +47,7 @@ class Modsel(SystemTestCase):
         tensors = [1e-9, (1e-9, 0, 0, 0)]
 
         # Path of the files.
-        path = Status().install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Loop over the data pipes.
         for i in xrange(2):

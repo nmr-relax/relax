@@ -28,7 +28,7 @@ import sys
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
-from status import Status
+from status import Status; status = Status()
 
 
 class Generic(SystemTestCase):
@@ -44,7 +44,7 @@ class Generic(SystemTestCase):
         """Test nested scripting."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'nested_scripting'+sep+'main.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'nested_scripting'+sep+'main.py')
 
         # Check.
         self.assertEqual(cdp.nest, ['a', 'b', 'c', 'd'])
@@ -63,7 +63,7 @@ class Generic(SystemTestCase):
             self.interpreter.pipe.create(pipe_list[i], 'mf')
 
             # Load the Lupin Ap4Aase sequence.
-            self.interpreter.sequence.read(file="Ap4Aase.seq", dir=Status().install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+            self.interpreter.sequence.read(file="Ap4Aase.seq", dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
             # Only select residue 8.
             self.interpreter.select.spin(spin_id=':8', change_all=True)
@@ -89,4 +89,4 @@ class Generic(SystemTestCase):
         """Test the creation of a PDB representation of the distribution of XH bond vectors."""
 
         # Execute the script.
-        self.interpreter.run(script_file=Status().install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'xh_vector_dist.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'xh_vector_dist.py')

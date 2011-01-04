@@ -33,7 +33,7 @@ except ImportError:
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from relax_io import delete
-from status import Status
+from status import Status; status = Status()
 
 
 
@@ -141,7 +141,7 @@ class Sequence_base_class:
         """
 
         # Read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
-        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir=Status().install_path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2)
+        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2)
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
