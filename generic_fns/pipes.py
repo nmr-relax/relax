@@ -29,7 +29,7 @@ import __builtin__
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from dep_check import C_module_exp_fn
+from dep_check import C_module_exp_fn, scipy_module
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 
 
@@ -93,6 +93,10 @@ def create(pipe_name=None, pipe_type=None, switch=True):
     # Test that the C modules have been loaded.
     if pipe_type == 'relax_fit' and not C_module_exp_fn:
         raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
+
+    # Test that the scipy is installed for the frame order analysis.
+    if pipe_type == 'frame order' and not scipy_module:
+        raise RelaxError("The frame order analysis is not available.  Please install the scipy Python package.")
 
     # Add the data pipe.
     ds.add(pipe_name=pipe_name, pipe_type=pipe_type)
