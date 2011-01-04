@@ -50,6 +50,29 @@ def summary_line(name, passed, width=64):
         sys.stdout.write(" %-10s\n" % "[ Failed ]")
 
 
+def subtitle(text):
+    """Function for printing the subtitles.
+
+    @param text:    The text of the subtitle to be printed.
+    @type text:     str
+    """
+
+    # The width of the subtitle string.
+    width = len(text)
+
+    # Top spacing.
+    sys.stdout.write("\n\n")
+
+    # Text.
+    sys.stdout.write("# %s\n" % text)
+
+    # Bottom bar.
+    sys.stdout.write("#" * width)
+
+    # Spacing.
+    sys.stdout.write("\n\n")
+
+
 def title(text):
     """Function for printing the titles.
 
