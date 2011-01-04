@@ -5,7 +5,7 @@
 #                         (see https://gna.org/users/varioustoxins             #
 #                                      for contact details)                    #
 #                                                                              #
-# Copyright (C) 2007-2010 Edward d'Auvergne                                    #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                    #
 #                                                                              #
 #                                                                              #
 # This file is part of the program relax.                                      #
