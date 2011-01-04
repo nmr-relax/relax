@@ -994,8 +994,31 @@ class Mf(SystemTestCase):
         ###########################
 
         # 32-bit Linux.
-        # f_count: 159
+        # f_count: 159, 95
         # g_count: 159
+
+        # 32-bit i686 Linux.
+        # System:           Linux                    
+        # Release:          2.6.33.7-desktop-2mnb    
+        # Version:          #1 SMP Mon Sep 20 19:00:25 UTC 2010
+        # Win32 version:                             
+        # Distribution:     mandrake 2010.2 Official 
+        # Architecture:     32bit ELF                
+        # Machine:          i686                     
+        # Processor:        i686                     
+        # Python version:   2.6.5                    
+        # Numpy version:    1.4.1                    
+        # Libc version:     glibc 2.0                
+        # 
+        # s2:                         0.9699999999999994
+        # te:                                       2048
+        # rex:                       0.14900000000002014
+        # chi2:                   7.9326439528899843e-28
+        # iter:                                       22
+        # f_count:                                    95
+        # g_count:                                    95
+        # h_count:                                    22
+        # warning:                                  None
 
         # 64-bit x86_64 Linux.
         # System:           Linux
@@ -1102,8 +1125,8 @@ class Mf(SystemTestCase):
         rex = 0.14900000000002225
         chi2 = 6.8756889983348349e-28
         iter = 22
-        f_count = [91, 153, 159, 160, 165]
-        g_count = [91, 153, 159, 160, 165]
+        f_count = [91, 95, 153, 159, 160, 165]
+        g_count = [91, 95, 153, 159, 160, 165]
         h_count = 22
         warning = None
 
