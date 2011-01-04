@@ -2,7 +2,6 @@
 #                                                                              #
 # Copyright (C) 2011 Edward d'Auvergne                                         #
 #                                                                              #
-#                                                                              #
 # This file is part of the program relax.                                      #
 #                                                                              #
 # relax is free software; you can redistribute it and/or modify                #
@@ -51,7 +50,15 @@ class RelaxTestLoader(TestLoader):
         # Generate a list of test cases.
         case_list = []
         for i in range(len(testCaseNames)):
-            case_list.append(testCaseClass(testCaseNames[i]))
+            # Initialise the test case.
+            test_case = testCaseClass(testCaseNames[i])
+
+            # Skip.
+            if hasattr(test_case, 'skip') and test_case.skip:
+                continue
+
+            # Append the test case.
+            case_list.append(test_case)
 
         # Return the test suite.
         return self.suiteClass(case_list)
