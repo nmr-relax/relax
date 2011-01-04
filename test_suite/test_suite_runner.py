@@ -176,13 +176,13 @@ class Test_suite_runner:
             format = "%-30s %20s"
 
         # Header.
-        print("\nCount of tests skipped due to missing modules:\n")
+        print("\nTests skipped due to missing modules:\n")
         if hasattr(self, 'system_result') and hasattr(self, 'unit_result'):
-            header = format % ("Module", "System tests", "Unit tests")
+            header = format % ("Module", "System test count", "Unit test count")
         elif hasattr(self, 'system_result'):
-            header = format % ("Module", "System tests")
+            header = format % ("Module", "System test count")
         else:
-            header = format % ("Module", "Unit tests")
+            header = format % ("Module", "Unit test count")
         print('-'*len(header))
         print(header)
         print('-'*len(header))
