@@ -47,7 +47,7 @@ def heading(text):
     sys.stdout.write("\n\n\n")
 
 
-def summary_line(name, passed, width=84):
+def summary_line(name, passed, width=64):
     """Print a summary line.
 
     @param name:    The name of the test, test category, etc.
