@@ -169,7 +169,7 @@ class Test_suite_runner:
         missing_modules.sort()
 
         # Sub-title.
-        subtitle("Optional modules")
+        subtitle("Optional packages/modules")
 
         # Nothing missing.
         if not missing_modules:
@@ -186,7 +186,7 @@ class Test_suite_runner:
             format = "%-30s %20s"
 
         # Header.
-        print("Tests skipped due to missing modules:\n")
+        print("Tests skipped due to missing packages/modules:\n")
         if hasattr(self, 'system_result') and hasattr(self, 'unit_result'):
             header = format % ("Module", "System test count", "Unit test count")
         elif hasattr(self, 'system_result'):
