@@ -85,6 +85,9 @@ class Test_suite_runner:
         system_runner = System_test_runner()
         self.system_result = system_runner.run(self.tests)
 
+        # Print out a summary of the test suite.
+        self.summary()
+
 
     def run_unit_tests(self):
         """Function for executing the unit tests."""
@@ -95,6 +98,9 @@ class Test_suite_runner:
         # Run the tests.
         unit_runner = Unit_test_runner(root_path=status.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
         self.unit_result = unit_runner.run(runner=RelaxTestRunner())
+
+        # Print out a summary of the test suite.
+        self.summary()
 
 
     def summary(self):
@@ -107,10 +113,13 @@ class Test_suite_runner:
         print("###################################\n")
 
         # System/functional test summary.
-        summary_line("System/functional tests", self.system_result)
+        if hasattr(self, 'system_result'):
+            summary_line("System/functional tests", self.system_result)
 
         # Unit test summary.
-        summary_line("Unit tests", self.unit_result)
+        if hasattr(self, 'unit_result'):
+            summary_line("Unit tests", self.unit_result)
 
         # Synopsis.
-        summary_line("Synopsis", self.system_result and self.unit_result)
+        if hasattr(self, 'system_result') and hasattr(self, 'unit_result'):
+            summary_line("Synopsis", self.system_result and self.unit_result)
