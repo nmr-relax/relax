@@ -61,7 +61,7 @@ from textwrap import dedent
 
 # relax module imports.
 try:
-    from relax_test_loader import RelaxTestLoader as TestLoader
+    from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 except ImportError:
     from unittest import TestLoader
 
