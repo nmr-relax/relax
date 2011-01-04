@@ -66,17 +66,21 @@ class Test_suite_runner:
 
 
         # Execute the system/functional tests.
-        self.run_system_tests()
+        self.run_system_tests(summary=False)
 
         # Execute the unit tests.
-        self.run_unit_tests()
+        self.run_unit_tests(summary=False)
 
         # Print out a summary of the test suite.
         self.summary()
 
 
-    def run_system_tests(self):
-        """Function for executing the system/functional tests."""
+    def run_system_tests(self, summary=True):
+        """Execute the system/functional tests.
+
+        @keyword summary:   A flag which if True will cause a summary to be printed.
+        @type summary:      bool
+        """
 
         # Print a header.
         title('System / functional tests')
@@ -86,11 +90,16 @@ class Test_suite_runner:
         self.system_result = system_runner.run(self.tests)
 
         # Print out a summary of the test suite.
-        self.summary()
+        if summary:
+            self.summary()
 
 
-    def run_unit_tests(self):
-        """Function for executing the unit tests."""
+    def run_unit_tests(self, summary=True):
+        """Execute the unit tests.
+
+        @keyword summary:   A flag which if True will cause a summary to be printed.
+        @type summary:      bool
+        """
 
         # Print a header.
         title('Unit tests')
@@ -100,7 +109,8 @@ class Test_suite_runner:
         self.unit_result = unit_runner.run(runner=RelaxTestRunner())
 
         # Print out a summary of the test suite.
-        self.summary()
+        if summary:
+            self.summary()
 
 
     def summary(self):
