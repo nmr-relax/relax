@@ -43,20 +43,19 @@ class Status(object):
             # Instantiate.
             self._instance = object.__new__(self, *args, **kargs)
 
+            # Initialise some variables.
+            self._instance.debug = False
+            self._instance.install_path = sys.path[0]
+
+            # Set up the singleton.
+            self._instance._setup()
+
         # Already instantiated, so return the instance.
         return self._instance
 
 
-    def setup(self, install_path=None, debug=False):
+    def _setup(self):
         """Initialise all the status data structures."""
-
-        # Store the args.
-        self.install_path = install_path
-        self.debug = debug
-
-        # The install path, if not given (this assumes package loading has not mangled the path).
-        if not self.install_path:
-            self.install_paths = sys.path[0]
 
         # Execution lock object.
         self.exec_lock = Exec_lock()
