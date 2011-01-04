@@ -40,7 +40,7 @@ class Test_scientific(TestCase):
     def __init__(self, methodName='runTest'):
         """Skip scientific Python tests if not installed.
 
-        @keyword methodName:    The keyword for unittest.TestCase.
+        @keyword methodName:    The name of the test.
         @type methodName:       str
         """
 
