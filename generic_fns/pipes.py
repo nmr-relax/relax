@@ -29,14 +29,8 @@ import __builtin__
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from dep_check import C_module_exp_fn
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
-
-# Relaxation curve fitting modules compilation test.
-C_module_exp_fn = True
-try:
-    from maths_fns.relax_fit import func
-except ImportError:
-    C_module_exp_fn = False
 
 
 # List of valid data pipe types.
