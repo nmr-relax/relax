@@ -72,6 +72,9 @@ class Status(object):
         self.dAuvergne_protocol.current_model = None     # The current model-free model.
         self.dAuvergne_protocol.convergence = False      # The convergence of the global model.
 
+        # A structure for skipped system and unit tests.
+        self.skipped_tests = []
+        """The skipped tests list.  Each element should be a list of the test case name, the missing Python module, and the name of the test suite category (i.e. 'system' or 'unit')."""
 
 
 class Status_container:
