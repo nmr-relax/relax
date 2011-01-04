@@ -31,6 +31,7 @@ from maths_fns.coord_transform import cartesian_to_spherical
 from maths_fns.frame_order_matrix_ops import *
 from maths_fns.kronecker_product import transpose_23
 from maths_fns.order_parameters import iso_cone_theta_to_S
+from status import Status; status = Status()
 
 
 class Test_frame_order_matrix_ops(TestCase):
