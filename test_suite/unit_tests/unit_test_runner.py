@@ -59,6 +59,12 @@ import os, re, string, sys, unittest, traceback
 from optparse import OptionParser
 from textwrap import dedent
 
+# relax module imports.
+try:
+    from relax_test_loader import RelaxTestLoader as TestLoader
+except ImportError:
+    from unittest import TestLoader
+
 
 # constants
 ###########
@@ -307,7 +313,7 @@ def load_test_case(package_path, module_name, class_name):
     clazz = getattr(packages[-1], class_name)
 
     # Load the test cases and return the suite of test cases.
-    return unittest.TestLoader().loadTestsFromTestCase(clazz)
+    return TestLoader().loadTestsFromTestCase(clazz)
 
 
 
