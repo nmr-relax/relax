@@ -73,7 +73,7 @@ class Frame_order(SystemTestCase):
             status.skipped_tests.append([methodName, 'Scipy', 'system'])
 
         # Execute the base class method.
-        super(Test_scientific, self).__init__(methodName)
+        super(Frame_order, self).__init__(methodName)
 
 
 
