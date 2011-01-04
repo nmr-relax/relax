@@ -49,7 +49,7 @@ class Unit_vectors(SystemTestCase):
             status.skipped_tests.append([methodName, 'Scientific Python', 'system'])
 
         # Execute the base class method.
-        super(Structure, self).__init__(methodName)
+        super(Unit_vectors, self).__init__(methodName)
 
 
     def setUp(self):
