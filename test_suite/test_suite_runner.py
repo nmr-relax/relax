@@ -33,7 +33,7 @@ from unit_tests.unit_test_runner import Unit_test_runner
 
 # relax module imports.
 from relax_test_runner import RelaxTestRunner
-from status import Status
+from status import Status; status = Status()
 
 
 class Test_suite_runner:
@@ -57,11 +57,8 @@ class Test_suite_runner:
         # Store the args.
         self.tests = tests
 
-        # The status object.
-        self.status = Status()
-
         # A list for skipped tests.
-        self.status.skip = []
+        status.skip = []
 
 
     def run_all_tests(self):
