@@ -49,7 +49,7 @@ from help import _Helper, _Helper_python
 from info import Info_box
 if dep_check.readline_module:
     from tab_completion import Tab_completion
-from status import Status
+from status import Status; status = Status()
 
 # User functions.
 from angles import Angles
@@ -344,7 +344,6 @@ def exec_script(name, globals):
     """Execute the script."""
 
     # Execution lock.
-    status = Status()
     status.exec_lock.acquire('script UI')
 
     # The module path.
@@ -469,9 +468,6 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         file.close()
 
-    # The status object.
-    status = Status()
-
     # The execution flag.
     exec_pass = True
 
@@ -485,7 +481,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         status.exec_lock.release()
 
         # Throw the error.
-        if Status().debug:
+        if status.debug:
             raise
 
         # Be nicer to the user.
@@ -507,7 +503,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         # Nice output for the user.
         else:
             # Print the scary traceback normally hidden from the user.
-            if Status().debug:
+            if status.debug:
                 self.showtraceback()
 
             # Print the RelaxError message line.

@@ -37,7 +37,7 @@ import time
 from types import ClassType
 
 # relax module imports
-from status import Status
+from status import Status; status = Status()
 
 
 # Text variables.
@@ -102,7 +102,7 @@ class BaseError(Exception):
         """Modify the behaviour of the error system."""
 
         # Save the state if debugging is turned on.
-        if Status().debug:
+        if status.debug:
             save_state()
 
         # Modify the error message to include 'RelaxError' at the start.

@@ -30,7 +30,7 @@ import warnings
 
 # relax module imports.
 from relax_errors import BaseError
-from status import Status
+from status import Status; status = Status()
 
 
 # The warning formatting function.
@@ -42,7 +42,7 @@ def format(message, category, filename, lineno, line=None):
     message = "RelaxWarning: %s\n" % message
 
     # Print stack-trace in debug mode.
-    if Status().debug:
+    if status.debug:
         tb = ""
         for frame in inspect.stack()[4:]:
             file = frame[1]

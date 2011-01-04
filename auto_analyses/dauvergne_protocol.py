@@ -150,7 +150,7 @@ from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loo
 from generic_fns import pipes
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
-from status import Status
+from status import Status; status = Status()
 
 
 
@@ -200,11 +200,8 @@ class dAuvergne_protocol:
         @type conv_loop:            bool
         """
 
-        # Initialise the status.
-        self.status = Status()
-
         # Execution lock.
-        self.status.exec_lock.acquire('auto dauvergne protocol')
+        status.exec_lock.acquire('auto dauvergne protocol')
 
         # Store the args.
         self.diff_model = diff_model
@@ -231,9 +228,9 @@ class dAuvergne_protocol:
         self.check_vars()
 
         # Some info for the status.
-        self.status.dAuvergne_protocol.diff_model = diff_model
-        self.status.dAuvergne_protocol.mf_models = mf_models
-        self.status.dAuvergne_protocol.local_tm_models = local_tm_models
+        status.dAuvergne_protocol.diff_model = diff_model
+        status.dAuvergne_protocol.mf_models = mf_models
+        status.dAuvergne_protocol.local_tm_models = local_tm_models
 
         # Initialise the convergence data structures.
         self.conv_data = Container()
@@ -292,7 +289,7 @@ class dAuvergne_protocol:
             while True:
                 # Determine which round of optimisation to do (init, round_1, round_2, etc).
                 self.round = self.determine_rnd(model=self.diff_model)
-                self.status.dAuvergne_protocol.round = self.round
+                status.dAuvergne_protocol.round = self.round
 
                 # Inital round of optimisation for diffusion models MII to MV.
                 if self.round == 0:
@@ -379,7 +376,7 @@ class dAuvergne_protocol:
                         break
 
                 # Unset the status.
-                self.status.dAuvergne_protocol.round = None
+                status.dAuvergne_protocol.round = None
 
 
         # Final run.
@@ -458,12 +455,12 @@ class dAuvergne_protocol:
             raise RelaxError("Unknown diffusion model, change the value of 'self.diff_model'")
 
         # Unset the status info.
-        self.status.dAuvergne_protocol.diff_model = None
-        self.status.dAuvergne_protocol.mf_models = None
-        self.status.dAuvergne_protocol.local_tm_models = None
+        status.dAuvergne_protocol.diff_model = None
+        status.dAuvergne_protocol.mf_models = None
+        status.dAuvergne_protocol.local_tm_models = None
 
         # Unlock execution.
-        self.status.exec_lock.release()
+        status.exec_lock.release()
 
 
     def check_vars(self):
@@ -703,7 +700,7 @@ class dAuvergne_protocol:
         print("\nConvergence:")
         if converged:
             # Update the status.
-            self.status.dAuvergne_protocol.convergence = True
+            status.dAuvergne_protocol.convergence = True
 
             # Print out.
             print("    [ Yes ]")
@@ -796,7 +793,7 @@ class dAuvergne_protocol:
         # Loop over the data pipes.
         for name in self.pipes:
             # Place the model name into the status container.
-            self.status.dAuvergne_protocol.current_model = name
+            status.dAuvergne_protocol.current_model = name
 
             # Create the data pipe.
             if pipes.has_pipe(name):
@@ -851,7 +848,7 @@ class dAuvergne_protocol:
             self.interpreter.results.write(file='results', dir=dir, force=True)
 
         # Unset the status.
-        self.status.dAuvergne_protocol.current_model = None
+        status.dAuvergne_protocol.current_model = None
 
 
 class Container:
