@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -381,6 +381,29 @@ class Mf(SystemTestCase):
         # h_count:  0
         # warning:  None
 
+        # 32-bit i686 Linux.
+        # System:           Linux                    
+        # Release:          2.6.33.7-desktop-2mnb    
+        # Version:          #1 SMP Mon Sep 20 19:00:25 UTC 2010
+        # Win32 version:                             
+        # Distribution:     mandrake 2010.2 Official 
+        # Architecture:     32bit ELF                
+        # Machine:          i686                     
+        # Processor:        i686                     
+        # Python version:   2.6.5                    
+        # Numpy version:    1.4.1                    
+        # Libc version:     glibc 2.0                
+        # 
+        # s2:                         0.9700000000016741
+        # te:                             2048.000000312
+        # rex:                       0.14899999996808433
+        # chi2:                   3.5466670276032307e-20
+        # iter:                                      158
+        # f_count:                                   744
+        # g_count:                                   165
+        # h_count:                                     0
+        # warning:                                  None
+
         # 64-bit x86_64 Linux.
         # System:           Linux
         # Release:          2.6.24.7-server-2mnb
@@ -481,9 +504,9 @@ class Mf(SystemTestCase):
         te = 2048.000000000022283
         rex = 0.14900000000000566
         chi2 = 3.1024517431117421e-27
-        iter = [156, 157, 162, 175, 203]
-        f_count = [695, 701, 722, 735, 758, 955]
-        g_count = [162, 163, 164, 169, 182, 209]
+        iter = [156, 157, 158, 162, 175, 203]
+        f_count = [695, 701, 722, 735, 744, 758, 955]
+        g_count = [162, 163, 164, 165, 169, 182, 209]
         h_count = 0
         warning = None
 
@@ -756,6 +779,29 @@ class Mf(SystemTestCase):
         # f_count: 738
         # g_count: 738
 
+        # 32-bit i686 Linux.
+        # System:           Linux                    
+        # Release:          2.6.33.7-desktop-2mnb    
+        # Version:          #1 SMP Mon Sep 20 19:00:25 UTC 2010
+        # Win32 version:                             
+        # Distribution:     mandrake 2010.2 Official 
+        # Architecture:     32bit ELF                
+        # Machine:          i686                     
+        # Processor:        i686                     
+        # Python version:   2.6.5                    
+        # Numpy version:    1.4.1                    
+        # Libc version:     glibc 2.0                
+        # 
+        # s2:                         0.9700000000219662
+        # te:                             2048.000001534
+        # rex:                       0.14899999946980566
+        # chi2:                   2.3474910055938013e-18
+        # iter:                                      200
+        # f_count:                                   874
+        # g_count:                                   874
+        # h_count:                                     0
+        # warning:                                  None
+
         # 64-bit x86_64 Linux.
         # System:           Linux
         # Release:          2.6.24.7-server-2mnb
@@ -830,9 +876,9 @@ class Mf(SystemTestCase):
         te = 2048.000001534187049
         rex = 0.14899999946977982
         chi2 = 2.3477234248531005e-18
-        iter = 198
-        f_count = [738, 757]
-        g_count = [738, 757]
+        iter = [198, 200]
+        f_count = [738, 757, 874]
+        g_count = [738, 757, 874]
         h_count = 0
         warning = None
 
@@ -874,6 +920,29 @@ class Mf(SystemTestCase):
         # 32-bit Linux.
         # f_count: 55
         # g_count: 23
+
+        # 32-bit i686 Linux.
+        # System:           Linux                    
+        # Release:          2.6.33.7-desktop-2mnb    
+        # Version:          #1 SMP Mon Sep 20 19:00:25 UTC 2010
+        # Win32 version:                             
+        # Distribution:     mandrake 2010.2 Official 
+        # Architecture:     32bit ELF                
+        # Machine:          i686                     
+        # Processor:        i686                     
+        # Python version:   2.6.5                    
+        # Numpy version:    1.4.1                    
+        # Libc version:     glibc 2.0                
+        # 
+        # s2:                         0.9699999999999992
+        # te:                                       2048
+        # rex:                       0.14900000000002034
+        # chi2:                   1.1701970207791308e-27
+        # iter:                                       18
+        # f_count:                                    57
+        # g_count:                                    23
+        # h_count:                                    18
+        # warning:                                  None
 
         # 64-bit x86_64 Linux.
         # System:           Linux
@@ -950,7 +1019,7 @@ class Mf(SystemTestCase):
         rex = 0.14900000000001817
         chi2 = 7.3040158179665562e-28
         iter = 18
-        f_count = [55, 94]
+        f_count = [55, 57, 94]
         g_count = [23]
         h_count = 18
         warning = None
