@@ -81,7 +81,7 @@ class Mol_res_spin:
 
             # Nothing.
             if not res:
-                return
+                return None, None
 
             # Split.
             res_num, res_name = split(res)
@@ -153,7 +153,7 @@ class Mol_res_spin:
 
             # Nothing.
             if spin == '':
-                return
+                return None, None
 
             # Split.
             spin_num, spin_name = split(spin)
