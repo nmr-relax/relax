@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -217,7 +217,8 @@ class Menu:
                 [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.sequence.read]
             ]],
             [wx.NewId(), "&spin", paths.icon_16x16.spin, None, [
-                [wx.NewId(), "&create", paths.icon_16x16.add, self.gui.user_functions.spin.create],
+                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.spin.copy],
+                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.spin.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.spin.delete]
             ]],
         ]

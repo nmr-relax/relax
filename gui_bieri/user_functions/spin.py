@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,11 +28,12 @@ from string import split
 import wx
 
 # relax module imports.
-from generic_fns.mol_res_spin import molecule_loop, residue_loop, spin_loop
-from generic_fns import pipes
+from generic_fns.mol_res_spin import generate_spin_id, molecule_loop, residue_loop, spin_loop
+from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_window
+from gui_bieri.misc import gui_to_str, str_to_gui
 from gui_bieri.paths import WIZARD_IMAGE_PATH
 from gui_bieri.user_functions.mol_res_spin import Mol_res_spin
 
@@ -40,6 +41,19 @@ from gui_bieri.user_functions.mol_res_spin import Mol_res_spin
 # The container class.
 class Spin(UF_base):
     """The container class for holding all GUI elements."""
+
+    def copy(self, event):
+        """The residue.copy user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The dialog.
+        window = Copy_window(self.gui, self.interpreter)
+        window.ShowModal()
+        window.Destroy()
+
 
     def create(self, event, mol_name=None, res_num=None, res_name=None):
         """The spin.create user function.
@@ -112,6 +126,171 @@ class Spin(UF_base):
 
 
 
+class Copy_window(UF_window, Mol_res_spin):
+    """The residue.copy() user function window."""
+
+    # Some class variables.
+    size_x = 700
+    size_y = 600
+    frame_title = 'Copy a residue'
+    image_path = WIZARD_IMAGE_PATH + 'residue.png'
+    main_text = 'This dialog allows you to copy residues.'
+    title = 'Residue copy'
+
+
+    def add_uf(self, sizer):
+        """Add the residue specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The source pipe.
+        self.pipe_from = self.combo_box(sizer, "The source data pipe:", evt_fn=self.update_mol_list)
+
+        # The molecule selection.
+        self.mol_from = self.combo_box(sizer, "The source molecule:", evt_fn=self.update_res_list)
+
+        # The residue selection.
+        self.res_from = self.combo_box(sizer, "The source residue:", evt_fn=self.update_spin_list)
+
+        # The spin selection.
+        self.spin_from = self.combo_box(sizer, "The source spin:")
+
+        # The destination pipe.
+        self.pipe_to = self.combo_box(sizer, "The destination data pipe name:", evt_fn=self.update_mol_list)
+
+        # The destination molecule name.
+        self.mol_to = self.combo_box(sizer, "The destination molecule name:")
+
+        # The destination residue.
+        self.res_to = self.combo_box(sizer, "The destination residue:")
+
+        # The new spin number.
+        self.spin_num_to = self.input_field(sizer, "The new spin number:", tooltip='If left blank, the new spin will have the same number as the old.')
+
+        # The new spin name.
+        self.spin_name_to = self.input_field(sizer, "The new spin name:", tooltip='If left blank, the new spin will have the same name as the old.')
+
+
+    def execute(self):
+        """Execute the user function."""
+
+        # Get the pipe names.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        pipe_to = gui_to_str(self.pipe_to.GetValue())
+
+        # The spin names.
+        spin_from = self._get_spin_id(suffix='_from')
+        spin_to = self._get_spin_id(suffix='_to')
+        if spin_to == '':
+            spin_to = None
+
+        # Copy the spin.
+        self.interpreter.spin.copy(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
+
+        # Update.
+        self.update(None)
+
+
+    def update(self, event):
+        """Update the UI.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the default pipe name.
+        if not gui_to_str(self.pipe_from.GetValue()):
+            self.pipe_from.SetValue(str_to_gui(cdp_name()))
+        if not gui_to_str(self.pipe_to.GetValue()):
+            self.pipe_to.SetValue(str_to_gui(cdp_name()))
+
+        # The list of pipe names.
+        for name in pipe_names():
+            self.pipe_from.Append(name)
+            self.pipe_to.Append(name)
+
+        # Update the molecule list.
+        self.update_mol_list()
+
+
+    def update_mol_list(self, event=None):
+        """Update the list of molecules.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The source data pipe.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        pipe_to = gui_to_str(self.pipe_to.GetValue())
+
+        # Clear the previous data.
+        self.mol_from.Clear()
+        self.mol_to.Clear()
+
+        # The list of molecule names.
+        for mol in molecule_loop(pipe=pipe_from):
+            self.mol_from.Append(str_to_gui(mol.name))
+        for mol in molecule_loop(pipe=pipe_to):
+            self.mol_to.Append(str_to_gui(mol.name))
+
+        # Update the residues too.
+        self.update_res_list()
+
+
+    def update_res_list(self, event=None):
+        """Update the list of residues.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The source data pipe and molecule name.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        mol_from = generate_spin_id(mol_name=gui_to_str(self.mol_from.GetValue()))
+
+        # Clear the previous data.
+        self.res_from.Clear()
+
+        # Nothing to do.
+        if mol_from == '':
+            return
+
+        # The list of molecule names.
+        for res in residue_loop(mol_from, pipe=pipe_from):
+            self.res_from.Append(str_to_gui("%s %s" % (res.num, res.name)))
+
+        # Update the spins too.
+        self.update_spin_list()
+
+
+    def update_spin_list(self, event=None):
+        """Update the list of spins.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The source data pipe and molecule name.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        res_from = self._get_res_id(suffix='_from')
+        print res_from
+
+        # Clear the previous data.
+        self.spin_from.Clear()
+
+        # Nothing to do.
+        if res_from == '':
+            return
+
+        # The list of molecule names.
+        for spin in spin_loop(res_from, pipe=pipe_from):
+            self.spin_from.Append(str_to_gui("%s %s" % (spin.num, spin.name)))
+
+
+
 class Create_window(UF_window, Mol_res_spin):
     """The spin.create() user function window."""
 
@@ -180,7 +359,7 @@ class Create_window(UF_window, Mol_res_spin):
         self.res.Clear()
 
         # The list of molecule names.
-        if pipes.cdp_name():
+        if cdp_name():
             for mol in molecule_loop():
                 self.mol.Append(mol.name)
 
@@ -241,6 +420,6 @@ class Delete_window(UF_window, Mol_res_spin):
         self.spin.Clear()
 
         # The list of molecule names.
-        if pipes.cdp_name():
+        if cdp_name():
             for mol in molecule_loop():
                 self.mol.Append(mol.name)
