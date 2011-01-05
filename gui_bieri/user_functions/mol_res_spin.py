@@ -108,19 +108,26 @@ class Mol_res_spin:
         return res_num, res_name
 
 
-    def _get_spin_id(self):
-        """Generate the spin ID from the molecule, residue, and spin selection."""
+    def _get_spin_id(self, suffix=''):
+        """Generate the spin ID from the molecule, residue, and spin selection.
+
+        @keyword suffix:    The suffix to be added to the spin data structure name.
+        @type suffix:       str
+        @return:            The spin ID string.
+        @rtype:             str
+        """
 
         # The molecule name.
-        mol_name = str(self.mol.GetValue())
+        obj = getattr(self, 'mol'+suffix)
+        mol_name = str(obj.GetValue())
         if mol_name == '':
             mol_name = None
 
         # The residue info.
-        res_num, res_name = self._get_res_info()
+        res_num, res_name = self._get_res_info(suffix=suffix)
 
         # The spin info.
-        spin_info = self._get_spin_info()
+        spin_info = self._get_spin_info(suffix=suffix)
         if not spin_info:
             return
         spin_num, spin_name = spin_info
@@ -129,30 +136,45 @@ class Mol_res_spin:
         return generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
 
 
-    def _get_spin_info(self):
+    def _get_spin_info(self, suffix=''):
         """Extract the spin info from the spin selection.
 
-        @return:    The spin number and name from the spin selection self.spin.
-        @rtype:     int, str
+        @keyword suffix:    The suffix to be added to the spin data structure name.
+        @type suffix:       str
+        @return:            The spin number and name from the spin selection self.spin.
+        @rtype:             int, str
         """
 
-        # The spin info.
-        spin = str(self.spin.GetValue())
+        # Single spin object.
+        if hasattr(self, 'spin'+suffix):
+            # The spin info.
+            obj = getattr(self, 'spin'+suffix)
+            spin = str(obj.GetValue())
 
-        # Nothing.
-        if spin == '':
-            return
+            # Nothing.
+            if spin == '':
+                return
 
-        # Split.
-        spin_num, spin_name = split(spin)
+            # Split.
+            spin_num, spin_name = split(spin)
 
-        # Convert.
-        if spin_name == '':
-            spin_name = None
-        if spin_num == '':
-            spin_num = None
+            # Convert.
+            if spin_name == '':
+                spin_name = None
+            if spin_num == '':
+                spin_num = None
+            else:
+                spin_num = int(spin_num)
+
+        # 2 objects.
         else:
-            spin_num = int(spin_num)
+            # The spin number.
+            obj = getattr(self, 'spin_num'+suffix)
+            spin_num = gui_to_int(obj.GetValue())
+
+            # The spin name.
+            obj = getattr(self, 'spin_name'+suffix)
+            spin_name = gui_to_str(obj.GetValue())
 
         # Return the number and name.
         return spin_num, spin_name
