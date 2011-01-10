@@ -25,7 +25,7 @@
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from status import Status
+from status import Status; status = Status()
 
 
 
@@ -47,11 +47,8 @@ class Relax_fit:
         @type mc_num:           int
         """
 
-        # Initialise the status.
-        self.status = Status()
-
         # Execution lock.
-        self.status.exec_lock.acquire('auto relax fit')
+        status.exec_lock.acquire('auto relax fit')
 
         # Store the args.
         self.pipe_name = pipe_name
@@ -73,7 +70,7 @@ class Relax_fit:
         self.run()
 
         # Unlock execution.
-        self.status.exec_lock.release()
+        status.exec_lock.release()
 
 
     def run(self):

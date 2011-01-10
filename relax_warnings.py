@@ -25,12 +25,12 @@
 
 
 # Python module imports.
-import __main__
 import inspect
 import warnings
 
 # relax module imports.
 from relax_errors import BaseError
+from status import Status; status = Status()
 
 
 # The warning formatting function.
@@ -42,7 +42,7 @@ def format(message, category, filename, lineno, line=None):
     message = "RelaxWarning: %s\n" % message
 
     # Print stack-trace in debug mode.
-    if __main__.debug:
+    if status.debug:
         tb = ""
         for frame in inspect.stack()[4:]:
             file = frame[1]
@@ -63,14 +63,14 @@ def format(message, category, filename, lineno, line=None):
     return message
 
 
-def setup():
+def setup(pedantic=False):
     """Set up the warning system."""
 
     # Format warning messages.
     warnings.formatwarning = format
 
     # Set warning filters.
-    if __main__.pedantic:
+    if pedantic:
         warnings.filterwarnings('error', category=BaseWarning)
     else:
         warnings.filterwarnings('always', category=BaseWarning)

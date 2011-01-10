@@ -2,17 +2,17 @@
 # Note:  relax is only used to read the PDB info!
 
 # Python module imports.
-import __main__
 from numpy import array, dot, float64, zeros
 from numpy.linalg import norm
 from os import sep
 
-# relax imports.
+# relax module imports.
 from generic_fns.mol_res_spin import spin_loop
+from status import Status; status = Status()
 
 
 # Path of the files.
-str_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'dna'
+str_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'dna'
 
 # Create the data pipe.
 pipe.create('DNA', 'N-state')

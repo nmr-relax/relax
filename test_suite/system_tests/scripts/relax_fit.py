@@ -1,19 +1,27 @@
 # Script for relaxation curve fitting.
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
+
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
+
+
+# Missing intensity type (allow this script to run outside of the system test framework).
+if not hasattr(ds, 'int_type'):
+    ds.int_type = 'height'
 
 
 # Create the data pipe.
 pipe.create('rx', 'relax_fit')
 
 # The path to the data files.
-data_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting'
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting'
 
 # Load the sequence.
-sequence.read('Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+sequence.read('Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
@@ -49,7 +57,7 @@ times = [
 # Loop over the spectra.
 for i in xrange(len(names)):
     # Load the peak intensities.
-    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='height')
+    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method=ds.int_type)
 
     # Set the relaxation times.
     relax_fit.relax_time(time=times[i], spectrum_id=names[i])
@@ -76,7 +84,7 @@ grid_search(inc=11)
 minimise('simplex', constraints=False)
 
 # Monte Carlo simulations.
-monte_carlo.setup(number=10)
+monte_carlo.setup(number=3)
 monte_carlo.create_data()
 monte_carlo.initial_values()
 minimise('simplex', constraints=False)

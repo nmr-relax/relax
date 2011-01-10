@@ -29,7 +29,7 @@ except ImportError:
     from StringIO import StringIO
 
 # relax module imports.
-from status import Status
+from status import Status; status = Status()
 
 
 class _RelaxTestResult(_TextTestResult):
@@ -55,7 +55,6 @@ class _RelaxTestResult(_TextTestResult):
         sys.stderr = self.capt
 
         # Place the test name in the status object.
-        status = Status()
         status.exec_lock.test_name = str(test)
 
         # Execute the normal startTest method.

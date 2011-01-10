@@ -23,11 +23,15 @@
 # Module docstring.
 """Module for the handling of Frame Order."""
 
+# Dependency check module.
+import dep_check
+
 # Python module imports.
 from math import cos, pi, sin, sqrt
 from numpy import cross, dot, sinc, transpose
 from numpy.linalg import norm
-from scipy.integrate import quad
+if dep_check.scipy_module:
+    from scipy.integrate import quad
 
 # relax module imports.
 from float import isNaN
