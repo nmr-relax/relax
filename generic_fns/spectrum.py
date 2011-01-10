@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2007-2009 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2007-2011 Edward d'Auvergne                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -414,7 +414,9 @@ def error_analysis():
         if hasattr(cdp, 'replicates'):
             # Print out.
             print("Replicated spectra:  Yes.")
-            raise RelaxImplementError
+
+            # Set the errors.
+            __errors_repl()
 
         # No replicated spectra.
         else:

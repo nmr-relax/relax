@@ -21,9 +21,11 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
+
+# relax module imports.
+from status import Status; status = Status()
 
 
 # Script for relaxation curve fitting.
@@ -31,7 +33,7 @@ import sys
 
 
 # The path to the data files.
-data_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'+sep+'ccpn_analysis'
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'+sep+'ccpn_analysis'
 
 # Create the 'rx' data pipe.
 pipe.create('rx', 'relax_fit')

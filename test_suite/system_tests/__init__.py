@@ -26,7 +26,7 @@
 # Python module imports.
 from relax_errors import RelaxError
 from string import split
-from unittest import TestLoader, TestSuite
+from unittest import TestSuite
 
 # relax module imports.
 from test_suite.relax_test_runner import RelaxTestRunner
@@ -55,6 +55,7 @@ from results import Results
 from sequence import Sequence
 from state import State
 from structure import Structure
+from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 from unit_vectors import Unit_vectors
 
 

@@ -98,9 +98,13 @@ class State(SystemTestCase):
         # Remove the data pipe.
         ds.__reset__()
 
+        # The data pipe list.
+        pipe_types = VALID_TYPES
+        pipe_types.pop(pipe_types.index("frame order"))
+
         # Create a few data pipes.
-        for i in range(len(VALID_TYPES)):
-            self.interpreter.pipe.create('test' + repr(i), VALID_TYPES[i])
+        for i in range(len(pipe_types)):
+            self.interpreter.pipe.create('test' + repr(i), pipe_types[i])
 
         # Write the results.
         self.interpreter.state.save(self.tmpfile)
@@ -112,11 +116,11 @@ class State(SystemTestCase):
         self.interpreter.state.load(self.tmpfile)
 
         # Test the pipes.
-        for i in range(len(VALID_TYPES)):
+        for i in range(len(pipe_types)):
             # Name.
             name = 'test' + repr(i)
             self.assert_(name in ds)
 
             # Type.
             pipe = get_pipe(name)
-            self.assertEqual(pipe.pipe_type, VALID_TYPES[i])
+            self.assertEqual(pipe.pipe_type, pipe_types[i])

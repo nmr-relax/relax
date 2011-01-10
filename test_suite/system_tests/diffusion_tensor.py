@@ -21,7 +21,6 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from math import pi
 from numpy import array, dot, float64, transpose, zeros
 from os import sep
@@ -36,6 +35,7 @@ from generic_fns.pipes import get_pipe
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import axis_angle_to_R, euler_to_R_zyz, two_vect_to_R
 from relax_io import delete
+from status import Status; status = Status()
 from tempfile import mktemp
 
 
@@ -45,6 +45,9 @@ class Diffusion_tensor(SystemTestCase):
     def setUp(self):
         """Function for initialising a spherical, spheroidal, and ellipsoidal diffusion tensor."""
 
+        # The status object.
+        status = Status()
+
         # Create three data pipes for spherical, spheroidal, and ellipsoidal diffusion.
         self.interpreter.pipe.create('sphere', 'mf')
         self.interpreter.pipe.create('spheroid', 'mf')
@@ -52,22 +55,22 @@ class Diffusion_tensor(SystemTestCase):
 
         # Sphere tensor initialization.
         self.interpreter.pipe.switch('sphere')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init(10e-9, fixed=True)
         self.tmpfile_sphere = mktemp()
 
         # Spheroid tensor initialization.
         self.interpreter.pipe.switch('spheroid')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init((5e-09, -10000000., 1.6, 2.7), angle_units='rad', spheroid_type='oblate', fixed=True)
         self.tmpfile_spheroid = mktemp()
 
         # Ellipsoid tensor initialization.
         self.interpreter.pipe.switch('ellipsoid')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init((9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=False)
         self.tmpfile_ellipsoid = mktemp()
 
@@ -187,7 +190,7 @@ class Diffusion_tensor(SystemTestCase):
                 self.assertAlmostEqual(cdp.diff_tensor.rotation[i, j], R[i, j])
 
 
-    def check_spheroid(self, tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R):
+    def check_spheroid(self, tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type=None):
         """Check if the spheroid in the cdp has the same values as given."""
 
         # Print outs.
@@ -227,6 +230,10 @@ class Diffusion_tensor(SystemTestCase):
 
             # Compare projections.
             self.assertAlmostEqual(proj1, proj2)
+
+        # Check the type.
+        if spheroid_type:
+            self.assertEqual(spheroid_type, cdp.diff_tensor.spheroid_type)
 
 
     def check_spheroid_as_ellipsoid(self, tm, Dx, Dy, Dz, Diso, Da, D, D_prime, R):
@@ -359,7 +366,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'ellipsoid'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
 
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
@@ -382,7 +389,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'sphere'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
 
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
@@ -405,7 +412,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'spheroid'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
 
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
@@ -487,7 +494,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'ellipsoid.pdb')
+        file = open(status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'ellipsoid.pdb')
         real_data = file.readlines()
         file.close()
 
@@ -519,7 +526,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'sphere.pdb')
+        file = open(status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'sphere.pdb')
         real_data = file.readlines()
         file.close()
 
@@ -551,7 +558,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'spheroid.pdb')
+        file = open(status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'spheroid.pdb')
         real_data = file.readlines()
         file.close()
 
@@ -660,7 +667,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((tm, Da, theta, phi), param_types=0, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_oblate_spheroid_param_types_1(self):
@@ -677,7 +684,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Da, theta, phi), param_types=1, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_oblate_spheroid_param_types_1_deg(self):
@@ -694,7 +701,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Da, theta/2.0/pi*360.0, phi/2.0/pi*360.0), param_types=1, angle_units='deg')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_oblate_spheroid_param_types_2(self):
@@ -711,7 +718,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((tm, Dratio, theta, phi), param_types=2, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_oblate_spheroid_param_types_3(self):
@@ -728,7 +735,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Dpar, Dper, theta, phi), param_types=3, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_oblate_spheroid_param_types_4(self):
@@ -745,7 +752,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Dratio, theta, phi), param_types=4, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_prolate_spheroid_as_ellipsoid(self):
@@ -776,10 +783,27 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.pipe.create('spheroid2', 'mf')
 
         # Tensor initialization.
-        self.interpreter.diffusion_tensor.init((tm, Da, theta, phi), param_types=0, angle_units='rad')
+        self.interpreter.diffusion_tensor.init((tm, Da, theta, phi), spheroid_type='prolate', param_types=0, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
+
+
+    def test_init_prolate_spheroid_param_types_0b(self):
+        """Test the initialisation of the prolate spheroid diffusion tensor using parameter set 0."""
+
+        # Get the spheroid data.
+        Dpar, Dper, theta, phi = 8e7, 8e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('spheroid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((tm, Da, theta, phi), spheroid_type='prolate', param_types=0, angle_units='rad')
+
+        # Check the spheroid.
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_init_prolate_spheroid_param_types_1(self):
@@ -796,7 +820,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Da, theta, phi), param_types=1, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_init_prolate_spheroid_param_types_1_deg(self):
@@ -813,7 +837,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Da, theta/2.0/pi*360.0, phi/2.0/pi*360.0), param_types=1, angle_units='deg')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_init_prolate_spheroid_param_types_2(self):
@@ -830,7 +854,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((tm, Dratio, theta, phi), param_types=2, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_init_prolate_spheroid_param_types_3(self):
@@ -847,7 +871,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Dpar, Dper, theta, phi), param_types=3, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_init_prolate_spheroid_param_types_4(self):
@@ -864,7 +888,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Dratio, theta, phi), param_types=4, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_opt_ellipsoid(self):
@@ -877,7 +901,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'ellipsoid'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
         # Print out.
         print cdp.diff_tensor
@@ -904,7 +928,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'sphere'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
         # Check the values.
         self.assertAlmostEqual(cdp.chi2, 0.0)
@@ -932,7 +956,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.diff_type = 'spheroid'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
         # Check the values.
         self.assertAlmostEqual(cdp.chi2, 0.0)
