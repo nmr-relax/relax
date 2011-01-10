@@ -135,6 +135,13 @@ try:
 except ImportError:
     scientific_pdb_module = False
 
+# Scipy import.
+try:
+    import scipy
+    scipy_module = True
+except ImportError:
+    scipy_module = False
+
 # Numeric python package check.
 try:
     import Numeric

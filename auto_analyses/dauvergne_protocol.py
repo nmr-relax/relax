@@ -35,7 +35,7 @@ from generic_fns import selection
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
 from relax_io import DummyFileObject
-from status import Status
+from status import Status; status = Status()
 
 
 doc = [
@@ -160,8 +160,8 @@ class dAuvergne_protocol:
         @type conv_loop:            bool
         """
 
-        # Initialise the status.
-        self.status = Status()
+        # Execution lock.
+        status.exec_lock.acquire('auto dauvergne protocol')
 
         # Store the args.
         self.diff_model = diff_model
@@ -194,9 +194,9 @@ class dAuvergne_protocol:
         self.check_vars()
 
         # Some info for the status.
-        self.status.dAuvergne_protocol.diff_model = diff_model
-        self.status.dAuvergne_protocol.mf_models = mf_models
-        self.status.dAuvergne_protocol.local_tm_models = local_tm_models
+        status.dAuvergne_protocol.diff_model = diff_model
+        status.dAuvergne_protocol.mf_models = mf_models
+        status.dAuvergne_protocol.local_tm_models = local_tm_models
 
         # Initialise the convergence data structures.
         self.conv_data = Container()
@@ -471,7 +471,7 @@ class dAuvergne_protocol:
         print("\nConvergence:")
         if converged:
             # Update the status.
-            self.status.dAuvergne_protocol.convergence = True
+            status.dAuvergne_protocol.convergence = True
 
             # Print out.
             print("    [ Yes ]")
@@ -781,7 +781,7 @@ class dAuvergne_protocol:
         # Loop over the data pipes.
         for name in self.pipes:
             # Place the model name into the status container.
-            self.status.dAuvergne_protocol.current_model = name
+            status.dAuvergne_protocol.current_model = name
 
             # Create the data pipe.
             if pipes.has_pipe(name):
@@ -837,7 +837,7 @@ class dAuvergne_protocol:
             self.interpreter.results.write(file='results', dir=dir, force=True)
 
         # Unset the status.
-        self.status.dAuvergne_protocol.current_model = None
+        status.dAuvergne_protocol.current_model = None
 
 
 class Container:

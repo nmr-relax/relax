@@ -1,15 +1,15 @@
 # Script for checking the free rotor frame order model.
 
 # Python module imports.
-import __main__
 from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 # Load the tensors.
-script(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'free_rotor_in_frame_rot_tensors.py')
+script(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'free_rotor_in_frame_rot_tensors.py')
 
 # Data init.
 cdp.ave_pos_beta = 0.5

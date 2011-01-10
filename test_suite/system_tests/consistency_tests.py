@@ -23,7 +23,6 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
@@ -32,6 +31,7 @@ from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import residue_loop
 from physical_constants import N15_CSA, NH_BOND_LENGTH
+from status import Status; status = Status()
 
 
 class Ct(SystemTestCase):
@@ -55,7 +55,7 @@ class Ct(SystemTestCase):
         """The consistency testing calculation test."""
 
         # Data directory.
-        dir = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep
 
         # Data paths.
         dataPaths = [dir + 'noe.dat',
@@ -73,7 +73,7 @@ class Ct(SystemTestCase):
         f_r2 = [2.0482909381655862e-09, 1.8998154021753067e-09]
 
         # Read the sequence.
-        self.interpreter.sequence.read(file='test_seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='test_seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Read the data.
         for dataSet in xrange(len(dataPaths)):
@@ -117,7 +117,7 @@ class Ct(SystemTestCase):
         """The user function value.set()."""
 
         # Read the sequence.
-        self.interpreter.sequence.read(file='test_seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='test_seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Try to set the values.
         bond_length = NH_BOND_LENGTH
@@ -135,4 +135,4 @@ class Ct(SystemTestCase):
         """Test a complete consistency tests run using a script."""
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'consistency_tests.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'consistency_tests.py')

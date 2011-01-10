@@ -15,7 +15,7 @@
 # relax, a program for relaxation data analysis.                              #
 #                                                                             #
 # Copyright (C) 2001-2006  Edward d'Auvergne                                  #
-# Copyright (C) 2006-2010  the relax development team                         #
+# Copyright (C) 2006-2011  the relax development team                         #
 #                                                                             #
 # This program is free software; you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,9 +34,9 @@
 ###############################################################################
 
 # First of all, store the relax installation path before the site-packages mangle sys.path.
-import __main__
+from status import Status; status = Status()
 import sys
-__main__.install_path = sys.path[0]
+status.install_path = sys.path[0]
 
 # Dependency checks.
 import dep_check
@@ -61,7 +61,6 @@ from prompt import interpreter
 import relax_errors
 from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
-from status import Status
 from test_suite.test_suite_runner import Test_suite_runner
 from version import version
 
@@ -83,12 +82,6 @@ class Relax:
         # Get and store the PID of this process.
         self.pid = getpid()
 
-        # Debugging flag (default is off).
-        __main__.debug = False
-
-        # Pedantic flag (default is off).
-        __main__.pedantic = False
-
         # Setup the object containing the generic functions.
         self.generic = generic_fns
 
@@ -96,11 +89,7 @@ class Relax:
         mode, log_file, tee_file = self.arguments()
 
         # Set up the warning system.
-        relax_warnings.setup()
-
-        # Initialise the status singleton.
-        status = Status()
-        status.setup()
+        relax_warnings.setup(self.pedantic)
 
         # Show the version number and exit.
         if mode == 'version':
@@ -202,11 +191,12 @@ class Relax:
 
         # Debugging flag.
         if options.debug:
-            __main__.debug = True
+            status.debug = True
 
         # Pedantic flag.
+        self.pedantic = False
         if options.pedantic:
-            __main__.pedantic = True
+            self.pedantic = True
 
         # Logging.
         if options.log:

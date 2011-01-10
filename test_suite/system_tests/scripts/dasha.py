@@ -1,12 +1,12 @@
 # Script for model-free analysis using the program Dasha.
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 # Missing temp directory (allow this script to run outside of the system test framework).
@@ -22,15 +22,15 @@ for name in pipes:
     pipe.create(name, 'mf')
 
     # Load the sequence.
-    sequence.read(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2)
+    sequence.read(status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2)
 
     # Load a PDB file.
     #structure.read_pdb('example.pdb')
 
     # Load the relaxation data.
-    relax_data.read('R1', '600', 600.0 * 1e6, __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R1.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-    relax_data.read('R2', '600', 600.0 * 1e6, __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R2.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-    relax_data.read('NOE', '600', 600.0 * 1e6, __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+    relax_data.read('R1', '600', 600.0 * 1e6, status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R1.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+    relax_data.read('R2', '600', 600.0 * 1e6, status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R2.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+    relax_data.read('NOE', '600', 600.0 * 1e6, status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
     # Setup other values.
     diffusion_tensor.init(1e-8, fixed=True)

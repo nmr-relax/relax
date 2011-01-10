@@ -3,12 +3,12 @@
 # Bug #12679 (https://gna.org/bugs/index.php?12679).
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 # Missing temp directory (allow this script to run outside of the system test framework).
@@ -19,8 +19,8 @@ if not hasattr(ds, 'tmpdir'):
 pipe.create('rx', 'relax_fit')
 
 # The paths to the data files.
-seq_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'sequence'
-list_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'
+seq_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'sequence'
+list_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'
 
 # Load the sequence.
 sequence.read('1UBQ.seq', dir=seq_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)

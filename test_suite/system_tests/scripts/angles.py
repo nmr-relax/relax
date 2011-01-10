@@ -1,13 +1,16 @@
-import __main__
+# Python module imports.
 from os import sep
 import sys
+
+# relax imports.
+from status import Status; status = Status()
 
 
 # Create the data pipe.
 pipe.create('mf', 'mf')
 
 # Read a PDB file.
-structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
 
 # Load the spins.
 structure.load_spins('@N')

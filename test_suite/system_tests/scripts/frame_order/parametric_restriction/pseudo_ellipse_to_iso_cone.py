@@ -1,13 +1,13 @@
 # Script for checking the parametric restriction of the pseudo-ellipse to the isotropic cone frame order model.
 
 # Python module imports.
-import __main__
 from numpy import array, float64
 from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from maths_fns.rotation_matrix import R_to_euler_zyz
+from status import Status; status = Status()
 
 
 def get_angle(index, incs=None, deg=False):
@@ -36,7 +36,7 @@ EIG_FRAME = array([[ 2, -1,  2],
 a, b, g = R_to_euler_zyz(EIG_FRAME)
 
 # Load the tensors.
-script(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'iso_cone_out_of_frame_theta_z_tensors_beta78_75.py')
+script(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'iso_cone_out_of_frame_theta_z_tensors_beta78_75.py')
 
 # Data stores.
 ds.chi2 = []

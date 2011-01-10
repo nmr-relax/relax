@@ -23,12 +23,12 @@
 """Script for back-calculating the relaxation data."""
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
+from status import Status; status = Status()
 
 
 def back_calc():
@@ -71,7 +71,7 @@ def write():
 pipe.create('test', 'mf')
 
 # Load a PDB file.
-structure.read_pdb('Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures')
+structure.read_pdb('Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures')
 
 # Load the backbone amide nitrogen spins from the structure.
 structure.load_spins(spin_id='@N')
