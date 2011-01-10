@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,10 +31,27 @@ from maths_fns.coord_transform import cartesian_to_spherical
 from maths_fns.frame_order_matrix_ops import *
 from maths_fns.kronecker_product import transpose_23
 from maths_fns.order_parameters import iso_cone_theta_to_S
+from status import Status; status = Status()
 
 
 class Test_frame_order_matrix_ops(TestCase):
     """Unit tests for the maths_fns.frame_order_matrix_ops relax module."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip the tests if scipy is not installed.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Missing module.
+        if not dep_check.scipy_module:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Scipy', 'unit'])
+
+        # Execute the base class method.
+        super(Test_frame_order_matrix_ops, self).__init__(methodName)
+
 
     def setUp(self):
         """Initialise a few data structures for the tests."""

@@ -72,7 +72,7 @@ from physical_constants import dipolar_constant, g1H, g13C
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
 from relax_io import mkdir_nofail
-from status import Status
+from status import Status; status = Status()
 
 
 
@@ -140,11 +140,8 @@ class Stereochem_analysis:
         @type upper_lim_rdc:        int
         """
 
-        # Initialise the status.
-        self.status = Status()
-
         # Execution lock.
-        self.status.exec_lock.acquire('auto stereochem analysis')
+        status.exec_lock.acquire('auto stereochem analysis')
 
         # Store all the args.
         self.stage = stage
@@ -194,7 +191,7 @@ class Stereochem_analysis:
             mkdir_nofail(self.results_dir + sep + "logs")
 
         # Unlock execution.
-        self.status.exec_lock.release()
+        status.exec_lock.release()
 
 
     def run(self):

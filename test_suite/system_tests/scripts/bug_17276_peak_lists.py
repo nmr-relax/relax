@@ -25,12 +25,14 @@
 
 
 # Python module imports.
-import __main__
 from os import sep
+
+# relax module imports.
+from status import Status; status = Status()
 
 
 # Path of the files.
-PATH = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'+sep+'bug_17276'
+PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'+sep+'bug_17276'
 
 
 # Create the 'rx' data pipe.

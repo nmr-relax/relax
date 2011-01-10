@@ -393,14 +393,22 @@ def calc_rotation(diff_type, *args):
         raise RelaxError('The diffusion tensor has not been specified')
 
 
-def calc_spheroid_type(Da):
+def calc_spheroid_type(Da, spheroid_type, flag):
     """Determine the spheroid type.
 
-    @keyword Da:    The diffusion tensor anisotropy.
-    @type Da:       float
-    @return:        The spheroid type, either 'oblate' or 'prolate'.
-    @rtype:         str
+    @param Da:              The diffusion tensor anisotropy.
+    @type Da:               float
+    @param spheroid_type:   The current value of spheroid_type.
+    @type spheroid_type:    str
+    @param flag:            A flag which if True will cause the current spheroid_type value to be returned.
+    @type flag:             bool
+    @return:                The spheroid type, either 'oblate' or 'prolate'.
+    @rtype:                 str
     """
+
+    # Do not change.
+    if flag:
+        return spheroid_type
 
     # The spheroid type.
     if Da > 0.0:
@@ -549,7 +557,7 @@ def dependency_generator(diff_type):
         yield ('tensor_diag',   ['tm', 'Da'],                   ['type', 'Dpar', 'Dper'])
         yield ('rotation',      ['theta', 'phi'],               ['type', 'spheroid_type', 'theta', 'phi'])
         yield ('tensor',        ['tm', 'Da', 'theta', 'phi'],   ['rotation', 'tensor_diag'])
-        yield ('spheroid_type', ['Da'],                         ['Da'])
+        yield ('spheroid_type', ['Da'],                         ['Da', 'spheroid_type', '__spheroid_type'])
 
     # Ellipsoidal diffusion.
     elif diff_type == 'ellipsoid':
@@ -626,6 +634,9 @@ class DiffTensorData(Element):
         # Set the initial diffusion type to None.
         self.type = None
 
+        # Initialise the spheroid type flag.
+        self.__dict__['__spheroid_type'] = False
+
 
     def __setattr__(self, name, value):
         """Function for calculating the parameters, unit vectors, and tensors on the fly.
@@ -652,6 +663,10 @@ class DiffTensorData(Element):
 
         # Set the attribute normally.
         self.__dict__[name] = value
+
+        # Flag for the spheroid type.
+        if name == 'spheroid_type' and value:
+            self.__dict__['__spheroid_type'] = True
 
         # Skip the updating process for certain objects.
         if name in ['type', 'fixed', 'spheroid_type']:

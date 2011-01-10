@@ -21,13 +21,13 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import sep
 
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import create_molecule, create_residue, create_spin
+from status import Status; status = Status()
 
 
 class Noe_restraints(SystemTestCase):
@@ -92,7 +92,7 @@ class Noe_restraints(SystemTestCase):
         ds.file_name = 'phthalic_acid'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'phthalic_acid_noes.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'phthalic_acid_noes.py')
 
         # The restraint data.
         restraints = [
@@ -166,7 +166,7 @@ class Noe_restraints(SystemTestCase):
         ds.file_name = 'pseudo_atoms.dat'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'phthalic_acid_noes.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'phthalic_acid_noes.py')
 
         # The restraint data.
         restraints = [
@@ -192,7 +192,7 @@ class Noe_restraints(SystemTestCase):
         self.rna_seq()
 
         # Read the Xplor input file.
-        self.interpreter.noe.read_restraints(file='noe_rna_hbond.dat', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'noe_restraints')
+        self.interpreter.noe.read_restraints(file='noe_rna_hbond.dat', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'noe_restraints')
 
         # The restraint data.
         restraints = [

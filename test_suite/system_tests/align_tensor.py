@@ -36,7 +36,7 @@ class Align_tensor(SystemTestCase):
         """Function for initialising a few alignment tensors."""
 
         # Create a data pipe.
-        self.interpreter.pipe.create('test', 'frame order')
+        self.interpreter.pipe.create('test', 'N-state')
 
         # Temp file name.
         self.tmpfile = mktemp()
@@ -102,7 +102,7 @@ class Align_tensor(SystemTestCase):
         self.interpreter.results.write(self.tmpfile, dir=None, compress_type=0)
 
         # Create a new data pipe.
-        self.interpreter.pipe.create('new', 'frame order')
+        self.interpreter.pipe.create('new', 'N-state')
 
         # Load the data.
         self.interpreter.results.read(self.tmpfile, dir=None)

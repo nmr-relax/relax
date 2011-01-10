@@ -1,16 +1,16 @@
 # Script for performing a PCS analysis.
 
 # Python module imports.
-import __main__
 from os import sep
 
 # relax imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 # Path of the files.
-str_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'dna'
-data_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pcs_data'
+str_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'dna'
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pcs_data'
 
 # Create the data pipe.
 pipe.create('DNA', 'N-state')

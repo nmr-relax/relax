@@ -45,14 +45,13 @@ This script is split into multiple stages:
 """
 
 # Python module imports.
-import __main__
 from os import rename, sep
 import sys
 
 # relax module imports.
 from auto_analyses.stereochem_analysis import Stereochem_analysis
 from data import Relax_data_store; ds = Relax_data_store()
-
+from status import Status; status = Status()
 
 
 # Missing temp directory (allow this script to run outside of the system test framework).
@@ -60,7 +59,7 @@ if not hasattr(ds, 'tmpdir'):
     ds.tmpdir = 'temp_script'
 
 # Path of the data files.
-path = __main__.install_path + sep + 'test_suite' + sep + 'shared_data'
+path = status.install_path + sep + 'test_suite' + sep + 'shared_data'
 path_str = path + sep + 'structures' + sep + 'phthalic_acid' + sep + 'snapshots'
 path_noe = path + sep + 'noe_restraints' + sep
 path_rdc = path + sep + 'rdc_data' + sep
