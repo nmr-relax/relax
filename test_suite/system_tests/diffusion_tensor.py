@@ -667,7 +667,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((tm, Da, theta, phi), param_types=0, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_oblate_spheroid_param_types_1(self):
@@ -684,7 +684,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Da, theta, phi), param_types=1, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_oblate_spheroid_param_types_1_deg(self):
@@ -701,7 +701,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Da, theta/2.0/pi*360.0, phi/2.0/pi*360.0), param_types=1, angle_units='deg')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_oblate_spheroid_param_types_2(self):
@@ -718,7 +718,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((tm, Dratio, theta, phi), param_types=2, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_oblate_spheroid_param_types_3(self):
@@ -735,7 +735,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Dpar, Dper, theta, phi), param_types=3, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_oblate_spheroid_param_types_4(self):
@@ -752,7 +752,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Dratio, theta, phi), param_types=4, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='oblate')
 
 
     def test_init_prolate_spheroid_as_ellipsoid(self):
@@ -786,7 +786,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((tm, Da, theta, phi), spheroid_type='prolate', param_types=0, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_init_prolate_spheroid_param_types_0b(self):
@@ -820,7 +820,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Da, theta, phi), param_types=1, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_init_prolate_spheroid_param_types_1_deg(self):
@@ -837,7 +837,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Da, theta/2.0/pi*360.0, phi/2.0/pi*360.0), param_types=1, angle_units='deg')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_init_prolate_spheroid_param_types_2(self):
@@ -854,7 +854,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((tm, Dratio, theta, phi), param_types=2, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_init_prolate_spheroid_param_types_3(self):
@@ -871,7 +871,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Dpar, Dper, theta, phi), param_types=3, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_init_prolate_spheroid_param_types_4(self):
@@ -888,7 +888,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.init((Diso, Dratio, theta, phi), param_types=4, angle_units='rad')
 
         # Check the spheroid.
-        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_opt_ellipsoid(self):
