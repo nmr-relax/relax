@@ -5,7 +5,13 @@ from os import sep
 import sys
 
 # relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
+
+
+# Missing intensity type (allow this script to run outside of the system test framework).
+if not hasattr(ds, 'int_type'):
+    ds.int_type = 'height'
 
 
 # Create the data pipe.
@@ -51,7 +57,7 @@ times = [
 # Loop over the spectra.
 for i in xrange(len(names)):
     # Load the peak intensities.
-    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='height')
+    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method=ds.int_type)
 
     # Set the relaxation times.
     relax_fit.relax_time(time=times[i], spectrum_id=names[i])

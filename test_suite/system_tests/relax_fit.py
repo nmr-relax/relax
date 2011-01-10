@@ -59,37 +59,8 @@ class Relax_fit(SystemTestCase):
         ds.__reset__()
 
 
-    def test_bug_12670_12679(self):
-        """Test the relaxation curve fitting, replicating bug #12670 and bug #12679."""
-
-        # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'1UBQ_relax_fit.py')
-
-        # Open the intensities.agr file.
-        file = open(ds.tmpdir + sep + 'intensities.agr')
-        lines = file.readlines()
-        file.close()
-
-        # Loop over all lines.
-        for i in xrange(len(lines)):
-            # Find the "@target G0.S0" line.
-            if search('@target', lines[i]):
-                index = i + 2
-
-            # Split up the lines.
-            lines[i] = split(lines[i])
-
-        # Check some of the Grace data.
-        self.assertEqual(len(lines[index]), 2)
-        self.assertEqual(lines[index][0], '0.004')
-        self.assertEqual(lines[index][1], '487178.0')
-
-
-    def test_curve_fitting(self):
-        """Test the relaxation curve fitting C modules."""
-
-        # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
+    def check_curve_fitting(self):
+        """Check the results of the curve-fitting."""
 
         # Data.
         relax_times = [0.0176, 0.0176, 0.0352, 0.0704, 0.0704, 0.1056, 0.1584, 0.1584, 0.1936, 0.1936]
@@ -123,6 +94,58 @@ class Relax_fit(SystemTestCase):
             i = i + 1
             if i >= 12:
                 break
+
+
+    def test_bug_12670_12679(self):
+        """Test the relaxation curve fitting, replicating bug #12670 and bug #12679."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'1UBQ_relax_fit.py')
+
+        # Open the intensities.agr file.
+        file = open(ds.tmpdir + sep + 'intensities.agr')
+        lines = file.readlines()
+        file.close()
+
+        # Loop over all lines.
+        for i in xrange(len(lines)):
+            # Find the "@target G0.S0" line.
+            if search('@target', lines[i]):
+                index = i + 2
+
+            # Split up the lines.
+            lines[i] = split(lines[i])
+
+        # Check some of the Grace data.
+        self.assertEqual(len(lines[index]), 2)
+        self.assertEqual(lines[index][0], '0.004')
+        self.assertEqual(lines[index][1], '487178.0')
+
+
+    def test_curve_fitting_height(self):
+        """Test the relaxation curve fitting C modules."""
+
+        # The intensity type.
+        ds.int_type = 'height'
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
+
+        # Check the curve-fitting results.
+        self.check_curve_fitting()
+
+
+    def test_curve_fitting_volume(self):
+        """Test the relaxation curve fitting C modules."""
+
+        # The intensity type.
+        ds.int_type = 'volume'
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
+
+        # Check the curve-fitting results.
+        self.check_curve_fitting()
 
 
     def test_read_sparky(self):
