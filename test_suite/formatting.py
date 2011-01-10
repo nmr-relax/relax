@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,48 +20,46 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
 
-def heading(text):
-    """Function for printing the headings.
+def subtitle(text):
+    """Function for printing the subtitles.
 
-    @param text:    The text of the heading to be printed.
+    @param text:    The text of the subtitle to be printed.
     @type text:     str
     """
 
-    # Spacing.
-    sys.stdout.write("\n\n\n\n")
-
-    # Top bar.
-    for i in xrange(len(text) + 4):
-        sys.stdout.write("#")
-    sys.stdout.write("\n")
+    # The width of the subtitle string.
+    width = len(text) + 2
 
     # Text.
-    sys.stdout.write("# " + text + " #\n")
+    sys.stdout.write("# %s\n" % text)
 
     # Bottom bar.
-    for i in xrange(len(text) + 4):
-        sys.stdout.write("#")
-    sys.stdout.write("\n\n\n")
+    sys.stdout.write("#" * width)
+
+    # Spacing.
+    sys.stdout.write("\n\n")
 
 
-def summary_line(name, passed):
+def summary_line(name, passed, width=64):
     """Print a summary line.
 
     @param name:    The name of the test, test category, etc.
     @type name:     str
-    @param passed:  An argment which if True causes '[ OK ]' to be printed and if False causes
-                    '[ Failed ]' to be printed.
-    @type passed:   Any objects which evaluates to either True or False.
+    @param passed:  An argument which if True causes '[ OK ]' to be printed and if False causes '[ Failed ]' to be printed.
+    @type passed:   bool
+    @keyword width: The width of the line, excluding the terminal '[ OK ]' or '[ Failed ]'.
+    @type width:    int
     """
 
     # Name.
-    sys.stdout.write("    " + name + " ")
+    sys.stdout.write(name + " ")
 
     # Dots.
-    for j in xrange(84 - len(name)):
+    for j in xrange(width - len(name)):
         sys.stdout.write(".")
 
     # Passed.
@@ -71,3 +69,30 @@ def summary_line(name, passed):
     # Failed.
     else:
         sys.stdout.write(" %-10s\n" % "[ Failed ]")
+
+
+def title(text):
+    """Function for printing the titles.
+
+    @param text:    The text of the title to be printed.
+    @type text:     str
+    """
+
+    # The width of the title string.
+    width = len(text) + 4
+
+    # Top spacing.
+    sys.stdout.write("\n\n\n\n")
+
+    # Top bar.
+    sys.stdout.write("#" * width)
+    sys.stdout.write("\n")
+
+    # Text.
+    sys.stdout.write("# %s #\n" % text)
+
+    # Bottom bar.
+    sys.stdout.write("#" * width)
+
+    # Spacing.
+    sys.stdout.write("\n\n\n")

@@ -7,13 +7,15 @@ The data set is:
 """
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
+# relax module imports.
+from status import Status; status = Status()
+
 
 # Path of the files.
-path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
 # Load the sequence.
 sequence.read('noe.500.out', dir=path, res_num_col=1, res_name_col=2)

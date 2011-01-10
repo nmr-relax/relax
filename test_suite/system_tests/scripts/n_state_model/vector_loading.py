@@ -1,15 +1,15 @@
 # Script for checking the loading of bond vectors in the correct order.
 
 # Python module imports.
-import __main__
 from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 # Path of the files.
-str_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+str_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
 
 # Create the data pipe.

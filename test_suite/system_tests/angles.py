@@ -21,13 +21,13 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 class Angles(SystemTestCase):
@@ -43,7 +43,7 @@ class Angles(SystemTestCase):
         """The user function angles()."""
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'angles.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'angles.py')
 
         # Res info.
         res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
