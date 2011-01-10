@@ -70,7 +70,7 @@ class Relax_fit(SystemTestCase):
 
         # Some checks.
         self.assertEqual(cdp.curve_type, 'exp')
-        self.assertEqual(cdp.int_method, 'height')
+        self.assertEqual(cdp.int_method, ds.int_type)
         self.assertEqual(len(cdp.relax_times), 10)
         cdp_relax_times = cdp.relax_times.values()
         cdp_relax_times.sort()
