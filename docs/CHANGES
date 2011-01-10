@@ -1,3 +1,37 @@
+Version 1.3.7
+(10 January 2011, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.7
+
+    Features:
+        * Shifted the relax installation path variable from __main__ into the status singleton object, allowing relax modules to be imported outside of relax.
+        * Shifted the global relax debug flag from __main__.debug to the relax status singleton, allowing the flag to be defined even when imported from outside of relax.
+
+    Changes:
+        * Speed up of the relaxation curve-fitting system tests.
+        * The sample_scripts/full_analysis.py script has been renamed to sample_scripts/dauvergne_protocol.py.
+        * Improvements to the test suite final print out with a table of skipped tests.
+        * The data pipe system test is avoiding the frame order data pipe, allowing the test to pass without scipy installed.
+        * The alignment tensor system test now uses the N-state model rather than frame order so it is always tested.
+        * The frame order system and unit tests are skipped if scipy is not installed.
+        * The frame order analysis is disabled if scipy is not installed.
+        * The data pipe generic code now uses dep_check to see if the relaxation curve-fitting is available.
+        * The system tests now use the RelaxTestLoader to allow tests to be skipped.
+        * The unit vector system tests using scientific python are now being skipped if the package is not installed.
+        * The structure system tests involving scientific python are now skipped if the package is not installed.
+        * The RelaxTestLoader has been added as a replacement for unittest.TestLoader to handle the skipping of tests when optional Python packages are not installed.
+        * Shifted the status singleton instantiation to the import level in all modules, saving execution time.
+        * Big code cleanups in unit_test_runner.py
+
+    Bugfixes:
+        * Peak intensity errors can now be calculated when using volume integration and replicated spectra (bug #17457).
+        * Failure of the prolate diffusion tensor in model-free analysis - if the tensor is initialised with Da = 0, the tensor is converted to being oblate.  This was introduced in relax version 1.3.6.
+        * relax can now operate without scipy being installed.
+        * Updated four model-free optimisation system tests to pass under 32-bit Linux.
+        * Made the N_state_model.test_pcs_fit_zero_pos system test less stringent so it passes on 32-bit Linux.
+        * The model_free _model_setup() method should handle no model-free model being set when reading relax 1.2 results files (bug #17417).
+
+
+
 Version 1.3.6
 (31 December 2010, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.6
