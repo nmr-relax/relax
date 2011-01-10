@@ -190,7 +190,7 @@ class Diffusion_tensor(SystemTestCase):
                 self.assertAlmostEqual(cdp.diff_tensor.rotation[i, j], R[i, j])
 
 
-    def check_spheroid(self, tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R):
+    def check_spheroid(self, tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type=None):
         """Check if the spheroid in the cdp has the same values as given."""
 
         # Print outs.
@@ -230,6 +230,10 @@ class Diffusion_tensor(SystemTestCase):
 
             # Compare projections.
             self.assertAlmostEqual(proj1, proj2)
+
+        # Check the type.
+        if spheroid_type:
+            self.assertEqual(spheroid_type, cdp.diff_tensor.spheroid_type)
 
 
     def check_spheroid_as_ellipsoid(self, tm, Dx, Dy, Dz, Diso, Da, D, D_prime, R):
@@ -779,10 +783,27 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.pipe.create('spheroid2', 'mf')
 
         # Tensor initialization.
-        self.interpreter.diffusion_tensor.init((tm, Da, theta, phi), param_types=0, angle_units='rad')
+        self.interpreter.diffusion_tensor.init((tm, Da, theta, phi), spheroid_type='prolate', param_types=0, angle_units='rad')
 
         # Check the spheroid.
         self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R)
+
+
+    def test_init_prolate_spheroid_param_types_0b(self):
+        """Test the initialisation of the prolate spheroid diffusion tensor using parameter set 0."""
+
+        # Get the spheroid data.
+        Dpar, Dper, theta, phi = 8e7, 8e7, 0.5, 1.0
+        tm, Dx, Dy, Dz, Diso, Da, Dratio, D, D_prime, R = self.get_spheroid(Dpar=Dpar, Dper=Dper, theta=theta, phi=phi)
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('spheroid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((tm, Da, theta, phi), spheroid_type='prolate', param_types=0, angle_units='rad')
+
+        # Check the spheroid.
+        self.check_spheroid(tm, Dpar, Dper, Diso, Da, Dratio, theta, phi, D, D_prime, R, spheroid_type='prolate')
 
 
     def test_init_prolate_spheroid_param_types_1(self):
