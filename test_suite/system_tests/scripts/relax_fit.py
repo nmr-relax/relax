@@ -84,7 +84,7 @@ grid_search(inc=11)
 minimise('simplex', constraints=False)
 
 # Monte Carlo simulations.
-monte_carlo.setup(number=10)
+monte_carlo.setup(number=3)
 monte_carlo.create_data()
 monte_carlo.initial_values()
 minimise('simplex', constraints=False)
