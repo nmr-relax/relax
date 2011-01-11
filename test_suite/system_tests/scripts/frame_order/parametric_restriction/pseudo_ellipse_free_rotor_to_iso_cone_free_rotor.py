@@ -42,9 +42,9 @@ vect_z = vect_z / norm(vect_z)
 
 # Build the frame.
 EIG_FRAME = zeros((3, 3), float64)
-EIG_FRAME[:,0] = vect_x
-EIG_FRAME[:,1] = vect_y
-EIG_FRAME[:,2] = vect_z
+EIG_FRAME[:, 0] = vect_x
+EIG_FRAME[:, 1] = vect_y
+EIG_FRAME[:, 2] = vect_z
 a, b, g = R_to_euler_zyz(EIG_FRAME)
 
 # Load the tensors.
