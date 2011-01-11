@@ -165,10 +165,7 @@ class Test_suite_runner:
                 unit_count[test[1]] += 1
 
         # The missing modules.
-        missing_modules = system_count.keys()
-        missing_modules.sort()
-
-        # Sub-title.
+        missing_modules = sorted(system_count.keys())
         subtitle("Optional packages/modules")
 
         # Nothing missing.

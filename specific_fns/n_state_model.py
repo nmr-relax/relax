@@ -569,7 +569,7 @@ class N_state_model(API_base, API_common):
 
         # Loop over the structures.
         i = 0
-        while 1:
+        while True:
             # End condition.
             if i == cdp.N - 1:
                 break
