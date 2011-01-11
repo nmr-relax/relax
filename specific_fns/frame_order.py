@@ -272,7 +272,7 @@ class Frame_order(API_base, API_common):
 
                 # Fill the structure.
                 for i in range(cdp.sim_number):
-                    euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim[:,i])
+                    euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim[:, i])
 
                 # Rotation and inversion.
                 axes_sim_pos = axes_sim
@@ -284,12 +284,12 @@ class Frame_order(API_base, API_common):
             for i in range(2):
                 # Simulation structures.
                 if sim:
-                    axis_sim_pos = axes_sim_pos[:,i]
-                    axis_sim_neg = axes_sim_neg[:,i]
+                    axis_sim_pos = axes_sim_pos[:, i]
+                    axis_sim_neg = axes_sim_neg[:, i]
 
                 # The vectors.
-                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:,i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_pos, res_num=res_num+1, origin=cdp.pivot, scale=size)
-                res_num = generate_vector_residues(mol=mol, vector=axes_neg[:,i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_neg, res_num=res_num+1, origin=cdp.pivot, scale=size)
+                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_pos, res_num=res_num+1, origin=cdp.pivot, scale=size)
+                res_num = generate_vector_residues(mol=mol, vector=axes_neg[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_neg, res_num=res_num+1, origin=cdp.pivot, scale=size)
 
 
         # The cone object.

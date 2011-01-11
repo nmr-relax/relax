@@ -195,4 +195,4 @@ CONV_LOOP = True
 
 
 # Execution (do not change!).
-dAuvergne_protocol(diff_model=DIFF_MODEL, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, pdb_file=PDB_FILE, seq_args=SEQ_ARGS, het_name=HET_NAME,attached_name=ATTACHED_NAME, relax_data=RELAX_DATA, unres=UNRES, exclude=EXCLUDE, bond_length=BOND_LENGTH, csa=CSA, hetnuc=HETNUC, proton=PROTON, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_num=MC_NUM, conv_loop=CONV_LOOP)
+dAuvergne_protocol(diff_model=DIFF_MODEL, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, pdb_file=PDB_FILE, seq_args=SEQ_ARGS, het_name=HET_NAME, attached_name=ATTACHED_NAME, relax_data=RELAX_DATA, unres=UNRES, exclude=EXCLUDE, bond_length=BOND_LENGTH, csa=CSA, hetnuc=HETNUC, proton=PROTON, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_num=MC_NUM, conv_loop=CONV_LOOP)

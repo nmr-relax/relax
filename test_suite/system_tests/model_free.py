@@ -1573,7 +1573,7 @@ class Mf(SystemTestCase):
         eqi = [None, 'mf_ext']
         select = [False, True]
         model = [None, 'm5']
-        params = [[], ['S2f','S2','ts']]
+        params = [[], ['S2f', 'S2', 'ts']]
         s2 = [None, 0.86578779694713515]
         s2f = [None, 0.88618694421409949]
         s2s = [None, 0.97698098871784322]
@@ -1635,7 +1635,7 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.warning_sim[2], None)
 
         # Global relaxation data tests.
-        self.assertEqual(cdp.ri_labels, ['R1','NOE','R1','R2','NOE','R1','R2','NOE'])
+        self.assertEqual(cdp.ri_labels, ['R1', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'])
         self.assertEqual(cdp.remap_table, [0, 0, 1, 1, 1, 2, 2, 2])
         self.assertEqual(cdp.frq_labels, ['800', '600', '500'])
         self.assertEqual(cdp.frq, [799744000.0, 599737000.0, 499719000.0])
@@ -1722,7 +1722,7 @@ class Mf(SystemTestCase):
         eqi = [None, None, None, 'mf_ext', 'mf_orig', 'mf_orig', None, 'mf_orig']
         select = [False, False, False, True, True, True, False, True]
         model = [None, None, None, 'm5', 'm2', 'm1', None, 'm1']
-        params = [None, None, None, ['S2f','S2','ts'], ['S2', 'te'], ['S2'], None, ['S2']]
+        params = [None, None, None, ['S2f', 'S2', 'ts'], ['S2', 'te'], ['S2'], None, ['S2']]
         s2 = [None, None, None, 0.85674161305142216, 0.89462664243726608, 0.90201790111143165, None, 0.92099297347361675]
         s2f = [None, None, None, 0.88220054271390302, None, None, None, None]
         s2s = [None, None, None, 0.97114156200339452, None, None, None, None]
@@ -1732,7 +1732,7 @@ class Mf(SystemTestCase):
         rex = [None, None, None, None, None, None, None, None]
         r = [None, None, None, 1.0200000000000001e-10, 1.0200000000000001e-10, 1.0200000000000001e-10, None, 1.0200000000000001e-10]
         csa = [None, None, None, -0.00017199999999999998, -0.00017199999999999998, -0.00017199999999999998, None, -0.00017199999999999998]
-        ri_labels = [[], [], [], ['R1','R2','R1','R2','NOE','R1','R2','NOE'], ['R1','R2','R1','R2','NOE','R1','R2','NOE'], ['R1','R2','R1','R2','NOE','R1','R2','NOE'], [], ['R1','R2','R1','R2','NOE','R1','R2','NOE']]
+        ri_labels = [[], [], [], ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'], ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'], ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'], [], ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']]
         remap_table = [[], [], [], [0, 0, 1, 1, 1, 2, 2, 2], [0, 0, 1, 1, 1, 2, 2, 2], [0, 0, 1, 1, 1, 2, 2, 2], [], [0, 0, 1, 1, 1, 2, 2, 2]]
         frq_labels = [[], [], [], ['800', '600', '500'], ['800', '600', '500'], ['800', '600', '500'], [], ['800', '600', '500']]
         frq = [[], [], [], [799812000.0, 599739000.0, 499827000.0], [799812000.0, 599739000.0, 499827000.0], [799812000.0, 599739000.0, 499827000.0], [], [799812000.0, 599739000.0, 499827000.0]]
@@ -1776,7 +1776,7 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.diff_tensor.gamma, 42.15815798778408 / 360.0 * 2.0 * pi)
 
         # Global relaxation data tests.
-        self.assertEqual(cdp.ri_labels, ['R1','R2','R1','R2','NOE','R1','R2','NOE'])
+        self.assertEqual(cdp.ri_labels, ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'])
         self.assertEqual(cdp.remap_table, [0, 0, 1, 1, 1, 2, 2, 2])
         self.assertEqual(cdp.frq_labels, ['800', '600', '500'])
         self.assertEqual(cdp.frq, [799812000.0, 599739000.0, 499827000.0])
