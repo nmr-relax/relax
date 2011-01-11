@@ -224,14 +224,14 @@ class dAuvergne_protocol:
                 setattr(self.interpreter, name, user_fns[name])
 
         # Execution lock.
-        self.status.exec_lock.acquire('auto dauvergne protocol')
+        status.exec_lock.acquire('auto dauvergne protocol')
 
         # Execute the protocol.
         try:
             self.execute()
         finally:
             # Unlock execution.
-            self.status.exec_lock.release()
+            status.exec_lock.release()
 
 
     def check_vars(self):
@@ -562,7 +562,7 @@ class dAuvergne_protocol:
             while True:
                 # Determine which round of optimisation to do (init, round_1, round_2, etc).
                 self.round = self.determine_rnd(model=self.diff_model)
-                self.status.dAuvergne_protocol.round = self.round
+                status.dAuvergne_protocol.round = self.round
 
                 # Inital round of optimisation for diffusion models MII to MV.
                 if self.round == 0:
@@ -649,7 +649,7 @@ class dAuvergne_protocol:
                         break
 
                 # Unset the status.
-                self.status.dAuvergne_protocol.round = None
+                status.dAuvergne_protocol.round = None
 
 
         # Final run.
@@ -734,9 +734,9 @@ class dAuvergne_protocol:
             raise RelaxError("Unknown diffusion model, change the value of 'self.diff_model'")
 
         # Unset the status info.
-        self.status.dAuvergne_protocol.diff_model = None
-        self.status.dAuvergne_protocol.mf_models = None
-        self.status.dAuvergne_protocol.local_tm_models = None
+        status.dAuvergne_protocol.diff_model = None
+        status.dAuvergne_protocol.mf_models = None
+        status.dAuvergne_protocol.local_tm_models = None
 
 
     def load_tensor(self):
