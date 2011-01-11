@@ -232,9 +232,6 @@ class Redirect_text(object):
     def __init__(self,aWxTextCtrl):
         self.out=aWxTextCtrl
 
-        # Integrate the status singleton object.
-        self.status = Status()
-
 
     def limit_entries(self):
         """ Function to overcome feedback problem of wx.CallAfter() command"""
@@ -251,34 +248,34 @@ class Redirect_text(object):
             new_entries = 'Refreshing log window...\n\n'
             self.out.log_panel.SetValue(new_entries)
 
-    def write(self,string):
+    def write(self, string):
 
         # Limit panle entries to max_entries Lines.
         wx.CallAfter(self.limit_entries)
 
         # Update Gauge (Progress bar).
         # Local tm model:
-        if self.status.dAuvergne_protocol.diff_model == 'local_tm':
-            if self.status.dAuvergne_protocol.current_model:
+        if status.dAuvergne_protocol.diff_model == 'local_tm':
+            if status.dAuvergne_protocol.current_model:
                 # Current model.
-                no = self.status.dAuvergne_protocol.current_model[2:]
+                no = status.dAuvergne_protocol.current_model[2:]
                 no = int(no)
 
                 # Total selected models.
-                total_models = len(self.status.dAuvergne_protocol.local_tm_models)
+                total_models = len(status.dAuvergne_protocol.local_tm_models)
 
                 # update Progress bar.
                 wx.CallAfter(self.out.progress_bar.SetValue, (100*no/total_models))
 
         # Sphere to Ellipsoid Models.
-        elif self.status.dAuvergne_protocol.diff_model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
+        elif status.dAuvergne_protocol.diff_model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
             # Determine actual round (maximum is 20).
-            wx.CallAfter(self.out.progress_bar.SetValue, (100*(self.status.dAuvergne_protocol.round-1)/20))
+            wx.CallAfter(self.out.progress_bar.SetValue, (100*(status.dAuvergne_protocol.round-1)/20))
 
         # Final analysis or Rx calculation.
         else:
-            if self.status.mc_number:
-                progress = 100 * (self.status.mc_number+2) / cdp.sim_number
+            if status.mc_number:
+                progress = 100 * (status.mc_number+2) / cdp.sim_number
                 wx.CallAfter(self.out.progress_bar.SetValue, progress)
 
         # Add new output.
