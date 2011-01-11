@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -626,6 +626,12 @@ class UF_window(wx.Dialog):
         ds.relax_gui.free_file_format.res_name_col =  gui_to_int(self.res_name_col.GetValue())
         ds.relax_gui.free_file_format.spin_num_col =  gui_to_int(self.spin_num_col.GetValue())
         ds.relax_gui.free_file_format.spin_name_col = gui_to_int(self.spin_name_col.GetValue())
+
+        # The data and error.
+        if hasattr(self, 'data_col'):
+            ds.relax_gui.free_file_format.data_col = gui_to_int(self.data_col.GetValue())
+        if hasattr(self, 'err_col'):
+            ds.relax_gui.free_file_format.err_col = gui_to_int(self.err_col.GetValue())
 
         # The column separator.
         ds.relax_gui.free_file_format.sep = str(self.sep.GetValue())
