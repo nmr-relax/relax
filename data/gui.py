@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -65,7 +65,8 @@ class Gui(Element):
 
         # Get the file settings node and recreate the structure.
         format_nodes = gui_node.getElementsByTagName('free_file_format')
-        self.free_file_format.from_xml(format_nodes[0])
+        if format_nodes:
+            self.free_file_format.from_xml(format_nodes[0])
 
         # Recreate all the other data structures.
         xml_to_object(gui_node, self, blacklist=['analyses', 'free_file_format'])
