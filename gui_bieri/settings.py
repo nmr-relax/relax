@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -236,18 +236,8 @@ class Free_file_format(Base_window, UF_window):
         @type event:    wx event
         """
 
-        # Get the column numbers.
-        ds.relax_gui.free_file_format.spin_id_col =   gui_to_int(self.spin_id_col.GetValue())
-        ds.relax_gui.free_file_format.mol_name_col =  gui_to_int(self.mol_name_col.GetValue())
-        ds.relax_gui.free_file_format.res_num_col =   gui_to_int(self.res_num_col.GetValue())
-        ds.relax_gui.free_file_format.res_name_col =  gui_to_int(self.res_name_col.GetValue())
-        ds.relax_gui.free_file_format.spin_num_col =  gui_to_int(self.spin_num_col.GetValue())
-        ds.relax_gui.free_file_format.spin_name_col = gui_to_int(self.spin_name_col.GetValue())
-
-        # The column separator.
-        ds.relax_gui.free_file_format.sep = str(self.sep.GetValue())
-        if ds.relax_gui.free_file_format.sep == 'white space':
-            ds.relax_gui.free_file_format.sep = None
+        # Execute the base class method.
+        self.free_file_format_save(event)
 
         # Destroy the window.
         self.Destroy()
