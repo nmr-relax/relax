@@ -225,8 +225,8 @@ class Diffusion_tensor(SystemTestCase):
         vects = array(vects)
         for vect in vects:
             # The projections.
-            proj1 = dot(vect,dot(cdp.diff_tensor.tensor, vect)) 
-            proj2 = dot(vect,dot(D, vect)) 
+            proj1 = dot(vect, dot(cdp.diff_tensor.tensor, vect)) 
+            proj2 = dot(vect, dot(D, vect)) 
 
             # Compare projections.
             self.assertAlmostEqual(proj1, proj2)
@@ -268,8 +268,8 @@ class Diffusion_tensor(SystemTestCase):
         vects = array(vects)
         for vect in vects:
             # The projections.
-            proj1 = dot(vect,dot(cdp.diff_tensor.tensor, vect)) 
-            proj2 = dot(vect,dot(D, vect)) 
+            proj1 = dot(vect, dot(cdp.diff_tensor.tensor, vect)) 
+            proj2 = dot(vect, dot(D, vect)) 
 
             # Print out.
             print("\nVector: %s" % vect)
@@ -295,8 +295,8 @@ class Diffusion_tensor(SystemTestCase):
         gamma = 0.5
 
         # The actual tensor in the PDB frame.
-        D = array([[ 22758858.4088357 ,  -7267400.1700938 ,   6272205.75829415],
-                   [ -7267400.1700938 ,  17923072.3436445 ,   1284270.53726401],
+        D = array([[ 22758858.4088357,  -7267400.1700938,   6272205.75829415],
+                   [ -7267400.1700938,  17923072.3436445,   1284270.53726401],
                    [  6272205.75829415,   1284270.53726401,  19318069.2475198 ]], float64)
 
         # The tensor in the eigenframe.
