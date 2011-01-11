@@ -223,9 +223,6 @@ class dAuvergne_protocol:
             for name in user_fns:
                 setattr(self.interpreter, name, user_fns[name])
 
-        # Execution lock.
-        status.exec_lock.acquire('auto dauvergne protocol')
-
         # Execute the protocol.
         try:
             self.execute()
