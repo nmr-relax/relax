@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,6 @@
 """Module containing the base class for the automatic NOE analysis frames."""
 
 # Python module imports.
-import __main__
 from os import sep
 from string import replace
 import sys
@@ -38,7 +37,7 @@ from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError
 from relax_io import DummyFileObject
-from status import Status
+from status import Status; status = Status()
 
 # relaxGUI module imports.
 from gui_bieri.analyses.results_analysis import color_code_noe
@@ -551,11 +550,11 @@ class Auto_noe:
         self.sync_ds(upload=True)
 
         # Display the relax controller (if not debugging).
-        if not __main__.debug:
+        if not status.debug:
             self.gui.controller.Show()
 
         # Start the thread (if not debugging).
-        if __main__.debug:
+        if status.debug:
             self.execute_thread()
         else:
             id = thread.start_new_thread(self.execute_thread, ())
@@ -568,7 +567,7 @@ class Auto_noe:
         """Execute the calculation in a thread."""
 
         # Controller.
-        if not __main__.debug:
+        if not status.debug:
             # Redirect relax output and errors to the controller.
             redir = Redirect_text(self.gui.controller)
             sys.stdout = redir
@@ -595,7 +594,7 @@ class Auto_noe:
         NOE_calc(seq_args=data.seq_args, pipe_name='noe'+'_'+str(time.asctime(time.localtime())), noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, output_file=data.filename, results_dir=data.save_dir, int_method='height', heteronuc=data.heteronuc, proton=data.proton, heteronuc_pdb='@N')
 
         # Feedback about success.
-        if not __main__.debug:
+        if not status.debug:
             wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
 
         # Add noe grace plot to results list.

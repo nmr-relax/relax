@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,6 @@
 """Module containing the base class for the automatic R1 and R2 analysis frames."""
 
 # Python module imports.
-import __main__
 from os import sep
 from string import replace
 import sys
@@ -37,7 +36,7 @@ import wx
 from auto_analyses.relax_fit import Relax_fit
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_io import DummyFileObject
-from status import Status
+from status import Status; status = Status()
 
 # relaxGUI module imports.
 from gui_bieri.base_classes import Container
@@ -431,11 +430,11 @@ class Auto_rx:
         self.sync_ds(upload=True)
 
         # Display the relax controller.
-        if not __main__.debug:
+        if not status.debug:
             self.gui.controller.Show()
 
         # Start the thread.
-        if __main__.debug:
+        if status.debug:
             self.execute_thread('dummy')
         else:
             id = thread.start_new_thread(self.execute_thread, ('dummy',))
@@ -448,7 +447,7 @@ class Auto_rx:
         """Execute the calculation in a thread."""
 
         # Controller.
-        if not __main__.debug:
+        if not status.debug:
             # Redirect relax output and errors to the controller.
             redir = Redirect_text(self.gui.controller)
             sys.stdout = redir
@@ -475,7 +474,7 @@ class Auto_rx:
         Relax_fit(file_root=self.filename, pipe_name='rx'+'_'+str(time.asctime(time.localtime())), seq_args=data.seq_args, results_directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, load_spin_ids=data.load_spin_ids, inc=data.inc)
 
         # Feedback about success.
-        if not __main__.debug:
+        if not status.debug:
             wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated Rx values\n__________________________________________________________')
 
         # Add noe grace plot to results list.

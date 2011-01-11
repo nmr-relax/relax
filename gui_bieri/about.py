@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,7 +22,6 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from copy import deepcopy
 from numpy import uint8, zeros
 from os import sep
@@ -33,6 +32,7 @@ import wx.html
 
 # relax module imports.
 from info import Info_box
+from status import Status; status = Status()
 
 # relax GUI module imports.
 from paths import IMAGE_PATH
@@ -159,7 +159,7 @@ class About_base(wx.Frame):
         self.set_background()
 
         # Debugging lines.
-        if __main__.debug:
+        if status.debug:
             # Cross.
             self.dc.DrawLine(0, 0, self.virt_x, self.virt_y)
             self.dc.DrawLine(self.virt_x, 0, 0, self.virt_y)

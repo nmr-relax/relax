@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,6 @@
 """Module for the automatic model-free protocol frame."""
 
 # Python module imports.
-import __main__
 from os import getcwd, sep
 from string import replace, split
 import sys
@@ -38,7 +37,7 @@ from auto_analyses import dauvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
 from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from relax_io import DummyFileObject
-from status import Status
+from status import Status; status = Status()
 
 
 # relax GUI module imports.
@@ -783,7 +782,7 @@ class Auto_model_free:
         which_model = self.choose_global_model(False)
 
         # Display the relax controller.
-        if not __main__.debug:
+        if not status.debug:
             self.gui.controller.Show()
 
         # Cancel.
@@ -975,7 +974,7 @@ class Auto_model_free:
         thread_cont = self.gui.calc_threads[-1]
 
         # Start the thread.
-        if __main__.debug:
+        if status.debug:
             self.execute_thread(global_models=global_models, automatic=automatic)
         else:
             id = thread.start_new_thread(self.execute_thread, (), {'global_models': global_models, 'automatic': automatic})
@@ -1002,7 +1001,7 @@ class Auto_model_free:
             self.gui.calc_threads[-1].progress = 5.0
 
             # Controller.
-            if not __main__.debug:
+            if not status.debug:
                 # Redirect relax output and errors to the controller.
                 redir = Redirect_text(self.gui.controller)
                 sys.stdout = redir

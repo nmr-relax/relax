@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,6 @@
 """Main module for the relax graphical user interface."""
 
 # Python module imports.
-import __main__
 import os
 from os import F_OK, access, getcwd, mkdir, sep
 import platform
@@ -41,6 +40,7 @@ from info import Info_box
 from generic_fns import state
 from generic_fns.reset import reset
 from relax_io import io_streams_restore
+from status import Status; status = Status()
 from version import version
 
 # relaxGUI module imports.
@@ -510,9 +510,7 @@ class Main(wx.Frame):
         """
 
         # The PDF manual.
-        if not hasattr(__main__, 'install_path'):
-            __main__.install_path = sys.path[0]
-        file = __main__.install_path + sep+"docs"+sep+"relax.pdf"
+        file = status.install_path + sep+"docs"+sep+"relax.pdf"
 
         # Test if it exists.
         if not access(file, F_OK):

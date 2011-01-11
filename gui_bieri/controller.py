@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,13 +25,12 @@
 """Log window of relax GUI controlling all calculations."""
 
 # Python module imports.
-import __main__
 import sys
 import time
 import wx
 
 # relax module imports.
-from status import Status
+from status import Status; status = Status()
 
 # relaxGUI module imports.
 from gui_bieri.paths import IMAGE_PATH
@@ -54,7 +53,7 @@ class Controller(wx.Frame):
         self.border = 5
 
         # IO redirection.
-        if not __main__.debug:
+        if not status.debug:
             redir = Redirect_text(self)
             sys.stdout = redir
             sys.stderr = redir

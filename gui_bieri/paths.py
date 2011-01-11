@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,19 +28,18 @@ This module allows for easy replacement of images and icons throughout the GUI.
 """
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
-# Install path.
-if not hasattr(__main__, 'install_path'):
-    __main__.install_path = sys.path[0]
+# relax module imports.
+from status import Status; status = Status()
+
 
 # GUI image and icon paths.
-OXY_ICON_PATH = __main__.install_path + sep + 'graphics' + sep + 'oxygen_icons' + sep
-IMAGE_PATH = __main__.install_path + sep + 'gui_bieri' + sep + 'images' + sep
-ICON_RELAX_PATH = __main__.install_path + sep + 'graphics' + sep + 'relax_icons' + sep
-WIZARD_IMAGE_PATH = __main__.install_path + sep + 'graphics' + sep + 'wizards' + sep
+OXY_ICON_PATH = status.install_path + sep + 'graphics' + sep + 'oxygen_icons' + sep
+IMAGE_PATH = status.install_path + sep + 'gui_bieri' + sep + 'images' + sep
+ICON_RELAX_PATH = status.install_path + sep + 'graphics' + sep + 'relax_icons' + sep
+WIZARD_IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'wizards' + sep
 
 
 
