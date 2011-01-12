@@ -161,7 +161,7 @@ def calc_omega(frq, heteronuc='15N'):
     return omega
 
 
-def spectral_density_mf_orig(frq=None, tm=None, S2=1.0, te=0.0, heteronuc='15N'):
+def spectral_density_mf_orig(frq=None, tm=None, s2=1.0, te=0.0, heteronuc='15N'):
     """Calculate the spectral density values using the original Lipari and Szabo model-free theory.
 
     @keyword frq:       The array of proton frequencies to calculate the spectral densities at.
