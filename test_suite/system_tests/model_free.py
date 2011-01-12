@@ -262,7 +262,7 @@ class Mf(SystemTestCase):
         spin = cdp.mol[0].res[0].spin[0]
 
         # Check the values.
-        #self.value_test(spin, select, s2=0.8, te, rex, chi2, iter, f_count, g_count, h_count, warning)
+        self.value_test(spin, s2=0.8, te=40e-9, chi2=0.0)
 
 
     def test_omp_analysis(self):
