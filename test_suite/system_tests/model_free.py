@@ -276,7 +276,7 @@ class Mf(SystemTestCase):
         spin = cdp.mol[0].res[0].spin[0]
 
         # Check the values.
-        self.value_test(spin, s2=0.8, te=40e-9, chi2=0.0)
+        self.value_test(spin, s2=0.8, te=40, chi2=0.0)
 
 
     def test_omp_analysis(self):
@@ -2107,6 +2107,8 @@ class Mf(SystemTestCase):
 
         # te correlation time.
         if te != None:
+            print te / 1e3
+            print spin.te / 1e-9
             self.assertAlmostEqual(spin.te / 1e-9, te / 1e3, msg=mesg)
         else:
             self.assertEqual(spin.te, None, msg=mesg)
