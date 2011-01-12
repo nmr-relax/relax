@@ -540,7 +540,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
 
 
     def test_opt_constr_bfgs_mt_S2_0_970_te_2048_Rex_0_149(self):
@@ -702,7 +702,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
 
 
     def test_opt_constr_cd_back_S2_0_970_te_2048_Rex_0_149(self):
@@ -771,7 +771,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
 
 
     def test_opt_constr_cd_mt_S2_0_970_te_2048_Rex_0_149(self):
@@ -912,7 +912,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
 
 
     def test_opt_constr_newton_gmw_back_S2_0_970_te_2048_Rex_0_149(self):
@@ -1054,7 +1054,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
 
 
     def test_opt_constr_newton_gmw_mt_S2_0_970_te_2048_Rex_0_149(self):
@@ -1229,7 +1229,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
 
 
     def test_opt_constr_sd_back_S2_0_970_te_2048_Rex_0_149(self):
@@ -1298,7 +1298,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
 
 
     def test_opt_constr_sd_mt_S2_0_970_te_2048_Rex_0_149(self):
@@ -1367,7 +1367,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
 
 
     def test_opt_grid_search_S2_0_970_te_2048_Rex_0_149(self):
@@ -1431,7 +1431,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
 
 
     def test_read_relax_data(self):
@@ -2051,32 +2051,82 @@ class Mf(SystemTestCase):
             self.assertEqual(test_line, true_line)
 
 
-    def value_test(self, spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning):
-        """Method for testing the optimisation values.
-
-        """
+    def value_test(self, spin, select=True, s2=None, s2f=None, s2s=None, te=None, tf=None, ts=None, rex=None, chi2=None, iter=None, f_count=None, g_count=None, h_count=None, warning=None):
+        """Test the optimisation values."""
 
         # Get the debugging message.
         mesg = self.mesg_opt_debug(spin)
 
         # Convert to lists.
-        if not isinstance(iter, list):
+        if iter != None and not isinstance(iter, list):
             iter = [iter]
-        if not isinstance(f_count, list):
+        if f_count != None and not isinstance(f_count, list):
             f_count = [f_count]
-        if not isinstance(g_count, list):
+        if g_count != None and not isinstance(g_count, list):
             g_count = [g_count]
-        if not isinstance(h_count, list):
+        if h_count != None and not isinstance(h_count, list):
             h_count = [h_count]
 
         # Test all the values.
+        ######################
+
+        # Spin selection.
         self.assertEqual(spin.select, select, msg=mesg)
-        self.assertAlmostEqual(spin.s2, s2, msg=mesg)
-        self.assertAlmostEqual(spin.te / 1e-9, te / 1e3, msg=mesg)
-        self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
+
+        # S2 order parameter.
+        if s2 != None:
+            self.assertAlmostEqual(spin.s2, s2, msg=mesg)
+        else:
+            self.assertEqual(spin.s2, None, msg=mesg)
+
+        # S2f order parameter.
+        if s2f != None:
+            self.assertAlmostEqual(spin.s2f, s2f, msg=mesg)
+        else:
+            self.assertEqual(spin.s2f, None, msg=mesg)
+
+        # S2s order parameter.
+        if s2s != None:
+            self.assertAlmostEqual(spin.s2s, s2s, msg=mesg)
+        else:
+            self.assertEqual(spin.s2s, None, msg=mesg)
+
+        # te correlation time.
+        if te != None:
+            self.assertAlmostEqual(spin.te / 1e-9, te / 1e3, msg=mesg)
+        else:
+            self.assertEqual(spin.te, None, msg=mesg)
+
+        # tf correlation time.
+        if tf != None:
+            self.assertAlmostEqual(spin.tf / 1e-9, tf / 1e3, msg=mesg)
+        else:
+            self.assertEqual(spin.tf, None, msg=mesg)
+
+        # ts correlation time.
+        if ts != None:
+            self.assertAlmostEqual(spin.ts / 1e-9, ts / 1e3, msg=mesg)
+        else:
+            self.assertEqual(spin.ts, None, msg=mesg)
+
+        # Chemical exchange.
+        if rex != None:
+            self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
+        else:
+            self.assertEqual(spin.rex, None, msg=mesg)
+
         self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
-        self.assert_(spin.iter in iter, msg=mesg)
-        self.assert_(spin.f_count in f_count, msg=mesg)
-        self.assert_(spin.g_count in g_count, msg=mesg)
-        self.assert_(spin.h_count in h_count, msg=mesg)
-        self.assertEqual(spin.warning, warning, msg=mesg)
+
+        # The optimisation stats.
+        if chi2 != None:
+            self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
+        if iter != None:
+            self.assert_(spin.iter in iter, msg=mesg)
+        if f_count != None:
+            self.assert_(spin.f_count in f_count, msg=mesg)
+        if g_count != None:
+            self.assert_(spin.g_count in g_count, msg=mesg)
+        if h_count != None:
+            self.assert_(spin.h_count in h_count, msg=mesg)
+        if warning != None:
+            self.assertEqual(spin.warning, warning, msg=mesg)
