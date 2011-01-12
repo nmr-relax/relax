@@ -2108,7 +2108,7 @@ class Mf(SystemTestCase):
                     self.interpreter.minimise('newton', 'gmw', 'back')
 
                     # Check the values.
-                    self.value_test(spin, local_tm=tm[tm_index], s2=s2[s2_index], te=te[te_index], chi2=0.0)
+                    self.value_test(spin, local_tm=tm[tm_index]*1e9, s2=s2[s2_index], te=te[te_index]*1e12, chi2=0.0)
 
                     # Increment the residue index and deselect the spin.
                     res_index += 1
