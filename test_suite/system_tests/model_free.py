@@ -2091,6 +2091,17 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
 
 
+    def test_tm0_grid(self):
+        """Test the optimisation of the tm0 model-free parameter grid."""
+
+        # Initialise.
+        cdp._model = 'tm0'
+        cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+
+
     def test_tm2_grid(self):
         """Test the optimisation of the tm2 model-free parameter grid."""
 
