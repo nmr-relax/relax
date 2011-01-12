@@ -338,10 +338,13 @@ class Mf(SystemTestCase):
 
 
     def test_m2_grid(self):
-        """Test the optimisation of the m2 model-free parameter grid."""
+        """Test the optimisation of the m2 model-free model against the tm2 parameter grid."""
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_m2_grid.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_tm2_grid.py')
+
+        # Select the model-free model.
+        self.interpreter.model_free.select_model(model='m2')
 
         # The model-free parameters.
         tm = [2e-9, 10e-9, 21e-9]
@@ -2123,6 +2126,9 @@ class Mf(SystemTestCase):
 
         # Setup the data pipe for optimisation.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_tm2_grid.py')
+
+        # Select the model-free model.
+        self.interpreter.model_free.select_model(model='tm2')
 
         # The model-free parameters.
         tm = [2e-9, 10e-9, 21e-9]

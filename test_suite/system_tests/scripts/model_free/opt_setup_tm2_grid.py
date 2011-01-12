@@ -32,6 +32,3 @@ value.set(1.20 * 1e-10, 'bond_length')
 value.set(200 * 1e-6, 'csa')
 value.set('13C', 'heteronucleus')
 value.set('1H', 'proton')
-
-# Select the model-free model.
-model_free.select_model(model='tm2')
