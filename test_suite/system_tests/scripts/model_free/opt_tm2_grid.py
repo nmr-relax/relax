@@ -64,13 +64,13 @@ for te_index in range(3):
 
             # Set up the initial model-free parameter values (bypass the grid search for speed).
             if cdp._model in ['tm2']:
-                spin.local_tm = tm[tm_index]
+                spin.local_tm = tm[tm_index] + 1e-11
             if cdp._model in ['tm2', 'm2', 'm4']:
-                spin.s2 = s2[s2_index]
+                spin.s2 = s2[s2_index] - 0.01
             if cdp._model in ['tm2', 'm2', 'm4']:
-                spin.te = te[te_index]
+                spin.te = te[te_index] + 1e-12
             if cdp._model in ['m4']:
-                spin.rex = 0.0
+                spin.rex = 0.1 / (2.0 * pi * spin.frq[0])**2
 
             # Minimise.
             minimise('newton', 'gmw', 'back', constraints=False)
