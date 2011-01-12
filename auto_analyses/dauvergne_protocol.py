@@ -570,7 +570,7 @@ class dAuvergne_protocol:
                     name = self.diff_model
 
                     # Create the data pipe (deleting the old one if it exists).
-                    if pipes.get_pipe(name):
+                    if pipes.has_pipe(name):
                         self.interpreter.pipe.delete(name)
                     self.interpreter.pipe.create(name, 'mf')
 
