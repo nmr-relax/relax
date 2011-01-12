@@ -337,6 +337,17 @@ class Mf(SystemTestCase):
         self.value_test(spin, local_tm=10, s2=0.8, te=40, chi2=0.0)
 
 
+    def test_m0_grid(self):
+        """Test the optimisation of the m0 model-free model against the tm0 parameter grid."""
+
+        # Initialise.
+        cdp._model = 'm0'
+        cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+
+
     def test_m2_grid(self):
         """Test the optimisation of the m2 model-free model against the tm2 parameter grid."""
 
