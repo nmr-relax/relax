@@ -276,7 +276,7 @@ class Mf(SystemTestCase):
         spin = cdp.mol[0].res[0].spin[0]
 
         # Check the values.
-        self.value_test(spin, s2=0.8, te=40, chi2=0.0)
+        self.value_test(spin, local_tm=10, s2=0.8, te=40, chi2=0.0)
 
 
     def test_local_tm_10_S2_0_8_te_40_test2(self):
@@ -304,7 +304,7 @@ class Mf(SystemTestCase):
         spin = cdp.mol[0].res[0].spin[0]
 
         # Check the values.
-        self.value_test(spin, s2=0.8, te=40, chi2=0.0)
+        self.value_test(spin, local_tm=10, s2=0.8, te=40, chi2=0.0)
 
 
     def test_local_tm_10_S2_0_8_te_40_test3(self):
@@ -334,7 +334,7 @@ class Mf(SystemTestCase):
         spin = cdp.mol[0].res[0].spin[0]
 
         # Check the values.
-        self.value_test(spin, s2=0.8, te=40, chi2=0.0)
+        self.value_test(spin, local_tm=10, s2=0.8, te=40, chi2=0.0)
 
 
 
@@ -2169,7 +2169,7 @@ class Mf(SystemTestCase):
             self.assertEqual(test_line, true_line)
 
 
-    def value_test(self, spin, select=True, s2=None, s2f=None, s2s=None, te=None, tf=None, ts=None, rex=None, chi2=None, iter=None, f_count=None, g_count=None, h_count=None, warning=None):
+    def value_test(self, spin, select=True, local_tm=None, s2=None, s2f=None, s2s=None, te=None, tf=None, ts=None, rex=None, chi2=None, iter=None, f_count=None, g_count=None, h_count=None, warning=None):
         """Test the optimisation values."""
 
         # Get the debugging message.
@@ -2191,6 +2191,12 @@ class Mf(SystemTestCase):
         # Spin selection.
         self.assertEqual(spin.select, select, msg=mesg)
 
+        # The local tm correlation time.
+        if local_tm != None:
+            self.assertAlmostEqual(spin.local_tm / 1e-9, local_tm, msg=mesg)
+        else:
+            self.assertEqual(spin.local_tm, None, msg=mesg)
+
         # S2 order parameter.
         if s2 != None:
             self.assertAlmostEqual(spin.s2, s2, msg=mesg)
@@ -2211,8 +2217,6 @@ class Mf(SystemTestCase):
 
         # te correlation time.
         if te != None:
-            print te / 1e3
-            print spin.te / 1e-9
             self.assertAlmostEqual(spin.te / 1e-9, te / 1e3, msg=mesg)
         else:
             self.assertEqual(spin.te, None, msg=mesg)
