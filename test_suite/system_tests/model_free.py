@@ -184,7 +184,7 @@ class Mf(SystemTestCase):
         """Test catching bug #14872, the unicode string selection failure as submitted by Olivier Serve."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_14872_unicode_selection.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_14872_unicode_selection.py')
 
 
     def test_bug_14941_local_tm_global_selection(self):
@@ -205,7 +205,7 @@ class Mf(SystemTestCase):
         """Test catching bugs #12582, #12591 and #12607 as submitted by Chris Brosey."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bugs_12582_12591_12607.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bugs_12582_12591_12607.py')
 
         # Test for bug #12607 (S2 changes because it is in the grid search when it should not be).
         self.assertNotEqual(cdp.mol[0].res[1].spin[0].s2, 1.0)
@@ -215,7 +215,7 @@ class Mf(SystemTestCase):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'create_m4.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'create_m4.py')
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
@@ -241,21 +241,21 @@ class Mf(SystemTestCase):
         """Back-calculate relaxation data."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'generate_ri.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'generate_ri.py')
 
 
     def test_latex_table(self):
         """Test the creation of a LaTeX table of model-free results, mimicking the latex_mf_table.py sample script."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'latex_mf_table.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'latex_mf_table.py')
 
 
     def test_local_tm_10_S2_0_8_te_40(self):
         """Test the optimisation of the test set {tm=10, S2=0.8, te=40}."""
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
 
         # The proton frequencies in MHz.
         frq = ['400', '500', '600', '700', '800', '900', '1000']
@@ -283,7 +283,7 @@ class Mf(SystemTestCase):
         """Try a very minimal model-free analysis on the OMP relaxation data."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'omp_model_free.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'omp_model_free.py')
 
         # Alias the final data pipe.
         dp = pipes.get_pipe('final')
@@ -299,7 +299,7 @@ class Mf(SystemTestCase):
         """Mapping the {S2, te, Rex} chi2 space through the OpenDX user function dx.map()."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opendx_s2_te_rex.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opendx_s2_te_rex.py')
 
 
     def test_opendx_theta_phi_da(self):
@@ -382,7 +382,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -572,7 +572,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -734,7 +734,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -803,7 +803,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -945,7 +945,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -1087,7 +1087,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -1261,7 +1261,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -1330,7 +1330,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -1397,7 +1397,7 @@ class Mf(SystemTestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Grid search.
         self.interpreter.grid_search(inc=11)
@@ -2015,7 +2015,7 @@ class Mf(SystemTestCase):
         """Try a component of model-free analysis on Tyler Reddy's peptide data (truncated)."""
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'tylers_peptide.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'tylers_peptide.py')
 
 
     def test_write_results(self):
