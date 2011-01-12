@@ -73,7 +73,7 @@ for te_index in range(3):
                 spin.rex = 0.0
 
             # Minimise.
-            minimise('newton', 'gmw', 'back')
+            minimise('newton', 'gmw', 'back', constraints=False)
 
             # Check the values.
             if cdp._model == 'm2':
