@@ -172,8 +172,6 @@ def spectral_density_mf_orig(frq=None, tm=None, s2=1.0, te=0.0, heteronuc='15N')
     @type s2:           float
     @keyword te:        The effective internal correlation time.
     @type te:           float
-    @keyword rex:       The chemical exchange factor.
-    @type rex:          float
     @keyword heteronuc: The heteronucleus type, i.e. 15N, 13C, etc.
     @type heteronuc:    str
     @return:            The spectral density values.  The first dimension of this 2D array are the different proton frequencies.  The second dimension is the 5 frequencies.
@@ -200,6 +198,65 @@ def spectral_density_mf_orig(frq=None, tm=None, s2=1.0, te=0.0, heteronuc='15N')
             J[i, j] = s2 * tm / (1.0 + (tm*omega[j])**2)
             J[i, j] = J[i, j]  +  (1.0 - s2) * tau / (1.0 + (tau*omega[j])**2)
             J[i, j] = 0.4 * J[i, j]
+
+    # Return the spectral density values.
+    return J
+
+
+def spectral_density_mf_ext(frq=None, tm=None, s2=1.0, s2f=1.0, tf=0.0, ts=0.0, heteronuc='15N'):
+    """Calculate the spectral density values using the extended Lipari and Szabo model-free theory.
+
+    @keyword frq:       The array of proton frequencies to calculate the spectral densities at.
+    @type frq:          numpy rank-1 array
+    @keyword tm:        The global correlation time in seconds.
+    @type tm:           float
+    @keyword s2:        The generalised order parameter (S2 = S2f*S2s).
+    @type s2:           float
+    @keyword s2f:       The generalised order parameter for the faster motion.
+    @type s2f:          float
+    @keyword tf:        The effective internal correlation time for the faster motion.
+    @type tf:           float
+    @keyword ts:        The effective internal correlation time for the slower motion.
+    @type ts:           float
+    @keyword heteronuc: The heteronucleus type, i.e. 15N, 13C, etc.
+    @type heteronuc:    str
+    @return:            The spectral density values.  The first dimension of this 2D array are the different proton frequencies.  The second dimension is the 5 frequencies.
+    @rtype:             numpy rank-2 array
+    """
+
+    # Initialise.
+    J = zeros((len(frq), 5), float64)
+
+    # Loop over the frequencies.
+    for i in range(len(frq)):
+        # Calculate the 5 effective frequencies.
+        omega = calc_omega(frq[i], heteronuc=heteronuc)
+
+        # Loop over the effective frequencies.
+        for j in range(5):
+            # tf_prime.
+            if tf == 0.0:
+                tf_prime = 0.0
+            else:
+                tf_prime = 1.0 / (1.0/tm + 1.0/tf)
+
+            # ts_prime.
+            if ts == 0.0:
+                ts_prime = 0.0
+            else:
+                ts_prime = 1.0 / (1.0/tm + 1.0/ts)
+
+            # The spectral density value, part 1.
+            part1 = s2 * tm / (1.0 + (tm*omega[j])**2)
+
+            # The spectral density value, part 2.
+            part2 = (1.0 - s2f) * tf_prime / (1.0 + (tf_prime*omega[j])**2)
+
+            # The spectral density value, part 3.
+            part3 = (s2f - s2) * ts_prime / (1.0 + (ts_prime*omega[j])**2)
+
+            # Combine it all.
+            J[i, j] = 0.4 * (part1 + part2 + part3)
 
     # Return the spectral density values.
     return J
