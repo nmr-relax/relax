@@ -2115,8 +2115,6 @@ class Mf(SystemTestCase):
         else:
             self.assertEqual(spin.rex, None, msg=mesg)
 
-        self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
-
         # The optimisation stats.
         if chi2 != None:
             self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
