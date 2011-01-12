@@ -348,11 +348,11 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm2_grid.py')
 
 
-    def test_m2_grid_vs_m3(self):
-        """Test the optimisation of the m3 model-free model against the tm2 parameter grid."""
+    def test_m2_grid_vs_m4(self):
+        """Test the optimisation of the m4 model-free model against the tm2 parameter grid."""
 
         # Initialise.
-        cdp._model = 'm3'
+        cdp._model = 'm4'
         cdp._value_test = self.value_test
 
         # Setup the data pipe for optimisation.

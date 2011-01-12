@@ -57,7 +57,7 @@ for te_index in range(3):
             spin.select = True
 
             # Set up the diffusion tensor.
-            if cdp._model in ['m2', 'm3']:
+            if cdp._model in ['m2', 'm4']:
                 if res_index:
                     diffusion_tensor.delete()
                 diffusion_tensor.init(tm[tm_index])
@@ -65,11 +65,11 @@ for te_index in range(3):
             # Set up the initial model-free parameter values (bypass the grid search for speed).
             if cdp._model in ['tm2']:
                 spin.local_tm = tm[tm_index]
-            if cdp._model in ['m2', 'm3']:
+            if cdp._model in ['m2', 'm4']:
                 spin.s2 = s2[s2_index]
-            if cdp._model in ['m2', 'm3']:
+            if cdp._model in ['m2', 'm4']:
                 spin.te = te[te_index]
-            if cdp._model in ['m3']:
+            if cdp._model in ['m4']:
                 spin.rex = 0.0
 
             # Minimise.
@@ -78,7 +78,7 @@ for te_index in range(3):
             # Check the values.
             if cdp._model == 'm2':
                 cdp._value_test(spin, s2=s2[s2_index], te=te[te_index]*1e12, chi2=0.0)
-            elif cdp._model == 'm3':
+            elif cdp._model == 'm4':
                 cdp._value_test(spin, s2=s2[s2_index], te=te[te_index]*1e12, rex=0.0, chi2=0.0)
             elif cdp._model == 'tm2':
                 cdp._value_test(spin, local_tm=tm[tm_index]*1e9, s2=s2[s2_index], te=te[te_index]*1e12, chi2=0.0)
