@@ -103,7 +103,7 @@ def relaxation_data(J, frq=None, heteronuc='15N', r=1.02e-10, csa=-172e-6, Rex=0
     # Loop over the frequencies.
     for i in range(len(J)):
         # Calculate the 5 effective frequencies.
-        omega = calc_omega(frq[i])
+        omega = calc_omega(frq[i], heteronuc=heteronuc)
 
         # The CSA constant.
         c = csa_const(wX=omega[1], csa=csa)
@@ -184,7 +184,7 @@ def spectral_density_mf_orig(frq=None, tm=None, S2=1.0, te=0.0, heteronuc='15N')
     # Loop over the frequencies.
     for i in range(len(frq)):
         # Calculate the 5 effective frequencies.
-        omega = calc_omega(frq[i])
+        omega = calc_omega(frq[i], heteronuc=heteronuc)
 
         # Loop over the effective frequencies.
         for j in range(5):
