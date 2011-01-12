@@ -68,7 +68,7 @@ def dipolar_const(gX, r):
     return 0.25 * (mu0 / (4.0*pi))**2 * (gX * g1H * h_bar)**2 / r**6
 
 
-def relaxation_data(J, frq=None, heteronuc='15N', r=1.02e-10, csa=-172e-6, Rex=0.0):
+def relaxation_data(J, frq=None, heteronuc='15N', rex=0.0, r=1.02e-10, csa=-172e-6):
     """Calculate the R1, R2, and NOE values for the given spectral density values.
 
     @param J:           The spectral density values.  The first dimension of this 2D array are the different proton frequencies.  The second dimension is the 5 frequencies.
@@ -77,10 +77,10 @@ def relaxation_data(J, frq=None, heteronuc='15N', r=1.02e-10, csa=-172e-6, Rex=0
     @type frq:          numpy rank-1 array
     @keyword heteronuc: The heteronucleus type, i.e. 15N, 13C, etc.
     @type heteronuc:    str
+    @keyword rex:       The chemical exchange factor.
+    @type rex:          float
     @keyword r:         The heteronucleus-proton bond length in meters.
     @type r:            float
-    @keyword Rex:       The chemical exchange relaxation value.
-    @type Rex:          float
     @keyword csa:       The chemical shift anisotropy (unitless).
     @type csa:          float
     @return:            The R1, R2, and NOE relaxation values at all spectrometer frequencies.  The first dimension are the different spectrometer frequencies.  The second dimension is the R1, R2, and NOE.
@@ -112,7 +112,7 @@ def relaxation_data(J, frq=None, heteronuc='15N', r=1.02e-10, csa=-172e-6, Rex=0
         Ri[i, 0] = Ri_prime[i, 0] = d * (3.0*J[i, 1] + J[i, 2] + 6.0*J[i, 4])  +  c * J[i, 1]
 
         # The R2.
-        Ri[i, 1] = Ri_prime[i, 1] = 0.5 * d * (4.0*J[i, 0] + 3.0*J[i, 1] + J[i, 2] + 6.0*J[i, 3] + 6.0*J[i, 4])  +  c/6.0 * (4.0*J[i, 0] + 3.0*J[i, 1])  +  Rex
+        Ri[i, 1] = Ri_prime[i, 1] = 0.5 * d * (4.0*J[i, 0] + 3.0*J[i, 1] + J[i, 2] + 6.0*J[i, 3] + 6.0*J[i, 4])  +  c/6.0 * (4.0*J[i, 0] + 3.0*J[i, 1])  +  rex * (2.0 * pi * omega[3])**2
 
         # The sigma NOE.
         Ri_prime[i, 2] = d * (6.0*J[i, 4] - J[i, 2])
@@ -172,6 +172,8 @@ def spectral_density_mf_orig(frq=None, tm=None, S2=1.0, te=0.0, heteronuc='15N')
     @type S2:           float
     @keyword te:        The effective internal correlation time.
     @type te:           float
+    @keyword rex:       The chemical exchange factor.
+    @type rex:          float
     @keyword heteronuc: The heteronucleus type, i.e. 15N, 13C, etc.
     @type heteronuc:    str
     @return:            The spectral density values.  The first dimension of this 2D array are the different proton frequencies.  The second dimension is the 5 frequencies.
