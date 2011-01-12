@@ -2100,9 +2100,9 @@ class Mf(SystemTestCase):
                     spin.select = True
 
                     # Set up the initial model-free parameter values (bypass the grid search for speed).
-                    spin.local_tm = tm[tm_index] - 1e-9
-                    spin.s2 = s2[s2_index] - 0.1
-                    spin.te = te[te_index] + 10e-12
+                    spin.local_tm = tm[tm_index]
+                    spin.s2 = s2[s2_index]
+                    spin.te = te[te_index]
 
                     # Minimise.
                     self.interpreter.minimise('newton', 'gmw', 'back')
