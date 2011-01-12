@@ -337,7 +337,6 @@ class Mf(SystemTestCase):
         self.value_test(spin, local_tm=10, s2=0.8, te=40, chi2=0.0)
 
 
-
     def test_omp_analysis(self):
         """Try a very minimal model-free analysis on the OMP relaxation data."""
 
