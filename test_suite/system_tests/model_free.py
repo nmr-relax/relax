@@ -2070,6 +2070,51 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
 
 
+    def test_tm2_grid(self):
+        """Test the optimisation of the tm2 model-free parameter grid."""
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_tm2_grid.py')
+
+        # The model-free parameters.
+        tm = [2e-9, 10e-9, 21e-9]
+        s2 = [0.2, 0.8, 0.95]
+        te = [2e-12, 40e-12, 1e-9]
+
+        # Deselect all spins.
+        self.interpreter.deselect.spin()
+
+        # Residue index.
+        res_index = 0
+
+        # Loop over te.
+        for te_index in range(3):
+            # Loop over s2.
+            for s2_index in range(3):
+                # Loop over tm.
+                for tm_index in range(3):
+                    # Alias the relevent spin container.
+                    spin = cdp.mol[0].res[res_index].spin[0]
+
+                    # Select the spin.
+                    spin.select = True
+
+                    # Set up the initial model-free parameter values (bypass the grid search for speed).
+                    spin.local_tm = tm[tm_index] - 1e-9
+                    spin.s2 = s2[s2_index] - 0.1
+                    spin.te = te[te_index] + 10e-12
+
+                    # Minimise.
+                    self.interpreter.minimise('newton', 'gmw', 'back')
+
+                    # Check the values.
+                    self.value_test(spin, local_tm=tm[tm_index], s2=s2[s2_index], te=te[te_index], chi2=0.0)
+
+                    # Increment the residue index and deselect the spin.
+                    res_index += 1
+                    spin.select = False
+
+
     def test_tylers_peptide(self):
         """Try a component of model-free analysis on Tyler Reddy's peptide data (truncated)."""
 
