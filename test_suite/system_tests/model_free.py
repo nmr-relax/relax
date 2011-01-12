@@ -106,7 +106,7 @@ class Mf(SystemTestCase):
 
 
         # Minimisation info.
-        strint = string + '\n'
+        string = string + '\n'
         if spin.local_tm != None:
             string = string + "%-15s %30.16g\n" % ('local_tm:', spin.local_tm)
         if spin.s2 != None:
