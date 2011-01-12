@@ -108,19 +108,19 @@ class Mf(SystemTestCase):
         # Minimisation info.
         string = string + '\n'
         if spin.local_tm != None:
-            string = string + "%-15s %30.16g\n" % ('local_tm:', spin.local_tm)
+            string = string + "%-15s %30.16g\n" % ('local_tm (ns):',    spin.local_tm * 1e9)
         if spin.s2 != None:
-            string = string + "%-15s %30.16g\n" % ('s2:',       spin.s2)
+            string = string + "%-15s %30.16g\n" % ('s2:',               spin.s2)
         if spin.s2f != None:
-            string = string + "%-15s %30.16g\n" % ('s2f:',      spin.s2f)
+            string = string + "%-15s %30.16g\n" % ('s2f:',              spin.s2f)
         if spin.s2s != None:
-            string = string + "%-15s %30.16g\n" % ('s2s:',      spin.s2s)
+            string = string + "%-15s %30.16g\n" % ('s2s:',              spin.s2s)
         if spin.te != None:
-            string = string + "%-15s %30.13g\n" % ('te:',       spin.te * 1e12)
+            string = string + "%-15s %30.13g\n" % ('te (ps):',          spin.te * 1e12)
         if spin.tf != None:
-            string = string + "%-15s %30.13g\n" % ('tf:',       spin.tf * 1e12)
+            string = string + "%-15s %30.13g\n" % ('tf (ps):',          spin.tf * 1e12)
         if spin.ts != None:
-            string = string + "%-15s %30.13g\n" % ('ts:',       spin.ts * 1e12)
+            string = string + "%-15s %30.13g\n" % ('ts (ps):',          spin.ts * 1e12)
         if spin.rex != None:
             string = string + "%-15s %30.17g\n" % ('rex:',      spin.rex * (2.0 * pi * spin.frq[0])**2)
         string = string +   "%-15s %30.17g\n" % ('chi2:',   spin.chi2)
