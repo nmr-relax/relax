@@ -57,9 +57,10 @@ for te_index in range(3):
             spin.select = True
 
             # Set up the diffusion tensor.
-            if res_index:
-                diffusion_tensor.delete()
-            diffusion_tensor.init(tm[tm_index])
+            if cdp._model in ['m2', 'm3']:
+                if res_index:
+                    diffusion_tensor.delete()
+                diffusion_tensor.init(tm[tm_index])
 
             # Set up the initial model-free parameter values (bypass the grid search for speed).
             if cdp._model in ['tm2']:
