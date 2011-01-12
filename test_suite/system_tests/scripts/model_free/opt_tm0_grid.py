@@ -45,6 +45,12 @@ res_index = 0
 
 # Loop over tm.
 for tm_index in range(len(tm)):
+    # Default values for certain parameters.
+    s2 = [1.0]
+    s2_index = 0
+    te = [0.0]
+    te_index = 0
+
     # Alias the relevent spin container.
     spin = cdp.mol[0].res[res_index].spin[0]
 
@@ -60,7 +66,7 @@ for tm_index in range(len(tm)):
     # Set up the initial model-free parameter values (bypass the grid search for speed).
     if search('^t', cdp._model):
         spin.local_tm = tm[tm_index] + 1e-11
-    if cdp._model in ['tm2', 'm2']:
+    if cdp._model in ['tm2', 'm1', 'm2']:
         spin.s2 = 0.98
     if cdp._model in ['tm2', 'm2']:
         spin.te = 1e-12
@@ -71,8 +77,14 @@ for tm_index in range(len(tm)):
     minimise('newton', 'gmw', 'back', constraints=False)
 
     # Check the values.
-    if cdp._model == 'm2':
+    if cdp._model == 'm0':
+        cdp._value_test(spin, chi2=0.0)
+    elif cdp._model == 'm1':
+        cdp._value_test(spin, s2=s2[s2_index], chi2=0.0)
+    elif cdp._model == 'm2':
         cdp._value_test(spin, s2=s2[s2_index], te=te[te_index]*1e12, chi2=0.0)
+    elif cdp._model == 'm3':
+        cdp._value_test(spin, s2=s2[s2_index], rex=0.0, chi2=0.0)
     elif cdp._model == 'm4':
         cdp._value_test(spin, s2=s2[s2_index], te=te[te_index]*1e12, rex=0.0, chi2=0.0)
     elif cdp._model == 'tm2':
