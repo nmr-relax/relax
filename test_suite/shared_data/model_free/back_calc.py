@@ -168,8 +168,8 @@ def spectral_density_mf_orig(frq=None, tm=None, s2=1.0, te=0.0, heteronuc='15N')
     @type frq:          numpy rank-1 array
     @keyword tm:        The global correlation time in seconds.
     @type tm:           float
-    @keyword S2:        The generalised order parameter.
-    @type S2:           float
+    @keyword s2:        The generalised order parameter.
+    @type s2:           float
     @keyword te:        The effective internal correlation time.
     @type te:           float
     @keyword rex:       The chemical exchange factor.
@@ -197,8 +197,8 @@ def spectral_density_mf_orig(frq=None, tm=None, s2=1.0, te=0.0, heteronuc='15N')
                 tau = 1.0 / (1.0/tm + 1.0/te)
 
             # The spectral density value.
-            J[i, j] = S2 * tm / (1.0 + (tm*omega[j])**2)
-            J[i, j] = J[i, j]  +  (1.0 - S2) * tau / (1.0 + (tau*omega[j])**2)
+            J[i, j] = s2 * tm / (1.0 + (tm*omega[j])**2)
+            J[i, j] = J[i, j]  +  (1.0 - s2) * tau / (1.0 + (tau*omega[j])**2)
             J[i, j] = 0.4 * J[i, j]
 
     # Return the spectral density values.
