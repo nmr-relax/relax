@@ -65,9 +65,9 @@ for te_index in range(3):
             # Set up the initial model-free parameter values (bypass the grid search for speed).
             if cdp._model in ['tm2']:
                 spin.local_tm = tm[tm_index]
-            if cdp._model in ['m2', 'm4']:
+            if cdp._model in ['tm2', 'm2', 'm4']:
                 spin.s2 = s2[s2_index]
-            if cdp._model in ['m2', 'm4']:
+            if cdp._model in ['tm2', 'm2', 'm4']:
                 spin.te = te[te_index]
             if cdp._model in ['m4']:
                 spin.rex = 0.0
