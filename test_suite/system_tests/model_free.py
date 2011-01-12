@@ -237,6 +237,34 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'latex_mf_table.py')
 
 
+    def test_local_tm_10_S2_0_8_te_40(self):
+        """Test the optimisation of the test set {tm=10, S2=0.8, te=40}."""
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
+
+        # The proton frequencies in MHz.
+        frq = ['400', '500', '600', '700', '800', '900', '1000']
+
+        # Load the relaxation data.
+        for i in range(len(frq)):
+            self.interpreter.relax_data.read('R1',  frq[i], float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('R2',  frq[i], float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('NOE', frq[i], float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+
+        # Set up the initial model-free parameter values (bypass the grid search for speed).
+        self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 'S2', 'te'])
+
+        # Minimise.
+        self.interpreter.minimise('newton', 'gmw', 'back')
+
+        # Alias the relevent spin container.
+        spin = cdp.mol[0].res[0].spin[0]
+
+        # Check the values.
+        #self.value_test(spin, select, s2=0.8, te, rex, chi2, iter, f_count, g_count, h_count, warning)
+
+
     def test_omp_analysis(self):
         """Try a very minimal model-free analysis on the OMP relaxation data."""
 
