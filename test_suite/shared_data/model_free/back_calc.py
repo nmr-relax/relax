@@ -189,7 +189,10 @@ def spectral_density_mf_orig(frq=None, tm=None, S2=1.0, te=0.0, heteronuc='15N')
         # Loop over the effective frequencies.
         for j in range(5):
             # tau.
-            tau = 1.0 / (1.0/tm + 1.0/te)
+            if te == 0.0:
+                tau = 0.0
+            else:
+                tau = 1.0 / (1.0/tm + 1.0/te)
 
             # The spectral density value.
             J[i, j] = S2 * tm / (1.0 + (tm*omega[j])**2)
