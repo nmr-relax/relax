@@ -1,27 +1,36 @@
-Polycarbonate   1     Bisphenol_A     1     C1    3.6292232063         0.0725844641259      # tm2 = {local_tm=2e-09; s2=0.2; te=2e-12}
-Polycarbonate   2     Bisphenol_A     1     C1    16.306538455         0.326130769101       # tm2 = {local_tm=1e-08; s2=0.2; te=2e-12}
-Polycarbonate   3     Bisphenol_A     1     C1    34.0735617676        0.681471235353       # tm2 = {local_tm=2.1e-08; s2=0.2; te=2e-12}
-Polycarbonate   4     Bisphenol_A     1     C1    14.3849752113        0.287699504226       # tm2 = {local_tm=2e-09; s2=0.8; te=2e-12}
-Polycarbonate   5     Bisphenol_A     1     C1    65.094130703         1.30188261406        # tm2 = {local_tm=1e-08; s2=0.8; te=2e-12}
-Polycarbonate   6     Bisphenol_A     1     C1    136.162210125        2.7232442025         # tm2 = {local_tm=2.1e-08; s2=0.8; te=2e-12}
-Polycarbonate   7     Bisphenol_A     1     C1    17.0739132126        0.341478264252       # tm2 = {local_tm=2e-09; s2=0.95; te=2e-12}
-Polycarbonate   8     Bisphenol_A     1     C1    77.291028765         1.5458205753         # tm2 = {local_tm=1e-08; s2=0.95; te=2e-12}
-Polycarbonate   9     Bisphenol_A     1     C1    161.684372214        3.23368744429        # tm2 = {local_tm=2.1e-08; s2=0.95; te=2e-12}
-Polycarbonate   10    Bisphenol_A     1     C1    4.27289964468        0.0854579928936      # tm2 = {local_tm=2e-09; s2=0.2; te=4e-11}
-Polycarbonate   11    Bisphenol_A     1     C1    16.9606437373        0.339212874745       # tm2 = {local_tm=1e-08; s2=0.2; te=4e-11}
-Polycarbonate   12    Bisphenol_A     1     C1    34.7290562534        0.694581125069       # tm2 = {local_tm=2.1e-08; s2=0.2; te=4e-11}
-Polycarbonate   13    Bisphenol_A     1     C1    14.5458943209        0.290917886418       # tm2 = {local_tm=2e-09; s2=0.8; te=4e-11}
-Polycarbonate   14    Bisphenol_A     1     C1    65.2576570236        1.30515314047        # tm2 = {local_tm=1e-08; s2=0.8; te=4e-11}
-Polycarbonate   15    Bisphenol_A     1     C1    136.326083746        2.72652167493        # tm2 = {local_tm=2.1e-08; s2=0.8; te=4e-11}
-Polycarbonate   16    Bisphenol_A     1     C1    17.11414299          0.3422828598         # tm2 = {local_tm=2e-09; s2=0.95; te=4e-11}
-Polycarbonate   17    Bisphenol_A     1     C1    77.3319103452        1.5466382069         # tm2 = {local_tm=1e-08; s2=0.95; te=4e-11}
-Polycarbonate   18    Bisphenol_A     1     C1    161.72534062         3.23450681239        # tm2 = {local_tm=2.1e-08; s2=0.95; te=4e-11}
-Polycarbonate   19    Bisphenol_A     1     C1    10.1106246573        0.202212493145       # tm2 = {local_tm=2e-09; s2=0.2; te=1e-09}
-Polycarbonate   20    Bisphenol_A     1     C1    24.2943380517        0.485886761034       # tm2 = {local_tm=1e-08; s2=0.2; te=1e-09}
-Polycarbonate   21    Bisphenol_A     1     C1    42.3305899888        0.846611799776       # tm2 = {local_tm=2.1e-08; s2=0.2; te=1e-09}
-Polycarbonate   22    Bisphenol_A     1     C1    16.0053255741        0.320106511481       # tm2 = {local_tm=2e-09; s2=0.8; te=1e-09}
-Polycarbonate   23    Bisphenol_A     1     C1    67.0910806022        1.34182161204        # tm2 = {local_tm=1e-08; s2=0.8; te=1e-09}
-Polycarbonate   24    Bisphenol_A     1     C1    138.22646718         2.76452934361        # tm2 = {local_tm=2.1e-08; s2=0.8; te=1e-09}
-Polycarbonate   25    Bisphenol_A     1     C1    17.4790008033        0.349580016065       # tm2 = {local_tm=2e-09; s2=0.95; te=1e-09}
-Polycarbonate   26    Bisphenol_A     1     C1    77.7902662398        1.5558053248         # tm2 = {local_tm=1e-08; s2=0.95; te=1e-09}
-Polycarbonate   27    Bisphenol_A     1     C1    162.200436478        3.24400872956        # tm2 = {local_tm=2.1e-08; s2=0.95; te=1e-09}
+Polycarbonate   1     Bisphenol_A     1     C1    23.3684320085        0.467368640169       # tm4 = {local_tm=2e-09; s2=0.2; te=2e-12; rex=0.5}
+Polycarbonate   2     Bisphenol_A     1     C1    36.0457472572        0.720914945145       # tm4 = {local_tm=1e-08; s2=0.2; te=2e-12; rex=0.5}
+Polycarbonate   3     Bisphenol_A     1     C1    53.8127705698        1.0762554114         # tm4 = {local_tm=2.1e-08; s2=0.2; te=2e-12; rex=0.5}
+Polycarbonate   4     Bisphenol_A     1     C1    34.1241840135        0.68248368027        # tm4 = {local_tm=2e-09; s2=0.8; te=2e-12; rex=0.5}
+Polycarbonate   5     Bisphenol_A     1     C1    84.8333395052        1.6966667901         # tm4 = {local_tm=1e-08; s2=0.8; te=2e-12; rex=0.5}
+Polycarbonate   6     Bisphenol_A     1     C1    155.901418927        3.11802837854        # tm4 = {local_tm=2.1e-08; s2=0.8; te=2e-12; rex=0.5}
+Polycarbonate   7     Bisphenol_A     1     C1    36.8131220148        0.736262440295       # tm4 = {local_tm=2e-09; s2=0.95; te=2e-12; rex=0.5}
+Polycarbonate   8     Bisphenol_A     1     C1    97.0302375672        1.94060475134        # tm4 = {local_tm=1e-08; s2=0.95; te=2e-12; rex=0.5}
+Polycarbonate   9     Bisphenol_A     1     C1    181.423581016        3.62847162033        # tm4 = {local_tm=2.1e-08; s2=0.95; te=2e-12; rex=0.5}
+Polycarbonate   10    Bisphenol_A     1     C1    24.0121084469        0.480242168937       # tm4 = {local_tm=2e-09; s2=0.2; te=4e-11; rex=0.5}
+Polycarbonate   11    Bisphenol_A     1     C1    36.6998525394        0.733997050789       # tm4 = {local_tm=1e-08; s2=0.2; te=4e-11; rex=0.5}
+Polycarbonate   12    Bisphenol_A     1     C1    54.4682650556        1.08936530111        # tm4 = {local_tm=2.1e-08; s2=0.2; te=4e-11; rex=0.5}
+Polycarbonate   13    Bisphenol_A     1     C1    34.2851031231        0.685702062462       # tm4 = {local_tm=2e-09; s2=0.8; te=4e-11; rex=0.5}
+Polycarbonate   14    Bisphenol_A     1     C1    84.9968658258        1.69993731652        # tm4 = {local_tm=1e-08; s2=0.8; te=4e-11; rex=0.5}
+Polycarbonate   15    Bisphenol_A     1     C1    156.065292549        3.12130585097        # tm4 = {local_tm=2.1e-08; s2=0.8; te=4e-11; rex=0.5}
+Polycarbonate   16    Bisphenol_A     1     C1    36.8533517922        0.737067035843       # tm4 = {local_tm=2e-09; s2=0.95; te=4e-11; rex=0.5}
+Polycarbonate   17    Bisphenol_A     1     C1    97.0711191473        1.94142238295        # tm4 = {local_tm=1e-08; s2=0.95; te=4e-11; rex=0.5}
+Polycarbonate   18    Bisphenol_A     1     C1    181.464549422        3.62929098844        # tm4 = {local_tm=2.1e-08; s2=0.95; te=4e-11; rex=0.5}
+Polycarbonate   19    Bisphenol_A     1     C1    161.542893624        3.23085787247        # tm4 = {local_tm=2e-09; s2=0.2; te=2e-12; rex=4}
+Polycarbonate   20    Bisphenol_A     1     C1    174.220208872        3.48440417745        # tm4 = {local_tm=1e-08; s2=0.2; te=2e-12; rex=4}
+Polycarbonate   21    Bisphenol_A     1     C1    191.987232185        3.8397446437         # tm4 = {local_tm=2.1e-08; s2=0.2; te=2e-12; rex=4}
+Polycarbonate   22    Bisphenol_A     1     C1    172.298645629        3.44597291258        # tm4 = {local_tm=2e-09; s2=0.8; te=2e-12; rex=4}
+Polycarbonate   23    Bisphenol_A     1     C1    223.00780112         4.46015602241        # tm4 = {local_tm=1e-08; s2=0.8; te=2e-12; rex=4}
+Polycarbonate   24    Bisphenol_A     1     C1    294.075880542        5.88151761085        # tm4 = {local_tm=2.1e-08; s2=0.8; te=2e-12; rex=4}
+Polycarbonate   25    Bisphenol_A     1     C1    174.98758363         3.4997516726         # tm4 = {local_tm=2e-09; s2=0.95; te=2e-12; rex=4}
+Polycarbonate   26    Bisphenol_A     1     C1    235.204699182        4.70409398365        # tm4 = {local_tm=1e-08; s2=0.95; te=2e-12; rex=4}
+Polycarbonate   27    Bisphenol_A     1     C1    319.598042632        6.39196085263        # tm4 = {local_tm=2.1e-08; s2=0.95; te=2e-12; rex=4}
+Polycarbonate   28    Bisphenol_A     1     C1    162.186570062        3.24373140124        # tm4 = {local_tm=2e-09; s2=0.2; te=4e-11; rex=4}
+Polycarbonate   29    Bisphenol_A     1     C1    174.874314155        3.49748628309        # tm4 = {local_tm=1e-08; s2=0.2; te=4e-11; rex=4}
+Polycarbonate   30    Bisphenol_A     1     C1    192.642726671        3.85285453342        # tm4 = {local_tm=2.1e-08; s2=0.2; te=4e-11; rex=4}
+Polycarbonate   31    Bisphenol_A     1     C1    172.459564738        3.44919129477        # tm4 = {local_tm=2e-09; s2=0.8; te=4e-11; rex=4}
+Polycarbonate   32    Bisphenol_A     1     C1    223.171327441        4.46342654882        # tm4 = {local_tm=1e-08; s2=0.8; te=4e-11; rex=4}
+Polycarbonate   33    Bisphenol_A     1     C1    294.239754164        5.88479508328        # tm4 = {local_tm=2.1e-08; s2=0.8; te=4e-11; rex=4}
+Polycarbonate   34    Bisphenol_A     1     C1    175.027813407        3.50055626815        # tm4 = {local_tm=2e-09; s2=0.95; te=4e-11; rex=4}
+Polycarbonate   35    Bisphenol_A     1     C1    235.245580763        4.70491161525        # tm4 = {local_tm=1e-08; s2=0.95; te=4e-11; rex=4}
+Polycarbonate   36    Bisphenol_A     1     C1    319.639011037        6.39278022074        # tm4 = {local_tm=2.1e-08; s2=0.95; te=4e-11; rex=4}

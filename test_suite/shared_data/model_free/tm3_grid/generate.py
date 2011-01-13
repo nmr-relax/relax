@@ -38,7 +38,6 @@ from back_calc import relaxation_data, spectral_density_mf_orig
 # The model-free parameters.
 tm = [2e-9, 10e-9, 21e-9]
 s2 = [0.2, 0.8, 0.95]
-te = [2e-12, 40e-12]
 rex = [0.5, 4]
 
 # The proton frequencies.
@@ -56,30 +55,28 @@ for i in range(len(vals)):
     # Residue number.
     res_num = 1
 
-    # Loop over rex.
+    # Loop over te.
     for rex_index in range(len(rex)):
-        # Loop over te.
-        for te_index in range(len(te)):
-            # Loop over s2.
-            for s2_index in range(len(s2)):
-                # Loop over tm.
-                for tm_index in range(len(tm)):
-                    # The spectral density values.
-                    J = spectral_density_mf_orig(frq=frq, tm=tm[tm_index], S2=s2[s2_index], te=te[te_index], heteronuc='13C')
-                    
-                    # The relaxation data.
-                    Ri = relaxation_data(J, frq=frq, heteronuc='13C', rex=rex[rex_index] / (2.0 * pi * frq[i])**2, r=1.20e-10, csa=200e-6)
+        # Loop over s2.
+        for s2_index in range(len(s2)):
+            # Loop over tm.
+            for tm_index in range(len(tm)):
+                # The spectral density values.
+                J = spectral_density_mf_orig(frq=frq, tm=tm[tm_index], s2=s2[s2_index], heteronuc='13C')
 
-                    # The model info.
-                    info = "# tm3 = {local_tm=%s; s2=%s; te=%s; rex=%s}" % (tm[tm_index], s2[s2_index], te[te_index], rex[rex_index])
+                # The relaxation data.
+                Ri = relaxation_data(J, frq=frq, heteronuc='13C', rex=rex[rex_index] / (2.0 * pi * frq[i])**2, r=1.20e-10, csa=200e-6)
 
-                    # Write out the values.
-                    file_r1.write('%-15s %-5s %-15s %-5s %-5s %-20s %-20s %s\n' %  ('Polycarbonate', res_num, 'Bisphenol_A', '1', 'C1', Ri[i, 0], Ri[i, 0] * 0.02, info))
-                    file_r2.write('%-15s %-5s %-15s %-5s %-5s %-20s %-20s %s\n' %  ('Polycarbonate', res_num, 'Bisphenol_A', '1', 'C1', Ri[i, 1], Ri[i, 1] * 0.02, info))
-                    file_noe.write('%-15s %-5s %-15s %-5s %-5s %-20s %-20s %s\n' % ('Polycarbonate', res_num, 'Bisphenol_A', '1', 'C1', Ri[i, 2], 0.05, info))
+                # The model info.
+                info = "# tm3 = {local_tm=%s; s2=%s; rex=%s}" % (tm[tm_index], s2[s2_index], rex[rex_index])
 
-                    # Increment the spin number.
-                    res_num += 1
+                # Write out the values.
+                file_r1.write('%-15s %-5s %-15s %-5s %-5s %-20s %-20s %s\n' %  ('Polycarbonate', res_num, 'Bisphenol_A', '1', 'C1', Ri[i, 0], Ri[i, 0] * 0.02, info))
+                file_r2.write('%-15s %-5s %-15s %-5s %-5s %-20s %-20s %s\n' %  ('Polycarbonate', res_num, 'Bisphenol_A', '1', 'C1', Ri[i, 1], Ri[i, 1] * 0.02, info))
+                file_noe.write('%-15s %-5s %-15s %-5s %-5s %-20s %-20s %s\n' % ('Polycarbonate', res_num, 'Bisphenol_A', '1', 'C1', Ri[i, 2], 0.05, info))
+
+                # Increment the spin number.
+                res_num += 1
 
     # Close the files.
     file_r1.close()
