@@ -27,8 +27,8 @@ from opt_tm_fns import create_sequence, opt_and_check, setup_data
 
 
 # The model-free parameters.
-tm = [2e-9, 10e-9, 21e-9]
-s2 = [0.2, 0.8, 0.95]
+tm = [2e-9, 10e-9]
+s2 = [0.2, 0.4, 0.65]
 s2f = [0.7, 0.8]            
 ts = [2e-12, 40e-12, 1e-9]  
 
