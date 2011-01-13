@@ -85,21 +85,21 @@ def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=N
         te = 0.0
     te_scaled = 'skip'
     if te and abs(s2 - 1.0) > epsilon:
-        te_scaled = te * 1e9
+        te_scaled = te * 1e12
 
     # Default tf value.
     if 'tf' in spin.params and tf == None:
         tf = 0.0
     tf_scaled = 'skip'
     if tf and abs(s2f - 1.0) > epsilon:
-        tf_scaled = tf * 1e9
+        tf_scaled = tf * 1e12
 
     # Default ts value.
     if 'ts' in spin.params and ts == None:
         ts = 0.0
     ts_scaled = 'skip'
     if ts and abs(s2/s2f - 1.0) > epsilon:
-        ts_scaled = ts * 1e9
+        ts_scaled = ts * 1e12
 
     # Default Rex value.
     if 'rex' in spin.params and rex == None:
