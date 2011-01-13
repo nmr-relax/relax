@@ -41,7 +41,7 @@ res_index = 0
 # Loop over tm.
 for tm_index in range(len(tm)):
     # Optimise and validate.
-    opt_and_check(spin=cdp.mol[0].res[res_index].spin[0], tm=tm, tm_index=tm_index)
+    opt_and_check(spin=cdp.mol[0].res[res_index].spin[0], tm=tm[tm_index])
 
     # Increment the residue index.
     res_index += 1
