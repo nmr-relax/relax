@@ -59,7 +59,7 @@ for i in range(len(vals)):
         # Loop over tm.
         for tm_index in range(len(tm)):
             # The spectral density values.
-            J = spectral_density_mf_orig(frq=frq, tm=tm[tm_index], heteronuc='15N')
+            J = spectral_density_mf_orig(frq=frq, tm=tm[tm_index], heteronuc='13C')
             
             # The relaxation data.
             Ri = relaxation_data(J, frq=frq, heteronuc='13C', rex=rex[rex_index] / (2.0 * pi * frq[i])**2, r=1.20e-10, csa=200e-6)
