@@ -112,7 +112,7 @@ def relaxation_data(J, frq=None, heteronuc='15N', rex=0.0, r=1.02e-10, csa=-172e
         Ri[i, 0] = Ri_prime[i, 0] = d * (3.0*J[i, 1] + J[i, 2] + 6.0*J[i, 4])  +  c * J[i, 1]
 
         # The R2.
-        Ri[i, 1] = Ri_prime[i, 1] = 0.5 * d * (4.0*J[i, 0] + 3.0*J[i, 1] + J[i, 2] + 6.0*J[i, 3] + 6.0*J[i, 4])  +  c/6.0 * (4.0*J[i, 0] + 3.0*J[i, 1])  +  rex * (2.0 * pi * omega[3])**2
+        Ri[i, 1] = Ri_prime[i, 1] = 0.5 * d * (4.0*J[i, 0] + 3.0*J[i, 1] + J[i, 2] + 6.0*J[i, 3] + 6.0*J[i, 4])  +  c/6.0 * (4.0*J[i, 0] + 3.0*J[i, 1])  +  rex * (omega[3])**2
 
         # The sigma NOE.
         Ri_prime[i, 2] = d * (6.0*J[i, 4] - J[i, 2])
