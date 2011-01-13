@@ -106,7 +106,7 @@ def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=N
         rex = 0.0
     rex_scaled = 'skip'
     if rex:
-        rex_scaled = rex * (2.0 * pi * spin.frq[0])**2
+        rex_scaled = rex / (2.0 * pi * spin.frq[0])**2
 
     # Select the spin.
     spin.select = True
