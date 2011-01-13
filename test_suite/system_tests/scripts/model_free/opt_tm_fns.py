@@ -77,8 +77,12 @@ def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=N
         s2f = 1.0
 
     # Default S2s value.
-    if 'S2s' in spin.params and s2s == None:
-        s2s = 1.0
+    if 'S2s' in spin.params:
+        if s2s == None:
+            s2s = 1.0
+    else:
+        if 'S2f' in spin.params:
+            s2s = s2 / s2f
 
     # Default te value.
     if 'te' in spin.params and te == None:
