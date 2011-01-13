@@ -1,0 +1,9 @@
+Polycarbonate   1     Bisphenol_A     1     C1    0.723081327571       0.0144616265514      # tm2 = {local_tm=2e-09; s2=0.2}
+Polycarbonate   2     Bisphenol_A     1     C1    0.171493776978       0.00342987553955     # tm2 = {local_tm=1e-08; s2=0.2}
+Polycarbonate   3     Bisphenol_A     1     C1    0.082159155484       0.00164318310968     # tm2 = {local_tm=2.1e-08; s2=0.2}
+Polycarbonate   4     Bisphenol_A     1     C1    2.89232531028        0.0578465062057      # tm2 = {local_tm=2e-09; s2=0.8}
+Polycarbonate   5     Bisphenol_A     1     C1    0.685975107911       0.0137195021582      # tm2 = {local_tm=1e-08; s2=0.8}
+Polycarbonate   6     Bisphenol_A     1     C1    0.328636621936       0.00657273243872     # tm2 = {local_tm=2.1e-08; s2=0.8}
+Polycarbonate   7     Bisphenol_A     1     C1    3.43463630596        0.0686927261192      # tm2 = {local_tm=2e-09; s2=0.95}
+Polycarbonate   8     Bisphenol_A     1     C1    0.814595440644       0.0162919088129      # tm2 = {local_tm=1e-08; s2=0.95}
+Polycarbonate   9     Bisphenol_A     1     C1    0.390255988549       0.00780511977098     # tm2 = {local_tm=2.1e-08; s2=0.95}
