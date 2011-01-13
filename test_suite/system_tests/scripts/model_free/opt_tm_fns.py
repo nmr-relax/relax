@@ -34,6 +34,7 @@ from status import Status; status = Status()
 # Initialise the interpreter.
 interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
 interpreter.populate_self()
+interpreter.on()
 
 
 def create_sequence(num_res):
