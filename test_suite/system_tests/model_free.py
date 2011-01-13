@@ -2439,8 +2439,6 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.s2f, None, msg=mesg)
 
         # S2s order parameter.
-        print s2s
-        print spin.s2s
         if s2s != None:
             self.assertAlmostEqual(spin.s2s, s2s, 5, msg=mesg)
         else:
@@ -2460,7 +2458,7 @@ class Mf(SystemTestCase):
 
         # ts correlation time.
         if type(ts) == float:
-            self.assertAlmostEqual(spin.ts / 1e-12, ts, 5, msg=mesg)
+            self.assertAlmostEqual(spin.ts / 1e-12, ts, 4, msg=mesg)
         elif ts == None:
             self.assertEqual(spin.ts, None, msg=mesg)
 
