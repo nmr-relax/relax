@@ -23,6 +23,7 @@
 """Functions for the local tm grid optimisation tests."""
 
 # Python module imports.
+from math import pi
 from os import sep
 from re import search
 
@@ -52,18 +53,60 @@ def create_sequence(num_res):
         interpreter.spin.create(spin_num=1, spin_name='C1', res_num=i+1, res_name='Bisphenol_A', mol_name='Polycarbonate')
 
 
-def opt_and_check(spin=None, tm=None, tm_index=None):
+def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=None, ts=None, rex=None):
     """Optimise the given model-free model, residue by residue.
 
     @keyword spin:      The spin container to validate.
     @type spin:         SpinContainer instance
     """
 
-    # Default values for certain parameters.
-    s2 = [1.0]
-    s2_index = 0
-    te = [0.0]
-    te_index = 0
+    # Precision for significance checking.
+    epsilon = 1e-7
+
+    # Default tm value.
+    tm_scaled = None
+    if 'local_tm' in spin.params and tm != None:
+        tm_scaled = tm * 1e9
+
+    # Default S2 value.
+    if 'S2' in spin.params and s2 == None:
+        s2 = 1.0
+
+    # Default S2f value.
+    if 'S2f' in spin.params and s2f == None:
+        s2f = 1.0
+
+    # Default S2s value.
+    if 'S2s' in spin.params and s2s == None:
+        s2s = 1.0
+
+    # Default te value.
+    if 'te' in spin.params and te == None:
+        te = 0.0
+    te_scaled = 'skip'
+    if te and abs(s2 - 1.0) > epsilon:
+        te_scaled = te * 1e9
+
+    # Default tf value.
+    if 'tf' in spin.params and tf == None:
+        tf = 0.0
+    tf_scaled = 'skip'
+    if tf and abs(s2f - 1.0) > epsilon:
+        tf_scaled = tf * 1e9
+
+    # Default ts value.
+    if 'ts' in spin.params and ts == None:
+        ts = 0.0
+    ts_scaled = 'skip'
+    if ts and abs(s2/s2f - 1.0) > epsilon:
+        ts_scaled = ts * 1e9
+
+    # Default Rex value.
+    if 'rex' in spin.params and rex == None:
+        rex = 0.0
+    rex_scaled = 'skip'
+    if rex:
+        rex_scaled = rex * (2.0 * pi * spin.frq[0])**2
 
     # Select the spin.
     spin.select = True
@@ -72,34 +115,31 @@ def opt_and_check(spin=None, tm=None, tm_index=None):
     if search('^m', cdp._model):
         if hasattr(cdp, 'diff_tensor'):
             interpreter.diffusion_tensor.delete()
-        interpreter.diffusion_tensor.init(tm[tm_index])
+        interpreter.diffusion_tensor.init(tm)
 
     # Set up the initial model-free parameter values (bypass the grid search for speed).
     if search('^t', cdp._model):
-        spin.local_tm = tm[tm_index] + 1e-11
-    if cdp._model in ['tm2', 'm1', 'm2']:
-        spin.s2 = 0.98
-    if cdp._model in ['tm2', 'm2']:
-        spin.te = 1e-12
-    if cdp._model in ['m3']:
-        spin.rex = 0.1 / (2.0 * pi * spin.frq[0])**2
+        spin.local_tm = tm + 1e-11
+    if 'S2' in spin.params:
+        spin.s2 = s2 - 0.02
+    if 'S2f' in spin.params:
+        spin.s2f = s2f - 0.02
+    if 'S2s' in spin.params:
+        spin.s2s = s2s - 0.02
+    if 'te' in spin.params:
+        spin.te = te + 1e-12
+    if 'tf' in spin.params:
+        spin.tf = tf + 1e-12
+    if 'ts' in spin.params:
+        spin.ts = ts + 1e-12
+    if 'rex' in spin.params:
+        spin.rex = rex + 0.1 / (2.0 * pi * spin.frq[0])**2
 
     # Minimise.
     interpreter.minimise('newton', 'gmw', 'back', constraints=False)
 
     # Check the values.
-    if cdp._model == 'm0':
-        cdp._value_test(spin, chi2=0.0)
-    elif cdp._model == 'm1':
-        cdp._value_test(spin, s2=s2[s2_index], chi2=0.0)
-    elif cdp._model == 'm2':
-        cdp._value_test(spin, s2=s2[s2_index], te=te[te_index]*1e12, chi2=0.0)
-    elif cdp._model == 'm3':
-        cdp._value_test(spin, s2=s2[s2_index], rex=0.0, chi2=0.0)
-    elif cdp._model == 'm4':
-        cdp._value_test(spin, s2=s2[s2_index], te=te[te_index]*1e12, rex=0.0, chi2=0.0)
-    elif cdp._model == 'tm2':
-        cdp._value_test(spin, local_tm=tm[tm_index]*1e9, s2=s2[s2_index], te=te[te_index]*1e12, chi2=0.0)
+    cdp._value_test(spin, local_tm=tm_scaled, s2=s2, s2f=s2f, s2s=s2s, te=te_scaled, tf=tf_scaled, ts=ts_scaled, rex=rex_scaled, chi2=0.0)
 
     # Deselect the spin.
     spin.select = False
