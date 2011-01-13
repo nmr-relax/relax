@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-"""Set up the data pipe for testing optimisation against tm3 relaxation data."""
+"""Set up the data pipe for testing optimisation against tm4 relaxation data."""
 
 # relax module imports.
 from opt_tm_fns import create_sequence, opt_and_check, setup_data
@@ -36,7 +36,7 @@ rex = [0.5, 4]
 create_sequence(len(tm)*len(s2)*len(rex))
 
 # Set up the data.
-setup_data(dir='tm3_grid')
+setup_data(dir='tm4_grid')
 
 # Residue index.
 res_index = 0
