@@ -38,7 +38,7 @@ from back_calc import relaxation_data, spectral_density_mf_ext
 tm = [2e-9, 10e-9, 21e-9]
 s2 = [0.2, 0.8, 0.95]
 s2f = [0.7, 0.8]
-tf = [2e-12, 40e-12, 1e-9]
+ts = [2e-12, 40e-12, 1e-9]
 
 # The proton frequencies.
 vals = [400, 500, 600, 700, 800, 900, 1000]
@@ -55,8 +55,8 @@ for i in range(len(vals)):
     # Residue number.
     res_num = 1
 
-    # Loop over tf.
-    for tf_index in range(len(tf)):
+    # Loop over ts.
+    for ts_index in range(len(ts)):
         # Loop over s2f.
         for s2f_index in range(len(s2f)):
             # Loop over s2.
@@ -64,13 +64,13 @@ for i in range(len(vals)):
                 # Loop over tm.
                 for tm_index in range(len(tm)):
                     # The spectral density values.
-                    J = spectral_density_mf_ext(frq=frq, tm=tm[tm_index], s2=s2[s2_index], s2f=s2f[s2f_index], tf=tf[tf_index], heteronuc='13C')
+                    J = spectral_density_mf_ext(frq=frq, tm=tm[tm_index], s2=s2[s2_index], s2f=s2f[s2f_index], ts=ts[ts_index], heteronuc='13C')
                     
                     # The relaxation data.
                     Ri = relaxation_data(J, frq=frq, heteronuc='13C', r=1.20e-10, csa=200e-6)
 
                     # The model info.
-                    info = "# tm5 = {local_tm=%s; s2=%s; s2f=%s; tf=%s}" % (tm[tm_index], s2f[s2f_index], s2[s2_index], tf[tf_index])
+                    info = "# tm5 = {local_tm=%s; s2=%s; s2f=%s; ts=%s}" % (tm[tm_index], s2f[s2f_index], s2[s2_index], ts[ts_index])
 
                     # Write out the values.
                     file_r1.write('%-15s %-5s %-15s %-5s %-5s %-20s %-20s %s\n' %  ('Polycarbonate', res_num, 'Bisphenol_A', '1', 'C1', Ri[i, 0], Ri[i, 0] * 0.02, info))
