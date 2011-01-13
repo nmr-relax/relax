@@ -71,7 +71,7 @@ for i in range(len(vals)):
                         J = spectral_density_mf_ext(frq=frq, tm=tm[tm_index], s2=s2[s2_index], s2f=s2f[s2f_index], tf=tf[tf_index], heteronuc='13C')
                         
                         # The relaxation data.
-                        Ri = relaxation_data(J, frq=frq, heteronuc='13C', rex=rex[rex_index] / (2.0 * pi * frq[i])**2, r=1.20e-10, csa=200e-6)
+                        Ri = relaxation_data(J, frq=frq, heteronuc='13C', rex=rex[rex_index] / (2.0 * pi * frq[0])**2, r=1.20e-10, csa=200e-6)
 
                         # The model info.
                         info = "# tm7 = {local_tm=%s; s2=%s; s2f=%s; tf=%s; rex=%s}" % (tm[tm_index], s2f[s2f_index], s2[s2_index], tf[tf_index], rex[rex_index])
