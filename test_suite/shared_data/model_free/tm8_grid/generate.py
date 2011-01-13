@@ -36,7 +36,7 @@ from back_calc import relaxation_data, spectral_density_mf_ext
 
 
 # The model-free parameters.
-tm = [2e-9, 10e-9]
+tm = [10e-9]
 s2 = [0.2, 0.8]
 s2f = [0.7, 0.8]
 tf = [2e-12, 40e-12]
