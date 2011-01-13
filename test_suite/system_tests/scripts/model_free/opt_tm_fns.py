@@ -70,8 +70,8 @@ def opt_and_check(spin=None, tm=None, tm_index=None):
     # Set up the diffusion tensor.
     if search('^m', cdp._model):
         if hasattr(cdp, 'diffusion_tensor'):
-            diffusion_tensor.delete()
-        diffusion_tensor.init(tm[tm_index])
+            interpreter.diffusion_tensor.delete()
+        interpreter.diffusion_tensor.init(tm[tm_index])
 
     # Set up the initial model-free parameter values (bypass the grid search for speed).
     if search('^t', cdp._model):
