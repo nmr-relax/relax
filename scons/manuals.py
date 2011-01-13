@@ -93,7 +93,7 @@ def compile_api_manual_html(target, source, env):
 
     # exclude
     #   The list of objects to exclude.
-    exclude = ['minfx']
+    exclude = ['sample_scripts', 'scripts']
 
     # output
     #   The type of output that should be generated.  Should be one

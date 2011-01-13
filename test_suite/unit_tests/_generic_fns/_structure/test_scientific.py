@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,26 +21,44 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import path, sep
 import sys
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns.mol_res_spin import Selection
 from generic_fns.structure.scientific import Scientific_data
 from relax_io import file_root
+from status import Status; status = Status()
 
 
 class Test_scientific(TestCase):
     """Unit tests for the functions of the 'generic_fns.structure.scientific' module."""
 
+    def __init__(self, methodName='runTest'):
+        """Skip scientific Python tests if not installed.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Missing module.
+        if not dep_check.scientific_module:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Scientific Python', 'unit'])
+
+        # Execute the base class method.
+        super(Test_scientific, self).__init__(methodName)
+
+
+
     def setUp(self):
         """Set up for all the Scientific Python PDB structural object unit tests."""
 
         # The path to a PDB file.
-        self.test_pdb_path = __main__.install_path+sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'Ap4Aase_res1-12.pdb'
+        self.test_pdb_path = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'Ap4Aase_res1-12.pdb'
         expanded = path.split(self.test_pdb_path)
         self.test_pdb_dir = expanded[0]
         self.test_pdb_file_name = expanded[1]

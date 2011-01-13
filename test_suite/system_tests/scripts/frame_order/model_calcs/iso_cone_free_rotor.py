@@ -1,7 +1,6 @@
 # Script for checking the free rotor isotropic cone frame order model.
 
 # Python module imports.
-import __main__
 from numpy import array, float64
 from numpy.linalg import norm
 from os import sep
@@ -10,6 +9,7 @@ from os import sep
 from data import Relax_data_store; ds = Relax_data_store()
 from maths_fns.coord_transform import cartesian_to_spherical
 from maths_fns.order_parameters import iso_cone_theta_to_S
+from status import Status; status = Status()
 
 
 def get_angle(index, incs=None, deg=False):
@@ -36,7 +36,7 @@ vect_z = array([2, 1, 3], float64)
 r, theta, phi = cartesian_to_spherical(vect_z)
 
 # Load the tensors.
-execfile(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'iso_cone_free_rotor_axis2_1_3_tensors_beta78.75.py')
+script(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'iso_cone_free_rotor_axis2_1_3_tensors_beta78_75.py')
 
 # Data stores.
 ds.chi2 = []

@@ -1,11 +1,11 @@
 # Script for checking the free rotor frame order model.
 
 # Python module imports.
-import __main__
 from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 def get_angle(index, incs=None, deg=False):
@@ -28,7 +28,7 @@ def get_angle(index, incs=None, deg=False):
 INC = 18
 
 # Load the tensors.
-execfile(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'rotor_in_frame_tensors_beta22.5.py')
+script(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'rotor_in_frame_tensors_beta22_5.py')
 
 # Data stores.
 ds.chi2 = []

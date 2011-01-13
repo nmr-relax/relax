@@ -1,18 +1,18 @@
 # Script for determining populations for lactose conformations using RDCs and PCSs.
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
 # relax imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from specific_fns.setup import n_state_model_obj
+from status import Status; status = Status()
 
 
 # Path of the files.
-str_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
-data_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'
+str_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'
 
 # Create the data pipe.
 pipe.create('lactose', 'N-state')

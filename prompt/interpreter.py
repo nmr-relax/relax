@@ -27,12 +27,13 @@
 import dep_check
 
 # Python module imports.
-import __main__
 from code import InteractiveConsole, softspace
-from os import F_OK, access
+from os import F_OK, access, chdir, getcwd, path
 import platform
+from re import search
 if dep_check.readline_module:
     import readline
+import runpy
 import sys
 
 # Python modules accessible on the command prompt.
@@ -48,6 +49,7 @@ from help import _Helper, _Helper_python
 from info import Info_box
 if dep_check.readline_module:
     from tab_completion import Tab_completion
+from status import Status; status = Status()
 
 # User functions.
 from angles import Angles
@@ -337,6 +339,47 @@ class _Exit:
         sys.exit()
 
 
+
+def exec_script(name, globals):
+    """Execute the script."""
+
+    # Execution lock.
+    status.exec_lock.acquire('script UI')
+
+    # The module path.
+    head, tail = path.split(name)
+    script_path = path.join(getcwd(), head)
+    sys.path.append(script_path)
+
+    # Switch directories for nested scripting.
+    if head:
+        orig_dir = getcwd()
+        chdir(head)
+
+    # The module name.
+    module, ext = path.splitext(tail)
+
+    # Check if the script name is ok.
+    if search('\.', module):
+        raise RelaxError("The relax script must not contain the '.' character (except before the extension '*.py').")
+    if ext != '.py':
+        raise RelaxError("The script must have the extension *.py.")
+
+    # Execute the module.
+    try:
+        runpy.run_module(module, globals)
+    finally:
+        # Switch back to the original working directory.
+        if head:
+            chdir(orig_dir)
+
+        # Remove the script path.
+        sys.path.pop(sys.path.index(script_path))
+
+    # Unlock execution if needed.
+    status.exec_lock.release()
+
+
 def interact_prompt(self, intro=None, local={}):
     """Replacement function for 'code.InteractiveConsole.interact'.
 
@@ -418,23 +461,27 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
                 sys.stdout.write(instance.__str__())
                 sys.stdout.write("\n")
                 return
+
         sys.stdout.write("script = " + repr(script_file) + "\n")
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         sys.stdout.write(file.read())
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         file.close()
 
-    # The execution status.
-    status = True
+    # The execution flag.
+    exec_pass = True
 
     # Execute the script.
     try:
-        execfile(script_file, local)
+        exec_script(script_file, local)
 
     # Catch ctrl-C.
     except KeyboardInterrupt:
+        # Unlock execution.
+        status.exec_lock.release()
+
         # Throw the error.
-        if __main__.debug:
+        if status.debug:
             raise
 
         # Be nicer to the user.
@@ -442,10 +489,13 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
             sys.stderr.write("\nScript execution cancelled.\n")
 
         # The script failed.
-        status = False
+        exec_pass = False
 
     # Catch the RelaxErrors.
     except AllRelaxErrors, instance:
+        # Unlock execution.
+        status.exec_lock.release()
+
         # Throw the error.
         if raise_relax_error:
             raise
@@ -453,7 +503,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         # Nice output for the user.
         else:
             # Print the scary traceback normally hidden from the user.
-            if __main__.debug:
+            if status.debug:
                 self.showtraceback()
 
             # Print the RelaxError message line.
@@ -461,10 +511,14 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
                 sys.stderr.write(instance.__str__())
 
             # The script failed.
-            status = False
+            exec_pass = False
 
     # Throw all other errors.
     except:
+        # Unlock execution.
+        status.exec_lock.release()
+
+        # Raise the error.
         raise
 
     # Add an empty line to make exiting relax look better.
@@ -475,8 +529,8 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
     if quit:
         sys.exit()
 
-    # Return the status.
-    return status
+    # Return the execution flag.
+    return exec_pass
 
 
 def prompt(intro=None, local=None):

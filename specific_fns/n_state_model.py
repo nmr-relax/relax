@@ -569,7 +569,7 @@ class N_state_model(API_base, API_common):
 
         # Loop over the structures.
         i = 0
-        while 1:
+        while True:
             # End condition.
             if i == cdp.N - 1:
                 break
@@ -2497,7 +2497,7 @@ class N_state_model(API_base, API_common):
         """Return the array of simulation parameter values.
 
         @param model_info:  The global model index originating from model_loop().
-        @type data_id:      int
+        @type model_info:   int
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
         @return:            The array of simulation parameter values.

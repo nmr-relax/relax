@@ -31,6 +31,7 @@ from os import sep
 # relax module imports.
 from prompt.interpreter import Interpreter
 import generic_fns.structure.main
+from status import Status; status = Status()
 
 
 
@@ -68,6 +69,9 @@ class NOE_calc:
         @type heteronuc_pdb:    str
         """
 
+        # Execution lock.
+        status.exec_lock.acquire('auto noe')
+
         # Store the args.
         self.pipe_name = pipe_name
         self.noe_sat = noe_sat
@@ -98,6 +102,9 @@ class NOE_calc:
 
         # Execute.
         self.run()
+
+        # Unlock execution.
+        status.exec_lock.release()
 
 
     def run(self):

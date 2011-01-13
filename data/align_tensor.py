@@ -802,7 +802,7 @@ def calc_rotation(A):
 
     # Switch from the left handed to right handed universe if required.
     if abs(det(rot_perm) - 1.0) > 1e-7:
-        rot_perm[:,0] = -rot_perm[:,0]
+        rot_perm[:, 0] = -rot_perm[:, 0]
 
     # Return the permuted rotation matrix.
     return rot_perm

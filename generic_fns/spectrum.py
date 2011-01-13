@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2007-2009 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2007-2011 Edward d'Auvergne                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -342,55 +342,49 @@ def __errors_height_no_repl():
 def __errors_repl(verbosity=0):
     """Calculate the errors for peak intensities from replicated spectra.
 
-    @keyword verbosity: The amount of information to print.  The higher the value, the greater the
-                        verbosity.
+    @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:    int
     """
 
     # replicated spectra.
-    repl = [False] * len(cdp.spectrum_ids)
+    repl = {}
     for i in xrange(len(cdp.replicates)):
         for j in xrange(len(cdp.replicates[i])):
-            repl[cdp.spectrum_ids.index(cdp.replicates[i][j])] = True
+            repl[cdp.replicates[i][j]] = True
 
     # Are all spectra replicated?
-    all_repl = not (False in repl)
-    if all_repl:
+    if len(repl.keys()) == len(cdp.spectrum_ids):
+        all_repl = True
         print("All spectra replicated:  Yes.")
     else:
+        all_repl = False
         print("All spectra replicated:  No.")
-
 
     # Test if the standard deviation has already been calculated.
     if hasattr(cdp, 'sigma_I'):
         raise RelaxError("The peak intensity standard deviation of all spectra has already been calculated.")
 
     # Initialise.
-    cdp.sigma_I = [0.0] * len(cdp.spectrum_ids)
-    cdp.var_I = [0.0] * len(cdp.spectrum_ids)
+    cdp.sigma_I = {}
+    cdp.var_I = {}
 
     # Loop over the spectra.
-    for i in xrange(len(cdp.spectrum_ids)):
+    for id in cdp.spectrum_ids:
         # Skip non-replicated spectra.
-        if not repl[i]:
+        if not repl.has_key(id):
             continue
 
         # Skip replicated spectra which already have been used.
-        if cdp.var_I[i] != 0.0:
+        if cdp.var_I.has_key(id) and cdp.var_I[id] != 0.0:
             continue
 
         # The replicated spectra.
         for j in xrange(len(cdp.replicates)):
-            if cdp.spectrum_ids[i] in cdp.replicates[j]:
+            if id in cdp.replicates[j]:
                 spectra = cdp.replicates[j]
 
         # Number of spectra.
         num_spectra = len(spectra)
-
-        # Indices of the spectra.
-        indices = [None] * num_spectra
-        for j in xrange(num_spectra):
-            indices[j] = cdp.spectrum_ids.index(spectra[j])
 
         # Print out.
         print(("\nReplicated spectra:  " + repr(spectra)))
@@ -409,16 +403,24 @@ def __errors_repl(verbosity=0):
                 spin.select = False
                 continue
 
+            # Missing data.
+            missing = False
+            for j in xrange(num_spectra):
+                if not spin.intensities.has_key(spectra[j]):
+                    missing = True
+            if missing:
+                continue
+
             # Average intensity.
             ave_intensity = 0.0
             for j in xrange(num_spectra):
-                ave_intensity = ave_intensity + spin.intensities[indices[j]]
+                ave_intensity = ave_intensity + spin.intensities[spectra[j]]
             ave_intensity = ave_intensity / num_spectra
 
             # Sum of squared errors.
             SSE = 0.0
             for j in xrange(num_spectra):
-                SSE = SSE + (spin.intensities[indices[j]] - ave_intensity) ** 2
+                SSE = SSE + (spin.intensities[spectra[j]] - ave_intensity) ** 2
 
             # Variance.
             #
@@ -433,7 +435,9 @@ def __errors_repl(verbosity=0):
                 print(("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I))))
 
             # Sum of variances (for average).
-            cdp.var_I[indices[0]] = cdp.var_I[indices[0]] + var_I
+            if not cdp.var_I.has_key(id):
+                cdp.var_I[id] = 0.0
+            cdp.var_I[id] = cdp.var_I[id] + var_I
             count = count + 1
 
         # No data catch.
@@ -441,14 +445,14 @@ def __errors_repl(verbosity=0):
             raise RelaxError("No data is present, unable to calculate errors from replicated spectra.")
 
         # Average variance.
-        cdp.var_I[indices[0]] = cdp.var_I[indices[0]] / float(count)
+        cdp.var_I[id] = cdp.var_I[id] / float(count)
 
         # Set all spectra variances.
-        for j in xrange(num_spectra):
-            cdp.var_I[indices[j]] = cdp.var_I[indices[0]]
+        for j in xrange(1, num_spectra):
+            cdp.var_I[spectra[j]] = cdp.var_I[spectra[0]]
 
         # Print out.
-        print(("Standard deviation:  %s" % sqrt(cdp.var_I[indices[0]])))
+        print(("Standard deviation:  %s" % sqrt(cdp.var_I[id])))
 
 
     # Average across all spectra if there are time points with a single spectrum.
@@ -461,29 +465,29 @@ def __errors_repl(verbosity=0):
         num_dups = 0
 
         # Loop over all time points.
-        for i in xrange(len(cdp.spectrum_ids)):
+        for id in cdp.var_I.keys():
             # Single spectrum (or extraordinarily accurate NMR spectra!).
-            if cdp.var_I[i] == 0.0:
+            if cdp.var_I[id] == 0.0:
                 continue
 
             # Sum and count.
-            var_I = var_I + cdp.var_I[i]
+            var_I = var_I + cdp.var_I[id]
             num_dups = num_dups + 1
 
         # Average value.
         var_I = var_I / float(num_dups)
 
         # Assign the average value to all time points.
-        for i in xrange(len(cdp.spectrum_ids)):
-            cdp.var_I[i] = var_I
+        for id in cdp.spectrum_ids:
+            cdp.var_I[id] = var_I
 
         # Print out.
         print(("Standard deviation for all spins:  " + repr(sqrt(var_I))))
 
     # Loop over the spectra.
-    for i in xrange(len(cdp.spectrum_ids)):
+    for id in cdp.var_I.keys():
         # Create the standard deviation data structure.
-        cdp.sigma_I[i] = sqrt(cdp.var_I[i])
+        cdp.sigma_I[id] = sqrt(cdp.var_I[id])
 
     # Set the spin specific errors.
     for spin in spin_loop():
@@ -517,7 +521,8 @@ def __errors_volume_no_repl():
             raise RelaxError("The total number of points used in the volume integration has not been specified for spin '%s'." % spin_id)
 
         # Set the error to the RMSD multiplied by the square root of the total number of points.
-        spin.intensity_err = spin.baseplane_rmsd * sqrt(spin.N)
+        for key in spin.intensity.keys():
+            spin.intensity_err[key] = spin.baseplane_rmsd[key] * sqrt(spin.N)
 
 
 def autodetect_format(file_data):
@@ -571,9 +576,6 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     if spectrum_id not in cdp.spectrum_ids:
         raise RelaxError("The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id)
 
-    # The spectrum id index.
-    spect_index = cdp.spectrum_ids.index(spectrum_id)
-
     # The scaling by NC_proc.
     if hasattr(cdp, 'ncproc') and spectrum_id in cdp.ncproc:
         scale = 1.0 / 2**cdp.ncproc[spectrum_id]
@@ -588,12 +590,10 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
 
         # Initialise or update the baseplane_rmsd data structure as necessary.
         if not hasattr(spin, 'baseplane_rmsd'):
-            spin.baseplane_rmsd = [None] * len(cdp.spectrum_ids)
-        elif len(spin.baseplane_rmsd) < len(cdp.spectrum_ids):
-            spin.baseplane_rmsd.append([None] * (len(cdp.spectrum_ids) - len(spin.baseplane_rmsd)))
+            spin.baseplane_rmsd = {}
 
         # Set the error.
-        spin.baseplane_rmsd[spect_index] = float(error) * scale
+        spin.baseplane_rmsd[spectrum_id] = float(error) * scale
 
 
 def error_analysis():
@@ -640,7 +640,9 @@ def error_analysis():
         if hasattr(cdp, 'replicates'):
             # Print out.
             print("Replicated spectra:  Yes.")
-            raise RelaxImplementError
+
+            # Set the errors.
+            __errors_repl()
 
         # No replicated spectra.
         else:
@@ -802,9 +804,13 @@ def intensity_sparky(file_data=None, int_col=None):
     @rtype:             list of lists of str, str, str, float
     """
 
-    # Assume the Sparky file has two header lines!
-    num = 2
-    print(("Number of header lines found: " + repr(num)))
+    # The number of header lines.
+    num = 0
+    if file_data[0][0] == 'Assignment':
+        num = num + 1
+    if file_data[1] == '':
+        num = num + 1
+    print("Number of header lines found: %s" % num)
 
     # Remove the header.
     file_data = file_data[num:]
@@ -821,36 +827,36 @@ def intensity_sparky(file_data=None, int_col=None):
         h_name = ''
         x_name = ''
         intensity = ''
-        if line[0]!='?-?':
-            assignment = split('([A-Z]+)', line[0])
-            if assignment[0] == '':
-                assignment = assignment[1:]
-            if assignment[-1] == '':
-                assignment = assignment[:-1]
-            try:
-                int(assignment[0])
-            except ValueError:
-                assignment = assignment[1:]
 
-            # The residue number.
-            try:
-                res_num = int(assignment[0])
-            except:
-                raise RelaxError("Improperly formatted Sparky file.")
+        # Skip non-assigned peaks.
+        if line[0] == '?-?':
+            continue
 
-            # Nuclei names.
-            x_name = assignment[1]
-            h_name = assignment[3]
+        # First split by the 2D separator.
+        x_assign, h_assign = split('-', line[0])
 
-            # The peak intensity column.
-            if int_col == None:
-                int_col = 3
+        # The proton info.
+        h_name = split('([A-Z]+)', h_assign)[-2]
 
-            # Intensity.
-            try:
-                intensity = float(line[int_col])
-            except ValueError:
-                raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
+        # The heteronucleus info.
+        x_row = split('([A-Z]+)', x_assign)
+        x_name = x_row[-2]
+
+        # The residue number.
+        try:
+            res_num = int(x_row[-3])
+        except:
+            raise RelaxError("Improperly formatted Sparky file.")
+
+        # The peak intensity column.
+        if int_col == None:
+            int_col = 3
+
+        # Intensity.
+        try:
+            intensity = float(line[int_col])
+        except ValueError:
+            raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
         # Generate the spin_id.
         spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
@@ -983,39 +989,29 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type dir:              str
     @keyword spectrum_id:   The spectrum identification string.
     @type spectrum_id:      str
-    @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
-                            file.
+    @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity file.
     @type heteronuc:        str
     @keyword proton:        The name of the proton as specified in the peak intensity file.
     @type proton:           str
-    @keyword int_col:       The column containing the peak intensity data (used by the generic
-                            intensity file format).
+    @keyword int_col:       The column containing the peak intensity data (used by the generic intensity file format).
     @type int_col:          int
     @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
     @type int_method:       str
-    @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity
-                            file format).  If supplied, the mol_name_col, res_name_col, res_num_col,
-                            spin_name_col, and spin_num_col arguments must be none.
+    @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity file format).  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
-    @keyword mol_name_col:  The column containing the molecule name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword mol_name_col:  The column containing the molecule name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword res_name_col:  The column containing the residue name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information (used by the
-                            generic intensity file format).  If supplied, spin_id_col must be None.
+    @keyword res_num_col:   The column containing the residue number information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword spin_name_col: The column containing the spin name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
+    @keyword spin_num_col:  The column containing the spin number information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type spin_num_col:     int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
-                            spins.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
     @type spin_id:          None or str
     @keyword ncproc:        The Bruker ncproc binary intensity scaling factor.
     @type ncproc:           int or None
@@ -1120,14 +1116,14 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Initialise.
         if not hasattr(spin, 'intensities'):
-            spin.intensities = []
+            spin.intensities = {}
 
         # Intensity scaling.
         if ncproc != None:
             intensity = intensity / float(2**ncproc)
 
         # Add the data.
-        spin.intensities.append(intensity)
+        spin.intensities[spectrum_id] = intensity
 
 
 def replicated(spectrum_ids=None):

@@ -1,7 +1,6 @@
 # Script for checking the free rotor pseudo-ellipse frame order model.
 
 # Python module imports.
-import __main__
 from numpy import array, float64
 from numpy.linalg import norm
 from os import sep
@@ -9,6 +8,7 @@ from os import sep
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from maths_fns.rotation_matrix import R_to_euler_zyz
+from status import Status; status = Status()
 
 
 def get_angle(index, incs=None, deg=False):
@@ -34,7 +34,7 @@ EIG_FRAME = array([[ 2, -1,  2],
                    [-1,  2,  2]], float64) / 3.0
 a, b, g = R_to_euler_zyz(EIG_FRAME)
 
-files = ['pseudo_ellipse_free_rotor_in_frame_theta_y_tensors_beta0.0.py', 'pseudo_ellipse_free_rotor_out_of_frame_theta_x_tensors_beta22.5.py']
+files = ['pseudo_ellipse_free_rotor_in_frame_theta_y_tensors_beta0_0.py', 'pseudo_ellipse_free_rotor_out_of_frame_theta_x_tensors_beta22_5.py']
 params = ['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'cone_theta_x', 'cone_theta_y']
 ave_pos_alpha  = [0.0,              0.0                       ]
 ave_pos_beta   = [0.0,              22.5 / 360.0 * 2.0 * pi   ]
@@ -54,7 +54,7 @@ for round in range(len(files)):
     reset()
 
     # Load the tensors.
-    execfile(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+files[round])
+    script(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+files[round])
 
     # New set of chi2 values.
     chi2.append([])

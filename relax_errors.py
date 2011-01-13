@@ -25,7 +25,6 @@
 
 
 # Python module imports.
-import __main__
 try:
     from bz2 import BZ2File
     bz2 = True
@@ -36,6 +35,9 @@ from re import match
 from sys import stderr
 import time
 from types import ClassType
+
+# relax module imports
+from status import Status; status = Status()
 
 
 # Text variables.
@@ -100,7 +102,7 @@ class BaseError(Exception):
         """Modify the behaviour of the error system."""
 
         # Save the state if debugging is turned on.
-        if __main__.debug:
+        if status.debug:
             save_state()
 
         # Modify the error message to include 'RelaxError' at the start.

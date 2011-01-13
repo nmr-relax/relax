@@ -23,6 +23,10 @@
 # Module docstring.
 """Module containing the status singleton object."""
 
+# Python module imports.
+from re import search
+import sys
+from threading import Lock
 
 
 class Status(object):
@@ -31,8 +35,30 @@ class Status(object):
     # Class variable for storing the class instance (for the singleton).
     _instance = None
 
-    def __init__(self):
+    def __new__(self, *args, **kargs):
+        """Replacement method for implementing the singleton design pattern."""
+
+        # First instantiation.
+        if self._instance is None:
+            # Instantiate.
+            self._instance = object.__new__(self, *args, **kargs)
+
+            # Initialise some variables.
+            self._instance.debug = False
+            self._instance.install_path = sys.path[0]
+
+            # Set up the singleton.
+            self._instance._setup()
+
+        # Already instantiated, so return the instance.
+        return self._instance
+
+
+    def _setup(self):
         """Initialise all the status data structures."""
+
+        # Execution lock object.
+        self.exec_lock = Exec_lock()
 
         # The Monte Carlo simulation status.
         self.mc_number = None
@@ -46,18 +72,147 @@ class Status(object):
         self.dAuvergne_protocol.current_model = None     # The current model-free model.
         self.dAuvergne_protocol.convergence = False      # The convergence of the global model.
 
-
-    def __new__(self, *args, **kargs):
-        """Replacement method for implementing the singleton design pattern."""
-
-        # First instantiation.
-        if self._instance is None:
-            # Instantiate.
-            self._instance = object.__new__(self, *args, **kargs)
-
-        # Already instantiated, so return the instance.
-        return self._instance
+        # A structure for skipped system and unit tests.
+        self.skipped_tests = []
+        """The skipped tests list.  Each element should be a list of the test case name, the missing Python module, and the name of the test suite category (i.e. 'system' or 'unit')."""
 
 
 class Status_container:
     """The generic empty container for the status data."""
+
+
+
+class Exec_lock:
+    """A type of locking object for locking execution of relax."""
+
+    def __init__(self, debug=False):
+        """Set up the lock-like object."""
+
+        # Store the arg.
+        self.debug = debug
+
+        # Init a threading.Lock object.
+        self._lock = Lock()
+
+        # The name of the locker.
+        self._name = None
+
+        # Script nesting level.
+        self._script_nest = 0
+
+        # Auto-analysis from script launch.
+        self._auto_from_script = False
+
+        # Debugging.
+        if self.debug:
+            self.log = open('lock.log', 'w')
+
+
+    def acquire(self, name):
+        """Simulate the Lock.acquire() mechanism.
+
+        @param name:    The name of the locking code.
+        @type name:     str
+        """
+
+        # Do not acquire if lunching a script from a script.
+        if name == 'script UI' and self._name == 'script UI' and self.locked():
+            # Increment the nesting counter.
+            self._script_nest += 1
+
+            # Debugging.
+            if self.debug:
+                self.log.write("Nested by %s (to level %s)\n" % (name, self._script_nest))
+                self.log.flush()
+
+            # Return without doing anything.
+            return
+
+        # Skip locking if an auto-analysis is called from a script.
+        if self.locked() and self._name == 'script UI' and search('^auto', name):
+            # Debugging.
+            if self.debug:
+                self.log.write("Skipped unlocking of '%s' lock by '%s'\n" % (self._name, name))
+                self.log.flush()
+
+            # Switch the flag.
+            self._auto_from_script = True
+
+            # Return without doing anything.
+            return
+
+        # Store the new name.
+        self._name = name
+
+        # Debugging.
+        if self.debug:
+            self.log.write("Acquired by %s\n" % self._name)
+            self.log.flush()
+            return
+
+        # Acquire the real lock.
+        return self._lock.acquire()
+
+
+    def locked(self):
+        """Simulate the Lock.locked() mechanism."""
+
+        # Debugging (pseudo-locking based on _name).
+        if self.debug:
+            if self._name:
+                return True
+            else:
+                return False
+
+        # Call the real method.
+        return self._lock.locked()
+
+
+    def release(self):
+        """Simulate the Lock.release() mechanism."""
+
+        # Nested scripting.
+        if self._script_nest:
+            # Debugging.
+            if self.debug:
+                self.log.write("Script termination, nest decrement (%s -> %s)\n" % (self._script_nest, self._script_nest-1))
+                self.log.flush()
+
+            # Decrement.
+            self._script_nest -= 1
+
+            # Return without releasing the lock.
+            return
+
+        # Auto-analysis launched from script.
+        if self._auto_from_script:
+            # Debugging.
+            if self.debug:
+                self.log.write("Auto-analysis launched from script, skipping release.\n")
+                self.log.flush()
+
+            # Unset the flag.
+            self._auto_from_script = False
+
+            # Return without releasing the lock.
+            return
+
+        # Reset the name.
+        self._name = None
+
+        # Debugging.
+        if self.debug:
+            # Main text.
+            text = 'Release'
+
+            # Test suite info.
+            if hasattr(self, 'test_name'):
+                text = text + 'd by %s' % self.test_name
+
+            # Write out, flush, and exit the method.
+            self.log.write("%s\n\n" % text)
+            self.log.flush()
+            return
+
+        # Release the real lock.
+        return self._lock.release()

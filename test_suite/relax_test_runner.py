@@ -28,6 +28,9 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+# relax module imports.
+from status import Status; status = Status()
+
 
 class _RelaxTestResult(_TextTestResult):
     """A replacement for the _TextTestResult class used by the normal TextTestRunner.
@@ -50,6 +53,9 @@ class _RelaxTestResult(_TextTestResult):
         self.capt = StringIO()
         sys.stdout = self.capt
         sys.stderr = self.capt
+
+        # Place the test name in the status object.
+        status.exec_lock.test_name = str(test)
 
         # Execute the normal startTest method.
         _TextTestResult.startTest(self, test)

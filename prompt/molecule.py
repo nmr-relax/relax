@@ -91,7 +91,7 @@ class Molecule(User_fn_class):
         copy_molecule(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
 
-    def create(self, mol_name=None):
+    def create(self, mol_name=None, type=None):
         """Function for creating a new molecule.
 
         Keyword Arguments
@@ -99,12 +99,16 @@ class Molecule(User_fn_class):
 
         mol_name:  The name of the molecule.
 
+        type:  The type of molecule.
+
 
         Description
         ~~~~~~~~~~~
 
         This function will add a new molecule data container to the relax data storage object.  The
-        same molecule name cannot be used more than once.
+        same molecule name cannot be used more than once.  The molecule type need not be specified.
+        However if it given, it should be one of 'protein', 'RNA', 'DNA', 'organic molecule',
+        'inorganic molecule'.
 
 
         Examples
@@ -120,14 +124,16 @@ class Molecule(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "molecule.create("
-            text = text + "mol_name=" + repr(mol_name) + ")"
+            text = text + "mol_name=" + repr(mol_name)
+            text = text + ", type=" + repr(type) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_str(mol_name, 'molecule name')
+        arg_check.is_str(type, 'molecule type', can_be_none=True)
 
         # Execute the functional code.
-        create_molecule(mol_name=mol_name)
+        create_molecule(mol_name=mol_name, mol_type=type)
 
 
     def delete(self, mol_id=None):

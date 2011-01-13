@@ -21,13 +21,13 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes, sequence
+from status import Status; status = Status()
 
 
 class Relax_data_base_class:
@@ -71,10 +71,10 @@ class Relax_data_base_class:
         """
 
         # First read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
-        sequence.read(file='Ap4Aase.Noe.600.bz2', dir=__main__.install_path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2)
+        sequence.read(file='Ap4Aase.Noe.600.bz2', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2)
 
         # Then read the data out of the same file.
-        self.relax_data_fns.read(ri_label='NOE', frq_label='600', frq=600e6, file='Ap4Aase.Noe.600.bz2', dir=__main__.install_path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax_data_fns.read(ri_label='NOE', frq_label='600', frq=600e6, file='Ap4Aase.Noe.600.bz2', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Test the pipe data structures.
         self.assertEqual(cdp.frq, [600e6])

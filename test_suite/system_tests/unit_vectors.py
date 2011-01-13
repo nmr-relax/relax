@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,16 +21,36 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import sep
 
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
+from status import Status; status = Status()
 
 
 class Unit_vectors(SystemTestCase):
     """Class for testing the calculation of unit vectors."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip scientific Python tests if not installed.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Scientific python tests.
+        scientific_tests = ['test_calc_unit_vectors1', 'test_calc_unit_vectors2']
+
+        # Missing module.
+        if methodName in scientific_tests and not dep_check.scientific_module:
+            # Store in the status object.
+            status.skipped_tests.append([methodName, 'Scientific Python', 'system'])
+
+        # Execute the base class method.
+        super(Unit_vectors, self).__init__(methodName)
+
 
     def setUp(self):
         """Set up for all the functional tests."""
@@ -49,7 +69,7 @@ class Unit_vectors(SystemTestCase):
         """Load the PDB file using the Scientific parser and calculate the XH unit vectors."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='scientific')
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='scientific')
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')
@@ -71,7 +91,7 @@ class Unit_vectors(SystemTestCase):
         """Load the PDB file using the Scientific parser and calculate the XH unit vectors (with spin numbers removed)."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='scientific')
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='scientific')
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')
@@ -96,7 +116,7 @@ class Unit_vectors(SystemTestCase):
         """Load the PDB file using the internal parser and calculate the XH unit vectors."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')
@@ -118,7 +138,7 @@ class Unit_vectors(SystemTestCase):
         """Load the PDB file using the internal parser and calculate the XH unit vectors from it (with spin numbers removed)."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')

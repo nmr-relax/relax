@@ -21,7 +21,6 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 from os import path, sep
 import sys
 from unittest import TestCase
@@ -30,6 +29,7 @@ from unittest import TestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.structure.internal import Internal, MolContainer
 from relax_io import file_root
+from status import Status; status = Status()
 
 
 class Test_internal(TestCase):
@@ -39,7 +39,7 @@ class Test_internal(TestCase):
         """Set up for all the internal relax structural object unit tests."""
 
         # The path to a PDB file.
-        self.test_pdb_path = __main__.install_path+sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'Ap4Aase_res1-12.pdb'
+        self.test_pdb_path = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'Ap4Aase_res1-12.pdb'
         expanded = path.split(self.test_pdb_path)
         self.test_pdb_dir = expanded[0]
         self.test_pdb_file_name = expanded[1]

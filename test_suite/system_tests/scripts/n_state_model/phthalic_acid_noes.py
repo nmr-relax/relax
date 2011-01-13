@@ -1,12 +1,12 @@
 """Script for testing the loading of phthalic acid NOEs from a generically formatted file."""
 
 # Python module imports.
-import __main__
 from os import sep
 import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 # Add a date pipe if one doesn't already exist.
@@ -18,7 +18,7 @@ if not hasattr(ds, 'file_name'):
     ds.file_name = 'phthalic_acid'
 
 # Path of the relaxation data.
-DATA_PATH = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep
+DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep
 
 # Pseudo-atoms.
 PSEUDO = [

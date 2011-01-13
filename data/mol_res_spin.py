@@ -500,11 +500,14 @@ class ResidueList(list):
 class MoleculeContainer(Prototype):
     """Class containing all the molecule specific data."""
 
-    def __init__(self, mol_name=None):
+    def __init__(self, mol_name=None, mol_type=None):
         """Set up the default objects of the molecule data container."""
 
         # The name of the molecule, corresponding to that of the structure file if specified.
         self.name = mol_name
+
+        # The type of molecule.
+        self.type = mol_type
 
         # The empty residue list.
         self.res = ResidueList()
@@ -558,7 +561,7 @@ class MoleculeContainer(Prototype):
         # An object has been added to the container.
         for name in dir(self):
             # Skip the objects initialised in __init__().
-            if name == 'name' or name == 'res':
+            if name in ['name', 'res', 'type']:
                 continue
 
             # Skip the MoleculeContainer methods.
@@ -605,12 +608,13 @@ class MoleculeList(list):
         return text
 
 
-    def add_item(self, mol_name=None):
+    def add_item(self, mol_name=None, mol_type=None):
         """Append an empty MoleculeContainer to the MoleculeList."""
 
         # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
         if self.is_empty():
             self[0].name = mol_name
+            self[0].type = mol_type
 
         # Otherwise append an empty MoleculeContainer.
         else:
@@ -620,7 +624,7 @@ class MoleculeList(list):
                     raise RelaxError("The molecule '%s' already exists in the sequence." % mol_name)
 
             # Append an empty MoleculeContainer.
-            self.append(MoleculeContainer(mol_name))
+            self.append(MoleculeContainer(mol_name, mol_type))
 
 
     def is_empty(self):
@@ -656,7 +660,10 @@ class MoleculeList(list):
             name = mol_node.getAttribute('name')
             if name == 'None':
                 name = None
-            self.add_item(mol_name=name)
+            type = mol_node.getAttribute('type')
+            if type == 'None':
+                type = None
+            self.add_item(mol_name=name, mol_type=type)
 
             # Get the residue nodes.
             res_nodes = mol_node.getElementsByTagName('res')
@@ -683,9 +690,10 @@ class MoleculeList(list):
             # Set the molecule attributes.
             mol_element.setAttribute('desc', 'Molecule container')
             mol_element.setAttribute('name', str(self[i].name))
+            mol_element.setAttribute('type', str(self[i].type))
 
             # Add all simple python objects within the MoleculeContainer to the XML element.
-            fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res'] + list(self[i].__class__.__dict__.keys()))
+            fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res', 'type'] + list(self[i].__class__.__dict__.keys()))
 
             # Add the residue data.
             self[i].res.to_xml(doc, mol_element)

@@ -50,6 +50,14 @@ from relax_errors import RelaxError, RelaxNoSpinError, RelaxResSelectDisallowErr
 from relax_warnings import RelaxWarning
 
 
+ALLOWED_MOL_TYPES = ['protein',
+                     'DNA',
+                     'RNA',
+                     'organic molecule',
+                     'inorganic molecule'
+]
+"""The list of allowable molecule types."""
+
 id_string_doc = """
 Identification string documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -803,15 +811,21 @@ def count_spins(selection=None, pipe=None, skip_desel=True):
     return spin_num
 
 
-def create_molecule(mol_name=None):
+def create_molecule(mol_name=None, mol_type=None):
     """Add a molecule into the relax data store.
 
     @keyword mol_name:  The name of the molecule.
     @type mol_name:     str
+    @keyword mol_type:  The type of molecule.
+    @type mol_type:     str
     """
 
     # Test if the current data pipe exists.
     pipes.test()
+
+    # Test the molecule type.
+    if mol_type and mol_type not in ALLOWED_MOL_TYPES:
+        raise RelaxError("The molecule type '%s' must be one of %s" % (mol_type, ALLOWED_MOL_TYPES))
 
     # Test if the molecule name already exists.
     for i in xrange(len(cdp.mol)):
@@ -819,7 +833,7 @@ def create_molecule(mol_name=None):
             raise RelaxError("The molecule '" + repr(mol_name) + "' already exists in the relax data store.")
 
     # Append the molecule.
-    cdp.mol.add_item(mol_name=mol_name)
+    cdp.mol.add_item(mol_name=mol_name, mol_type=mol_type)
 
 
 def create_residue(res_num=None, res_name=None, mol_name=None):
@@ -1047,7 +1061,7 @@ def delete_residue(res_id=None):
     residues = parse_token(res_token)
 
     # Molecule loop.
-    for mol in molecule_loop(mol_token):
+    for mol in molecule_loop(res_id):
         # List of indices to delete.
         indices = []
 
@@ -1381,13 +1395,15 @@ def last_residue_num(selection=None):
     return mol.res[-1].num
 
 
-def molecule_loop(selection=None, pipe=None):
+def molecule_loop(selection=None, pipe=None, return_id=False):
     """Generator function for looping over all the molecules of the given selection.
 
     @param selection:   The molecule selection identifier.
     @type selection:    str
     @param pipe:        The data pipe containing the molecule.  Defaults to the current data pipe.
     @type pipe:         str
+    @keyword return_id: A flag which if True will cause the molecule identification string of the molecule spin to be returned in addition to the spin container.
+    @type return_id:    bool
     @return:            The molecule specific data container.
     @rtype:             instance of the MoleculeContainer class.
     """
@@ -1409,20 +1425,21 @@ def molecule_loop(selection=None, pipe=None):
     # Parse the selection string.
     select_obj = Selection(selection)
 
-    # Disallowed selections.
-    if select_obj.residues:
-        raise RelaxResSelectDisallowError
-    if select_obj.spins:
-        raise RelaxSpinSelectDisallowError
-
     # Loop over the molecules.
     for mol in dp.mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
 
+        # Generate the spin id.
+        if return_id:
+            mol_id = generate_spin_id(mol.name)
+
         # Yield the molecule data container.
-        yield mol
+        if return_id:
+            yield mol, mol_id
+        else:
+            yield mol
 
 
 def linear_ave(positions):
@@ -1683,21 +1700,19 @@ def parse_token(token, verbosity=False):
     return id_list
 
 
-def residue_loop(selection=None, pipe=None, full_info=False):
+def residue_loop(selection=None, pipe=None, full_info=False, return_id=False):
     """Generator function for looping over all the residues of the given selection.
 
     @param selection:   The residue selection identifier.
     @type selection:    str
     @param pipe:        The data pipe containing the residue.  Defaults to the current data pipe.
     @type pipe:         str
-    @param full_info:   A flag specifying if the amount of information to be returned.  If false,
-                        only the data container is returned.  If true, the molecule name, residue
-                        number, and residue name is additionally returned.
+    @param full_info:   A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
     @type full_info:    boolean
-    @return:            The residue specific data container and, if full_info=True, the molecule
-                        name.
-    @rtype:             instance of the ResidueContainer class.  If full_info=True, the type is the
-                        tuple (ResidueContainer, str).
+    @keyword return_id: A flag which if True will cause the molecule identification string of the molecule spin to be returned in addition to the spin container.
+    @type return_id:    bool
+    @return:            The residue specific data container and, if full_info=True, the molecule name.
+    @rtype:             instance of the ResidueContainer class.  If full_info=True, the type is the tuple (ResidueContainer, str).
     """
 
     # The data pipe.
@@ -1725,9 +1740,17 @@ def residue_loop(selection=None, pipe=None, full_info=False):
             if (mol, res) not in select_obj:
                 continue
 
+            # Generate the spin id.
+            if return_id:
+                res_id = generate_spin_id(mol.name, res.num, res.name)
+
             # Yield the residue data container.
-            if full_info:
+            if full_info and return_id:
+                yield res, mol.name, res_id
+            elif full_info:
                 yield res, mol.name
+            elif return_id:
+                yield res, res_id
             else:
                 yield res
 
@@ -2271,22 +2294,12 @@ def spin_loop(selection=None, pipe=None, full_info=False, return_id=False):
     @type selection:    str
     @keyword pipe:      The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
-    @keyword full_info: A flag which if True will cause the the molecule name, residue number, and
-                        residue name to be returned in addition to the spin container.
+    @keyword full_info: A flag which if True will cause the the molecule name, residue number, and residue name to be returned in addition to the spin container.
     @type full_info:    bool
-    @keyword return_id: A flag which if True will cause the spin identification string of the
-                        current spin to be returned in addition to the spin container.
+    @keyword return_id: A flag which if True will cause the spin identification string of the current spin to be returned in addition to the spin container.
     @type return_id:    bool
-    @return:            The spin system specific data container.  If full_info is True, a tuple of
-                        the spin container, the molecule name, residue number, and residue name.  If
-                        return_id is True, a tuple of the spin container and spin id.  If both flags
-                        are True, then a tuple of the spin container, the molecule name, residue
-                        number, residue name, and spin id.
-    @rtype:             If full_info and return_id are False, SpinContainer instance.  If full_info
-                        is True and return_id is false, a tuple of (SpinContainer instance, str,
-                        int, str).  If full_info is False and return_id is True, a tuple of
-                        (SpinContainer instance, str).  If full_info and return_id are False, a
-                        tuple of (SpinContainer instance, str, int, str, str)
+    @return:            The spin system specific data container.  If full_info is True, a tuple of the spin container, the molecule name, residue number, and residue name.  If return_id is True, a tuple of the spin container and spin id.  If both flags are True, then a tuple of the spin container, the molecule name, residue number, residue name, and spin id.
+    @rtype:             If full_info and return_id are False, SpinContainer instance.  If full_info is True and return_id is false, a tuple of (SpinContainer instance, str, int, str).  If full_info is False and return_id is True, a tuple of (SpinContainer instance, str).  If full_info and return_id are False, a tuple of (SpinContainer instance, str, int, str, str)
     """
 
     # The data pipe.
