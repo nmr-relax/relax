@@ -33,7 +33,7 @@ te = [2e-12, 40e-12]
 rex = [0.5, 4]
 
 # Create the sequence.
-create_sequence(len(tm)*len(s2)*len(rex))
+create_sequence(len(tm)*len(s2)*len(te)*len(rex))
 
 # Set up the data.
 setup_data(dir='tm4_grid')
