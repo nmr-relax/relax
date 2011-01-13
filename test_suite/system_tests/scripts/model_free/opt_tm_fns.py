@@ -145,11 +145,11 @@ def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=N
     spin.select = False
 
 
-def setup_data():
+def setup_data(dir=None):
     """Set up all the relevant data prior to optimisation."""
 
     # Path of the files.
-    path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'tm0_grid'
+    path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+dir
 
     # The proton frequencies in MHz.
     frq = ['400', '500', '600', '700', '800', '900', '1000']
@@ -161,9 +161,9 @@ def setup_data():
         interpreter.relax_data.read('R2',  frq[i], float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
     # Setup other values.
-    interpreter.value.set(1.04 * 1e-10, 'bond_length')
-    interpreter.value.set(-160 * 1e-6, 'csa')
-    interpreter.value.set('15N', 'heteronucleus')
+    interpreter.value.set(1.20 * 1e-10, 'bond_length')
+    interpreter.value.set(200 * 1e-6, 'csa')
+    interpreter.value.set('13C', 'heteronucleus')
     interpreter.value.set('1H', 'proton')
 
     # Select the model-free model.
