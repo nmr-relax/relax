@@ -70,7 +70,7 @@ for i in range(len(vals)):
                     Ri = relaxation_data(J, frq=frq, heteronuc='13C', r=1.20e-10, csa=200e-6)
 
                     # The model info.
-                    info = "# tm5 = {local_tm=%s; s2=%s; s2f=%s; ts=%s}" % (tm[tm_index], s2f[s2f_index], s2[s2_index], ts[ts_index])
+                    info = "# tm5 = {local_tm=%s; s2=%s; s2f=%s; ts=%s}" % (tm[tm_index], s2[s2_index], s2f[s2f_index], ts[ts_index])
 
                     # Write out the values.
                     file_r1.write('%-15s %-5s %-15s %-5s %-5s %-20s %-20s %s\n' %  ('Polycarbonate', res_num, 'Bisphenol_A', '1', 'C1', Ri[i, 0], Ri[i, 0] * 0.02, info))
