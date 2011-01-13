@@ -2464,7 +2464,7 @@ class Mf(SystemTestCase):
 
         # Chemical exchange.
         if type(rex) == float:
-            self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
+            self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex * (2.0 * pi * spin.frq[0])**2, msg=mesg)
         elif rex == None:
             self.assertEqual(spin.rex, None, msg=mesg)
 
