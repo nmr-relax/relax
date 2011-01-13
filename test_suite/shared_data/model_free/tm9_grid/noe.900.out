@@ -1,0 +1,9 @@
+Polycarbonate   1     Bisphenol_A     1     C1    1.04699340786        0.05                 # tm9 = {local_tm=2e-09, rex=0.5}
+Polycarbonate   2     Bisphenol_A     1     C1    1.04205529943        0.05                 # tm9 = {local_tm=1e-08, rex=0.5}
+Polycarbonate   3     Bisphenol_A     1     C1    1.04185248073        0.05                 # tm9 = {local_tm=8e-08, rex=0.5}
+Polycarbonate   4     Bisphenol_A     1     C1    1.04699340786        0.05                 # tm9 = {local_tm=2e-09, rex=4}
+Polycarbonate   5     Bisphenol_A     1     C1    1.04205529943        0.05                 # tm9 = {local_tm=1e-08, rex=4}
+Polycarbonate   6     Bisphenol_A     1     C1    1.04185248073        0.05                 # tm9 = {local_tm=8e-08, rex=4}
+Polycarbonate   7     Bisphenol_A     1     C1    1.04699340786        0.05                 # tm9 = {local_tm=2e-09, rex=20}
+Polycarbonate   8     Bisphenol_A     1     C1    1.04205529943        0.05                 # tm9 = {local_tm=1e-08, rex=20}
+Polycarbonate   9     Bisphenol_A     1     C1    1.04185248073        0.05                 # tm9 = {local_tm=8e-08, rex=20}
