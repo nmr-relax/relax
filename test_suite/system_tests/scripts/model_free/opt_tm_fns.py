@@ -123,21 +123,21 @@ def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=N
 
     # Set up the initial model-free parameter values (bypass the grid search for speed).
     if search('^t', cdp._model):
-        spin.local_tm = tm + 1e-12
+        spin.local_tm = tm
     if 'S2' in spin.params:
-        spin.s2 = s2 - 0.002
+        spin.s2 = s2
     if 'S2f' in spin.params:
-        spin.s2f = s2f - 0.002
+        spin.s2f = s2f
     if 'S2s' in spin.params:
-        spin.s2s = s2s - 0.002
+        spin.s2s = s2s
     if 'te' in spin.params:
-        spin.te = te + 1e-13
+        spin.te = te
     if 'tf' in spin.params:
-        spin.tf = tf + 1e-13
+        spin.tf = tf
     if 'ts' in spin.params:
-        spin.ts = ts + 1e-13
+        spin.ts = ts
     if 'rex' in spin.params:
-        spin.rex = rex + 0.01 / (2.0 * pi * spin.frq[0])**2
+        spin.rex = rex
 
     # Minimise.
     interpreter.minimise('newton', 'gmw', 'back', constraints=False)
