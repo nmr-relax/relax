@@ -2157,6 +2157,17 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
 
 
+    def test_tm1_grid(self):
+        """Test the optimisation of the tm1 model-free parameter grid."""
+
+        # Initialise.
+        cdp._model = 'tm1'
+        cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm1_grid.py')
+
+
     def test_tm2_grid(self):
         """Test the optimisation of the tm2 model-free parameter grid."""
 
@@ -2166,6 +2177,83 @@ class Mf(SystemTestCase):
 
         # Setup the data pipe for optimisation.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm2_grid.py')
+
+
+    def test_tm3_grid(self):
+        """Test the optimisation of the tm3 model-free parameter grid."""
+
+        # Initialise.
+        cdp._model = 'tm3'
+        cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm3_grid.py')
+
+
+    def test_tm4_grid(self):
+        """Test the optimisation of the tm4 model-free parameter grid."""
+
+        # Initialise.
+        cdp._model = 'tm4'
+        cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm4_grid.py')
+
+
+    def test_tm5_grid(self):
+        """Test the optimisation of the tm5 model-free parameter grid."""
+
+        # Initialise.
+        cdp._model = 'tm5'
+        cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm5_grid.py')
+
+
+    def test_tm6_grid(self):
+        """Test the optimisation of the tm6 model-free parameter grid."""
+
+        # Initialise.
+        cdp._model = 'tm6'
+        cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm6_grid.py')
+
+
+    def test_tm7_grid(self):
+        """Test the optimisation of the tm7 model-free parameter grid."""
+
+        # Initialise.
+        cdp._model = 'tm7'
+        cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm7_grid.py')
+
+
+    def test_tm8_grid(self):
+        """Test the optimisation of the tm8 model-free parameter grid."""
+
+        # Initialise.
+        cdp._model = 'tm8'
+        cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm8_grid.py')
+
+
+    def test_tm9_grid(self):
+        """Test the optimisation of the tm9 model-free parameter grid."""
+
+        # Initialise.
+        cdp._model = 'tm9'
+        cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm9_grid.py')
 
 
     def test_tylers_peptide(self):
