@@ -58,7 +58,7 @@ for i in range(len(vals)):
         J = spectral_density_mf_orig(frq=frq, tm=tm[tm_index], heteronuc='15N')
         
         # The relaxation data.
-        Ri = relaxation_data(J, frq=frq, heteronuc='15N', r=1.04e-10, csa=-160e-6)
+        Ri = relaxation_data(J, frq=frq, heteronuc='13C', r=1.20e-10, csa=200e-6)
 
         # The model info.
         info = "# tm0 = {local_tm=%s}" % (tm[tm_index])
