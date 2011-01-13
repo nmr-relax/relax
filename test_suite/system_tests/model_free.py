@@ -2452,7 +2452,7 @@ class Mf(SystemTestCase):
 
         # tf correlation time.
         if type(tf) == float:
-            self.assertAlmostEqual(spin.tf / 1e-12, tf, 5, msg=mesg)
+            self.assertAlmostEqual(spin.tf / 1e-12, tf, 4, msg=mesg)
         elif tf == None:
             self.assertEqual(spin.tf, None, msg=mesg)
 
