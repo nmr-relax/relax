@@ -2269,27 +2269,27 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.s2s, None, msg=mesg)
 
         # te correlation time.
-        if te != None:
+        if type(te) == float:
             self.assertAlmostEqual(spin.te / 1e-9, te / 1e3, msg=mesg)
-        else:
+        elif te == None:
             self.assertEqual(spin.te, None, msg=mesg)
 
         # tf correlation time.
-        if tf != None:
+        if type(tf) == float:
             self.assertAlmostEqual(spin.tf / 1e-9, tf / 1e3, msg=mesg)
-        else:
+        elif tf == None:
             self.assertEqual(spin.tf, None, msg=mesg)
 
         # ts correlation time.
-        if ts != None:
+        if type(ts) == float:
             self.assertAlmostEqual(spin.ts / 1e-9, ts / 1e3, msg=mesg)
-        else:
+        elif ts == None:
             self.assertEqual(spin.ts, None, msg=mesg)
 
         # Chemical exchange.
-        if rex != None:
+        if type(rex) == float:
             self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
-        else:
+        elif rex == None:
             self.assertEqual(spin.rex, None, msg=mesg)
 
         # The optimisation stats.
