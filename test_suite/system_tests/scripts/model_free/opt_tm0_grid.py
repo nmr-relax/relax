@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-"""Script for setting up the data pipe for testing optimisation."""
+"""Set up the data pipe for testing optimisation against tm0 relaxation data."""
 
 # relax module imports.
 from opt_tm_fns import create_sequence, opt_and_check, setup_data
@@ -33,7 +33,7 @@ tm = [2e-9, 10e-9, 80e-9]
 create_sequence(len(tm))
 
 # Set up the data.
-setup_data()
+setup_data(dir='tm0_grid')
 
 # Residue index.
 res_index = 0
