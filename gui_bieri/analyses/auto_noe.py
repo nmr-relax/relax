@@ -198,7 +198,7 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Background RMSD:", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Baseplane RMSD:", style=wx.ALIGN_RIGHT)
         label.SetMinSize((230, 17))
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
@@ -282,7 +282,7 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Background RMSD:", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Baseplane RMSD:", style=wx.ALIGN_RIGHT)
         label.SetMinSize((230, 17))
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
