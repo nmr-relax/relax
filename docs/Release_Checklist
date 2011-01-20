@@ -82,7 +82,7 @@ $ scons binary_dist
 
 * Move the distribution files and their signatures, as well as the PDF manual, to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  Rsync the entire directory contents to download.gna.org/upload/relax/ using the command
 
-$ rsync --delete -av --rsh="ssh" . bugman@download.gna.org:/upload/relax/
+$ rsync --delete -av --no-perms --rsh="ssh" . bugman@download.gna.org:/upload/relax/
 
 
 
