@@ -98,7 +98,7 @@ Replace the old manual with the new in the http://nmr-relax.com SVN repository (
 
 
 
-* Create the API documentation for the current version with the command:
+* Modifiy http://www.nmr-relax.com/api/index.html for the new version number and create the API documentation for the current version with the command:
 
 $ scons api_manual_html
 
