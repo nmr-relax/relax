@@ -660,6 +660,29 @@ class Mf(SystemTestCase):
         # Libc version:     glibc 2.0                
         # 
         # s2:                         0.9700000000016741
+        # te (ps):                        2048.000000312
+        # rex:                       0.14899999996808433
+        # chi2:                   3.5466670276032307e-20
+        # iter:                                      158
+        # f_count:                                   744
+        # g_count:                                   165
+        # h_count:                                     0
+        # warning:                                  None
+
+        # 32-bit i686 Linux.
+        # System:           Linux                    
+        # Release:          2.6.33.7-desktop-2mnb    
+        # Version:          #1 SMP Mon Sep 20 19:00:25 UTC 2010
+        # Win32 version:                             
+        # Distribution:     mandrake 2010.2 Official 
+        # Architecture:     32bit ELF                
+        # Machine:          i686                     
+        # Processor:        i686                     
+        # Python version:   2.6.5                    
+        # Numpy version:    1.4.1                    
+        # Libc version:     glibc 2.0                
+        # 
+        # s2:                         0.9700000000016741
         # te:                             2048.000000312
         # rex:                       0.14899999996808433
         # chi2:                   3.5466670276032307e-20
@@ -2446,7 +2469,7 @@ class Mf(SystemTestCase):
 
         # te correlation time.
         if type(te) == float:
-            self.assertAlmostEqual(spin.te / 1e-12, te, msg=mesg)
+            self.assertAlmostEqual(spin.te / 1e-12, te, 6, msg=mesg)
         elif te == None:
             self.assertEqual(spin.te, None, msg=mesg)
 
