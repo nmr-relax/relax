@@ -1,3 +1,22 @@
+Version 1.3.8
+(20 January 2011, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.8
+
+    Features:
+        * Created a sample script to create a CSV file of model-free results for reading into spreadsheets, based on the LaTeX table generation script.
+        * Extensive system tests for all the model-free models have been introduced.
+
+    Changes:
+        * Loosened the te check in value_check() so that the test_opt_constr_bfgs_back_S2_0_970_te_2048_Rex_0_149() model-free system test would pass on 32-bit Linux.
+        * Renamed the model-free results LaTeX table generation script.
+        * Created a test-suite module to aid in the back-calculation of relaxation data from model-free parameters independent of relax.
+        * Updates for Python 3.0 using 2to3.
+
+    Bugfixes:
+        * Fix for running scripts in certain versions of python - if a file with the same name as the script lies in one of the paths in sys.path, then that file will be executed rather than the script.
+
+
+
 Version 1.3.7
 (10 January 2011, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.7
