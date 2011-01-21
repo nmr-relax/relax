@@ -122,7 +122,7 @@ class Relax:
             self.interpreter.run(self.script_file)
 
         # Execute the relax GUI.
-        elif mode == 'gui':
+        elif self.mode == 'gui':
             # Dependency check.
             if not dep_check.wx_module:
                 sys.stderr.write("Please install the wx Python module to access the relax GUI.\n\n")
