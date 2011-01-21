@@ -24,7 +24,7 @@
 """Module holding the experimental information data container."""
 
 # relax module imports.
-from data_classes import ContainerList, Element
+from data_classes import RelaxListType, Element
 
 
 class ExpInfo(Element):
@@ -81,7 +81,7 @@ class ExpInfo(Element):
         # Initialise the list container if needed.
         if not hasattr(self, "citations"):
             # The list.
-            self.citations = ContainerList()
+            self.citations = RelaxListType()
 
             # The name of the container.
             self.citations.container_name = "citation_list"
@@ -200,7 +200,7 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "peak_intensity_type"):
             # The list.
-            self.peak_intensity_type = ContainerList()
+            self.peak_intensity_type = RelaxListType()
 
             # The name of the container.
             self.peak_intensity_type.container_name = "peak_intensity_type_list"
@@ -272,7 +272,7 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "scripts"):
             # The list.
-            self.scripts = ContainerList()
+            self.scripts = RelaxListType()
 
             # The name of the container.
             self.scripts.container_name = "script_list"
@@ -324,7 +324,7 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "software"):
             # The list.
-            self.software = ContainerList()
+            self.software = RelaxListType()
 
             # The name of the container.
             self.software.container_name = "software_list"
@@ -367,7 +367,7 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "temp_calibration"):
             # The list.
-            self.temp_calibration = ContainerList()
+            self.temp_calibration = RelaxListType()
 
             # The name of the container.
             self.temp_calibration.container_name = "temp_calibration_list"
@@ -412,7 +412,7 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "temp_control"):
             # The list.
-            self.temp_control = ContainerList()
+            self.temp_control = RelaxListType()
 
             # The name of the container.
             self.temp_control.container_name = "temp_control_list"
