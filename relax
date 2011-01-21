@@ -86,15 +86,15 @@ class Relax:
         # Setup the object containing the generic functions.
         self.generic = generic_fns
 
-        # Set up the warning system.
-        relax_warnings.setup(self.pedantic)
-
 
     def run(self):
         """Execute relax.
 
         This is the application callback method executed by the multi-processor framework.
         """
+
+        # Set up the warning system.
+        relax_warnings.setup(self.pedantic)
 
         # Show the version number and exit.
         if self.mode == 'version':
