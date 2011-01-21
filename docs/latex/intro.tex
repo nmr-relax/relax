@@ -397,13 +397,21 @@ To test that the program functions correctly, relax possesses an inbuilt test su
 \subsection{The GUI}
 \index{GUI}
 
-relax has been designed primarily for scripting and, as such, no graphical user interface (GUI) currently exists.  The internal structure of the program has been specifically designed so any type of control mechanism can be easily added, including a GUI, therefore in the future one may be written.  A GUI will, however, detract from the power and flexibility inherent in the control by scripting.
+If the wx Python module is installed on your system, you will have access to the GUI interface of relax.  To launch relax in GUI mode, type either
+
+\example{\$ relax -g}
+
+or
+
+\example{\$ relax --gui}
 
 % GUI screenshot
 \begin{figure}
 \centerline{\includegraphics[width=\textwidth, bb=14 14 769 485]{graphics/screenshots/relax_gui_model_free_tab.eps.gz}}
 \caption[GUI screenshot]{A screenshot of relax being run in GUI mode.}\label{fig: relax GUI}
 \end{figure}
+
+The GUI is still in development, so many of the features of the prompt/scripting user interfaces are not available (however the prompt and script modes can be accessed through the menus if needed).  Currently the GUI is an interface to the automatic analyses which some of the sample scripts utilise.  This provides an easy way for the user to perform quick analyses.  The interface is broken into a number of sections via tabs.  One tab provides access to the steady-state NOE calculation with pseudo Monte Carlo simulations for error analysis (this falls back to bootstrapping as this is a calculation rather than optimisation).  Another two tabs provide easy access to optimisations and error analysis for the R$_1$ and R$_2$ relaxation rates.  A fully automatic model-free protocol is provided in another tab.  This operates via the dauvergne\_protocol module which implements the protocol of \cite{dAuvergneGooley08b}.  A final tab provides visual access to the results including Grace visualisations, PyMOL macros, and a table of the model-free results.
 
 
 
