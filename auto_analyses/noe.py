@@ -119,7 +119,7 @@ class NOE_calc:
             self.interpreter.structure.read_pdb(self.pdb_file)
 
             # Read the spin information.
-            generic_fns.structure.main.load_spins(spin_id=heteronuc_pdb)
+            generic_fns.structure.main.load_spins(spin_id=self.heteronuc_pdb)
 
         else:
             # Read the sequence file.

@@ -1,0 +1,75 @@
+**************************************************
+*    relaxGUI - Graphical Interface for relax    *
+*           by Michael Bieri, 2009               *
+**************************************************
+
+
+Requirements:
+=============
+
+relaxGUI is a graphical interface for the software package 'relax', which can be downloaded from www.nmr-relax.com. Make sure 'relax' works properly and a symbolic link for relax exists (symbolic link shoud be 'relax'). 
+
+To create a symbolic link of relax, type: 
+  $ sudo ln -s [directory of relax]/relax /usr/local/bin/relax
+
+
+relaxGUI is written in python and uses wx.pathon for its GUI:
+
+  http://www.wxpython.org/
+
+
+Installation:
+=============
+
+There is no installation required. 
+
+Start relaxGUI by typing
+
+   $ relax relaxGUI
+
+It is recommended to start relaxGUI from a terminal, as progress of relax can be observed in real time.
+
+
+Program:
+========
+
+relaxGUI is designed to create and run scripts for 'relax'. Furthermore, it is able to manage your 15N-NMR relaxation projects from generating NOE, T1 and T2 parameters until Model-free analysis. In addition, relaxGUI creates publication quality graphes and figures of the results.
+
+To set up relaxGUI, a PDB structure file as well as steady-state NOE, T1 and T2 peaklists are required.
+
+
+Workflow:
+=========
+
+relaxGUI is designed to work in a pragmatic manner. Several tabs will guide the way until Model-free analysis. The best way is to always work your way from left to right and from top down to Results.
+
+Example:
+  - Create New Project
+  - NOE 1st frequency
+  - T1 1st frequency
+  - T2 1st frequency
+  - NOE 2nd frequency
+  - T1 2nd frequency
+  - T2 2nd frequency
+  - NOE 3rd frequency
+  - T1 3rd frequency
+  - T2 3rd frequency
+  - Model-free analysis
+       Local tm > Sphere > Prolate > Oblate > Ellipsoid > Final
+
+
+After completing the Final run, results may be evaluated in the Results section.
+
+
+Support:
+========
+
+For further questions, send an email to: mbieri@unimelb.edu.au
+
+
+
+___________________________________________________________________________________________
+___________________________________________________________________________________________
+
+Michael Bieri, 27.10.2009
+mbieri@unimelb.edu.au
