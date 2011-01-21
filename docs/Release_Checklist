@@ -66,9 +66,23 @@ $ gpg --detach-sign --default-key xxxxx relax-1.3.1.GNU-Linux.x86_64.tar.bz2
 
 
 
+* Build other distribution packages by first checking out the tag, bundling minfx:
+
+$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.3.1
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/trunk/minfx
+$ scons binary_dist key=xxxxx
+
+Or:
+
+$ svn co http://svn.gna.org/svn/relax/tags/1.3.1
+$ svn co http://svn.gna.org/svn/minfx/trunk/minfx
+$ scons binary_dist
+
+
+
 * Move the distribution files and their signatures, as well as the PDF manual, to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  Rsync the entire directory contents to download.gna.org/upload/relax/ using the command
 
-$ rsync --delete -av --rsh="ssh" . bugman@download.gna.org:/upload/relax/
+$ rsync --delete -av --no-perms --rsh="ssh" . bugman@download.gna.org:/upload/relax/
 
 
 
@@ -84,7 +98,7 @@ Replace the old manual with the new in the http://nmr-relax.com SVN repository (
 
 
 
-* Create the API documentation for the current version with the command:
+* Modifiy http://www.nmr-relax.com/api/index.html for the new version number and create the API documentation for the current version with the command:
 
 $ scons api_manual_html
 

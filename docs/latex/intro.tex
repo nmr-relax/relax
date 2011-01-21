@@ -117,8 +117,9 @@ relax can create the input files, execute in-line, and then read the output of t
 relax can be used through the following UIs:
 
 \begin{description}
-\item[The prompt] this is the primary interface of relax. Rather than reinventing a new command language, relax's interface is the powerful Python prompt. This gives the power user full access to a proven programming language.
-\item[Scripting] this provides a more powerful and flexible framework for controlling the program. The script will be executed as Python code enabling advanced programming for automating data analysis. All the features available within the prompt environment are accessible to the script.
+\item[The prompt] this is the primary interface of relax. Rather than reinventing a new command language, relax's interface is the powerful Python prompt. This gives the power user full access to a proven programming language.  See Figure~\ref{fig: relax prompt} for a screenshot.
+\item[Scripting] this provides a more powerful and flexible framework for controlling the program. The script will be executed as Python code enabling advanced programming for automating data analysis. All the features available within the prompt environment are accessible to the script.  See Figure~\ref{fig: relax script} for a screenshot.
+\item[GUI] the graphical user interface provides a sub-set of relax's features - the automatic R$_1$ and R$_2$ relaxation rate curve-fitting, the NOE calculations, and the automatic model-free analysis provided by the dauvergne\_protocol module \citep{dAuvergneGooley08b}.  See Figure~\ref{fig: relax GUI} for a screenshot.
 \end{description}
 
 
@@ -158,6 +159,12 @@ relax> (1.0 + (2 * 3))/10 \\
 0.69999999999999996 \\
 relax>
 \end{exampleenv}
+
+% Prompt screenshot
+\begin{figure}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 861 561]{graphics/screenshots/relax_prompt_1_3_8.eps.gz}}
+\caption[Prompt screenshot]{A screenshot of relax being run in the primary prompt mode.}\label{fig: relax prompt}
+\end{figure}
 
 
 
@@ -308,7 +315,7 @@ Currently the NOE calculation, relaxation curve-fitting, model-free analysis, an
 \subsection{Scripting}
 \index{scripting|textbf}
 
-What ever is done within the prompt is also accessible through scripting.  Just type your commands into a text file and then at the terminal type
+What ever is done within the prompt is also accessible through scripting (Figure~\ref{fig: relax script}).  Just type your commands into a text file and then at the terminal type
 
 \example{\$ relax your\_script}
 
@@ -356,6 +363,12 @@ state.save(`save', force=True)
 
 Scripting is much more powerful than the prompt as advanced Python\index{Python} programming can be employed (see the file `full\_analysis.py' in the `sample\_scripts' directory for an example).
 
+% Script screenshot
+\begin{figure}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 861 561]{graphics/screenshots/relax_script_1_3_8.eps.gz}}
+\caption[Scripting screenshot]{A screenshot of relax being run in scripting mode.}\label{fig: relax script}
+\end{figure}
+
 
 
 % Sample scripts.
@@ -384,7 +397,21 @@ To test that the program functions correctly, relax possesses an inbuilt test su
 \subsection{The GUI}
 \index{GUI}
 
-relax has been designed primarily for scripting and, as such, no graphical user interface (GUI) currently exists.  The internal structure of the program has been specifically designed so any type of control mechanism can be easily added, including a GUI, therefore in the future one may be written.  A GUI will, however, detract from the power and flexibility inherent in the control by scripting.
+If the wx Python module is installed on your system, you will have access to the GUI interface of relax.  To launch relax in GUI mode, type either
+
+\example{\$ relax -g}
+
+or
+
+\example{\$ relax --gui}
+
+% GUI screenshot
+\begin{figure}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 769 485]{graphics/screenshots/relax_gui_model_free_tab.eps.gz}}
+\caption[GUI screenshot]{A screenshot of relax being run in GUI mode.}\label{fig: relax GUI}
+\end{figure}
+
+The GUI is still in development, so many of the features of the prompt/scripting user interfaces are not available (however the prompt and script modes can be accessed through the menus if needed).  Currently the GUI is an interface to the automatic analyses which some of the sample scripts utilise.  This provides an easy way for the user to perform quick analyses.  The interface is broken into a number of sections via tabs.  One tab provides access to the steady-state NOE calculation with pseudo Monte Carlo simulations for error analysis (this falls back to bootstrapping as this is a calculation rather than optimisation).  Another two tabs provide easy access to optimisations and error analysis for the R$_1$ and R$_2$ relaxation rates.  A fully automatic model-free protocol is provided in another tab.  This operates via the dauvergne\_protocol module which implements the protocol of \cite{dAuvergneGooley08b}.  A final tab provides visual access to the results including Grace visualisations, PyMOL macros, and a table of the model-free results.
 
 
 

@@ -12,10 +12,11 @@
 The following packages need to be installed before using relax:
 
 \begin{description}
-\item[\href{http://python.org/}{Python}\index{Python}:]  Version 2.4 or higher (although any 2.x version may work).
-\item[\href{http://numpy.scipy.org/}{Numeric}\index{Numeric}:]  Version 21 or higher.
-\item[\href{http://starship.python.net/~hinsen/ScientificPython/}{ScientificPython}\index{ScientificPython}:]  Version 2.2 or higher.
-\item[Optik\index{Optik}:]  Version 1.4 or higher.  This is only needed if running python $<=$ 2.2.
+\item[\href{http://python.org/}{Python}\index{Python}:]  Version 2.5 or higher.
+\item[\href{http://numpy.scipy.org/}{NumPy}\index{NumPy}:]  Version 1.0.4 or higher.  This package is used for most of the numerical calculations within relax.
+\item[\href{http://starship.python.net/~hinsen/ScientificPython/}{ScientificPython}\index{ScientificPython}:]  Version 2.8 or higher.  This is an optional package.  relax has an inbuilt PDB reader.  However, due to the diversity of the PDB with many files not conforming to the standard, this reader many not function for all files.  An alternative is to use the more advanced PDB reader that comes with ScientificPython.
+\item[\href{http://www.scipy.org/}{SciPy}\index{SciPy}:]  Version 0.7.1 or higher.  This package is also optional.  It is required only for the frame order theory analyses.
+\item[\href{http://www.scipy.org/}{wxPython}\index{wxPython}:]  Version 2.8 or higher.  This package is optional.  It is required for the operation of the graphical user interface (GUI)\index{GUI}.
 \end{description}
 
 Older versions of these packages may work, use them at your own risk.  If, for older dependency versions, errors do occur please submit a bug report to the bug tracker\index{bug tracker} at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax}.  That way a solution may be created for the next relax release.

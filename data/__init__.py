@@ -35,6 +35,7 @@ import xml.dom.minidom
 # relax module imports.
 from pipe_container import PipeContainer
 import generic_fns
+from gui import Gui
 from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from relax_xml import fill_object_contents, xml_to_object
 from version import version
@@ -43,6 +44,7 @@ from version import version
 __all__ = [ 'align_tensor',
             'data_classes',
             'diff_tensor',
+            'gui',
             'mol_res_spin',
             'pipe_container',
             'prototype',
@@ -239,8 +241,17 @@ class Relax_data_store(dict):
         # Get the relax version of the XML file.
         relax_version = str(relax_node.getAttribute('version'))
 
+        # Get the GUI nodes.
+        gui_nodes = relax_node.getElementsByTagName('relax_gui')
+        if gui_nodes:
+            # Create the GUI object.
+            self.relax_gui = Gui()
+
+            # Fill its contents.
+            self.relax_gui.from_xml(gui_nodes[0])
+
         # Recreate all the data store data structures.
-        xml_to_object(relax_node, self, blacklist=['pipe'])
+        xml_to_object(relax_node, self, blacklist=['pipe', 'relax_gui'])
 
         # Get the pipe nodes.
         pipe_nodes = relax_node.getElementsByTagName('pipe')
@@ -335,9 +346,26 @@ class Relax_data_store(dict):
         top_element.setAttribute('version', version)
         top_element.setAttribute('time', asctime())
 
+        # Add all objects in the data store base object to the XML element.
+        blacklist = list(self.__class__.__dict__.keys() + dict.__dict__.keys())
+        for name in dir(self):
+            # Skip blacklisted objects.
+            if name in blacklist:
+                continue
+
+            # Skip special objects.
+            if search('^_', name):
+                continue
+
+            # Execute any to_xml() methods, and add that object to the blacklist.
+            obj = getattr(self, name)
+            if hasattr(obj, 'to_xml'):
+                obj.to_xml(xmldoc, top_element)
+                blacklist = blacklist + [name]
+
         # Add all simple python objects within the PipeContainer to the pipe element.
         if all:
-            fill_object_contents(xmldoc, top_element, object=self, blacklist=list(self.__class__.__dict__.keys() + dict.__dict__.keys()))
+            fill_object_contents(xmldoc, top_element, object=self, blacklist=blacklist)
 
         # Loop over the pipes.
         for pipe in pipes:
