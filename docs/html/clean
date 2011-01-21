@@ -1,3 +1,3 @@
 #! /bin/sh
 
-rm -f *.png images* node* *.pl *.html WARNINGS relax.css
+rm -f *.png images* node* *.pl *.html *.old WARNINGS relax.css
