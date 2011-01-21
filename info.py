@@ -101,7 +101,7 @@ class Info_box(object):
         self.bib = {}
 
         # Place the containers into the dictionary.
-        self.bib['Bieri10'] = Bieri10()
+        self.bib['Bieri11'] = Bieri11()
         self.bib['Clore90'] = Clore90()
         self.bib['dAuvergne06'] = dAuvergne06()
         self.bib['dAuvergneGooley03'] = dAuvergneGooley03()
@@ -563,14 +563,14 @@ class Ref:
 
 
 
-class Bieri10(Ref):
+class Bieri11(Ref):
     """Bibliography container."""
 
     type           = "journal"
     author         = "Bieri, M., d'Auvergne, E. J. and Gooley, P. R."
     title          = "relaxGUI: a new software for fast and simple NMR relaxation data analysis and calculation of ps-ns and micro-s motion of proteins"
     status         = "submitted"
-    year           = 2010
+    year           = 2011
 
 
 

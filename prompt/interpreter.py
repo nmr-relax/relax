@@ -367,6 +367,10 @@ def exec_script(name, globals):
 
     # Execute the module.
     try:
+        # Reverse the system path so that the script path is first.
+        sys.path.reverse()
+
+        # Execute the script as a module.
         runpy.run_module(module, globals)
     finally:
         # Switch back to the original working directory.
@@ -374,6 +378,7 @@ def exec_script(name, globals):
             chdir(orig_dir)
 
         # Remove the script path.
+        sys.path.reverse()
         sys.path.pop(sys.path.index(script_path))
 
     # Unlock execution if needed.

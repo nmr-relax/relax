@@ -337,7 +337,7 @@ def compile_user_manual_pdf(target, source, env):
     system('latex relax')
 
     print("\n\n\n <<< dvips >>>\n\n\n")
-    system('dvips -o relax.ps relax.dvi')
+    system('dvips -R0 -o relax.ps relax.dvi')
 
     print("\n\n\n <<< ps2pdf >>>\n\n\n")
     if env['SYSTEM'] == 'Windows':
