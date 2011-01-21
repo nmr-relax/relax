@@ -118,7 +118,7 @@ relax can be used through the following UIs:
 
 \begin{description}
 \item[The prompt] this is the primary interface of relax. Rather than reinventing a new command language, relax's interface is the powerful Python prompt. This gives the power user full access to a proven programming language.  See Figure~\ref{fig: relax prompt} for a screenshot.
-\item[Scripting] this provides a more powerful and flexible framework for controlling the program. The script will be executed as Python code enabling advanced programming for automating data analysis. All the features available within the prompt environment are accessible to the script.
+\item[Scripting] this provides a more powerful and flexible framework for controlling the program. The script will be executed as Python code enabling advanced programming for automating data analysis. All the features available within the prompt environment are accessible to the script.  See Figure~\ref{fig: relax script} for a screenshot.
 \item[GUI] the graphical user interface provides a sub-set of relax's features - the automatic R$_1$ and R$_2$ relaxation rate curve-fitting, the NOE calculations, and the automatic model-free analysis provided by the dauvergne\_protocol module \citep{dAuvergneGooley08b}.
 \end{description}
 
@@ -315,7 +315,7 @@ Currently the NOE calculation, relaxation curve-fitting, model-free analysis, an
 \subsection{Scripting}
 \index{scripting|textbf}
 
-What ever is done within the prompt is also accessible through scripting.  Just type your commands into a text file and then at the terminal type
+What ever is done within the prompt is also accessible through scripting (Figure~\ref{fig: relax script}).  Just type your commands into a text file and then at the terminal type
 
 \example{\$ relax your\_script}
 
@@ -362,6 +362,12 @@ state.save(`save', force=True)
 \end{exampleenv}
 
 Scripting is much more powerful than the prompt as advanced Python\index{Python} programming can be employed (see the file `full\_analysis.py' in the `sample\_scripts' directory for an example).
+
+% Script screenshot
+\begin{figure}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 861 561]{graphics/screenshots/relax_script_1_3_8.eps.gz}}
+\caption[Scripting screenshot]{A screenshot of relax being run in scripting mode.}\label{fig: relax script}
+\end{figure}
 
 
 
