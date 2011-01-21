@@ -351,7 +351,7 @@ class Main(wx.Frame):
             # A print out.
             text = "\n\nThank you for citing:\n"
             text = text + "\n\nrelaxGUI\n========\n\n"
-            for line in wrap(info.bib['Bieri10'].cite_short(), width):
+            for line in wrap(info.bib['Bieri11'].cite_short(), width):
                 text = text + line + '\n'
             text = text + "\n\n\nrelax\n=====\n\n"
             for line in wrap(info.bib['dAuvergneGooley08a'].cite_short(), width):

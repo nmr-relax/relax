@@ -109,7 +109,7 @@ class References(wx.Frame):
 
         # GUI refs.
         text = text + "<h3><i>The relax GUI</i></h3>"
-        text = text + "<p>%s</p>" % info.bib['Bieri10'].cite_html()
+        text = text + "<p>%s</p>" % info.bib['Bieri11'].cite_html()
 
         # Model-free refs.
         text = text + "<h2>Model-free analysis</h2>"
