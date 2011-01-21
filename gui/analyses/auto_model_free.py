@@ -41,16 +41,16 @@ from status import Status; status = Status()
 
 
 # relax GUI module imports.
-from gui_bieri.about import About_base
-from gui_bieri.analyses.results_analysis import model_free_results, see_results
-from gui_bieri.analyses.select_model_calc import Select_tensor
-from gui_bieri.base_classes import Container
-from gui_bieri.components.conversion import str_to_float
-from gui_bieri.controller import Redirect_text, Thread_container
-from gui_bieri.derived_wx_classes import StructureTextCtrl
-from gui_bieri.filedialog import opendir, openfile
-from gui_bieri.message import error_message, missing_data
-from gui_bieri import paths
+from gui.about import About_base
+from gui.analyses.results_analysis import model_free_results, see_results
+from gui.analyses.select_model_calc import Select_tensor
+from gui.base_classes import Container
+from gui.components.conversion import str_to_float
+from gui.controller import Redirect_text, Thread_container
+from gui.derived_wx_classes import StructureTextCtrl
+from gui.filedialog import opendir, openfile
+from gui.message import error_message, missing_data
+from gui import paths
 
 
 class About_window(About_base):
@@ -156,7 +156,7 @@ class Auto_model_free:
         """Build the automatic model-free protocol GUI element.
 
         @param gui:         The main GUI class.
-        @type gui:          gui_bieri.relax_gui.Main instance
+        @type gui:          gui.relax_gui.Main instance
         @param notebook:    The notebook to pack this frame into.
         @type notebook:     wx.Notebook instance
         """

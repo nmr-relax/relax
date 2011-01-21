@@ -32,7 +32,7 @@ from prompt.interpreter import Interpreter
 from generic_fns.mol_res_spin import spin_loop
 
 # relax GUI module imports.
-from gui_bieri.paths import IMAGE_PATH
+from gui.paths import IMAGE_PATH
 
 
 def color_code_noe(self, target_dir, pdb_file):

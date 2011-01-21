@@ -34,7 +34,7 @@ from generic_fns.mol_res_spin import generate_spin_id, molecule_loop, residue_lo
 from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
-from gui_bieri import paths
+from gui import paths
 
 
 class Container(wx.Window):

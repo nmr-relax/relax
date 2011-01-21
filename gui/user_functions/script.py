@@ -28,7 +28,7 @@ import thread
 
 # GUI module imports.
 from base import UF_base
-from gui_bieri.filedialog import openfile
+from gui.filedialog import openfile
 
 
 class Script(UF_base):

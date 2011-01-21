@@ -37,7 +37,7 @@ from status import Status; status = Status()
 
 # GUI image and icon paths.
 OXY_ICON_PATH = status.install_path + sep + 'graphics' + sep + 'oxygen_icons' + sep
-IMAGE_PATH = status.install_path + sep + 'gui_bieri' + sep + 'images' + sep
+IMAGE_PATH = status.install_path + sep + 'gui' + sep + 'images' + sep
 ICON_RELAX_PATH = status.install_path + sep + 'graphics' + sep + 'relax_icons' + sep
 WIZARD_IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'wizards' + sep
 

@@ -55,7 +55,7 @@ import sys
 from info import Info_box
 import generic_fns
 if dep_check.wx_module:
-    import gui_bieri
+    import gui
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
@@ -124,7 +124,7 @@ class Relax:
                 sys.exit()
 
             # Start the relax GUI wx application.
-            app = gui_bieri.App(script=self.script_file)
+            app = gui.App(script=self.script_file)
             app.MainLoop()
 
         # Execute the relax test suite

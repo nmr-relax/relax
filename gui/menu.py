@@ -31,7 +31,7 @@ from status import Status
 import wx
 
 # relax GUI module imports.
-from gui_bieri import paths
+from gui import paths
 
 
 class Menu:

@@ -32,7 +32,7 @@ import wx
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
-from gui_bieri.paths import IMAGE_PATH
+from gui.paths import IMAGE_PATH
 
 
 
@@ -43,7 +43,7 @@ class Results_summary:
         """Build the results frame.
 
         @param gui:                 The main GUI class.
-        @type gui:                  gui_bieri.relax_gui.Main instance
+        @type gui:                  gui.relax_gui.Main instance
         @param notebook:            The notebook to pack this frame into.
         @type notebook:             wx.Notebook instance
         """

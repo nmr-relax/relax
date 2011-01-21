@@ -26,7 +26,7 @@ from os import sep
 import wx
 
 # relax GUI module imports.
-from gui_bieri.paths import IMAGE_PATH
+from gui.paths import IMAGE_PATH
 
 
 class Select_tensor(wx.Dialog):

@@ -57,7 +57,7 @@ from controller import Controller
 from filedialog import opendir, openfile, savefile
 from menu import Menu
 from message import dir_message, error_message, question
-from gui_bieri import paths
+from gui import paths
 from references import References
 from relax_prompt import Prompt
 from settings import Free_file_format, load_sequence, relax_global_settings

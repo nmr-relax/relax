@@ -22,7 +22,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the base class for the automatic R1 and R2 analysis frames."""
+"""Module containing the base class for the automatic NOE analysis frames."""
 
 # Python module imports.
 from os import sep
@@ -33,25 +33,26 @@ import time
 import wx
 
 # relax module imports.
-from auto_analyses.relax_fit import Relax_fit
+from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
+from relax_errors import RelaxError
 from relax_io import DummyFileObject
 from status import Status; status = Status()
 
 # relaxGUI module imports.
-from gui_bieri.base_classes import Container
-from gui_bieri.components.spectrum import Peak_intensity
-from gui_bieri.controller import Redirect_text, Thread_container
-from gui_bieri.derived_wx_classes import StructureTextCtrl
-from gui_bieri.filedialog import multi_openfile, opendir
-from gui_bieri.message import error_message, missing_data
-from gui_bieri import paths
-from gui_bieri.settings import load_sequence
+from gui.analyses.results_analysis import color_code_noe
+from gui.base_classes import Container
+from gui.controller import Redirect_text, Thread_container
+from gui.derived_wx_classes import StructureTextCtrl
+from gui.filedialog import multi_openfile, opendir, openfile
+from gui.message import error_message, missing_data
+from gui.paths import IMAGE_PATH
+from gui.settings import load_sequence
 
 
 
-class Auto_rx:
-    """The base class for the R1 and R2 frames."""
+class Auto_noe:
+    """The base class for the noe frames."""
 
     # Hardcoded variables.
     analysis_type = None
@@ -59,10 +60,10 @@ class Auto_rx:
     label = None
 
     def __init__(self, gui, notebook, hardcoded_index=None):
-        """Build the automatic R1 and R2 analysis GUI frame elements.
+        """Build the automatic NOE analysis GUI frame elements.
 
         @param gui:                 The main GUI class.
-        @type gui:                  gui_bieri.relax_gui.Main instance
+        @type gui:                  gui.relax_gui.Main instance
         @param notebook:            The notebook to pack this frame into.
         @type notebook:             wx.Notebook instance
         @keyword hardcoded_index:   Kludge for the current GUI layout.
@@ -71,6 +72,9 @@ class Auto_rx:
 
         # Store the main class.
         self.gui = gui
+
+        # The NOE image
+        self.bitmap = IMAGE_PATH + 'noe.png'
 
         # Alias the storage container in the relax data store.
         self.data = ds.relax_gui.analyses[hardcoded_index]
@@ -102,7 +106,7 @@ class Auto_rx:
         sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The button.
-        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         button.SetName('hello')
         button.SetSize(button.GetBestSize())
         self.gui.Bind(wx.EVT_BUTTON, self.execute, button)
@@ -120,7 +124,7 @@ class Auto_rx:
         """
 
         # The title.
-        label = wx.StaticText(self.parent, -1, "Setup for %s relaxation analysis" % self.label)
+        label = wx.StaticText(self.parent, -1, "Setup for steady-state NOE analysis")
 
         # The font properties.
         label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
@@ -153,6 +157,60 @@ class Auto_rx:
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
+    def add_reference_peak_list(self, box):
+        """Create and add the reference file selection GUI element to the given box.
+
+        @param box:     The box element to pack the structure file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Reference NOE peak list:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.field_ref_noe = wx.TextCtrl(self.parent, -1, self.data.ref_file)
+        self.field_ref_noe.SetMinSize((350, 27))
+        sizer.Add(self.field_ref_noe, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The button.
+        button = wx.Button(self.parent, -1, "Change")
+        button.SetMinSize((103, 27))
+        self.gui.Bind(wx.EVT_BUTTON, self.ref_file, button)
+        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
+    def add_reference_rmsd(self, box):
+        """Create and add the background RMSD GUI element to the given box.
+
+        @param box:     The box element to pack the structure file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Baseplane RMSD:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.field_ref_rmsd = wx.TextCtrl(self.parent, -1, str(self.data.ref_rmsd))
+        self.field_ref_rmsd.SetMinSize((350, 27))
+        sizer.Add(self.field_ref_rmsd, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
     def add_results_dir(self, box):
         """Create and add the results directory GUI element to the given box.
 
@@ -178,6 +236,60 @@ class Auto_rx:
         button.SetMinSize((103, 27))
         self.gui.Bind(wx.EVT_BUTTON, self.results_directory, button)
         sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
+    def add_saturated_peak_list(self, box):
+        """Create and add the saturated file selection GUI element to the given box.
+
+        @param box:     The box element to pack the structure file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Saturated NOE peak list:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.field_sat_noe = wx.TextCtrl(self.parent, -1, self.data.sat_file)
+        self.field_sat_noe.SetMinSize((350, 27))
+        sizer.Add(self.field_sat_noe, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The button.
+        button = wx.Button(self.parent, -1, "Change")
+        button.SetMinSize((103, 27))
+        self.gui.Bind(wx.EVT_BUTTON, self.sat_file, button)
+        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
+    def add_saturated_rmsd(self, box):
+        """Create and add the background RMSD GUI element to the given box.
+
+        @param box:     The box element to pack the structure file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Baseplane RMSD:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.field_sat_rmsd = wx.TextCtrl(self.parent, -1, str(self.data.sat_rmsd))
+        self.field_sat_rmsd.SetMinSize((350, 27))
+        sizer.Add(self.field_sat_rmsd, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
@@ -264,13 +376,13 @@ class Auto_rx:
         self.field_unresolved = wx.TextCtrl(self.parent, -1, "")
         self.field_unresolved.SetMinSize((350, 27))
         sizer.Add(self.field_unresolved, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
+        
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
     def assemble_data(self):
-        """Assemble the data required for the Relax_fit class.
+        """Assemble the data required for the Auto_noe class.
 
         See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
@@ -278,28 +390,36 @@ class Auto_rx:
         @rtype:     class instance, bool, list of str
         """
 
-        # The data container.
+        # The data container and flag.
         data = Container()
         complete = True
         missing = []
 
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         if hasattr(self.data, 'sequence_file'):
-            data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
+            data.seq_args = [self.data.sequence_file, None, None, 1, None, None, None, None]
         else:
             data.seq_args = None
 
-        # The file names and relaxation times.
-        for i in range(len(self.data.file_list)):
-            # Hit the end of the list.
-            if self.data.file_list[i] == '':
-                break
-        data.file_names = self.data.file_list[:i]
-        data.relax_times = self.data.relax_times[:i]
-        data.relax_times = [float(i) for i in data.relax_times]
+        # Reference peak list and background noe.
+        data.ref_file = self.data.ref_file
+        if not data.ref_file:
+            complete = False
+            missing.append('Reference peak list')
+        data.ref_rmsd = int(self.data.ref_rmsd)
+
+        # Saturated peak list and background noe.
+        data.sat_file = self.data.sat_file
+        if not data.sat_file:
+            complete = False
+            missing.append('Saturated peak list')
+        data.sat_rmsd = int(self.data.sat_rmsd)
+
+        # Results directory.
+        data.save_dir = self.data.save_dir
 
         # Filename.
-        self.filename = self.analysis_type + '.' + str(self.data.frq)
+        data.filename = 'noe.' + str(self.field_nmr_frq.GetValue()) + '.out'
 
         # The integration method.
         data.int_method = 'height'
@@ -310,19 +430,10 @@ class Auto_rx:
         # Hetero nucleus name.
         data.heteronuc = global_settings[2]
 
-        # Spin id of the heteronucleus.
-        data.load_spin_ids = '@' + global_settings[2]
-
         # Proton name.
         data.proton = global_settings[3]
 
-        # Increment size.
-        data.inc = int(global_settings[4])
-
-        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        data.mc_num = int(global_settings[6])
-
-        # Unresolved residues
+        # Unresolved spins.
         file = DummyFileObject()
         entries = self.data.unresolved
         entries = replace(entries, ',', '\n')
@@ -331,17 +442,14 @@ class Auto_rx:
         data.unresolved = file
 
         # Structure file.
-        if self.data.structure_file == self.gui.structure_file_pdb_msg:
-            data.structure_file = None
-        else:
+        if hasattr(self.data, 'structure_file') and self.data.structure_file != self.gui.structure_file_pdb_msg:
             data.structure_file = self.data.structure_file
+        else:
+            data.structure_file = None
 
-        # Set Structure file as None if a structure file is loaded.
+        # Set Structure file as None if a sequence file is loaded.
         if data.structure_file == '!!! Sequence file selected !!!':
             data.structure_file = None
-
-        # Results directory.
-        data.save_dir = self.data.save_dir
 
         # No sequence data.
         if not data.seq_args and not data.structure_file:
@@ -353,7 +461,7 @@ class Auto_rx:
 
 
     def build_main_box(self):
-        """Construct the highest level box to pack into the automatic Rx analysis frame.
+        """Construct the highest level box to pack into the automatic NOE analysis frame.
 
         @return:    The main box element containing all Rx GUI elements to pack directly into the automatic Rx analysis frame.
         @rtype:     wx.BoxSizer instance
@@ -375,9 +483,9 @@ class Auto_rx:
 
 
     def build_right_box(self):
-        """Construct the right hand box to pack into the main Rx box.
+        """Construct the right hand box to pack into the main NOE box.
 
-        @return:    The right hand box element containing all Rx GUI elements (excluding the bitmap) to pack into the main Rx box.
+        @return:    The right hand box element containing all NOE GUI elements (excluding the bitmap) to pack into the main Rx box.
         @rtype:     wx.BoxSizer instance
         """
 
@@ -402,8 +510,20 @@ class Auto_rx:
         # Add the unresolved spins GUI element.
         self.add_unresolved_spins(box)
 
-        # Add the peak list selection GUI element.
-        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, data=self.data, label=self.label, box=box)
+        # Add peak list selection header.
+        self.peak_list_header(box)
+
+        # Add the saturated NOE peak list selection GUI element.
+        self.add_saturated_peak_list(box)
+
+        # Add the saturated RMSD background GUI element:
+        self.add_saturated_rmsd(box)
+
+        # Add the reference NOE peak list selection GUI element.
+        self.add_reference_peak_list(box)
+
+        # Add the reference RMSD background GUI element:
+        self.add_reference_rmsd(box)
 
         # Add the execution GUI element.
         self.add_execute_relax(box)
@@ -429,21 +549,21 @@ class Auto_rx:
         # Synchronise the frame data to the relax data store.
         self.sync_ds(upload=True)
 
-        # Display the relax controller.
+        # Display the relax controller (if not debugging).
         if not status.debug:
             self.gui.controller.Show()
 
-        # Start the thread.
+        # Start the thread (if not debugging).
         if status.debug:
-            self.execute_thread('dummy')
+            self.execute_thread()
         else:
-            id = thread.start_new_thread(self.execute_thread, ('dummy',))
+            id = thread.start_new_thread(self.execute_thread, ())
 
         # Terminate the event.
         event.Skip()
 
 
-    def execute_thread(self, dummy_string):
+    def execute_thread(self):
         """Execute the calculation in a thread."""
 
         # Controller.
@@ -454,12 +574,12 @@ class Auto_rx:
             sys.stderr = redir
 
             # Print a header in the controller.
-            header = 'Starting %s calculation' % self.label
+            header = 'Starting NOE calculation'
             underline = '-' * len(header)
             wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
             time.sleep(0.5)
 
-        # Assemble all the data needed for the Relax_fit class.
+        # Assemble all the data needed for the auto-analysis.
         data, complete, missing = self.assemble_data()
 
         # Incomplete.
@@ -471,32 +591,26 @@ class Auto_rx:
             return
 
         # Execute.
-        Relax_fit(file_root=self.filename, pipe_name='rx'+'_'+str(time.asctime(time.localtime())), seq_args=data.seq_args, results_directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, load_spin_ids=data.load_spin_ids, inc=data.inc)
+        NOE_calc(seq_args=data.seq_args, pipe_name='noe'+'_'+str(time.asctime(time.localtime())), noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, output_file=data.filename, results_dir=data.save_dir, int_method='height', heteronuc=data.heteronuc, proton=data.proton, heteronuc_pdb='@N')
 
         # Feedback about success.
         if not status.debug:
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated Rx values\n__________________________________________________________')
+            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
 
         # Add noe grace plot to results list.
-        self.gui.list_rx.Append(data.save_dir+sep+'grace'+sep+self.filename+'.agr')
-        self.gui.list_rx.Append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
+        self.gui.list_noe.Append(data.save_dir+sep+'grace'+sep+'noe.agr')
 
         # Add noe grace plot to relax data store.
-        ds.relax_gui.results_rx.append(data.save_dir+sep+'grace'+sep+self.filename+'.agr')
-        ds.relax_gui.results_rx.append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
+        ds.relax_gui.results_noe.append(data.save_dir+sep+'grace'+sep+'noe.agr')
 
+        # Create color coded structure pymol macro.
+        color_code_noe(self, data.save_dir, data.structure_file)
 
-    def link_data(self, data):
-        """Re-alias the storage container in the relax data store.
-        @keyword data:      The data storage container.
-        @type data:         class instance
-        """
+        # add macro to results tab
+        self.gui.list_noe.Append(data.save_dir+sep+'noe.pml')
 
-        # Re-alias.
-        self.data = data
-
-        # Re-alias in the peak intensity object as well.
-        self.peak_intensity.data = data
+        # Add noe macro to relax data store.
+        ds.relax_gui.results_noe.append(data.save_dir+sep+'noe.pml')
 
 
     def load_sequence(self, event):
@@ -518,6 +632,61 @@ class Auto_rx:
 
         # Sync.
         self.sync_ds(upload=False)
+
+        # Terminate the event.
+        event.Skip()
+
+
+    def link_data(self, data):
+        """Re-alias the storage container in the relax data store.
+
+        @keyword data:      The data storage container.
+        @type data:         class instance
+        """
+
+        # Re-alias.
+        self.data = data
+
+
+    def peak_list_header(self, box):
+        """Add header for peak list section
+
+        @param box:     The box element to pack the structure file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "\nNOE peak lists:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 34))
+        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
+    def ref_file(self, event):
+        """The results directory selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Store the original directory.
+        backup = self.field_ref_noe.GetValue()
+
+        # Select the file.
+        self.data.ref_file = openfile('Select reference NOE peak list', directory=self.field_ref_noe.GetValue(), default = 'all files (*.*)|*')
+
+        # Restore the backup file if no file was chosen.
+        if not self.data.ref_file:
+            self.data.ref_file = backup
+
+        # Place the path in the text box.
+        self.field_ref_noe.SetValue(self.data.ref_file)
 
         # Terminate the event.
         event.Skip()
@@ -547,8 +716,32 @@ class Auto_rx:
         event.Skip()
 
 
+    def sat_file(self, event):
+        """The results directory selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Store the original directory.
+        backup = self.field_sat_noe.GetValue()
+
+        # Select the file.
+        self.data.sat_file = openfile('Select saturated NOE peak list', directory=self.field_sat_noe.GetValue(), default = 'all files (*.*)|*')
+
+        # Restore the backup file if no file was chosen.
+        if not self.data.sat_file:
+            self.data.sat_file = backup
+
+        # Place the path in the text box.
+        self.field_sat_noe.SetValue(self.data.sat_file)
+
+        # Terminate the event.
+        event.Skip()
+
+
     def sync_ds(self, upload=False):
-        """Synchronise the rx analysis frame and the relax data store, both ways.
+        """Synchronise the noe analysis frame and the relax data store, both ways.
 
         This method allows the frame information to be uploaded into the relax data store, or for the information in the relax data store to be downloaded by the frame.
 
@@ -559,13 +752,13 @@ class Auto_rx:
         # The frequency.
         if upload:
             self.data.frq = str(self.field_nmr_frq.GetValue())
-        elif hasattr(self.data, 'frq'):
+        else:
             self.field_nmr_frq.SetValue(str(self.data.frq))
 
         # The results directory.
         if upload:
             self.data.save_dir = str(self.field_results_dir.GetValue())
-        elif hasattr(self.data, 'save_dir'):
+        else:
             self.field_results_dir.SetValue(str(self.data.save_dir))
 
         # The sequence file.
@@ -578,7 +771,9 @@ class Auto_rx:
 
         # The structure file.
         if upload:
-            self.data.structure_file = str(self.field_structure.GetValue())
+            file = str(self.field_structure.GetValue())
+            if file != self.gui.structure_file_pdb_msg:
+                self.data.structure_file = str(self.field_structure.GetValue())
         elif hasattr(self.data, 'structure_file'):
             self.field_structure.SetValue(str(self.data.structure_file))
 
@@ -588,5 +783,26 @@ class Auto_rx:
         elif hasattr(self.data, 'unresolved'):
             self.field_unresolved.SetValue(str(self.data.unresolved))
 
-        # The peak lists and relaxation times.
-        self.peak_intensity.sync_ds(upload)
+        # Reference peak file.
+        if upload:
+            self.data.ref_file = str(self.field_ref_noe.GetValue())
+        elif hasattr(self.data, 'ref_file'):
+            self.field_ref_noe.SetValue(str(self.data.ref_file))
+
+        # Reference rmsd.
+        if upload:
+            self.data.ref_rmsd = str(self.field_ref_rmsd.GetValue())
+        elif hasattr(self.data, 'ref_rmsd'):
+            self.field_ref_rmsd.SetValue(str(self.data.ref_rmsd))
+
+        # Saturated peak file.
+        if upload:
+            self.data.sat_file = str(self.field_sat_noe.GetValue())
+        elif hasattr(self.data, 'sat_file'):
+            self.field_sat_noe.SetValue(str(self.data.sat_file))
+
+        # Saturated rmsd.
+        if upload:
+            self.data.sat_rmsd = str(self.field_sat_rmsd.GetValue())
+        elif hasattr(self.data, 'sat_rmsd'):
+            self.field_sat_rmsd.SetValue(str(self.data.sat_rmsd))

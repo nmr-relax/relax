@@ -33,7 +33,7 @@ import wx
 from status import Status; status = Status()
 
 # relaxGUI module imports.
-from gui_bieri.paths import IMAGE_PATH
+from gui.paths import IMAGE_PATH
 from message import question
 
 

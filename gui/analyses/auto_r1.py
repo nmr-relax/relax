@@ -21,17 +21,17 @@
 ###############################################################################
 
 # Module docstring.
-"""Module for the automatic R2 analysis frame."""
+"""Module for the automatic R1 analysis frame."""
 
 # relax GUI module imports.
 from auto_rx_base import Auto_rx
-from gui_bieri.paths import IMAGE_PATH
+from gui.paths import IMAGE_PATH
 
 
-class Auto_r2(Auto_rx):
-    """Class for building the automatic R2 analysis frame."""
+class Auto_r1(Auto_rx):
+    """Class for building the automatic R1 analysis frame."""
 
     # Hardcoded variables.
-    analysis_type = 'r2'
-    bitmap = IMAGE_PATH+'r2.png'
-    label = 'R2'
+    analysis_type = 'r1'
+    bitmap = IMAGE_PATH+'r1.png'
+    label = 'R1'

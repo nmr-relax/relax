@@ -32,7 +32,7 @@ import wx.html
 from info import Info_box
 
 # relax GUI module imports.
-from gui_bieri import paths
+from gui import paths
 
 # HTML header.
 HTML_HEADER = """\

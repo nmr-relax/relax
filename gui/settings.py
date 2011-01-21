@@ -30,11 +30,11 @@ import wx
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relax GUI module imports.
-from gui_bieri.filedialog import openfile
-from gui_bieri.message import error_message
-from gui_bieri.misc import gui_to_int, int_to_gui
-from gui_bieri import paths
-from gui_bieri.user_functions.base import UF_window
+from gui.filedialog import openfile
+from gui.message import error_message
+from gui.misc import gui_to_int, int_to_gui
+from gui import paths
+from gui.user_functions.base import UF_window
 
 
 def relax_global_settings(oldsettings):

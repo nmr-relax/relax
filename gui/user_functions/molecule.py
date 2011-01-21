@@ -32,8 +32,8 @@ from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_window
-from gui_bieri.paths import WIZARD_IMAGE_PATH
-from gui_bieri.misc import gui_to_str, str_to_gui
+from gui.paths import WIZARD_IMAGE_PATH
+from gui.misc import gui_to_str, str_to_gui
 
 
 # The container class.
