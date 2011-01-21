@@ -119,7 +119,7 @@ relax can be used through the following UIs:
 \begin{description}
 \item[The prompt] this is the primary interface of relax. Rather than reinventing a new command language, relax's interface is the powerful Python prompt. This gives the power user full access to a proven programming language.  See Figure~\ref{fig: relax prompt} for a screenshot.
 \item[Scripting] this provides a more powerful and flexible framework for controlling the program. The script will be executed as Python code enabling advanced programming for automating data analysis. All the features available within the prompt environment are accessible to the script.  See Figure~\ref{fig: relax script} for a screenshot.
-\item[GUI] the graphical user interface provides a sub-set of relax's features - the automatic R$_1$ and R$_2$ relaxation rate curve-fitting, the NOE calculations, and the automatic model-free analysis provided by the dauvergne\_protocol module \citep{dAuvergneGooley08b}.
+\item[GUI] the graphical user interface provides a sub-set of relax's features - the automatic R$_1$ and R$_2$ relaxation rate curve-fitting, the NOE calculations, and the automatic model-free analysis provided by the dauvergne\_protocol module \citep{dAuvergneGooley08b}.  See Figure~\ref{fig: relax GUI} for a screenshot.
 \end{description}
 
 
@@ -398,6 +398,12 @@ To test that the program functions correctly, relax possesses an inbuilt test su
 \index{GUI}
 
 relax has been designed primarily for scripting and, as such, no graphical user interface (GUI) currently exists.  The internal structure of the program has been specifically designed so any type of control mechanism can be easily added, including a GUI, therefore in the future one may be written.  A GUI will, however, detract from the power and flexibility inherent in the control by scripting.
+
+% GUI screenshot
+\begin{figure}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 769 485]{graphics/screenshots/relax_gui_model_free_tab.eps.gz}}
+\caption[GUI screenshot]{A screenshot of relax being run in GUI mode.}\label{fig: relax GUI}
+\end{figure}
 
 
 
