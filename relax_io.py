@@ -204,8 +204,12 @@ def get_file_path(file_name=None, dir=None):
     return file_path
 
 
-def io_streams_restore():
-    """Restore all IO streams to the Python defaults."""
+def io_streams_restore(verbosity=1):
+    """Restore all IO streams to the Python defaults.
+
+    @param verbosity:   The verbosity level.
+    @type verbosity:    int
+    """
 
     # Print out.
     if verbosity:
