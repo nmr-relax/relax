@@ -297,8 +297,11 @@ def compile_user_manual_html(target, source, env):
     base_dir = getcwd()
     chdir(env['LATEX_DIR'])
 
+    # The target directory.
+    dir = path.pardir + path.sep + "html"
+
     # Run the latex2html command.
-    cmd = "latex2html -no_math -address http://nmr-relax.com -local_icons -html_version 4.0 -long_titles 5 -split 4 -dir %s -auto_navigation --external_file relax.aux -antialias relax.tex" % (path.pardir + path.sep + "html")
+    cmd = "latex2html -no_math -address http://nmr-relax.com -local_icons -html_version 4.0 -long_titles 5 -split 4 -dir %s -auto_navigation --external_file relax.aux -antialias relax.tex" % (dir)
     print("Running the command:\n$ %s\n\n\n" % cmd)
     system(cmd)
 
