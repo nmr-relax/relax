@@ -7,4 +7,15 @@ $DVIPS = 'dvips -R0';
 # The path to the custom icons.
 $ALTERNATIVE_ICONS = 'icons';
 
+%iconsizes = (
+'up' ,'WIDTH="48" HEIGHT="48"',
+'next','WIDTH="48" HEIGHT="48"',
+'previous','WIDTH="48" HEIGHT="48"',
+'next_group' ,'WIDTH="48" HEIGHT="48"',
+'next_inactive' ,'WIDTH="48" HEIGHT="48"',
+'previous_group','WIDTH="48" HEIGHT="48"',
+'contents','WIDTH="48" HEIGHT="48"',
+'index','WIDTH="48" HEIGHT="48"',
+);
+
 1;	# This must be the last line
