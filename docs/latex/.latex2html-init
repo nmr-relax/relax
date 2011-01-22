@@ -4,6 +4,9 @@ $TITLE = 'relax';
 # Allow images in the base relax directory to be used.
 $DVIPS = 'dvips -R0';
 
+# Better maths images.
+$DVIPSOPT = ' -E';
+
 # The path to the custom icons.
 $ALTERNATIVE_ICONS = 'icons';
 
