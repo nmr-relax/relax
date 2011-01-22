@@ -21,6 +21,9 @@ $ALTERNATIVE_ICONS = 'icons';
 'index','WIDTH="48" HEIGHT="48"',
 );
 
+# Set the font size.
+$FONT_SIZE = "12pt";
+
 # Show the section numbers of the PDF manual.
 $SHOW_SECTION_NUMBERS = 1;
 
