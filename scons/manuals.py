@@ -284,6 +284,9 @@ def compile_api_manual_html(target, source, env):
 def compile_user_manual_html(target, source, env):
     """Builder action for compiling the user manual (HTML version) from the LaTeX sources."""
 
+    # Make the PDF manual to generate the aux files.
+    compile_user_manual_pdf(target, source, env, convert=False)
+
     # Print out.
     print('')
     print("############################################")
@@ -295,7 +298,7 @@ def compile_user_manual_html(target, source, env):
     chdir(env['LATEX_DIR'])
 
     # Run the latex2html command.
-    cmd = "latex2html -no_math -address http://nmr-relax.com -local_icons -html_version 4.0 -long_titles 5 -split 4 -dir %s -auto_navigation -antialias relax.tex" % (path.pardir + path.sep + "html")
+    cmd = "latex2html -no_math -address http://nmr-relax.com -local_icons -html_version 4.0 -long_titles 5 -split 4 -dir %s -auto_navigation --external_file relax.aux -antialias relax.tex" % (path.pardir + path.sep + "html")
     print("Running the command:\n$ %s\n\n\n" % cmd)
     system(cmd)
 
@@ -306,7 +309,7 @@ def compile_user_manual_html(target, source, env):
     print("\n\n\n")
 
 
-def compile_user_manual_pdf(target, source, env):
+def compile_user_manual_pdf(target, source, env, convert=True):
     """Builder action for compiling the user manual (PDF version) from the LaTeX sources."""
 
     # Print out.
@@ -336,6 +339,14 @@ def compile_user_manual_pdf(target, source, env):
 
     print("\n\n\n <<< LaTeX (fourth round) >>>\n\n\n")
     system('latex relax')
+
+    # Skip the rest.
+    if not convert:
+        # Return to the base directory.
+        chdir(base_dir)
+
+        # Return.
+        return
 
     print("\n\n\n <<< dvips >>>\n\n\n")
     system('dvips -R0 -o relax.ps relax.dvi')
