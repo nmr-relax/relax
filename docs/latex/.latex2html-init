@@ -21,4 +21,7 @@ $ALTERNATIVE_ICONS = 'icons';
 'index','WIDTH="48" HEIGHT="48"',
 );
 
+# Show the section numbers of the PDF manual.
+$SHOW_SECTION_NUMBERS = 1;
+
 1;	# This must be the last line
