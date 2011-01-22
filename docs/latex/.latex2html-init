@@ -1,0 +1,3 @@
+$DVIPS = 'dvips -R0';
+
+1;	# This must be the last line
