@@ -1,3 +1,10 @@
+# The title.
+$TITLE = 'relax';
+
+# Allow images in the base relax directory to be used.
 $DVIPS = 'dvips -R0';
+
+# The path to the custom icons.
+$ALTERNATIVE_ICONS = 'icons';
 
 1;	# This must be the last line
