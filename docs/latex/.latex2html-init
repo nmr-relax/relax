@@ -39,6 +39,9 @@ $AUTO_NAVIGATION = 1;
 # The auxillary file prefix.
 $EXTERNAL_FILE = "relax";
 
+# Nicer figures.
+$ANTI_ALIAS = 1;
+
 # Set the font size.
 $FONT_SIZE = "12pt";
 
