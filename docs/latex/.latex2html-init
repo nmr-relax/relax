@@ -33,6 +33,9 @@ $LONG_TITLES = 5;
 # The level for splitting into separate HTML pages.
 $MAX_SPLIT_DEPTH = 4;
 
+# Navigation links at the bottom as well.
+$AUTO_NAVIGATION = 1;
+
 # Set the font size.
 $FONT_SIZE = "12pt";
 
