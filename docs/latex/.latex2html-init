@@ -36,6 +36,9 @@ $MAX_SPLIT_DEPTH = 4;
 # Navigation links at the bottom as well.
 $AUTO_NAVIGATION = 1;
 
+# The auxillary file prefix.
+$EXTERNAL_FILE = "relax";
+
 # Set the font size.
 $FONT_SIZE = "12pt";
 
