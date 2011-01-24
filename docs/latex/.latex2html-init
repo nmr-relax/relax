@@ -27,6 +27,12 @@ $LOCAL_ICONS = 1;
 # Set the HTML version.
 $HTML_VERSION = "4.0";
 
+# The names of the HTML pages.
+$LONG_TITLES = 5;
+
+# The level for splitting into separate HTML pages.
+$MAX_SPLIT_DEPTH = 4;
+
 # Set the font size.
 $FONT_SIZE = "12pt";
 
