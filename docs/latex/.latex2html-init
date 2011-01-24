@@ -24,6 +24,9 @@ $ALTERNATIVE_ICONS = 'icons';
 # Copy the icons into the HTML target directory.
 $LOCAL_ICONS = 1;
 
+# Set the HTML version.
+$HTML_VERSION = "4.0";
+
 # Set the font size.
 $FONT_SIZE = "12pt";
 
