@@ -11,14 +11,14 @@ $DVIPSOPT = ' -E';
 $ALTERNATIVE_ICONS = 'icons';
 
 %iconsizes = (
-'up' ,'WIDTH="48" HEIGHT="48"',
-'next','WIDTH="48" HEIGHT="48"',
-'previous','WIDTH="48" HEIGHT="48"',
-'next_group' ,'WIDTH="48" HEIGHT="48"',
-'next_inactive' ,'WIDTH="48" HEIGHT="48"',
-'previous_group','WIDTH="48" HEIGHT="48"',
-'contents','WIDTH="48" HEIGHT="48"',
-'index','WIDTH="48" HEIGHT="48"',
+'up' ,'WIDTH="48" HEIGHT="48" TITLE="Up"',
+'next','WIDTH="48" HEIGHT="48" TITLE="Next"',
+'previous','WIDTH="48" HEIGHT="48" TITLE="Previous"',
+'next_group' ,'WIDTH="48" HEIGHT="48" TITLE="Next group"',
+'next_inactive' ,'WIDTH="48" HEIGHT="48" TITLE="Next"',
+'previous_group','WIDTH="48" HEIGHT="48" TITLE="Previous group"',
+'contents','WIDTH="48" HEIGHT="48" TITLE="Contents"',
+'index','WIDTH="48" HEIGHT="48" TITLE="Index"',
 );
 
 # Copy the icons into the HTML target directory.
