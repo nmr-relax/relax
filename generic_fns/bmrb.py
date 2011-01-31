@@ -83,8 +83,14 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
         if spin:
             continue
 
+        # The residue container.
+        if not mol_names:
+            res_id = generate_spin_id(res_num=res_nums[i], res_name=res_names[i])
+        else:
+            res_id = generate_spin_id(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i])
+
         # The spin container needs to be named.
-        res_cont = return_residue(generate_spin_id(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i]))
+        res_cont = return_residue(res_id)
         if res_cont and len(res_cont.spin) == 1 and res_cont.spin[0].name == None and res_cont.spin[0].num == None:
             # Name and number the spin.
             res_cont.spin[0].name = spin_names[i]
