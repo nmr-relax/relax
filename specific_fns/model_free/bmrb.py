@@ -120,10 +120,15 @@ class Bmrb:
                 setattr(cdp, 'chi2', data['global_chi2'])
 
             # The number of spins.
+            N = 0
             if data['data_ids']:
                 N = len(data['data_ids'])
             elif data['s2']:
                 N = len(data['s2'])
+
+            # No data in the saveframe.
+            if N == 0:
+                continue
 
             # Generate the spin IDs.
             spin_ids = []
