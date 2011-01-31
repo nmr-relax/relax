@@ -141,6 +141,10 @@ class Bmrb:
                 # Obtain the spin.
                 spin = mol_res_spin.return_spin(spin_id)
 
+                # No spin?!?
+                if spin == None:
+                    raise(RelaxError("The spin '%s' does not exist." % spin_id))
+
                 # Loop over and set the model-free parameters.
                 for j in range(len(mf_params)):
                     # No parameter.
