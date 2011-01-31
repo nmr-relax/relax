@@ -141,31 +141,35 @@ class Bmrb:
 
                 # Loop over and set the model-free parameters.
                 for j in range(len(mf_params)):
+                    # No parameter.
+                    if not mf_bmrb_key[j] in keys or data[mf_bmrb_key[j]] == None:
+                        continue
+
                     # Set the parameter.
-                    if mf_bmrb_key[j] in keys:
-                        setattr(spin, mf_params[j], data[mf_bmrb_key[j]][i])
+                    setattr(spin, mf_params[j], data[mf_bmrb_key[j]][i])
 
                     # Set the error.
                     mf_bmrb_key_err = mf_bmrb_key[j] + '_err'
                     mf_param_err = mf_params[j] + '_err'
-                    if mf_bmrb_key_err in keys:
+                    if mf_bmrb_key_err in keys and data[mf_bmrb_key_err] != None:
                         setattr(spin, mf_param_err, data[mf_bmrb_key_err][i])
 
                 # The model.
-                model = self._bmrb_model_map(bmrb_name=data['model_fit'][i])
-                setattr(spin, 'model', model)
+                if data['model_fit'] != None:
+                    model = self._bmrb_model_map(bmrb_name=data['model_fit'][i])
+                    setattr(spin, 'model', model)
 
-                # The equation and parameters.
-                equation, params = self._model_map(model)
-                setattr(spin, 'equation', equation)
-                setattr(spin, 'params', params)
+                    # The equation and parameters.
+                    equation, params = self._model_map(model)
+                    setattr(spin, 'equation', equation)
+                    setattr(spin, 'params', params)
 
                 # The element.
-                if'atom_types' in keys:
+                if'atom_types' in keys and data['atom_types'] != None:
                     setattr(spin, 'element', data['atom_types'][i])
 
                 # Heteronucleus type.
-                if'atom_types' in keys and 'isotope' in keys:
+                if'atom_types' in keys and data['atom_types'] != None and 'isotope' in keys and data['isotope'] != None:
                     setattr(spin, 'heteronuc_type', str(data['isotope'][i]) + data['atom_types'][i])
 
 
