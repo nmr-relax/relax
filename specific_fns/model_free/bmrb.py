@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,6 +33,7 @@ if dep_check.bmrblib_module:
     from bmrblib.nmr_star_dict import NMR_STAR
     from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
 from generic_fns import diffusion_tensor, exp_info, mol_res_spin, pipes, relax_data
+from generic_fns.bmrb import generate_sequence
 from generic_fns.mol_res_spin import get_molecule_names, spin_loop
 from relax_errors import RelaxError
 
@@ -122,10 +123,18 @@ class Bmrb:
             elif data['s2']:
                 N = len(data['s2'])
 
+            # Generate the spin IDs.
+            spin_ids = []
+            for i in range(N):
+                spin_ids.append(mol_res_spin.generate_spin_id(res_num=data['res_nums'][i], spin_name=data['atom_names'][i]))
+
+            # Generate the sequence if needed.
+            generate_sequence(N, spin_ids=spin_ids, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'])
+
             # Loop over the spins.
             for i in range(N):
                 # Generate a spin ID.
-                spin_id = mol_res_spin.generate_spin_id(res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
+                spin_id = mol_res_spin.generate_spin_id(res_name=data['res_names'][i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
 
                 # Obtain the spin.
                 spin = mol_res_spin.return_spin(spin_id)
