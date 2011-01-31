@@ -792,7 +792,7 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
     if not spin_ids:
         spin_ids = []
         for i in range(N):
-            spin_ids.append(generate_spin_id(spin_num=spin_nums[i], spin_name=None, res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i]))
+            spin_ids.append(generate_spin_id(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i]))
 
     # Initialise the global data for the current pipe if necessary.
     data_init(cdp, global_flag=True)
