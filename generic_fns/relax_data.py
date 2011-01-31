@@ -246,12 +246,6 @@ def bmrb_read(star):
         frq = float(data['frq']) * 1e6
         frq_label = str(int(float(data['frq'])))
 
-        # Convert entity IDs to molecule names.
-        mol_names = []
-        names = get_molecule_names()
-        for id in data['entity_ids']:
-            mol_names.append(names[int(id)-1])
-
         # Pack the data.
         pack_data(ri_label, frq_label, frq, data['data'], data['errors'], res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
 
