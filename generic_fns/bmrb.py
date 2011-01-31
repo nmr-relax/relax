@@ -76,6 +76,18 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
     @type mol_names:        list of str or None
     """
 
+    # The blank data.
+    if not spin_nums:
+        spin_nums = [None] * N
+    if not spin_names:
+        spin_names = [None] * N
+    if not res_nums:
+        res_nums = [None] * N
+    if not res_names:
+        res_names = [None] * N
+    if not mol_names:
+        mol_names = [None] * N
+
     # Loop over the spin data.
     for i in range(N):
         # The spin already exists.
@@ -95,6 +107,8 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
             # Name and number the spin.
             res_cont.spin[0].name = spin_names[i]
             res_cont.spin[0].num = spin_nums[i]
+
+            # Jump to the next spin.
             continue
 
         # Create the spin.
