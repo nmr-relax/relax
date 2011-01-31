@@ -116,8 +116,14 @@ class Bmrb:
             if 'global_chi2' in keys:
                 setattr(cdp, 'chi2', data['global_chi2'])
 
+            # The number of spins.
+            if data['data_ids']:
+                N = len(data['data_ids'])
+            elif data['s2']:
+                N = len(data['s2'])
+
             # Loop over the spins.
-            for i in range(len(data['data_ids'])):
+            for i in range(N):
                 # Generate a spin ID.
                 spin_id = mol_res_spin.generate_spin_id(res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
 
