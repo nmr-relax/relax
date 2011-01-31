@@ -76,7 +76,6 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
     @type mol_names:        list of str or None
     """
 
-    print cdp.mol[0].res
     # Loop over the spin data.
     for i in range(N):
         # The spin already exists.
