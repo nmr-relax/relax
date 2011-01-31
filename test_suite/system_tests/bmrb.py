@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,6 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 import inspect
 from numpy import ndarray
 from os import remove, sep
@@ -32,6 +31,7 @@ from tempfile import mktemp
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 class Bmrb(SystemTestCase):
@@ -223,7 +223,7 @@ class Bmrb(SystemTestCase):
         ds.version = '3.0'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
 
         # Test the data.
         self.data_check(version='3.0')
@@ -236,7 +236,7 @@ class Bmrb(SystemTestCase):
         ds.version = '3.1'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
 
         # Test the data.
         self.data_check(version='3.1')
