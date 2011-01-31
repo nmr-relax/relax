@@ -157,7 +157,7 @@ class Bmrb:
                         setattr(spin, mf_param_err, data[mf_bmrb_key_err][i])
 
                 # The model.
-                if data['model_fit'] != None:
+                if data['model_fit'] != None and data['model_fit'][i] != None:
                     model = self._bmrb_model_map(bmrb_name=data['model_fit'][i])
                     setattr(spin, 'model', model)
 
