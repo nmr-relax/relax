@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,10 +31,11 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
 import dep_check
 from generic_fns import exp_info
+from generic_fns.mol_res_spin import create_spin, generate_spin_id, return_residue, return_spin
 from info import Info_box
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModuleInstallError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
-from specific_fns.setup import get_specific_fn
+import specific_fns
 from version import version_full
 
 
@@ -50,10 +51,49 @@ def display(version='3.1'):
         raise RelaxNoPipeError
 
     # Specific results writing function.
-    write_function = get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type, raise_error=False)
+    write_function = specific_fns.setup.get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type, raise_error=False)
 
     # Write the results.
     write_function(sys.stdout, version=version)
+
+
+def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_nums=None, res_names=None, mol_names=None):
+    """Generate the sequence data from the BRMB information.
+
+    @keyword N:             The number of spins.
+    @type N:                int
+    @keyword spin_ids:      The list of spin IDs.
+    @type spin_ids:         list of str
+    @keyword spin_nums:     The list of spin numbers.
+    @type spin_nums:        list of int or None
+    @keyword spin_names:    The list of spin names.
+    @type spin_names:       list of str or None
+    @keyword res_nums:      The list of residue numbers.
+    @type res_nums:         list of int or None
+    @keyword res_names:     The list of residue names.
+    @type res_names:        list of str or None
+    @keyword mol_names:     The list of molecule names.
+    @type mol_names:        list of str or None
+    """
+
+    print cdp.mol[0].res
+    # Loop over the spin data.
+    for i in range(N):
+        # The spin already exists.
+        spin = return_spin(spin_ids[i])
+        if spin:
+            continue
+
+        # The spin container needs to be named.
+        res_cont = return_residue(generate_spin_id(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i]))
+        if res_cont and len(res_cont.spin) == 1 and res_cont.spin[0].name == None and res_cont.spin[0].num == None:
+            # Name and number the spin.
+            res_cont.spin[0].name = spin_names[i]
+            res_cont.spin[0].num = spin_nums[i]
+            continue
+
+        # Create the spin.
+        create_spin(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i])
 
 
 def read(file=None, directory=None, version='3.1'):
@@ -79,7 +119,7 @@ def read(file=None, directory=None, version='3.1'):
         raise RelaxFileError(file_path)
 
     # Specific results reading function.
-    read_function = get_specific_fn('bmrb_read', ds[ds.current_pipe].pipe_type)
+    read_function = specific_fns.setup.get_specific_fn('bmrb_read', ds[ds.current_pipe].pipe_type)
 
     # Read the results.
     read_function(file_path, version=version)
@@ -101,7 +141,7 @@ def write(file=None, directory=None, version='3.1', force=False):
         directory = ds.current_pipe
 
     # Specific results writing function.
-    write_function = get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type)
+    write_function = specific_fns.setup.get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type)
 
     # Get the full file path.
     file_path = get_file_path(file, directory)

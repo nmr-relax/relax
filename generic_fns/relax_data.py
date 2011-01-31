@@ -33,6 +33,7 @@ from warnings import warn
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
+from generic_fns.bmrb import generate_sequence
 from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
@@ -800,16 +801,16 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
     # Update the global data.
     update_data_structures_pipe(ri_label, frq_label, frq)
 
+    # Generate the sequence.
+    if gen_seq:
+        generate_sequence(N, spin_ids=spin_ids, spin_nums=spin_nums, spin_names=spin_names, res_nums=res_nums, res_names=res_names, mol_names=mol_names)
+
     # Loop over the spin data.
     for i in range(N):
         # Get the corresponding spin container.
         spin = return_spin(spin_ids[i])
         if spin == None:
-            if not gen_seq:
-                raise RelaxNoSpinError(spin_ids[i])
-            else:
-                create_spin(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i])
-                spin = return_spin(spin_ids[i])
+            raise RelaxNoSpinError(spin_ids[i])
 
         # Update all data structures.
         update_data_structures_spin(spin, ri_label, frq_label, frq, values[i], errors[i])
