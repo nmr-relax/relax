@@ -762,7 +762,7 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
     N = len(values)
 
     # Test the data.
-    if len(errors) != N:
+    if errors and len(errors) != N:
         raise RelaxError("The length of the errors arg (%s) does not match that of the value arg (%s)." % (len(errors), N))
     if spin_ids and len(spin_ids) != N:
         raise RelaxError("The length of the spin ID strings arg (%s) does not match that of the value arg (%s)." % (len(mol_names), N))
@@ -788,6 +788,8 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
         spin_nums = [None] * N
     if not spin_names:
         spin_names = [None] * N
+    if not errors:
+        errors = [None] * N
 
     # Generate the spin IDs.
     if not spin_ids:
