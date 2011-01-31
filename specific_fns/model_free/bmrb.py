@@ -27,6 +27,7 @@ import dep_check
 from math import pi
 from numpy import int32, zeros
 import string
+from warnings import warn
 
 # relax module imports.
 if dep_check.bmrblib_module:
@@ -36,6 +37,7 @@ from generic_fns import diffusion_tensor, exp_info, mol_res_spin, pipes, relax_d
 from generic_fns.bmrb import generate_sequence
 from generic_fns.mol_res_spin import get_molecule_names, spin_loop
 from relax_errors import RelaxError
+from relax_warnings import RelaxWarning
 
 
 class Bmrb:
