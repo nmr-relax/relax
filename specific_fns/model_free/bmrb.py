@@ -94,9 +94,9 @@ class Bmrb:
 
         # Should not be here!
         if model_name:
-            raise RelaxError("The model-free model '%s' is unknown.")
+            raise RelaxError("The model-free model '%s' is unknown." % model_name)
         else:
-            warn(RelaxWarning("The BMRB model-free model name '%s' is unknown."))
+            warn(RelaxWarning("The BMRB model-free model name '%s' is unknown." % model_name))
 
 
     def _sf_model_free_read(self, star):
