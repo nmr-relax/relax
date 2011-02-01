@@ -160,6 +160,9 @@ class Bmrb:
             else:
                 ts_scale = te_scale
 
+            # Rex scaling.
+            rex_scale = 1.0 / (2.0*pi*cdp.frq[0]**2)
+
             # Loop over the spins.
             for i in range(N):
                 # Generate a spin ID.
@@ -189,6 +192,8 @@ class Bmrb:
                             value = value * tf_scale
                         elif mf_params[j] == 'ts':
                             value = value * ts_scale
+                        elif mf_params[j] == 'rex':
+                            value = value * rex_scale
 
                     # Set the parameter.
                     setattr(spin, mf_params[j], value)
@@ -205,6 +210,8 @@ class Bmrb:
                             error = error * tf_scale
                         elif mf_params[j] == 'ts':
                             error = error * ts_scale
+                        elif mf_params[j] == 'rex':
+                            error = error * rex_scale
 
                     # Set the error.
                     mf_param_err = mf_params[j] + '_err'
