@@ -92,7 +92,12 @@ class Bmrb:
 
         # Loop over the dictionary.
         for item in map.items():
+            # Normal match.
             if item[search_index] == search_text:
+                return item[return_index]
+
+            # No whitespace.
+            if string.replace(item[search_index], ' ', '') == search_text:
                 return item[return_index]
 
         # The bmrb name is the relax name!
