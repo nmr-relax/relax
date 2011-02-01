@@ -135,12 +135,12 @@ class Bmrb:
                 continue
 
             # The molecule index and name.
-            if 'entity_ids' in keys:
-                mol_index = []
-                for i in range(N):
+            mol_index = []
+            for i in range(N):
+                if 'entity_ids' in keys and data['entity_ids'] != None and data['entity_ids'][i] != None:
                     mol_index.append(int(data['entity_ids'][i]) -1 )
-            else:
-                mol_index = [0]*N
+                else:
+                    mol_index = [0]*N
             mol_names = []
             for i in range(N):
                 mol_names.append(cdp.mol[mol_index[i]].name)
