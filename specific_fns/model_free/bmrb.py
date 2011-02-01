@@ -196,7 +196,16 @@ class Bmrb:
 
                 # Heteronucleus type.
                 if'atom_types' in keys and data['atom_types'] != None and 'isotope' in keys and data['isotope'] != None:
-                    setattr(spin, 'heteronuc_type', str(data['isotope'][i]) + data['atom_types'][i])
+                    # The isotope number.
+                    iso_num = data['isotope'][i]
+
+                    # No isotope number.
+                    iso_table = {'C': 13, 'N': 15}
+                    if not data['isotope'][i]:
+                        iso_num = iso_table[data['atom_types'][i]]
+
+                    # Set the type.
+                    setattr(spin, 'heteronuc_type', str(iso_num) + data['atom_types'][i])
 
 
     def _sf_csa_read(self, star):
