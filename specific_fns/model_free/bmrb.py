@@ -139,16 +139,8 @@ class Bmrb:
             if N == 0:
                 continue
 
-            # The molecule index and name.
-            mol_index = []
-            for i in range(N):
-                if 'entity_ids' in keys and data['entity_ids'] != None and data['entity_ids'][i] != None:
-                    mol_index.append(int(data['entity_ids'][i]) -1 )
-                else:
-                    mol_index = [0]*N
-            mol_names = []
-            for i in range(N):
-                mol_names.append(cdp.mol[mol_index[i]].name)
+            # The molecule names.
+            mol_names = bmrb.molecule_names(data)
 
             # Generate the spin IDs.
             spin_ids = []

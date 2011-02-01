@@ -115,6 +115,51 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
         create_spin(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i])
 
 
+def molecule_names(data):
+    """Generate the molecule names list.
+
+    @param data:    An element of data from bmrblib.
+    @type data:     dict
+    @return:        The list of molecule names.
+    @rtype:         list of str
+    """
+
+    # The molecule index and name.
+    mol_index = []
+    for i in range(N):
+        if 'entity_ids' in keys and data['entity_ids'] != None and data['entity_ids'][i] != None:
+            mol_index.append(int(data['entity_ids'][i]) -1 )
+        else:
+            mol_index = [0]*N
+    mol_names = []
+    for i in range(N):
+        mol_names.append(cdp.mol[mol_index[i]].name)
+
+
+def num_spins(data):
+    """Determine the number of spins in the given data.
+
+    @param data:    An element of data from bmrblib.
+    @type data:     dict
+    @return:        The number of spins.
+    @rtype:         int
+    """
+
+    # The number of spins.
+    N = 0
+    if data['data_ids']:
+        N = len(data['data_ids'])
+    elif data['entity_ids']:
+        N = len(data['entity_ids'])
+    elif data['res_nums']:
+        N = len(data['res_nums'])
+    elif data['s2']:
+        N = len(data['s2'])
+
+    # Return the number.
+    return N
+
+
 def read(file=None, directory=None, version='3.1'):
     """Read the contents of a BMRB NMR-STAR formatted file."""
 

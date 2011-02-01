@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,7 +33,7 @@ from warnings import warn
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
-from generic_fns.bmrb import generate_sequence
+from generic_fns import bmrb
 from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
@@ -242,6 +242,9 @@ def bmrb_read(star):
 
     # Get the relaxation data.
     for data in star.relaxation.loop():
+        # Store the keys.
+        keys = data.keys()
+
         # Create the labels.
         ri_label = data['data_type']
         frq = float(data['frq']) * 1e6
@@ -249,8 +252,18 @@ def bmrb_read(star):
         # Round the label to the nearest factor of 10.
         frq_label = str(int(round(float(data['frq'])/10)*10))
 
+        # The number of spins.
+        N = bmrb.num_spins(data)
+
+        # No data in the saveframe.
+        if N == 0:
+            continue
+
+        # The molecule names.
+        mol_names = bmrb.molecule_names(data)
+
         # Pack the data.
-        pack_data(ri_label, frq_label, frq, data['data'], data['errors'], res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
+        pack_data(ri_label, frq_label, frq, data['data'], data['errors'], mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
 
 
 
@@ -807,7 +820,7 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
 
     # Generate the sequence.
     if gen_seq:
-        generate_sequence(N, spin_ids=spin_ids, spin_nums=spin_nums, spin_names=spin_names, res_nums=res_nums, res_names=res_names, mol_names=mol_names)
+        bmrb.generate_sequence(N, spin_ids=spin_ids, spin_nums=spin_nums, spin_names=spin_names, res_nums=res_nums, res_names=res_names, mol_names=mol_names)
 
     # Loop over the spin data.
     for i in range(N):
