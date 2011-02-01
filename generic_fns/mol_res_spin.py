@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2011 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,7 +38,7 @@ The functionality of this module is diverse:
 # Python module imports.
 from numpy import array
 from re import split
-from string import count, strip, upper
+from string import count, replace, strip, upper
 from textwrap import fill
 from warnings import warn
 
@@ -504,9 +504,14 @@ def bmrb_read(star):
 
     # Get the entities.
     for data in star.entity.loop():
+        # Remove brackets from the molecule name.
+        mol_name = data['mol_name']
+        mol_name = replace(mol_name, '(', '')
+        mol_name = replace(mol_name, ')', '')
+
         # Add the residues.
         for i in range(len(data['res_nums'])):
-            create_residue(data['res_nums'][i], data['res_names'][i], mol_name=data['mol_name'])
+            create_residue(data['res_nums'][i], data['res_names'][i], mol_name=mol_name)
 
 
 def bmrb_write_entity(star, version=None):
