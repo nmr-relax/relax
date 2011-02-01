@@ -142,6 +142,10 @@ class Bmrb:
             # The molecule names.
             mol_names = bmrb.molecule_names(data, N)
 
+            # Missing atom names.
+            if 'atom_names' not in keys or data['atom_names'] == None:
+                data['atom_names'] = [None] * N
+
             # Generate the sequence if needed.
             bmrb.generate_sequence(N, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
 
