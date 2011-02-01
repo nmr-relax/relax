@@ -161,7 +161,9 @@ class Bmrb:
                 ts_scale = te_scale
 
             # Rex scaling.
-            rex_scale = 1.0 / (2.0*pi*cdp.frq[0]**2)
+            rex_scale = 1.0
+            if hasattr(cdp, 'frq') and len(cdp.frq):
+                rex_scale = 1.0 / (2.0*pi*cdp.frq[0]**2)
 
             # Loop over the spins.
             for i in range(N):
