@@ -33,8 +33,7 @@ from warnings import warn
 if dep_check.bmrblib_module:
     from bmrblib.nmr_star_dict import NMR_STAR
     from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
-from generic_fns import diffusion_tensor, exp_info, mol_res_spin, pipes, relax_data
-from generic_fns.bmrb import generate_sequence
+from generic_fns import bmrb, diffusion_tensor, exp_info, mol_res_spin, pipes, relax_data
 from generic_fns.mol_res_spin import get_molecule_names, spin_loop
 from relax_errors import RelaxError
 from relax_warnings import RelaxWarning
@@ -129,11 +128,7 @@ class Bmrb:
                 setattr(cdp, 'chi2', data['global_chi2'])
 
             # The number of spins.
-            N = 0
-            if data['data_ids']:
-                N = len(data['data_ids'])
-            elif data['s2']:
-                N = len(data['s2'])
+            N = bmrb.num_spins(data)
 
             # No data in the saveframe.
             if N == 0:
@@ -148,7 +143,7 @@ class Bmrb:
                 spin_ids.append(mol_res_spin.generate_spin_id(mol_name=mol_names[i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i]))
 
             # Generate the sequence if needed.
-            generate_sequence(N, spin_ids=spin_ids, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
+            bmrb.generate_sequence(N, spin_ids=spin_ids, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
 
             # Correlation time scaling.
             table = {'s':   1.0,
