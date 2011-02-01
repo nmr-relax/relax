@@ -64,6 +64,7 @@ class Bmrb:
                'm3':  'S2, Rex',
                'm4':  'S2, te, Rex',
                'm5':  'S2f, S2, ts',
+               'm5':  'S2, te, S2f',
                'm6':  'S2f, tf, S2, ts',
                'm7':  'S2f, S2, ts, Rex',
                'm8':  'S2f, tf, S2, ts, Rex',
