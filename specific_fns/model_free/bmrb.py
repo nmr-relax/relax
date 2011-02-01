@@ -245,7 +245,7 @@ class Bmrb:
                     setattr(spin, 'element', data['atom_types'][i])
 
                 # Heteronucleus type.
-                if'atom_types' in keys and data['atom_types'] != None and 'isotope' in keys and data['isotope'] != None:
+                if'atom_types' in keys and data['atom_types'] != None and data['atom_types'][i] != None and 'isotope' in keys and data['isotope'] != None:
                     # The isotope number.
                     iso_num = data['isotope'][i]
 
