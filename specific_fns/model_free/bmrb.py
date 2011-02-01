@@ -153,6 +153,26 @@ class Bmrb:
             # Generate the sequence if needed.
             generate_sequence(N, spin_ids=spin_ids, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
 
+            # Correlation time scaling.
+            table = {'s':   1.0,
+                     'ns':  1e-9,
+                     'ps':  1e-12}
+            te_scale = 1.0
+            if data['te_units']:
+                te_scale = table[data['te_units']]
+
+            # Fast correlation time scaling.
+            if data['tf_units']:
+                tf_scale = table[data['tf_units']]
+            else:
+                tf_scale = te_scale
+
+            # Slow correlation time scaling.
+            if data['ts_units']:
+                ts_scale = table[data['ts_units']]
+            else:
+                ts_scale = te_scale
+
             # Loop over the spins.
             for i in range(N):
                 # Generate a spin ID.
@@ -171,8 +191,20 @@ class Bmrb:
                     if not mf_bmrb_key[j] in keys or data[mf_bmrb_key[j]] == None:
                         continue
 
+                    # The value.
+                    value = data[mf_bmrb_key[j]][i]
+
+                    # Parameter scaling.
+                    if value != None:
+                        if mf_params[j] == 'te':
+                            value = value * te_scale
+                        elif mf_params[j] == 'tf':
+                            value = value * tf_scale
+                        elif mf_params[j] == 'ts':
+                            value = value * ts_scale
+
                     # Set the parameter.
-                    setattr(spin, mf_params[j], data[mf_bmrb_key[j]][i])
+                    setattr(spin, mf_params[j], value)
 
                     # Set the error.
                     mf_bmrb_key_err = mf_bmrb_key[j] + '_err'
