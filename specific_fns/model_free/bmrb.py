@@ -211,11 +211,23 @@ class Bmrb:
                     # Set the parameter.
                     setattr(spin, mf_params[j], value)
 
-                    # Set the error.
+                    # The error.
                     mf_bmrb_key_err = mf_bmrb_key[j] + '_err'
+                    error = data[mf_bmrb_key_err][i]
+
+                    # Error scaling.
+                    if error != None:
+                        if mf_params[j] == 'te':
+                            error = error * te_scale
+                        elif mf_params[j] == 'tf':
+                            error = error * tf_scale
+                        elif mf_params[j] == 'ts':
+                            error = error * ts_scale
+
+                    # Set the error.
                     mf_param_err = mf_params[j] + '_err'
                     if mf_bmrb_key_err in keys and data[mf_bmrb_key_err] != None:
-                        setattr(spin, mf_param_err, data[mf_bmrb_key_err][i])
+                        setattr(spin, mf_param_err, error)
 
                 # The model.
                 if data['model_fit'] != None and data['model_fit'][i] != None:
