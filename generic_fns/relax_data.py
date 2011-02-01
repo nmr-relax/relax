@@ -245,7 +245,9 @@ def bmrb_read(star):
         # Create the labels.
         ri_label = data['data_type']
         frq = float(data['frq']) * 1e6
-        frq_label = str(int(round(float(data['frq']))))
+
+        # Round the label to the nearest factor of 10.
+        frq_label = str(int(round(float(data['frq'])/10)*10))
 
         # Pack the data.
         pack_data(ri_label, frq_label, frq, data['data'], data['errors'], res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
