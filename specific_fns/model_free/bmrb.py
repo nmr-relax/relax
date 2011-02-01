@@ -54,8 +54,8 @@ class Bmrb:
         if model_name != None and bmrb_name != None:
             raise RelaxError, "Either the model_name or bmrb_name args can be supplied, but not both together."
 
-        # Conversion of Modelfree4 model names.
-        if bmrb_name in ['1', '2', '3', '4', '5']:
+        # Conversion of Modelfree4 (and relax) model numbers.
+        if bmrb_name in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
             return 'm' + bmrb_name
 
         # The relax to BMRB model-free model name map.
