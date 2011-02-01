@@ -140,7 +140,7 @@ class Bmrb:
                 continue
 
             # The molecule names.
-            mol_names = bmrb.molecule_names(data)
+            mol_names = bmrb.molecule_names(data, N)
 
             # Generate the spin IDs.
             spin_ids = []

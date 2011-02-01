@@ -115,7 +115,7 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
         create_spin(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i])
 
 
-def molecule_names(data):
+def molecule_names(data, N=0):
     """Generate the molecule names list.
 
     @param data:    An element of data from bmrblib.
@@ -127,7 +127,7 @@ def molecule_names(data):
     # The molecule index and name.
     mol_index = []
     for i in range(N):
-        if 'entity_ids' in keys and data['entity_ids'] != None and data['entity_ids'][i] != None:
+        if 'entity_ids' in data.keys() and data['entity_ids'] != None and data['entity_ids'][i] != None:
             mol_index.append(int(data['entity_ids'][i]) -1 )
         else:
             mol_index = [0]*N
