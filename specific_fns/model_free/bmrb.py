@@ -134,18 +134,29 @@ class Bmrb:
             if N == 0:
                 continue
 
+            # The molecule index and name.
+            if 'entity_ids' in keys:
+                mol_index = []
+                for i in range(N):
+                    mol_index.append(int(data['entity_ids'][i]) -1 )
+            else:
+                mol_index = [0]*N
+            mol_names = []
+            for i in range(N):
+                mol_names.append(cdp.mol[mol_index[i]].name)
+
             # Generate the spin IDs.
             spin_ids = []
             for i in range(N):
-                spin_ids.append(mol_res_spin.generate_spin_id(res_num=data['res_nums'][i], spin_name=data['atom_names'][i]))
+                spin_ids.append(mol_res_spin.generate_spin_id(mol_name=mol_names[i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i]))
 
             # Generate the sequence if needed.
-            generate_sequence(N, spin_ids=spin_ids, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'])
+            generate_sequence(N, spin_ids=spin_ids, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
 
             # Loop over the spins.
             for i in range(N):
                 # Generate a spin ID.
-                spin_id = mol_res_spin.generate_spin_id(res_name=data['res_names'][i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
+                spin_id = mol_res_spin.generate_spin_id(mol_name=mol_names[i], res_name=data['res_names'][i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
 
                 # Obtain the spin.
                 spin = mol_res_spin.return_spin(spin_id)
