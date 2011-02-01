@@ -137,13 +137,8 @@ class Bmrb:
             # The molecule names.
             mol_names = bmrb.molecule_names(data, N)
 
-            # Generate the spin IDs.
-            spin_ids = []
-            for i in range(N):
-                spin_ids.append(mol_res_spin.generate_spin_id(mol_name=mol_names[i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i]))
-
             # Generate the sequence if needed.
-            bmrb.generate_sequence(N, spin_ids=spin_ids, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
+            bmrb.generate_sequence(N, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
 
             # Correlation time scaling.
             table = {'s':   1.0,

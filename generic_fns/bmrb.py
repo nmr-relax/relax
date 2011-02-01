@@ -88,6 +88,11 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
     if not mol_names:
         mol_names = [None] * N
 
+    # Generate the spin IDs.
+    spin_ids = []
+    for i in range(N):
+        spin_ids.append(generate_spin_id(mol_name=mol_names[i], res_num=res_nums[i], spin_name=spin_names[i]))
+
     # Loop over the spin data.
     for i in range(N):
         # The spin already exists.

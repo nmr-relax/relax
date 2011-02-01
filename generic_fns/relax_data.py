@@ -262,6 +262,9 @@ def bmrb_read(star):
         # The molecule names.
         mol_names = bmrb.molecule_names(data, N)
 
+        # Generate the sequence if needed.
+        bmrb.generate_sequence(N, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
+
         # Pack the data.
         pack_data(ri_label, frq_label, frq, data['data'], data['errors'], mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
 
