@@ -1032,7 +1032,7 @@ class Model_free_main:
 
         # Invalid model.
         else:
-            raise RelaxError("The model '" + model + "' is invalid.")
+            raise RelaxError("The model '%s' is invalid." % model)
 
         # Return the values.
         return equation, params
