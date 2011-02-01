@@ -140,6 +140,9 @@ def molecule_names(data, N=0):
     for i in range(N):
         mol_names.append(cdp.mol[mol_index[i]].name)
 
+    # Return the names.
+    return mol_names
+
 
 def num_spins(data):
     """Determine the number of spins in the given data.
