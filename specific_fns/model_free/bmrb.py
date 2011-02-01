@@ -96,6 +96,11 @@ class Bmrb:
             if item[search_index] == search_text:
                 return item[return_index]
 
+        # The bmrb name is the relax name!
+        for item in map.items():
+            if item[0] == bmrb_name:
+                return bmrb_name
+
         # Should not be here!
         if model_name:
             raise RelaxError("The model-free model '%s' is unknown." % model_name)
