@@ -175,7 +175,7 @@ class BMRB(User_fn_class):
         bmrb.display(version=version)
 
 
-    def read(self, file=None, dir=None, version=None, sample_conditions='conditions_1'):
+    def read(self, file=None, dir=None, version=None, sample_conditions=None):
         """Read BMRB files in the NMR-STAR format.
 
         Keyword Arguments
