@@ -175,7 +175,7 @@ class BMRB(User_fn_class):
         bmrb.display(version=version)
 
 
-    def read(self, file=None, dir=None, version=None):
+    def read(self, file=None, dir=None, version=None, sample_conditions='conditions_1'):
         """Read BMRB files in the NMR-STAR format.
 
         Keyword Arguments
@@ -185,11 +185,18 @@ class BMRB(User_fn_class):
 
         dir:  The directory where the file is located.
 
+        version:  For the reading to use the given NMR-STAR version.
+
+        sample_conditions:  The sample conditions label in the NMR-STAR file to restrict loading to.
+
 
         Description
         ~~~~~~~~~~~
 
-        To search for the results file in the current working directory, set dir to None.
+        To search for the results file in the current working directory, set dir to None.  Note that
+        only one sample condition can be read per relax data pipe.  Therefore if sample_conditions
+        is not given and multiple conditions exist in the NMR-STAR file, a RelaxError will be
+        raised.
         """
 
         # Function intro text.
@@ -197,16 +204,18 @@ class BMRB(User_fn_class):
             text = self._exec_info.ps3 + "bmrb.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
-            text = text + ", version=" + repr(version) + ")"
+            text = text + ", version=" + repr(version)
+            text = text + ", sample_conditions=" + repr(sample_conditions) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
         arg_check.is_str(version, 'NMR-STAR dictionary version', can_be_none=True)
+        arg_check.is_str(sample_conditions, 'sample conditions label', can_be_none=True)
 
         # Execute the functional code.
-        bmrb.read(file=file, directory=dir, version=version)
+        bmrb.read(file=file, directory=dir, version=version, sample_conditions=sample_conditions)
 
 
     def script(self, file='reduced', dir=None, analysis_type=None, model_selection=None, engine='relax', model_elim=False, universal_solution=False):
