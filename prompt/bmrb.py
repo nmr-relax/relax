@@ -203,7 +203,7 @@ class BMRB(User_fn_class):
         # The argument checks.
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
-        arg_check.is_str(version, 'NMR-STAR dictionary version')
+        arg_check.is_str(version, 'NMR-STAR dictionary version', can_be_none=True)
 
         # Execute the functional code.
         bmrb.read(file=file, directory=dir, version=version)
@@ -530,7 +530,7 @@ class BMRB(User_fn_class):
         # The argument checks.
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
-        arg_check.is_str(version, 'NMR-STAR dictionary version')
+        arg_check.is_str(version, 'NMR-STAR dictionary version', can_be_none=True)
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
