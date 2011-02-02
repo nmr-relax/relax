@@ -162,7 +162,7 @@ class BMRB(User_fn_class):
         exp_info.citation(cite_id=cite_id, authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
 
 
-    def display(self, version='3.1'):
+    def display(self, version=None):
         """Display the BMRB data in NMR-STAR format."""
 
         # Function intro text.
@@ -175,7 +175,7 @@ class BMRB(User_fn_class):
         bmrb.display(version=version)
 
 
-    def read(self, file=None, dir=None, version='3.1'):
+    def read(self, file=None, dir=None, version=None):
         """Read BMRB files in the NMR-STAR format.
 
         Keyword Arguments
@@ -494,7 +494,7 @@ class BMRB(User_fn_class):
         exp_info.thiol_state(state=state)
 
 
-    def write(self, file=None, dir='pipe_name', version='3.1', force=False):
+    def write(self, file=None, dir='pipe_name', version=None, force=False):
         """Write the results to a BMRB NMR-STAR formatted file.
 
         Keyword Arguments
