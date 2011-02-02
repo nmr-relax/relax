@@ -31,8 +31,7 @@ from warnings import warn
 
 # relax module imports.
 if dep_check.bmrblib_module:
-    from bmrblib.nmr_star_dict import NMR_STAR
-    from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
+    import bmrblib
 from generic_fns import bmrb, diffusion_tensor, exp_info, mol_res_spin, pipes, relax_data
 from generic_fns.mol_res_spin import get_molecule_names, spin_loop
 from relax_errors import RelaxError
@@ -287,10 +286,7 @@ class Bmrb:
         """
 
         # Initialise the NMR-STAR data object.
-        if version == '3.1':
-            star = NMR_STAR_v3_1('relax_model_free_results', file_path)
-        else:
-            star = NMR_STAR('relax_model_free_results', file_path)
+        star = bmrblib.create_nmr_star('relax_model_free_results', file_path, version)
 
         # Read the contents of the STAR formatted file.
         star.read()
@@ -324,10 +320,7 @@ class Bmrb:
         cdp = pipes.get_pipe()
 
         # Initialise the NMR-STAR data object.
-        if version == '3.1':
-            star = NMR_STAR_v3_1('relax_model_free_results', file_path)
-        else:
-            star = NMR_STAR('relax_model_free_results', file_path)
+        star = bmrblib.create_nmr_star('relax_model_free_results', file_path, version)
 
         # Global minimisation stats.
         global_chi2 = None
