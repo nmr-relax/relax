@@ -189,8 +189,18 @@ def num_spins(data):
     return N
 
 
-def read(file=None, directory=None, version='3.1'):
-    """Read the contents of a BMRB NMR-STAR formatted file."""
+def read(file=None, directory=None, version=None, sample_conditions=None):
+    """Read the contents of a BMRB NMR-STAR formatted file.
+
+    @keyword file:              The name of the BMRB STAR formatted file.
+    @type file:                 str
+    @keyword directory:         The directory where the file is located.
+    @type directory:            None or str
+    @keyword version:           The BMRB version to force the reading.
+    @type version:              None or str
+    @keyword sample_conditions: The sample condition label to read.  Only one sample condition can be read per data pipe.
+    @type sample_conditions:    None or str
+    """
 
     # Test if bmrblib is installed.
     if not dep_check.bmrblib_module:
@@ -215,7 +225,7 @@ def read(file=None, directory=None, version='3.1'):
     read_function = specific_fns.setup.get_specific_fn('bmrb_read', ds[ds.current_pipe].pipe_type)
 
     # Read the results.
-    read_function(file_path, version=version)
+    read_function(file_path, version=version, sample_conditions=sample_conditions)
 
 
 def write(file=None, directory=None, version='3.1', force=False):
