@@ -120,6 +120,27 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
         create_spin(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i])
 
 
+def list_sample_conditions(star):
+    """Get a listing of all the sample conditions.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    @return:        The list of sample condition names.
+    @rtype:         list of str
+    """
+
+    # Init.
+    sample_conds = []
+
+    # Get the sample conditions.
+    for data in star.sample_conditions.loop():
+        # Store the framecode.
+        sample_conds.append(data['sf_framecode'])
+
+    # Return the names.
+    return sample_conds
+
+
 def molecule_names(data, N=0):
     """Generate the molecule names list.
 
