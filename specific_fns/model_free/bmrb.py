@@ -278,11 +278,15 @@ class Bmrb:
                 setattr(spin, 'csa', data['csa'][i] * 1e-6)
 
 
-    def bmrb_read(self, file_path, version='3.1'):
+    def bmrb_read(self, file_path, version=None, sample_conditions=None):
         """Read the model-free results from a BMRB NMR-STAR v3.1 formatted file.
 
-        @param file_path:   The full file path.
-        @type file_path:    str
+        @param file_path:           The full file path.
+        @type file_path:            str
+        @keyword version:           The BMRB version to force the reading.
+        @type version:              None or str
+        @keyword sample_conditions: The sample condition label to read.  Only one sample condition can be read per data pipe.
+        @type sample_conditions:    None or str
         """
 
         # Initialise the NMR-STAR data object.
@@ -290,6 +294,13 @@ class Bmrb:
 
         # Read the contents of the STAR formatted file.
         star.read()
+
+        # The sample conditions.
+        sample_conds = bmrb.list_sample_conditions(star)
+        if sample_conditions and sample_conditions not in sample_conds:
+            raise RelaxError("The sample conditions label '%s' does not correspond to any of the labels in the file: %s" % (sample_conditions, sample_conds))
+        if not sample_conditions and len(sample_conds) > 1:
+            raise RelaxError("Only one of the sample conditions in %s can be loaded per relax data pipe." % sample_conds)
 
         # The diffusion tensor.
         diffusion_tensor.bmrb_read(star)
