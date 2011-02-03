@@ -504,11 +504,19 @@ def bmrb_read(star):
 
     # Get the entities.
     for data in star.entity.loop():
-        # Remove brackets from the molecule name.
+        # Remove nasty characters from the molecule name.
         mol_name = data['mol_name']
         if mol_name:
+            # Round brackets.
             mol_name = replace(mol_name, '(', '')
             mol_name = replace(mol_name, ')', '')
+
+            # Square brackets.
+            mol_name = replace(mol_name, '[', '')
+            mol_name = replace(mol_name, ']', '')
+
+            # Commas.
+            mol_name = replace(mol_name, ',', ' ')
 
         # Add the residues.
         for i in range(len(data['res_nums'])):
