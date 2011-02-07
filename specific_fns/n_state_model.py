@@ -2230,7 +2230,7 @@ class N_state_model(API_base, API_common):
         if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
             # Do errors exist?
             if not hasattr(spin, 'rdc_err'):
-                raise(RelaxError, "The RDC errors are missing for spin '%s'." % data_id[0])
+                raise RelaxError("The RDC errors are missing for spin '%s'." % data_id[0])
 
             # Append the data.
             mc_errors.append(spin.rdc_err[data_id[2]])
@@ -2239,7 +2239,7 @@ class N_state_model(API_base, API_common):
         elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
             # Do errors exist?
             if not hasattr(spin, 'pcs_err'):
-                raise(RelaxError, "The PCS errors are missing for spin '%s'." % data_id[0])
+                raise RelaxError("The PCS errors are missing for spin '%s'." % data_id[0])
 
             # Append the data.
             mc_errors.append(spin.pcs_err[data_id[2]])
@@ -2248,7 +2248,7 @@ class N_state_model(API_base, API_common):
         elif hasattr(spin, 'noesy'):
             # Do errors exist?
             if not hasattr(spin, 'noesy_err'):
-                raise(RelaxError, "The NOESY errors are missing for spin '%s'." % data_id[0])
+                raise RelaxError("The NOESY errors are missing for spin '%s'." % data_id[0])
 
             # Append the data.
             mc_errors.append(spin.noesy_err)
