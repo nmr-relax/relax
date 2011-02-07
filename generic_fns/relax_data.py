@@ -233,17 +233,23 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
         update_data_structures_spin(spin, ri_label, frq_label, frq, value)
 
 
-def bmrb_read(star):
+def bmrb_read(star, sample_conditions=None):
     """Read the relaxation data from the NMR-STAR dictionary object.
 
-    @param star:    The NMR-STAR dictionary object.
-    @type star:     NMR_STAR instance
+    @param star:                The NMR-STAR dictionary object.
+    @type star:                 NMR_STAR instance
+    @keyword sample_conditions: The sample condition label to read.  Only one sample condition can be read per data pipe.
+    @type sample_conditions:    None or str
     """
 
     # Get the relaxation data.
     for data in star.relaxation.loop():
         # Store the keys.
         keys = data.keys()
+
+        # Sample conditions do not match (remove the $ sign).
+        if 'sample_cond_list_label' in keys and string.replace(data['sample_cond_list_label'], '$', '') != sample_conditions:
+            continue
 
         # Create the labels.
         ri_label = data['data_type']

@@ -112,11 +112,13 @@ class Bmrb:
             warn(RelaxWarning("The BMRB model-free model name '%s' is unknown." % model_name))
 
 
-    def _sf_model_free_read(self, star):
+    def _sf_model_free_read(self, star, sample_conditions=None):
         """Fill the spin containers with the model-free data from the saveframe records.
 
-        @param star:    The NMR-STAR dictionary object.
-        @type star:     NMR_STAR instance
+        @param star:                The NMR-STAR dictionary object.
+        @type star:                 NMR_STAR instance
+        @keyword sample_conditions: The sample condition label to read.  Only one sample condition can be read per data pipe.
+        @type sample_conditions:    None or str
         """
 
         # The list of model-free parameters (both bmrblib names and relax names).
@@ -127,6 +129,10 @@ class Bmrb:
         for data in star.model_free.loop():
             # Store the keys.
             keys = data.keys()
+
+            # Sample conditions do not match (remove the $ sign).
+            if 'sample_cond_list_label' in keys and string.replace(data['sample_cond_list_label'], '$', '') != sample_conditions:
+                continue
 
             # Global data.
             if 'global_chi2' in keys:
@@ -195,19 +201,27 @@ class Bmrb:
                     # The value.
                     value = data[mf_bmrb_key[j]][i]
 
+                    # The parameter.
+                    param = mf_params[j]
+
+                    # Change the parameter name of te to ts.
+                    if param == 'te':
+                        if data['s2s'] and data['s2s'][i] != None:
+                            param = 'ts'
+
                     # Parameter scaling.
                     if value != None:
-                        if mf_params[j] == 'te':
+                        if param == 'te':
                             value = value * te_scale
-                        elif mf_params[j] == 'tf':
+                        elif param == 'tf':
                             value = value * tf_scale
-                        elif mf_params[j] == 'ts':
+                        elif param == 'ts':
                             value = value * ts_scale
-                        elif mf_params[j] == 'rex':
+                        elif param == 'rex':
                             value = value * rex_scale
 
                     # Set the parameter.
-                    setattr(spin, mf_params[j], value)
+                    setattr(spin, param, value)
 
                     # The error.
                     mf_bmrb_key_err = mf_bmrb_key[j] + '_err'
@@ -215,17 +229,17 @@ class Bmrb:
 
                     # Error scaling.
                     if error != None:
-                        if mf_params[j] == 'te':
+                        if param == 'te':
                             error = error * te_scale
-                        elif mf_params[j] == 'tf':
+                        elif param == 'tf':
                             error = error * tf_scale
-                        elif mf_params[j] == 'ts':
+                        elif param == 'ts':
                             error = error * ts_scale
-                        elif mf_params[j] == 'rex':
+                        elif param == 'rex':
                             error = error * rex_scale
 
                     # Set the error.
-                    mf_param_err = mf_params[j] + '_err'
+                    mf_param_err = param + '_err'
                     if mf_bmrb_key_err in keys and data[mf_bmrb_key_err] != None:
                         setattr(spin, mf_param_err, error)
 
@@ -289,6 +303,7 @@ class Bmrb:
         @type sample_conditions:    None or str
         """
 
+        print sample_conditions
         # Initialise the NMR-STAR data object.
         star = bmrblib.create_nmr_star('relax_model_free_results', file_path, version)
 
@@ -309,10 +324,10 @@ class Bmrb:
         mol_res_spin.bmrb_read(star)
 
         # Read the relaxation data saveframes.
-        relax_data.bmrb_read(star)
+        relax_data.bmrb_read(star, sample_conditions=sample_conditions)
 
         # Read the model-free data saveframes.
-        self._sf_model_free_read(star)
+        self._sf_model_free_read(star, sample_conditions=sample_conditions)
 
         # Read the CSA data saveframes.
         self._sf_csa_read(star)
