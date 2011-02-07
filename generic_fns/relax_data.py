@@ -248,7 +248,7 @@ def bmrb_read(star, sample_conditions=None):
         keys = data.keys()
 
         # Sample conditions do not match (remove the $ sign).
-        if 'sample_cond_list_label' in keys and string.replace(data['sample_cond_list_label'], '$', '') != sample_conditions:
+        if 'sample_cond_list_label' in keys and sample_conditions and string.replace(data['sample_cond_list_label'], '$', '') != sample_conditions:
             continue
 
         # Create the labels.
