@@ -2102,7 +2102,7 @@ class N_state_model(API_base, API_common):
             cdp.warning = warning
 
         # Statistical analysis.
-        if ('rdc' in data_types or 'pcs' in data_types):
+        if sim_index == None and ('rdc' in data_types or 'pcs' in data_types):
             # Get the final back calculated data (for the Q-factor and
             self._minimise_bc_data(model)
 
