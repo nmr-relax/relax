@@ -303,7 +303,6 @@ class Bmrb:
         @type sample_conditions:    None or str
         """
 
-        print sample_conditions
         # Initialise the NMR-STAR data object.
         star = bmrblib.create_nmr_star('relax_model_free_results', file_path, version)
 
