@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import int32, ones, zeros
+from numpy import array, float64, int32, ones, zeros
 import string
 import sys
 from warnings import warn
@@ -271,8 +271,17 @@ def bmrb_read(star, sample_conditions=None):
         # Generate the sequence if needed.
         bmrb.generate_sequence(N, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
 
+        # The data and error.
+        vals = array(data['data'], float64)
+        errors = array(data['errors'], float64)
+
+        # Scaling.
+        if 'units' in keys and data['units'] == 'ms':
+            vals = vals / 1000
+            vals = errors / 1000
+
         # Pack the data.
-        pack_data(ri_label, frq_label, frq, data['data'], data['errors'], mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
+        pack_data(ri_label, frq_label, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
 
 
 
