@@ -772,9 +772,9 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
     @param frq:             The spectrometer proton frequency in Hz.
     @type frq:              float
     @keyword values:        The relaxation data for each spin.
-    @type values:           None or list of str
+    @type values:           None or list of float or float array
     @keyword errors:        The relaxation data errors for each spin.
-    @type errors:           None or list of str
+    @type errors:           None or list of float or float array
     @keyword spin_ids:      The list of spin ID strings.  If the other spin identifiers are given, i.e. mol_names, res_nums, res_names, spin_nums, and/or spin_names, then this argument is not necessary.
     @type spin_ids:         None or list of str
     @keyword mol_names:     The list of molecule names used for creating the spin IDs (if not given) or for generating the sequence data.
@@ -795,7 +795,7 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
     N = len(values)
 
     # Test the data.
-    if errors and len(errors) != N:
+    if errors != None and len(errors) != N:
         raise RelaxError("The length of the errors arg (%s) does not match that of the value arg (%s)." % (len(errors), N))
     if spin_ids and len(spin_ids) != N:
         raise RelaxError("The length of the spin ID strings arg (%s) does not match that of the value arg (%s)." % (len(mol_names), N))
@@ -821,7 +821,7 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
         spin_nums = [None] * N
     if not spin_names:
         spin_names = [None] * N
-    if not errors:
+    if errors == None:
         errors = [None] * N
 
     # Generate the spin IDs.
