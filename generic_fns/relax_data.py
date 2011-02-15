@@ -272,25 +272,38 @@ def bmrb_read(star, sample_conditions=None):
         bmrb.generate_sequence(N, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
 
         # The data and error.
-        vals = array(data['data'], float64)
-        errors = array(data['errors'], float64)
+        vals = data['data']
+        errors = data['errors']
+        if vals == None:
+            vals = [None] * N
+        if errors == None:
+            errors = [None] * N
 
         # Data transformation.
-        if 'units' in keys:
+        if vals != None and 'units' in keys:
             # Scaling.
             if data['units'] == 'ms':
-                vals = vals / 1000
-                errors = errors / 1000
+                # Loop over the data.
+                for i in range(N):
+                    # The value.
+                    if vals[i] != None:
+                        vals[i] = vals[i] / 1000
+
+                    # The error.
+                    if errors[i] != None:
+                        errors[i] = errors[i] / 1000
 
             # Invert.
             if data['units'] in ['s', 'ms']:
                 # Loop over the data.
                 for i in range(len(vals)):
                     # The value.
-                    vals[i] = 1.0 / vals[i]
+                    if vals[i] != None:
+                        vals[i] = 1.0 / vals[i]
 
                     # The error.
-                    errors[i] = errors[i] * vals[i]**2
+                    if vals[i] != None and errors[i] != None:
+                        errors[i] = errors[i] * vals[i]**2
 
         # Pack the data.
         pack_data(ri_label, frq_label, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
