@@ -206,7 +206,7 @@ class Bmrb:
 
                     # Change the parameter name of te to ts.
                     if param == 'te':
-                        if data['s2s'] and data['s2s'][i] != None:
+                        if (data['s2s'] and data['s2s'][i] != None) or (data['s2f'] and data['s2f'][i] != None):
                             param = 'ts'
 
                     # Parameter scaling.
