@@ -176,13 +176,13 @@ def num_spins(data):
 
     # The number of spins.
     N = 0
-    if data['data_ids']:
+    if 'data_ids' in data.keys() and data['data_ids']:
         N = len(data['data_ids'])
-    elif data['entity_ids']:
+    elif 'entity_ids' in data.keys() and data['entity_ids']:
         N = len(data['entity_ids'])
-    elif data['res_nums']:
+    elif 'res_nums' in data.keys() and data['res_nums']:
         N = len(data['res_nums'])
-    elif data['s2']:
+    elif 's2' in data.keys() and data['s2']:
         N = len(data['s2'])
 
     # Return the number.
