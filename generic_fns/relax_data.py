@@ -275,10 +275,22 @@ def bmrb_read(star, sample_conditions=None):
         vals = array(data['data'], float64)
         errors = array(data['errors'], float64)
 
-        # Scaling.
-        if 'units' in keys and data['units'] == 'ms':
-            vals = vals / 1000
-            vals = errors / 1000
+        # Data transformation.
+        if 'units' in keys:
+            # Scaling.
+            if data['units'] == 'ms':
+                vals = vals / 1000
+                errors = errors / 1000
+
+            # Invert.
+            if data['units'] in ['s', 'ms']:
+                # Loop over the data.
+                for i in range(len(vals)):
+                    # The value.
+                    vals[i] = 1.0 / vals[i]
+
+                    # The error.
+                    errors[i] = errors[i] * vals[i]**2
 
         # Pack the data.
         pack_data(ri_label, frq_label, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
