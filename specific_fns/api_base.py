@@ -67,8 +67,8 @@ class API_base:
         raise RelaxImplementError
 
 
-    def bmrb_read(self, file_path, version=None):
-        """Prototype method for reading the data from a BMRB NMR-STAR v3.1 formatted file.
+    def bmrb_read(self, file_path, version=None, sample_conditions=None):
+        """Prototype method for reading the data from a BMRB NMR-STAR formatted file.
 
         @param file_path:   The full file path.
         @type file_path:    str
