@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,40 +20,26 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for the reading of Bruker Protein Dynamics Centre (PDC) files."""
 
-__all__ = [ 'align_tensor',
-            'angles',
-            'dasha',
-            'diffusion_tensor',
-            'eliminate',
-            'fix',
-            'frame_order',
-            'frq',
-            'grace',
-            'minimise',
-            'model_selection',
-            'mol_res_spin',
-            'molmol',
-            'monte_carlo',
-            'noesy',
-            'palmer',
-            'paramag',
-            'pcs',
-            'pdc',
-            'pipes',
-            'pymol_control',
-            'rdc',
-            'relax_data',
-            'relax_re',
-            'reset',
-            'results',
-            'selection',
-            'sequence',
-            'spectrum',
-            'state',
-            'structure',
-            'temperature',
-            'value',
-            'vmd',
-            'xplor'
-]
+# relax module imports.
+from generic_fns.mol_res_spin import spin_loop
+from relax_errors import RelaxError
+
+
+def read(file=None, dir=None):
+    """Read the PDC data file and place all the data into the relax data store.
+
+    @keyword file:          The name of the file to open.
+    @type file:             str
+    @keyword dir:           The directory containing the file (defaults to the current directory if None).
+    @type dir:              str or None
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
