@@ -226,7 +226,7 @@ class Bmrb:
                     # The error.
                     mf_bmrb_key_err = mf_bmrb_key[j] + '_err'
                     error = None
-                    if data[mf_bmrb_key_err] != None:
+                    if mf_bmrb_key_err in keys and data[mf_bmrb_key_err] != None:
                         error = data[mf_bmrb_key_err][i]
 
                     # Error scaling.
