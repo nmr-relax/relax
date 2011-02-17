@@ -63,8 +63,8 @@ class Pdc(SystemTestCase):
         i = 0
         for spin in spin_loop():
             # Check the R1 value and error.
-            self.assertEqaul(spin.relax_data[0], r1[i])
-            self.assertEqaul(spin.relax_error[0], r1_err[i])
+            self.assertEqual(spin.relax_data[0], r1[i])
+            self.assertEqual(spin.relax_error[0], r1_err[i])
 
             # Increment the data index.
             i += 1
