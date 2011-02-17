@@ -48,6 +48,7 @@ from n_state_model import N_state_model
 from noe import Noe
 from noe_restraints import Noe_restraints
 from palmer import Palmer
+from pdc import Pdc
 from peak_lists import Peak_lists
 from pipes import Pipes
 from relax_fit import Relax_fit
@@ -75,6 +76,7 @@ __all__ = ['align_tensor',
            'noe',
            'noe_restraints',
            'palmer',
+           'pdc',
            'peak_lists'
            'pipes',
            'relax_fit',
@@ -137,6 +139,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe_restraints))
             suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Pdc))
             suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
             suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
             suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
