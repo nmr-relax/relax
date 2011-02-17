@@ -62,8 +62,8 @@ class Bmrb:
                'm2':  'S2, te',
                'm3':  'S2, Rex',
                'm4':  'S2, te, Rex',
+               'm5':  'S2, te, S2f',    # This non-standard naming (incorrect) must go before the correct m5.
                'm5':  'S2f, S2, ts',
-               'm5':  'S2, te, S2f',
                'm6':  'S2f, tf, S2, ts',
                'm7':  'S2f, S2, ts, Rex',
                'm8':  'S2f, tf, S2, ts, Rex',
