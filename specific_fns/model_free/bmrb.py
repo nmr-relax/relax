@@ -195,30 +195,41 @@ class Bmrb:
                 # Loop over and set the model-free parameters.
                 for j in range(len(mf_params)):
                     # No parameter.
-                    if not mf_bmrb_key[j] in keys or data[mf_bmrb_key[j]] == None:
+                    if not mf_bmrb_key[j] in keys:
                         continue
 
-                    # The value.
-                    value = data[mf_bmrb_key[j]][i]
+                    # The parameter and its value.
+                    if data[mf_bmrb_key[j]] != None:
+                        # The value.
+                        value = data[mf_bmrb_key[j]][i]
 
-                    # The parameter.
-                    param = mf_params[j]
+                        # The parameter.
+                        param = mf_params[j]
 
-                    # Change the parameter name of te to ts.
-                    if param == 'te':
-                        if (data['s2s'] and data['s2s'][i] != None) or (data['s2f'] and data['s2f'][i] != None):
-                            param = 'ts'
+                        # A te value which should be ts!
+                        if param == 'te' and not hasattr(spin, 'te'):
+                            if (data['s2s'] and data['s2s'][i] != None) or (data['s2f'] and data['s2f'][i] != None):
+                                # Change the parameter name of te to ts.
+                                param = 'ts'
 
-                    # Parameter scaling.
-                    if value != None:
-                        if param == 'te':
-                            value = value * te_scale
-                        elif param == 'tf':
-                            value = value * tf_scale
-                        elif param == 'ts':
-                            value = value * ts_scale
-                        elif param == 'rex':
-                            value = value * rex_scale
+                                # Set the te and te_err values to None.
+                                spin.te = None
+                                spin.te_err = None
+
+                        # Parameter scaling.
+                        if value != None:
+                            if param == 'te':
+                                value = value * te_scale
+                            elif param == 'tf':
+                                value = value * tf_scale
+                            elif param == 'ts':
+                                value = value * ts_scale
+                            elif param == 'rex':
+                                value = value * rex_scale
+
+                    # No parameter value.
+                    else:
+                        value = None
 
                     # Set the parameter.
                     setattr(spin, param, value)
