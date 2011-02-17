@@ -24,7 +24,8 @@
 """Module for the reading of Bruker Protein Dynamics Centre (PDC) files."""
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns import pipes
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError
 
 
