@@ -139,5 +139,14 @@ def read(file=None, dir=None):
             # Set the value (not implemented yet).
             continue
 
+        # The labelling.
+        if len(line) == 2 and line[0] == 'Labelling:':
+            # Set the heteronucleus value.
+            value.set(line[1], 'heteronucleus')
+
+            # Name the spins.
+            name = split('([A-Z]+)', line[1])[1]
+            name_spin(name=name)
+
     # Pack the data.
     pack_data(ri_label, frq_label, frq, values, errors, ids=res_nums)
