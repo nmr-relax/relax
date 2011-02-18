@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,40 +20,47 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the Bruker Protein Dynamics Centre user function class."""
+__docformat__ = 'plaintext'
 
-__all__ = [ 'align_tensor',
-            'angles',
-            'dasha',
-            'diffusion_tensor',
-            'eliminate',
-            'fix',
-            'frame_order',
-            'frq',
-            'grace',
-            'minimise',
-            'model_selection',
-            'mol_res_spin',
-            'molmol',
-            'monte_carlo',
-            'noesy',
-            'palmer',
-            'paramag',
-            'pcs',
-            'pdc',
-            'pipes',
-            'pymol_control',
-            'rdc',
-            'relax_data',
-            'relax_re',
-            'reset',
-            'results',
-            'selection',
-            'sequence',
-            'spectrum',
-            'state',
-            'structure',
-            'temperature',
-            'value',
-            'vmd',
-            'xplor'
-]
+# relax module imports.
+import arg_check
+from base_class import User_fn_class
+from generic_fns import pdc
+
+
+class Pdc(User_fn_class):
+    """Class containing the function for reading the Bruker Protein Dynamics Centre (PDC) files."""
+
+    def read(self, file=None, dir=None):
+        """Read the Bruker Protein Dynamics Centre (PDC) file.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        file:  The name of the PDC file.
+
+        dir:  The directory where the file is located.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function is used to load all of the data out of a Bruker PDC file for subsequent
+        analysis within relax.
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pdc.read("
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+
+        # Execute the functional code.
+        pdc.read(file=file, dir=dir)

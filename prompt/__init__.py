@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2009-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2009-2011 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -51,6 +51,7 @@ __all__ = ['align_tensor',
            'palmer',
            'paramag',
            'pcs',
+           'pdc',
            'pipe',
            'pymol_control',
            'rdc',

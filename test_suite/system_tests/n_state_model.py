@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,7 +32,7 @@ from tempfile import mkdtemp
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.align_tensor import calc_chi_tensor
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.mol_res_spin import return_spin, spin_loop
 from status import Status; status = Status()
 
 
@@ -184,15 +184,53 @@ class N_state_model(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
-        # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
-        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189412096996)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.000271130087923)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.000264898401302)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000284115871058)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.000152207413184)
-        self.assertAlmostEqual(cdp.chi2, 783.530808266)
-        self.assertAlmostEqual(cdp.q_pcs, 0.063345784112045375)
-        self.assertAlmostEqual(cdp.q_rdc, 0.084926009099013003)
+        # The tag.
+        tag = 'synth'
+
+        # Loop a few times.
+        for i in range(4):
+            # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
+            self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189412096996)
+            self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.000271130087923)
+            self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.000264898401302)
+            self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000284115871058)
+            self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.000152207413184)
+            self.assertAlmostEqual(cdp.chi2, 783.530808266)
+            self.assertAlmostEqual(cdp.q_pcs, 0.063345784112045375)
+            self.assertAlmostEqual(cdp.q_rdc, 0.084926009099013003)
+
+            # Get a spin to check.
+            spin = return_spin(':114@N')
+
+            # Check the RDC and PCS values.
+            self.assertAlmostEqual(spin.rdc[tag], -8.9193269604999994)
+            self.assertAlmostEqual(spin.rdc_bc[tag], -9.1030018792821394)
+            self.assertAlmostEqual(spin.pcs[tag], -0.41430390310999998)
+            self.assertAlmostEqual(spin.pcs_bc[tag], -0.39723010845807194)
+
+            # MC sims so next round can check if values change.
+            if i == 0:
+                # Set some errors.
+                for spin in spin_loop():
+                    spin.rdc_err = {tag: 1.0}
+                    spin.pcs_err = {tag: 0.1}
+
+                # MC sims.
+                self.interpreter.monte_carlo.setup(number=3)
+                self.interpreter.monte_carlo.create_data()
+                self.interpreter.monte_carlo.initial_values()
+                self.interpreter.minimise('simplex', constraints=False, max_iter=5)
+                self.interpreter.monte_carlo.error_analysis()
+
+            # Back-calc so next round can check if values change.
+            if i == 2:
+                self.interpreter.rdc.back_calc(tag)
+                self.interpreter.pcs.back_calc(tag)
+
+            # Calc Q factors so next round can check if values change.
+            if i == 1:
+                self.interpreter.rdc.calc_q_factors()
+                self.interpreter.pcs.calc_q_factors()
 
 
     def test_align_fit_pcs(self):

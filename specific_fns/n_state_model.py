@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -2102,7 +2102,7 @@ class N_state_model(API_base, API_common):
             cdp.warning = warning
 
         # Statistical analysis.
-        if ('rdc' in data_types or 'pcs' in data_types):
+        if sim_index == None and ('rdc' in data_types or 'pcs' in data_types):
             # Get the final back calculated data (for the Q-factor and
             self._minimise_bc_data(model)
 
@@ -2230,7 +2230,7 @@ class N_state_model(API_base, API_common):
         if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
             # Do errors exist?
             if not hasattr(spin, 'rdc_err'):
-                raise(RelaxError, "The RDC errors are missing for spin '%s'." % spin_id)
+                raise RelaxError("The RDC errors are missing for spin '%s'." % data_id[0])
 
             # Append the data.
             mc_errors.append(spin.rdc_err[data_id[2]])
@@ -2239,7 +2239,7 @@ class N_state_model(API_base, API_common):
         elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
             # Do errors exist?
             if not hasattr(spin, 'pcs_err'):
-                raise(RelaxError, "The PCS errors are missing for spin '%s'." % spin_id)
+                raise RelaxError("The PCS errors are missing for spin '%s'." % data_id[0])
 
             # Append the data.
             mc_errors.append(spin.pcs_err[data_id[2]])
@@ -2248,7 +2248,7 @@ class N_state_model(API_base, API_common):
         elif hasattr(spin, 'noesy'):
             # Do errors exist?
             if not hasattr(spin, 'noesy_err'):
-                raise(RelaxError, "The NOESY errors are missing for spin '%s'." % spin_id)
+                raise RelaxError("The NOESY errors are missing for spin '%s'." % data_id[0])
 
             # Append the data.
             mc_errors.append(spin.noesy_err)

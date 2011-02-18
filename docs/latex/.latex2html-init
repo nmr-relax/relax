@@ -1,0 +1,51 @@
+# The title.
+$TITLE = 'relax';
+
+# Allow images in the base relax directory to be used.
+$DVIPS = 'dvips -R0';
+
+# Better maths images.
+$DVIPSOPT = ' -E';
+
+# The path to the custom icons.
+$ALTERNATIVE_ICONS = 'icons';
+
+%iconsizes = (
+'up' ,'WIDTH="48" HEIGHT="48" TITLE="Up"',
+'next','WIDTH="48" HEIGHT="48" TITLE="Next"',
+'previous','WIDTH="48" HEIGHT="48" TITLE="Previous"',
+'next_group' ,'WIDTH="48" HEIGHT="48" TITLE="Next group"',
+'next_inactive' ,'WIDTH="48" HEIGHT="48" TITLE="Next"',
+'previous_group','WIDTH="48" HEIGHT="48" TITLE="Previous group"',
+'contents','WIDTH="48" HEIGHT="48" TITLE="Contents"',
+'index','WIDTH="48" HEIGHT="48" TITLE="Index"',
+);
+
+# Copy the icons into the HTML target directory.
+$LOCAL_ICONS = 1;
+
+# Set the HTML version.
+$HTML_VERSION = "4.0";
+
+# The names of the HTML pages.
+$LONG_TITLES = 5;
+
+# The level for splitting into separate HTML pages.
+$MAX_SPLIT_DEPTH = 4;
+
+# Navigation links at the bottom as well.
+$AUTO_NAVIGATION = 1;
+
+# The auxillary file prefix.
+$EXTERNAL_FILE = "relax";
+
+# Nicer figures.
+$ANTI_ALIAS = 1;
+
+# Set the font size.
+$FONT_SIZE = "12pt";
+
+# Show the section numbers of the PDF manual.
+$SHOW_SECTION_NUMBERS = 1;
+
+1;	# This must be the last line
