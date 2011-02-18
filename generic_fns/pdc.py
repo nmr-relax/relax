@@ -108,39 +108,55 @@ def read(file=None, dir=None):
     # Loop over the data.
     in_ri_data = False
     for line in file_data:
+        print line
         # The data type.
         if len(line) == 3 and search('T1', line[2]):
             ri_label = 'R1'
-            continue
+        elif len(line) == 3 and search('T2', line[2]):
+            ri_label = 'R2'
+        elif len(line) == 4 and line[3] == 'NOE':
+            ri_label = 'NOE'
 
         # Get the frequency.
-        if len(line) == 3 and line[0] == 'Proton' and line[1] == 'frequency[MHz]:':
+        elif len(line) == 3 and line[0] == 'Proton' and line[1] == 'frequency[MHz]:':
             frq = float(line[2])
             frq_label = str(int(round(float(line[2])/10)*10))
-            continue
 
         # Inside the relaxation data section.
-        if len(line) == 2 and line[0] == 'SECTION:' and line[1] == 'results':
+        elif len(line) == 2 and line[0] == 'SECTION:' and line[1] == 'results':
             in_ri_data = True
-            continue
 
         # The relaxation data.
-        if in_ri_data and line[0] != 'Peak':
+        elif in_ri_data and line[0] != 'Peak':
+            # Differences in the Rx and NOE files.
+            if ri_label == 'NOE':
+                index1 = -4
+                index2 = -4
+            else:
+                index1 = -5
+                index2 = -3
+
             # The residue info.
-            res_nums.append(get_res_num(line[:-5]))
+            res_nums.append(get_res_num(line[:index1]))
 
             # Get the relaxation data.
-            rx, rx_err = get_relax_data(line[-3:])
+            if ri_label != 'NOE':
+                rx, rx_err = get_relax_data(line[index2:])
+            else:
+                rx = float(line[-2])
+                rx_err = float(line[-1])
+
+            # Append the data.
             values.append(rx)
             errors.append(rx_err)
 
         # The temperature.
-        if len(line) == 3 and line[0] == 'Temperature':
+        elif len(line) == 3 and line[0] == 'Temperature':
             # Set the value (not implemented yet).
-            continue
+            pass
 
         # The labelling.
-        if len(line) == 2 and line[0] == 'Labelling:':
+        elif len(line) == 2 and line[0] == 'Labelling:':
             # Set the heteronucleus value.
             value.set(line[1], 'heteronucleus')
 
@@ -149,7 +165,7 @@ def read(file=None, dir=None):
             name_spin(name=name)
 
         # The integration method.
-        if len(line) == 4 and line[0] == 'Used' and line[1] == 'integrals:':
+        elif len(line) == 4 and line[0] == 'Used' and line[1] == 'integrals:':
             # Not implemented yet!  Needs the BMRB branch.
             ## Peak heights.
             #if line[2] == 'peak' and line[3] == 'intensities':
@@ -158,7 +174,7 @@ def read(file=None, dir=None):
             ## Peak volumes:
             #if line[2] == 'peak' and line[3] == 'volumes':
             #    peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type='volume')
-            continue
+            pass
 
     # Pack the data.
     pack_data(ri_label, frq_label, frq, values, errors, ids=res_nums)
