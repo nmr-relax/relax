@@ -39,6 +39,232 @@ from relax_io import extract_data, read_spin_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
+
+class Bruker_import():
+    def __init__(self, dir=None, exp_type=None, file=None, UI='prompt', output_file=None):
+        """Function to import Bruker Protein Dynamic Center (PDC) files.
+
+        @param dir:         The directory to save the new file in.
+        @type dir:          str
+        @param file:        The Bruker PDC output file.
+        @type file:         str
+        @param exp_type:    The type of experiment, e.g. NOE, T1 or T2
+        @type exp_type:     str
+        @param UI:          The relax user interface (either 'prompt' or 'GUI').
+        @type UI:           str
+        @param output_file: The file to save the imported list.
+        @type output_file:  str
+        """
+
+        # Create experiment type
+        self.exp_type = exp_type
+
+        # The output file
+        self.output_file = output_file
+        self.dir = dir
+
+        # The user interface.
+        self.UI = UI
+
+        # Read the file.
+        if file:
+            self.read_file(file)
+        else:
+            raise RelaxError('No file selected.')
+
+        # Collect the entries for the file.
+        self.collect_entries()
+
+        # Create dummy file.
+        self.create_file()
+
+
+    def __str__(self):
+        """Function to allow to return a value."""
+        return str(self.value)
+
+
+    def collect_entries(self):
+        """Function to collect entries for the NOE/R1/R2 relax dummy file."""
+
+        # storage for file entries
+        # [ [Mol_name, Res_num, Res_name, Spin_num, value, error], ... ]
+        self.file_entries = []
+
+        # Data flag
+        is_data = False
+
+        # Spin name
+        spinname = 'N'
+
+        # loop over line
+        for line in range(0, len(self.entries)):
+            # Detect the experiment
+            if 'Project:' in self.entries[line][0]:
+                exp_type = ''
+
+                # NOE
+                if 'Dynamic method/Hetero NOE' in self.entries[line][1]:
+                    exp_type = 'NOE'
+                # T1
+                elif 'Dynamic method/T1' in self.entries[line][1]:
+                    exp_type = 'T1'
+                # T2
+                elif 'Dynamic method/T2' in self.entries[line][1]:
+                    exp_type = 'T2'
+
+                # Check agreement of file and user input.
+                if self.exp_type:
+                    if not self.exp_type == exp_type:
+                        raise RelaxError('Selected file is not a '+self.exp_type+'-file.')
+                        return
+
+                # Feedback
+                print "Reading BRUKER PDC "+exp_type+" file.\n"
+
+            # The entries
+            if 'SECTION:' in self.entries[line][0]:
+                # NOE/T1/T2 results
+                if 'results' in self.entries[line][1]:
+                    is_data = True
+                    continue
+
+                # Other entries
+                else:
+                    is_data = False
+
+            # Spin name
+            if 'Labelling:' in self.entries[line][0]:
+                # 15N
+                if 'N' in self.entries[line][0]:
+                    spinname = 'N'
+
+                # 13C
+                if 'C' in self.entries[line][0]:
+                    spinname = 'C'
+
+            # Collect NOE/T1/T2 values
+            if is_data:
+                # Exclued header or blank line.
+                if self.entries[line][0] in ['Peak name', '']:
+                    continue
+
+                # Label
+                label_tmp = self.entries[line][0]
+                label_tmp = label_tmp.replace(' ', '')
+                label_tmp = label_tmp.replace('[', '')
+                label_tmp = label_tmp.replace(']', '')
+
+                # Detect residue number
+                resnum = label_tmp
+                # find start of number
+                start = 0
+                while resnum[start].isdigit()==False: start = start+1
+
+                # find end of number
+                end = start
+                try:
+                    while resnum[end].isdigit()==True: end = end+1
+                # Label ends with number
+                except:
+                    end = end
+
+                # cut out residue number integer
+                resnum = resnum[start:end]
+
+                # Residue name
+                resname = label_tmp[0:start]
+
+                # Spin num
+                spin_no = line
+
+                # The value
+                value_tmp = float(self.entries[line][3])
+
+                # Convert T1/T2 to R1/R2
+                if exp_type in ['T1', 'T2']:
+                    value_tmp = 1.0/value_tmp
+
+                # error
+                error = float(self.entries[line][4])
+
+                # Store file entry
+                self.file_entries.append(['Bruker_PDC_'+exp_type, resnum, resname, spin_no, spinname, value_tmp, error])
+
+
+    def create_file(self):
+        """Function to write the file."""
+
+        # The Sparky header
+        text = 'Mol_name\tRes_num\tRes_name\tSpin_num\tSpin_name\tValue\tError \n'
+
+        for line in range(0, len(self.file_entries)):
+            # Build entries.
+            tmp_text = ''
+            for i in range(0, len(self.file_entries[line])):
+                tmp_text = tmp_text + str(self.file_entries[line][i])+'\t'
+
+            # Add entries.
+            text = text+tmp_text + '\n'
+
+        # Print entries
+        if not self.UI == 'GUI':
+            print text
+
+        # craete output file
+        if self.output_file:
+            if self.dir:
+                file = open(self.dir+sep+self.output_file, 'w')
+            else:
+                file = open(self.output_file, 'w')
+        # create dummy file
+        else:
+            file = DummyFileObject()
+
+        # Write the file
+        file.write(text)
+        file.close()
+
+        # Feedback
+        if self.output_file:
+            if self.dir:
+                print 'Created BRUKER PDC file '+self.dir+sep+self.output_file
+                # The return value
+                self.value = self.dir+sep+self.output_file
+            else:
+                print 'Created BRUKER PDC file '+self.output_file
+                # The return value
+                self.value = self.output_file
+        else:
+            print 'Created BRUKER PDC file.'
+            # Return the dummy file
+            self.value = file
+
+
+    def read_file(self, filename):
+        """Function to read the file."""
+
+        # Open the file.
+        file = open(filename, 'r')
+
+        # Storage of lines.
+        self.entries = []
+
+        # Loop over line in PDC file
+        for line in file:
+            # Read entries in line
+            entry = line
+            entry = line.strip()
+            entry = entry.split('\t')
+
+            # Add entries to storage
+            self.entries.append(entry)
+
+        # close the file
+        file.close()
+
+
+
 def __check_args(spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None):
     """Check that the arguments have not been set.
 
