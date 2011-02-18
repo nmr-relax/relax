@@ -1,3 +1,32 @@
+Version 1.3.10
+(18 February 2011, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.10
+
+    Features:
+        * Support for the reading of relaxation data out of the Bruker Protein Dynamics Centre (PDC) files.
+
+    Changes:
+        * Updates for 2 model-free system tests for a new system which again shows optimisation differences.
+
+    Bugfixes:
+        * Fix for a bug in the N-state model - the Q-factors and back calculated RDCs and PCSs were set to that of the last Monte Carlo simulation.
+        * Fix for the N-state model error returning method for when errors are not present.
+
+
+Version 1.3.9
+(26 January 2011, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.9
+
+    Features:
+        * The addition of Michael Bieri's graphical user interface - relaxGUI.
+
+    Changes:
+        * Improvements to the HTML version of the user manual (http://www.nmr-relax.com/manual/1.3/relax.html).
+
+    Bugfixes:
+        N/A
+
+
 Version 1.3.8
 (20 January 2011, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.8
