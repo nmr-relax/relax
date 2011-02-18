@@ -158,6 +158,7 @@ def read(file=None, dir=None):
             ## Peak volumes:
             #if line[2] == 'peak' and line[3] == 'volumes':
             #    peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type='volume')
+            continue
 
     # Pack the data.
     pack_data(ri_label, frq_label, frq, values, errors, ids=res_nums)
