@@ -692,6 +692,29 @@ class Mf(SystemTestCase):
         # h_count:                                     0
         # warning:                                  None
 
+        # 32-bit i686 Linux (https://mail.gna.org/public/relax-users/2011-01/msg00029.html).
+        # System:           Linux
+        # Release:          2.6.28-17-generic
+        # Version:          #58-Ubuntu SMP Tue Dec 1 18:57:07 UTC 2009
+        # Win32 version:
+        # Distribution:     Ubuntu 9.04 jaunty
+        # Architecture:     32bit ELF
+        # Machine:          i686
+        # Processor:
+        # Python version:   2.6.2
+        # Numpy version:    1.2.1
+        # Libc version:     glibc 2.4
+        # 
+        # s2:                          0.970000000000951
+        # te (ps):                        2048.000000178
+        # rex:                       0.14899999998189395
+        # chi2:                   1.1498599057727952e-20
+        # iter:                                      154
+        # f_count:                                   598
+        # g_count:                                   161
+        # h_count:                                     0
+        # warning:                                  None
+
         # 64-bit x86_64 Linux.
         # System:           Linux
         # Release:          2.6.24.7-server-2mnb
@@ -792,9 +815,9 @@ class Mf(SystemTestCase):
         te = 2048.000000000022283
         rex = 0.14900000000000566 / (2.0 * pi * spin.frq[0])**2
         chi2 = 3.1024517431117421e-27
-        iter = [156, 157, 158, 162, 175, 203]
-        f_count = [695, 701, 722, 735, 744, 758, 955]
-        g_count = [162, 163, 164, 165, 169, 182, 209]
+        iter = [154, 156, 157, 158, 162, 175, 203]
+        f_count = [598, 695, 701, 722, 735, 744, 758, 955]
+        g_count = [161, 162, 163, 164, 165, 169, 182, 209]
         h_count = 0
         warning = None
 
@@ -857,6 +880,29 @@ class Mf(SystemTestCase):
         # g_count:  386
         # h_count:  0
         # warning:  None
+
+        # 32-bit i686 Linux (https://mail.gna.org/public/relax-users/2011-01/msg00029.html).
+        # System:           Linux
+        # Release:          2.6.28-17-generic
+        # Version:          #58-Ubuntu SMP Tue Dec 1 18:57:07 UTC 2009
+        # Win32 version:
+        # Distribution:     Ubuntu 9.04 jaunty
+        # Architecture:     32bit ELF
+        # Machine:          i686
+        # Processor:
+        # Python version:   2.6.2
+        # Numpy version:    1.2.1
+        # Libc version:     glibc 2.4
+        # 
+        # s2:                         0.9700000000000614
+        # te (ps):                        2048.000000012
+        # rex:                       0.14899999999883881
+        # chi2:                   4.9272178768519757e-23
+        # iter:                                      120
+        # f_count:                                   381
+        # g_count:                                   381
+        # h_count:                                     0
+        # warning:                                  None
 
         # 64-bit x86_64 Linux.
         # System:           Linux
@@ -955,8 +1001,8 @@ class Mf(SystemTestCase):
         rex = 0.148999999998904 / (2.0 * pi * spin.frq[0])**2
         chi2 = 4.3978813282102374e-23
         iter = 120
-        f_count = [377, 384, 386, 388]
-        g_count = [377, 384, 386, 388]
+        f_count = [377, 381, 384, 386, 388]
+        g_count = [377, 381, 384, 386, 388]
         h_count = 0
         warning = None
 
