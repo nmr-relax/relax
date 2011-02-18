@@ -177,4 +177,4 @@ def read(file=None, dir=None):
             pass
 
     # Pack the data.
-    pack_data(ri_label, frq_label, frq, values, errors, ids=res_nums)
+    pack_data(ri_label, frq_label, frq, values, errors, spin_ids=res_nums)
