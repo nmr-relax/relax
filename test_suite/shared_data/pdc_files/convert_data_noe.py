@@ -77,7 +77,7 @@ data = [
 noe = []
 noe_err = []
 for i in range(len(data)):
-    noe.append(data[i][5])
+    noe.append(data[i][4])
     noe_err.append(data[i][5])
 
 print("\nnoe = %s" % noe)
