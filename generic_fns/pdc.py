@@ -28,7 +28,8 @@ from re import search, split
 
 # relax module imports.
 from generic_fns import pipes
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from generic_fns import value
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, name_spin, spin_loop
 from generic_fns.relax_data import pack_data
 from relax_errors import RelaxError
 from relax_io import extract_data
@@ -132,6 +133,11 @@ def read(file=None, dir=None):
             rx, rx_err = get_relax_data(line[-3:])
             values.append(rx)
             errors.append(rx_err)
+
+        # The temperature.
+        if len(line) == 3 and line[0] == 'Temperature':
+            # Set the value (not implemented yet).
+            continue
 
     # Pack the data.
     pack_data(ri_label, frq_label, frq, values, errors, ids=res_nums)
