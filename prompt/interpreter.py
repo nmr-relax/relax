@@ -83,6 +83,7 @@ from residue import Residue
 from structure import Structure
 from paramag import Paramag
 from pcs import PCS
+from pdc import Pdc
 from pymol_control import Pymol
 from rdc import RDC
 from relax_data import Relax_data
@@ -205,6 +206,7 @@ class Interpreter:
         objects['palmer'] = Palmer(self._exec_info)
         objects['paramag'] = Paramag(self._exec_info)
         objects['pcs'] = PCS(self._exec_info)
+        objects['pdc'] = Pdc(self._exec_info)
         objects['pymol'] = Pymol(self._exec_info)
         objects['rdc'] = RDC(self._exec_info)
         objects['relax_data'] = Relax_data(self._exec_info)
