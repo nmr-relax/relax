@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+# The data - PDC T2, PDC T2 err, PDC scale factor, relax R2, relax R2 err (MC sim).
 data = [
 [0.4560,	 0.0055642,	  2.22814 ,       2.19316607131,      0.0167373857319],
 [0.4289,	 0.0040993,	  2.22814 ,       2.33164219228,      0.0193921242129],
@@ -81,5 +82,5 @@ for i in range(len(data)):
 
     print("%20.10f %20.10f %20.10f %20.10f" % (r1[-1], r1_err[-1], r1[-1]/data[i][3], r1_err[-1]/data[i][4]))
 
-print("r1:\n%s" % r1)
-print("r1_err:\n%s" % r1_err)
+print("r1 = %s" % r1)
+print("r1_err = %s" % r1_err)
