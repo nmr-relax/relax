@@ -23,6 +23,7 @@
 
 __all__ = [ 'align_tensor',
             'angles',
+            'bmrb',
             'dasha',
             'diffusion_tensor',
             'eliminate',
