@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,6 @@
 ###############################################################################
 
 # Python module imports.
-import __main__
 import inspect
 from numpy import ndarray
 from os import remove, sep
@@ -32,6 +31,7 @@ from tempfile import mktemp
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 class Bmrb(SystemTestCase):
@@ -57,14 +57,16 @@ class Bmrb(SystemTestCase):
         ds.__reset__()
 
 
-    def data_check(self, old_pipe_name='results', new_pipe_name='new'):
+    def data_check(self, old_pipe_name='results', new_pipe_name='new', version=None):
         """Check that all data has been successfully restored from the BMRB files."""
 
         # Print out.
         print("\n\nComparing data pipe contents:")
 
-        # Blacklists (data that is not restored, and relaxation data which has been reordered).
-        blacklist_spin = ['attached_proton', 'fixed', 'nucleus', 'proton_type', 'relax_sim_data', 'select', 'xh_vect'] + ['r', 'r_err', 'csa_err'] + ['chi2_sim', 'f_count', 'g_count', 'h_count', 'iter', 'warning'] + ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels', 'relax_data', 'relax_error']
+        # Blacklists (data that is not restored, and relaxation data which has been reordered and will be checked in data_ri_comp()).
+        blacklist_spin = ['attached_proton', 'fixed', 'nucleus', 'proton_type', 'relax_sim_data', 'select', 'xh_vect'] + ['r_err', 'csa_err'] + ['chi2_sim', 'f_count', 'g_count', 'h_count', 'iter', 'warning'] + ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels', 'relax_data', 'relax_error']
+        if version == '3.0':
+            blacklist_spin = blacklist_spin + ['r', 'local_tm', 'local_tm_err']
         blacklist_diff = []
         blacklist_global = ['diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'sim_number', 'sim_state'] + ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels']
 
@@ -99,8 +101,9 @@ class Bmrb(SystemTestCase):
                         self.data_ri_comp(label='Global', cont_old=old_pipe.mol[i].res[j].spin[k], cont_new=new_pipe.mol[i].res[j].spin[k])
 
         # The diffusion tensor.
-        self.assert_(hasattr(new_pipe, 'diff_tensor'))
-        self.data_cont_comp(label='Diff tensor', cont_old=old_pipe.diff_tensor, cont_new=new_pipe.diff_tensor, prec=4, blacklist=blacklist_diff)
+        if version != '3.0':
+            self.assert_(hasattr(new_pipe, 'diff_tensor'))
+            self.data_cont_comp(label='Diff tensor', cont_old=old_pipe.diff_tensor, cont_new=new_pipe.diff_tensor, prec=4, blacklist=blacklist_diff)
 
         # The global data structures.
         self.data_cont_comp(label='Global', cont_old=old_pipe, cont_new=new_pipe, blacklist=blacklist_global)
@@ -220,10 +223,10 @@ class Bmrb(SystemTestCase):
         ds.version = '3.0'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
 
         # Test the data.
-        self.data_check()
+        self.data_check(version='3.0')
 
 
     def test_rw_bmrb_3_1_model_free(self):
@@ -233,7 +236,7 @@ class Bmrb(SystemTestCase):
         ds.version = '3.1'
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bmrb_rw.py')
 
         # Test the data.
-        self.data_check()
+        self.data_check(version='3.1')

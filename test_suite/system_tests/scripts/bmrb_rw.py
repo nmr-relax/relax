@@ -1,12 +1,12 @@
 # Script for testing the reading and writing of BMRB files.
 
 # Python module imports.
-import __main__
 import sys
 from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 # Missing temp file (allow this script to run outside of the system test framework).
@@ -21,7 +21,7 @@ if not hasattr(ds, 'tmpfile'):
 pipe.create(pipe_name='results', pipe_type='mf')
 
 # Read the results.
-results.read(file='final_results_trunc_1.3', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
+results.read(file='final_results_trunc_1.3', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
 # Play with the data.
 deselect.all()
@@ -32,7 +32,7 @@ select.spin(':11')
 spin.name(name='N')
 spin.element(element='N')
 molecule.name(name='OMP')
-molecule.type(type='polypeptide(L)')
+molecule.type(type='protein')
 bmrb.thiol_state(state='reduced')
 
 # Display the data (as a test).
@@ -51,9 +51,9 @@ bmrb.software_select('NMRPipe')
 bmrb.software_select('Sparky', version='3.106')
 bmrb.citation(cite_id='test', authors=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]], doi="10.1039/b702202f", pubmed_id="17579774", full_citation="d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494.", title="Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm.", status="published", type="journal", journal_abbrev="Mol. Biosyst.", journal_full="Molecular Biosystems", volume=3, issue=7, page_first=483, page_last=498, year=2007)
 bmrb.software(name='X', url='http://nmr-relax.com', vendor_name='me', cite_ids=['test'], tasks=['procrastinating', 'nothing much', 'wasting time'])
-bmrb.script(file='noe.py', dir=__main__.install_path+sep+'sample_scripts', analysis_type='noe', engine='relax')
-bmrb.script(file='relax_fit.py', dir=__main__.install_path+sep+'sample_scripts', analysis_type='relax_fit', engine='relax')
-bmrb.script(file='full_analysis.py', dir=__main__.install_path+sep+'sample_scripts', analysis_type='mf', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)
+bmrb.script(file='noe.py', dir=status.install_path+sep+'sample_scripts', analysis_type='noe', engine='relax')
+bmrb.script(file='relax_fit.py', dir=status.install_path+sep+'sample_scripts', analysis_type='relax_fit', engine='relax')
+bmrb.script(file='full_analysis.py', dir=status.install_path+sep+'sample_scripts', analysis_type='mf', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)
 
 # Write, then read the data to a new data pipe.
 bmrb.write(file=ds.tmpfile, dir=None, version=ds.version, force=True)

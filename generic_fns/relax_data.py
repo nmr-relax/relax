@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import int32, ones, zeros
+from numpy import array, float64, int32, ones, zeros
 import string
 import sys
 from warnings import warn
@@ -33,6 +33,7 @@ from warnings import warn
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
+from generic_fns import bmrb
 from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
@@ -232,28 +233,80 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
         update_data_structures_spin(spin, ri_label, frq_label, frq, value)
 
 
-def bmrb_read(star):
+def bmrb_read(star, sample_conditions=None):
     """Read the relaxation data from the NMR-STAR dictionary object.
 
-    @param star:    The NMR-STAR dictionary object.
-    @type star:     NMR_STAR instance
+    @param star:                The NMR-STAR dictionary object.
+    @type star:                 NMR_STAR instance
+    @keyword sample_conditions: The sample condition label to read.  Only one sample condition can be read per data pipe.
+    @type sample_conditions:    None or str
     """
 
     # Get the relaxation data.
     for data in star.relaxation.loop():
+        # Store the keys.
+        keys = data.keys()
+
+        # Sample conditions do not match (remove the $ sign).
+        if 'sample_cond_list_label' in keys and sample_conditions and string.replace(data['sample_cond_list_label'], '$', '') != sample_conditions:
+            continue
+
         # Create the labels.
         ri_label = data['data_type']
         frq = float(data['frq']) * 1e6
-        frq_label = str(int(float(data['frq'])))
 
-        # Convert entity IDs to molecule names.
-        mol_names = []
-        names = get_molecule_names()
-        for id in data['entity_ids']:
-            mol_names.append(names[int(id)-1])
+        # Round the label to the nearest factor of 10.
+        frq_label = str(int(round(float(data['frq'])/10)*10))
+
+        # The number of spins.
+        N = bmrb.num_spins(data)
+
+        # No data in the saveframe.
+        if N == 0:
+            continue
+
+        # The molecule names.
+        mol_names = bmrb.molecule_names(data, N)
+
+        # Generate the sequence if needed.
+        bmrb.generate_sequence(N, spin_names=data['atom_names'], res_nums=data['res_nums'], res_names=data['res_names'], mol_names=mol_names)
+
+        # The data and error.
+        vals = data['data']
+        errors = data['errors']
+        if vals == None:
+            vals = [None] * N
+        if errors == None:
+            errors = [None] * N
+
+        # Data transformation.
+        if vals != None and 'units' in keys:
+            # Scaling.
+            if data['units'] == 'ms':
+                # Loop over the data.
+                for i in range(N):
+                    # The value.
+                    if vals[i] != None:
+                        vals[i] = vals[i] / 1000
+
+                    # The error.
+                    if errors[i] != None:
+                        errors[i] = errors[i] / 1000
+
+            # Invert.
+            if data['units'] in ['s', 'ms']:
+                # Loop over the data.
+                for i in range(len(vals)):
+                    # The value.
+                    if vals[i] != None:
+                        vals[i] = 1.0 / vals[i]
+
+                    # The error.
+                    if vals[i] != None and errors[i] != None:
+                        errors[i] = errors[i] * vals[i]**2
 
         # Pack the data.
-        pack_data(ri_label, frq_label, frq, data['data'], data['errors'], res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
+        pack_data(ri_label, frq_label, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
 
 
 
@@ -285,6 +338,9 @@ def bmrb_write(star):
 
     # Relax data labels.
     labels = []
+    exp_label = []
+    spectro_ids = []
+    spectro_labels = []
     for i in range(cdp.num_ri):
         labels.append(cdp.ri_labels[i] + '_' + cdp.frq_labels[cdp.remap_table[i]])
 
@@ -393,6 +449,24 @@ def bmrb_write(star):
 
         # Add the relaxation data.
         star.relaxation.add(data_type=ri_label, frq=frq, entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, entity_ids_2=entity_ids, res_nums_2=res_num_list, res_names_2=res_name_list, atom_names_2=attached_atom_name_list, atom_types_2=attached_element_list, isotope_2=attached_isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control, peak_intensity_type=peak_intensity_type)
+
+        # The experimental label.
+        if ri_label == 'NOE':
+            exp_name = 'steady-state NOE'
+        else:
+            exp_name = ri_label
+        exp_label.append("%s MHz %s" % (frq_label, exp_name))
+
+        # Spectrometer info.
+        spectro_ids.append(cdp.remap_table[i] + 1)
+        spectro_labels.append("$spectrometer_%s" % spectro_ids[-1])
+
+    # Add the spectrometer info.
+    for i in range(cdp.num_frq):
+        star.nmr_spectrometer.add(name="$spectrometer_%s" % (i+1), manufacturer=None, model=None, frq=int(cdp.frq[i]/1e6))
+
+    # Add the experiment saveframe.
+    star.experiment.add(name=exp_label, spectrometer_ids=spectro_ids, spectrometer_labels=spectro_labels)
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
@@ -723,9 +797,9 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
     @param frq:             The spectrometer proton frequency in Hz.
     @type frq:              float
     @keyword values:        The relaxation data for each spin.
-    @type values:           None or list of str
+    @type values:           None or list of float or float array
     @keyword errors:        The relaxation data errors for each spin.
-    @type errors:           None or list of str
+    @type errors:           None or list of float or float array
     @keyword spin_ids:      The list of spin ID strings.  If the other spin identifiers are given, i.e. mol_names, res_nums, res_names, spin_nums, and/or spin_names, then this argument is not necessary.
     @type spin_ids:         None or list of str
     @keyword mol_names:     The list of molecule names used for creating the spin IDs (if not given) or for generating the sequence data.
@@ -746,7 +820,7 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
     N = len(values)
 
     # Test the data.
-    if len(errors) != N:
+    if errors != None and len(errors) != N:
         raise RelaxError("The length of the errors arg (%s) does not match that of the value arg (%s)." % (len(errors), N))
     if spin_ids and len(spin_ids) != N:
         raise RelaxError("The length of the spin ID strings arg (%s) does not match that of the value arg (%s)." % (len(mol_names), N))
@@ -772,6 +846,8 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
         spin_nums = [None] * N
     if not spin_names:
         spin_names = [None] * N
+    if errors == None:
+        errors = [None] * N
 
     # Generate the spin IDs.
     if not spin_ids:
@@ -785,16 +861,16 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
     # Update the global data.
     update_data_structures_pipe(ri_label, frq_label, frq)
 
+    # Generate the sequence.
+    if gen_seq:
+        bmrb.generate_sequence(N, spin_ids=spin_ids, spin_nums=spin_nums, spin_names=spin_names, res_nums=res_nums, res_names=res_names, mol_names=mol_names)
+
     # Loop over the spin data.
     for i in range(N):
         # Get the corresponding spin container.
         spin = return_spin(spin_ids[i])
         if spin == None:
-            if not gen_seq:
-                raise RelaxNoSpinError(spin_ids[i])
-            else:
-                create_spin(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i])
-                spin = return_spin(spin_ids[i])
+            raise RelaxNoSpinError(spin_ids[i])
 
         # Update all data structures.
         update_data_structures_spin(spin, ri_label, frq_label, frq, values[i], errors[i])

@@ -131,7 +131,8 @@ def bmrb_read(star):
     # Spheroid.
     elif data['geometric_shape'] in ['spheroid', 'oblate spheroid', 'prolate spheroid']:
         # The spherical angles.
-        r, theta, phi = cartesian_to_spherical(R[:, 2])
+        theta = data['axial_sym_axis_polar_angle'][0]
+        phi = data['axial_sym_axis_azimuthal_angle'][0]
 
         # Set up the tensor.
         spheroid(params=(Dpar, Dper, theta, phi), d_scale=1.0, param_types=3, spheroid_type=type)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2011 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,7 +38,7 @@ The functionality of this module is diverse:
 # Python module imports.
 from numpy import array
 from re import split
-from string import count, strip, upper
+from string import count, replace, strip, upper
 from textwrap import fill
 from warnings import warn
 
@@ -504,9 +504,23 @@ def bmrb_read(star):
 
     # Get the entities.
     for data in star.entity.loop():
+        # Remove nasty characters from the molecule name.
+        mol_name = data['mol_name']
+        if mol_name:
+            # Round brackets.
+            mol_name = replace(mol_name, '(', '')
+            mol_name = replace(mol_name, ')', '')
+
+            # Square brackets.
+            mol_name = replace(mol_name, '[', '')
+            mol_name = replace(mol_name, ']', '')
+
+            # Commas.
+            mol_name = replace(mol_name, ',', ' ')
+
         # Add the residues.
         for i in range(len(data['res_nums'])):
-            create_residue(data['res_nums'][i], data['res_names'][i], mol_name=data['mol_name'])
+            create_residue(data['res_nums'][i], data['res_names'][i], mol_name=mol_name)
 
 
 def bmrb_write_entity(star, version=None):
@@ -545,8 +559,19 @@ def bmrb_write_entity(star, version=None):
         else:
             mol_type = 'polymer'
 
+        # Translate the names.
+        polymer_type = mol.type
+        if polymer_type == 'protein':
+            polymer_type = 'polypeptide(L)'
+        if polymer_type == 'DNA':
+            polymer_type = 'polydeoxyribonucleotide'
+        if polymer_type == 'RNA':
+            polymer_type = 'polyribonucleotide'
+        if polymer_type == 'inorganic molecule':
+            polymer_type = 'other'
+
         # Add the entity.
-        star.entity.add(mol_name=mol.name, mol_type=mol_type, polymer_type=mol.type, polymer_seq_code=polymer_seq_code,thiol_state=cdp.exp_info.thiol_state, res_nums=res_nums, res_names=res_names)
+        star.entity.add(mol_name=mol.name, mol_type=mol_type, polymer_type=polymer_type, polymer_seq_code=polymer_seq_code,thiol_state=cdp.exp_info.thiol_state, res_nums=res_nums, res_names=res_names)
 
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
@@ -2710,19 +2735,9 @@ def type_molecule(mol_id, type=None, force=False):
     @type force:        bool
     """
 
-    # Check.
-    allowed = ['organic molecule',
-               'DNA/RNA hybrid',
-               'polydeoxyribonucleotide',
-               'polypeptide(D)',
-               'polypeptide(L)',
-               'polyribonucleotide',
-               'polysaccharide(D)',
-               'polysaccharide(L)'
-               'other'
-    ]
-    if type not in allowed:
-        raise RelaxError("The molecule type '%s' must be one of %s." % (type, allowed))
+    # Check the type.
+    if type not in ALLOWED_MOL_TYPES:
+        raise RelaxError("The molecule type '%s' must be one of %s." % (type, ALLOWED_MOL_TYPES))
 
     # Disallow residue and spin selections.
     select_obj = Selection(mol_id)
@@ -2733,7 +2748,7 @@ def type_molecule(mol_id, type=None, force=False):
 
     # Change the molecule types.
     for mol in molecule_loop(mol_id):
-        if hasattr(mol, 'type') and not force:
+        if hasattr(mol, 'type') and mol.type and not force:
             warn(RelaxWarning("The molecule '%s' already has its type set.  Set the force flag to change." % mol_id))
         else:
             mol.type = type

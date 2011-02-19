@@ -24,7 +24,7 @@
 """Module holding the experimental information data container."""
 
 # relax module imports.
-from data_classes import ContainerList, Element
+from data_classes import RelaxListType, Element
 
 
 class ExpInfo(Element):
@@ -34,10 +34,10 @@ class ExpInfo(Element):
         """Initialise the data container."""
 
         # The name of the container.
-        self.element_name = "exp_info"
+        self.name = "exp_info"
 
         # The description of the container.
-        self.element_desc = "Experimental information"
+        self.desc = "Experimental information"
 
         # Blacklisted objects.
         self.blacklist = ["citations", "software", "temp_calibration", "temp_control"]
@@ -81,7 +81,7 @@ class ExpInfo(Element):
         # Initialise the list container if needed.
         if not hasattr(self, "citations"):
             # The list.
-            self.citations = ContainerList()
+            self.citations = RelaxListType()
 
             # The name of the container.
             self.citations.container_name = "citation_list"
@@ -93,10 +93,10 @@ class ExpInfo(Element):
         cite = Element()
 
         # The name of the container.
-        cite.element_name = "citation"
+        cite.name = "citation"
 
         # The description of the container.
-        cite.element_desc = "Literature citation"
+        cite.desc = "Literature citation"
 
         # Set the attributes.
         cite.cite_id = cite_id
@@ -200,7 +200,7 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "peak_intensity_type"):
             # The list.
-            self.peak_intensity_type = ContainerList()
+            self.peak_intensity_type = RelaxListType()
 
             # The name of the container.
             self.peak_intensity_type.container_name = "peak_intensity_type_list"
@@ -217,10 +217,10 @@ class ExpInfo(Element):
         peak_intensity_type = Element()
 
         # The name of the container.
-        peak_intensity_type.element_name = "peak_intensity_type"
+        peak_intensity_type.name = "peak_intensity_type"
 
         # The description of the container.
-        peak_intensity_type.element_desc = "Temperature control methods for the relaxation data."
+        peak_intensity_type.desc = "Temperature control methods for the relaxation data."
 
         # Set the attributes.
         peak_intensity_type.ri_label = ri_label
@@ -272,7 +272,7 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "scripts"):
             # The list.
-            self.scripts = ContainerList()
+            self.scripts = RelaxListType()
 
             # The name of the container.
             self.scripts.container_name = "script_list"
@@ -284,10 +284,10 @@ class ExpInfo(Element):
         script = Element()
 
         # The name of the container.
-        script.element_name = "script"
+        script.name = "script"
 
         # The description of the container.
-        script.element_desc = "Script used for the analysis"
+        script.desc = "Script used for the analysis"
 
         # Set the attributes.
         script.file = file
@@ -324,7 +324,7 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "software"):
             # The list.
-            self.software = ContainerList()
+            self.software = RelaxListType()
 
             # The name of the container.
             self.software.container_name = "software_list"
@@ -336,10 +336,10 @@ class ExpInfo(Element):
         software = Element()
 
         # The name of the container.
-        software.element_name = "software"
+        software.name = "software"
 
         # The description of the container.
-        software.element_desc = "Software program used in the analysis"
+        software.desc = "Software program used in the analysis"
 
         # Set the attributes.
         software.name = name
@@ -367,7 +367,7 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "temp_calibration"):
             # The list.
-            self.temp_calibration = ContainerList()
+            self.temp_calibration = RelaxListType()
 
             # The name of the container.
             self.temp_calibration.container_name = "temp_calibration_list"
@@ -384,10 +384,10 @@ class ExpInfo(Element):
         temp_calibration = Element()
 
         # The name of the container.
-        temp_calibration.element_name = "temp_calibration"
+        temp_calibration.name = "temp_calibration"
 
         # The description of the container.
-        temp_calibration.element_desc = "Temperature calibration methods for the relaxation data."
+        temp_calibration.desc = "Temperature calibration methods for the relaxation data."
 
         # Set the attributes.
         temp_calibration.ri_label = ri_label
@@ -412,7 +412,7 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "temp_control"):
             # The list.
-            self.temp_control = ContainerList()
+            self.temp_control = RelaxListType()
 
             # The name of the container.
             self.temp_control.container_name = "temp_control_list"
@@ -429,10 +429,10 @@ class ExpInfo(Element):
         temp_control = Element()
 
         # The name of the container.
-        temp_control.element_name = "temp_control"
+        temp_control.name = "temp_control"
 
         # The description of the container.
-        temp_control.element_desc = "Temperature control methods for the relaxation data."
+        temp_control.desc = "Temperature control methods for the relaxation data."
 
         # Set the attributes.
         temp_control.ri_label = ri_label
