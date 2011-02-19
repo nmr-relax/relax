@@ -20,12 +20,14 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from math import pi
+import string
+
 # relax module imports.
+from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
+from generic_fns import mol_res_spin, pipes, relax_data
 from generic_fns.mol_res_spin import spin_loop
-from generic_fns.pipes import get_pipe
-from pystarlib.File import File
-from pystarlib.SaveFrame import SaveFrame
-from pystarlib.TagTable import TagTable
 
 
 class Bmrb:
@@ -38,11 +40,17 @@ class Bmrb:
         @type file_path:    str
         """
 
-        # Initialise the pystarlib File object.
-        file = File(title='relax_model_free_results', filename=file_path)
+        # Initialise the NMR-STAR data object.
+        star = NMR_STAR_v3_1('relax_model_free_results', file_path)
 
         # Read the contents of the STAR formatted file.
-        file.read()
+        star.read()
+
+        # Generate the molecule and residue containers from the entity records.
+        mol_res_spin.bmrb_read(star)
+
+        # Read the relaxation data saveframes.
+        relax_data.bmrb_read(star)
 
 
     def bmrb_write(self, file_path):
@@ -52,86 +60,105 @@ class Bmrb:
         @type file_path:    str
         """
 
-        # Initialise the pystarlib File object.
-        file = File(title='relax_model_free_results', filename=file_path)
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
 
-        # Get the current data pipe.
-        cdp = get_pipe()
+        # Initialise the NMR-STAR data object.
+        star = NMR_STAR_v3_1('relax_model_free_results', file_path)
+
+        # Generate the entity saveframe.
+        mol_res_spin.bmrb_write_entity(star)
+
+        # Generate the relaxation data saveframes.
+        relax_data.bmrb_write(star)
+
+        # Rex frq.
+        rex_frq = cdp.frq[0]
 
         # Initialise the spin specific data lists.
         res_num_list = []
         res_name_list = []
         atom_name_list = []
-        relax_data_list = []
-        relax_error_list = []
-        for i in range(cdp.num_ri):
-            relax_data_list.append([])
-            relax_error_list.append([])
+
+        csa_list = []
+        r_list = []
+        isotope_list = []
+
+        s2_list = []
+        s2f_list = []
+        s2s_list = []
+        te_list = []
+        tf_list = []
+        ts_list = []
+        rex_list = []
+
+        s2_err_list = []
+        s2f_err_list = []
+        s2s_err_list = []
+        te_err_list = []
+        tf_err_list = []
+        ts_err_list = []
+        rex_err_list = []
+
+        chi2_list = []
 
         # Store the spin specific data in lists for later use.
-        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
 
-            # The residue/spin info.
-            res_num_list.append(str(res_num))
-            res_name_list.append(str(res_name))
-            atom_name_list.append(str(spin.name))
+            # Check the data for None (not allowed in BMRB!).
+            if res_num == None:
+                raise RelaxError, "For the BMRB, the residue of spin '%s' must be numbered." % spin_id
+            if res_name == None:
+                raise RelaxError, "For the BMRB, the residue of spin '%s' must be named." % spin_id
+            if spin.name == None:
+                raise RelaxError, "For the BMRB, the spin '%s' must be named." % spin_id
+            if spin.heteronuc_type == None:
+                raise RelaxError, "For the BMRB, the spin isotope type of '%s' must be specified." % spin_id
 
-            # The relaxation data.
-            for i in range(cdp.num_ri):
-                relax_data_list[i].append(str(spin.relax_data[i]))
-                relax_error_list[i].append(str(spin.relax_error[i]))
+            # The molecule/residue/spin info.
+            res_num_list.append(res_num)
+            res_name_list.append(res_name)
+            atom_name_list.append(spin.name)
 
-        # Relaxation data save frames.
-        r1_inc = 0
-        r2_inc = 0
-        noe_inc = 0
-        for i in range(cdp.num_ri):
-            # Data type labels.
-            if cdp.ri_labels[i] == 'R1':
-                r1_inc = r1_inc + 1
-                ri_inc = r1_inc
-                ri_label = 'T1'
-                coherence = 'Nz'
-            elif cdp.ri_labels[i] == 'R2':
-                r2_inc = r2_inc + 1
-                ri_inc = r2_inc
-                ri_label = 'T2'
-                coherence = 'Ny'
-            elif cdp.ri_labels[i] == 'NOE':
-                noe_inc = noe_inc + 1
-                ri_inc = noe_inc
-                ri_label = 'NOE'
+            # Values.
+            csa_list.append(spin.csa * 1e6)    # In ppm.
+            r_list.append(spin.r)
+            isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
 
-            # Initialise the save frame.
-            frame = SaveFrame(title='heteronuclear_'+ri_label+'_list_'+`ri_inc`)
+            # Model-free data.
+            s2_list.append(spin.s2)
+            s2f_list.append(spin.s2f)
+            s2s_list.append(spin.s2s)
+            te_list.append(spin.te)
+            tf_list.append(spin.tf)
+            ts_list.append(spin.ts)
+            if spin.rex == None:
+                rex_list.append(None)
+            else:
+                rex_list.append(spin.rex / (2.0*pi*rex_frq**2))
 
-            # The save frame category.
-            frame.tagtables.append(TagTable(free=True, tagnames=['_Saveframe_category'], tagvalues=[[ri_label+'_relaxation']]))
+            s2_err_list.append(spin.s2_err)
+            s2f_err_list.append(spin.s2f_err)
+            s2s_err_list.append(spin.s2s_err)
+            te_err_list.append(spin.te_err)
+            tf_err_list.append(spin.tf_err)
+            ts_err_list.append(spin.ts_err)
+            if spin.rex_err == None:
+                rex_err_list.append(None)
+            else:
+                rex_err_list.append(spin.rex_err / (2.0*pi*rex_frq**2))
 
-            # Sample info.
-            frame.tagtables.append(TagTable(free=True, tagnames=['_Sample_label'], tagvalues=[['$sample_1']]))
-            frame.tagtables.append(TagTable(free=True, tagnames=['_Sample_conditions_label'], tagvalues=[['$conditions_1']]))
+            # Opt stats.
+            chi2_list.append(spin.chi2)
 
-            # NMR info.
-            frame.tagtables.append(TagTable(free=True, tagnames=['_Spectrometer_frequency_1H'], tagvalues=[[str(cdp.frq[cdp.remap_table[i]]/1e6)]]))
-            if ri_label in ['T1', 'T2']:
-                frame.tagtables.append(TagTable(free=True, tagnames=['_'+ri_label+'_coherence_type'], tagvalues=[[coherence]]))
-                frame.tagtables.append(TagTable(free=True, tagnames=['_'+ri_label+'_value_units'], tagvalues=[['1/s']]))
+        # Generate the CSA saveframe.
+        star.chem_shift_anisotropy.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, csa=csa_list)
 
-            # The relaxation tag names.
-            tag_names = ['_Residue_seq_code', '_Residue_label', '_Atom_name', '_'+ri_label+'_value', '_'+ri_label+'_value_error']
-
-            # Add the data.
-            table = TagTable(tagnames=tag_names, tagvalues=[res_num_list, res_name_list, atom_name_list, relax_data_list[i], relax_error_list[i]])
-
-            # Add the tag table to the save frame.
-            frame.tagtables.append(table)
-
-            # Add the relaxation data save frame.
-            file.datanodes.append(frame)
+        # Generate the model-free data saveframe.
+        star.order_parameters.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list, rex_frq=rex_frq, chi2=chi2_list)
 
         # Write the contents to the STAR formatted file.
-        file.write()
+        star.write()

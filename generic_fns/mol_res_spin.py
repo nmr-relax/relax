@@ -495,6 +495,55 @@ class Selection(object):
 
 
 
+def bmrb_read(star):
+    """Generate the molecule and residue spin containers from the entity saveframe records.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    """
+
+    # Get the entities.
+    for mol_name, mol_type, res_nums, res_names in star.entity.loop():
+        # Add the residues.
+        for i in range(len(res_nums)):
+            create_residue(res_nums[i], res_names[i], mol_name=mol_name)
+
+
+def bmrb_write_entity(star):
+    """Generate the entity saveframe records for the NMR-STAR dictionary object.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    """
+
+    # Can't handle multiple molecules yet.
+    if count_molecules() > 1:
+        raise RelaxError, "Multiple molecules are not yet supported."
+
+    # Get the molecule names.
+    mol_names = get_molecule_names()
+
+    # Loop over the names.
+    for i in range(len(mol_names)):
+        # Test that the molecule has a name!
+        if not mol_names[i]:
+            raise RelaxError, "All molecules must be named."
+
+        # Get the residue names and numbers.
+        res_names = get_residue_names("#" + mol_names[i])
+        res_nums = get_residue_nums("#" + mol_names[i])
+
+        # Find the molecule type.
+        if len(res_nums) < 4:
+            mol_type = 'non-polymer'
+            warn(RelaxWarning("The molecule '%s' is assumed to be a non-polymer, i.e. an organic molecule, ligand, metal ion, etc.  It should not be a solvent molecule!"))
+        else:
+            mol_type = 'polymer'
+
+        # Add the entity.
+        star.entity.add(mol_name=mol_names[i], mol_type=mol_type, res_nums=res_nums, res_names=res_names)
+
+
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
     """Copy the contents of a molecule container to a new molecule.
 
@@ -1381,11 +1430,67 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, 
     return id
 
 
+def get_molecule_names(selection=None):
+    """Return a list of the molecule names.
+
+    @param selection:   The molecule selection identifier.
+    @type selection:    str
+    @return:            The molecule names.
+    @rtype:             list of str
+    """
+
+    # Loop over the molecules, append the name of each within the selection.
+    mol_names = []
+    for mol in molecule_loop(selection):
+        mol_names.append(mol.name)
+
+    # Return the names.
+    return mol_names
+
+
+def get_residue_names(selection=None):
+    """Return a list of the residue names.
+
+    @param selection:   The molecule and residue selection identifier.
+    @type selection:    str
+    @return:            The residue names.
+    @rtype:             list of str
+    """
+
+    # Loop over the residues, appending the name of each within the selection.
+    res_names = []
+    for res in residue_loop(selection):
+        res_names.append(res.name)
+
+    # Return the names.
+    return res_names
+
+
+def get_residue_nums(selection=None):
+    """Return a list of the residue numbers.
+
+    @param selection:   The molecule and residue selection identifier.
+    @type selection:    str
+    @return:            The residue numbers.
+    @rtype:             list of str
+    """
+
+    # Loop over the residues, appending the number of each within the selection.
+    res_nums = []
+    for res in residue_loop(selection):
+        res_nums.append(res.num)
+
+    # Return the numbers.
+    return res_nums
+
+
 def last_residue_num(selection=None):
     """Determine the last residue number.
 
-    @return:    The number of the last residue.
-    @rtype:     int
+    @param selection:   The molecule selection identifier.
+    @type selection:    str
+    @return:            The number of the last residue.
+    @rtype:             int
     """
 
     # Get the molecule.

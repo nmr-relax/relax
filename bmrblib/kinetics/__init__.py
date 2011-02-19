@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2009 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,41 +20,17 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from os import remove
-import sys
-from tempfile import mktemp
-from unittest import TestCase
+# Module docstring.
+"""Supergroup 6 - Kinetic data.
 
-# relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+This is a collection of NMR-STAR dictionary saveframes as defined at, for example,
+http://www.bmrb.wisc.edu/dictionary/3.1html/SuperGroupPage.html.
+"""
 
-
-class Bmrb(TestCase):
-    """TestCase class for functional tests of the reading and writing of BMRB STAR formatted files."""
-
-    def setUp(self):
-        """Common set up for these system tests."""
-
-        # Create a temporary file name.
-        ds.tmpfile = mktemp()
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Delete the temporary file.
-        try:
-            remove(ds.tmpfile)
-        except OSError:
-            pass
-
-        # Reset the relax data storage object.
-        ds.__reset__()
-
-
-    def test_rw_bmrb_model_free(self):
-        """Write and then read a BRMB STAR formatted file containing model-free results."""
-
-        # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bmrb_rw.py')
+__all__ = ['heteronucl_NOE_relaxation',
+           'heteronucl_NOE_relaxation_v3_1',
+           'heteronucl_T1_relaxation',
+           'heteronucl_T1_relaxation_v3_1',
+           'heteronucl_T2_relaxation',
+           'heteronucl_T2_relaxation_v3_1',
+           'relax_base']

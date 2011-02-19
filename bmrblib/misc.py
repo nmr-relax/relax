@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2009 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,41 +20,58 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from os import remove
-import sys
-from tempfile import mktemp
-from unittest import TestCase
-
-# relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+# Module docstring.
+"""Functions for manipulating NMR-STAR dictionary data."""
 
 
-class Bmrb(TestCase):
-    """TestCase class for functional tests of the reading and writing of BMRB STAR formatted files."""
+def no_missing(data, name):
+    """Check that there are no None values in the data.
 
-    def setUp(self):
-        """Common set up for these system tests."""
+    @param data:    The data to check.
+    @type data:     anything
+    @param name:    The name associated with the data.
+    @type name:     str
+    """
 
-        # Create a temporary file name.
-        ds.tmpfile = mktemp()
+    # Init.
+    missing = False
+
+    # List data.
+    if type(data) == list:
+        # Loop over the data.
+        for i in range(len(data)):
+            if data[i] == None or data[i] == 'None':
+                missing = True
+
+    # None.
+    if data == None:
+        missing = True
+
+    # Fail.
+    if missing:
+        raise NameError, "Data is missing from the " + name + '.'
 
 
-    def tearDown(self):
-        """Reset the relax data storage object."""
+def translate(data):
+    """Translate all None values into the '?' string.
 
-        # Delete the temporary file.
-        try:
-            remove(ds.tmpfile)
-        except OSError:
-            pass
+    @param data:    The data to translate.
+    @type data:     anything
+    """
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+    # List data.
+    if type(data) == list:
+        # Loop over the data.
+        new_data = []
+        for i in range(len(data)):
+            if data[i] == None or data[i] == 'None':
+                new_data.append('?')
+            else:
+                new_data.append(str(data[i]))
 
+    # None.
+    if data == None:
+        new_data = '?'
 
-    def test_rw_bmrb_model_free(self):
-        """Write and then read a BRMB STAR formatted file containing model-free results."""
-
-        # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bmrb_rw.py')
+    # Return the translated result.
+    return new_data

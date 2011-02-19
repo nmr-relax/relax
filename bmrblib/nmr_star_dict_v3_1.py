@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2009 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,41 +20,39 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from os import remove
-import sys
-from tempfile import mktemp
-from unittest import TestCase
+# Module docstring.
+"""The NMR-STAR dictionary API for version 3.1.
+
+The v3.1 NMR-STAR dictionary is documented at
+http://www.bmrb.wisc.edu/dictionary/3.1html/SuperGroupPage.html.
+"""
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from bmrblib.assembly_supercategory.entity_v3_1 import EntitySaveframe_v3_1
+from bmrblib.kinetics.relaxation import Relaxation_v3_1
+from bmrblib.NMR_parameters.chem_shift_anisotropy_v3_1 import ChemShiftAnisotropySaveframe_v3_1
+from bmrblib.thermodynamics.order_parameters_v3_1 import OrderParameterSaveframe_v3_1
+from bmrblib.nmr_star_dict import NMR_STAR
 
 
-class Bmrb(TestCase):
-    """TestCase class for functional tests of the reading and writing of BMRB STAR formatted files."""
+class NMR_STAR_v3_1(NMR_STAR):
+    """The v3.1 NMR-STAR dictionary."""
 
-    def setUp(self):
-        """Common set up for these system tests."""
-
-        # Create a temporary file name.
-        ds.tmpfile = mktemp()
+    # Class extension string.
+    ext = ''
 
 
-    def tearDown(self):
-        """Reset the relax data storage object."""
+    def create_saveframes(self):
+        """Create all the saveframe objects."""
 
-        # Delete the temporary file.
-        try:
-            remove(ds.tmpfile)
-        except OSError:
-            pass
+        # Initialise the assembly_supercategory saveframe supergroup.
+        self.entity = EntitySaveframe_v3_1(self.data.datanodes)
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # Initialise the NMR parameters saveframe supergroup.
+        self.chem_shift_anisotropy = ChemShiftAnisotropySaveframe_v3_1(self.data.datanodes)
 
+        # Initialise the kinetic saveframe supergroup API.
+        self.relaxation = Relaxation_v3_1(self.data.datanodes)
 
-    def test_rw_bmrb_model_free(self):
-        """Write and then read a BRMB STAR formatted file containing model-free results."""
-
-        # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bmrb_rw.py')
+        # Initialise the thermodynamics saveframe supergroup.
+        self.order_parameters = OrderParameterSaveframe_v3_1(self.data.datanodes)

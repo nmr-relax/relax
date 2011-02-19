@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2009 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,41 +20,43 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from os import remove
-import sys
-from tempfile import mktemp
-from unittest import TestCase
+# Module docstring.
+"""The v3.1 entity saveframe category.
+
+See http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#entity.
+"""
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from bmrblib.assembly_supercategory.entity import EntitySaveframe, Entity, EntityCompIndex
 
 
-class Bmrb(TestCase):
-    """TestCase class for functional tests of the reading and writing of BMRB STAR formatted files."""
+class EntitySaveframe_v3_1(EntitySaveframe):
+    """The v3.1 entity saveframe class."""
 
-    def setUp(self):
-        """Common set up for these system tests."""
+    def add_tag_categories(self):
+        """Create the v3.1 tag categories."""
 
-        # Create a temporary file name.
-        ds.tmpfile = mktemp()
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Delete the temporary file.
-        try:
-            remove(ds.tmpfile)
-        except OSError:
-            pass
-
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # The tag category objects.
+        self.entity = Entity_v3_1(self)
+        self.entity_comp_index = EntityCompIndex_v3_1(self)
 
 
-    def test_rw_bmrb_model_free(self):
-        """Write and then read a BRMB STAR formatted file containing model-free results."""
+class Entity_v3_1(Entity):
+    """v3.1 Entity tag category."""
 
-        # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bmrb_rw.py')
+    def tag_setup(self, tag_category_label=None, sep=None):
+        # Execute the base class tag_setup() method.
+        Entity.tag_setup(self, tag_category_label='Entity', sep=sep)
+
+        # Tag names for the relaxation data.
+        self.tag_names['SfCategory'] = 'Sf_category'
+
+
+class EntityCompIndex_v3_1(EntityCompIndex):
+    """v3.1 EntityCompIndex tag category."""
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        # Execute the base class tag_setup() method.
+        EntityCompIndex.tag_setup(self, tag_category_label='Entity_comp_index', sep=sep)
+
+
