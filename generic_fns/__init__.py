@@ -23,10 +23,12 @@
 
 __all__ = [ 'align_tensor',
             'angles',
+            'bmrb',
             'chemical_shift',
             'dasha',
             'diffusion_tensor',
             'eliminate',
+            'exp_info',
             'fix',
             'frame_order',
             'frq',
