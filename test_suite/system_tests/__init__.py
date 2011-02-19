@@ -34,6 +34,7 @@ from test_suite.relax_test_runner import RelaxTestRunner
 # relax system/functional test module imports.
 from align_tensor import Align_tensor
 from angles import Angles
+from bmrb import Bmrb
 from consistency_tests import Ct
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
@@ -63,6 +64,7 @@ from unit_vectors import Unit_vectors
 
 __all__ = ['align_tensor',
            'angles',
+           'brmb',
            'consistency_tests',
            'dasha'
            'diffusion_tensor',
@@ -126,6 +128,7 @@ class System_test_runner:
         # All tests.
         if not tests:
             suite_array.append(TestLoader().loadTestsFromTestCase(Align_tensor))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Bmrb))
             suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
             suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
             suite_array.append(TestLoader().loadTestsFromTestCase(Dasha))

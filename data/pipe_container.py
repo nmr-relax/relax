@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,6 +27,7 @@ from warnings import warn
 # relax module imports.
 from align_tensor import AlignTensorList
 from diff_tensor import DiffTensorData
+from exp_info import ExpInfo
 import generic_fns
 from mol_res_spin import MoleculeList
 from prototype import Prototype
@@ -62,7 +63,7 @@ class PipeContainer(Prototype):
         text = "The data pipe storage object.\n"
 
         # Special objects/methods (to avoid the getattr() function call on).
-        spec_obj = ['mol', 'diff_tensor', 'structure']
+        spec_obj = ['exp_info', 'mol', 'diff_tensor', 'structure']
 
         # Objects.
         text = text + "\n"
@@ -79,6 +80,10 @@ class PipeContainer(Prototype):
             # Molecular structure.
             if name == 'structure':
                 text = text + "  structure: The 3D molecular data object\n"
+
+            # The experimental info data container.
+            if name == 'exp_info':
+                text = text + "  exp_info: The data container for experimental information\n"
 
             # Skip the PipeContainer methods.
             if name in list(self.__class__.__dict__.keys()):
@@ -117,6 +122,15 @@ class PipeContainer(Prototype):
         hybrid_node = pipe_node.getElementsByTagName('hybrid')[0]
         pipes_node = hybrid_node.getElementsByTagName('pipes')[0]
         setattr(self, 'hybrid_pipes', node_value_to_python(pipes_node.childNodes[0]))
+
+        # Get the experimental information data nodes and, if they exist, fill the contents.
+        exp_info_nodes = pipe_node.getElementsByTagName('exp_info')
+        if exp_info_nodes:
+            # Create the data container.
+            self.exp_info = ExpInfo()
+
+            # Fill its contents.
+            self.exp_info.from_xml(exp_info_nodes[0])
 
         # Get the diffusion tensor data nodes and, if they exist, fill the contents.
         diff_tensor_nodes = pipe_node.getElementsByTagName('diff_tensor')
@@ -214,10 +228,14 @@ class PipeContainer(Prototype):
         global_element = doc.createElement('global')
         element.appendChild(global_element)
         global_element.setAttribute('desc', 'Global data located in the top level of the data pipe')
-        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + list(self.__class__.__dict__.keys()))
+        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + list(self.__class__.__dict__.keys()))
 
         # Hybrid info.
         self.xml_create_hybrid_element(doc, element)
+
+        # Add the experimental information.
+        if hasattr(self, 'exp_info'):
+            self.exp_info.to_xml(doc, element)
 
         # Add the diffusion tensor data.
         if hasattr(self, 'diff_tensor'):

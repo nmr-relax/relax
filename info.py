@@ -258,13 +258,6 @@ class Info_box(object):
         except:
             text = text + '\n'
 
-        # Numeric.
-        text = text + format1 % ('Numeric', dep_check.numeric_module)
-        try:
-            text = text + format2 % (dep_check.Numeric.__version__, dep_check.Numeric.__file__)
-        except:
-            text = text + '\n'
-
         # readline.
         text = text + format1 % ('readline', dep_check.readline_module)
         try:

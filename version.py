@@ -32,7 +32,7 @@ from subprocess import PIPE, Popen
 version = "repository checkout"
 
 
-def get_revision():
+def revision():
     """Attempt to retrieve the SVN revision number, if this is a checked out copy.
 
     @return:    The SVN revision number, or None if unsuccessful.
@@ -60,7 +60,7 @@ def get_revision():
             return row[1]
 
 
-def get_url():
+def url():
     """Attempt to retrieve the SVN URL, if this is a checked out copy.
 
     @return:    The SVN URL, or None if unsuccessful.
@@ -86,3 +86,29 @@ def get_url():
         # The revision.
         if row[0] == 'URL:':
             return row[1]
+
+
+def version_full():
+    """Return the full relax version, including all SVN info for repository versions.
+
+    @return:    The relax version string.
+    @rtype:     str
+    """
+
+    # The relax version.
+    ver = version
+
+    # Repository version.
+    if ver == 'repository checkout':
+        # Get the SVN revision and URL.
+        svn_rev = revision()
+        svn_url = url()
+
+        # Change the version string.
+        if svn_rev:
+            ver = version + " r" + svn_rev
+        if svn_url:
+            ver = ver + " " + svn_url
+
+    # Return the version.
+    return ver
