@@ -319,6 +319,93 @@ class Relax_data(User_fn_class):
         relax_data.read(ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
+    def temp_calibration(self, ri_label=None, frq_label=None, method=None):
+        """Specify the temperature calibration method used.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+
+        frq_label:  The field strength label.
+
+        method:  The calibration method.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function is essential for BMRB data deposition.  The currently allowed methods
+        are
+
+            'methanol',
+            'monoethylene glycol',
+            'no calibration applied'.
+
+        Other strings will be accepted if supplied.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "relax_data.temp_calibration("
+            text = text + "ri_label=" + repr(ri_label)
+            text = text + ", frq_label=" + repr(frq_label)
+            text = text + ", method=" + repr(method) + ")"
+            print(text)
+
+        # The argument checks.
+        check.is_str(ri_label, 'relaxation label')
+        check.is_str(frq_label, 'frequency label')
+        check.is_str(method, 'temperature calibration method')
+
+        # Execute the functional code.
+        relax_data.temp_calibration(ri_label=ri_label, frq_label=frq_label, method=method)
+
+
+    def temp_control(self, ri_label=None, frq_label=None, method=None):
+        """Specify the temperature control method used.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+
+        frq_label:  The field strength label.
+
+        method:  The control method.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function is essential for BMRB data deposition.  The currently allowed methods
+        are
+
+            'single scan interleaving',
+            'temperature compensation block',
+            'single scan interleaving and temperature compensation block',
+            'single fid interleaving',
+            'single experiment interleaving',
+            'no temperature control applied'.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "relax_data.temp_control("
+            text = text + "ri_label=" + repr(ri_label)
+            text = text + ", frq_label=" + repr(frq_label)
+            text = text + ", method=" + repr(method) + ")"
+            print(text)
+
+        # The argument checks.
+        check.is_str(ri_label, 'relaxation label')
+        check.is_str(frq_label, 'frequency label')
+        check.is_str(method, 'temperature control method')
+
+        # Execute the functional code.
+        relax_data.temp_control(ri_label=ri_label, frq_label=frq_label, method=method)
+
+
     def write(self, ri_label=None, frq_label=None, file=None, dir=None, force=False):
         """Function for writing R1, R2, or NOE relaxation data to a file.
 

@@ -400,6 +400,11 @@ class RelaxListFloatStrError(BaseArgError):
 class RelaxListIntError(BaseArgError):
     list_types = [LIST_INT]
 
+# List of integers.
+class RelaxNoneListIntError(BaseArgError):
+    simple_types = [NONE]
+    list_types = [LIST_INT]
+
 # List of numbers.
 class RelaxListNumError(BaseArgError):
     list_types = [LIST_NUM]

@@ -53,7 +53,7 @@ class SoftwareSaveframe(BaseSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, name, version=None, vendor_name=None, vendor_address=None, vendor_eaddress=None, task=None):
+    def add(self, name, version=None, vendor_name=None, vendor_address=None, vendor_eaddress=None, task=None, cite_ids=None):
         """Add the software info to the data nodes.
 
         @param name:                The name of the software program.
@@ -68,19 +68,24 @@ class SoftwareSaveframe(BaseSaveframe):
         @type vendor_eaddress:      None or str
         @keyword task:              The task of the software.
         @type task:                 str
+        @keyword cite_ids:          The citation ID numbers.
+        @type cite_ids:             None or list of int
+        @return:                    The software ID number.
+        @rtype:                     int
         """
 
         # Check.
-        if not isinstance(task, str):
+        if not isinstance(task, list):
             raise NameError, "The task argument '%s' is invalid." % task
 
         # Place the args into the namespace.
         self.program_name = name
         self.program_version = version
-        self.vendor_name = [translate(vendor_name)]
-        self.vendor_address = [translate(vendor_address)]
-        self.vendor_eaddress = [translate(vendor_eaddress)]
-        self.task = [translate(task)]
+        self.vendor_name = translate(vendor_name)
+        self.vendor_address = translate(vendor_address)
+        self.vendor_eaddress = translate(vendor_eaddress)
+        self.task = translate(task)
+        self.cite_ids = translate(cite_ids)
 
         # Increment the ID number.
         self.software_num = self.software_num + 1
@@ -94,11 +99,15 @@ class SoftwareSaveframe(BaseSaveframe):
 
         # Create the tag categories.
         self.Software.create()
+        self.Software_citation.create()
         self.Vendor.create()
         self.Task.create()
 
         # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
+
+        # Return the software ID number.
+        return self.software_num
 
 
     def add_tag_categories(self):
@@ -116,7 +125,7 @@ class Software(TagCategory):
     """Base class for the Software tag category."""
 
     def create(self):
-        """Create the ChemShiftAnisotropy tag category."""
+        """Create the Software tag category."""
 
         # The save frame category.
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
@@ -153,6 +162,43 @@ class Software(TagCategory):
 
 class SoftwareCitation(TagCategory):
     """Base class for the SoftwareCitation tag category."""
+
+
+    def create(self):
+        """Create the Software tag category."""
+
+        # Keys and objects.
+        info = [
+            ['CitationID',      'cite_ids'],
+            ['SoftwareID',      'software_id_num']
+        ]
+
+        # Get the TabTable.
+        table = self.create_tag_table(info)
+
+        # Add the tagtable to the save frame.
+        self.sf.frame.tagtables.append(table)
+
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Category label.
+        if not tag_category_label:
+            tag_category_label='Software_citation'
+
+        # Execute the base class tag_setup() method.
+        TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
+
+        # Tag names for the relaxation data.
+        self.tag_names['CitationID'] = 'Citation_ID'
+        self.tag_names['SoftwareID'] = 'Software_ID'
 
 
 class Task(TagCategory):

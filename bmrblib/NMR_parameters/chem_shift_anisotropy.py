@@ -50,7 +50,7 @@ class ChemShiftAnisotropySaveframe(BaseSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, csa=None, units='ppm'):
+    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, atom_types=None, isotope=None, csa=None, units='ppm'):
         """Add relaxation data to the data nodes.
 
         @keyword frq:           The spectrometer proton frequency, in Hz.
@@ -61,6 +61,8 @@ class ChemShiftAnisotropySaveframe(BaseSaveframe):
         @type res_names:        list of str
         @keyword atom_names:    The atom name list.
         @type atom_names:       list of str
+        @keyword atom_types:    The atom types as IUPAC element abbreviations.
+        @type atom_types:       list of str
         @keyword isotope:       The isotope type list, ie 15 for '15N'.
         @type isotope:          list of int
         @keyword csa:           The CSA values in ppm.
@@ -81,6 +83,7 @@ class ChemShiftAnisotropySaveframe(BaseSaveframe):
         self.res_nums = translate(res_nums)
         self.res_names = translate(res_names)
         self.atom_names = translate(atom_names)
+        self.atom_types = translate(atom_types)
         self.isotope = translate(isotope)
         self.csa = translate(csa)
 
@@ -244,6 +247,7 @@ class CSAnisotropy(TagCategory):
             ['CompIndexID',         'res_nums'],
             ['CompID',              'res_names'],
             ['AtomID',              'atom_names'],
+            ['AtomType',            'atom_types'],
             ['AtomIsotopeNumber',   'isotope'],
             ['Val',                 'csa']
         ]
@@ -299,6 +303,7 @@ class CSAnisotropy(TagCategory):
         self.tag_names['CompIndexID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
+        self.tag_names['AtomType'] = 'Atom_type'
         self.tag_names['AtomIsotopeNumber'] = 'Atom_isotope_number'
         self.tag_names['Val'] = 'value'
         self.tag_names['ValErr'] = 'value_error'

@@ -28,9 +28,12 @@ from os import F_OK, access
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from data.exp_info import ExpInfo
+from generic_fns import exp_info
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
 from specific_fns.setup import get_specific_fn
+from version import version_full
 
 
 def display(version='3.1'):
@@ -98,6 +101,13 @@ def write(file=None, directory=None, version='3.1', force=False):
 
     # Create the directories.
     mkdir_nofail(directory, verbosity=0)
+
+    # Add the relax citations.
+    cdp.exp_info.add_citation(cite_id='relax_ref1', authors=exp_info.RELAX_CITE1_AUTHORS, doi=exp_info.RELAX_CITE1_DOI, pubmed_id=exp_info.RELAX_CITE1_PUBMED_ID, full_citation=exp_info.RELAX_CITE1_FULL_CITATION, title=exp_info.RELAX_CITE1_TITLE, status=exp_info.RELAX_CITE1_STATUS, type=exp_info.RELAX_CITE1_TYPE, journal_abbrev=exp_info.RELAX_CITE1_JOURNAL_ABBREV, journal_full=exp_info.RELAX_CITE1_JOURNAL_FULL, volume=exp_info.RELAX_CITE1_VOLUME, issue=exp_info.RELAX_CITE1_ISSUE, page_first=exp_info.RELAX_CITE1_PAGE_FIRST, page_last=exp_info.RELAX_CITE1_PAGE_LAST, year=exp_info.RELAX_CITE1_YEAR)
+    cdp.exp_info.add_citation(cite_id='relax_ref2', authors=exp_info.RELAX_CITE2_AUTHORS, doi=exp_info.RELAX_CITE2_DOI, pubmed_id=exp_info.RELAX_CITE2_PUBMED_ID, full_citation=exp_info.RELAX_CITE2_FULL_CITATION, title=exp_info.RELAX_CITE2_TITLE, status=exp_info.RELAX_CITE2_STATUS, type=exp_info.RELAX_CITE2_TYPE, journal_abbrev=exp_info.RELAX_CITE2_JOURNAL_ABBREV, journal_full=exp_info.RELAX_CITE2_JOURNAL_FULL, volume=exp_info.RELAX_CITE2_VOLUME, issue=exp_info.RELAX_CITE2_ISSUE, page_first=exp_info.RELAX_CITE2_PAGE_FIRST, page_last=exp_info.RELAX_CITE2_PAGE_LAST, year=exp_info.RELAX_CITE2_YEAR)
+
+    # Add the relax software package.
+    cdp.exp_info.software_setup(name=exp_info.RELAX_NAME, version=version_full(), vendor_name=exp_info.RELAX_AUTHORS, url=exp_info.RELAX_URL, cite_ids=['relax_ref1', 'relax_ref2'], tasks=exp_info.RELAX_TASKS)
 
     # Execute the specific BMRB writing code.
     write_function(file_path, version=version)

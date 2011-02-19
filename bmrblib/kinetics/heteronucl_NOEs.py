@@ -61,20 +61,20 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
     def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
         """Add relaxation data to the data nodes.
 
-        @keyword frq:           The spectrometer proton frequency, in Hz.
-        @type frq:              float
-        @keyword res_nums:      The residue number list.
-        @type res_nums:         list of int
-        @keyword res_names:     The residue name list.
-        @type res_names:        list of str
-        @keyword atom_names:    The atom name list.
-        @type atom_names:       list of str
-        @keyword isotope:       The isotope type list, ie 15 for '15N'.
-        @type isotope:          list of int
-        @keyword data:          The relaxation data.
-        @type data:             list of float
-        @keyword errors:        The errors associated with the relaxation data.
-        @type errors:           list of float
+        @keyword frq:               The spectrometer proton frequency, in Hz.
+        @type frq:                  float
+        @keyword res_nums:          The residue number list.
+        @type res_nums:             list of int
+        @keyword res_names:         The residue name list.
+        @type res_names:            list of str
+        @keyword atom_names:        The atom name list.
+        @type atom_names:           list of str
+        @keyword isotope:           The isotope type list, ie 15 for '15N'.
+        @type isotope:              list of int
+        @keyword data:              The relaxation data.
+        @type data:                 list of float
+        @keyword errors:            The errors associated with the relaxation data.
+        @type errors:               list of float
         """
 
         # Check the ID info.

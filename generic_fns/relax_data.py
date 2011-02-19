@@ -27,14 +27,17 @@
 from copy import deepcopy
 import string
 import sys
+from warnings import warn
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from data.exp_info import ExpInfo
 from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
 from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from relax_io import read_spin_data
+from relax_warnings import RelaxWarning
 import specific_fns
 
 
@@ -303,9 +306,30 @@ def bmrb_write(star):
         # Other info.
         isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
 
-    # Add the relaxation data.
+    # Check the temperature control methods.
+    if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_calibration'):
+        raise RelaxError("The temperature calibration methods have not been specified.")
+    if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_control'):
+        raise RelaxError("The temperature control methods have not been specified.")
+
+    # Loop over the relaxation data.
     for i in range(cdp.num_ri):
-        star.relaxation.add(data_type=cdp.ri_labels[i], frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+        # Alias.
+        ri_label = cdp.ri_labels[i]
+        frq_label = cdp.frq_labels[cdp.remap_table[i]]
+
+        # Get the temperature control methods.
+        temp_calib = cdp.exp_info.get_temp_calibration(ri_label, frq_label)
+        temp_control = cdp.exp_info.get_temp_control(ri_label, frq_label)
+
+        # Check.
+        if not temp_calib:
+            raise RelaxError("The temperature calibration method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
+        if not temp_control:
+            raise RelaxError("The temperature control method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
+
+        # Add the relaxation data.
+        star.relaxation.add(data_type=ri_label, frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control)
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
@@ -847,6 +871,80 @@ def return_value(spin, data_type):
 
     # Return the data.
     return value, error
+
+
+def temp_calibration(ri_label=None, frq_label=None, method=None):
+    """Set the temperature calibration method.
+
+    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_label:     str
+    @param frq_label:   The field strength label.
+    @type frq_label:    str
+    @param method:      The temperature calibration method.
+    @type method:       str
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+    if not test_labels(ri_label, frq_label):
+        raise RelaxNoRiError(ri_label, frq_label)
+
+
+    # Check the values, and warn if not in the list.
+    valid = ['methanol', 'monoethylene glycol', 'no calibration applied']
+    if method not in valid:
+        warn(RelaxWarning("The '%s' method is unknown.  Please try to use one of %s." % (method, valid)))
+
+    # Set up the experimental info data container, if needed.
+    if not hasattr(cdp, 'exp_info'):
+        cdp.exp_info = ExpInfo()
+
+    # Store the method.
+    cdp.exp_info.temp_calibration_setup(ri_label, frq_label, method)
+
+
+
+def temp_control(ri_label=None, frq_label=None, method=None):
+    """Set the temperature control method.
+
+    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_label:     str
+    @param frq_label:   The field strength label.
+    @type frq_label:    str
+    @param method:      The temperature control method.
+    @type method:       str
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+    if not test_labels(ri_label, frq_label):
+        raise RelaxNoRiError(ri_label, frq_label)
+
+
+    # Check the values, and warn if not in the list.
+    valid = ['single scan interleaving', 'temperature compensation block', 'single scan interleaving and temperature compensation block', 'single fid interleaving', 'single experiment interleaving', 'no temperature control applied']
+    if method not in valid:
+        raise RelaxError("The '%s' method is unknown.  Please select one of %s." % (method, valid))
+
+    # Set up the experimental info data container, if needed.
+    if not hasattr(cdp, 'exp_info'):
+        cdp.exp_info = ExpInfo()
+
+    # Store the method.
+    cdp.exp_info.temp_control_setup(ri_label, frq_label, method)
+
 
 
 def test_labels(ri_label, frq_label):

@@ -73,9 +73,9 @@ def translate(data):
     elif data == None:
         new_data = '?'
 
-    # Otherwise don't do anything.
+    # Otherwise don't do anything (except convert to string).
     else:
-        new_data = data
+        new_data = str(data)
 
     # Return the translated result.
     return new_data

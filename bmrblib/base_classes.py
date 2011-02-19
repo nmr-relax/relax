@@ -110,8 +110,34 @@ class TagCategory:
 
             # The tag names and values (skipping empty entries in self.tag_names).
             if self.tag_names[key] != None:
+                # The name.
                 tag_names.append(self.tag_names_full[key])
-                tag_values.append(getattr(self.sf, name))
+
+                # The value.
+                val = getattr(self.sf, name)
+
+                # Convert to a list, if necessary.
+                if not isinstance(val, list):
+                    val = [val]
+
+                # Append the value list.
+                tag_values.append(val)
+
+        # Check the input data to avoid cryptic pystarlib error messages.
+        N = len(tag_values[0])
+        for i in range(len(tag_values)):
+            if len(tag_values[i]) > N:
+                # Mismatch.
+                if N != 1:
+                    raise NameError("The tag values are not all the same length '%s'." % tag_values)
+
+                # First element was single.
+                N = len(tag_values[i])
+
+        # Fix the single values if the other data are lists.
+        for i in range(len(tag_values)):
+            if len(tag_values[i]) == 1:
+                tag_values[i] = tag_values[i] * N
 
         # Add the data and return the table.
         return TagTable(free=free, tagnames=tag_names, tagvalues=tag_values)

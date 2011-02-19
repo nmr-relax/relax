@@ -27,7 +27,7 @@ __docformat__ = 'plaintext'
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
-from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin
+from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin, set_spin_element
 
 
 class Spin(User_fn_class):
@@ -256,6 +256,51 @@ class Spin(User_fn_class):
 
         # Execute the functional code.
         display_spin(spin_id=spin_id)
+
+
+    def element(self, spin_id=None, element=None, force=False):
+        """Set the element type of the spin.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        spin_id:  The spin identification string corresponding to one or more spins.
+
+        element:  The IUPAC element name.
+
+        force:  A flag which if True will cause the element to be changed.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function allows the element type of the spins to be set.
+
+
+        Examples
+        ~~~~~~~~
+
+        The set all spins of residue 1 to be carbons, type one of:
+
+        relax> spin.element('@1', 'C', force=True)
+        relax> spin.element(spin_id='@1', element='C', force=True)
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "spin.element("
+            text = text + "spin_id=" + repr(spin_id)
+            text = text + ", element=" + repr(element)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
+
+        # The argument checks.
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_str(element, 'IUPAC element name')
+        check.is_bool(force, 'force flag')
+
+        # Execute the functional code.
+        set_spin_element(spin_id=spin_id, element=element, force=force)
 
 
     def name(self, spin_id=None, name=None, force=False):

@@ -2225,6 +2225,41 @@ def same_sequence(pipe1, pipe2):
     return True
 
 
+def set_spin_element(spin_id=None, element=None, force=False):
+    """Set the element type of the spins.
+
+    @keyword spin_id:   The spin identification string.
+    @type spin_id:      str
+    @keyword element:   The IUPAC element name.
+    @type element:      str
+    @keyword force:     A flag which if True will cause the element to be changed.
+    @type force:        bool
+    """
+
+    # Valid names (for NMR active spins).
+    valid_names = ['H',
+             'C',
+             'N',
+             'O',
+             'F',
+             'Na',
+             'P',
+             'Cd'
+    ]
+
+    # Check.
+    if element not in valid_names:
+        raise(RelaxError("The element name '%s' is not valid and should be one of the IUPAC names %s." % (element, valid_names)))
+
+
+    # Set the element name for the matching spins.
+    for spin, id in spin_loop(spin_id, return_id=True):
+        if hasattr(spin, 'element') and spin.element and not force:
+            warn(RelaxWarning("The element type of the spin '%s' is already set.  Set the force flag to True to rename." % id))
+        else:
+            spin.element = element
+
+
 def spin_id_to_data_list(id):
     """Convert the single spin ID string into a list of the mol, res, and spin names and numbers.
 
