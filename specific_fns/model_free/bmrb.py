@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2009 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,34 +20,36 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""The model-free specific code."""
-
-
-# The available modules.
-__all__ = [ 'main',
-            'mf_minimise',
-            'molmol',
-            'results']
-
 # relax module imports.
-from bmrb import Bmrb
-from main import Model_free_main
-from mf_minimise import Mf_minimise
-from molmol import Molmol
-from results import Results
-from specific_fns.api_base import API_base
-from specific_fns.api_common import API_common
+from pystarlib.File import File
 
 
-class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Bmrb, API_base, API_common):
-    """Parent class containing all the model-free specific functions."""
+class Bmrb:
+    """Class containing methods related to BMRB STAR file reading and writing."""
 
-    def __init__(self):
-        """Initialise the class by placing API_common methods into the API."""
+    def bmrb_read(self, file_path):
+        """Read the model-free results from a BMRB NMR-STAR v3.1 formatted file.
 
-        # Place methods into the API.
-        self.base_data_loop = self._base_data_loop_spin
-        self.return_error = self._return_error_relax_data
-        self.return_value = self._return_value_general
-        self.test_grid_ops = self._test_grid_ops_general
+        @param file_path:   The full file path.
+        @type file_path:    str
+        """
+
+        # Initialise the pystarlib File object.
+        file = File(title='relax_model_free_results', filename=file_path)
+
+        # Read the contents of the STAR formatted file.
+        file.read()
+
+
+    def bmrb_write(self, file_path):
+        """Write the model-free results to a BMRB NMR-STAR v3.1 formatted file.
+
+        @param file_path:   The full file path.
+        @type file_path:    str
+        """
+
+        # Initialise the pystarlib File object.
+        file = File(title='relax_model_free_results', filename=file_path)
+
+        # Write the contents to the STAR formatted file.
+        file.write()

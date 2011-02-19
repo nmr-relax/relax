@@ -63,7 +63,7 @@ from model_selection import Modsel
 from temperature import Temp
 
 # User classes.
-from bmrb import Align_tensor
+from align_tensor import Align_tensor
 from bmrb import BMRB
 from consistency_tests import Consistency_tests
 from dasha import Dasha

@@ -70,11 +70,6 @@ class BMRB:
         ~~~~~~~~~~~
 
         To search for the results file in the current working directory, set dir to None.
-
-        This function is able to handle uncompressed, bzip2 compressed files, or gzip compressed
-        files automatically.  The full file name including extension can be supplied, however, if
-        the file cannot be found, this function will search for the file name with '.bz2' appended
-        followed by the file name with '.gz' appended.
         """
 
         # Function intro text.
@@ -96,7 +91,7 @@ class BMRB:
         bmrb.read(file=file, directory=dir)
 
 
-    def write(self, file=None, dir='pipe_name', force=False, compress_type=0):
+    def write(self, file=None, dir='pipe_name', force=False):
         """Write the results to a BMRB NMR-STAR v3.1 formatted file.
 
         Keyword Arguments
@@ -109,8 +104,6 @@ class BMRB:
 
         force:  A flag which if True will cause the any pre-existing file to be overwritten.
 
-        compress_type:  The type of compression to use when creating the file.
-
 
         Description
         ~~~~~~~~~~~
@@ -118,16 +111,6 @@ class BMRB:
         To place the BMRB file in the current working directory, set dir to None.  If dir is set
         to the special name 'pipe_name', then the results file will be placed into a directory with
         the same name as the current data pipe.
-
-        The default behaviour of this function is to create an uncompressed BMRB file.  The file can
-        however be saved in compressed format.  This is controlled by the compress_type argument
-        which can be set to one of:
-
-            0:  No compression (no file extension),
-            1:  bzip2 compression ('.bz2' file extension),
-            2:  gzip compression ('.gz' file extension).
-
-        The complementary read function will automatically handle the compressed files.
         """
 
         # Function intro text.
@@ -135,8 +118,7 @@ class BMRB:
             text = sys.ps3 + "bmrb.write("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force`
-            text = text + ", compress_type=" + `compress_type` + ")"
+            text = text + ", force=" + `force` + ")"
             print text
 
         # File.
@@ -151,9 +133,5 @@ class BMRB:
         if type(force) != bool:
             raise RelaxBoolError, ('force flag', force)
 
-        # Compression type.
-        if type(compress_type) != int:
-            raise RelaxIntError, ('compression type', compress_type)
-
         # Execute the functional code.
-        bmrb.write(file=file, directory=dir, force=force, compress_type=compress_type)
+        bmrb.write(file=file, directory=dir, force=force)
