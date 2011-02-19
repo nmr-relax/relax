@@ -31,11 +31,28 @@ from tempfile import mktemp
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from status import Status; status = Status()
 
 
 class Bmrb(SystemTestCase):
     """TestCase class for functional tests of the reading and writing of BMRB STAR formatted files."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip the tests if scipy is not installed.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Missing module.
+        if not dep_check.bmrblib_module:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Bmrblib', 'system'])
+
+        # Execute the base class method.
+        super(Bmrb, self).__init__(methodName)
+
 
     def setUp(self):
         """Common set up for these system tests."""
