@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2009 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,35 +21,42 @@
 ###############################################################################
 
 # Module docstring.
-"""The model-free specific code."""
+"""The NMR-STAR dictionary API for version 3.2.
 
-
-# The available modules.
-__all__ = [ 'bmrb',
-            'main',
-            'mf_minimise',
-            'molmol',
-            'results'
-]
+The v3.2 NMR-STAR dictionary is documented at
+http://www.bmrb.wisc.edu/dictionary/3.2html/SuperGroupPage.html.
+"""
 
 # relax module imports.
-from bmrb import Bmrb
-from main import Model_free_main
-from mf_minimise import Mf_minimise
-from molmol import Molmol
-from results import Results
-from specific_fns.api_base import API_base
-from specific_fns.api_common import API_common
+from bmrblib.assembly_supercategory.entity_v3_1 import EntitySaveframe_v3_1
+from bmrblib.experimental_details.software import SoftwareSaveframe
+from bmrblib.kinetics.relaxation import Relaxation_v3_2
+from bmrblib.NMR_parameters.chem_shift_anisotropy_v3_1 import ChemShiftAnisotropySaveframe_v3_1
+from bmrblib.thermodynamics.order_parameters_v3_1 import OrderParameterSaveframe_v3_1
+from bmrblib.nmr_star_dict import NMR_STAR
 
 
-class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Bmrb, API_base, API_common):
-    """Parent class containing all the model-free specific functions."""
+class NMR_STAR_v3_2(NMR_STAR):
+    """The v3.2 NMR-STAR dictionary."""
 
-    def __init__(self):
-        """Initialise the class by placing API_common methods into the API."""
+    # Class extension string.
+    ext = ''
 
-        # Place methods into the API.
-        self.base_data_loop = self._base_data_loop_spin
-        self.return_error = self._return_error_relax_data
-        self.return_value = self._return_value_general
-        self.test_grid_ops = self._test_grid_ops_general
+
+    def create_saveframes(self):
+        """Create all the saveframe objects."""
+
+        # Initialise Supergroup 3 : The molecular assembly saveframe API.
+        self.entity = EntitySaveframe_v3_1(self.data.datanodes)
+
+        # Initialise Supergroup 4:  The experimental descriptions saveframe API.
+        self.software = SoftwareSaveframe(self.data.datanodes)
+
+        # Initialise Supergroup 5 : The NMR parameters saveframe API.
+        self.chem_shift_anisotropy = ChemShiftAnisotropySaveframe_v3_1(self.data.datanodes)
+
+        # Initialise Supergroup 6 : The kinetic data saveframe API.
+        self.relaxation = Relaxation_v3_2(self.data.datanodes)
+
+        # Initialise Supergroup 7 : The thermodynamics saveframe API.
+        self.order_parameters = OrderParameterSaveframe_v3_1(self.data.datanodes)

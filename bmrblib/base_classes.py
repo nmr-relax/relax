@@ -25,7 +25,7 @@
 
 # relax module imports.
 from bmrblib.misc import translate
-from pystarlib.TagTable import TagTable
+from bmrblib.pystarlib.TagTable import TagTable
 
 
 class BaseSaveframe:
@@ -39,7 +39,7 @@ class BaseSaveframe:
         """
 
         # The data ID values.
-        self.data_ids = translate(range(1,N+1))
+        self.data_ids = translate(range(1, N+1))
 
 
 
@@ -67,7 +67,7 @@ class TagCategory:
         self.tag_setup()
 
         # Generate the full names.
-        for key, name in self.tag_names.iteritems():
+        for key, name in self.tag_names.items():
             self.tag_names_full[key] = self.create_tag_label(name) 
 
 
@@ -98,7 +98,7 @@ class TagCategory:
         """
 
         # Init.
-        keys = self.tag_names.keys()
+        keys = list(self.tag_names.keys())
         tag_names = []
         tag_values = []
 
@@ -106,7 +106,7 @@ class TagCategory:
         for key, name in info:
             # Key check.
             if key not in keys:
-                raise NameError, "The key '%s' is not located in the self.tag_names structure." % key
+                raise NameError("The key '%s' is not located in the self.tag_names structure." % key)
 
             # The tag names and values (skipping empty entries in self.tag_names).
             if self.tag_names[key] != None:

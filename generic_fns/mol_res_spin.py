@@ -509,16 +509,18 @@ def bmrb_read(star):
             create_residue(res_nums[i], res_names[i], mol_name=mol_name)
 
 
-def bmrb_write_entity(star):
+def bmrb_write_entity(star, version=None):
     """Generate the entity saveframe records for the NMR-STAR dictionary object.
 
-    @param star:    The NMR-STAR dictionary object.
-    @type star:     NMR_STAR instance
+    @param star:        The NMR-STAR dictionary object.
+    @type star:         NMR_STAR instance
+    @keyword version:   The BMRB NMR-STAR dictionary format to output to.
+    @type version:      str
     """
 
     # Can't handle multiple molecules yet.
     if count_molecules() > 1:
-        raise RelaxError, "Multiple molecules are not yet supported."
+        raise RelaxError("Multiple molecules are not yet supported.")
 
     # Get the molecule names.
     mol_names = get_molecule_names()
@@ -527,7 +529,7 @@ def bmrb_write_entity(star):
     for i in range(len(mol_names)):
         # Test that the molecule has a name!
         if not mol_names[i]:
-            raise RelaxError, "All molecules must be named."
+            raise RelaxError("All molecules must be named.")
 
         # Get the residue names and numbers.
         res_names = get_residue_names("#" + mol_names[i])

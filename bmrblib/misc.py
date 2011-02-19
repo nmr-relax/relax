@@ -37,7 +37,7 @@ def no_missing(data, name):
     missing = False
 
     # List data.
-    if type(data) == list:
+    if isinstance(data, list):
         # Loop over the data.
         for i in range(len(data)):
             if data[i] == None or data[i] == 'None':
@@ -49,7 +49,7 @@ def no_missing(data, name):
 
     # Fail.
     if missing:
-        raise NameError, "Data is missing from the " + name + '.'
+        raise NameError("Data is missing from the " + name + '.')
 
 
 def translate(data):
@@ -60,7 +60,7 @@ def translate(data):
     """
 
     # List data.
-    if type(data) == list:
+    if isinstance(data, list):
         # Loop over the data.
         new_data = []
         for i in range(len(data)):
@@ -70,8 +70,12 @@ def translate(data):
                 new_data.append(str(data[i]))
 
     # None.
-    if data == None:
+    elif data == None:
         new_data = '?'
+
+    # Otherwise don't do anything.
+    else:
+        new_data = data
 
     # Return the translated result.
     return new_data

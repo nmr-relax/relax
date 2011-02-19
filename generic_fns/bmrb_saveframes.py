@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2009 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,35 +21,28 @@
 ###############################################################################
 
 # Module docstring.
-"""The model-free specific code."""
-
-
-# The available modules.
-__all__ = [ 'bmrb',
-            'main',
-            'mf_minimise',
-            'molmol',
-            'results'
-]
+"""Module containing read/write functions for miscellaneous BMRB NMR-STAR saveframes."""
 
 # relax module imports.
-from bmrb import Bmrb
-from main import Model_free_main
-from mf_minimise import Mf_minimise
-from molmol import Molmol
-from results import Results
-from specific_fns.api_base import API_base
-from specific_fns.api_common import API_common
+from version import version, get_revision
 
 
-class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Bmrb, API_base, API_common):
-    """Parent class containing all the model-free specific functions."""
+def write_relax(star):
+    """Generate the Software saveframe records for relax.
 
-    def __init__(self):
-        """Initialise the class by placing API_common methods into the API."""
+    @param star:        The NMR-STAR dictionary object.
+    @type star:         NMR_STAR instance
+    """
 
-        # Place methods into the API.
-        self.base_data_loop = self._base_data_loop_spin
-        self.return_error = self._return_error_relax_data
-        self.return_value = self._return_value_general
-        self.test_grid_ops = self._test_grid_ops_general
+    # The relax version.
+    ver = version
+    if ver == 'repository checkout':
+        # Get the SVN revision.
+        rev = get_revision()
+
+        # Change the version string.
+        if rev:
+            ver = version + " r" + rev
+
+    # The relax info.
+    star.software.add(name='relax', version=ver, vendor_name='The relax development team', vendor_eaddress='http://nmr-relax.com', task='data processing')

@@ -20,43 +20,38 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the BMRB user function class."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import bmrb
 from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 
 
-class BMRB:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for interfacing with the BMRB (http://www.bmrb.wisc.edu/)."""
+class BMRB(User_fn_class):
+    """Class for interfacing with the BMRB (http://www.bmrb.wisc.edu/)."""
 
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
-
-    def display(self):
-        """Display the BMRB data in NMR-STAR v3.1 format."""
+    def display(self, version='3.1'):
+        """Display the BMRB data in NMR-STAR format."""
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "bmrb.display("
-            text = text + "format=" + `format` + ")"
-            print text
+            text = text + "version=" + repr(version) + ")"
+            print(text)
 
         # Execute the functional code.
-        bmrb.display(format=format)
+        bmrb.display(version=version)
 
 
-    def read(self, file=None, dir=None):
-        """Read BMRB files in the NMR-STAR v3.1 format.
+    def read(self, file=None, dir=None, version='3.1'):
+        """Read BMRB files in the NMR-STAR format.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -75,24 +70,22 @@ class BMRB:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "bmrb.read("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", version=" + repr(version) + ")"
+            print(text)
 
-        # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str(version, 'NMR-STAR dictionary version')
 
         # Execute the functional code.
-        bmrb.read(file=file, directory=dir)
+        bmrb.read(file=file, directory=dir, version=version)
 
 
-    def write(self, file=None, dir='pipe_name', force=False):
-        """Write the results to a BMRB NMR-STAR v3.1 formatted file.
+    def write(self, file=None, dir='pipe_name', version='3.1', force=False):
+        """Write the results to a BMRB NMR-STAR formatted file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -102,6 +95,8 @@ class BMRB:
 
         dir:  The directory name.
 
+        version:  The NMR-STAR dictionary format version to use.
+.sconsign.dblite
         force:  A flag which if True will cause the any pre-existing file to be overwritten.
 
 
@@ -116,22 +111,17 @@ class BMRB:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "bmrb.write("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", version=" + repr(version)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # File.
-        if type(file) != str and not hasattr(file, 'write'):
-            raise RelaxStrFileError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str(version, 'NMR-STAR dictionary version')
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        bmrb.write(file=file, directory=dir, force=force)
+        bmrb.write(file=file, directory=dir, version=version, force=force)

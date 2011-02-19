@@ -53,8 +53,31 @@ class Bmrb(TestCase):
         ds.__reset__()
 
 
-    def test_rw_bmrb_model_free(self):
+    def test_rw_bmrb_3_0_model_free(self):
         """Write and then read a BRMB STAR formatted file containing model-free results."""
+
+        # Set the NMR-STAR version.
+        ds.version = '3.0'
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bmrb_rw.py')
+
+
+    def test_rw_bmrb_3_1_model_free(self):
+        """Write and then read a BRMB STAR formatted file containing model-free results."""
+
+        # Set the NMR-STAR version.
+        ds.version = '3.1'
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bmrb_rw.py')
+
+
+    def test_rw_bmrb_3_2_model_free(self):
+        """Write and then read a BRMB STAR formatted file containing model-free results."""
+
+        # Set the NMR-STAR version.
+        ds.version = '3.2'
 
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bmrb_rw.py')

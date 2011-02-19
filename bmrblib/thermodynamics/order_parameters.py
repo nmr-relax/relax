@@ -29,8 +29,8 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html_frame/frame_SaveFra
 # relax module imports.
 from bmrblib.base_classes import BaseSaveframe, TagCategory
 from bmrblib.misc import no_missing, translate
-from pystarlib.SaveFrame import SaveFrame
-from pystarlib.TagTable import TagTable
+from bmrblib.pystarlib.SaveFrame import SaveFrame
+from bmrblib.pystarlib.TagTable import TagTable
 
 
 class OrderParameterSaveframe(BaseSaveframe):
@@ -113,7 +113,7 @@ class OrderParameterSaveframe(BaseSaveframe):
         if rex:
             # Check.
             if not rex_frq:
-                raise NameError, "The rex_frq arg must be supplied if the rex values are supplied."
+                raise NameError("The rex_frq arg must be supplied if the rex values are supplied.")
 
             # Convert to MHz.
             self.rex_frq = str(rex_frq / 1e6)
@@ -139,7 +139,7 @@ class OrderParameterSaveframe(BaseSaveframe):
 
             # Check the length.
             if len(obj) != N:
-                raise NameError, "The number of elements in the '%s' arg does not match that of 'res_nums'." % name
+                raise NameError("The number of elements in the '%s' arg does not match that of 'res_nums'." % name)
 
             # Place the args into the namespace, translating for BMRB.
             setattr(self, name, translate(obj))
@@ -186,7 +186,7 @@ class OrderParameterList(TagCategory):
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
 
         # Model-free analysis ID number.
-        if self.tag_names.has_key('OrderParameterListID'):
+        if 'OrderParameterListID' in self.tag_names:
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['OrderParameterListID']], tagvalues=[['1']]))
 
         # Sample info.
@@ -311,3 +311,4 @@ class OrderParameter(TagCategory):
         self.tag_names['S2fValErr'] = 'S2f_value_fit_error'
         self.tag_names['S2sVal'] = 'S2s_value'
         self.tag_names['S2sValErr'] = 'S2s_value_fit_error'
+        self.tag_names['ChiSquaredVal'] = 'Chi_squared_val'

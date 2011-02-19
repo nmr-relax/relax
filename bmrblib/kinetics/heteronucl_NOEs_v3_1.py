@@ -55,6 +55,14 @@ class HeteronuclNOEList_v3_1(HeteronuclNOEList):
     """v3.1 HeteronuclNOEList tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
+        """Set up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
         # Execute the base class tag_setup() method.
         HeteronuclNOEList.tag_setup(self, tag_category_label='Heteronucl_NOE_list', sep=sep)
 
@@ -84,6 +92,14 @@ class HeteronuclNOE_v3_1(HeteronuclNOE):
     """v3.1 HeteronuclNOE tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
         # Execute the base class tag_setup() method.
         HeteronuclNOE.tag_setup(self, tag_category_label='Heteronucl_NOE', sep=sep)
 

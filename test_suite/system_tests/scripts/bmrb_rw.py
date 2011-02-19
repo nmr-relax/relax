@@ -10,6 +10,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 # Missing temp file (allow this script to run outside of the system test framework).
 if not hasattr(ds, 'tmpfile'):
     ds.tmpfile = 'temp_bmrb'
+    ds.version = '3.1'
 
 # Create the data pipe.
 pipe.create(pipe_name='results', pipe_type='mf')
@@ -30,9 +31,9 @@ molecule.name(name='OMP')
 relax_data.display(ri_label='R1', frq_label='800')
 
 # Write, then read the data to a new data pipe.
-bmrb.write(file=ds.tmpfile, dir=None, force=True)
+bmrb.write(file=ds.tmpfile, dir=None, version=ds.version, force=True)
 pipe.create(pipe_name='new', pipe_type='mf')
-bmrb.read(file=ds.tmpfile)
+bmrb.read(file=ds.tmpfile, version=ds.version)
 
 # Display tests.
 sequence.display()

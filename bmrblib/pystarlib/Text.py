@@ -172,7 +172,7 @@ character in it before pos (not fully tested; perhaps possible).
 """
 
 def pattern_unquoted_find(text, pattern, pos=0):    
-    while 1:
+    while True:
         match = pattern.search( text, pos)
         if not match:
             ## No match at all
@@ -187,7 +187,7 @@ def pattern_unquoted_find(text, pattern, pos=0):
         ## Is the first character matched an eol it self
         if text[pos]=='\n':
             if verbosity >= 9:
-                print 'Found pattern: [%s] at the beginning of a line' % pattern.pattern
+                print('Found pattern: [%s] at the beginning of a line' % pattern.pattern)
             return pos
             
         ## I hope the rfind is optimized to stroll backwards from pos
@@ -203,8 +203,8 @@ def pattern_unquoted_find(text, pattern, pos=0):
         # Not the one
         if line[0] == ';': 
             if verbosity > 1:
-                print 'WARNING: (1) found pattern: [%s] preceded by: [%s]' % (
-                    pattern.pattern, line )
+                print('WARNING: (1) found pattern: [%s] preceded by: [%s]' % (
+                    pattern.pattern, line ))
             pos = pos + 1
             continue
 
@@ -224,8 +224,8 @@ def pattern_unquoted_find(text, pattern, pos=0):
 ##                print "ERROR: [%s]" % line
 ##                return None
             if verbosity > 1:
-                print 'WARNING: (2) found pattern: [%s] preceded by: [%s]' % (
-                    pattern.pattern, line )
+                print('WARNING: (2) found pattern: [%s] preceded by: [%s]' % (
+                    pattern.pattern, line ))
 
             # Not the one
             pos = pos + 1 
@@ -246,8 +246,8 @@ def tag_value_quoted_parse( text, pos ):
     if text[ pos ] == '"':
         match_d_quote = pattern_d_quote.search( text, pos+1)
         if not match_d_quote:
-            print "ERROR: No matching double quote char found for double quote char at offset:", 0
-            print "ERROR: Next 70 chars are: [%s]" % text[ pos:pos+70 ]
+            print("ERROR: No matching double quote char found for double quote char at offset:", 0)
+            print("ERROR: Next 70 chars are: [%s]" % text[ pos:pos+70 ])
             return None, None
     ##            if verbosity >= 9:
     ##                print "pos, span():", pos, match_d_quote.span()
@@ -257,8 +257,8 @@ def tag_value_quoted_parse( text, pos ):
     if text[ pos ] == "'":
         match_s_quote = pattern_s_quote.search( text, pos+1)
         if not match_s_quote:
-            print "ERROR: No matching single quote char found for single quote char at offset:", 0
-            print "ERROR: Next 70 chars are: [%s]" % text[ pos:pos+70 ]
+            print("ERROR: No matching single quote char found for single quote char at offset:", 0)
+            print("ERROR: Next 70 chars are: [%s]" % text[ pos:pos+70 ])
             return None, None
         value = text[ pos+1:match_s_quote.start() ]
     ##            if verbosity >= 9:
@@ -271,8 +271,8 @@ def tag_value_quoted_parse( text, pos ):
     if text[ pos ] == ";":
         match_e_semicolon = pattern_e_semicolon.search( text, pos+1)
         if not match_e_semicolon:
-            print "ERROR: No matching semicolon found for semicolon char at offset:", 0
-            print "ERROR: Next 70 chars are: [%s]" % text[ pos:pos+70 ]
+            print("ERROR: No matching semicolon found for semicolon char at offset:", 0)
+            print("ERROR: Next 70 chars are: [%s]" % text[ pos:pos+70 ])
             return None, None
     ##            print "pos, span():", pos, match_e_semicolon.span()
         ## Include the first eol and the eol before the semicolon
@@ -288,9 +288,9 @@ def tag_value_quoted_parse( text, pos ):
         
         return value, match_e_semicolon.end() 
 
-    print   "ERROR: Position in text:", pos
-    print """ERROR: should contain a ', ", or a ; but was not found:"""
-    print   "ERROR: Next 70 chars are: [%s]" % text[ pos:pos+70 ]
+    print("ERROR: Position in text:", pos)
+    print("""ERROR: should contain a ', ", or a ; but was not found:""")
+    print("ERROR: Next 70 chars are: [%s]" % text[ pos:pos+70 ])
     return None, None
 
 
@@ -309,12 +309,12 @@ def tag_value_parse( text, pos):
                 
     match_word = pattern_word.search( text, pos )
     if not match_word:
-        print "ERROR: No match for a 'word' at offset:", pos
-        print "ERROR: Next 70 chars are:", text[ pos:pos+70 ]
+        print("ERROR: No match for a 'word' at offset:", pos)
+        print("ERROR: Next 70 chars are:", text[ pos:pos+70 ])
         return None, None
     if match_word.start() != pos:
-        print "ERROR: Match for a 'word' at wrong offset:", match_word.start() - pos
-        print "ERROR: Next 70 chars are:", text[ pos:pos+70 ]
+        print("ERROR: Match for a 'word' at wrong offset:", match_word.start() - pos)
+        print("ERROR: Next 70 chars are:", text[ pos:pos+70 ])
         return None, None
 
     ## Include the first eol and the eol before the semicolon
@@ -360,10 +360,10 @@ def semicolon_block_collapse( text ):
       try:
         endpos = startpos + 1 + semicolon_end.end() - len(semicolon_end.group(1)) + 1
       except:
-        print "ERROR in semicolon_block_collapse for text starting at: ["+ text[startpos:startpos+100]+ "]"            
+        print("ERROR in semicolon_block_collapse for text starting at: ["+ text[startpos:startpos+100]+ "]")            
         raise
     
-      text_replace = re.sub("\n", eol_string,text[startpos:endpos])
+      text_replace = re.sub("\n", eol_string, text[startpos:endpos])
 
       # This is bulky and not very elegant but works
       text= text[0:startpos] + text_replace + text[endpos:]
@@ -375,7 +375,7 @@ def semicolon_block_collapse( text ):
     # Original code: can't handle re matches that are too long
     #text, count = pattern_semicolon_block.subn( semicolon_block_replace, text )
     if __init__.verbosity >= 9:
-        print 'Done [%s] subs with semicolon blocks' % count
+        print('Done [%s] subs with semicolon blocks' % count)
     return text
 
 def semicolon_block_expand( text ):        
@@ -442,7 +442,7 @@ the second semicolon can not be the first char on a line.
 """
 def semicolons_add( text, possible_bad_char=None ):
     if possible_bad_char:
-        lines       = string.split(text,'\n')
+        lines       = string.split(text, '\n')
         text   = ''
         for line in lines:
             text = text + prepending_string + line + '\n'
@@ -492,8 +492,8 @@ def comments_strip( text ):
         i += 1
 
     if __init__.verbosity >= 9:
-        print 'Done [%s] comment subs' % count
-    text = string.join(lines,"\n")
+        print('Done [%s] comment subs' % count)
+    text = string.join(lines, "\n")
     return text
 
 """
@@ -553,9 +553,9 @@ def _comments_strip_line( line ):
 def nmrView_compress( text ):
 
     text, count = pattern_nmrView_compress_empty.subn( '{}', text )    
-    print 'Compressed [%s] nmrView empty { } tags' % count
+    print('Compressed [%s] nmrView empty { } tags' % count)
 
     text, count = pattern_nmrView_compress_questionmark.subn( '{?}', text )    
-    print 'Compressed [%s] nmrView question mark { ?} tags' % count
+    print('Compressed [%s] nmrView question mark { ?} tags' % count)
     
     return text

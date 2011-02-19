@@ -6,7 +6,7 @@ import __init__
 
 import os   
 import zipfile
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from unittest import TestCase
 
 
@@ -56,7 +56,7 @@ save_comment   _Saveframe_category  comment   loop_
 
 ;    BOGUS_CATEGORY     stop_ save_
 """
-            self.assertTrue(Utils.equalIgnoringWhiteSpace(exp,st))
+            self.assertTrue(Utils.equalIgnoringWhiteSpace(exp, st))
 
         def testread2(self):
             """STAR File read"""
@@ -66,7 +66,7 @@ save_comment   _Saveframe_category  comment   loop_
 Extra Test Routine going over some entries in the NMR Restraints Grid
 """
 def testEntry(entry):
-    print "Testing Entry"
+    print("Testing Entry")
     strf = File() 
     __init__.verbosity = 2
     # Freely available on the web so not included in package.
@@ -77,7 +77,7 @@ def testEntry(entry):
     "&program=STAR&request_type=archive&subtype=full&type=entry") % (stage, stage, entry)
     fnamezip = entry+".zip"
 #    print "DEBUG: downloading url:", urlLocation
-    urllib.urlretrieve(urlLocation,fnamezip)
+    urllib.request.urlretrieve(urlLocation, fnamezip)
 #    print "DEBUG: opening local zip file:", fnamezip
     zfobj = zipfile.ZipFile(fnamezip)
     fname = None
@@ -109,25 +109,25 @@ def testEntry(entry):
             cmd = "diff --ignore-all-space --ignore-blank-lines %s %s > %s" % ( orgWattosWrittenFile, pystarlibWrittenFile, diffOrgPystarFile)
             os.system(cmd)
             if not os.path.exists(diffOrgPystarFile):
-                print "WARNING: failed to diff files: ", orgWattosWrittenFile, pystarlibWrittenFile
+                print("WARNING: failed to diff files: ", orgWattosWrittenFile, pystarlibWrittenFile)
             
     #        print "Most likely the below check will fail because it depends on Wattos being installed"
-            print "DEBUG: rewrite to Java formating for comparison"
+            print("DEBUG: rewrite to Java formating for comparison")
             cmd = "java -Xmx256m Wattos.Star.STARFilter %s %s ." % ( pystarlibWrittenFile, wattosWrittenFile)
             os.system(cmd)
             if not os.path.exists(wattosWrittenFile):
-                print "WARNING: failed to rewrite file: " + pystarlibWrittenFile
+                print("WARNING: failed to rewrite file: " + pystarlibWrittenFile)
             else:
     #            print "Most likely the below diff will fail because it depends on diff being installed"
                 cmd = "diff --ignore-all-space --ignore-blank-lines %s %s > %s" % ( pystarlibWrittenFile, wattosWrittenFile, diffPystarWattosFile)
                 os.system(cmd)
                 if not os.path.exists(diffPystarWattosFile):
-                    print "WARNING: failed to diff file: ",pystarlibWrittenFile, wattosWrittenFile
+                    print("WARNING: failed to diff file: ", pystarlibWrittenFile, wattosWrittenFile)
     #            print "Most likely the below diff will fail because it depends on diff being installed"
                 cmd = "diff --ignore-all-space --ignore-blank-lines %s %s > %s" % ( orgWattosWrittenFile, wattosWrittenFile, diffOrgWattosWattosFile)
                 os.system(cmd)
                 if not os.path.exists(diffOrgWattosWattosFile):
-                    print "WARNING: failed to diff file: ",orgWattosWrittenFile, wattosWrittenFile
+                    print("WARNING: failed to diff file: ", orgWattosWrittenFile, wattosWrittenFile)
         except:
     #        print "DEBUG: failed the rewrite or diff but as mentioned that's totally understandable."
             pass
@@ -146,13 +146,13 @@ def testAllEntries():
     pdbList = ('1edp')
     try:
         from Wattos.Utils import PDBEntryLists #@UnresolvedImport
-        print "Imported Wattos.Utils; but it's not essential"
+        print("Imported Wattos.Utils; but it's not essential")
         pdbList = PDBEntryLists.getBmrbNmrGridEntries()[0:1] # Decide on the range yourself.
     except:
-        print "Skipping import of Wattos.Utils; it's not needed"
+        print("Skipping import of Wattos.Utils; it's not needed")
     
     for entry in pdbList:
-        print entry
+        print(entry)
         testEntry(entry)
 #        entry = '1edp' # 57 kb
     #    entry = '1q56' # 10 Mb takes 27 s to parse on 2GHz PIV CPU
@@ -166,10 +166,10 @@ Extra Test Routine going over some entries in the NMR Restraints Grid
 def testSingleFile( filename ):
     strf = File() 
     strf.filename  = filename   
-    print "DEBUG: reading file ", strf.filename
+    print("DEBUG: reading file ", strf.filename)
     strf.read()
     strf.filename  = strf.filename + "_new.str"
-    print "DEBUG: writing file ", strf.filename
+    print("DEBUG: writing file ", strf.filename)
     strf.write()
     
         
@@ -177,4 +177,4 @@ if __name__ == "__main__":
     testAllEntries()
 #    testSingleFile("S:\\jurgen\\2hgh_small_new_google.str")
 #    unittest.main()
-    print "Done with STAR.FileTest"
+    print("Done with STAR.FileTest")

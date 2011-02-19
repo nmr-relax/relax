@@ -65,7 +65,7 @@ class TagTable (Lister):
         elif flavor == 'mmCIF':
             loop_ident_size     = 0
         else:
-            print 'ERROR: Unknown flavor of STAR given', flavor
+            print('ERROR: Unknown flavor of STAR given', flavor)
             return 1
                 
         free_ident_size         = loop_ident_size
@@ -140,7 +140,7 @@ class TagTable (Lister):
                 if tag_id - count > count_hash:
                     count = tag_id
                     if self.verbosity >= 9:
-                        print '##### %s looped tag values collected ######' % count_hash
+                        print('##### %s looped tag values collected ######' % count_hash)
                                 
         if show_stop_tag:
             str_row.append( '\n' + loop_ident_size * ' ' + 'stop_\n' )
@@ -158,7 +158,7 @@ class TagTable (Lister):
     """
     def set_title ( self ):
         if self.verbosity >= 9:
-            print 'Setting title of tagtable'
+            print('Setting title of tagtable')
         self.title = string.join( self.tagnames )
 
                 
@@ -173,20 +173,20 @@ class TagTable (Lister):
         values_length   = len(self.tagvalues)
 
         if names_length != values_length:
-            print "ERROR: names_length[%s] != values_length[%s]:" % (
-                names_length, values_length )
-            print "ERROR: names:", self.tagnames
+            print("ERROR: names_length[%s] != values_length[%s]:" % (
+                names_length, values_length ))
+            print("ERROR: names:", self.tagnames)
             return 1
 
         column_length_first = len( self.tagvalues[ 0 ] )            
         for tag_id in range( values_length ):
             if len( self.tagvalues[ tag_id ] ) != column_length_first:
-                print "ERROR: length column[%s](%s) is not the same as" % (
+                print("ERROR: length column[%s](%s) is not the same as" % (
                             self.tagnames[ tag_id],
-                            len( self.tagvalues[ tag_id ] ) )
-                print "ERROR: length column[%s](%s)" % (
+                            len( self.tagvalues[ tag_id ] ) ))
+                print("ERROR: length column[%s](%s)" % (
                             self.tagnames[ 0],
-                            column_length_first )
+                            column_length_first ))
                 return 1
 
         if check_type >= 9:
@@ -195,14 +195,14 @@ class TagTable (Lister):
             for row_id in rows:
                 for col_id in cols:
                     val_type = type(self.tagvalues[col_id][row_id])
-                    if val_type !=  types.StringType:
-                        print "ERROR: type %s is not allowed as a value in a tagtable" % val_type
-                        print "ERROR: found for tagtable[%s][%s]" % ( self.tagnames[ col_id ], row_id )
+                    if val_type !=  bytes:
+                        print("ERROR: type %s is not allowed as a value in a tagtable" % val_type)
+                        print("ERROR: found for tagtable[%s][%s]" % ( self.tagnames[ col_id ], row_id ))
                         return 1
 
         if self.verbosity >= 9:
-            print 'Checked integrity of TagTable (%2s names %4s values each): OK [%s]' % (
-                names_length, column_length_first, self.title )
+            print('Checked integrity of TagTable (%2s names %4s values each): OK [%s]' % (
+                names_length, column_length_first, self.title ))
         return 0
         
 
@@ -225,19 +225,19 @@ class TagTable (Lister):
         if self.free:
             pos = self._tagtable_free_parse( text, pos )
             if pos == None:
-                print "ERROR: tagtable_free_parse returned with ERROR"
+                print("ERROR: tagtable_free_parse returned with ERROR")
                 return None
             else:
                 return pos
             if self.check_integrity():
-                print "ERROR: integrity of parsed table is not ok"
+                print("ERROR: integrity of parsed table is not ok")
                 return None
             
         ## Parse looped tagtable        
         # Tag names
         match_tags_loop = pattern_tags_loop.search(text, pos)
         if not match_tags_loop:
-            print "ERROR: No tag names found for looped tagtable"
+            print("ERROR: No tag names found for looped tagtable")
             return None
 
         ## Do a limited search with findall for tag names
@@ -258,7 +258,7 @@ class TagTable (Lister):
     
         text_length = len(text)
         if pos == text_length:
-            print "ERROR: No tag values found for looped tagtable"
+            print("ERROR: No tag values found for looped tagtable")
             return None
 
 ##        pos_sf_begin_or_end_nws = pattern_unquoted_find(text, pattern_sf_begin_or_end, pos)        
@@ -277,10 +277,10 @@ class TagTable (Lister):
             pos_end = pos_tagname + 1
 
         if self.verbosity >= 9:
-            print'pos_tagtable_loop:', pos_tagtable_loop
-            print'pos_tagtable_stop:', pos_tagtable_stop
-            print'pos_tagname      :', pos_tagname
-            print 'Will parse tagtable text to end at position: [%s]' % pos_end
+            print('pos_tagtable_loop:', pos_tagtable_loop)
+            print('pos_tagtable_stop:', pos_tagtable_stop)
+            print('pos_tagname      :', pos_tagname)
+            print('Will parse tagtable text to end at position: [%s]' % pos_end)
             
         ## Just checking
         if not ( pos_tagtable_loop!=-1 or pos_tagtable_stop!=-1 or pos_tagname!=-1 ):
@@ -296,7 +296,7 @@ class TagTable (Lister):
         # Tag values
         if self._tagtable_loop_values_parse(
                 text, pos, pos_end): ## will set title too
-            print "ERROR: not parsed table"
+            print("ERROR: not parsed table")
             return None
         ## Set the position to the end of this tagtable at the beginning
         ## of a stop_ or a new tagtable
@@ -308,12 +308,12 @@ class TagTable (Lister):
             ## the white space char before it.
             match_tagtable_stop = pattern_tagtable_stop_2.search( text, pos-1 )
             if not match_tagtable_stop:
-                print "ERROR: no stop_ on second try"
+                print("ERROR: no stop_ on second try")
                 return None
             pos = match_tagtable_stop.end()
         
         if self.check_integrity():
-            print "ERROR: integrity of parsed table is not ok"
+            print("ERROR: integrity of parsed table is not ok")
             return None
         return pos
 
@@ -333,23 +333,23 @@ class TagTable (Lister):
             match_tag_name = pattern_tag_name.search(text, pos)
             if match_tag_name:
                 if ( match_tag_name.start() - pos ) != 0:
-                    print "ERROR: looking for a free tag name (0)"
+                    print("ERROR: looking for a free tag name (0)")
                     return None
             else:
-                print "ERROR: looking for a free tag name(1)"
+                print("ERROR: looking for a free tag name(1)")
                 return None
             self.tagnames.append( match_tag_name.group(1) )
             pos  = match_tag_name.end()
             # Tag value
             value, pos = tag_value_parse(text, pos)
             if pos == 0:
-                print "ERROR: looking for a free tag name(1)"
+                print("ERROR: looking for a free tag name(1)")
                 return None
             ## Structures of free and looped tagtable are the same
             self.tagvalues.append( [ value ] ) 
             if self.verbosity >= 9:
-                print '**Parsed tag name : [%s] and value [%s]: ' % (
-                    match_tag_name.group(1), value)
+                print('**Parsed tag name : [%s] and value [%s]: ' % (
+                    match_tag_name.group(1), value))
         self.set_title()
         return pos
 
@@ -361,7 +361,7 @@ class TagTable (Lister):
     def _tagtable_loop_values_parse( self, text, pos, pos_end):
         
         if self.free:
-            print "ERROR: This is a 'free' tagtable, only looped tagtable can be parsed"
+            print("ERROR: This is a 'free' tagtable, only looped tagtable can be parsed")
             return 1
         names_length                = len(self.tagnames)
         ## Empty the table
@@ -384,7 +384,7 @@ class TagTable (Lister):
         while pos < pos_end:
             if self.verbosity > 2:
                 if pos - count > count_hash:
-                    print 'DEBUG: ##### %s chars processed ######' % count_hash
+                    print('DEBUG: ##### %s chars processed ######' % count_hash)
                     count = pos
             ## 1 char search; ', ", or ; at beginning of line
             match_quoted = pattern_quoted.search( text, pos, pos_end )            
@@ -393,10 +393,10 @@ class TagTable (Lister):
                     ## Quoted at pos
                     value, pos = tag_value_quoted_parse( text, pos )
                     if pos ==  None:
-                        print 'ERROR: got error in parse (1)'
+                        print('ERROR: got error in parse (1)')
                         return 1
                     if pos > pos_end:
-                        print 'ERROR: found a quoted value that was not wholly within boundaries (1)'                        
+                        print('ERROR: found a quoted value that was not wholly within boundaries (1)')                        
                         return 1
                     self.tagvalues[ tag_id ].append( value )
                     tag_id += 1
@@ -413,7 +413,7 @@ class TagTable (Lister):
                     if (c == "'" or c == '"') and bc != " ":
                         # JFD the next line takes an expensive slice of the pie?
 #                        tempendpos = idxstart + string.find(text[idxstart:],' ')                      
-                        tempendpos = string.find(text,' ',idxstart)
+                        tempendpos = string.find(text, ' ', idxstart)
                     else:                    
                         tempendpos = idxstart
 
@@ -430,10 +430,10 @@ class TagTable (Lister):
                         pos = tempendpos
                         value, pos = tag_value_quoted_parse( text, pos )
                         if pos ==  None:
-                            print 'ERROR: got error in parse (2)'
+                            print('ERROR: got error in parse (2)')
                             return 1
                         if pos > pos_end:
-                            print 'ERROR: found a quoted value that was not wholly within boundaries (2)'
+                            print('ERROR: found a quoted value that was not wholly within boundaries (2)')
                             return 1
                         self.tagvalues[ tag_id ].append( value )
                         tag_id += 1
@@ -451,25 +451,25 @@ class TagTable (Lister):
             
         col_length = len( self.tagvalues[-1] )    
         if tag_id != 0:
-            print "ERROR: not correct number of tag values read"
-            print "Read [%s] tag(s) that is:" \
-                  % ( col_length * names_length + tag_id )
-            print "[%s] row(s) complete and [%s] tag value(s) in last row that is incomplete." \
-                  % ( col_length, tag_id )
-            print "Tag names of this table are:"
-            print self.tagnames            
-            for xxx in range(0,len(self.tagvalues[0])):             
-                for yyy in range(0,len(self.tagvalues)):
-                    print self.tagvalues[yyy][xxx],              
-                print '\n-----------------------------------------------'              
+            print("ERROR: not correct number of tag values read")
+            print("Read [%s] tag(s) that is:" \
+                  % ( col_length * names_length + tag_id ))
+            print("[%s] row(s) complete and [%s] tag value(s) in last row that is incomplete." \
+                  % ( col_length, tag_id ))
+            print("Tag names of this table are:")
+            print(self.tagnames)            
+            for xxx in range(0, len(self.tagvalues[0])):             
+                for yyy in range(0, len(self.tagvalues)):
+                    print(self.tagvalues[yyy][xxx])              
+                print('-----------------------------------------------')              
             pos = 0
             while pos < tag_id:
-                 print self.tagvalues[pos][-1]
+                 print(self.tagvalues[pos][-1])
                  pos = pos + 1            
             return 1
 
         if col_length == 0:
-            print "ERROR: no tag values parsed"
+            print("ERROR: no tag values parsed")
             return 1
 
         # Set the title

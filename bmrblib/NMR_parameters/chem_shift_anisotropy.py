@@ -29,8 +29,8 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html_frame/frame_SaveFra
 # relax module imports.
 from bmrblib.base_classes import BaseSaveframe, TagCategory
 from bmrblib.misc import no_missing, translate
-from pystarlib.SaveFrame import SaveFrame
-from pystarlib.TagTable import TagTable
+from bmrblib.pystarlib.SaveFrame import SaveFrame
+from bmrblib.pystarlib.TagTable import TagTable
 
 
 class ChemShiftAnisotropySaveframe(BaseSaveframe):
@@ -171,7 +171,7 @@ class ChemShiftAnisotropy(TagCategory):
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
 
         # CSA ID number.
-        if self.tag_names.has_key('ChemShiftAnisotropyID'):
+        if 'ChemShiftAnisotropyID' in self.tag_names:
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['ChemShiftAnisotropyID']], tagvalues=[['1']]))
 
         # Sample info.

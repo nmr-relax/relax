@@ -26,7 +26,7 @@ class AllChecks(TestCase):
         t2noComment = """
  
 """
-        self.assertEqual(t2noComment,comments_strip( t2 ))
+        self.assertEqual(t2noComment, comments_strip( t2 ))
 
     def testcomments_strip(self):
         """comments_strip"""

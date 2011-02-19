@@ -33,8 +33,8 @@ from relax_io import get_file_path, mkdir_nofail
 from specific_fns.setup import get_specific_fn
 
 
-def display():
-    """Display the results in the BMRB NMR-STAR v3.1 format."""
+def display(version='3.1'):
+    """Display the results in the BMRB NMR-STAR format."""
 
     # Test if the current data pipe exists.
     if not ds.current_pipe:
@@ -44,11 +44,11 @@ def display():
     write_function = get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type, raise_error=False)
 
     # Write the results.
-    write_function(sys.stdout)
+    write_function(sys.stdout, version=version)
 
 
-def read(file=None, directory=None):
-    """Read the contents of a BMRB NMR-STAR v3.1 formatted file."""
+def read(file=None, directory=None, version='3.1'):
+    """Read the contents of a BMRB NMR-STAR formatted file."""
 
     # Test if the current data pipe exists.
     if not ds.current_pipe:
@@ -56,24 +56,24 @@ def read(file=None, directory=None):
 
     # Make sure that the data pipe is empty.
     if not ds[ds.current_pipe].is_empty():
-        raise RelaxError, "The current data pipe is not empty."
+        raise RelaxError("The current data pipe is not empty.")
 
     # Get the full file path.
     file_path = get_file_path(file_name=file, dir=directory)
 
     # Fail if the file does not exist.
     if not access(file_path, F_OK):
-        raise RelaxFileError, file_path
+        raise RelaxFileError(file_path)
 
     # Specific results reading function.
     read_function = get_specific_fn('bmrb_read', ds[ds.current_pipe].pipe_type)
 
     # Read the results.
-    read_function(file_path)
+    read_function(file_path, version=version)
 
 
-def write(file=None, directory=None, force=False):
-    """Create a BMRB NMR-STAR v3.1 formatted file."""
+def write(file=None, directory=None, version='3.1', force=False):
+    """Create a BMRB NMR-STAR formatted file."""
 
     # Test if the current data pipe exists.
     if not ds.current_pipe:
@@ -91,13 +91,13 @@ def write(file=None, directory=None, force=False):
 
     # Fail if the file already exists and the force flag is False.
     if access(file_path, F_OK) and not force:
-        raise RelaxFileOverwriteError, (file_path, 'force flag')
+        raise RelaxFileOverwriteError(file_path, 'force flag')
 
     # Print out.
-    print "Opening the file '%s' for writing." % file_path
+    print("Opening the file '%s' for writing." % file_path)
 
     # Create the directories.
     mkdir_nofail(directory, verbosity=0)
 
     # Execute the specific BMRB writing code.
-    write_function(file_path)
+    write_function(file_path, version=version)

@@ -234,24 +234,18 @@ def bmrb_read(star):
     @type star:     NMR_STAR instance
     """
 
-    # R1, R2, and NOE.
-    labels = ['R1', 'R2', 'NOE']
-    objects = [star.heteronucl_T1_relaxation, star.heteronucl_T2_relaxation, star.heteronucl_NOEs]
+    # Get the relaxation data.
+    for data_type, frq, res_nums, res_names, spin_names, val, err in star.relaxation.loop():
+        # Create the labels.
+        ri_label = data_type
+        frq_label = str(int(frq*1e-6))
 
-    # Loop over the data types.
-    for i in range(3):
-        # Get the relaxation data.
-        for frq, res_nums, res_names, spin_names, val, err in objects[i].loop():
-            # Create the labels.
-            ri_label = labels[i]
-            frq_label = str(int(frq*1e-6))
+        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+        if test_labels(ri_label, frq_label):
+            raise RelaxRiError(ri_label, frq_label)
 
-            # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-            if test_labels(ri_label, frq_label):
-                raise RelaxRiError, (ri_label, frq_label)
-
-            # Pack the data.
-            pack_data(ri_label, frq_label, frq, val, err, mol_names=None, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
+        # Pack the data.
+        pack_data(ri_label, frq_label, frq, val, err, mol_names=None, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
 
 
 
@@ -288,13 +282,13 @@ def bmrb_write(star):
 
         # Check the data for None (not allowed in BMRB!).
         if res_num == None:
-            raise RelaxError, "For the BMRB, the residue of spin '%s' must be numbered." % spin_id
+            raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
         if res_name == None:
-            raise RelaxError, "For the BMRB, the residue of spin '%s' must be named." % spin_id
+            raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
         if spin.name == None:
-            raise RelaxError, "For the BMRB, the spin '%s' must be named." % spin_id
+            raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
         if spin.heteronuc_type == None:
-            raise RelaxError, "For the BMRB, the spin isotope type of '%s' must be specified." % spin_id
+            raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
 
         # The molecule/residue/spin info.
         res_num_list.append(str(res_num))
@@ -309,25 +303,9 @@ def bmrb_write(star):
         # Other info.
         isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
 
-    # The operators of the relaxation superoperator.
-    operator_pair = []
-    for i in range(cdp.num_ri):
-        if cdp.ri_labels[i] == 'R1':
-            operator_pair.append(['Iz', 'Iz'])
-        elif cdp.ri_labels[i] == 'R2':
-            operator_pair.append(['I+', 'I+'])
-        elif cdp.ri_labels[i] == 'NOE':
-            operator_pair.append(['Iz', 'Sz'])
-
     # Add the relaxation data.
     for i in range(cdp.num_ri):
-        star.relaxation.add(operator_pair=operator_pair[i], frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
-        #if cdp.ri_labels[i] == 'R1':
-        #    star.heteronucl_T1_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
-        #elif cdp.ri_labels[i] == 'R2':
-        #    star.heteronucl_T2_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
-        #elif cdp.ri_labels[i] == 'NOE':
-        #    star.heteronucl_NOEs.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+        star.relaxation.add(data_type=cdp.ri_labels[i], frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
@@ -646,11 +624,10 @@ def find_ri_index(data, ri_label, frq_label):
     return index
 
 
-def pack_data(ri_label, frq_label, frq, values, errors, ids=None, gen_seq=False):
+def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, gen_seq=False):
     """Pack the relaxation data into the data pipe and spin containers.
 
-    The values, errors, and ids arguments must be lists of equal length or None.  Each element i
-    corresponds to a unique spin.
+    The values, errors, and spin_ids arguments must be lists of equal length or None.  Each element i corresponds to a unique spin.
 
     @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
     @type ri_label:         str
@@ -662,10 +639,19 @@ def pack_data(ri_label, frq_label, frq, values, errors, ids=None, gen_seq=False)
     @type values:           None or list of str
     @keyword errors:        The relaxation data errors for each spin.
     @type errors:           None or list of str
-    @keyword ids:           The list of spin ID strings.
-    @type ids:              list of str
-    @keyword gen_seq:       A flag which if True will cause the molecule, residue, and spin sequence
-                            data to be generated.
+    @keyword spin_ids:      The list of spin ID strings.  If the other spin identifiers are given, i.e. mol_names, res_nums, res_names, spin_nums, and/or spin_names, then this argument is not necessary.
+    @type spin_ids:         None or list of str
+    @keyword mol_names:     The list of molecule names used for creating the spin IDs (if not given) or for generating the sequence data.
+    @type mol_names:        None or list of str
+    @keyword res_nums:      The list of residue numbers used for creating the spin IDs (if not given) or for generating the sequence data.
+    @type res_nums:         None or list of str
+    @keyword res_names:     The list of residue names used for creating the spin IDs (if not given) or for generating the sequence data.
+    @type res_names:        None or list of str
+    @keyword spin_nums:     The list of spin numbers used for creating the spin IDs (if not given) or for generating the sequence data.
+    @type spin_nums:        None or list of str
+    @keyword spin_names:    The list of spin names used for creating the spin IDs (if not given) or for generating the sequence data.
+    @type spin_names:       None or list of str
+    @keyword gen_seq:       A flag which if True will cause the molecule, residue, and spin sequence data to be generated.
     @type gen_seq:          bool
     """
 
@@ -675,8 +661,36 @@ def pack_data(ri_label, frq_label, frq, values, errors, ids=None, gen_seq=False)
     # Test the data.
     if len(errors) != N:
         raise RelaxError("The length of the errors arg (%s) does not match that of the value arg (%s)." % (len(errors), N))
-    if len(ids) != N:
+    if spin_ids and len(spin_ids) != N:
         raise RelaxError("The length of the spin ID strings arg (%s) does not match that of the value arg (%s)." % (len(mol_names), N))
+    if mol_names and len(mol_names) != N:
+        raise RelaxError("The length of the molecule names arg (%s) does not match that of the value arg (%s)." % (len(mol_names), N))
+    if res_nums and len(res_nums) != N:
+        raise RelaxError("The length of the residue numbers arg (%s) does not match that of the value arg (%s)." % (len(res_nums), N))
+    if res_names and len(res_names) != N:
+        raise RelaxError("The length of the residue names arg (%s) does not match that of the value arg (%s)." % (len(res_names), N))
+    if spin_nums and len(spin_nums) != N:
+        raise RelaxError("The length of the spin numbers arg (%s) does not match that of the value arg (%s)." % (len(spin_nums), N))
+    if spin_names and len(spin_names) != N:
+        raise RelaxError("The length of the spin names arg (%s) does not match that of the value arg (%s)." % (len(spin_names), N))
+
+    # Generate some empty lists.
+    if not mol_names:
+        mol_names = [None] * N
+    if not res_nums:
+        res_nums = [None] * N
+    if not res_names:
+        res_names = [None] * N
+    if not spin_nums:
+        spin_nums = [None] * N
+    if not spin_names:
+        spin_names = [None] * N
+
+    # Generate the spin IDs.
+    if not spin_ids:
+        spin_ids = []
+        for i in range(N):
+            spin_ids.append(generate_spin_id(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i]))
 
     # Initialise the global data for the current pipe if necessary.
     data_init(cdp, global_flag=True)
@@ -685,22 +699,18 @@ def pack_data(ri_label, frq_label, frq, values, errors, ids=None, gen_seq=False)
     update_data_structures_pipe(ri_label, frq_label, frq)
 
     # Loop over the spin data.
-    for value, error, id in zip(values, errors, ids):
-        # Skip all rows where the value or error is None.
-        if value == None or error == None:
-            continue
-
+    for i in range(N):
         # Get the corresponding spin container.
-        spin = return_spin(id)
+        spin = return_spin(spin_ids[i])
         if spin == None:
             if not gen_seq:
-                raise RelaxNoSpinError(id)
+                raise RelaxNoSpinError(spin_ids[i])
             else:
-                create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
-                spin = return_spin(id)
+                create_spin(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i])
+                spin = return_spin(spin_ids[i])
 
         # Update all data structures.
-        update_data_structures_spin(spin, ri_label, frq_label, frq, value, error)
+        update_data_structures_spin(spin, ri_label, frq_label, frq, values[i], errors[i])
 
 
 def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):

@@ -25,15 +25,17 @@ from math import pi
 import string
 
 # relax module imports.
+from bmrblib.nmr_star_dict import NMR_STAR
 from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
-from generic_fns import mol_res_spin, pipes, relax_data
+from bmrblib.nmr_star_dict_v3_2 import NMR_STAR_v3_2
+from generic_fns import bmrb_saveframes, mol_res_spin, pipes, relax_data
 from generic_fns.mol_res_spin import spin_loop
 
 
 class Bmrb:
     """Class containing methods related to BMRB STAR file reading and writing."""
 
-    def bmrb_read(self, file_path):
+    def bmrb_read(self, file_path, version='3.1'):
         """Read the model-free results from a BMRB NMR-STAR v3.1 formatted file.
 
         @param file_path:   The full file path.
@@ -41,7 +43,12 @@ class Bmrb:
         """
 
         # Initialise the NMR-STAR data object.
-        star = NMR_STAR_v3_1('relax_model_free_results', file_path)
+        if version == '3.2':
+            star = NMR_STAR_v3_2('relax_model_free_results', file_path)
+        elif version == '3.1':
+            star = NMR_STAR_v3_1('relax_model_free_results', file_path)
+        else:
+            star = NMR_STAR('relax_model_free_results', file_path)
 
         # Read the contents of the STAR formatted file.
         star.read()
@@ -53,24 +60,25 @@ class Bmrb:
         relax_data.bmrb_read(star)
 
 
-    def bmrb_write(self, file_path):
+    def bmrb_write(self, file_path, version=None):
         """Write the model-free results to a BMRB NMR-STAR v3.1 formatted file.
 
         @param file_path:   The full file path.
         @type file_path:    str
+        @keyword version:   The BMRB NMR-STAR dictionary format to output to.
+        @type version:      str
         """
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
         # Initialise the NMR-STAR data object.
-        star = NMR_STAR_v3_1('relax_model_free_results', file_path)
-
-        # Generate the entity saveframe.
-        mol_res_spin.bmrb_write_entity(star)
-
-        # Generate the relaxation data saveframes.
-        relax_data.bmrb_write(star)
+        if version == '3.2':
+            star = NMR_STAR_v3_2('relax_model_free_results', file_path)
+        elif version == '3.1':
+            star = NMR_STAR_v3_1('relax_model_free_results', file_path)
+        else:
+            star = NMR_STAR('relax_model_free_results', file_path)
 
         # Rex frq.
         rex_frq = cdp.frq[0]
@@ -110,13 +118,13 @@ class Bmrb:
 
             # Check the data for None (not allowed in BMRB!).
             if res_num == None:
-                raise RelaxError, "For the BMRB, the residue of spin '%s' must be numbered." % spin_id
+                raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
             if res_name == None:
-                raise RelaxError, "For the BMRB, the residue of spin '%s' must be named." % spin_id
+                raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
             if spin.name == None:
-                raise RelaxError, "For the BMRB, the spin '%s' must be named." % spin_id
+                raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
             if spin.heteronuc_type == None:
-                raise RelaxError, "For the BMRB, the spin isotope type of '%s' must be specified." % spin_id
+                raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
 
             # The molecule/residue/spin info.
             res_num_list.append(res_num)
@@ -154,11 +162,41 @@ class Bmrb:
             # Opt stats.
             chi2_list.append(spin.chi2)
 
+
+        # Create Supergroup 3 : The molecular assembly saveframes.
+        ##########################################################
+
+        # Generate the entity saveframe.
+        mol_res_spin.bmrb_write_entity(star)
+
+
+        # Create Supergroup 4:  The experimental descriptions saveframes.
+        #################################################################
+
+        # Generate the software saveframe.
+        bmrb_saveframes.write_relax(star)
+
+
+        # Create Supergroup 5 : The NMR parameters saveframes.
+        ######################################################
+
         # Generate the CSA saveframe.
         star.chem_shift_anisotropy.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, csa=csa_list)
 
+
+        # Create Supergroup 6 : The kinetic data saveframes.
+        ####################################################
+
+        # Generate the relaxation data saveframes.
+        relax_data.bmrb_write(star)
+
+
+        # Create Supergroup 7 : The thermodynamics saveframes.
+        ######################################################
+
         # Generate the model-free data saveframe.
         star.order_parameters.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list, rex_frq=rex_frq, chi2=chi2_list)
+
 
         # Write the contents to the STAR formatted file.
         star.write()

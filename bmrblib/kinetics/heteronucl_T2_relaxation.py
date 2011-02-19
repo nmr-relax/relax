@@ -30,8 +30,8 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#
 from bmrblib.base_classes import TagCategory
 from bmrblib.misc import no_missing, translate
 from bmrblib.kinetics.relax_base import HeteronuclRxList, RelaxSaveframe, Rx
-from pystarlib.SaveFrame import SaveFrame
-from pystarlib.TagTable import TagTable
+from bmrblib.pystarlib.SaveFrame import SaveFrame
+from bmrblib.pystarlib.TagTable import TagTable
 
 
 class HeteronuclT2Saveframe(RelaxSaveframe):
@@ -78,9 +78,9 @@ class HeteronuclT2Saveframe(RelaxSaveframe):
         """
 
         # Check the ID info.
-        no_missing(res_nums, 'residue numbers of the ' + `int(frq*1e-6)` + ' MHz NOE data')
-        no_missing(res_names, 'residue names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
-        no_missing(atom_names, 'atom names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
+        no_missing(res_nums, 'residue numbers of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
+        no_missing(res_names, 'residue names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
+        no_missing(atom_names, 'atom names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
 
         # The number of elements.
         self.N = len(res_nums)
@@ -103,7 +103,7 @@ class HeteronuclT2Saveframe(RelaxSaveframe):
         self.specific_setup()
 
         # Initialise the save frame.
-        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.r2_inc`)
+        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+repr(self.r2_inc))
 
         # Create the tag categories.
         self.heteronuclRxlist.create()
@@ -137,7 +137,7 @@ class HeteronuclT2List(HeteronuclRxList):
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
 
         # T2 ID number.
-        if self.tag_names.has_key('HeteronuclT2ListID'):
+        if 'HeteronuclT2ListID' in self.tag_names:
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['HeteronuclT2ListID']], tagvalues=[[str(self.sf.r2_inc)]]))
 
         # Sample info.
