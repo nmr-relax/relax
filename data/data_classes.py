@@ -32,9 +32,6 @@ from types import ListType
 from relax_xml import fill_object_contents, xml_to_object
 
 
-# Empty data container.
-#######################
-
 class Element(object):
     """Empty data container."""
 
@@ -88,15 +85,15 @@ class Element(object):
         return text
 
 
-    def from_xml(self, exp_info_node):
-        """Recreate the container data structure from the XML container node.
+    def from_xml(self, super_node):
+        """Recreate the element data structure from the XML element node.
 
-        @param exp_info_node:   The container XML node.
-        @type exp_info_node:    xml.dom.minicompat.Element instance
+        @param super_node:    The element XML node.
+        @type super_node:     xml.dom.minicompat.Element instance
         """
 
-        # Recreate all the data structures.
-        xml_to_object(exp_info_node, self)
+        # Recreate all the other data structures.
+        xml_to_object(super_node, self)
 
 
     def is_empty(self):
@@ -126,120 +123,143 @@ class Element(object):
     def to_xml(self, doc, element):
         """Create an XML element for the container.
 
-        The variables self.element_name and self.element_desc must exist.
-
-
         @param doc:     The XML document object.
         @type doc:      xml.dom.minidom.Document instance
-        @param element: The element to add the container element to.
+        @param element: The element to add the data container XML element to.
         @type element:  XML element object
         """
 
-        # Create the container element and add it to the higher level element.
-        container_element = doc.createElement(self.element_name)
-        element.appendChild(container_element)
+        # Create a new element for this container and add it to the higher level element.
+        cont_element = doc.createElement(self.name)
+        element.appendChild(cont_element)
 
-        # Set the container attributes.
-        container_element.setAttribute('desc', self.element_desc)
+        # Set the list attributes.
+        cont_element.setAttribute('desc', self.desc)
 
-        # Blacklist.
-        blacklist = ['element_name', 'element_desc'] + list(Element.__dict__.keys()) + list(self.__class__.__dict__.keys())
-        if hasattr(self, 'blacklist'):
-            blacklist = blacklist + self.blacklist + ['blacklist']
+        # Blacklisted objects.
+        blacklist = ['name', 'desc', 'blacklist'] + list(Element.__dict__.keys() + self.__class__.__dict__.keys() + object.__dict__.keys())
 
-        # Add all simple python objects within.
-        fill_object_contents(doc, container_element, object=self, blacklist=blacklist)
-
-        # Run any object to_xml() methods.
+        # Store and blacklist the objects which have to_xml() methods.
+        to_xml_list = []
         for name in dir(self):
-            # Skip certain objects.
-            if search("^_", name):
+            # Skip blacklisted objects.
+            if name in blacklist:
                 continue
 
-            # Get the object.
+            # Skip special objects.
+            if search('^_', name):
+                continue
+
+            # Execute any to_xml() methods, and add that object to the blacklist.
             obj = getattr(self, name)
-
-            # Test for and run to_xml().
             if hasattr(obj, 'to_xml'):
-                obj.to_xml(doc, container_element)
+                to_xml_list.append(obj)
+                blacklist = blacklist + [name]
+
+        # Add all simple python objects within the container to the XML element.
+        fill_object_contents(doc, cont_element, object=self, blacklist=blacklist)
+
+        # Execute the object to_xml() methods.
+        for obj in to_xml_list:
+            obj.to_xml(doc, cont_element)
 
 
 
-# Empty data container.
-#######################
+class RelaxListType(ListType):
+    """An empty list type container."""
 
-class ContainerList(ListType):
-    """List type data container for basic Element data containers.
+    def __init__(self):
+        """Initialise some class variables."""
 
-    The elements of this list should be Element instances.
-    """
+        # Execute the base class __init__() method.
+        super(RelaxListType, self).__init__()
 
-    def __repr__(self):
-        """Replacement function for displaying an instance of this class."""
+        # Some generic initial names.
+        self.list_name = 'relax_list'
+        self.list_desc = 'relax list container'
+        self.element_name = 'relax_list_element'
+        self.element_desc = 'relax container'
 
-        text = "Container list.\n\n"
-        text = text + "%-8s%-20s\n" % ("Index", "Name")
-        for i in xrange(len(self)):
-            text = text + "%-8i%-20s\n" % (i, self[i].element_name)
-        return text
-
-
-    def add_item(self):
-        """Function for appending a new Element instance to the list."""
-
-        self.append(Element())
+        # Blacklisted objects.
+        self.blacklist = []
 
 
-    def from_xml(self, container_list_super_node):
-        """Recreate the container list data structure from the XML container list node.
+    def from_xml(self, super_node):
+        """Recreate the data structure from the XML node.
 
-        @param container_list_super_node:     The container list XML nodes.
-        @type container_list_super_node:      xml.dom.minicompat.Element instance
+        @param super_node:     The XML nodes.
+        @type super_node:      xml.dom.minicompat.Element instance
         """
 
-        # Recreate all the container list data structures.
-        xml_to_object(container_list_super_node, self, blacklist=[self.container_name])
+        # Recreate all the data structures.
+        xml_to_object(super_node, self, blacklist=self.blacklist)
 
-        # Get the individual containers.
-        container_list_nodes = container_list_super_node.getElementsByTagName(self.container_name)
+        # Get the individual elements.
+        nodes = super_node.getElementsByTagName(self.element_name)
 
         # Loop over the child nodes.
-        for container_node in container_nodes:
-            # Add the container list data container.
-            self.add_item(container_node.getAttribute('name'))
+        for node in nodes:
+            # Add the data container.
+            self.add_item(node.getAttribute('name'))
 
             # Recreate all the other data structures.
-            xml_to_object(container_node, self[-1])
+            xml_to_object(node, self[-1])
 
 
     def to_xml(self, doc, element):
-        """Create an XML element for the container list.
-
-        The variables self.container_name and self.container_desc must exist.
-
+        """Create an XML element for the list data structure.
 
         @param doc:     The XML document object.
         @type doc:      xml.dom.minidom.Document instance
-        @param element: The element to add the container list XML element to.
+        @param element: The element to add the list data structure XML element to.
         @type element:  XML element object
         """
 
-        # Create the container list element and add it to the higher level element.
-        container_list_element = doc.createElement(self.container_name)
-        element.appendChild(container_list_element)
+        # Create the element and add it to the higher level element.
+        list_element = doc.createElement(self.list_name)
+        element.appendChild(list_element)
 
-        # Set the container list attributes.
-        container_list_element.setAttribute('desc', self.container_desc)
+        # Set the list attributes.
+        list_element.setAttribute('desc', self.list_desc)
 
-        # Blacklist.
-        blacklist = ['container_name', 'container_desc'] + list(ListType.__dict__.keys()) + list(ContainerList.__dict__.keys()) + list(self.__class__.__dict__.keys())
-        if hasattr(self, 'blacklist'):
-            blacklist = blacklist + self.blacklist + ['blacklist']
+        # Blacklisted objects.
+        blacklist = ['list_name', 'list_desc', 'element_name', 'element_desc', 'blacklist'] + list(self.__dict__.keys() + RelaxListType.__dict__.keys() + self.__class__.__dict__.keys() + list.__dict__.keys() + ListType.__dict__.keys())
 
-        # Add all simple python objects.
-        fill_object_contents(doc, container_list_element, object=self, blacklist=blacklist)
+        # Add all simple python objects within the list to the list element.
+        fill_object_contents(doc, list_element, object=self, blacklist=blacklist)
 
-        # Loop over the elements.
+        # Loop over the list.
         for i in xrange(len(self)):
-            # Add the element.
-            self[i].to_xml(doc, container_list_element)
+            # The element has its own to_xml() method.
+            if hasattr(self[i], 'to_xml'):
+                self[i].to_xml(doc, list_element)
+
+            # Normal element.
+            else:
+                # Create an XML element for each container.
+                list_item_element = doc.createElement(self.element_name)
+                list_element.appendChild(list_item_element)
+                list_item_element.setAttribute('index', repr(i))
+                list_item_element.setAttribute('desc', self.element_desc)
+
+                # Blacklisted objects.
+                blacklist = list(self[i].__class__.__dict__.keys())
+
+                # Add objects which have to_xml() methods.
+                for name in dir(self[i]):
+                    # Skip blacklisted objects.
+                    if name in blacklist:
+                        continue
+
+                    # Skip special objects.
+                    if search('^_', name):
+                        continue
+
+                    # Execute any to_xml() methods, and add that object to the blacklist.
+                    obj = getattr(self[i], name)
+                    if hasattr(obj, 'to_xml'):
+                        obj.to_xml(doc, list_item_element)
+                        blacklist = blacklist + [name]
+
+                # Add all simple python objects within the container to the XML element.
+                fill_object_contents(doc, list_item_element, object=self[i], blacklist=blacklist)
