@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,16 +20,21 @@
 #                                                                             #
 ###############################################################################
 
+# Dependency check module.
+import dep_check
+
 # Python module imports.
 from math import pi
+from numpy import int32, zeros
 import string
 
 # relax module imports.
-from bmrblib.nmr_star_dict import NMR_STAR
-from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
-from bmrblib.nmr_star_dict_v3_2 import NMR_STAR_v3_2
-from generic_fns import exp_info, mol_res_spin, pipes, relax_data
-from generic_fns.mol_res_spin import spin_loop
+if dep_check.bmrblib_module:
+    from bmrblib.nmr_star_dict import NMR_STAR
+    from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
+    from bmrblib.nmr_star_dict_v3_2 import NMR_STAR_v3_2
+from generic_fns import diffusion_tensor, exp_info, mol_res_spin, pipes, relax_data
+from generic_fns.mol_res_spin import get_molecule_names, spin_loop
 from relax_errors import RelaxError
 
 
@@ -113,6 +118,7 @@ class Bmrb:
         }
 
         # Initialise the spin specific data lists.
+        mol_name_list = []
         res_num_list = []
         res_name_list = []
         atom_name_list = []
@@ -162,6 +168,7 @@ class Bmrb:
                 raise RelaxError("For the BMRB, the spin element type of '%s' must be specified.  Please use the spin user function for setting the element type." % spin_id)
 
             # The molecule/residue/spin info.
+            mol_name_list.append(mol_name)
             res_num_list.append(res_num)
             res_name_list.append(res_name)
             atom_name_list.append(spin.name)
@@ -174,9 +181,12 @@ class Bmrb:
 
             # Diffusion tensor.
             local_tm_list.append(spin.local_tm)
-            local_tm_err_list.append(spin.local_tm_err)
+            if hasattr(spin, 'local_tm_err'):
+                local_tm_err_list.append(spin.local_tm_err)
+            else:
+                local_tm_err_list.append(None)
 
-            # Model-free data.
+            # Model-free parameter values.
             s2_list.append(spin.s2)
             s2f_list.append(spin.s2f)
             s2s_list.append(spin.s2s)
@@ -188,22 +198,42 @@ class Bmrb:
             else:
                 rex_list.append(spin.rex / (2.0*pi*rex_frq**2))
 
-            s2_err_list.append(spin.s2_err)
-            s2f_err_list.append(spin.s2f_err)
-            s2s_err_list.append(spin.s2s_err)
-            te_err_list.append(spin.te_err)
-            tf_err_list.append(spin.tf_err)
-            ts_err_list.append(spin.ts_err)
-            if spin.rex_err == None:
-                rex_err_list.append(None)
-            else:
-                rex_err_list.append(spin.rex_err / (2.0*pi*rex_frq**2))
+            # Model-free parameter errors.
+            params = ['s2', 's2f', 's2s', 'te', 'tf', 'ts', 'rex']
+            for param in params:
+                # The error list.
+                err_list = locals()[param+'_err_list']
+
+                # Append the error.
+                if hasattr(spin, param+'_err'):
+                    # The value.
+                    val = getattr(spin, param+'_err')
+
+                    # Scaling.
+                    if param == 'rex' and val != None:
+                        val = val / (2.0*pi*rex_frq**2)
+
+                    # Append.
+                    err_list.append(val)
+
+                # Or None.
+                else:
+                    err_list.append(None)
+
 
             # Opt stats.
             chi2_list.append(spin.chi2)
 
             # Model-free model.
             model_list.append(model_map[spin.model])
+
+        # Convert the molecule names into the entity IDs.
+        entity_ids = zeros(len(mol_name_list), int32)
+        mol_names = get_molecule_names()
+        for i in range(len(mol_name_list)):
+            for j in range(len(mol_names)):
+                if mol_name_list[i] == mol_names[j]:
+                    entity_ids[i] = j+1
 
 
         # Create Supergroup 2 : The citations.
@@ -223,6 +253,9 @@ class Bmrb:
         # Create Supergroup 4:  The experimental descriptions saveframes.
         #################################################################
 
+        # Generate the method saveframes.
+        exp_info.bmrb_write_methods(star)
+
         # Generate the software saveframe.
         software_ids, software_labels = exp_info.bmrb_write_software(star)
 
@@ -231,7 +264,7 @@ class Bmrb:
         ######################################################
 
         # Generate the CSA saveframe.
-        star.chem_shift_anisotropy.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, csa=csa_list)
+        star.chem_shift_anisotropy.add(entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, csa=csa_list)
 
 
         # Create Supergroup 6 : The kinetic data saveframes.
@@ -250,7 +283,14 @@ class Bmrb:
                 software_id = software_ids[i]
 
         # Generate the model-free data saveframe.
-        star.model_free.add(global_chi2=global_chi2, software_ids=[software_id], software_labels=['relax'], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, local_tc=local_tm_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, local_tc_err=local_tm_err_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list, rex_frq=rex_frq, chi2=chi2_list, model_fit=model_list)
+        star.model_free.add(global_chi2=global_chi2, software_ids=[software_id], software_labels=['relax'], entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, local_tc=local_tm_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, local_tc_err=local_tm_err_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list, rex_frq=rex_frq, chi2=chi2_list, model_fit=model_list)
+
+
+        # Create Supergroup 8 : The structure determination saveframes.
+        ###############################################################
+
+        # Generate the diffusion tensor saveframes.
+        diffusion_tensor.bmrb_write(star)
 
 
         # Write the contents to the STAR formatted file.

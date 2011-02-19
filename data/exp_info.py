@@ -135,6 +135,23 @@ class ExpInfo(Element):
                 return i + 1
 
 
+    def get_peak_intensity_type(self, ri_label, frq_label):
+        """Return the peak intensity type for the given relaxation data.
+
+        @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @type ri_label:     str
+        @param frq_label:   The field strength label.
+        @type frq_label:    str
+        @return:            The peak intensity type.
+        @rtype:             str
+        """
+
+        # Find the matching container.
+        for i in range(len(self.peak_intensity_type)):
+            if self.peak_intensity_type[i].ri_label == ri_label and self.peak_intensity_type[i].frq_label == frq_label:
+                return self.peak_intensity_type[i].type
+
+
     def get_temp_calibration(self, ri_label, frq_label):
         """Return the temperature calibration method.
 
@@ -167,6 +184,124 @@ class ExpInfo(Element):
         for i in range(len(self.temp_control)):
             if self.temp_control[i].ri_label == ri_label and self.temp_control[i].frq_label == frq_label:
                 return self.temp_control[i].method
+
+
+    def setup_peak_intensity_type(self, ri_label, frq_label, type):
+        """Store the peak intensity type.
+
+        @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @type ri_label:     str
+        @param frq_label:   The field strength label.
+        @type frq_label:    str
+        @param type:        The peak intensity type, one of 'height' or 'volume'.
+        @type type:         str
+        """
+
+        # Initialise the container if needed.
+        if not hasattr(self, "peak_intensity_type"):
+            # The list.
+            self.peak_intensity_type = ContainerList()
+
+            # The name of the container.
+            self.peak_intensity_type.container_name = "peak_intensity_type_list"
+
+            # The description of the container.
+            self.peak_intensity_type.container_desc = "List of peak intensity types."
+
+        # Find if the type has already been set.
+        for i in range(len(self.peak_intensity_type)):
+            if self.peak_intensity_type[i].ri_label == ri_label and self.peak_intensity_type[i].frq_label == frq_label:
+                raise RelaxError("The peak intensity type for the '%s' ri_label and '%s' frq_label has already been set.")
+
+        # Init the container.
+        peak_intensity_type = Element()
+
+        # The name of the container.
+        peak_intensity_type.element_name = "peak_intensity_type"
+
+        # The description of the container.
+        peak_intensity_type.element_desc = "Temperature control methods for the relaxation data."
+
+        # Set the attributes.
+        peak_intensity_type.ri_label = ri_label
+        peak_intensity_type.frq_label = frq_label
+        peak_intensity_type.type = type
+
+        # Append the container.
+        self.peak_intensity_type.append(peak_intensity_type)
+
+
+    def setup_thiol(self, state):
+        """Set up the thiol state of the system.
+
+        @param thiol_state:     The thiol state of the molecule.
+        @type thiol_state:      str
+        """
+
+        # Check.
+        if hasattr(self, "thiol_state"):
+            raise RelaxError("The thiol state has already been specified")
+
+        # Set the attribute.
+        self.thiol_state = state
+
+
+    def setup_script(self, file=None, dir=None, cite_ids=None, text=None, analysis_type=None, model_selection=None, engine=None, model_elim=False, universal_solution=False):
+        """Specify the scripts used in the analysis.
+
+        @keyword file:                  The name of the script file.
+        @type file:                     str
+        @keyword dir:                   The directory containing the file (defaults to the current directory if None).
+        @type dir:                      None or str
+        @keyword cite_ids:              The citation ID numbers.
+        @type cite_ids:                 None or str
+        @param text:                    The script text.
+        @type text:                     str
+        @keyword analysis_type:         The type of analysis performed.
+        @type analysis_type:            str
+        @keyword model_selection:       The model selection technique used, if relevant.
+        @type model_selection:          None or str
+        @keyword engine:                The software engine used in the analysis.
+        @type engine:                   str
+        @keyword model_elim:            A model-free specific flag specifying if model elimination was performed.
+        @type model_elim:               bool
+        @keyword universal_solution:    A model-free specific flag specifying if the universal solution was sought after.
+        @type universal_solution:       bool
+        """
+
+        # Initialise the container if needed.
+        if not hasattr(self, "scripts"):
+            # The list.
+            self.scripts = ContainerList()
+
+            # The name of the container.
+            self.scripts.container_name = "script_list"
+
+            # The description of the container.
+            self.scripts.container_desc = "List of scripts used for the analysis"
+
+        # Init the container.
+        script = Element()
+
+        # The name of the container.
+        script.element_name = "script"
+
+        # The description of the container.
+        script.element_desc = "Script used for the analysis"
+
+        # Set the attributes.
+        script.file = file
+        script.dir = dir
+        script.cite_ids = cite_ids
+        script.text = text
+        script.analysis_type = analysis_type
+        script.model_selection = model_selection
+        script.engine = engine
+        script.model_elim = model_elim
+        script.universal_solution = universal_solution
+
+        # Append the container.
+        self.scripts.append(script)
 
 
     def software_setup(self, name, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):

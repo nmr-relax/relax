@@ -27,7 +27,7 @@ __docformat__ = 'plaintext'
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
-from generic_fns.mol_res_spin import copy_molecule, create_molecule, delete_molecule, display_molecule, id_string_doc, name_molecule
+from generic_fns.mol_res_spin import copy_molecule, create_molecule, delete_molecule, display_molecule, id_string_doc, name_molecule, type_molecule
 
 
 class Molecule(User_fn_class):
@@ -231,6 +231,62 @@ class Molecule(User_fn_class):
 
         # Execute the functional code.
         name_molecule(mol_id=mol_id, name=name, force=force)
+
+
+    def type(self, mol_id=None, type=None, force=False):
+        """Set the molecule type (mainly used for BMRB submission).
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        mol_id:  The molecule identification string corresponding to one or more molecules.
+
+        type:  The molecule type.
+
+        force:  A flag which if True will cause the molecule to type to be overwritten.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function allows the type of the molecule to be specified.  It can be one of:
+
+            'organic molecule',
+            'DNA/RNA hybrid',
+            'polydeoxyribonucleotide',
+            'polypeptide(D)',
+            'polypeptide(L)',
+            'polyribonucleotide',
+            'polysaccharide(D)',
+            'polysaccharide(L)',
+            'other'.
+
+
+
+        Examples
+        ~~~~~~~~
+
+        To set the molecule 'Ap4Aase' to the 'polypeptide(L)' type, type one of:
+
+        relax> molecule.type('#Ap4Aase', 'polypeptide(L)', True)
+        relax> molecule.type(mol_id='#Ap4Aase', type='polypeptide(L)', force=True)
+        """
+
+        # Function intro text.
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "molecule.type("
+            text = text + "mol_id=" + repr(mol_id)
+            text = text + ", type=" + repr(type)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(mol_id, 'molecule identification string', can_be_none=True)
+        arg_check.is_str(type, 'molecule type')
+        arg_check.is_bool(force, 'force flag')
+
+        # Execute the functional code.
+        type_molecule(mol_id=mol_id, type=type, force=force)
 
 
 

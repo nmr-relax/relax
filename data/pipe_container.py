@@ -124,7 +124,7 @@ class PipeContainer(Prototype):
         setattr(self, 'hybrid_pipes', node_value_to_python(pipes_node.childNodes[0]))
 
         # Get the experimental information data nodes and, if they exist, fill the contents.
-        exp_info_nodes = relax_node.getElementsByTagName('exp_info')
+        exp_info_nodes = pipe_node.getElementsByTagName('exp_info')
         if exp_info_nodes:
             # Create the data container.
             self.exp_info = ExpInfo()

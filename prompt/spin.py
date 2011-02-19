@@ -287,17 +287,17 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spin.element("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "spin.element("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", element=" + repr(element)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        check.is_str(element, 'IUPAC element name')
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(element, 'IUPAC element name')
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         set_spin_element(spin_id=spin_id, element=element, force=force)

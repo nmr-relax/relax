@@ -25,6 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
+from numpy import int32, ones, zeros
 import string
 import sys
 from warnings import warn
@@ -32,9 +33,10 @@ from warnings import warn
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
-from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, return_spin, spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
+from physical_constants import element_from_isotope, number_from_isotope
 from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from relax_io import read_spin_data
 from relax_warnings import RelaxWarning
@@ -238,17 +240,19 @@ def bmrb_read(star):
     """
 
     # Get the relaxation data.
-    for data_type, frq, res_nums, res_names, spin_names, val, err in star.relaxation.loop():
+    for data_type, frq, entity_ids, res_nums, res_names, spin_names, val, err in star.relaxation.loop():
         # Create the labels.
         ri_label = data_type
         frq_label = str(int(frq*1e-6))
 
-        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-        if test_labels(ri_label, frq_label):
-            raise RelaxRiError(ri_label, frq_label)
+        # Convert entity IDs to molecule names.
+        mol_names = []
+        names = get_molecule_names()
+        for id in entity_ids:
+            mol_names.append(names[int(id)-1])
 
         # Pack the data.
-        pack_data(ri_label, frq_label, frq, val, err, mol_names=None, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
+        pack_data(ri_label, frq_label, frq, val, err, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
 
 
 
@@ -263,15 +267,25 @@ def bmrb_write(star):
     cdp = pipes.get_pipe()
 
     # Initialise the spin specific data lists.
+    mol_name_list = []
     res_num_list = []
     res_name_list = []
     atom_name_list = []
     isotope_list = []
+    element_list = []
+    attached_atom_name_list = []
+    attached_isotope_list = []
+    attached_element_list = []
     relax_data_list = []
     relax_error_list = []
     for i in range(cdp.num_ri):
         relax_data_list.append([])
         relax_error_list.append([])
+
+    # Relax data labels.
+    labels = []
+    for i in range(cdp.num_ri):
+        labels.append(cdp.ri_labels[i] + '_' + cdp.frq_labels[cdp.remap_table[i]])
 
     # Store the spin specific data in lists for later use.
     for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
@@ -294,23 +308,65 @@ def bmrb_write(star):
             raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
 
         # The molecule/residue/spin info.
+        mol_name_list.append(mol_name)
         res_num_list.append(str(res_num))
         res_name_list.append(str(res_name))
         atom_name_list.append(str(spin.name))
 
+        # The attached atom info.
+        if hasattr(spin, 'attached_atom'):
+            attached_atom_name_list.append(str(spin.attached_atom))
+        else:
+            attached_atom_name_list.append(str(spin.attached_proton))
+        attached_element_list.append(element_from_isotope(spin.proton_type))
+        attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
+
         # The relaxation data.
+        used_index = -ones(spin.num_ri)
+        for i in range(len(spin.ri_labels)):
+            # Labels.
+            label = spin.ri_labels[i] + '_' + spin.frq_labels[spin.remap_table[i]]
+
+            # Find the global index.
+            index = None
+            for j in range(cdp.num_ri):
+                if label == labels[j] and j not in used_index:
+                    index = j
+                    used_index[i] = j
+                    break
+
+            # Data exists.
+            if index != None:
+                relax_data_list[index].append(str(spin.relax_data[i]))
+                relax_error_list[index].append(str(spin.relax_error[i]))
+
+        # No relaxation data.
         for i in range(cdp.num_ri):
-            relax_data_list[i].append(str(spin.relax_data[i]))
-            relax_error_list[i].append(str(spin.relax_error[i]))
+            if i not in used_index:
+                relax_data_list[i].append(None)
+                relax_error_list[i].append(None)
 
         # Other info.
         isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
+        element_list.append(spin.element)
+
+    # Convert the molecule names into the entity IDs.
+    entity_ids = zeros(len(mol_name_list), int32)
+    mol_names = get_molecule_names()
+    for i in range(len(mol_name_list)):
+        for j in range(len(mol_names)):
+            if mol_name_list[i] == mol_names[j]:
+                entity_ids[i] = j+1
 
     # Check the temperature control methods.
     if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_calibration'):
         raise RelaxError("The temperature calibration methods have not been specified.")
     if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_control'):
         raise RelaxError("The temperature control methods have not been specified.")
+
+    # Check the peak intensity type.
+    if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'peak_intensity_type'):
+        raise RelaxError("The peak intensity types measured for the relaxation data have not been specified.")
 
     # Loop over the relaxation data.
     for i in range(cdp.num_ri):
@@ -322,6 +378,9 @@ def bmrb_write(star):
         temp_calib = cdp.exp_info.get_temp_calibration(ri_label, frq_label)
         temp_control = cdp.exp_info.get_temp_control(ri_label, frq_label)
 
+        # Get the peak intensity type.
+        peak_intensity_type = cdp.exp_info.get_peak_intensity_type(ri_label, frq_label)
+
         # Check.
         if not temp_calib:
             raise RelaxError("The temperature calibration method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
@@ -329,7 +388,7 @@ def bmrb_write(star):
             raise RelaxError("The temperature control method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
 
         # Add the relaxation data.
-        star.relaxation.add(data_type=ri_label, frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control)
+        star.relaxation.add(data_type=ri_label, frq=cdp.frq[cdp.remap_table[i]], entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, entity_ids_2=entity_ids, res_nums_2=res_num_list, res_names_2=res_name_list, atom_names_2=attached_atom_name_list, atom_types_2=attached_element_list, isotope_2=attached_isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control, peak_intensity_type=peak_intensity_type)
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
@@ -735,6 +794,41 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
 
         # Update all data structures.
         update_data_structures_spin(spin, ri_label, frq_label, frq, values[i], errors[i])
+
+
+def peak_intensity_type(ri_label=None, frq_label=None, type=None):
+    """Set the type of intensity measured for the peaks.
+
+    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_label:     str
+    @param frq_label:   The field strength label.
+    @type frq_label:    str
+    @param type:        The peak intensity type, one of 'height' or 'volume'.
+    @type type:         str
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+    if not test_labels(ri_label, frq_label):
+        raise RelaxNoRiError(ri_label, frq_label)
+
+    # Check the values, and warn if not in the list.
+    valid = ['height', 'volume']
+    if type not in valid:
+        raise RelaxError("The '%s' peak intensity type is unknown.  Please select one of %s." % (type, valid))
+
+    # Set up the experimental info data container, if needed.
+    if not hasattr(cdp, 'exp_info'):
+        cdp.exp_info = ExpInfo()
+
+    # Store the type.
+    cdp.exp_info.setup_peak_intensity_type(ri_label, frq_label, type)
 
 
 def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):

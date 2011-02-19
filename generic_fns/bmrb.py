@@ -30,6 +30,7 @@ from os import F_OK, access
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
 from generic_fns import exp_info
+from info import Info_box
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
 from specific_fns.setup import get_specific_fn
@@ -102,12 +103,19 @@ def write(file=None, directory=None, version='3.1', force=False):
     # Create the directories.
     mkdir_nofail(directory, verbosity=0)
 
+    # Get the info box.
+    info = Info_box()
+
     # Add the relax citations.
-    cdp.exp_info.add_citation(cite_id='relax_ref1', authors=exp_info.RELAX_CITE1_AUTHORS, doi=exp_info.RELAX_CITE1_DOI, pubmed_id=exp_info.RELAX_CITE1_PUBMED_ID, full_citation=exp_info.RELAX_CITE1_FULL_CITATION, title=exp_info.RELAX_CITE1_TITLE, status=exp_info.RELAX_CITE1_STATUS, type=exp_info.RELAX_CITE1_TYPE, journal_abbrev=exp_info.RELAX_CITE1_JOURNAL_ABBREV, journal_full=exp_info.RELAX_CITE1_JOURNAL_FULL, volume=exp_info.RELAX_CITE1_VOLUME, issue=exp_info.RELAX_CITE1_ISSUE, page_first=exp_info.RELAX_CITE1_PAGE_FIRST, page_last=exp_info.RELAX_CITE1_PAGE_LAST, year=exp_info.RELAX_CITE1_YEAR)
-    cdp.exp_info.add_citation(cite_id='relax_ref2', authors=exp_info.RELAX_CITE2_AUTHORS, doi=exp_info.RELAX_CITE2_DOI, pubmed_id=exp_info.RELAX_CITE2_PUBMED_ID, full_citation=exp_info.RELAX_CITE2_FULL_CITATION, title=exp_info.RELAX_CITE2_TITLE, status=exp_info.RELAX_CITE2_STATUS, type=exp_info.RELAX_CITE2_TYPE, journal_abbrev=exp_info.RELAX_CITE2_JOURNAL_ABBREV, journal_full=exp_info.RELAX_CITE2_JOURNAL_FULL, volume=exp_info.RELAX_CITE2_VOLUME, issue=exp_info.RELAX_CITE2_ISSUE, page_first=exp_info.RELAX_CITE2_PAGE_FIRST, page_last=exp_info.RELAX_CITE2_PAGE_LAST, year=exp_info.RELAX_CITE2_YEAR)
+    for id, key in zip(['relax_ref1', 'relax_ref2'], ['dAuvergneGooley08a', 'dAuvergneGooley08b']):
+        # Alias the bib entry.
+        bib = info.bib[key]
+
+        # Add.
+        cdp.exp_info.add_citation(cite_id=id, authors=bib.author2, doi=bib.doi, pubmed_id=bib.pubmed_id, full_citation=bib.cite_short(doi=False, url=False), title=bib.title, status=bib.status, type=bib.type, journal_abbrev=bib.journal, journal_full=bib.journal_full, volume=bib.volume, issue=bib.number, page_first=bib.page_first, page_last=bib.page_last, year=bib.year)
 
     # Add the relax software package.
-    cdp.exp_info.software_setup(name=exp_info.RELAX_NAME, version=version_full(), vendor_name=exp_info.RELAX_AUTHORS, url=exp_info.RELAX_URL, cite_ids=['relax_ref1', 'relax_ref2'], tasks=exp_info.RELAX_TASKS)
+    cdp.exp_info.software_setup(name=exp_info.SOFTWARE['relax'].name, version=version_full(), vendor_name=exp_info.SOFTWARE['relax'].authors, url=exp_info.SOFTWARE['relax'].url, cite_ids=['relax_ref1', 'relax_ref2'], tasks=exp_info.SOFTWARE['relax'].tasks)
 
     # Execute the specific BMRB writing code.
     write_function(file_path, version=version)

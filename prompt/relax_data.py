@@ -196,6 +196,44 @@ class Relax_data(User_fn_class):
         relax_data.display(ri_label=ri_label, frq_label=frq_label)
 
 
+    def peak_intensity_type(self, ri_label=None, frq_label=None, type=None):
+        """Specify the type of peak intensity measurement used - i.e. height or volume.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+
+        frq_label:  The field strength label.
+
+        type:  The peak intensity type.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function is essential for BMRB data deposition.  This is used to specify whether
+        peak heights or peak volumes were measured.  The two currently allowed values for the type
+        argument are 'height' and 'volume'.
+        """
+
+        # Function intro text.
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "relax_data.peak_intensity_type("
+            text = text + "ri_label=" + repr(ri_label)
+            text = text + ", frq_label=" + repr(frq_label)
+            text = text + ", type=" + repr(type) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(ri_label, 'relaxation label')
+        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(type, 'peak intensity type')
+
+        # Execute the functional code.
+        relax_data.peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type=type)
+
+
     def read(self, ri_label=None, frq_label=None, frq=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
         """Function for reading R1, R2, or NOE relaxation data from a file.
 
@@ -346,17 +384,17 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.temp_calibration("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "relax_data.temp_calibration("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", method=" + repr(method) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(ri_label, 'relaxation label')
-        check.is_str(frq_label, 'frequency label')
-        check.is_str(method, 'temperature calibration method')
+        arg_check.is_str(ri_label, 'relaxation label')
+        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(method, 'temperature calibration method')
 
         # Execute the functional code.
         relax_data.temp_calibration(ri_label=ri_label, frq_label=frq_label, method=method)
@@ -390,17 +428,17 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.temp_control("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "relax_data.temp_control("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", method=" + repr(method) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(ri_label, 'relaxation label')
-        check.is_str(frq_label, 'frequency label')
-        check.is_str(method, 'temperature control method')
+        arg_check.is_str(ri_label, 'relaxation label')
+        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(method, 'temperature control method')
 
         # Execute the functional code.
         relax_data.temp_control(ri_label=ri_label, frq_label=frq_label, method=method)

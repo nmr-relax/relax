@@ -38,7 +38,7 @@ The functionality of this module is diverse:
 # Python module imports.
 from numpy import array
 from re import split
-from string import count, strip
+from string import count, strip, upper
 from textwrap import fill
 from warnings import warn
 
@@ -518,32 +518,35 @@ def bmrb_write_entity(star, version=None):
     @type version:      str
     """
 
-    # Can't handle multiple molecules yet.
-    if count_molecules() > 1:
-        raise RelaxError("Multiple molecules are not yet supported.")
-
-    # Get the molecule names.
-    mol_names = get_molecule_names()
-
-    # Loop over the names.
-    for i in range(len(mol_names)):
+    # Loop over the molecules.
+    for mol in molecule_loop():
         # Test that the molecule has a name!
-        if not mol_names[i]:
+        if not mol.name:
             raise RelaxError("All molecules must be named.")
 
+        # Test that the molecule has a type!
+        if not hasattr(mol, 'type') or not mol.type:
+            raise RelaxError("The molecule type for the '%s' molecule must be specified, please use the appropriate molecule user function to set this." % mol.name)
+
+        # Test that the molecule thiol state has been set.
+        if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'thiol_state'):
+            raise RelaxError("The thiol state of the molecule '%s' must be specified, please use the appropriate BMRB user function to set this." % mol.name)
+
         # Get the residue names and numbers.
-        res_names = get_residue_names("#" + mol_names[i])
-        res_nums = get_residue_nums("#" + mol_names[i])
+        res_names = get_residue_names("#" + mol.name)
+        res_nums = get_residue_nums("#" + mol.name)
+
+        # Get the one letter codes.
+        polymer_seq_code = one_letter_code(res_names)
 
         # Find the molecule type.
-        if len(res_nums) < 4:
+        if mol.type in ['organic molecule', 'other']:
             mol_type = 'non-polymer'
-            warn(RelaxWarning("The molecule '%s' is assumed to be a non-polymer, i.e. an organic molecule, ligand, metal ion, etc.  It should not be a solvent molecule!"))
         else:
             mol_type = 'polymer'
 
         # Add the entity.
-        star.entity.add(mol_name=mol_names[i], mol_type=mol_type, res_nums=res_nums, res_names=res_names)
+        star.entity.add(mol_name=mol.name, mol_type=mol_type, polymer_type=mol.type, polymer_seq_code=polymer_seq_code,thiol_state=cdp.exp_info.thiol_state, res_nums=res_nums, res_names=res_names)
 
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
@@ -1712,6 +1715,61 @@ def number_spin(spin_id=None, number=None, force=False):
             spin.num = number
 
 
+def one_letter_code(res_names):
+    """Convert the list of residue names into a string of one letter residue codes.
+
+    Standard amino acids are converted to the one letter code.  Unknown residues are labelled as 'X'.
+
+
+    @param res_names:   A list of residue names.
+    @type res_names:    list or str
+    @return:            The one letter codes for the residues.
+    @rtype:             str
+    """
+
+    # The amino acid translation table.
+    aa_table = [
+                ['Alanine',         'ALA', 'A'],
+                ['Arginine',        'ARG', 'R'],
+                ['Asparagine',      'ASN', 'N'],
+                ['Aspartic acid',   'ASP', 'D'],
+                ['Cysteine',        'CYS', 'C'],
+                ['Glutamic acid',   'GLU', 'E'],
+                ['Glutamine',       'GLN', 'Q'],
+                ['Glycine',         'GLY', 'G'],
+                ['Histidine',       'HIS', 'H'],
+                ['Isoleucine',      'ILE', 'I'],
+                ['Leucine',         'LEU', 'L'],
+                ['Lysine',          'LYS', 'K'],
+                ['Methionine',      'MET', 'M'],
+                ['Phenylalanine',   'PHE', 'F'],
+                ['Proline',         'PRO', 'P'],
+                ['Serine',          'SER', 'S'],
+                ['Threonine',       'THR', 'T'],
+                ['Tryptophan',      'TRP', 'W'],
+                ['Tyrosine',        'TYR', 'Y'],
+                ['Valine',          'VAL', 'V']
+    ]
+
+    # Translate.
+    seq = ''
+    for res in res_names:
+        # Aa match.
+        match = False
+        for i in range(len(aa_table)):
+            if upper(res) == aa_table[i][1]:
+                seq = seq + aa_table[i][2]
+                match = True
+                break
+
+        # No match.
+        if not match:
+            seq = seq + 'X'
+
+    # Return the sequence.
+    return seq
+
+
 def parse_token(token, verbosity=False):
     """Parse the token string and return a list of identifying numbers and names.
 
@@ -2639,3 +2697,46 @@ def tokenise(selection):
 
     # Return the three tokens.
     return mol_token, res_token, spin_token
+
+
+def type_molecule(mol_id, type=None, force=False):
+    """Set the molecule type.
+
+    @param mol_id:      The molecule identification string.
+    @type mol_id:       str
+    @param type:        The molecule type.
+    @type type:         str
+    @keyword force:     A flag which if True will cause the molecule type to be overwritten.
+    @type force:        bool
+    """
+
+    # Check.
+    allowed = ['organic molecule',
+               'DNA/RNA hybrid',
+               'polydeoxyribonucleotide',
+               'polypeptide(D)',
+               'polypeptide(L)',
+               'polyribonucleotide',
+               'polysaccharide(D)',
+               'polysaccharide(L)'
+               'other'
+    ]
+    if type not in allowed:
+        raise RelaxError("The molecule type '%s' must be one of %s." % (type, allowed))
+
+    # Disallow residue and spin selections.
+    select_obj = Selection(mol_id)
+    if select_obj.has_residues():
+        raise RelaxResSelectDisallowError
+    if select_obj.has_spins():
+        raise RelaxSpinSelectDisallowError
+
+    # Change the molecule types.
+    for mol in molecule_loop(mol_id):
+        if hasattr(mol, 'type') and not force:
+            warn(RelaxWarning("The molecule '%s' already has its type set.  Set the force flag to change." % mol_id))
+        else:
+            mol.type = type
+
+
+
