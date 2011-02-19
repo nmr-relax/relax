@@ -90,32 +90,15 @@ class Relax_data_base_class:
             # The spin container.
             spin = cdp.mol[0].res[i].spin[0]
 
-            # No relaxation data.
-            if self.Ap4Aase_600_NOE_val[i] == None or self.Ap4Aase_600_NOE_err[i] == None:
-                # Auxillary data.
-                self.failIf(hasattr(spin, 'frq'))
-                self.failIf(hasattr(spin, 'frq_labels'))
-                self.failIf(hasattr(spin, 'noe_r1_table'))
-                self.failIf(hasattr(spin, 'num_frq'))
-                self.failIf(hasattr(spin, 'num_ri'))
-                self.failIf(hasattr(spin, 'remap_table'))
-                self.failIf(hasattr(spin, 'ri_labels'))
+            # Auxillary data.
+            self.assertEqual(spin.frq, [600e6])
+            self.assertEqual(spin.frq_labels, ['600'])
+            self.assertEqual(spin.noe_r1_table, [None])
+            self.assertEqual(spin.num_frq, 1)
+            self.assertEqual(spin.num_ri, 1)
+            self.assertEqual(spin.remap_table, [0])
+            self.assertEqual(spin.ri_labels, ['NOE'])
 
-                # Relaxation data.
-                self.failIf(hasattr(spin, 'relax_data'))
-                self.failIf(hasattr(spin, 'relax_error'))
-
-            # Data exists
-            else:
-                # Auxillary data.
-                self.assertEqual(spin.frq, [600e6])
-                self.assertEqual(spin.frq_labels, ['600'])
-                self.assertEqual(spin.noe_r1_table, [None])
-                self.assertEqual(spin.num_frq, 1)
-                self.assertEqual(spin.num_ri, 1)
-                self.assertEqual(spin.remap_table, [0])
-                self.assertEqual(spin.ri_labels, ['NOE'])
-
-                # Relaxation data.
-                self.assertEqual(spin.relax_data, [self.Ap4Aase_600_NOE_val[i]])
-                self.assertEqual(spin.relax_error, [self.Ap4Aase_600_NOE_err[i]])
+            # Relaxation data.
+            self.assertEqual(spin.relax_data, [self.Ap4Aase_600_NOE_val[i]])
+            self.assertEqual(spin.relax_error, [self.Ap4Aase_600_NOE_err[i]])

@@ -25,13 +25,16 @@
 
 
 # The available modules.
-__all__ = [ 'main',
+__all__ = [ 'bmrb',
+            'main',
             'mf_minimise',
             'molmol',
             'multi_processor_commands',
-            'results']
+            'results'
+]
 
 # relax module imports.
+from bmrb import Bmrb
 from main import Model_free_main
 from mf_minimise import Mf_minimise
 from molmol import Molmol
@@ -40,7 +43,7 @@ from specific_fns.api_base import API_base
 from specific_fns.api_common import API_common
 
 
-class Model_free(Model_free_main, Mf_minimise, Molmol, Results, API_base, API_common):
+class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Bmrb, API_base, API_common):
     """Parent class containing all the model-free specific functions."""
 
     def __init__(self):

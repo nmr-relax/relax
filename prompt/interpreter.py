@@ -64,6 +64,7 @@ from temperature import Temp
 
 # User classes.
 from align_tensor import Align_tensor
+from bmrb import BMRB
 from consistency_tests import Consistency_tests
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
@@ -186,6 +187,7 @@ class Interpreter:
 
         # Place the user classes in the local namespace.
         objects['align_tensor'] = Align_tensor(self._exec_info)
+        objects['bmrb'] = BMRB(self._exec_info)
         objects['consistency_tests'] = Consistency_tests(self._exec_info)
         objects['dasha'] = Dasha(self._exec_info)
         objects['deselect'] = Deselect(self._exec_info)

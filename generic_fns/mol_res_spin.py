@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2011 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,7 +38,7 @@ The functionality of this module is diverse:
 # Python module imports.
 from numpy import array
 from re import split
-from string import count, strip
+from string import count, replace, strip, upper
 from textwrap import fill
 from warnings import warn
 
@@ -493,6 +493,85 @@ class Selection(object):
         # Create the union.
         self._union = (select_obj0, select_obj1)
 
+
+
+def bmrb_read(star):
+    """Generate the molecule and residue spin containers from the entity saveframe records.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    """
+
+    # Get the entities.
+    for data in star.entity.loop():
+        # Remove nasty characters from the molecule name.
+        mol_name = data['mol_name']
+        if mol_name:
+            # Round brackets.
+            mol_name = replace(mol_name, '(', '')
+            mol_name = replace(mol_name, ')', '')
+
+            # Square brackets.
+            mol_name = replace(mol_name, '[', '')
+            mol_name = replace(mol_name, ']', '')
+
+            # Commas.
+            mol_name = replace(mol_name, ',', ' ')
+
+        # Add the residues.
+        for i in range(len(data['res_nums'])):
+            create_residue(data['res_nums'][i], data['res_names'][i], mol_name=mol_name)
+
+
+def bmrb_write_entity(star, version=None):
+    """Generate the entity saveframe records for the NMR-STAR dictionary object.
+
+    @param star:        The NMR-STAR dictionary object.
+    @type star:         NMR_STAR instance
+    @keyword version:   The BMRB NMR-STAR dictionary format to output to.
+    @type version:      str
+    """
+
+    # Loop over the molecules.
+    for mol in molecule_loop():
+        # Test that the molecule has a name!
+        if not mol.name:
+            raise RelaxError("All molecules must be named.")
+
+        # Test that the molecule has a type!
+        if not hasattr(mol, 'type') or not mol.type:
+            raise RelaxError("The molecule type for the '%s' molecule must be specified, please use the appropriate molecule user function to set this." % mol.name)
+
+        # Test that the molecule thiol state has been set.
+        if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'thiol_state'):
+            raise RelaxError("The thiol state of the molecule '%s' must be specified, please use the appropriate BMRB user function to set this." % mol.name)
+
+        # Get the residue names and numbers.
+        res_names = get_residue_names("#" + mol.name)
+        res_nums = get_residue_nums("#" + mol.name)
+
+        # Get the one letter codes.
+        polymer_seq_code = one_letter_code(res_names)
+
+        # Find the molecule type.
+        if mol.type in ['organic molecule', 'other']:
+            mol_type = 'non-polymer'
+        else:
+            mol_type = 'polymer'
+
+        # Translate the names.
+        polymer_type = mol.type
+        if polymer_type == 'protein':
+            polymer_type = 'polypeptide(L)'
+        if polymer_type == 'DNA':
+            polymer_type = 'polydeoxyribonucleotide'
+        if polymer_type == 'RNA':
+            polymer_type = 'polyribonucleotide'
+        if polymer_type == 'inorganic molecule':
+            polymer_type = 'other'
+
+        # Add the entity.
+        star.entity.add(mol_name=mol.name, mol_type=mol_type, polymer_type=polymer_type, polymer_seq_code=polymer_seq_code,thiol_state=cdp.exp_info.thiol_state, res_nums=res_nums, res_names=res_names)
 
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
@@ -1381,11 +1460,67 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, 
     return id
 
 
+def get_molecule_names(selection=None):
+    """Return a list of the molecule names.
+
+    @param selection:   The molecule selection identifier.
+    @type selection:    str
+    @return:            The molecule names.
+    @rtype:             list of str
+    """
+
+    # Loop over the molecules, append the name of each within the selection.
+    mol_names = []
+    for mol in molecule_loop(selection):
+        mol_names.append(mol.name)
+
+    # Return the names.
+    return mol_names
+
+
+def get_residue_names(selection=None):
+    """Return a list of the residue names.
+
+    @param selection:   The molecule and residue selection identifier.
+    @type selection:    str
+    @return:            The residue names.
+    @rtype:             list of str
+    """
+
+    # Loop over the residues, appending the name of each within the selection.
+    res_names = []
+    for res in residue_loop(selection):
+        res_names.append(res.name)
+
+    # Return the names.
+    return res_names
+
+
+def get_residue_nums(selection=None):
+    """Return a list of the residue numbers.
+
+    @param selection:   The molecule and residue selection identifier.
+    @type selection:    str
+    @return:            The residue numbers.
+    @rtype:             list of str
+    """
+
+    # Loop over the residues, appending the number of each within the selection.
+    res_nums = []
+    for res in residue_loop(selection):
+        res_nums.append(res.num)
+
+    # Return the numbers.
+    return res_nums
+
+
 def last_residue_num(selection=None):
     """Determine the last residue number.
 
-    @return:    The number of the last residue.
-    @rtype:     int
+    @param selection:   The molecule selection identifier.
+    @type selection:    str
+    @return:            The number of the last residue.
+    @rtype:             int
     """
 
     # Get the molecule.
@@ -1603,6 +1738,61 @@ def number_spin(spin_id=None, number=None, force=False):
             warn(RelaxWarning("The spin '%s' is already numbered.  Set the force flag to renumber." % id))
         else:
             spin.num = number
+
+
+def one_letter_code(res_names):
+    """Convert the list of residue names into a string of one letter residue codes.
+
+    Standard amino acids are converted to the one letter code.  Unknown residues are labelled as 'X'.
+
+
+    @param res_names:   A list of residue names.
+    @type res_names:    list or str
+    @return:            The one letter codes for the residues.
+    @rtype:             str
+    """
+
+    # The amino acid translation table.
+    aa_table = [
+                ['Alanine',         'ALA', 'A'],
+                ['Arginine',        'ARG', 'R'],
+                ['Asparagine',      'ASN', 'N'],
+                ['Aspartic acid',   'ASP', 'D'],
+                ['Cysteine',        'CYS', 'C'],
+                ['Glutamic acid',   'GLU', 'E'],
+                ['Glutamine',       'GLN', 'Q'],
+                ['Glycine',         'GLY', 'G'],
+                ['Histidine',       'HIS', 'H'],
+                ['Isoleucine',      'ILE', 'I'],
+                ['Leucine',         'LEU', 'L'],
+                ['Lysine',          'LYS', 'K'],
+                ['Methionine',      'MET', 'M'],
+                ['Phenylalanine',   'PHE', 'F'],
+                ['Proline',         'PRO', 'P'],
+                ['Serine',          'SER', 'S'],
+                ['Threonine',       'THR', 'T'],
+                ['Tryptophan',      'TRP', 'W'],
+                ['Tyrosine',        'TYR', 'Y'],
+                ['Valine',          'VAL', 'V']
+    ]
+
+    # Translate.
+    seq = ''
+    for res in res_names:
+        # Aa match.
+        match = False
+        for i in range(len(aa_table)):
+            if upper(res) == aa_table[i][1]:
+                seq = seq + aa_table[i][2]
+                match = True
+                break
+
+        # No match.
+        if not match:
+            seq = seq + 'X'
+
+    # Return the sequence.
+    return seq
 
 
 def parse_token(token, verbosity=False):
@@ -2118,6 +2308,41 @@ def same_sequence(pipe1, pipe2):
     return True
 
 
+def set_spin_element(spin_id=None, element=None, force=False):
+    """Set the element type of the spins.
+
+    @keyword spin_id:   The spin identification string.
+    @type spin_id:      str
+    @keyword element:   The IUPAC element name.
+    @type element:      str
+    @keyword force:     A flag which if True will cause the element to be changed.
+    @type force:        bool
+    """
+
+    # Valid names (for NMR active spins).
+    valid_names = ['H',
+             'C',
+             'N',
+             'O',
+             'F',
+             'Na',
+             'P',
+             'Cd'
+    ]
+
+    # Check.
+    if element not in valid_names:
+        raise(RelaxError("The element name '%s' is not valid and should be one of the IUPAC names %s." % (element, valid_names)))
+
+
+    # Set the element name for the matching spins.
+    for spin, id in spin_loop(spin_id, return_id=True):
+        if hasattr(spin, 'element') and spin.element and not force:
+            warn(RelaxWarning("The element type of the spin '%s' is already set.  Set the force flag to True to rename." % id))
+        else:
+            spin.element = element
+
+
 def spin_id_to_data_list(id):
     """Convert the single spin ID string into a list of the mol, res, and spin names and numbers.
 
@@ -2497,3 +2722,36 @@ def tokenise(selection):
 
     # Return the three tokens.
     return mol_token, res_token, spin_token
+
+
+def type_molecule(mol_id, type=None, force=False):
+    """Set the molecule type.
+
+    @param mol_id:      The molecule identification string.
+    @type mol_id:       str
+    @param type:        The molecule type.
+    @type type:         str
+    @keyword force:     A flag which if True will cause the molecule type to be overwritten.
+    @type force:        bool
+    """
+
+    # Check the type.
+    if type not in ALLOWED_MOL_TYPES:
+        raise RelaxError("The molecule type '%s' must be one of %s." % (type, ALLOWED_MOL_TYPES))
+
+    # Disallow residue and spin selections.
+    select_obj = Selection(mol_id)
+    if select_obj.has_residues():
+        raise RelaxResSelectDisallowError
+    if select_obj.has_spins():
+        raise RelaxSpinSelectDisallowError
+
+    # Change the molecule types.
+    for mol in molecule_loop(mol_id):
+        if hasattr(mol, 'type') and mol.type and not force:
+            warn(RelaxWarning("The molecule '%s' already has its type set.  Set the force flag to change." % mol_id))
+        else:
+            mol.type = type
+
+
+

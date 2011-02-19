@@ -164,6 +164,14 @@ class RelaxError(BaseError):
         self.text = text
 
 
+# Module import errors.
+#######################
+
+class RelaxNoModuleInstallError(BaseError):
+    def __init__(self, desc, name):
+        self.text = "The %s module '%s' cannot be found.  Please check that it is installed." % (desc, name)
+
+
 # Fault.
 ########
 
@@ -398,6 +406,11 @@ class RelaxListFloatStrError(BaseArgError):
 
 # List of integers.
 class RelaxListIntError(BaseArgError):
+    list_types = [LIST_INT]
+
+# List of integers.
+class RelaxNoneListIntError(BaseArgError):
+    simple_types = [NONE]
     list_types = [LIST_INT]
 
 # List of numbers.

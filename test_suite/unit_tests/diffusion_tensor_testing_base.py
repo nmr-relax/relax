@@ -137,7 +137,7 @@ class Diffusion_tensor_base_class:
         self.assertAlmostEqual(dp.diff_tensor.tm * 1e9, 8.6, 14)
         self.assertEqual(dp.diff_tensor.Da, 5.2854122621564493e6)
         self.assertEqual(dp.diff_tensor.theta, 5.2359877559829879)
-        self.assertEqual(dp.diff_tensor.phi, 1.0471975511965983)
+        self.assertEqual(dp.diff_tensor.phi, 2.7925268031909276)
         self.assertEqual(dp.diff_tensor.fixed, 0)
 
 
@@ -212,7 +212,7 @@ class Diffusion_tensor_base_class:
         self.assertAlmostEqual(dp.diff_tensor.tm * 1e9, 8.6, 14)
         self.assertEqual(dp.diff_tensor.Da, 5.2854122621564493e6)
         self.assertEqual(dp.diff_tensor.theta, 5.2359877559829879)
-        self.assertEqual(dp.diff_tensor.phi, 1.0471975511965983)
+        self.assertEqual(dp.diff_tensor.phi, 2.7925268031909276)
         self.assertEqual(dp.diff_tensor.fixed, 0)
 
 
@@ -402,5 +402,5 @@ class Diffusion_tensor_base_class:
         self.assertAlmostEqual(dp.diff_tensor.tm * 1e9, 8.6, 14)
         self.assertEqual(dp.diff_tensor.Da, 5.2854122621564493e6)
         self.assertEqual(dp.diff_tensor.theta, 5.2359877559829879)
-        self.assertEqual(dp.diff_tensor.phi, 1.0471975511965983)
+        self.assertEqual(dp.diff_tensor.phi, 2.7925268031909276)
         self.assertEqual(dp.diff_tensor.fixed, 0)
