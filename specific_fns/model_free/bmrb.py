@@ -62,8 +62,8 @@ class Bmrb:
                'm2':  'S2, te',
                'm3':  'S2, Rex',
                'm4':  'S2, te, Rex',
+               'm5':  'S2, te, S2f',    # This non-standard naming (incorrect) must go before the correct m5.
                'm5':  'S2f, S2, ts',
-               'm5':  'S2, te, S2f',
                'm6':  'S2f, tf, S2, ts',
                'm7':  'S2f, S2, ts, Rex',
                'm8':  'S2f, tf, S2, ts, Rex',
@@ -195,30 +195,41 @@ class Bmrb:
                 # Loop over and set the model-free parameters.
                 for j in range(len(mf_params)):
                     # No parameter.
-                    if not mf_bmrb_key[j] in keys or data[mf_bmrb_key[j]] == None:
+                    if not mf_bmrb_key[j] in keys:
                         continue
 
-                    # The value.
-                    value = data[mf_bmrb_key[j]][i]
+                    # The parameter and its value.
+                    if data[mf_bmrb_key[j]] != None:
+                        # The value.
+                        value = data[mf_bmrb_key[j]][i]
 
-                    # The parameter.
-                    param = mf_params[j]
+                        # The parameter.
+                        param = mf_params[j]
 
-                    # Change the parameter name of te to ts.
-                    if param == 'te':
-                        if (data['s2s'] and data['s2s'][i] != None) or (data['s2f'] and data['s2f'][i] != None):
-                            param = 'ts'
+                        # A te value which should be ts!
+                        if param == 'te' and not hasattr(spin, 'te'):
+                            if (data['s2s'] and data['s2s'][i] != None) or (data['s2f'] and data['s2f'][i] != None):
+                                # Change the parameter name of te to ts.
+                                param = 'ts'
 
-                    # Parameter scaling.
-                    if value != None:
-                        if param == 'te':
-                            value = value * te_scale
-                        elif param == 'tf':
-                            value = value * tf_scale
-                        elif param == 'ts':
-                            value = value * ts_scale
-                        elif param == 'rex':
-                            value = value * rex_scale
+                                # Set the te and te_err values to None.
+                                spin.te = None
+                                spin.te_err = None
+
+                        # Parameter scaling.
+                        if value != None:
+                            if param == 'te':
+                                value = value * te_scale
+                            elif param == 'tf':
+                                value = value * tf_scale
+                            elif param == 'ts':
+                                value = value * ts_scale
+                            elif param == 'rex':
+                                value = value * rex_scale
+
+                    # No parameter value.
+                    else:
+                        value = None
 
                     # Set the parameter.
                     setattr(spin, param, value)
@@ -226,7 +237,7 @@ class Bmrb:
                     # The error.
                     mf_bmrb_key_err = mf_bmrb_key[j] + '_err'
                     error = None
-                    if data[mf_bmrb_key_err] != None:
+                    if mf_bmrb_key_err in keys and data[mf_bmrb_key_err] != None:
                         error = data[mf_bmrb_key_err][i]
 
                     # Error scaling.
