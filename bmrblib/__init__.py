@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module for interfacing with the BMRB (http://www.bmrb.wisc.edu/) by handling NMR-STAR v3.1 files."""
+"""Package for interfacing with the BMRB (http://www.bmrb.wisc.edu/) by handling NMR-STAR formatted files."""
 
 # Python module imports.
 from os import F_OK, access
@@ -31,6 +31,10 @@ from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
 from specific_fns.setup import get_specific_fn
+
+
+__all__ = []
+
 
 
 def display():

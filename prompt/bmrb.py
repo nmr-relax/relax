@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2008 Edward d'Auvergne                              #
+# Copyright (C) 2003-2005,2008-2009 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from generic_fns import bmrb
+import bmrblib
 from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 
 
@@ -52,7 +52,7 @@ class BMRB:
             print text
 
         # Execute the functional code.
-        bmrb.display(format=format)
+        bmrblib.display(format=format)
 
 
     def read(self, file=None, dir=None):
@@ -88,7 +88,7 @@ class BMRB:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
-        bmrb.read(file=file, directory=dir)
+        bmrblib.read(file=file, directory=dir)
 
 
     def write(self, file=None, dir='pipe_name', force=False):
@@ -134,4 +134,4 @@ class BMRB:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        bmrb.write(file=file, directory=dir, force=force)
+        bmrblib.write(file=file, directory=dir, force=force)
