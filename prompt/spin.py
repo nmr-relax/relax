@@ -287,8 +287,8 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spin.element("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.element("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", element=" + repr(element)
             text = text + ", force=" + repr(force) + ")"

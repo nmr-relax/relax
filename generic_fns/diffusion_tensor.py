@@ -26,18 +26,239 @@
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin
-from numpy import cross, dot, float64, transpose, zeros
-from numpy.linalg import norm, svd
-from operator import itemgetter
+from numpy.linalg import eig, norm
+from numpy import cross, float64, int32, ones, transpose, zeros
 from re import search
+import string
 
 # relax module imports.
 from angles import wrap_angles
 from data.diff_tensor import DiffTensorData
 from generic_fns import pipes
 from generic_fns.angles import fold_spherical_angles
+from generic_fns.mol_res_spin import get_molecule_names, spin_loop
+from maths_fns.coord_transform import cartesian_to_spherical
 from maths_fns.rotation_matrix import R_to_euler_zyz
+from physical_constants import element_from_isotope, number_from_isotope
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+
+
+def bmrb_read(star):
+    """Read the relaxation data from the NMR-STAR dictionary object.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    """
+
+    # Get the diffusion tensor data.
+    found = 0
+    for data in star.tensor.loop():
+        # No data.
+        if data == None:
+            continue
+
+        # Not a diffusion tensor.
+        if data['tensor_type'] != 'diffusion':
+            continue
+
+        # Found.
+        found = found + 1
+
+    # No diffusion tensor data.
+    if not found:
+        return
+
+    # Check.
+    if found != 1:
+        raise RelaxError("More than one diffusion tensor found.")
+
+    # Rebuild the tensor.
+    tensor = zeros((3, 3), float64)
+    tensor[0, 0] = data['tensor_11'][0]
+    tensor[0, 1] = data['tensor_12'][0]
+    tensor[0, 2] = data['tensor_13'][0]
+    tensor[1, 0] = data['tensor_21'][0]
+    tensor[1, 1] = data['tensor_22'][0]
+    tensor[1, 2] = data['tensor_23'][0]
+    tensor[2, 0] = data['tensor_31'][0]
+    tensor[2, 1] = data['tensor_32'][0]
+    tensor[2, 2] = data['tensor_33'][0]
+
+    # Eigenvalues.
+    Di, R, alpha, beta, gamma = tensor_eigen_system(tensor)
+
+    # X-Y eigenvalue comparison.
+    xy_match = False
+    epsilon = 1e-1
+    if abs(Di[0] - Di[1]) < epsilon:
+        xy_match = True
+
+    # Y-Z eigenvalue comparison.
+    yz_match = False
+    if abs(Di[1] - Di[2]) < epsilon:
+        yz_match = True
+
+    # Determine the tensor type.
+    if xy_match and yz_match:
+        shape = ['sphere']
+    elif xy_match:
+        shape = ['spheroid', 'prolate spheroid']
+        type = 'prolate'
+        Dpar = Di[2]
+        Dper = Di[0]
+    elif yz_match:
+        shape = ['spheroid', 'oblate spheroid']
+        type = 'oblate'
+        Dpar = Di[0]
+        Dper = Di[2]
+    else:
+        shape = ['ellipsoid']
+
+    # Check the shape.
+    if data['geometric_shape'] not in shape:
+        raise RelaxError("The tensor with eigenvalues %s does not match the %s geometric shape." % (Di, shape[0]))
+
+    # Add the diff_tensor object to the data pipe.
+    cdp.diff_tensor = DiffTensorData()
+
+    # Set the fixed flag.
+    cdp.diff_tensor.fixed = True
+
+    # Sphere.
+    if data['geometric_shape'] == 'sphere':
+        sphere(params=Di[0], d_scale=1.0, param_types=1)
+
+    # Spheroid.
+    elif data['geometric_shape'] in ['spheroid', 'oblate spheroid', 'prolate spheroid']:
+        # The spherical angles.
+        r, theta, phi = cartesian_to_spherical(R[:, 2])
+
+        # Set up the tensor.
+        spheroid(params=(Dpar, Dper, theta, phi), d_scale=1.0, param_types=3, spheroid_type=type)
+
+    # Ellipsoid.
+    elif data['geometric_shape'] == 'ellipsoid':
+        ellipsoid(params=(Di[0], Di[1], Di[2], alpha, beta, gamma), d_scale=1.0, param_types=3)
+
+
+def bmrb_write(star):
+    """Generate the diffusion tensor saveframes for the NMR-STAR dictionary object.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    """
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # Initialise the spin specific data lists.
+    mol_name_list = []
+    res_num_list = []
+    res_name_list = []
+    atom_name_list = []
+    isotope_list = []
+    element_list = []
+    attached_atom_name_list = []
+    attached_isotope_list = []
+    attached_element_list = []
+
+    # Relax data labels.
+    labels = []
+    for i in range(cdp.num_ri):
+        labels.append(cdp.ri_labels[i] + '_' + cdp.frq_labels[cdp.remap_table[i]])
+
+    # Store the spin specific data in lists for later use.
+    for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Check the data for None (not allowed in BMRB!).
+        if res_num == None:
+            raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
+        if res_name == None:
+            raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
+        if spin.name == None:
+            raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
+        if spin.heteronuc_type == None:
+            raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
+
+        # The molecule/residue/spin info.
+        mol_name_list.append(mol_name)
+        res_num_list.append(str(res_num))
+        res_name_list.append(str(res_name))
+        atom_name_list.append(str(spin.name))
+
+        # The attached atom info.
+        if hasattr(spin, 'attached_atom'):
+            attached_atom_name_list.append(str(spin.attached_atom))
+        else:
+            attached_atom_name_list.append(str(spin.attached_proton))
+        attached_element_list.append(element_from_isotope(spin.proton_type))
+        attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
+
+        # Other info.
+        isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
+        element_list.append(spin.element)
+
+    # Convert the molecule names into the entity IDs.
+    entity_ids = zeros(len(mol_name_list), int32)
+    mol_names = get_molecule_names()
+    for i in range(len(mol_name_list)):
+        for j in range(len(mol_names)):
+            if mol_name_list[i] == mol_names[j]:
+                entity_ids[i] = j+1
+
+    # The tensor geometric shape.
+    geometric_shape = cdp.diff_tensor.type
+    if geometric_shape == 'spheroid':
+        geometric_shape = "%s %s" % (cdp.diff_tensor.spheroid_type, geometric_shape)
+
+    # The tensor symmetry.
+    shapes = ['sphere', 'oblate spheroid', 'prolate spheroid', 'ellipsoid']
+    sym = ['isotropic', 'axial symmetry', 'axial symmetry', 'rhombic']
+    for i in range(len(shapes)):
+        if geometric_shape == shapes[i]:
+            tensor_symmetry = sym[i]
+
+    # Axial symmetry axis.
+    theta = None
+    phi = None
+    if tensor_symmetry == 'axial symmetry':
+        theta = cdp.diff_tensor.theta
+        phi = cdp.diff_tensor.phi
+
+    # Euler angles.
+    alpha, beta, gamma = None, None, None
+    if tensor_symmetry == 'rhombic':
+        alpha = cdp.diff_tensor.alpha
+        beta =  cdp.diff_tensor.beta
+        gamma = cdp.diff_tensor.gamma
+
+    # The tensor eigenvalues.
+    Diso = cdp.diff_tensor.Diso
+    Da = None
+    Dr = None
+    if tensor_symmetry == 'axial symmetry':
+        Da = cdp.diff_tensor.Da
+    elif tensor_symmetry == 'rhombic':
+        Dr = cdp.diff_tensor.Dr
+
+    # The full tensor.
+    tensor_11 = cdp.diff_tensor.tensor[0, 0]
+    tensor_12 = cdp.diff_tensor.tensor[0, 1]
+    tensor_13 = cdp.diff_tensor.tensor[0, 2]
+    tensor_21 = cdp.diff_tensor.tensor[1, 0]
+    tensor_22 = cdp.diff_tensor.tensor[1, 1]
+    tensor_23 = cdp.diff_tensor.tensor[1, 2]
+    tensor_31 = cdp.diff_tensor.tensor[2, 0]
+    tensor_32 = cdp.diff_tensor.tensor[2, 1]
+    tensor_33 = cdp.diff_tensor.tensor[2, 2]
+
+
+    # Add the diffusion tensor.
+    star.tensor.add(tensor_type='diffusion', euler_type='zyz', geometric_shape=geometric_shape, tensor_symmetry=tensor_symmetry, matrix_val_units='s-1', angle_units='rad', iso_val_formula='Diso = 1/(6.tm)', aniso_val_formula='Da = Dpar - Dper', rhomb_val_formula='Dr = (Dy - Dx)/2Da', entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, axial_sym_axis_polar_angle=theta, axial_sym_axis_azimuthal_angle=phi, iso_val=Diso, aniso_val=Da, rhombic_val=Dr, euler_alpha=alpha, euler_beta=beta, euler_gamma=gamma, tensor_11=tensor_11, tensor_12=tensor_12, tensor_13=tensor_13, tensor_21=tensor_21, tensor_22=tensor_22, tensor_23=tensor_23, tensor_31=tensor_31, tensor_32=tensor_32, tensor_33=tensor_33)
+
 
 
 def copy(pipe_from=None, pipe_to=None):
@@ -371,51 +592,10 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
         tensor = tensor * d_scale
 
         # Eigenvalues.
-        R, Di, A = svd(tensor)
-        D_diag = zeros((3, 3), float64)
-        for i in range(3):
-            D_diag[i, i] = Di[i]
-
-        # Reordering structure.
-        tup_struct = []
-        for i in range(3):
-            tup_struct.append((i, Di[i]))
-
-        # The indices.
-        reorder_data = sorted(tup_struct, key=itemgetter(1))
-        reorder = zeros(3, int)
-        Di_sort = zeros(3, float)
-        for i in range(3):
-            reorder[i], Di_sort[i] = reorder_data[i]
-
-        # Reorder columns.
-        R_new = zeros((3, 3), float64)
-        for i in range(3):
-            R_new[:, i] = R[:, reorder[i]]
-
-        # Switch from the left handed to right handed universes (if needed).
-        if norm(cross(R_new[:, 0], R_new[:, 1]) - R_new[:, 2]) > 1e-7:
-            R_new[:, 2] = -R_new[:, 2]
-
-        # Reverse the rotation.
-        R_new = transpose(R_new)
-
-        # Euler angles (reverse rotation in the rotated axis system).
-        gamma, beta, alpha = R_to_euler_zyz(R_new)
-
-        # Collapse the pi axis rotation symmetries.
-        if alpha >= pi:
-            alpha = alpha - pi
-        if gamma >= pi:
-            alpha = pi - alpha
-            beta = pi - beta
-            gamma = gamma - pi
-        if beta >= pi:
-            alpha = pi - alpha
-            beta = beta - pi
+        Di, R, alpha, beta, gamma = tensor_eigen_system(tensor)
 
         # Set the parameters.
-        set(value=[Di_sort[0], Di_sort[1], Di_sort[2]], param=['Dx', 'Dy', 'Dz'])
+        set(value=[Di[0], Di[1], Di[2]], param=['Dx', 'Dy', 'Dz'])
 
         # Change the angular units.
         angle_units = 'rad'
@@ -526,7 +706,7 @@ def fold_angles(sim_index=None):
         if sim_index == None:
             # Fold phi inside 0 and pi.
             if cdp.diff_tensor.phi >= pi:
-                theta, phi = fold_spherical_angles(cdp.diff_tensor.theta, cdp.diff_tensor.theta)
+                theta, phi = fold_spherical_angles(cdp.diff_tensor.theta, cdp.diff_tensor.phi)
                 cdp.diff_tensor.theta = theta
                 cdp.diff_tensor.phi = phi
 
@@ -1563,6 +1743,51 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
 
     # Set the orientational parameters.
     set(value=[theta, phi], param=['theta', 'phi'])
+
+
+def tensor_eigen_system(tensor):
+    """Determine the eigenvalues and vectors for the tensor, sorting the entries.
+
+    @return:    The eigenvalues, rotation matrix, and the Euler angles in zyz notation.
+    @rtype:     3D rank-1 array, 3D rank-2 array, float, float, float
+    """
+
+    # Eigenvalues.
+    Di, R = eig(tensor)
+
+    # Reordering structure.
+    reorder = zeros(3, int)
+    Di_sort = sorted(Di)
+    Di = Di.tolist()
+    R_new = zeros((3, 3), float64)
+
+    # Reorder columns.
+    for i in range(3):
+        R_new[:, i] = R[:, Di.index(Di_sort[i])]
+
+    # Switch from the left handed to right handed universes (if needed).
+    if norm(cross(R_new[:, 0], R_new[:, 1]) - R_new[:, 2]) > 1e-7:
+        R_new[:, 2] = -R_new[:, 2]
+
+    # Reverse the rotation.
+    R_new = transpose(R_new)
+
+    # Euler angles (reverse rotation in the rotated axis system).
+    gamma, beta, alpha = R_to_euler_zyz(R_new)
+
+    # Collapse the pi axis rotation symmetries.
+    if alpha >= pi:
+        alpha = alpha - pi
+    if gamma >= pi:
+        alpha = pi - alpha
+        beta = pi - beta
+        gamma = gamma - pi
+    if beta >= pi:
+        alpha = pi - alpha
+        beta = beta - pi
+
+    # Return the values.
+    return Di_sort, R_new, alpha, beta, gamma
 
 
 def test_params(num_params):

@@ -29,9 +29,10 @@ from os import F_OK, access
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
+import dep_check
 from generic_fns import exp_info
 from info import Info_box
-from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPipeError
+from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModuleInstallError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
 from specific_fns.setup import get_specific_fn
 from version import version_full
@@ -39,6 +40,10 @@ from version import version_full
 
 def display(version='3.1'):
     """Display the results in the BMRB NMR-STAR format."""
+
+    # Test if bmrblib is installed.
+    if not dep_check.bmrblib_module:
+        raise RelaxNoModuleInstallError('BMRB library', 'bmrblib')
 
     # Test if the current data pipe exists.
     if not ds.current_pipe:
@@ -53,6 +58,10 @@ def display(version='3.1'):
 
 def read(file=None, directory=None, version='3.1'):
     """Read the contents of a BMRB NMR-STAR formatted file."""
+
+    # Test if bmrblib is installed.
+    if not dep_check.bmrblib_module:
+        raise RelaxNoModuleInstallError('BMRB library', 'bmrblib')
 
     # Test if the current data pipe exists.
     if not ds.current_pipe:
@@ -78,6 +87,10 @@ def read(file=None, directory=None, version='3.1'):
 
 def write(file=None, directory=None, version='3.1', force=False):
     """Create a BMRB NMR-STAR formatted file."""
+
+    # Test if bmrblib is installed.
+    if not dep_check.bmrblib_module:
+        raise RelaxNoModuleInstallError('BMRB library', 'bmrblib')
 
     # Test if the current data pipe exists.
     if not ds.current_pipe:

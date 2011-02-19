@@ -218,8 +218,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "relax_data.peak_intensity_type("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.peak_intensity_type("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", type=" + repr(type) + ")"
@@ -384,8 +384,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "relax_data.temp_calibration("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.temp_calibration("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", method=" + repr(method) + ")"
@@ -428,8 +428,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "relax_data.temp_control("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.temp_control("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", method=" + repr(method) + ")"
