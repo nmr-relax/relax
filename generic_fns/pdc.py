@@ -30,7 +30,7 @@ from re import search, split
 from generic_fns import pipes
 from generic_fns import value
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, name_spin, spin_loop
-from generic_fns.relax_data import pack_data
+from generic_fns.relax_data import pack_data, peak_intensity_type
 from relax_errors import RelaxError
 from relax_io import extract_data
 
@@ -166,15 +166,13 @@ def read(file=None, dir=None):
 
         # The integration method.
         elif len(line) == 4 and line[0] == 'Used' and line[1] == 'integrals:':
-            # Not implemented yet!  Needs the BMRB branch.
-            ## Peak heights.
-            #if line[2] == 'peak' and line[3] == 'intensities':
-            #    peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type='height')
+            # Peak heights.
+            if line[2] == 'peak' and line[3] == 'intensities':
+                peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type='height')
 
-            ## Peak volumes:
-            #if line[2] == 'peak' and line[3] == 'volumes':
-            #    peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type='volume')
-            pass
+            # Peak volumes:
+            if line[2] == 'area' and line[3] == 'integral':
+                peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type='volume')
 
     # Pack the data.
     pack_data(ri_label, frq_label, frq, values, errors, spin_ids=res_nums)
