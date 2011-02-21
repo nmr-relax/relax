@@ -29,6 +29,7 @@ from re import search, split
 # relax module imports.
 from generic_fns import pipes
 from generic_fns import value
+from generic_fns.exp_info import software_select
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, name_spin, spin_loop
 from generic_fns.relax_data import pack_data, peak_intensity_type
 from relax_errors import RelaxError
@@ -184,3 +185,6 @@ def read(file=None, dir=None):
 
     # Set the integration method.
     peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type=int_type)
+
+    # Set the PDC as used software.
+    software_select('Bruker PDC', version=version)
