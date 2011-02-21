@@ -68,6 +68,12 @@ SOFTWARE['Sparky'].ref = "Goddard, T. D. and Kneller, D. G., SPARKY 3, Universit
 SOFTWARE['Sparky'].url = "http://www.cgl.ucsf.edu/home/sparky/"
 SOFTWARE['Sparky'].tasks = ["spectral analysis"]
 
+# Protein Dynamics Center software.
+SOFTWARE['Protein Dynamics Center'] = Software_store()
+SOFTWARE['Protein Dynamics Center'].name = "Protein Dynamics Center"
+SOFTWARE['Protein Dynamics Center'].authors = "Bruker BioSpin GmbH"
+SOFTWARE['Protein Dynamics Center'].url = "http://www.bruker-biospin.com"
+SOFTWARE['Protein Dynamics Center'].tasks = ["relaxation analysis"]
 
 
 def bmrb_write_citations(star):
