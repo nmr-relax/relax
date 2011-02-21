@@ -173,11 +173,14 @@ def read(file=None, dir=None):
         elif len(line) == 4 and line[0] == 'Used' and line[1] == 'integrals:':
             # Peak heights.
             if line[2] == 'peak' and line[3] == 'intensities':
-                peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type='height')
+                int_type = 'height'
 
             # Peak volumes:
             if line[2] == 'area' and line[3] == 'integral':
-                peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type='volume')
+                int_type = 'volume'
 
     # Pack the data.
     pack_data(ri_label, frq_label, frq, values, errors, spin_ids=res_nums)
+
+    # Set the integration method.
+    peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type=int_type)
