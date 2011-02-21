@@ -108,7 +108,12 @@ def read(file=None, dir=None):
     # Loop over the data.
     in_ri_data = False
     for line in file_data:
-        print line
+        # The PDC version.
+        if len(line) > 2 and line[0] == 'generated' and line[1] == 'by:':
+            version = line[2]
+            for i in range(len(line)-3):
+                version = version + ' ' + line[i+3]
+
         # The data type.
         if len(line) == 3 and search('T1', line[2]):
             ri_label = 'R1'
