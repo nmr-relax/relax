@@ -69,11 +69,11 @@ SOFTWARE['Sparky'].url = "http://www.cgl.ucsf.edu/home/sparky/"
 SOFTWARE['Sparky'].tasks = ["spectral analysis"]
 
 # Protein Dynamics Center software.
-SOFTWARE['Protein Dynamics Center'] = Software_store()
-SOFTWARE['Protein Dynamics Center'].name = "Protein Dynamics Center"
-SOFTWARE['Protein Dynamics Center'].authors = "Bruker BioSpin GmbH"
-SOFTWARE['Protein Dynamics Center'].url = "http://www.bruker-biospin.com"
-SOFTWARE['Protein Dynamics Center'].tasks = ["relaxation analysis"]
+SOFTWARE['PDC'] = Software_store()
+SOFTWARE['PDC'].name = "Protein Dynamics Center"
+SOFTWARE['PDC'].authors = "Bruker BioSpin GmbH"
+SOFTWARE['PDC'].url = "http://www.bruker-biospin.com"
+SOFTWARE['PDC'].tasks = ["relaxation analysis"]
 
 
 def bmrb_write_citations(star):
@@ -314,7 +314,7 @@ def software_select(name, version=None):
     """
 
     # Unknown program.
-    if name not in ['relax', 'NMRPipe', 'Sparky']:
+    if name not in ['relax', 'NMRPipe', 'Sparky', 'Bruker PDC']:
         raise RelaxError("The software '%s' is unknown.  Please use the user function for manually specifying software details instead." % name)
 
     # Set up the experimental info data container, if needed.
@@ -336,7 +336,7 @@ def software_select(name, version=None):
         versions.append(version_full())
 
     # NMRPipe.
-    if name == 'NMRPipe':
+    elif name == 'NMRPipe':
         # The info.
         cite_ids.append(['nmrpipe_ref'])
         keys.append(['Delaglio95'])
@@ -353,6 +353,12 @@ def software_select(name, version=None):
         cite_ids.append(['sparky_ref'])
         keys.append(['GoddardKneller'])
         software_keys.append('Sparky')
+        versions.append(version)
+
+    # Bruker Protein Dynamics Center.
+    elif name == 'Bruker PDC':
+        # The info.
+        software_keys.append('PDC')
         versions.append(version)
 
     # Get the info box.
