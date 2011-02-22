@@ -115,6 +115,13 @@ def read(file=None, dir=None):
             for i in range(len(line)-3):
                 version = version + ' ' + line[i+3]
 
+        # Check for bad errors.
+        if len(line) >= 5 and line[0:5] == ['Systematic', 'error', 'estimation', 'of', 'data:']:
+            # Badness.
+            if line[5:] == ['worst', 'case', 'per', 'peak', 'scenario']:
+                raise RelaxError("The errors estimation method \"worst case per peak scenario\" is not suitable for model-free analysis.  Please go back to the PDC and switch to \"average variance calculation\".")
+
+
         # The data type.
         if len(line) == 3 and search('T1', line[2]):
             ri_label = 'R1'
