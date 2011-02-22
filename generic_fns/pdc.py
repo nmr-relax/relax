@@ -106,6 +106,7 @@ def read(file=None, dir=None):
     values = []
     errors = []
     res_nums = []
+    int_type = None
 
     # Loop over the data.
     in_ri_data = False
@@ -137,7 +138,7 @@ def read(file=None, dir=None):
                 ri_label = 'R1'
             elif search('T2', row[1]):
                 ri_label = 'R2'
-            elif row[3] == 'NOE':
+            elif search('NOE', row[1]):
                 ri_label = 'NOE'
 
         # Get the frequency.
