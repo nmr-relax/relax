@@ -110,7 +110,6 @@ for line in lines:
         continue
 
     # The values.
-    print `row`
     data[index][2] = float(row[3])
     data[index][3] = float(row[4])
     data[index][4] = float(row[5])
