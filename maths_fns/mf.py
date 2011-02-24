@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 # Copyright (C) 2010 Pavel Kaderavek                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -25,6 +25,7 @@
 # Python module imports.
 from math import pi
 from numpy import dot, float64, ones, sum, transpose, zeros
+from types import ListType
 
 # relax module imports.
 from relax_errors import RelaxError
@@ -254,7 +255,8 @@ class Mf:
             # Total number of ri.
             self.total_num_ri = self.total_num_ri + num_ri[i]
 
-            self.data.append([])
+            # Append a list-like object for the spin specific data.
+            self.data.append(Spin_object())
 
             # The ratio of gyromagnetic ratios.
             g_ratio = gh[i] / gx[i]
@@ -3021,6 +3023,11 @@ class Mf:
         return 1
 
 
+
 class Data:
-    def __init__(self):
-        """Empty container for storing data."""
+    """Empty container for storing data."""
+
+
+
+class Spin_object(ListType):
+    """A special list-like object for the spin specific data structure."""
