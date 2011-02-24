@@ -163,8 +163,8 @@ def read(file=None, dir=None):
             if ri_label != 'NOE':
                 rx, rx_err = convert_relax_data(row[3:])
             else:
-                rx = float(row[-2])
-                rx_err = float(row[-1])
+                rx = float(row[-3])
+                rx_err = float(row[-2])
 
             # Append the data.
             values.append(rx)
