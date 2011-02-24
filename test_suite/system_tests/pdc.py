@@ -107,8 +107,8 @@ class Pdc(SystemTestCase):
         i = 0
         for spin in spin_loop():
             # Check the R1 value and error.
-            self.assertAlmostEqual(spin.relax_data[0], r1[i])
-            self.assertAlmostEqual(spin.relax_error[0], r1_err[i])
+            self.assertAlmostEqual(spin.relax_data[0], r1[i], 5)
+            self.assertAlmostEqual(spin.relax_error[0], r1_err[i], 5)
 
             # Increment the data index.
             i += 1
