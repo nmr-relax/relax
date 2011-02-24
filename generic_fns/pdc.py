@@ -161,7 +161,9 @@ def read(file=None, dir=None):
 
             # Get the relaxation data.
             if ri_label != 'NOE':
-                rx, rx_err = convert_relax_data(row[3:])
+                #rx, rx_err = convert_relax_data(row[3:])
+                rx = float(row[-2])
+                rx_err = float(row[-1])
             else:
                 rx = float(row[-3])
                 rx_err = float(row[-2])
