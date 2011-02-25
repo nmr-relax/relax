@@ -90,14 +90,7 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
         scaling_matrix[i] = PyFloat_AsDouble(element);
     }
 
-    /* Reference counting */
-    Py_XDECREF(values);
-    Py_XDECREF(sd);
-    Py_XDECREF(relax_times);
-    Py_XDECREF(scaling_matrix);
-
     /* Return nothing */
-    Py_INCREF(Py_None);
     return Py_None;
 }
 
@@ -132,9 +125,6 @@ func(PyObject *self, PyObject *args) {
     /* Back calculated the peak intensities */
     exponential(params, relax_times, back_calc, num_times);
 
-    /* Reference counting */
-    Py_DECREF(params_arg);
-
     /* Calculate and return the chi-squared value */
     return Py_BuildValue("f", chi2(values,sd,back_calc,num_times));
 }
@@ -159,7 +149,6 @@ dfunc(PyObject *self, PyObject *args) {
     /* Back calculated the peak intensities */
     exponential(params, relax_times, back_calc, num_times);
 
-    Py_DECREF(params);
     return NULL;
 }
 
