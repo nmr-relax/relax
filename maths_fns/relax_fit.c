@@ -21,9 +21,6 @@
 /* This include must come first */
 #include <Python.h>
 
-/* The numpy array object header file, must come second */
-#include <numpy/arrayobject.h>
-
 /* The header for all functions which will be called */
 #include "relax_fit.h"
 
@@ -33,14 +30,15 @@
 
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
-    /* Python declarations */
+    /* Python object declarations */
     PyObject *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
-    extern PyArrayObject *numpy_values, *numpy_sd, *numpy_relax_times, *numpy_scaling_matrix;
+    PyObject *element;
 
     /* Normal declarations */
-    extern double *values, *sd, *relax_times, *scaling_matrix;
+    extern double *params, *values, *sd, *relax_times, *scaling_matrix;
     extern double relax_time_array;
     extern int num_params, num_times;
+    int i;
 
     /* The keyword list */
     static char *keyword_list[] = {"num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
@@ -49,22 +47,54 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
         return NULL;
 
-    Py_XDECREF(numpy_values);
-    Py_XDECREF(numpy_sd);
-    Py_XDECREF(numpy_relax_times);
-    Py_XDECREF(numpy_scaling_matrix);
+    /* Dynamic C arrays */
+    params = (double *) malloc(sizeof(double)*num_params);
+    values = (double *) malloc(sizeof(double)*num_times);
+    sd = (double *) malloc(sizeof(double)*num_times);
+    relax_times = (double *) malloc(sizeof(double)*num_times);
+    scaling_matrix = (double *) malloc(sizeof(double)*num_params);
 
-    /* Make the numpy arrays contiguous */
-    numpy_values = (PyArrayObject *) PyArray_ContiguousFromObject(values_arg, PyArray_DOUBLE, 1, 1);
-    numpy_sd = (PyArrayObject *) PyArray_ContiguousFromObject(sd_arg, PyArray_DOUBLE, 1, 1);
-    numpy_relax_times = (PyArrayObject *) PyArray_ContiguousFromObject(relax_times_arg, PyArray_DOUBLE, 1, 1);
-    numpy_scaling_matrix = (PyArrayObject *) PyArray_ContiguousFromObject(scaling_matrix_arg, PyArray_DOUBLE, 2, 2);
+    /* Place the value elements into the C array */
+    for (i = 0; i < num_times; i++) {
+        /* Get the element */
+        element = PySequence_GetItem(values_arg, i);
 
-    /* Pointers to the numpy arrays */
-    values = (double *) numpy_values->data;
-    sd = (double *) numpy_sd->data;
-    relax_times = (double *) numpy_relax_times->data;
-    scaling_matrix = (double *) numpy_scaling_matrix->data;
+        /* Convert to a C double */
+        values[i] = PyFloat_AsDouble(element);
+    }
+
+    /* Place the sd elements into the C array */
+    for (i = 0; i < num_times; i++) {
+        /* Get the element */
+        element = PySequence_GetItem(sd_arg, i);
+
+        /* Convert to a C double */
+        sd[i] = PyFloat_AsDouble(element);
+    }
+
+    /* Place the relax_times elements into the C array */
+    for (i = 0; i < num_times; i++) {
+        /* Get the element */
+        element = PySequence_GetItem(relax_times_arg, i);
+
+        /* Convert to a C double */
+        relax_times[i] = PyFloat_AsDouble(element);
+    }
+
+    /* Place the scaling matrix elements into the C array */
+    for (i = 0; i < num_params; i++) {
+        /* Get the element */
+        element = PySequence_GetItem(values_arg, i);
+
+        /* Convert to a C double */
+        scaling_matrix[i] = PyFloat_AsDouble(element);
+    }
+
+    /* Reference counting */
+    Py_XDECREF(values);
+    Py_XDECREF(sd);
+    Py_XDECREF(relax_times);
+    Py_XDECREF(scaling_matrix);
 
     /* Return nothing */
     Py_INCREF(Py_None);
@@ -81,25 +111,30 @@ func(PyObject *self, PyObject *args) {
      */
 
     /* Declarations */
-    PyObject *arg1;
-    PyArrayObject *numpy_params;
-    double* params;
-
+    PyObject *params_arg;
+    PyObject *element;
+    extern double *params;
+    int i;
 
     /* Parse the function arguments, the only argument should be the parameter array */
-    if (!PyArg_ParseTuple(args, "O", &arg1))
+    if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
 
-    /* Convert the numpy array to be contiguous */
-    numpy_params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
+    /* Place the parameter array elements into the C array */
+    for (i = 0; i < num_params; i++) {
+        /* Get the element */
+        element = PySequence_GetItem(params_arg, i);
 
-    /* Pointers to the numpy arrays */
-    params = (double *) numpy_params->data;
+        /* Convert to a C double */
+        params[i] = PyFloat_AsDouble(element);
+    }
 
     /* Back calculated the peak intensities */
     exponential(params, relax_times, back_calc, num_times);
 
-    Py_DECREF(numpy_params);
+    /* Reference counting */
+    Py_DECREF(params_arg);
+
     /* Calculate and return the chi-squared value */
     return Py_BuildValue("f", chi2(values,sd,back_calc,num_times));
 }
@@ -110,42 +145,22 @@ dfunc(PyObject *self, PyObject *args) {
     /* Function for calculating and returning the chi-squared gradient. */
 
     /* Declarations */
-    PyObject *arg1;
-    PyArrayObject *numpy_params;
+    PyObject *params_arg;
 
     /* Temp Declarations */
-    PyArrayObject *aaa_numpy;
     double aaa[MAXPARAMS] = {1.0, 2.0};
-    double *aaa_pointer;
     int i;
     double* params;
 
     /* Parse the function arguments, the only argument should be the parameter array */
-    if (!PyArg_ParseTuple(args, "O", &arg1))
+    if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
-
-    /* Convert the numpy array to be contiguous */
-    numpy_params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
-
-    /* Pointers to the numpy arrays */
-    params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
     exponential(params, relax_times, back_calc, num_times);
 
-
-    /* Test code (convert aaa to a numpy array */
-    /* aaa_numpy = (PyArrayObject *) PyArray_FromDimsAndData(1, num_params, PyArray_DOUBLE, aaa_pointer); */
-    /*aaa_numpy = (PyArrayObject *) PyArray_FromDims(1, &num_params, PyArray_DOUBLE);
-    aaa_pointer = (double *) aaa_numpy->data;*/
-
-    /* Fill the numpy array */
-    /*for (i = 0; i < 2; i++)
-        aaa_pointer[i] = aaa[i];*/
-
-    Py_DECREF(numpy_params);
+    Py_DECREF(params);
     return NULL;
-    return PyArray_Return(aaa_numpy);
 }
 
 static PyObject *
@@ -192,7 +207,4 @@ PyMODINIT_FUNC
 initrelax_fit(void)
 {
     (void) Py_InitModule("relax_fit", relax_fit_methods);
-
-    /* Import the numpy array module.  This is essential. */
-    import_array();
 }
