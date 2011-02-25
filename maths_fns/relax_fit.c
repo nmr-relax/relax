@@ -175,12 +175,10 @@ back_calc_I(PyObject *self, PyObject *args) {
     /* Function for returning as a numpy array the back calculated peak intensities */
 
     /* Declarations */
+    PyObject *back_calc_py = PyList_New(num_times);
     extern double back_calc[];
     extern int num_times;
     int i;
-
-    PyObject *back_calc_py = PyList_New(num_times);
-    assert(PyList_Check(back_calc_py));
 
     /* Copy the values out of the C array into the Python array */
     for (i = 0; i < num_times; i++)
