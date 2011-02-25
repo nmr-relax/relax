@@ -40,7 +40,7 @@ from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
 
-class Bruker_import():
+class Bruker_import:
     def __init__(self, dir=None, exp_type=None, file=None, UI='prompt', output_file=None):
         """Function to import Bruker Protein Dynamic Center (PDC) files.
 
