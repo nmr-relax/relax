@@ -436,10 +436,9 @@ class Mf:
             data[j].create_ri_comps(data[j], params)
 
             # Calculate the R1, R2, and sigma_noe values.
-            data[j].ri_prime = data[j].create_ri_prime(data[j])
+            data.ri = data.ri + data[j].create_ri_prime(data[j])
 
         # Calculate the NOE values.
-        data.ri = data.ri_prime * 1.0
         for m in xrange(data.num_ri):
             if data.create_ri[m]:
                 data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
@@ -492,10 +491,9 @@ class Mf:
             data[j].create_ri_comps(data[j], params)
 
             # Calculate the R1, R2, and sigma_noe values.
-            data[j].ri_prime = data[j].create_ri_prime(data[j])
+            data.ri = data.ri + data[j].create_ri_prime(data[j])
 
         # Calculate the NOE values.
-        data.ri = data.ri_prime * 1.0
         for m in xrange(data.num_ri):
             if data.create_ri[m]:
                 data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
@@ -558,10 +556,9 @@ class Mf:
                 data[j].create_ri_comps(data[j], data[j].param_values)
 
                 # Calculate the R1, R2, and sigma_noe values.
-                data[j].ri_prime = data[j].create_ri_prime(data[j])
+                data.ri = data.ri + data[j].create_ri_prime(data[j])
 
             # Calculate the NOE values.
-            data.ri = data.ri_prime * 1.0
             for m in xrange(data.num_ri):
                 if data.create_ri[m]:
                     data.create_ri[m](data, m, data.remap_table[m], data.get_r1, data.param_values)
@@ -627,10 +624,10 @@ class Mf:
                 data[j].create_ri_comps(data[j], params)
 
                 # Calculate the R1, R2, and sigma_noe values.
-                data[j].ri_prime = data[j].create_ri_prime(data[j])
+                data.ri = data.ri + data[j].create_ri_prime(data[j])
+
 
             # Calculate the NOE values.
-            data.ri = data.ri_prime * 1.0
             for m in xrange(data.num_ri):
                 if data.create_ri[m]:
                     data.create_ri[m](data, m, data.remap_table[m], data.get_r1, params)
@@ -684,10 +681,9 @@ class Mf:
                 data[k].create_dri_comps(data[k], params)
 
                 # Calculate the R1, R2, and sigma_noe gradients.
-                data[k].dri_prime[j] = data[k].create_dri_prime[j](data[k])
+                data.dri[j] = data.dri[j] + data[k].create_dri_prime[j](data[k])
 
             # Loop over the relaxation values and modify the NOE gradients.
-            data.dri[j] = data.dri_prime[j]
             for m in xrange(data.num_ri):
                 if data.create_dri[m]:
                     data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
@@ -749,10 +745,9 @@ class Mf:
                 data[k].create_dri_comps(data[k], params)
 
                 # Calculate the R1, R2, and sigma_noe gradients.
-                data[k].dri_prime[j] = data[k].create_dri_prime[j](data[k])
+                data.dri[j] = data.dri[j] + data[k].create_dri_prime[j](data[k])
 
             # Loop over the relaxation values and modify the NOE gradients.
-            data.dri[j] = data.dri_prime[j]
             for m in xrange(data.num_ri):
                 if data.create_dri[m]:
                     data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
@@ -829,10 +824,9 @@ class Mf:
                     data[k].create_dri_comps(data[k], data[k].param_values)
 
                     # Calculate the R1, R2, and sigma_noe gradients.
-                    data[k].dri_prime[j] = data[k].create_dri_prime[j](data[k])
+                    data.dri[j] = data.dri[j] + data[k].create_dri_prime[j](data[k])
 
                 # Loop over the relaxation values and modify the NOE gradients.
-                data.dri[j] = data.dri_prime[j]
                 for m in xrange(data.num_ri):
                     if data.create_dri[m]:
                         data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
@@ -912,10 +906,9 @@ class Mf:
                     data[k].create_dri_comps(data[k], params)
 
                     # Calculate the R1, R2, and sigma_noe gradients.
-                    data[k].dri_prime[j] = data[k].create_dri_prime[j](data[k])
+                    data.dri[j] = data.dri[j] + data[k].create_dri_prime[j](data[k])
 
                 # Loop over the relaxation values and modify the NOE gradients.
-                data.dri[j] = data.dri_prime[j]
                 for m in xrange(data.num_ri):
                     if data.create_dri[m]:
                         data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
@@ -973,10 +966,9 @@ class Mf:
 
                     # Calculate the R1, R2, and sigma_noe Hessians.
                     if data[m].create_d2ri_prime[j][k]:
-                        data[m].d2ri_prime[j, k] = data[m].create_d2ri_prime[j][k](data[m])
+                        data.d2ri[j, k] = data.d2ri[j, k] + data[m].create_d2ri_prime[j][k](data[m])
 
                 # Loop over the relaxation values and modify the NOE Hessians.
-                data.d2ri[j, k] = data.d2ri_prime[j, k]
                 for m in xrange(data.num_ri):
                     if data.create_d2ri[m]:
                         data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
@@ -1028,10 +1020,9 @@ class Mf:
 
                     # Calculate the R1, R2, and sigma_noe Hessians.
                     if data[m].create_d2ri_prime[j][k]:
-                        data[m].d2ri_prime[j, k] = data[m].create_d2ri_prime[j][k](data[m])
+                        data.d2ri[j, k] = data.d2ri[j, k] + data[m].create_d2ri_prime[j][k](data[m])
 
                 # Loop over the relaxation values and modify the NOE Hessians.
-                data.d2ri[j, k] = data.d2ri_prime[j, k]
                 for m in xrange(data.num_ri):
                     if data.create_d2ri[m]:
                         data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
@@ -1101,10 +1092,9 @@ class Mf:
 
                         # Calculate the R1, R2, and sigma_noe Hessians.
                         if data[m].create_d2ri_prime[j][k]:
-                            data[m].d2ri_prime[j, k] = data[m].create_d2ri_prime[j][k](data[m])
+                            data.d2ri[j, k] = data.d2ri[j, k] + data[m].create_d2ri_prime[j][k](data[m])
 
                     # Loop over the relaxation values and modify the NOE Hessians.
-                    data.d2ri[j, k] = data.d2ri_prime[j, k]
                     for m in xrange(data.num_ri):
                         if data.create_d2ri[m]:
                             data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
@@ -1177,10 +1167,9 @@ class Mf:
 
                         # Calculate the R1, R2, and sigma_noe Hessians.
                         if data[m].create_d2ri_prime[j][k]:
-                            data[m].d2ri_prime[j, k] = data[m].create_d2ri_prime[j][k](data[m])
+                            data.d2ri[j, k] = data.d2ri[j, k] + data[m].create_d2ri_prime[j][k](data[m])
 
                     # Loop over the relaxation values and modify the NOE Hessians.
-                    data.d2ri[j, k] = data.d2ri_prime[j, k]
                     for m in xrange(data.num_ri):
                         if data.create_d2ri[m]:
                             data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
