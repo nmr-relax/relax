@@ -1120,7 +1120,7 @@ class Mf_minimise:
                 raise RelaxNoValueError("bond length")
 
             # Skip spins where there is no data or errors.
-            if not hasattr(spin, 'relax_data') or not hasattr(spin, 'relax_error'):
+            if not hasattr(spin, 'ri_data') or not hasattr(spin, 'relax_error'):
                 continue
 
             # Make sure that the errors are strictly positive numbers.
@@ -1133,13 +1133,24 @@ class Mf_minimise:
             # Create the initial parameter vector.
             param_vector = self._assemble_param_vector(spin=spin, sim_index=sim_index)
 
+            # The relaxation data optimisation structures.
+            data = self._relax_data_opt_structs(spin, sim_index=sim_index)
+
+            # Append the data.
+            ri_data = [array(data[0])]
+            ri_data_err = [array(data[1])]
+            num_frq = [data[2]]
+            num_ri = [data[3]]
+            ri_labels = [data[4]]
+            frq = [data[5]]
+            remap_table = [data[6]]
+            noe_r1_table = [data[7]]
+
             # Repackage the spin.
             if sim_index == None:
-                relax_data = [spin.relax_data]
                 r = [spin.r]
                 csa = [spin.csa]
             else:
-                relax_data = [spin.relax_sim_data[sim_index]]
                 r = [spin.r_sim[sim_index]]
                 csa = [spin.csa_sim[sim_index]]
 
@@ -1158,10 +1169,6 @@ class Mf_minimise:
 
             # Repackage the parameter values as a local model (ignore if the diffusion tensor is not fixed).
             param_values = [self._assemble_param_vector(model_type='mf')]
-
-            # Convert to Numeric arrays.
-            relax_data = [array(spin.relax_data, float64)]
-            relax_error = [array(spin.relax_error, float64)]
 
             # Package the diffusion tensor parameters.
             if model_type == 'local_tm':
@@ -1184,7 +1191,7 @@ class Mf_minimise:
                     diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.Dr, cdp.diff_tensor.alpha, cdp.diff_tensor.beta, cdp.diff_tensor.gamma]
 
             # Initialise the model-free function.
-            mf = Mf(init_params=param_vector, model_type='mf', diff_type=diff_type, diff_params=diff_params, num_spins=1, equations=[spin.equation], param_types=[spin.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[spin.num_frq], frq=[spin.frq], num_ri=[spin.num_ri], remap_table=[spin.remap_table], noe_r1_table=[spin.noe_r1_table], ri_labels=[spin.ri_labels], gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
+            mf = Mf(init_params=param_vector, model_type='mf', diff_type=diff_type, diff_params=diff_params, num_spins=1, equations=[spin.equation], param_types=[spin.params], param_values=param_values, relax_data=ri_data, errors=ri_data_err, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
 
             # Chi-squared calculation.
             try:
