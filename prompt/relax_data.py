@@ -341,15 +341,13 @@ class Relax_data(User_fn_class):
         relax_data.read(ri_id=ri_id, ri_type=ri_type, frq=frq, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
-    def temp_calibration(self, ri_label=None, frq_label=None, method=None):
+    def temp_calibration(self, ri_id=None, method=None):
         """Specify the temperature calibration method used.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
         method:  The calibration method.
 
@@ -370,18 +368,16 @@ class Relax_data(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.temp_calibration("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label)
+            text = text + "ri_id=" + repr(ri_id)
             text = text + ", method=" + repr(method) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation label')
         arg_check.is_str(method, 'temperature calibration method')
 
         # Execute the functional code.
-        relax_data.temp_calibration(ri_label=ri_label, frq_label=frq_label, method=method)
+        relax_data.temp_calibration(ri_id=ri_id, method=method)
 
 
     def temp_control(self, ri_label=None, frq_label=None, method=None):

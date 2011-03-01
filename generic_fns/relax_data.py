@@ -779,14 +779,12 @@ def return_value(spin, data_type):
     return spin.ri_data[data_type], spin.ri_data_err[data_type]
 
 
-def temp_calibration(ri_label=None, frq_label=None, method=None):
+def temp_calibration(ri_id=None, method=None):
     """Set the temperature calibration method.
 
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    @param method:      The temperature calibration method.
+    @keyword ri_id:     The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_id:        str
+    @keyword method:    The temperature calibration method.
     @type method:       str
     """
 
@@ -797,10 +795,9 @@ def temp_calibration(ri_label=None, frq_label=None, method=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-    if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError(ri_label, frq_label)
-
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
 
     # Check the values, and warn if not in the list.
     valid = ['methanol', 'monoethylene glycol', 'no calibration applied']
@@ -812,7 +809,7 @@ def temp_calibration(ri_label=None, frq_label=None, method=None):
         cdp.exp_info = ExpInfo()
 
     # Store the method.
-    cdp.exp_info.temp_calibration_setup(ri_label, frq_label, method)
+    cdp.exp_info.temp_calibration_setup(ri_id, method)
 
 
 
