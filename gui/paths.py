@@ -60,6 +60,7 @@ class I16x16:
         self.residue =              path + 'residue.png'
         self.sequence =             path + 'sequence.png'
         self.spin =                 path + 'spin.png'
+        self.value =                path + 'value.png'
 
         # Oxygen icons.
         path = OXY_ICON_PATH + '16x16' + sep
@@ -115,6 +116,7 @@ class I22x22:
         self.residue =              path + 'residue.png'
         self.sequence =             path + 'sequence.png'
         self.spin =                 path + 'spin.png'
+        self.value =                path + 'value.png'
 
 
 
@@ -160,6 +162,7 @@ class I48x48:
         self.pipe =                 path + 'pipe.png'
         self.relax_data =           path + 'fid.png'
         self.sequence =             path + 'sequence.png'
+        self.value =                path + 'value.png'
 
 
 # Set up all icon classes.
