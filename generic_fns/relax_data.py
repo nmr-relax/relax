@@ -44,15 +44,18 @@ from relax_warnings import RelaxWarning
 import specific_fns
 
 
-def back_calc(ri_label=None, frq_label=None, frq=None):
+def back_calc(ri_id=None, ri_type=None, frq=None):
     """Back calculate the relaxation data.
 
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    @param frq:         The spectrometer proton frequency in Hz.
-    @type frq:          float
+    If no relaxation data currently exists, then the ri_id, ri_type, and frq args are required.
+
+
+    @keyword ri_id:     The relaxation data ID string.  If not given, all relaxation data will be back calculated.
+    @type ri_id:        None or str
+    @keyword ri_type:   The relaxation data type.  This should be one of 'R1', 'R2', or 'NOE'.
+    @type ri_type:      None or str
+    @keyword frq:       The spectrometer proton frequency in Hz.
+    @type frq:          None or float
     """
 
     # Test if the current pipe exists.
@@ -62,29 +65,19 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-    if test_labels(ri_label, frq_label):
-        raise RelaxRiError(ri_label, frq_label)
+    # Initialise the global data for the current pipe if necessary.
+    if not hasattr(cdp, 'frq'):
+        cdp.frq = {}
+    if not hasattr(cdp, 'ri_type'):
+        cdp.ri_type = {}
+    if not hasattr(cdp, 'ri_ids'):
+        cdp.ri_ids = []
 
-
-    # Global (non-residue specific) data.
-    #####################################
-
-    # Global data flag.
-    global_flag = 1
-
-    # Initialise the global data if necessary.
-    data_init(cdp)
-
-    # Update the global data.
-    update_data_structures_pipe(ri_label, frq_label, frq)
-
-
-    # Residue specific data.
-    ########################
-
-    # Global data flag.
-    global_flag = 0
+    # Update the global data if needed.
+    if ri_id and ri_id not in cdp.ri_ids:
+        cdp.ri_ids.append(ri_id)
+        cdp.ri_type[ri_id] = ri_type
+        cdp.frq[ri_id] = frq
 
     # Specific Ri back-calculate function setup.
     back_calculate = specific_fns.setup.get_specific_fn('back_calc_ri', pipes.get_type())
@@ -98,18 +91,12 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
         # The global index.
         spin_index = find_index(spin_id)
 
-        # Initialise all data structures.
-        update_data_structures_spin(spin, ri_label, frq_label, frq)
+        # Initialise the spin data if necessary.
+        if not hasattr(cdp, 'ri_data_bc'):
+            spin.ri_data_bc = {}
 
         # Back-calculate the relaxation value.
-        value = back_calculate(spin_index=spin_index, ri_label=ri_label, frq_label=frq_label, frq=frq)
-
-        # No data.
-        if value == None:
-            continue
-
-        # Update all data structures.
-        update_data_structures_spin(spin, ri_label, frq_label, frq, value)
+        spin.ri_data_bc[ri_id] = back_calculate(spin_index=spin_index, ri_id=ri_id, ri_type=ri_type, frq=frq)
 
 
 def bmrb_read(star, sample_conditions=None):
