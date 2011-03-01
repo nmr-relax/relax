@@ -1927,7 +1927,7 @@ class Model_free_main:
                 return None, None, None
 
             # Missing data sets.
-            if not hasattr(spin, 'relax_data'):
+            if not hasattr(spin, 'ri_data'):
                 return None, None, None
 
             # Count the number of parameters.
@@ -1935,7 +1935,7 @@ class Model_free_main:
             k = len(param_vector)
 
             # Count the number of data points.
-            n = len(spin.relax_data)
+            n = len(spin.ri_data)
 
             # The chi2 value.
             chi2 = spin.chi2
@@ -1955,10 +1955,10 @@ class Model_free_main:
                     continue
 
                 # Skip residues with no relaxation data.
-                if not hasattr(spin, 'relax_data') or not len(spin.relax_data):
+                if not hasattr(spin, 'ri_data') or not len(spin.ri_data):
                     continue
 
-                n = n + len(spin.relax_data)
+                n = n + len(spin.ri_data)
 
                 # Local tm models.
                 if model_type == 'local_tm':
