@@ -997,27 +997,12 @@ def return_value(spin, data_type):
 
     @param spin:        The spin container.
     @type spin:         SpinContainer instance
-    @param data_type:   A tuple of the Ri label and the frequency label.
-    @type data_type:    tuple of str of length 2
+    @param data_type:   The relaxation data ID string.
+    @type data_type:    str
     """
 
-    # Unpack the data_type tuple.
-    ri_label, frq_label = data_type
-
-    # Initialise.
-    value = None
-    error = None
-
-    # Find the index corresponding to 'ri_label' and 'frq_label'.
-    index = find_ri_index(spin, ri_label, frq_label)
-
-    # Get the data.
-    if index != None:
-        value = spin.relax_data[index]
-        error = spin.relax_error[index]
-
     # Return the data.
-    return value, error
+    return spin.ri_data[data_type], spin.ri_data_err[data_type]
 
 
 def temp_calibration(ri_label=None, frq_label=None, method=None):
