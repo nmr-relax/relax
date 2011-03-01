@@ -1416,7 +1416,7 @@ class Mf_minimise:
                     continue
 
                 # Skip spins missing relaxation data or errors.
-                if not hasattr(spin, 'relax_data') or not hasattr(spin, 'relax_error'):
+                if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
                     continue
 
             # Print out.
@@ -1470,13 +1470,13 @@ class Mf_minimise:
             h_count = 0
 
             # Get the data for minimisation.
-            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self._minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
+            ri_data, ri_data_err, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self._minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
 
 
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
+            self.mf = Mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=ri_data, errors=ri_data_err, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
 
 
             # Setup the minimisation algorithm when constraints are present.
