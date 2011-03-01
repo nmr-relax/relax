@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -1208,13 +1208,7 @@ class Model_free_main:
         relax_data_names = relax_data.get_data_names()
 
         # Loop over the data structure names.
-        relax_data_init = False
         for name in data_names:
-            # Relaxation data structures.
-            if name in relax_data_names and not relax_data_init:
-                relax_data.data_init(data_cont)
-                relax_data_init = True
-
             # Data structures which are initially empty arrays.
             list_data = [ 'params' ]
             if name in list_data:
