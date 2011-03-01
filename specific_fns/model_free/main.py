@@ -2790,11 +2790,11 @@ class Model_free_main:
         spin = return_spin(data_id)
 
         # Test if the simulation data already exists.
-        if hasattr(spin, 'relax_sim_data'):
+        if hasattr(spin, 'ri_data_sim'):
             raise RelaxError("Monte Carlo simulation data already exists.")
 
         # Create the data structure.
-        spin.relax_sim_data = sim_data
+        spin.ri_data_sim = sim_data
 
 
     def sim_return_chi2(self, model_info, index=None):
