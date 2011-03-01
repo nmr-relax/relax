@@ -1506,9 +1506,9 @@ class Mf:
         r1_data.csa_jw_comps_hess = zeros(data.num_ri, float64)
 
         # Initialise the transformed relaxation values, gradients, and Hessians.
-        r1_data.ri_prime = zeros(data.num_ri, float64)
-        r1_data.dri_prime = zeros((data.num_ri, data.total_num_params), float64)
-        r1_data.d2ri_prime = zeros((data.num_ri, data.total_num_params, data.total_num_params), float64)
+        r1_data.ri = zeros(data.num_ri, float64)
+        r1_data.dri = zeros((data.num_ri, data.total_num_params), float64)
+        r1_data.d2ri = zeros((data.num_ri, data.total_num_params, data.total_num_params), float64)
 
         # Place a few function arrays in the data class for the calculation of the R1 value when an NOE data set exists but the R1 set does not.
         r1_data.create_dri_prime = data.create_dri_prime
