@@ -488,8 +488,8 @@ def delete(ri_id=None):
     # Loop over the spins.
     for spin in spin_loop():
         # Relaxation data and errors.
-        del spin.relax_data[ri_id]
-        del spin.relax_error[ri_id]
+        del spin.ri_data[ri_id]
+        del spin.ri_data_err[ri_id]
 
 
 def display(ri_id=None):
