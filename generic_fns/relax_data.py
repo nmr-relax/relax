@@ -1064,7 +1064,6 @@ def temp_control(ri_label=None, frq_label=None, method=None):
     cdp.exp_info.temp_control_setup(ri_label, frq_label, method)
 
 
-
 def update_data_structures_spin(spin=None, ri_label=None, frq_label=None, frq=None, value=None, error=None):
     """Update all relaxation data structures of the given spin container.
 
