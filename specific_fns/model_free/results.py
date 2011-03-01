@@ -35,7 +35,6 @@ import sys
 import generic_fns
 from generic_fns.mol_res_spin import generate_spin_id, return_spin, spin_loop
 from generic_fns import pipes
-from generic_fns.relax_data import add_data_to_spin
 from relax_errors import RelaxError, RelaxInvalidDataError
 
 
