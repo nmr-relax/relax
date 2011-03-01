@@ -258,6 +258,9 @@ class Mf:
             # Append a list-like object for the spin specific data.
             self.data.append(Spin_object())
 
+            # Initialise the spin specific data.
+            self.init_spin_data(self.data[i], self.diff_data)
+
             # The ratio of gyromagnetic ratios.
             g_ratio = gh[i] / gx[i]
 
@@ -327,8 +330,8 @@ class Mf:
                 else:
                     self.data[i][j].total_num_params = self.data[i][j].num_params + self.diff_data.num_params
 
-                # Initialise the residue specific data.
-                self.init_res_data(self.data[i][j], self.diff_data)
+                # Initialise the interaction specific data.
+                self.init_interaction_data(self.data[i][j], self.diff_data)
 
                 # Setup the residue specific equations.
                 if not self.setup_equations(self.data[i][j]):
@@ -1334,8 +1337,8 @@ class Mf:
             diff_data.d2dz_dgamma2 = zeros(3, float64)
 
 
-    def init_res_data(self, data, diff_data):
-        """Function for the initialisation of the residue specific data."""
+    def init_interaction_data(self, data, diff_data):
+        """Function for the initialisation of the interaction specific data."""
 
         # Correlation times.
         data.ci = zeros(diff_data.num_indices, float64)
@@ -1448,10 +1451,8 @@ class Mf:
         data.dip_jw_comps_hess = zeros(data.num_ri, float64)
         data.csa_jw_comps_hess = zeros(data.num_ri, float64)
 
-        # Transformed relaxation values, gradients, and Hessians.
-        data.ri_prime = zeros((data.num_ri), float64)
-        data.dri_prime = zeros((data.total_num_params, data.num_ri), float64)
-        data.d2ri_prime = zeros((data.total_num_params, data.total_num_params, data.num_ri), float64)
+    def init_spin_data(self, data, diff_data):
+        """Function for the initialisation of the spin specific data."""
 
         # Data structures containing the Ri values.
         data.ri = zeros(data.num_ri, float64)
