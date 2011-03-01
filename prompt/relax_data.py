@@ -380,7 +380,7 @@ class Relax_data(User_fn_class):
         relax_data.temp_calibration(ri_id=ri_id, method=method)
 
 
-    def temp_control(self, ri_id=None, frq_id=None, method=None):
+    def temp_control(self, ri_id=None, method=None):
         """Specify the temperature control method used.
 
         Keyword Arguments
