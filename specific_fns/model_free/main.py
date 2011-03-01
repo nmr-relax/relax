@@ -1183,9 +1183,9 @@ class Model_free_main:
             raise RelaxNoModelError
 
         # Loop over the relaxation data.
-        for j in xrange(len(spin.relax_data)):
+        for ri_id in cdp.ri_ids:
             # Back calculate the value.
-            value = self.back_calc_ri(spin_index=global_index, ri_label=spin.ri_labels[j], frq_label=spin.frq_labels[spin.remap_table[j]], frq=spin.frq[spin.remap_table[j]])
+            value = self.back_calc_ri(spin_index=global_index, ri_id=ri_id, frq=cdp.frq[ri_id])
 
             # Append the value.
             mc_data.append(value)
