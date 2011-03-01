@@ -184,15 +184,13 @@ class Relax_data(User_fn_class):
         relax_data.display(ri_id=ri_id)
 
 
-    def peak_intensity_type(self, ri_label=None, frq_label=None, type=None):
+    def peak_intensity_type(self, ri_id=None, type=None):
         """Specify the type of peak intensity measurement used - i.e. height or volume.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
         type:  The peak intensity type.
 
@@ -208,18 +206,16 @@ class Relax_data(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.peak_intensity_type("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label)
+            text = text + "ri_id=" + repr(ri_id)
             text = text + ", type=" + repr(type) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation label')
         arg_check.is_str(type, 'peak intensity type')
 
         # Execute the functional code.
-        relax_data.peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type=type)
+        relax_data.peak_intensity_type(ri_id=ri_id, type=type)
 
 
     def read(self, ri_id=None, ri_type=None, frq=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):

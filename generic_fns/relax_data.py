@@ -646,15 +646,13 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
         spin.ri_data_err[ri_id] = errors[i]
 
 
-def peak_intensity_type(ri_label=None, frq_label=None, type=None):
+def peak_intensity_type(ri_id=None, type=None):
     """Set the type of intensity measured for the peaks.
 
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    @param type:        The peak intensity type, one of 'height' or 'volume'.
-    @type type:         str
+    @keyword ri_id: The relaxation data ID string.
+    @type ri_id:    str
+    @keyword type:  The peak intensity type, one of 'height' or 'volume'.
+    @type type:     str
     """
 
     # Test if the current pipe exists.
@@ -664,9 +662,9 @@ def peak_intensity_type(ri_label=None, frq_label=None, type=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-    if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError(ri_label, frq_label)
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
 
     # Check the values, and warn if not in the list.
     valid = ['height', 'volume']
@@ -678,7 +676,7 @@ def peak_intensity_type(ri_label=None, frq_label=None, type=None):
         cdp.exp_info = ExpInfo()
 
     # Store the type.
-    cdp.exp_info.setup_peak_intensity_type(ri_label, frq_label, type)
+    cdp.exp_info.setup_peak_intensity_type(ri_id, type)
 
 
 def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
