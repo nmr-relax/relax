@@ -178,7 +178,6 @@ def bmrb_read(star, sample_conditions=None):
         pack_data(ri_id, ri_type, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
 
 
-
 def bmrb_write(star):
     """Generate the relaxation data saveframes for the NMR-STAR dictionary object.
 
