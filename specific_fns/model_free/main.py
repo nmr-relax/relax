@@ -1205,7 +1205,6 @@ class Model_free_main:
 
         # Get the data names.
         data_names = self.data_names()
-        relax_data_names = relax_data.get_data_names()
 
         # Loop over the data structure names.
         for name in data_names:
