@@ -118,11 +118,14 @@ def bmrb_read(star, sample_conditions=None):
             continue
 
         # Create the labels.
-        ri_label = data['data_type']
+        ri_type = data['data_type']
         frq = float(data['frq']) * 1e6
 
         # Round the label to the nearest factor of 10.
         frq_label = str(int(round(float(data['frq'])/10)*10))
+
+        # The ID string.
+        ri_id = "%s_%s" % (ri_type, frq_label)
 
         # The number of spins.
         N = bmrb.num_spins(data)
@@ -172,7 +175,7 @@ def bmrb_read(star, sample_conditions=None):
                         errors[i] = errors[i] * vals[i]**2
 
         # Pack the data.
-        pack_data(ri_label, frq_label, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
+        pack_data(ri_id, ri_type, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
 
 
 
