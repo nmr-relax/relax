@@ -338,19 +338,15 @@ def bmrb_write(star):
     star.experiment.add(name=exp_label, spectrometer_ids=spectro_ids, spectrometer_labels=spectro_labels)
 
 
-def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
+def copy(pipe_from=None, pipe_to=None, ri_id=None):
     """Copy the relaxation data from one data pipe to another.
 
-    @keyword pipe_from: The data pipe to copy the relaxation data from.  This defaults to the
-                        current data pipe.
+    @keyword pipe_from: The data pipe to copy the relaxation data from.  This defaults to the current data pipe.
     @type pipe_from:    str
-    @keyword pipe_to:   The data pipe to copy the relaxation data to.  This defaults to the current
-                        data pipe.
+    @keyword pipe_to:   The data pipe to copy the relaxation data to.  This defaults to the current data pipe.
     @type pipe_to:      str
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @param ri_id:       The relaxation data ID string.
     @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
     """
 
     # Defaults.
@@ -378,7 +374,7 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
         raise RelaxNoSequenceError
 
     # Copy all data.
-    if ri_label == None and frq_label == None:
+    if ri_id == None:
         # Get all data structure names.
         names = get_data_names()
 
@@ -399,13 +395,13 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
 
     # Copy a specific data set.
     else:
-        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_from.
-        if not test_labels(ri_label, frq_label, pipe=pipe_from):
-            raise RelaxNoRiError(ri_label, frq_label)
+        # Test if relaxation data ID string exists for pipe_from.
+        if not hasattr(dp_from, 'ri_ids') or ri_id not in dp_from.ri_ids:
+            raise RelaxNoRiError(ri_id)
 
-        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_to.
-        if not test_labels(ri_label, frq_label, pipe=pipe_to):
-            raise RelaxRiError(ri_label, frq_label)
+        # Test if relaxation data ID string exists for pipe_to.
+        if not hasattr(dp_to, 'ri_ids') or ri_id not in dp_to.ri_ids:
+            raise RelaxNoRiError(ri_id)
 
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
@@ -413,19 +409,15 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
             spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
             spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
 
-            # Find the index corresponding to 'ri_label' and 'frq_label'.
-            index = find_ri_index(spin_from, ri_label, frq_label)
+            # Initialise the spin data if necessary.
+            if not hasattr(spin_to, 'ri_data'):
+                spin_to.ri_data = {}
+            if not hasattr(spin_to, 'ri_data_err'):
+                spin_to.ri_data_err = {}
 
-            # Catch any problems.
-            if index == None:
-                continue
-
-            # Get the value and error from pipe_from.
-            value = spin_from.relax_data[index]
-            error = spin_from.relax_error[index]
-
-            # Update all data structures for pipe_to.
-            update_data_structures_spin(spin_to, ri_label, frq_label, frq, value, error)
+            # Copy the value and error from pipe_from.
+            spin_to.ri_data[ri_id] = spin_from.ri_data[ri_id]
+            spin_to.ri_data_err[ri_id] = spin_from.ri_data_err[ri_id]
 
 
 def get_data_names(global_flag=False, sim_names=False):
@@ -715,9 +707,9 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
             raise RelaxNoSpinError(spin_ids[i])
 
         # Initialise the spin data if necessary.
-        if not hasattr(cdp, 'ri_data'):
+        if not hasattr(spin, 'ri_data'):
             spin.ri_data = {}
-        if not hasattr(cdp, 'ri_data_err'):
+        if not hasattr(spin, 'ri_data_err'):
             spin.ri_data_err = {}
 
         # Update all data structures.

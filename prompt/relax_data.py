@@ -65,8 +65,8 @@ class Relax_data(User_fn_class):
         relax_data.back_calc(ri_label=ri_label, frq_label=frq_label, frq=frq)
 
 
-    def copy(self, pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
-        """Function for copying relaxation data from pipe_from to pipe_to.
+    def copy(self, pipe_from=None, pipe_to=None, ri_id=None):
+        """Copy relaxation data from one pipe to another.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -75,17 +75,15 @@ class Relax_data(User_fn_class):
 
         pipe_to:  The name of the pipe to copy the relaxation data to.
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy relaxation data from 'pipe_from' to 'pipe_to'.  If ri_label and frq_label
-        are not given then all relaxation data will be copied, otherwise only a specific data set
-        will be copied.
+        This function will copy relaxation data from 'pipe_from' to 'pipe_to'.  If ri_id is not
+        given then all relaxation data will be copied, otherwise only a specific data set will be
+        copied.
 
 
         Examples
@@ -95,14 +93,14 @@ class Relax_data(User_fn_class):
 
         relax> relax_data.copy('m1', 'm9')
         relax> relax_data.copy(pipe_from='m1', pipe_to='m9')
-        relax> relax_data.copy('m1', 'm9', None, None)
-        relax> relax_data.copy(pipe_from='m1', pipe_to='m9', ri_label=None, frq_label=None)
+        relax> relax_data.copy('m1', 'm9', None)
+        relax> relax_data.copy(pipe_from='m1', pipe_to='m9', ri_id=None)
 
-        To copy only the NOE relaxation data with the frq_label of '800' from 'm3' to 'm6', type one
-        of:
+        To copy only the NOE relaxation data with the ID string of 'NOE_800' from 'm3' to 'm6', type
+        one of:
 
-        relax> relax_data.copy('m3', 'm6', 'NOE', '800')
-        relax> relax_data.copy(pipe_from='m3', pipe_to='m6', ri_label='NOE', frq_label='800')
+        relax> relax_data.copy('m3', 'm6', 'NOE_800')
+        relax> relax_data.copy(pipe_from='m3', pipe_to='m6', ri_id='NOE_800')
         """
 
         # Function intro text.
@@ -110,22 +108,20 @@ class Relax_data(User_fn_class):
             text = self._exec_info.ps3 + "relax_data.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
-            text = text + ", ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label) + ")"
+            text = text + ", ri_id=" + repr(ri_id) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
         arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
-        arg_check.is_str(ri_label, 'relaxation label', can_be_none=True)
-        arg_check.is_str(frq_label, 'frequency label', can_be_none=True)
+        arg_check.is_str(ri_id, 'relaxation data ID string', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
             raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Execute the functional code.
-        relax_data.copy(pipe_from=pipe_from, pipe_to=pipe_to, ri_label=ri_label, frq_label=frq_label)
+        relax_data.copy(pipe_from=pipe_from, pipe_to=pipe_to, ri_id=ri_id)
 
 
     def delete(self, ri_label=None, frq_label=None):
