@@ -74,7 +74,7 @@ class Set_window(UF_window):
         """
 
         # The parameter.
-        self.param = self.combo_box(sizer, "The parameter:", [])
+        self.param = self.input_field(sizer, "The parameter:")
 
         # The value.
         self.value = self.input_field(sizer, "The value:")
@@ -87,7 +87,7 @@ class Set_window(UF_window):
         """Execute the user function."""
 
         # The parameter and value.
-        param = gui_to_str(self.param.GetClientData(self.param.GetSelection()))
+        param = gui_to_str(self.param.GetValue())
         value = gui_to_str(self.value.GetValue())
 
         # The spin ID.
@@ -109,14 +109,14 @@ class Set_window(UF_window):
         return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', pipes.get_type(), raise_error=False)
 
         # Loop over the parameters.
-        for name in data_names(set='params'):
-            # Get the description.
-            desc = return_data_desc(name)
+        #for name in data_names(set='params'):
+        #    # Get the description.
+        #    desc = return_data_desc(name)
 
-            # No description.
-            if not desc:
-                desc = name
+        #    # No description.
+        #    if not desc:
+        #        desc = name
 
-            # Append the description.
-            self.param.Append(str_to_gui(desc), name)
+        #    # Append the description.
+        #    self.param.Append(str_to_gui(desc), name)
 
