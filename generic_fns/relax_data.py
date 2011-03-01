@@ -608,9 +608,9 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
             raise RelaxNoSpinError(spin_ids[i])
 
         # Initialise the spin data if necessary.
-        if not hasattr(spin, 'ri_data'):
+        if not hasattr(spin, 'ri_data') or spin.ri_data == None:
             spin.ri_data = {}
-        if not hasattr(spin, 'ri_data_err'):
+        if not hasattr(spin, 'ri_data_err') or spin.ri_data_err == None:
             spin.ri_data_err = {}
 
         # Update all data structures.
