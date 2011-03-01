@@ -124,38 +124,34 @@ class Relax_data(User_fn_class):
         relax_data.copy(pipe_from=pipe_from, pipe_to=pipe_to, ri_id=ri_id)
 
 
-    def delete(self, ri_label=None, frq_label=None):
-        """Function for deleting the relaxation data corresponding to ri_label and frq_label.
+    def delete(self, ri_id=None):
+        """Delete the relaxation data corresponding to the relaxation data ID string.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
 
         Examples
         ~~~~~~~~
 
-        To delete the relaxation data corresponding to ri_label='NOE', frq_label='600', type:
+        To delete the relaxation data corresponding to the ID 'NOE_600', type:
 
-        relax> relax_data.delete('NOE', '600')
+        relax> relax_data.delete('NOE_600')
         """
 
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.delete("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label) + ")"
+            text = text + "ri_id=" + repr(ri_id) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation data ID string')
 
         # Execute the functional code.
-        relax_data.delete(ri_label=ri_label, frq_label=frq_label)
+        relax_data.delete(ri_id=ri_id)
 
 
     def display(self, ri_label=None, frq_label=None):

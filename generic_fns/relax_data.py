@@ -494,13 +494,11 @@ def get_data_names(global_flag=False, sim_names=False):
     return names
 
 
-def delete(ri_label=None, frq_label=None):
-    """Delete relaxation data corresponding to the Ri and frequency labels.
+def delete(ri_id=None):
+    """Delete relaxation data corresponding to the relaxation data ID.
 
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
+    @keyword ri_id: The relaxation data ID string.
+    @type ri_id:    str
     """
 
     # Test if the current pipe exists.
@@ -510,52 +508,15 @@ def delete(ri_label=None, frq_label=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if data corresponding to 'ri_label' and 'frq_label' exists.
-    if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError(ri_label, frq_label)
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
 
     # Loop over the spins.
     for spin in spin_loop():
-        # Global data flag.
-        global_flag = False
-
-        # Find the index corresponding to 'ri_label' and 'frq_label'.
-        index = find_ri_index(spin, ri_label, frq_label)
-
-        # Catch any problems.
-        if index == None:
-            continue
-
         # Relaxation data and errors.
-        spin.relax_data.pop(index)
-        spin.relax_error.pop(index)
-
-        # Update the number of relaxation data points.
-        spin.num_ri = spin.num_ri - 1
-
-        # Delete ri_label from the data types.
-        spin.ri_labels.pop(index)
-
-        # Update the remap table.
-        spin.remap_table.pop(index)
-
-        # Find if there is other data corresponding to 'frq_label'
-        frq_index = spin.frq_labels.index(frq_label)
-        if not frq_index in spin.remap_table:
-            # Update the number of frequencies.
-            spin.num_frq = spin.num_frq - 1
-
-            # Update the frequency labels.
-            spin.frq_labels.pop(frq_index)
-
-            # Update the frequency array.
-            spin.frq.pop(frq_index)
-
-        # Update the NOE R1 translation table.
-        spin.noe_r1_table.pop(index)
-        for j in xrange(spin.num_ri):
-            if spin.noe_r1_table[j] > index:
-                spin.noe_r1_table[j] = spin.noe_r1_table[j] - 1
+        del spin.relax_data[ri_id]
+        del spin.relax_error[ri_id]
 
 
 def display(ri_label=None, frq_label=None):
