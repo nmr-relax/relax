@@ -519,13 +519,11 @@ def delete(ri_id=None):
         del spin.relax_error[ri_id]
 
 
-def display(ri_label=None, frq_label=None):
-    """Display relaxation data corresponding to the Ri and frequency labels.
+def display(ri_id=None):
+    """Display relaxation data corresponding to the ID.
 
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
+    @keyword ri_id: The relaxation data ID string.
+    @type ri_id:    str
     """
 
     # Test if the current pipe exists.
@@ -535,12 +533,12 @@ def display(ri_label=None, frq_label=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if data corresponding to 'ri_label' and 'frq_label' exists.
-    if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError(ri_label, frq_label)
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
 
     # Print the data.
-    value.write_data(param=(ri_label, frq_label), file=sys.stdout, return_value=return_value)
+    value.write_data(param=ri_id, file=sys.stdout, return_value=return_value)
 
 
 def find_ri_index(data, ri_label, frq_label):

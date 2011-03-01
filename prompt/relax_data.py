@@ -125,7 +125,7 @@ class Relax_data(User_fn_class):
 
 
     def delete(self, ri_id=None):
-        """Delete the relaxation data corresponding to the relaxation data ID string.
+        """Delete the data corresponding to the relaxation data ID string.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -154,38 +154,34 @@ class Relax_data(User_fn_class):
         relax_data.delete(ri_id=ri_id)
 
 
-    def display(self, ri_label=None, frq_label=None):
-        """Function for displaying the relaxation data corresponding to ri_label and frq_label.
+    def display(self, ri_id=None):
+        """Display the data corresponding to the relaxation data ID string.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
 
         Examples
         ~~~~~~~~
 
-        To display the NOE relaxation data at 600 MHz, type:
+        To display the NOE relaxation data at 600 MHz with the ID string 'NOE_600', type:
 
-        relax> relax_data.display('NOE', '600')
+        relax> relax_data.display('NOE_600')
         """
 
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.display("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label) + ")"
+            text = text + "ri_id=" + repr(ri_id) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation data ID string')
 
         # Execute the functional code.
-        relax_data.display(ri_label=ri_label, frq_label=frq_label)
+        relax_data.display(ri_id=ri_id)
 
 
     def peak_intensity_type(self, ri_label=None, frq_label=None, type=None):
