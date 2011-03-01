@@ -421,41 +421,25 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
 
 
 def get_data_names(global_flag=False, sim_names=False):
-    """Return a list of names of data structures associated with relax_data.
+    """Return a list of names of data structures associated with relaxation data.
 
     Description
     ===========
 
     The names are as follows:
 
-    relax_data:  Relaxation data.
+    ri_data:  Relaxation data.
 
-    relax_error:  Relaxation error.
+    ri_data_err:  Relaxation data error.
 
-    num_ri:  Number of data points, eg 6.
-
-    num_frq:  Number of field strengths, eg 2.
-
-    ri_labels:  Labels corresponding to the data type, eg ['NOE', 'R1', 'R2', 'NOE', 'R1',
-    'R2'].
-
-    remap_table:  A translation table to map relaxation data points to their frequencies, eg [0,
-    0, 0, 1, 1, 1].
-
-    noe_r1_table:  A translation table to direct the NOE data points to the R1 data points.
-    This is used to speed up calculations by avoiding the recalculation of R1 values.  eg [None,
-    None, 0, None, None, 3]
-
-    frq_labels:  NMR frequency labels, eg ['600', '500']
+    ri_type:  The relaxation data type, i.e. one of ['NOE', 'R1', 'R2']
 
     frq:  NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
 
 
-    @keyword global_flag:   A flag which if True corresponds to the pipe specific data structures
-                            and if False corresponds to the spin specific data structures.
+    @keyword global_flag:   A flag which if True corresponds to the pipe specific data structures and if False corresponds to the spin specific data structures.
     @type global_flag:      bool
-    @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as
-                            well.
+    @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
     @type sim_names:        bool
     @return:                The list of object names.
     @rtype:                 list of str
@@ -466,29 +450,18 @@ def get_data_names(global_flag=False, sim_names=False):
 
     # Global data names.
     if not sim_names and global_flag:
-        names.append('num_frq')
+        names.append('ri_id')
+        names.append('ri_type')
         names.append('frq')
-        names.append('frq_labels')
-        names.append('num_ri')
-        names.append('ri_labels')
-        names.append('remap_table')
-        names.append('noe_r1_table')
 
-    # Residue specific data names.
+    # Spin specific data names.
     if not sim_names and not global_flag:
-        names.append('num_frq')
-        names.append('frq')
-        names.append('frq_labels')
-        names.append('num_ri')
-        names.append('ri_labels')
-        names.append('remap_table')
-        names.append('noe_r1_table')
-        names.append('relax_data')
-        names.append('relax_error')
+        names.append('ri_data')
+        names.append('ri_data_err')
 
     # Simulation object names.
     if sim_names and not global_flag:
-        names.append('relax_sim_data')
+        names.append('ri_data_sim')
 
     # Return the list of names.
     return names
