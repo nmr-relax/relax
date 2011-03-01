@@ -1005,7 +1005,7 @@ class Mf_minimise:
             ri_data_err.append(spin.ri_data_err[ri_id])
 
             # The labels.
-            ri_labels.append(cdp.ri_types[ri_id])
+            ri_labels.append(cdp.ri_type[ri_id])
 
             # The frequencies.
             if cdp.frq[ri_id] not in frq:
@@ -1023,9 +1023,9 @@ class Mf_minimise:
         # Fill the NOE to R1 mapping table.
         for i in range(num_ri):
             # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
-            if cdp.ri_types[cdp.ri_ids[i]] == 'NOE':
+            if cdp.ri_type[cdp.ri_ids[i]] == 'NOE':
                 for j in range(num_ri):
-                    if cdp.ri_types[cdp.ri_ids[j]] == 'R1' and cdp.frq[cdp.ri_ids[i]] == cdp.frq[cdp.ri_ids[j]]:
+                    if cdp.ri_type[cdp.ri_ids[j]] == 'R1' and cdp.frq[cdp.ri_ids[i]] == cdp.frq[cdp.ri_ids[j]]:
                         noe_r1_table[i] = j
 
         # Return the structures.
