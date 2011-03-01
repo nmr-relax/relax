@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -829,16 +829,13 @@ class Mf_minimise:
         @type spin:             SpinContainer instance
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
-        @return:                An insane tuple.  The full tuple is (relax_data, relax_error,
-                                equations, param_types, param_values, r, csa, num_frq, frq, num_ri,
-                                remap_table, noe_r1_table, ri_labels, num_params, xh_unit_vectors,
-                                diff_type, diff_params)
+        @return:                An insane tuple.  The full tuple is (ri_data, ri_data_err, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, num_params, xh_unit_vectors, diff_type, diff_params)
         @rtype:                 tuple
         """
 
         # Initialise the data structures for the model-free function.
-        relax_data = []
-        relax_error = []
+        ri_data = []
+        ri_data_err = []
         equations = []
         param_types = []
         param_values = None
@@ -862,8 +859,8 @@ class Mf_minimise:
         # Set up the data for the back_calc function.
         if min_algor == 'back_calc':
             # The data.
-            relax_data = [0.0]
-            relax_error = [0.000001]
+            ri_data = [0.0]
+            ri_data_err = [0.000001]
             equations = [spin.equation]
             param_types = [spin.params]
             r = [spin.r]
@@ -896,30 +893,33 @@ class Mf_minimise:
                 continue
 
             # Skip spins where there is no data or errors.
-            if not hasattr(spin, 'relax_data') or not hasattr(spin, 'relax_error'):
+            if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
                 continue
 
-            # Make sure that the errors are strictly positive numbers.
-            for k in xrange(len(spin.relax_error)):
-                if spin.relax_error[k] == 0.0:
+            # The relaxation data.
+            for ri_id in cdp.ri_ids:
+                # Make sure that the errors are strictly positive numbers.
+                if spin.ri_data_err[ri_id] == 0.0:
                     raise RelaxError("Zero error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
-                elif spin.relax_error[k] < 0.0:
+                elif spin.ri_data_err[ri_id] < 0.0:
                     raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
 
+                # The relaxation data optimisation structures.
+                data = self._relax_data_opt_structs(spin, sim_index=sim_index)
+
+                # Append the data.
+                ri_data.append(data[0])
+                ri_data_err.append(data[1])
+                num_frq.append(data[2])
+                num_ri.append(data[3])
+                ri_labels.append(data[4])
+                frq.append(data[5])
+                remap_table.append(data[6])
+                noe_r1_table.append(data[7])
+
             # Repackage the data.
-            if sim_index == None:
-                relax_data.append(spin.relax_data)
-            else:
-                relax_data.append(spin.relax_sim_data[sim_index])
-            relax_error.append(spin.relax_error)
             equations.append(spin.equation)
             param_types.append(spin.params)
-            num_frq.append(spin.num_frq)
-            frq.append(spin.frq)
-            num_ri.append(spin.num_ri)
-            remap_table.append(spin.remap_table)
-            noe_r1_table.append(spin.noe_r1_table)
-            ri_labels.append(spin.ri_labels)
             gx.append(return_gyromagnetic_ratio(spin.heteronuc_type))
             gh.append(return_gyromagnetic_ratio(spin.proton_type))
             if sim_index == None or model_type == 'diff':
@@ -947,9 +947,9 @@ class Mf_minimise:
                 param_values.append(self._assemble_param_vector(model_type='mf'))
 
         # Convert to numpy arrays.
-        for k in xrange(len(relax_data)):
-            relax_data[k] = array(relax_data[k], float64)
-            relax_error[k] = array(relax_error[k], float64)
+        for k in xrange(len(ri_data)):
+            ri_data[k] = array(ri_data[k], float64)
+            ri_data_err[k] = array(ri_data_err[k], float64)
 
         # Diffusion tensor type.
         if model_type == 'local_tm':
@@ -976,7 +976,60 @@ class Mf_minimise:
             diff_params = [spin.local_tm]
 
         # Return all the data.
-        return relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params
+        return ri_data, ri_data_err, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params
+
+
+    def _relax_data_opt_structs(self, spin, sim_index=None):
+        """Package the relaxation data into the data structures used for optimisation.
+
+        @param spin:        The spin container to extract the data from.
+        @type spin:         SpinContainer instance
+        @keyword sim_index: The optional MC simulation index.
+        @type sim_index:    int
+        @return:            The structures ri_data, ri_data_err, num_frq, num_ri, ri_labels, frq, remap_table, noe_r1_table.
+        @rtype:             tuple
+        """
+
+        # Initialise the data.
+        ri_data = []
+        ri_data_err = []
+        ri_labels = []
+        frq = []
+        remap_table = []
+        noe_r1_table = []
+
+        # Loop over the relaxation data.
+        for ri_id in cdp.ri_ids:
+            # The Rx data.
+            ri_data.append(spin.ri_data[ri_id])
+            ri_data_err.append(spin.ri_data_err[ri_id])
+
+            # The labels.
+            ri_labels.append(cdp.ri_types[ri_id])
+
+            # The frequencies.
+            if cdp.frq[ri_id] not in frq:
+                frq.append(cdp.frq[ri_id])
+
+            # The remap table.
+            remap_table.append(frq.index(cdp.frq[ri_id]))
+
+            # The NOE to R1 mapping table.
+            noe_r1_table.append(None)
+
+        # The number of data sets.
+        num_ri = len(cdp.ri_ids)
+
+        # Fill the NOE to R1 mapping table.
+        for i in range(num_ri):
+            # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
+            if cdp.ri_types[cdp.ri_ids[i]] == 'NOE':
+                for j in range(num_ri):
+                    if cdp.ri_types[cdp.ri_ids[j]] == 'R1' and cdp.frq[cdp.ri_ids[i]] == cdp.frq[cdp.ri_ids[j]]:
+                        noe_r1_table[i] = j
+
+        # Return the structures.
+        return ri_data, ri_data_err, len(frq), num_ri, ri_labels, frq, remap_table, noe_r1_table
 
 
     def _reset_min_stats(self):
