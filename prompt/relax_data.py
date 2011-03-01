@@ -420,15 +420,13 @@ class Relax_data(User_fn_class):
         relax_data.temp_control(ri_id=ri_id, method=method)
 
 
-    def write(self, ri_label=None, frq_label=None, file=None, dir=None, force=False):
-        """Function for writing R1, R2, or NOE relaxation data to a file.
+    def write(self, ri_id=None, frq_id=None, file=None, dir=None, force=False):
+        """Write relaxation data to a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
         file:  The name of the file.
 
@@ -441,26 +439,23 @@ class Relax_data(User_fn_class):
         ~~~~~~~~~~~
 
         If no directory name is given, the file will be placed in the current working directory.
-        The 'ri_label' and 'frq_label' arguments are required for selecting which relaxation data
-        to write to file.
+        The 'ri_id' argument is required for selecting which relaxation data to write to file.
         """
 
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.write("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label)
+            text = text + "ri_id=" + repr(ri_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation label')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        relax_data.write(ri_label=ri_label, frq_label=frq_label, file=file, dir=dir, force=force)
+        relax_data.write(ri_id=ri_id, file=file, dir=dir, force=force)

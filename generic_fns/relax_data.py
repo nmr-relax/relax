@@ -931,8 +931,18 @@ def update_data_structures_spin(spin=None, ri_label=None, frq_label=None, frq=No
                 spin.noe_r1_table[j] = spin.num_ri - 1
 
 
-def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
-    """Write relaxation data to a file."""
+def write(ri_id=None, file=None, dir=None, force=False):
+    """Write relaxation data to a file.
+
+    @keyword ri_id: The relaxation data ID string.
+    @type ri_label: str
+    @keyword file:  The name of the file to create.
+    @type file:     str
+    @keyword dir:   The directory to write to.
+    @type dir:      str or None
+    @keyword force: A flag which if True will cause any pre-existing file to be overwritten.
+    @type force:    bool
+    """
 
     # Test if the current pipe exists.
     pipes.test()
@@ -941,13 +951,13 @@ def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if data corresponding to 'ri_label' and 'frq_label' exists.
-    if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError(ri_label, frq_label)
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
 
     # Create the file name if none is given.
     if file == None:
-        file = ri_label + "." + frq_label + ".out"
+        file = ri_id + ".out"
 
     # Write the data.
-    value.write(param=(ri_label, frq_label), file=file, dir=dir, force=force, return_value=return_value)
+    value.write(param=ri_id, file=file, dir=dir, force=force, return_value=return_value)
