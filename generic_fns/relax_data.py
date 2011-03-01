@@ -559,40 +559,6 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
             update_data_structures_spin(spin_to, ri_label, frq_label, frq, value, error)
 
 
-def data_init(container, global_flag=False):
-    """Initialise the data structures for a spin container.
-
-    @param container:       The data pipe or spin data container (PipeContainer or SpinContainer).
-    @type container:        class instance
-    @keyword global_flag:   A flag which if True corresponds to the pipe specific data structures
-                            and if False corresponds to the spin specific data structures.
-    @type global_flag:      bool
-    """
-
-    # Get the data names.
-    data_names = get_data_names(global_flag)
-
-    # Init.
-    list_data = [ 'relax_data',
-                  'relax_error',
-                  'ri_labels',
-                  'remap_table',
-                  'noe_r1_table',
-                  'frq_labels',
-                  'frq' ]
-    zero_data = [ 'num_ri', 'num_frq' ]
-
-    # Loop over the data structure names.
-    for name in data_names:
-        # If the name is not in the container, add it as an empty array.
-        if name in list_data and not hasattr(container, name):
-            setattr(container, name, [])
-
-        # If the name is not in the container, add it as a variable set to zero.
-        if name in zero_data and not hasattr(container, name):
-            setattr(container, name, 0)
-
-
 def get_data_names(global_flag=False, sim_names=False):
     """Return a list of names of data structures associated with relax_data.
 
@@ -785,15 +751,15 @@ def find_ri_index(data, ri_label, frq_label):
     return index
 
 
-def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, gen_seq=False):
+def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, gen_seq=False):
     """Pack the relaxation data into the data pipe and spin containers.
 
     The values, errors, and spin_ids arguments must be lists of equal length or None.  Each element i corresponds to a unique spin.
 
-    @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:         str
-    @param frq_label:       The field strength label.
-    @type frq_label:        str
+    @param ri_id:           The relaxation data ID string.
+    @type ri_id:            str
+    @param ri_type:         The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_type:          str
     @param frq:             The spectrometer proton frequency in Hz.
     @type frq:              float
     @keyword values:        The relaxation data for each spin.
@@ -856,10 +822,17 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
             spin_ids.append(generate_spin_id(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i]))
 
     # Initialise the global data for the current pipe if necessary.
-    data_init(cdp, global_flag=True)
+    if not hasattr(cdp, 'frq'):
+        cdp.frq = {}
+    if not hasattr(cdp, 'ri_type'):
+        cdp.ri_type = {}
+    if not hasattr(cdp, 'ri_ids'):
+        cdp.ri_ids = []
 
     # Update the global data.
-    update_data_structures_pipe(ri_label, frq_label, frq)
+    cdp.ri_ids.append(ri_id)
+    cdp.ri_type[ri_id] = ri_type
+    cdp.frq[ri_id] = frq
 
     # Generate the sequence.
     if gen_seq:
@@ -872,8 +845,15 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
         if spin == None:
             raise RelaxNoSpinError(spin_ids[i])
 
+        # Initialise the spin data if necessary.
+        if not hasattr(cdp, 'ri_data'):
+            spin.ri_data = {}
+        if not hasattr(cdp, 'ri_data_err'):
+            spin.ri_data_err = {}
+
         # Update all data structures.
-        update_data_structures_spin(spin, ri_label, frq_label, frq, values[i], errors[i])
+        spin.ri_data[ri_id] = values[i]
+        spin.ri_data_err[ri_id] = errors[i]
 
 
 def peak_intensity_type(ri_label=None, frq_label=None, type=None):
@@ -911,42 +891,32 @@ def peak_intensity_type(ri_label=None, frq_label=None, type=None):
     cdp.exp_info.setup_peak_intensity_type(ri_label, frq_label, type)
 
 
-def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
     """Read R1, R2, or NOE relaxation data from a file.
 
-    @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:         str
-    @param frq_label:       The field strength label.
-    @type frq_label:        str
+    @param ri_id:           The relaxation data ID string.
+    @type ri_id:            str
+    @param ri_type:         The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_type:          str
     @param frq:             The spectrometer proton frequency in Hz.
     @type frq:              float
     @param file:            The name of the file to open.
     @type file:             str
-    @param dir:             The directory containing the file (defaults to the current directory
-                            if None).
+    @param dir:             The directory containing the file (defaults to the current directory if None).
     @type dir:              str or None
-    @param file_data:       An alternative opening a file, if the data already exists in the
-                            correct format.  The format is a list of lists where the first index
-                            corresponds to the row and the second the column.
+    @param file_data:       An alternative opening a file, if the data already exists in the correct format.  The format is a list of lists where the first index corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
-                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
-                            arguments must be none.
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
-    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied, spin_id_col must be None.
     @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword res_name_col:  The column containing the residue name information.  If supplied, spin_id_col must be None.
     @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information.  If supplied,
-                            spin_id_col must be None.
+    @keyword res_num_col:   The column containing the residue number information.  If supplied, spin_id_col must be None.
     @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword spin_name_col: The column containing the spin name information.  If supplied, spin_id_col must be None.
     @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
-                            spin_id_col must be None.
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied, spin_id_col must be None.
     @type spin_num_col:     int or None
     @keyword data_col:      The column containing the relaxation data.
     @type data_col:         int or None
@@ -954,8 +924,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     @type error_col:        int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
-                            spins.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
     @type spin_id:          None or str
     """
 
@@ -965,6 +934,10 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
+
+    # Test if the ri_id already exists.
+    if hasattr(cdp, 'ri_ids') and ri_id in cdp.ri_ids:
+        raise RelaxError("The relaxation ID string '%s' already exists." % ri_id)
 
     # Loop over the file data to create the data structures for packing.
     values = []
@@ -989,7 +962,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
         errors.append(error)
 
     # Pack the data.
-    pack_data(ri_label, frq_label, frq, values, errors, ids)
+    pack_data(ri_id, ri_type, frq, values, errors, ids)
 
 
 def return_data_desc(name):
@@ -1147,68 +1120,6 @@ def test_labels(ri_label, frq_label):
 
     # No match.
     return False
-
-
-def update_data_structures_pipe(ri_label=None, frq_label=None, frq=None):
-    """Update all relaxation data structures in the current data pipe.
-
-    @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:         str
-    @param frq_label:       The field strength label.
-    @type frq_label:        str
-    @param frq:             The spectrometer proton frequency in Hz.
-    @type frq:              float
-    """
-
-    # Initialise the relaxation data structures (if needed).
-    data_init(cdp, global_flag=True)
-
-    # The index.
-    i = len(cdp.ri_labels) - 1
-
-    # Update the number of relaxation data points.
-    cdp.num_ri = cdp.num_ri + 1
-
-    # Add ri_label to the data types.
-    cdp.ri_labels.append(ri_label)
-
-    # Find if the frequency has already been loaded.
-    remap = len(cdp.frq)
-    flag = 0
-    for j in xrange(len(cdp.frq)):
-        if frq == cdp.frq[j]:
-            remap = j
-            flag = 1
-
-    # Update the remap table.
-    cdp.remap_table.append(remap)
-
-    # Update the data structures which have a length equal to the number of field strengths.
-    if not flag:
-        # Update the number of frequencies.
-        cdp.num_frq = cdp.num_frq + 1
-
-        # Update the frequency labels.
-        cdp.frq_labels.append(frq_label)
-
-        # Update the frequency array.
-        cdp.frq.append(frq)
-
-    # Update the NOE R1 translation table.
-    cdp.noe_r1_table.append(None)
-
-    # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
-    if ri_label == 'NOE':
-        for j in xrange(cdp.num_ri):
-            if cdp.ri_labels[j] == 'R1' and frq_label == cdp.frq_labels[cdp.remap_table[j]]:
-                cdp.noe_r1_table[cdp.num_ri - 1] = j
-
-    # Update the NOE R1 translation table.
-    # If the data corresponds to 'R1', try to find if the corresponding NOE data.
-    if ri_label == 'R1':
-        for j in xrange(cdp.num_ri):
-            if cdp.ri_labels[j] == 'NOE' and frq_label == cdp.frq_labels[cdp.remap_table[j]]:
-                cdp.noe_r1_table[j] = cdp.num_ri - 1
 
 
 def update_data_structures_spin(spin=None, ri_label=None, frq_label=None, frq=None, value=None, error=None):
