@@ -262,9 +262,9 @@ class Mf(SystemTestCase):
 
         # Load the relaxation data.
         for i in range(len(frq)):
-            self.interpreter.relax_data.read('R1',  frq[i], float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-            self.interpreter.relax_data.read('R2',  frq[i], float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-            self.interpreter.relax_data.read('NOE', frq[i], float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('NOE_%s'%frq[i], 'NOE', float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('R1_%s'%frq[i],  'R1',  float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('R2_%s'%frq[i],  'R2',  float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 'S2', 'te'])
@@ -290,9 +290,9 @@ class Mf(SystemTestCase):
 
         # Load the relaxation data.
         for i in range(len(frq)):
-            self.interpreter.relax_data.read('NOE', frq[i], float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-            self.interpreter.relax_data.read('R1',  frq[i], float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-            self.interpreter.relax_data.read('R2',  frq[i], float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('NOE_%s'%frq[i], 'NOE', float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('R1_%s'%frq[i],  'R1',  float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('R2_%s'%frq[i],  'R2',  float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 'S2', 'te'])
@@ -314,15 +314,15 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
 
         # Load the relaxation data.
-        self.interpreter.relax_data.read('R2',  '700', 700*1e6, 'r2.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '500', 500*1e6, 'noe.500.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1',  '500', 500*1e6, 'r1.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1',  '900', 900*1e6, 'r1.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '900', 900*1e6, 'noe.900.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2',  '900', 900*1e6, 'r2.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1',  '700', 700*1e6, 'r1.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '700', 700*1e6, 'noe.700.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2',  '500', 500*1e6, 'r2.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_700',  'R2',  700*1e6, 'r2.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_500', 'NOE', 500*1e6, 'noe.500.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_500',  'R1',  500*1e6, 'r1.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_900',  'R1',  900*1e6, 'r1.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_900', 'NOE', 900*1e6, 'noe.900.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_900',  'R2',  900*1e6, 'r2.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_700',  'R1',  700*1e6, 'r1.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_700', 'NOE', 700*1e6, 'noe.700.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_500',  'R2',  500*1e6, 'r2.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 'S2', 'te'])
@@ -540,12 +540,12 @@ class Mf(SystemTestCase):
         self.interpreter.structure.vectors(attached='H')
 
         # Read the relaxation data.
-        self.interpreter.relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_600',  'R1',  600.0*1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_600',  'R2',  600.0*1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_600', 'NOE', 600.0*1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_500',  'R1',  500.0*1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_500',  'R2',  500.0*1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_500', 'NOE', 500.0*1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
         self.interpreter.diffusion_tensor.init((1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
@@ -571,12 +571,12 @@ class Mf(SystemTestCase):
         self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the relaxation data.
-        self.interpreter.relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_600',  'R1',  600.0*1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_600',  'R2',  600.0*1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_600', 'NOE', 600.0*1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_500',  'R1',  500.0*1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_500',  'R2',  500.0*1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_500', 'NOE', 500.0*1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
         self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
