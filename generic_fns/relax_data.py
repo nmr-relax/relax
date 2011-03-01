@@ -541,36 +541,6 @@ def display(ri_id=None):
     value.write_data(param=ri_id, file=sys.stdout, return_value=return_value)
 
 
-def find_ri_index(data, ri_label, frq_label):
-    """Find the index corresponding to ri_label and frq_label.
-
-    @param data:        The class instance containing the ri_label and frq_label variables.
-    @type data:         PipeContainer or SpinContainer
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    @return:            The index corresponding to the relaxation data.  If there is no
-                        relaxation data corresponding to the labels, None is returned.
-    @rtype:             None or int
-    """
-
-    # No data.num_ri data structure.
-    if not hasattr(data, 'num_ri'):
-        return None
-
-    # Initialise.
-    index = None
-
-    # Find the index.
-    for j in xrange(data.num_ri):
-        if ri_label == data.ri_labels[j] and frq_label == data.frq_labels[data.remap_table[j]]:
-            index = j
-
-    # Return the index.
-    return index
-
-
 def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, gen_seq=False):
     """Pack the relaxation data into the data pipe and spin containers.
 
