@@ -1065,34 +1065,6 @@ def temp_control(ri_label=None, frq_label=None, method=None):
 
 
 
-def test_labels(ri_label, frq_label):
-    """Test if data corresponding to 'ri_label' and 'frq_label' currently exists.
-
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    @return:            The answer to the question of whether relaxation data exists corresponding
-                        to the given labels.
-    @rtype:             bool
-    """
-
-    # Loop over the spins.
-    for spin in spin_loop():
-        # No ri data.
-        if not hasattr(spin, 'num_ri'):
-            continue
-
-        # Loop over the relaxation data.
-        for j in xrange(spin.num_ri):
-            # Test if the relaxation data matches 'ri_label' and 'frq_label'.
-            if ri_label == spin.ri_labels[j] and frq_label == spin.frq_labels[spin.remap_table[j]]:
-                return True
-
-    # No match.
-    return False
-
-
 def update_data_structures_spin(spin=None, ri_label=None, frq_label=None, frq=None, value=None, error=None):
     """Update all relaxation data structures of the given spin container.
 
