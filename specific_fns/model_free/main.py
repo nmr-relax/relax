@@ -2041,17 +2041,17 @@ class Model_free_main:
         # Loop over the sequence.
         for spin, spin_id in spin_loop(return_id=True):
             # Relaxation data must exist!
-            if not hasattr(spin, 'relax_data'):
+            if not hasattr(spin, 'ri_data'):
                 warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                 spin.select = False
 
             # Require 3 or more relaxation data points.
-            elif len(spin.relax_data) < 3:
+            elif len(spin.ri_data) < 3:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                 spin.select = False
 
             # Require at least as many data points as params to prevent over-fitting.
-            elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.relax_data):
+            elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.ri_data):
                 warn(RelaxDeselectWarning(spin_id, 'over-fitting - more parameters than data points'))
                 spin.select = False
 
