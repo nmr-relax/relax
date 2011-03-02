@@ -190,6 +190,8 @@ def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
     @type num_frq:      int
     @keyword frq:       The spectrometer frequencies.
     @type frq:          list of float
+    @return:            True if file data is written, False otherwise.
+    @rtype:             bool
     """
 
     # Spin title.
