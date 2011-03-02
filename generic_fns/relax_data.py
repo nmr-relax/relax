@@ -393,7 +393,6 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
                 spin_to.ri_data_err = {}
 
             # Copy the value and error from pipe_from.
-            print spin_from
             spin_to.ri_data[ri_id] = spin_from.ri_data[ri_id]
             spin_to.ri_data_err[ri_id] = spin_from.ri_data_err[ri_id]
 
