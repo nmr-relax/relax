@@ -235,9 +235,9 @@ class Latex:
             if spin.rex == None:
                 self.file.write("%27s \\\\\n" % "\\multicolumn{2}{c}{}")
             elif not hasattr(spin, 'rex_err'):
-                self.file.write("%27s \\\\\n" % ("\\multicolumn{2}{c}{%.3f}" % (spin.rex * (2.0 * pi * spin.frq[0])**2)))
+                self.file.write("%27s \\\\\n" % ("\\multicolumn{2}{c}{%.3f}" % (spin.rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2)))
             else:
-                self.file.write("%12.3f & %12.3f \\\\\n" % (spin.rex * (2.0 * pi * spin.frq[0])**2, spin.rex_err * (2.0 * pi * spin.frq[0])**2))
+                self.file.write("%12.3f & %12.3f \\\\\n" % (spin.rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, spin.rex_err * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2))
 
         # Start a new line.
         self.file.write("\n")

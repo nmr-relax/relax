@@ -122,7 +122,7 @@ class Mf(SystemTestCase):
         if spin.ts != None:
             string = string + "%-15s %30.13g\n" % ('ts (ps):',          spin.ts * 1e12)
         if spin.rex != None:
-            string = string + "%-15s %30.17g\n" % ('rex:',      spin.rex * (2.0 * pi * spin.frq[0])**2)
+            string = string + "%-15s %30.17g\n" % ('rex:',      spin.rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2)
         string = string +   "%-15s %30.17g\n" % ('chi2:',   spin.chi2)
         string = string +   "%-15s %30i\n"   % ('iter:',    spin.iter)
         string = string +   "%-15s %30i\n"   % ('f_count:', spin.f_count)
@@ -813,7 +813,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9699999999999995
         te = 2048.000000000022283
-        rex = 0.14900000000000566 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14900000000000566 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 3.1024517431117421e-27
         iter = [154, 156, 157, 158, 162, 175, 203]
         f_count = [598, 695, 701, 722, 735, 744, 758, 955]
@@ -998,7 +998,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9700000000000580
         te = 2048.000000011044449
-        rex = 0.148999999998904 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.148999999998904 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 4.3978813282102374e-23
         iter = 120
         f_count = [377, 381, 384, 386, 388]
@@ -1067,7 +1067,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9097900390625
         te = 25.00000000000000
-        rex = 1.24017333984375 / (2.0 * pi * spin.frq[0])**2
+        rex = 1.24017333984375 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 53.476155463267176
         iter = 50
         f_count = 131
@@ -1208,7 +1208,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9700000000219674
         te = 2048.000001534187049
-        rex = 0.14899999946977982 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14899999946977982 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 2.3477234248531005e-18
         iter = [198, 200]
         f_count = [738, 757, 874]
@@ -1350,7 +1350,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9699999999999994
         te = 2048.000000000045020
-        rex = 0.14900000000001817 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14900000000001817 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 7.3040158179665562e-28
         iter = 18
         f_count = [55, 57, 94]
@@ -1525,7 +1525,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9699999999999993
         te = 2048.000000000041837
-        rex = 0.14900000000002225 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14900000000002225 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 6.8756889983348349e-28
         iter = 22
         f_count = [91, 95, 153, 159, 160, 165]
@@ -1594,7 +1594,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.91579220834688024
         te = 0.30568658722531733
-        rex = 0.34008409798366124 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.34008409798366124 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 68.321956795264342
         iter = 50
         f_count = 134
@@ -1663,7 +1663,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.91619994957822126
         te = 0.12319687570987945
-        rex = 0.16249110942961512 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.16249110942961512 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 73.843613546506191
         iter = 50
         f_count = 108
@@ -2539,7 +2539,7 @@ class Mf(SystemTestCase):
 
         # Chemical exchange.
         if type(rex) == float:
-            self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex * (2.0 * pi * spin.frq[0])**2, msg=mesg)
+            self.assertAlmostEqual(spin.rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, msg=mesg)
         elif rex == None:
             self.assertEqual(spin.rex, None, msg=mesg)
 

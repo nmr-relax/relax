@@ -714,8 +714,8 @@ def extract(dir, spin_id=None):
         # Get the Rex data.
         if 'Rex' in spin.params:
             spin.rex, spin.rex_err = get_mf_data(mfout_lines, rex_pos + pos)
-            spin.rex = spin.rex / (2.0 * pi * spin.frq[0])**2
-            spin.rex_err = spin.rex_err / (2.0 * pi * spin.frq[0])**2
+            spin.rex = spin.rex / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
+            spin.rex_err = spin.rex_err / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
 
         # Get the chi-squared data.
         if not sims:

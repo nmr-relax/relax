@@ -460,7 +460,7 @@ class Mf_minimise:
             # Rex.
             elif spin.params[i] == 'Rex':
                 lower.append(0.0)
-                upper.append(5.0 / (2.0 * pi * spin.frq[0])**2)
+                upper.append(5.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2)
 
             # Bond length.
             elif spin.params[i] == 'r':

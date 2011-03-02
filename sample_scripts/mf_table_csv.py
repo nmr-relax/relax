@@ -153,9 +153,9 @@ class CSV:
             if spin.rex == None:
                 self.file.write(", ")
             elif not hasattr(spin, 'rex_err'):
-                self.file.write("%.3f, " % (spin.rex * (2.0 * pi * spin.frq[0])**2))
+                self.file.write("%.3f, " % (spin.rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2))
             else:
-                self.file.write("%.3f±%.3f, " % (spin.rex * (2.0 * pi * spin.frq[0])**2, spin.rex_err * (2.0 * pi * spin.frq[0])**2))
+                self.file.write("%.3f±%.3f, " % (spin.rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, spin.rex_err * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2))
 
             # Start a new line.
             self.file.write("\n")

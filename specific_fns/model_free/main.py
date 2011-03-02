@@ -413,7 +413,7 @@ class Model_free_main:
 
                     # Rex.
                     elif spin.params[k] == 'Rex':
-                        scaling_matrix[i, i] = 1.0 / (2.0 * pi * spin.frq[0]) ** 2
+                        scaling_matrix[i, i] = 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]]) ** 2
 
                     # Bond length.
                     elif spin.params[k] == 'r':
@@ -1811,7 +1811,7 @@ class Model_free_main:
 
         # Rex.
         elif param == 'rex':
-            return [0.0, 30.0 / (2.0 * pi * spin.frq[0])**2]
+            return [0.0, 30.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2]
 
         # Bond length.
         elif param == 'r':
@@ -2103,7 +2103,7 @@ class Model_free_main:
 
         # Rex (value at 1st field strength).
         elif object_name == 'rex':
-            return 1.0 / (2.0 * pi * spin.frq[0])**2
+            return 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
 
         # Bond length (Angstrom).
         elif object_name == 'r':
