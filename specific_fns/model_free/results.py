@@ -608,8 +608,10 @@ class Results:
                     spin.ri_data_err = {}
 
                 # Set the value.
-                spin.ri_data[ri_id] = values[i]
-                spin.ri_data_err[ri_id] = errors[i]
+                if values[i] != None:
+                    spin.ri_data[ri_id] = values[i]
+                if errors[i] != None:
+                    spin.ri_data_err[ri_id] = errors[i]
 
 
     def _load_structure(self, spin_line, col, verbosity=1):
