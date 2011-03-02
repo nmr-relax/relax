@@ -1782,10 +1782,10 @@ class Mf(SystemTestCase):
         ri_ids = ['R1_500', 'R2_500', 'NOE_500', 'R1_600', 'R2_600', 'NOE_600', 'R1_750', 'R2_750', 'NOE_750']
         types_list = ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
         frqs_list = [500000000.0] * 3 + [600000000.0] * 3 + [750000000.0] * 3
-        ri_types = {}
+        ri_type = {}
         frqs = {}
         for i in range(len(ri_ids)):
-            ri_types[ri_ids[i]] = types_list[i]
+            ri_type[ri_ids[i]] = types_list[i]
             frqs[ri_ids[i]] = frqs_list[i]
 
         ri_data = {}
@@ -1829,7 +1829,7 @@ class Mf(SystemTestCase):
         # Global relaxation data tests.
         self.assertEqual(cdp.ri_ids, ri_ids)
         for ri_id in ri_ids:
-            self.assertEqual(cdp.ri_types[ri_id], ri_types[ri_id])
+            self.assertEqual(cdp.ri_type[ri_id], ri_type[ri_id])
             self.assertEqual(cdp.frq[ri_id], frqs[ri_id])
 
         # Loop over the residues of the original data.
