@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -39,8 +39,8 @@ class Test_relax_data(Relax_data_base_class, TestCase):
     relax_data_fns = Relax_data()
 
 
-    def test_back_calc_argfail_ri_label(self):
-        """The ri_label arg test of the relax_data.back_calc() user function."""
+    def test_back_calc_argfail_ri_id(self):
+        """The ri_id arg test of the relax_data.back_calc() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -49,11 +49,11 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.back_calc, ri_label=data[1])
+            self.assertRaises(RelaxStrError, self.relax_data_fns.back_calc, ri_id=data[1])
 
 
-    def test_back_calc_argfail_frq_label(self):
-        """The frq_label arg test of the relax_data.back_calc() user function."""
+    def test_back_calc_argfail_ri_type(self):
+        """The ri_type arg test of the relax_data.back_calc() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -62,7 +62,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.back_calc, ri_label='R2', frq_label=data[1])
+            self.assertRaises(RelaxStrError, self.relax_data_fns.back_calc, ri_id='R2', ri_type=data[1])
 
 
     def test_back_calc_argfail_frq(self):
@@ -75,7 +75,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNumError, self.relax_data_fns.back_calc, ri_label='R2', frq_label='1000', frq=data[1])
+            self.assertRaises(RelaxNumError, self.relax_data_fns.back_calc, ri_id='R2_1000', frq=data[1])
 
 
     def test_copy_argfail_pipe_from(self):
@@ -111,8 +111,8 @@ class Test_relax_data(Relax_data_base_class, TestCase):
         self.assertRaises(RelaxError, self.relax_data_fns.copy)
 
 
-    def test_copy_argfail_ri_label(self):
-        """The ri_label arg test of the relax_data.copy() user function."""
+    def test_copy_argfail_ri_id(self):
+        """The ri_id arg test of the relax_data.copy() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -121,24 +121,11 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.copy, pipe_from='', pipe_to='', ri_label=data[1])
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.copy, pipe_from='', pipe_to='', ri_id=data[1])
 
 
-    def test_copy_argfail_frq_label(self):
-        """The frq_label arg test of the relax_data.copy() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'None' or data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.copy, pipe_from='', pipe_to='', ri_label='R2', frq_label=data[1])
-
-
-    def test_delete_argfail_ri_label(self):
-        """The ri_label arg test of the relax_data.delete() user function."""
+    def test_delete_argfail_ri_id(self):
+        """The ri_id arg test of the relax_data.delete() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -147,24 +134,11 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.delete, ri_label=data[1])
+            self.assertRaises(RelaxStrError, self.relax_data_fns.delete, ri_id=data[1])
 
 
-    def test_delete_argfail_frq_label(self):
-        """The frq_label arg test of the relax_data.delete() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.delete, ri_label='R2', frq_label=data[1])
-
-
-    def test_display_argfail_ri_label(self):
-        """The ri_label arg test of the relax_data.display() user function."""
+    def test_display_argfail_ri_id(self):
+        """The ri_id arg test of the relax_data.display() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -173,24 +147,11 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.display, ri_label=data[1])
+            self.assertRaises(RelaxStrError, self.relax_data_fns.display, ri_id=data[1])
 
 
-    def test_display_argfail_frq_label(self):
-        """The frq_label arg test of the relax_data.display() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.display, ri_label='R2', frq_label=data[1])
-
-
-    def test_read_argfail_ri_label(self):
-        """The ri_label arg test of the relax_data.read() user function."""
+    def test_read_argfail_ri_id(self):
+        """The ri_id arg test of the relax_data.read() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -199,11 +160,11 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.read, ri_label=data[1])
+            self.assertRaises(RelaxStrError, self.relax_data_fns.read, ri_id=data[1])
 
 
-    def test_read_argfail_frq_label(self):
-        """The frq_label arg test of the relax_data.read() user function."""
+    def test_read_argfail_ri_type(self):
+        """The ri_type arg test of the relax_data.read() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -212,7 +173,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.read, ri_label='R2', frq_label=data[1])
+            self.assertRaises(RelaxStrError, self.relax_data_fns.read, ri_id='R2', ri_type=data[1])
 
 
     def test_read_argfail_frq(self):
@@ -225,7 +186,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNumError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=data[1])
+            self.assertRaises(RelaxNumError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=data[1])
 
 
     def test_read_argfail_file(self):
@@ -238,7 +199,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file=data[1])
+            self.assertRaises(RelaxStrError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file=data[1])
 
 
     def test_read_argfail_dir(self):
@@ -251,7 +212,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', dir=data[1])
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file='R2_1000MHz', dir=data[1])
 
 
     def test_read_argfail_mol_name_col(self):
@@ -264,7 +225,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', mol_name_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file='R2_1000MHz', mol_name_col=data[1])
 
 
     def test_read_argfail_res_num_col(self):
@@ -277,7 +238,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', res_num_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file='R2_1000MHz', res_num_col=data[1])
 
 
     def test_read_argfail_res_name_col(self):
@@ -290,7 +251,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', res_name_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file='R2_1000MHz', res_name_col=data[1])
 
 
     def test_read_argfail_spin_num_col(self):
@@ -303,7 +264,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', spin_num_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file='R2_1000MHz', spin_num_col=data[1])
 
 
     def test_read_argfail_spin_name_col(self):
@@ -316,7 +277,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', spin_name_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file='R2_1000MHz', spin_name_col=data[1])
 
 
     def test_read_argfail_data_col(self):
@@ -329,7 +290,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', data_col=data[1])
+            self.assertRaises(RelaxIntError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file='R2_1000MHz', data_col=data[1])
 
 
     def test_read_argfail_error_col(self):
@@ -342,7 +303,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', error_col=data[1])
+            self.assertRaises(RelaxIntError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file='R2_1000MHz', error_col=data[1])
 
 
     def test_read_argfail_sep(self):
@@ -355,24 +316,11 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', data_col=0, error_col=0, sep=data[1])
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file='R2_1000MHz', data_col=0, error_col=0, sep=data[1])
 
 
-    def test_write_argfail_ri_label(self):
-        """The ri_label arg test of the relax_data.write() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.write, ri_label=data[1])
-
-
-    def test_write_argfail_frq_label(self):
-        """The frq_label arg test of the relax_data.write() user function."""
+    def test_write_argfail_ri_id(self):
+        """The ri_id arg test of the relax_data.write() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -381,7 +329,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.write, ri_label='R2', frq_label=data[1])
+            self.assertRaises(RelaxStrError, self.relax_data_fns.write, ri_id=data[1])
 
 
     def test_write_argfail_file(self):
@@ -394,7 +342,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.write, ri_label='R2', frq_label='1000', file=data[1])
+            self.assertRaises(RelaxStrError, self.relax_data_fns.write, ri_id='R2_1000', file=data[1])
 
 
     def test_write_argfail_dir(self):
@@ -407,7 +355,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.write, ri_label='R2', frq_label='1000', file='a', dir=data[1])
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.write, ri_id='R2_1000', file='a', dir=data[1])
 
 
     def test_write_argfail_force(self):
@@ -420,4 +368,4 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBoolError, self.relax_data_fns.write, ri_label='R2', frq_label='1000', file='a', force=data[1])
+            self.assertRaises(RelaxBoolError, self.relax_data_fns.write, ri_id='R2_1000', file='a', force=data[1])
