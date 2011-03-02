@@ -190,7 +190,7 @@ class ExpInfo(Element):
         """Store the peak intensity type.
 
         @param ri_id:       The relaxation data ID string.
-        @type ri_label:     str
+        @type ri_id:        str
         @param type:        The peak intensity type, one of 'height' or 'volume'.
         @type type:         str
         """
@@ -204,7 +204,7 @@ class ExpInfo(Element):
         if ri_id in self.peak_intensity_type.keys():
             raise RelaxError("The peak intensity type for the '%s' relaxation data ID string has already been set.")
 
-        # Append the container.
+        # Set the type.
         self.peak_intensity_type[ri_id] = type
 
 
@@ -330,13 +330,11 @@ class ExpInfo(Element):
         self.software.append(software)
 
 
-    def temp_calibration_setup(self, ri_label, frq_label, method):
+    def temp_calibration_setup(self, ri_id, method):
         """Store the temperature calibration method.
 
-        @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-        @type ri_label:     str
-        @param frq_label:   The field strength label.
-        @type frq_label:    str
+        @param ri_id:       The relaxation data ID string.
+        @type ri_id:        str
         @param method:      The temperature calibration method.
         @type method:       str
         """
@@ -344,35 +342,14 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "temp_calibration"):
             # The list.
-            self.temp_calibration = RelaxListType()
-
-            # The name of the container.
-            self.temp_calibration.container_name = "temp_calibration_list"
-
-            # The description of the container.
-            self.temp_calibration.container_desc = "List of temperature calibration methods."
+            self.temp_calibration = {}
 
         # Find if the method has already been set.
-        for i in range(len(self.temp_calibration)):
-            if self.temp_calibration[i].ri_label == ri_label and self.temp_calibration[i].frq_label == frq_label:
-                raise RelaxError("The temperature calibration method for the '%s' ri_label and '%s' frq_label has already been set.")
+        if ri_id in self.temp_calibration.keys():
+            raise RelaxError("The temperature calibration method for the '%s' relaxation data ID string has already been set.")
 
-        # Init the container.
-        temp_calibration = Element()
-
-        # The name of the container.
-        temp_calibration.name = "temp_calibration"
-
-        # The description of the container.
-        temp_calibration.desc = "Temperature calibration methods for the relaxation data."
-
-        # Set the attributes.
-        temp_calibration.ri_label = ri_label
-        temp_calibration.frq_label = frq_label
-        temp_calibration.method = method
-
-        # Append the container.
-        self.temp_calibration.append(temp_calibration)
+        # Set the method.
+        self.temp_calibration[ri_id] = temp_calibration
 
 
     def temp_control_setup(self, ri_label, frq_label, method):
