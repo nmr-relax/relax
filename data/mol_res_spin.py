@@ -131,7 +131,8 @@ class SpinContainer(Prototype):
         del self.remap_table
         del self.relax_data
         del self.relax_error
-        del self.relax_sim_data
+        if sims:
+            del self.relax_sim_data
 
 
     def is_empty(self):
