@@ -186,13 +186,11 @@ class ExpInfo(Element):
                 return self.temp_control[i].method
 
 
-    def setup_peak_intensity_type(self, ri_label, frq_label, type):
+    def setup_peak_intensity_type(self, ri_id, type):
         """Store the peak intensity type.
 
-        @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @param ri_id:       The relaxation data ID string.
         @type ri_label:     str
-        @param frq_label:   The field strength label.
-        @type frq_label:    str
         @param type:        The peak intensity type, one of 'height' or 'volume'.
         @type type:         str
         """
@@ -200,35 +198,14 @@ class ExpInfo(Element):
         # Initialise the container if needed.
         if not hasattr(self, "peak_intensity_type"):
             # The list.
-            self.peak_intensity_type = RelaxListType()
-
-            # The name of the container.
-            self.peak_intensity_type.container_name = "peak_intensity_type_list"
-
-            # The description of the container.
-            self.peak_intensity_type.container_desc = "List of peak intensity types."
+            self.peak_intensity_type = {}
 
         # Find if the type has already been set.
-        for i in range(len(self.peak_intensity_type)):
-            if self.peak_intensity_type[i].ri_label == ri_label and self.peak_intensity_type[i].frq_label == frq_label:
-                raise RelaxError("The peak intensity type for the '%s' ri_label and '%s' frq_label has already been set.")
-
-        # Init the container.
-        peak_intensity_type = Element()
-
-        # The name of the container.
-        peak_intensity_type.name = "peak_intensity_type"
-
-        # The description of the container.
-        peak_intensity_type.desc = "Temperature control methods for the relaxation data."
-
-        # Set the attributes.
-        peak_intensity_type.ri_label = ri_label
-        peak_intensity_type.frq_label = frq_label
-        peak_intensity_type.type = type
+        if ri_id in self.peak_intensity_type.keys():
+            raise RelaxError("The peak intensity type for the '%s' relaxation data ID string has already been set.")
 
         # Append the container.
-        self.peak_intensity_type.append(peak_intensity_type)
+        self.peak_intensity_type[ri_id] = type
 
 
     def setup_thiol(self, state):
