@@ -1185,7 +1185,7 @@ class Model_free_main:
         # Loop over the relaxation data.
         for ri_id in cdp.ri_ids:
             # Back calculate the value.
-            value = self.back_calc_ri(spin_index=global_index, ri_id=ri_id, frq=cdp.frq[ri_id])
+            value = self.back_calc_ri(spin_index=global_index, ri_id=ri_id, ri_type=cdp.ri_type[ri_id], frq=cdp.frq[ri_id])
 
             # Append the value.
             mc_data.append(value)
