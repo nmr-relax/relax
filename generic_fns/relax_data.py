@@ -198,19 +198,17 @@ def bmrb_write(star):
     attached_atom_name_list = []
     attached_isotope_list = []
     attached_element_list = []
-    relax_data_list = []
-    relax_error_list = []
+    ri_data_list = []
+    ri_data_err_list = []
     for i in range(cdp.num_ri):
-        relax_data_list.append([])
-        relax_error_list.append([])
+        ri_data_list.append([])
+        ri_data_err_list.append([])
 
     # Relax data labels.
-    labels = []
+    labels = cdp.ri_ids
     exp_label = []
     spectro_ids = []
     spectro_labels = []
-    for i in range(cdp.num_ri):
-        labels.append(cdp.ri_labels[i] + '_' + cdp.frq_labels[cdp.remap_table[i]])
 
     # Store the spin specific data in lists for later use.
     for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
@@ -219,7 +217,7 @@ def bmrb_write(star):
             continue
 
         # Skip spins with no relaxation data.
-        if not hasattr(spin, 'relax_data'):
+        if not hasattr(spin, 'ri_data'):
             continue
 
         # Check the data for None (not allowed in BMRB!).
@@ -248,28 +246,14 @@ def bmrb_write(star):
 
         # The relaxation data.
         used_index = -ones(spin.num_ri)
-        for i in range(len(spin.ri_labels)):
-            # Labels.
-            label = spin.ri_labels[i] + '_' + spin.frq_labels[spin.remap_table[i]]
-
-            # Find the global index.
-            index = None
-            for j in range(cdp.num_ri):
-                if label == labels[j] and j not in used_index:
-                    index = j
-                    used_index[i] = j
-                    break
-
+        for i in range(len(cdp.ri_ids)):
             # Data exists.
-            if index != None:
-                relax_data_list[index].append(str(spin.relax_data[i]))
-                relax_error_list[index].append(str(spin.relax_error[i]))
-
-        # No relaxation data.
-        for i in range(cdp.num_ri):
-            if i not in used_index:
-                relax_data_list[i].append(None)
-                relax_error_list[i].append(None)
+            if cdp.ri_ids[i] in spin.ri_data.keys():
+                ri_data_list[i].append(str(spin.ri_data[i]))
+                ri_data_err_list[i].append(str(spin.ri_data_err[i]))
+            else:
+                ri_data_list[i].append(None)
+                ri_data_err_list[i].append(None)
 
         # Other info.
         isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
@@ -296,34 +280,34 @@ def bmrb_write(star):
     # Loop over the relaxation data.
     for i in range(cdp.num_ri):
         # Alias.
-        ri_label = cdp.ri_labels[i]
-        frq_label = cdp.frq_labels[cdp.remap_table[i]]
+        ri_id = cdp.ri_ids[i]
+        ri_type = cdp.ri_type[ri_id]
 
         # Convert to MHz.
-        frq = cdp.frq[cdp.remap_table[i]] * 1e-6
+        frq = cdp.frq[ri_id] * 1e-6
 
         # Get the temperature control methods.
-        temp_calib = cdp.exp_info.get_temp_calibration(ri_label, frq_label)
-        temp_control = cdp.exp_info.get_temp_control(ri_label, frq_label)
+        temp_calib = cdp.exp_info.temp_calibration[ri_id]
+        temp_control = cdp.exp_info.temp_control[ri_id]
 
         # Get the peak intensity type.
-        peak_intensity_type = cdp.exp_info.get_peak_intensity_type(ri_label, frq_label)
+        peak_intensity_type = cdp.exp_info.peak_intensity_type[ri_id]
 
         # Check.
         if not temp_calib:
-            raise RelaxError("The temperature calibration method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
+            raise RelaxError("The temperature calibration method for the '%s' relaxation data ID string has not been specified." % ri_id)
         if not temp_control:
-            raise RelaxError("The temperature control method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
+            raise RelaxError("The temperature control method for the '%s' relaxation data ID string has not been specified." % ri_id)
 
         # Add the relaxation data.
-        star.relaxation.add(data_type=ri_label, frq=frq, entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, entity_ids_2=entity_ids, res_nums_2=res_num_list, res_names_2=res_name_list, atom_names_2=attached_atom_name_list, atom_types_2=attached_element_list, isotope_2=attached_isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control, peak_intensity_type=peak_intensity_type)
+        star.relaxation.add(data_type=ri_type, frq=frq, entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, entity_ids_2=entity_ids, res_nums_2=res_num_list, res_names_2=res_name_list, atom_names_2=attached_atom_name_list, atom_types_2=attached_element_list, isotope_2=attached_isotope_list, data=ri_data_list[i], errors=ri_data_err_list[i], temp_calibration=temp_calib, temp_control=temp_control, peak_intensity_type=peak_intensity_type)
 
         # The experimental label.
-        if ri_label == 'NOE':
+        if ri_type == 'NOE':
             exp_name = 'steady-state NOE'
         else:
-            exp_name = ri_label
-        exp_label.append("%s MHz %s" % (frq_label, exp_name))
+            exp_name = ri_type
+        exp_label.append("%s MHz %s" % (frq, exp_name))
 
         # Spectrometer info.
         spectro_ids.append(cdp.remap_table[i] + 1)
