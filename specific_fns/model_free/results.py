@@ -571,8 +571,45 @@ class Results:
         if data_set == 'value' or data_set == 'error':
             sim = False
 
-        # Add the relaxation data.
-        add_data_to_spin(spin=spin, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, values=values, errors=errors, sim=sim)
+        # Loop over the relaxation data sets.
+        for i in range(len(ri_labels)):
+            # The ID string.
+            ri_id = "%s_%s" % (ri_labels[i], frq_labels[remap_table[i]])
+
+            # Initialise the global structures if necessary.
+            if not hasattr(cdp, 'ri_ids'):
+                cdp.ri_ids = []
+            if not hasattr(cdp, 'ri_type'):
+                cdp.ri_type = {}
+            if not hasattr(cdp, 'frq'):
+                cdp.frq = {}
+
+            # Update the global structures if necessary.
+            if ri_id not in cdp.ri_ids:
+                cdp.ri_ids.append(ri_id)
+                cdp.ri_type[ri_id] = ri_labels[i]
+                cdp.frq[ri_id] = frq[remap_table[i]]
+
+            # Simulation data.
+            if sim:
+                # Initialise.
+                if not hasattr(spin, 'ri_data_sim'):
+                    spin.ri_data_sim = {}
+
+                # Set the value.
+                spin.ri_data_sim[ri_id] = values[i]
+
+            # Normal data.
+            else:
+                # Initialise.
+                if not hasattr(spin, 'ri_data'):
+                    spin.ri_data = {}
+                if not hasattr(spin, 'ri_data_err'):
+                    spin.ri_data_err = {}
+
+                # Set the value.
+                spin.ri_data[ri_id] = values[i]
+                spin.ri_data_err[ri_id] = errors[i]
 
 
     def _load_structure(self, spin_line, col, verbosity=1):
