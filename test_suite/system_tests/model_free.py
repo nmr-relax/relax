@@ -2054,8 +2054,6 @@ class Mf(SystemTestCase):
         # Debugging print out.
         print(cdp)
 
-
-
         # The spin specific data.
         num = [26, 27, 29, 30, 31, 32, 33, 34]
         name = ['His', 'Pro', 'Thr', 'Leu', 'Val', 'Lys', 'Val', 'Lys']
@@ -2072,8 +2070,9 @@ class Mf(SystemTestCase):
         rex = [None, None, None, None, None, None, None, None]
         r = [None, None, None, 1.0200000000000001e-10, 1.0200000000000001e-10, 1.0200000000000001e-10, None, 1.0200000000000001e-10]
         csa = [None, None, None, -0.00017199999999999998, -0.00017199999999999998, -0.00017199999999999998, None, -0.00017199999999999998]
+        ri_ids = ['R1_800', 'R2_800', 'R1_600', 'R2_600', 'NOE_600', 'R1_500', 'R2_500', 'NOE_500']
         ri_type_list = ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
-        frq_list = [799812000.0]*3 + [599739000.0]*3 + [499827000.0]*3
+        frq_list = [799812000.0]*2 + [599739000.0]*3 + [499827000.0]*3
         ri_data_list = [[],
                         [],
                         [],
@@ -2092,8 +2091,12 @@ class Mf(SystemTestCase):
                             [0.027699999999999999, 0.52810000000000001, 0.031399999999999997, 0.46688099999999999, 0.040013100000000003, 0.055779599999999999, 0.71983399999999997, 0.036582299999999998]]
         ri_type = {}
         frq = {}
-        ri_data = [{}] * len(ri_data_list)
-        ri_data_err = [{}] * len(ri_data_list)
+        ri_data = []
+        ri_data_err = []
+        for i in range(len(ri_data_list)):
+            ri_data.append({})
+            ri_data_err.append({})
+
         for i in range(len(ri_ids)):
             ri_type[ri_ids[i]] = ri_type_list[i]
             frq[ri_ids[i]] = frq_list[i]
@@ -2176,6 +2179,7 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
+            print ri_data
             if not ri_data[i].keys():
                 self.assertEqual(spin.ri_data, {})
                 self.assertEqual(spin.ri_data_err, {})
