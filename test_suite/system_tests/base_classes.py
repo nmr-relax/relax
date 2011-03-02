@@ -40,3 +40,4 @@ class SystemTestCase(TestCase):
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
         self.interpreter.populate_self()
+        self.interpreter.on()
