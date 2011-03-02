@@ -75,7 +75,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNumError, self.relax_data_fns.back_calc, ri_id='R2_1000', frq=data[1])
+            self.assertRaises(RelaxNumError, self.relax_data_fns.back_calc, ri_id='R2_1000', ri_type='R2', frq=data[1])
 
 
     def test_copy_argfail_pipe_from(self):
