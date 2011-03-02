@@ -356,35 +356,29 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
     if not exists_mol_res_spin_data(pipe_to):
         raise RelaxNoSequenceError
 
-    # Copy all data.
+    # Test if relaxation data ID string exists for pipe_from.
+    if ri_id and (not hasattr(dp_from, 'ri_ids') or ri_id not in dp_from.ri_ids):
+        raise RelaxNoRiError(ri_id)
+
+    # The IDs.
     if ri_id == None:
-        # Get all data structure names.
-        names = get_data_names()
-
-        # Spin loop.
-        for mol_index, res_index, spin_index in spin_index_loop():
-            # Alias the spin containers.
-            spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
-            spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
-
-            # Loop through the data structure names.
-            for name in names:
-                # Skip the data structure if it does not exist.
-                if not hasattr(spin_from, name):
-                    continue
-
-                # Copy the data structure.
-                setattr(spin_to, name, deepcopy(getattr(spin_from, name)))
-
-    # Copy a specific data set.
+        ri_ids = dp_from.ri_ids
     else:
-        # Test if relaxation data ID string exists for pipe_from.
-        if not hasattr(dp_from, 'ri_ids') or ri_id not in dp_from.ri_ids:
-            raise RelaxNoRiError(ri_id)
+        ri_ids = [ri_id]
 
+    # Init target pipe global structures.
+    if not hasattr(dp_to, 'ri_ids'):
+        dp_to.ri_ids = []
+    if not hasattr(dp_to, 'ri_type'):
+        dp_to.ri_type = {}
+    if not hasattr(dp_to, 'frq'):
+        dp_to.frq = {}
+
+    # Loop over the Rx IDs.
+    for ri_id in ri_ids:
         # Test if relaxation data ID string exists for pipe_to.
-        if not hasattr(dp_to, 'ri_ids') or ri_id not in dp_to.ri_ids:
-            raise RelaxNoRiError(ri_id)
+        if ri_id in dp_to.ri_ids:
+            raise RelaxRiError(ri_id)
 
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
@@ -399,6 +393,7 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
                 spin_to.ri_data_err = {}
 
             # Copy the value and error from pipe_from.
+            print spin_from
             spin_to.ri_data[ri_id] = spin_from.ri_data[ri_id]
             spin_to.ri_data_err[ri_id] = spin_from.ri_data_err[ri_id]
 
