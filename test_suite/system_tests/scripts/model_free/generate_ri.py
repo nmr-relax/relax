@@ -43,7 +43,7 @@ def errors():
     # Loop over the sequence.
     for spin in spin_loop():
         # Loop over the relaxation data.
-        for ri_id in ri_ids:
+        for ri_id in cdp.ri_ids:
             # No data.
             if spin.ri_data[ri_id] == None:
                 continue
