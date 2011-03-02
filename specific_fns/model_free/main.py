@@ -1303,10 +1303,6 @@ class Model_free_main:
             names.append('h_count')
             names.append('warning')
 
-        # Relaxation data.
-        if set == 'all':
-            names = names + relax_data.get_data_names()
-
         # Parameter errors.
         if error_names and (set == 'all' or set == 'params'):
             names.append('s2_err')
@@ -1332,10 +1328,6 @@ class Model_free_main:
             names.append('rex_sim')
             names.append('r_sim')
             names.append('csa_sim')
-
-        # Relaxation data simulation values.
-        if sim_names and set == 'all':
-            names = names + relax_data.get_data_names(sim_names=True)
 
         # Return the names.
         return names
