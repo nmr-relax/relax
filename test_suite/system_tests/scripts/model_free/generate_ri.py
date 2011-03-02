@@ -43,22 +43,22 @@ def errors():
     # Loop over the sequence.
     for spin in spin_loop():
         # Loop over the relaxation data.
-        for j in xrange(len(cdp.ri_ids)):
+        for ri_id in ri_ids:
             # No data.
-            if spin.ri_data[j] == None:
+            if spin.ri_data[ri_id] == None:
                 continue
 
             # 600 MHz NOE.
-            if cdp.ri_ids[j] == 'NOE_600':
-                spin.ri_data_err[j] = 0.04
+            if cdp.ri_ids[ri_id] == 'NOE_600':
+                spin.ri_data_err[ri_id] = 0.04
 
             # 500 MHz NOE.
-            elif cdp.ri_ids[j] == 'NOE_500':
-                spin.ri_data_err[j] = 0.05
+            elif cdp.ri_ids[ri_id] == 'NOE_500':
+                spin.ri_data_err[ri_id] = 0.05
 
             # All other data.
             else:
-                spin.ri_data_err[j] = spin.ri_data[j] * 0.02
+                spin.ri_data_err[ri_id] = spin.ri_data[ri_id] * 0.02
 
 
 def write():
