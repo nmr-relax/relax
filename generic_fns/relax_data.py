@@ -82,6 +82,12 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
     # Specific Ri back-calculate function setup.
     back_calculate = specific_fns.setup.get_specific_fn('back_calc_ri', pipes.get_type())
 
+    # The IDs to loop over.
+    if ri_id == None:
+        ri_ids = cdp.ri_ids
+    else:
+        ri_ids = [ri_id]
+
     # Loop over the spins.
     for spin, spin_id in spin_loop(return_id=True):
         # Skip deselected spins.
@@ -92,11 +98,12 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
         spin_index = find_index(spin_id)
 
         # Initialise the spin data if necessary.
-        if not hasattr(cdp, 'ri_data_bc'):
+        if not hasattr(spin, 'ri_data_bc'):
             spin.ri_data_bc = {}
 
         # Back-calculate the relaxation value.
-        spin.ri_data_bc[ri_id] = back_calculate(spin_index=spin_index, ri_id=ri_id, ri_type=ri_type, frq=frq)
+        for ri_id in ri_ids:
+            spin.ri_data_bc[ri_id] = back_calculate(spin_index=spin_index, ri_id=ri_id, ri_type=ri_type, frq=frq)
 
 
 def bmrb_read(star, sample_conditions=None):
