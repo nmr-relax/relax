@@ -31,42 +31,6 @@ from generic_fns.mol_res_spin import spin_loop
 from status import Status; status = Status()
 
 
-def back_calc():
-    """Function for back calculating the relaxation data."""
-
-    relax_data.back_calc(ri_id='NOE_600', ri_type='NOE', frq=600e6)
-
-
-def errors():
-    """Function for generating relaxation data errors."""
-
-    # Loop over the sequence.
-    for spin in spin_loop():
-        # Loop over the relaxation data.
-        for ri_id in cdp.ri_ids:
-            # No data.
-            if spin.ri_data[ri_id] == None:
-                continue
-
-            # 600 MHz NOE.
-            if cdp.ri_ids[ri_id] == 'NOE_600':
-                spin.ri_data_err[ri_id] = 0.04
-
-            # 500 MHz NOE.
-            elif cdp.ri_ids[ri_id] == 'NOE_500':
-                spin.ri_data_err[ri_id] = 0.05
-
-            # All other data.
-            else:
-                spin.ri_data_err[ri_id] = spin.ri_data[ri_id] * 0.02
-
-
-def write():
-    """Function for writing the relaxation data to file."""
-
-    relax_data.write(ri_id='NOE_600', file='devnull', force=True)
-
-
 # Create the data pipe.
 pipe.create('test', 'mf')
 
@@ -93,11 +57,8 @@ value.set(val=20e-12, param='te')
 # Select model-free model m2.
 model_free.select_model(model='m2')
 
-# Back calculate the relaxation data.
-back_calc()
-
-# Generate the errors.
-errors()
+# Back calculate some relaxation data.
+relax_data.back_calc(ri_id='NOE_600', ri_type='NOE', frq=600e6)
 
 # Write the data.
-write()
+relax_data.write(ri_id='NOE_600', file='devnull', force=True)
