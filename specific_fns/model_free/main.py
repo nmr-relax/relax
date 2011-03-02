@@ -430,15 +430,15 @@ class Model_free_main:
         return scaling_matrix
 
 
-    def back_calc_ri(self, spin_index=None, ri_label=None, frq_label=None, frq=None):
+    def back_calc_ri(self, spin_index=None, ri_id=None, frq_label=None, frq=None):
         """Back-calculation of relaxation data from the model-free parameter values.
 
         @keyword spin_index:    The global spin index.
         @type spin_index:       int
-        @keyword ri_label:      The relaxation data type, i.e. 'R1', 'R2', or 'NOE'.
-        @type ri_label:         str
-        @keyword frq_label:     The field strength label.
-        @type frq_label:        str
+        @keyword ri_id:         The relaxation data ID string.
+        @type ri_id:            str
+        @keyword ri_type:       The relaxation data type.
+        @type ri_type:          str
         @keyword frq:           The field strength.
         @type frq:              float
         @return:                The back calculated relaxation data value corresponding to the index.
@@ -454,7 +454,7 @@ class Model_free_main:
             return
 
         # Get the relaxation value from the minimise function.
-        value = self.minimise(min_algor='back_calc', min_options=(spin_index, ri_label, frq_label, frq))
+        value = self.minimise(min_algor='back_calc', min_options=(spin_index, ri_id, ri_type, frq))
 
         # Return the relaxation value.
         return value
