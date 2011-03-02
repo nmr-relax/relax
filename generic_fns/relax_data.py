@@ -321,11 +321,34 @@ def bmrb_write(star):
         spectro_labels.append("$spectrometer_%s" % spectro_ids[-1])
 
     # Add the spectrometer info.
-    for i in range(cdp.num_frq):
-        star.nmr_spectrometer.add(name="$spectrometer_%s" % (i+1), manufacturer=None, model=None, frq=int(cdp.frq[i]/1e6))
+    num = 1
+    for frq in frq_loop():
+        star.nmr_spectrometer.add(name="$spectrometer_%s" % num, manufacturer=None, model=None, frq=int(frq/1e6))
+        num += 1
 
     # Add the experiment saveframe.
     star.experiment.add(name=exp_label, spectrometer_ids=spectro_ids, spectrometer_labels=spectro_labels)
+
+
+def frq_loop():
+    """Generator function for returning each unique frequency.
+
+    @return:    The frequency.
+    @rtype:     float
+    """
+
+    # Init.
+    frq = []
+
+    # Loop over the Rx data.
+    for ri_id in cdp.ri_ids:
+        # New frequency.
+        if cdp.frq[ri_id] not in frq:
+            # Add the frequency.
+            frq.append(cdp.frq[ri_id])
+
+            # Yield the value.
+            yield cdp.frq[ri_id]
 
 
 def copy(pipe_from=None, pipe_to=None, ri_id=None):
