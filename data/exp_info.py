@@ -352,46 +352,22 @@ class ExpInfo(Element):
         self.temp_calibration[ri_id] = temp_calibration
 
 
-    def temp_control_setup(self, ri_label, frq_label, method):
+    def temp_control_setup(self, ri_id, method):
         """Store the temperature control method.
 
-        @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-        @type ri_label:     str
-        @param frq_label:   The field strength label.
-        @type frq_label:    str
+        @param ri_id:       The relaxation data ID string.
+        @type ri_id:        str
         @param method:      The temperature control method.
         @type method:       str
         """
 
         # Initialise the container if needed.
         if not hasattr(self, "temp_control"):
-            # The list.
-            self.temp_control = RelaxListType()
-
-            # The name of the container.
-            self.temp_control.container_name = "temp_control_list"
-
-            # The description of the container.
-            self.temp_control.container_desc = "List of temperature control methods."
+            self.temp_control = {}
 
         # Find if the method has already been set.
-        for i in range(len(self.temp_control)):
-            if self.temp_control[i].ri_label == ri_label and self.temp_control[i].frq_label == frq_label:
-                raise RelaxError("The temperature control method for the '%s' ri_label and '%s' frq_label has already been set.")
+        if ri_id in self.temp_control.keys():
+            raise RelaxError("The temperature control method for the '%s' relaxation data ID string has already been set.")
 
-        # Init the container.
-        temp_control = Element()
-
-        # The name of the container.
-        temp_control.name = "temp_control"
-
-        # The description of the container.
-        temp_control.desc = "Temperature control methods for the relaxation data."
-
-        # Set the attributes.
-        temp_control.ri_label = ri_label
-        temp_control.frq_label = frq_label
-        temp_control.method = method
-
-        # Append the container.
-        self.temp_control.append(temp_control)
+        # Set the method.
+        self.temp_control[ri_id] = method
