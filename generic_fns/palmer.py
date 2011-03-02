@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -54,16 +54,16 @@ def __deselect_spins():
 
     # Loop over the sequence.
     for spin in spin_loop():
-        # Relaxation data must exist!
-        if not hasattr(spin, 'relax_data'):
+        # Relaxation data and errors must exist!
+        if (not hasattr(spin, 'ri_data') or spin.ri_data == None) or (not hasattr(spin, 'ri_data_err') or spin.ri_data_err == None):
             spin.select = False
 
         # Require 3 or more relaxation data points.
-        elif len(spin.relax_data) < 3:
+        elif len(spin.ri_data) < 3:
             spin.select = False
 
         # Require at least as many data points as params to prevent over-fitting.
-        elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.relax_data):
+        elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.ri_data):
             spin.select = False
 
 
@@ -133,22 +133,15 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     mkdir_nofail(dir, verbosity=0)
 
     # Number of field strengths and values.
-    num_frq = 0
     frq = []
-    for spin in spin_loop(spin_id):
-        if hasattr(spin, 'num_frq'):
-            if spin.num_frq > num_frq:
-                # Number of field strengths.
-                num_frq = spin.num_frq
-
-                # Field strength values.
-                for val in spin.frq:
-                    if val not in frq:
-                        frq.append(val)
+    for ri_id in cdp.ri_ids:
+        # New frequency.
+        if cdp.frq[ri_id] not in frq:
+            frq.append(cdp.frq[ri_id])
 
     # The 'mfin' file.
     mfin = open_write_file('mfin', dir, force)
-    create_mfin(mfin, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, num_frq=num_frq, frq=frq)
+    create_mfin(mfin, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, num_frq=len(frq), frq=frq)
     mfin.close()
 
     # Open the 'mfdata', 'mfmodel', and 'mfpar' files.
@@ -162,16 +155,15 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
         if not spin.select:
             continue
 
-        if hasattr(spin, 'num_frq'):
-            # The 'mfdata' file.
-            if not create_mfdata(mfdata, spin=spin, spin_id=id, num_frq=num_frq, frq=frq):
-                continue
+        # The 'mfdata' file.
+        if not create_mfdata(mfdata, spin=spin, spin_id=id, num_frq=len(frq), frq=frq):
+            continue
 
-            # The 'mfmodel' file.
-            create_mfmodel(mfmodel, spin=spin, spin_id=id, steps=steps, constraints=constraints)
+        # The 'mfmodel' file.
+        create_mfmodel(mfmodel, spin=spin, spin_id=id, steps=steps, constraints=constraints)
 
-            # The 'mfpar' file.
-            create_mfpar(mfpar, spin=spin, spin_id=id, res_num=res_num, atom1=atom1, atom2=atom2)
+        # The 'mfpar' file.
+        create_mfpar(mfpar, spin=spin, spin_id=id, res_num=res_num, atom1=atom1, atom2=atom2)
 
     # Close the 'mfdata', 'mfmodel', and 'mfpar' files.
     mfdata.close()
@@ -211,25 +203,26 @@ def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
         # Set the data to None.
         r1, r2, noe = None, None, None
 
-        # Loop over the relevant relaxation data.
-        for k in xrange(spin.num_ri):
-            if frq[j] != spin.frq[spin.remap_table[k]]:
+        # Loop over the relaxation data.
+        for ri_id in cdp.ri_ids:
+            # The frequency does not match.
+            if frq[j] != cdp.frq[ri_id]
                 continue
 
             # Find the corresponding R1.
-            if spin.ri_labels[k] == 'R1':
-                r1 = spin.relax_data[k]
-                r1_err = spin.relax_error[k]
+            if cdp.ri_type[ri_id] == 'R1':
+                r1 = spin.ri_data[ri_id]
+                r1_err = spin.ri_data_err[ri_id]
 
             # Find the corresponding R2.
-            elif spin.ri_labels[k] == 'R2':
-                r2 = spin.relax_data[k]
-                r2_err = spin.relax_error[k]
+            elif cdp.ri_type[ri_id] == 'R2':
+                r2 = spin.ri_data[ri_id]
+                r2_err = spin.ri_data_err[ri_id]
 
             # Find the corresponding NOE.
-            elif spin.ri_labels[k] == 'NOE':
-                noe = spin.relax_data[k]
-                noe_err = spin.relax_error[k]
+            elif cdp.ri_type[ri_id] == 'NOE':
+                noe = spin.ri_data[ri_id]
+                noe_err = spin.ri_data_err[ri_id]
 
         # Test if the R1 exists for this frequency, otherwise skip the data.
         if r1:
