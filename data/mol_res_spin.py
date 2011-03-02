@@ -70,7 +70,7 @@ class SpinContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # Add the object's attribute to the text string.
@@ -157,7 +157,7 @@ class SpinContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # An object has been added.
@@ -382,7 +382,7 @@ class ResidueContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # Add the object's attribute to the text string.
@@ -414,7 +414,7 @@ class ResidueContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # An object has been added.
@@ -599,7 +599,7 @@ class MoleculeContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # Add the object's attribute to the text string.
@@ -631,7 +631,7 @@ class MoleculeContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # An object has been added.

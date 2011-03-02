@@ -271,7 +271,7 @@ class PipeContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # An object has been added.
