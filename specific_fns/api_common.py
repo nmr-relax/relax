@@ -228,7 +228,13 @@ class API_common:
         @rtype:         list of float
         """
 
-        return spin.relax_data
+        # Convert to a list.
+        data = []
+        for ri_id in cdp.ri_ids:
+            data.append(spin.ri_data[ri_id])
+
+        # Return the list.
+        return data
 
 
     def _return_error_relax_data(self, data_id):
@@ -243,8 +249,13 @@ class API_common:
         # Get the spin container.
         spin = return_spin(data_id)
 
-        # Return the data.
-        return spin.relax_error
+        # Convert to a list.
+        error = []
+        for ri_id in cdp.ri_ids:
+            error.append(spin.ri_data_err[ri_id])
+
+        # Return the list.
+        return error
 
 
     def _return_value_general(self, spin, param, sim=None):
