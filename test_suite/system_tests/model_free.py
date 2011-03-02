@@ -1753,8 +1753,8 @@ class Mf(SystemTestCase):
         self.interpreter.relax_data.read(ri_id='R1_600', ri_type='R1', frq=600.0 * 1e6, file='r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Test the data and error.
-        self.assertEqual(cdp.mol[0].res[1].spin[0].ri_data[0], 1.3874977659397683)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].ri_data_err[0], 0.027749955318795365)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].ri_data['R1_600'], 1.3874977659397683)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].ri_data_err['R1_600'], 0.027749955318795365)
 
 
     def test_read_results_1_2(self):
