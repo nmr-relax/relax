@@ -420,7 +420,7 @@ class Relax_data(User_fn_class):
         relax_data.temp_control(ri_id=ri_id, method=method)
 
 
-    def write(self, ri_id=None, frq_id=None, file=None, dir=None, force=False):
+    def write(self, ri_id=None, file=None, dir=None, force=False):
         """Write relaxation data to a file.
 
         Keyword Arguments
