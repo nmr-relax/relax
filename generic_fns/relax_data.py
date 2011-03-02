@@ -730,8 +730,18 @@ def return_value(spin, data_type):
     @type data_type:    str
     """
 
+    # Relaxation data.
+    data = None
+    if hasattr(spin, 'ri_data') and spin.ri_data != None and data_type in spin.ri_data.keys():
+        data = spin.ri_data[data_type]
+
+    # Relaxation errors.
+    error = None
+    if hasattr(spin, 'ri_data_err') and spin.ri_data_err != None and data_type in spin.ri_data_err.keys():
+        error = spin.ri_data_err[data_type]
+
     # Return the data.
-    return spin.ri_data[data_type], spin.ri_data_err[data_type]
+    return data, error
 
 
 def temp_calibration(ri_id=None, method=None):
