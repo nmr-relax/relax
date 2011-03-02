@@ -371,12 +371,11 @@ class Diffusion_tensor(SystemTestCase):
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
             # Alias.
-            bc = ds['back_calc'].mol[0].res[i].spin[0]
-            orig = ds['orig_data'].mol[0].res[i].spin[0]
+            spin = cdp.mol[0].res[i].spin[0]
 
             # Check the values.
-            for j in range(len(bc.relax_data)):
-                self.assertAlmostEqual(bc.relax_data[j], orig.relax_data[j])
+            for ri_id in cdp.ri_ids:
+                self.assertAlmostEqual(spin.ri_data_bc[ri_id], spin.ri_data[ri_id])
 
 
     def test_back_calc_sphere(self):
@@ -394,12 +393,11 @@ class Diffusion_tensor(SystemTestCase):
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
             # Alias.
-            bc = ds['back_calc'].mol[0].res[i].spin[0]
-            orig = ds['orig_data'].mol[0].res[i].spin[0]
+            spin = cdp.mol[0].res[i].spin[0]
 
             # Check the values.
-            for j in range(len(bc.relax_data)):
-                self.assertAlmostEqual(bc.relax_data[j], orig.relax_data[j])
+            for ri_id in cdp.ri_ids:
+                self.assertAlmostEqual(spin.ri_data_bc[ri_id], spin.ri_data[ri_id])
 
 
     def test_back_calc_spheroid(self):
@@ -417,12 +415,11 @@ class Diffusion_tensor(SystemTestCase):
         # Loop over all spins.
         for i in range(len(cdp.mol[0].res)):
             # Alias.
-            bc = ds['back_calc'].mol[0].res[i].spin[0]
-            orig = ds['orig_data'].mol[0].res[i].spin[0]
+            spin = cdp.mol[0].res[i].spin[0]
 
             # Check the values.
-            for j in range(len(bc.relax_data)):
-                self.assertAlmostEqual(bc.relax_data[j], orig.relax_data[j])
+            for ri_id in cdp.ri_ids:
+                self.assertAlmostEqual(spin.ri_data_bc[ri_id], spin.ri_data[ri_id])
 
 
     def test_copy(self):
