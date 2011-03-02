@@ -34,15 +34,15 @@ from relax_errors import RelaxError
 class Relax_data(User_fn_class):
     """Class for manipulating R1, R2, and NOE relaxation data."""
 
-    def back_calc(self, ri_label=None, frq_label=None, frq=None):
+    def back_calc(self, ri_id=None, ri_type=None, frq=None):
         """Function for back calculating relaxation data.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        ri_id:  The relaxation data ID string.
 
-        frq_label:  The field strength label.
+        ri_type:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
 
         frq:  The spectrometer frequency in Hz.
 
@@ -51,18 +51,18 @@ class Relax_data(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.back_calc("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label)
+            text = text + "ri_id=" + repr(ri_id)
+            text = text + ", ri_type=" + repr(ri_type)
             text = text + ", frq=" + repr(frq) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation ID string')
+        arg_check.is_str(ri_type, 'relaxation type')
         arg_check.is_num(frq, 'frequency')
 
         # Execute the functional code.
-        relax_data.back_calc(ri_label=ri_label, frq_label=frq_label, frq=frq)
+        relax_data.back_calc(ri_id=ri_id, ri_type=ri_type, frq=frq)
 
 
     def copy(self, pipe_from=None, pipe_to=None, ri_id=None):
