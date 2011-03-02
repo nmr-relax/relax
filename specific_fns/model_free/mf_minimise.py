@@ -1086,6 +1086,7 @@ class Mf_minimise:
 
         # Loop over the spins.
         for spin in spin_loop(spin_id):
+            print spin
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -1120,14 +1121,14 @@ class Mf_minimise:
                 raise RelaxNoValueError("bond length")
 
             # Skip spins where there is no data or errors.
-            if not hasattr(spin, 'ri_data') or not hasattr(spin, 'relax_error'):
+            if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
                 continue
 
             # Make sure that the errors are strictly positive numbers.
-            for j in xrange(len(spin.relax_error)):
-                if spin.relax_error[j] == 0.0:
+            for ri_id in cdp.ri_ids:
+                if spin.ri_data_err[ri_id] == 0.0:
                     raise RelaxError("Zero error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible.")
-                elif spin.relax_error[j] < 0.0:
+                elif spin.ri_data_err[ri_id] < 0.0:
                     raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible.")
 
             # Create the initial parameter vector.
