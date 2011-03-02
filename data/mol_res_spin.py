@@ -94,24 +94,28 @@ class SpinContainer(Prototype):
         """Converting the old spin relaxation data structures to the new ones."""
 
         # Nothing to do.
-        if not (hasattr(cdp, 'frq_labels') and hasattr(cdp, 'noe_r1_table') and hasattr(cdp, 'remap_table')):
+        if not (hasattr(self, 'frq_labels') and hasattr(self, 'noe_r1_table') and hasattr(self, 'remap_table')):
             return
 
         # Initialise the new structures.
         self.ri_data = {}
         self.ri_data_err = {}
+        sims = False
+        if hasattr(self, 'relax_sim_data'):
+            sims = True
+            self.ri_data_sim = {}
 
         # Generate the new structures.
-        for i in range(cdp.num_ri):
+        for i in range(self.num_ri):
             # The ID.
-            ri_id = "%s_%s" % (cdp.ri_labels[i], cdp.frq_labels[cdp.remap_table[i]])
+            ri_id = "%s_%s" % (self.ri_labels[i], self.frq_labels[self.remap_table[i]])
 
             # Not unique.
             if ri_id in cdp.ri_ids:
                 # Loop until a unique ID is found.
-                for i in range(100):
+                for j in range(100):
                     # New id.
-                    new_id = "%s_%s" % (ri_id, i)
+                    new_id = "%s_%s" % (ri_id, j)
 
                     # Unique.
                     if not new_id in cdp.ri_ids:
@@ -122,16 +126,24 @@ class SpinContainer(Prototype):
             self.ri_data[ri_id] = self.relax_data[i]
             self.ri_data_err[ri_id] = self.relax_error[i]
 
+            # Simulation data.
+            if sims:
+                self.ri_data_sim[ri_id] = []
+                for j in range(cdp.sim_number):
+                    self.ri_data_sim[ri_id].append(self.relax_sim_data[j][i])
+
+
         # Delete the old structures.
-        del cdp.frq
-        del cdp.frq_labels
-        del cdp.noe_r1_table
-        del cdp.num_frq
-        del cdp.num_ri
-        del cdp.ri_labels
-        del cdp.remap_table
-        del cdp.relax_data
-        del cdp.relax_error
+        del self.frq
+        del self.frq_labels
+        del self.noe_r1_table
+        del self.num_frq
+        del self.num_ri
+        del self.ri_labels
+        del self.remap_table
+        del self.relax_data
+        del self.relax_error
+        del self.relax_sim_data
 
 
     def is_empty(self):

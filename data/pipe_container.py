@@ -131,9 +131,9 @@ class PipeContainer(Prototype):
             # Not unique.
             if ri_id in cdp.ri_ids:
                 # Loop until a unique ID is found.
-                for i in range(100):
+                for j in range(100):
                     # New id.
-                    new_id = "%s_%s" % (ri_id, i)
+                    new_id = "%s_%s" % (ri_id, j)
 
                     # Unique.
                     if not new_id in cdp.ri_ids:
