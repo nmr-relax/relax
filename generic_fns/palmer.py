@@ -206,7 +206,7 @@ def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
         # Loop over the relaxation data.
         for ri_id in cdp.ri_ids:
             # The frequency does not match.
-            if frq[j] != cdp.frq[ri_id]
+            if frq[j] != cdp.frq[ri_id]:
                 continue
 
             # Find the corresponding R1.
