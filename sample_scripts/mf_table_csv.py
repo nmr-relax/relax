@@ -68,7 +68,7 @@ class CSV:
         self.file.write("S2f, ")
         self.file.write("te < 100 or tf, ")
         self.file.write("te > 100 or ts, ")
-        self.file.write("Rex (" + repr(cdp.frq[0] / 1e6) + " MHz)")
+        self.file.write("Rex (" + repr(cdp.frq[cdp.ri_ids[0]] / 1e6) + " MHz)")
         self.file.write("\n")
 
         # Units.

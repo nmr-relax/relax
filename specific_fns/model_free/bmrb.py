@@ -178,7 +178,7 @@ class Bmrb:
             # Rex scaling.
             rex_scale = 1.0
             if hasattr(cdp, 'frq') and len(cdp.frq):
-                rex_scale = 1.0 / (2.0*pi*cdp.frq[0])**2
+                rex_scale = 1.0 / (2.0*pi*cdp.frq[cdp.ri_ids[0]])**2
 
             # Loop over the spins.
             for i in range(N):
@@ -366,7 +366,7 @@ class Bmrb:
             global_chi2 = cdp.chi2
 
         # Rex frq.
-        rex_frq = cdp.frq[0]
+        rex_frq = cdp.frq[cdp.ri_ids[0]]
 
         # Initialise the spin specific data lists.
         mol_name_list = []

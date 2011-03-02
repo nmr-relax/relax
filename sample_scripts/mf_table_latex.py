@@ -106,7 +106,7 @@ class Latex:
         self.file.write("\multicolumn{2}{c}{$S^2_f$} &%\n")
         self.file.write("\multicolumn{2}{c}{$\\tau_e < 100$ or $\\tau_f$} &%\n")
         self.file.write("\multicolumn{2}{c}{$\\tau_e > 100$ or $\\tau_s$} &%\n")
-        self.file.write("\multicolumn{2}{c}{$R_{ex}$ (" + repr(cdp.frq[0] / 1e6) + " MHz)} \\\\\n")
+        self.file.write("\multicolumn{2}{c}{$R_{ex}$ (" + repr(cdp.frq[cdp.ri_ids[0]] / 1e6) + " MHz)} \\\\\n")
         self.file.write("\n")
 
         # Units.

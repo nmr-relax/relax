@@ -183,8 +183,11 @@ def create_script(file, model_type, algor):
 
     # Frequency values.
     file.write('\n# Frequency values.\n')
-    for i in xrange(cdp.num_frq):
-        file.write('set H1_freq ' + repr(cdp.frq[i] / 1e6) + ' ' + repr(i+1) + '\n')
+    frqs = []
+    for ri_id in cdp.ri_ids:
+        if not cdp.frq[ri_id] in frqs:
+            frqs.append(cdp.frq[ri_id])
+            file.write('set H1_freq ' + repr(cdp.frq[ri_id] / 1e6) + ' ' + repr(i+1) + '\n')
 
     # Set the diffusion tensor.
     file.write('\n# Set the diffusion tensor.\n')
@@ -487,7 +490,7 @@ def extract(dir):
         if param in ['te', 'tf', 'ts']:
             scaling = 1e-9
         elif param == 'Rex':
-            scaling = 1.0 / (2.0 * pi * cdp.frq[0]) ** 2
+            scaling = 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]]) ** 2
         else:
             scaling = 1.0
 
