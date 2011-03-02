@@ -134,41 +134,33 @@ class Consistency_tests(API_base, API_common):
             if not spin.select:
                 continue
 
-            # Residue specific frequency index.
-            frq_index = None
-            for j in xrange(spin.num_frq):
-                if spin.frq[j] == cdp.ct_frq:
-                    frq_index = j
-            if frq_index == None:
-                continue
-
             # Set the r1, r2, and NOE to None.
             r1 = None
             r2 = None
             noe = None
 
             # Get the R1, R2, and NOE values corresponding to the set frequency.
-            for j in xrange(spin.num_ri):
+            for ri_id in cdp.ri_ids:
                 # R1.
-                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R1':
+                if cdp.ri_type[ri_id] == 'R1':
                     if sim_index == None:
-                        r1 = spin.relax_data[j]
+                        r1 = spin.ri_data[j]
                     else:
-                        r1 = spin.relax_sim_data[sim_index][j]
+                        r1 = spin.ri_data_sim[sim_index][j]
 
                 # R2.
-                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R2':
+                if cdp.ri_type[ri_id] == 'R2':
                     if sim_index == None:
-                        r2 = spin.relax_data[j]
+                        r2 = spin.ri_data[j]
                     else:
-                        r2 = spin.relax_sim_data[sim_index][j]
+                        r2 = spin.ri_data_sim[sim_index][j]
 
                 # NOE.
-                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'NOE':
+                if cdp.ri_type[ri_id] == 'NOE':
                     if sim_index == None:
-                        noe = spin.relax_data[j]
+                        noe = spin.ri_data[j]
                     else:
-                        noe = spin.relax_sim_data[sim_index][j]
+                        noe = spin.ri_data_sim[sim_index][j]
 
             # Skip the residue if not all of the three value exist.
             if r1 == None or r2 == None or noe == None:
@@ -214,7 +206,7 @@ class Consistency_tests(API_base, API_common):
         spin = return_spin(data_id)
 
         # Return the data.
-        return spin.relax_data
+        return spin.ri_data
 
 
     def data_init(self, data_cont, sim=False):
@@ -363,12 +355,12 @@ class Consistency_tests(API_base, API_common):
         # Loop over spin data:
         for spin, spin_id in spin_loop(return_id=True):
             # Check for sufficient data
-            if not hasattr(spin, 'relax_data'):
+            if not hasattr(spin, 'ri_data'):
                 warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                 spin.select = False
 
             # Require 3 or more data points
-            elif len(spin.relax_data) < 3:
+            elif len(spin.ri_data) < 3:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                 spin.select = False
 
@@ -623,8 +615,8 @@ class Consistency_tests(API_base, API_common):
         spin = return_spin(data_id)
 
         # Test if the simulation data already exists.
-        if hasattr(spin, 'relax_sim_data'):
+        if hasattr(spin, 'ri_data_sim'):
             raise RelaxError("Monte Carlo simulation data already exists.")
 
         # Create the data structure.
-        spin.relax_sim_data = sim_data
+        spin.ri_data_sim = sim_data
