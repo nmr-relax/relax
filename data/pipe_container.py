@@ -218,7 +218,7 @@ class PipeContainer(Prototype):
 
         # Recreate the molecule, residue, and spin data structure.
         mol_nodes = pipe_node.getElementsByTagName('mol')
-        self.mol.from_xml(mol_nodes)
+        self.mol.from_xml(mol_nodes, file_version=file_version)
 
         # Get the structural object nodes and, if they exist, fill the contents.
         str_nodes = pipe_node.getElementsByTagName('structure')
