@@ -1495,15 +1495,15 @@ class Mf_minimise:
             if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
                 # Total number of ri.
                 number_ri = 0
-                for k in xrange(len(relax_error)):
-                    number_ri = number_ri + len(relax_error[k])
+                for k in xrange(len(ri_data_err)):
+                    number_ri = number_ri + len(ri_data_err[k])
 
                 # Reconstruct the error data structure.
                 lm_error = zeros(number_ri, float64)
                 index = 0
-                for k in xrange(len(relax_error)):
-                    lm_error[index:index+len(relax_error[k])] = relax_error[k]
-                    index = index + len(relax_error[k])
+                for k in xrange(len(ri_data_err)):
+                    lm_error[index:index+len(ri_data_err[k])] = ri_data_err[k]
+                    index = index + len(ri_data_err[k])
 
                 min_options = min_options + (self.mf.lm_dri, lm_error)
 
