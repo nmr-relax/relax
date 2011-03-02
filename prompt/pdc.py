@@ -33,11 +33,13 @@ from generic_fns import pdc
 class Pdc(User_fn_class):
     """Class containing the function for reading the Bruker Protein Dynamics Centre (PDC) files."""
 
-    def read(self, file=None, dir=None):
+    def read(self, ri_id=None, file=None, dir=None):
         """Read the Bruker Protein Dynamics Centre (PDC) file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
+
+        ri_id:  The relaxation data ID string.
 
         file:  The name of the PDC file.
 
@@ -54,13 +56,15 @@ class Pdc(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pdc.read("
-            text = text + "file=" + repr(file)
+            text = text + "ri_id=" + repr(ri_id)
+            text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir) + ")"
             print(text)
 
         # The argument checks.
+        arg_check.is_str(ri_id, 'relaxation data ID string')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
-        pdc.read(file=file, dir=dir)
+        pdc.read(ri_id=ri_id, file=file, dir=dir)
