@@ -1923,17 +1923,22 @@ class Mf(SystemTestCase):
         rex = [None, None]
         r = [None, 1.0200000000000001e-10]
         csa = [None, -0.00017199999999999998]
-        ri_labels = [[], ['R1', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']]
-        remap_table = [[], [0, 0, 1, 1, 1, 2, 2, 2]]
-        frq_labels = [[], ['800', '600', '500']]
-        frq = [[], [799744000.0, 599737000.0, 499719000.0]]
-        noe_r1_table = [[], [None, 0, None, None, 2, None, None, 5]]
-        num_frq = [None, 3]
-        num_ri = [None, 8]
-        relax_data = [[],
+        ri_ids = ['R1_800', 'NOE_800', 'R1_600', 'R2_600', 'NOE_600', 'R1_500', 'R2_500', 'NOE_500']
+        ri_type_list = ['R1', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
+        frq_list = [799744000.0]*3 + [599737000.0]*3 + [499719000.0]*3
+        ri_data_list = [[],
                 [0.6835, 0.81850000000000001, 0.98409999999999997, 16.5107, 0.79796699999999998, 1.3174999999999999, 15.381500000000001, 0.73046900000000003]]
-        relax_error = [[],
+        ri_data_err_list = [[],
                 [0.026957200000000001, 0.025881000000000001, 0.0243073, 0.497137, 0.028663000000000001, 0.038550000000000001, 0.40883999999999998, 0.022016299999999999]]
+        ri_type = {}
+        frq = {}
+        ri_data = [{}, {}]
+        ri_data_err = [{}, {}]
+        for i in range(len(ri_ids)):
+            ri_type[ri_ids[i]] = ri_type_list[i]
+            frq[ri_ids[i]] = frq_list[i]
+            ri_data[1][ri_ids[i]] = ri_data_list[1][i]
+            ri_data_err[1][ri_ids[i]] = ri_data_err_list[1][i]
 
         # Misc tests.
         self.assertEqual(cdp.pipe_type, 'mf')
@@ -1974,13 +1979,10 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.warning_sim[2], None)
 
         # Global relaxation data tests.
-        self.assertEqual(cdp.ri_labels, ['R1', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'])
-        self.assertEqual(cdp.remap_table, [0, 0, 1, 1, 1, 2, 2, 2])
-        self.assertEqual(cdp.frq_labels, ['800', '600', '500'])
-        self.assertEqual(cdp.frq, [799744000.0, 599737000.0, 499719000.0])
-        self.assertEqual(cdp.noe_r1_table, [None, 0, None, None, 2, None, None, 5])
-        self.assertEqual(cdp.num_frq, 3)
-        self.assertEqual(cdp.num_ri, 8)
+        self.assertEqual(cdp.ri_ids, ri_ids)
+        for ri_id in ri_ids:
+            self.assertEqual(cdp.ri_type[ri_id], ri_type[ri_id])
+            self.assertEqual(cdp.frq[ri_id], frq[ri_id])
 
         # Loop over the residues of the original data.
         for i in xrange(len(cdp.mol[0].res)):
@@ -2033,15 +2035,13 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
-            self.assertEqual(spin.ri_labels, ri_labels[i])
-            self.assertEqual(spin.remap_table, remap_table[i])
-            self.assertEqual(spin.frq_labels, frq_labels[i])
-            self.assertEqual(spin.frq, frq[i])
-            self.assertEqual(spin.noe_r1_table, noe_r1_table[i])
-            self.assertEqual(spin.num_frq, num_frq[i])
-            self.assertEqual(spin.num_ri, num_ri[i])
-            self.assertEqual(spin.relax_data, relax_data[i])
-            self.assertEqual(spin.relax_error, relax_error[i])
+            if i == 0:
+                self.assertEqual(spin.ri_data, {})
+                self.assertEqual(spin.ri_data_err, {})
+            else:
+                for ri_id in ri_ids:
+                    self.assertEqual(spin.ri_data[ri_id], ri_data[ri_id])
+                    self.assertEqual(spin.ri_data_err[ri_id], ri_data_err[ri_id])
 
 
     def test_read_results_1_2_tem1(self):
