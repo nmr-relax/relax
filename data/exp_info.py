@@ -197,7 +197,6 @@ class ExpInfo(Element):
 
         # Initialise the container if needed.
         if not hasattr(self, "peak_intensity_type"):
-            # The list.
             self.peak_intensity_type = {}
 
         # Find if the type has already been set.
@@ -341,7 +340,6 @@ class ExpInfo(Element):
 
         # Initialise the container if needed.
         if not hasattr(self, "temp_calibration"):
-            # The list.
             self.temp_calibration = {}
 
         # Find if the method has already been set.
@@ -349,7 +347,7 @@ class ExpInfo(Element):
             raise RelaxError("The temperature calibration method for the '%s' relaxation data ID string has already been set.")
 
         # Set the method.
-        self.temp_calibration[ri_id] = temp_calibration
+        self.temp_calibration[ri_id] = method
 
 
     def temp_control_setup(self, ri_id, method):
