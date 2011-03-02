@@ -1890,8 +1890,9 @@ class Mf(SystemTestCase):
 
             # Relaxation data tests.
             for ri_id in cdp.ri_ids:
-                self.assertEqual(spin.ri_data[ri_id], ri_data[ri_id][i])
-                self.assertEqual(spin.ri_data_err[ri_id], ri_data_err[ri_id][i])
+                print(ri_id)
+                self.assertEqual(spin.ri_data[ri_id], ri_data[ri_id][j])
+                self.assertEqual(spin.ri_data_err[ri_id], ri_data_err[ri_id][j])
 
             # Secondary index.
             j = j + 1
