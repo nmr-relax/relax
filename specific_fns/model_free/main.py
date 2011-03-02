@@ -430,7 +430,7 @@ class Model_free_main:
         return scaling_matrix
 
 
-    def back_calc_ri(self, spin_index=None, ri_id=None, frq_label=None, frq=None):
+    def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
         """Back-calculation of relaxation data from the model-free parameter values.
 
         @keyword spin_index:    The global spin index.
