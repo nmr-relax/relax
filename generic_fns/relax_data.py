@@ -380,6 +380,11 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
         if ri_id in dp_to.ri_ids:
             raise RelaxRiError(ri_id)
 
+        # Copy the global data.
+        dp_to.ri_ids.append(ri_id)
+        dp_to.ri_type[ri_id] = dp_from.ri_type[ri_id]
+        dp_to.frq[ri_id] = dp_from.frq[ri_id]
+
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
             # Alias the spin containers.
