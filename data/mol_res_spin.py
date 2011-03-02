@@ -110,18 +110,6 @@ class SpinContainer(Prototype):
             # The ID.
             ri_id = "%s_%s" % (self.ri_labels[i], self.frq_labels[self.remap_table[i]])
 
-            # Not unique.
-            if ri_id in cdp.ri_ids:
-                # Loop until a unique ID is found.
-                for j in range(100):
-                    # New id.
-                    new_id = "%s_%s" % (ri_id, j)
-
-                    # Unique.
-                    if not new_id in cdp.ri_ids:
-                        ri_id = new_id
-                        break
-
             # The relaxation data.
             self.ri_data[ri_id] = self.relax_data[i]
             self.ri_data_err[ri_id] = self.relax_error[i]
