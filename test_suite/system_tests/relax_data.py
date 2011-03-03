@@ -63,7 +63,7 @@ class Relax_data(SystemTestCase):
             index += 1
 
 
-    def test_back_calc2(self):
+    def test_back_calc_specific(self):
         """Test the back calculation of specific relaxation data from model-free results."""
 
         # Load the original state.
