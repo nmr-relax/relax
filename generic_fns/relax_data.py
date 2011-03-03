@@ -44,6 +44,11 @@ from relax_warnings import RelaxWarning
 import specific_fns
 
 
+# The relaxation data types supported.
+VALID_TYPES = ['R1', 'R2', 'NOE']
+
+
+
 def back_calc(ri_id=None, ri_type=None, frq=None):
     """Back calculate the relaxation data.
 
@@ -64,6 +69,10 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
+
+    # Check if the type is valid.
+    if ri_type not in VALID_TYPES:
+        raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
 
     # Initialise the global data for the current pipe if necessary.
     if not hasattr(cdp, 'frq'):
@@ -711,6 +720,10 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
     # Test if the ri_id already exists.
     if hasattr(cdp, 'ri_ids') and ri_id in cdp.ri_ids:
         raise RelaxError("The relaxation ID string '%s' already exists." % ri_id)
+
+    # Check if the type is valid.
+    if ri_type not in VALID_TYPES:
+        raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
 
     # Loop over the file data to create the data structures for packing.
     values = []
