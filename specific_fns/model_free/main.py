@@ -2796,8 +2796,20 @@ class Model_free_main:
         if hasattr(spin, 'ri_data_sim'):
             raise RelaxError("Monte Carlo simulation data already exists.")
 
-        # Create the data structure.
-        spin.ri_data_sim = sim_data
+        # Initialise the data structure.
+        spin.ri_data_sim = {}
+
+        # Loop over the relaxation data.
+        for i in range(len(cdp.ri_ids)):
+            # The ID.
+            ri_id = cdp.ri_ids[i]
+
+            # Initialise the MC data list.
+            spin.ri_data_sim[ri_id] = []
+
+            # Loop over the simulations.
+            for j in range(cdp.sim_number):
+                spin.ri_data_sim[ri_id].append(sim_data[j][i])
 
 
     def sim_return_chi2(self, model_info, index=None):
