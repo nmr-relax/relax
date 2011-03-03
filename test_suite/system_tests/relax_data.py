@@ -48,3 +48,16 @@ class Relax_data(SystemTestCase):
 
         # Back calculate the relaxation data.
         self.interpreter.relax_data.back_calc()
+
+        # The actual data.
+        ri_data_bc = [{'R2_600': 4.7159538829340821, 'R1_500': 2.4779663389365068, 'NOE_500': 0.51989421750722165, 'R2_500': 4.3440970032224548, 'R1_600': 2.2831801922968129, 'NOE_600': 0.63592506242171432},
+                      {'R2_600': 4.7211287713315739, 'R1_500': 2.5267468751446214, 'NOE_500': 0.57703969243842634, 'R2_500': 4.6185111669453738, 'R1_600': 2.2320234021052801, 'NOE_600': 0.66505178335932991}]
+
+        # Loop over the spins.
+        index = 0
+        for spin in spin_loop():
+            # Check the back calculated data.
+            self.assertEqual(spin.ri_data_bc, ri_data_bc[index])
+
+            # Increment.
+            index += 1
