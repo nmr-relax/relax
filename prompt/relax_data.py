@@ -57,9 +57,9 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_id, 'relaxation ID string')
-        arg_check.is_str(ri_type, 'relaxation type')
-        arg_check.is_num(frq, 'frequency')
+        arg_check.is_str(ri_id, 'relaxation ID string', can_be_none=True)
+        arg_check.is_str(ri_type, 'relaxation type', can_be_none=True)
+        arg_check.is_num(frq, 'frequency', can_be_none=True)
 
         # Execute the functional code.
         relax_data.back_calc(ri_id=ri_id, ri_type=ri_type, frq=frq)
