@@ -1209,7 +1209,7 @@ class Model_free_main:
         # Loop over the data structure names.
         for name in data_names:
             # Blacklisted data structures.
-            if name in ['ri_data', 'ri_data_err']:
+            if name in ['ri_data', 'ri_data_bc', 'ri_data_err']:
                 continue
 
             # Data structures which are initially empty arrays.
