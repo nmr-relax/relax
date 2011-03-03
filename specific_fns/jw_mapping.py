@@ -83,7 +83,7 @@ class Jw_mapping(API_base, API_common):
         @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:    int
         @keyword sim_index: The optional MC simulation index.
-        @type sim_index:    int
+        @type sim_index:    None or int
         """
 
         # Test if the frequency has been set.
@@ -96,7 +96,7 @@ class Jw_mapping(API_base, API_common):
 
         # Test if the CSA and bond length values have been set.
         for spin in spin_loop(spin_id):
-            # Skip deselected residues.
+            # Skip deselected spins.
             if not spin.select:
                 continue
 
@@ -117,22 +117,13 @@ class Jw_mapping(API_base, API_common):
                 raise RelaxProtonTypeError
 
         # Frequency index.
-        if cdp.jw_frq not in cdp.frq:
+        if cdp.jw_frq not in cdp.frq.values():
             raise RelaxError("No relaxation data corresponding to the frequency " + repr(cdp.jw_frq) + " has been loaded.")
 
         # Reduced spectral density mapping.
         for spin in spin_loop(spin_id):
-
-            # Skip deselected residues.
+            # Skip deselected spins.
             if not spin.select:
-                continue
-
-            # Residue specific frequency index.
-            frq_index = None
-            for j in xrange(spin.num_frq):
-                if spin.frq[j] == cdp.jw_frq:
-                    frq_index = j
-            if frq_index == None:
                 continue
 
             # Set the r1, r2, and NOE to None.
@@ -141,29 +132,33 @@ class Jw_mapping(API_base, API_common):
             noe = None
 
             # Get the R1, R2, and NOE values corresponding to the set frequency.
-            for j in xrange(spin.num_ri):
+            for ri_id in cdp.ri_ids:
+                # The frequency does not match.
+                if cdp.frq[ri_id] != cdp.jw_frq:
+                    continue
+
                 # R1.
-                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R1':
+                if cdp.ri_type[ri_id] == 'R1':
                     if sim_index == None:
-                        r1 = spin.relax_data[j]
+                        r1 = spin.ri_data[ri_id]
                     else:
-                        r1 = spin.relax_sim_data[sim_index][j]
+                        r1 = spin.ri_data_sim[ri_id][sim_index]
 
                 # R2.
-                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R2':
+                if cdp.ri_type[ri_id] == 'R2':
                     if sim_index == None:
-                        r2 = spin.relax_data[j]
+                        r2 = spin.ri_data[ri_id]
                     else:
-                        r2 = spin.relax_sim_data[sim_index][j]
+                        r2 = spin.ri_data_sim[ri_id][sim_index]
 
                 # NOE.
-                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'NOE':
+                if cdp.ri_type[ri_id] == 'NOE':
                     if sim_index == None:
-                        noe = spin.relax_data[j]
+                        noe = spin.ri_data[ri_id]
                     else:
-                        noe = spin.relax_sim_data[sim_index][j]
+                        noe = spin.ri_data_sim[ri_id][sim_index]
 
-            # Skip the residue if not all of the three value exist.
+            # Skip the spin if not all of the three value exist.
             if r1 == None or r2 == None or noe == None:
                 continue
 
@@ -207,11 +202,11 @@ class Jw_mapping(API_base, API_common):
         spin = return_spin(data_id)
 
         # Return the data.
-        return spin.relax_data
+        return spin.ri_data
 
 
     def data_init(self, data_cont, sim=False):
-        """Initialise the data structure.
+        """Initialise the data structures.
 
         @param data_cont:   The data container.
         @type data_cont:    instance
@@ -339,12 +334,12 @@ class Jw_mapping(API_base, API_common):
         # Loop over spin data.
         for spin, spin_id in spin_loop(return_id=True):
             # Check if data exists.
-            if not hasattr(spin, 'relax_data'):
+            if not hasattr(spin, 'ri_data'):
                 warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                 spin.select = False
 
             # Require 3 or more data points.
-            elif len(spin.relax_data) < 3:
+            elif len(spin.ri_data) < 3:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                 spin.select = False
 
@@ -527,7 +522,7 @@ class Jw_mapping(API_base, API_common):
         # Alias.
         spin = model_info
 
-        # Skip deselected residues.
+        # Skip deselected spins.
         if not spin.select:
                 return
 
