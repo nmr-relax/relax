@@ -145,23 +145,23 @@ class Consistency_tests(API_base, API_common):
                 # R1.
                 if cdp.ri_type[ri_id] == 'R1':
                     if sim_index == None:
-                        r1 = spin.ri_data[j]
+                        r1 = spin.ri_data[ri_id]
                     else:
-                        r1 = spin.ri_data_sim[sim_index][j]
+                        r1 = spin.ri_data_sim[ri_id][sim_index]
 
                 # R2.
                 if cdp.ri_type[ri_id] == 'R2':
                     if sim_index == None:
-                        r2 = spin.ri_data[j]
+                        r2 = spin.ri_data[ri_id]
                     else:
-                        r2 = spin.ri_data_sim[sim_index][j]
+                        r2 = spin.ri_data_sim[ri_id][sim_index]
 
                 # NOE.
                 if cdp.ri_type[ri_id] == 'NOE':
                     if sim_index == None:
-                        noe = spin.ri_data[j]
+                        noe = spin.ri_data[ri_id]
                     else:
-                        noe = spin.ri_data_sim[sim_index][j]
+                        noe = spin.ri_data_sim[ri_id][sim_index]
 
             # Skip the residue if not all of the three value exist.
             if r1 == None or r2 == None or noe == None:
