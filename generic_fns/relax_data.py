@@ -535,6 +535,31 @@ def get_data_names(global_flag=False, sim_names=False):
     return names
 
 
+def num_frq():
+    """Determine the number of unique frequencies.
+
+    @return:    The number of unique frequencies.
+    @rtype:     int
+    """
+
+    # Init.
+    frq = []
+    count = 0
+
+    # Loop over the Rx data.
+    for ri_id in cdp.ri_ids:
+        # New frequency.
+        if cdp.frq[ri_id] not in frq:
+            # Add the frequency.
+            frq.append(cdp.frq[ri_id])
+
+            # Increment the counter.
+            count += 1
+
+    # Return the counter.
+    return count
+
+
 def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, gen_seq=False):
     """Pack the relaxation data into the data pipe and spin containers.
 
