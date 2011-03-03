@@ -2,7 +2,7 @@
 #                                                                             #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
