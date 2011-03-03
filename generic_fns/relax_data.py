@@ -101,6 +101,18 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
     else:
         ri_ids = [ri_id]
 
+    # The data types.
+    if ri_type == None:
+        ri_types = cdp.ri_type
+    else:
+        ri_types = {ri_id: ri_type}
+
+    # The frequencies.
+    if frq == None:
+        frqs = cdp.frq
+    else:
+        frqs = {ri_id: frq}
+
     # Loop over the spins.
     for spin, spin_id in spin_loop(return_id=True):
         # Skip deselected spins.
@@ -116,7 +128,7 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
 
         # Back-calculate the relaxation value.
         for ri_id in ri_ids:
-            spin.ri_data_bc[ri_id] = back_calculate(spin_index=spin_index, ri_id=ri_id, ri_type=ri_type, frq=frq)
+            spin.ri_data_bc[ri_id] = back_calculate(spin_index=spin_index, ri_id=ri_id, ri_type=ri_types[ri_id], frq=frqs[ri_id])
 
 
 def bmrb_read(star, sample_conditions=None):
