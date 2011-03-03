@@ -216,7 +216,7 @@ def bmrb_write(star):
     attached_element_list = []
     ri_data_list = []
     ri_data_err_list = []
-    for i in range(cdp.num_ri):
+    for i in range(len(cdp.ri_ids)):
         ri_data_list.append([])
         ri_data_err_list.append([])
 
@@ -261,12 +261,12 @@ def bmrb_write(star):
         attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
 
         # The relaxation data.
-        used_index = -ones(spin.num_ri)
+        used_index = -ones(len(cdp.ri_ids))
         for i in range(len(cdp.ri_ids)):
             # Data exists.
             if cdp.ri_ids[i] in spin.ri_data.keys():
-                ri_data_list[i].append(str(spin.ri_data[i]))
-                ri_data_err_list[i].append(str(spin.ri_data_err[i]))
+                ri_data_list[i].append(str(spin.ri_data[cdp.ri_ids[i]]))
+                ri_data_err_list[i].append(str(spin.ri_data_err[cdp.ri_ids[i]]))
             else:
                 ri_data_list[i].append(None)
                 ri_data_err_list[i].append(None)
@@ -294,9 +294,8 @@ def bmrb_write(star):
         raise RelaxError("The peak intensity types measured for the relaxation data have not been specified.")
 
     # Loop over the relaxation data.
-    for i in range(cdp.num_ri):
+    for ri_id in cdp.ri_ids:
         # Alias.
-        ri_id = cdp.ri_ids[i]
         ri_type = cdp.ri_type[ri_id]
 
         # Convert to MHz.
@@ -326,7 +325,12 @@ def bmrb_write(star):
         exp_label.append("%s MHz %s" % (frq, exp_name))
 
         # Spectrometer info.
-        spectro_ids.append(cdp.remap_table[i] + 1)
+        frq_num = 1
+        for frq in frq_loop():
+            if frq == cdp.frq[ri_id]:
+                break
+            frq_num += 1
+        spectro_ids.append(frq_num)
         spectro_labels.append("$spectrometer_%s" % spectro_ids[-1])
 
     # Add the spectrometer info.
