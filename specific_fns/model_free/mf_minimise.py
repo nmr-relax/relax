@@ -1001,7 +1001,12 @@ class Mf_minimise:
         # Loop over the relaxation data.
         for ri_id in cdp.ri_ids:
             # The Rx data.
-            ri_data.append(spin.ri_data[ri_id])
+            if sim_index == None:
+                ri_data.append(spin.ri_data[ri_id])
+            else:
+                ri_data.append(spin.ri_data_sim[ri_id][sim_index])
+
+            # The errors.
             ri_data_err.append(spin.ri_data_err[ri_id])
 
             # The labels.
