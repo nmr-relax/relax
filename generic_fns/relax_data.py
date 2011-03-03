@@ -294,8 +294,9 @@ def bmrb_write(star):
         raise RelaxError("The peak intensity types measured for the relaxation data have not been specified.")
 
     # Loop over the relaxation data.
-    for ri_id in cdp.ri_ids:
+    for i in xrange(len(cdp.ri_ids)):
         # Alias.
+        ri_id = cdp.ri_ids[i]
         ri_type = cdp.ri_type[ri_id]
 
         # Convert to MHz.
