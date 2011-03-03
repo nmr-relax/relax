@@ -52,17 +52,16 @@ class Pdc(SystemTestCase):
         # Read the sequence data.
         self.interpreter.sequence.read(file="seq", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pdc_files', res_num_col=2, res_name_col=1)
 
+        # The ID string.
+        ri_id = 'NOE_600'
+
         # Read the PDC file.
-        self.interpreter.pdc.read(file="testNOE.txt", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pdc_files')
+        self.interpreter.pdc.read(ri_id=ri_id, file="testNOE.txt", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pdc_files')
 
         # Check the data pipe structures.
-        self.assertEqual(cdp.frq[0], 600.13)
-        self.assertEqual(cdp.frq_labels[0], '600')
-        self.assertEqual(cdp.ri_labels[0], 'NOE')
-        self.assertEqual(cdp.remap_table[0], 0)
-        self.assertEqual(cdp.noe_r1_table[0], None)
-        self.assertEqual(cdp.num_frq, 1)
-        self.assertEqual(cdp.num_ri, 1)
+        self.assertEqual(cdp.ri_ids, [ri_id])
+        self.assertEqual(cdp.frq[ri_id], 600.13)
+        self.assertEqual(cdp.ri_type[ri_id], 'NOE')
 
         # The NOE values and errors.
         noe = [0.70140000000000002, 0.72260000000000002, 0.78410000000000002, 0.71389999999999998, 0.72219999999999995, 0.73450000000000004, 0.65800000000000003, 0.61319999999999997, 0.64359999999999995, 0.55810000000000004, 0.64349999999999996, 0.72719999999999996, 0.76690000000000003, 0.78159999999999996, 0.78320000000000001, 0.71179999999999999, 0.73529999999999995, 0.7339, 0.76639999999999997, 0.79600000000000004, 0.76980000000000004, 0.76090000000000002, 0.77000000000000002, 0.76839999999999997, 0.746, 0.75119999999999998, 0.7258, 0.76139999999999997, 0.75970000000000004, 0.76270000000000004, 0.71899999999999997, 0.7752, 0.78710000000000002, 0.75270000000000004, 0.75860000000000005, 0.73709999999999998, 0.76649999999999996, 0.78059999999999996, 0.77710000000000001, 0.74419999999999997, 0.71909999999999996, 0.73429999999999995, 0.69320000000000004, 0.60419999999999996, 0.71460000000000001, 0.73599999999999999, 0.78359999999999996, 0.79749999999999999, 0.75949999999999995, 0.76659999999999995, 0.77559999999999996, 0.73729999999999996, 0.73080000000000001, 0.78420000000000001, 0.70409999999999995, 0.6069, 0.79710000000000003, 0.74829999999999997, 0.72860000000000003, 0.73939999999999995, 0.751, 0.73150000000000004, 0.7238, 0.72529999999999994, 0.7218, 0.62980000000000003, 0.3004, 0.15970000000000001, -0.41570000000000001, -1.3540000000000001]
@@ -73,8 +72,8 @@ class Pdc(SystemTestCase):
         i = 0
         for spin in spin_loop():
             # Check the R1 value and error.
-            self.assertAlmostEqual(spin.relax_data[0], noe[i])
-            self.assertAlmostEqual(spin.relax_error[0], noe_err[i])
+            self.assertAlmostEqual(spin.ri_data[ri_id], noe[i])
+            self.assertAlmostEqual(spin.ri_data_err[ri_id], noe_err[i])
 
             # Increment the data index.
             i += 1
@@ -86,17 +85,16 @@ class Pdc(SystemTestCase):
         # Read the sequence data.
         self.interpreter.sequence.read(file="seq", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pdc_files', res_num_col=2, res_name_col=1)
 
+        # The ID string.
+        ri_id = 'NOE_600'
+
         # Read the PDC file.
-        self.interpreter.pdc.read(file="testT1.txt", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pdc_files')
+        self.interpreter.pdc.read(ri_id=ri_id, file="testT1.txt", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pdc_files')
 
         # Check the data pipe structures.
-        self.assertEqual(cdp.frq[0], 600.13)
-        self.assertEqual(cdp.frq_labels[0], '600')
-        self.assertEqual(cdp.ri_labels[0], 'R1')
-        self.assertEqual(cdp.remap_table[0], 0)
-        self.assertEqual(cdp.noe_r1_table[0], None)
-        self.assertEqual(cdp.num_frq, 1)
-        self.assertEqual(cdp.num_ri, 1)
+        self.assertEqual(cdp.ri_ids, [ri_id])
+        self.assertEqual(cdp.frq[ri_id], 600.13)
+        self.assertEqual(cdp.ri_type[ri_id], 'R1')
 
         # The R1 values and errors.
         r1 = [2.1931556000035091, 2.3314642761386288, 2.3482998309224121, 2.2490812503092488, 2.2794204801371301, 2.2197311905528241, 2.2402487572220018, 1.9682404717478763, 2.0880183244488153, 1.9977625059932875, 2.1644881093845711, 2.2725568309649504, 2.1992861117281328, 2.2794360675168961, 2.0871205875661878, 2.2847272835278019, 2.1080324468354217, 2.2433596554199569, 2.3491493730120321, 2.2750850881822982, 2.4672959916309321, 2.3956227181693608, 2.1334016021846032, 2.3625860867305351, 2.3848078202618042, 2.3269721670859096, 2.4206451987712803, 2.3722597434638315, 2.343270361847809, 2.1927612565399106, 2.2380977959212909, 2.2461360844008094, 1.9912266553564995, 2.2936831964769029, 2.25463891957703, 2.2244169803094609, 2.280408101833904, 2.172312143876578, 2.2795451851446598, 2.266191370796498, 2.1729305009908564, 2.1917183729559486, 2.201809006279559, 2.1141693745652739, 2.2445782213064343, 2.133488082335572, 2.0460023160746217, 2.1921507848995887, 2.2750902642062325, 2.3691236848402144, 2.2981479225891852, 2.377233708223089, 2.2256001887308958, 2.2846020109066898, 2.3422878999749375, 1.973756927886817, 2.1651301459730745, 2.3191578673951914, 2.1891945734244915, 2.1815674998800136, 2.2678668217887572, 2.2465094858863042, 2.248479465761279, 2.3154901661132645, 2.1756630333094011, 2.1637200405913881, 1.8566309574645847, 1.6125599066005301, 1.1626041402658644, 0.76306229106400647]
@@ -107,8 +105,8 @@ class Pdc(SystemTestCase):
         i = 0
         for spin in spin_loop():
             # Check the R1 value and error.
-            self.assertAlmostEqual(spin.relax_data[0], r1[i], 5)
-            self.assertAlmostEqual(spin.relax_error[0], r1_err[i], 5)
+            self.assertAlmostEqual(spin.ri_data[ri_id], r1[i], 5)
+            self.assertAlmostEqual(spin.ri_data_err[ri_id], r1_err[i], 5)
 
             # Increment the data index.
             i += 1

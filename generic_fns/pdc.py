@@ -81,13 +81,15 @@ def get_res_num(data):
     return ":%s" % res_num
 
 
-def read(file=None, dir=None):
+def read(ri_id=None, file=None, dir=None):
     """Read the PDC data file and place all the data into the relax data store.
 
-    @keyword file:          The name of the file to open.
-    @type file:             str
-    @keyword dir:           The directory containing the file (defaults to the current directory if None).
-    @type dir:              str or None
+    @keyword ri_id: The relaxation data ID string.
+    @type ri_id:    str
+    @keyword file:  The name of the file to open.
+    @type file:     str
+    @keyword dir:   The directory containing the file (defaults to the current directory if None).
+    @type dir:      str or None
     """
 
     # Test if the current pipe exists.
@@ -135,16 +137,15 @@ def read(file=None, dir=None):
         # The data type.
         if row[0] == 'Project:':
             if search('T1', row[1]):
-                ri_label = 'R1'
+                ri_type = 'R1'
             elif search('T2', row[1]):
-                ri_label = 'R2'
+                ri_type = 'R2'
             elif search('NOE', row[1]):
-                ri_label = 'NOE'
+                ri_type = 'NOE'
 
         # Get the frequency.
         elif row[0] == 'Proton frequency[MHz]:':
             frq = float(row[1])
-            frq_label = str(int(round(float(row[1])/10)*10))
 
         # Inside the relaxation data section.
         elif row[0] == 'SECTION:' and row[1] == 'results':
@@ -160,7 +161,7 @@ def read(file=None, dir=None):
             res_nums.append(get_res_num(row[0]))
 
             # Get the relaxation data.
-            if ri_label != 'NOE':
+            if ri_type != 'NOE':
                 #rx, rx_err = convert_relax_data(row[3:])
                 rx = float(row[-2])
                 rx_err = float(row[-1])
@@ -197,10 +198,10 @@ def read(file=None, dir=None):
                 int_type = 'volume'
 
     # Pack the data.
-    pack_data(ri_label, frq_label, frq, values, errors, spin_ids=res_nums)
+    pack_data(ri_id, ri_type, frq, values, errors, spin_ids=res_nums)
 
     # Set the integration method.
-    peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type=int_type)
+    peak_intensity_type(ri_id=ri_id, type=int_type)
 
     # Set the PDC as used software.
     software_select('Bruker PDC', version=version)
