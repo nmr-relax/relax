@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,6 +33,25 @@ class API_base:
 
     All the methods here are prototype methods.  To identify that the method is not available for certain analysis types, if called a RelaxImplementError is raised if called.
     """
+
+    def back_calc_ri(self, spin_index=None, ri_label=None, frq_label=None, frq=None):
+        """Back-calculation of relaxation data from the model-free parameter values.
+
+        @keyword spin_index:    The global spin index.
+        @type spin_index:       int
+        @keyword ri_label:      The relaxation data type, i.e. 'R1', 'R2', or 'NOE'.
+        @type ri_label:         str
+        @keyword frq_label:     The field strength label.
+        @type frq_label:        str
+        @keyword frq:           The field strength.
+        @type frq:              float
+        @return:                The back calculated relaxation data value corresponding to the index.
+        @rtype:                 float
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
 
     def base_data_loop(self):
         """Generator method for looping over the base data of the specific analysis type.
