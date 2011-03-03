@@ -142,6 +142,10 @@ class Consistency_tests(API_base, API_common):
 
             # Get the R1, R2, and NOE values corresponding to the set frequency.
             for ri_id in cdp.ri_ids:
+                # The frequency does not match.
+                if cdp.frq[ri_id] != cdp.ct_frq:
+                    continue
+
                 # R1.
                 if cdp.ri_type[ri_id] == 'R1':
                     if sim_index == None:
@@ -229,7 +233,7 @@ class Consistency_tests(API_base, API_common):
                 # Add '_sim' to the names.
                 name = name + '_sim'
 
-            # If the name is not in 'data', add it.
+            # If the name is not in 'data_cont', add it.
             if not hasattr(data_cont, name):
                 # Set the attribute.
                 setattr(data_cont, name, None)
@@ -348,18 +352,18 @@ class Consistency_tests(API_base, API_common):
         # Print out.
         print("\n\nOver-fit spin deselection.\n")
 
-        # Test if the sequence data is loaded.
+        # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Loop over spin data:
+        # Loop over spin data.
         for spin, spin_id in spin_loop(return_id=True):
-            # Check for sufficient data
+            # Check if data exists.
             if not hasattr(spin, 'ri_data'):
                 warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                 spin.select = False
 
-            # Require 3 or more data points
+            # Require 3 or more data points.
             elif len(spin.ri_data) < 3:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                 spin.select = False
