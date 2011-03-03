@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -49,6 +49,7 @@ class Jw_mapping(API_base, API_common):
         self.return_value = self._return_value_general
         self.set_param_values = self._set_param_values_spin
         self.set_selected_sim = self._set_selected_sim_spin
+        self.sim_pack_data = self._sim_pack_relax_data
 
 
     def _set_frq(self, frq=None):
@@ -510,26 +511,6 @@ class Jw_mapping(API_base, API_common):
         # Return J(wH) sim data.
         if index == 2:
             spin.jwh_err = error
-
-
-    def sim_pack_data(self, data_id, sim_data):
-        """Pack the Monte Carlo simulation data.
-
-        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type data_id:      str
-        @param sim_data:    The Monte Carlo simulation data.
-        @type sim_data:     list of float
-        """
-
-        # Get the spin container.
-        spin = return_spin(data_id)
-
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'relax_sim_data'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
-
-        # Create the data structure.
-        spin.relax_sim_data = sim_data
 
 
     def sim_return_param(self, model_info, index):

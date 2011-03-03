@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 # Copyright (C) 2007-2009 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -50,6 +50,7 @@ class Consistency_tests(API_base, API_common):
         self.return_value = self._return_value_general
         self.set_param_values = self._set_param_values_spin
         self.set_selected_sim = self._set_selected_sim_spin
+        self.sim_pack_data = self._sim_pack_relax_data
 
 
     def _set_frq(self, frq=None):
@@ -245,8 +246,7 @@ class Consistency_tests(API_base, API_common):
             - 'r', bond length.
             - 'csa', CSA value.
             - 'heteronuc_type', the heteronucleus type.
-            - 'orientation', angle between the 15N-1H vector and the principal axis of the 15N
-            chemical shift tensor.
+            - 'orientation', angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor.
             - 'tc', correlation time.
             - 'j0', spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162).
             - 'f_eta', eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952).
@@ -600,23 +600,3 @@ class Consistency_tests(API_base, API_common):
 
         # Multiple spins.
         return spin.select_sim
-
-
-    def sim_pack_data(self, data_id, sim_data):
-        """Pack the Monte Carlo simulation data.
-
-        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type data_id:      str
-        @param sim_data:    The Monte Carlo simulation data.
-        @type sim_data:     list of float
-        """
-
-        # Get the spin container.
-        spin = return_spin(data_id)
-
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'ri_data_sim'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
-
-        # Create the data structure.
-        spin.ri_data_sim = sim_data

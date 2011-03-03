@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -552,6 +552,38 @@ class API_common:
                 for j in xrange(cdp.sim_number):
                     # Copy and append the data.
                     sim_object.append(deepcopy(getattr(spin, object_name)))
+
+
+    def _sim_pack_relax_data(self, data_id, sim_data):
+        """Pack the Monte Carlo simulation relaxation data into the corresponding spin container.
+
+        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
+
+        # Get the spin container.
+        spin = return_spin(data_id)
+
+        # Test if the simulation data already exists.
+        if hasattr(spin, 'ri_data_sim'):
+            raise RelaxError("Monte Carlo simulation data already exists.")
+
+        # Initialise the data structure.
+        spin.ri_data_sim = {}
+
+        # Loop over the relaxation data.
+        for i in range(len(cdp.ri_ids)):
+            # The ID.
+            ri_id = cdp.ri_ids[i]
+
+            # Initialise the MC data list.
+            spin.ri_data_sim[ri_id] = []
+
+            # Loop over the simulations.
+            for j in range(cdp.sim_number):
+                spin.ri_data_sim[ri_id].append(sim_data[j][i])
 
 
     def _sim_return_chi2_spin(self, model_info, index=None):

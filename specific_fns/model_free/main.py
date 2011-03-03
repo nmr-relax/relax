@@ -2780,38 +2780,6 @@ class Model_free_main:
                         sim_object.append(deepcopy(getattr(spin, object_name)))
 
 
-    def sim_pack_data(self, data_id, sim_data):
-        """Pack the Monte Carlo simulation data.
-
-        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type data_id:      str
-        @param sim_data:    The Monte Carlo simulation data.
-        @type sim_data:     list of float
-        """
-
-        # Get the spin container.
-        spin = return_spin(data_id)
-
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'ri_data_sim'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
-
-        # Initialise the data structure.
-        spin.ri_data_sim = {}
-
-        # Loop over the relaxation data.
-        for i in range(len(cdp.ri_ids)):
-            # The ID.
-            ri_id = cdp.ri_ids[i]
-
-            # Initialise the MC data list.
-            spin.ri_data_sim[ri_id] = []
-
-            # Loop over the simulations.
-            for j in range(cdp.sim_number):
-                spin.ri_data_sim[ri_id].append(sim_data[j][i])
-
-
     def sim_return_chi2(self, model_info, index=None):
         """Return the simulation chi-squared values.
 
