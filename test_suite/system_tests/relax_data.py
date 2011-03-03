@@ -84,3 +84,26 @@ class Relax_data(SystemTestCase):
 
             # Increment.
             index += 1
+
+
+    def test_back_calc_new(self):
+        """Test the back calculation of new relaxation data from model-free results."""
+
+        # Load the original state.
+        self.interpreter.state.load(state='sphere_trunc', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'bug_14941_local_tm_global_selection')
+
+        # Back calculate the relaxation data.
+        self.interpreter.relax_data.back_calc('NOE_500.001', ri_type='NOE', frq=500.001e6)
+
+        # The actual data.
+        ri_data_bc = [{'NOE_500.001': 0.52064607759431081},
+                      {'NOE_500.001': 0.57759452179767434}]
+
+        # Loop over the spins.
+        index = 0
+        for spin in spin_loop():
+            # Check the back calculated data.
+            self.assertEqual(spin.ri_data_bc, ri_data_bc[index])
+
+            # Increment.
+            index += 1
