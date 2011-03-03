@@ -904,18 +904,18 @@ class Mf_minimise:
                 elif spin.ri_data_err[ri_id] < 0.0:
                     raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
 
-                # The relaxation data optimisation structures.
-                data = self._relax_data_opt_structs(spin, sim_index=sim_index)
+            # The relaxation data optimisation structures.
+            data = self._relax_data_opt_structs(spin, sim_index=sim_index)
 
-                # Append the data.
-                ri_data.append(data[0])
-                ri_data_err.append(data[1])
-                num_frq.append(data[2])
-                num_ri.append(data[3])
-                ri_types.append(data[4])
-                frq.append(data[5])
-                remap_table.append(data[6])
-                noe_r1_table.append(data[7])
+            # Append the data.
+            ri_data.append(data[0])
+            ri_data_err.append(data[1])
+            num_frq.append(data[2])
+            num_ri.append(data[3])
+            ri_types.append(data[4])
+            frq.append(data[5])
+            remap_table.append(data[6])
+            noe_r1_table.append(data[7])
 
             # Repackage the data.
             equations.append(spin.equation)
@@ -1086,7 +1086,6 @@ class Mf_minimise:
 
         # Loop over the spins.
         for spin in spin_loop(spin_id):
-            print spin
             # Skip deselected spins.
             if not spin.select:
                 continue
