@@ -126,8 +126,8 @@ class Consistency_tests(API_base, API_common):
                 raise RelaxProtonTypeError
 
         # Frequency index.
-        if cdp.ct_frq not in cdp.frq:
-            raise RelaxError("No relaxation data corresponding to the frequency " + repr(cdp.ct_frq) + " has been loaded.")
+        if cdp.ct_frq not in cdp.frq.values():
+            raise RelaxError("No relaxation data corresponding to the frequency %s has been loaded." % cdp.ct_frq)
 
         # Consistency testing.
         for spin in spin_loop(spin_id):
