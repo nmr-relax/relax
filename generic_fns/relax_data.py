@@ -339,27 +339,6 @@ def bmrb_write(star):
     star.experiment.add(name=exp_label, spectrometer_ids=spectro_ids, spectrometer_labels=spectro_labels)
 
 
-def frq_loop():
-    """Generator function for returning each unique frequency.
-
-    @return:    The frequency.
-    @rtype:     float
-    """
-
-    # Init.
-    frq = []
-
-    # Loop over the Rx data.
-    for ri_id in cdp.ri_ids:
-        # New frequency.
-        if cdp.frq[ri_id] not in frq:
-            # Add the frequency.
-            frq.append(cdp.frq[ri_id])
-
-            # Yield the value.
-            yield cdp.frq[ri_id]
-
-
 def copy(pipe_from=None, pipe_to=None, ri_id=None):
     """Copy the relaxation data from one data pipe to another.
 
@@ -441,53 +420,6 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
             spin_to.ri_data_err[ri_id] = spin_from.ri_data_err[ri_id]
 
 
-def get_data_names(global_flag=False, sim_names=False):
-    """Return a list of names of data structures associated with relaxation data.
-
-    Description
-    ===========
-
-    The names are as follows:
-
-    ri_data:  Relaxation data.
-
-    ri_data_err:  Relaxation data error.
-
-    ri_type:  The relaxation data type, i.e. one of ['NOE', 'R1', 'R2']
-
-    frq:  NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
-
-
-    @keyword global_flag:   A flag which if True corresponds to the pipe specific data structures and if False corresponds to the spin specific data structures.
-    @type global_flag:      bool
-    @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
-    @type sim_names:        bool
-    @return:                The list of object names.
-    @rtype:                 list of str
-    """
-
-    # Initialise.
-    names = []
-
-    # Global data names.
-    if not sim_names and global_flag:
-        names.append('ri_id')
-        names.append('ri_type')
-        names.append('frq')
-
-    # Spin specific data names.
-    if not sim_names and not global_flag:
-        names.append('ri_data')
-        names.append('ri_data_err')
-
-    # Simulation object names.
-    if sim_names and not global_flag:
-        names.append('ri_data_sim')
-
-    # Return the list of names.
-    return names
-
-
 def delete(ri_id=None):
     """Delete relaxation data corresponding to the relaxation data ID.
 
@@ -533,6 +465,74 @@ def display(ri_id=None):
 
     # Print the data.
     value.write_data(param=ri_id, file=sys.stdout, return_value=return_value)
+
+
+def frq_loop():
+    """Generator function for returning each unique frequency.
+
+    @return:    The frequency.
+    @rtype:     float
+    """
+
+    # Init.
+    frq = []
+
+    # Loop over the Rx data.
+    for ri_id in cdp.ri_ids:
+        # New frequency.
+        if cdp.frq[ri_id] not in frq:
+            # Add the frequency.
+            frq.append(cdp.frq[ri_id])
+
+            # Yield the value.
+            yield cdp.frq[ri_id]
+
+
+def get_data_names(global_flag=False, sim_names=False):
+    """Return a list of names of data structures associated with relaxation data.
+
+    Description
+    ===========
+
+    The names are as follows:
+
+    ri_data:  Relaxation data.
+
+    ri_data_err:  Relaxation data error.
+
+    ri_type:  The relaxation data type, i.e. one of ['NOE', 'R1', 'R2']
+
+    frq:  NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
+
+
+    @keyword global_flag:   A flag which if True corresponds to the pipe specific data structures and if False corresponds to the spin specific data structures.
+    @type global_flag:      bool
+    @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
+    @type sim_names:        bool
+    @return:                The list of object names.
+    @rtype:                 list of str
+    """
+
+    # Initialise.
+    names = []
+
+    # Global data names.
+    if not sim_names and global_flag:
+        names.append('ri_id')
+        names.append('ri_type')
+        names.append('frq')
+
+    # Spin specific data names.
+    if not sim_names and not global_flag:
+        names.append('ri_data')
+        names.append('ri_data_err')
+
+    # Simulation object names.
+    if sim_names and not global_flag:
+        names.append('ri_data_sim')
+
+    # Return the list of names.
+    return names
 
 
 def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, gen_seq=False):
