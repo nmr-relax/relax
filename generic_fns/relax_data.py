@@ -521,6 +521,8 @@ def get_data_names(global_flag=False, sim_names=False):
 
     ri_data_err:  Relaxation data error.
 
+    ri_data_bc:  The back calculated relaxation data.
+
     ri_type:  The relaxation data type, i.e. one of ['NOE', 'R1', 'R2']
 
     frq:  NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
@@ -547,6 +549,7 @@ def get_data_names(global_flag=False, sim_names=False):
     if not sim_names and not global_flag:
         names.append('ri_data')
         names.append('ri_data_err')
+        names.append('ri_data_bc')
 
     # Simulation object names.
     if sim_names and not global_flag:
