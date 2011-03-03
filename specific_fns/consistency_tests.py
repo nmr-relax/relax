@@ -44,6 +44,7 @@ class Consistency_tests(API_base, API_common):
 
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
+        self.create_mc_data = self._create_mc_relax_data
         self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_error = self._return_error_relax_data
@@ -197,21 +198,6 @@ class Consistency_tests(API_base, API_common):
                 spin.f_eta_sim.append(f_eta)
                 spin.f_r2_sim.append(f_r2)
 
-
-    def create_mc_data(self, data_id=None):
-        """Return the Monte Carlo Ri data structure for the corresponding spin.
-
-        @keyword data_id:   The spin identification string, as yielded by the base_data_loop() generator method.
-        @type data_id:      str
-        @return:            The Monte Carlo simulation data.
-        @rtype:             list of floats
-        """
-
-        # Get the spin container.
-        spin = return_spin(data_id)
-
-        # Return the data.
-        return spin.ri_data
 
 
     def data_init(self, data_cont, sim=False):

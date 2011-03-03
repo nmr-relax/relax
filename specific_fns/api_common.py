@@ -55,6 +55,29 @@ class API_common:
             yield spin_id
 
 
+    def _create_mc_relax_data(self, data_id):
+        """Return the Monte Carlo relaxation data list for the corresponding spin.
+
+        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
+        @type data_id:      str
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
+
+        # Get the spin container.
+        spin = return_spin(data_id)
+
+        # Initialise the data structure.
+        data = []
+
+        # Add the data.
+        for ri_id in cdp.ri_ids:
+            data.append(spin.ri_data[ri_id])
+
+        # Return the data.
+        return data
+
+
     def _data_init_dummy(self, data_cont, sim=False):
         """Dummy method for initialising data structures.
 
