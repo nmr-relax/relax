@@ -163,7 +163,7 @@ class Consistency_tests(API_base, API_common):
                     else:
                         noe = spin.ri_data_sim[ri_id][sim_index]
 
-            # Skip the residue if not all of the three value exist.
+            # Skip the spin if not all of the three value exist.
             if r1 == None or r2 == None or noe == None:
                 continue
 
@@ -569,7 +569,7 @@ class Consistency_tests(API_base, API_common):
         # Alias.
         spin = model_info
 
-        # Skip deselected residues.
+        # Skip deselected spins.
         if not spin.select:
                 return
 
