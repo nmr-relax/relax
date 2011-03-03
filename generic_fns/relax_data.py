@@ -70,8 +70,12 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Check that ri_type and frq are supplied if no relaxation data exists.
+    if ri_id and (not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids) and (ri_type == None or frq == None):
+        raise RelaxError("The 'ri_type' and 'frq' arguments must be supplied as no relaxation data corresponding to '%s' exists." % ri_id)
+
     # Check if the type is valid.
-    if ri_type not in VALID_TYPES:
+    if ri_type and ri_type not in VALID_TYPES:
         raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
 
     # Initialise the global data for the current pipe if necessary.
