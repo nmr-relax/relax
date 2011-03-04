@@ -1,8 +1,8 @@
 # Script for model-free analysis using cross-validation model selection.
 
 # Initialise data structures.
-ri_labels = ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
-frq_labels = ['600', '600', '600', '500', '500', '500']
+ri_ids = ['R1_600', 'R2_600', 'NOE_600', 'R1_500', 'R2_500', 'NOE_500']
+ri_types = ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
 frqs = [600.0 * 1e6, 600.0 * 1e6, 600.0 * 1e6, 500.0 * 1e6, 500.0 * 1e6, 500.0 * 1e6]
 file_names = ['r1.600.out', 'r2.600.out', 'noe.600.out', 'r1.500.out', 'r2.500.out', 'noe.500.out']
 pipes = ['m1', 'm2', 'm3', 'm4', 'm5']
@@ -11,8 +11,8 @@ pipes = ['m1', 'm2', 'm3', 'm4', 'm5']
 cv_pipes = []
 for i in xrange(len(pipes)):
     cv_pipes.append([])
-    for j in xrange(len(ri_labels)):
-        cv_pipes[i].append(pipes[i] + "_" + ri_labels[j] + "_" + frq_labels[j])
+    for j in xrange(len(ri_ids)):
+        cv_pipes[i].append(pipes[i] + "_" + ri_ids[j])
 
 print("\n\n\n\n")
 print("# Calibration set.")
@@ -22,7 +22,7 @@ print("\n")
 # Loop over the pipes for single-item-out cross-validation.
 for i in xrange(len(pipes)):
     # Loop over the relaxation data.
-    for j in xrange(len(ri_labels)):
+    for j in xrange(len(ri_ids)):
         # Nuclei type
         nuclei('N')
 
@@ -33,10 +33,10 @@ for i in xrange(len(pipes)):
         sequence.read('noe.500.out', res_num_col=1)
 
         # Create the calibration set by loading all relaxation data except the index 'i'.
-        for k in xrange(len(ri_labels)):
+        for k in xrange(len(ri_ids)):
             if k == i:
                 continue
-            relax_data.read(ri_labels[k], frq_labels[k], frqs[k], file_names[k])
+            relax_data.read(ri_ids[k], ri_types[k], frqs[k], file_names[k])
 
         # Set up the global rotational correlation time.
         diffusion_tensor.init(1e-8)
@@ -64,7 +64,7 @@ print("\n")
 # Load all the pipes.
 for i in xrange(len(pipes)):
     # Loop over the relaxation data.
-    for j in xrange(len(ri_labels)):
+    for j in xrange(len(ri_ids)):
         # Switch to the relevent data pipe.
         pipe.switch(cv_pipes[i][j])
 
@@ -72,7 +72,7 @@ for i in xrange(len(pipes)):
         delete(data_type='relax_data')
 
         # Create the validation set by loading the relaxation data excluded from the calibration set.
-        relax_data.read(ri_labels[j], frq_labels[j], frqs[j], file_names[j])
+        relax_data.read(ri_ids[j], ri_types[j], frqs[j], file_names[j])
 
         # Reload the model-free results.
         read.results(data_type='mf')
@@ -99,8 +99,8 @@ pipe.switch('cv')
 
 # Delete the relaxation data copied over to the 'cv' data pipe and then load all the data.
 delete(data_type='relax_data')
-for i in xrange(len(ri_labels)):
-    relax_data.read(ri_labels[i], frq_labels[i], frqs[i], file_names[i])
+for i in xrange(len(ri_ids)):
+    relax_data.read(ri_ids[i], ri_types[i], frqs[i], file_names[i])
 
 # Minimise the selected model using all relaxation data.
 minimise('newton')
