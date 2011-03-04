@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.relax_data import Relax_data
-from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.relax_data_testing_base import Relax_data_base_class
 
 # Unit test imports.
@@ -45,11 +45,11 @@ class Test_relax_data(Relax_data_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.back_calc, ri_id=data[1])
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.back_calc, ri_id=data[1])
 
 
     def test_back_calc_argfail_ri_type(self):
@@ -58,11 +58,11 @@ class Test_relax_data(Relax_data_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.back_calc, ri_id='R2', ri_type=data[1])
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.back_calc, ri_id='R2', ri_type=data[1])
 
 
     def test_back_calc_argfail_frq(self):
@@ -71,11 +71,11 @@ class Test_relax_data(Relax_data_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the number arguments, and skip them.
-            if data[0] == 'bin' or data[0] == 'int' or data[0] == 'float':
+            if data[0] == 'None' or data[0] == 'bin' or data[0] == 'int' or data[0] == 'float':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNumError, self.relax_data_fns.back_calc, ri_id='R2_1000', ri_type='R2', frq=data[1])
+            self.assertRaises(RelaxNoneNumError, self.relax_data_fns.back_calc, ri_id='R2_1000', ri_type='R2', frq=data[1])
 
 
     def test_copy_argfail_pipe_from(self):
