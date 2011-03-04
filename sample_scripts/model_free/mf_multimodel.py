@@ -20,8 +20,8 @@
 #                                                                             #
 ###############################################################################
 
-# This script performs a model-free analysis for the models 'm0' to 'm9' (or 'tm0' to 'tm9').
-#############################################################################################
+"""This script performs a model-free analysis for the models 'm0' to 'm9' (or 'tm0' to 'tm9')."""
+
 
 # Set the data pipe names (also the names of preset model-free models).
 #pipes = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']

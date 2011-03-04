@@ -20,8 +20,8 @@
 #                                                                             #
 ###############################################################################
 
-# This script performs a model-free analysis for the single model 'm4'.
-#######################################################################
+"""This script performs a model-free analysis for the single model 'm4'."""
+
 
 # Create the data pipe.
 name = 'm4'

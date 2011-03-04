@@ -20,8 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-# Script for model-free model selection.
-########################################
+"""Script for model-free model selection."""
 
 
 # Set the data pipe names.
