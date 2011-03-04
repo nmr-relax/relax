@@ -45,17 +45,14 @@ def remap(values):
     return array([s2f, s2s, ts], float64)
 
 
-# Set the run name (also the name of a preset model-free model).
+# The model-free model name.
 name = 'm5'
 
-# Nuclei type
-value.set('15N', 'heteronucleus')
-
-# Create the run 'name'.
+# Create the data pipe.
 pipe.create(name, 'mf')
 
 # Load the sequence.
-sequence.read(name, 'noe.500.out', res_num_col=1)
+sequence.read('noe.500.out', res_num_col=1)
 
 # Load the relaxation data.
 relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file='r1.600.out', res_num_col=1, data_col=3, error_col=4)
@@ -66,9 +63,10 @@ relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.0*1e6, file='r2.500.out'
 relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out', res_num_col=1, data_col=3, error_col=4)
 
 # Setup other values.
-diffusion_tensor.init(name, 1e-8)
-value.set(name, 1.02 * 1e-10, 'bond_length')
-value.set(name, -172 * 1e-6, 'csa')
+diffusion_tensor.init(1e-8)
+value.set(1.02*1e-10, 'bond_length')
+value.set(-172*1e-6, 'csa')
+value.set('15N', 'heteronucleus')
 
 # Select the model-free model.
 model_free.select_model(model=name)
@@ -81,5 +79,5 @@ upper = [1.0, 300e-12, 1.0]
 point = [0.952, 32.0e-12, 0.582]
 point = [point[0], point[1], point[0]*point[2]]
 
-dx.map(name, params=params, res_num=1, inc=inc, lower=lower, upper=upper, file='remap', point=point, axis_incs=5, remap=remap)
+dx.map(params=params, spin_id=":1", inc=inc, lower=lower, upper=upper, file_prefix='remap', point=point, axis_incs=5, remap=remap)
 dx.execute(file='remap')
