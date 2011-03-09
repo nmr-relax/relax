@@ -746,6 +746,11 @@ def intensity_nmrview(file_data=None, int_col=None):
     # Loop over the file data.
     data = []
     for line in file_data:
+        # Unknown assignment.
+        if line[1] == '{}':
+            warn(RelaxWarning("The assignment '%s' is unknown, skipping this peak." % line[1]))
+            continue
+
         # The residue number
         res_num = ''
         try:
