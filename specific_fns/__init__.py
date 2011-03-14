@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2011 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -35,6 +35,5 @@ __all__ = [ 'api_base',
             'n_state_model',
             'noe',
             'relax_fit',
-            'setup',
-            'srls'
+            'setup'
 ]

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2008-2010 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2008-2011 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -255,7 +255,6 @@ class BMRB(User_fn_class):
             'N-state':  N-state model of domain motions,
             'noe':  Steady state NOE calculation,
             'relax_fit':  Relaxation curve fitting,
-            'srls':  SRLS analysis.
 
         The model_selection argument only needs to be set if the script selects between different
         mathematical models.  This can be anything, but the following are recommended:

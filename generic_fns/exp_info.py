@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -230,8 +230,7 @@ def script(file=None, dir=None, analysis_type=None, model_selection=None, engine
                'mf',
                'N-state',
                'noe',
-               'relax_fit',
-               'srls'
+               'relax_fit'
     ]
     if analysis_type not in allowed:
         raise RelaxError("The analysis type '%s' should be one of %s." % (analysis_type, allowed))
