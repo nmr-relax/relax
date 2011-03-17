@@ -34,7 +34,7 @@ from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 
 
 # List of valid data pipe types.
-VALID_TYPES = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit', 'relax_disp']
+VALID_TYPES = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit']
 
 
 def copy(pipe_from=None, pipe_to=None):
