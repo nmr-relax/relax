@@ -93,46 +93,6 @@ class Bmrb:
             raise RelaxError("The BMRB model-free model '%s' is unknown." % name)
 
 
-    def _to_bmrb_model(self, name=None):
-        """Convert the model-free model name to the BMRB name.
-
-        @keyword name:  The model-free model name.
-        @type name:     str
-        @return:        The corresponding BMRB model name.
-        @rtype:         str
-        """
-
-        # The relax to BMRB model-free model name map.
-        map = {'m0':  '',
-               'm1':  'S2',
-               'm2':  'S2, te',
-               'm3':  'S2, Rex',
-               'm4':  'S2, te, Rex',
-               'm5':  'S2f, S2, ts',
-               'm6':  'S2f, tf, S2, ts',
-               'm7':  'S2f, S2, ts, Rex',
-               'm8':  'S2f, tf, S2, ts, Rex',
-               'm9':  'Rex',
-               'tm0': 'tm',
-               'tm1': 'tm, S2',
-               'tm2': 'tm, S2, te',
-               'tm3': 'tm, S2, Rex',
-               'tm4': 'tm, S2, te, Rex',
-               'tm5': 'tm, S2f, S2, ts',
-               'tm6': 'tm, S2f, tf, S2, ts',
-               'tm7': 'tm, S2f, S2, ts, Rex',
-               'tm8': 'tm, S2f, tf, S2, ts, Rex',
-               'tm9': 'tm, Rex'
-        }
-
-        # No match.
-        if name not in map.keys():
-            raise RelaxError("The model-free model '%s' is unknown." % name)
-
-        # Return the BMRB model name.
-        return map[name]
-
-
     def _sf_model_free_read(self, star, sample_conditions=None):
         """Fill the spin containers with the model-free data from the saveframe records.
 
@@ -324,6 +284,46 @@ class Bmrb:
 
                 # The CSA value (converted from ppm).
                 setattr(spin, 'csa', data['csa'][i] * 1e-6)
+
+
+    def _to_bmrb_model(self, name=None):
+        """Convert the model-free model name to the BMRB name.
+
+        @keyword name:  The model-free model name.
+        @type name:     str
+        @return:        The corresponding BMRB model name.
+        @rtype:         str
+        """
+
+        # The relax to BMRB model-free model name map.
+        map = {'m0':  '',
+               'm1':  'S2',
+               'm2':  'S2, te',
+               'm3':  'S2, Rex',
+               'm4':  'S2, te, Rex',
+               'm5':  'S2f, S2, ts',
+               'm6':  'S2f, tf, S2, ts',
+               'm7':  'S2f, S2, ts, Rex',
+               'm8':  'S2f, tf, S2, ts, Rex',
+               'm9':  'Rex',
+               'tm0': 'tm',
+               'tm1': 'tm, S2',
+               'tm2': 'tm, S2, te',
+               'tm3': 'tm, S2, Rex',
+               'tm4': 'tm, S2, te, Rex',
+               'tm5': 'tm, S2f, S2, ts',
+               'tm6': 'tm, S2f, tf, S2, ts',
+               'tm7': 'tm, S2f, S2, ts, Rex',
+               'tm8': 'tm, S2f, tf, S2, ts, Rex',
+               'tm9': 'tm, Rex'
+        }
+
+        # No match.
+        if name not in map.keys():
+            raise RelaxError("The model-free model '%s' is unknown." % name)
+
+        # Return the BMRB model name.
+        return map[name]
 
 
     def bmrb_read(self, file_path, version=None, sample_conditions=None):
