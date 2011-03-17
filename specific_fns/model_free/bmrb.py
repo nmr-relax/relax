@@ -41,20 +41,66 @@ from relax_warnings import RelaxWarning
 class Bmrb:
     """Class containing methods related to BMRB STAR file reading and writing."""
 
-    def _bmrb_model_map(self, model_name=None, bmrb_name=None):
+    def _from_bmrb_model(self, name=None):
         """The model-free model name to BMRB name mapping.
 
-        @return:    Either the bmrb_name or model_name corresponding to the given model_name or bmrb_name respectively.  Both args cannot be given.
-        @rtype:     str
+        @keyword name:  The BMRB model name.
+        @type name:     str
+        @return:        The corresponding model-free model name.
+        @rtype:         str
         """
 
-        # Check.
-        if model_name != None and bmrb_name != None:
-            raise RelaxError, "Either the model_name or bmrb_name args can be supplied, but not both together."
-
         # Conversion of Modelfree4 (and relax) model numbers.
-        if bmrb_name in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
-            return 'm' + bmrb_name
+        if name in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+            return 'm' + name
+
+        # The BMRB to model-free model name map.
+        map = {'':                         'm0',
+               'S2':                       'm1',
+               'S2, te':                   'm2',
+               'S2, Rex':                  'm3',
+               'S2, te, Rex':              'm4',
+               'S2, te, S2f':              'm5',
+               'S2f, S2, ts':              'm5',
+               'S2f, tf, S2, ts':          'm6',
+               'S2f, S2, ts, Rex':         'm7',
+               'S2f, tf, S2, ts, Rex':     'm8',
+               'Rex':                      'm9',
+               'tm':                       'tm0',
+               'tm, S2':                   'tm1',
+               'tm, S2, te':               'tm2',
+               'tm, S2, Rex':              'tm3',
+               'tm, S2, te, Rex':          'tm4',
+               'tm, S2f, S2, ts':          'tm5',
+               'tm, S2f, tf, S2, ts':      'tm6',
+               'tm, S2f, S2, ts, Rex':     'tm7',
+               'tm, S2f, tf, S2, ts, Rex': 'tm8',
+               'tm, Rex':                  'tm9'
+        }
+
+        # Loop over the dictionary.
+        for item in map.items():
+            # Normal match.
+            if item[0] == name:
+                return item[1]
+
+            # No whitespace.
+            if string.replace(item[0], ' ', '') == name:
+                return item[1]
+
+        # Should not be here!
+        if name:
+            raise RelaxError("The BMRB model-free model '%s' is unknown." % model_name)
+
+
+    def _to_bmrb_model(self, name=None):
+        """Convert the model-free model name to the BMRB name.
+
+        @keyword name:  The model-free model name.
+        @type name:     str
+        @return:        The corresponding BMRB model name.
+        @rtype:         str
+        """
 
         # The relax to BMRB model-free model name map.
         map = {'m0':  '',
@@ -62,7 +108,6 @@ class Bmrb:
                'm2':  'S2, te',
                'm3':  'S2, Rex',
                'm4':  'S2, te, Rex',
-               'm5':  'S2, te, S2f',    # This non-standard naming (incorrect) must go before the correct m5.
                'm5':  'S2f, S2, ts',
                'm6':  'S2f, tf, S2, ts',
                'm7':  'S2f, S2, ts, Rex',
@@ -80,36 +125,12 @@ class Bmrb:
                'tm9': 'tm, Rex'
         }
 
-        # Indicies.
-        if model_name:
-            search_text = model_name
-            search_index = 0
-            return_index = 1
-        else:
-            search_text = bmrb_name
-            search_index = 1
-            return_index = 0
-
-        # Loop over the dictionary.
-        for item in map.items():
-            # Normal match.
-            if item[search_index] == search_text:
-                return item[return_index]
-
-            # No whitespace.
-            if string.replace(item[search_index], ' ', '') == search_text:
-                return item[return_index]
-
-        # The bmrb name is the relax name!
-        for item in map.items():
-            if item[0] == bmrb_name:
-                return bmrb_name
-
-        # Should not be here!
-        if model_name:
+        # No match.
+        if name not in map.keys():
             raise RelaxError("The model-free model '%s' is unknown." % model_name)
-        else:
-            warn(RelaxWarning("The BMRB model-free model name '%s' is unknown." % model_name))
+
+        # Return the BMRB model name.
+        return map[name]
 
 
     def _sf_model_free_read(self, star, sample_conditions=None):
@@ -258,7 +279,7 @@ class Bmrb:
 
                 # The model.
                 if data['model_fit'] != None and data['model_fit'][i] != None:
-                    model = self._bmrb_model_map(bmrb_name=data['model_fit'][i])
+                    model = self._from_bmrb_model(data['model_fit'][i])
                     setattr(spin, 'model', model)
 
                     # The equation and parameters.
@@ -476,7 +497,7 @@ class Bmrb:
             chi2_list.append(spin.chi2)
 
             # Model-free model.
-            model_list.append(self._bmrb_model_map(model_name=spin.model))
+            model_list.append(self._to_bmrb_model(spin.model))
 
         # Convert the molecule names into the entity IDs.
         entity_ids = zeros(len(mol_name_list), int32)
