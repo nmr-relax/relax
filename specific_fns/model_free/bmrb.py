@@ -242,7 +242,7 @@ class Bmrb:
                     setattr(spin, 'params', params)
 
                 # Convert te values which should be ts!
-                if spin.model in ['m5', 'm6', 'm7', 'm8'] and hasattr(spin, 'te') and spin.te != None:
+                if hasattr(spin, 'model') and spin.model in ['m5', 'm6', 'm7', 'm8'] and hasattr(spin, 'te') and spin.te != None:
                     # Change the parameter name of te to ts.
                     spin.ts = spin.te
                     if hasattr(spin, 'te_err'):
