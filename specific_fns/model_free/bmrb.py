@@ -50,6 +50,10 @@ class Bmrb:
         @rtype:         str
         """
 
+        # The same name.
+        if name in ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9', 'm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']:
+            return name
+
         # Conversion of Modelfree4 (and relax) model numbers.
         if name in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
             return 'm' + name
