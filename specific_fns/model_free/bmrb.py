@@ -90,7 +90,7 @@ class Bmrb:
 
         # Should not be here!
         if name:
-            raise RelaxError("The BMRB model-free model '%s' is unknown." % model_name)
+            raise RelaxError("The BMRB model-free model '%s' is unknown." % name)
 
 
     def _to_bmrb_model(self, name=None):
@@ -127,7 +127,7 @@ class Bmrb:
 
         # No match.
         if name not in map.keys():
-            raise RelaxError("The model-free model '%s' is unknown." % model_name)
+            raise RelaxError("The model-free model '%s' is unknown." % name)
 
         # Return the BMRB model name.
         return map[name]
