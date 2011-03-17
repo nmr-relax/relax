@@ -191,16 +191,6 @@ class Bmrb:
                         # The value.
                         value = data[mf_bmrb_key[j]][i]
 
-                        # A te value which should be ts!
-                        if param == 'te' and not hasattr(spin, 'te'):
-                            if (data['s2s'] and data['s2s'][i] != None) or (data['s2f'] and data['s2f'][i] != None):
-                                # Change the parameter name of te to ts.
-                                param = 'ts'
-
-                                # Set the te and te_err values to None.
-                                spin.te = None
-                                spin.te_err = None
-
                         # Parameter scaling.
                         if value != None:
                             if param == 'te':
@@ -250,6 +240,17 @@ class Bmrb:
                     equation, params = self._model_map(model)
                     setattr(spin, 'equation', equation)
                     setattr(spin, 'params', params)
+
+                # Convert te values which should be ts!
+                if spin.model in ['m5', 'm6', 'm7', 'm8'] and hasattr(spin, 'te') and spin.te != None:
+                    # Change the parameter name of te to ts.
+                    spin.ts = spin.te
+                    if hasattr(spin, 'te_err'):
+                        spin.ts_err = spin.te_err
+
+                    # Set the te and te_err values to None.
+                    spin.te = None
+                    spin.te_err = None
 
                 # The element.
                 if'atom_types' in keys and data['atom_types'] != None:
