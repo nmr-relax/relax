@@ -215,6 +215,9 @@ class Bmrb:
 
                 # Loop over and set the model-free parameters.
                 for j in range(len(mf_params)):
+                    # The parameter.
+                    param = mf_params[j]
+
                     # No parameter.
                     if not mf_bmrb_key[j] in keys:
                         continue
@@ -223,9 +226,6 @@ class Bmrb:
                     if data[mf_bmrb_key[j]] != None:
                         # The value.
                         value = data[mf_bmrb_key[j]][i]
-
-                        # The parameter.
-                        param = mf_params[j]
 
                         # A te value which should be ts!
                         if param == 'te' and not hasattr(spin, 'te'):
