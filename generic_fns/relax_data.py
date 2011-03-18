@@ -154,7 +154,7 @@ def bmrb_read(star, sample_conditions=None):
         frq = float(data['frq']) * 1e6
 
         # Round the label to the nearest factor of 10.
-        frq_label = str(int(round(float(data['frq'])/10)*10))
+        frq_label = create_frq_label(float(data['frq']) * 1e6)
 
         # The ID string.
         ri_id = "%s_%s" % (ri_type, frq_label)
@@ -439,6 +439,25 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
             # Copy the value and error from pipe_from.
             spin_to.ri_data[ri_id] = spin_from.ri_data[ri_id]
             spin_to.ri_data_err[ri_id] = spin_from.ri_data_err[ri_id]
+
+
+def create_frq_label(frq):
+    """Generate a frequency label in MHz, rounded to the nearest factor of 10.
+
+    @param frq:     The frequency in Hz.
+    @type frq:      float
+    @return:        The MHz frequency label.
+    @rtype:         str
+    """
+
+    # Convert to MHz.
+    label = frq / 1e6
+
+    # Rounding to the nearest factor of 10.
+    label = int(round(frq/10)*10)
+
+    # Convert to str and return.
+    return str(label)
 
 
 def delete(ri_id=None):
