@@ -454,7 +454,7 @@ def create_frq_label(frq):
     label = frq / 1e6
 
     # Rounding to the nearest factor of 10.
-    label = int(round(frq/10)*10)
+    label = int(round(label/10)*10)
 
     # Convert to str and return.
     return str(label)
