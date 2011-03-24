@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -313,6 +313,11 @@ def q_factors(spin_id=None):
     @keyword spin_id:   The spin ID string used to restrict the Q-factor calculation to a subset of all spins.
     @type spin_id:      None or str
     """
+
+    # No PCSs, so no Q factors can be calculated.
+    if not hasattr(cdp, 'pcs_ids') or not len(cdp.pcs_ids):
+        warn(RelaxWarning("No PCS data exists, Q factors cannot be calculated."))
+        return
 
     # Q-factor list.
     cdp.q_factors_pcs = []
