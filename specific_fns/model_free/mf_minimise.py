@@ -350,12 +350,14 @@ class Mf_minimise:
                     self._grid_search_spin_bounds(spin, lower, upper)
 
         # Diagonal scaling of minimisation options.
+        lower_new = []
+        upper_new = []
         for i in xrange(num_params):
-            lower[i] = lower[i] / scaling_matrix[i, i]
-            upper[i] = upper[i] / scaling_matrix[i, i]
+            lower_new.append(lower[i] / scaling_matrix[i, i])
+            upper_new.append(upper[i] / scaling_matrix[i, i])
 
         # Return the minimisation options.
-        return inc, lower, upper
+        return inc, lower_new, upper_new
 
 
     def _grid_search_diff_bounds(self, lower, upper):
