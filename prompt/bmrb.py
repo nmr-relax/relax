@@ -42,8 +42,8 @@ class BMRB(User_fn_class):
 
         cite_id:  The citation ID string.
 
-        authors:  The list of authors.  Each author element is a list of four elements: the first
-            name, last name, first initial, and middle initials.
+        authors:  The list of authors.  Each author element is a list of four elements (the first 
+            name, last name, first initial, and middle initials).
 
         doi:  The DOI number, e.g. "10.1000/182".
 
