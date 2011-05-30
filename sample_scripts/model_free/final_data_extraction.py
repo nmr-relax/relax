@@ -179,6 +179,7 @@ file.write("hide all\n")
 file.write("show sticks, name C+N+CA\n")
 file.write("set stick_quality, 10\n")
 file.write("ray\n")
+file.close()
 
 
 ##################################################################################################
@@ -231,6 +232,7 @@ file.write("hide all\n")
 file.write("show sticks, name C+N+CA\n")
 file.write("set stick_quality, 10\n")
 file.write("ray\n")
+file.close()
 
 
 
