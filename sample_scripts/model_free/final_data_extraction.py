@@ -21,9 +21,6 @@ from generic_fns import pipes
 pipe.create('Data_extraction', 'mf')
 results.read()
 
-# Data
-raise RelaxError("Test.")
-
 #create file
 
 file = open('Model-free_Results.csv', 'w')
@@ -54,34 +51,46 @@ for spin, spin_id in spin_loop(return_id=True):
                 spin.model = spin.model[1:2]
                 file.write(spin.model)
             # Write separator.
-            else:
-                file.write(",")
+            file.write(",")
 
 
             # S2.
             if  hasattr(spin, 's2'):
                 s2 = str(spin.s2)
-                s2_err = str(spin.s2_err)
                 if spin.s2 == None:
                         file.write("")
                 else:
-                        file.write(s2[0:5]+ " +/- " + s2_err[0:4])
+                        file.write(s2[0:5])
+
+                        # Try to read the error, skip if no MC simulation was performed
+                        try:
+                            s2_err = str(spin.s2_err)
+                            file.write( " +/- " + s2_err[0:4])
+                        except:
+                            a = 'No MC'
+
             # Write separator.
-            else:
-                file.write(",")
+            file.write(",")
 
 
             # Rex.
             if hasattr(spin, 'rex'):
                 rex = str(spin.rex)
-                rex_err = str(spin.rex_err)
+                
                 if spin.rex == None:
                         file.write("")
                 else:
-                        file.write(rex[0:5]+ " +/- " + rex_err[0:4])
+                        file.write(rex[0:5])
+
+                        # Try to read the error, skip if no MC simulation was performed
+                        try:
+                            rex_err = str(spin.rex_err)
+                            file.write( " +/- " + rex_err[0:4])
+                        except:
+                            a = 'No MC'
+
             # Write separator.
-            else:
-                file.write(",")
+            file.write(",")
 
 # Start a new line.
             file.write("\n")
