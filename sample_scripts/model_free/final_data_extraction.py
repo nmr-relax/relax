@@ -26,36 +26,36 @@ raise RelaxError("Test.")
 
 #create file
 
-self.file = open('Model-free_Results.csv', 'w')
+file = open('Model-free_Results.csv', 'w')
 
-self.file.write('Data Extraction by Michael Bieri')
-self.file.write("\n")
-self.file.write("\n")
-self.file.write("Residue,Model,S2,Rex\n")
-self.file.write("\n")
+file.write('Data Extraction by Michael Bieri')
+file.write("\n")
+file.write("\n")
+file.write("Residue,Model,S2,Rex\n")
+file.write("\n")
 
 
 for spin, spin_id in spin_loop(return_id=True):
             # The spin ID string.
             spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
             spin_res = spin_id[spin_id.index('&')+2:spin_id.index('@')]
-            self.file.write((spin_res) + " " + (spin_no))
+            file.write((spin_res) + " " + (spin_no))
             # The spin is not selected.
             if not spin.select:
-                self.file.write("\n")
+                file.write("\n")
                 continue
             # Write separator.
             else:
-                self.file.write(",")
+                file.write(",")
 
 
             # The model-free model.
             if hasattr(spin, 'model'):
                 spin.model = spin.model[1:2]
-                self.file.write(spin.model)
+                file.write(spin.model)
             # Write separator.
             else:
-                self.file.write(",")
+                file.write(",")
 
 
             # S2.
@@ -63,12 +63,12 @@ for spin, spin_id in spin_loop(return_id=True):
                 s2 = str(spin.s2)
                 s2_err = str(spin.s2_err)
                 if spin.s2 == None:
-                        self.file.write("")
+                        file.write("")
                 else:
-                        self.file.write(s2[0:5]+ " +/- " + s2_err[0:4])
+                        file.write(s2[0:5]+ " +/- " + s2_err[0:4])
             # Write separator.
             else:
-                self.file.write(",")
+                file.write(",")
 
 
             # Rex.
@@ -76,15 +76,15 @@ for spin, spin_id in spin_loop(return_id=True):
                 rex = str(spin.rex)
                 rex_err = str(spin.rex_err)
                 if spin.rex == None:
-                        self.file.write("")
+                        file.write("")
                 else:
-                        self.file.write(rex[0:5]+ " +/- " + rex_err[0:4])
+                        file.write(rex[0:5]+ " +/- " + rex_err[0:4])
             # Write separator.
             else:
-                self.file.write(",")
+                file.write(",")
 
 # Start a new line.
-            self.file.write("\n")
+            file.write("\n")
 
 # Close file.
 file.close()
@@ -146,12 +146,12 @@ from generic_fns import pipes
 
 #create file
 
-self.file = open('s2.pml', 'w')
+file = open('s2.pml', 'w')
 
-self.file.write("bg_color white\n")
-self.file.write("color gray90\n")
-self.file.write("hide all\n")
-self.file.write("show ribbon\n")
+file.write("bg_color white\n")
+file.write("color gray90\n")
+file.write("hide all\n")
+file.write("show ribbon\n")
 
 for spin, spin_id in spin_loop(return_id=True):
 
@@ -163,22 +163,22 @@ for spin, spin_id in spin_loop(return_id=True):
             if  hasattr(spin, 's2'):
                 s2 = str(spin.s2)
                 if spin.s2 == None:
-                        self.file.write("")
+                        file.write("")
                 else:
                         width = ((1-spin.s2) * 2)
                         green = 1 - ((spin.s2)**3) 
                         green = green * green * green #* green * green
                         green = 1 - green
-                        self.file.write("set_color resicolor" + spin_no + ", [0," + str(green) + ",1]\n")
-                        self.file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
-                        self.file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
+                        file.write("set_color resicolor" + spin_no + ", [0," + str(green) + ",1]\n")
+                        file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
+                        file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
 
 
 
-self.file.write("hide all\n")
-self.file.write("show sticks, name C+N+CA\n")
-self.file.write("set stick_quality, 10\n")
-self.file.write("ray\n")
+file.write("hide all\n")
+file.write("show sticks, name C+N+CA\n")
+file.write("set stick_quality, 10\n")
+file.write("ray\n")
 
 
 ##################################################################################################
@@ -187,12 +187,12 @@ self.file.write("ray\n")
 
 #create file
 
-self.file = open('rex.pml', 'w')
+file = open('rex.pml', 'w')
 
-self.file.write("bg_color white\n")
-self.file.write("color gray90\n")
-self.file.write("hide all\n")
-self.file.write("show ribbon\n")
+file.write("bg_color white\n")
+file.write("color gray90\n")
+file.write("hide all\n")
+file.write("show ribbon\n")
 
 max_rex = 0
 
@@ -214,23 +214,23 @@ for spin, spin_id in spin_loop(return_id=True):
             if  hasattr(spin, 'rex'):
                 rex = str(spin.rex)
                 if spin.rex == None:
-                        self.file.write("")
+                        file.write("")
                 else:
                         rel_rex = spin.rex / max_rex
                         width = ((rel_rex) * 2)
                         green = ((rel_rex)) 
                         green = green * green * green #* green * green
                         green = 1 - green
-                        self.file.write("set_color resicolor" + spin_no + ", [0," + str(green) + ",1]\n")
-                        self.file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
-                        self.file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
+                        file.write("set_color resicolor" + spin_no + ", [0," + str(green) + ",1]\n")
+                        file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
+                        file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
 
 
 
-self.file.write("hide all\n")
-self.file.write("show sticks, name C+N+CA\n")
-self.file.write("set stick_quality, 10\n")
-self.file.write("ray\n")
+file.write("hide all\n")
+file.write("show sticks, name C+N+CA\n")
+file.write("set stick_quality, 10\n")
+file.write("ray\n")
 
 
 
