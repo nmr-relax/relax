@@ -17,17 +17,21 @@ from generic_fns.mol_res_spin import spin_loop
 from generic_fns import pipes
 
 
+
 pipe.create('Data_extraction', 'mf')
 results.read()
 
+# Data
+raise RelaxError("Test.")
+
 #create file
 
-self.file = open('Model-free_Results.txt', 'w')
+self.file = open('Model-free_Results.csv', 'w')
 
 self.file.write('Data Extraction by Michael Bieri')
 self.file.write("\n")
 self.file.write("\n")
-self.file.write("Residue		Model	S2			Rex\n")
+self.file.write("Residue,Model,S2,Rex\n")
 self.file.write("\n")
 
 
@@ -40,37 +44,50 @@ for spin, spin_id in spin_loop(return_id=True):
             if not spin.select:
                 self.file.write("\n")
                 continue
+            # Write separator.
+            else:
+                self.file.write(",")
 
 
-# The model-free model.
+            # The model-free model.
             if hasattr(spin, 'model'):
                 spin.model = spin.model[1:2]
-                self.file.write("		" + spin.model)
+                self.file.write(spin.model)
+            # Write separator.
+            else:
+                self.file.write(",")
 
 
-# S2.
+            # S2.
             if  hasattr(spin, 's2'):
                 s2 = str(spin.s2)
                 s2_err = str(spin.s2_err)
                 if spin.s2 == None:
                         self.file.write("")
                 else:
-                        self.file.write("	" + s2[0:5]+ " +/- " + s2_err[0:4])
+                        self.file.write(s2[0:5]+ " +/- " + s2_err[0:4])
+            # Write separator.
+            else:
+                self.file.write(",")
 
 
-# Rex.
+            # Rex.
             if hasattr(spin, 'rex'):
                 rex = str(spin.rex)
                 rex_err = str(spin.rex_err)
                 if spin.rex == None:
                         self.file.write("")
                 else:
-                        self.file.write("		" + rex[0:5]+ " +/- " + rex_err[0:4])
-
-
+                        self.file.write(rex[0:5]+ " +/- " + rex_err[0:4])
+            # Write separator.
+            else:
+                self.file.write(",")
 
 # Start a new line.
             self.file.write("\n")
+
+# Close file.
+file.close()
 
 
 ##################################################################################################
