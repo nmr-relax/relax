@@ -15,6 +15,7 @@ from string import replace
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns import pipes
+from relax_errors import RelaxError
 
 
 
@@ -131,16 +132,6 @@ grace.write(x_data_type='spin', y_data_type='tf', file='tf.agr', force=True)
 grace.write(x_data_type='spin', y_data_type='csa', file='csa.agr', force=True)
 grace.write(x_data_type='te', y_data_type='s2', file='s2-te.agr', force=True)
 
-##################################################################################################
-
-#Create Diffusion Tensor
-
-# Display the diffusion tensor.
-diffusion_tensor.display()
-
-# Create the tensor PDB file.
-tensor_file = 'tensor.pdb'
-structure.create_diff_tensor_pdb(file=tensor_file, force=True)
 
 ##################################################################################################
 
@@ -242,6 +233,24 @@ file.write("show sticks, name C+N+CA\n")
 file.write("set stick_quality, 10\n")
 file.write("ray\n")
 file.close()
+
+
+##################################################################################################
+
+#Create Diffusion Tensor
+
+# Try to read the diffusion tensor.
+try:
+    # Display the diffusion tensor.
+    diffusion_tensor.display()
+
+    # Create the tensor PDB file.
+    tensor_file = 'tensor.pdb'
+    structure.create_diff_tensor_pdb(file=tensor_file, force=True)
+
+# No diffusion in model (local tm model)
+except:
+    print "No diffusion tensor found."
 
 
 
