@@ -20,24 +20,14 @@
 #                                                                             #
 ###############################################################################
 
-# This script creates a Grace plot of Ix - Ix(theta), the difference between the measured peak
-# intensity and the back calculated peak intensity for each spin system x.  Ix(theta) is back
-# calculated using the parameter vector theta = [Rx, I0], where Rx is either the R1 or R2 relaxation
-# rate and I0 is the initial peak intensity.  The plot consists of distributions of intensity
-# differences for each residue at each measured relaxation period.  The average and standard
-# deviations of these distributions are also plotted.
-#
-# The resultant plot is useful for finding bad points or bad spectra when fitting exponential curves
-# to determine the R1 and R2 relaxation rates.  If the averages deviate systematically from zero,
-# then bias in the spectra or fitting will be clearly revealed.
-#
-# To use this script, R1 or R2 exponential curve fitting must have previously have been carried out
-# and the program state saved to the file 'rx.save' (either with or without the .gz or .bz2
-# extensions).  The file name of the saved state can be changed at the top of this script.  It is
-# important to note that the same version of relax should be used for creating the saved state as
-# reading the program state, these files are neither backwards nor forwards compatible.  Only the
-# two parameter exponential fit is currently supported.
+"""Script for creating a Grace plot of peak intensity differences.
 
+This script creates a Grace plot of Ix - Ix(theta), the difference between the measured peak and the back calculated peak intensity for each spin system x.  Ix(theta) is back using the parameter vector theta = [Rx, I0], where Rx is either the R1 or R2 relaxation and I0 is the initial peak intensity.  The plot consists of distributions of intensity for each residue at each measured relaxation period.  The average and standard of these distributions are also plotted.
+
+The resultant plot is useful for finding bad points or bad spectra when fitting exponential curves determine the R1 and R2 relaxation rates.  If the averages deviate systematically from zero, bias in the spectra or fitting will be clearly revealed.
+
+To use this script, R1 or R2 exponential curve fitting must have previously have been carried out the program state saved to the file 'rx.save' (either with or without the .gz or .bz2 ).  The file name of the saved state can be changed at the top of this script.  It is to note that the same version of relax should be used for creating the saved state as the program state, these files are neither backwards nor forwards compatible.  Only the parameter exponential fit is currently supported.
+"""
 
 # Python module imports.
 from numpy import float64, array, identity, sqrt, zeros

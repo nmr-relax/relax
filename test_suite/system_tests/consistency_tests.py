@@ -2,7 +2,7 @@
 #                                                                             #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -57,15 +57,11 @@ class Ct(SystemTestCase):
         # Data directory.
         dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep
 
-        # Data paths.
-        dataPaths = [dir + 'noe.dat',
-                     dir + 'R1.dat',
-                     dir + 'R2.dat']
-
-        # Data types.
-        dataTypes = [('NOE', '600', 600.0e6),
-                     ('R1', '600', 600.0e6),
-                     ('R2', '600', 600.0e6)]
+        # The data.
+        ri_ids = ['NOE_600', 'R1_600', 'R2_600']
+        ri_type = ['NOE', 'R1', 'R2']
+        frq = [600e6]*3
+        data_paths = [dir + 'noe.dat', dir + 'R1.dat', dir + 'R2.dat']
 
         # Correct consistency functions values:
         j0 = [4.0703318681008998e-09, 3.7739393907014834e-09]
@@ -76,8 +72,8 @@ class Ct(SystemTestCase):
         self.interpreter.sequence.read(file='test_seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Read the data.
-        for dataSet in xrange(len(dataPaths)):
-            self.interpreter.relax_data.read(dataTypes[dataSet][0], dataTypes[dataSet][1], dataTypes[dataSet][2], dataPaths[dataSet], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        for i in xrange(len(ri_ids)):
+            self.interpreter.relax_data.read(ri_id=ri_ids[i], ri_type=ri_type[i], frq=frq[i], file=data_paths[i], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set r, csa, heteronucleus type, and proton type.
         self.interpreter.value.set(NH_BOND_LENGTH, 'bond_length')

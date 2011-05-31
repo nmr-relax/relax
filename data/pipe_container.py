@@ -100,14 +100,77 @@ class PipeContainer(Prototype):
         return text
 
 
-    def from_xml(self, pipe_node, dir=None):
+    def _back_compat_hook(self, file_version=None):
+        """Method for converting old data structures to the new ones.
+
+        @keyword file_version:  The relax version used to create the XML file.
+        @type file_version:     str
+        """
+
+        # Relaxation data.
+        self._back_compat_hook_ri_data()
+
+
+    def _back_compat_hook_ri_data(self):
+        """Converting the old relaxation data structures to the new ones."""
+
+        # Nothing to do.
+        if not (hasattr(cdp, 'frq_labels') and hasattr(cdp, 'noe_r1_table') and hasattr(cdp, 'remap_table')):
+            return
+
+        # Initialise the new structures.
+        cdp.ri_ids = []
+        cdp.ri_type = {}
+        frq = {}    # This will be placed into cdp later as cdp.frq still exists.
+
+        # Generate the new structures.
+        for i in range(cdp.num_ri):
+            # The ID.
+            ri_id = "%s_%s" % (cdp.ri_labels[i], cdp.frq_labels[cdp.remap_table[i]])
+
+            # Not unique.
+            if ri_id in cdp.ri_ids:
+                # Loop until a unique ID is found.
+                for j in range(100):
+                    # New id.
+                    new_id = "%s_%s" % (ri_id, j)
+
+                    # Unique.
+                    if not new_id in cdp.ri_ids:
+                        ri_id = new_id
+                        break
+
+            # Add the ID.
+            cdp.ri_ids.append(ri_id)
+
+            # The relaxation data type.
+            cdp.ri_type[ri_id] = cdp.ri_labels[i]
+
+            # The frequency data.
+            frq[ri_id] = cdp.frq[cdp.remap_table[i]]
+
+        # Delete the old structures.
+        del cdp.frq
+        del cdp.frq_labels
+        del cdp.noe_r1_table
+        del cdp.num_frq
+        del cdp.num_ri
+        del cdp.remap_table
+        del cdp.ri_labels
+
+        # Set the frequencies.
+        cdp.frq = frq
+
+
+    def from_xml(self, pipe_node, file_version=None, dir=None):
         """Read a pipe container XML element and place the contents into this pipe.
 
-        @param pipe_node:   The data pipe XML node.
-        @type pipe_node:    xml.dom.minidom.Element instance
-        @keyword dir:       The name of the directory containing the results file (needed for
-                            loading external files).
-        @type dir:          str
+        @param pipe_node:       The data pipe XML node.
+        @type pipe_node:        xml.dom.minidom.Element instance
+        @keyword file_version:  The relax version used to create the XML file.
+        @type file_version:     str
+        @keyword dir:           The name of the directory containing the results file (needed for loading external files).
+        @type dir:              str
         """
 
         # Test if empty.
@@ -117,6 +180,9 @@ class PipeContainer(Prototype):
         # Get the global data node, and fill the contents of the pipe.
         global_node = pipe_node.getElementsByTagName('global')[0]
         xml_to_object(global_node, self)
+
+        # Backwards compatibility transformations.
+        self._back_compat_hook(file_version)
 
         # Get the hybrid node (and its sub-node), and recreate the hybrid object.
         hybrid_node = pipe_node.getElementsByTagName('hybrid')[0]
@@ -152,7 +218,7 @@ class PipeContainer(Prototype):
 
         # Recreate the molecule, residue, and spin data structure.
         mol_nodes = pipe_node.getElementsByTagName('mol')
-        self.mol.from_xml(mol_nodes)
+        self.mol.from_xml(mol_nodes, file_version=file_version)
 
         # Get the structural object nodes and, if they exist, fill the contents.
         str_nodes = pipe_node.getElementsByTagName('structure')
@@ -205,7 +271,7 @@ class PipeContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # An object has been added.

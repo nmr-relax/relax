@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -109,7 +109,6 @@ class Pipe(User_fn_class):
             'N-state':  N-state model of domain motions,
             'noe':  Steady state NOE calculation,
             'relax_fit':  Relaxation curve fitting,
-            'srls':  SRLS analysis.
 
 
         Examples

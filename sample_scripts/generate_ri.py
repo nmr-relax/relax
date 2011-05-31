@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,12 +29,12 @@ from generic_fns.mol_res_spin import spin_loop
 def back_calc():
     """Function for back calculating the relaxation data."""
 
-    relax_data.back_calc(ri_label='NOE', frq_label='600', frq=600e6)
-    relax_data.back_calc(ri_label='R1', frq_label='600', frq=600e6)
-    relax_data.back_calc(ri_label='R2', frq_label='600', frq=600e6)
-    relax_data.back_calc(ri_label='NOE', frq_label='500', frq=500e6)
-    relax_data.back_calc(ri_label='R1', frq_label='500', frq=500e6)
-    relax_data.back_calc(ri_label='R2', frq_label='500', frq=500e6)
+    relax_data.back_calc(ri_id='NOE_600', ri_type='NOE', frq=600e6)
+    relax_data.back_calc(ri_id='R1_600',  ri_type='R1',  frq=600e6)
+    relax_data.back_calc(ri_id='R2_600',  ri_type='R2',  frq=600e6)
+    relax_data.back_calc(ri_id='NOE_500', ri_type='NOE', frq=500e6)
+    relax_data.back_calc(ri_id='R1_500',  ri_type='R1',  frq=500e6)
+    relax_data.back_calc(ri_id='R2_500',  ri_type='R2',  frq=500e6)
 
 
 def errors():
@@ -43,33 +43,33 @@ def errors():
     # Loop over the sequence.
     for spin in spin_loop():
         # Loop over the relaxation data.
-        for j in xrange(len(spin.relax_data)):
+        for ri_id in cdp.ri_ids:
             # No data.
-            if spin.relax_data[j] == None:
+            if spin.ri_data[ri_id] == None:
                 continue
 
             # 600 MHz NOE.
-            if spin.ri_labels[j] == 'NOE' and spin.frq_labels[spin.remap_table[j]] == '600':
-                spin.relax_error[j] = 0.04
+            if ri_id == 'NOE_600':
+                spin.ri_data_err[ri_id] = 0.04
 
             # 500 MHz NOE.
-            elif spin.ri_labels[j] == 'NOE' and spin.frq_labels[spin.remap_table[j]] == '500':
-                spin.relax_error[j] = 0.05
+            elif ri_id == 'NOE_500':
+                spin.ri_data_err[ri_id] = 0.05
 
             # All other data.
             else:
-                spin.relax_error[j] = spin.relax_data[j] * 0.02
+                spin.ri_data_err[ri_id] = spin.ri_data[ri_id] * 0.02
 
 
 def write():
     """Function for writing the relaxation data to file."""
 
-    relax_data.write(ri_label='NOE', frq_label='600', file='noe.600.out', force=True)
-    relax_data.write(ri_label='R1', frq_label='600', file='r1.600.out', force=True)
-    relax_data.write(ri_label='R2', frq_label='600', file='r2.600.out', force=True)
-    relax_data.write(ri_label='NOE', frq_label='500', file='noe.500.out', force=True)
-    relax_data.write(ri_label='R1', frq_label='500', file='r1.500.out', force=True)
-    relax_data.write(ri_label='R2', frq_label='500', file='r2.500.out', force=True)
+    relax_data.write(ri_id='NOE_600', ri_type='NOE', file='noe.600.out', force=True)
+    relax_data.write(ri_id='R1_600',  ri_type='R1',  file='r1.600.out', force=True)
+    relax_data.write(ri_id='R2_600',  ri_type='R2',  file='r2.600.out', force=True)
+    relax_data.write(ri_id='NOE_500', ri_type='NOE', file='noe.500.out', force=True)
+    relax_data.write(ri_id='R1_500',  ri_type='R1',  file='r1.500.out', force=True)
+    relax_data.write(ri_id='R2_500',  ri_type='R2',  file='r2.500.out', force=True)
 
 
 # Create the data pipe.

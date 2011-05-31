@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2005-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,14 +20,18 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""Module for the SRLS analysis of relaxation data."""
+"""Script for creating a grace plot of 'S2' vs 'te'."""
 
 
-# relax module imports.
-from specific_fns.api_base import API_base
+# Create the run.
+name = 'm4'
+pipe.create(name, 'mf')
 
+# Load the data.
+results.read(name)
 
-class SRLS(API_base):
-    """Class containing functions specific to the SRLS analysis."""
+# Grace plot.
+grace.write(name, x_data_type='s2', y_data_type='te', plot_data='sim', file='s2_te.agr', force=True)
 
+# View the plot.
+grace.view(file='s2_te.agr')

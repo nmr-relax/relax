@@ -40,7 +40,7 @@ from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
 
-class Bruker_import():
+class Bruker_import:
     def __init__(self, dir=None, exp_type=None, file=None, UI='prompt', output_file=None):
         """Function to import Bruker Protein Dynamic Center (PDC) files.
 
@@ -746,6 +746,11 @@ def intensity_nmrview(file_data=None, int_col=None):
     # Loop over the file data.
     data = []
     for line in file_data:
+        # Unknown assignment.
+        if line[1] == '{}':
+            warn(RelaxWarning("The assignment '%s' is unknown, skipping this peak." % line[1]))
+            continue
+
         # The residue number
         res_num = ''
         try:

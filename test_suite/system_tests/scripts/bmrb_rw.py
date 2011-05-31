@@ -36,15 +36,14 @@ molecule.type(type='protein')
 bmrb.thiol_state(state='reduced')
 
 # Display the data (as a test).
-relax_data.display(ri_label='R1', frq_label='800')
+relax_data.display(ri_id='R1_800')
 
 # Temperature control and peak intensity type.
-ri_labels = ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
-frq_labels = ['600', '600', '600', '800', '800', '800']
+ri_ids = ['R1_600', 'R2_600', 'NOE_600', 'R1_800', 'R2_800', 'NOE_800']
 for i in range(6):
-    relax_data.temp_calibration(ri_label=ri_labels[i], frq_label=frq_labels[i], method='methanol')
-    relax_data.temp_control(ri_label=ri_labels[i], frq_label=frq_labels[i], method='single fid interleaving')
-    relax_data.peak_intensity_type(ri_label=ri_labels[i], frq_label=frq_labels[i], type='height')
+    relax_data.temp_calibration(ri_id=ri_ids[i], method='methanol')
+    relax_data.temp_control(ri_id=ri_ids[i], method='single fid interleaving')
+    relax_data.peak_intensity_type(ri_id=ri_ids[i], type='height')
 
 # Set up some BMRB information.
 bmrb.software_select('NMRPipe')
@@ -53,7 +52,7 @@ bmrb.citation(cite_id='test', authors=[["Edward", "d'Auvergne", "E.", "J."], ["P
 bmrb.software(name='X', url='http://nmr-relax.com', vendor_name='me', cite_ids=['test'], tasks=['procrastinating', 'nothing much', 'wasting time'])
 bmrb.script(file='noe.py', dir=status.install_path+sep+'sample_scripts', analysis_type='noe', engine='relax')
 bmrb.script(file='relax_fit.py', dir=status.install_path+sep+'sample_scripts', analysis_type='relax_fit', engine='relax')
-bmrb.script(file='full_analysis.py', dir=status.install_path+sep+'sample_scripts', analysis_type='mf', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)
+bmrb.script(file='dauvergne_protocol.py', dir=status.install_path+sep+'sample_scripts'+sep+'model_free', analysis_type='mf', model_selection='AIC', engine='relax', model_elim=True, universal_solution=True)
 
 # Write, then read the data to a new data pipe.
 bmrb.write(file=ds.tmpfile, dir=None, version=ds.version, force=True)
@@ -62,7 +61,7 @@ bmrb.read(file=ds.tmpfile, version=ds.version)
 
 # Display tests.
 sequence.display()
-relax_data.display(ri_label='R1', frq_label='800')
+relax_data.display(ri_id='R1_800')
 
 # Save the program state.
 state.save(state_file, force=True)

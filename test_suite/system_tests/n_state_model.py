@@ -157,6 +157,7 @@ class N_state_model(SystemTestCase):
 
         # Set the mode to use both RDCs and PCSs.
         ds.mode = 'all'
+        tag = 'synth'
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
@@ -170,6 +171,39 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 0.0)
         self.assertAlmostEqual(cdp.q_rdc, 0.0)
         self.assertAlmostEqual(cdp.q_pcs, 0.0)
+
+        # The spin data.
+        pcs = [1.0261275236, 0.75832284646, 0.65377417467, 0.88410306916, 0.83665620282, 1.887881182, 1.6564530832, 1.8489841033, -1.1143070855, -0.52863087918, -0.67600660991, -0.36996952054, -0.50720205688, -0.39889489474, -0.41237130008, -0.71313422816, -0.58642013802, -1.2160818959, -1.3990341569, -1.4084215541, -1.2007391713, -2.1392542193, -2.0165726596, -1.7623442985, -1.6437792517, -1.2415832517, -1.3008765368, -1.5872391105, -1.8060331465, -1.9063640494, -1.9817787999, -0.85264936663, -0.98332177588, -0.13370651687, -0.41762890604, -0.038212181921, -0.37986098085, 0.63582157322, 0.48346482178, 1.7566240094, 1.5694652222, 1.9914499872, 2.5316890107, 1.4559940851, 1.8661428328, 0.65003087965, 0.91690449156, 3.2096229388, 3.5547526651, 3.0579308183, 3.5933428117, 2.9062016872, 3.3750576279, 2.1848555929, 2.4769802024, 1.6466129291, 1.7719619979, 1.1373876736, 1.2182451528]
+        i = 0
+        for spin in spin_loop():
+            # No PCS.
+            if not hasattr(spin, 'pcs'):
+                continue
+
+            # Check the value.
+            self.assertAlmostEqual(spin.pcs[tag], pcs[i])
+
+            # Check the back-calculated value.
+            self.assertAlmostEqual(spin.pcs_bc[tag], pcs[i])
+
+            # Increment the spin index.
+            i += 1
+
+        # Back calc.
+        self.interpreter.pcs.back_calc(tag)
+
+        # Check the spin data.
+        i = 0
+        for spin in spin_loop():
+            # No PCS.
+            if not hasattr(spin, 'pcs'):
+                continue
+
+            # Check the back-calculated value.
+            self.assertAlmostEqual(spin.pcs_bc[tag], pcs[i])
+
+            # Increment the spin index.
+            i += 1
 
 
     def test_align_fit_rand(self):

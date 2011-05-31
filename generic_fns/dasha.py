@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,7 +30,7 @@ from string import lower
 import sys
 
 # relax module imports.
-from generic_fns import angles, diffusion_tensor, pipes, value
+from generic_fns import angles, diffusion_tensor, pipes, relax_data, value
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, first_residue_num, last_residue_num, residue_loop, spin_loop
 from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 from relax_io import mkdir_nofail, open_write_file, test_binary
@@ -52,23 +52,22 @@ def __deselect_spins():
     # Loop over the sequence.
     for spin in spin_loop():
         # Relaxation data must exist!
-        if not hasattr(spin, 'relax_data'):
+        if not hasattr(spin, 'ri_data'):
             spin.select = False
 
         # Require 3 or more relaxation data points.
-        elif len(spin.relax_data) < 3:
+        elif len(spin.ri_data) < 3:
             spin.select = False
 
         # Require at least as many data points as params to prevent over-fitting.
-        elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.relax_data):
+        elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.ri_data):
             spin.select = False
 
 
 def create(algor='LM', dir=None, force=False):
     """Create the Dasha script file 'dasha_script' for controlling the program.
 
-    @keyword algor: The optimisation algorithm to use.  This can be the Levenberg-Marquardt
-                    algorithm 'LM' or the Newton-Raphson algorithm 'NR'.
+    @keyword algor: The optimisation algorithm to use.  This can be the Levenberg-Marquardt algorithm 'LM' or the Newton-Raphson algorithm 'NR'.
     @type algor:    str
     @keyword dir:   The optional directory to place the script into.
     @type dir:      str or None
@@ -96,7 +95,7 @@ def create(algor='LM', dir=None, force=False):
 
     # Test the optimisation algorithm.
     if algor not in ['LM', 'NR']:
-        raise RelaxError("The Dasha optimisation algorithm " + repr(algor) + " is unknown, it should either be 'LM' or 'NR'.")
+        raise RelaxError("The Dasha optimisation algorithm '%s' is unknown, it should either be 'LM' or 'NR'." % algor)
 
     # Multiple spins per residue not allowed.
     for residue in residue_loop():
@@ -111,20 +110,6 @@ def create(algor='LM', dir=None, force=False):
     if dir == None:
         dir = pipes.cdp_name()
     mkdir_nofail(dir, verbosity=0)
-
-    # Number of field strengths and values.
-    num_frq = 0
-    frq = []
-    for spin in spin_loop():
-        if hasattr(spin, 'num_frq'):
-            if spin.num_frq > num_frq:
-                # Number of field strengths.
-                num_frq = spin.num_frq
-
-                # Field strength values.
-                for val in spin.frq:
-                    if val not in frq:
-                        frq.append(val)
 
     # Calculate the angle alpha of the XH vector in the spheroid diffusion frame.
     if cdp.diff_tensor.type == 'spheroid':
@@ -147,17 +132,16 @@ def create_script(file, model_type, algor):
     @type file:         file object
     @param model_type:  The model-free model type.
     @type model_type:   str
-    @param algor:       The optimisation algorithm to use.  This can be the Levenberg-Marquardt
-                        algorithm 'LM' or the Newton-Raphson algorithm 'NR'.
+    @param algor:       The optimisation algorithm to use.  This can be the Levenberg-Marquardt algorithm 'LM' or the Newton-Raphson algorithm 'NR'.
     @type algor:        str
     """
 
     # Delete all data.
-    file.write('# Delete all data.\n')
-    file.write('del 1 10000\n')
+    file.write("# Delete all data.\n")
+    file.write("del 1 10000\n")
 
     # Nucleus type.
-    file.write('\n# Nucleus type.\n')
+    file.write("\n# Nucleus type.\n")
     nucleus = None
     for spin in spin_loop():
         # Can only handle one spin type.
@@ -174,28 +158,30 @@ def create_script(file, model_type, algor):
     elif nucleus == '13C':
         nucleus = 'C13'
     else:
-        raise RelaxError('Cannot handle the nucleus type ' + repr(nucleus) + ' within Dasha.')
-    file.write('set nucl ' + nucleus + '\n')
+        raise RelaxError("Cannot handle the nucleus type '%s' within Dasha." % nucleus)
+    file.write("set nucl %s\n" % nucleus)
 
     # Number of frequencies.
-    file.write('\n# Number of frequencies.\n')
-    file.write('set n_freq ' + repr(cdp.num_frq) + '\n')
+    file.write("\n# Number of frequencies.\n")
+    file.write("set n_freq %s\n" % relax_data.num_frq())
 
     # Frequency values.
-    file.write('\n# Frequency values.\n')
-    for i in xrange(cdp.num_frq):
-        file.write('set H1_freq ' + repr(cdp.frq[i] / 1e6) + ' ' + repr(i+1) + '\n')
+    file.write("\n# Frequency values.\n")
+    count = 1
+    for frq in relax_data.frq_loop():
+        file.write("set H1_freq %s %s\n" % (frq / 1e6, count))
+        count += 1
 
     # Set the diffusion tensor.
-    file.write('\n# Set the diffusion tensor.\n')
+    file.write("\n# Set the diffusion tensor.\n")
     if model_type != 'local_tm':
         # Sphere.
         if cdp.diff_tensor.type == 'sphere':
-            file.write('set tr ' + repr(cdp.diff_tensor.tm / 1e-9) + '\n')
+            file.write("set tr %s\n" % (cdp.diff_tensor.tm / 1e-9))
 
         # Spheroid.
         elif cdp.diff_tensor.type == 'spheroid':
-            file.write('set tr ' + repr(cdp.diff_tensor.tm / 1e-9) + '\n')
+            file.write('set tr %s\n' % (cdp.diff_tensor.tm / 1e-9))
 
         # Ellipsoid.
         elif cdp.diff_tensor.type == 'ellipsoid':
@@ -203,24 +189,24 @@ def create_script(file, model_type, algor):
             Dx, Dy, Dz = diffusion_tensor.return_eigenvalues()
 
             # Geometric parameters.
-            file.write('set tr ' + repr(cdp.diff_tensor.tm / 1e-9) + '\n')
-            file.write('set D1/D3 ' + repr(Dx / Dz) + '\n')
-            file.write('set D2/D3 ' + repr(Dy / Dz) + '\n')
+            file.write("set tr %s\n" % (cdp.diff_tensor.tm / 1e-9))
+            file.write("set D1/D3 %s\n" % (Dx / Dz))
+            file.write("set D2/D3 %s\n" % (Dy / Dz))
 
             # Orientational parameters.
-            file.write('set alfa ' + repr(cdp.diff_tensor.alpha / (2.0 * pi) * 360.0) + '\n')
-            file.write('set betta ' + repr(cdp.diff_tensor.beta / (2.0 * pi) * 360.0) + '\n')
-            file.write('set gamma ' + repr(cdp.diff_tensor.gamma / (2.0 * pi) * 360.0) + '\n')
+            file.write("set alfa %s\n" % (cdp.diff_tensor.alpha / (2.0 * pi) * 360.0))
+            file.write("set betta %s\n" % (cdp.diff_tensor.beta / (2.0 * pi) * 360.0))
+            file.write("set gamma %s\n" % (cdp.diff_tensor.gamma / (2.0 * pi) * 360.0))
 
     # Reading the relaxation data.
-    file.write('\n# Reading the relaxation data.\n')
-    file.write('echo Reading the relaxation data.\n')
+    file.write("\n# Reading the relaxation data.\n")
+    file.write("echo Reading the relaxation data.\n")
     noe_index = 1
     r1_index = 1
     r2_index = 1
-    for i in xrange(cdp.num_ri):
+    for ri_id in cdp.ri_ids:
         # NOE.
-        if cdp.ri_labels[i] == 'NOE':
+        if cdp.ri_type[ri_id] == 'NOE':
             # Data set number.
             number = noe_index
 
@@ -231,7 +217,7 @@ def create_script(file, model_type, algor):
             noe_index = noe_index + 1
 
         # R1.
-        elif cdp.ri_labels[i] == 'R1':
+        elif cdp.ri_type[ri_id] == 'R1':
             # Data set number.
             number = r1_index
 
@@ -242,7 +228,7 @@ def create_script(file, model_type, algor):
             r1_index = r1_index + 1
 
         # R2.
-        elif cdp.ri_labels[i] == 'R2':
+        elif cdp.ri_type[ri_id] == 'R2':
             # Data set number.
             number = r2_index
 
@@ -254,9 +240,9 @@ def create_script(file, model_type, algor):
 
         # Set the data type.
         if number == 1:
-            file.write('\nread < ' + data_type + '\n')
+            file.write("\nread < %s\n" % data_type)
         else:
-            file.write('\nread < ' + data_type + ' ' + repr(number) + '\n')
+            file.write("\nread < %s %s\n" % (data_type, number))
 
         # The relaxation data.
         for residue in residue_loop():
@@ -268,15 +254,15 @@ def create_script(file, model_type, algor):
                 continue
 
             # Skip and deselect spins for which relaxation data is missing.
-            if len(spin.relax_data) != cdp.num_ri:
+            if len(spin.ri_data) != len(cdp.ri_ids):
                 spin.select = False
                 continue
 
             # Data and errors.
-            file.write(repr(residue.num) + ' ' + repr(spin.relax_data[i]) + ' ' + repr(spin.relax_error[i]) + '\n')
+            file.write("%s %s %s\n" % (residue.num, spin.ri_data[ri_id], spin.ri_data_err[ri_id]))
 
         # Terminate the reading.
-        file.write('exit\n')
+        file.write("exit\n")
 
     # Individual residue optimisation.
     if model_type == 'mf':
@@ -290,24 +276,24 @@ def create_script(file, model_type, algor):
                 continue
 
             # Comment.
-            file.write('\n\n\n# Residue ' + repr(residue.num) + '\n\n')
+            file.write("\n\n\n# Residue %s\n\n" % residue.num)
 
             # Echo.
-            file.write('echo Optimisation of residue ' + repr(residue.num) + '\n')
+            file.write("echo Optimisation of residue %s\n" % residue.num)
 
             # Select the spin.
-            file.write('\n# Select the residue.\n')
-            file.write('set cres ' + repr(residue.num) + '\n')
+            file.write("\n# Select the residue.\n")
+            file.write("set cres %s\n" % residue.num)
 
             # The angle alpha of the XH vector in the spheroid diffusion frame.
             if cdp.diff_tensor.type == 'spheroid':
-                file.write('set teta ' + repr(spin.alpha) + '\n')
+                file.write("set teta %s\n" % spin.alpha)
 
             # The angles theta and phi of the XH vector in the ellipsoid diffusion frame.
             elif cdp.diff_tensor.type == 'ellipsoid':
-                file.write('\n# Setting the spherical angles of the XH vector in the ellipsoid diffusion frame.\n')
-                file.write('set teta ' + repr(spin.theta) + '\n')
-                file.write('set fi ' + repr(spin.phi) + '\n')
+                file.write("\n# Setting the spherical angles of the XH vector in the ellipsoid diffusion frame.\n")
+                file.write("set teta %s\n" % spin.theta)
+                file.write("set fi %s\n" % spin.phi)
 
             # The 'jmode'.
             if 'ts' in spin.params:
@@ -336,58 +322,58 @@ def create_script(file, model_type, algor):
                 sym = False
 
             # Set the jmode.
-            file.write('\n# Set the jmode.\n')
-            file.write('set def jmode ' + repr(jmode))
+            file.write("\n# Set the jmode.\n")
+            file.write("set def jmode %s" % jmode)
             if exch:
-                file.write(' exch')
+                file.write(" exch")
             if anis:
-                file.write(' anis')
+                file.write(" anis")
             if sym:
-                file.write(' sym')
-            file.write('\n')
+                file.write(" sym")
+            file.write("\n")
 
             # Parameter default values.
-            file.write('\n# Parameter default values.\n')
-            file.write('reset jmode ' + repr(residue.num) + '\n')
+            file.write("\n# Parameter default values.\n")
+            file.write("reset jmode %s\n" % residue.num)
 
             # Bond length.
-            file.write('\n# Bond length.\n')
-            file.write('set r_hx ' + repr(spin.r / 1e-10) + '\n')
+            file.write("\n# Bond length.\n")
+            file.write("set r_hx %s\n" % (spin.r / 1e-10))
 
             # CSA value.
-            file.write('\n# CSA value.\n')
-            file.write('set csa ' + repr(spin.csa / 1e-6) + '\n')
+            file.write("\n# CSA value.\n")
+            file.write("set csa %s\n" % (spin.csa / 1e-6))
 
             # Fix the tf parameter if it isn't in the model.
             if not 'tf' in spin.params and jmode == 3:
-                file.write('\n# Fix the tf parameter.\n')
-                file.write('fix tf 0\n')
+                file.write("\n# Fix the tf parameter.\n")
+                file.write("fix tf 0\n")
 
         # Optimisation of all residues.
-        file.write('\n\n\n# Optimisation of all residues.\n')
+        file.write("\n\n\n# Optimisation of all residues.\n")
         if algor == 'LM':
-            file.write('lmin ' + repr(first_residue_num()) + ' ' + repr(last_residue_num()))
+            file.write("lmin %s %s" % (first_residue_num(), last_residue_num()))
         elif algor == 'NR':
-            file.write('min ' + repr(first_residue_num()) + ' ' + repr(last_residue_num()))
+            file.write("min %s %s" % (first_residue_num(), last_residue_num()))
 
         # Show the results.
-        file.write('\n# Show the results.\n')
-        file.write('echo\n')
-        file.write('show all\n')
+        file.write("\n# Show the results.\n")
+        file.write("echo\n")
+        file.write("show all\n")
 
         # Write the results.
-        file.write('\n# Write the results.\n')
-        file.write('write S2.out S\n')
-        file.write('write S2f.out Sf\n')
-        file.write('write S2s.out Ss\n')
-        file.write('write te.out te\n')
-        file.write('write tf.out tf\n')
-        file.write('write ts.out ts\n')
-        file.write('write Rex.out rex\n')
-        file.write('write chi2.out F\n')
+        file.write("\n# Write the results.\n")
+        file.write("write S2.out S\n")
+        file.write("write S2f.out Sf\n")
+        file.write("write S2s.out Ss\n")
+        file.write("write te.out te\n")
+        file.write("write tf.out tf\n")
+        file.write("write ts.out ts\n")
+        file.write("write Rex.out rex\n")
+        file.write("write chi2.out F\n")
 
     else:
-        raise RelaxError('Optimisation of the parameter set ' + repr(model_type) + ' currently not supported.')
+        raise RelaxError("Optimisation of the parameter set '%s' currently not supported." % model_type)
 
 
 def execute(dir, force, binary):
@@ -395,8 +381,7 @@ def execute(dir, force, binary):
 
     @param dir:     The optional directory where the script is located.
     @type dir:      str or None
-    @param force:   A flag which if True will cause any pre-existing files to be overwritten by
-                    Dasha.
+    @param force:   A flag which if True will cause any pre-existing files to be overwritten by Dasha.
     @type force:    bool
     @param binary:  The name of the Dasha binary file.  This can include the path to the binary.
     @type binary:   str
@@ -454,7 +439,7 @@ def execute(dir, force, binary):
     chdir(orig_dir)
 
     # Print some blank lines (aesthetics)
-    sys.stdout.write('\n\n')
+    sys.stdout.write("\n\n")
 
 
 def extract(dir):
@@ -487,7 +472,7 @@ def extract(dir):
         if param in ['te', 'tf', 'ts']:
             scaling = 1e-9
         elif param == 'Rex':
-            scaling = 1.0 / (2.0 * pi * cdp.frq[0]) ** 2
+            scaling = 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]]) ** 2
         else:
             scaling = 1.0
 

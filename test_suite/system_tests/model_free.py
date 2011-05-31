@@ -122,7 +122,7 @@ class Mf(SystemTestCase):
         if spin.ts != None:
             string = string + "%-15s %30.13g\n" % ('ts (ps):',          spin.ts * 1e12)
         if spin.rex != None:
-            string = string + "%-15s %30.17g\n" % ('rex:',      spin.rex * (2.0 * pi * spin.frq[0])**2)
+            string = string + "%-15s %30.17g\n" % ('rex:',      spin.rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2)
         string = string +   "%-15s %30.17g\n" % ('chi2:',   spin.chi2)
         string = string +   "%-15s %30i\n"   % ('iter:',    spin.iter)
         string = string +   "%-15s %30i\n"   % ('f_count:', spin.f_count)
@@ -262,9 +262,9 @@ class Mf(SystemTestCase):
 
         # Load the relaxation data.
         for i in range(len(frq)):
-            self.interpreter.relax_data.read('R1',  frq[i], float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-            self.interpreter.relax_data.read('R2',  frq[i], float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-            self.interpreter.relax_data.read('NOE', frq[i], float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('NOE_%s'%frq[i], 'NOE', float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('R1_%s'%frq[i],  'R1',  float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('R2_%s'%frq[i],  'R2',  float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 'S2', 'te'])
@@ -290,9 +290,9 @@ class Mf(SystemTestCase):
 
         # Load the relaxation data.
         for i in range(len(frq)):
-            self.interpreter.relax_data.read('NOE', frq[i], float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-            self.interpreter.relax_data.read('R1',  frq[i], float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-            self.interpreter.relax_data.read('R2',  frq[i], float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('NOE_%s'%frq[i], 'NOE', float(frq[i])*1e6, 'noe.%s.out' % frq[i], dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('R1_%s'%frq[i],  'R1',  float(frq[i])*1e6, 'r1.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read('R2_%s'%frq[i],  'R2',  float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 'S2', 'te'])
@@ -314,15 +314,15 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_local_tm_10_S2_0_8_te_40.py')
 
         # Load the relaxation data.
-        self.interpreter.relax_data.read('R2',  '700', 700*1e6, 'r2.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '500', 500*1e6, 'noe.500.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1',  '500', 500*1e6, 'r1.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1',  '900', 900*1e6, 'r1.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '900', 900*1e6, 'noe.900.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2',  '900', 900*1e6, 'r2.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1',  '700', 700*1e6, 'r1.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '700', 700*1e6, 'noe.700.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2',  '500', 500*1e6, 'r2.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_700',  'R2',  700*1e6, 'r2.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_500', 'NOE', 500*1e6, 'noe.500.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_500',  'R1',  500*1e6, 'r1.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_900',  'R1',  900*1e6, 'r1.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_900', 'NOE', 900*1e6, 'noe.900.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_900',  'R2',  900*1e6, 'r2.900.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_700',  'R1',  700*1e6, 'r1.700.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_700', 'NOE', 700*1e6, 'noe.700.out', dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_500',  'R2',  500*1e6, 'r2.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 'S2', 'te'])
@@ -540,12 +540,12 @@ class Mf(SystemTestCase):
         self.interpreter.structure.vectors(attached='H')
 
         # Read the relaxation data.
-        self.interpreter.relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_600',  'R1',  600.0*1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_600',  'R2',  600.0*1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_600', 'NOE', 600.0*1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_500',  'R1',  500.0*1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_500',  'R2',  500.0*1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_500', 'NOE', 500.0*1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
         self.interpreter.diffusion_tensor.init((1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
@@ -571,12 +571,12 @@ class Mf(SystemTestCase):
         self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the relaxation data.
-        self.interpreter.relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
-        self.interpreter.relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_600',  'R1',  600.0*1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_600',  'R2',  600.0*1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_600', 'NOE', 600.0*1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R1_500',  'R1',  500.0*1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('R2_500',  'R2',  500.0*1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read('NOE_500', 'NOE', 500.0*1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
         self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
@@ -813,7 +813,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9699999999999995
         te = 2048.000000000022283
-        rex = 0.14900000000000566 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14900000000000566 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 3.1024517431117421e-27
         iter = [154, 156, 157, 158, 162, 175, 203]
         f_count = [598, 695, 701, 722, 735, 744, 758, 955]
@@ -823,7 +823,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2)
 
 
     def test_opt_constr_bfgs_mt_S2_0_970_te_2048_Rex_0_149(self):
@@ -998,7 +998,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9700000000000580
         te = 2048.000000011044449
-        rex = 0.148999999998904 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.148999999998904 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 4.3978813282102374e-23
         iter = 120
         f_count = [377, 381, 384, 386, 388]
@@ -1008,7 +1008,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2)
 
 
     def test_opt_constr_cd_back_S2_0_970_te_2048_Rex_0_149(self):
@@ -1067,7 +1067,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9097900390625
         te = 25.00000000000000
-        rex = 1.24017333984375 / (2.0 * pi * spin.frq[0])**2
+        rex = 1.24017333984375 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 53.476155463267176
         iter = 50
         f_count = 131
@@ -1077,7 +1077,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2)
 
 
     def test_opt_constr_cd_mt_S2_0_970_te_2048_Rex_0_149(self):
@@ -1208,7 +1208,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9700000000219674
         te = 2048.000001534187049
-        rex = 0.14899999946977982 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14899999946977982 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 2.3477234248531005e-18
         iter = [198, 200]
         f_count = [738, 757, 874]
@@ -1218,7 +1218,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2)
 
 
     def test_opt_constr_newton_gmw_back_S2_0_970_te_2048_Rex_0_149(self):
@@ -1350,7 +1350,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9699999999999994
         te = 2048.000000000045020
-        rex = 0.14900000000001817 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14900000000001817 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 7.3040158179665562e-28
         iter = 18
         f_count = [55, 57, 94]
@@ -1360,7 +1360,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2)
 
 
     def test_opt_constr_newton_gmw_mt_S2_0_970_te_2048_Rex_0_149(self):
@@ -1525,7 +1525,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.9699999999999993
         te = 2048.000000000041837
-        rex = 0.14900000000002225 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14900000000002225 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 6.8756889983348349e-28
         iter = 22
         f_count = [91, 95, 153, 159, 160, 165]
@@ -1535,7 +1535,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2)
 
 
     def test_opt_constr_sd_back_S2_0_970_te_2048_Rex_0_149(self):
@@ -1594,7 +1594,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.91579220834688024
         te = 0.30568658722531733
-        rex = 0.34008409798366124 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.34008409798366124 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 68.321956795264342
         iter = 50
         f_count = 134
@@ -1604,7 +1604,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2)
 
 
     def test_opt_constr_sd_mt_S2_0_970_te_2048_Rex_0_149(self):
@@ -1663,7 +1663,7 @@ class Mf(SystemTestCase):
         select = True
         s2 = 0.91619994957822126
         te = 0.12319687570987945
-        rex = 0.16249110942961512 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.16249110942961512 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
         chi2 = 73.843613546506191
         iter = 50
         f_count = 108
@@ -1673,7 +1673,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2)
 
 
     def test_opt_grid_search_S2_0_970_te_2048_Rex_0_149(self):
@@ -1737,7 +1737,7 @@ class Mf(SystemTestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2, iter=iter, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning)
+        self.value_test(spin, select=select, s2=s2, te=te, rex=rex, chi2=chi2)
 
 
     def test_read_relax_data(self):
@@ -1750,11 +1750,11 @@ class Mf(SystemTestCase):
         self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the relaxation data.
-        self.interpreter.relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.interpreter.relax_data.read(ri_id='R1_600', ri_type='R1', frq=600.0 * 1e6, file='r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Test the data and error.
-        self.assertEqual(cdp.mol[0].res[1].spin[0].relax_data[0], 1.3874977659397683)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].relax_error[0], 0.027749955318795365)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].ri_data['R1_600'], 1.3874977659397683)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].ri_data_err['R1_600'], 0.027749955318795365)
 
 
     def test_read_results_1_2(self):
@@ -1777,24 +1777,38 @@ class Mf(SystemTestCase):
         tf = [51.972302580836775, 40.664901270582988, 28.130299965023671, 33.804249387275249, None, None, 39.01236115991609, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 44.039078787981225]
         ts = [4485.91415175767, 4102.7781982031429, 3569.2837792404325, 6879.5308400989479, 3372.9879908647699, 4029.0617588044606, 4335.5290462417324, 4609.1336532777468, 2628.5638771308277, 3618.1332115807745, 6208.3028336637644, 3763.0843884066526, 3847.9994107906346, 2215.2061317769703, 2936.1282626562524, 3647.0715185456729, 3803.6990762708042, 2277.5259401416288, 3448.4496004396187, 3884.6917561878495, 1959.3267951363712, 4100.8496898773756]
         rex = [None, 0.37670424516405815, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0.71472288436387088]
-        r1_500 = [2.2480000000000002, 2.2679999999999998, 2.2309999999999999, 2.383, 2.1960000000000002, 2.3570000000000002, 2.3340000000000001, 2.3999999999999999, 2.2839999999999998, 2.3889999999999998, 2.375, 2.274, 2.407, 2.3220000000000001, 2.2130000000000001, 2.351, 2.3260000000000001, 2.2949999999999999, 2.2829999999999999, 2.302, 2.2719999999999998, 2.2280000000000002]
-        r2_500 = [5.3419999999999996, 5.3730000000000002, 5.1280000000000001, 5.6749999999999998, 5.9669999999999996, 5.8410000000000002, 5.774, 6.0419999999999998, 6.3129999999999997, 5.9210000000000003, 6.1269999999999998, 6.1120000000000001, 6.0570000000000004, 5.6399999999999997, 6.2809999999999997, 5.8890000000000002, 5.875, 6.1429999999999998, 5.7370000000000001, 5.5490000000000004, 5.7110000000000003, 5.4020000000000001]
-        noe_500 = [0.4617, 0.46560000000000001, 0.61670000000000003, 0.60860000000000003, 0.68869999999999998, 0.6663, 0.58620000000000005, 0.64939999999999998, 0.61070000000000002, 0.61180000000000001, 0.73129999999999995, 0.69650000000000001, 0.65139999999999998, 0.4929, 0.65920000000000001, 0.63029999999999997, 0.64380000000000004, 0.53500000000000003, 0.63839999999999997, 0.65000000000000002, 0.49909999999999999, 0.45979999999999999]
-        r1_600 = [1.8879999999999999, 1.992, 2.0270000000000001, 1.9790000000000001, 1.9399999999999999, 2.0550000000000002, 2.0030000000000001, 2.0139999999999998, 1.982, 2.1000000000000001, 2.008, 1.927, 2.1019999999999999, 2.0830000000000002, 1.9910000000000001, 2.036, 1.9990000000000001, 1.9490000000000001, 1.976, 1.9870000000000001, 2.0, 1.9379999999999999]
-        r2_600 = [5.6100000000000003, 5.7869999999999999, 5.4029999999999996, 6.1849999999999996, 6.3150000000000004, 5.9809999999999999, 6.1600000000000001, 6.2460000000000004, 6.4340000000000002, 6.0069999999999997, 6.399, 6.6799999999999997, 6.1369999999999996, 5.952, 6.3239999999999998, 5.9699999999999998, 6.3979999999999997, 6.4379999999999997, 6.1139999999999999, 6.0960000000000001, 6.3250000000000002, 6.1050000000000004]
-        noe_600 = [0.62929999999999997, 0.64429999999999998, 0.5393, 0.71509999999999996, 0.73870000000000002, 0.75580000000000003, 0.64239999999999997, 0.74429999999999996, 0.69440000000000002, 0.73140000000000005, 0.7681, 0.73399999999999999, 0.75680000000000003, 0.62470000000000003, 0.73529999999999995, 0.73740000000000006, 0.73080000000000001, 0.6603, 0.70899999999999996, 0.69040000000000001, 0.59199999999999997, 0.56830000000000003]
-        r1_750 = [1.6220000000000001, 1.706, 1.73, 1.665, 1.627, 1.768, 1.706, 1.7030000000000001, 1.7649999999999999, 1.8129999999999999, 1.675, 1.6339999999999999, 1.845, 1.7829999999999999, 1.764, 1.7470000000000001, 1.681, 1.647, 1.6850000000000001, 1.667, 1.7010000000000001, 1.6850000000000001]
-        r2_750 = [6.2619999999999996, 6.5359999999999996, 5.8959999999999999, 6.6840000000000002, 6.8819999999999997, 6.7569999999999997, 6.5620000000000003, 7.0030000000000001, 6.9740000000000002, 6.649, 6.9829999999999997, 7.2309999999999999, 6.4429999999999996, 6.6840000000000002, 6.8070000000000004, 6.4850000000000003, 6.9400000000000004, 6.944, 6.4640000000000004, 6.4889999999999999, 6.9009999999999998, 6.9539999999999997]
-        noe_750 = [0.61909999999999998, 0.65890000000000004, 0.72009999999999996, 0.71009999999999995, 0.75219999999999998, 0.80420000000000003, 0.70020000000000004, 0.81999999999999995, 0.81040000000000001, 0.83409999999999995, 0.81299999999999994, 0.81910000000000005, 0.7782, 0.74760000000000004, 0.8115, 0.7379, 0.81100000000000005, 0.78249999999999997, 0.75729999999999997, 0.78259999999999996, 0.75139999999999996, 0.65210000000000001]
-        r1_500_err = [0.044999999999999998, 0.044999999999999998, 0.044499999999999998, 0.048000000000000001, 0.043999999999999997, 0.047, 0.0465, 0.048000000000000001, 0.045499999999999999, 0.048000000000000001, 0.047500000000000001, 0.045499999999999999, 0.048000000000000001, 0.0465, 0.044499999999999998, 0.047, 0.0465, 0.045499999999999999, 0.045499999999999999, 0.045999999999999999, 0.045499999999999999, 0.044499999999999998]
-        r2_500_err = [0.107, 0.1075, 0.10249999999999999, 0.1135, 0.11899999999999999, 0.11650000000000001, 0.11600000000000001, 0.121, 0.1265, 0.11799999999999999, 0.123, 0.122, 0.1215, 0.1125, 0.17599999999999999, 0.11749999999999999, 0.11749999999999999, 0.123, 0.1145, 0.111, 0.1145, 0.108]
-        noe_500_err = [0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003]
-        r1_600_err = [0.037999999999999999, 0.040000000000000001, 0.040500000000000001, 0.0395, 0.0385, 0.041000000000000002, 0.040000000000000001, 0.040500000000000001, 0.040000000000000001, 0.042000000000000003, 0.041500000000000002, 0.039, 0.042000000000000003, 0.042000000000000003, 0.0395, 0.040500000000000001, 0.040000000000000001, 0.039, 0.0395, 0.040000000000000001, 0.040500000000000001, 0.039]
-        r2_600_err = [0.1125, 0.11550000000000001, 0.108, 0.1235, 0.1265, 0.1275, 0.123, 0.125, 0.1285, 0.12, 0.128, 0.13350000000000001, 0.1225, 0.11899999999999999, 0.1265, 0.1195, 0.128, 0.129, 0.1225, 0.122, 0.1265, 0.1225]
-        noe_600_err = [0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003]
-        r1_750_err = [0.032500000000000001, 0.034000000000000002, 0.035000000000000003, 0.033500000000000002, 0.032500000000000001, 0.035499999999999997, 0.034000000000000002, 0.034000000000000002, 0.035499999999999997, 0.036499999999999998, 0.033500000000000002, 0.032500000000000001, 0.036999999999999998, 0.035499999999999997, 0.035499999999999997, 0.035000000000000003, 0.033500000000000002, 0.033000000000000002, 0.034000000000000002, 0.033000000000000002, 0.034000000000000002, 0.033500000000000002]
-        r2_750_err = [0.1255, 0.1305, 0.11799999999999999, 0.13400000000000001, 0.13800000000000001, 0.13550000000000001, 0.13150000000000001, 0.14050000000000001, 0.13950000000000001, 0.13300000000000001, 0.14000000000000001, 0.14449999999999999, 0.129, 0.13400000000000001, 0.13600000000000001, 0.1295, 0.13850000000000001, 0.13900000000000001, 0.1295, 0.13, 0.13800000000000001, 0.13900000000000001]
-        noe_750_err = [0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003]
+
+        # Relaxation data.
+        ri_ids = ['R1_500', 'R2_500', 'NOE_500', 'R1_600', 'R2_600', 'NOE_600', 'R1_750', 'R2_750', 'NOE_750']
+        types_list = ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
+        frqs_list = [500000000.0] * 3 + [600000000.0] * 3 + [750000000.0] * 3
+        ri_type = {}
+        frqs = {}
+        for i in range(len(ri_ids)):
+            ri_type[ri_ids[i]] = types_list[i]
+            frqs[ri_ids[i]] = frqs_list[i]
+
+        ri_data = {}
+        ri_data['R1_500'] = [2.2480000000000002, 2.2679999999999998, 2.2309999999999999, 2.383, 2.1960000000000002, 2.3570000000000002, 2.3340000000000001, 2.3999999999999999, 2.2839999999999998, 2.3889999999999998, 2.375, 2.274, 2.407, 2.3220000000000001, 2.2130000000000001, 2.351, 2.3260000000000001, 2.2949999999999999, 2.2829999999999999, 2.302, 2.2719999999999998, 2.2280000000000002]
+        ri_data['R2_500'] = [5.3419999999999996, 5.3730000000000002, 5.1280000000000001, 5.6749999999999998, 5.9669999999999996, 5.8410000000000002, 5.774, 6.0419999999999998, 6.3129999999999997, 5.9210000000000003, 6.1269999999999998, 6.1120000000000001, 6.0570000000000004, 5.6399999999999997, 6.2809999999999997, 5.8890000000000002, 5.875, 6.1429999999999998, 5.7370000000000001, 5.5490000000000004, 5.7110000000000003, 5.4020000000000001]
+        ri_data['NOE_500'] = [0.4617, 0.46560000000000001, 0.61670000000000003, 0.60860000000000003, 0.68869999999999998, 0.6663, 0.58620000000000005, 0.64939999999999998, 0.61070000000000002, 0.61180000000000001, 0.73129999999999995, 0.69650000000000001, 0.65139999999999998, 0.4929, 0.65920000000000001, 0.63029999999999997, 0.64380000000000004, 0.53500000000000003, 0.63839999999999997, 0.65000000000000002, 0.49909999999999999, 0.45979999999999999]
+        ri_data['R1_600'] = [1.8879999999999999, 1.992, 2.0270000000000001, 1.9790000000000001, 1.9399999999999999, 2.0550000000000002, 2.0030000000000001, 2.0139999999999998, 1.982, 2.1000000000000001, 2.008, 1.927, 2.1019999999999999, 2.0830000000000002, 1.9910000000000001, 2.036, 1.9990000000000001, 1.9490000000000001, 1.976, 1.9870000000000001, 2.0, 1.9379999999999999]
+        ri_data['R2_600'] = [5.6100000000000003, 5.7869999999999999, 5.4029999999999996, 6.1849999999999996, 6.3150000000000004, 5.9809999999999999, 6.1600000000000001, 6.2460000000000004, 6.4340000000000002, 6.0069999999999997, 6.399, 6.6799999999999997, 6.1369999999999996, 5.952, 6.3239999999999998, 5.9699999999999998, 6.3979999999999997, 6.4379999999999997, 6.1139999999999999, 6.0960000000000001, 6.3250000000000002, 6.1050000000000004]
+        ri_data['NOE_600'] = [0.62929999999999997, 0.64429999999999998, 0.5393, 0.71509999999999996, 0.73870000000000002, 0.75580000000000003, 0.64239999999999997, 0.74429999999999996, 0.69440000000000002, 0.73140000000000005, 0.7681, 0.73399999999999999, 0.75680000000000003, 0.62470000000000003, 0.73529999999999995, 0.73740000000000006, 0.73080000000000001, 0.6603, 0.70899999999999996, 0.69040000000000001, 0.59199999999999997, 0.56830000000000003]
+        ri_data['R1_750'] = [1.6220000000000001, 1.706, 1.73, 1.665, 1.627, 1.768, 1.706, 1.7030000000000001, 1.7649999999999999, 1.8129999999999999, 1.675, 1.6339999999999999, 1.845, 1.7829999999999999, 1.764, 1.7470000000000001, 1.681, 1.647, 1.6850000000000001, 1.667, 1.7010000000000001, 1.6850000000000001]
+        ri_data['R2_750'] = [6.2619999999999996, 6.5359999999999996, 5.8959999999999999, 6.6840000000000002, 6.8819999999999997, 6.7569999999999997, 6.5620000000000003, 7.0030000000000001, 6.9740000000000002, 6.649, 6.9829999999999997, 7.2309999999999999, 6.4429999999999996, 6.6840000000000002, 6.8070000000000004, 6.4850000000000003, 6.9400000000000004, 6.944, 6.4640000000000004, 6.4889999999999999, 6.9009999999999998, 6.9539999999999997]
+        ri_data['NOE_750'] = [0.61909999999999998, 0.65890000000000004, 0.72009999999999996, 0.71009999999999995, 0.75219999999999998, 0.80420000000000003, 0.70020000000000004, 0.81999999999999995, 0.81040000000000001, 0.83409999999999995, 0.81299999999999994, 0.81910000000000005, 0.7782, 0.74760000000000004, 0.8115, 0.7379, 0.81100000000000005, 0.78249999999999997, 0.75729999999999997, 0.78259999999999996, 0.75139999999999996, 0.65210000000000001]
+
+        ri_data_err = {}
+        ri_data_err['R1_500'] = [0.044999999999999998, 0.044999999999999998, 0.044499999999999998, 0.048000000000000001, 0.043999999999999997, 0.047, 0.0465, 0.048000000000000001, 0.045499999999999999, 0.048000000000000001, 0.047500000000000001, 0.045499999999999999, 0.048000000000000001, 0.0465, 0.044499999999999998, 0.047, 0.0465, 0.045499999999999999, 0.045499999999999999, 0.045999999999999999, 0.045499999999999999, 0.044499999999999998]
+        ri_data_err['R2_500'] = [0.107, 0.1075, 0.10249999999999999, 0.1135, 0.11899999999999999, 0.11650000000000001, 0.11600000000000001, 0.121, 0.1265, 0.11799999999999999, 0.123, 0.122, 0.1215, 0.1125, 0.17599999999999999, 0.11749999999999999, 0.11749999999999999, 0.123, 0.1145, 0.111, 0.1145, 0.108]
+        ri_data_err['NOE_500'] = [0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003]
+        ri_data_err['R1_600'] = [0.037999999999999999, 0.040000000000000001, 0.040500000000000001, 0.0395, 0.0385, 0.041000000000000002, 0.040000000000000001, 0.040500000000000001, 0.040000000000000001, 0.042000000000000003, 0.041500000000000002, 0.039, 0.042000000000000003, 0.042000000000000003, 0.0395, 0.040500000000000001, 0.040000000000000001, 0.039, 0.0395, 0.040000000000000001, 0.040500000000000001, 0.039]
+        ri_data_err['R2_600'] = [0.1125, 0.11550000000000001, 0.108, 0.1235, 0.1265, 0.1275, 0.123, 0.125, 0.1285, 0.12, 0.128, 0.13350000000000001, 0.1225, 0.11899999999999999, 0.1265, 0.1195, 0.128, 0.129, 0.1225, 0.122, 0.1265, 0.1225]
+        ri_data_err['NOE_600'] = [0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003]
+        ri_data_err['R1_750'] = [0.032500000000000001, 0.034000000000000002, 0.035000000000000003, 0.033500000000000002, 0.032500000000000001, 0.035499999999999997, 0.034000000000000002, 0.034000000000000002, 0.035499999999999997, 0.036499999999999998, 0.033500000000000002, 0.032500000000000001, 0.036999999999999998, 0.035499999999999997, 0.035499999999999997, 0.035000000000000003, 0.033500000000000002, 0.033000000000000002, 0.034000000000000002, 0.033000000000000002, 0.034000000000000002, 0.033500000000000002]
+        ri_data_err['R2_750'] = [0.1255, 0.1305, 0.11799999999999999, 0.13400000000000001, 0.13800000000000001, 0.13550000000000001, 0.13150000000000001, 0.14050000000000001, 0.13950000000000001, 0.13300000000000001, 0.14000000000000001, 0.14449999999999999, 0.129, 0.13400000000000001, 0.13600000000000001, 0.1295, 0.13850000000000001, 0.13900000000000001, 0.1295, 0.13, 0.13800000000000001, 0.13900000000000001]
+        ri_data_err['NOE_750'] = [0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003]
 
         # Misc tests.
         self.assertEqual(cdp.pipe_type, 'mf')
@@ -1813,13 +1827,10 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.warning, None)
 
         # Global relaxation data tests.
-        self.assertEqual(cdp.ri_labels, ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'])
-        self.assertEqual(cdp.remap_table, [0, 0, 0, 1, 1, 1, 2, 2, 2])
-        self.assertEqual(cdp.frq_labels, ['500', '600', '750'])
-        self.assertEqual(cdp.frq, [500000000.0, 600000000.0, 750000000.0])
-        self.assertEqual(cdp.noe_r1_table, [None, None, 0, None, None, 3, None, None, 6])
-        self.assertEqual(cdp.num_frq, 3)
-        self.assertEqual(cdp.num_ri, 9)
+        self.assertEqual(cdp.ri_ids, ri_ids)
+        for ri_id in ri_ids:
+            self.assertEqual(cdp.ri_type[ri_id], ri_type[ri_id])
+            self.assertEqual(cdp.frq[ri_id], frqs[ri_id])
 
         # Loop over the residues of the original data.
         j = 0
@@ -1878,15 +1889,10 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
-            self.assertEqual(spin.ri_labels, ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'])
-            self.assertEqual(spin.remap_table, [0, 0, 0, 1, 1, 1, 2, 2, 2])
-            self.assertEqual(spin.frq_labels, ['500', '600', '750'])
-            self.assertEqual(spin.frq, [500000000.0, 600000000.0, 750000000.0])
-            self.assertEqual(spin.noe_r1_table, [None, None, 0, None, None, 3, None, None, 6])
-            self.assertEqual(spin.num_frq, 3)
-            self.assertEqual(spin.num_ri, 9)
-            self.assertEqual(spin.relax_data, [r1_500[j], r2_500[j], noe_500[j], r1_600[j], r2_600[j], noe_600[j], r1_750[j], r2_750[j], noe_750[j]])
-            self.assertEqual(spin.relax_error, [r1_500_err[j], r2_500_err[j], noe_500_err[j], r1_600_err[j], r2_600_err[j], noe_600_err[j], r1_750_err[j], r2_750_err[j], noe_750_err[j]])
+            for ri_id in cdp.ri_ids:
+                print(ri_id)
+                self.assertEqual(spin.ri_data[ri_id], ri_data[ri_id][j])
+                self.assertEqual(spin.ri_data_err[ri_id], ri_data_err[ri_id][j])
 
             # Secondary index.
             j = j + 1
@@ -1918,17 +1924,22 @@ class Mf(SystemTestCase):
         rex = [None, None]
         r = [None, 1.0200000000000001e-10]
         csa = [None, -0.00017199999999999998]
-        ri_labels = [[], ['R1', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']]
-        remap_table = [[], [0, 0, 1, 1, 1, 2, 2, 2]]
-        frq_labels = [[], ['800', '600', '500']]
-        frq = [[], [799744000.0, 599737000.0, 499719000.0]]
-        noe_r1_table = [[], [None, 0, None, None, 2, None, None, 5]]
-        num_frq = [None, 3]
-        num_ri = [None, 8]
-        relax_data = [[],
+        ri_ids = ['R1_800', 'NOE_800', 'R1_600', 'R2_600', 'NOE_600', 'R1_500', 'R2_500', 'NOE_500']
+        ri_type_list = ['R1', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
+        frq_list = [799744000.0]*2 + [599737000.0]*3 + [499719000.0]*3
+        ri_data_list = [[],
                 [0.6835, 0.81850000000000001, 0.98409999999999997, 16.5107, 0.79796699999999998, 1.3174999999999999, 15.381500000000001, 0.73046900000000003]]
-        relax_error = [[],
+        ri_data_err_list = [[],
                 [0.026957200000000001, 0.025881000000000001, 0.0243073, 0.497137, 0.028663000000000001, 0.038550000000000001, 0.40883999999999998, 0.022016299999999999]]
+        ri_type = {}
+        frq = {}
+        ri_data = [{}, {}]
+        ri_data_err = [{}, {}]
+        for i in range(len(ri_ids)):
+            ri_type[ri_ids[i]] = ri_type_list[i]
+            frq[ri_ids[i]] = frq_list[i]
+            ri_data[1][ri_ids[i]] = ri_data_list[1][i]
+            ri_data_err[1][ri_ids[i]] = ri_data_err_list[1][i]
 
         # Misc tests.
         self.assertEqual(cdp.pipe_type, 'mf')
@@ -1969,13 +1980,10 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.warning_sim[2], None)
 
         # Global relaxation data tests.
-        self.assertEqual(cdp.ri_labels, ['R1', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'])
-        self.assertEqual(cdp.remap_table, [0, 0, 1, 1, 1, 2, 2, 2])
-        self.assertEqual(cdp.frq_labels, ['800', '600', '500'])
-        self.assertEqual(cdp.frq, [799744000.0, 599737000.0, 499719000.0])
-        self.assertEqual(cdp.noe_r1_table, [None, 0, None, None, 2, None, None, 5])
-        self.assertEqual(cdp.num_frq, 3)
-        self.assertEqual(cdp.num_ri, 8)
+        self.assertEqual(cdp.ri_ids, ri_ids)
+        for ri_id in ri_ids:
+            self.assertEqual(cdp.ri_type[ri_id], ri_type[ri_id])
+            self.assertEqual(cdp.frq[ri_id], frq[ri_id])
 
         # Loop over the residues of the original data.
         for i in xrange(len(cdp.mol[0].res)):
@@ -2028,15 +2036,13 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
-            self.assertEqual(spin.ri_labels, ri_labels[i])
-            self.assertEqual(spin.remap_table, remap_table[i])
-            self.assertEqual(spin.frq_labels, frq_labels[i])
-            self.assertEqual(spin.frq, frq[i])
-            self.assertEqual(spin.noe_r1_table, noe_r1_table[i])
-            self.assertEqual(spin.num_frq, num_frq[i])
-            self.assertEqual(spin.num_ri, num_ri[i])
-            self.assertEqual(spin.relax_data, relax_data[i])
-            self.assertEqual(spin.relax_error, relax_error[i])
+            if i == 0:
+                self.assertEqual(spin.ri_data, {})
+                self.assertEqual(spin.ri_data_err, {})
+            else:
+                for ri_id in ri_ids:
+                    self.assertEqual(spin.ri_data[ri_id], ri_data[i][ri_id])
+                    self.assertEqual(spin.ri_data_err[ri_id], ri_data_err[i][ri_id])
 
 
     def test_read_results_1_2_tem1(self):
@@ -2047,8 +2053,6 @@ class Mf(SystemTestCase):
 
         # Debugging print out.
         print(cdp)
-
-
 
         # The spin specific data.
         num = [26, 27, 29, 30, 31, 32, 33, 34]
@@ -2066,29 +2070,40 @@ class Mf(SystemTestCase):
         rex = [None, None, None, None, None, None, None, None]
         r = [None, None, None, 1.0200000000000001e-10, 1.0200000000000001e-10, 1.0200000000000001e-10, None, 1.0200000000000001e-10]
         csa = [None, None, None, -0.00017199999999999998, -0.00017199999999999998, -0.00017199999999999998, None, -0.00017199999999999998]
-        ri_labels = [[], [], [], ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'], ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'], ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'], [], ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']]
-        remap_table = [[], [], [], [0, 0, 1, 1, 1, 2, 2, 2], [0, 0, 1, 1, 1, 2, 2, 2], [0, 0, 1, 1, 1, 2, 2, 2], [], [0, 0, 1, 1, 1, 2, 2, 2]]
-        frq_labels = [[], [], [], ['800', '600', '500'], ['800', '600', '500'], ['800', '600', '500'], [], ['800', '600', '500']]
-        frq = [[], [], [], [799812000.0, 599739000.0, 499827000.0], [799812000.0, 599739000.0, 499827000.0], [799812000.0, 599739000.0, 499827000.0], [], [799812000.0, 599739000.0, 499827000.0]]
-        noe_r1_table = [[], [], [], [None, None, None, None, 2, None, None, 5], [None, None, None, None, 2, None, None, 5], [None, None, None, None, 2, None, None, 5], [], [None, None, None, None, 2, None, None, 5]]
-        num_frq = [None, None, None, 3, 3, 3, None, 3]
-        num_ri = [None, None, None, 8, 8, 8, None, 8]
-        relax_data = [[],
-                      [],
-                      [],
-                      [0.75680000000000003, 18.797999999999998, 1.0747, 16.477, 0.86873100000000003, 1.2625999999999999, 15.3367, 0.77803197999999996],
-                      [0.75019999999999998, 19.201599999999999, 1.0617000000000001, 17.652899999999999, 0.73757200000000001, 1.3165, 15.949, 0.72442474000000001],
-                      [0.75860000000000005, 19.303799999999999, 1.0605, 16.593699999999998, 0.79137500000000005, 1.3425, 15.327199999999999, 0.83449132000000004],
-                      [],
-                      [0.71919999999999995, 20.165400000000002, 1.0729, 17.291899999999998, 0.80444599999999999, 1.2971999999999999, 15.9963, 0.73164684999999996]]
-        relax_error = [[],
-                      [],
-                      [],
-                      [0.028001600000000001, 0.21729999999999999, 0.031166300000000001, 0.44487900000000002, 0.043210699999999998, 0.054291800000000001, 0.69015199999999999, 0.038901600000000001],
-                      [0.028899999999999999, 0.25640000000000002, 0.030789299999999999, 0.476628, 0.036686799999999999, 0.0566095, 0.71770500000000004, 0.036221200000000002],
-                      [0.033399999999999999, 0.2233, 0.030754500000000001, 0.44802999999999998, 0.039363000000000002, 0.057727500000000001, 0.689724, 0.041724600000000001],
-                      [],
-                      [0.027699999999999999, 0.52810000000000001, 0.031399999999999997, 0.46688099999999999, 0.040013100000000003, 0.055779599999999999, 0.71983399999999997, 0.036582299999999998]]
+        ri_ids = ['R1_800', 'R2_800', 'R1_600', 'R2_600', 'NOE_600', 'R1_500', 'R2_500', 'NOE_500']
+        ri_type_list = ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
+        frq_list = [799812000.0]*2 + [599739000.0]*3 + [499827000.0]*3
+        ri_data_list = [[],
+                        [],
+                        [],
+                        [0.75680000000000003, 18.797999999999998, 1.0747, 16.477, 0.86873100000000003, 1.2625999999999999, 15.3367, 0.77803197999999996],
+                        [0.75019999999999998, 19.201599999999999, 1.0617000000000001, 17.652899999999999, 0.73757200000000001, 1.3165, 15.949, 0.72442474000000001],
+                        [0.75860000000000005, 19.303799999999999, 1.0605, 16.593699999999998, 0.79137500000000005, 1.3425, 15.327199999999999, 0.83449132000000004],
+                        [],
+                        [0.71919999999999995, 20.165400000000002, 1.0729, 17.291899999999998, 0.80444599999999999, 1.2971999999999999, 15.9963, 0.73164684999999996]]
+        ri_data_err_list = [[],
+                            [],
+                            [],
+                            [0.028001600000000001, 0.21729999999999999, 0.031166300000000001, 0.44487900000000002, 0.043210699999999998, 0.054291800000000001, 0.69015199999999999, 0.038901600000000001],
+                            [0.028899999999999999, 0.25640000000000002, 0.030789299999999999, 0.476628, 0.036686799999999999, 0.0566095, 0.71770500000000004, 0.036221200000000002],
+                            [0.033399999999999999, 0.2233, 0.030754500000000001, 0.44802999999999998, 0.039363000000000002, 0.057727500000000001, 0.689724, 0.041724600000000001],
+                            [],
+                            [0.027699999999999999, 0.52810000000000001, 0.031399999999999997, 0.46688099999999999, 0.040013100000000003, 0.055779599999999999, 0.71983399999999997, 0.036582299999999998]]
+        ri_type = {}
+        frq = {}
+        ri_data = []
+        ri_data_err = []
+        for i in range(len(ri_data_list)):
+            ri_data.append({})
+            ri_data_err.append({})
+
+        for i in range(len(ri_ids)):
+            ri_type[ri_ids[i]] = ri_type_list[i]
+            frq[ri_ids[i]] = frq_list[i]
+            for j in range(len(ri_data_list)):
+                if len(ri_data_list[j]):
+                    ri_data[j][ri_ids[i]] = ri_data_list[j][i]
+                    ri_data_err[j][ri_ids[i]] = ri_data_err_list[j][i]
 
         chi2 = [None, None, None, 7.9383923597292441, 10.93852890925343, 3.1931459495488084, None, 8.3598891989018611]
         iter = [None, None, None, 55, 10, 3, None, 3]
@@ -2110,13 +2125,10 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.diff_tensor.gamma, 42.15815798778408 / 360.0 * 2.0 * pi)
 
         # Global relaxation data tests.
-        self.assertEqual(cdp.ri_labels, ['R1', 'R2', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'])
-        self.assertEqual(cdp.remap_table, [0, 0, 1, 1, 1, 2, 2, 2])
-        self.assertEqual(cdp.frq_labels, ['800', '600', '500'])
-        self.assertEqual(cdp.frq, [799812000.0, 599739000.0, 499827000.0])
-        self.assertEqual(cdp.noe_r1_table, [None, None, None, None, 2, None, None, 5])
-        self.assertEqual(cdp.num_frq, 3)
-        self.assertEqual(cdp.num_ri, 8)
+        self.assertEqual(cdp.ri_ids, ri_ids)
+        for ri_id in ri_ids:
+            self.assertEqual(cdp.ri_type[ri_id], ri_type[ri_id])
+            self.assertEqual(cdp.frq[ri_id], frq[ri_id])
 
         # Loop over the residues of the original data.
         for i in xrange(len(cdp.mol[0].res)):
@@ -2167,15 +2179,14 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
-            self.assertEqual(spin.ri_labels, ri_labels[i])
-            self.assertEqual(spin.remap_table, remap_table[i])
-            self.assertEqual(spin.frq_labels, frq_labels[i])
-            self.assertEqual(spin.frq, frq[i])
-            self.assertEqual(spin.noe_r1_table, noe_r1_table[i])
-            self.assertEqual(spin.num_frq, num_frq[i])
-            self.assertEqual(spin.num_ri, num_ri[i])
-            self.assertEqual(spin.relax_data, relax_data[i])
-            self.assertEqual(spin.relax_error, relax_error[i])
+            print ri_data
+            if not ri_data[i].keys():
+                self.assertEqual(spin.ri_data, {})
+                self.assertEqual(spin.ri_data_err, {})
+            else:
+                for ri_id in ri_ids:
+                    self.assertEqual(spin.ri_data[ri_id], ri_data[i][ri_id])
+                    self.assertEqual(spin.ri_data_err[ri_id], ri_data_err[i][ri_id])
 
 
     def test_read_results_1_3(self):
@@ -2533,7 +2544,7 @@ class Mf(SystemTestCase):
 
         # Chemical exchange.
         if type(rex) == float:
-            self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex * (2.0 * pi * spin.frq[0])**2, msg=mesg)
+            self.assertAlmostEqual(spin.rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, msg=mesg)
         elif rex == None:
             self.assertEqual(spin.rex, None, msg=mesg)
 

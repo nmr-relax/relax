@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2011 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -34,7 +34,7 @@ from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 
 
 # List of valid data pipe types.
-VALID_TYPES = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit', 'relax_disp', 'srls']
+VALID_TYPES = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit']
 
 
 def copy(pipe_from=None, pipe_to=None):
@@ -79,7 +79,6 @@ def create(pipe_name=None, pipe_type=None, switch=True):
         'noe':  Steady state NOE calculation,
         'relax_fit':  Relaxation curve fitting,
         'relax_disp':  Relaxation dispersion,
-        'srls':  SRLS analysis.
     @type pipe_type:    str
     @keyword switch:    If True, this new pipe will be switched to, otherwise the current data pipe
                         will remain as is.

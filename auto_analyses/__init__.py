@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,6 +22,12 @@
 
 # Package docstring.
 """Package for all of the automatic analyses, hard coded protocols to be used as a black box."""
+
+# Module imports.
+import dauvergne_protocol
+import noe
+import relax_fit
+import stereochem_analysis
 
 
 __all__ = [ 'dauvergne_protocol',
