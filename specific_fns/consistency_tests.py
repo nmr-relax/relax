@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 # Copyright (C) 2007-2009 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -44,12 +44,14 @@ class Consistency_tests(API_base, API_common):
 
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
+        self.create_mc_data = self._create_mc_relax_data
         self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_error = self._return_error_relax_data
         self.return_value = self._return_value_general
         self.set_param_values = self._set_param_values_spin
         self.set_selected_sim = self._set_selected_sim_spin
+        self.sim_pack_data = self._sim_pack_relax_data
 
 
     def _set_frq(self, frq=None):
@@ -125,21 +127,13 @@ class Consistency_tests(API_base, API_common):
                 raise RelaxProtonTypeError
 
         # Frequency index.
-        if cdp.ct_frq not in cdp.frq:
-            raise RelaxError("No relaxation data corresponding to the frequency " + repr(cdp.ct_frq) + " has been loaded.")
+        if cdp.ct_frq not in cdp.frq.values():
+            raise RelaxError("No relaxation data corresponding to the frequency %s has been loaded." % cdp.ct_frq)
 
         # Consistency testing.
         for spin in spin_loop(spin_id):
             # Skip deselected spins.
             if not spin.select:
-                continue
-
-            # Residue specific frequency index.
-            frq_index = None
-            for j in xrange(spin.num_frq):
-                if spin.frq[j] == cdp.ct_frq:
-                    frq_index = j
-            if frq_index == None:
                 continue
 
             # Set the r1, r2, and NOE to None.
@@ -148,29 +142,33 @@ class Consistency_tests(API_base, API_common):
             noe = None
 
             # Get the R1, R2, and NOE values corresponding to the set frequency.
-            for j in xrange(spin.num_ri):
+            for ri_id in cdp.ri_ids:
+                # The frequency does not match.
+                if cdp.frq[ri_id] != cdp.ct_frq:
+                    continue
+
                 # R1.
-                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R1':
+                if cdp.ri_type[ri_id] == 'R1':
                     if sim_index == None:
-                        r1 = spin.relax_data[j]
+                        r1 = spin.ri_data[ri_id]
                     else:
-                        r1 = spin.relax_sim_data[sim_index][j]
+                        r1 = spin.ri_data_sim[ri_id][sim_index]
 
                 # R2.
-                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R2':
+                if cdp.ri_type[ri_id] == 'R2':
                     if sim_index == None:
-                        r2 = spin.relax_data[j]
+                        r2 = spin.ri_data[ri_id]
                     else:
-                        r2 = spin.relax_sim_data[sim_index][j]
+                        r2 = spin.ri_data_sim[ri_id][sim_index]
 
                 # NOE.
-                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'NOE':
+                if cdp.ri_type[ri_id] == 'NOE':
                     if sim_index == None:
-                        noe = spin.relax_data[j]
+                        noe = spin.ri_data[ri_id]
                     else:
-                        noe = spin.relax_sim_data[sim_index][j]
+                        noe = spin.ri_data_sim[ri_id][sim_index]
 
-            # Skip the residue if not all of the three value exist.
+            # Skip the spin if not all of the three value exist.
             if r1 == None or r2 == None or noe == None:
                 continue
 
@@ -201,21 +199,6 @@ class Consistency_tests(API_base, API_common):
                 spin.f_r2_sim.append(f_r2)
 
 
-    def create_mc_data(self, data_id=None):
-        """Return the Monte Carlo Ri data structure for the corresponding spin.
-
-        @keyword data_id:   The spin identification string, as yielded by the base_data_loop() generator method.
-        @type data_id:      str
-        @return:            The Monte Carlo simulation data.
-        @rtype:             list of floats
-        """
-
-        # Get the spin container.
-        spin = return_spin(data_id)
-
-        # Return the data.
-        return spin.relax_data
-
 
     def data_init(self, data_cont, sim=False):
         """Initialise the data structures.
@@ -236,7 +219,7 @@ class Consistency_tests(API_base, API_common):
                 # Add '_sim' to the names.
                 name = name + '_sim'
 
-            # If the name is not in 'data', add it.
+            # If the name is not in 'data_cont', add it.
             if not hasattr(data_cont, name):
                 # Set the attribute.
                 setattr(data_cont, name, None)
@@ -253,8 +236,7 @@ class Consistency_tests(API_base, API_common):
             - 'r', bond length.
             - 'csa', CSA value.
             - 'heteronuc_type', the heteronucleus type.
-            - 'orientation', angle between the 15N-1H vector and the principal axis of the 15N
-            chemical shift tensor.
+            - 'orientation', angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor.
             - 'tc', correlation time.
             - 'j0', spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162).
             - 'f_eta', eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952).
@@ -356,19 +338,19 @@ class Consistency_tests(API_base, API_common):
         # Print out.
         print("\n\nOver-fit spin deselection.\n")
 
-        # Test if the sequence data is loaded.
+        # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Loop over spin data:
+        # Loop over spin data.
         for spin, spin_id in spin_loop(return_id=True):
-            # Check for sufficient data
-            if not hasattr(spin, 'relax_data'):
+            # Check if data exists.
+            if not hasattr(spin, 'ri_data'):
                 warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                 spin.select = False
 
-            # Require 3 or more data points
-            elif len(spin.relax_data) < 3:
+            # Require 3 or more data points.
+            elif len(spin.ri_data) < 3:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                 spin.select = False
 
@@ -577,7 +559,7 @@ class Consistency_tests(API_base, API_common):
         # Alias.
         spin = model_info
 
-        # Skip deselected residues.
+        # Skip deselected spins.
         if not spin.select:
                 return
 
@@ -608,23 +590,3 @@ class Consistency_tests(API_base, API_common):
 
         # Multiple spins.
         return spin.select_sim
-
-
-    def sim_pack_data(self, data_id, sim_data):
-        """Pack the Monte Carlo simulation data.
-
-        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type data_id:      str
-        @param sim_data:    The Monte Carlo simulation data.
-        @type sim_data:     list of float
-        """
-
-        # Get the spin container.
-        spin = return_spin(data_id)
-
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'relax_sim_data'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
-
-        # Create the data structure.
-        spin.relax_sim_data = sim_data

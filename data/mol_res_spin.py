@@ -70,13 +70,69 @@ class SpinContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # Add the object's attribute to the text string.
             text = text + "  " + name + ": " + repr(getattr(self, name)) + "\n"
 
         return text
+
+
+    def _back_compat_hook(self, file_version=None):
+        """Method for converting old spin data structures to the new ones.
+
+        @keyword file_version:  The relax version used to create the XML file.
+        @type file_version:     str
+        """
+
+        # Relaxation data.
+        self._back_compat_hook_ri_data()
+
+
+    def _back_compat_hook_ri_data(self):
+        """Converting the old spin relaxation data structures to the new ones."""
+
+        # Nothing to do.
+        if not (hasattr(self, 'frq_labels') and hasattr(self, 'noe_r1_table') and hasattr(self, 'remap_table')):
+            return
+
+        # Initialise the new structures.
+        self.ri_data = {}
+        self.ri_data_err = {}
+        sims = False
+        if hasattr(self, 'relax_sim_data'):
+            sims = True
+            self.ri_data_sim = {}
+
+        # Generate the new structures.
+        for i in range(self.num_ri):
+            # The ID.
+            ri_id = "%s_%s" % (self.ri_labels[i], self.frq_labels[self.remap_table[i]])
+
+            # The relaxation data.
+            self.ri_data[ri_id] = self.relax_data[i]
+            self.ri_data_err[ri_id] = self.relax_error[i]
+
+            # Simulation data.
+            if sims:
+                self.ri_data_sim[ri_id] = []
+                for j in range(cdp.sim_number):
+                    self.ri_data_sim[ri_id].append(self.relax_sim_data[j][i])
+
+
+        # Delete the old structures.
+        del self.frq
+        del self.frq_labels
+        del self.noe_r1_table
+        del self.num_frq
+        del self.num_ri
+        del self.ri_labels
+        del self.remap_table
+        del self.relax_data
+        del self.relax_error
+        if sims:
+            del self.relax_sim_data
 
 
     def is_empty(self):
@@ -102,7 +158,7 @@ class SpinContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # An object has been added.
@@ -184,11 +240,13 @@ class SpinList(list):
         return False
 
 
-    def from_xml(self, spin_nodes):
+    def from_xml(self, spin_nodes, file_version=None):
         """Recreate a spin list data structure from the XML spin nodes.
 
-        @param spin_nodes:  The spin XML nodes.
-        @type spin_nodes:   xml.dom.minicompat.NodeList instance
+        @param spin_nodes:      The spin XML nodes.
+        @type spin_nodes:       xml.dom.minicompat.NodeList instance
+        @keyword file_version:  The relax version used to create the XML file.
+        @type file_version:     str
         """
 
         # Test if empty.
@@ -206,6 +264,9 @@ class SpinList(list):
 
             # Recreate the current spin container.
             xml_to_object(spin_node, self[-1])
+
+            # Backwards compatibility transformations.
+            self[-1]._back_compat_hook(file_version)
 
 
     def to_xml(self, doc, element):
@@ -322,7 +383,7 @@ class ResidueContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # Add the object's attribute to the text string.
@@ -354,7 +415,7 @@ class ResidueContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # An object has been added.
@@ -439,11 +500,13 @@ class ResidueList(list):
         return False
 
 
-    def from_xml(self, res_nodes):
+    def from_xml(self, res_nodes, file_version=None):
         """Recreate a residue list data structure from the XML residue nodes.
 
-        @param res_nodes:   The residue XML nodes.
-        @type res_nodes:    xml.dom.minicompat.NodeList instance
+        @param res_nodes:       The residue XML nodes.
+        @type res_nodes:        xml.dom.minicompat.NodeList instance
+        @keyword file_version:  The relax version used to create the XML file.
+        @type file_version:     str
         """
 
         # Test if empty.
@@ -463,7 +526,7 @@ class ResidueList(list):
             spin_nodes = res_node.getElementsByTagName('spin')
 
             # Recreate the spin data structures for the current residue.
-            self[-1].spin.from_xml(spin_nodes)
+            self[-1].spin.from_xml(spin_nodes, file_version=file_version)
 
 
     def to_xml(self, doc, element):
@@ -537,7 +600,7 @@ class MoleculeContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # Add the object's attribute to the text string.
@@ -569,7 +632,7 @@ class MoleculeContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if match("^_", name):
                 continue
 
             # An object has been added.
@@ -643,11 +706,13 @@ class MoleculeList(list):
         return False
 
 
-    def from_xml(self, mol_nodes):
+    def from_xml(self, mol_nodes, file_version=None):
         """Recreate a molecule list data structure from the XML molecule nodes.
 
-        @param mol_nodes:   The molecule XML nodes.
-        @type mol_nodes:    xml.dom.minicompat.NodeList instance
+        @param mol_nodes:       The molecule XML nodes.
+        @type mol_nodes:        xml.dom.minicompat.NodeList instance
+        @keyword file_version:  The relax version used to create the XML file.
+        @type file_version:     str
         """
 
         # Test if empty.
@@ -669,7 +734,7 @@ class MoleculeList(list):
             res_nodes = mol_node.getElementsByTagName('res')
 
             # Recreate the residue data structures for the current molecule.
-            self[-1].res.from_xml(res_nodes)
+            self[-1].res.from_xml(res_nodes, file_version=file_version)
 
 
     def to_xml(self, doc, element):

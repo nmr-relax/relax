@@ -44,136 +44,23 @@ from relax_warnings import RelaxWarning
 import specific_fns
 
 
-def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, values=None, errors=None, sim=False):
-    """Add the relaxation data to the spin.
-
-    @keyword spin:          The spin container.
-    @type spin:             SpinContainer instance
-    @keyword ri_labels:     The labels corresponding to the data type, eg ['NOE', 'R1', 'R2',
-                            'NOE', 'R1', 'R2'].
-    @type ri_labels:        list of str
-    @keyword remap_table:   A translation table to map relaxation data points to their
-                            frequencies, eg [0, 0, 0, 1, 1, 1].
-    @type remap_table:      list of int
-    @keyword frq_labels:    NMR frequency labels, eg ['600', '500'].
-    @type frq_labels:       list of str
-    @keyword frq:           NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6].
-    @type frq:              list of float
-    @keyword values:        The relaxation data.
-    @type values:           list of float
-    @keyword errors:        The relaxation errors.
-    @type errors:           list of float
-    @keyword sim:           A flag which if True means the data corresponds to Monte Carlo
-                            simulation data.
-    @type sim:              bool
-    """
-
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Test if sequence data exists.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
+# The relaxation data types supported.
+VALID_TYPES = ['R1', 'R2', 'NOE']
 
 
-    # Global (non-spin specific) data.
-    #####################################
 
-    # Initialise the global data if necessary.
-    data_init(cdp, global_flag=True)
-
-    # Add the data structures.
-    cdp.ri_labels = deepcopy(ri_labels)
-    cdp.remap_table = deepcopy(remap_table)
-    cdp.frq_labels = deepcopy(frq_labels)
-    cdp.frq = deepcopy(frq)
-    cdp.num_ri = len(ri_labels)
-    cdp.num_frq = len(frq)
-
-    # Update the NOE R1 translation table.
-    update_noe_r1_table(cdp)
-
-
-    # Spin specific data.
-    #####################
-
-    # Relaxation data.
-    if not sim:
-        # Initialise the relaxation data structures (if needed).
-        data_init(spin, global_flag=False)
-
-        # Relaxation data and errors.
-        spin.relax_data = values
-        spin.relax_error = errors
-
-        # Associated data structures.
-        spin.ri_labels = ri_labels
-        spin.remap_table = remap_table
-
-        # Remove any data with the value None.
-        indices = []
-        for index, Ri in enumerate(spin.relax_data):
-            if Ri == None:
-                indices.append(index)
-        indices.reverse()
-        for index in indices:
-            spin.relax_data.pop(index)
-            spin.relax_error.pop(index)
-            spin.ri_labels.pop(index)
-            spin.remap_table.pop(index)
-
-        # Remove any data with error of None.
-        indices = []
-        for index, error in enumerate(spin.relax_error):
-            if error == None:
-                indices.append(index)
-        indices.reverse()
-        for index in indices:
-            spin.relax_data.pop(index)
-            spin.relax_error.pop(index)
-            spin.ri_labels.pop(index)
-            spin.remap_table.pop(index)
-
-        # Associated data structures.
-        spin.frq_labels = []
-        spin.frq = []
-        for index in spin.remap_table:
-            if not frq_labels[index] in spin.frq_labels:
-                spin.frq_labels.append(frq_labels[index])
-                spin.frq.append(frq[index])
-
-        # Counts.
-        spin.num_ri = len(spin.relax_data)
-        spin.num_frq = len(spin.frq)
-
-        # Update the NOE R1 translation table.
-        update_noe_r1_table(spin)
-
-        # Convert to None.
-        if spin.num_ri == 0:
-            spin.num_ri = None
-        if spin.num_frq == 0:
-            spin.num_frq = None
-
-    # Simulation data.
-    else:
-        # Create the data structure if necessary.
-        if not hasattr(spin, 'relax_sim_data') or not isinstance(spin.relax_sim_data, list):
-            spin.relax_sim_data = []
-
-        # Append the simulation's relaxation data.
-        spin.relax_sim_data.append(values)
-
-
-def back_calc(ri_label=None, frq_label=None, frq=None):
+def back_calc(ri_id=None, ri_type=None, frq=None):
     """Back calculate the relaxation data.
 
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    @param frq:         The spectrometer proton frequency in Hz.
-    @type frq:          float
+    If no relaxation data currently exists, then the ri_id, ri_type, and frq args are required.
+
+
+    @keyword ri_id:     The relaxation data ID string.  If not given, all relaxation data will be back calculated.
+    @type ri_id:        None or str
+    @keyword ri_type:   The relaxation data type.  This should be one of 'R1', 'R2', or 'NOE'.
+    @type ri_type:      None or str
+    @keyword frq:       The spectrometer proton frequency in Hz.
+    @type frq:          None or float
     """
 
     # Test if the current pipe exists.
@@ -183,32 +70,48 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-    if test_labels(ri_label, frq_label):
-        raise RelaxRiError(ri_label, frq_label)
+    # Check that ri_type and frq are supplied if no relaxation data exists.
+    if ri_id and (not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids) and (ri_type == None or frq == None):
+        raise RelaxError("The 'ri_type' and 'frq' arguments must be supplied as no relaxation data corresponding to '%s' exists." % ri_id)
 
+    # Check if the type is valid.
+    if ri_type and ri_type not in VALID_TYPES:
+        raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
 
-    # Global (non-residue specific) data.
-    #####################################
+    # Initialise the global data for the current pipe if necessary.
+    if not hasattr(cdp, 'frq'):
+        cdp.frq = {}
+    if not hasattr(cdp, 'ri_type'):
+        cdp.ri_type = {}
+    if not hasattr(cdp, 'ri_ids'):
+        cdp.ri_ids = []
 
-    # Global data flag.
-    global_flag = 1
-
-    # Initialise the global data if necessary.
-    data_init(cdp)
-
-    # Update the global data.
-    update_data_structures_pipe(ri_label, frq_label, frq)
-
-
-    # Residue specific data.
-    ########################
-
-    # Global data flag.
-    global_flag = 0
+    # Update the global data if needed.
+    if ri_id and ri_id not in cdp.ri_ids:
+        cdp.ri_ids.append(ri_id)
+        cdp.ri_type[ri_id] = ri_type
+        cdp.frq[ri_id] = frq
 
     # Specific Ri back-calculate function setup.
     back_calculate = specific_fns.setup.get_specific_fn('back_calc_ri', pipes.get_type())
+
+    # The IDs to loop over.
+    if ri_id == None:
+        ri_ids = cdp.ri_ids
+    else:
+        ri_ids = [ri_id]
+
+    # The data types.
+    if ri_type == None:
+        ri_types = cdp.ri_type
+    else:
+        ri_types = {ri_id: ri_type}
+
+    # The frequencies.
+    if frq == None:
+        frqs = cdp.frq
+    else:
+        frqs = {ri_id: frq}
 
     # Loop over the spins.
     for spin, spin_id in spin_loop(return_id=True):
@@ -219,18 +122,13 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
         # The global index.
         spin_index = find_index(spin_id)
 
-        # Initialise all data structures.
-        update_data_structures_spin(spin, ri_label, frq_label, frq)
+        # Initialise the spin data if necessary.
+        if not hasattr(spin, 'ri_data_bc'):
+            spin.ri_data_bc = {}
 
         # Back-calculate the relaxation value.
-        value = back_calculate(spin_index=spin_index, ri_label=ri_label, frq_label=frq_label, frq=frq)
-
-        # No data.
-        if value == None:
-            continue
-
-        # Update all data structures.
-        update_data_structures_spin(spin, ri_label, frq_label, frq, value)
+        for ri_id in ri_ids:
+            spin.ri_data_bc[ri_id] = back_calculate(spin_index=spin_index, ri_id=ri_id, ri_type=ri_types[ri_id], frq=frqs[ri_id])
 
 
 def bmrb_read(star, sample_conditions=None):
@@ -252,11 +150,14 @@ def bmrb_read(star, sample_conditions=None):
             continue
 
         # Create the labels.
-        ri_label = data['data_type']
+        ri_type = data['data_type']
         frq = float(data['frq']) * 1e6
 
         # Round the label to the nearest factor of 10.
-        frq_label = str(int(round(float(data['frq'])/10)*10))
+        frq_label = create_frq_label(float(data['frq']) * 1e6)
+
+        # The ID string.
+        ri_id = "%s_%s" % (ri_type, frq_label)
 
         # The number of spins.
         N = bmrb.num_spins(data)
@@ -306,8 +207,7 @@ def bmrb_read(star, sample_conditions=None):
                         errors[i] = errors[i] * vals[i]**2
 
         # Pack the data.
-        pack_data(ri_label, frq_label, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
-
+        pack_data(ri_id, ri_type, frq, vals, errors, mol_names=mol_names, res_nums=data['res_nums'], res_names=data['res_names'], spin_nums=None, spin_names=data['atom_names'], gen_seq=True)
 
 
 def bmrb_write(star):
@@ -330,19 +230,17 @@ def bmrb_write(star):
     attached_atom_name_list = []
     attached_isotope_list = []
     attached_element_list = []
-    relax_data_list = []
-    relax_error_list = []
-    for i in range(cdp.num_ri):
-        relax_data_list.append([])
-        relax_error_list.append([])
+    ri_data_list = []
+    ri_data_err_list = []
+    for i in range(len(cdp.ri_ids)):
+        ri_data_list.append([])
+        ri_data_err_list.append([])
 
     # Relax data labels.
-    labels = []
+    labels = cdp.ri_ids
     exp_label = []
     spectro_ids = []
     spectro_labels = []
-    for i in range(cdp.num_ri):
-        labels.append(cdp.ri_labels[i] + '_' + cdp.frq_labels[cdp.remap_table[i]])
 
     # Store the spin specific data in lists for later use.
     for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
@@ -351,7 +249,7 @@ def bmrb_write(star):
             continue
 
         # Skip spins with no relaxation data.
-        if not hasattr(spin, 'relax_data'):
+        if not hasattr(spin, 'ri_data'):
             continue
 
         # Check the data for None (not allowed in BMRB!).
@@ -379,29 +277,15 @@ def bmrb_write(star):
         attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
 
         # The relaxation data.
-        used_index = -ones(spin.num_ri)
-        for i in range(len(spin.ri_labels)):
-            # Labels.
-            label = spin.ri_labels[i] + '_' + spin.frq_labels[spin.remap_table[i]]
-
-            # Find the global index.
-            index = None
-            for j in range(cdp.num_ri):
-                if label == labels[j] and j not in used_index:
-                    index = j
-                    used_index[i] = j
-                    break
-
+        used_index = -ones(len(cdp.ri_ids))
+        for i in range(len(cdp.ri_ids)):
             # Data exists.
-            if index != None:
-                relax_data_list[index].append(str(spin.relax_data[i]))
-                relax_error_list[index].append(str(spin.relax_error[i]))
-
-        # No relaxation data.
-        for i in range(cdp.num_ri):
-            if i not in used_index:
-                relax_data_list[i].append(None)
-                relax_error_list[i].append(None)
+            if cdp.ri_ids[i] in spin.ri_data.keys():
+                ri_data_list[i].append(str(spin.ri_data[cdp.ri_ids[i]]))
+                ri_data_err_list[i].append(str(spin.ri_data_err[cdp.ri_ids[i]]))
+            else:
+                ri_data_list[i].append(None)
+                ri_data_err_list[i].append(None)
 
         # Other info.
         isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
@@ -426,62 +310,65 @@ def bmrb_write(star):
         raise RelaxError("The peak intensity types measured for the relaxation data have not been specified.")
 
     # Loop over the relaxation data.
-    for i in range(cdp.num_ri):
+    for i in xrange(len(cdp.ri_ids)):
         # Alias.
-        ri_label = cdp.ri_labels[i]
-        frq_label = cdp.frq_labels[cdp.remap_table[i]]
+        ri_id = cdp.ri_ids[i]
+        ri_type = cdp.ri_type[ri_id]
 
         # Convert to MHz.
-        frq = cdp.frq[cdp.remap_table[i]] * 1e-6
+        frq = cdp.frq[ri_id] * 1e-6
 
         # Get the temperature control methods.
-        temp_calib = cdp.exp_info.get_temp_calibration(ri_label, frq_label)
-        temp_control = cdp.exp_info.get_temp_control(ri_label, frq_label)
+        temp_calib = cdp.exp_info.temp_calibration[ri_id]
+        temp_control = cdp.exp_info.temp_control[ri_id]
 
         # Get the peak intensity type.
-        peak_intensity_type = cdp.exp_info.get_peak_intensity_type(ri_label, frq_label)
+        peak_intensity_type = cdp.exp_info.peak_intensity_type[ri_id]
 
         # Check.
         if not temp_calib:
-            raise RelaxError("The temperature calibration method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
+            raise RelaxError("The temperature calibration method for the '%s' relaxation data ID string has not been specified." % ri_id)
         if not temp_control:
-            raise RelaxError("The temperature control method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
+            raise RelaxError("The temperature control method for the '%s' relaxation data ID string has not been specified." % ri_id)
 
         # Add the relaxation data.
-        star.relaxation.add(data_type=ri_label, frq=frq, entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, entity_ids_2=entity_ids, res_nums_2=res_num_list, res_names_2=res_name_list, atom_names_2=attached_atom_name_list, atom_types_2=attached_element_list, isotope_2=attached_isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control, peak_intensity_type=peak_intensity_type)
+        star.relaxation.add(data_type=ri_type, frq=frq, entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, entity_ids_2=entity_ids, res_nums_2=res_num_list, res_names_2=res_name_list, atom_names_2=attached_atom_name_list, atom_types_2=attached_element_list, isotope_2=attached_isotope_list, data=ri_data_list[i], errors=ri_data_err_list[i], temp_calibration=temp_calib, temp_control=temp_control, peak_intensity_type=peak_intensity_type)
 
         # The experimental label.
-        if ri_label == 'NOE':
+        if ri_type == 'NOE':
             exp_name = 'steady-state NOE'
         else:
-            exp_name = ri_label
-        exp_label.append("%s MHz %s" % (frq_label, exp_name))
+            exp_name = ri_type
+        exp_label.append("%s MHz %s" % (frq, exp_name))
 
         # Spectrometer info.
-        spectro_ids.append(cdp.remap_table[i] + 1)
+        frq_num = 1
+        for frq in frq_loop():
+            if frq == cdp.frq[ri_id]:
+                break
+            frq_num += 1
+        spectro_ids.append(frq_num)
         spectro_labels.append("$spectrometer_%s" % spectro_ids[-1])
 
     # Add the spectrometer info.
-    for i in range(cdp.num_frq):
-        star.nmr_spectrometer.add(name="$spectrometer_%s" % (i+1), manufacturer=None, model=None, frq=int(cdp.frq[i]/1e6))
+    num = 1
+    for frq in frq_loop():
+        star.nmr_spectrometer.add(name="$spectrometer_%s" % num, manufacturer=None, model=None, frq=int(frq/1e6))
+        num += 1
 
     # Add the experiment saveframe.
     star.experiment.add(name=exp_label, spectrometer_ids=spectro_ids, spectrometer_labels=spectro_labels)
 
 
-def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
+def copy(pipe_from=None, pipe_to=None, ri_id=None):
     """Copy the relaxation data from one data pipe to another.
 
-    @keyword pipe_from: The data pipe to copy the relaxation data from.  This defaults to the
-                        current data pipe.
+    @keyword pipe_from: The data pipe to copy the relaxation data from.  This defaults to the current data pipe.
     @type pipe_from:    str
-    @keyword pipe_to:   The data pipe to copy the relaxation data to.  This defaults to the current
-                        data pipe.
+    @keyword pipe_to:   The data pipe to copy the relaxation data to.  This defaults to the current data pipe.
     @type pipe_to:      str
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @param ri_id:       The relaxation data ID string.
     @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
     """
 
     # Defaults.
@@ -508,35 +395,34 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
     if not exists_mol_res_spin_data(pipe_to):
         raise RelaxNoSequenceError
 
-    # Copy all data.
-    if ri_label == None and frq_label == None:
-        # Get all data structure names.
-        names = get_data_names()
+    # Test if relaxation data ID string exists for pipe_from.
+    if ri_id and (not hasattr(dp_from, 'ri_ids') or ri_id not in dp_from.ri_ids):
+        raise RelaxNoRiError(ri_id)
 
-        # Spin loop.
-        for mol_index, res_index, spin_index in spin_index_loop():
-            # Alias the spin containers.
-            spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
-            spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
-
-            # Loop through the data structure names.
-            for name in names:
-                # Skip the data structure if it does not exist.
-                if not hasattr(spin_from, name):
-                    continue
-
-                # Copy the data structure.
-                setattr(spin_to, name, deepcopy(getattr(spin_from, name)))
-
-    # Copy a specific data set.
+    # The IDs.
+    if ri_id == None:
+        ri_ids = dp_from.ri_ids
     else:
-        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_from.
-        if not test_labels(ri_label, frq_label, pipe=pipe_from):
-            raise RelaxNoRiError(ri_label, frq_label)
+        ri_ids = [ri_id]
 
-        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_to.
-        if not test_labels(ri_label, frq_label, pipe=pipe_to):
-            raise RelaxRiError(ri_label, frq_label)
+    # Init target pipe global structures.
+    if not hasattr(dp_to, 'ri_ids'):
+        dp_to.ri_ids = []
+    if not hasattr(dp_to, 'ri_type'):
+        dp_to.ri_type = {}
+    if not hasattr(dp_to, 'frq'):
+        dp_to.frq = {}
+
+    # Loop over the Rx IDs.
+    for ri_id in ri_ids:
+        # Test if relaxation data ID string exists for pipe_to.
+        if ri_id in dp_to.ri_ids:
+            raise RelaxRiError(ri_id)
+
+        # Copy the global data.
+        dp_to.ri_ids.append(ri_id)
+        dp_to.ri_type[ri_id] = dp_from.ri_type[ri_id]
+        dp_to.frq[ri_id] = dp_from.frq[ri_id]
 
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
@@ -544,91 +430,126 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
             spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
             spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
 
-            # Find the index corresponding to 'ri_label' and 'frq_label'.
-            index = find_ri_index(spin_from, ri_label, frq_label)
+            # Initialise the spin data if necessary.
+            if not hasattr(spin_to, 'ri_data'):
+                spin_to.ri_data = {}
+            if not hasattr(spin_to, 'ri_data_err'):
+                spin_to.ri_data_err = {}
 
-            # Catch any problems.
-            if index == None:
-                continue
-
-            # Get the value and error from pipe_from.
-            value = spin_from.relax_data[index]
-            error = spin_from.relax_error[index]
-
-            # Update all data structures for pipe_to.
-            update_data_structures_spin(spin_to, ri_label, frq_label, frq, value, error)
+            # Copy the value and error from pipe_from.
+            spin_to.ri_data[ri_id] = spin_from.ri_data[ri_id]
+            spin_to.ri_data_err[ri_id] = spin_from.ri_data_err[ri_id]
 
 
-def data_init(container, global_flag=False):
-    """Initialise the data structures for a spin container.
+def create_frq_label(frq):
+    """Generate a frequency label in MHz, rounded to the nearest factor of 10.
 
-    @param container:       The data pipe or spin data container (PipeContainer or SpinContainer).
-    @type container:        class instance
-    @keyword global_flag:   A flag which if True corresponds to the pipe specific data structures
-                            and if False corresponds to the spin specific data structures.
-    @type global_flag:      bool
+    @param frq:     The frequency in Hz.
+    @type frq:      float
+    @return:        The MHz frequency label.
+    @rtype:         str
     """
 
-    # Get the data names.
-    data_names = get_data_names(global_flag)
+    # Convert to MHz.
+    label = frq / 1e6
+
+    # Rounding to the nearest factor of 10.
+    label = int(round(label/10)*10)
+
+    # Convert to str and return.
+    return str(label)
+
+
+def delete(ri_id=None):
+    """Delete relaxation data corresponding to the relaxation data ID.
+
+    @keyword ri_id: The relaxation data ID string.
+    @type ri_id:    str
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
+
+    # Loop over the spins.
+    for spin in spin_loop():
+        # Relaxation data and errors.
+        del spin.ri_data[ri_id]
+        del spin.ri_data_err[ri_id]
+
+
+def display(ri_id=None):
+    """Display relaxation data corresponding to the ID.
+
+    @keyword ri_id: The relaxation data ID string.
+    @type ri_id:    str
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
+
+    # Print the data.
+    value.write_data(param=ri_id, file=sys.stdout, return_value=return_value)
+
+
+def frq_loop():
+    """Generator function for returning each unique frequency.
+
+    @return:    The frequency.
+    @rtype:     float
+    """
 
     # Init.
-    list_data = [ 'relax_data',
-                  'relax_error',
-                  'ri_labels',
-                  'remap_table',
-                  'noe_r1_table',
-                  'frq_labels',
-                  'frq' ]
-    zero_data = [ 'num_ri', 'num_frq' ]
+    frq = []
 
-    # Loop over the data structure names.
-    for name in data_names:
-        # If the name is not in the container, add it as an empty array.
-        if name in list_data and not hasattr(container, name):
-            setattr(container, name, [])
+    # Loop over the Rx data.
+    for ri_id in cdp.ri_ids:
+        # New frequency.
+        if cdp.frq[ri_id] not in frq:
+            # Add the frequency.
+            frq.append(cdp.frq[ri_id])
 
-        # If the name is not in the container, add it as a variable set to zero.
-        if name in zero_data and not hasattr(container, name):
-            setattr(container, name, 0)
+            # Yield the value.
+            yield cdp.frq[ri_id]
 
 
 def get_data_names(global_flag=False, sim_names=False):
-    """Return a list of names of data structures associated with relax_data.
+    """Return a list of names of data structures associated with relaxation data.
 
     Description
     ===========
 
     The names are as follows:
 
-    relax_data:  Relaxation data.
+    ri_data:  Relaxation data.
 
-    relax_error:  Relaxation error.
+    ri_data_err:  Relaxation data error.
 
-    num_ri:  Number of data points, eg 6.
+    ri_data_bc:  The back calculated relaxation data.
 
-    num_frq:  Number of field strengths, eg 2.
-
-    ri_labels:  Labels corresponding to the data type, eg ['NOE', 'R1', 'R2', 'NOE', 'R1',
-    'R2'].
-
-    remap_table:  A translation table to map relaxation data points to their frequencies, eg [0,
-    0, 0, 1, 1, 1].
-
-    noe_r1_table:  A translation table to direct the NOE data points to the R1 data points.
-    This is used to speed up calculations by avoiding the recalculation of R1 values.  eg [None,
-    None, 0, None, None, 3]
-
-    frq_labels:  NMR frequency labels, eg ['600', '500']
+    ri_type:  The relaxation data type, i.e. one of ['NOE', 'R1', 'R2']
 
     frq:  NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
 
 
-    @keyword global_flag:   A flag which if True corresponds to the pipe specific data structures
-                            and if False corresponds to the spin specific data structures.
+    @keyword global_flag:   A flag which if True corresponds to the pipe specific data structures and if False corresponds to the spin specific data structures.
     @type global_flag:      bool
-    @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as
-                            well.
+    @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
     @type sim_names:        bool
     @return:                The list of object names.
     @rtype:                 list of str
@@ -639,161 +560,58 @@ def get_data_names(global_flag=False, sim_names=False):
 
     # Global data names.
     if not sim_names and global_flag:
-        names.append('num_frq')
+        names.append('ri_id')
+        names.append('ri_type')
         names.append('frq')
-        names.append('frq_labels')
-        names.append('num_ri')
-        names.append('ri_labels')
-        names.append('remap_table')
-        names.append('noe_r1_table')
 
-    # Residue specific data names.
+    # Spin specific data names.
     if not sim_names and not global_flag:
-        names.append('num_frq')
-        names.append('frq')
-        names.append('frq_labels')
-        names.append('num_ri')
-        names.append('ri_labels')
-        names.append('remap_table')
-        names.append('noe_r1_table')
-        names.append('relax_data')
-        names.append('relax_error')
+        names.append('ri_data')
+        names.append('ri_data_err')
+        names.append('ri_data_bc')
 
     # Simulation object names.
     if sim_names and not global_flag:
-        names.append('relax_sim_data')
+        names.append('ri_data_sim')
 
     # Return the list of names.
     return names
 
 
-def delete(ri_label=None, frq_label=None):
-    """Delete relaxation data corresponding to the Ri and frequency labels.
+def num_frq():
+    """Determine the number of unique frequencies.
 
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
+    @return:    The number of unique frequencies.
+    @rtype:     int
     """
 
-    # Test if the current pipe exists.
-    pipes.test()
+    # Init.
+    frq = []
+    count = 0
 
-    # Test if the sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
+    # Loop over the Rx data.
+    for ri_id in cdp.ri_ids:
+        # New frequency.
+        if cdp.frq[ri_id] not in frq:
+            # Add the frequency.
+            frq.append(cdp.frq[ri_id])
 
-    # Test if data corresponding to 'ri_label' and 'frq_label' exists.
-    if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError(ri_label, frq_label)
+            # Increment the counter.
+            count += 1
 
-    # Loop over the spins.
-    for spin in spin_loop():
-        # Global data flag.
-        global_flag = False
-
-        # Find the index corresponding to 'ri_label' and 'frq_label'.
-        index = find_ri_index(spin, ri_label, frq_label)
-
-        # Catch any problems.
-        if index == None:
-            continue
-
-        # Relaxation data and errors.
-        spin.relax_data.pop(index)
-        spin.relax_error.pop(index)
-
-        # Update the number of relaxation data points.
-        spin.num_ri = spin.num_ri - 1
-
-        # Delete ri_label from the data types.
-        spin.ri_labels.pop(index)
-
-        # Update the remap table.
-        spin.remap_table.pop(index)
-
-        # Find if there is other data corresponding to 'frq_label'
-        frq_index = spin.frq_labels.index(frq_label)
-        if not frq_index in spin.remap_table:
-            # Update the number of frequencies.
-            spin.num_frq = spin.num_frq - 1
-
-            # Update the frequency labels.
-            spin.frq_labels.pop(frq_index)
-
-            # Update the frequency array.
-            spin.frq.pop(frq_index)
-
-        # Update the NOE R1 translation table.
-        spin.noe_r1_table.pop(index)
-        for j in xrange(spin.num_ri):
-            if spin.noe_r1_table[j] > index:
-                spin.noe_r1_table[j] = spin.noe_r1_table[j] - 1
+    # Return the counter.
+    return count
 
 
-def display(ri_label=None, frq_label=None):
-    """Display relaxation data corresponding to the Ri and frequency labels.
-
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    """
-
-    # Test if the current pipe exists.
-    pipes.test()
-
-    # Test if the sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Test if data corresponding to 'ri_label' and 'frq_label' exists.
-    if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError(ri_label, frq_label)
-
-    # Print the data.
-    value.write_data(param=(ri_label, frq_label), file=sys.stdout, return_value=return_value)
-
-
-def find_ri_index(data, ri_label, frq_label):
-    """Find the index corresponding to ri_label and frq_label.
-
-    @param data:        The class instance containing the ri_label and frq_label variables.
-    @type data:         PipeContainer or SpinContainer
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    @return:            The index corresponding to the relaxation data.  If there is no
-                        relaxation data corresponding to the labels, None is returned.
-    @rtype:             None or int
-    """
-
-    # No data.num_ri data structure.
-    if not hasattr(data, 'num_ri'):
-        return None
-
-    # Initialise.
-    index = None
-
-    # Find the index.
-    for j in xrange(data.num_ri):
-        if ri_label == data.ri_labels[j] and frq_label == data.frq_labels[data.remap_table[j]]:
-            index = j
-
-    # Return the index.
-    return index
-
-
-def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, gen_seq=False):
+def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, gen_seq=False):
     """Pack the relaxation data into the data pipe and spin containers.
 
     The values, errors, and spin_ids arguments must be lists of equal length or None.  Each element i corresponds to a unique spin.
 
-    @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:         str
-    @param frq_label:       The field strength label.
-    @type frq_label:        str
+    @param ri_id:           The relaxation data ID string.
+    @type ri_id:            str
+    @param ri_type:         The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_type:          str
     @param frq:             The spectrometer proton frequency in Hz.
     @type frq:              float
     @keyword values:        The relaxation data for each spin.
@@ -856,10 +674,17 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
             spin_ids.append(generate_spin_id(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i]))
 
     # Initialise the global data for the current pipe if necessary.
-    data_init(cdp, global_flag=True)
+    if not hasattr(cdp, 'frq'):
+        cdp.frq = {}
+    if not hasattr(cdp, 'ri_type'):
+        cdp.ri_type = {}
+    if not hasattr(cdp, 'ri_ids'):
+        cdp.ri_ids = []
 
     # Update the global data.
-    update_data_structures_pipe(ri_label, frq_label, frq)
+    cdp.ri_ids.append(ri_id)
+    cdp.ri_type[ri_id] = ri_type
+    cdp.frq[ri_id] = frq
 
     # Generate the sequence.
     if gen_seq:
@@ -872,19 +697,24 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
         if spin == None:
             raise RelaxNoSpinError(spin_ids[i])
 
+        # Initialise the spin data if necessary.
+        if not hasattr(spin, 'ri_data') or spin.ri_data == None:
+            spin.ri_data = {}
+        if not hasattr(spin, 'ri_data_err') or spin.ri_data_err == None:
+            spin.ri_data_err = {}
+
         # Update all data structures.
-        update_data_structures_spin(spin, ri_label, frq_label, frq, values[i], errors[i])
+        spin.ri_data[ri_id] = values[i]
+        spin.ri_data_err[ri_id] = errors[i]
 
 
-def peak_intensity_type(ri_label=None, frq_label=None, type=None):
+def peak_intensity_type(ri_id=None, type=None):
     """Set the type of intensity measured for the peaks.
 
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    @param type:        The peak intensity type, one of 'height' or 'volume'.
-    @type type:         str
+    @keyword ri_id: The relaxation data ID string.
+    @type ri_id:    str
+    @keyword type:  The peak intensity type, one of 'height' or 'volume'.
+    @type type:     str
     """
 
     # Test if the current pipe exists.
@@ -894,9 +724,9 @@ def peak_intensity_type(ri_label=None, frq_label=None, type=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-    if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError(ri_label, frq_label)
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
 
     # Check the values, and warn if not in the list.
     valid = ['height', 'volume']
@@ -908,45 +738,35 @@ def peak_intensity_type(ri_label=None, frq_label=None, type=None):
         cdp.exp_info = ExpInfo()
 
     # Store the type.
-    cdp.exp_info.setup_peak_intensity_type(ri_label, frq_label, type)
+    cdp.exp_info.setup_peak_intensity_type(ri_id, type)
 
 
-def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
     """Read R1, R2, NOE, or R2eff relaxation data from a file.
 
-    @param ri_label:        The relaxation data type, ie 'R1', 'R2', 'NOE', or 'R2eff'.
-    @type ri_label:         str
-    @param frq_label:       The field strength label.
-    @type frq_label:        str
+    @param ri_id:           The relaxation data ID string.
+    @type ri_id:            str
+    @param ri_type:         The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_type:          str
     @param frq:             The spectrometer proton frequency in Hz.
     @type frq:              float
     @param file:            The name of the file to open.
     @type file:             str
-    @param dir:             The directory containing the file (defaults to the current directory
-                            if None).
+    @param dir:             The directory containing the file (defaults to the current directory if None).
     @type dir:              str or None
-    @param file_data:       An alternative opening a file, if the data already exists in the
-                            correct format.  The format is a list of lists where the first index
-                            corresponds to the row and the second the column.
+    @param file_data:       An alternative opening a file, if the data already exists in the correct format.  The format is a list of lists where the first index corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
-                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
-                            arguments must be none.
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
-    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied, spin_id_col must be None.
     @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword res_name_col:  The column containing the residue name information.  If supplied, spin_id_col must be None.
     @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information.  If supplied,
-                            spin_id_col must be None.
+    @keyword res_num_col:   The column containing the residue number information.  If supplied, spin_id_col must be None.
     @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword spin_name_col: The column containing the spin name information.  If supplied, spin_id_col must be None.
     @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
-                            spin_id_col must be None.
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied, spin_id_col must be None.
     @type spin_num_col:     int or None
     @keyword data_col:      The column containing the relaxation data.
     @type data_col:         int or None
@@ -954,8 +774,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     @type error_col:        int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
-                            spins.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
     @type spin_id:          None or str
     """
 
@@ -965,6 +784,14 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
+
+    # Test if the ri_id already exists.
+    if hasattr(cdp, 'ri_ids') and ri_id in cdp.ri_ids:
+        raise RelaxError("The relaxation ID string '%s' already exists." % ri_id)
+
+    # Check if the type is valid.
+    if ri_type not in VALID_TYPES:
+        raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
 
     # Loop over the file data to create the data structures for packing.
     values = []
@@ -989,7 +816,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
         errors.append(error)
 
     # Pack the data.
-    pack_data(ri_label, frq_label, frq, values, errors, ids)
+    pack_data(ri_id, ri_type, frq, values, errors, ids)
 
 
 def return_data_desc(name):
@@ -999,23 +826,9 @@ def return_data_desc(name):
     @type name:     str
     """
 
-    if name == 'num_frq':
-        return 'Number of spectrometer frequencies'
-    if name == 'frq':
-        return 'Frequencies'
-    if name == 'frq_labels':
-        return 'Frequency labels'
-    if name == 'num_ri':
-        return 'Number of relaxation data sets'
-    if name == 'ri_labels':
-        return 'Relaxation data set labels'
-    if name == 'remap_table':
-        return 'Table mapping frequencies to relaxation data'
-    if name == 'noe_r1_table':
-        return 'Table mapping the NOE to the corresponding R1'
-    if name == 'relax_data':
+    if name == 'ri_data':
         return 'The relaxation data'
-    if name == 'relax_error':
+    if name == 'ri_data_err':
         return 'The relaxation data errors'
 
 
@@ -1024,37 +837,30 @@ def return_value(spin, data_type):
 
     @param spin:        The spin container.
     @type spin:         SpinContainer instance
-    @param data_type:   A tuple of the Ri label and the frequency label.
-    @type data_type:    tuple of str of length 2
+    @param data_type:   The relaxation data ID string.
+    @type data_type:    str
     """
 
-    # Unpack the data_type tuple.
-    ri_label, frq_label = data_type
+    # Relaxation data.
+    data = None
+    if hasattr(spin, 'ri_data') and spin.ri_data != None and data_type in spin.ri_data.keys():
+        data = spin.ri_data[data_type]
 
-    # Initialise.
-    value = None
+    # Relaxation errors.
     error = None
-
-    # Find the index corresponding to 'ri_label' and 'frq_label'.
-    index = find_ri_index(spin, ri_label, frq_label)
-
-    # Get the data.
-    if index != None:
-        value = spin.relax_data[index]
-        error = spin.relax_error[index]
+    if hasattr(spin, 'ri_data_err') and spin.ri_data_err != None and data_type in spin.ri_data_err.keys():
+        error = spin.ri_data_err[data_type]
 
     # Return the data.
-    return value, error
+    return data, error
 
 
-def temp_calibration(ri_label=None, frq_label=None, method=None):
+def temp_calibration(ri_id=None, method=None):
     """Set the temperature calibration method.
 
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    @param method:      The temperature calibration method.
+    @keyword ri_id:     The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_id:        str
+    @keyword method:    The temperature calibration method.
     @type method:       str
     """
 
@@ -1065,10 +871,9 @@ def temp_calibration(ri_label=None, frq_label=None, method=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-    if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError(ri_label, frq_label)
-
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
 
     # Check the values, and warn if not in the list.
     valid = ['methanol', 'monoethylene glycol', 'no calibration applied']
@@ -1080,18 +885,15 @@ def temp_calibration(ri_label=None, frq_label=None, method=None):
         cdp.exp_info = ExpInfo()
 
     # Store the method.
-    cdp.exp_info.temp_calibration_setup(ri_label, frq_label, method)
+    cdp.exp_info.temp_calibration_setup(ri_id, method)
 
 
-
-def temp_control(ri_label=None, frq_label=None, method=None):
+def temp_control(ri_id=None, method=None):
     """Set the temperature control method.
 
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    @param method:      The temperature control method.
+    @keyword ri_id:     The relaxation data ID string.
+    @type ri_id:        str
+    @keyword method:    The temperature control method.
     @type method:       str
     """
 
@@ -1102,10 +904,9 @@ def temp_control(ri_label=None, frq_label=None, method=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-    if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError(ri_label, frq_label)
-
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
 
     # Check the values, and warn if not in the list.
     valid = ['single scan interleaving', 'temperature compensation block', 'single scan interleaving and temperature compensation block', 'single fid interleaving', 'single experiment interleaving', 'no temperature control applied']
@@ -1117,215 +918,21 @@ def temp_control(ri_label=None, frq_label=None, method=None):
         cdp.exp_info = ExpInfo()
 
     # Store the method.
-    cdp.exp_info.temp_control_setup(ri_label, frq_label, method)
+    cdp.exp_info.temp_control_setup(ri_id, method)
 
 
+def write(ri_id=None, file=None, dir=None, force=False):
+    """Write relaxation data to a file.
 
-def test_labels(ri_label, frq_label):
-    """Test if data corresponding to 'ri_label' and 'frq_label' currently exists.
-
-    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:     str
-    @param frq_label:   The field strength label.
-    @type frq_label:    str
-    @return:            The answer to the question of whether relaxation data exists corresponding
-                        to the given labels.
-    @rtype:             bool
+    @keyword ri_id: The relaxation data ID string.
+    @type ri_label: str
+    @keyword file:  The name of the file to create.
+    @type file:     str
+    @keyword dir:   The directory to write to.
+    @type dir:      str or None
+    @keyword force: A flag which if True will cause any pre-existing file to be overwritten.
+    @type force:    bool
     """
-
-    # Loop over the spins.
-    for spin in spin_loop():
-        # No ri data.
-        if not hasattr(spin, 'num_ri'):
-            continue
-
-        # Loop over the relaxation data.
-        for j in xrange(spin.num_ri):
-            # Test if the relaxation data matches 'ri_label' and 'frq_label'.
-            if ri_label == spin.ri_labels[j] and frq_label == spin.frq_labels[spin.remap_table[j]]:
-                return True
-
-    # No match.
-    return False
-
-
-def update_data_structures_pipe(ri_label=None, frq_label=None, frq=None):
-    """Update all relaxation data structures in the current data pipe.
-
-    @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:         str
-    @param frq_label:       The field strength label.
-    @type frq_label:        str
-    @param frq:             The spectrometer proton frequency in Hz.
-    @type frq:              float
-    """
-
-    # Initialise the relaxation data structures (if needed).
-    data_init(cdp, global_flag=True)
-
-    # The index.
-    i = len(cdp.ri_labels) - 1
-
-    # Update the number of relaxation data points.
-    cdp.num_ri = cdp.num_ri + 1
-
-    # Add ri_label to the data types.
-    cdp.ri_labels.append(ri_label)
-
-    # Find if the frequency has already been loaded.
-    remap = len(cdp.frq)
-    flag = 0
-    for j in xrange(len(cdp.frq)):
-        if frq == cdp.frq[j]:
-            remap = j
-            flag = 1
-
-    # Update the remap table.
-    cdp.remap_table.append(remap)
-
-    # Update the data structures which have a length equal to the number of field strengths.
-    if not flag:
-        # Update the number of frequencies.
-        cdp.num_frq = cdp.num_frq + 1
-
-        # Update the frequency labels.
-        cdp.frq_labels.append(frq_label)
-
-        # Update the frequency array.
-        cdp.frq.append(frq)
-
-    # Update the NOE R1 translation table.
-    cdp.noe_r1_table.append(None)
-
-    # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
-    if ri_label == 'NOE':
-        for j in xrange(cdp.num_ri):
-            if cdp.ri_labels[j] == 'R1' and frq_label == cdp.frq_labels[cdp.remap_table[j]]:
-                cdp.noe_r1_table[cdp.num_ri - 1] = j
-
-    # Update the NOE R1 translation table.
-    # If the data corresponds to 'R1', try to find if the corresponding NOE data.
-    if ri_label == 'R1':
-        for j in xrange(cdp.num_ri):
-            if cdp.ri_labels[j] == 'NOE' and frq_label == cdp.frq_labels[cdp.remap_table[j]]:
-                cdp.noe_r1_table[j] = cdp.num_ri - 1
-
-
-def update_data_structures_spin(spin=None, ri_label=None, frq_label=None, frq=None, value=None, error=None):
-    """Update all relaxation data structures of the given spin container.
-
-    @param spin:            The SpinContainer object.
-    @type spin:             class instance
-    @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:         str
-    @param frq_label:       The field strength label.
-    @type frq_label:        str
-    @param frq:             The spectrometer proton frequency in Hz.
-    @type frq:              float
-    @param value:           The relaxation data value.
-    @type value:            float
-    @param error:           The relaxation data error.
-    @type error:            float
-    """
-
-    # Initialise the relaxation data structures (if needed).
-    data_init(spin, global_flag=False)
-
-    # Find the index corresponding to 'ri_label' and 'frq_label'.
-    index = find_ri_index(spin, ri_label, frq_label)
-
-    # Append empty data.
-    if index == None:
-        spin.relax_data.append(None)
-        spin.relax_error.append(None)
-        spin.ri_labels.append(None)
-        spin.remap_table.append(None)
-        spin.noe_r1_table.append(None)
-
-    # Set the index value.
-    if index == None:
-        i = len(spin.relax_data) - 1
-    else:
-        i = index
-
-    # Relaxation data and errors.
-    spin.relax_data[i] = value
-    spin.relax_error[i] = error
-
-    # Update the number of relaxation data points.
-    if index == None:
-        spin.num_ri = spin.num_ri + 1
-
-    # Add ri_label to the data types.
-    spin.ri_labels[i] = ri_label
-
-    # Find if the frequency frq has already been loaded.
-    remap = len(spin.frq)
-    flag = 0
-    for j in xrange(len(spin.frq)):
-        if frq == spin.frq[j]:
-            remap = j
-            flag = 1
-
-    # Update the remap table.
-    spin.remap_table[i] = remap
-
-    # Update the data structures which have a length equal to the number of field strengths.
-    if not flag:
-        # Update the number of frequencies.
-        if index == None:
-            spin.num_frq = spin.num_frq + 1
-
-        # Update the frequency labels.
-        spin.frq_labels.append(frq_label)
-
-        # Update the frequency array.
-        spin.frq.append(frq)
-
-    # Update the NOE R1 translation table.
-    # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
-    if ri_label == 'NOE':
-        for j in xrange(spin.num_ri):
-            if spin.ri_labels[j] == 'R1' and frq_label == spin.frq_labels[spin.remap_table[j]]:
-                spin.noe_r1_table[spin.num_ri - 1] = j
-
-    # Update the NOE R1 translation table.
-    # If the data corresponds to 'R1', try to find if the corresponding NOE data.
-    if ri_label == 'R1':
-        for j in xrange(spin.num_ri):
-            if spin.ri_labels[j] == 'NOE' and frq_label == spin.frq_labels[spin.remap_table[j]]:
-                spin.noe_r1_table[j] = spin.num_ri - 1
-
-
-def update_noe_r1_table(cont):
-    """Update the NOE-R1 translation table.
-
-    @param cont:    Either the pipe container or spin container to update the structure of.
-    @type cont:     PipeContainer or SpinContainer instance
-    """
-
-    # Create an array of None for the NOE R1 translation table, if the table is empty.
-    if cont.noe_r1_table == []:
-        for i in xrange(cont.num_ri):
-            cont.noe_r1_table.append(None)
-
-    # Loop over the relaxation data.
-    for i in xrange(cont.num_ri):
-        # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
-        if cont.ri_labels[i] == 'NOE':
-            for j in xrange(cont.num_ri):
-                if cont.ri_labels[j] == 'R1' and cont.frq_labels[cont.remap_table[i]] == cont.frq_labels[cont.remap_table[j]]:
-                    cont.noe_r1_table[i] = j
-
-        # If the data corresponds to 'R1', try to find if the corresponding NOE data.
-        if cont.ri_labels[i] == 'R1':
-            for j in xrange(cont.num_ri):
-                if cont.ri_labels[j] == 'NOE' and cont.frq_labels[cont.remap_table[i]] == cont.frq_labels[cont.remap_table[j]]:
-                    cont.noe_r1_table[j] = i
-
-
-def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
-    """Write relaxation data to a file."""
 
     # Test if the current pipe exists.
     pipes.test()
@@ -1334,13 +941,13 @@ def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if data corresponding to 'ri_label' and 'frq_label' exists.
-    if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError(ri_label, frq_label)
+    # Test if data exists.
+    if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        raise RelaxNoRiError(ri_id)
 
     # Create the file name if none is given.
     if file == None:
-        file = ri_label + "." + frq_label + ".out"
+        file = ri_id + ".out"
 
     # Write the data.
-    value.write(param=(ri_label, frq_label), file=file, dir=dir, force=force, return_value=return_value)
+    value.write(param=ri_id, file=file, dir=dir, force=force, return_value=return_value)

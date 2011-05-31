@@ -88,6 +88,13 @@ try:
 except ImportError:
     readline_module = False
 
+# runpy module.
+try:
+    import runpy
+    runpy_module = True
+except ImportError:
+    runpy_module = False
+
 # profile module (python development packages required).
 try:
     import profile

@@ -590,13 +590,13 @@ class RelaxSpinsNotLoadedError(BaseError):
 
 # No relaxation data.
 class RelaxNoRiError(BaseError):
-    def __init__(self, ri_label, frq_label):
-        self.text = "Relaxation data corresponding to ri_label = " + repr(ri_label) + " and frq_label = " + repr(frq_label) + " does not exist."
+    def __init__(self, ri_id):
+        self.text = "Relaxation data corresponding to the ID string '%s' does not exist." % ri_id
 
 # Relaxation data already exists.
 class RelaxRiError(BaseError):
-    def __init__(self, ri_label, frq_label):
-        self.text = "Relaxation data corresponding to ri_label = " + repr(ri_label) + " and frq_label = " + repr(frq_label) + " already exists."
+    def __init__(self, ri_id):
+        self.text = "Relaxation data corresponding to the ID string '%s' already exists." % ri_id
 
 
 # RDC and PCS data errors.

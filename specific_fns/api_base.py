@@ -34,15 +34,15 @@ class API_base:
     All the methods here are prototype methods.  To identify that the method is not available for certain analysis types, if called a RelaxImplementError is raised if called.
     """
 
-    def back_calc_ri(self, spin_index=None, ri_label=None, frq_label=None, frq=None):
-        """Back-calculation of relaxation data from the model-free parameter values.
+    def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
+        """Back-calculation of relaxation data.
 
         @keyword spin_index:    The global spin index.
         @type spin_index:       int
-        @keyword ri_label:      The relaxation data type, i.e. 'R1', 'R2', or 'NOE'.
-        @type ri_label:         str
-        @keyword frq_label:     The field strength label.
-        @type frq_label:        str
+        @keyword ri_id:         The relaxation data ID string.
+        @type ri_id:            str
+        @keyword ri_type:       The relaxation data type.
+        @type ri_type:          str
         @keyword frq:           The field strength.
         @type frq:              float
         @return:                The back calculated relaxation data value corresponding to the index.

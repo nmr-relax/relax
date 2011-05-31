@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,42 +31,6 @@ from generic_fns.mol_res_spin import spin_loop
 from status import Status; status = Status()
 
 
-def back_calc():
-    """Function for back calculating the relaxation data."""
-
-    relax_data.back_calc(ri_label='NOE', frq_label='600', frq=600e6)
-
-
-def errors():
-    """Function for generating relaxation data errors."""
-
-    # Loop over the sequence.
-    for spin in spin_loop():
-        # Loop over the relaxation data.
-        for j in xrange(len(spin.relax_data)):
-            # No data.
-            if spin.relax_data[j] == None:
-                continue
-
-            # 600 MHz NOE.
-            if spin.ri_labels[j] == 'NOE' and spin.frq_labels[spin.remap_table[j]] == '600':
-                spin.relax_error[j] = 0.04
-
-            # 500 MHz NOE.
-            elif spin.ri_labels[j] == 'NOE' and spin.frq_labels[spin.remap_table[j]] == '500':
-                spin.relax_error[j] = 0.05
-
-            # All other data.
-            else:
-                spin.relax_error[j] = spin.relax_data[j] * 0.02
-
-
-def write():
-    """Function for writing the relaxation data to file."""
-
-    relax_data.write(ri_label='NOE', frq_label='600', file='devnull', force=True)
-
-
 # Create the data pipe.
 pipe.create('test', 'mf')
 
@@ -93,11 +57,8 @@ value.set(val=20e-12, param='te')
 # Select model-free model m2.
 model_free.select_model(model='m2')
 
-# Back calculate the relaxation data.
-back_calc()
-
-# Generate the errors.
-errors()
+# Back calculate some relaxation data.
+relax_data.back_calc(ri_id='NOE_600', ri_type='NOE', frq=600e6)
 
 # Write the data.
-write()
+relax_data.write(ri_id='NOE_600', file='devnull', force=True)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,7 +33,8 @@ import platform
 from re import search
 if dep_check.readline_module:
     import readline
-import runpy
+if dep_check.runpy_module:
+    import runpy
 import sys
 
 # Python modules accessible on the command prompt.
@@ -377,7 +378,13 @@ def exec_script(name, globals):
         sys.path.reverse()
 
         # Execute the script as a module.
-        runpy.run_module(module, globals)
+        if dep_check.runpy_module:
+            runpy.run_module(module, globals)
+
+        # Allow scripts to run under Python <= 2.4.
+        else:
+            exec(compile(open(name).read(), name, 'exec'), globals)
+
     finally:
         # Switch back to the original working directory.
         if head:

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2008-2010 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2008-2011 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -42,8 +42,8 @@ class BMRB(User_fn_class):
 
         cite_id:  The citation ID string.
 
-        authors:  The list of authors.  Each author element is a list of four elements: the first
-            name, last name, first initial, and middle initials.
+        authors:  The list of authors.  Each author element is a list of four elements (the first 
+            name, last name, first initial, and middle initials).
 
         doi:  The DOI number, e.g. "10.1000/182".
 
@@ -255,7 +255,6 @@ class BMRB(User_fn_class):
             'N-state':  N-state model of domain motions,
             'noe':  Steady state NOE calculation,
             'relax_fit':  Relaxation curve fitting,
-            'srls':  SRLS analysis.
 
         The model_selection argument only needs to be set if the script selects between different
         mathematical models.  This can be anything, but the following are recommended:

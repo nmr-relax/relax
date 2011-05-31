@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2010 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2007-2011 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -34,15 +34,15 @@ from relax_errors import RelaxError
 class Relax_data(User_fn_class):
     """Class for manipulating R1, R2, and NOE relaxation data."""
 
-    def back_calc(self, ri_label=None, frq_label=None, frq=None):
+    def back_calc(self, ri_id=None, ri_type=None, frq=None):
         """Function for back calculating relaxation data.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        ri_id:  The relaxation data ID string.
 
-        frq_label:  The field strength label.
+        ri_type:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
 
         frq:  The spectrometer frequency in Hz.
 
@@ -51,22 +51,22 @@ class Relax_data(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.back_calc("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label)
+            text = text + "ri_id=" + repr(ri_id)
+            text = text + ", ri_type=" + repr(ri_type)
             text = text + ", frq=" + repr(frq) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
-        arg_check.is_num(frq, 'frequency')
+        arg_check.is_str(ri_id, 'relaxation ID string', can_be_none=True)
+        arg_check.is_str(ri_type, 'relaxation type', can_be_none=True)
+        arg_check.is_num(frq, 'frequency', can_be_none=True)
 
         # Execute the functional code.
-        relax_data.back_calc(ri_label=ri_label, frq_label=frq_label, frq=frq)
+        relax_data.back_calc(ri_id=ri_id, ri_type=ri_type, frq=frq)
 
 
-    def copy(self, pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
-        """Function for copying relaxation data from pipe_from to pipe_to.
+    def copy(self, pipe_from=None, pipe_to=None, ri_id=None):
+        """Copy relaxation data from one pipe to another.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -75,17 +75,15 @@ class Relax_data(User_fn_class):
 
         pipe_to:  The name of the pipe to copy the relaxation data to.
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy relaxation data from 'pipe_from' to 'pipe_to'.  If ri_label and frq_label
-        are not given then all relaxation data will be copied, otherwise only a specific data set
-        will be copied.
+        This function will copy relaxation data from 'pipe_from' to 'pipe_to'.  If ri_id is not
+        given then all relaxation data will be copied, otherwise only a specific data set will be
+        copied.
 
 
         Examples
@@ -95,14 +93,14 @@ class Relax_data(User_fn_class):
 
         relax> relax_data.copy('m1', 'm9')
         relax> relax_data.copy(pipe_from='m1', pipe_to='m9')
-        relax> relax_data.copy('m1', 'm9', None, None)
-        relax> relax_data.copy(pipe_from='m1', pipe_to='m9', ri_label=None, frq_label=None)
+        relax> relax_data.copy('m1', 'm9', None)
+        relax> relax_data.copy(pipe_from='m1', pipe_to='m9', ri_id=None)
 
-        To copy only the NOE relaxation data with the frq_label of '800' from 'm3' to 'm6', type one
-        of:
+        To copy only the NOE relaxation data with the ID string of 'NOE_800' from 'm3' to 'm6', type
+        one of:
 
-        relax> relax_data.copy('m3', 'm6', 'NOE', '800')
-        relax> relax_data.copy(pipe_from='m3', pipe_to='m6', ri_label='NOE', frq_label='800')
+        relax> relax_data.copy('m3', 'm6', 'NOE_800')
+        relax> relax_data.copy(pipe_from='m3', pipe_to='m6', ri_id='NOE_800')
         """
 
         # Function intro text.
@@ -110,101 +108,89 @@ class Relax_data(User_fn_class):
             text = self._exec_info.ps3 + "relax_data.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
-            text = text + ", ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label) + ")"
+            text = text + ", ri_id=" + repr(ri_id) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
         arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
-        arg_check.is_str(ri_label, 'relaxation label', can_be_none=True)
-        arg_check.is_str(frq_label, 'frequency label', can_be_none=True)
+        arg_check.is_str(ri_id, 'relaxation data ID string', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
             raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Execute the functional code.
-        relax_data.copy(pipe_from=pipe_from, pipe_to=pipe_to, ri_label=ri_label, frq_label=frq_label)
+        relax_data.copy(pipe_from=pipe_from, pipe_to=pipe_to, ri_id=ri_id)
 
 
-    def delete(self, ri_label=None, frq_label=None):
-        """Function for deleting the relaxation data corresponding to ri_label and frq_label.
+    def delete(self, ri_id=None):
+        """Delete the data corresponding to the relaxation data ID string.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
 
         Examples
         ~~~~~~~~
 
-        To delete the relaxation data corresponding to ri_label='NOE', frq_label='600', type:
+        To delete the relaxation data corresponding to the ID 'NOE_600', type:
 
-        relax> relax_data.delete('NOE', '600')
+        relax> relax_data.delete('NOE_600')
         """
 
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.delete("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label) + ")"
+            text = text + "ri_id=" + repr(ri_id) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation data ID string')
 
         # Execute the functional code.
-        relax_data.delete(ri_label=ri_label, frq_label=frq_label)
+        relax_data.delete(ri_id=ri_id)
 
 
-    def display(self, ri_label=None, frq_label=None):
-        """Function for displaying the relaxation data corresponding to ri_label and frq_label.
+    def display(self, ri_id=None):
+        """Display the data corresponding to the relaxation data ID string.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
 
         Examples
         ~~~~~~~~
 
-        To display the NOE relaxation data at 600 MHz, type:
+        To display the NOE relaxation data at 600 MHz with the ID string 'NOE_600', type:
 
-        relax> relax_data.display('NOE', '600')
+        relax> relax_data.display('NOE_600')
         """
 
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.display("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label) + ")"
+            text = text + "ri_id=" + repr(ri_id) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation data ID string')
 
         # Execute the functional code.
-        relax_data.display(ri_label=ri_label, frq_label=frq_label)
+        relax_data.display(ri_id=ri_id)
 
 
-    def peak_intensity_type(self, ri_label=None, frq_label=None, type=None):
+    def peak_intensity_type(self, ri_id=None, type=None):
         """Specify the type of peak intensity measurement used - i.e. height or volume.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
         type:  The peak intensity type.
 
@@ -220,29 +206,27 @@ class Relax_data(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.peak_intensity_type("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label)
+            text = text + "ri_id=" + repr(ri_id)
             text = text + ", type=" + repr(type) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation label')
         arg_check.is_str(type, 'peak intensity type')
 
         # Execute the functional code.
-        relax_data.peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type=type)
+        relax_data.peak_intensity_type(ri_id=ri_id, type=type)
 
 
-    def read(self, ri_label=None, frq_label=None, frq=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
-        """Function for reading R1, R2, NOE, or R2eff relaxation data from a file.
+    def read(self, ri_id=None, ri_type=None, frq=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+        """Read R1, R2, NOE, or R2eff relaxation data from a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', 'NOE', or 'R2eff'.
+        ri_id:  The relaxation data ID string.
 
-        frq_label:  The field strength label.
+        ri_type:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
 
         frq:  The spectrometer frequency in Hz.
 
@@ -294,9 +278,9 @@ class Relax_data(User_fn_class):
         a file called 'noe.600.out' where the residue numbers, residue names, data, errors are in
         the first, second, third, and forth columns respectively.
 
-        relax> relax_data.read('NOE', '600', 599.7 * 1e6, 'noe.600.out', res_num_col=1,
+        relax> relax_data.read('NOE_600', 'NOE', 599.7 * 1e6, 'noe.600.out', res_num_col=1,
                                res_name_col=2, data_col=3, error_col=4)
-        relax> relax_data.read(ri_label='NOE', frq_label='600', frq=600.0 * 1e6, file='noe.600.out',
+        relax> relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0 * 1e6, file='noe.600.out',
                                res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
 
@@ -304,23 +288,23 @@ class Relax_data(User_fn_class):
         numbers, residue names, data, errors are in the second, third, fifth, and sixth columns
         respectively.  The columns are separated by commas.
 
-        relax> relax_data.read('R2', '800 MHz', 8.0 * 1e8, 'r2.out', res_num_col=2,
-                               res_name_col=3, data_col=5, error_col=6, sep=',')
-        relax> relax_data.read(ri_label='R2', frq_label='800 MHz', frq=8.0*1e8, file='r2.out',
+        relax> relax_data.read('R2_800', 'R2', 8.0 * 1e8, 'r2.out', res_num_col=2, res_name_col=3,
+                               data_col=5, error_col=6, sep=',')
+        relax> relax_data.read(ri_id='R2_800', ri_type='R2', frq=8.0*1e8, file='r2.out',
                                res_num_col=2, res_name_col=3, data_col=5, error_col=6, sep=',')
 
 
         The following commands will read the R1 data out of the file 'r1.out' where the columns are
         separated by the symbol '%'
 
-        relax> relax_data.read('R1', '300', 300.1 * 1e6, 'r1.out', sep='%')
+        relax> relax_data.read('R1_300', 'R1', 300.1 * 1e6, 'r1.out', sep='%')
         """
 
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.read("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label)
+            text = text + "ri_id=" + repr(ri_id)
+            text = text + ", ri_type=" + repr(ri_type)
             text = text + ", frq=" + repr(frq)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -337,8 +321,8 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation ID string')
+        arg_check.is_str(ri_type, 'relaxation type')
         arg_check.is_num(frq, 'frequency')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
@@ -354,18 +338,16 @@ class Relax_data(User_fn_class):
         arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
-        relax_data.read(ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
+        relax_data.read(ri_id=ri_id, ri_type=ri_type, frq=frq, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
-    def temp_calibration(self, ri_label=None, frq_label=None, method=None):
+    def temp_calibration(self, ri_id=None, method=None):
         """Specify the temperature calibration method used.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
         method:  The calibration method.
 
@@ -386,29 +368,25 @@ class Relax_data(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.temp_calibration("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label)
+            text = text + "ri_id=" + repr(ri_id)
             text = text + ", method=" + repr(method) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation label')
         arg_check.is_str(method, 'temperature calibration method')
 
         # Execute the functional code.
-        relax_data.temp_calibration(ri_label=ri_label, frq_label=frq_label, method=method)
+        relax_data.temp_calibration(ri_id=ri_id, method=method)
 
 
-    def temp_control(self, ri_label=None, frq_label=None, method=None):
+    def temp_control(self, ri_id=None, method=None):
         """Specify the temperature control method used.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
         method:  The control method.
 
@@ -430,29 +408,25 @@ class Relax_data(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.temp_control("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label)
+            text = text + "ri_id=" + repr(ri_id)
             text = text + ", method=" + repr(method) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation label')
         arg_check.is_str(method, 'temperature control method')
 
         # Execute the functional code.
-        relax_data.temp_control(ri_label=ri_label, frq_label=frq_label, method=method)
+        relax_data.temp_control(ri_id=ri_id, method=method)
 
 
-    def write(self, ri_label=None, frq_label=None, file=None, dir=None, force=False):
-        """Function for writing R1, R2, or NOE relaxation data to a file.
+    def write(self, ri_id=None, file=None, dir=None, force=False):
+        """Write relaxation data to a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        ri_id:  The relaxation data ID string.
 
         file:  The name of the file.
 
@@ -465,26 +439,23 @@ class Relax_data(User_fn_class):
         ~~~~~~~~~~~
 
         If no directory name is given, the file will be placed in the current working directory.
-        The 'ri_label' and 'frq_label' arguments are required for selecting which relaxation data
-        to write to file.
+        The 'ri_id' argument is required for selecting which relaxation data to write to file.
         """
 
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.write("
-            text = text + "ri_label=" + repr(ri_label)
-            text = text + ", frq_label=" + repr(frq_label)
+            text = text + "ri_id=" + repr(ri_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_label, 'relaxation label')
-        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(ri_id, 'relaxation label')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        relax_data.write(ri_label=ri_label, frq_label=frq_label, file=file, dir=dir, force=force)
+        relax_data.write(ri_id=ri_id, file=file, dir=dir, force=force)

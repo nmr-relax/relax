@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2011 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,7 +30,6 @@ from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
 from specific_fns.relax_disp import Relax_disp
 from specific_fns.relax_fit import Relax_fit
-from specific_fns.srls import SRLS
 from relax_errors import RelaxError, RelaxFuncSetupError
 
 
@@ -44,7 +43,6 @@ n_state_model_obj = N_state_model()
 noe_obj = Noe()
 relax_disp_obj = Relax_disp()
 relax_fit_obj = Relax_fit()
-srls_obj = SRLS()
 
 
 # The function for returning the requested specific function.
@@ -295,10 +293,6 @@ def get_instance(function_type):
     if function_type == 'hybrid':
         return hybrid_obj
 
-    # SRLS.
-    if function_type == 'srls':
-        return srls_obj
-
     # Unknown analysis.
     raise RelaxError("The function_type " + repr(function_type) + " is unknown.")
 
@@ -341,10 +335,6 @@ def get_string(function_type):
     # Hybrid models.
     if function_type == 'hybrid':
         return "hybrid models"
-
-    # SRLS
-    if function_type == 'srls':
-        return "SRLS analysis"
 
     # Unknown analysis.
     raise RelaxError("The function_type " + repr(function_type) + " is unknown.")

@@ -73,32 +73,22 @@ class Relax_data_base_class:
         # First read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
         sequence.read(file='Ap4Aase.Noe.600.bz2', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2)
 
+        # The ID string.
+        ri_id = 'NOE_600'
+
         # Then read the data out of the same file.
-        self.relax_data_fns.read(ri_label='NOE', frq_label='600', frq=600e6, file='Ap4Aase.Noe.600.bz2', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax_data_fns.read(ri_id=ri_id, ri_type='NOE', frq=600e6, file='Ap4Aase.Noe.600.bz2', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Test the pipe data structures.
-        self.assertEqual(cdp.frq, [600e6])
-        self.assertEqual(cdp.frq_labels, ['600'])
-        self.assertEqual(cdp.noe_r1_table, [None])
-        self.assertEqual(cdp.num_frq, 1)
-        self.assertEqual(cdp.num_ri, 1)
-        self.assertEqual(cdp.remap_table, [0])
-        self.assertEqual(cdp.ri_labels, ['NOE'])
+        self.assertEqual(cdp.frq[ri_id], 600e6)
+        self.assertEqual(cdp.ri_type[ri_id], 'NOE')
+        self.assertEqual(cdp.ri_ids[0], ri_id)
 
         # Test the spin specific data.
         for i in xrange(len(cdp.mol[0].res)):
             # The spin container.
             spin = cdp.mol[0].res[i].spin[0]
 
-            # Auxillary data.
-            self.assertEqual(spin.frq, [600e6])
-            self.assertEqual(spin.frq_labels, ['600'])
-            self.assertEqual(spin.noe_r1_table, [None])
-            self.assertEqual(spin.num_frq, 1)
-            self.assertEqual(spin.num_ri, 1)
-            self.assertEqual(spin.remap_table, [0])
-            self.assertEqual(spin.ri_labels, ['NOE'])
-
             # Relaxation data.
-            self.assertEqual(spin.relax_data, [self.Ap4Aase_600_NOE_val[i]])
-            self.assertEqual(spin.relax_error, [self.Ap4Aase_600_NOE_err[i]])
+            self.assertEqual(spin.ri_data[ri_id], self.Ap4Aase_600_NOE_val[i])
+            self.assertEqual(spin.ri_data_err[ri_id], self.Ap4Aase_600_NOE_err[i])

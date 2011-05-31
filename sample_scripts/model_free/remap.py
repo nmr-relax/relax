@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,64 +20,64 @@
 #                                                                             #
 ###############################################################################
 
-# This script performs a model-free analysis for the single model 'm4'.
-#######################################################################
+"""Script for mapping the model-free space."""
+
+
+# Python module imports.
+from numpy import float64, array
+
+
+def remap(values):
+    """Remapping function."""
+
+    # S2f.
+    s2f = values[0]
+
+    # S2s.
+    if values[0] == 0.0:
+        s2s = 1e99
+    else:
+        s2s = values[1]*values[0]
+
+    # ts.
+    ts = values[2]
+
+    return array([s2f, s2s, ts], float64)
+
+
+# The model-free model name.
+name = 'm5'
 
 # Create the data pipe.
-name = 'm4'
 pipe.create(name, 'mf')
 
 # Load the sequence.
 sequence.read('noe.500.out', res_num_col=1)
 
-# Load a PDB file.
-#structure.read_pdb('example.pdb')
-
 # Load the relaxation data.
-relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', res_num_col=1, data_col=3, error_col=4)
-relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', res_num_col=1, data_col=3, error_col=4)
-relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', res_num_col=1, data_col=3, error_col=4)
-relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', res_num_col=1, data_col=3, error_col=4)
-relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', res_num_col=1, data_col=3, error_col=4)
-relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file='r1.600.out', res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=600.0*1e6, file='r2.600.out', res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0*1e6, file='noe.600.out', res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='R1_500',  ri_type='R1',  frq=500.0*1e6, file='r1.500.out', res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.0*1e6, file='r2.500.out', res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out', res_num_col=1, data_col=3, error_col=4)
 
 # Setup other values.
-diffusion_tensor.init(10e-9, fixed=True)
-#diffusion_tensor.init((2e-8, 1.3, 60, 290), param_types=0, spheroid_type='prolate', fixed=True)
-#diffusion_tensor.init((9e-8, 0.5, 0.3, 60, 290, 100), fixed=False)
-value.set(1.02 * 1e-10, 'bond_length')
-value.set(-172 * 1e-6, 'csa')
-#value.set(1.0, 's2f')
-#value.set(0.970, 's2')
-#value.set(2048e-12, 'te')
-#value.set(2048e-12, 'ts')
-#value.set(2048e-12, 'tf')
-#value.set(0.149/(2*pi*600e6)**2, 'rex')
+diffusion_tensor.init(1e-8)
+value.set(1.02*1e-10, 'bond_length')
+value.set(-172*1e-6, 'csa')
 value.set('15N', 'heteronucleus')
-value.set('1H', 'proton')
 
 # Select the model-free model.
 model_free.select_model(model=name)
-#model_free.create_model(model=name, equation='mf_ext2', params=['S2f', 'S2s', 'ts'])
 
-# Fixed value.
-#fix('all_res')
+# Map data.
+inc = 100
+params = ['S2f', 'ts', 'S2s']
+lower = [0.5, 0, 0.5]
+upper = [1.0, 300e-12, 1.0]
+point = [0.952, 32.0e-12, 0.582]
+point = [point[0], point[1], point[0]*point[2]]
 
-# Grid search.
-grid_search(inc=11)
-#value.set()
-
-# Minimise.
-minimise('newton')
-
-# Monte Carlo simulations.
-#monte_carlo.setup(number=100)
-#monte_carlo.create_data()
-#monte_carlo.initial_values()
-#minimise('newton')
-#eliminate()
-#monte_carlo.error_analysis()
-
-# Finish.
-results.write(file='results', force=True)
-state.save('save', force=True)
+dx.map(params=params, spin_id=":1", inc=inc, lower=lower, upper=upper, file_prefix='remap', point=point, axis_incs=5, remap=remap)
+dx.execute(file='remap')

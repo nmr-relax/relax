@@ -538,7 +538,7 @@ class Molmol:
         """Function for generating the bond width and colours for correlation times."""
 
         # The Rex value at the first field strength.
-        rex = rex * (2.0 * pi * cdp.frq[0])**2
+        rex = rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
 
         # The bond width (aiming for a width range of 2 to 0 for Rex values of 0 to 25 s^-1).
         width = 2.0 - 2.0 / (rex/5.0 + 1.0)

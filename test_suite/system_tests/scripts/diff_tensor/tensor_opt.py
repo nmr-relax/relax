@@ -33,9 +33,9 @@ structure.vectors(spin_id='@N', attached='H*', ave=False)
 # Load the relaxation data.
 frq = array([500, 600, 700, 800], float64)
 for i in range(len(frq)):
-    relax_data.read('R1', str(int(frq[i])), frq[i] * 1e6, 'R1.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
-    relax_data.read('R2', str(int(frq[i])), frq[i] * 1e6, 'R2.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
-    relax_data.read('NOE', str(int(frq[i])), frq[i] * 1e6, 'NOE.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
+    relax_data.read(ri_id='R1_%i'%frq[i],  ri_type='R1',  frq=frq[i]*1e6, file='R1.%i.out'%frq[i], dir=path, res_num_col=1, data_col=2, error_col=3)
+    relax_data.read(ri_id='R2_%i'%frq[i],  ri_type='R2',  frq=frq[i]*1e6, file='R2.%i.out'%frq[i], dir=path, res_num_col=1, data_col=2, error_col=3)
+    relax_data.read(ri_id='NOE_%i'%frq[i], ri_type='NOE', frq=frq[i]*1e6, file='NOE.%i.out'%frq[i], dir=path, res_num_col=1, data_col=2, error_col=3)
 
 # Initialise the diffusion tensors.
 if ds.diff_type == 'sphere':
