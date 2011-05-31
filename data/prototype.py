@@ -40,8 +40,8 @@ class Prototype(object):
 
         # Loop over all objects in self and make deepcopies of them.
         for name in dir(self):
-            # Skip all names begining with '__'.
-            if search('^__', name):
+            # Skip all names begining with '_'.
+            if search('^_', name):
                 continue
 
             # Skip the class methods.

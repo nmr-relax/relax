@@ -164,11 +164,6 @@ def bmrb_write(star):
     attached_isotope_list = []
     attached_element_list = []
 
-    # Relax data labels.
-    labels = []
-    for i in range(cdp.num_ri):
-        labels.append(cdp.ri_labels[i] + '_' + cdp.frq_labels[cdp.remap_table[i]])
-
     # Store the spin specific data in lists for later use.
     for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
         # Skip deselected spins.

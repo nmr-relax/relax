@@ -20,8 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-# Script for calculating NOEs.
-##############################
+"""Script for calculating NOEs."""
 
 
 # Create the NOE data pipe.

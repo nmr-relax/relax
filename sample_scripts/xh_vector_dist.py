@@ -20,12 +20,11 @@
 #                                                                             #
 ###############################################################################
 
+"""Script for creating a PDB representation of the distribution of XH bond vectors."""
+
+
 # Python module imports.
 from os import pardir, sep
-
-
-# Script for creating a PDB representation of the distribution of XH bond vectors.
-##################################################################################
 
 
 # Create the data pipe.

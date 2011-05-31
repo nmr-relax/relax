@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -34,6 +34,7 @@ from relax_data import Relax_data
 from script import Script
 from sequence import Sequence
 from spin import Spin
+from value import Value
 
 
 # The package __all__ list.
@@ -44,7 +45,8 @@ __all__ = ['base',
            'relax_data',
            'script',
            'sequence',
-           'spin']
+           'spin',
+           'value']
 
 
 class User_functions:
@@ -69,6 +71,7 @@ class User_functions:
         self.script = Script(self.gui, self.interpreter)
         self.sequence = Sequence(self.gui, self.interpreter)
         self.spin = Spin(self.gui, self.interpreter)
+        self.value = Value(self.gui, self.interpreter)
 
 
     def destroy(self):
@@ -81,3 +84,4 @@ class User_functions:
         self.relax_data.destroy()
         self.sequence.destroy()
         self.spin.destroy()
+        self.value.destroy()

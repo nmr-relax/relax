@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -36,7 +36,6 @@ from specific_fns.model_free import Model_free
 from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
 from specific_fns.relax_fit import Relax_fit
-from specific_fns.srls import SRLS
 
 
 class Test_api(TestCase):
@@ -255,17 +254,3 @@ class Test_api(TestCase):
 
         # Check.
         self.__check_objects(Relax_fit())
-
-
-    def test_srls_method_args(self):
-        """The SRLS object public method args check."""
-
-        # Check.
-        self.__check_method_args(SRLS())
-
-
-    def test_srls_objects(self):
-        """The SRLS object public objects check."""
-
-        # Check.
-        self.__check_objects(SRLS())

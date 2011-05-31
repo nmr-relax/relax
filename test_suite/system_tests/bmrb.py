@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from copy import deepcopy
 import inspect
 from numpy import ndarray
 from os import remove, sep
@@ -85,7 +86,7 @@ class Bmrb(SystemTestCase):
         if version == '3.0':
             blacklist_spin = blacklist_spin + ['r', 'local_tm', 'local_tm_err']
         blacklist_diff = []
-        blacklist_global = ['diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'sim_number', 'sim_state'] + ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels']
+        blacklist_global = ['diff_tensor', 'exp_info', 'hybrid_pipes', 'mol', 'sim_number', 'sim_state'] + ['ri_ids', 'frq', 'ri_type']
 
         # The data pipes.
         old_pipe = ds[old_pipe_name]
@@ -115,7 +116,7 @@ class Bmrb(SystemTestCase):
                     # Check the containers.
                     self.data_cont_comp(label='Spin', cont_old=old_pipe.mol[i].res[j].spin[k], cont_new=new_pipe.mol[i].res[j].spin[k], blacklist=blacklist_spin)
                     if hasattr(old_pipe.mol[i].res[j].spin[k], 'ri_labels'):
-                        self.data_ri_comp(label='Global', cont_old=old_pipe.mol[i].res[j].spin[k], cont_new=new_pipe.mol[i].res[j].spin[k])
+                        self.data_ri_comp_spin(cont_old=old_pipe.mol[i].res[j].spin[k], cont_new=new_pipe.mol[i].res[j].spin[k])
 
         # The diffusion tensor.
         if version != '3.0':
@@ -124,8 +125,8 @@ class Bmrb(SystemTestCase):
 
         # The global data structures.
         self.data_cont_comp(label='Global', cont_old=old_pipe, cont_new=new_pipe, blacklist=blacklist_global)
-        if hasattr(old_pipe, 'ri_labels'):
-            self.data_ri_comp(label='Global', cont_old=old_pipe, cont_new=new_pipe)
+        if hasattr(old_pipe, 'ri_ids'):
+            self.data_ri_comp_pipe(cont_old=old_pipe, cont_new=new_pipe)
 
 
     def data_cont_comp(self, label=None, cont_old=None, cont_new=None, prec=7, blacklist=[]):
@@ -197,40 +198,44 @@ class Bmrb(SystemTestCase):
                 self.assertEqual(obj_old, obj_new)
 
 
-    def data_ri_comp(self, label=None, cont_old=None, cont_new=None, prec=7):
-        """Compare the contents of the two data containers."""
+    def data_ri_comp_pipe(self, cont_old=None, cont_new=None):
+        """Compare the contents of the two pipe data containers."""
 
         # Check that the new container has relaxation data.
-        for name in ['frq', 'frq_labels', 'noe_r1_table', 'remap_table', 'ri_labels']:
+        for name in ['frq', 'ri_ids', 'ri_type']:
             self.assert_(hasattr(cont_new, name))
 
-        # Loop over the original relaxation data.
-        for i in range(cont_old.num_ri):
-            # A flag to make sure the data matches.
-            match = False
+        # Check the IDs.
+        old_ids = deepcopy(cont_old.ri_ids)
+        new_ids = deepcopy(cont_new.ri_ids)
+        old_ids.sort()
+        new_ids.sort()
+        self.assertEqual(old_ids, new_ids)
 
-            # Loop over the new relaxation data.
-            for j in range(cont_old.num_ri):
-                # Matching relaxation data.
-                if cont_old.ri_labels[i] == cont_new.ri_labels[j] and cont_old.frq_labels[cont_old.remap_table[i]] == cont_new.frq_labels[cont_new.remap_table[j]]:
-                    # NOE to R1 checks.
-                    if cont_old.noe_r1_table[i] == None:
-                        self.assertEqual(cont_new.noe_r1_table[j], None)
-                    else:
-                        self.assertEqual(cont_old.ri_labels[cont_old.noe_r1_table[i]], cont_new.ri_labels[cont_new.noe_r1_table[j]])
-                        self.assertEqual(cont_old.remap_table[cont_old.noe_r1_table[i]], cont_new.remap_table[cont_new.noe_r1_table[j]])
-                        self.assertEqual(cont_old.frq_labels[cont_old.remap_table[cont_old.noe_r1_table[i]]], cont_new.frq_labels[cont_new.remap_table[cont_new.noe_r1_table[j]]])
+        # Check the frequencies and types.
+        for ri_id in old_ids:
+            self.assertEqual(cont_old.frq[ri_id], cont_new.frq[ri_id])
+            self.assertEqual(cont_old.ri_type[ri_id], cont_new.ri_type[ri_id])
 
-                    # Relaxation data checks.
-                    if hasattr(cont_old, 'relax_data'):
-                        self.assertAlmostEqual(cont_old.relax_data[i],   cont_new.relax_data[j])
-                        self.assertAlmostEqual(cont_old.relax_error[i], cont_new.relax_error[j])
 
-                    # Flag.
-                    match = True
+    def data_ri_comp_spin(self, cont_old=None, cont_new=None):
+        """Compare the contents of the two spin data containers."""
 
-            # No match.
-            self.assert_(match)
+        # Check that the new container has relaxation data.
+        for name in ['ri_data', 'ri_data_err']:
+            self.assert_(hasattr(cont_new, name))
+
+        # Check the IDs.
+        old_ids = cont_old.ri_data.keys()
+        new_ids = cont_new.ri_data.keys()
+        old_ids.sort()
+        new_ids.sort()
+        self.assertEqual(old_ids, new_ids)
+
+        # Check the data and errors.
+        for ri_id in old_ids:
+            self.assertEqual(cont_old.ri_data[ri_id], cont_new.ri_data[ri_id])
+            self.assertEqual(cont_old.ri_data_err[ri_id], cont_new.ri_data_err[ri_id])
 
 
     def test_rw_bmrb_3_0_model_free(self):

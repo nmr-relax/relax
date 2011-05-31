@@ -20,8 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-# Script for relaxation curve fitting.
-######################################
+"""Script for relaxation curve fitting."""
 
 
 # Create the 'rx' data pipe.

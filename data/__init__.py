@@ -240,7 +240,7 @@ class Relax_data_store(dict):
         relax_node = doc.childNodes[0]
 
         # Get the relax version of the XML file.
-        relax_version = str(relax_node.getAttribute('version'))
+        file_version = str(relax_node.getAttribute('version'))
 
         # Get the GUI nodes.
         gui_nodes = relax_node.getElementsByTagName('relax_gui')
@@ -307,7 +307,7 @@ class Relax_data_store(dict):
                 self.add(pipe_name, pipe_type)
 
                 # Fill the pipe.
-                self[pipe_name].from_xml(pipe_node, dir=dir)
+                self[pipe_name].from_xml(pipe_node, file_version=file_version, dir=dir)
 
 
     def to_xml(self, file, pipes=None):
