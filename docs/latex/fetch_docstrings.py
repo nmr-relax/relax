@@ -136,8 +136,6 @@ class Fetch_docstrings:
         self.blacklist = []
 
         # Skip these.
-        self.blacklist.append('Numeric')
-        self.blacklist.append('Scientific')
         self.blacklist.append('pi')
         self.blacklist.append('script')
 
