@@ -44,14 +44,8 @@ class Test_scientific(TestCase):
         @type methodName:       str
         """
 
-        # Missing module.
-        if not dep_check.scientific_module:
-            # Store in the status object. 
-            status.skipped_tests.append([methodName, 'Scientific Python', 'unit'])
-
         # Execute the base class method.
         super(Test_scientific, self).__init__(methodName)
-
 
 
     def setUp(self):
