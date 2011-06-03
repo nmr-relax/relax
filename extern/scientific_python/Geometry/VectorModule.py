@@ -6,7 +6,7 @@
 # last revision: 2008-8-27
 #
 
-from scientific_python import N; Numeric = N
+from extern.scientific_python import N; Numeric = N
 
 
 class Vector:
@@ -82,7 +82,7 @@ class Vector:
         return Vector(other.array-self.array)
 
     def __mul__(self, other):
-        from scientific_python import Geometry
+        from extern.scientific_python import Geometry
         if isVector(other):
             return Numeric.add.reduce(self.array*other.array)
         elif Geometry.isTensor(other):
@@ -97,7 +97,7 @@ class Vector:
             return Vector(Numeric.multiply(self.array, other))
 
     def __rmul__(self, other):
-        from scientific_python import Geometry
+        from extern.scientific_python import Geometry
         if Geometry.isTensor(other):
             product = other.dot(Geometry.Tensor(self.array))
             if product.rank == 1:
@@ -183,20 +183,20 @@ class Vector:
     def asTensor(self):
         """
         @returns: an equivalent rank-1 tensor object
-        @rtype: L{scientific_python.Geometry.Tensor}
+        @rtype: L{extern.scientific_python.Geometry.Tensor}
         """
-        from scientific_python import Geometry
+        from extern.scientific_python import Geometry
         return Geometry.Tensor(self.array, 1)
 
     def dyadicProduct(self, other):
         """
         @param other: a vector or a tensor
-        @type other: L{Vector} or L{scientific_python.Geometry.Tensor}
+        @type other: L{Vector} or L{extern.scientific_python.Geometry.Tensor}
         @returns: the dyadic product with other
-        @rtype: L{scientific_python.Geometry.Tensor}
+        @rtype: L{extern.scientific_python.Geometry.Tensor}
         @raises TypeError: if other is not a vector or a tensor
         """
-        from scientific_python import Geometry
+        from extern.scientific_python import Geometry
         if isVector(other):
             return Geometry.Tensor(self.array[:, N.NewAxis]
                                    * other.array[N.NewAxis, :], 1)

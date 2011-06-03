@@ -5,7 +5,7 @@
 # last revision: 2006-11-23
 #
 
-from scientific_python import N; Numeric = N
+from extern.scientific_python import N; Numeric = N
 
 class Tensor:
 
@@ -66,7 +66,7 @@ class Tensor:
         return Tensor(other.array-self.array, 1)
 
     def __mul__(self, other):
-        from scientific_python import Geometry
+        from extern.scientific_python import Geometry
         if isTensor(other):
             a = self.array[self.rank*(slice(None),)+(N.NewAxis,)]
             b = other.array[other.rank*(slice(None),)+(N.NewAxis,)]
@@ -110,10 +110,10 @@ class Tensor:
     def asVector(self):
         """
         @returns: an equivalent vector object
-        @rtype: L{scientific_python.Geometry.Vector}
+        @rtype: L{extern.scientific_python.Geometry.Vector}
         @raises ValueError: if rank > 1
         """
-        from scientific_python import Geometry
+        from extern.scientific_python import Geometry
         if self.rank == 1:
             return Geometry.Vector(self.array)
         else:
@@ -191,7 +191,7 @@ class Tensor:
         @raises ValueError: if rank !=2 
         """
         if self.rank == 2:
-            from scientific_python.LA import eigenvalues
+            from extern.scientific_python.LA import eigenvalues
             return eigenvalues(self.array)
         else:
             raise ValueError('Undefined operation')
@@ -204,7 +204,7 @@ class Tensor:
         @raises ValueError: if rank !=2 
         """
         if self.rank == 2:
-            from scientific_python.LA import eigenvectors
+            from extern.scientific_python.LA import eigenvectors
             ev, vectors = eigenvectors(self.array)
             return ev, Tensor(vectors)
         else:
@@ -217,7 +217,7 @@ class Tensor:
         @raises ValueError: if rank !=2 
         """
         if self.rank == 2:
-            from scientific_python.LA import inverse
+            from extern.scientific_python.LA import inverse
             return Tensor(inverse(self.array))
         else:
             raise ValueError('Undefined operation')

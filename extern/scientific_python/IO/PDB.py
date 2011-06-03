@@ -64,10 +64,10 @@ Example::
 @undocumented: DummyChain
 """
 
-from scientific_python.IO.TextFile import TextFile
-from scientific_python.IO.FortranFormat import FortranFormat, FortranLine
-from scientific_python.Geometry import Vector, Tensor
-from scientific_python import N
+from extern.scientific_python.IO.TextFile import TextFile
+from extern.scientific_python.IO.FortranFormat import FortranFormat, FortranLine
+from extern.scientific_python.Geometry import Vector, Tensor
+from extern.scientific_python import N
 from PDBExportFilters import export_filters
 import copy, string
 
@@ -142,7 +142,7 @@ class PDBFile:
     X{PDB} file with access at the record level
 
     The low-level file access is handled by the module
-    L{scientific_python.IO.TextFile}, therefore compressed files and URLs
+    L{extern.scientific_python.IO.TextFile}, therefore compressed files and URLs
     (for reading) can be used as well.
     """
 
@@ -154,7 +154,7 @@ class PDBFile:
         @type mode: C{str}
         @param subformat: indicates a specific dialect of the PDB format.
                           Subformats are defined in
-                          L{scientific_python.IO.PDBExportFilters}; they are used
+                          L{extern.scientific_python.IO.PDBExportFilters}; they are used
                           only when writing.
         @type subformat: C{str} or C{NoneType}
         """
@@ -407,7 +407,7 @@ class PDBFile:
         @param name: the atom name
         @type name: C{str}
         @param position: the atom position
-        @type position: L{scientific_python.Geometry.Vector}
+        @type position: L{extern.scientific_python.Geometry.Vector}
         @param occupancy: the occupancy
         @type occupancy: C{float}
         @param temperature_factor: the temperature factor (B-factor)
@@ -529,7 +529,7 @@ class Atom:
         @param name: the atom name
         @type name: C{str}
         @param position: the atom position
-        @type position: L{scientific_python.Geometry.Vector}
+        @type position: L{extern.scientific_python.Geometry.Vector}
         @param properties: any other atom properties as keyword parameters.
                            These properties are stored in the atom object
                            and can be accessed by indexing, as for
@@ -1378,7 +1378,7 @@ class Structure:
                     self._scale_matrix = {}
                 self._scale_matrix[type[-1]] = data
                 if type[-1] == '3': # last line read
-                    from scientific_python.Geometry.Transformation \
+                    from extern.scientific_python.Geometry.Transformation \
                          import Shear, Translation
                     l1 = self._scale_matrix['1']
                     l2 = self._scale_matrix['2']
@@ -1395,7 +1395,7 @@ class Structure:
                     self._ncs_matrix = {}
                 self._ncs_matrix[type[-1]] = data
                 if type[-1] == '3': # last line read
-                    from scientific_python.Geometry.Transformation \
+                    from extern.scientific_python.Geometry.Transformation \
                          import Rotation, Translation
                     l1 = self._ncs_matrix['1']
                     l2 = self._ncs_matrix['2']
@@ -1453,7 +1453,7 @@ class Structure:
 
     def findSpaceGroupTransformations(self):
         if self.space_group is not None and self.to_fractional is not None:
-            from scientific_python.IO.PDBSpaceGroups import \
+            from extern.scientific_python.IO.PDBSpaceGroups import \
                  getSpaceGroupTransformations
             try:
                 trs = getSpaceGroupTransformations(self.space_group)

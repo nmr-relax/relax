@@ -22,11 +22,11 @@ as one item per line.
 
 Numbers in files to be read must conform to Python/C syntax.  For
 reading files containing Fortran-style double-precision numbers
-(exponent prefixed by D), use the module L{scientific_python.IO.FortranFormat}.
+(exponent prefixed by D), use the module L{extern.scientific_python.IO.FortranFormat}.
 """
 
-from scientific_python.IO.TextFile import TextFile
-from scientific_python import N; Numeric = N
+from extern.scientific_python.IO.TextFile import TextFile
+from extern.scientific_python import N; Numeric = N
 import string
 
 def readArray(filename):

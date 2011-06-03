@@ -2,9 +2,9 @@
 # obtained from the Computational Crystallography Toolbox
 #
 
-from scientific_python.Geometry import Vector, Tensor
-from scientific_python.Geometry.Transformation import Rotation, Translation
-from scientific_python import N
+from extern.scientific_python.Geometry import Vector, Tensor
+from extern.scientific_python.Geometry.Transformation import Rotation, Translation
+from extern.scientific_python import N
 
 class SpaceGroup(object):
 
