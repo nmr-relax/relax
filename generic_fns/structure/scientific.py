@@ -54,10 +54,6 @@ class Scientific_data(Base_struct_API):
     def __init__(self):
         """Initialise the class."""
 
-        # Test for the PDB parser availability.
-        if not dep_check.scientific_pdb_module:
-            raise RelaxError("The Scientific python PDB module scientific_python.IO.PDB could not be imported.")
-
         # Execute the base class __init__() method.
         Base_struct_API.__init__(self)
 
