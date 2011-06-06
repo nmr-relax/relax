@@ -163,7 +163,7 @@ class Main(wx.Frame):
 
         # statusbar fields
         self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
-        frame_1_statusbar_fields = ["relaxGUI (C) by Michael Bieri 2009", "relax:", version]
+        frame_1_statusbar_fields = ["relaxGUI (C) 2009 Michael Bieri and (C) 2010-2011 the relax development team", "relax:", version]
         for i in range(len(frame_1_statusbar_fields)):
             self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
 
