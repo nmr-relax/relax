@@ -152,6 +152,30 @@ class Auto_rx:
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
+    def add_peaklists(self, box):
+        """Fuction to load/select peak lists and set relaxation time.""" 
+        
+        # Number of peaklists
+        pk_list = 20
+
+        # Sizer
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # Grid of peak list file names and relaxation time
+        self.peaklist = wx.grid.Grid(self.parent, -1, size=(1, 300))
+
+        # Create entries
+        self.peaklist.CreateGrid(pk_list, 2)
+
+        # Create headers
+        self.peaklist.SetColLabelValue(0, "Peak lists")
+        self.peaklist.SetColSize(0, 430)
+        self.peaklist.SetColLabelValue(1, "Relaxation time [s]")
+        self.peaklist.SetColSize(1, 150)
+
+        # Add to window
+        box.Add(self.peaklist, 0, wx.EXPAND, 0)
+
 
     def add_results_dir(self, box):
         """Create and add the results directory GUI element to the given box.
@@ -403,7 +427,7 @@ class Auto_rx:
         self.add_unresolved_spins(box)
 
         # Add the peak list selection GUI element.
-        self.load_peaklists(box)
+        self.add_peaklists(box)
         #self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, data=self.data, label=self.label, box=box)
 
         # Add the execution GUI element.
@@ -498,31 +522,6 @@ class Auto_rx:
 
         # Re-alias in the peak intensity object as well.
         self.peak_intensity.data = data
-    
-    
-    def load_peaklists(self, box):
-        """Fuction to load/select peak lists and set relaxation time.""" 
-        
-        # Number of peaklists
-        pk_list = 20
-
-        # Sizer
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Grid of peak list file names and relaxation time
-        self.peaklist = wx.grid.Grid(self.parent, -1, size=(1, 300))
-
-        # Create entries
-        self.peaklist.CreateGrid(pk_list, 2)
-
-        # Create headers
-        self.peaklist.SetColLabelValue(0, "Peak lists")
-        self.peaklist.SetColSize(0, 430)
-        self.peaklist.SetColLabelValue(1, "Relaxation time [s]")
-        self.peaklist.SetColSize(1, 150)
-
-        # Add to window
-        box.Add(self.peaklist, 0, wx.EXPAND, 0)
 
 
     def load_sequence(self, event):
