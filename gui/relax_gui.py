@@ -153,12 +153,16 @@ class Main(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: main.__set_properties
         self.SetTitle("relaxGUI " + GUI_version)
-        _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
-        self.SetIcon(_icon)
-        self.SetSize((1000, 600))
-        self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
+
+        # Disable icon if running on a Mac
+        if not 'darwin' in sys.platform:
+            _icon = wx.EmptyIcon()
+            _icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+            self.SetIcon(_icon)
+            self.SetSize((1000, 600))
+
         # statusbar fields
+        self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
         frame_1_statusbar_fields = ["relaxGUI (C) by Michael Bieri 2009", "relax:", version]
         for i in range(len(frame_1_statusbar_fields)):
             self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
