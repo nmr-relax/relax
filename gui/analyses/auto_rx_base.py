@@ -731,4 +731,32 @@ class Auto_rx:
             self.field_unresolved.SetValue(str(self.data.unresolved))
 
         # The peak lists and relaxation times.
-        self.peak_intensity.sync_ds(upload)
+        # Sync peaklist and relaxation time
+        self.sync_peaklist()
+        #Sync
+        if upload:
+            # Peak list
+            self.data.file_list = self.peakfiles
+            # Relaxation time
+            self.data.relax_times = self.rxtimes
+        else:
+            if hasattr(self.data, 'file_list'):
+                self.peakfiles = self.data.file_list
+            if hasattr(self.data, 'relax_times'):
+                self.rxtimes = self.data.relax_times
+
+
+    def sync_peaklist(self):
+        """Fucntion to read and store peaklists and relaxation times."""
+
+        # Containers
+        self.peakfiles = []
+        self.rxtimes = []
+
+        # read entries in data grid
+        for i in range(self.pk_list):
+            # Store peaklist
+            self.peakfiles.append(str(self.peaklist.GetCellValue(i, 0)))
+
+            # Store relaxation time
+            self.rxtimes.append(str(self.peaklist.GetCellValue(i, 1)))
