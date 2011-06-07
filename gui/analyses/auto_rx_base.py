@@ -175,7 +175,7 @@ class Auto_rx:
         self.peaklist.CreateGrid(self.pk_list, 2)
 
         # Create headers
-        self.peaklist.SetColLabelValue(0, "Peak lists")
+        self.peaklist.SetColLabelValue(0, "%s Peak lists" %self.label)
         self.peaklist.SetColSize(0, 370)
         self.peaklist.SetColLabelValue(1, "Relaxation time [s]")
         self.peaklist.SetColSize(1, 150)
