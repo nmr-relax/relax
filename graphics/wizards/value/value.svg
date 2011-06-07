@@ -133,7 +133,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.62"
      inkscape:cx="100.99251"
-     inkscape:cy="173.35231"
+     inkscape:cy="222.73503"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -154,7 +154,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -334,15 +334,15 @@
     <text
        xml:space="preserve"
        style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Nimbus Roman No9 L;-inkscape-font-specification:Nimbus Roman No9 L"
-       x="78.571426"
-       y="142.85715"
+       x="74.571426"
+       y="144.85715"
        id="text2907"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
          id="tspan2909"
-         x="78.571426"
-         y="142.85715"
-         style="font-size:18px;font-style:italic;-inkscape-font-specification:Bitstream Vera Sans Oblique">CSA = 172 ppm</tspan></text>
+         x="74.571426"
+         y="144.85715"
+         style="font-size:18px;font-style:italic;-inkscape-font-specification:Bitstream Vera Sans Oblique">CSA = -172 ppm</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Nimbus Roman No9 L;-inkscape-font-specification:Nimbus Roman No9 L"
