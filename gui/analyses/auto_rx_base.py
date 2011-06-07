@@ -44,7 +44,7 @@ from gui.base_classes import Container
 from gui.components.spectrum import Peak_intensity
 from gui.controller import Redirect_text, Thread_container
 from gui.derived_wx_classes import StructureTextCtrl
-from gui.filedialog import multi_openfile, opendir, openfile
+from gui.filedialog import opendir
 from gui.message import error_message, missing_data
 from gui import paths
 from gui.settings import load_sequence
@@ -152,70 +152,6 @@ class Auto_rx:
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-    def add_peaklists(self, box):
-        """Fuction to load/select peak lists and set relaxation time.""" 
-        
-        # Number of peaklists
-        self.pk_list = 50
-
-        # Sizer
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Button Sizer
-        button_sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Add peaklist button
-        add_pkl = wx.BitmapButton(self.parent, -1, bitmap=wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
-        add_pkl.SetMinSize((50, 50))
-        self.gui.Bind(wx.EVT_BUTTON, self.load_peaklist, add_pkl)
-        button_sizer.Add(add_pkl, 0, wx.ADJUST_MINSIZE, 0)
-
-        # Add VD list import
-        if self.label =='R1':
-            add_vd = wx.Button(self.parent, -1, "+VD")
-            add_vd.SetToolTipString("Add VD (variable delay) list to automatically fill in R1 relaxation times.")
-            add_vd.SetMinSize((50, 50))
-            self.gui.Bind(wx.EVT_BUTTON, self.load_delay, add_vd)
-            button_sizer.Add(add_vd, 0, wx.ADJUST_MINSIZE, 0)
-
-        # Add Vc list import
-        if self.label =='R2':
-            add_vc = wx.Button(self.parent, -1, "+VC")
-            add_vc.SetToolTipString("Add VC (variable counter) list to automatically fill in R2 relaxation times.")
-            add_vc.SetMinSize((50, 50))
-            button_sizer.Add(add_vc, 0, wx.ADJUST_MINSIZE, 0)
-
-            # Time of counter
-            self.vc_time = wx.TextCtrl(self.parent, -1, "0")
-            self.vc_time.SetToolTipString("Time of counter loop in seconds.")
-            self.vc_time.SetMinSize((50, 20))
-            self.vc_time.SetFont(wx.Font(7, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-            button_sizer.Add(self.vc_time, 0, 0 ,0)
-
-            # Action of Button
-            self.gui.Bind(wx.EVT_BUTTON, lambda evt, vc=True: self.load_delay(evt, vc), add_vc)
-
-        # Pack buttons
-        sizer.Add(button_sizer, 0, 0, 0)
-
-        # Grid of peak list file names and relaxation time
-        self.peaklist = wx.grid.Grid(self.parent, -1, size=(1, 300))
-
-        # Create entries
-        self.peaklist.CreateGrid(self.pk_list, 2)
-
-        # Create headers
-        self.peaklist.SetColLabelValue(0, "%s Peak lists" %self.label)
-        self.peaklist.SetColSize(0, 370)
-        self.peaklist.SetColLabelValue(1, "Relaxation time [s]")
-        self.peaklist.SetColSize(1, 150)
-
-        # Add grid to sizer
-        sizer.Add(self.peaklist, -1, wx.EXPAND, 0)
-
-        # Pack box
-        box.Add(sizer, 0, wx.EXPAND, 0)
 
 
     def add_results_dir(self, box):
@@ -468,8 +404,7 @@ class Auto_rx:
         self.add_unresolved_spins(box)
 
         # Add the peak list selection GUI element.
-        self.add_peaklists(box)
-        #self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, data=self.data, label=self.label, box=box)
+        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, data=self.data, label=self.label, box=box)
 
         # Add the execution GUI element.
         self.add_execute_relax(box)
@@ -561,92 +496,6 @@ class Auto_rx:
         #self.peak_intensity.data = data
 
 
-    def load_delay(self, event, vc=False):
-        """The variable delay list loading GUI element.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # VD
-        
-        # VC time is not a number
-        if vc:
-            try:
-                vc_factor = float(self.vc_time.GetValue())
-            except:
-                error_message('VC time is not a number.')
-                return
-
-        # VD
-        else:
-            vc_factor = 1
-
-        # The file
-        filename = openfile(msg='Select file.', filetype='*.*', default='all files (*.*)|*')
-
-        # Abort if nothing selected
-        if not filename:
-            return
-
-        # Open the file
-        file = open(filename, 'r')
-
-        # Read entries
-        index = 0
-        for line in file:
-            # Evaluate if line is a number
-            try:
-                t = float(line.replace('/n', ''))
-            except:
-                continue
-
-            # Write delay to peak list grid
-            self.peaklist.SetCellValue(index, 1, str(t*vc_factor))
-
-            # Next peak list
-            index = index + 1
-
-            # Too many entries in VD list
-            if index == self.pk_list:
-                error_message('Too many entries in list.')
-                return
-
-
-    def load_peaklist(self, event):
-        """Function to load peak lists to data grid.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Open files
-        files = multi_openfile(msg='Select %s peak list file' % self.label, filetype='*.*', default='all files (*.*)|*')
-
-        # Abort if no files have been selected
-        if not files:
-            return
-
-        # Fill values in data grid
-        index = 0
-        for i in range(self.pk_list):
-            # Add entry if nothing is filled in already
-            if str(self.peaklist.GetCellValue(i, 0)) == '':
-                # Write peak file
-                self.peaklist.SetCellValue(i, 0, str(files[index]))
-
-                # Next file
-                index = index + 1
-
-                # Stop if no files left
-                if index == len(files):
-                    break
-
-        # Error message if not all files were loaded
-        if index < (len(files)-1):
-                error_message('Not all files could be loaded.')
-
-
     def load_sequence(self, event):
         """The sequence loading GUI element.
 
@@ -731,38 +580,4 @@ class Auto_rx:
             self.field_unresolved.SetValue(str(self.data.unresolved))
 
         # The peak lists and relaxation times.
-        # Sync peaklist and relaxation time
-        self.sync_peaklist()
-        #Sync
-        if upload:
-            # Peak list
-            self.data.file_list = self.peakfiles
-            # Relaxation time
-            self.data.relax_times = self.rxtimes
-        else:
-            if hasattr(self.data, 'file_list'):
-                self.peakfiles = self.data.file_list
-                # Fill in
-                for i in range(len(self.peakfiles)):
-                    self.peaklist.SetCellValue(i, 0, str(self.peakfiles[i]))
-            if hasattr(self.data, 'relax_times'):
-                self.rxtimes = self.data.relax_times
-                # Fill in
-                for i in range(len(self.rxtimes)):
-                    self.peaklist.SetCellValue(i, 1, str(self.rxtimes[i]))
-
-
-    def sync_peaklist(self):
-        """Fucntion to read and store peaklists and relaxation times."""
-
-        # Containers
-        self.peakfiles = []
-        self.rxtimes = []
-
-        # read entries in data grid
-        for i in range(self.pk_list):
-            # Store peaklist
-            self.peakfiles.append(str(self.peaklist.GetCellValue(i, 0)))
-
-            # Store relaxation time
-            self.rxtimes.append(str(self.peaklist.GetCellValue(i, 1)))
+        self.peak_intensity.sync_ds(upload)
