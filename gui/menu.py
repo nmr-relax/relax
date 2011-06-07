@@ -104,7 +104,7 @@ class Menu:
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_item(menu, id=40, text="relax user &manual\tF1", icon=paths.icon_16x16.manual))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_item(menu, id=41, text="&Contact relaxGUI (relax-users@gna.org)", icon=paths.icon_16x16.contact))
+        menu.AppendItem(self.build_menu_item(menu, id=41, text="Mailing list &contact (relax-users@gna.org)", icon=paths.icon_16x16.contact))
         menu.AppendItem(self.build_menu_item(menu, id=42, text="&References", icon=paths.icon_16x16.ref))
         menu.AppendSeparator()
         menu.AppendItem(self.build_menu_item(menu, id=43, text="About relaxG&UI", icon=paths.icon_16x16.about_relaxgui))
