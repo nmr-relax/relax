@@ -548,8 +548,15 @@ class Bieri11(Ref):
 
     type           = "journal"
     author         = "Bieri, M., d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Michael", "Bieri", "M.", ""], ["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "relaxGUI: a new software for fast and simple NMR relaxation data analysis and calculation of ps-ns and micro-s motion of proteins"
-    status         = "submitted"
+    journal        = "J. Biomol. NMR"
+    journal_full   = "Journal of Biomolecular NMR"
+    abstract       = "Investigation of protein dynamics on the ps-ns and mus-ms timeframes provides detailed insight into the mechanisms of enzymes and the binding properties of proteins. Nuclear magnetic resonance (NMR) is an excellent tool for studying protein dynamics at atomic resolution. Analysis of relaxation data using model-free analysis can be a tedious and time consuming process, which requires good knowledge of scripting procedures. The software relaxGUI was developed for fast and simple model-free analysis and is fully integrated into the software package relax. It is written in Python and uses wxPython to build the graphical user interface (GUI) for maximum performance and multi-platform use. This software allows the analysis of NMR relaxation data with ease and the generation of publication quality graphs as well as color coded images of molecular structures. The interface is designed for simple data analysis and management. The software was tested and validated against the command line version of relax."
+    authoraddress  = "Department of Biochemistry and Molecular Biology, University of Melbourne, Melbourne, Victoria 3010, Australia. ejdauv@pgrad.unimelb.edu.au"
+    doi            = "10.1007/s10858-011-9509-1"
+    pubmed_id      = 21618018
+    status         = "published"
     year           = 2011
 
 
