@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Michael Bieri                                            #
+# Copyright (C) 2009-2011 Michael Bieri                                       #
 # Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -157,7 +157,7 @@ class Auto_rx:
         """Fuction to load/select peak lists and set relaxation time.""" 
         
         # Number of peaklists
-        pk_list = 20
+        self.pk_list = 20
 
         # Sizer
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -165,13 +165,14 @@ class Auto_rx:
         # Add peaklist button
         add_pkl = wx.BitmapButton(self.parent, -1, bitmap=wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
         add_pkl.SetMinSize((50, 50))
+        self.gui.Bind(wx.EVT_BUTTON, self.load_peaklist, add_pkl)
         sizer.Add(add_pkl, 0, wx.ADJUST_MINSIZE, 0)
 
         # Grid of peak list file names and relaxation time
         self.peaklist = wx.grid.Grid(self.parent, -1, size=(1, 300))
 
         # Create entries
-        self.peaklist.CreateGrid(pk_list, 2)
+        self.peaklist.CreateGrid(self.pk_list, 2)
 
         # Create headers
         self.peaklist.SetColLabelValue(0, "Peak lists")
@@ -531,6 +532,42 @@ class Auto_rx:
 
         # Re-alias in the peak intensity object as well.
         self.peak_intensity.data = data
+
+
+    def load_peaklist(self, event):
+        """Function to load peak lists to data grid.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Open files
+        files = multi_openfile(msg='Select %s peak list file' % self.label, filetype='*.*', default='all files (*.*)|*')
+        print str(files)
+
+        # Abort if no files have been selected
+        if not files:
+            return
+
+        # Fill values in data grid
+        index = 0
+        for i in range(self.pk_list):
+            # Add entry if nothing is filled in already
+            if str(self.peaklist.GetCellValue(i, 0)) == '':
+                # Write peak file
+                self.peaklist.SetCellValue(i, 0, str(files[index]))
+                print str(files[index])
+
+                # Next file
+                index = index + 1
+
+                # Stop if no files left
+                if index == len(files):
+                    break
+
+        # Error message if not all files were loaded
+        if index < (len(files)-1):
+                error_message('Not all files could be loaded.')
 
 
     def load_sequence(self, event):
