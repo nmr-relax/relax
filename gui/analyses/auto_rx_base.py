@@ -162,11 +162,25 @@ class Auto_rx:
         # Sizer
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        # Button Sizer
+        button_sizer = wx.BoxSizer(wx.VERTICAL)
+
         # Add peaklist button
         add_pkl = wx.BitmapButton(self.parent, -1, bitmap=wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
         add_pkl.SetMinSize((50, 50))
         self.gui.Bind(wx.EVT_BUTTON, self.load_peaklist, add_pkl)
-        sizer.Add(add_pkl, 0, wx.ADJUST_MINSIZE, 0)
+        button_sizer.Add(add_pkl, 0, wx.ADJUST_MINSIZE, 0)
+
+        # Add VD list import
+        if self.label =='R1':
+            add_vd = wx.Button(self.parent, -1, "+VD")
+            add_vd.SetToolTipString("Add VD (variable delay) list to automatically fill in R1 relaxation times.")
+            add_vd.SetMinSize((50, 50))
+            self.gui.Bind(wx.EVT_BUTTON, self.load_peaklist, add_vd)
+            button_sizer.Add(add_vd, 0, wx.ADJUST_MINSIZE, 0)
+
+        # Pack buttons
+        sizer.Add(button_sizer, 0, 0, 0)
 
         # Grid of peak list file names and relaxation time
         self.peaklist = wx.grid.Grid(self.parent, -1, size=(1, 300))
