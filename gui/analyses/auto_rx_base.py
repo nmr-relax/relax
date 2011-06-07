@@ -37,6 +37,7 @@ from auto_analyses.relax_fit import Relax_fit
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_io import DummyFileObject
 from status import Status; status = Status()
+from gui import paths
 
 # relaxGUI module imports.
 from gui.base_classes import Container
@@ -159,7 +160,12 @@ class Auto_rx:
         pk_list = 20
 
         # Sizer
-        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Add peaklist button
+        add_pkl = wx.BitmapButton(self.parent, -1, bitmap=wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        add_pkl.SetMinSize((50, 50))
+        sizer.Add(add_pkl, 0, wx.ADJUST_MINSIZE, 0)
 
         # Grid of peak list file names and relaxation time
         self.peaklist = wx.grid.Grid(self.parent, -1, size=(1, 300))
@@ -169,12 +175,15 @@ class Auto_rx:
 
         # Create headers
         self.peaklist.SetColLabelValue(0, "Peak lists")
-        self.peaklist.SetColSize(0, 430)
+        self.peaklist.SetColSize(0, 370)
         self.peaklist.SetColLabelValue(1, "Relaxation time [s]")
         self.peaklist.SetColSize(1, 150)
 
-        # Add to window
-        box.Add(self.peaklist, 0, wx.EXPAND, 0)
+        # Add grid to sizer
+        sizer.Add(self.peaklist, -1, wx.EXPAND, 0)
+
+        # Pack box
+        box.Add(sizer, 0, wx.EXPAND, 0)
 
 
     def add_results_dir(self, box):
