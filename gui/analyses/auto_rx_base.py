@@ -176,7 +176,7 @@ class Auto_rx:
             add_vd = wx.Button(self.parent, -1, "+VD")
             add_vd.SetToolTipString("Add VD (variable delay) list to automatically fill in R1 relaxation times.")
             add_vd.SetMinSize((50, 50))
-            self.gui.Bind(wx.EVT_BUTTON, self.load_vd, add_vd)
+            self.gui.Bind(wx.EVT_BUTTON, self.load_delay, add_vd)
             button_sizer.Add(add_vd, 0, wx.ADJUST_MINSIZE, 0)
 
         # Add Vc list import
@@ -184,15 +184,17 @@ class Auto_rx:
             add_vc = wx.Button(self.parent, -1, "+VC")
             add_vc.SetToolTipString("Add VC (variable counter) list to automatically fill in R2 relaxation times.")
             add_vc.SetMinSize((50, 50))
-            self.gui.Bind(wx.EVT_BUTTON, self.load_vd, add_vc)
             button_sizer.Add(add_vc, 0, wx.ADJUST_MINSIZE, 0)
 
             # Time of counter
-            label = wx.TextCtrl(self.parent, -1, "0")
-            label.SetToolTipString("Time of counter loop in seconds.")
-            label.SetMinSize((50, 20))
-            label.SetFont(wx.Font(7, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-            button_sizer.Add(label, 0, 0 ,0)
+            self.vc_time = wx.TextCtrl(self.parent, -1, "0")
+            self.vc_time.SetToolTipString("Time of counter loop in seconds.")
+            self.vc_time.SetMinSize((50, 20))
+            self.vc_time.SetFont(wx.Font(7, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+            button_sizer.Add(self.vc_time, 0, 0 ,0)
+
+            # Action of Button
+            self.gui.Bind(wx.EVT_BUTTON, lambda evt, vc=True: self.load_delay(evt, vc), add_vc)
 
         # Pack buttons
         sizer.Add(button_sizer, 0, 0, 0)
@@ -524,7 +526,7 @@ class Auto_rx:
 
         # Incomplete.
         if not complete:
-            print 'Aborting NOE caclulation as the following informations are missing:\n'
+            print 'Aborting Rx caclulation as the following informations are missing:\n'
             for i in range(len(missing)):
                 print '\t'+missing[i]
             print ''
@@ -559,6 +561,58 @@ class Auto_rx:
         self.peak_intensity.data = data
 
 
+    def load_delay(self, event, vc=False):
+        """The variable delay list loading GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # VD
+        
+        # VC time is not a number
+        if vc:
+            try:
+                vc_factor = float(self.vc_time.GetValue())
+            except:
+                error_message('VC time is not a number.')
+                return
+
+        # VD
+        else:
+            vc_factor = 1
+
+        # The file
+        filename = openfile(msg='Select file.', filetype='*.*', default='all files (*.*)|*')
+
+        # Abort if nothing selected
+        if not filename:
+            return
+
+        # Open the file
+        file = open(filename, 'r')
+
+        # Read entries
+        index = 0
+        for line in file:
+            # Evaluate if line is a number
+            try:
+                t = float(line.replace('/n', ''))
+            except:
+                continue
+
+            # Write delay to peak list grid
+            self.peaklist.SetCellValue(index, 1, str(t*vc_factor))
+
+            # Next peak list
+            index = index + 1
+
+            # Too many entries in VD list
+            if index == self.pk_list:
+                error_message('Too many entries in list.')
+                return
+
+
     def load_peaklist(self, event):
         """Function to load peak lists to data grid.
 
@@ -568,7 +622,6 @@ class Auto_rx:
 
         # Open files
         files = multi_openfile(msg='Select %s peak list file' % self.label, filetype='*.*', default='all files (*.*)|*')
-        print str(files)
 
         # Abort if no files have been selected
         if not files:
@@ -613,44 +666,6 @@ class Auto_rx:
 
         # Sync.
         self.sync_ds(upload=False)
-
-
-    def load_vd(self, event):
-        """The variable delay list loading GUI element.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The file
-        filename = openfile(msg='Select VD file.', filetype='*.*', default='all files (*.*)|*')
-
-        # Abort if nothing selected
-        if not filename:
-            return
-
-        # Open the file
-        file = open(filename, 'r')
-
-        # Read entries
-        index = 0
-        for line in file:
-            # Evaluate if line is a number
-            try:
-                t = float(line.replace('/n', ''))
-            except:
-                continue
-
-            # Write delay to peak list grid
-            self.peaklist.SetCellValue(index, 1, str(t))
-
-            # Next peak list
-            index = index + 1
-
-            # Too many entries in VD list
-            if index == self.pk_list:
-                error_message('Too many entries in VD list.')
-                return
 
 
     def results_directory(self, event):
