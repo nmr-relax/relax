@@ -68,10 +68,6 @@ class Peak_intensity:
         self.label = label
         self.box = box
 
-        # Some fixed sizes.
-        button_width  = 80
-        button_height = 40
-
         # The number of rows.
         self.num_rows = 50
 
