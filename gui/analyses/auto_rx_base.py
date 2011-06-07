@@ -157,7 +157,7 @@ class Auto_rx:
         """Fuction to load/select peak lists and set relaxation time.""" 
         
         # Number of peaklists
-        self.pk_list = 20
+        self.pk_list = 50
 
         # Sizer
         sizer = wx.BoxSizer(wx.HORIZONTAL)
