@@ -126,7 +126,7 @@ class Peak_intensity:
         self.peaklist.SetColLabelValue(0, "%s peak list" % self.label)
         self.peaklist.SetColSize(0, 370)
         self.peaklist.SetColLabelValue(1, "Relaxation delay [s]")
-        self.peaklist.SetColSize(1, 150)
+        self.peaklist.SetColSize(1, 160)
 
         # Bind some events.
         self.peaklist.Bind(wx.grid.EVT_GRID_EDITOR_SHOWN, self.editor)
