@@ -179,6 +179,21 @@ class Auto_rx:
             self.gui.Bind(wx.EVT_BUTTON, self.load_vd, add_vd)
             button_sizer.Add(add_vd, 0, wx.ADJUST_MINSIZE, 0)
 
+        # Add Vc list import
+        if self.label =='R2':
+            add_vc = wx.Button(self.parent, -1, "+VC")
+            add_vc.SetToolTipString("Add VC (variable counter) list to automatically fill in R2 relaxation times.")
+            add_vc.SetMinSize((50, 50))
+            self.gui.Bind(wx.EVT_BUTTON, self.load_vd, add_vc)
+            button_sizer.Add(add_vc, 0, wx.ADJUST_MINSIZE, 0)
+
+            # Time of counter
+            label = wx.TextCtrl(self.parent, -1, "0")
+            label.SetToolTipString("Time of counter loop in seconds.")
+            label.SetMinSize((50, 20))
+            label.SetFont(wx.Font(7, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+            button_sizer.Add(label, 0, 0 ,0)
+
         # Pack buttons
         sizer.Add(button_sizer, 0, 0, 0)
 
