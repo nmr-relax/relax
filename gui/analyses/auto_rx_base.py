@@ -44,7 +44,7 @@ from gui.base_classes import Container
 from gui.components.spectrum import Peak_intensity
 from gui.controller import Redirect_text, Thread_container
 from gui.derived_wx_classes import StructureTextCtrl
-from gui.filedialog import multi_openfile, opendir
+from gui.filedialog import multi_openfile, opendir, openfile
 from gui.message import error_message, missing_data
 from gui import paths
 from gui.settings import load_sequence
@@ -566,7 +566,6 @@ class Auto_rx:
             if str(self.peaklist.GetCellValue(i, 0)) == '':
                 # Write peak file
                 self.peaklist.SetCellValue(i, 0, str(files[index]))
-                print str(files[index])
 
                 # Next file
                 index = index + 1
@@ -599,6 +598,44 @@ class Auto_rx:
 
         # Sync.
         self.sync_ds(upload=False)
+
+
+    def load_vd(self, event):
+        """The variable delay list loading GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The file
+        filename = openfile(msg='Select VD file.', filetype='*.*', default='all files (*.*)|*')
+
+        # Abort if nothing selected
+        if not filename:
+            return
+
+        # Open the file
+        file = open(filename, 'r')
+
+        # Read entries
+        index = 0
+        for line in file:
+            # Evaluate if line is a number
+            try:
+                t = float(line.replace('/n', ''))
+            except:
+                continue
+
+            # Write delay to peak list grid
+            self.peaklist.SetCellValue(index, 1, str(t))
+
+            # Next peak list
+            index = index + 1
+
+            # Too many entries in VD list
+            if index == self.pk_list:
+                error_message('Too many entries in VD list.')
+                return
 
 
     def results_directory(self, event):
