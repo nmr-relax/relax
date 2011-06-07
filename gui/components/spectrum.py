@@ -125,7 +125,7 @@ class Peak_intensity:
         # Create headers
         self.peaklist.SetColLabelValue(0, "%s peak list" % self.label)
         self.peaklist.SetColSize(0, 370)
-        self.peaklist.SetColLabelValue(1, "Relaxation time [s]")
+        self.peaklist.SetColLabelValue(1, "Relaxation delay [s]")
         self.peaklist.SetColSize(1, 150)
 
         # Bind some events.
