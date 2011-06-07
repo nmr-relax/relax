@@ -493,7 +493,7 @@ class Auto_rx:
         self.data = data
 
         # Re-alias in the peak intensity object as well.
-        #self.peak_intensity.data = data
+        self.peak_intensity.data = data
 
 
     def load_sequence(self, event):
