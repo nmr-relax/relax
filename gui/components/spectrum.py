@@ -127,11 +127,41 @@ class Peak_intensity:
         self.peaklist.SetColLabelValue(1, "Relaxation time [s]")
         self.peaklist.SetColSize(1, 150)
 
+        # Bind some events.
+        self.peaklist.Bind(wx.grid.EVT_GRID_EDITOR_SHOWN, self.editor)
+
         # Add grid to sizer
         sizer.Add(self.peaklist, -1, wx.EXPAND, 0)
 
         # Pack box
         box.Add(sizer, 0, wx.EXPAND, 0)
+
+
+    def editor(self, event):
+        """Cell editing.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The row and column.
+        row = event.GetRow()
+        col = event.GetCol()
+
+        # File selection.
+        if col == 0:
+            # The file
+            filename = openfile(msg='Select file.', filetype='*.*', default='all files (*.*)|*')
+
+            # Abort if nothing selected
+            if not filename:
+                return
+
+            # Set the file name.
+            self.peaklist.SetCellValue(row, col, str(filename))
+
+            # Veto the event so the cell is not editable.
+            event.Veto()
 
 
     def load_delay(self, event, vc=False):
