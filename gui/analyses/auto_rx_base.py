@@ -176,7 +176,7 @@ class Auto_rx:
             add_vd = wx.Button(self.parent, -1, "+VD")
             add_vd.SetToolTipString("Add VD (variable delay) list to automatically fill in R1 relaxation times.")
             add_vd.SetMinSize((50, 50))
-            self.gui.Bind(wx.EVT_BUTTON, self.load_peaklist, add_vd)
+            self.gui.Bind(wx.EVT_BUTTON, self.load_vd, add_vd)
             button_sizer.Add(add_vd, 0, wx.ADJUST_MINSIZE, 0)
 
         # Pack buttons
@@ -472,7 +472,6 @@ class Auto_rx:
         status = Status()
         if status.exec_lock.locked():
             error_message("relax is currently executing.", "relax execution lock")
-            event.Skip()
             return
 
         # Synchronise the frame data to the relax data store.
@@ -487,9 +486,6 @@ class Auto_rx:
             self.execute_thread('dummy')
         else:
             id = thread.start_new_thread(self.execute_thread, ('dummy',))
-
-        # Terminate the event.
-        event.Skip()
 
 
     def execute_thread(self, dummy_string):
@@ -604,9 +600,6 @@ class Auto_rx:
         # Sync.
         self.sync_ds(upload=False)
 
-        # Terminate the event.
-        event.Skip()
-
 
     def results_directory(self, event):
         """The results directory selection.
@@ -627,9 +620,6 @@ class Auto_rx:
 
         # Place the path in the text box.
         self.field_results_dir.SetValue(self.data.save_dir)
-
-        # Terminate the event.
-        event.Skip()
 
 
     def sync_ds(self, upload=False):
