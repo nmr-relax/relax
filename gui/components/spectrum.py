@@ -33,8 +33,6 @@ import wx.lib.buttons
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
-from gui.controller import Redirect_text, Thread_container
-from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import multi_openfile, opendir, openfile
 from gui.message import error_message
 from gui import paths
@@ -231,34 +229,31 @@ class Peak_intensity:
         @type upload:       bool
         """
 
-        # Sync the peaklists and relaxation times.
-        self.sync_peaklist()
-
         # The peak lists and relaxation times.
         if upload:
-            for i in range(self.peak_list_count):
-                # Set the relaxation time.
-                self.data.relax_times[i] = str(self.field_rx_time[i].GetValue())
+            for i in range(self.num_rows):
+                # The cell data.
+                file_name = str(self.peaklist.GetCellValue(i, 0))
+                relax_time = str(self.peaklist.GetCellValue(i, 1))
+
+                # No data, so stop.
+                if file_name == '' and relax_time == '':
+                    break
+
+                # New row needed.
+                if i >= len(self.data.file_list):
+                    self.data.file_list.append('')
+                if i >= len(self.data.relax_times):
+                    self.data.relax_times.append('')
+
+                # Set the file name and relaxation time.
+                self.data.file_list[i] = file_name
+                self.data.relax_times[i] = relax_time
+
         else:
-            for i in range(self.peak_list_count):
+            for i in range(len(self.data.file_list)):
                 # The file name.
-                self.field_rx_list[i].SetLabel(self.data.file_list[i])
+                self.peaklist.SetCellValue(i, 0, str(self.data.file_list[i]))
 
                 # The relaxation time.
-                self.field_rx_time[i].SetValue(str(self.data.relax_times[i]))
-
-
-    def sync_peaklist(self):
-        """Fucntion to read and store peaklists and relaxation times."""
-
-        # Containers
-        self.peakfiles = []
-        self.rxtimes = []
-
-        # read entries in data grid
-        for i in range(self.num_rows):
-            # Store peaklist
-            self.peakfiles.append(str(self.peaklist.GetCellValue(i, 0)))
-
-            # Store relaxation time
-            self.rxtimes.append(str(self.peaklist.GetCellValue(i, 1)))
+                self.peaklist.SetCellValue(i, 1, str(self.data.relax_times[i]))
