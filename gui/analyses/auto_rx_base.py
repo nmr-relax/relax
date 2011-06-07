@@ -558,7 +558,7 @@ class Auto_rx:
         self.data = data
 
         # Re-alias in the peak intensity object as well.
-        self.peak_intensity.data = data
+        #self.peak_intensity.data = data
 
 
     def load_delay(self, event, vc=False):
@@ -742,8 +742,14 @@ class Auto_rx:
         else:
             if hasattr(self.data, 'file_list'):
                 self.peakfiles = self.data.file_list
+                # Fill in
+                for i in range(len(self.peakfiles)):
+                    self.peaklist.SetCellValue(i, 0, str(self.peakfiles[i]))
             if hasattr(self.data, 'relax_times'):
                 self.rxtimes = self.data.relax_times
+                # Fill in
+                for i in range(len(self.rxtimes)):
+                    self.peaklist.SetCellValue(i, 1, str(self.rxtimes[i]))
 
 
     def sync_peaklist(self):
