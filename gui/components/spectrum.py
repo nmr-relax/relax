@@ -153,11 +153,12 @@ class Peak_intensity:
 
         # File selection.
         if col == 0:
-            # The file
+            # The file.
             filename = openfile(msg='Select file.', filetype='*.*', default='all files (*.*)|*')
 
-            # Abort if nothing selected
+            # Abort if nothing selected.
             if not filename:
+                event.Veto()
                 return
 
             # Set the file name.
