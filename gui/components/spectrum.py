@@ -145,23 +145,23 @@ class Peak_intensity:
         """
 
         # Grid of peak list file names and relaxation time
-        self.peaklist = wx.grid.Grid(self.parent, -1, size=(1, 230))
+        self.grid = wx.grid.Grid(self.parent, -1, size=(1, 230))
 
         # Create entries
-        self.peaklist.CreateGrid(self.num_rows, 2)
+        self.grid.CreateGrid(self.num_rows, 2)
 
         # Create headers
-        self.peaklist.SetColLabelValue(0, "%s peak list" % self.label)
-        self.peaklist.SetColSize(0, 370)
-        self.peaklist.SetColLabelValue(1, "Relaxation delay [s]")
-        self.peaklist.SetColSize(1, 160)
+        self.grid.SetColLabelValue(0, "%s peak list" % self.label)
+        self.grid.SetColSize(0, 370)
+        self.grid.SetColLabelValue(1, "Relaxation delay [s]")
+        self.grid.SetColSize(1, 160)
 
         # Bind some events.
-        self.peaklist.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
-        self.peaklist.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
+        self.grid.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
+        self.grid.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
 
         # Add grid to sizer, with spacing.
-        sizer.Add(self.peaklist, -1, wx.EXPAND, 0)
+        sizer.Add(self.grid, -1, wx.EXPAND, 0)
 
 
     def add_header(self, box):
@@ -192,8 +192,8 @@ class Peak_intensity:
         """
 
         # The row and column.
-        col = self.peaklist.GetGridCursorCol()
-        row = self.peaklist.GetGridCursorRow()
+        col = self.grid.GetGridCursorCol()
+        row = self.grid.GetGridCursorRow()
 
         # File selection.
         if col == 0:
@@ -205,7 +205,7 @@ class Peak_intensity:
                 return
 
             # Set the file name.
-            self.peaklist.SetCellValue(row, col, str(filename))
+            self.grid.SetCellValue(row, col, str(filename))
 
         # Skip the event to allow for normal operation.
         event.Skip()
@@ -230,7 +230,7 @@ class Peak_intensity:
             # Loop over the cells.
             for cell in cells:
                 # Set to the empty string.
-                self.peaklist.SetCellValue(cell[0], cell[1], '')
+                self.grid.SetCellValue(cell[0], cell[1], '')
 
         # Skip the event to allow for normal operation.
         event.Skip()
@@ -276,13 +276,13 @@ class Peak_intensity:
         """
 
         # First try to get the coordinates.
-        top_left = self.peaklist.GetSelectionBlockTopLeft()
-        bottom_right = self.peaklist.GetSelectionBlockBottomRight()
+        top_left = self.grid.GetSelectionBlockTopLeft()
+        bottom_right = self.grid.GetSelectionBlockBottomRight()
 
         # Or the selection.
-        selection = self.peaklist.GetSelectedCells()
-        col = self.peaklist.GetSelectedCols()
-        row = self.peaklist.GetSelectedRows()
+        selection = self.grid.GetSelectedCells()
+        col = self.grid.GetSelectedCols()
+        row = self.grid.GetSelectedRows()
 
         # Debugging printout.
         if status.debug:
@@ -334,7 +334,7 @@ class Peak_intensity:
                 print("Single cell.")
 
             # The position.
-            pos = self.peaklist.GetGridCursorRow(), self.peaklist.GetGridCursorCol()
+            pos = self.grid.GetGridCursorRow(), self.grid.GetGridCursorCol()
 
             # Return the coordinate as a list.
             return [pos]
@@ -404,7 +404,7 @@ class Peak_intensity:
                 continue
 
             # Write delay to peak list grid
-            self.peaklist.SetCellValue(index, 1, str(t*vc_factor))
+            self.grid.SetCellValue(index, 1, str(t*vc_factor))
 
             # Next peak list
             index = index + 1
@@ -433,9 +433,9 @@ class Peak_intensity:
         index = 0
         for i in range(self.num_rows):
             # Add entry if nothing is filled in already
-            if str(self.peaklist.GetCellValue(i, 0)) == '':
+            if str(self.grid.GetCellValue(i, 0)) == '':
                 # Write peak file
-                self.peaklist.SetCellValue(i, 0, str(files[index]))
+                self.grid.SetCellValue(i, 0, str(files[index]))
 
                 # Next file
                 index = index + 1
@@ -462,8 +462,8 @@ class Peak_intensity:
         if upload:
             for i in range(self.num_rows):
                 # The cell data.
-                file_name = str(self.peaklist.GetCellValue(i, 0))
-                relax_time = str(self.peaklist.GetCellValue(i, 1))
+                file_name = str(self.grid.GetCellValue(i, 0))
+                relax_time = str(self.grid.GetCellValue(i, 1))
 
                 # No data, so stop.
                 if file_name == '' and relax_time == '':
@@ -482,7 +482,7 @@ class Peak_intensity:
         else:
             for i in range(len(self.data.file_list)):
                 # The file name.
-                self.peaklist.SetCellValue(i, 0, str(self.data.file_list[i]))
+                self.grid.SetCellValue(i, 0, str(self.data.file_list[i]))
 
                 # The relaxation time.
-                self.peaklist.SetCellValue(i, 1, str(self.data.relax_times[i]))
+                self.grid.SetCellValue(i, 1, str(self.data.relax_times[i]))
