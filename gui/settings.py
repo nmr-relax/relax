@@ -310,9 +310,13 @@ class Globalparam(wx.Dialog):
     def __set_properties(self):
         # begin globalparam.__set_properties
         self.SetTitle("Global parameters")
-        _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-        self.SetIcon(_icon)
+
+        # Disable icon if running on a Mac
+        if not 'darwin' in sys.platform:
+            _icon = wx.EmptyIcon()
+            _icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+            self.SetIcon(_icon)
+
         self.label_1_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.bond.SetMinSize((250, 27))
         self.csa.SetMinSize((250, 27))
