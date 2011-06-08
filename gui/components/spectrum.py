@@ -229,7 +229,7 @@ class Peak_intensity:
         self.label = label
 
         # GUI variables.
-        self.spacing = 10
+        self.spacing = 5
 
         # The number of rows.
         self.num_rows = 50
@@ -335,7 +335,7 @@ class Peak_intensity:
         """
 
         # Grid of peak list file names and relaxation time.
-        self.grid = wx.grid.Grid(self.parent, -1, size=(1, 230))
+        self.grid = wx.grid.Grid(self.parent, -1, size=(1, 210))
 
         # Create entries.
         self.grid.CreateGrid(self.num_rows, 3)
