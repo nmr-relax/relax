@@ -31,6 +31,7 @@ import wx.lib.buttons
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 # relaxGUI module imports.
 from gui.filedialog import multi_openfile, opendir, openfile
@@ -130,6 +131,7 @@ class Peak_intensity:
 
         # Bind some events.
         self.peaklist.Bind(wx.grid.EVT_GRID_EDITOR_SHOWN, self.editor)
+        self.peaklist.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
 
         # Add grid to sizer, with spacing.
         sizer.Add(self.peaklist, -1, wx.EXPAND, 0)
@@ -166,6 +168,155 @@ class Peak_intensity:
 
             # Veto the event so the cell is not editable.
             event.Veto()
+
+
+    def event_key_down(self, event):
+        """Control what happens when a key is pressed.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Clear cell contents (delete key).
+        if event.GetKeyCode() == wx.WXK_DELETE:
+            # Get the cell selection.
+            cells = self.get_selection()
+
+            # Debugging printout.
+            if status.debug:
+                print(cells)
+
+            # Loop over the cells.
+            for cell in cells:
+                # Set to the empty string.
+                self.peaklist.SetCellValue(cell[0], cell[1], '')
+
+
+    def get_all_coordinates(self, top_left, bottom_right):
+        """Convert the cell range into a coordinate list.
+
+        @param top_left:        The top left hand coordinate.
+        @type top_left:         list or tuple
+        @param bottom_right:    The bottom right hand coordinate.
+        @type bottom_right:     list or tuple
+        @return:                The list of tuples of coordinates of all cells.
+        @rtype:                 list of tuples
+        """
+
+        # Init.
+        cells = []
+
+        # Loop over the x-range.
+        for x in range(top_left[0], bottom_right[0]+1):
+            # Loop over the y-range.
+            for y in range(top_left[1], bottom_right[1]+1):
+                # Append the coordinate.
+                cells.append((x, y))
+
+        # Return the coordinates.
+        return cells
+
+
+    def get_selection(self):
+        """Determine which cells are selected.
+
+        There are three possibilities for cell selections in a wx.grid.  These are:
+
+            - Single cell selection (this is not highlighted).
+            - Multiple cells are selected.
+            - Column selection.
+            - Row selection.
+
+        @return:    An array of the cell selection coordinates.
+        @rtype:     list of tuples of int
+        """
+
+        # First try to get the coordinates.
+        top_left = self.peaklist.GetSelectionBlockTopLeft()
+        bottom_right = self.peaklist.GetSelectionBlockBottomRight()
+
+        # Or the selection.
+        selection = self.peaklist.GetSelectedCells()
+        col = self.peaklist.GetSelectedCols()
+        row = self.peaklist.GetSelectedRows()
+
+        # Debugging printout.
+        if status.debug:
+            print("\nTop left: %s" % top_left)
+            print("Bottom right: %s" % bottom_right)
+            print("selection: %s" % selection)
+            print("col: %s" % col)
+            print("row: %s" % row)
+
+        # Column selection.
+        if col:
+            # Debugging printout.
+            if status.debug:
+                print("Column selection")
+
+            # Return the coordinates of the selected columns.
+            return self.get_all_coordinates([0, col[0]], [self.num_rows-1, col[-1]])
+
+        # Row selection.
+        elif row:
+            # Debugging printout.
+            if status.debug:
+                print("Row selection")
+
+            # Return the coordinates of the selected rows.
+            return self.get_all_coordinates([row[0], 0], [row[-1], 1])
+
+        # Multiple block selection.
+        elif top_left and not selection:
+            # Debugging printout.
+            if status.debug:
+                print("Multiple block selection.")
+
+            # The cell list.
+            cells = []
+
+            # Loop over the n blocks.
+            for n in range(len(top_left)):
+                # Append the cells.
+                cells = cells + self.get_all_coordinates(top_left[n], bottom_right[n])
+
+            # Return the selected cells.
+            return cells
+
+        # Single cell.
+        elif not selection and not top_left:
+            # Debugging printout.
+            if status.debug:
+                print("Single cell.")
+
+            # The position.
+            pos = self.peaklist.GetGridCursorRow(), self.peaklist.GetGridCursorCol()
+
+            # Return the coordinate as a list.
+            return [pos]
+
+        # Complex selection.
+        elif selection:
+            # Debugging printout.
+            if status.debug:
+                print("Complex selection.")
+
+            # The cell list.
+            cells = []
+
+            # Loop over the n blocks.
+            for n in range(len(top_left)):
+                # Append the cells.
+                cells = cells + self.get_all_coordinates(top_left[n], bottom_right[n])
+
+            # Return the selection.
+            return cells + selection
+
+        # Unknown.
+        else:
+            # Debugging printout.
+            if status.debug:
+                print("Should not be here.")
 
 
     def load_delay(self, event, vc=False):
