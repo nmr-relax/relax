@@ -39,6 +39,166 @@ from gui.message import error_message
 from gui import paths
 
 
+class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
+    """Custom GridCellEditor for the number of delays grid cells.
+
+    Changing these cells will update the relaxation delay times.
+    """
+
+    def __init__(self, min=None, max=None, parent=None):
+        """Initialise the class.
+        
+        @keyword min:       The minimum value for wx.SpinCtrl.
+        @type min:          None or int
+        @keyword max:       The maximum value for wx.SpinCtrl.
+        @type max:          None or int
+        @keyword parent:    The parent wx object.
+        @type parent:       wx object
+        """
+
+        # Store the args.
+        self.min = min
+        self.max = max
+        self.parent = parent
+
+        # Initialise the base class.
+        super(Delay_num_cell_editor, self).__init__()
+
+        # A flag for a resetting event.
+        self.reset = False
+
+
+    def BeginEdit(self, row, col, grid):
+        """Start the editing.
+
+        @param row:     The row index.
+        @type row:      int
+        @param col:     The column index.
+        @type col:      int
+        @param grid:    The grid GUI element.
+        @type grid:     wx.grid.Grid instance.
+        """
+
+        # The previous value.
+        self.prev_val = grid.GetTable().GetValue(row, col)
+
+        # Set the starting value.
+        self.cell.SetValueString(self.prev_val)
+
+        # Set the focus to the cell.
+        self.cell.SetFocus()
+
+
+    def Clone(self):
+        """Create and return a new class instance."""
+
+        # Initialise and return the class.
+        return Delay_num_cell_editor(self.min, self.max)
+
+
+    def Create(self, parent, id, evtHandler):
+        """Create the control for the cell.
+
+        @param parent:      The parent wx object.
+        @type parent:       wx object
+        @param id:          The ID number.
+        @type id:           int
+        @param evtHandler:  The event handler function.
+        @type evtHandler:   func
+        """
+
+        # Set the cell to be a spin control.
+        self.cell = wx.SpinCtrl(parent, id, "", min=self.min, max=self.max)
+        self.SetControl(self.cell)
+
+        # Handle the event handler.
+        if evtHandler:
+            self.cell.PushEventHandler(evtHandler)
+
+
+    def EndEdit(self, row, col, grid):
+        """End the editing.
+
+        @param row:     The row index.
+        @type row:      int
+        @param col:     The column index.
+        @type col:      int
+        @param grid:    The grid GUI element.
+        @type grid:     wx.grid.Grid instance.
+        """
+
+        # A reset.
+        if self.reset:
+            # Reset the reset flag.
+            self.reset = False
+
+            # No starting value, so do nothing.
+            if self.prev_val == '':
+                return False
+
+        # The new value.
+        value = self.cell.GetValue()
+
+        # No change.
+        if value == self.prev_val:
+            return False
+
+        # Set the value in the table.
+        grid.GetTable().SetValue(row, col, str(value))
+
+        # The delay cycle time.
+        time = self.parent.delay_time.GetValue()
+
+        # No times to update.
+        if time == '':
+            # A change occurred.
+            return True
+
+        # Update the relaxation delay time.
+        delay_time = float(time) * float(value)
+        grid.GetTable().SetValue(row, col+1, str(delay_time))
+
+        # A change occurred.
+        return True
+
+
+
+    def Reset(self):
+        """Reset the cell to the previous value."""
+
+        # Set the previous value.
+        self.cell.SetValueString(self.prev_val)
+
+        # Set a flag for EndEdit to catch a reset.
+        self.reset = True
+
+
+    def StartingKey(self, event):
+        """Catch the starting key stroke to add the value to the cell.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The value.
+        key = event.GetKeyCode()
+
+        # Acceptable integers.
+        if key >= 49 and key <= 57:
+            # The number.
+            num = int(chr(key))
+
+            # Set the value.
+            self.cell.SetValue(num)
+
+            # Set the insertion point to the end.
+            self.cell.SetSelection(1,1)
+
+        # Skip everything else.
+        else:
+            event.Skip()
+
+
 
 class Peak_intensity:
     """The peak list selection class."""
@@ -77,11 +237,14 @@ class Peak_intensity:
         # Add peak list selection header.
         self.add_header(box)
 
+        # Add the cycle delay time element.
+        self.add_cycle_delay(box)
+
         # A sizer for the buttons and grid.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # Add the buttons.
-        self.add_buttons(sizer)
+        #self.add_buttons(sizer)
 
         # Add the grid.
         self.add_grid(sizer)
@@ -131,10 +294,37 @@ class Peak_intensity:
             button_sizer.Add(self.vc_time, 0, 0 ,0)
 
             # Action of Button
-            self.gui.Bind(wx.EVT_BUTTON, lambda evt, vc=True: self.load_delay(evt, vc), add_vc)
+            self.gui.Bind(wx.EVT_BUTTON, lambda event, vc=True: self.load_delay(event, vc), add_vc)
 
         # Pack buttons
         sizer.Add(button_sizer, 0, 0, 0)
+
+
+    def add_cycle_delay(self, box):
+        """Create and add the cycle delay time GUI element to the given box.
+
+        @param box:     The box element to pack the cycle delay time GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Single delay cycle time [s]", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.delay_time = wx.TextCtrl(self.parent, -1)
+        self.delay_time.SetMinSize((350, 27))
+        sizer.Add(self.delay_time, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Bind the change of contents.
+        self.delay_time.Bind(wx.EVT_KEY_UP, self.change_delay)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
     def add_grid(self, sizer):
@@ -144,17 +334,30 @@ class Peak_intensity:
         @type box:      wx.BoxSizer instance
         """
 
-        # Grid of peak list file names and relaxation time
+        # Grid of peak list file names and relaxation time.
         self.grid = wx.grid.Grid(self.parent, -1, size=(1, 230))
 
-        # Create entries
-        self.grid.CreateGrid(self.num_rows, 2)
+        # Create entries.
+        self.grid.CreateGrid(self.num_rows, 3)
 
-        # Create headers
+        # Create headers.
         self.grid.SetColLabelValue(0, "%s peak list" % self.label)
-        self.grid.SetColSize(0, 370)
-        self.grid.SetColLabelValue(1, "Relaxation delay [s]")
-        self.grid.SetColSize(1, 160)
+        self.grid.SetColLabelValue(1, "No. of cycles")
+        self.grid.SetColLabelValue(2, "Relaxation delay [s]")
+
+        # Set the sizes.
+        self.grid.SetRowLabelSize(40)
+        self.grid.SetColSize(0, 320)
+        self.grid.SetColSize(1, 140)
+        self.grid.SetColSize(2, 160)
+
+        # Column properties.
+        for i in range(self.grid.GetNumberRows()):
+            # Set the editor for the number of cycles column.
+            self.grid.SetCellEditor(i, 1, Delay_num_cell_editor(1, 200, self))
+
+            # Make the relaxation delay column read only.
+            self.grid.SetReadOnly(i, 2)
 
         # Bind some events.
         self.grid.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
@@ -182,6 +385,34 @@ class Peak_intensity:
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ADJUST_MINSIZE, 0)
+
+
+    def change_delay(self, event):
+        """Handle updates to the delay time.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The key.
+        key = event.GetKeyCode()
+
+        # Allowed keys.
+        allowed = []
+        allowed += [8]    # Backspace.
+        allowed += [46]    # Full stop.
+        allowed += [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]    # Numbers.
+        allowed += [127]    # Delete.
+
+        # Disallowed values, so do nothing.
+        if key not in allowed:
+            return
+
+        # Normal event handling.
+        event.Skip()
+
+        # Update the grid.
+        self.update_grid()
 
 
     def event_left_dclick(self, event):
@@ -231,6 +462,9 @@ class Peak_intensity:
             for cell in cells:
                 # Set to the empty string.
                 self.grid.SetCellValue(cell[0], cell[1], '')
+
+            # Update the grid.
+            self.update_grid()
 
         # Skip the event to allow for normal operation.
         event.Skip()
@@ -371,7 +605,7 @@ class Peak_intensity:
         """
 
         # VD
-        
+
         # VC time is not a number
         if vc:
             try:
@@ -460,29 +694,73 @@ class Peak_intensity:
 
         # The peak lists and relaxation times.
         if upload:
+            # The delay time.
+            self.data.delay_time = str(self.delay_time.GetString(0, self.delay_time.GetLastPosition()))
+
+            # Loop over the rows.
             for i in range(self.num_rows):
                 # The cell data.
                 file_name = str(self.grid.GetCellValue(i, 0))
-                relax_time = str(self.grid.GetCellValue(i, 1))
+                ncyc = str(self.grid.GetCellValue(i, 1))
+                relax_time = str(self.grid.GetCellValue(i, 2))
 
                 # No data, so stop.
-                if file_name == '' and relax_time == '':
+                if file_name == '' and ncyc == '':
                     break
 
                 # New row needed.
                 if i >= len(self.data.file_list):
                     self.data.file_list.append('')
+                if i >= len(self.data.ncyc):
+                    self.data.ncyc.append('')
                 if i >= len(self.data.relax_times):
                     self.data.relax_times.append('')
 
                 # Set the file name and relaxation time.
                 self.data.file_list[i] = file_name
+                self.data.ncyc[i] = ncyc
                 self.data.relax_times[i] = relax_time
 
         else:
+            # The delay time.
+            if hasattr(self.data, 'delay_time'):
+                self.delay_time.SetValue(self.data.delay_time)
+
+            # Loop over the rows.
             for i in range(len(self.data.file_list)):
                 # The file name.
-                self.grid.SetCellValue(i, 0, str(self.data.file_list[i]))
+                if hasattr(self.data, 'file_list'):
+                    self.grid.SetCellValue(i, 0, str(self.data.file_list[i]))
+
+                # The number of cycles.
+                if hasattr(self.data, 'ncyc'):
+                    self.grid.SetCellValue(i, 1, str(self.data.ncyc[i]))
 
                 # The relaxation time.
-                self.grid.SetCellValue(i, 1, str(self.data.relax_times[i]))
+                if hasattr(self.data, 'relax_times'):
+                    self.grid.SetCellValue(i, 2, str(self.data.relax_times[i]))
+
+            # Update the grid.
+            self.update_grid()
+
+
+    def update_grid(self):
+        """Update the grid, changing the relaxation delay times as needed."""
+
+        # The time value.
+        time = self.delay_time.GetString(0, self.delay_time.GetLastPosition())
+        if time != '':
+            time = float(time)
+
+        # Loop over the rows.
+        for i in range(self.grid.GetNumberRows()):
+            # The number of cycles.
+            ncyc = self.grid.GetCellValue(i, 1)
+
+            # No time or no cycles, so set the value to nothing.
+            if time == '' or ncyc == '':
+                self.grid.SetCellValue(i, 2, '')
+
+            # Update the relaxation time.
+            else:
+                self.grid.SetCellValue(i, 2, str(int(ncyc) * time))

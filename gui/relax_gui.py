@@ -456,6 +456,7 @@ class Main(wx.Frame):
             ds.relax_gui.analyses[-1].frq = nmrfreq[i]
             ds.relax_gui.analyses[-1].num = 0
             ds.relax_gui.analyses[-1].file_list = []
+            ds.relax_gui.analyses[-1].ncyc = []
             ds.relax_gui.analyses[-1].relax_times = []
 
         # Initialise all the source and save directories.
