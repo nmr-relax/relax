@@ -130,7 +130,7 @@ class Peak_intensity:
         self.peaklist.SetColSize(1, 160)
 
         # Bind some events.
-        self.peaklist.Bind(wx.grid.EVT_GRID_EDITOR_SHOWN, self.editor)
+        self.peaklist.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
         self.peaklist.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
 
         # Add grid to sizer, with spacing.
@@ -142,16 +142,16 @@ class Peak_intensity:
         box.AddSpacer(self.spacing)
 
 
-    def editor(self, event):
-        """Cell editing.
+    def event_left_dclick(self, event):
+        """Handle the left mouse double click.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
         # The row and column.
-        row = event.GetRow()
-        col = event.GetCol()
+        col = self.peaklist.GetGridCursorCol()
+        row = self.peaklist.GetGridCursorRow()
 
         # File selection.
         if col == 0:
@@ -160,14 +160,13 @@ class Peak_intensity:
 
             # Abort if nothing selected.
             if not filename:
-                event.Veto()
                 return
 
             # Set the file name.
             self.peaklist.SetCellValue(row, col, str(filename))
 
-            # Veto the event so the cell is not editable.
-            event.Veto()
+        # Skip the event to allow for normal operation.
+        event.Skip()
 
 
     def event_key_down(self, event):
@@ -190,6 +189,9 @@ class Peak_intensity:
             for cell in cells:
                 # Set to the empty string.
                 self.peaklist.SetCellValue(cell[0], cell[1], '')
+
+        # Skip the event to allow for normal operation.
+        event.Skip()
 
 
     def get_all_coordinates(self, top_left, bottom_right):
