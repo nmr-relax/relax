@@ -96,9 +96,9 @@ class Menu:
         self.menubar.Append(menu, "&Settings")
 
         # The 'Settings' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.settings,           id=20)
+        self.gui.Bind(wx.EVT_MENU, self.gui.settings,                  id=20)
         self.gui.Bind(wx.EVT_MENU, self.gui.free_file_format_settings, id=21)
-        self.gui.Bind(wx.EVT_MENU, self.gui.reset_setting,      id=22)
+        self.gui.Bind(wx.EVT_MENU, self.gui.reset_setting,             id=22)
 
         # The 'Help' menu entries.
         menu = wx.Menu()
