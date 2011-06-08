@@ -77,32 +77,16 @@ class Peak_intensity:
         # Add peak list selection header.
         self.peak_list_header(box)
 
-        # Sizer
+        # A sizer for the buttons and grid.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # Add the buttons.
         self.add_buttons(sizer)
 
-        # Grid of peak list file names and relaxation time
-        self.peaklist = wx.grid.Grid(self.parent, -1, size=(1, 230))
+        # Add the grid.
+        self.add_grid(sizer)
 
-        # Create entries
-        self.peaklist.CreateGrid(self.num_rows, 2)
-
-        # Create headers
-        self.peaklist.SetColLabelValue(0, "%s peak list" % self.label)
-        self.peaklist.SetColSize(0, 370)
-        self.peaklist.SetColLabelValue(1, "Relaxation delay [s]")
-        self.peaklist.SetColSize(1, 160)
-
-        # Bind some events.
-        self.peaklist.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
-        self.peaklist.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
-
-        # Add grid to sizer, with spacing.
-        sizer.Add(self.peaklist, -1, wx.EXPAND, 0)
-
-        # Pack box
+        # Pack the box.
         box.AddSpacer(self.spacing)
         box.Add(sizer, 0, wx.EXPAND, 0)
         box.AddSpacer(self.spacing)
@@ -151,6 +135,33 @@ class Peak_intensity:
 
         # Pack buttons
         sizer.Add(button_sizer, 0, 0, 0)
+
+
+    def add_grid(self, sizer):
+        """Add the grid for the peak list files and delay times.
+
+        @param box:     The sizer element to pack the grid into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Grid of peak list file names and relaxation time
+        self.peaklist = wx.grid.Grid(self.parent, -1, size=(1, 230))
+
+        # Create entries
+        self.peaklist.CreateGrid(self.num_rows, 2)
+
+        # Create headers
+        self.peaklist.SetColLabelValue(0, "%s peak list" % self.label)
+        self.peaklist.SetColSize(0, 370)
+        self.peaklist.SetColLabelValue(1, "Relaxation delay [s]")
+        self.peaklist.SetColSize(1, 160)
+
+        # Bind some events.
+        self.peaklist.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
+        self.peaklist.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
+
+        # Add grid to sizer, with spacing.
+        sizer.Add(self.peaklist, -1, wx.EXPAND, 0)
 
 
     def event_left_dclick(self, event):
