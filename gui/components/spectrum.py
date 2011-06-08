@@ -75,7 +75,7 @@ class Peak_intensity:
         self.num_rows = 50
 
         # Add peak list selection header.
-        self.peak_list_header(box)
+        self.add_header(box)
 
         # A sizer for the buttons and grid.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -162,6 +162,26 @@ class Peak_intensity:
 
         # Add grid to sizer, with spacing.
         sizer.Add(self.peaklist, -1, wx.EXPAND, 0)
+
+
+    def add_header(self, box):
+        """Add header for peak list section
+
+        @param box:     The box element to pack the structure file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "\nData points:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 40))
+        label.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.ADJUST_MINSIZE, 0)
 
 
     def event_left_dclick(self, event):
@@ -427,26 +447,6 @@ class Peak_intensity:
         # Error message if not all files were loaded
         if index < (len(files)-1):
                 error_message('Not all files could be loaded.')
-
-
-    def peak_list_header(self, box):
-        """Add header for peak list section
-
-        @param box:     The box element to pack the structure file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "\nData points:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 40))
-        label.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.ADJUST_MINSIZE, 0)
 
 
     def sync_ds(self, upload=False):
