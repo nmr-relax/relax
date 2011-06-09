@@ -747,7 +747,7 @@ class Auto_model_free(Base_frame):
 
         # Build the right hand box and pack it next to the bitmap.
         right_box = self.build_right_box()
-        box.Add(right_box, 0, 0, 0)
+        box.Add(right_box, 1, 0, 0)
 
         # Return the box.
         return box
