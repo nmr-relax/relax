@@ -207,13 +207,15 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
 class Peak_intensity:
     """The peak list selection class."""
 
-    def __init__(self, gui=None, parent=None, data=None, label=None, width=688, height=300, box=None):
+    def __init__(self, gui=None, parent=None, subparent=None, data=None, label=None, width=688, height=300, box=None):
         """Build the peak list reading GUI element.
 
         @keyword gui:       The main GUI object.
         @type gui:          wx.Frame instance
-        @keyword parent:    The parent GUI element that this is to be attached to.
+        @keyword parent:    The parent GUI element that this is to be attached to (the panel object).
         @type parent:       wx object
+        @keyword subparent: The subparent GUI element that this is to be attached to (the analysis object).
+        @type subparent:    wx object
         @keyword data:      The data storage container.
         @type data:         class instance
         @keyword label:     The type of analysis.
@@ -229,6 +231,7 @@ class Peak_intensity:
         # Store the arguments.
         self.gui = gui
         self.parent = parent
+        self.subparent = subparent
         self.data = data
         self.label = label
 
@@ -239,7 +242,7 @@ class Peak_intensity:
         self.num_rows = 50
 
         # Add peak list selection header.
-        self.add_header(box)
+        self.subparent.add_subtitle(box, "Data points")
 
         # Add the cycle delay time element.
         self.add_cycle_delay(box)
@@ -370,26 +373,6 @@ class Peak_intensity:
 
         # Add grid to sizer, with spacing.
         sizer.Add(self.grid, -1, wx.EXPAND, 0)
-
-
-    def add_header(self, box):
-        """Add header for peak list section
-
-        @param box:     The box element to pack the structure file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "\nData points:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 40))
-        label.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.ADJUST_MINSIZE, 0)
 
 
     def change_delay_down(self, event):

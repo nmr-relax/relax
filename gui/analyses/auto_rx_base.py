@@ -35,6 +35,7 @@ import wx
 # relax module imports.
 from auto_analyses.relax_fit import Relax_fit
 from data import Relax_data_store; ds = Relax_data_store()
+from gui.analyses.base import Base_frame
 from relax_io import DummyFileObject
 from status import Status; status = Status()
 from gui import paths
@@ -51,7 +52,7 @@ from gui.settings import load_sequence
 
 
 
-class Auto_rx:
+class Auto_rx(Base_frame):
     """The base class for the R1 and R2 frames."""
 
     # Hardcoded variables.
@@ -83,9 +84,6 @@ class Auto_rx:
         main_box = self.build_main_box()
         self.parent.SetSizer(main_box)
 
-        # Set the frame font size.
-        self.parent.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-
 
     def add_execute_relax(self, box):
         """Create and add the relax execution GUI element to the given box.
@@ -100,6 +98,7 @@ class Auto_rx:
         # The label.
         label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
         label.SetMinSize((118, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The button.
@@ -113,23 +112,6 @@ class Auto_rx:
         box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
 
 
-    def add_frame_title(self, box):
-        """Create and add the frame title to the given box.
-
-        @param box:     The box element to pack the frame title into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # The title.
-        label = wx.StaticText(self.parent, -1, "Setup for %s relaxation analysis" % self.label)
-
-        # The font properties.
-        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-
-        # Pack the title.
-        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
-
-
     def add_frq(self, box):
         """Create and add the frequency selection GUI element to the given box.
 
@@ -141,8 +123,9 @@ class Auto_rx:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -165,8 +148,9 @@ class Auto_rx:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Results directory")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -195,8 +179,9 @@ class Auto_rx:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence file", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Sequence file")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -226,8 +211,9 @@ class Auto_rx:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence from PDB structure file", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Sequence from PDB structure file")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -257,8 +243,9 @@ class Auto_rx:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Unresolved residues")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -386,7 +373,7 @@ class Auto_rx:
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the frame title.
-        self.add_frame_title(box)
+        self.add_title(box, "Setup for %s relaxation analysis" % self.label)
 
         # Add the frequency selection GUI element.
         self.add_frq(box)
@@ -404,7 +391,7 @@ class Auto_rx:
         self.add_unresolved_spins(box)
 
         # Add the peak list selection GUI element.
-        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, data=self.data, label=self.label, box=box)
+        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, subparent=self, data=self.data, label=self.label, box=box)
 
         # Add the execution GUI element.
         self.add_execute_relax(box)
