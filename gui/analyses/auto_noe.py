@@ -36,7 +36,6 @@ import wx
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
 from gui.analyses.base import Base_frame
-from relax_errors import RelaxError
 from relax_io import DummyFileObject
 from status import Status; status = Status()
 
@@ -45,7 +44,7 @@ from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
 from gui.controller import Redirect_text, Thread_container
 from gui.derived_wx_classes import StructureTextCtrl
-from gui.filedialog import multi_openfile, opendir, openfile
+from gui.filedialog import opendir, openfile
 from gui.message import error_message, missing_data
 from gui.paths import IMAGE_PATH
 from gui.settings import load_sequence
