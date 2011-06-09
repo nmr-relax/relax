@@ -42,6 +42,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.about import About_base
+from gui.analyses.base import Base_frame
 from gui.analyses.results_analysis import model_free_results, see_results
 from gui.analyses.select_model_calc import Select_tensor
 from gui.base_classes import Container
@@ -151,7 +152,7 @@ class About_window(About_base):
         self.offset(-self.offset())
 
 
-class Auto_model_free:
+class Auto_model_free(Base_frame):
     def __init__(self, gui, notebook):
         """Build the automatic model-free protocol GUI element.
 
@@ -233,23 +234,6 @@ class Auto_model_free:
 
         # Add the element to the box.
         box.Add(sizer, 1, wx.ALIGN_RIGHT, 0)
-
-
-    def add_frame_title(self, box):
-        """Create and add the frame title to the given box.
-
-        @param box:     The box element to pack the frame title into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # The title.
-        label = wx.StaticText(self.parent, -1, "Setup for model-free analysis")
-
-        # The font properties.
-        label.SetFont(self.gui.font_title)
-
-        # Pack the title.
-        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
 
 
     def add_max_iterations(self, box):
@@ -872,7 +856,7 @@ class Auto_model_free:
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the frame title.
-        self.add_frame_title(box)
+        self.add_title(box, "Setup for model-free analysis")
 
         # Add the relaxation data input GUI element.
         self.add_relax_data_input(box)
