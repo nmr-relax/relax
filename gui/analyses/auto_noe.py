@@ -133,6 +133,7 @@ class Auto_noe(Base_frame):
         # The text input field.
         self.field_nmr_frq = wx.TextCtrl(self.parent, -1, str(self.data.frq))
         self.field_nmr_frq.SetMinSize((350, 27))
+        self.field_nmr_frq.SetFont(self.gui.font_normal)
         sizer.Add(self.field_nmr_frq, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Add the element to the box.
