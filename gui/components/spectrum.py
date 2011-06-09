@@ -26,6 +26,7 @@
 
 # Python module imports.
 from os import sep
+from re import search
 import wx
 import wx.lib.buttons
 
@@ -324,7 +325,8 @@ class Peak_intensity:
         sizer.Add(self.delay_time, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Bind the change of contents.
-        self.delay_time.Bind(wx.EVT_KEY_UP, self.change_delay)
+        self.delay_time.Bind(wx.EVT_KEY_DOWN, self.change_delay_down)
+        self.delay_time.Bind(wx.EVT_KEY_UP, self.change_delay_up)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
@@ -390,8 +392,8 @@ class Peak_intensity:
         box.Add(sizer, 0, wx.ADJUST_MINSIZE, 0)
 
 
-    def change_delay(self, event):
-        """Handle updates to the delay time.
+    def change_delay_down(self, event):
+        """Handle changes to the delay time.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -400,16 +402,31 @@ class Peak_intensity:
         # The key.
         key = event.GetKeyCode()
 
+        # Get the text.
+        text = str(self.delay_time.GetString(0, self.delay_time.GetLastPosition()))
+
         # Allowed keys.
         allowed = []
         allowed += [8]    # Backspace.
-        allowed += [46]    # Full stop.
+        if not search('\.', text):
+            allowed += [46]    # Only one full stop.
         allowed += [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]    # Numbers.
         allowed += [127]    # Delete.
 
         # Disallowed values, so do nothing.
         if key not in allowed:
             return
+
+        # Normal event handling.
+        event.Skip()
+
+
+    def change_delay_up(self, event):
+        """Handle updates to the delay time.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
 
         # Normal event handling.
         event.Skip()
@@ -752,8 +769,10 @@ class Peak_intensity:
 
         # The time value.
         time = self.delay_time.GetString(0, self.delay_time.GetLastPosition())
-        if time != '':
+        try:
             time = float(time)
+        except ValueError:
+            time = ''
 
         # Loop over the rows.
         for i in range(self.grid.GetNumberRows()):
