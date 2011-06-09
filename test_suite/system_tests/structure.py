@@ -632,14 +632,14 @@ class Structure(SystemTestCase):
         # Path of the files.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
-        # Read the PDB.
-        self.interpreter.structure.read_pdb(file='Indol_test.xyz', dir=path, parser='internal')
+        # Read the xyz.
+        self.interpreter.structure.read_xyz(file='Indol_test.xyz', dir=path, parser='internal')
 
         # Test the molecule name.
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, '1F35_N_H_molmol_mol1')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, '1-Indolizinyl')
 
         # Load a single atom and test it.
-        self.interpreter.structure.load_spins('#1F35_N_H_molmol_mol1:3@N')
+        self.interpreter.structure.load_spins('1-Indolizinyl:3@C')
         self.assertEqual(count_spins(), 1)
 
         # Try loading a few protons.
@@ -648,7 +648,3 @@ class Structure(SystemTestCase):
         # And now all the rest of the atoms.
         self.interpreter.structure.load_spins()
 
-        # Extract a N-Ca vector.
-        self.interpreter.structure.vectors('CA', spin_id='#1F35_N_H_molmol_mol1:3@N')
-        print((cdp.mol[0].res[0].spin[0]))
-        self.assert_(hasattr(cdp.mol[0].res[0].spin[0], 'bond_vect'))
