@@ -125,10 +125,7 @@ class Auto_noe(Base_frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.add_static_text(sizer, self.parent, text="NMR Frequency [MHz]", width=230)
 
         # The text input field.
         self.field_nmr_frq = self.add_text_control(sizer, self.parent, text=str(self.data.frq), width=350)
@@ -148,10 +145,7 @@ class Auto_noe(Base_frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Reference NOE peak list")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.add_static_text(sizer, self.parent, text="Reference NOE peak list", width=230)
 
         # The text input field.
         self.field_ref_noe = self.add_text_control(sizer, self.parent, text=self.data.ref_file, width=350)
@@ -177,10 +171,7 @@ class Auto_noe(Base_frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Baseplane RMSD")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.add_static_text(sizer, self.parent, text="Baseplane RMSD", width=230)
 
         # The text input field.
         self.field_ref_rmsd = self.add_text_control(sizer, self.parent, text=str(self.data.ref_rmsd), width=350)
@@ -200,10 +191,7 @@ class Auto_noe(Base_frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Results directory")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.add_static_text(sizer, self.parent, text="Results directory", width=230)
 
         # The text input field.
         self.field_results_dir = self.add_text_control(sizer, self.parent, text=self.data.save_dir, width=350)
@@ -229,10 +217,7 @@ class Auto_noe(Base_frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Saturated NOE peak list")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.add_static_text(sizer, self.parent, text="Saturated NOE peak list", width=230)
 
         # The text input field.
         self.field_sat_noe = self.add_text_control(sizer, self.parent, text=self.data.sat_file, width=350)
@@ -258,10 +243,7 @@ class Auto_noe(Base_frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Baseplane RMSD")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.add_static_text(sizer, self.parent, text="Baseplane RMSD", width=230)
 
         # The text input field.
         self.field_sat_rmsd = self.add_text_control(sizer, self.parent, text=str(self.data.sat_rmsd), width=350)
@@ -281,10 +263,7 @@ class Auto_noe(Base_frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence file")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.add_static_text(sizer, self.parent, text="Sequence file", width=230)
 
         # The text input field.
         self.field_sequence = self.add_text_control(sizer, self.parent, text=str(self.gui.sequence_file_msg), width=350, editable=False)
@@ -310,10 +289,7 @@ class Auto_noe(Base_frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence from PDB structure file")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.add_static_text(sizer, self.parent, text="Sequence from PDB structure file", width=230)
 
         # The text input field.
         self.field_structure = self.add_text_control(sizer, self.parent, text=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, width=350, editable=False)
@@ -339,10 +315,7 @@ class Auto_noe(Base_frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Unresolved residues")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.add_static_text(sizer, self.parent, text="Unresolved residues", width=230)
 
         # The text input field.
         self.field_unresolved = self.add_text_control(sizer, self.parent, width=350)
