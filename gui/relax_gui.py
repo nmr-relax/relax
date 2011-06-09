@@ -73,6 +73,8 @@ class Main(wx.Frame):
     """The main GUI class."""
 
     # Hard coded variables.
+    min_width = 1000
+    min_height = 600
     sequence_file_msg = "please insert sequence file"
     structure_file_pdb_msg = "please insert .pdb file"
 
@@ -137,8 +139,26 @@ class Main(wx.Frame):
         rx_data = ds.relax_gui.analyses[self.noe_index[0]]
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
 
-        self.__set_properties()
-        self.__do_layout()
+        # Set the title.
+        self.SetTitle("relaxGUI " + GUI_version)
+
+        # Set up the program icon (disabled on Macs).
+        if not 'darwin' in sys.platform:
+            icon = wx.EmptyIcon()
+            icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+            self.SetIcon(icon)
+            self.SetSize((self.min_width, self.min_height))
+
+        # Statusbar fields.
+        self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
+        frame_1_statusbar_fields = ["relaxGUI (C) 2009 Michael Bieri and (C) 2010-2011 the relax development team", "relax:", version]
+        for i in range(len(frame_1_statusbar_fields)):
+            self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
+
+        # Set up the frame.
+        self.Layout()
+        self.SetSize((1000, 600))
+        self.Centre()
 
         # Close Box event
         self.Bind(wx.EVT_CLOSE, self.exit_gui)
@@ -146,31 +166,6 @@ class Main(wx.Frame):
         # Run a script.
         if script:
             self.user_functions.script.script_exec(script)
-
-
-    def __do_layout(self):
-        # Build layout
-        self.Layout()
-        self.SetSize((1000, 600))
-        self.Centre()
-
-
-    def __set_properties(self):
-        # begin wxGlade: main.__set_properties
-        self.SetTitle("relaxGUI " + GUI_version)
-
-        # Disable icon if running on a Mac
-        if not 'darwin' in sys.platform:
-            _icon = wx.EmptyIcon()
-            _icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
-            self.SetIcon(_icon)
-            self.SetSize((1000, 600))
-
-        # statusbar fields
-        self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
-        frame_1_statusbar_fields = ["relaxGUI (C) 2009 Michael Bieri and (C) 2010-2011 the relax development team", "relax:", version]
-        for i in range(len(frame_1_statusbar_fields)):
-            self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
 
 
     def about_gui(self, event):
