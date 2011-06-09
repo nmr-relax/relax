@@ -131,10 +131,7 @@ class Auto_noe(Base_frame):
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
-        self.field_nmr_frq = wx.TextCtrl(self.parent, -1, str(self.data.frq))
-        self.field_nmr_frq.SetMinSize((350, 27))
-        self.field_nmr_frq.SetFont(self.gui.font_normal)
-        sizer.Add(self.field_nmr_frq, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.field_nmr_frq = self.add_text_control(sizer, self.parent, text=str(self.data.frq), width=350)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
@@ -157,9 +154,7 @@ class Auto_noe(Base_frame):
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
-        self.field_ref_noe = wx.TextCtrl(self.parent, -1, self.data.ref_file)
-        self.field_ref_noe.SetMinSize((350, 27))
-        sizer.Add(self.field_ref_noe, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.field_ref_noe = self.add_text_control(sizer, self.parent, text=self.data.ref_file, width=350)
 
         # The button.
         button = wx.Button(self.parent, -1, "Change")
@@ -188,9 +183,7 @@ class Auto_noe(Base_frame):
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
-        self.field_ref_rmsd = wx.TextCtrl(self.parent, -1, str(self.data.ref_rmsd))
-        self.field_ref_rmsd.SetMinSize((350, 27))
-        sizer.Add(self.field_ref_rmsd, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.field_ref_rmsd = self.add_text_control(sizer, self.parent, text=str(self.data.ref_rmsd), width=350)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
@@ -213,9 +206,7 @@ class Auto_noe(Base_frame):
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
-        self.field_results_dir = wx.TextCtrl(self.parent, -1, self.data.save_dir)
-        self.field_results_dir.SetMinSize((350, 27))
-        sizer.Add(self.field_results_dir, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.field_results_dir = self.add_text_control(sizer, self.parent, text=self.data.save_dir, width=350)
 
         # The button.
         button = wx.Button(self.parent, -1, "Change")
@@ -244,9 +235,7 @@ class Auto_noe(Base_frame):
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
-        self.field_sat_noe = wx.TextCtrl(self.parent, -1, self.data.sat_file)
-        self.field_sat_noe.SetMinSize((350, 27))
-        sizer.Add(self.field_sat_noe, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.field_sat_noe = self.add_text_control(sizer, self.parent, text=self.data.sat_file, width=350)
 
         # The button.
         button = wx.Button(self.parent, -1, "Change")
@@ -275,9 +264,7 @@ class Auto_noe(Base_frame):
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
-        self.field_sat_rmsd = wx.TextCtrl(self.parent, -1, str(self.data.sat_rmsd))
-        self.field_sat_rmsd.SetMinSize((350, 27))
-        sizer.Add(self.field_sat_rmsd, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.field_sat_rmsd = self.add_text_control(sizer, self.parent, text=str(self.data.sat_rmsd), width=350)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
@@ -300,10 +287,7 @@ class Auto_noe(Base_frame):
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
-        self.field_sequence = wx.TextCtrl(self.parent, -1, str(self.gui.sequence_file_msg))
-        self.field_sequence.SetEditable(False)
-        self.field_sequence.SetMinSize((350, 27))
-        sizer.Add(self.field_sequence, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.field_sequence = self.add_text_control(sizer, self.parent, text=str(self.gui.sequence_file_msg), width=350, editable=False)
 
         # The button.
         button = wx.Button(self.parent, -1, "Change")
@@ -332,10 +316,7 @@ class Auto_noe(Base_frame):
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
-        self.field_structure = StructureTextCtrl(self.parent, -1, self.gui.structure_file_pdb_msg)
-        self.field_structure.SetEditable(False)
-        self.field_structure.SetMinSize((350, 27))
-        sizer.Add(self.field_structure, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.field_structure = self.add_text_control(sizer, self.parent, text=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, width=350, editable=False)
 
         # The button.
         button = wx.Button(self.parent, -1, "Change")
@@ -364,9 +345,7 @@ class Auto_noe(Base_frame):
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
-        self.field_unresolved = wx.TextCtrl(self.parent, -1, "")
-        self.field_unresolved.SetMinSize((350, 27))
-        sizer.Add(self.field_unresolved, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.field_unresolved = self.add_text_control(sizer, self.parent, width=350)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
