@@ -487,6 +487,9 @@ class Peak_intensity:
             # Update the grid.
             self.update_grid()
 
+            # Do nothing else.
+            return
+
         # Skip the event to allow for normal operation.
         event.Skip()
 
@@ -778,10 +781,10 @@ class Peak_intensity:
         # Loop over the rows.
         for i in range(self.grid.GetNumberRows()):
             # The number of cycles.
-            ncyc = self.grid.GetCellValue(i, 1)
+            ncyc = str(self.grid.GetCellValue(i, 1))
 
             # No time or no cycles, so set the value to nothing.
-            if time == '' or ncyc == '':
+            if time == '' or ncyc in ['', '0']:
                 self.grid.SetCellValue(i, 2, '')
 
             # Update the relaxation time.
