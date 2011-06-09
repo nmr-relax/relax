@@ -263,8 +263,9 @@ class Auto_model_free:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # Text.
-        label_maxiter = wx.StaticText(self.parent, -1, "Maximum interations:")
+        label_maxiter = wx.StaticText(self.parent, -1, "Maximum interations")
         label_maxiter.SetMinSize((240, 17))
+        label_maxiter.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         sizer.Add(label_maxiter, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spinner.
@@ -283,7 +284,8 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.label_9 = wx.StaticText(self.parent, -1, "Select Model-free models (default = all):")
+        label = wx.StaticText(self.parent, -1, "Select model-free models (default = all):")
+        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.m0 = wx.ToggleButton(self.parent, -1, "m0")
         self.m1 = wx.ToggleButton(self.parent, -1, "m1")
         self.m2 = wx.ToggleButton(self.parent, -1, "m2")
@@ -351,7 +353,7 @@ class Auto_model_free:
         sizer_20.Add(self.m9, 0, wx.ADJUST_MINSIZE, 0)
 
         # Add the title and box of buttons.
-        box.Add(self.label_9, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
+        box.Add(label, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
         box.Add(sizer_20, 1, wx.EXPAND, 0)
 
 
@@ -363,7 +365,7 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.text_structure = wx.StaticText(self.parent, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
+        self.text_structure = wx.StaticText(self.parent, -1, "Structure file (.pdb)")
         self.textctrl_structure = StructureTextCtrl(self.parent, -1, self.gui.structure_file_pdb_msg)
         self.textctrl_structure.SetEditable(False)
         button = wx.Button(self.parent, -1, "Change")
@@ -583,7 +585,7 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
+        self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.parent, -1, "Results directory")
         self.resultsdir_r21_copy_2 = wx.TextCtrl(self.parent, -1, self.data.results_dir_model)
         self.results_directory_r21_copy_2 = wx.Button(self.parent, -1, "Change")
 
@@ -615,7 +617,7 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
+        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy = wx.StaticText(self.parent, -1, "Unresolved residues")
         self.unresolved_r21_copy_1_copy = wx.TextCtrl(self.parent, -1, "")
 
         # Properties.
