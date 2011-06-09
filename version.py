@@ -44,7 +44,7 @@ def revision():
         return
 
     # Try to run 'svn info'.
-    pipe = Popen('svn info', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
+    pipe = Popen('svn info', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
     # Errors.
     if pipe.stderr.readlines():
@@ -72,7 +72,7 @@ def url():
         return
 
     # Try to run 'svn info'.
-    pipe = Popen('svn info', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
+    pipe = Popen('svn info', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
     # Errors.
     if pipe.stderr.readlines():

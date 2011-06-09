@@ -31,8 +31,7 @@ from math import sqrt
 from numpy import array, dot, float64, zeros
 import os
 from os import F_OK, access, sep
-if dep_check.scientific_pdb_module:
-    import Scientific.IO.PDB
+from extern.scientific_python.IO import PDB
 import sys
 from warnings import warn
 
@@ -54,10 +53,6 @@ class Scientific_data(Base_struct_API):
 
     def __init__(self):
         """Initialise the class."""
-
-        # Test for the PDB parser availability.
-        if not dep_check.scientific_pdb_module:
-            raise RelaxError("The Scientific python PDB module Scientific.IO.PDB could not be imported.")
 
         # Execute the base class __init__() method.
         Base_struct_API.__init__(self)
@@ -542,12 +537,12 @@ class Scientific_data(Base_struct_API):
                     continue
 
             # Load the PDB file.
-            model = Scientific.IO.PDB.Structure(file_path, model_num)
+            model = PDB.Structure(file_path, model_num)
 
             # No model 1.
             if not len(model) and not len(mol_conts):
                 # Load the PDB without a model number.
-                model = Scientific.IO.PDB.Structure(file_path)
+                model = PDB.Structure(file_path)
                 model_flag = False
 
                 # Ok, nothing is loadable from this file.
@@ -688,7 +683,7 @@ class MolContainer:
                 return
 
         # Load the PDB file.
-        model = Scientific.IO.PDB.Structure(file_path, self.file_model)
+        model = PDB.Structure(file_path, self.file_model)
 
         # Print out.
         print(("\n" + repr(model)))

@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2010 Michael Bieri                                            #
+# Copyright (C) 2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,11 +33,12 @@ import wx
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
+from gui.analyses.base import Base_frame
 from gui.paths import IMAGE_PATH
 
 
 
-class Results_summary:
+class Results_summary(Base_frame):
     """The base class for the noe frames."""
 
     def __init__(self, gui, notebook):
@@ -71,9 +73,8 @@ class Results_summary:
         # Use a vertical packing of elements.
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        # Add Title.
-        title = wx.StaticText(self.parent, -1, "\nModel-Free Results:", style=wx.ALIGN_RIGHT)
-        sizer.Add(title, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        # Add a label.
+        self.add_subsubtitle(sizer, "Model-free results")
 
         # Selection to open.
         sizer1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -103,9 +104,8 @@ class Results_summary:
         # Use a vertical packing of elements.
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        # Add Title.
-        title = wx.StaticText(self.parent, -1, "steady-state NOE Results:", style=wx.ALIGN_RIGHT)
-        sizer.Add(title, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        # Add a label.
+        self.add_subsubtitle(sizer, "Steady-state NOE results")
 
         # Selection to open.
         sizer1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -135,9 +135,8 @@ class Results_summary:
         # Use a vertical packing of elements.
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        # Add Title.
-        title = wx.StaticText(self.parent, -1, "\nRelaxation Results:", style=wx.ALIGN_RIGHT)
-        sizer.Add(title, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        # Add a label.
+        self.add_subsubtitle(sizer, "Relaxation results")
 
         # Selection to open.
         sizer1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -169,7 +168,7 @@ class Results_summary:
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the title.
-        self.add_title(box)
+        self.add_title(box, "Results")
 
         # Add Noe results.
         self.add_noe_results(box)
@@ -189,16 +188,3 @@ class Results_summary:
         self.results_noe = ds.relax_gui.results_noe
         self.results_rx = ds.relax_gui.results_rx
         self.results_modelfree = ds.relax_gui.results_model_free
-
-
-    def add_title(self, box):
-        """Create and add the frame title to the given box."""
-
-        # The title.
-        label = wx.StaticText(self.parent, -1, "Results:")
-
-        # The font properties.
-        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-
-        # Pack the title.
-        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)

@@ -42,6 +42,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.about import About_base
+from gui.analyses.base import Base_frame
 from gui.analyses.results_analysis import model_free_results, see_results
 from gui.analyses.select_model_calc import Select_tensor
 from gui.base_classes import Container
@@ -151,7 +152,7 @@ class About_window(About_base):
         self.offset(-self.offset())
 
 
-class Auto_model_free:
+class Auto_model_free(Base_frame):
     def __init__(self, gui, notebook):
         """Build the automatic model-free protocol GUI element.
 
@@ -191,7 +192,7 @@ class Auto_model_free:
         self.parent.SetSizer(main_box)
 
         # Set the frame font size.
-        self.parent.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.parent.SetFont(self.gui.font_small)
 
 
     def _about(self, event):
@@ -221,7 +222,7 @@ class Auto_model_free:
         # The label.
         label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
         label.SetMinSize((118, 17))
-        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The button.
@@ -235,23 +236,6 @@ class Auto_model_free:
         box.Add(sizer, 1, wx.ALIGN_RIGHT, 0)
 
 
-    def add_frame_title(self, box):
-        """Create and add the frame title to the given box.
-
-        @param box:     The box element to pack the frame title into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # The title.
-        label = wx.StaticText(self.parent, -1, "Setup for model-free analysis")
-
-        # The font properties.
-        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-
-        # Pack the title.
-        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
-
-
     def add_max_iterations(self, box):
         """Create and add the model-free maximum interation GUI element to the given box.
 
@@ -263,8 +247,9 @@ class Auto_model_free:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # Text.
-        label_maxiter = wx.StaticText(self.parent, -1, "Maximum interations:")
+        label_maxiter = wx.StaticText(self.parent, -1, "Maximum interations")
         label_maxiter.SetMinSize((240, 17))
+        label_maxiter.SetFont(self.gui.font_normal)
         sizer.Add(label_maxiter, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spinner.
@@ -283,7 +268,8 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.label_9 = wx.StaticText(self.parent, -1, "Select Model-free models (default = all):")
+        label = wx.StaticText(self.parent, -1, "Select model-free models (default = all):")
+        label.SetFont(self.gui.font_normal)
         self.m0 = wx.ToggleButton(self.parent, -1, "m0")
         self.m1 = wx.ToggleButton(self.parent, -1, "m1")
         self.m2 = wx.ToggleButton(self.parent, -1, "m2")
@@ -297,43 +283,43 @@ class Auto_model_free:
 
         # Properties.
         self.m0.SetMinSize((70, 25))
-        self.m0.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m0.SetFont(self.gui.font_button)
         self.m0.SetToolTipString("{}")
         self.m0.SetValue(1)
         self.m1.SetMinSize((70, 25))
-        self.m1.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m1.SetFont(self.gui.font_button)
         self.m1.SetToolTipString("{S2}")
         self.m1.SetValue(1)
         self.m2.SetMinSize((70, 25))
-        self.m2.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m2.SetFont(self.gui.font_button)
         self.m2.SetToolTipString("{S2, te}")
         self.m2.SetValue(1)
         self.m3.SetMinSize((70, 25))
-        self.m3.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m3.SetFont(self.gui.font_button)
         self.m3.SetToolTipString("{S2, Rex}")
         self.m3.SetValue(1)
         self.m4.SetMinSize((70, 25))
-        self.m4.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m4.SetFont(self.gui.font_button)
         self.m4.SetToolTipString("{S2, te, Rex}")
         self.m4.SetValue(1)
         self.m5.SetMinSize((70, 25))
-        self.m5.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m5.SetFont(self.gui.font_button)
         self.m5.SetToolTipString("{S2, S2f, ts}")
         self.m5.SetValue(1)
         self.m6.SetMinSize((70, 25))
-        self.m6.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m6.SetFont(self.gui.font_button)
         self.m6.SetToolTipString("{S2, tf, S2f, ts}")
         self.m6.SetValue(1)
         self.m7.SetMinSize((70, 25))
-        self.m7.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m7.SetFont(self.gui.font_button)
         self.m7.SetToolTipString("{S2, S2f, ts, Rex}")
         self.m7.SetValue(1)
         self.m8.SetMinSize((70, 25))
-        self.m8.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m8.SetFont(self.gui.font_button)
         self.m8.SetToolTipString("{S2, tf, S2f, ts, Rex}")
         self.m8.SetValue(1)
         self.m9.SetMinSize((70, 25))
-        self.m9.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m9.SetFont(self.gui.font_button)
         self.m9.SetToolTipString("{Rex}")
         self.m9.SetValue(1)
 
@@ -351,41 +337,8 @@ class Auto_model_free:
         sizer_20.Add(self.m9, 0, wx.ADJUST_MINSIZE, 0)
 
         # Add the title and box of buttons.
-        box.Add(self.label_9, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
+        box.Add(label, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
         box.Add(sizer_20, 1, wx.EXPAND, 0)
-
-
-    def add_pdb_selection(self, box):
-        """Create and add the PDB file selection GUI element to the given box.
-
-        @param box:     The box element to pack the PDB file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # The elements.
-        self.text_structure = wx.StaticText(self.parent, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.textctrl_structure = StructureTextCtrl(self.parent, -1, self.gui.structure_file_pdb_msg)
-        self.textctrl_structure.SetEditable(False)
-        button = wx.Button(self.parent, -1, "Change")
-
-        # Properties.
-        self.text_structure.SetMinSize((240, 17))
-        self.text_structure.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.textctrl_structure.SetMinSize((350, 27))
-        button.SetMinSize((103, 27))
-
-        # Layout.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        sizer.Add(self.text_structure, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer.Add(self.textctrl_structure, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Bind the events.
-        self.gui.Bind(wx.EVT_BUTTON, self.textctrl_structure.open_file, button)
-
-        # Add the element to the box.
-        box.Add(sizer, 1, wx.EXPAND, 0)
 
 
     def add_relax_data_input(self, box):
@@ -445,43 +398,43 @@ class Auto_model_free:
         label_8.SetMinSize((80, 17))
         self.m_noe_1.SetMinSize((120, 20))
         model_noe_1.SetMinSize((20, 20))
-        model_noe_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_noe_1.SetFont(self.gui.font_smaller)
         label_8_copy.SetMinSize((80, 17))
         self.m_r1_1.SetMinSize((120, 20))
         model_r1_1.SetMinSize((20, 20))
-        model_r1_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r1_1.SetFont(self.gui.font_smaller)
         label_8_copy_copy.SetMinSize((80, 17))
         self.m_r2_1.SetMinSize((120, 20))
         model_r2_1.SetMinSize((20, 20))
-        model_r2_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r2_1.SetFont(self.gui.font_smaller)
         label_7_copy.SetMinSize((80, 17))
         self.modelfreefreq2.SetMinSize((80, 20))
         label_8_copy_1.SetMinSize((80, 17))
         self.m_noe_2.SetMinSize((120, 20))
         model_noe_2.SetMinSize((20, 20))
-        model_noe_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_noe_2.SetFont(self.gui.font_smaller)
         label_8_copy_copy_1.SetMinSize((80, 17))
         self.m_r1_2.SetMinSize((120, 20))
         model_r1_2.SetMinSize((20, 20))
-        model_r1_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r1_2.SetFont(self.gui.font_smaller)
         label_8_copy_copy_copy.SetMinSize((80, 17))
         self.m_r2_2.SetMinSize((120, 20))
         model_r2_2.SetMinSize((20, 20))
-        model_r2_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r2_2.SetFont(self.gui.font_smaller)
         label_7_copy_copy.SetMinSize((80, 17))
         self.modelfreefreq3.SetMinSize((80, 20))
         label_8_copy_1_copy.SetMinSize((80, 17))
         self.m_noe_3.SetMinSize((120, 20))
         model_noe_3.SetMinSize((20, 20))
-        model_noe_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_noe_3.SetFont(self.gui.font_smaller)
         label_8_copy_copy_1_copy.SetMinSize((80, 17))
         self.m_r1_3.SetMinSize((120, 20))
         model_r1_3.SetMinSize((20, 20))
-        model_r1_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r1_3.SetFont(self.gui.font_smaller)
         label_8_copy_copy_copy_copy.SetMinSize((80, 17))
         self.m_r2_3.SetMinSize((120, 20))
         model_r2_3.SetMinSize((20, 20))
-        model_r2_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r2_3.SetFont(self.gui.font_smaller)
 
         # The box layout.
         sizer_16 = wx.BoxSizer(wx.HORIZONTAL)
@@ -573,65 +526,6 @@ class Auto_model_free:
 
         # Add the sizer to the given box.
         box.Add(sizer_16, 0, 0, 0)
-
-
-    def add_results_dir(self, box):
-        """Create and add the results directory GUI element to the given box.
-
-        @param box:     The box element to pack the results directory GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # The elements.
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.parent, -1, self.data.results_dir_model)
-        self.results_directory_r21_copy_2 = wx.Button(self.parent, -1, "Change")
-
-        # Properties.
-        results_dir_copy_copy_copy_1_copy_2 = wx.BoxSizer(wx.HORIZONTAL)
-        self.resultsdir_r21_copy_2.SetMinSize((350, 27))
-        self.results_directory_r21_copy_2.SetMinSize((103, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetMinSize((240, 17))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-
-        # Layout.
-        results_dir_copy_copy_copy_1_copy_2.Add(self.label_2_copy_copy_3_copy_copy_copy_copy_2, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1_copy_2.Add(self.resultsdir_r21_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1_copy_2.Add(self.results_directory_r21_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Bind the events.
-        self.gui.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
-
-
-        # Add the element to the box.
-        box.Add(results_dir_copy_copy_copy_1_copy_2, 1, wx.EXPAND, 0)
-
-
-    def add_unresolved_spins(self, box):
-        """Create and add the unresolved spins GUI element to the given box.
-
-        @param box:     The box element to pack the unresolved spins GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # The elements.
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r21_copy_1_copy = wx.TextCtrl(self.parent, -1, "")
-
-        # Properties.
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetMinSize((240, 17))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.unresolved_r21_copy_1_copy.SetMinSize((350, 27))
-
-        # Layout.
-        nmr_freq_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
-        nmr_freq_copy_copy_copy_copy_copy_1_copy.Add(self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_copy_copy_1_copy.Add(self.unresolved_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Bind the events.
-
-        # Add the element to the box.
-        box.Add(nmr_freq_copy_copy_copy_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
     def assemble_data(self):
@@ -771,7 +665,7 @@ class Auto_model_free:
             return
 
         # PDB file is given.
-        if str(self.textctrl_structure.GetValue()) in ['', 'please insert .pdb file']:
+        if str(self.field_structure.GetValue()) in ['', 'please insert .pdb file']:
             missing_data(missing=['No PDB file selected.'])
             return
 
@@ -849,7 +743,7 @@ class Auto_model_free:
         left_box.AddSpacer(10)
 
         # Add to the main box.
-        box.Add(left_box, 0, wx.ALL|wx.EXPAND, 0)
+        box.Add(left_box, 0, wx.ADJUST_MINSIZE, 0)
 
         # Build the right hand box and pack it next to the bitmap.
         right_box = self.build_right_box()
@@ -870,7 +764,7 @@ class Auto_model_free:
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the frame title.
-        self.add_frame_title(box)
+        self.add_title(box, "Setup for model-free analysis")
 
         # Add the relaxation data input GUI element.
         self.add_relax_data_input(box)
@@ -882,13 +776,13 @@ class Auto_model_free:
         self.add_max_iterations(box)
 
         # Add the PDB file selection GUI element.
-        self.add_pdb_selection(box)
+        self.field_structure = self.add_text_sel_element(box, self.parent, text="Structure file (.pdb)", default=str(self.gui.structure_file_pdb_msg), control=StructureTextCtrl, width_text=230, width_control=350, width_button=103, fn='open_file', editable=False, button=True)
 
         # Add the unresolved spins GUI element.
-        self.add_unresolved_spins(box)
+        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues", width_text=230, width_control=350, width_button=103)
 
         # Add the results directory GUI element.
-        self.add_results_dir(box)
+        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", default=self.data.results_dir_model, width_text=230, width_control=350, width_button=103, fn=self.resdir_modelfree, button=True)
 
         # Add the execution GUI element.
         self.add_execute_relax(box)
@@ -1170,11 +1064,11 @@ class Auto_model_free:
 
 
     def resdir_modelfree(self, event):
-        backup = self.resultsdir_r21_copy_2.GetValue()
+        backup = self.field_results_dir.GetValue()
         self.data.results_dir_model = opendir('Select results directory', backup)
         if self.data.results_dir_model == None:
             self.data.results_dir_model = backup
-        self.resultsdir_r21_copy_2.SetValue(self.data.results_dir_model)
+        self.field_results_dir.SetValue(self.data.results_dir_model)
         event.Skip()
 
 
@@ -1255,21 +1149,21 @@ class Auto_model_free:
 
         # The structure file.
         if upload:
-            self.data.structure_file = str(self.textctrl_structure.GetValue())
+            self.data.structure_file = str(self.field_structure.GetValue())
         else:
-            self.textctrl_structure.SetValue(str(self.data.structure_file))
+            self.field_structure.SetValue(str(self.data.structure_file))
 
         # Unresolved residues.
         if upload:
-            self.data.unresolved = str(self.unresolved_r21_copy_1_copy.GetValue())
+            self.data.unresolved = str(self.field_unresolved.GetValue())
         else:
-            self.unresolved_r21_copy_1_copy.SetValue(str(self.data.unresolved))
+            self.field_unresolved.SetValue(str(self.data.unresolved))
 
         # The results directory.
         if upload:
-            self.data.results_dir_model = str(self.resultsdir_r21_copy_2.GetValue())
+            self.data.results_dir_model = str(self.field_results_dir.GetValue())
         else:
-            self.resultsdir_r21_copy_2.SetValue(str(self.data.results_dir_model))
+            self.field_results_dir.SetValue(str(self.data.results_dir_model))
 
         # Maximum iterations.
         if upload:
