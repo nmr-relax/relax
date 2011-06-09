@@ -245,7 +245,7 @@ class Peak_intensity:
         self.subparent.add_subtitle(box, "Data points")
 
         # Add the cycle delay time element.
-        self.add_cycle_delay(box)
+        self.delay_time = self.subparent.add_text_sel_element(box, self.parent, text="Single delay cycle time [s]", width_text=230, width_control=350)
 
         # A sizer for the buttons and grid.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -305,35 +305,6 @@ class Peak_intensity:
 
         # Pack buttons
         sizer.Add(button_sizer, 0, 0, 0)
-
-
-    def add_cycle_delay(self, box):
-        """Create and add the cycle delay time GUI element to the given box.
-
-        @param box:     The box element to pack the cycle delay time GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Single delay cycle time [s]")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.delay_time = wx.TextCtrl(self.parent, -1)
-        self.delay_time.SetMinSize((350, 27))
-        sizer.Add(self.delay_time, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Bind the change of contents.
-        self.delay_time.Bind(wx.EVT_KEY_DOWN, self.change_delay_down)
-        self.delay_time.Bind(wx.EVT_KEY_UP, self.change_delay_up)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
     def add_grid(self, sizer):
