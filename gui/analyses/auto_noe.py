@@ -35,11 +35,11 @@ import wx
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
-from gui.analyses.base import Base_frame
 from relax_io import DummyFileObject
 from status import Status; status = Status()
 
 # relaxGUI module imports.
+from gui.analyses.base import Base_frame
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
 from gui.controller import Redirect_text, Thread_container

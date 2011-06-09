@@ -35,12 +35,12 @@ import wx
 # relax module imports.
 from auto_analyses.relax_fit import Relax_fit
 from data import Relax_data_store; ds = Relax_data_store()
-from gui.analyses.base import Base_frame
 from relax_io import DummyFileObject
 from status import Status; status = Status()
 from gui import paths
 
 # relaxGUI module imports.
+from gui.analyses.base import Base_frame
 from gui.base_classes import Container
 from gui.components.spectrum import Peak_intensity
 from gui.controller import Redirect_text, Thread_container
