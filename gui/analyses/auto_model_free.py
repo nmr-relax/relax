@@ -191,7 +191,7 @@ class Auto_model_free:
         self.parent.SetSizer(main_box)
 
         # Set the frame font size.
-        self.parent.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.parent.SetFont(self.gui.font_small)
 
 
     def _about(self, event):
@@ -221,7 +221,7 @@ class Auto_model_free:
         # The label.
         label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
         label.SetMinSize((118, 17))
-        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The button.
@@ -246,7 +246,7 @@ class Auto_model_free:
         label = wx.StaticText(self.parent, -1, "Setup for model-free analysis")
 
         # The font properties.
-        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        label.SetFont(self.gui.font_title)
 
         # Pack the title.
         box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
@@ -265,7 +265,7 @@ class Auto_model_free:
         # Text.
         label_maxiter = wx.StaticText(self.parent, -1, "Maximum interations")
         label_maxiter.SetMinSize((240, 17))
-        label_maxiter.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        label_maxiter.SetFont(self.gui.font_normal)
         sizer.Add(label_maxiter, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spinner.
@@ -285,7 +285,7 @@ class Auto_model_free:
 
         # The elements.
         label = wx.StaticText(self.parent, -1, "Select model-free models (default = all):")
-        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        label.SetFont(self.gui.font_normal)
         self.m0 = wx.ToggleButton(self.parent, -1, "m0")
         self.m1 = wx.ToggleButton(self.parent, -1, "m1")
         self.m2 = wx.ToggleButton(self.parent, -1, "m2")
@@ -299,43 +299,43 @@ class Auto_model_free:
 
         # Properties.
         self.m0.SetMinSize((70, 25))
-        self.m0.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m0.SetFont(self.gui.font_button)
         self.m0.SetToolTipString("{}")
         self.m0.SetValue(1)
         self.m1.SetMinSize((70, 25))
-        self.m1.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m1.SetFont(self.gui.font_button)
         self.m1.SetToolTipString("{S2}")
         self.m1.SetValue(1)
         self.m2.SetMinSize((70, 25))
-        self.m2.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m2.SetFont(self.gui.font_button)
         self.m2.SetToolTipString("{S2, te}")
         self.m2.SetValue(1)
         self.m3.SetMinSize((70, 25))
-        self.m3.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m3.SetFont(self.gui.font_button)
         self.m3.SetToolTipString("{S2, Rex}")
         self.m3.SetValue(1)
         self.m4.SetMinSize((70, 25))
-        self.m4.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m4.SetFont(self.gui.font_button)
         self.m4.SetToolTipString("{S2, te, Rex}")
         self.m4.SetValue(1)
         self.m5.SetMinSize((70, 25))
-        self.m5.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m5.SetFont(self.gui.font_button)
         self.m5.SetToolTipString("{S2, S2f, ts}")
         self.m5.SetValue(1)
         self.m6.SetMinSize((70, 25))
-        self.m6.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m6.SetFont(self.gui.font_button)
         self.m6.SetToolTipString("{S2, tf, S2f, ts}")
         self.m6.SetValue(1)
         self.m7.SetMinSize((70, 25))
-        self.m7.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m7.SetFont(self.gui.font_button)
         self.m7.SetToolTipString("{S2, S2f, ts, Rex}")
         self.m7.SetValue(1)
         self.m8.SetMinSize((70, 25))
-        self.m8.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m8.SetFont(self.gui.font_button)
         self.m8.SetToolTipString("{S2, tf, S2f, ts, Rex}")
         self.m8.SetValue(1)
         self.m9.SetMinSize((70, 25))
-        self.m9.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m9.SetFont(self.gui.font_button)
         self.m9.SetToolTipString("{Rex}")
         self.m9.SetValue(1)
 
@@ -372,7 +372,7 @@ class Auto_model_free:
 
         # Properties.
         self.text_structure.SetMinSize((240, 17))
-        self.text_structure.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.text_structure.SetFont(self.gui.font_normal)
         self.textctrl_structure.SetMinSize((350, 27))
         button.SetMinSize((103, 27))
 
@@ -447,43 +447,43 @@ class Auto_model_free:
         label_8.SetMinSize((80, 17))
         self.m_noe_1.SetMinSize((120, 20))
         model_noe_1.SetMinSize((20, 20))
-        model_noe_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_noe_1.SetFont(self.gui.font_smaller)
         label_8_copy.SetMinSize((80, 17))
         self.m_r1_1.SetMinSize((120, 20))
         model_r1_1.SetMinSize((20, 20))
-        model_r1_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r1_1.SetFont(self.gui.font_smaller)
         label_8_copy_copy.SetMinSize((80, 17))
         self.m_r2_1.SetMinSize((120, 20))
         model_r2_1.SetMinSize((20, 20))
-        model_r2_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r2_1.SetFont(self.gui.font_smaller)
         label_7_copy.SetMinSize((80, 17))
         self.modelfreefreq2.SetMinSize((80, 20))
         label_8_copy_1.SetMinSize((80, 17))
         self.m_noe_2.SetMinSize((120, 20))
         model_noe_2.SetMinSize((20, 20))
-        model_noe_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_noe_2.SetFont(self.gui.font_smaller)
         label_8_copy_copy_1.SetMinSize((80, 17))
         self.m_r1_2.SetMinSize((120, 20))
         model_r1_2.SetMinSize((20, 20))
-        model_r1_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r1_2.SetFont(self.gui.font_smaller)
         label_8_copy_copy_copy.SetMinSize((80, 17))
         self.m_r2_2.SetMinSize((120, 20))
         model_r2_2.SetMinSize((20, 20))
-        model_r2_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r2_2.SetFont(self.gui.font_smaller)
         label_7_copy_copy.SetMinSize((80, 17))
         self.modelfreefreq3.SetMinSize((80, 20))
         label_8_copy_1_copy.SetMinSize((80, 17))
         self.m_noe_3.SetMinSize((120, 20))
         model_noe_3.SetMinSize((20, 20))
-        model_noe_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_noe_3.SetFont(self.gui.font_smaller)
         label_8_copy_copy_1_copy.SetMinSize((80, 17))
         self.m_r1_3.SetMinSize((120, 20))
         model_r1_3.SetMinSize((20, 20))
-        model_r1_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r1_3.SetFont(self.gui.font_smaller)
         label_8_copy_copy_copy_copy.SetMinSize((80, 17))
         self.m_r2_3.SetMinSize((120, 20))
         model_r2_3.SetMinSize((20, 20))
-        model_r2_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        model_r2_3.SetFont(self.gui.font_smaller)
 
         # The box layout.
         sizer_16 = wx.BoxSizer(wx.HORIZONTAL)
@@ -594,7 +594,7 @@ class Auto_model_free:
         self.resultsdir_r21_copy_2.SetMinSize((350, 27))
         self.results_directory_r21_copy_2.SetMinSize((103, 27))
         self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetMinSize((240, 17))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetFont(self.gui.font_normal)
 
         # Layout.
         results_dir_copy_copy_copy_1_copy_2.Add(self.label_2_copy_copy_3_copy_copy_copy_copy_2, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
@@ -622,7 +622,7 @@ class Auto_model_free:
 
         # Properties.
         self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetMinSize((240, 17))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetFont(self.gui.font_normal)
         self.unresolved_r21_copy_1_copy.SetMinSize((350, 27))
 
         # Layout.

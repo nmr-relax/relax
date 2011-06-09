@@ -114,6 +114,9 @@ class Main(wx.Frame):
         # Initialise the GUI data.
         self.init_data()
 
+        # Set up some standard interface-wide fonts.
+        self.setup_fonts()
+
         # The user function GUI elements.
         self.user_functions = User_functions(self)
 
@@ -548,6 +551,17 @@ class Main(wx.Frame):
         if not tmp_global == None:
             if question('Do you realy want to change relax settings?'):
                 ds.relax_gui.global_setting = tmp_global
+
+
+    def setup_fonts(self):
+        """Initialise a series of fonts to be used throughout the GUI."""
+
+        # The fonts.
+        self.font_smaller = wx.Font(6,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
+        self.font_small =   wx.Font(8,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
+        self.font_button =  wx.Font(8,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
+        self.font_normal =  wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
+        self.font_title =   wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
 
 
     def show_controller(self, event):
