@@ -81,6 +81,8 @@ class Main(wx.Frame):
 
         # The window style.
         style = wx.CLOSE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN
+        if status.debug:
+            style = wx.DEFAULT_FRAME_STYLE
 
         # Execute the base class __init__ method.
         super(Main, self).__init__(parent=parent, id=id, title=title, style=style)
