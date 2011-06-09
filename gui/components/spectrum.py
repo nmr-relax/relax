@@ -412,6 +412,7 @@ class Peak_intensity:
             allowed += [46]    # Only one full stop.
         allowed += [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]    # Numbers.
         allowed += [127]    # Delete.
+        allowed += [wx.WXK_LEFT, wx.WXK_RIGHT, wx.WXK_HOME, wx.WXK_END]    # Navigation keys.
 
         # Disallowed values, so do nothing.
         if key not in allowed:
