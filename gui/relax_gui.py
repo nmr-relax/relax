@@ -147,7 +147,6 @@ class Main(wx.Frame):
             icon = wx.EmptyIcon()
             icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
             self.SetIcon(icon)
-            self.SetSize((self.min_width, self.min_height))
 
         # Statusbar fields.
         self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
@@ -157,7 +156,7 @@ class Main(wx.Frame):
 
         # Set up the frame.
         self.Layout()
-        self.SetSize((1000, 600))
+        self.SetSize((self.min_width, self.min_height))
         self.Centre()
 
         # Close Box event
