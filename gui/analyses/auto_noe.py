@@ -86,9 +86,6 @@ class Auto_noe:
         main_box = self.build_main_box()
         self.parent.SetSizer(main_box)
 
-        # Set the frame font size.
-        self.parent.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-
 
     def add_execute_relax(self, box):
         """Create and add the relax execution GUI element to the given box.
@@ -103,6 +100,7 @@ class Auto_noe:
         # The label.
         label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
         label.SetMinSize((118, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The button.
@@ -127,10 +125,12 @@ class Auto_noe:
         label = wx.StaticText(self.parent, -1, "Setup for steady-state NOE analysis")
 
         # The font properties.
-        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        label.SetFont(self.gui.font_title)
 
-        # Pack the title.
-        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
+        # Pack the title, with spacing.
+        box.AddSpacer(10)
+        box.Add(label)
+        box.AddSpacer(5)
 
 
     def add_frq(self, box):
@@ -144,8 +144,9 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -168,8 +169,9 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Reference NOE peak list:", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Reference NOE peak list")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -198,8 +200,9 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Baseplane RMSD:", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Baseplane RMSD")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -222,8 +225,9 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Results directory")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -252,8 +256,9 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Saturated NOE peak list:", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Saturated NOE peak list")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -282,8 +287,9 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Baseplane RMSD:", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Baseplane RMSD")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -306,8 +312,9 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence file", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Sequence file")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -337,8 +344,9 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence from PDB structure file", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Sequence from PDB structure file")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -368,8 +376,9 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Unresolved residues")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
@@ -659,9 +668,9 @@ class Auto_noe:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "\nNOE peak lists:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 34))
-        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        label = wx.StaticText(self.parent, -1, "\nNOE peak lists")
+        label.SetMinSize((230, 44))
+        label.SetFont(self.gui.font_subtitle)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Add the element to the box.
