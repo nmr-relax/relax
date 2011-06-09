@@ -144,6 +144,8 @@ class Base_frame:
         @type height:       int
         @keyword editable:  A flag specifying if the control is editable or not.
         @type editable:     bool
+        @return:            The text control object.
+        @rtype:             control object
         """
 
         # The control.
@@ -158,6 +160,64 @@ class Base_frame:
         box.Add(field, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Return the text field.
+        return field
+
+
+    def add_text_sel_element(self, box, parent, text="", default="", control=wx.TextCtrl, width_text=-1, width_control=-1, width_button=-1, height=-1, fn=None, editable=True, button=False):
+        """Create a text selection element for the frame.
+
+        This consists of a horizontal layout with a static text element, a text control, and an optional button.
+
+        @param box:             The box element to pack the structure file selection GUI element into.
+        @type box:              wx.BoxSizer instance
+        @param parent:          The parent GUI element.
+        @type parent:           wx object
+        @keyword text:          The static text.
+        @type text:             str
+        @keyword default:       The default text of the control.
+        @type default:          str
+        @keyword control:       The control class to use.
+        @type control:          wx.TextCtrl derived class
+        @keyword width_text:    The minimum width of the static text.
+        @type width_text:       int
+        @keyword width_control: The minimum width of the text control.
+        @type width_control:    int
+        @keyword width_button:  The minimum width of the button.
+        @type width_button:     int
+        @keyword height:        The minimum height of the entire element.
+        @type height:           int
+        @keyword fn:            The function or method to execute when clicking on the button.  If this is a string, then an equivalent function will be searched for in the control object.
+        @type fn:               func or str
+        @keyword editable:      A flag specifying if the control is editable or not.
+        @type editable:         bool
+        @return:                The text control object.
+        @rtype:                 control object
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        self.add_static_text(sizer, parent, text=text, width=width_text)
+
+        # The text input field.
+        field = self.add_text_control(sizer, parent, text=default, control=control, width=width_control, editable=editable)
+        size = field.GetSize()
+
+        # The button.
+        if button:
+            # Function is in the control class.
+            if type(fn) == str:
+                # The function.
+                fn = getattr(field, fn)
+
+            # Add the button.
+            self.add_button_open(sizer, parent, fn=fn, width=width_button, height=size[1])
+
+        # Add the element to the box.
+        box.Add(sizer, 1, wx.EXPAND, 0)
+
+        # Return the text control object.
         return field
 
 
