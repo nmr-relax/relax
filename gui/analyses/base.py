@@ -72,6 +72,40 @@ class Base_frame:
         box.Add(label)
 
 
+    def add_text_control(self, box, parent, text='', control=wx.TextCtrl, width=-1, height=-1, editable=True):
+        """Add a text control field to the box.
+
+        @param box:         The box element to pack the control into.
+        @type box:          wx.BoxSizer instance
+        @param parent:      The parent GUI element.
+        @type parent:       wx object
+        @keyword text:      The default text of the control.
+        @type text:         str
+        @keyword control:   The control class to use.
+        @type control:      wx.TextCtrl derived class
+        @keyword width:     The minimum width of the control.
+        @type width:        int
+        @keyword height:    The minimum height of the control.
+        @type height:       int
+        @keyword editable:  A flag specifying if the control is editable or not.
+        @type editable:     bool
+        """
+
+        # The control.
+        field = control(self.parent, -1, text)
+
+        # The font and control properties.
+        field.SetMinSize((width, height))
+        field.SetFont(self.gui.font_normal)
+        field.SetEditable(editable)
+
+        # Add the control to the box.
+        box.Add(field, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Return the text field.
+        return field
+
+
     def add_title(self, box, text):
         """Create and add the frame title.
 
