@@ -204,8 +204,8 @@ class Auto_noe(Base_frame):
         box = wx.BoxSizer(wx.HORIZONTAL)
 
         # Add the model-free bitmap picture.
-        self.bitmap_1_copy_copy = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
-        box.Add(self.bitmap_1_copy_copy, 0, wx.ADJUST_MINSIZE, 10)
+        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
+        box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
 
         # Build the right hand box and pack it next to the bitmap.
         right_box = self.build_right_box()
