@@ -86,7 +86,7 @@ class Base_frame:
         label.SetFont(self.gui.font_normal)
 
         # Add the label to the box.
-        box.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        box.Add(label, 0, 0, 0)
 
 
     def add_subtitle(self, box, text):
@@ -216,6 +216,10 @@ class Base_frame:
 
             # Add the button.
             self.add_button_open(sizer, parent, fn=fn, width=width_button, height=size[1])
+
+        # No button, so add a spacer.
+        else:
+            sizer.AddSpacer((width_button, -1))
 
         # Add the element to the box.
         box.Add(sizer, 1, wx.EXPAND, 0)
