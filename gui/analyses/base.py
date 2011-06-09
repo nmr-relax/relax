@@ -160,7 +160,7 @@ class Base_frame:
         field.SetEditable(editable)
 
         # Add the control to the box.
-        box.Add(field, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        box.Add(field, 1, wx.ALL|wx.EXPAND, 0)
 
         # Return the text field.
         return field
