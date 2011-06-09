@@ -71,6 +71,3 @@ class Base_frame:
         box.AddSpacer(20)
         box.Add(label)
         box.AddSpacer(5)
-
-
-
