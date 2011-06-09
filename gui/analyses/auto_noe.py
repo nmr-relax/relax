@@ -366,7 +366,7 @@ class Auto_noe(Base_frame):
         self.field_unresolved = wx.TextCtrl(self.parent, -1, "")
         self.field_unresolved.SetMinSize((350, 27))
         sizer.Add(self.field_unresolved, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        
+
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
