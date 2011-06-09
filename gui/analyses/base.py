@@ -31,6 +31,9 @@ import wx
 class Base_frame:
     """The base class for all frames."""
 
+    # Hard coded variables.
+    size_graphic_panel = 200
+
     def add_button_open(self, box, parent, fn=None, width=-1, height=-1):
         """Add a button for opening and changing files and directories.
 
