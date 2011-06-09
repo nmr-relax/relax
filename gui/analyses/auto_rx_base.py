@@ -112,151 +112,6 @@ class Auto_rx(Base_frame):
         box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
 
 
-    def add_frq(self, box):
-        """Create and add the frequency selection GUI element to the given box.
-
-        @param box:     The box element to pack the PDB file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_nmr_frq = wx.TextCtrl(self.parent, -1, str(self.data.frq))
-        self.field_nmr_frq.SetMinSize((350, 27))
-        sizer.Add(self.field_nmr_frq, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_results_dir(self, box):
-        """Create and add the results directory GUI element to the given box.
-
-        @param box:     The box element to pack the results directory GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Results directory")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_results_dir = wx.TextCtrl(self.parent, -1, self.data.save_dir)
-        self.field_results_dir.SetMinSize((350, 27))
-        sizer.Add(self.field_results_dir, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.results_directory, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_sequence_selection(self, box):
-        """Create and add the sequence file selection GUI element to the given box.
-
-        @param box:     The box element to pack the sequence file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence file")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_sequence = wx.TextCtrl(self.parent, -1, str(self.gui.sequence_file_msg))
-        self.field_sequence.SetEditable(False)
-        self.field_sequence.SetMinSize((350, 27))
-        sizer.Add(self.field_sequence, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.load_sequence, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 1, wx.EXPAND, 0)
-
-
-    def add_structure_selection(self, box):
-        """Create and add the structure file selection GUI element to the given box.
-
-        @param box:     The box element to pack the structure file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence from PDB structure file")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_structure = StructureTextCtrl(self.parent, -1, self.gui.structure_file_pdb_msg)
-        self.field_structure.SetEditable(False)
-        self.field_structure.SetMinSize((350, 27))
-        sizer.Add(self.field_structure, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.field_structure.open_file, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 1, wx.EXPAND, 0)
-
-
-    def add_unresolved_spins(self, box):
-        """Create and add the unresolved spins GUI element to the given box.
-
-        @param box:     The box element to pack the unresolved spins GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Unresolved residues")
-        label.SetMinSize((230, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_unresolved = wx.TextCtrl(self.parent, -1, "")
-        self.field_unresolved.SetMinSize((350, 27))
-        sizer.Add(self.field_unresolved, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
     def assemble_data(self):
         """Assemble the data required for the Relax_fit class.
 
@@ -376,19 +231,19 @@ class Auto_rx(Base_frame):
         self.add_title(box, "Setup for %s relaxation analysis" % self.label)
 
         # Add the frequency selection GUI element.
-        self.add_frq(box)
+        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str(self.data.frq), width_text=230, width_control=350, width_button=103)
 
         # Add the results directory GUI element.
-        self.add_results_dir(box)
+        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", default=self.data.save_dir, width_text=230, width_control=350, width_button=103, fn=self.results_directory, button=True)
 
         # Add the sequence file selection GUI element.
-        self.add_sequence_selection(box)
+        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str(self.gui.sequence_file_msg), width_text=230, width_control=350, width_button=103, fn=self.load_sequence, editable=False, button=True)
 
         # Add the structure file selection GUI element.
-        self.add_structure_selection(box)
+        self.field_structure = self.add_text_sel_element(box, self.parent, text="Sequence from PDB structure file", default=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, width_text=230, width_control=350, width_button=103, fn='open_file', editable=False, button=True)
 
         # Add the unresolved spins GUI element.
-        self.add_unresolved_spins(box)
+        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues", width_text=230, width_control=350, width_button=103)
 
         # Add the peak list selection GUI element.
         self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, subparent=self, data=self.data, label=self.label, box=box)
