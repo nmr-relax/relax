@@ -318,8 +318,9 @@ class Peak_intensity:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        label = wx.StaticText(self.parent, -1, "Single delay cycle time [s]", style=wx.ALIGN_RIGHT)
+        label = wx.StaticText(self.parent, -1, "Single delay cycle time [s]")
         label.SetMinSize((230, 17))
+        label.SetFont(self.gui.font_normal)
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
