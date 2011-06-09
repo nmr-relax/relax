@@ -35,6 +35,7 @@ import wx
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
+from gui.analyses.base import Base_frame
 from relax_errors import RelaxError
 from relax_io import DummyFileObject
 from status import Status; status = Status()
@@ -51,7 +52,7 @@ from gui.settings import load_sequence
 
 
 
-class Auto_noe:
+class Auto_noe(Base_frame):
     """The base class for the noe frames."""
 
     # Hardcoded variables.
@@ -112,25 +113,6 @@ class Auto_noe:
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
-
-
-    def add_frame_title(self, box):
-        """Create and add the frame title to the given box.
-
-        @param box:     The box element to pack the frame title into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # The title.
-        label = wx.StaticText(self.parent, -1, "Setup for steady-state NOE analysis")
-
-        # The font properties.
-        label.SetFont(self.gui.font_title)
-
-        # Pack the title, with spacing.
-        box.AddSpacer(10)
-        box.Add(label)
-        box.AddSpacer(5)
 
 
     def add_frq(self, box):
@@ -502,7 +484,7 @@ class Auto_noe:
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the frame title.
-        self.add_frame_title(box)
+        self.add_title(box, "Setup for steady-state NOE analysis")
 
         # Add the frequency selection GUI element.
         self.add_frq(box)
@@ -520,7 +502,7 @@ class Auto_noe:
         self.add_unresolved_spins(box)
 
         # Add peak list selection header.
-        self.peak_list_header(box)
+        self.add_subtitle(box, "NOE peak lists")
 
         # Add the saturated NOE peak list selection GUI element.
         self.add_saturated_peak_list(box)
@@ -655,26 +637,6 @@ class Auto_noe:
 
         # Re-alias.
         self.data = data
-
-
-    def peak_list_header(self, box):
-        """Add header for peak list section
-
-        @param box:     The box element to pack the structure file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "\nNOE peak lists")
-        label.SetMinSize((230, 44))
-        label.SetFont(self.gui.font_subtitle)
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
     def ref_file(self, event):
