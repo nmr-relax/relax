@@ -35,6 +35,7 @@ class Base_frame:
     size_graphic_panel = 200
     width_text = 240
     width_button = 100
+    spacer_horizontal = 5
 
     def add_button_open(self, box, parent, fn=None, width=-1, height=-1):
         """Add a button for opening and changing files and directories.
@@ -197,9 +198,15 @@ class Base_frame:
         # The label.
         self.add_static_text(sizer, parent, text=text, width=self.width_text)
 
+        # Spacer.
+        sizer.AddSpacer((self.spacer_horizontal, -1))
+
         # The text input field.
         field = self.add_text_control(sizer, parent, text=default, control=control, editable=editable)
         size = field.GetSize()
+
+        # Spacer.
+        sizer.AddSpacer((self.spacer_horizontal, -1))
 
         # The button.
         if button:
