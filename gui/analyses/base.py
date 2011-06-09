@@ -31,27 +31,6 @@ import wx
 class Base_frame:
     """The base class for all frames."""
 
-    def add_title(self, box, text):
-        """Create and add the frame title.
-
-        @param box:     The box element to pack the frame title into.
-        @type box:      wx.BoxSizer instance
-        @param text:    The text of the title.
-        @type text:     str
-        """
-
-        # The title.
-        label = wx.StaticText(self.parent, -1, text)
-
-        # The font properties.
-        label.SetFont(self.gui.font_title)
-
-        # Pack the title, with spacing.
-        box.AddSpacer(10)
-        box.Add(label)
-        box.AddSpacer(5)
-
-
     def add_subtitle(self, box, text):
         """Create and add the subtitle.
 
@@ -69,5 +48,46 @@ class Base_frame:
 
         # Add the subtitle to the box, with spacing.
         box.AddSpacer(20)
+        box.Add(label)
+        box.AddSpacer(5)
+
+
+    def add_subsubtitle(self, box, text):
+        """Create and add the subsubtitle.
+
+        @param box:     The box element to pack the text into.
+        @type box:      wx.BoxSizer instance
+        @param text:    The text of the subsubtitle.
+        @type text:     str
+        """
+
+        # The text.
+        label = wx.StaticText(self.parent, -1, text)
+
+        # The font properties.
+        label.SetFont(self.gui.font_normal)
+
+        # Add the text to the box, with spacing.
+        box.AddSpacer(10)
+        box.Add(label)
+
+
+    def add_title(self, box, text):
+        """Create and add the frame title.
+
+        @param box:     The box element to pack the frame title into.
+        @type box:      wx.BoxSizer instance
+        @param text:    The text of the title.
+        @type text:     str
+        """
+
+        # The title.
+        label = wx.StaticText(self.parent, -1, text)
+
+        # The font properties.
+        label.SetFont(self.gui.font_title)
+
+        # Pack the title, with spacing.
+        box.AddSpacer(10)
         box.Add(label)
         box.AddSpacer(5)
