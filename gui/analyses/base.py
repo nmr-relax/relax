@@ -92,7 +92,7 @@ class Base_frame:
         """
 
         # The control.
-        field = control(self.parent, -1, text)
+        field = control(parent, -1, text)
 
         # The font and control properties.
         field.SetMinSize((width, height))
