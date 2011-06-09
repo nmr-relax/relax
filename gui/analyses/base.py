@@ -31,6 +31,32 @@ import wx
 class Base_frame:
     """The base class for all frames."""
 
+    def add_static_text(self, box, parent, text='', width=-1, height=-1):
+        """Add a text control field to the box.
+
+        @param box:         The box element to pack the control into.
+        @type box:          wx.BoxSizer instance
+        @param parent:      The parent GUI element.
+        @type parent:       wx object
+        @keyword text:      The default text of the control.
+        @type text:         str
+        @keyword width:     The minimum width of the control.
+        @type width:        int
+        @keyword height:    The minimum height of the control.
+        @type height:       int
+        """
+
+        # The label.
+        label = wx.StaticText(parent, -1, text)
+
+        # The font and label properties.
+        label.SetMinSize((width, height))
+        label.SetFont(self.gui.font_normal)
+
+        # Add the label to the box.
+        box.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+
     def add_subtitle(self, box, text):
         """Create and add the subtitle.
 
