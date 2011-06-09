@@ -143,8 +143,12 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
         if value == self.prev_val:
             return False
 
-        # Set the value in the table.
-        grid.GetTable().SetValue(row, col, str(value))
+        # Set the value in the table (the value of zero shows nothing).
+        if value == 0:
+            text = ''
+        else:
+            text = str(value)
+        grid.GetTable().SetValue(row, col, text)
 
         # The delay cycle time.
         time = self.parent.delay_time.GetValue()
@@ -160,7 +164,6 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
 
         # A change occurred.
         return True
-
 
 
     def Reset(self):
@@ -354,7 +357,7 @@ class Peak_intensity:
         # Column properties.
         for i in range(self.grid.GetNumberRows()):
             # Set the editor for the number of cycles column.
-            self.grid.SetCellEditor(i, 1, Delay_num_cell_editor(1, 200, self))
+            self.grid.SetCellEditor(i, 1, Delay_num_cell_editor(0, 200, self))
 
             # Make the relaxation delay column read only.
             self.grid.SetReadOnly(i, 2)
