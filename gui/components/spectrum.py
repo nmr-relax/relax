@@ -93,7 +93,7 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
         """Create and return a new class instance."""
 
         # Initialise and return the class.
-        return Delay_num_cell_editor(self.min, self.max)
+        return Delay_num_cell_editor(self.min, self.max, self.parent)
 
 
     def Create(self, parent, id, evtHandler):
