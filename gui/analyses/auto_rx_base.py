@@ -231,19 +231,19 @@ class Auto_rx(Base_frame):
         self.add_title(box, "Setup for %s relaxation analysis" % self.label)
 
         # Add the frequency selection GUI element.
-        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str(self.data.frq), width_text=230, width_control=350, width_button=103)
+        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str(self.data.frq))
 
         # Add the results directory GUI element.
-        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", default=self.data.save_dir, width_text=230, width_control=350, width_button=103, fn=self.results_directory, button=True)
+        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", default=self.data.save_dir, fn=self.results_directory, button=True)
 
         # Add the sequence file selection GUI element.
-        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str(self.gui.sequence_file_msg), width_text=230, width_control=350, width_button=103, fn=self.load_sequence, editable=False, button=True)
+        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str(self.gui.sequence_file_msg), fn=self.load_sequence, editable=False, button=True)
 
         # Add the structure file selection GUI element.
-        self.field_structure = self.add_text_sel_element(box, self.parent, text="Sequence from PDB structure file", default=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, width_text=230, width_control=350, width_button=103, fn='open_file', editable=False, button=True)
+        self.field_structure = self.add_text_sel_element(box, self.parent, text="Sequence from PDB structure file", default=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, fn='open_file', editable=False, button=True)
 
         # Add the unresolved spins GUI element.
-        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues", width_text=230, width_control=350, width_button=103)
+        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues")
 
         # Add the peak list selection GUI element.
         self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, subparent=self, data=self.data, label=self.label, box=box)

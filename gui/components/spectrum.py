@@ -245,7 +245,7 @@ class Peak_intensity:
         self.subparent.add_subtitle(box, "Data points")
 
         # Add the cycle delay time element.
-        self.delay_time = self.subparent.add_text_sel_element(box, self.parent, text="Single delay cycle time [s]", width_text=230, width_control=350)
+        self.delay_time = self.subparent.add_text_sel_element(box, self.parent, text="Single delay cycle time [s]")
 
         # A sizer for the buttons and grid.
         sizer = wx.BoxSizer(wx.HORIZONTAL)

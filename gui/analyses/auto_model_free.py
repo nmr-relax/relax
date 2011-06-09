@@ -776,13 +776,13 @@ class Auto_model_free(Base_frame):
         self.add_max_iterations(box)
 
         # Add the PDB file selection GUI element.
-        self.field_structure = self.add_text_sel_element(box, self.parent, text="Structure file (.pdb)", default=str(self.gui.structure_file_pdb_msg), control=StructureTextCtrl, width_text=230, width_control=350, width_button=103, fn='open_file', editable=False, button=True)
+        self.field_structure = self.add_text_sel_element(box, self.parent, text="Structure file (.pdb)", default=str(self.gui.structure_file_pdb_msg), control=StructureTextCtrl, fn='open_file', editable=False, button=True)
 
         # Add the unresolved spins GUI element.
-        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues", width_text=230, width_control=350, width_button=103)
+        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues")
 
         # Add the results directory GUI element.
-        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", default=self.data.results_dir_model, width_text=230, width_control=350, width_button=103, fn=self.resdir_modelfree, button=True)
+        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", default=self.data.results_dir_model, fn=self.resdir_modelfree, button=True)
 
         # Add the execution GUI element.
         self.add_execute_relax(box)

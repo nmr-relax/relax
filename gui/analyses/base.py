@@ -33,6 +33,8 @@ class Base_frame:
 
     # Hard coded variables.
     size_graphic_panel = 200
+    width_text = 240
+    width_button = 100
 
     def add_button_open(self, box, parent, fn=None, width=-1, height=-1):
         """Add a button for opening and changing files and directories.
@@ -166,7 +168,7 @@ class Base_frame:
         return field
 
 
-    def add_text_sel_element(self, box, parent, text="", default="", control=wx.TextCtrl, width_text=-1, width_control=-1, width_button=-1, height=-1, fn=None, editable=True, button=False):
+    def add_text_sel_element(self, box, parent, text="", default="", control=wx.TextCtrl, fn=None, editable=True, button=False):
         """Create a text selection element for the frame.
 
         This consists of a horizontal layout with a static text element, a text control, and an optional button.
@@ -181,14 +183,6 @@ class Base_frame:
         @type default:          str
         @keyword control:       The control class to use.
         @type control:          wx.TextCtrl derived class
-        @keyword width_text:    The minimum width of the static text.
-        @type width_text:       int
-        @keyword width_control: The minimum width of the text control.
-        @type width_control:    int
-        @keyword width_button:  The minimum width of the button.
-        @type width_button:     int
-        @keyword height:        The minimum height of the entire element.
-        @type height:           int
         @keyword fn:            The function or method to execute when clicking on the button.  If this is a string, then an equivalent function will be searched for in the control object.
         @type fn:               func or str
         @keyword editable:      A flag specifying if the control is editable or not.
@@ -201,10 +195,10 @@ class Base_frame:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        self.add_static_text(sizer, parent, text=text, width=width_text)
+        self.add_static_text(sizer, parent, text=text, width=self.width_text)
 
         # The text input field.
-        field = self.add_text_control(sizer, parent, text=default, control=control, width=width_control, editable=editable)
+        field = self.add_text_control(sizer, parent, text=default, control=control, editable=editable)
         size = field.GetSize()
 
         # The button.
@@ -215,11 +209,11 @@ class Base_frame:
                 fn = getattr(field, fn)
 
             # Add the button.
-            self.add_button_open(sizer, parent, fn=fn, width=width_button, height=size[1])
+            self.add_button_open(sizer, parent, fn=fn, width=self.width_button, height=size[1])
 
         # No button, so add a spacer.
         else:
-            sizer.AddSpacer((width_button, -1))
+            sizer.AddSpacer((self.width_button, -1))
 
         # Add the element to the box.
         box.Add(sizer, 1, wx.EXPAND, 0)
