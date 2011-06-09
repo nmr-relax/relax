@@ -31,6 +31,35 @@ import wx
 class Base_frame:
     """The base class for all frames."""
 
+    def add_button_open(self, box, parent, fn=None, width=-1, height=-1):
+        """Add a button for opening and changing files and directories.
+
+        @param box:         The box element to pack the control into.
+        @type box:          wx.BoxSizer instance
+        @param parent:      The parent GUI element.
+        @type parent:       wx object
+        @keyword fn:        The function or method to execute when clicking on the button.
+        @type fn:           func
+        @keyword width:     The minimum width of the control.
+        @type width:        int
+        @keyword height:    The minimum height of the control.
+        @type height:       int
+        """
+
+        # The button.
+        button = wx.Button(parent, -1, "Change")
+
+        # The font and button properties.
+        button.SetMinSize((width, height))
+        button.SetFont(self.gui.font_normal)
+
+        # Bind the click.
+        self.gui.Bind(wx.EVT_BUTTON, fn, button)
+
+        # Add the button to the box.
+        box.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+
     def add_static_text(self, box, parent, text='', width=-1, height=-1):
         """Add a text control field to the box.
 
