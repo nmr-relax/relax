@@ -267,78 +267,50 @@ class Auto_model_free(Base_frame):
         @type box:      wx.BoxSizer instance
         """
 
-        # The elements.
+        # Add a label.
         label = wx.StaticText(self.parent, -1, "Select model-free models (default = all):")
         label.SetFont(self.gui.font_normal)
-        self.m0 = wx.ToggleButton(self.parent, -1, "m0")
-        self.m1 = wx.ToggleButton(self.parent, -1, "m1")
-        self.m2 = wx.ToggleButton(self.parent, -1, "m2")
-        self.m3 = wx.ToggleButton(self.parent, -1, "m3")
-        self.m4 = wx.ToggleButton(self.parent, -1, "m4")
-        self.m5 = wx.ToggleButton(self.parent, -1, "m5")
-        self.m6 = wx.ToggleButton(self.parent, -1, "m6")
-        self.m7 = wx.ToggleButton(self.parent, -1, "m7")
-        self.m8 = wx.ToggleButton(self.parent, -1, "m8")
-        self.m9 = wx.ToggleButton(self.parent, -1, "m9")
-
-        # Properties.
-        self.m0.SetMinSize((70, 25))
-        self.m0.SetFont(self.gui.font_button)
-        self.m0.SetToolTipString("{}")
-        self.m0.SetValue(1)
-        self.m1.SetMinSize((70, 25))
-        self.m1.SetFont(self.gui.font_button)
-        self.m1.SetToolTipString("{S2}")
-        self.m1.SetValue(1)
-        self.m2.SetMinSize((70, 25))
-        self.m2.SetFont(self.gui.font_button)
-        self.m2.SetToolTipString("{S2, te}")
-        self.m2.SetValue(1)
-        self.m3.SetMinSize((70, 25))
-        self.m3.SetFont(self.gui.font_button)
-        self.m3.SetToolTipString("{S2, Rex}")
-        self.m3.SetValue(1)
-        self.m4.SetMinSize((70, 25))
-        self.m4.SetFont(self.gui.font_button)
-        self.m4.SetToolTipString("{S2, te, Rex}")
-        self.m4.SetValue(1)
-        self.m5.SetMinSize((70, 25))
-        self.m5.SetFont(self.gui.font_button)
-        self.m5.SetToolTipString("{S2, S2f, ts}")
-        self.m5.SetValue(1)
-        self.m6.SetMinSize((70, 25))
-        self.m6.SetFont(self.gui.font_button)
-        self.m6.SetToolTipString("{S2, tf, S2f, ts}")
-        self.m6.SetValue(1)
-        self.m7.SetMinSize((70, 25))
-        self.m7.SetFont(self.gui.font_button)
-        self.m7.SetToolTipString("{S2, S2f, ts, Rex}")
-        self.m7.SetValue(1)
-        self.m8.SetMinSize((70, 25))
-        self.m8.SetFont(self.gui.font_button)
-        self.m8.SetToolTipString("{S2, tf, S2f, ts, Rex}")
-        self.m8.SetValue(1)
-        self.m9.SetMinSize((70, 25))
-        self.m9.SetFont(self.gui.font_button)
-        self.m9.SetToolTipString("{Rex}")
-        self.m9.SetValue(1)
-
-        # Lay out the model buttons into the sizer.
-        sizer_20 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_20.Add(self.m0, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m4, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m5, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m6, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m7, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m8, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m9, 0, wx.ADJUST_MINSIZE, 0)
-
-        # Add the title and box of buttons.
         box.Add(label, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
-        box.Add(sizer_20, 1, wx.EXPAND, 0)
+
+        # A horizontal sizer for the buttons.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The help text.
+        text = ["{}",
+                "{S2}",
+                "{S2, te}",
+                "{S2, Rex}",
+                "{S2, te, Rex}",
+                "{S2, S2f, ts}",
+                "{S2, tf, S2f, ts}",
+                "{S2, S2f, ts, Rex}",
+                "{S2, tf, S2f, ts, Rex}",
+                "{Rex}"]
+
+        # Loop over the 10 models.
+        for i in range(10):
+            # The model name.
+            name = "m%s" % i
+
+            # The button.
+            setattr(self, name, wx.ToggleButton(self.parent, -1, name))
+
+            # Get the button.
+            button = getattr(self, name)
+
+            # Set the properties.
+            button.SetMinSize((70, 25))
+            button.SetFont(self.gui.font_button)
+            button.SetToolTipString(text[i])
+
+            # Default is on.
+            button.SetValue(1)
+
+            # Add the button.
+            sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+
+        # Add the title and buttons to the main box.
+        box.Add(sizer, 1, wx.EXPAND, 0)
 
 
     def add_relax_data_input(self, box):
