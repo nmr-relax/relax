@@ -299,7 +299,7 @@ class Base_frame:
 
         # Build the left hand box and add to the main box.
         left_box = self.build_left_box()
-        box.Add(left_box, 0, wx.ADJUST_MINSIZE, 0)
+        box.Add(left_box, 0, wx.ALL|wx.EXPAND|wx.ADJUST_MINSIZE, 0)
 
         # Central spacer.
         box.AddSpacer(self.border)
