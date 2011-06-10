@@ -633,7 +633,7 @@ class Structure(SystemTestCase):
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the xyz.
-        self.interpreter.structure.read_xyz(file='Indol_test.xyz', dir=path, parser='internal')
+        self.interpreter.structure.read_xyz(file='Indol_test.xyz', dir=path)
 
         # Test the molecule name.
         self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, '1-Indolizinyl')
