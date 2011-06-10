@@ -268,9 +268,7 @@ class Auto_model_free(Base_frame):
         """
 
         # Add a label.
-        label = wx.StaticText(self.parent, -1, "Select model-free models (default = all):")
-        label.SetFont(self.gui.font_normal)
-        box.Add(label, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
+        self.add_static_text(box, self.parent, "Select model-free models (default = all):")
 
         # A horizontal sizer for the buttons.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
