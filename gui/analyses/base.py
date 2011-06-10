@@ -267,7 +267,7 @@ class Base_frame:
 
         # Build the right hand box and pack it next to the bitmap.
         right_box = self.build_right_box()
-        box.Add(right_box, 1, 0, 0)
+        box.Add(right_box, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def setup_analysis_element(self, parent):
