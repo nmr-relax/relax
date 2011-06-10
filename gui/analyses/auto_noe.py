@@ -256,6 +256,9 @@ class Auto_noe(Base_frame):
         # Add the reference RMSD background GUI element:
         self.field_ref_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str(self.data.ref_rmsd))
 
+        # Add a stretchable spacer.
+        box.AddStretchSpacer()
+
         # Add the execution GUI element.
         self.add_execute_relax(box)
 
