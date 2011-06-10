@@ -299,7 +299,7 @@ class Auto_model_free(Base_frame):
             button = getattr(self, name)
 
             # Set the properties.
-            button.SetMinSize((70, 25))
+            button.SetMinSize((-1, 25))
             button.SetFont(self.gui.font_button)
             button.SetToolTipString(text[i])
 
@@ -307,7 +307,7 @@ class Auto_model_free(Base_frame):
             button.SetValue(1)
 
             # Add the button.
-            sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+            sizer.Add(button, 1, wx.ADJUST_MINSIZE, 0)
 
         # Add the title and buttons to the main box.
         box.Add(sizer, 1, wx.EXPAND, 0)
