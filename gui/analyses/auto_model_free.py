@@ -152,6 +152,7 @@ class About_window(About_base):
         self.offset(-self.offset())
 
 
+
 class Auto_model_free(Base_frame):
     def __init__(self, gui, notebook):
         """Build the automatic model-free protocol GUI element.
@@ -187,12 +188,11 @@ class Auto_model_free(Base_frame):
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
 
-        # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        main_box = self.build_main_box()
-        self.parent.SetSizer(main_box)
+        # Build the central sizer, with borders.
+        box = self.setup_analysis_element(self.parent)
 
-        # Set the frame font size.
-        self.parent.SetFont(self.gui.font_small)
+        # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
+        self.build_main_box(box)
 
 
     def _about(self, event):
@@ -699,15 +699,12 @@ class Auto_model_free(Base_frame):
         event.Skip()
 
 
-    def build_main_box(self):
+    def build_main_box(self, box):
         """Construct the highest level box to pack into the automatic model-free analysis frame.
 
-        @return:    The main box element containing all model-free GUI elements to pack directly into the automatic model-free analysis frame.
-        @rtype:     wx.BoxSizer instance
+        @param box: The horizontal box element to pack the elements into.
+        @type box:  wx.BoxSizer instance
         """
-
-        # Use a horizontal packing of elements.
-        box = wx.BoxSizer(wx.HORIZONTAL)
 
         # Build the left hand box.
         left_box = wx.BoxSizer(wx.VERTICAL)
@@ -739,18 +736,18 @@ class Auto_model_free(Base_frame):
         button_sizer.Add(button, 0, 0, 0)
         left_box.Add(button_sizer, 0, wx.ALL, 0)
 
-        # Spacer.
+        # Bottom spacer.
         left_box.AddSpacer(10)
 
         # Add to the main box.
         box.Add(left_box, 0, wx.ADJUST_MINSIZE, 0)
 
+        # Central spacer.
+        box.AddSpacer(self.border)
+
         # Build the right hand box and pack it next to the bitmap.
         right_box = self.build_right_box()
         box.Add(right_box, 1, 0, 0)
-
-        # Return the box.
-        return box
 
 
     def build_right_box(self):
