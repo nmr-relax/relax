@@ -224,7 +224,7 @@ class Peak_intensity:
         @type width:        int
         @keyword height:    The initial height of the GUI element.
         @type height:       int
-        @keyword box:       The box sizer to pack this GUI component into.
+        @keyword box:       The vertical box sizer to pack this GUI component into.
         @type box:          wx.BoxSizer instance
         """
 
@@ -247,18 +247,9 @@ class Peak_intensity:
         # Add the cycle delay time element.
         self.delay_time = self.subparent.add_text_sel_element(box, self.parent, text="Single delay cycle time [s]")
 
-        # A sizer for the buttons and grid.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Add the buttons.
-        #self.add_buttons(sizer)
-
         # Add the grid.
-        self.add_grid(sizer)
-
-        # Pack the box.
         box.AddSpacer(self.spacing)
-        box.Add(sizer, 0, wx.EXPAND, 0)
+        self.add_grid(box)
         box.AddSpacer(self.spacing)
 
 
@@ -315,7 +306,7 @@ class Peak_intensity:
         """
 
         # Grid of peak list file names and relaxation time.
-        self.grid = wx.grid.Grid(self.parent, -1, size=(1, 210))
+        self.grid = wx.grid.Grid(self.parent, -1)
 
         # Create entries.
         self.grid.CreateGrid(self.num_rows, 3)
@@ -344,7 +335,7 @@ class Peak_intensity:
         self.grid.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
 
         # Add grid to sizer, with spacing.
-        sizer.Add(self.grid, -1, wx.EXPAND, 0)
+        sizer.Add(self.grid, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def change_delay_down(self, event):
