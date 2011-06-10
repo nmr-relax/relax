@@ -90,7 +90,6 @@ class Base_frame:
 
         # The button.
         button = wx.BitmapButton(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-        button.SetName('hello')
         button.SetSize(button.GetBestSize())
         self.gui.Bind(wx.EVT_BUTTON, method, button)
         sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
