@@ -95,7 +95,7 @@ class Base_frame:
         sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
 
         # Add the element to the box.
-        box.Add(sizer, 1, wx.ALIGN_RIGHT, 0)
+        box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
 
 
     def add_static_text(self, box, parent, text='', width=-1, height=-1):
