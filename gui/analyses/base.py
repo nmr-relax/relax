@@ -80,6 +80,8 @@ class Base_frame:
         @type width:        int
         @keyword height:    The minimum height of the control.
         @type height:       int
+        @return:            The label.
+        @rtype:             wx.StaticText instance
         """
 
         # The label.
@@ -90,7 +92,10 @@ class Base_frame:
         label.SetFont(self.gui.font_normal)
 
         # Add the label to the box.
-        box.Add(label, 0, 0, 0)
+        box.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Return the label.
+        return label
 
 
     def add_subtitle(self, box, text):
@@ -164,7 +169,7 @@ class Base_frame:
         field.SetEditable(editable)
 
         # Add the control to the box.
-        box.Add(field, 1, wx.ALL|wx.EXPAND, 0)
+        box.Add(field, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Return the text field.
         return field
@@ -197,14 +202,17 @@ class Base_frame:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        self.add_static_text(sizer, parent, text=text, width=self.width_text)
+        label = self.add_static_text(sizer, parent, text=text, width=self.width_text)
+
+        # The size for all elements, based on this text.
+        size = label.GetSize()
+        size_horizontal = size[1] + 8
 
         # Spacer.
         sizer.AddSpacer((self.spacer_horizontal, -1))
 
         # The text input field.
-        field = self.add_text_control(sizer, parent, text=default, control=control, editable=editable)
-        size = field.GetSize()
+        field = self.add_text_control(sizer, parent, text=default, control=control, height=size_horizontal, editable=editable)
 
         # Spacer.
         sizer.AddSpacer((self.spacer_horizontal, -1))
@@ -217,14 +225,14 @@ class Base_frame:
                 fn = getattr(field, fn)
 
             # Add the button.
-            self.add_button_open(sizer, parent, fn=fn, width=self.width_button, height=size[1])
+            self.add_button_open(sizer, parent, fn=fn, width=self.width_button, height=size_horizontal)
 
         # No button, so add a spacer.
         else:
             sizer.AddSpacer((self.width_button, -1))
 
         # Add the element to the box.
-        box.Add(sizer, 1, wx.EXPAND, 0)
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
 
         # Return the text control object.
         return field
