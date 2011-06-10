@@ -70,11 +70,13 @@ class Base_frame:
         box.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
 
-    def add_execute_relax(self, box):
+    def add_execute_relax(self, box, method):
         """Create and add the relax execution GUI element to the given box.
 
         @param box:     The box element to pack the relax execution GUI element into.
         @type box:      wx.BoxSizer instance
+        @param method:  The method to execute when the button is clicked.
+        @type method:   method
         """
 
         # A horizontal sizer for the contents.
@@ -90,7 +92,7 @@ class Base_frame:
         button = wx.BitmapButton(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         button.SetName('hello')
         button.SetSize(button.GetBestSize())
-        self.gui.Bind(wx.EVT_BUTTON, self.automatic_protocol_controller, button)
+        self.gui.Bind(wx.EVT_BUTTON, method, button)
         sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
 
         # Add the element to the box.

@@ -718,7 +718,7 @@ class Auto_model_free(Base_frame):
         self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", default=self.data.results_dir_model, fn=self.resdir_modelfree, button=True)
 
         # Add the execution GUI element.
-        self.add_execute_relax(box)
+        self.add_execute_relax(box, self.automatic_protocol_controller)
 
         # Return the packed box.
         return box
