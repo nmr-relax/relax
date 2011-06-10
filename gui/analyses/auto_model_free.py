@@ -743,25 +743,6 @@ class Auto_model_free(Base_frame):
         return left_box
 
 
-    def build_main_box(self, box):
-        """Construct the highest level box to pack into the automatic model-free analysis frame.
-
-        @param box: The horizontal box element to pack the elements into.
-        @type box:  wx.BoxSizer instance
-        """
-
-        # Build the left hand box and add to the main box.
-        left_box = self.build_left_box()
-        box.Add(left_box, 0, wx.ADJUST_MINSIZE, 0)
-
-        # Central spacer.
-        box.AddSpacer(self.border)
-
-        # Build the right hand box and pack it next to the bitmap.
-        right_box = self.build_right_box()
-        box.Add(right_box, 1, 0, 0)
-
-
     def build_right_box(self):
         """Construct the right hand box to pack into the main model-free box.
 
