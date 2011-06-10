@@ -241,16 +241,22 @@ class Peak_intensity:
         # The number of rows.
         self.num_rows = 50
 
-        # Add peak list selection header.
-        self.subparent.add_subtitle(box, "Data points")
+        # A static box to hold all the widgets, and its sizer.
+        stat_box = wx.StaticBox(self.parent, -1, "Peak lists")
+        stat_box.SetFont(self.gui.font_subtitle)
+        sub_sizer = wx.StaticBoxSizer(stat_box, wx.VERTICAL)
 
         # Add the cycle delay time element.
-        self.delay_time = self.subparent.add_text_sel_element(box, self.parent, text="Single delay cycle time [s]")
+        sub_sizer.AddSpacer(self.spacing)
+        self.delay_time = self.subparent.add_text_sel_element(sub_sizer, self.parent, text="Single delay cycle time [s]")
 
         # Add the grid.
-        box.AddSpacer(self.spacing)
-        self.add_grid(box)
-        box.AddSpacer(self.spacing)
+        sub_sizer.AddSpacer(self.spacing)
+        self.add_grid(sub_sizer)
+        sub_sizer.AddSpacer(self.spacing)
+
+        # Add the sizer to the static box and the static box to the main box.
+        box.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def add_buttons(self, sizer):
