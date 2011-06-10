@@ -59,12 +59,11 @@ class Results_summary(Base_frame):
         # The parent GUI element for this class.
         self.parent = notebook
 
-        # Build and pack the main sizer box.
-        main_box = self.build_results_box()
-        self.parent.SetSizer(main_box)
+        # Build the central sizer, with borders.
+        box = self.setup_analysis_element(self.parent)
 
-        # Set the frame font size.
-        self.parent.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        # Build and pack the main sizer box.
+        self.build_results_box(box)
 
 
     def add_model_free_results(self, box):
@@ -161,25 +160,31 @@ class Results_summary(Base_frame):
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
-    def build_results_box(self):
-        """Function to pack results frame."""
+    def build_results_box(self, box):
+        """Function to pack results frame.
+
+        @param box: The horizontal box element to pack the elements into.
+        @type box:  wx.BoxSizer instance
+        """
 
         # Use a vertical packing of elements.
-        box = wx.BoxSizer(wx.VERTICAL)
+        sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Add the title.
-        self.add_title(box, "Results")
+        self.add_title(sizer, "Results")
 
         # Add Noe results.
-        self.add_noe_results(box)
+        self.add_noe_results(sizer)
 
         # Add rx results.
-        self.add_rx_results(box)
+        self.add_rx_results(sizer)
 
         # Add model-free results.
-        self.add_model_free_results(box)
+        self.add_model_free_results(sizer)
 
-        return box
+        # Add the sizer to the main box.
+        box.Add(sizer, 1, 0, 0)
+
 
     def sync_results(self):
         """Function to synchronize results with relax data storage"""
