@@ -82,9 +82,11 @@ class Auto_noe(Base_frame):
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
 
+        # Build the central sizer, with borders.
+        box = self.setup_analysis_element(self.parent)
+
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        main_box = self.build_main_box()
-        self.parent.SetSizer(main_box)
+        self.build_main_box(box)
 
 
     def add_execute_relax(self, box):
@@ -193,23 +195,19 @@ class Auto_noe(Base_frame):
         return data, complete, missing
 
 
-    def build_main_box(self):
-        """Construct the highest level box to pack into the automatic NOE analysis frame.
+    def build_left_box(self):
+        """Construct the left hand box to pack into the automatic NOE analysis frame.
 
-        @return:    The main box element containing all Rx GUI elements to pack directly into the automatic Rx analysis frame.
+        @return:    The left hand box element containing the bitmap.
         @rtype:     wx.BoxSizer instance
         """
 
-        # Use a horizontal packing of elements.
-        box = wx.BoxSizer(wx.HORIZONTAL)
+        # Use a vertical packing of elements.
+        box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the model-free bitmap picture.
         bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
         box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
-
-        # Build the right hand box and pack it next to the bitmap.
-        right_box = self.build_right_box()
-        box.Add(right_box, 1, 0, 0)
 
         # Return the box.
         return box
