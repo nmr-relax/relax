@@ -32,10 +32,11 @@ class Base_frame:
     """The base class for all frames."""
 
     # Hard coded variables.
+    border = 10
     size_graphic_panel = 200
+    spacer_horizontal = 5
     width_text = 240
     width_button = 100
-    spacer_horizontal = 5
 
     def add_button_open(self, box, parent, fn=None, width=-1, height=-1):
         """Add a button for opening and changing files and directories.
@@ -248,3 +249,34 @@ class Base_frame:
         box.AddSpacer(10)
         box.Add(label)
         box.AddSpacer(5)
+
+
+    def setup_analysis_element(self, parent):
+        """Set up the specific analysis GUI element.
+
+        @param parent:  The parent GUI element.
+        @type parent:   wx object
+        @return:        The sizer object.
+        @rtype:         wx.Sizer instance
+        """
+
+        # Some sizers.
+        sizer_hori = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_vert = wx.BoxSizer(wx.VERTICAL)
+        sizer_cent = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Pack the sizer into the frame.
+        parent.SetSizer(sizer_hori)
+
+        # Left and right borders.
+        sizer_hori.AddSpacer(self.border)
+        sizer_hori.Add(sizer_vert, 1, wx.EXPAND|wx.ALL)
+        sizer_hori.AddSpacer(self.border)
+
+        # Top and bottom borders.
+        sizer_vert.AddSpacer(self.border)
+        sizer_vert.Add(sizer_cent, 1, wx.EXPAND|wx.ALL)
+        sizer_vert.AddSpacer(self.border)
+
+        # Return the central sizer.
+        return sizer_cent
