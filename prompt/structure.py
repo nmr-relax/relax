@@ -471,6 +471,107 @@ class Structure(User_fn_class):
         generic_fns.structure.main.read_pdb(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
 
 
+    def read_xyz(self, file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None):
+        """The XYZ loading function.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        file:  The name of the XYZ file.
+
+        dir:  The directory where the file is located.
+
+        read_mol:  If set, only the given molecule(s) will be read.
+
+        set_mol_name:  Set the names of the read molecules.
+
+        read_model:  If set, only the given model number(s) from the XYZ file will be read.
+
+        set_model_num:  Set the model numbers of the read molecules.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        The reading of XYZ files into relax is quite a flexible procedure allowing for both models,
+        defined as an ensemble of the same molecule but with different atomic positions, and
+        different molecules within the same model.  One of more molecules can exist in one or more
+        models.  The flexibility allows XYZ models to be converted into different molecules and
+        different XYZ files loaded as the same molecule but as different models.  This flexibility
+        is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 'read_model', and
+        'set_model_num'.
+
+
+        The 'set_mol_name' argument is used to name the molecules within the XYZ (within one
+        model).  If not set, then the molecules will be named after the file name, with the molecule
+        number appended if more than one exists.
+
+        Note that relax will complain if it cannot work out what to do.
+
+
+        Examples
+        ~~~~~~~~
+
+        To load all structures from the XYZ file 'test.xyz' in the directory '~/xyz', including all
+        models and all molecules, type one of:
+
+        relax> structure.read_xyz('test.xyz', '~/xyz')
+        relax> structure.read_xyz(file='test.xyz', dir='xyz')
+
+
+        To load the 10th model from the file 'test.xyz' and
+        naming it 'CaM', use one of:
+
+        relax> structure.read_xyz('test.xyz', read_model=10, set_mol_name='CaM')
+        relax> structure.read_xyz(file='test.xyz', read_model=10, set_mol_name='CaM')
+
+
+        To load models 1 and 5 from the file 'test.xyz' as two different structures of the same
+        model, type one of:
+
+        relax> structure.read_xyz('test.xyz', read_model=[1, 5], set_model_num=[1, 1])
+        relax> structure.read_xyz('test.xyz', set_mol_name=['CaM_1', 'CaM_2'], read_model=[1, 5],
+                                  set_model_num=[1, 1])
+
+        To load the files 'lactose_MCMM4_S1_1.xyz', 'lactose_MCMM4_S1_2.xyz',
+        'lactose_MCMM4_S1_3.xyz' and 'lactose_MCMM4_S1_4.xyz' as models, type the following sequence
+        of commands:
+
+        relax> structure.read_xyz('lactose_MCMM4_S1_1.xyz', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=1)
+        relax> structure.read_xyz('lactose_MCMM4_S1_2.xyz', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=2)
+        relax> structure.read_xyz('lactose_MCMM4_S1_3.xyz', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=3)
+        relax> structure.read_xyz('lactose_MCMM4_S1_4.xyz', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=4)
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.read_xyz("
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", read_mol=" + repr(read_mol)
+            text = text + ", set_mol_name=" + repr(set_mol_name)
+            text = text + ", read_model=" + repr(read_model)
+            text = text + ", set_model_num=" + repr(set_model_num)
+            text = text +  ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int_or_int_list(read_mol, 'read molecule number', can_be_none=True)
+        arg_check.is_int_or_int_list(read_model, 'read model', can_be_none=True)
+        arg_check.is_int_or_int_list(set_model_num, 'set model numbers', can_be_none=True)
+        arg_check.is_str_or_str_list(set_mol_name, 'set molecule names', can_be_none=True)
+
+        # Execute the functional code.
+        generic_fns.structure.main.read_xyz(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num)
+
+
+
     def vectors(self, attached='H', spin_id=None, model=None, verbosity=1, ave=True, unit=True):
         """Extract and store the bond vectors from the loaded structures in the spin container.
 
