@@ -27,6 +27,9 @@
 # Python module imports.
 import wx
 
+# relax GUI module imports.
+from gui import paths
+
 
 class Base_frame:
     """The base class for all frames."""
@@ -65,6 +68,33 @@ class Base_frame:
 
         # Add the button to the box.
         box.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+
+    def add_execute_relax(self, box):
+        """Create and add the relax execution GUI element to the given box.
+
+        @param box:     The box element to pack the relax execution GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # A horizontal sizer for the contents.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((118, 17))
+        label.SetFont(self.gui.font_normal)
+        sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The button.
+        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        button.SetName('hello')
+        button.SetSize(button.GetBestSize())
+        self.gui.Bind(wx.EVT_BUTTON, self.automatic_protocol_controller, button)
+        sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
+
+        # Add the element to the box.
+        box.Add(sizer, 1, wx.ALIGN_RIGHT, 0)
 
 
     def add_static_text(self, box, parent, text='', width=-1, height=-1):
