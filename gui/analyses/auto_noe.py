@@ -89,33 +89,6 @@ class Auto_noe(Base_frame):
         self.build_main_box(box)
 
 
-    def add_execute_relax(self, box):
-        """Create and add the relax execution GUI element to the given box.
-
-        @param box:     The box element to pack the relax execution GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # A horizontal sizer for the contents.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((118, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-        button.SetName('hello')
-        button.SetSize(button.GetBestSize())
-        self.gui.Bind(wx.EVT_BUTTON, self.execute, button)
-        sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
-
-
     def assemble_data(self):
         """Assemble the data required for the Auto_noe class.
 
@@ -260,7 +233,7 @@ class Auto_noe(Base_frame):
         box.AddStretchSpacer()
 
         # Add the execution GUI element.
-        self.add_execute_relax(box)
+        self.add_execute_relax(box, self.execute)
 
         # Return the box.
         return box
