@@ -93,26 +93,6 @@ class Main(wx.Frame):
         # The analysis frame object storage.
         self.analysis_frames = []
 
-        # FIXME:  This is only for the current fixed interface.
-        self.hardcoded_index_noe_1 = 0
-        self.hardcoded_index_r1_1  = 1
-        self.hardcoded_index_r2_1  = 2
-        self.hardcoded_index_noe_2 = 3
-        self.hardcoded_index_r1_2  = 4
-        self.hardcoded_index_r2_2  = 5
-        self.hardcoded_index_noe_3 = 6
-        self.hardcoded_index_r1_3  = 7
-        self.hardcoded_index_r2_3  = 8
-        self.hardcoded_index_mf    = 9
-        for i in range(10):
-            self.analysis_frames.append(Container())
-
-        # A fixed set of indices for 3 NOE, 3 R1, and 3 R2 frames used for accessing the relax data store.
-        # FIXME:  Eliminate these!  There should be a flexible number of these frames.
-        self.noe_index = [0, 1, 2]
-        self.r1_index =  [3, 4, 5]
-        self.r2_index =  [6, 7, 8]
-
         # The calculation threads list.
         self.calc_threads = []
 
@@ -125,20 +105,11 @@ class Main(wx.Frame):
         # The user function GUI elements.
         self.user_functions = User_functions(self)
 
-        # Build the main window.
-        self.build_main_window()
-
-        # Build Notebooks
-        self.build_notebooks()
-
         # Build the menu bar.
         self.menu = Menu(self)
 
         # Build the controller, but don't show it.
         self.controller = Controller(None, -1, "")
-
-        rx_data = ds.relax_gui.analyses[self.noe_index[0]]
-        self.frame_1_statusbar = self.CreateStatusBar(3, 0)
 
         # Set the title.
         self.SetTitle("relaxGUI " + GUI_version)
@@ -150,6 +121,7 @@ class Main(wx.Frame):
             self.SetIcon(icon)
 
         # Statusbar fields.
+        self.frame_1_statusbar = self.CreateStatusBar(3, 0)
         self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
         frame_1_statusbar_fields = ["relaxGUI (C) 2009 Michael Bieri and (C) 2010-2011 the relax development team", "relax:", version]
         for i in range(len(frame_1_statusbar_fields)):
@@ -228,96 +200,6 @@ class Main(wx.Frame):
         self.state_save()
 
 
-    def build_main_window(self):
-        """Construct the main relax GUI window."""
-
-
-        self.notebook_left = wx.Notebook(self, -1, style=wx.NB_LEFT)
-        #self.results = wx.Panel(self.notebook_left, -1)
-
-        # The 5th notebook (freq 3).
-        self.frq3 = wx.Panel(self.notebook_left, -1)
-        self.notebook_frq_3 = wx.Notebook(self.frq3, -1, style=0)
-
-        # The automatic relaxation data analysis frames.
-        self.analysis_frames[self.hardcoded_index_r1_3] = Auto_r1(self, self.notebook_frq_3, hardcoded_index=self.r1_index[2])
-        self.analysis_frames[self.hardcoded_index_r2_3] = Auto_r2(self, self.notebook_frq_3, hardcoded_index=self.r2_index[2])
-        self.analysis_frames[self.hardcoded_index_noe_3] = Auto_noe(self, self.notebook_frq_3, hardcoded_index=self.noe_index[2])
-
-        # The 4th notebook (freq 2).
-        self.frq2 = wx.Panel(self.notebook_left, -1)
-        self.notebook_frq_2 = wx.Notebook(self.frq2, -1, style=0)
-
-        # The automatic relaxation data analysis frames.
-        self.analysis_frames[self.hardcoded_index_r1_2] = Auto_r1(self, self.notebook_frq_2, hardcoded_index=self.r1_index[1])
-        self.analysis_frames[self.hardcoded_index_r2_2] = Auto_r2(self, self.notebook_frq_2, hardcoded_index=self.r2_index[1])
-        self.analysis_frames[self.hardcoded_index_noe_2] = Auto_noe(self, self.notebook_frq_2, hardcoded_index=self.noe_index[1])
-
-        # The 3rd notebook (freq 1).
-        self.frq1 = wx.Panel(self.notebook_left, -1)
-        self.notebook_frq_1 = wx.Notebook(self.frq1, -1, style=0)
-
-        # The automatic relaxation data analysis frames.
-        self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_frq_1, hardcoded_index=self.r1_index[0])
-        self.analysis_frames[self.hardcoded_index_r2_1] = Auto_r2(self, self.notebook_frq_1, hardcoded_index=self.r2_index[0])
-        self.analysis_frames[self.hardcoded_index_noe_1] = Auto_noe(self, self.notebook_frq_1, hardcoded_index=self.noe_index[0])
-
-        # The automatic model-free protocol frame.
-        self.analysis_frames[self.hardcoded_index_mf] = Auto_model_free(self, self.notebook_left)
-
-
-    def build_notebooks(self):
-        """Build the notebooks for the 3 frequencies and analysis modes"""
-
-        # Add NOE, R1 and R2 tabs to main notebook (1. frequency).
-        frq1sub = wx.BoxSizer(wx.HORIZONTAL)
-        # Create sub-tabs.
-        self.notebook_frq_1.AddPage(self.analysis_frames[self.hardcoded_index_noe_1].parent, "steady-state NOE")
-        self.notebook_frq_1.AddPage(self.analysis_frames[self.hardcoded_index_r1_1].parent, "R1 relaxation")
-        self.notebook_frq_1.AddPage(self.analysis_frames[self.hardcoded_index_r2_1].parent, "R2 relaxation")
-        frq1sub.Add(self.notebook_frq_1, 1, wx.EXPAND, 0)
-        self.frq1.SetSizer(frq1sub)
-        # Pack frequency 1 tab.
-        self.notebook_left.AddPage(self.frq1, "Frq. 1")
-
-        # Add NOE, R1 and R2 tabs to main notebook (2. frequency).
-        frq2sub = wx.BoxSizer(wx.HORIZONTAL)
-        # Create sub-tabs.
-        self.notebook_frq_2.AddPage(self.analysis_frames[self.hardcoded_index_noe_2].parent, "steady-state NOE")
-        self.notebook_frq_2.AddPage(self.analysis_frames[self.hardcoded_index_r1_2].parent, "R1 relaxation")
-        self.notebook_frq_2.AddPage(self.analysis_frames[self.hardcoded_index_r2_2].parent, "R2 relaxation")
-        frq2sub.Add(self.notebook_frq_2, 1, wx.EXPAND, 0)
-        self.frq2.SetSizer(frq2sub)
-        # Pack frequency 2 tab.
-        self.notebook_left.AddPage(self.frq2, "Frq. 2")
-
-        # Add NOE, R1 and R2 tabs to main notebook (3. frequency).
-        frq3sub = wx.BoxSizer(wx.HORIZONTAL)
-        # Create sub-tabs.
-        self.notebook_frq_3.AddPage(self.analysis_frames[self.hardcoded_index_noe_3].parent, "steady-state NOE")
-        self.notebook_frq_3.AddPage(self.analysis_frames[self.hardcoded_index_r1_3].parent, "R1 relaxation")
-        self.notebook_frq_3.AddPage(self.analysis_frames[self.hardcoded_index_r2_3].parent, "R2 relaxation")
-        frq3sub.Add(self.notebook_frq_3, 1, wx.EXPAND, 0)
-        self.frq3.SetSizer(frq3sub)
-        # Pack frequency 3 tab.
-        self.notebook_left.AddPage(self.frq3, "Frq. 3")
-
-        # Model-free tab.
-        self.notebook_left.AddPage(self.analysis_frames[self.hardcoded_index_mf].parent, "Model-free")
-
-        # Results tab.
-        self.results = wx.Panel(self.notebook_left, -1)
-        results_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.results_frame = Results_summary(self, self.results)
-        results_sizer.Add(results_sizer, 1, wx.EXPAND, 0)
-        self.notebook_left.AddPage(self.results, "Results")
-
-        # Pack main notebook.
-        main_sizer = wx.BoxSizer(wx.VERTICAL)
-        main_sizer.Add(self.notebook_left, 1, wx.EXPAND, 0)
-        self.SetSizer(main_sizer)
-
-
     def contact_relax(self, event):
         """Write an email to the relax mailing-list using the standard mailing program."""
         webbrowser.open_new('mailto:relax-users@gna.org')
@@ -363,45 +245,6 @@ class Main(wx.Frame):
 
             # End application.
             sys.exit()
-
-
-    def import_seq(self, event):
-        """Open sequence loading GUI element."""
-
-        # The dialog.
-        file = load_sequence()
-
-        # Nothing selected.
-        if file == None:
-            return
-
-        # The selected file.
-        sequencefile = str(file)
-
-        # Set entries in pdb text box.
-        structure_file_pdb = '!!! Sequence file selected !!!'
-
-        # Add file to NOE tabs.
-        self.analysis_frames[self.hardcoded_index_noe_1].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_noe_2].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_noe_3].field_structure.SetValue(structure_file_pdb)
-
-        # Add file to R1 tabs.
-        self.analysis_frames[self.hardcoded_index_r1_1].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_r1_2].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_r1_3].field_structure.SetValue(structure_file_pdb)
-
-        # Add file to R2 tabs.
-        self.analysis_frames[self.hardcoded_index_r2_1].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_r2_2].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_r2_3].field_structure.SetValue(structure_file_pdb)
-
-        # Load sequence file into the relax data store.
-        for i in range(10):
-            ds.relax_gui.analyses[i].sequence_file = sequencefile
-
-        # Update the core of the GUI to match the new data store.
-        self.sync_ds(upload=False)
 
 
     def init_data(self):
@@ -629,31 +472,11 @@ class Main(wx.Frame):
         # Load the relax state.
         state.load_state(filename, verbosity=0)
 
-        # FIXME: (commented out until analyses are dynamically loaded and unloaded).
-        ## Build the analysis frames
-        #for i in range(len(ds.relax_gui.analyses)):
-        #    # The automatic model-free protocol frame
-        #    if ds.relax_gui.analyses[i].analysis_type == 'model-free':
-        #        self.analysis_frames.append(Auto_model_free(self))
-
-        # FIXME:  Temporary fix - set the data structures explicitly.
-        # R1 frames.
-        self.analysis_frames[self.hardcoded_index_r1_1].link_data(ds.relax_gui.analyses[self.r1_index[0]])
-        self.analysis_frames[self.hardcoded_index_r1_2].link_data(ds.relax_gui.analyses[self.r1_index[1]])
-        self.analysis_frames[self.hardcoded_index_r1_3].link_data(ds.relax_gui.analyses[self.r1_index[2]])
-
-        # R2 frames.
-        self.analysis_frames[self.hardcoded_index_r2_1].link_data(ds.relax_gui.analyses[self.r2_index[0]])
-        self.analysis_frames[self.hardcoded_index_r2_2].link_data(ds.relax_gui.analyses[self.r2_index[1]])
-        self.analysis_frames[self.hardcoded_index_r2_3].link_data(ds.relax_gui.analyses[self.r2_index[2]])
-
-        # NOE frames
-        self.analysis_frames[self.hardcoded_index_noe_1].link_data(ds.relax_gui.analyses[self.noe_index[0]])
-        self.analysis_frames[self.hardcoded_index_noe_2].link_data(ds.relax_gui.analyses[self.noe_index[1]])
-        self.analysis_frames[self.hardcoded_index_noe_3].link_data(ds.relax_gui.analyses[self.noe_index[2]])
-
-        # Model-free frame.
-        self.analysis_frames[self.hardcoded_index_mf].link_data(ds.relax_gui.analyses[9])
+        # Build the analysis frames
+        for i in range(len(ds.relax_gui.analyses)):
+            # The automatic model-free protocol frame
+            if ds.relax_gui.analyses[i].analysis_type == 'model-free':
+                self.analysis_frames.append(Auto_model_free(self))
 
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
@@ -678,27 +501,6 @@ class Main(wx.Frame):
 
         # Save the relax state.
         state.save_state(self.save_file, verbosity=0, force=True)
-
-
-    def structure_pdb(self, event): # open load sequence panel
-        temp = openfile('Select PDB file to open', '', '', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
-        if not temp == None:
-            structure_file_pdb = str(temp) #set sequence file
-
-            # Add file to NOE tabs.
-            self.analysis_frames[self.hardcoded_index_noe_1].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_noe_2].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_noe_3].field_structure.SetValue(structure_file_pdb)
-
-            # Add file to R1 tabs.
-            self.analysis_frames[self.hardcoded_index_r1_1].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r1_2].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r1_3].field_structure.SetValue(structure_file_pdb)
-
-            # Add file to R2 tabs.
-            self.analysis_frames[self.hardcoded_index_r2_1].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r2_2].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r2_3].field_structure.SetValue(structure_file_pdb)
 
 
     def sync_ds(self, upload=False):

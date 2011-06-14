@@ -78,16 +78,6 @@ class Menu:
         # The 'User functions' menu entries.
         self._user_functions()
 
-        # The 'Molecule' menu entries.
-        menu = wx.Menu()
-        menu.AppendItem(self.build_menu_item(menu, id=10, text="Load &PDB File", icon=paths.icon_16x16.load))
-        menu.AppendItem(self.build_menu_item(menu, id=11, text="Load se&quence file", icon=paths.icon_16x16.load))
-        self.menubar.Append(menu, "&Molecule")
-
-        # The 'Molecule' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.structure_pdb,  id=10)
-        self.gui.Bind(wx.EVT_MENU, self.gui.import_seq,     id=11)
-
         # The 'Settings' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_item(menu, id=20, text="&Global relax settings", icon=paths.icon_16x16.settings_global))
