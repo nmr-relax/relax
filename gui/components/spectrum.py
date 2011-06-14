@@ -162,7 +162,7 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
 
         # Update the relaxation delay time.
         delay_time = float(time) * float(value)
-        grid.GetTable().SetValue(row, col+1, str(delay_time))
+        grid.GetTable().SetValue(row, col-1, str(delay_time))
 
         # A change occurred.
         return True
@@ -210,8 +210,8 @@ class Peak_intensity:
 
     # Class variables.
     col_label_width = 40
-    col1_width = 140
-    col2_width = 160
+    col1_width = 160
+    col2_width = 140
 
     def __init__(self, gui=None, parent=None, subparent=None, data=None, label=None, width=688, height=300, box=None):
         """Build the peak list reading GUI element.
@@ -352,16 +352,16 @@ class Peak_intensity:
 
         # Create headers.
         self.grid.SetColLabelValue(0, "%s peak list" % self.label)
-        self.grid.SetColLabelValue(1, "No. of cycles")
-        self.grid.SetColLabelValue(2, "Relaxation delay [s]")
+        self.grid.SetColLabelValue(1, "Relaxation delay [s]")
+        self.grid.SetColLabelValue(2, "No. of cycles")
 
         # Column properties.
         for i in range(self.grid.GetNumberRows()):
-            # Set the editor for the number of cycles column.
-            self.grid.SetCellEditor(i, 1, Delay_num_cell_editor(0, 200, self))
-
             # Make the relaxation delay column read only.
-            self.grid.SetReadOnly(i, 2)
+            self.grid.SetReadOnly(i, 1)
+
+            # Set the editor for the number of cycles column.
+            self.grid.SetCellEditor(i, 2, Delay_num_cell_editor(0, 200, self))
 
         # No cell resizing allowed.
         self.grid.EnableDragColSize(False)
