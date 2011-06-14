@@ -37,6 +37,7 @@ from status import Status; status = Status()
 # relaxGUI module imports.
 from gui.filedialog import multi_openfile, opendir, openfile
 from gui.message import error_message
+from gui.misc import add_border
 from gui import paths
 
 
@@ -237,6 +238,7 @@ class Peak_intensity:
 
         # GUI variables.
         self.spacing = 5
+        self.border = 5
 
         # The number of rows.
         self.num_rows = 50
@@ -246,17 +248,20 @@ class Peak_intensity:
         stat_box.SetFont(self.gui.font_subtitle)
         sub_sizer = wx.StaticBoxSizer(stat_box, wx.VERTICAL)
 
-        # Add the cycle delay time element.
-        sub_sizer.AddSpacer(self.spacing)
-        self.delay_time = self.subparent.add_text_sel_element(sub_sizer, self.parent, text="Single delay cycle time [s]")
-
-        # Add the grid.
-        sub_sizer.AddSpacer(self.spacing)
-        self.add_grid(sub_sizer)
-        sub_sizer.AddSpacer(self.spacing)
-
         # Add the sizer to the static box and the static box to the main box.
         box.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Add a border.
+        box_centre = add_border(sub_sizer, border=self.border)
+
+        # Add the cycle delay time element.
+        box_centre.AddSpacer(self.spacing)
+        self.delay_time = self.subparent.add_text_sel_element(box_centre, self.parent, text="Single delay cycle time [s]")
+
+        # Add the grid.
+        box_centre.AddSpacer(self.spacing)
+        self.add_grid(box_centre)
+        box_centre.AddSpacer(self.spacing)
 
         # Catch a resize.
         stat_box.Bind(wx.EVT_SIZE, self.resize)
