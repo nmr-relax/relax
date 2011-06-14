@@ -124,10 +124,10 @@ class Results_summary(Base_frame):
         sizer1.Add(button_noe, 0, wx.LEFT, 5)
         
         # Add selection.
-        sizer.Add(sizer1, 0, wx.EXPAND, 0) 
+        sizer.Add(sizer1, 1, wx.ALL|wx.EXPAND, 0) 
 
         # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+        box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def add_list_box(self, box, fn=None):
@@ -145,13 +145,13 @@ class Results_summary(Base_frame):
         list = wx.ListBox(self.parent, -1, choices=[])
 
         # Set the properties.
-        list.SetMinSize((800, 130))
+        list.SetMinSize((400, 130))
 
         # Bind events.
         self.gui.Bind(wx.EVT_LISTBOX_DCLICK, fn, list)
 
         # Add to the sizer.
-        box.Add(list, 0, wx.EXPAND, 0)
+        box.Add(list, 1, wx.ALL|wx.EXPAND, 0)
 
         # Return the list box.
         return list
@@ -212,7 +212,7 @@ class Results_summary(Base_frame):
         self.add_model_free_results(sizer)
 
         # Add the sizer to the main box.
-        box.Add(sizer, 1, 0, 0)
+        box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def sync_results(self):
