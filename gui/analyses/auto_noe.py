@@ -47,7 +47,7 @@ from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir, openfile
 from gui.message import error_message, missing_data
 from gui.misc import add_border
-from gui.paths import IMAGE_PATH
+from gui import paths
 from gui.settings import load_sequence
 
 
@@ -75,7 +75,7 @@ class Auto_noe(Base_frame):
         self.gui = gui
 
         # The NOE image
-        self.bitmap = IMAGE_PATH + 'noe.png'
+        self.bitmap = paths.IMAGE_PATH + 'noe.png'
 
         # Alias the storage container in the relax data store.
         self.data = ds.relax_gui.analyses[hardcoded_index]
@@ -208,7 +208,7 @@ class Auto_noe(Base_frame):
         self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str(self.data.frq))
 
         # Add the results directory GUI element.
-        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", default=self.data.save_dir, fn=self.results_directory, button=True)
+        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
         # Add the sequence file selection GUI element.
         self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str(self.gui.sequence_file_msg), fn=self.load_sequence, editable=False, button=True)

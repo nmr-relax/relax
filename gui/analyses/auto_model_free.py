@@ -724,7 +724,7 @@ class Auto_model_free(Base_frame):
         self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues")
 
         # Add the results directory GUI element.
-        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", default=self.data.results_dir_model, fn=self.resdir_modelfree, button=True)
+        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.results_dir_model, fn=self.resdir_modelfree, button=True)
 
         # Add a stretchable spacer.
         box.AddStretchSpacer()
