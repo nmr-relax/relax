@@ -76,6 +76,7 @@ class I16x16:
         self.manual =               path + 'mimetypes'  + sep + 'application-pdf.png'
         self.new =                  path + 'actions'    + sep + 'document-new.png'
         self.open =                 path + 'actions'    + sep + 'document-open.png'
+        self.open_folder =          path + 'actions'    + sep + 'document-open-folder.png'
         self.pipe_switch =          path + 'actions'    + sep + 'system-switch-user.png'
         self.relax_prompt =         path + 'mimetypes'  + sep + 'application-x-executable-script.png'
         self.remove =               path + 'actions'    + sep + 'list-remove.png'
@@ -104,6 +105,7 @@ class I22x22:
         self.close =                path + 'actions' + sep + 'dialog-close.png'
         self.copy =                 path + 'actions' + sep + 'list-add.png'
         self.ok =                   path + 'actions' + sep + 'dialog-ok.png'
+        self.open_folder =          path + 'actions' + sep + 'document-open-folder.png'
         self.save =                 path + 'actions' + sep + 'document-save.png'
         self.view_refresh =         path + 'actions' + sep + 'view-refresh.png'
 
@@ -134,6 +136,7 @@ class I32x32:
         self.close =        path + 'actions' + sep + 'dialog-close.png'
         self.copy =         path + 'actions' + sep + 'list-add.png'
         self.ok =           path + 'actions' + sep + 'dialog-ok.png'
+        self.open_folder =  path + 'actions' + sep + 'document-open-folder.png'
         self.save =         path + 'actions' + sep + 'document-save.png'
         self.view_refresh = path + 'actions' + sep + 'view-refresh.png'
 
@@ -153,6 +156,7 @@ class I48x48:
         self.cancel =       path + 'actions' + sep + 'dialog-cancel.png'
         self.copy =         path + 'actions' + sep + 'list-add.png'
         self.forwards =     path + 'actions' + sep + 'go-next-view.png'
+        self.open_folder =  path + 'actions' + sep + 'document-open-folder.png'
         self.remove =       path + 'actions' + sep + 'list-remove.png'
         self.save =         path + 'actions' + sep + 'document-save.png'
         self.view_refresh = path + 'actions' + sep + 'view-refresh.png'
