@@ -368,6 +368,9 @@ class Peak_intensity:
         self.grid.EnableDragColSize(False)
         self.grid.EnableDragRowSize(False)
 
+        # Properties.
+        self.grid.SetFont(self.gui.font_normal)
+
         # Bind some events.
         self.grid.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
         self.grid.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
