@@ -71,6 +71,33 @@ class Results_summary(Base_frame):
         self.build_results_box(box_centre)
 
 
+    def add_list_box(self, box, fn=None):
+        """Add a results list box.
+
+        @param box:     The box sizer to pack the box into.
+        @type box:      wx.BoxSizer instance
+        @keyword fn:    The function to bind double click events to.
+        @type fn:       method
+        @return:        The list box element.
+        @rtype:         wx.ListBox element
+        """
+
+        # Initialise the list box.
+        list = wx.ListBox(self.parent, -1, choices=[])
+
+        # Set the properties.
+        list.SetMinSize((400, 130))
+
+        # Bind events.
+        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, fn, list)
+
+        # Add to the sizer.
+        box.Add(list, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Return the list box.
+        return list
+
+
     def add_model_free_results(self, box):
         """Function to pack rx results."""
 
@@ -128,33 +155,6 @@ class Results_summary(Base_frame):
 
         # Add the element to the box.
         box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
-
-
-    def add_list_box(self, box, fn=None):
-        """Add a results list box.
-
-        @param box:     The box sizer to pack the box into.
-        @type box:      wx.BoxSizer instance
-        @keyword fn:    The function to bind double click events to.
-        @type fn:       method
-        @return:        The list box element.
-        @rtype:         wx.ListBox element
-        """
-
-        # Initialise the list box.
-        list = wx.ListBox(self.parent, -1, choices=[])
-
-        # Set the properties.
-        list.SetMinSize((400, 130))
-
-        # Bind events.
-        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, fn, list)
-
-        # Add to the sizer.
-        box.Add(list, 1, wx.ALL|wx.EXPAND, 0)
-
-        # Return the list box.
-        return list
 
 
     def add_rx_results(self, box):
