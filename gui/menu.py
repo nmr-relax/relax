@@ -50,9 +50,9 @@ class Menu:
         # The 'File' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_item(menu, id=1, text="&New analysis\tCtrl+N", icon=paths.icon_16x16.new))
-        menu.AppendItem(self.build_menu_item(menu, id=2, text="&Open\tCtrl+O", icon=paths.icon_16x16.open))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_item(menu, id=3, text="S&ave\tCtrl+S", icon=paths.icon_16x16.save))
+        menu.AppendItem(self.build_menu_item(menu, id=2, text="&Open relax state\tCtrl+O", icon=paths.icon_16x16.open))
+        menu.AppendItem(self.build_menu_item(menu, id=3, text="S&ave relax state\tCtrl+S", icon=paths.icon_16x16.save))
         menu.AppendItem(self.build_menu_item(menu, id=4, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.save_as))
         menu.AppendSeparator()
         menu.AppendItem(self.build_menu_item(menu, id=5, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
