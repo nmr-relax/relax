@@ -303,6 +303,14 @@ class Main(wx.Frame):
             ds.relax_gui.analyses[i].save_dir = getcwd()
 
 
+    def new(self, event):
+        """Initialise a new analysis.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+
     def open_model_results_exe(self, event):    # open model-free results
         choice = self.list_modelfree.GetStringSelection()
         model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te] # relax results values

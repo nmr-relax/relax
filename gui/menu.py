@@ -49,19 +49,21 @@ class Menu:
 
         # The 'File' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_item(menu, id=1, text="&Open\tCtrl+O", icon=paths.icon_16x16.open))
+        menu.AppendItem(self.build_menu_item(menu, id=1, text="&New analysis\tCtrl+N", icon=paths.icon_16x16.new))
+        menu.AppendItem(self.build_menu_item(menu, id=2, text="&Open\tCtrl+O", icon=paths.icon_16x16.open))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_item(menu, id=2, text="S&ave\tCtrl+S", icon=paths.icon_16x16.save))
-        menu.AppendItem(self.build_menu_item(menu, id=3, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.save_as))
+        menu.AppendItem(self.build_menu_item(menu, id=3, text="S&ave\tCtrl+S", icon=paths.icon_16x16.save))
+        menu.AppendItem(self.build_menu_item(menu, id=4, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.save_as))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_item(menu, id=4, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
+        menu.AppendItem(self.build_menu_item(menu, id=5, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
         self.menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.state_load, id=1)
-        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save, id=2)
-        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save_as, id=3)
-        self.gui.Bind(wx.EVT_MENU, self.gui.exit_gui,   id=4)
+        self.gui.Bind(wx.EVT_MENU, self.gui.new,                    id=1)
+        self.gui.Bind(wx.EVT_MENU, self.gui.state_load,             id=2)
+        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save,      id=3)
+        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save_as,   id=4)
+        self.gui.Bind(wx.EVT_MENU, self.gui.exit_gui,               id=5)
 
         # The 'View' menu entries.
         menu = wx.Menu()
