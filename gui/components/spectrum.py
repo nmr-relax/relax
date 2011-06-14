@@ -371,6 +371,7 @@ class Peak_intensity:
         # Bind some events.
         self.grid.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
         self.grid.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
+        self.grid.Bind(wx.EVT_KEY_UP, self.event_key_up)
         self.grid.Bind(wx.EVT_SIZE, self.resize)
 
         # Add grid to sizer, with spacing.
@@ -474,6 +475,20 @@ class Peak_intensity:
 
             # Do nothing else.
             return
+
+        # Skip the event to allow for normal operation.
+        event.Skip()
+
+
+    def event_key_up(self, event):
+        """Control what happens when a key is released.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Update the grid.
+        self.update_grid()
 
         # Skip the event to allow for normal operation.
         event.Skip()
@@ -771,3 +786,10 @@ class Peak_intensity:
             # Update the relaxation time.
             if time != '' and ncyc not in ['', '0']:
                 self.grid.SetCellValue(i, 1, str(int(ncyc) * time))
+
+            # The relaxation time and number of cycles.
+            relax_time = str(self.grid.GetCellValue(i, 1))
+
+            # Clear the relaxation time if set to zero.
+            if relax_time == '0.0':
+                self.grid.SetCellValue(i, 1, '')
