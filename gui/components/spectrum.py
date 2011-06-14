@@ -769,12 +769,12 @@ class Peak_intensity:
         # Loop over the rows.
         for i in range(self.grid.GetNumberRows()):
             # The number of cycles.
-            ncyc = str(self.grid.GetCellValue(i, 1))
+            ncyc = str(self.grid.GetCellValue(i, 2))
 
             # No time or no cycles, so set the value to nothing.
             if time == '' or ncyc in ['', '0']:
-                self.grid.SetCellValue(i, 2, '')
+                self.grid.SetCellValue(i, 1, '')
 
             # Update the relaxation time.
             else:
-                self.grid.SetCellValue(i, 2, str(int(ncyc) * time))
+                self.grid.SetCellValue(i, 1, str(int(ncyc) * time))
