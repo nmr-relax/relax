@@ -30,11 +30,11 @@ from string import split
 import wx
 
 
-def add_border(parent, border=0, packing=wx.VERTICAL):
+def add_border(box, border=0, packing=wx.VERTICAL):
     """Create the main part of the frame, returning the central sizer.
 
-    @param parent:      The parent GUI element to pack the box into.
-    @type parent:       wx object
+    @param box:         The box sizer element to pack the borders into.
+    @type box:          wx.BoxSizer instance
     @keyword border:    The size of the border in pixels.
     @type border:       int
     @keyword packing:   Specify if the central sizer should be vertically or horizontally packed.
@@ -43,23 +43,26 @@ def add_border(parent, border=0, packing=wx.VERTICAL):
     @rtype:             wx.BoxSizer instance
     """
 
+    # The orientation of the sub sizer.
+    orient = box.GetOrientation()
+    if orient == wx.HORIZONTAL:
+        orient_sub = wx.VERTICAL
+    else:
+        orient_sub = wx.HORIZONTAL
+
     # Some sizers.
-    sizer_hori = wx.BoxSizer(wx.HORIZONTAL)
-    sizer_vert = wx.BoxSizer(wx.VERTICAL)
+    sizer_sub = wx.BoxSizer(orient_sub)
     sizer_cent = wx.BoxSizer(packing)
 
-    # Pack the sizer into the frame.
-    parent.SetSizer(sizer_hori)
-
     # Left and right borders.
-    sizer_hori.AddSpacer(border)
-    sizer_hori.Add(sizer_vert, 1, wx.EXPAND|wx.ALL)
-    sizer_hori.AddSpacer(border)
+    box.AddSpacer(border)
+    box.Add(sizer_sub, 1, wx.EXPAND|wx.ALL)
+    box.AddSpacer(border)
 
     # Top and bottom borders.
-    sizer_vert.AddSpacer(border)
-    sizer_vert.Add(sizer_cent, 1, wx.EXPAND|wx.ALL)
-    sizer_vert.AddSpacer(border)
+    sizer_sub.AddSpacer(border)
+    sizer_sub.Add(sizer_cent, 1, wx.EXPAND|wx.ALL)
+    sizer_sub.AddSpacer(border)
 
     # Return the central sizer.
     return sizer_cent
