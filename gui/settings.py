@@ -235,7 +235,7 @@ class Free_file_format(Base_window, UF_window):
 
 
 
-class Global_params(Base_window):
+class Global_params(Base_window, UF_window):
     """The global parameters setting window."""
 
     # The window size.
