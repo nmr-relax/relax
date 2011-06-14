@@ -359,14 +359,20 @@ class Peak_intensity:
         self.grid.SetColLabelValue(1, "Relaxation delay [s]")
         self.grid.SetColLabelValue(2, "No. of cycles")
 
+        # Properties.
+        self.grid.SetDefaultCellFont(self.gui.font_normal)
+        self.grid.SetLabelFont(self.gui.font_normal_bold)
+
+        # Text height.
+        height = self.delay_time.GetSize()[1]
+
         # Column properties.
         for i in range(self.grid.GetNumberRows()):
             # Set the editor for the number of cycles column.
             self.grid.SetCellEditor(i, 2, Delay_num_cell_editor(0, 200, self))
 
-        # Properties.
-        self.grid.SetDefaultCellFont(self.gui.font_normal)
-        self.grid.SetLabelFont(self.gui.font_normal_bold)
+            # Row properties.
+            self.grid.SetRowSize(i, height)
 
         # No cell resizing allowed.
         self.grid.EnableDragColSize(False)
