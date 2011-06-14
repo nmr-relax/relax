@@ -60,7 +60,7 @@ from message import dir_message, error_message, question
 from gui import paths
 from references import References
 from relax_prompt import Prompt
-from settings import Free_file_format, load_sequence, relax_global_settings
+from settings import Free_file_format, Global_params, load_sequence
 from user_functions import User_functions
 
 
@@ -81,13 +81,8 @@ class Main(wx.Frame):
     def __init__(self, parent=None, id=-1, title="", script=None):
         """Initialise the main relax GUI frame."""
 
-        # The window style.
-        style = wx.CLOSE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN
-        if status.debug:
-            style = wx.DEFAULT_FRAME_STYLE
-
         # Execute the base class __init__ method.
-        super(Main, self).__init__(parent=parent, id=id, title=title, style=style)
+        super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE)
 
         # Set up the frame.
         self.Layout()
@@ -495,6 +490,20 @@ class Main(wx.Frame):
         win.Show()
 
 
+    def global_parameters(self, event):
+        """Open the global parameters window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Build the window.
+        win = Global_params(self)
+
+        # Show the window.
+        win.Show()
+
+
     def references(self, event):
         """Display the references relevant for relax.
 
@@ -537,17 +546,9 @@ class Main(wx.Frame):
 
 
     def reset_setting(self, event): #reset all settings
-        global global_setting #import global variable
         if question('Do you realy want to change relax settings?'):
             ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
             ds.relax_gui.free_file_format.reset()
-
-
-    def settings(self, event): # set up for relax variables
-        tmp_global = relax_global_settings(ds.relax_gui.global_setting)
-        if not tmp_global == None:
-            if question('Do you realy want to change relax settings?'):
-                ds.relax_gui.global_setting = tmp_global
 
 
     def setup_fonts(self):
