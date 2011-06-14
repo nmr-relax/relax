@@ -363,6 +363,10 @@ class Peak_intensity:
             # Make the relaxation delay column read only.
             self.grid.SetReadOnly(i, 2)
 
+        # No cell resizing allowed.
+        self.grid.EnableDragColSize(False)
+        self.grid.EnableDragRowSize(False)
+
         # Bind some events.
         self.grid.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
         self.grid.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
