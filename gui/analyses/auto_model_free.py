@@ -715,7 +715,7 @@ class Auto_model_free(Base_frame):
         box.AddSpacer(10)
 
         # Add maximum interation selector.
-        self.add_max_iterations(box)
+        self.max_iter = self.add_spin_element(box, self.parent, text="Maximum interations", default=self.data.max_iter, min=25, max=100)
 
         # Add the PDB file selection GUI element.
         self.field_structure = self.add_text_sel_element(box, self.parent, text="Structure file (.pdb)", default=str(self.gui.structure_file_pdb_msg), control=StructureTextCtrl, fn='open_file', editable=False, button=True)
