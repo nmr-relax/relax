@@ -188,11 +188,15 @@ class Auto_model_free(Base_frame):
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
 
+        # Pack a sizer into the panel.
+        box_main = wx.BoxSizer(wx.HORIZONTAL)
+        self.parent.SetSizer(box_main)
+
         # Build the central sizer, with borders.
-        box = add_border(self.parent, border=self.border, packing=wx.HORIZONTAL)
+        box_centre = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        self.build_main_box(box)
+        self.build_main_box(box_centre)
 
 
     def _about(self, event):

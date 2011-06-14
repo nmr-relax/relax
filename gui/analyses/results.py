@@ -60,11 +60,15 @@ class Results_summary(Base_frame):
         # The parent GUI element for this class.
         self.parent = notebook
 
+        # Pack a sizer into the panel.
+        box_main = wx.BoxSizer(wx.HORIZONTAL)
+        self.parent.SetSizer(box_main)
+
         # Build the central sizer, with borders.
-        box = add_border(self.parent, border=self.border, packing=wx.HORIZONTAL)
+        box_centre = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
 
         # Build and pack the main sizer box.
-        self.build_results_box(box)
+        self.build_results_box(box_centre)
 
 
     def add_model_free_results(self, box):
