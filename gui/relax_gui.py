@@ -89,6 +89,12 @@ class Main(wx.Frame):
         # Execute the base class __init__ method.
         super(Main, self).__init__(parent=parent, id=id, title=title, style=style)
 
+        # Set up the frame.
+        self.Layout()
+        self.SetSize((self.min_width, self.min_height))
+        self.SetMinSize((self.min_width, self.min_height))
+        self.Centre()
+
         # The analysis frame object storage.
         self.analysis_frames = []
 
@@ -153,12 +159,6 @@ class Main(wx.Frame):
         frame_1_statusbar_fields = ["relaxGUI (C) 2009 Michael Bieri and (C) 2010-2011 the relax development team", "relax:", version]
         for i in range(len(frame_1_statusbar_fields)):
             self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
-
-        # Set up the frame.
-        self.Layout()
-        self.SetSize((self.min_width, self.min_height))
-        self.SetMinSize((self.min_width, self.min_height))
-        self.Centre()
 
         # Close Box event
         self.Bind(wx.EVT_CLOSE, self.exit_gui)
