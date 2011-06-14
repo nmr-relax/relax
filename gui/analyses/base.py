@@ -26,6 +26,7 @@
 
 # Python module imports.
 import wx
+from wx.lib import buttons
 
 # relax GUI module imports.
 from gui import paths
@@ -82,17 +83,11 @@ class Base_frame:
         # A horizontal sizer for the contents.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((118, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
         # The button.
-        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-        button.SetSize(button.GetBestSize())
+        button = buttons.ThemedGenBitmapTextButton(self.parent, -1, None, "Execute relax")
+        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.gui.Bind(wx.EVT_BUTTON, method, button)
-        sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
+        sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
