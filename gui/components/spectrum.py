@@ -361,9 +361,6 @@ class Peak_intensity:
 
         # Column properties.
         for i in range(self.grid.GetNumberRows()):
-            # Make the relaxation delay column read only.
-            self.grid.SetReadOnly(i, 1)
-
             # Set the editor for the number of cycles column.
             self.grid.SetCellEditor(i, 2, Delay_num_cell_editor(0, 200, self))
 
