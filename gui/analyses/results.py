@@ -111,22 +111,19 @@ class Results_summary(Base_frame):
         sizer1 = wx.BoxSizer(wx.HORIZONTAL)
 
         # Add results list box.
-        self.gui.list_modelfree = wx.ListBox(self.parent, -1, choices=[])
-        self.gui.list_modelfree.SetMinSize((800, 130))
-        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, self.gui.open_model_results_exe, self.gui.list_modelfree)
-        sizer1.Add(self.gui.list_modelfree, 0, wx.EXPAND, 0)
-        
+        self.gui.list_modelfree = self.add_list_box(sizer1, fn=self.gui.open_model_results_exe)
+
         # Add open button.
         button_modelfree = wx.Button(self.parent, -1, "Open")
         button_modelfree.SetMinSize((103, 27))
         self.gui.Bind(wx.EVT_BUTTON, self.gui.open_model_results_exe, button_modelfree)
         sizer1.Add(button_modelfree, 0, wx.LEFT, 5)
-        
+
         # Add selection.
-        sizer.Add(sizer1, 0, wx.EXPAND, 0) 
+        sizer.Add(sizer1, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+        box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def add_noe_results(self, box):
@@ -149,9 +146,9 @@ class Results_summary(Base_frame):
         button_noe.SetMinSize((103, 27))
         self.gui.Bind(wx.EVT_BUTTON, self.gui.open_noe_results_exe, button_noe)
         sizer1.Add(button_noe, 0, wx.LEFT, 5)
-        
+
         # Add selection.
-        sizer.Add(sizer1, 1, wx.ALL|wx.EXPAND, 0) 
+        sizer.Add(sizer1, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the element to the box.
         box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
@@ -170,23 +167,19 @@ class Results_summary(Base_frame):
         sizer1 = wx.BoxSizer(wx.HORIZONTAL)
 
         # Add results list box.
-        self.gui.list_rx = wx.ListBox(self.parent, -1, choices=[])
-        self.gui.list_rx.SetMinSize((800, 130))
-        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, self.gui.open_rx_results_exe, self.gui.list_rx)
-        sizer1.Add(self.gui.list_rx, 0, wx.EXPAND, 0)
-        
+        self.gui.list_rx = self.add_list_box(sizer1, fn=self.gui.open_rx_results_exe)
+
         # Add open button.
         button_rx = wx.Button(self.parent, -1, "Open")
         button_rx.SetMinSize((103, 27))
         self.gui.Bind(wx.EVT_BUTTON, self.gui.open_rx_results_exe, button_rx)
         sizer1.Add(button_rx, 0, wx.LEFT, 5)
-        
-        # Add selection.
-        sizer.Add(sizer1, 0, wx.EXPAND, 0) 
 
+        # Add selection.
+        sizer.Add(sizer1, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+        box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def build_results_box(self, box):
