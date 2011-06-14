@@ -484,7 +484,7 @@ class Main(wx.Frame):
         """
 
         # Build the window.
-        win = Free_file_format(self)
+        win = Free_file_format()
 
         # Show the window.
         win.Show()
@@ -498,7 +498,7 @@ class Main(wx.Frame):
         """
 
         # Build the window.
-        win = Global_params(self)
+        win = Global_params()
 
         # Show the window.
         win.Show()

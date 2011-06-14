@@ -62,7 +62,7 @@ def load_sequence():
 
 
 
-class Base_window(wx.Frame):
+class Base_window(wx.Dialog):
     """Base class for the settings windows."""
 
     # The window size.
@@ -75,7 +75,7 @@ class Base_window(wx.Frame):
         """Set up the window."""
 
         # Execute the base __init__() method.
-        super(Base_window, self).__init__(parent=parent, id=id, title=title, style=style)
+        wx.Dialog.__init__(self, parent, id=id, title=title, style=style)
 
         # The main sizer.
         self.main_sizer = self.build_frame()
