@@ -99,6 +99,7 @@ class Base_window(wx.Frame):
 
         # Set the window size.
         self.SetSize(self.SIZE)
+        self.SetMinSize(self.SIZE)
 
         # Centre the window.
         self.Center()
