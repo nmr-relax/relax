@@ -227,14 +227,14 @@ class Auto_model_free(Base_frame):
         label_maxiter = wx.StaticText(self.parent, -1, "Maximum interations")
         label_maxiter.SetMinSize((240, 17))
         label_maxiter.SetFont(self.gui.font_normal)
-        sizer.Add(label_maxiter, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer.Add(label_maxiter, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spinner.
         self.max_iter = wx.SpinCtrl(self.parent, -1, self.data.max_iter, min=25, max=100)
-        sizer.Add(self.max_iter, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer.Add(self.max_iter, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Add the element to the box.
-        box.Add(sizer, 1, wx.EXPAND, 0)
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
 
 
     def add_mf_models(self, box):
@@ -246,6 +246,9 @@ class Auto_model_free(Base_frame):
 
         # Add a label.
         self.add_static_text(box, self.parent, "Select model-free models (default = all):")
+
+        # Add some spacing.
+        box.AddSpacer(5)
 
         # A horizontal sizer for the buttons.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -285,7 +288,7 @@ class Auto_model_free(Base_frame):
             sizer.Add(button, 1, wx.ADJUST_MINSIZE, 0)
 
         # Add the title and buttons to the main box.
-        box.Add(sizer, 1, wx.EXPAND, 0)
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
 
 
     def add_relax_data_input(self, box):
@@ -703,11 +706,13 @@ class Auto_model_free(Base_frame):
         # Add the frame title.
         self.add_title(box, "Setup for model-free analysis")
 
-        # Add the relaxation data input GUI element.
+        # Add the relaxation data input GUI element, with spacing.
         self.add_relax_data_input(box)
+        box.AddSpacer(10)
 
-        # Add the model-free models GUI element.
+        # Add the model-free models GUI element, with spacing.
         self.add_mf_models(box)
+        box.AddSpacer(10)
 
         # Add maximum interation selector.
         self.add_max_iterations(box)
@@ -720,6 +725,9 @@ class Auto_model_free(Base_frame):
 
         # Add the results directory GUI element.
         self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", default=self.data.results_dir_model, fn=self.resdir_modelfree, button=True)
+
+        # Add a stretchable spacer.
+        box.AddStretchSpacer()
 
         # Add the execution GUI element.
         self.add_execute_relax(box, self.automatic_protocol_controller)
