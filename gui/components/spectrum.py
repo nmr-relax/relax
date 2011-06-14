@@ -258,6 +258,24 @@ class Peak_intensity:
         # Add the sizer to the static box and the static box to the main box.
         box.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
+        # Catch a resize.
+        stat_box.Bind(wx.EVT_SIZE, self.resize)
+
+
+    def resize(self, event):
+        """Catch the resize to allow the grid to be resized.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Print out.
+        if status.debug:
+            print "Event size: %s" % event.GetSize()
+
+        # Continue with the normal resizing.
+        event.Skip()
+
 
     def add_buttons(self, sizer):
         """Add the buttons for peak list manipulation.
