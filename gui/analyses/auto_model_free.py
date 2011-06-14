@@ -39,7 +39,6 @@ from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from relax_io import DummyFileObject
 from status import Status; status = Status()
 
-
 # relax GUI module imports.
 from gui.about import About_base
 from gui.analyses.base import Base_frame
@@ -51,6 +50,7 @@ from gui.controller import Redirect_text, Thread_container
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir, openfile
 from gui.message import error_message, missing_data
+from gui.misc import add_border
 from gui import paths
 
 
@@ -189,7 +189,7 @@ class Auto_model_free(Base_frame):
         self.parent = wx.Panel(notebook, -1)
 
         # Build the central sizer, with borders.
-        box = self.setup_analysis_element(self.parent)
+        box = add_border(self.parent, border=self.border, packing=wx.HORIZONTAL)
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
         self.build_main_box(box)

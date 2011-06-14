@@ -307,34 +307,3 @@ class Base_frame:
         # Build the right hand box and pack it next to the bitmap.
         right_box = self.build_right_box()
         box.Add(right_box, 1, wx.ALL|wx.EXPAND, 0)
-
-
-    def setup_analysis_element(self, parent):
-        """Set up the specific analysis GUI element.
-
-        @param parent:  The parent GUI element.
-        @type parent:   wx object
-        @return:        The sizer object.
-        @rtype:         wx.Sizer instance
-        """
-
-        # Some sizers.
-        sizer_hori = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_vert = wx.BoxSizer(wx.VERTICAL)
-        sizer_cent = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Pack the sizer into the frame.
-        parent.SetSizer(sizer_hori)
-
-        # Left and right borders.
-        sizer_hori.AddSpacer(self.border)
-        sizer_hori.Add(sizer_vert, 1, wx.EXPAND|wx.ALL)
-        sizer_hori.AddSpacer(self.border)
-
-        # Top and bottom borders.
-        sizer_vert.AddSpacer(self.border)
-        sizer_vert.Add(sizer_cent, 1, wx.EXPAND|wx.ALL)
-        sizer_vert.AddSpacer(self.border)
-
-        # Return the central sizer.
-        return sizer_cent

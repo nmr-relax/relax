@@ -34,6 +34,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
 from gui.analyses.base import Base_frame
+from gui.misc import add_border
 from gui.paths import IMAGE_PATH
 
 
@@ -60,7 +61,7 @@ class Results_summary(Base_frame):
         self.parent = notebook
 
         # Build the central sizer, with borders.
-        box = self.setup_analysis_element(self.parent)
+        box = add_border(self.parent, border=self.border, packing=wx.HORIZONTAL)
 
         # Build and pack the main sizer box.
         self.build_results_box(box)

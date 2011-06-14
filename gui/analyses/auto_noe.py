@@ -46,6 +46,7 @@ from gui.controller import Redirect_text, Thread_container
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir, openfile
 from gui.message import error_message, missing_data
+from gui.misc import add_border
 from gui.paths import IMAGE_PATH
 from gui.settings import load_sequence
 
@@ -83,7 +84,7 @@ class Auto_noe(Base_frame):
         self.parent = wx.Panel(notebook, -1)
 
         # Build the central sizer, with borders.
-        box = self.setup_analysis_element(self.parent)
+        box = add_border(self.parent, border=self.border, packing=wx.HORIZONTAL)
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
         self.build_main_box(box)
