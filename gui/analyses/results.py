@@ -115,11 +115,8 @@ class Results_summary(Base_frame):
         sizer1 = wx.BoxSizer(wx.HORIZONTAL)
 
         # Add results list box.
-        self.gui.list_noe = wx.ListBox(self.parent, -1, choices=[])
-        self.gui.list_noe.SetMinSize((800, 130))
-        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, self.gui.open_noe_results_exe, self.gui.list_noe)
-        sizer1.Add(self.gui.list_noe, 0, wx.EXPAND, 0)
-        
+        self.gui.list_noe = self.add_list_box(sizer1, fn=self.gui.open_noe_results_exe)
+
         # Add open button.
         button_noe = wx.Button(self.parent, -1, "Open")
         button_noe.SetMinSize((103, 27))
@@ -131,6 +128,33 @@ class Results_summary(Base_frame):
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
+    def add_list_box(self, box, fn=None):
+        """Add a results list box.
+
+        @param box:     The box sizer to pack the box into.
+        @type box:      wx.BoxSizer instance
+        @keyword fn:    The function to bind double click events to.
+        @type fn:       method
+        @return:        The list box element.
+        @rtype:         wx.ListBox element
+        """
+
+        # Initialise the list box.
+        list = wx.ListBox(self.parent, -1, choices=[])
+
+        # Set the properties.
+        list.SetMinSize((800, 130))
+
+        # Bind events.
+        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, fn, list)
+
+        # Add to the sizer.
+        box.Add(list, 0, wx.EXPAND, 0)
+
+        # Return the list box.
+        return list
 
 
     def add_rx_results(self, box):
