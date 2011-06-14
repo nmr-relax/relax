@@ -364,12 +364,13 @@ class Peak_intensity:
             # Set the editor for the number of cycles column.
             self.grid.SetCellEditor(i, 2, Delay_num_cell_editor(0, 200, self))
 
+        # Properties.
+        self.grid.SetDefaultCellFont(self.gui.font_normal)
+        self.grid.SetLabelFont(self.gui.font_normal_bold)
+
         # No cell resizing allowed.
         self.grid.EnableDragColSize(False)
         self.grid.EnableDragRowSize(False)
-
-        # Properties.
-        self.grid.SetFont(self.gui.font_normal)
 
         # Bind some events.
         self.grid.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
