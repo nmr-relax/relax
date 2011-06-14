@@ -713,8 +713,8 @@ class Peak_intensity:
             for i in range(self.num_rows):
                 # The cell data.
                 file_name = str(self.grid.GetCellValue(i, 0))
-                ncyc = str(self.grid.GetCellValue(i, 1))
-                relax_time = str(self.grid.GetCellValue(i, 2))
+                relax_time = str(self.grid.GetCellValue(i, 1))
+                ncyc = str(self.grid.GetCellValue(i, 2))
 
                 # No data, so stop.
                 if file_name == '' and ncyc == '':
@@ -744,13 +744,13 @@ class Peak_intensity:
                 if hasattr(self.data, 'file_list'):
                     self.grid.SetCellValue(i, 0, str(self.data.file_list[i]))
 
-                # The number of cycles.
-                if hasattr(self.data, 'ncyc'):
-                    self.grid.SetCellValue(i, 1, str(self.data.ncyc[i]))
-
                 # The relaxation time.
                 if hasattr(self.data, 'relax_times'):
-                    self.grid.SetCellValue(i, 2, str(self.data.relax_times[i]))
+                    self.grid.SetCellValue(i, 1, str(self.data.relax_times[i]))
+
+                # The number of cycles.
+                if hasattr(self.data, 'ncyc'):
+                    self.grid.SetCellValue(i, 2, str(self.data.ncyc[i]))
 
             # Update the grid.
             self.update_grid()
