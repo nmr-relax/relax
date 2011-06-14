@@ -87,7 +87,7 @@ class Base_frame:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The button.
-        button = buttons.ThemedGenBitmapTextButton(self.parent, -1, None, "Execute relax")
+        button = buttons.ThemedGenBitmapTextButton(self.parent, -1, None, " Execute relax")
         button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.gui.Bind(wx.EVT_BUTTON, method, button)
         sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
