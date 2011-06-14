@@ -208,6 +208,11 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
 class Peak_intensity:
     """The peak list selection class."""
 
+    # Class variables.
+    col_label_width = 40
+    col1_width = 140
+    col2_width = 160
+
     def __init__(self, gui=None, parent=None, subparent=None, data=None, label=None, width=688, height=300, box=None):
         """Build the peak list reading GUI element.
 
@@ -263,9 +268,6 @@ class Peak_intensity:
         self.add_grid(box_centre)
         box_centre.AddSpacer(self.spacing)
 
-        # Catch a resize.
-        stat_box.Bind(wx.EVT_SIZE, self.resize)
-
 
     def resize(self, event):
         """Catch the resize to allow the grid to be resized.
@@ -274,9 +276,17 @@ class Peak_intensity:
         @type event:    wx event
         """
 
-        # Print out.
-        if status.debug:
-            print "Event size: %s" % event.GetSize()
+        # The new grid size.
+        x, y = event.GetSize()
+
+        # The expandable column width.
+        width = x - self.col_label_width - self.col1_width - self.col2_width - 10
+
+        # Set the column sizes.
+        self.grid.SetRowLabelSize(self.col_label_width)
+        self.grid.SetColSize(0, width)
+        self.grid.SetColSize(1, self.col1_width)
+        self.grid.SetColSize(2, self.col2_width)
 
         # Continue with the normal resizing.
         event.Skip()
@@ -345,12 +355,6 @@ class Peak_intensity:
         self.grid.SetColLabelValue(1, "No. of cycles")
         self.grid.SetColLabelValue(2, "Relaxation delay [s]")
 
-        # Set the sizes.
-        self.grid.SetRowLabelSize(40)
-        self.grid.SetColSize(0, 320)
-        self.grid.SetColSize(1, 140)
-        self.grid.SetColSize(2, 160)
-
         # Column properties.
         for i in range(self.grid.GetNumberRows()):
             # Set the editor for the number of cycles column.
@@ -362,6 +366,7 @@ class Peak_intensity:
         # Bind some events.
         self.grid.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
         self.grid.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
+        self.grid.Bind(wx.EVT_SIZE, self.resize)
 
         # Add grid to sizer, with spacing.
         sizer.Add(self.grid, 1, wx.ALL|wx.EXPAND, 0)
