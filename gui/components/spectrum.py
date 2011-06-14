@@ -367,6 +367,9 @@ class Peak_intensity:
         self.grid.EnableDragColSize(False)
         self.grid.EnableDragRowSize(False)
 
+        # No horizontal scrolling.
+        self.grid.SetMargins(-20, 0)
+
         # Bind some events.
         self.grid.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
         self.grid.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
