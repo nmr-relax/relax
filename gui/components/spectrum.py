@@ -284,7 +284,7 @@ class Peak_intensity:
         x, y = event.GetSize()
 
         # The expandable column width.
-        width = x - self.col_label_width - self.col1_width - self.col2_width - 10
+        width = x - self.col_label_width - self.col1_width - self.col2_width - 20
 
         # Set the column sizes.
         self.grid.SetRowLabelSize(self.col_label_width)
