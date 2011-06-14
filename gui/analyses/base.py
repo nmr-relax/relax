@@ -98,6 +98,95 @@ class Base_frame:
         box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
 
 
+    def add_spin_control(self, box, parent, text='', min=None, max=None, control=wx.SpinCtrl, width=-1, height=-1):
+        """Add a text control field to the box.
+
+        @param box:         The box element to pack the control into.
+        @type box:          wx.BoxSizer instance
+        @param parent:      The parent GUI element.
+        @type parent:       wx object
+        @keyword text:      The default text of the control.
+        @type text:         str
+        @keyword min:       The minimum value allowed.
+        @type min:          int
+        @keyword max:       The maximum value allowed.
+        @type max:          int
+        @keyword control:   The control class to use.
+        @type control:      wx.TextCtrl derived class
+        @keyword width:     The minimum width of the control.
+        @type width:        int
+        @keyword height:    The minimum height of the control.
+        @type height:       int
+        @return:            The text control object.
+        @rtype:             control object
+        """
+
+        # The control.
+        field = control(parent, -1, text, min=min, max=max)
+
+        # The font and control properties.
+        field.SetMinSize((width, height))
+        field.SetFont(self.gui.font_normal)
+
+        # Add the control to the box.
+        box.Add(field, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Return the text field.
+        return field
+
+
+    def add_spin_element(self, box, parent, text="", default=0, min=0, max=1000, control=wx.SpinCtrl):
+        """Create a text selection element using a spinner for the frame.
+
+        This consists of a horizontal layout with a static text element and a spin control
+
+        @param box:             The box element to pack the structure file selection GUI element into.
+        @type box:              wx.BoxSizer instance
+        @param parent:          The parent GUI element.
+        @type parent:           wx object
+        @keyword text:          The static text.
+        @type text:             str
+        @keyword default:       The default value of the control.
+        @type default:          str
+        @keyword min:           The minimum value allowed.
+        @type min:              int
+        @keyword max:           The maximum value allowed.
+        @type max:              int
+        @keyword control:       The control class to use.
+        @type control:          wx.SpinCtrl derived class
+        @return:                The text control object.
+        @rtype:                 control object
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = self.add_static_text(sizer, parent, text=text, width=self.width_text)
+
+        # The size for all elements, based on this text.
+        size = label.GetSize()
+        size_horizontal = size[1] + 8
+
+        # Spacer.
+        sizer.AddSpacer((self.spacer_horizontal, -1))
+
+        # The text input field.
+        field = self.add_spin_control(sizer, parent, text=default, control=control, min=min, max=max, height=size_horizontal)
+
+        # Spacer.
+        sizer.AddSpacer((self.spacer_horizontal, -1))
+
+        # No button, so add a spacer.
+        sizer.AddSpacer((self.width_button, -1))
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
+
+        # Return the text control object.
+        return field
+
+
     def add_static_text(self, box, parent, text='', width=-1, height=-1):
         """Add a text control field to the box.
 
