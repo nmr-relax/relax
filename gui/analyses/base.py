@@ -42,13 +42,15 @@ class Base_frame:
     width_text = 240
     width_button = 100
 
-    def add_button_open(self, box, parent, fn=None, width=-1, height=-1):
+    def add_button_open(self, box, parent, icon=paths.icon_16x16.open, fn=None, width=-1, height=-1):
         """Add a button for opening and changing files and directories.
 
         @param box:         The box element to pack the control into.
         @type box:          wx.BoxSizer instance
         @param parent:      The parent GUI element.
         @type parent:       wx object
+        @keyword icon:      The path of the icon to use for the button.
+        @type icon:         str
         @keyword fn:        The function or method to execute when clicking on the button.
         @type fn:           func
         @keyword width:     The minimum width of the control.
@@ -58,7 +60,8 @@ class Base_frame:
         """
 
         # The button.
-        button = wx.Button(parent, -1, "Change")
+        button = buttons.ThemedGenBitmapTextButton(parent, -1, None, " Change")
+        button.SetBitmapLabel(wx.Bitmap(icon, wx.BITMAP_TYPE_ANY))
 
         # The font and button properties.
         button.SetMinSize((width, height))
@@ -290,7 +293,7 @@ class Base_frame:
         return field
 
 
-    def add_text_sel_element(self, box, parent, text="", default="", control=wx.TextCtrl, fn=None, editable=True, button=False):
+    def add_text_sel_element(self, box, parent, text="", default="", control=wx.TextCtrl, icon=paths.icon_16x16.open, fn=None, editable=True, button=False):
         """Create a text selection element for the frame.
 
         This consists of a horizontal layout with a static text element, a text control, and an optional button.
@@ -305,10 +308,14 @@ class Base_frame:
         @type default:          str
         @keyword control:       The control class to use.
         @type control:          wx.TextCtrl derived class
+        @keyword icon:          The path of the icon to use for the button.
+        @type icon:             str
         @keyword fn:            The function or method to execute when clicking on the button.  If this is a string, then an equivalent function will be searched for in the control object.
         @type fn:               func or str
         @keyword editable:      A flag specifying if the control is editable or not.
         @type editable:         bool
+        @keyword button:        A flag which if True will cause a button to appear.
+        @type button:           bool
         @return:                The text control object.
         @rtype:                 control object
         """
@@ -340,7 +347,7 @@ class Base_frame:
                 fn = getattr(field, fn)
 
             # Add the button.
-            self.add_button_open(sizer, parent, fn=fn, width=self.width_button, height=size_horizontal)
+            self.add_button_open(sizer, parent, icon=icon, fn=fn, width=self.width_button, height=size_horizontal)
 
         # No button, so add a spacer.
         else:
