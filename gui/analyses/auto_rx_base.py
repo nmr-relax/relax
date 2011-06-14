@@ -221,8 +221,10 @@ class Auto_rx(Base_frame):
         # Add the unresolved spins GUI element.
         self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues")
 
-        # Add the peak list selection GUI element.
+        # Add the peak list selection GUI element, with spacing.
+        box.AddSpacer(10)
         self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, subparent=self, data=self.data, label=self.label, box=box)
+        box.AddSpacer(10)
 
         # Add the execution GUI element.
         self.add_execute_relax(box, self.execute)
