@@ -268,6 +268,10 @@ class Peak_intensity:
         self.add_grid(box_centre)
         box_centre.AddSpacer(self.spacing)
 
+        # Bind some events.
+        self.delay_time.Bind(wx.EVT_KEY_DOWN, self.change_delay_down)
+        self.delay_time.Bind(wx.EVT_KEY_UP, self.change_delay_up)
+
 
     def resize(self, event):
         """Catch the resize to allow the grid to be resized.
