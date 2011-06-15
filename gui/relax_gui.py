@@ -209,39 +209,6 @@ class Main(wx.Frame):
         self.state_save()
 
 
-    def add_analysis(self, type):
-        """Add a new analysis type to the main notebook.
-
-        @param type:    The type of analysis.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
-        @type type:     str
-        """
-
-        # The analysis classes.
-        classes = {'noe': Auto_noe,
-                   'r1':  Auto_r1,
-                   'r2':  Auto_r2,
-                   'mf':  Auto_model_free}
-
-        # The titles.
-        titles = {'noe': "steady-state NOE",
-                  'r1':  "R1 relaxation",
-                  'r2':  "R2 relaxation",
-                  'mf':  "Model-free"}
-
-        # Bad analysis type.
-        if type not in classes.keys():
-            raise RelaxError("The analysis '%s' is unknown." % type)
-
-        # Get the class.
-        analysis = classes[type]
-
-        # Initialise the class and append it to the analysis window object.
-        self.analyses.append(analysis(self, self.notebook))
-
-        # Add to the notebook.
-        self.notebook.AddPage(self.analyses[-1].parent, titles[type])
-
-
     def add_start_screen(self):
         """Create a start screen for the main window when no analyses exist."""
 
@@ -362,7 +329,7 @@ class Main(wx.Frame):
 
 
     def new(self, event):
-        """Initialise a new analysis.
+        """Launch a wizard to select the new analysis.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -370,6 +337,17 @@ class Main(wx.Frame):
 
         # FIXME: temporary vars until a wizard is made.
         analysis_type = 'r1'
+
+        # Initialise the new analysis.
+        self.new_analysis(analysis_type)
+
+
+    def new_analysis(self, analysis_type):
+        """Initialise a new analysis.
+
+        @param analysis_type:   The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
+        @type analysis_type:    str
+        """
 
         # Starting from the initial state.
         if self.init_state:
@@ -387,8 +365,30 @@ class Main(wx.Frame):
             # Set the flag.
             self.init_state = False
 
-        # Add the new analysis.
-        self.add_analysis(analysis_type)
+        # The analysis classes.
+        classes = {'noe': Auto_noe,
+                   'r1':  Auto_r1,
+                   'r2':  Auto_r2,
+                   'mf':  Auto_model_free}
+
+        # The titles.
+        titles = {'noe': "steady-state NOE",
+                  'r1':  "R1 relaxation",
+                  'r2':  "R2 relaxation",
+                  'mf':  "Model-free"}
+
+        # Bad analysis type.
+        if analysis_type not in classes.keys():
+            raise RelaxError("The analysis '%s' is unknown." % analysis_type)
+
+        # Get the class.
+        analysis = classes[analysis_type]
+
+        # Initialise the class and append it to the analysis window object.
+        self.analyses.append(analysis(self, self.notebook))
+
+        # Add to the notebook.
+        self.notebook.AddPage(self.analyses[-1].parent, titles[analysis_type])
 
         # Reset the main window layout.
         self.Layout()
@@ -579,7 +579,7 @@ class Main(wx.Frame):
                'R2': 'r2',
                'model-free': 'mf'}
         for i in range(len(ds.relax_gui.analyses)):
-            self.add_analysis(map[ds.relax_gui.analyses[i].analysis_type])
+            self.new_analysis(map[ds.relax_gui.analyses[i].analysis_type])
 
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
