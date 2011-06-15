@@ -221,11 +221,11 @@ class Main(wx.Frame):
 
         # Add a button for a new analysis.
         button = buttons.ThemedGenBitmapTextButton(self, -1, None, " New analysis")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.new, wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_48x48.new, wx.BITMAP_TYPE_ANY))
         button.SetToolTipString("Initialise a new analysis")
 
         # The properties of the button.
-        button.SetMinSize((200, 50))
+        button.SetMinSize((200, 60))
         button.SetFont(self.font_14)
         self.main_sizer.Add(button, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ADJUST_MINSIZE, 0)
 
