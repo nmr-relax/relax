@@ -225,6 +225,25 @@ class Main(wx.Frame):
         sizer.AddStretchSpacer()
 
 
+    def close_analysis(self, event):
+        """Close the currently opened analysis.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Get the current analysis index.
+        index = self.notebook.GetSelection()
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to close the current %s analysis tab?" % ds.relax_gui.analyses[index].analysis_type
+        if not question(msg, default=False):
+            return
+
+        # Delete.
+        self.delete_analysis(index)
+
+
     def contact_relax(self, event):
         """Write an email to the relax mailing-list using the standard mailing program."""
         webbrowser.open_new('mailto:relax-users@gna.org')
