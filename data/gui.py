@@ -103,7 +103,7 @@ class Analyses(RelaxListType):
         self[-1].analysis_type = type
 
         # Return the index of the container.
-        return len(self-1)
+        return len(self)-1
 
 
     def from_xml(self, analyses_node):
