@@ -215,25 +215,9 @@ class Main(wx.Frame):
         image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.IMAGE_PATH+'ulysses_shadowless_400x168.png', wx.BITMAP_TYPE_ANY))
 
         # Add the icon to the main spacer with spacing.
-        self.main_sizer.AddStretchSpacer(2)
+        self.main_sizer.AddStretchSpacer()
         self.main_sizer.Add(image, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
         self.main_sizer.AddStretchSpacer()
-
-        # Add a button for a new analysis.
-        button = buttons.ThemedGenBitmapTextButton(self, -1, None, " New analysis")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_48x48.new, wx.BITMAP_TYPE_ANY))
-        button.SetToolTipString("Initialise a new analysis")
-
-        # The properties of the button.
-        button.SetMinSize((200, 60))
-        button.SetFont(self.font_14)
-        self.main_sizer.Add(button, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ADJUST_MINSIZE, 0)
-
-        # More spacing.
-        self.main_sizer.AddStretchSpacer(2)
-
-        # Catch clicking.
-        self.Bind(wx.EVT_BUTTON, self.new, button)
 
 
     def contact_relax(self, event):
