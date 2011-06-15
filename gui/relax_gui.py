@@ -610,12 +610,6 @@ class Main(wx.Frame):
         # Update the data store to match the GUI.
         self.sync_ds(upload=True)
 
-        # Analyses updates of the new data store.
-        for i in range(len(self.analyses)):
-            # Execute the analysis frame specific update methods.
-            if hasattr(self.analyses[i], 'sync_ds'):
-                self.analyses[i].sync_ds(upload=True)
-
         # Save the relax state.
         state.save_state(self.save_file, verbosity=0, force=True)
 
