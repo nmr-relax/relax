@@ -216,9 +216,6 @@ class Main(wx.Frame):
         @type type:     str
         """
 
-        # First add a container to the analysis window object.
-        self.analyses.append(Container())
-
         # The analysis classes.
         classes = {'noe': Auto_noe,
                    'r1':  Auto_r1,
