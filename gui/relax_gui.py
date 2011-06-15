@@ -230,6 +230,23 @@ class Main(wx.Frame):
         webbrowser.open_new('mailto:relax-users@gna.org')
 
 
+    def delete_analysis(self, index):
+        """Delete the analysis tab and data store corresponding to the index.
+
+        @param index:   The index of the analysis to delete.
+        @type index:    int
+        """
+
+        # Delete the data store object.
+        ds.relax_gui.analyses.pop(index)
+
+        # Delete the tab.
+        self.notebook.DeletePage(index)
+
+        # Delete the tab object.
+        self.analyses.pop(index)
+
+
     def exit_gui(self, event=None):
         """Catch the main window closure and perform the exit procedure.
 
@@ -563,6 +580,11 @@ class Main(wx.Frame):
         if not filename:
             # Don't do anything.
             return
+
+        # Delete the current tabs.
+        while len(self.analyses):
+            # Remove the last analysis, until there is nothing left.
+            self.delete_analysis(len(self.analyses)-1)
 
         # Reset the relax data store.
         reset()
