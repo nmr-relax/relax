@@ -182,7 +182,7 @@ class Auto_model_free(Base_frame):
         self.data.paramfiles3 = ["", "", ""]
         self.data.unresolved = ''
         self.data.structure_file = ''
-        self.data.results_dir_model = getcwd()
+        self.data.results_dir_model = self.gui.launch_dir
         self.data.max_iter = "30"
 
         # The parent GUI element for this class.

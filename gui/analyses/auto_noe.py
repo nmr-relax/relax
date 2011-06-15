@@ -60,25 +60,28 @@ class Auto_noe(Base_frame):
     bitmap = None
     label = None
 
-    def __init__(self, gui, notebook, hardcoded_index=None):
+    def __init__(self, gui, notebook):
         """Build the automatic NOE analysis GUI frame elements.
 
         @param gui:                 The main GUI class.
         @type gui:                  gui.relax_gui.Main instance
         @param notebook:            The notebook to pack this frame into.
         @type notebook:             wx.Notebook instance
-        @keyword hardcoded_index:   Kludge for the current GUI layout.
-        @type hardcoded_index:      int
         """
 
         # Store the main class.
         self.gui = gui
 
-        # The NOE image
-        self.bitmap = paths.IMAGE_PATH + 'noe.png'
+        # Generate a storage container in the relax data store, and alias it for easy access.
+        self.data = ds.relax_gui.analyses.add('NOE')
 
-        # Alias the storage container in the relax data store.
-        self.data = ds.relax_gui.analyses[hardcoded_index]
+        # Initialise the variables.
+        self.data.frq = ''
+        self.data.ref_file = ''
+        self.data.sat_file = ''
+        self.data.ref_rmsd = 1000
+        self.data.sat_rmsd = 1000
+        self.data.save_dir = self.gui.launch_dir
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
@@ -183,8 +186,8 @@ class Auto_noe(Base_frame):
         # Use a vertical packing of elements.
         box = wx.BoxSizer(wx.VERTICAL)
 
-        # Add the model-free bitmap picture.
-        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
+        # Add the NOE bitmap picture.
+        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'noe.png', wx.BITMAP_TYPE_ANY))
         box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
 
         # Return the box.

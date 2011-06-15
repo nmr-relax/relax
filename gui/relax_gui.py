@@ -86,6 +86,10 @@ class Main(wx.Frame):
         # Execute the base class __init__ method.
         super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE)
 
+        # Initialise some variables for the GUI.
+        self.init_state = True
+        self.launch_dir = getcwd()
+
         # Set up the frame.
         self.Layout()
         self.SetSize((self.min_width, self.min_height))
@@ -131,7 +135,6 @@ class Main(wx.Frame):
 
         # Add the start screen.
         self.add_start_screen()
-        self.init_state = True
 
         # Close Box event
         self.Bind(wx.EVT_CLOSE, self.exit_gui)
@@ -369,7 +372,7 @@ class Main(wx.Frame):
         """
 
         # FIXME: temporary vars until a wizard is made.
-        analysis_type = 'mf'
+        analysis_type = 'noe'
 
         # Starting from the initial state.
         if self.init_state:
