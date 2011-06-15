@@ -80,12 +80,12 @@ class Auto_rx(Base_frame):
             data_index = ds.relax_gui.analyses.add(self.label)
 
             # Initialise the variables.
-            ds.relax_gui.analses[data_index].frq = ''
-            ds.relax_gui.analses[data_index].num = 0
-            ds.relax_gui.analses[data_index].file_list = []
-            ds.relax_gui.analses[data_index].ncyc = []
-            ds.relax_gui.analses[data_index].relax_times = []
-            ds.relax_gui.analses[data_index].save_dir = self.gui.launch_dir
+            ds.relax_gui.analyses[data_index].frq = ''
+            ds.relax_gui.analyses[data_index].num = 0
+            ds.relax_gui.analyses[data_index].file_list = []
+            ds.relax_gui.analyses[data_index].ncyc = []
+            ds.relax_gui.analyses[data_index].relax_times = []
+            ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
