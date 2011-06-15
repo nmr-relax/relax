@@ -265,6 +265,14 @@ class Main(wx.Frame):
         # Delete the tab object.
         self.analyses.pop(index)
 
+        # No more analyses, so in the initial state.
+        if len(ds.relax_gui.analyses) == 0:
+            # Reset the flag.
+            self.init_state = True
+
+            # Recreate the start screen.
+            self.add_start_screen()
+
 
     def exit_gui(self, event=None):
         """Catch the main window closure and perform the exit procedure.
