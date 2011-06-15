@@ -574,8 +574,12 @@ class Main(wx.Frame):
         state.load_state(filename, verbosity=0)
 
         # Reconstruct the analysis tabs.
+        map = {'NOE': 'noe',
+               'R1': 'r1',
+               'R2': 'r2',
+               'model-free': 'mf'}
         for i in range(len(ds.relax_gui.analyses)):
-            self.add_analysis(ds.relax_gui.analyses[i].analysis_type)
+            self.add_analysis(map[ds.relax_gui.analyses[i].analysis_type])
 
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
