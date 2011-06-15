@@ -40,6 +40,7 @@ from data.gui import Gui
 from info import Info_box
 from generic_fns import state
 from generic_fns.reset import reset
+from relax_errors import RelaxError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
 from version import version
@@ -91,8 +92,8 @@ class Main(wx.Frame):
         self.SetMinSize((self.min_width, self.min_height))
         self.Centre()
 
-        # The analysis frame object storage.
-        self.analysis_frames = []
+        # The analysis window object storage.
+        self.analyses = []
 
         # The calculation threads list.
         self.calc_threads = []
@@ -128,12 +129,9 @@ class Main(wx.Frame):
         for i in range(len(frame_1_statusbar_fields)):
             self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
 
-        # The sizer for the main GUI window.
-        self.main_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.SetSizer(self.main_sizer)
-
         # Add the start screen.
         self.add_start_screen()
+        self.init_state = True
 
         # Close Box event
         self.Bind(wx.EVT_CLOSE, self.exit_gui)
@@ -208,16 +206,56 @@ class Main(wx.Frame):
         self.state_save()
 
 
+    def add_analysis(self, type):
+        """Add a new analysis type to the main notebook.
+
+        @param type:    The type of analysis.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
+        @type type:     str
+        """
+
+        # First add a container to the analysis window object.
+        self.analyses.append(Container())
+
+        # The analysis classes.
+        classes = {'noe': Auto_noe,
+                   'r1':  Auto_r1,
+                   'r2':  Auto_r2,
+                   'mf':  Auto_model_free}
+
+        # The titles.
+        titles = {'noe': "steady-state NOE",
+                  'r1':  "R1 relaxation",
+                  'r2':  "R2 relaxation",
+                  'mf':  "Model-free"}
+
+        # Bad analysis type.
+        if type not in classes.keys():
+            raise RelaxError("The analysis '%s' is unknown." % type)
+
+        # Get the class.
+        analysis = classes[type]
+
+        # Initialise the class and append it to the analysis window object.
+        self.analyses.append(analysis(self, self.notebook))
+
+        # Add to the notebook.
+        self.notebook.AddPage(self.analyses[-1].parent, titles[type])
+
+
     def add_start_screen(self):
         """Create a start screen for the main window when no analyses exist."""
+
+        # The sizer for the main GUI window.
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(sizer)
 
         # The relax icon.
         image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.IMAGE_PATH+'ulysses_shadowless_400x168.png', wx.BITMAP_TYPE_ANY))
 
         # Add the icon to the main spacer with spacing.
-        self.main_sizer.AddStretchSpacer()
-        self.main_sizer.Add(image, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        self.main_sizer.AddStretchSpacer()
+        sizer.AddStretchSpacer()
+        sizer.Add(image, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer.AddStretchSpacer()
 
 
     def contact_relax(self, event):
@@ -330,8 +368,30 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
-        # First destroy the contents of the main sizer.
-        self.main_sizer.DeleteWindows()
+        # FIXME: temporary vars until a wizard is made.
+        analysis_type = 'mf'
+
+        # Starting from the initial state.
+        if self.init_state:
+            # A new sizer for the notebook (to replace the current sizer).
+            sizer = wx.BoxSizer(wx.VERTICAL)
+
+            # Create a notebook and add it to the sizer.
+            self.notebook = wx.Notebook(self, -1, style=wx.NB_TOP)
+            sizer.Add(self.notebook, 1, wx.ALL|wx.EXPAND, 0)
+
+            # Add the new sizer to the main window.
+            self.SetSizer(sizer)
+            sizer.Layout()
+
+            # Set the flag.
+            self.init_state = False
+
+        # Add the new analysis.
+        self.add_analysis(analysis_type)
+
+        # Reset the main window layout.
+        self.Layout()
 
 
     def open_model_results_exe(self, event):    # open model-free results
@@ -508,13 +568,13 @@ class Main(wx.Frame):
         for i in range(len(ds.relax_gui.analyses)):
             # The automatic model-free protocol frame
             if ds.relax_gui.analyses[i].analysis_type == 'model-free':
-                self.analysis_frames.append(Auto_model_free(self))
+                self.analyses.append(Auto_model_free(self))
 
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
 
         # Execute the analysis frame specific update methods.
-        for analysis in self.analysis_frames:
+        for analysis in self.analyses:
             if hasattr(analysis, 'sync_ds'):
                 analysis.sync_ds(upload=False)
 
@@ -526,10 +586,10 @@ class Main(wx.Frame):
         self.sync_ds(upload=True)
 
         # Analyses updates of the new data store.
-        for i in range(len(self.analysis_frames)):
+        for i in range(len(self.analyses)):
             # Execute the analysis frame specific update methods.
-            if hasattr(self.analysis_frames[i], 'sync_ds'):
-                self.analysis_frames[i].sync_ds(upload=True)
+            if hasattr(self.analyses[i], 'sync_ds'):
+                self.analyses[i].sync_ds(upload=True)
 
         # Save the relax state.
         state.save_state(self.save_file, verbosity=0, force=True)
@@ -545,5 +605,5 @@ class Main(wx.Frame):
         """
 
         # Synchronise each frame.
-        for frame in self.analysis_frames:
+        for frame in self.analyses:
             frame.sync_ds(upload)
