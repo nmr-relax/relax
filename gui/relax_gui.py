@@ -32,6 +32,7 @@ import sys
 from textwrap import wrap
 import webbrowser
 import wx
+from wx.lib import buttons
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -127,6 +128,13 @@ class Main(wx.Frame):
         for i in range(len(frame_1_statusbar_fields)):
             self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
 
+        # The sizer for the main GUI window.
+        self.main_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self.main_sizer)
+
+        # Add the start screen.
+        self.add_start_screen()
+
         # Close Box event
         self.Bind(wx.EVT_CLOSE, self.exit_gui)
 
@@ -198,6 +206,34 @@ class Main(wx.Frame):
 
         # Save.
         self.state_save()
+
+
+    def add_start_screen(self):
+        """Create a start screen for the main window when no analyses exist."""
+
+        # The relax icon.
+        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.IMAGE_PATH+'ulysses_shadowless_400x168.png', wx.BITMAP_TYPE_ANY))
+
+        # Add the icon to the main spacer with spacing.
+        self.main_sizer.AddStretchSpacer(2)
+        self.main_sizer.Add(image, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        self.main_sizer.AddStretchSpacer()
+
+        # Add a button for a new analysis.
+        button = buttons.ThemedGenBitmapTextButton(self, -1, None, " New analysis")
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.new, wx.BITMAP_TYPE_ANY))
+        button.SetToolTipString("Initialise a new analysis")
+
+        # The properties of the button.
+        button.SetMinSize((200, 50))
+        button.SetFont(self.font_14)
+        self.main_sizer.Add(button, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ADJUST_MINSIZE, 0)
+
+        # More spacing.
+        self.main_sizer.AddStretchSpacer(2)
+
+        # Catch clicking.
+        self.Bind(wx.EVT_BUTTON, self.new, button)
 
 
     def contact_relax(self, event):
@@ -412,6 +448,7 @@ class Main(wx.Frame):
         self.font_normal =      wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
         self.font_normal_bold = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD,   0, "Sans")
         self.font_subtitle =    wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD,   0, "Sans")
+        self.font_14 =          wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
         self.font_title =       wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
 
 
