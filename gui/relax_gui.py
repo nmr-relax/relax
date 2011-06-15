@@ -224,8 +224,9 @@ class Main(wx.Frame):
         sizer.Add(image, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
         sizer.AddStretchSpacer()
 
-        # Re-perform the layout of the GUI elements, if needed.
+        # Re-perform the layout of the GUI elements, and refresh.
         self.Layout()
+        self.Refresh()
 
 
     def close_analysis(self, event):
@@ -272,6 +273,10 @@ class Main(wx.Frame):
         if len(ds.relax_gui.analyses) == 0:
             # Reset the flag.
             self.init_state = True
+
+            # Delete the previous sizer.
+            old_sizer = self.GetSizer()
+            old_sizer.DeleteWindows()
 
             # Recreate the start screen.
             self.add_start_screen()
