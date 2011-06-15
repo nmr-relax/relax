@@ -584,11 +584,6 @@ class Main(wx.Frame):
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
 
-        # Execute the analysis frame specific update methods.
-        for analysis in self.analyses:
-            if hasattr(analysis, 'sync_ds'):
-                analysis.sync_ds(upload=False)
-
 
     def state_save(self):
         """Save the program state."""
@@ -615,6 +610,14 @@ class Main(wx.Frame):
         @type upload:       bool
         """
 
-        # Synchronise each frame.
-        for frame in self.analyses:
-            frame.sync_ds(upload)
+        # Loop over each analysis.
+        for i in range(len(self.analyses)):
+            # Link the data.
+            if not upload:
+                self.analyses[i].link_data(ds.relax_gui.analyses[i])
+
+            # Execute the analysis frame specific update methods.
+            if hasattr(self.analyses[i], 'sync_ds'):
+                self.analyses[i].sync_ds(upload)
+
+
