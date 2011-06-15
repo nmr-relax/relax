@@ -331,38 +331,6 @@ class Main(wx.Frame):
         ds.relax_gui.table_rex = []
         ds.relax_gui.table_te = []
 
-        # Initialise the 3 NOE analyses.
-        nmrfreq = [600, 800, 900]
-        for i in range(3):
-            # Add the element.
-            ds.relax_gui.analyses.add('NOE')
-
-            # Initialise the variables.
-            ds.relax_gui.analyses[-1].frq = nmrfreq[i]
-            ds.relax_gui.analyses[-1].ref_file = ''
-            ds.relax_gui.analyses[-1].sat_file = ''
-            ds.relax_gui.analyses[-1].ref_rmsd = 1000
-            ds.relax_gui.analyses[-1].sat_rmsd = 1000
-
-        # Initialise the 3 R1 and 3 R2 analyses.
-        rx = ['R1']*3 + ['R2']*3
-        nmrfreq = nmrfreq * 2
-        for i in range(len(rx)):
-            # Add the element.
-            ds.relax_gui.analyses.add(rx[i])
-
-            # Initialise the variables.
-            ds.relax_gui.analyses[-1].frq = nmrfreq[i]
-            ds.relax_gui.analyses[-1].num = 0
-            ds.relax_gui.analyses[-1].file_list = []
-            ds.relax_gui.analyses[-1].ncyc = []
-            ds.relax_gui.analyses[-1].relax_times = []
-
-        # Initialise all the source and save directories.
-        for i in range(len(ds.relax_gui.analyses)):
-            ds.relax_gui.analyses[i].source_dir = getcwd()
-            ds.relax_gui.analyses[i].save_dir = getcwd()
-
 
     def new(self, event):
         """Launch a wizard to select the new analysis.
