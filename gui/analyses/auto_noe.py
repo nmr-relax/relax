@@ -60,28 +60,35 @@ class Auto_noe(Base_frame):
     bitmap = None
     label = None
 
-    def __init__(self, gui, notebook):
+    def __init__(self, gui, notebook, data_index=None):
         """Build the automatic NOE analysis GUI frame elements.
 
-        @param gui:                 The main GUI class.
-        @type gui:                  gui.relax_gui.Main instance
-        @param notebook:            The notebook to pack this frame into.
-        @type notebook:             wx.Notebook instance
+        @param gui:             The main GUI class.
+        @type gui:              gui.relax_gui.Main instance
+        @param notebook:        The notebook to pack this frame into.
+        @type notebook:         wx.Notebook instance
+        @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
+        @type data_index:       None or int
         """
 
         # Store the main class.
         self.gui = gui
 
-        # Generate a storage container in the relax data store, and alias it for easy access.
-        self.data = ds.relax_gui.analyses.add('NOE')
+        # New data container.
+        if data_index == None:
+            # Generate a storage container in the relax data store, and alias it for easy access.
+            data_index = ds.relax_gui.analyses.add('NOE')
 
-        # Initialise the variables.
-        self.data.frq = ''
-        self.data.ref_file = ''
-        self.data.sat_file = ''
-        self.data.ref_rmsd = 1000
-        self.data.sat_rmsd = 1000
-        self.data.save_dir = self.gui.launch_dir
+            # Initialise the variables.
+            ds.relax_gui.analyses[data_index].frq = ''
+            ds.relax_gui.analyses[data_index].ref_file = ''
+            ds.relax_gui.analyses[data_index].sat_file = ''
+            ds.relax_gui.analyses[data_index].ref_rmsd = 1000
+            ds.relax_gui.analyses[data_index].sat_rmsd = 1000
+            ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
+
+        # Alias the data.
+        self.data = ds.relax_gui.analyses[data_index]
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
@@ -350,17 +357,6 @@ class Auto_noe(Base_frame):
 
         # Terminate the event.
         event.Skip()
-
-
-    def link_data(self, data):
-        """Re-alias the storage container in the relax data store.
-
-        @keyword data:      The data storage container.
-        @type data:         class instance
-        """
-
-        # Re-alias.
-        self.data = data
 
 
     def ref_file(self, event):

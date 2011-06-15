@@ -60,28 +60,35 @@ class Auto_rx(Base_frame):
     bitmap = None
     label = None
 
-    def __init__(self, gui, notebook):
+    def __init__(self, gui, notebook, data_index=None):
         """Build the automatic R1 and R2 analysis GUI frame elements.
 
-        @param gui:                 The main GUI class.
-        @type gui:                  gui.relax_gui.Main instance
-        @param notebook:            The notebook to pack this frame into.
-        @type notebook:             wx.Notebook instance
+        @param gui:             The main GUI class.
+        @type gui:              gui.relax_gui.Main instance
+        @param notebook:        The notebook to pack this frame into.
+        @type notebook:         wx.Notebook instance
+        @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
+        @type data_index:       None or int
         """
 
         # Store the main class.
         self.gui = gui
 
-        # Generate a storage container in the relax data store, and alias it for easy access.
-        self.data = ds.relax_gui.analyses.add(self.label)
+        # New data container.
+        if data_index == None:
+            # Generate a storage container in the relax data store, and alias it for easy access.
+            data_index = ds.relax_gui.analyses.add(self.label)
 
-        # Initialise the variables.
-        self.data.frq = ''
-        self.data.num = 0
-        self.data.file_list = []
-        self.data.ncyc = []
-        self.data.relax_times = []
-        self.data.save_dir = self.gui.launch_dir
+            # Initialise the variables.
+            ds.relax_gui.analses[data_index].frq = ''
+            ds.relax_gui.analses[data_index].num = 0
+            ds.relax_gui.analses[data_index].file_list = []
+            ds.relax_gui.analses[data_index].ncyc = []
+            ds.relax_gui.analses[data_index].relax_times = []
+            ds.relax_gui.analses[data_index].save_dir = self.gui.launch_dir
+
+        # Alias the data.
+        self.data = ds.relax_gui.analyses[data_index]
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
@@ -306,19 +313,6 @@ class Auto_rx(Base_frame):
         # Add noe grace plot to relax data store.
         ds.relax_gui.results_rx.append(data.save_dir+sep+'grace'+sep+self.filename+'.agr')
         ds.relax_gui.results_rx.append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
-
-
-    def link_data(self, data):
-        """Re-alias the storage container in the relax data store.
-        @keyword data:      The data storage container.
-        @type data:         class instance
-        """
-
-        # Re-alias.
-        self.data = data
-
-        # Re-alias in the peak intensity object as well.
-        self.peak_intensity.data = data
 
 
     def load_sequence(self, event):

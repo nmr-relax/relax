@@ -154,36 +154,43 @@ class About_window(About_base):
 
 
 class Auto_model_free(Base_frame):
-    def __init__(self, gui, notebook):
+    def __init__(self, gui, notebook, data_index=None):
         """Build the automatic model-free protocol GUI element.
 
-        @param gui:         The main GUI class.
-        @type gui:          gui.relax_gui.Main instance
-        @param notebook:    The notebook to pack this frame into.
-        @type notebook:     wx.Notebook instance
+        @param gui:             The main GUI class.
+        @type gui:              gui.relax_gui.Main instance
+        @param notebook:        The notebook to pack this frame into.
+        @type notebook:         wx.Notebook instance
+        @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
+        @type data_index:       None or int
         """
 
         # Store the main class.
         self.gui = gui
 
-        # Generate a storage container in the relax data store, and alias it for easy access.
-        self.data = ds.relax_gui.analyses.add('model-free')
+        # New data container.
+        if data_index == None:
+            # Generate a storage container in the relax data store, and alias it for easy access.
+            data_index = ds.relax_gui.analyses.add('model-free')
 
-        # Model-free variables.
-        self.data.model_source = getcwd()
-        self.data.model_save = getcwd()
-        self.data.selection = "AIC"
-        self.data.model_toggle = [True]*10
-        self.data.nmrfreq1 = 600
-        self.data.nmrfreq2 = 800
-        self.data.nmrfreq3 = 900
-        self.data.paramfiles1 = ["", "", ""]
-        self.data.paramfiles2 = ["", "", ""]
-        self.data.paramfiles3 = ["", "", ""]
-        self.data.unresolved = ''
-        self.data.structure_file = ''
-        self.data.results_dir_model = self.gui.launch_dir
-        self.data.max_iter = "30"
+            # Model-free variables.
+            ds.relax_gui.analyses[data_index].model_source = getcwd()
+            ds.relax_gui.analyses[data_index].model_save = getcwd()
+            ds.relax_gui.analyses[data_index].selection = "AIC"
+            ds.relax_gui.analyses[data_index].model_toggle = [True]*10
+            ds.relax_gui.analyses[data_index].nmrfreq1 = 600
+            ds.relax_gui.analyses[data_index].nmrfreq2 = 800
+            ds.relax_gui.analyses[data_index].nmrfreq3 = 900
+            ds.relax_gui.analyses[data_index].paramfiles1 = ["", "", ""]
+            ds.relax_gui.analyses[data_index].paramfiles2 = ["", "", ""]
+            ds.relax_gui.analyses[data_index].paramfiles3 = ["", "", ""]
+            ds.relax_gui.analyses[data_index].unresolved = ''
+            ds.relax_gui.analyses[data_index].structure_file = ''
+            ds.relax_gui.analyses[data_index].results_dir_model = self.gui.launch_dir
+            ds.relax_gui.analyses[data_index].max_iter = "30"
+
+        # Alias the data.
+        self.data = ds.relax_gui.analyses[data_index]
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
@@ -715,7 +722,7 @@ class Auto_model_free(Base_frame):
         box.AddSpacer(10)
 
         # Add maximum interation selector.
-        self.max_iter = self.add_spin_element(box, self.parent, text="Maximum interations", default=self.data.max_iter, min=25, max=100)
+        self.max_iter = self.add_spin_element(box, self.parent, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100)
 
         # Add the PDB file selection GUI element.
         self.field_structure = self.add_text_sel_element(box, self.parent, text="Structure file (.pdb)", default=str(self.gui.structure_file_pdb_msg), control=StructureTextCtrl, fn='open_file', editable=False, button=True)
@@ -899,16 +906,6 @@ class Auto_model_free(Base_frame):
             if global_model == 'local_tm':
                 # enable m1 - m5 to choose for calculation
                 return True
-
-
-    def link_data(self, data):
-        """Re-alias the storage container in the relax data store.
-        @keyword data:      The data storage container.
-        @type data:         class instance
-        """
-
-        # Alias.
-        self.data = data
 
 
     def model_noe1(self, event): # load noe1

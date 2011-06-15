@@ -346,11 +346,13 @@ class Main(wx.Frame):
         self.new_analysis(analysis_type)
 
 
-    def new_analysis(self, analysis_type):
+    def new_analysis(self, analysis_type, index=None):
         """Initialise a new analysis.
 
         @param analysis_type:   The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
         @type analysis_type:    str
+        @keyword index:         The index of the analysis in the relax data store (set to None if no data currently exists).
+        @type index:            None or int
         """
 
         # Starting from the initial state.
@@ -389,7 +391,7 @@ class Main(wx.Frame):
         analysis = classes[analysis_type]
 
         # Initialise the class and append it to the analysis window object.
-        self.analyses.append(analysis(self, self.notebook))
+        self.analyses.append(analysis(self, self.notebook, index))
 
         # Add to the notebook.
         self.notebook.AddPage(self.analyses[-1].parent, titles[analysis_type])
@@ -595,7 +597,7 @@ class Main(wx.Frame):
                'R2': 'r2',
                'model-free': 'mf'}
         for i in range(len(ds.relax_gui.analyses)):
-            self.new_analysis(map[ds.relax_gui.analyses[i].analysis_type])
+            self.new_analysis(map[ds.relax_gui.analyses[i].analysis_type], index=i)
 
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
@@ -625,10 +627,6 @@ class Main(wx.Frame):
 
         # Loop over each analysis.
         for i in range(len(self.analyses)):
-            # Link the data.
-            if not upload:
-                self.analyses[i].link_data(ds.relax_gui.analyses[i])
-
             # Execute the analysis frame specific update methods.
             if hasattr(self.analyses[i], 'sync_ds'):
                 self.analyses[i].sync_ds(upload)
