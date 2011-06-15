@@ -573,11 +573,9 @@ class Main(wx.Frame):
         # Load the relax state.
         state.load_state(filename, verbosity=0)
 
-        # Build the analysis frames
+        # Reconstruct the analysis tabs.
         for i in range(len(ds.relax_gui.analyses)):
-            # The automatic model-free protocol frame
-            if ds.relax_gui.analyses[i].analysis_type == 'model-free':
-                self.analyses.append(Auto_model_free(self))
+            self.add_analysis(ds.relax_gui.analyses[i].analysis_type)
 
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
