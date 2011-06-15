@@ -119,10 +119,10 @@ class Analyses(RelaxListType):
         # Loop over the nodes.
         for node in analysis_nodes:
             # Add a blank analysis container.
-            cont = self.add()
+            index = self.add()
 
             # Recreate the analysis container.
-            cont.from_xml(node)
+            self[index].from_xml(node)
 
 
 class Free_file_format(Element):
