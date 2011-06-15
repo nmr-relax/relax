@@ -600,6 +600,13 @@ class Main(wx.Frame):
             # Don't do anything.
             return
 
+        # Yield to allow the cursor to be changed.
+        wx.Yield()
+
+        # Change the cursor to waiting.
+        orig_cursor = self.GetCursor()
+        self.SetCursor(wx.StockCursor(wx.CURSOR_ARROWWAIT))
+
         # Delete the current tabs.
         while len(self.analyses):
             # Remove the last analysis, until there is nothing left.
@@ -624,6 +631,9 @@ class Main(wx.Frame):
 
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
+
+        # Reset the cursor.
+        self.SetCursor(orig_cursor)
 
 
     def state_save(self):
