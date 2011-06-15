@@ -364,6 +364,10 @@ class Main(wx.Frame):
             self.notebook = wx.Notebook(self, -1, style=wx.NB_TOP)
             sizer.Add(self.notebook, 1, wx.ALL|wx.EXPAND, 0)
 
+            # Delete the previous sizer.
+            old_sizer = self.GetSizer()
+            old_sizer.DeleteWindows()
+
             # Add the new sizer to the main window.
             self.SetSizer(sizer)
             sizer.Layout()
