@@ -346,6 +346,9 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
+        # First destroy the contents of the main sizer.
+        self.main_sizer.DeleteWindows()
+
 
     def open_model_results_exe(self, event):    # open model-free results
         choice = self.list_modelfree.GetStringSelection()
