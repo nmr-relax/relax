@@ -372,7 +372,7 @@ class Main(wx.Frame):
         """
 
         # FIXME: temporary vars until a wizard is made.
-        analysis_type = 'noe'
+        analysis_type = 'r1'
 
         # Starting from the initial state.
         if self.init_state:
