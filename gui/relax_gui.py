@@ -224,6 +224,9 @@ class Main(wx.Frame):
         sizer.Add(image, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
         sizer.AddStretchSpacer()
 
+        # Re-perform the layout of the GUI elements, if needed.
+        self.Layout()
+
 
     def close_analysis(self, event):
         """Close the currently opened analysis.
