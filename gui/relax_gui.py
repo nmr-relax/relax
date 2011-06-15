@@ -550,6 +550,15 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
+        # Warning.
+        if not self.init_state:
+            # The message.
+            msg = "Loading a saved relax state file will cause all unsaved data to be lost.  Are you sure you would to open a save file?"
+
+            # The dialog.
+            if not question(msg, default=True):
+                return
+
         # Open the dialog.
         filename = openfile(msg='Select file to open', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
 
