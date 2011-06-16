@@ -186,35 +186,35 @@ class Menu:
 
         # The list of entries to build.
         self.entries_uf = [
-            [wx.NewId(), "&molecule", paths.icon_16x16.molecule, None, [
-                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.molecule.copy],
-                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.molecule.create],
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.molecule.delete]
-            ]],
-            [wx.NewId(), "&pipe", paths.icon_16x16.pipe, None, [
-                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.pipes.copy],
-                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipes.delete],
-                [wx.NewId(), "&switch", paths.icon_16x16.pipe_switch, self.gui.user_functions.pipes.switch]
-            ]],
-            [wx.NewId(), "&relax_data", paths.icon_16x16.relax_data, None, [
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.relax_data.delete],
-                [wx.NewId(), "&read",   paths.icon_16x16.open, self.gui.user_functions.relax_data.read]
-            ]],
-            [wx.NewId(), "resid&ue", paths.icon_16x16.residue, None, [
-                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.residue.copy],
-                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.residue.create],
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.residue.delete]
-            ]],
-            [wx.NewId(), "s&cript",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
-            [wx.NewId(), "se&quence", paths.icon_16x16.sequence, None, [
-                [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.sequence.read]
-            ]],
-            [wx.NewId(), "&spin", paths.icon_16x16.spin, None, [
-                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.spin.copy],
-                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.spin.create],
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.spin.delete]
-            ]],
+            #[wx.NewId(), "&molecule", paths.icon_16x16.molecule, None, [
+            #    [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.molecule.copy],
+            #    [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.molecule.create],
+            #    [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.molecule.delete]
+            #]],
+            #[wx.NewId(), "&pipe", paths.icon_16x16.pipe, None, [
+            #    [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.pipes.copy],
+            #    [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
+            #    [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipes.delete],
+            #    [wx.NewId(), "&switch", paths.icon_16x16.pipe_switch, self.gui.user_functions.pipes.switch]
+            #]],
+            #[wx.NewId(), "&relax_data", paths.icon_16x16.relax_data, None, [
+            #    [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.relax_data.delete],
+            #    [wx.NewId(), "&read",   paths.icon_16x16.open, self.gui.user_functions.relax_data.read]
+            #]],
+            #[wx.NewId(), "resid&ue", paths.icon_16x16.residue, None, [
+            #    [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.residue.copy],
+            #    [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.residue.create],
+            #    [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.residue.delete]
+            #]],
+            #[wx.NewId(), "s&cript",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
+            #[wx.NewId(), "se&quence", paths.icon_16x16.sequence, None, [
+            #    [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.sequence.read]
+            #]],
+            #[wx.NewId(), "&spin", paths.icon_16x16.spin, None, [
+            #    [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.spin.copy],
+            #    [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.spin.create],
+            #    [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.spin.delete]
+            #]],
             [wx.NewId(), "&value", paths.icon_16x16.value, None, [
                 [wx.NewId(), "&set",   paths.icon_16x16.add, self.gui.user_functions.value.set]
             ]]
