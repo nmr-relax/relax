@@ -24,9 +24,10 @@
 /* The header for all functions which will be called */
 #include "relax_fit.h"
 
-/* functions for chi2 and exponential */
+/* functions for chi2, exponential and inversion-recovery */
 #include "c_chi2.h"
 #include "exponential.h"
+#include "inversion-recovery.h"
 
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
