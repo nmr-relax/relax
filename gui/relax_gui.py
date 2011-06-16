@@ -53,6 +53,7 @@ from gui.analyses.auto_r1 import Auto_r1
 from gui.analyses.auto_r2 import Auto_r2
 from gui.analyses.results import Results_summary
 from gui.analyses.results_analysis import see_results
+from gui.analyses.wizard import Analysis_wizard
 from gui.base_classes import Container
 from gui.components.spin_view import Spin_view_window
 from gui.controller import Controller
@@ -355,8 +356,9 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
-        # FIXME: temporary vars until a wizard is made.
-        analysis_type = 'r1'
+        # Initialise the analysis wizard, and obtain the user specified data.
+        wizard = Analysis_wizard()
+        analysis_type, pipe_name = wizard.run()
 
         # Initialise the new analysis.
         self.new_analysis(analysis_type)
