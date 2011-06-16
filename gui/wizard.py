@@ -81,28 +81,25 @@ class File_selector:
 
 
 
-class Wiz_window(wx.Dialog):
-    """Wizard-like window GUI element base class.
+class Wiz_panel(wx.Panel):
+    """The panel base class to be placed inside the wizard-like window.
 
     To inherit from this class, you must supply the add_contents() and execute() methods.  The add_contents() method should build the specific GUI elements, and the execute() method is called when clicking on the apply or ok buttons.
     """
 
     # Some class variables.
     art_spacing = 20
-    size_x = 600
-    size_y = 400
     border = 10
     button_apply = True
     button_cancel = True
     button_ok = True
     divider = None
-    frame_title = ''
     image_path = None
     input_size = 27
     main_text = ''
     title = ''
 
-    def __init__(self, gui, interpreter, style=wx.DEFAULT_DIALOG_STYLE):
+    def __init__(self, gui, interpreter):
         """Set up the window."""
 
         # Store the args.
@@ -110,13 +107,14 @@ class Wiz_window(wx.Dialog):
         self.interpreter = interpreter
 
         # Execute the base class method.
-        wx.Dialog.__init__(self, None, id=-1, title=self.frame_title, style=style)
+        wx.Panel.__init__(self, None, id=-1)
 
-        # Set up the frame.
-        sizer = self.setup_frame()
+        # Pack a sizer into the panel.
+        box_main = wx.BoxSizer(wx.HORIZONTAL)
+        self.SetSizer(box_main)
 
-        # Add the central part.
-        centre_sizer = self.build_central_section(sizer)
+        # Build the central sizer, with borders.
+        centre_sizer = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
 
         # Add the final buttons.
         self.add_buttons(sizer)
@@ -697,41 +695,6 @@ class Wiz_window(wx.Dialog):
         self.Close()
 
 
-    def setup_frame(self):
-        """Set up the generic frame.
-
-        @return:    The sizer object.
-        @rtype:     wx.Sizer instance
-        """
-
-        # Some sizers.
-        sizer_hori = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_vert = wx.BoxSizer(wx.VERTICAL)
-        sizer_cent = wx.BoxSizer(wx.VERTICAL)
-
-        # Pack the sizer into the frame.
-        self.SetSizer(sizer_hori)
-
-        # Set the default size of the controller.
-        self.SetSize((self.size_x, self.size_y))
-
-        # Left and right borders.
-        sizer_hori.AddSpacer(self.border)
-        sizer_hori.Add(sizer_vert, 1, wx.EXPAND|wx.ALL)
-        sizer_hori.AddSpacer(self.border)
-
-        # Top and bottom borders.
-        sizer_vert.AddSpacer(self.border)
-        sizer_vert.Add(sizer_cent, 1, wx.EXPAND|wx.ALL)
-        sizer_vert.AddSpacer(self.border)
-
-        # Centre the frame.
-        self.Centre()
-
-        # Return the sizer.
-        return sizer_cent
-
-
     def text(self, sizer, desc, default=''):
         """Build the input field.
 
@@ -774,3 +737,36 @@ class Wiz_window(wx.Dialog):
 
     def update(self, event):
         """Dummy method for updating the UI."""
+
+
+
+class Wiz_window(wx.Dialog):
+    """Wizard-like window GUI element base class.
+
+    To inherit from this class, you must supply the add_contents() and execute() methods.  The add_contents() method should build the specific GUI elements, and the execute() method is called when clicking on the apply or ok buttons.
+    """
+
+    # Some class variables.
+    size_x = 600
+    size_y = 400
+    frame_title = ''
+
+    def __init__(self, gui, interpreter, style=wx.DEFAULT_DIALOG_STYLE):
+        """Set up the window."""
+
+        # Store the args.
+        self.gui = gui
+        self.interpreter = interpreter
+
+        # Execute the base class method.
+        wx.Dialog.__init__(self, None, id=-1, title=self.frame_title, style=style)
+
+        # The main sizer for the dialog.
+        self.main_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.SetSizer(self.main_sizer)
+
+        # Set the default size of the dialog.
+        self.SetSize((self.size_x, self.size_y))
+
+        # Centre the dialog.
+        self.Centre()
