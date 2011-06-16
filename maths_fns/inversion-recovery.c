@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Edward d'Auvergne
+ * Copyright (C) 2011 Sebastien Morin
  *
  * This file is part of the program relax.
  *
@@ -27,12 +28,12 @@
 
 
 
-void exponential(double *params, double *relax_times, double *back_calc, int num_times) {
-	/* Function to back calculate the peak intensities.
-	*/
+void inversion-recovery(double *params, double *relax_times, double *back_calc, int num_times) {
+        /* Function to back calculate the peak intensities.
+        */
 
     /* Declarations */
-    double Rx, I0;
+    double Rx, I0, Iinf;
     int i;
 
 
@@ -45,7 +46,7 @@ void exponential(double *params, double *relax_times, double *back_calc, int num
 
         /* Back calculate */
         else
-            back_calc[i] = params[1] * exp(-relax_times[i] * params[0]);
+            back_calc[i] = params[2] - (params[2] - params[1]) * exp(-relax_times[i] * params[0]);
 
     }
 }
