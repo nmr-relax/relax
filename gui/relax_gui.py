@@ -46,24 +46,24 @@ from status import Status; status = Status()
 from version import version
 
 # relaxGUI module imports.
-from about import About_gui, About_relax
-from analyses.auto_model_free import Auto_model_free
-from analyses.auto_noe import Auto_noe
-from analyses.auto_r1 import Auto_r1
-from analyses.auto_r2 import Auto_r2
-from analyses.results import Results_summary
-from analyses.results_analysis import see_results
-from base_classes import Container
-from components.spin_view import Spin_view_window
-from controller import Controller
-from filedialog import opendir, openfile, savefile
-from menu import Menu
-from message import dir_message, error_message, question
+from gui.about import About_gui, About_relax
+from gui.analyses.auto_model_free import Auto_model_free
+from gui.analyses.auto_noe import Auto_noe
+from gui.analyses.auto_r1 import Auto_r1
+from gui.analyses.auto_r2 import Auto_r2
+from gui.analyses.results import Results_summary
+from gui.analyses.results_analysis import see_results
+from gui.base_classes import Container
+from gui.components.spin_view import Spin_view_window
+from gui.controller import Controller
+from gui.filedialog import opendir, openfile, savefile
+from gui.menu import Menu
+from gui.message import dir_message, error_message, question
 from gui import paths
-from references import References
-from relax_prompt import Prompt
-from settings import Free_file_format, Global_params, load_sequence
-from user_functions import User_functions
+from gui.references import References
+from gui.relax_prompt import Prompt
+from gui.settings import Free_file_format, Global_params, load_sequence
+from gui.user_functions import User_functions
 
 
 # Variables.
