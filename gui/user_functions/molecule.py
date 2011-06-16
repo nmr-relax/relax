@@ -107,7 +107,7 @@ class Add_window(Wiz_window):
     title = 'Addition of new molecules'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the molecule specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -145,7 +145,7 @@ class Copy_window(Wiz_window):
     title = 'Molecule copy'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the molecule specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -238,7 +238,7 @@ class Delete_window(Wiz_window):
     title = 'Molecule deletion'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the molecule specific GUI elements.
 
         @param sizer:   A sizer object.

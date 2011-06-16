@@ -121,7 +121,7 @@ class Add_window(Wiz_window):
     title = 'Addition of new data pipes'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the pipe specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -159,7 +159,7 @@ class Copy_window(Wiz_window):
     title = 'Data pipe copy'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the pipe specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -218,7 +218,7 @@ class Delete_window(Wiz_window):
     title = 'Data pipe deletion'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the pipe specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -274,7 +274,7 @@ class Switch_window(Wiz_window):
     title = 'Switch between data pipes'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the pipe specific GUI elements.
 
         @param sizer:   A sizer object.

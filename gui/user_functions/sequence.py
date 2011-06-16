@@ -71,7 +71,7 @@ class Read_window(Wiz_window):
     title = 'Sequence reading'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the sequence specific GUI elements.
 
         @param sizer:   A sizer object.

@@ -88,7 +88,7 @@ class Delete_window(Wiz_window):
     title = 'Relaxation data deletion'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the relaxation data deletion specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -148,7 +148,7 @@ class Read_window(Wiz_window):
     title = 'Relaxation data reading'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the relaxation data reading specific GUI elements.
 
         @param sizer:   A sizer object.

@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Base class module for the user function GUI elements."""
+"""Base class module for the wizard GUI elements."""
 
 # Python module imports.
 import wx
@@ -60,7 +60,7 @@ class File_selector:
 
 
     def select(self, event):
-        """The script user function GUI element.
+        """The file selector GUI element.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -82,9 +82,9 @@ class File_selector:
 
 
 class Wiz_window(wx.Dialog):
-    """User function window GUI element base class.
+    """Wizard-like window GUI element base class.
 
-    To inherit from this class, you must supply the add_uf() and execute() methods.  The add_uf() method should build the GUI elements specific to the user function, which the execute() method runs the user function.
+    To inherit from this class, you must supply the add_contents() and execute() methods.  The add_contents() method should build the specific GUI elements, and the execute() method is called when clicking on the apply or ok buttons.
     """
 
     # Some class variables.
@@ -103,7 +103,7 @@ class Wiz_window(wx.Dialog):
     title = ''
 
     def __init__(self, gui, interpreter, style=wx.DEFAULT_DIALOG_STYLE):
-        """Set up the user function class."""
+        """Set up the window."""
 
         # Store the args.
         self.gui = gui
@@ -144,9 +144,9 @@ class Wiz_window(wx.Dialog):
         # Add the description.
         self.add_desc(main_sizer)
 
-        # Add the user function specific GUI elements (bounded by spacers).
+        # Add the specific GUI elements (bounded by spacers).
         main_sizer.AddStretchSpacer()
-        self.add_uf(main_sizer)
+        self.add_contents(main_sizer)
         main_sizer.AddStretchSpacer()
         main_sizer.AddStretchSpacer()
 
@@ -187,7 +187,7 @@ class Wiz_window(wx.Dialog):
         if self.button_apply:
             button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Apply")
             button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.apply, wx.BITMAP_TYPE_ANY))
-            button.SetToolTipString("Apply the user function")
+            button.SetToolTipString("Apply the operation")
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self.apply, button)
 
@@ -198,7 +198,7 @@ class Wiz_window(wx.Dialog):
         if self.button_ok:
             button = buttons.ThemedGenBitmapTextButton(self, -1, None, "OK")
             button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
-            button.SetToolTipString("Accept the user function")
+            button.SetToolTipString("Accept the operation")
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self.ok, button)
 
@@ -209,7 +209,7 @@ class Wiz_window(wx.Dialog):
         if self.button_cancel:
             button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Cancel")
             button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
-            button.SetToolTipString("Abort the user function")
+            button.SetToolTipString("Abort the operation")
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self.cancel, button)
 
@@ -267,8 +267,8 @@ class Wiz_window(wx.Dialog):
         sizer.AddSpacer(10)
 
 
-    def add_uf(self, sizer):
-        """Add the user function specific GUI elements (dummy method).
+    def add_contents(self, sizer):
+        """Add the specific GUI elements (dummy method).
 
         @param sizer:   A sizer object.
         @type sizer:    wx.Sizer instance
@@ -278,13 +278,13 @@ class Wiz_window(wx.Dialog):
 
 
     def apply(self, event):
-        """Apply the user function.
+        """Apply the operation.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
-        # Execute the user function.
+        # Execute.
         try:
             self.execute()
         except AllRelaxErrors, instance:
@@ -330,7 +330,7 @@ class Wiz_window(wx.Dialog):
 
 
     def cancel(self, event):
-        """Cancel the user function.
+        """Cancel the operation.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -450,7 +450,7 @@ class Wiz_window(wx.Dialog):
 
 
     def execute(self):
-        """Execute the user function (dummy method)."""
+        """Execute the operation (dummy method)."""
 
         raise RelaxImplementError
 
@@ -684,7 +684,7 @@ class Wiz_window(wx.Dialog):
 
 
     def ok(self, event):
-        """Accept the user function.
+        """Accept the operation.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -698,7 +698,7 @@ class Wiz_window(wx.Dialog):
 
 
     def setup_frame(self):
-        """Set up the generic user function frame.
+        """Set up the generic frame.
 
         @return:    The sizer object.
         @rtype:     wx.Sizer instance

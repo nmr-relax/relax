@@ -123,7 +123,7 @@ class Copy_window(Wiz_window, Mol_res_spin):
     title = 'Residue copy'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the residue specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -255,7 +255,7 @@ class Create_window(Wiz_window, Mol_res_spin):
     title = 'Addition of new residues'
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the residue specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -324,7 +324,7 @@ class Delete_window(Wiz_window, Mol_res_spin):
     main_text = 'This dialog allows you to delete residues from the relax data store.  The residue will be deleted from the current data pipe.'
     title = 'Residue deletion'
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the residue specific GUI elements.
 
         @param sizer:   A sizer object.
