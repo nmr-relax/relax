@@ -24,7 +24,7 @@
 """Module for the analysis selection wizard."""
 
 # relax GUI module imports.
-from gui.wizard import Wiz_window
+from gui.wizard import Wiz_panel, Wiz_window
 
 
 class Analysis_wizard:
@@ -41,9 +41,30 @@ class Analysis_wizard:
         @rtype:     str, str
         """
 
+        # Create the wizard.
+        self.wizard = Wizard()
+        self.wizard.ShowModal()
+        self.wizard.Destroy()
+
         # FIXME.
         analysis_type = 'r1'
         pipe_name = 'x'
 
         # Return the analysis type and pipe name.
         return analysis_type, pipe_name
+
+
+class Data_pipe(Wiz_panel):
+    pass
+
+
+class New_analysis(Wiz_panel):
+    pass
+
+
+class Wizard(Wiz_window):
+    def __init__(self):
+        # Initialise the panels.
+        self.panel1 = New_analysis()
+        self.panel2 = Data_pipe()
+
