@@ -34,7 +34,7 @@ from gui.filedialog import openfile
 from gui.message import error_message
 from gui.misc import gui_to_int, int_to_gui
 from gui import paths
-from gui.user_functions.base import UF_window
+from gui.wizard import Wiz_window
 
 
 def load_sequence():
@@ -189,7 +189,7 @@ class Base_window(wx.Dialog):
 
 
 
-class Free_file_format(Base_window, UF_window):
+class Free_file_format(Base_window, Wiz_window):
     """The free file format setting window."""
 
     # The window size.
@@ -235,7 +235,7 @@ class Free_file_format(Base_window, UF_window):
 
 
 
-class Global_params(Base_window, UF_window):
+class Global_params(Base_window, Wiz_window):
     """The global parameters setting window."""
 
     # The window size.

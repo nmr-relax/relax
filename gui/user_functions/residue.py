@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,10 +32,11 @@ from generic_fns.mol_res_spin import generate_spin_id, molecule_loop, residue_lo
 from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
-from base import UF_base, UF_window
+from base import UF_base
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
+from gui.wizard import Wiz_window
 
 
 # The container class.
@@ -110,7 +111,7 @@ class Residue(UF_base):
 
 
 
-class Copy_window(UF_window, Mol_res_spin):
+class Copy_window(Wiz_window, Mol_res_spin):
     """The residue.copy() user function window."""
 
     # Some class variables.
@@ -242,7 +243,7 @@ class Copy_window(UF_window, Mol_res_spin):
 
 
 
-class Create_window(UF_window, Mol_res_spin):
+class Create_window(Wiz_window, Mol_res_spin):
     """The residue.create() user function window."""
 
     # Some class variables.
@@ -312,7 +313,7 @@ class Create_window(UF_window, Mol_res_spin):
 
 
 
-class Delete_window(UF_window, Mol_res_spin):
+class Delete_window(Wiz_window, Mol_res_spin):
     """The residue.delete() user function window."""
 
     # Some class variables.

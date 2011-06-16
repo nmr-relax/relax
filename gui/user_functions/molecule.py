@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,9 +31,10 @@ from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, generate_spin_id, molecu
 from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
-from base import UF_base, UF_window
+from base import UF_base
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_str, str_to_gui
+from gui.wizard import Wiz_window
 
 
 # The container class.
@@ -94,7 +95,7 @@ class Molecule(UF_base):
 
 
 
-class Add_window(UF_window):
+class Add_window(Wiz_window):
     """The molecule.create() user function window."""
 
     # Some class variables.
@@ -132,7 +133,7 @@ class Add_window(UF_window):
 
 
 
-class Copy_window(UF_window):
+class Copy_window(Wiz_window):
     """The molecule.copy() user function window."""
 
     # Some class variables.
@@ -225,7 +226,7 @@ class Copy_window(UF_window):
 
 
 
-class Delete_window(UF_window):
+class Delete_window(Wiz_window):
     """The molecule.delete() user function window."""
 
     # Some class variables.

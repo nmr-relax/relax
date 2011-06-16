@@ -31,9 +31,10 @@ from generic_fns import pipes
 import specific_fns
 
 # GUI module imports.
-from base import UF_base, UF_window
+from base import UF_base
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
+from gui.wizard import Wiz_window
 
 
 # The container class.
@@ -54,7 +55,7 @@ class Value(UF_base):
 
 
 
-class Set_window(UF_window):
+class Set_window(Wiz_window):
     """The user function window."""
 
     # Some class variables.

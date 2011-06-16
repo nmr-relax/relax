@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,9 +31,10 @@ import wx
 from generic_fns import pipes
 
 # GUI module imports.
-from base import UF_base, UF_window
+from base import UF_base
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_float, gui_to_int, gui_to_str
+from gui.wizard import Wiz_window
 
 
 # The container class.
@@ -75,7 +76,7 @@ class Relax_data(UF_base):
 
 
 
-class Delete_window(UF_window):
+class Delete_window(Wiz_window):
     """The relax_data.read() user function window."""
 
     # Some class variables.
@@ -135,7 +136,7 @@ class Delete_window(UF_window):
 
 
 
-class Read_window(UF_window):
+class Read_window(Wiz_window):
     """The relax_data.read() user function window."""
 
     # Some class variables.

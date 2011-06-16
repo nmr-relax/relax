@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,9 +30,10 @@ import wx
 from generic_fns.pipes import VALID_TYPES, cdp_name, pipe_names
 
 # GUI module imports.
-from base import UF_base, UF_window
+from base import UF_base
 from gui.misc import gui_to_str
 from gui.paths import WIZARD_IMAGE_PATH
+from gui.wizard import Wiz_window
 
 
 # The container class.
@@ -108,7 +109,7 @@ class Pipes(UF_base):
 
 
 
-class Add_window(UF_window):
+class Add_window(Wiz_window):
     """The pipe.create() user function window."""
 
     # Some class variables.
@@ -146,7 +147,7 @@ class Add_window(UF_window):
 
 
 
-class Copy_window(UF_window):
+class Copy_window(Wiz_window):
     """The pipe.copy() user function window."""
 
     # Some class variables.
@@ -205,7 +206,7 @@ class Copy_window(UF_window):
 
 
 
-class Delete_window(UF_window):
+class Delete_window(Wiz_window):
     """The pipe.delete() user function window."""
 
     # Some class variables.
@@ -260,7 +261,7 @@ class Delete_window(UF_window):
 
 
 
-class Switch_window(UF_window):
+class Switch_window(Wiz_window):
     """The pipe.switch() user function window."""
 
     # Some class variables.

@@ -31,7 +31,7 @@ from generic_fns.mol_res_spin import generate_spin_id, residue_loop, spin_loop
 from generic_fns import pipes
 
 # GUI module imports.
-from base import UF_base, UF_window
+from base import UF_base
 from gui.misc import gui_to_int, gui_to_str
 from gui.paths import WIZARD_IMAGE_PATH
 
