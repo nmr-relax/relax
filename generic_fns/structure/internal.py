@@ -290,7 +290,7 @@ class Internal(Base_struct_API):
             yield model, records
 
 
-        def __parse_models_xyz(self, file_path):
+    def __parse_models_xyz(self, file_path):
         """Generator function for looping over the models in the XYZ file.
 
         @param file_path:   The full path of the XYZ file.
@@ -327,13 +327,8 @@ class Internal(Base_struct_API):
 
             # End of the model.
             if (len(records) == total_atom):
-              # Get the model number
-              model = num
-              print "model", model
-              num = num + 1
-
               # Yield the info
-              yield model, records
+              yield records
 
               # Reset the records.
               records = []
@@ -347,7 +342,7 @@ class Internal(Base_struct_API):
 
         # If records is not empty then there are no models, so yield the lot.
         if len(records):
-            yield model, records
+            yield records
 
 
     def __parse_mols(self, records):
@@ -842,9 +837,9 @@ class Internal(Base_struct_API):
         mol_conts = []
         orig_mol_num = []
         new_mol_name = []
-        for model_num, model_records in self.__parse_models_xyz(file_path):
+        for model_records in self.__parse_models_xyz(file_path):
             # Only load the desired model.
-            if read_model and model_num not in read_model:
+            if read_model and model_index not in read_model:
                 continue
 
             # Store the original model number.
@@ -852,7 +847,6 @@ class Internal(Base_struct_API):
 
             # Loop over the molecules of the model.
             if read_mol and mol_index not in read_mol:
-                print "continue"
                 continue
 
             # Set the target molecule name.
@@ -866,7 +860,7 @@ class Internal(Base_struct_API):
             orig_mol_num.append(mol_index)
 
             # Generate the molecule container.
-            mol = MolContainer_xyz()
+            mol = MolContainer()
 
             # Fill the molecular data object.
             mol.fill_object_from_xyz(model_records)
@@ -877,7 +871,6 @@ class Internal(Base_struct_API):
 
             # Increment the molecule index.
             mol_index = mol_index + 1
-            print "mol_index_try", mol_index
 
             # Increment the model index.
             model_index = model_index + 1
