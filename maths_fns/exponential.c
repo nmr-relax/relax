@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Edward d'Auvergne
+ * Copyright (C) 2011 Sebastien Morin
  *
  * This file is part of the program relax.
  *
@@ -27,7 +28,32 @@
 
 
 
-void exponential(double *params, double *relax_times, double *back_calc, int num_times) {
+/* Exponential #1: exp_2param */
+void exp_2param(double *params, double *relax_times, double *back_calc, int num_times) {
+        /* Function to back calculate the peak intensities.
+        */
+
+    /* Declarations */
+    double Rx, I0;
+    int i;
+
+
+    /* Loop over the time points */
+    /* for (i = 0; i < num_times; i++) { */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value */
+        if (params[0] == 0.0)
+            back_calc[i] = 0.0;
+
+        /* Back calculate */
+        else
+            back_calc[i] = params[1] * exp(relax_times[i] * params[0]);
+
+    }
+}
+
+/* Exponential #2: exp_2param_neg */
+void exp_2param_neg(double *params, double *relax_times, double *back_calc, int num_times) {
 	/* Function to back calculate the peak intensities.
 	*/
 
@@ -49,3 +75,149 @@ void exponential(double *params, double *relax_times, double *back_calc, int num
 
     }
 }
+
+
+/* Exponential #3: exp_2param_inv */
+void exp_2param_inv(double *params, double *relax_times, double *back_calc, int num_times) {
+        /* Function to back calculate the peak intensities.
+        */
+
+    /* Declarations */
+    double Rx, I0;
+    int i;
+
+
+    /* Loop over the time points */
+    /* for (i = 0; i < num_times; i++) { */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value */
+        if (params[0] == 0.0)
+            back_calc[i] = 0.0;
+
+        /* Back calculate */
+        else
+            back_calc[i] = -params[1] * exp(relax_times[i] * params[0]);
+
+    }
+}
+
+/* Exponential #4: exp_2param_inv_neg */
+void exp_2param_inv_neg(double *params, double *relax_times, double *back_calc, int num_times) {
+        /* Function to back calculate the peak intensities.
+        */
+
+    /* Declarations */
+    double Rx, I0;
+    int i;
+
+
+    /* Loop over the time points */
+    /* for (i = 0; i < num_times; i++) { */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value */
+        if (params[0] == 0.0)
+            back_calc[i] = 0.0;
+
+        /* Back calculate */
+        else
+            back_calc[i] = -params[1] * exp(-relax_times[i] * params[0]);
+
+    }
+}
+
+/* Exponential #5: exp_3param */
+void  exp_3param(double *params, double *relax_times, double *back_calc, int num_times) {
+        /* Function to back calculate the peak intensities.
+        */
+
+    /* Declarations */
+    double Rx, I0, Iinf;
+    int i;
+
+
+    /* Loop over the time points */
+    /* for (i = 0; i < num_times; i++) { */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value */
+        if (params[0] == 0.0)
+            back_calc[i] = 0.0;
+
+        /* Back calculate */
+        else
+            back_calc[i] = params[2] + (params[2] - params[1]) * exp(relax_times[i] * params[0]);
+
+    }
+}
+
+/* Exponential #6: exp_3param_neg */
+void  exp_3param_neg(double *params, double *relax_times, double *back_calc, int num_times) {
+        /* Function to back calculate the peak intensities.
+        */
+
+    /* Declarations */
+    double Rx, I0, Iinf;
+    int i;
+
+
+    /* Loop over the time points */
+    /* for (i = 0; i < num_times; i++) { */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value */
+        if (params[0] == 0.0)
+            back_calc[i] = 0.0;
+
+        /* Back calculate */
+        else
+            back_calc[i] = params[2] + (params[2] - params[1]) * exp(-relax_times[i] * params[0]);
+
+    }
+}
+
+/* Exponential #7: exp_3param_inv */
+void  exp_3param_inv(double *params, double *relax_times, double *back_calc, int num_times) {
+        /* Function to back calculate the peak intensities.
+        */
+
+    /* Declarations */
+    double Rx, I0, Iinf;
+    int i;
+
+
+    /* Loop over the time points */
+    /* for (i = 0; i < num_times; i++) { */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value */
+        if (params[0] == 0.0)
+            back_calc[i] = 0.0;
+
+        /* Back calculate */
+        else
+            back_calc[i] = params[2] - (params[2] - params[1]) * exp(relax_times[i] * params[0]);
+
+    }
+}
+
+/* Exponential #8: exp_3param_inv_neg */
+void  exp_3param_inv_neg(double *params, double *relax_times, double *back_calc, int num_times) {
+        /* Function to back calculate the peak intensities.
+        */
+
+    /* Declarations */
+    double Rx, I0, Iinf;
+    int i;
+
+
+    /* Loop over the time points */
+    /* for (i = 0; i < num_times; i++) { */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value */
+        if (params[0] == 0.0)
+            back_calc[i] = 0.0;
+
+        /* Back calculate */
+        else
+            back_calc[i] = params[2] - (params[2] - params[1]) * exp(-relax_times[i] * params[0]);
+
+    }
+}
+
