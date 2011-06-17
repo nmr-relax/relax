@@ -153,6 +153,19 @@ class Relax_fit(SystemTestCase):
         self.check_curve_fitting()
 
 
+    def test_curve_fitting_volume_exp_3param_inv_neg(self):
+        """Test the relaxation curve fitting C modules."""
+
+        # The intensity type.
+        ds.int_type = 'volume'
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_exp_3param_inv_neg.py')
+
+        # Check the curve-fitting results.
+        self.check_curve_fitting()
+
+
     def test_read_sparky(self):
         """The Sparky peak height loading test."""
 
