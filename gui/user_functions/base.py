@@ -40,3 +40,21 @@ class UF_base:
 
     def setup(self):
         """Dummy method to be overwritten."""
+
+
+class UF_panel(Wiz_panel):
+    """User function specific panel for the wizards."""
+
+    def __init__(self, parent):
+        """Set up the window.
+        
+        @param parent:  The parent class containing the GUI and interpreter objects.
+        @type parent:   class instance
+        """
+
+        # Store the args.
+        self.gui = parent.gui
+        self.interpreter = parent.interpreter
+
+        # Execute the base class method.
+        super(UF_panel, self).__init__(None, id=-1)
