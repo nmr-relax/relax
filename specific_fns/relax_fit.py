@@ -484,12 +484,12 @@ class Relax_fit(API_base, API_common):
             raise RelaxNoSequenceError
 
         # Two parameter fit.
-        if model == 'exp_2param' or 'exp_2param_neg' or 'exp_2param_inv' or 'exp_2param_inv_neg':
+        if model in ['exp_2param', 'exp_2param_neg', 'exp_2param_inv', 'exp_2param_inv_neg']:
             print("Two parameter exponential decay fit.")
             params = ['Rx', 'I0']
 
         # Three parameter fit.
-        elif model == 'exp_3param' or 'exp_3param_neg' or 'exp_3param_inv' or 'exp_3param_inv_neg':
+        elif model in ['exp_3param', 'exp_3param_neg', 'exp_3param_inv', 'exp_3param_inv_neg']:
             print("Three parameter inversion recovery fit.")
             params = ['Rx', 'I0', 'Iinf']
 
