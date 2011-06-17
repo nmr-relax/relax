@@ -127,27 +127,27 @@ class Relax_fit(SystemTestCase):
         self.assertEqual(lines[index][1], '487178.0')
 
 
-    def test_curve_fitting_height(self):
+    def test_curve_fitting_height_exp_2param_neg(self):
         """Test the relaxation curve fitting C modules."""
 
         # The intensity type.
         ds.int_type = 'height'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_exp_2param_neg.py')
 
         # Check the curve-fitting results.
         self.check_curve_fitting()
 
 
-    def test_curve_fitting_volume(self):
+    def test_curve_fitting_volume_exp_2param_neg(self):
         """Test the relaxation curve fitting C modules."""
 
         # The intensity type.
         ds.int_type = 'volume'
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_exp_2param_neg.py')
 
         # Check the curve-fitting results.
         self.check_curve_fitting()
