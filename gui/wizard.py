@@ -802,7 +802,13 @@ class Wiz_window(wx.Dialog):
     def run(self):
         """Execute the wizard."""
 
+        # Show the wizard.
+        self.ShowModal()
+
         # Loop over the pages.
         for i in range(len(self.pages)):
             # Display the page.
             self.display_page(i)
+
+        # Destroy the wizard.
+        self.Destroy()
