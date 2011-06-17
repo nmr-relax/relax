@@ -416,7 +416,6 @@ def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
         else:
             warn(RelaxNoPDBFileWarning(file_path))
             return
-   
 
     # Place the  structural object into the relax data store.
     if not hasattr(cdp, 'structure'):
