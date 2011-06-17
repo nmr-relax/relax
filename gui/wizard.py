@@ -99,12 +99,8 @@ class Wiz_panel(wx.Panel):
     main_text = ''
     title = ''
 
-    def __init__(self, gui, interpreter):
+    def __init__(self):
         """Set up the window."""
-
-        # Store the args.
-        self.gui = gui
-        self.interpreter = interpreter
 
         # Execute the base class method.
         wx.Panel.__init__(self, None, id=-1)
