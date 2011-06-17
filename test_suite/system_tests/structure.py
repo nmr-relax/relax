@@ -648,3 +648,26 @@ class Structure(SystemTestCase):
         # And now all the rest of the atoms.
         self.interpreter.structure.load_spins()
 
+
+    def test_read_xyz_internal2(self):
+        """Load the 'SSS-cluster4-new-test.xyz' XYZ file (using the internal structural object XYZ reader)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the xyz.
+        self.interpreter.structure.read_xyz(file='SSS-cluster4-new-test.xyz', dir=path)
+
+        # Test the molecule name.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, 'SSS-cluster4-new-test')
+
+        # Load a single atom and test it.
+        self.interpreter.structure.load_spins('SSS-cluster4-new-test:3@C')
+        self.assertEqual(count_spins(), 1)
+
+        # Try loading a few protons.
+        self.interpreter.structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.interpreter.structure.load_spins()
+
