@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2011 Sebastien Morin
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -68,7 +69,7 @@ class Relax_fit(User_fn_class):
         relax_fit_obj._relax_time(time=time, spectrum_id=spectrum_id)
 
 
-    def select_model(self, model='exp'):
+    def select_model(self, model='exp_2param_neg'):
         """Function for the selection of the relaxation curve type.
 
         Keyword Arguments
@@ -80,14 +81,24 @@ class Relax_fit(User_fn_class):
         The preset models
         ~~~~~~~~~~~~~~~~~
 
-        The supported relaxation experiments include the default two parameter exponential fit,
-        selected by setting the 'fit_type' argument to 'exp', and the three parameter inversion
+        The supported curve fitting procedures include the default two parameter exponential fit,
+        selected by setting the 'fit_type' argument to 'exp_2param_neg', the three parameter inversion
         recovery experiment in which the peak intensity limit is a non-zero value, selected by
-        setting the argument to 'inv'.
+        setting the argument to 'exp_3param_inv_neg', as well as various other forms.
 
-        The parameters of these two models are
-            'exp': [Rx, I0],
-            'inv': [Rx, I0, Iinf].
+        The general parameters of these models are
+            'exp_2param*': [Rx, I0],
+            'exp_3param*': [Rx, I0, Iinf].
+
+        The different models available are
+            'exp_2param',
+            'exp_2param_neg',
+            'exp_2param_inv',
+            'exp_2param_inv_neg',
+            'exp_3param',
+            'exp_3param_neg',
+            'exp_3param_inv',
+            'exp_3param_inv_neg'.
         """
 
         # Function intro text.
