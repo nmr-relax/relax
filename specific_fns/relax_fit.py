@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2011 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -461,10 +462,12 @@ class Relax_fit(API_base, API_common):
         cdp.relax_times[spectrum_id] = time
 
 
-    def _select_model(self, model='exp'):
+    def _select_model(self, model='exp_2param_neg'):
         """Function for selecting the model of the exponential curve.
 
-        @keyword model: The exponential curve type.  Can be one of 'exp' or 'inv'.
+        @keyword model: The exponential curve type.  Can be one of 8 functions: 'exp_2param', 
+                        'exp_2param_neg', 'exp_2param_inv_neg', 'exp_3param', 'exp_3param_neg', 
+                        'exp_3param_inv', or 'exp_3param_inv_neg'.
         @type model:    str
         """
 
@@ -480,13 +483,13 @@ class Relax_fit(API_base, API_common):
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Two parameter exponential fit.
-        if model == 'exp':
-            print("Two parameter exponential fit.")
+        # Two parameter exponential decay fit.
+        if model == 'exp_2param_neg':
+            print("Two parameter exponential decay fit.")
             params = ['Rx', 'I0']
 
         # Three parameter inversion recovery fit.
-        elif model == 'inv':
+        elif model == 'exp_3param_inv_neg':
             print("Three parameter inversion recovery fit.")
             params = ['Rx', 'I0', 'Iinf']
 
