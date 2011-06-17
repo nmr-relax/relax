@@ -23,6 +23,9 @@
 # Module docstring.
 """Base class module for the user function GUI elements."""
 
+# relax GUI imports.
+from gui.wizard import Wiz_panel
+
 
 class UF_base:
     """User function GUI element base class."""
@@ -57,4 +60,4 @@ class UF_panel(Wiz_panel):
         self.interpreter = parent.interpreter
 
         # Execute the base class method.
-        super(UF_panel, self).__init__(None, id=-1)
+        super(UF_panel, self).__init__()
