@@ -50,7 +50,8 @@ class Value(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title='Set parameter values')
-        wizard.add_page(Set_panel(self))
+        panel = Set_panel(wizard, self)
+        wizard.add_page(panel)
         wizard.run()
 
 
