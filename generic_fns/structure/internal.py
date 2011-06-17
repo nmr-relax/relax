@@ -236,7 +236,7 @@ class Internal(Base_struct_API):
             return 'Average vector'
 
 
-    def __parse_models(self, file_path):
+    def __parse_models_pdb(self, file_path):
         """Generator function for looping over the models in the PDB file.
 
         @param file_path:   The full path of the PDB file.
@@ -731,7 +731,7 @@ class Internal(Base_struct_API):
         model_index = 0
         orig_model_num = []
         mol_conts = []
-        for model_num, model_records in self.__parse_models(file_path):
+        for model_num, model_records in self.__parse_models_pdb(file_path):
             # Only load the desired model.
             if read_model and model_num not in read_model:
                 continue
