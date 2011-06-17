@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2006-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2011 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -69,7 +70,7 @@ class Relax_fit(SystemTestCase):
         i0 = [None, None, None, 1996050.9679873895, 2068490.9458262245, 1611556.5193290685, 1362887.2329727132, 1877670.5629299041, None, None, None, 897044.17270784755]
 
         # Some checks.
-        self.assertEqual(cdp.curve_type, 'exp')
+        self.assertEqual(cdp.curve_type, 'exp_2param_neg')
         self.assertEqual(cdp.int_method, ds.int_type)
         self.assertEqual(len(cdp.relax_times), 10)
         cdp_relax_times = sorted(cdp.relax_times.values())

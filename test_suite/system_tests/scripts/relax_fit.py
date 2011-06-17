@@ -75,7 +75,7 @@ spectrum.error_analysis()
 deselect.read(file='unresolved', dir=data_path, res_num_col=1)
 
 # Set the relaxation curve type.
-relax_fit.select_model('exp')
+relax_fit.select_model('exp_2param_neg')
 
 # Grid search.
 grid_search(inc=11)

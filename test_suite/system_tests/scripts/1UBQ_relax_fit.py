@@ -76,7 +76,7 @@ spectrum.baseplane_rmsd(error=16700, spectrum_id='700mhz-263k-1m-16', spin_id=No
 spectrum.error_analysis()
 
 # Set the relaxation curve type.
-relax_fit.select_model('exp')
+relax_fit.select_model('exp_2param_neg')
 
 # Grid search.
 grid_search(inc=11)

@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2011 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -79,7 +80,7 @@ spectrum.error_analysis()
 deselect.read(file='unresolved')
 
 # Set the relaxation curve type.
-relax_fit.select_model('exp')
+relax_fit.select_model('exp_2param_neg')
 
 # Grid search.
 grid_search(inc=11)
