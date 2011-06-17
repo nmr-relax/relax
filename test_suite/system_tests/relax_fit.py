@@ -60,7 +60,7 @@ class Relax_fit(SystemTestCase):
         ds.__reset__()
 
 
-    def check_curve_fitting(self):
+    def check_curve_fitting_exp_2param_neg(self):
         """Check the results of the curve-fitting."""
 
         # Data.
@@ -137,7 +137,7 @@ class Relax_fit(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_exp_2param_neg.py')
 
         # Check the curve-fitting results.
-        self.check_curve_fitting()
+        self.check_curve_fitting_exp_2param_neg()
 
 
     def test_curve_fitting_volume_exp_2param_neg(self):
@@ -150,7 +150,7 @@ class Relax_fit(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_exp_2param_neg.py')
 
         # Check the curve-fitting results.
-        self.check_curve_fitting()
+        self.check_curve_fitting_exp_2param_neg()
 
 
     def test_curve_fitting_volume_exp_3param_inv_neg(self):
@@ -163,7 +163,7 @@ class Relax_fit(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_exp_3param_inv_neg.py')
 
         # Check the curve-fitting results.
-        self.check_curve_fitting()
+        self.check_curve_fitting_exp_3param_inv_neg()
 
 
     def test_read_sparky(self):
