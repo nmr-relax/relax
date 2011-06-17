@@ -113,7 +113,7 @@ class Wiz_panel(wx.Panel):
         centre_sizer = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
 
         # Add the final buttons.
-        self.add_buttons(sizer)
+        self.add_buttons(centre_sizer)
 
         # Add the artwork.
         self.add_artwork(centre_sizer)
