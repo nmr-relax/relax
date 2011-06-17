@@ -98,11 +98,15 @@ class Wiz_panel(wx.Panel):
     main_text = ''
     title = ''
 
-    def __init__(self):
-        """Set up the window."""
+    def __init__(self, parent):
+        """Set up the window.
+
+        @param parent:  The parent GUI element.
+        @type parent:   wx.object instance
+        """
 
         # Execute the base class method.
-        wx.Panel.__init__(self, None, id=-1)
+        wx.Panel.__init__(self, parent, id=-1)
 
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
