@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Edward d'Auvergne
+ * Copyright (C) 2011 Sebastien Morin
  *
  * This file is part of the program relax.
  *
@@ -123,7 +124,7 @@ func(PyObject *self, PyObject *args) {
     }
 
     /* Back calculated the peak intensities */
-    exponential(params, relax_times, back_calc, num_times);
+    exp_2param_neg(params, relax_times, back_calc, num_times);
 
     /* Calculate and return the chi-squared value */
     return Py_BuildValue("f", chi2(values,sd,back_calc,num_times));
@@ -147,7 +148,7 @@ dfunc(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Back calculated the peak intensities */
-    exponential(params, relax_times, back_calc, num_times);
+    exp_2param_neg(params, relax_times, back_calc, num_times);
 
     return NULL;
 }
