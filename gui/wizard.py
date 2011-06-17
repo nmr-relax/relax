@@ -746,23 +746,22 @@ class Wiz_window(wx.Dialog):
     To inherit from this class, you must supply the add_contents() and execute() methods.  The add_contents() method should build the specific GUI elements, and the execute() method is called when clicking on the apply or ok buttons.
     """
 
-    # Some class variables.
-    size_x = 600
-    size_y = 400
-    frame_title = ''
-
-    def __init__(self, style=wx.DEFAULT_DIALOG_STYLE):
-        """Set up the window."""
+    def __init__(self, size_x=None, size_y=None, title='', style=wx.DEFAULT_DIALOG_STYLE):
+        """Set up the window.
+        
+        @keyword style:     The dialog style.
+        @type style:        wx style
+        """
 
         # Execute the base class method.
-        wx.Dialog.__init__(self, None, id=-1, title=self.frame_title, style=style)
+        wx.Dialog.__init__(self, None, id=-1, title=title, style=style)
 
         # The main sizer for the dialog.
         self.main_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(self.main_sizer)
 
         # Set the default size of the dialog.
-        self.SetSize((self.size_x, self.size_y))
+        self.SetSize((size_x, size_y))
 
         # Centre the dialog.
         self.Centre()
