@@ -112,9 +112,6 @@ class Wiz_panel(wx.Panel):
         box_main = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(box_main)
 
-        # Add the final buttons.
-        self.add_buttons(box_main)
-
         # Add the artwork.
         self.add_artwork(box_main)
 
@@ -164,48 +161,6 @@ class Wiz_panel(wx.Panel):
 
         # A spacer.
         sizer.AddSpacer(self.art_spacing)
-
-
-    def add_buttons(self, sizer):
-        """Add the buttons to the sizer.
-
-        @param sizer:   A sizer object.
-        @type sizer:    wx.Sizer instance
-        """
-
-        # Create a horizontal layout for the buttons.
-        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT|wx.ALL, 0)
-
-        # The apply button.
-        if self.button_apply:
-            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Apply")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.apply, wx.BITMAP_TYPE_ANY))
-            button.SetToolTipString("Apply the operation")
-            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-            self.Bind(wx.EVT_BUTTON, self.apply, button)
-
-            # Spacer.
-            button_sizer.AddSpacer(5)
-
-        # The OK button.
-        if self.button_ok:
-            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "OK")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
-            button.SetToolTipString("Accept the operation")
-            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-            self.Bind(wx.EVT_BUTTON, self.ok, button)
-
-            # Spacer.
-            button_sizer.AddSpacer(15)
-
-        # The cancel button.
-        if self.button_cancel:
-            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Cancel")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
-            button.SetToolTipString("Abort the operation")
-            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-            self.Bind(wx.EVT_BUTTON, self.cancel, button)
 
 
     def add_desc(self, sizer):
@@ -774,6 +729,49 @@ class Wiz_window(wx.Dialog):
         self.pages = []
         self.page_sizers = []
         self.button_sizers = []
+        self.button_flags = []
+
+
+    def add_buttons(self, sizer):
+        """Add the buttons to the sizer.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Create a horizontal layout for the buttons.
+        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT|wx.ALL, 0)
+
+        # The apply button.
+        if self.button_apply:
+            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Apply")
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.apply, wx.BITMAP_TYPE_ANY))
+            button.SetToolTipString("Apply the operation")
+            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.apply, button)
+
+            # Spacer.
+            button_sizer.AddSpacer(5)
+
+        # The OK button.
+        if self.button_ok:
+            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "OK")
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
+            button.SetToolTipString("Accept the operation")
+            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.ok, button)
+
+            # Spacer.
+            button_sizer.AddSpacer(15)
+
+        # The cancel button.
+        if self.button_cancel:
+            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Cancel")
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
+            button.SetToolTipString("Abort the operation")
+            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.cancel, button)
 
 
     def add_page(self, panel):
