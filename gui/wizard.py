@@ -792,7 +792,7 @@ class Wiz_window(wx.Dialog):
         self.main_sizer.Clear(deleteWindows=True)
 
         # Add the page.
-        self.main_sizer.Add(self.pages[i])
+        self.main_sizer.Add(self.pages[i], 1, wx.ALL|wx.EXPAND, 0)
 
         # Re-perform the window layout.
         self.Layout()
