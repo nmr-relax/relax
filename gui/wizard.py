@@ -122,7 +122,7 @@ class Wiz_panel(wx.Panel):
         image_x, image_y = self.image.GetSize()
 
         # Calculate the size of the main section, and the subdivisions.
-        self.main_size = self.size_x - image_x - self.art_spacing
+        self.main_size = parent.size_x - image_x - self.art_spacing - 2*parent.border
         if self.divider:
             self.div_left = self.divider
             self.div_right = self.main_size - self.divider
@@ -788,9 +788,10 @@ class Wiz_window(wx.Dialog):
 
         # Store a new sizer for the page and its buttons.
         self.page_sizers.append(wx.BoxSizer(wx.VERTICAL))
+        self.main_sizer.Add(self.page_sizers[-1], 1, wx.ALL, 0)
 
         # Add the sizer for the top half.
-        top_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        top_sizer = wx.BoxSizer(wx.VERTICAL)
         self.page_sizers[-1].Add(top_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the page to the top sizer.
@@ -798,7 +799,7 @@ class Wiz_window(wx.Dialog):
 
         # Add the sizer for the wizard buttons.
         self.button_sizers.append(wx.BoxSizer(wx.HORIZONTAL))
-        self.page_sizer[-1].Add(self.button_sizer)
+        self.page_sizers[-1].Add(self.button_sizers[-1])
 
 
     def display_page(self, i):
@@ -808,11 +809,12 @@ class Wiz_window(wx.Dialog):
         @type i:    int
         """
 
-        # Destroy all of the original contents.
-        self.main_sizer.Clear(deleteWindows=True)
+        # Hide all of the original contents.
+        for j in range(len(self.pages)):
+            self.main_sizer.Hide(self.page_sizers[j])
 
         # Add the page.
-        self.main_sizer.Add(self.pages[i], 1, wx.ALL|wx.EXPAND, 0)
+        self.main_sizer.Add(self.page_sizers[i], 1, wx.ALL|wx.EXPAND, 0)
 
         # Re-perform the window layout.
         self.Layout()
