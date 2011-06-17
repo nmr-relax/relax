@@ -768,6 +768,8 @@ class Wiz_window(wx.Dialog):
 
         # Initialise the page storage.
         self.pages = []
+        self.page_sizers = []
+        self.button_sizers = []
 
 
     def add_page(self, panel):
@@ -777,8 +779,22 @@ class Wiz_window(wx.Dialog):
         @type panel:    wx.Panel instance
         """
 
-        # Append the page.
+        # Store the page.
         self.pages.append(panel)
+
+        # Store a new sizer for the page and its buttons.
+        self.page_sizers.append(wx.BoxSizer(wx.VERTICAL))
+
+        # Add the sizer for the top half.
+        top_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.page_sizers[-1].Add(top_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Add the page to the top sizer.
+        top_sizer.Add(panel, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Add the sizer for the wizard buttons.
+        self.button_sizers.append(wx.BoxSizer(wx.HORIZONTAL))
+        self.page_sizer[-1].Add(self.button_sizer)
 
 
     def display_page(self, i):
