@@ -782,17 +782,28 @@ class Wiz_window(wx.Dialog):
         self.pages.append(panel)
 
 
+    def display_page(self, i):
+        """Display the given page.
+
+        @param i:   The index of the page to display.
+        @type i:    int
+        """
+
+        # Destroy all of the original contents.
+        self.main_sizer.Clear(deleteWindows=True)
+
+        # Add the page.
+        self.main_sizer.Add(self.pages[i])
+
+        # Re-perform the window layout.
+        self.Layout()
+        self.Refresh()
+
+
     def run(self):
         """Execute the wizard."""
 
         # Loop over the pages.
         for i in range(len(self.pages)):
-            # Destroy all of the original contents.
-            self.main_sizer.Clear(deleteWindows=True)
-
-            # Add the page.
-            self.main_sizer.Add(self.pages[i])
-
-            # Re-perform the window layout.
-            self.Layout()
-            self.Refresh()
+            # Display the page.
+            self.display_page(i)
