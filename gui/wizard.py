@@ -786,7 +786,7 @@ class Wiz_window(wx.Dialog):
 
         # Store a new sizer for the page and its buttons.
         self.page_sizers.append(wx.BoxSizer(wx.VERTICAL))
-        self.main_sizer.Add(self.page_sizers[-1], 1, wx.ALL, 0)
+        self.main_sizer.Add(self.page_sizers[-1], 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the sizer for the top half.
         top_sizer = wx.BoxSizer(wx.VERTICAL)
