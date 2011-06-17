@@ -745,6 +745,11 @@ class Wiz_window(wx.Dialog):
         @type style:        wx style
         """
 
+        # Store the args.
+        self.size_x = size_x
+        self.size_y = size_y
+        self.border = border
+
         # Execute the base class method.
         wx.Dialog.__init__(self, None, id=-1, title=title, style=style)
 
@@ -753,7 +758,7 @@ class Wiz_window(wx.Dialog):
         self.SetSizer(sizer)
 
         # Build the central sizer, with borders.
-        self.main_sizer = add_border(sizer, border=self.border, packing=wx.VERTICAL)
+        self.main_sizer = add_border(sizer, border=border, packing=wx.VERTICAL)
 
         # Set the default size of the dialog.
         self.SetSize((size_x, size_y))
