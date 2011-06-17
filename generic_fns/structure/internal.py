@@ -290,6 +290,66 @@ class Internal(Base_struct_API):
             yield model, records
 
 
+        def __parse_models_xyz(self, file_path):
+        """Generator function for looping over the models in the XYZ file.
+
+        @param file_path:   The full path of the XYZ file.
+        @type file_path:    str
+        @return:            The model number and all the records for that model.
+        @rtype:             tuple of int and array of str
+        """
+
+        # Open the file.
+        file = open_read_file(file_path)
+        lines = file.readlines()
+        file.close()
+
+        # Check for empty files.
+        if lines == []:
+            raise RelaxError("The XYZ file is empty.")
+
+        # Init.
+        total_atom = 0
+        model = 0 
+        records = []
+
+        # Loop over the data.
+        for i in xrange(len(lines)):
+            num=0
+            word=split(lines[i])
+            # Find the total atom number and the first model.
+            if (i==0) and (len(word)==1):
+                try:
+                    total_atom = int(word[0])
+                    num = 1
+                except:
+                    raise RelaxError("The MODEL record " + repr(lines[i]) + " is corrupt, cannot read the XYZ file.")
+
+            # End of the model.
+            if (len(records) == total_atom):
+              # Get the model number
+              model = num
+              print "model", model
+              num = num + 1
+
+              # Yield the info
+              yield model, records
+
+              # Reset the records.
+              records = []
+
+            # Skip all records prior to atom coordinates record.
+            if (len(word) != 4):
+                continue
+
+            # Append the line as a record of the model.
+            records.append(lines[i])
+
+        # If records is not empty then there are no models, so yield the lot.
+        if len(records):
+            yield model, records
+
+
     def __parse_mols(self, records):
         """Generator function for looping over the molecules in the PDB records of a model.
 
@@ -726,6 +786,108 @@ class Internal(Base_struct_API):
         # Loading worked.
         return True
 
+
+    def load_xyz(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
+        """Method for loading structures from a XYZ file.
+
+        @param file_path:       The full path of the XYZ file.
+        @type file_path:        str
+        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
+                                molecules are determined differently by the different parsers, but
+                                are numbered consecutively from 1.  If set to None, then all
+                                molecules will be loaded.
+        @type read_mol:         None, int, or list of int
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None,
+                                then the molecules will be automatically labelled based on the file
+                                name or other information.
+        @type set_mol_name:     None, str, or list of str
+        @keyword read_model:    The XYZ model to extract from the file.  If set to None, then all
+                                models will be loaded.
+        @type read_model:       None, int, or list of int
+        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
+                                the XYZ model numbers will be preserved, if they exist.
+        @type set_model_num:    None, int, or list of int
+        @keyword verbosity:     A flag which if True will cause messages to be printed.
+        @type verbosity:        bool
+        @return:                The status of the loading of the XYZ file.
+        @rtype:                 bool
+        """
+
+        # Initial print out.
+        if verbosity:
+            print("\nInternal relax XYZ parser.")
+
+        # Test if the file exists.
+        if not access(file_path, F_OK):
+            # Exit indicating failure.
+            return False
+
+        # Separate the file name and path.
+        path, file = os.path.split(file_path)
+
+        # Convert the structure reading args into lists.
+        if read_mol and not isinstance(read_mol, list):
+            read_mol = [read_mol]
+        if set_mol_name and not isinstance(set_mol_name, list):
+            set_mol_name = [set_mol_name]
+        if read_model and not isinstance(read_model, list):
+            read_model = [read_model]
+        if set_model_num and not isinstance(set_model_num, list):
+            set_model_num = [set_model_num]
+
+        # Loop over all models in the XYZ file.
+        mol_index=0
+        model_index = 0
+        orig_model_num = []
+        mol_conts = []
+        orig_mol_num = []
+        new_mol_name = []
+        for model_num, model_records in self.__parse_models_xyz(file_path):
+            # Only load the desired model.
+            if read_model and model_num not in read_model:
+                continue
+
+            # Store the original model number.
+            orig_model_num.append(model_index)
+
+            # Loop over the molecules of the model.
+            if read_mol and mol_index not in read_mol:
+                print "continue"
+                continue
+
+            # Set the target molecule name.
+            if set_mol_name:
+                new_mol_name.append(set_mol_name[mol_index])
+            else:
+                # Set the name to the file name plus the structure number.
+                new_mol_name.append(file_root(file) + '_mol' + repr(mol_index))
+
+            # Store the original mol number.
+            orig_mol_num.append(mol_index)
+
+            # Generate the molecule container.
+            mol = MolContainer_xyz()
+
+            # Fill the molecular data object.
+            mol.fill_object_from_xyz(model_records)
+
+            # Store the molecule container.
+            mol_conts.append([])
+            mol_conts[model_index].append(mol)
+
+            # Increment the molecule index.
+            mol_index = mol_index + 1
+            print "mol_index_try", mol_index
+
+            # Increment the model index.
+            model_index = model_index + 1
+        
+        # Create the structural data data structures.
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path)
+
+        # Loading worked.
+        return True
+        
 
     def write_pdb(self, file, model_num=None):
         """Method for the creation of a PDB file from the structural data.
