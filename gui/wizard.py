@@ -751,12 +751,8 @@ class Wiz_window(wx.Dialog):
     size_y = 400
     frame_title = ''
 
-    def __init__(self, gui, interpreter, style=wx.DEFAULT_DIALOG_STYLE):
+    def __init__(self, style=wx.DEFAULT_DIALOG_STYLE):
         """Set up the window."""
-
-        # Store the args.
-        self.gui = gui
-        self.interpreter = interpreter
 
         # Execute the base class method.
         wx.Dialog.__init__(self, None, id=-1, title=self.frame_title, style=style)
@@ -770,3 +766,33 @@ class Wiz_window(wx.Dialog):
 
         # Centre the dialog.
         self.Centre()
+
+        # Initialise the page storage.
+        self.pages = []
+
+
+    def add_page(self, panel):
+        """Add a new page to the wizard.
+
+        @param panel:   The page to add to the wizard.
+        @type panel:    wx.Panel instance
+        """
+
+        # Append the page.
+        self.pages.append(panel)
+
+
+    def run(self):
+        """Execute the wizard."""
+
+        # Loop over the pages.
+        for i in range(len(self.pages)):
+            # Destroy all of the original contents.
+            self.main_sizer.Clear(deleteWindows=True)
+
+            # Add the page.
+            self.main_sizer.Add(self.pages[i])
+
+            # Re-perform the window layout.
+            self.Layout()
+            self.Refresh()
