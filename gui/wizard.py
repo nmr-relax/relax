@@ -35,7 +35,7 @@ from relax_errors import AllRelaxErrors, RelaxImplementError
 from gui.controller import Redirect_text
 from gui.filedialog import openfile
 from gui.message import error_message
-from gui.misc import gui_to_int, int_to_gui, str_to_gui
+from gui.misc import add_border, gui_to_int, int_to_gui, str_to_gui
 from gui import paths
 
 
