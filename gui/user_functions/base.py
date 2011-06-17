@@ -51,10 +51,12 @@ class UF_panel(Wiz_panel):
     def __init__(self, parent, gui, interpreter):
         """Set up the window.
 
-        @param parent:  The parent class containing the GUI and interpreter objects.
-        @type parent:   class instance
-        @param gui:     The GUI base object.
-        @type gui:      wx.Frame instance
+        @param parent:      The parent class containing the GUI and interpreter objects.
+        @type parent:       class instance
+        @param gui:         The GUI base object.
+        @type gui:          wx.Frame instance
+        @param interpreter: The relax interpreter.
+        @type interpreter:  prompt.interpreter.Interpreter instance
         """
 
         # Store the args.
