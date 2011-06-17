@@ -31,7 +31,7 @@ from generic_fns import pipes
 import specific_fns
 
 # GUI module imports.
-from base import UF_base
+from base import UF_base, UF_panel
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
@@ -48,20 +48,17 @@ class Value(UF_base):
         @type event:    wx event
         """
 
-        # The dialog.
-        window = Set_window(self.gui, self.interpreter)
-        window.ShowModal()
-        window.Destroy()
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title='Set parameter values')
+        wizard.add_page(Set_panel(self))
+        wizard.run()
 
 
 
-class Set_window(Wiz_window):
+class Set_panel(UF_panel):
     """The user function window."""
 
     # Some class variables.
-    size_x = 800
-    size_y = 600
-    frame_title = 'Set parameter values'
     image_path = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
     main_text = 'This dialog allows you to set spin specific data values.'
     title = 'Value setting'
