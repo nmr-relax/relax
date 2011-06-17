@@ -89,7 +89,6 @@ class Wiz_panel(wx.Panel):
 
     # Some class variables.
     art_spacing = 20
-    border = 10
     button_apply = True
     button_cancel = True
     button_ok = True
@@ -109,20 +108,17 @@ class Wiz_panel(wx.Panel):
         box_main = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(box_main)
 
-        # Build the central sizer, with borders.
-        centre_sizer = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
-
         # Add the final buttons.
-        self.add_buttons(centre_sizer)
+        self.add_buttons(box_main)
 
         # Add the artwork.
-        self.add_artwork(centre_sizer)
+        self.add_artwork(box_main)
 
         # The size of the image.
         image_x, image_y = self.image.GetSize()
 
         # Calculate the size of the main section, and the subdivisions.
-        self.main_size = self.size_x - image_x - self.art_spacing - 2*self.border
+        self.main_size = self.size_x - image_x - self.art_spacing
         if self.divider:
             self.div_left = self.divider
             self.div_right = self.main_size - self.divider
@@ -130,7 +126,7 @@ class Wiz_panel(wx.Panel):
             self.div_left = self.div_right = self.main_size / 2
 
         # Add the main sizer.
-        main_sizer = self.build_main_section(centre_sizer)
+        main_sizer = self.build_main_section(box_main)
 
         # Add the title.
         self.add_title(main_sizer)
@@ -742,7 +738,7 @@ class Wiz_window(wx.Dialog):
     To inherit from this class, you must supply the add_contents() and execute() methods.  The add_contents() method should build the specific GUI elements, and the execute() method is called when clicking on the apply or ok buttons.
     """
 
-    def __init__(self, size_x=None, size_y=None, title='', style=wx.DEFAULT_DIALOG_STYLE):
+    def __init__(self, size_x=None, size_y=None, title='', border=10, style=wx.DEFAULT_DIALOG_STYLE):
         """Set up the window.
         
         @keyword style:     The dialog style.
@@ -752,9 +748,12 @@ class Wiz_window(wx.Dialog):
         # Execute the base class method.
         wx.Dialog.__init__(self, None, id=-1, title=title, style=style)
 
-        # The main sizer for the dialog.
-        self.main_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.SetSizer(self.main_sizer)
+        # The sizer for the dialog.
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(sizer)
+
+        # Build the central sizer, with borders.
+        self.main_sizer = add_border(sizer, border=self.border, packing=wx.VERTICAL)
 
         # Set the default size of the dialog.
         self.SetSize((size_x, size_y))
