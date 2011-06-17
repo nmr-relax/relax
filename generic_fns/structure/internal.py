@@ -1483,6 +1483,61 @@ class MolContainer:
         return fields
 
 
+    def __parse_xyz_record(self, record):
+        """Parse the XYZ record string and return an array of the corresponding atomic information.
+
+        The format of the XYZ records is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1      | String       | element      |                                                |
+         |  2      | Real         | x            | Orthogonal coordinates for X in Angstroms      |
+         |  3      | Real         | y            | Orthogonal coordinates for Y in Angstroms      |
+         |  4      | Real         | z            | Orthogonal coordinates for Z in Angstroms      |
+         |_________|______________|______________|________________________________________________|
+
+
+        @param record:  The single line PDB record.
+        @type record:   str
+        @return:        The list of atomic information
+        @rtype:         list of str
+        """
+
+        # Initialise.
+        fields = []
+        word=split(record)
+
+        # ATOM and HETATM records.
+        if len(word)==4:
+            # Split up the record.
+            fields.append(word[0])
+            fields.append(word[1])
+            fields.append(word[2])
+            fields.append(word[3])
+
+            # Loop over the fields.
+            for i in xrange(len(fields)):
+                # Strip all whitespace.
+                fields[i] = strip(fields[i])
+
+                # Replace nothingness with None.
+                if fields[i] == '':
+                    fields[i] = None
+
+            # Convert strings to numbers.
+            if fields[1]:
+                fields[1] = float(fields[1])
+            if fields[2]:
+                fields[2] = float(fields[2])
+            if fields[3]:
+                fields[3] = float(fields[3])
+        
+        # Return the atomic info.
+        return fields
+
+
     def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None):
         """Method for adding an atom to the structural data object.
 
@@ -1579,6 +1634,39 @@ class MolContainer:
 
                     # Make the connection.
                     self.atom_connect(index1=self.__atom_index(record[1]), index2=self.__atom_index(record[i+2]))
+
+
+    def fill_object_from_xyz(self, records):
+        """Method for generating a complete Structure_container object from the given xyz records.
+
+        @param records:         A list of structural xyz records.
+        @type records:          list of str
+        """
+
+        # initialisation for atom number
+        atom_number = 0
+ 
+        # Loop over the records.
+        for record in records:
+            # Parse the record.
+            record = self.__parse_xyz_record(record)
+
+            # Nothing to do.
+            if not record:
+                continue
+
+            # Add the atom.
+            if len(record) == 4:
+                # Attempt at determining the element, if missing.
+                element = record[0]
+                if not element:
+                    element = self.__det_pdb_element(record[2])
+
+                # Add.
+                self.atom_add(atom_num=atom_number, pos=[record[1], record[2], record[3]], element=element)
+
+                # Increment of atom number
+                atom_number = atom_number + 1
 
 
     def from_xml(self, mol_node):
