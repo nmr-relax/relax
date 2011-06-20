@@ -24,15 +24,12 @@
 """Module for the analysis selection wizard."""
 
 # relax GUI module imports.
+from gui import paths
 from gui.wizard import Wiz_panel, Wiz_window
 
 
 class Analysis_wizard:
     """The analysis selection wizard."""
-
-    def __init__(self):
-        """Setup the analysis selection wizard."""
-
 
     def run(self):
         """Run through the analysis selection wizard, returning the results.
@@ -41,30 +38,69 @@ class Analysis_wizard:
         @rtype:     str, str
         """
 
-        # Create the wizard.
-        self.wizard = Wizard()
-        self.wizard.ShowModal()
-        self.wizard.Destroy()
+        # Set up the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title='Set parameter values')
 
-        # FIXME.
-        analysis_type = 'r1'
-        pipe_name = 'x'
+        # Add the new analysis panel.
+        new_panel = New_analysis_panel(wizard)
+        wizard.add_page(new_panel, apply_button=False)
+
+        # Add the data pipe name panel.
+        pipe_panel = Data_pipe_panel(wizard)
+        wizard.add_page(pipe_panel, apply_button=False)
+
+        # Execute the wizard.
+        wizard.run()
 
         # Return the analysis type and pipe name.
-        return analysis_type, pipe_name
+        return new_panel.analysis_type, str(pipe_panel.pipe_name.GetValue())
 
 
-class Data_pipe(Wiz_panel):
-    pass
+
+class Data_pipe_panel(Wiz_panel):
+    """The panel for setting the data pipe name."""
+
+    # Class variables.
+    pipe_name = 'x'
+    image_path = paths.WIZARD_IMAGE_PATH + 'pipe.png'
+    main_text = 'Select the name of the pipe name to be associated with the analysis'
+    title = 'Data pipe name'
+
+    def add_contents(self, sizer):
+        """Add the specific GUI elements (dummy method).
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The pipe name input.
+        self.pipe_name = self.input_field(sizer, "The data pipe name:")
 
 
-class New_analysis(Wiz_panel):
-    pass
+    def update(self, event):
+        """Update the UI.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        self.pipe_name.SetValue('test')
 
 
-class Wizard(Wiz_window):
-    def __init__(self):
-        # Initialise the panels.
-        self.panel1 = New_analysis()
-        self.panel2 = Data_pipe()
+
+class New_analysis_panel(Wiz_panel):
+    """The panel for selection of the new analysis."""
+
+    # Class variables.
+    analysis_type = 'mf'
+    image_path = paths.IMAGE_PATH + 'relax.gif'
+    main_text = 'Select one of the following analysis types.'
+    title = 'Start a new analysis'
+
+    def add_contents(self, sizer):
+        """Add the specific GUI elements (dummy method).
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
 
