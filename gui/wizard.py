@@ -798,9 +798,6 @@ class Wiz_window(wx.Dialog):
                 self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self.go_next, button)
 
-                # Spacer.
-                self.button_sizers[i].AddSpacer(5)
-
             # The OK button (only for single pages).
             if num_pages == 1:
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " OK")
