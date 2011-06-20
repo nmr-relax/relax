@@ -100,17 +100,19 @@ class I22x22:
 
         # Oxygen icons.
         path = OXY_ICON_PATH + '22x22' + sep
-        self.about =                path + 'actions' + sep + 'help-about.png'
-        self.apply =                path + 'actions' + sep + 'dialog-ok-apply.png'
-        self.cancel =               path + 'actions' + sep + 'dialog-cancel.png'
-        self.close =                path + 'actions' + sep + 'dialog-close.png'
-        self.copy =                 path + 'actions' + sep + 'list-add.png'
+        self.about =                path + 'actions'    + sep + 'help-about.png'
+        self.apply =                path + 'actions'    + sep + 'dialog-ok-apply.png'
+        self.cancel =               path + 'actions'    + sep + 'dialog-cancel.png'
+        self.close =                path + 'actions'    + sep + 'dialog-close.png'
+        self.copy =                 path + 'actions'    + sep + 'list-add.png'
         self.document_close =       path + 'actions'    + sep + 'document-close.png'
-        self.new =                  path + 'actions' + sep + 'document-new.png'
-        self.ok =                   path + 'actions' + sep + 'dialog-ok.png'
-        self.open_folder =          path + 'actions' + sep + 'document-open-folder.png'
-        self.save =                 path + 'actions' + sep + 'document-save.png'
-        self.view_refresh =         path + 'actions' + sep + 'view-refresh.png'
+        self.go_previous_view =     path + 'actions'    + sep + 'go-previous-view.png'
+        self.go_next_view =         path + 'actions'    + sep + 'go-next-view.png'
+        self.new =                  path + 'actions'    + sep + 'document-new.png'
+        self.ok =                   path + 'actions'    + sep + 'dialog-ok.png'
+        self.open_folder =          path + 'actions'    + sep + 'document-open-folder.png'
+        self.save =                 path + 'actions'    + sep + 'document-save.png'
+        self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
