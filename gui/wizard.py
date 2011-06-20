@@ -618,20 +618,6 @@ class Wiz_panel(wx.Panel):
         return field
 
 
-    def ok(self, event):
-        """Accept the operation.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Execute the apply method.
-        self.apply(event)
-
-        # Then close.
-        self.Close()
-
-
     def text(self, sizer, desc, default=''):
         """Build the input field.
 
@@ -805,7 +791,7 @@ class Wiz_window(wx.Dialog):
                 button.SetToolTipString("Accept the operation")
                 button.SetSize(self.size_button)
                 self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-                self.Bind(wx.EVT_BUTTON, self.pages[i].ok, button)
+                self.Bind(wx.EVT_BUTTON, self.ok, button)
 
             # The finish button (only for the last page with multi-pages).
             if num_pages > 1 and i == num_pages - 1:
@@ -814,7 +800,7 @@ class Wiz_window(wx.Dialog):
                 button.SetToolTipString("Accept the operation")
                 button.SetSize(self.size_button)
                 self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-                self.Bind(wx.EVT_BUTTON, self.pages[i].ok, button)
+                self.Bind(wx.EVT_BUTTON, self.ok, button)
 
             # Spacer.
             self.button_sizers[i].AddSpacer(15)
@@ -884,6 +870,20 @@ class Wiz_window(wx.Dialog):
 
         # Display the next page.
         self.display_page(self.current_page)
+
+
+    def ok(self, event):
+        """Accept the operation.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Execute the apply method.
+        self.pages[self.current_page].apply(event)
+
+        # Then destroy the dialog.
+        self.Destroy()
 
 
     def run(self):
