@@ -773,7 +773,7 @@ class Wiz_window(wx.Dialog):
             if num_pages > 1 and i > 0:
                 # Create the button.
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Back")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.back, wx.BITMAP_TYPE_ANY))
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_previous_view, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Return to the previous page")
                 self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self.go_back, button)
@@ -797,10 +797,10 @@ class Wiz_window(wx.Dialog):
             if num_pages > 1 and i < num_pages - 1:
                 # Create the button.
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, "Next")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.next, wx.BITMAP_TYPE_ANY))
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_next_view, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Move to the next page")
                 self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-                self.Bind(wx.EVT_BUTTON, self.go_forward, button)
+                self.Bind(wx.EVT_BUTTON, self.go_next, button)
 
                 # Spacer.
                 self.button_sizers[i].AddSpacer(5)
@@ -852,6 +852,34 @@ class Wiz_window(wx.Dialog):
         self.Refresh()
 
 
+    def go_back(self, event):
+        """Return to the previous page.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Change the current page.
+        self.current_page -= 1
+
+        # Display the previous page.
+        self.display_page(self.current_page)
+
+
+    def go_next(self, event):
+        """Move to the next page.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Change the current page.
+        self.current_page += 1
+
+        # Display the next page.
+        self.display_page(self.current_page)
+
+
     def run(self):
         """Execute the wizard."""
 
@@ -863,6 +891,9 @@ class Wiz_window(wx.Dialog):
 
         # Loop over the pages.
         for i in range(len(self.pages)):
+            # Store the current page.
+            self.current_page = i
+
             # Display the page.
             self.display_page(i)
 
