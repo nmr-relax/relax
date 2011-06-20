@@ -832,7 +832,6 @@ class Wiz_window(wx.Dialog):
             self.Bind(wx.EVT_BUTTON, self.pages[i].cancel, button)
 
 
-
     def display_page(self, i):
         """Display the given page.
 
