@@ -879,8 +879,10 @@ class Wiz_window(wx.Dialog):
         @type event:    wx event
         """
 
-        # Execute the apply method.
-        self.pages[self.current_page].apply(event)
+        # Loop over all pages and execute their apply() methods.
+        for i in range(len(self.pages)):
+            # Execute the apply method.
+            self.pages[i].apply(event)
 
         # Then destroy the dialog.
         self.Destroy()
