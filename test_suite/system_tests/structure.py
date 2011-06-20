@@ -659,10 +659,10 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_xyz(file='SSS-cluster4-new-test.xyz', dir=path)
 
         # Test the molecule name.
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, 'SSS-cluster4-new-test')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, 'SSS-cluster4-new-test_mol1')
 
         # Load a single atom and test it.
-        self.interpreter.structure.load_spins('SSS-cluster4-new-test:3@C')
+        self.interpreter.structure.load_spins('SSS-cluster4-new-test_mol1:@C')
         self.assertEqual(count_spins(), 1)
 
         # Try loading a few protons.

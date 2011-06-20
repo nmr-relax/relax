@@ -853,8 +853,9 @@ class Internal(Base_struct_API):
             if set_mol_name:
                 new_mol_name.append(set_mol_name[mol_index])
             else:
-                # Set the name to the file name plus the structure number.
-                new_mol_name.append(file_root(file) + '_mol' + repr(mol_index))
+                if mol_index==0:
+                   #Set the name to the file name plus the structure number.
+                   new_mol_name.append(file_root(file) + '_mol' + repr(mol_index+1))
 
             # Store the original mol number.
             orig_mol_num.append(mol_index)
@@ -874,7 +875,8 @@ class Internal(Base_struct_API):
 
             # Increment the model index.
             model_index = model_index + 1
-        
+      
+        orig_mol_num=[0]
         # Create the structural data data structures.
         self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path)
 
