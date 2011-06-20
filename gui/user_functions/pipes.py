@@ -30,7 +30,7 @@ import wx
 from generic_fns.pipes import VALID_TYPES, cdp_name, pipe_names
 
 # GUI module imports.
-from base import UF_base
+from base import UF_base, UF_panel
 from gui.misc import gui_to_str
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
@@ -47,14 +47,11 @@ class Pipes(UF_base):
         @type event:    wx event
         """
 
-        # Initialise the dialog.
-        self._create_window = Add_window(self.gui, self.interpreter)
-
-        # Show the dialog.
-        self._create_window.ShowModal()
-
-        # Destroy.
-        self._create_window.Destroy()
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=600, size_y=400, title='Add a data pipe')
+        panel = Add_panel(wizard, self.gui, self.interpreter)
+        wizard.add_page(panel)
+        wizard.run()
 
 
     def copy(self, event):
@@ -64,14 +61,11 @@ class Pipes(UF_base):
         @type event:    wx event
         """
 
-        # Initialise the dialog.
-        window = Copy_window(self.gui, self.interpreter)
-
-        # Show the dialog.
-        window.ShowModal()
-
-        # Destroy.
-        window.Destroy()
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=600, size_y=400, title='Copy a data pipe')
+        panel = Copy_panel(wizard, self.gui, self.interpreter)
+        wizard.add_page(panel)
+        wizard.run()
 
 
     def delete(self, event):
@@ -81,14 +75,11 @@ class Pipes(UF_base):
         @type event:    wx event
         """
 
-        # Initialise the dialog.
-        self._delete_window = Delete_window(self.gui, self.interpreter)
-
-        # Show the dialog.
-        self._delete_window.ShowModal()
-
-        # Destroy.
-        self._delete_window.Destroy()
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=600, size_y=400, title='Delete a data pipe')
+        panel = Delete_panel(wizard, self.gui, self.interpreter)
+        wizard.add_page(panel)
+        wizard.run()
 
 
     def switch(self, event):
@@ -98,24 +89,17 @@ class Pipes(UF_base):
         @type event:    wx event
         """
 
-        # Initialise the dialog.
-        self._switch_window = Switch_window(self.gui, self.interpreter)
-
-        # Show the dialog.
-        self._switch_window.ShowModal()
-
-        # Destroy.
-        self._switch_window.Destroy()
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=650, size_y=450, title='Data pipe switching')
+        panel = Switch_panel(wizard, self.gui, self.interpreter)
+        wizard.add_page(panel, apply_button=False)
+        wizard.run()
 
 
-
-class Add_window(Wiz_window):
-    """The pipe.create() user function window."""
+class Add_panel(UF_panel):
+    """The pipe.create() user function panel."""
 
     # Some class variables.
-    size_x = 600
-    size_y = 400
-    frame_title = 'Add a data pipe'
     image_path = WIZARD_IMAGE_PATH + 'pipe.png'
     main_text = 'This dialog allows you to add new data pipes to the relax data store.'
     title = 'Addition of new data pipes'
@@ -147,13 +131,10 @@ class Add_window(Wiz_window):
 
 
 
-class Copy_window(Wiz_window):
+class Copy_panel(UF_panel):
     """The pipe.copy() user function window."""
 
     # Some class variables.
-    size_x = 600
-    size_y = 400
-    frame_title = 'Copy a data pipe'
     image_path = WIZARD_IMAGE_PATH + 'pipe.png'
     main_text = 'This dialog allows you to copy data pipes.'
     title = 'Data pipe copy'
@@ -206,13 +187,10 @@ class Copy_window(Wiz_window):
 
 
 
-class Delete_window(Wiz_window):
+class Delete_panel(UF_panel):
     """The pipe.delete() user function window."""
 
     # Some class variables.
-    size_x = 600
-    size_y = 400
-    frame_title = 'Delete a data pipe'
     image_path = WIZARD_IMAGE_PATH + 'pipe.png'
     main_text = 'This dialog allows you to delete data pipes from the relax data store.'
     title = 'Data pipe deletion'
@@ -261,14 +239,10 @@ class Delete_window(Wiz_window):
 
 
 
-class Switch_window(Wiz_window):
+class Switch_panel(UF_panel):
     """The pipe.switch() user function window."""
 
     # Some class variables.
-    size_x = 650
-    size_y = 450
-    button_apply = False
-    frame_title = 'Data pipe switching'
     image_path = WIZARD_IMAGE_PATH + 'pipe_switch.png'
     main_text = 'This dialog allows you to switch between the various data pipes within the relax data store.'
     title = 'Switch between data pipes'
