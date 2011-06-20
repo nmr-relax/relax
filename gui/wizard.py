@@ -385,9 +385,10 @@ class Wiz_panel(wx.Panel):
 
 
     def execute(self):
-        """Execute the operation (dummy method)."""
+        """Execute the operation (dummy method).
 
-        raise RelaxImplementError
+        If this method is not overridden, then the wizard panel will do nothing.
+        """
 
 
     def file_selection(self, sizer, desc, title='File selection', default="all files (*.*)|*"):
