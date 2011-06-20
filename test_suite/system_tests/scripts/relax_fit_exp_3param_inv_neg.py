@@ -28,16 +28,16 @@ spin.name(name='N')
 
 # Spectrum names.
 names = [
-    'T2_ncyc1_ave',
-    'T2_ncyc1b_ave',
-    'T2_ncyc2_ave',
-    'T2_ncyc4_ave',
-    'T2_ncyc4b_ave',
-    'T2_ncyc6_ave',
-    'T2_ncyc9_ave',
-    'T2_ncyc9b_ave',
-    'T2_ncyc11_ave',
-    'T2_ncyc11b_ave'
+    'T1_inv-recov_ncyc1_ave',
+    'T1_inv-recov_ncyc1b_ave',
+    'T1_inv-recov_ncyc2_ave',
+    'T1_inv-recov_ncyc4_ave',
+    'T1_inv-recov_ncyc4b_ave',
+    'T1_inv-recov_ncyc6_ave',
+    'T1_inv-recov_ncyc9_ave',
+    'T1_inv-recov_ncyc9b_ave',
+    'T1_inv-recov_ncyc11_ave',
+    'T1_inv-recov_ncyc11b_ave'
 ]
 
 # Relaxation times (in seconds).
@@ -63,10 +63,10 @@ for i in xrange(len(names)):
     relax_fit.relax_time(time=times[i], spectrum_id=names[i])
 
 # Specify the duplicated spectra.
-spectrum.replicated(spectrum_ids=['T2_ncyc1_ave', 'T2_ncyc1b_ave'])
-spectrum.replicated(spectrum_ids=['T2_ncyc4_ave', 'T2_ncyc4b_ave'])
-spectrum.replicated(spectrum_ids=['T2_ncyc9_ave', 'T2_ncyc9b_ave'])
-spectrum.replicated(spectrum_ids=['T2_ncyc11_ave', 'T2_ncyc11b_ave'])
+spectrum.replicated(spectrum_ids=['T1_inv-recov_ncyc1_ave', 'T1_inv-recov_ncyc1b_ave'])
+spectrum.replicated(spectrum_ids=['T1_inv-recov_ncyc4_ave', 'T1_inv-recov_ncyc4b_ave'])
+spectrum.replicated(spectrum_ids=['T1_inv-recov_ncyc9_ave', 'T1_inv-recov_ncyc9b_ave'])
+spectrum.replicated(spectrum_ids=['T1_inv-recov_ncyc11_ave', 'T1_inv-recov_ncyc11b_ave'])
 
 # Peak intensity error analysis.
 spectrum.error_analysis()
