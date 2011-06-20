@@ -25,14 +25,13 @@
 
 # Python module imports.
 from string import split
-import wx
 
 # relax module imports.
 from generic_fns.mol_res_spin import generate_spin_id, molecule_loop, residue_loop, spin_loop
 from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
-from base import UF_base
+from base import UF_base, UF_panel
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
@@ -50,10 +49,11 @@ class Spin(UF_base):
         @type event:    wx event
         """
 
-        # The dialog.
-        window = Copy_window(self.gui, self.interpreter)
-        window.ShowModal()
-        window.Destroy()
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=700, size_y=600, title='Copy a spin')
+        panel = Copy_panel(wizard, self.gui, self.interpreter)
+        wizard.add_page(panel)
+        wizard.run()
 
 
     def create(self, event, mol_name=None, res_num=None, res_name=None):
@@ -69,22 +69,21 @@ class Spin(UF_base):
         @type res_name:     str
         """
 
-        # Initialise the dialog.
-        self._create_window = Create_window(self.gui, self.interpreter)
+        # Create the wizard.
+        wizard = Wiz_window(size_x=600, size_y=400, title='Add a spin')
+        panel = Create_panel(wizard, self.gui, self.interpreter)
+        wizard.add_page(panel)
 
         # Default molecule name.
         if mol_name:
-            self._create_window.mol.SetValue(mol_name)
+            panel.mol.SetValue(mol_name)
 
         # Default residue.
         if res_num or res_name:
-            self._create_window.res.SetValue("%s %s" % (res_num, res_name))
+            panel.res.SetValue("%s %s" % (res_num, res_name))
 
-        # Show the dialog.
-        self._create_window.ShowModal()
-
-        # Destroy.
-        self._create_window.Destroy()
+        # Execute the wizard.
+        wizard.run()
 
 
     def delete(self, event, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
@@ -104,36 +103,32 @@ class Spin(UF_base):
         @type spin_name:    str
         """
 
-        # Initialise the dialog.
-        self._delete_window = Delete_window(self.gui, self.interpreter)
+        # Create the wizard.
+        wizard = Wiz_window(size_x=600, size_y=400, title='Delete a spin')
+        panel = Delete_panel(wizard, self.gui, self.interpreter)
+        wizard.add_page(panel)
 
         # Default molecule name.
         if mol_name:
-            self._delete_window.mol.SetValue(mol_name)
+            panel.mol.SetValue(mol_name)
 
         # Default residue.
         if res_num or res_name:
-            self._delete_window.res.SetValue("%s %s" % (res_num, res_name))
+            panel.res.SetValue("%s %s" % (res_num, res_name))
 
         # Default spin.
         if spin_num or spin_name:
-            self._delete_window.spin.SetValue("%s %s" % (spin_num, spin_name))
+            panel.spin.SetValue("%s %s" % (spin_num, spin_name))
 
-        # Show the dialog.
-        self._delete_window.ShowModal()
-
-        # Destroy.
-        self._delete_window.Destroy()
+        # Execute the wizard.
+        wizard.run()
 
 
 
-class Copy_window(Wiz_window, Mol_res_spin):
-    """The spin.copy() user function window."""
+class Copy_panel(UF_panel, Mol_res_spin):
+    """The spin.copy() user function panel."""
 
     # Some class variables.
-    size_x = 700
-    size_y = 600
-    frame_title = 'Copy a spin'
     image_path = WIZARD_IMAGE_PATH + 'spin.png'
     main_text = 'This dialog allows you to copy spin.'
     title = 'Spin copy'
@@ -291,13 +286,10 @@ class Copy_window(Wiz_window, Mol_res_spin):
 
 
 
-class Create_window(Wiz_window, Mol_res_spin):
-    """The spin.create() user function window."""
+class Create_panel(UF_panel, Mol_res_spin):
+    """The spin.create() user function panel."""
 
     # Some class variables.
-    size_x = 600
-    size_y = 400
-    frame_title = 'Add a spin'
     image_path = WIZARD_IMAGE_PATH + 'spin.png'
     main_text = 'This dialog allows you to add new spins to the relax data store.  The spin will be added to the current data pipe.'
     title = 'Addition of new spins'
@@ -365,13 +357,10 @@ class Create_window(Wiz_window, Mol_res_spin):
 
 
 
-class Delete_window(Wiz_window, Mol_res_spin):
-    """The spin.delete() user function window."""
+class Delete_panel(UF_panel, Mol_res_spin):
+    """The spin.delete() user function panel."""
 
     # Some class variables.
-    size_x = 600
-    size_y = 400
-    frame_title = 'Delete a spin'
     image_path = WIZARD_IMAGE_PATH + 'spin.png'
     main_text = 'This dialog allows you to delete spins from the relax data store.  The spin will be deleted from the current data pipe.'
     title = 'Spin deletion'

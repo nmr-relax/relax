@@ -23,15 +23,12 @@
 # Module docstring.
 """The molecule user function GUI elements."""
 
-# Python module imports.
-import wx
-
 # relax module imports.
 from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, generate_spin_id, molecule_loop
 from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
-from base import UF_base
+from base import UF_base, UF_panel
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_str, str_to_gui
 from gui.wizard import Wiz_window
@@ -48,10 +45,11 @@ class Molecule(UF_base):
         @type event:    wx event
         """
 
-        # The dialog.
-        window = Copy_window(self.gui, self.interpreter)
-        window.ShowModal()
-        window.Destroy()
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=700, size_y=400, title='Copy a molecule')
+        panel = Copy_panel(wizard, self.gui, self.interpreter)
+        wizard.add_page(panel)
+        wizard.run()
 
 
     def create(self, event):
@@ -61,14 +59,11 @@ class Molecule(UF_base):
         @type event:    wx event
         """
 
-        # Initialise the dialog.
-        self._create_window = Add_window(self.gui, self.interpreter)
-
-        # Show the dialog.
-        self._create_window.ShowModal()
-
-        # Destroy.
-        self._create_window.Destroy()
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=600, size_y=400, title='Add a molecule')
+        panel = Add_panel(wizard, self.gui, self.interpreter)
+        wizard.add_page(panel)
+        wizard.run()
 
 
     def delete(self, event, mol_name=None):
@@ -80,28 +75,24 @@ class Molecule(UF_base):
         @type mol_name:     str
         """
 
-        # Initialise the dialog.
-        self._delete_window = Delete_window(self.gui, self.interpreter)
+        # Create the wizard.
+        wizard = Wiz_window(size_x=600, size_y=400, title='Delete a molecule')
+        panel = Delete_panel(wizard, self.gui, self.interpreter)
+        wizard.add_page(panel)
 
         # Default molecule name.
         if mol_name:
-            self._delete_window.mol.SetValue(mol_name)
+            panel.mol.SetValue(mol_name)
 
-        # Show the dialog.
-        self._delete_window.ShowModal()
-
-        # Destroy.
-        self._delete_window.Destroy()
+        # Execute the wizard.
+        wizard.run()
 
 
 
-class Add_window(Wiz_window):
-    """The molecule.create() user function window."""
+class Add_panel(UF_panel):
+    """The molecule.create() user function panel."""
 
     # Some class variables.
-    size_x = 600
-    size_y = 400
-    frame_title = 'Add a molecule'
     image_path = WIZARD_IMAGE_PATH + 'molecule.png'
     main_text = 'This dialog allows you to add new molecules to the relax data store.  The molecule will be added to the current data pipe.'
     title = 'Addition of new molecules'
@@ -133,13 +124,10 @@ class Add_window(Wiz_window):
 
 
 
-class Copy_window(Wiz_window):
-    """The molecule.copy() user function window."""
+class Copy_panel(UF_panel):
+    """The molecule.copy() user function panel."""
 
     # Some class variables.
-    size_x = 700
-    size_y = 400
-    frame_title = 'Copy a molecule'
     image_path = WIZARD_IMAGE_PATH + 'molecule.png'
     main_text = 'This dialog allows you to copy molecules.'
     title = 'Molecule copy'
@@ -226,13 +214,10 @@ class Copy_window(Wiz_window):
 
 
 
-class Delete_window(Wiz_window):
-    """The molecule.delete() user function window."""
+class Delete_panel(UF_panel):
+    """The molecule.delete() user function panel."""
 
     # Some class variables.
-    size_x = 600
-    size_y = 400
-    frame_title = 'Delete a molecule'
     image_path = WIZARD_IMAGE_PATH + 'molecule.png'
     main_text = 'This dialog allows you to delete molecules from the relax data store.  The molecule will be deleted from the current data pipe.'
     title = 'Molecule deletion'

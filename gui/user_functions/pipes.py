@@ -132,7 +132,7 @@ class Add_panel(UF_panel):
 
 
 class Copy_panel(UF_panel):
-    """The pipe.copy() user function window."""
+    """The pipe.copy() user function panel."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pipe.png'
@@ -188,7 +188,7 @@ class Copy_panel(UF_panel):
 
 
 class Delete_panel(UF_panel):
-    """The pipe.delete() user function window."""
+    """The pipe.delete() user function panel."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pipe.png'
@@ -240,7 +240,7 @@ class Delete_panel(UF_panel):
 
 
 class Switch_panel(UF_panel):
-    """The pipe.switch() user function window."""
+    """The pipe.switch() user function panel."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pipe_switch.png'

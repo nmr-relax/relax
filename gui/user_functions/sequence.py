@@ -25,13 +25,12 @@
 
 # Python module imports.
 from string import split
-import wx
 
 # relax module imports.
 from generic_fns import pipes
 
 # GUI module imports.
-from base import UF_base
+from base import UF_base, UF_panel
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_int, gui_to_str
 from gui.wizard import Wiz_window
@@ -48,24 +47,18 @@ class Sequence(UF_base):
         @type event:        wx event
         """
 
-        # Initialise the dialog.
-        self._read_window = Read_window(self.gui, self.interpreter)
-
-        # Show the dialog.
-        self._read_window.ShowModal()
-
-        # Destroy.
-        self._read_window.Destroy()
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title='Read the spin sequence from a file')
+        panel = Read_panel(wizard, self.gui, self.interpreter)
+        wizard.add_page(panel)
+        wizard.run()
 
 
 
-class Read_window(Wiz_window):
-    """The sequence.delete() user function window."""
+class Read_panel(UF_panel):
+    """The sequence.delete() user function panel."""
 
     # Some class variables.
-    size_x = 800
-    size_y = 600
-    frame_title = 'Read the spin sequence from a file'
     image_path = WIZARD_IMAGE_PATH + 'sequence.png'
     main_text = 'This dialog allows you to read the molecule, residue, and spin information from a file.'
     title = 'Sequence reading'
