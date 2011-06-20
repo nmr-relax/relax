@@ -57,7 +57,7 @@ class Value(UF_base):
 
 
 class Set_panel(UF_panel):
-    """The user function window."""
+    """The value.set() user function panel."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
