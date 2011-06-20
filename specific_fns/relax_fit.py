@@ -465,8 +465,8 @@ class Relax_fit(API_base, API_common):
     def _select_model(self, model='exp_2param_neg'):
         """Function for selecting the model of the exponential curve.
 
-        @keyword model: The exponential curve type.  Can be one of 8 functions: 'exp_2param', 
-                        'exp_2param_neg', 'exp_2param_inv_neg', 'exp_3param', 'exp_3param_neg', 
+        @keyword model: The exponential curve type.  Can be one of 8 functions: 'exp_2param',
+                        'exp_2param_neg', 'exp_2param_inv_neg', 'exp_3param', 'exp_3param_neg',
                         'exp_3param_inv', or 'exp_3param_inv_neg'.
         @type model:    str
         """
