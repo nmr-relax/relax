@@ -82,9 +82,9 @@ class Relax_fit(User_fn_class):
         ~~~~~~~~~~~~~~~~~
 
         The supported curve fitting procedures include the default two parameter exponential fit,
-        selected by setting the 'fit_type' argument to 'exp_2param_neg', the three parameter inversion
-        recovery experiment in which the peak intensity limit is a non-zero value, selected by
-        setting the argument to 'exp_3param_inv_neg', as well as various other forms.
+        selected by setting the 'fit_type' argument to 'exp_2param_neg', the three parameter
+        inversion recovery experiment in which the peak intensity limit is a non-zero value,
+        selected by setting the argument to 'exp_3param_inv_neg', as well as various other forms.
 
         The general parameters of these models are
             'exp_2param*': [Rx, I0],
