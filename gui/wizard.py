@@ -712,6 +712,7 @@ class Wiz_window(wx.Dialog):
         self.Centre()
 
         # Initialise the page storage.
+        self.current_page = 0
         self.pages = []
         self.page_sizers = []
         self.button_sizers = []
@@ -843,8 +844,8 @@ class Wiz_window(wx.Dialog):
         for j in range(len(self.pages)):
             self.main_sizer.Hide(self.page_sizers[j])
 
-        # Add the page.
-        self.main_sizer.Add(self.page_sizers[i], 1, wx.ALL|wx.EXPAND, 0)
+        # Show the desired page.
+        self.main_sizer.Show(self.page_sizers[i])
 
         # Re-perform the window layout.
         self.Layout()
@@ -885,16 +886,11 @@ class Wiz_window(wx.Dialog):
         # Build the buttons for the entire wizard.
         self.build_buttons()
 
+        # Display the first page.
+        self.display_page(0)
+
         # Show the wizard.
         self.ShowModal()
-
-        # Loop over the pages.
-        for i in range(len(self.pages)):
-            # Store the current page.
-            self.current_page = i
-
-            # Display the page.
-            self.display_page(i)
 
         # Destroy the wizard.
         self.Destroy()
