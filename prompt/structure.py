@@ -334,7 +334,18 @@ class Structure(User_fn_class):
 
         relax> for id in [":A@C8", ":A@C2", ":G@C8", ":G@N1", ":C@C5", ":C@C6", ":U@N3", ":U@C5", ":U@C6"]:
         relax>     structure.load_spins(spin_id=id)
-        """
+
+
+
+        Example for xyz file
+        To load all C atoms from the 'test.xyz' (which is a single molecule), type the following two user functions:
+
+        relax> structure.read_xyz('test.xyz')
+        relax> structure.load_spins(spin_id='@C')
+
+        To load only the third atom from the xyz file, type the following user function:
+        relax> structure.load_spins(spin_id='@3')
+"""
 
         # Function intro text.
         if self._exec_info.intro:
@@ -493,13 +504,11 @@ class Structure(User_fn_class):
         Description
         ~~~~~~~~~~~
 
-        The reading of XYZ files into relax is quite a flexible procedure allowing for both models,
-        defined as an ensemble of the same molecule but with different atomic positions, and
-        different molecules within the same model.  One of more molecules can exist in one or more
-        models.  The flexibility allows XYZ models to be converted into different molecules and
-        different XYZ files loaded as the same molecule but as different models.  This flexibility
-        is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 'read_model', and
-        'set_model_num'.
+        The XYZ files with different models, which defined as an ensemble of the same molecule but with 
+        different atomic positions, can be read into relax. If there are several molecules in one xyz file, 
+        please seperate them into different files and then load them individually. Loading different models
+        and different molecules is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 
+        'read_model', and 'set_model_num'.
 
 
         The 'set_mol_name' argument is used to name the molecules within the XYZ (within one
@@ -533,17 +542,16 @@ class Structure(User_fn_class):
         relax> structure.read_xyz('test.xyz', set_mol_name=['CaM_1', 'CaM_2'], read_model=[1, 5],
                                   set_model_num=[1, 1])
 
-        To load the files 'lactose_MCMM4_S1_1.xyz', 'lactose_MCMM4_S1_2.xyz',
-        'lactose_MCMM4_S1_3.xyz' and 'lactose_MCMM4_S1_4.xyz' as models, type the following sequence
-        of commands:
+        To load the files 'test_1.xyz', 'test_2.xyz','test_3.xyz' and 'test_4.xyz' as models, type the 
+        following sequence of commands:
 
-        relax> structure.read_xyz('lactose_MCMM4_S1_1.xyz', set_mol_name='lactose_MCMM4_S1',
+        relax> structure.read_xyz('test_1.xyz', set_mol_name='test_1',
                                   set_model_num=1)
-        relax> structure.read_xyz('lactose_MCMM4_S1_2.xyz', set_mol_name='lactose_MCMM4_S1',
+        relax> structure.read_xyz('test_2.xyz', set_mol_name='test_2',
                                   set_model_num=2)
-        relax> structure.read_xyz('lactose_MCMM4_S1_3.xyz', set_mol_name='lactose_MCMM4_S1',
+        relax> structure.read_xyz('test_3.xyz', set_mol_name='test_3',
                                   set_model_num=3)
-        relax> structure.read_xyz('lactose_MCMM4_S1_4.xyz', set_mol_name='lactose_MCMM4_S1',
+        relax> structure.read_xyz('test_4.xyz', set_mol_name='test_4',
                                   set_model_num=4)
         """
 
