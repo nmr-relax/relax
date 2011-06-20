@@ -275,17 +275,6 @@ class Wiz_panel(wx.Panel):
         return main_sizer
 
 
-    def cancel(self, event):
-        """Cancel the operation.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Close.
-        self.Close()
-
-
     def chooser(self, sizer, desc, func, choices):
         """Build the choice element.
 
@@ -829,7 +818,18 @@ class Wiz_window(wx.Dialog):
             button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
             button.SetToolTipString("Abort the operation")
             self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-            self.Bind(wx.EVT_BUTTON, self.pages[i].cancel, button)
+            self.Bind(wx.EVT_BUTTON, self.cancel, button)
+
+
+    def cancel(self, event):
+        """Cancel the operation.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Destroy the window.
+        self.Destroy()
 
 
     def display_page(self, i):
