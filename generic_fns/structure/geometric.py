@@ -443,10 +443,6 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         if not hasattr(cdp, 'structure'):
             raise RelaxNoPdbError
 
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
 
         # Initialise.
         #############
