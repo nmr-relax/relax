@@ -115,45 +115,22 @@ class New_analysis_panel(Wiz_panel):
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
 
         # The NOE button.
-        self.button_noe = wx.ToggleButton(self, -1, '')
-        self.button_noe.SetToolTipString("Steady-state NOE analysis")
-        self.button_noe.SetMinSize(size)
-        sizer1.Add(self.button_noe)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.select_noe, self.button_noe)
+        self.button_noe = self.create_button(box=sizer1, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="Steady-state NOE analysis", fn=self.select_noe)
 
         # The R1 button.
-        self.button_r1 = wx.ToggleButton(self, -1, '')
-        self.button_r1.SetToolTipString("R1 relaxation curve-fitting analysis")
-        self.button_r1.SetMinSize(size)
-        sizer1.Add(self.button_r1)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.select_r1, self.button_r1)
+        self.button_r1 = self.create_button(box=sizer1, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="R1 relaxation curve-fitting analysis", fn=self.select_r1)
 
         # The R2 button.
-        self.button_r2 = wx.ToggleButton(self, -1, '')
-        self.button_r2.SetToolTipString("R2 relaxation curve-fitting analysis")
-        self.button_r2.SetMinSize(size)
-        sizer1.Add(self.button_r2)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.select_r2, self.button_r2)
+        self.button_r2 = self.create_button(box=sizer1, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="R2 relaxation curve-fitting analysis", fn=self.select_r2)
 
         # The model-free button.
-        self.button_mf = wx.ToggleButton(self, -1, '')
-        self.button_mf.SetToolTipString("Model-free analysis")
-        self.button_mf.SetMinSize(size)
-        sizer2.Add(self.button_mf)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.select_mf, self.button_mf)
+        self.button_mf = self.create_button(box=sizer2, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="Model-free analysis", fn=self.select_mf)
 
         # The custom analysis button.
-        self.button_custom = wx.ToggleButton(self, -1, '')
-        self.button_custom.SetToolTipString("Custom analysis")
-        self.button_custom.SetMinSize(size)
-        sizer2.Add(self.button_custom)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.select_custom, self.button_custom)
+        self.button_custom = self.create_button(box=sizer2, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="Custom analysis", fn=self.select_custom, disabled=True)
 
         # A blank button.
-        self.button_none = wx.ToggleButton(self, -1, '')
-        self.button_none.SetMinSize(size)
-        sizer2.Add(self.button_none)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.select_none, self.button_none)
+        self.button_none = self.create_button(box=sizer2, size=size, disabled=True)
 
         # Add the sizers.
         box.Add(sizer1, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
@@ -171,6 +148,52 @@ class New_analysis_panel(Wiz_panel):
         self.add_buttons(sizer)
 
 
+    def create_button(self, box=None, size=None, bmp=None, text='', tooltip='', fn=None, disabled=False):
+        """Create a button for the new analysis selector panel.
+
+        @keyword box:       The box sizer to place the button into.
+        @type box:          wx.BoxSizer instance
+        @keyword size:      The size of the button.
+        @type size:         tuple of int
+        @keyword bmp:       The full path of the bitmap image to use for the button.
+        @type bmp:          str
+        @keyword text:      The text for the button.
+        @type text:         str
+        @keyword tooltip:   The button tooltip text.
+        @type tooltip:      str
+        @keyword fn:        The function to bind the button click to.
+        @type fn:           method
+        @return:            The button.
+        @rtype:             wx.lib.buttons.ThemedGenBitmapTextToggleButton instance
+        """
+
+        # Generate the button.
+        if bmp:
+            image = wx.Bitmap(bmp, wx.BITMAP_TYPE_ANY)
+            button = buttons.ThemedGenBitmapTextToggleButton(self, -1, image)
+        else:
+            button = buttons.ThemedGenBitmapTextToggleButton(self, -1)
+
+        # Set the tool tip.
+        button.SetToolTipString(tooltip)
+
+        # Button properties.
+        button.SetMinSize(size)
+
+        # Add to the given sizer.
+        box.Add(button)
+
+        # Bind the click.
+        self.Bind(wx.EVT_BUTTON, fn, button)
+
+        # The button is disabled.
+        if disabled:
+            button.Disable()
+
+        # Return the button.
+        return button
+
+
     def select_custom(self, event):
         """NOE analysis selection.
 
@@ -183,6 +206,8 @@ class New_analysis_panel(Wiz_panel):
 
         # Set the analysis type.
         self.analysis_type = 'custom'
+
+        event.Skip()
 
 
     def select_mf(self, event):
@@ -211,20 +236,6 @@ class New_analysis_panel(Wiz_panel):
 
         # Set the analysis type.
         self.analysis_type = 'noe'
-
-
-    def select_none(self, event):
-        """No analysis selection.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Toggle all buttons off.
-        self.toggle(self.button_none)
-
-        # Set the analysis type.
-        self.analysis_type = 'none'
 
 
     def select_r1(self, event):
