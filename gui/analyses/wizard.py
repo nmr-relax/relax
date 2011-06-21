@@ -95,6 +95,22 @@ class Data_pipe_panel(Wiz_panel):
 class New_analysis_button(buttons.ThemedGenBitmapTextToggleButton):
     """A special button for the new analysis panel."""
 
+    def OnLeftDown(self, event):
+        """Catch left button mouse down events to ignore when the button is toggled.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Do nothing on a click if already selected.
+        if self.GetValue():
+            event.Skip()
+
+        # Otherwise, perform the normal operations.
+        else:
+            super(buttons.ThemedGenBitmapTextToggleButton, self).OnLeftDown(event)
+
+
     def OnMouse(self, event):
         """Catch mouse events, specifically entry into the window.
 
@@ -106,7 +122,7 @@ class New_analysis_button(buttons.ThemedGenBitmapTextToggleButton):
         if event.GetEventType() == wx.EVT_ENTER_WINDOW.typeId and self.GetValue():
             event.Skip()
 
-        # Otherwise perform the normal operations.
+        # Otherwise, perform the normal operations.
         else:
             super(buttons.ThemedGenBitmapTextToggleButton, self).OnMouse(event)
 
