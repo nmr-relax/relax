@@ -166,7 +166,7 @@ class New_analysis_panel(Wiz_panel):
         self.button_mf = self.create_button(box=sizer2, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="Model-free analysis", fn=self.select_mf)
 
         # The custom analysis button.
-        self.button_custom = self.create_button(box=sizer2, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="Custom analysis", fn=self.select_custom, disabled=True)
+        self.button_custom = self.create_button(box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+'custom_150x150.png', tooltip="Custom analysis", fn=self.select_custom, disabled=True)
 
         # Add the sizers.
         box.Add(sizer1, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
