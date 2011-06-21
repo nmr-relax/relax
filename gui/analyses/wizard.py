@@ -92,6 +92,26 @@ class Data_pipe_panel(Wiz_panel):
 
 
 
+class New_analysis_button(buttons.ThemedGenBitmapTextToggleButton):
+    """A special button for the new analysis panel."""
+
+    def OnMouse(self, event):
+        """Catch mouse events, specifically entry into the window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Do nothing if entering the button when it is selected.
+        if event.GetEventType() == wx.EVT_ENTER_WINDOW.typeId and self.GetValue():
+            event.Skip()
+
+        # Otherwise perform the normal operations.
+        else:
+            super(buttons.ThemedGenBitmapTextToggleButton, self).OnMouse(event)
+
+
+
 class New_analysis_panel(Wiz_panel):
     """The panel for selection of the new analysis."""
 
@@ -170,9 +190,9 @@ class New_analysis_panel(Wiz_panel):
         # Generate the button.
         if bmp:
             image = wx.Bitmap(bmp, wx.BITMAP_TYPE_ANY)
-            button = buttons.ThemedGenBitmapTextToggleButton(self, -1, image)
+            button = New_analysis_button(self, -1, image)
         else:
-            button = buttons.ThemedGenBitmapTextToggleButton(self, -1)
+            button = New_analysis_button(self, -1)
 
         # Set the tool tip.
         button.SetToolTipString(tooltip)
