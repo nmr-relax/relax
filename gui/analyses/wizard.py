@@ -151,7 +151,7 @@ class New_analysis_panel(Wiz_panel):
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
 
         # The NOE button.
-        self.button_noe = self.create_button(box=sizer1, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="Steady-state NOE analysis", fn=self.select_noe)
+        self.button_noe = self.create_button(box=sizer1, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+'noe_150x150.png', tooltip="Steady-state NOE analysis", fn=self.select_noe)
 
         # The R1 button.
         self.button_r1 = self.create_button(box=sizer1, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="R1 relaxation curve-fitting analysis", fn=self.select_r1)
