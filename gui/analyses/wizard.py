@@ -159,14 +159,14 @@ class New_analysis_panel(Wiz_panel):
         # The R2 button.
         self.button_r2 = self.create_button(box=sizer1, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="R2 relaxation curve-fitting analysis", fn=self.select_r2)
 
+        # Consistency testing.
+        self.button_consist_test = self.create_button(box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+'consistency_testing_150x70.png', tooltip="Relaxation data consistency testing", fn=self.select_consist_test, disabled=True)
+
         # The model-free button.
         self.button_mf = self.create_button(box=sizer2, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="Model-free analysis", fn=self.select_mf)
 
         # The custom analysis button.
         self.button_custom = self.create_button(box=sizer2, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="Custom analysis", fn=self.select_custom, disabled=True)
-
-        # A blank button.
-        self.button_none = self.create_button(box=sizer2, size=size, disabled=True)
 
         # Add the sizers.
         box.Add(sizer1, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
@@ -230,6 +230,20 @@ class New_analysis_panel(Wiz_panel):
         return button
 
 
+    def select_consist_test(self, event):
+        """NOE analysis selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Toggle all buttons off.
+        self.toggle(self.button_consist_test)
+
+        # Set the analysis type.
+        self.analysis_type = 'consistency test'
+
+
     def select_custom(self, event):
         """NOE analysis selection.
 
@@ -242,8 +256,6 @@ class New_analysis_panel(Wiz_panel):
 
         # Set the analysis type.
         self.analysis_type = 'custom'
-
-        event.Skip()
 
 
     def select_mf(self, event):
@@ -316,9 +328,9 @@ class New_analysis_panel(Wiz_panel):
         self.button_noe.SetValue(False)
         self.button_r1.SetValue(False)
         self.button_r2.SetValue(False)
+        self.button_consist_test.SetValue(False)
         self.button_mf.SetValue(False)
         self.button_custom.SetValue(False)
-        self.button_none.SetValue(False)
 
         # Turn on the selected button.
         button.SetValue(True)

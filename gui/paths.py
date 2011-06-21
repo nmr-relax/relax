@@ -36,6 +36,7 @@ from status import Status; status = Status()
 
 
 # GUI image and icon paths.
+ANALYSIS_IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'analyses' + sep
 OXY_ICON_PATH = status.install_path + sep + 'graphics' + sep + 'oxygen_icons' + sep
 IMAGE_PATH = status.install_path + sep + 'gui' + sep + 'images' + sep
 ICON_RELAX_PATH = status.install_path + sep + 'graphics' + sep + 'relax_icons' + sep
