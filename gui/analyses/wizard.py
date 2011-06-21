@@ -43,7 +43,7 @@ class Analysis_wizard:
         """
 
         # Set up the wizard.
-        wizard = Wiz_window(size_x=700, size_y=600, title='Set parameter values')
+        wizard = Wiz_window(size_x=800, size_y=600, title='Set parameter values')
 
         # Add the new analysis panel.
         new_panel = New_analysis_panel(wizard)
@@ -144,7 +144,7 @@ class New_analysis_panel(Wiz_panel):
         """
 
         # The sizes.
-        size = (150, 150)
+        size = (170, 170)
 
         # The horizontal spacers.
         sizer1 = wx.BoxSizer(wx.HORIZONTAL)
