@@ -863,7 +863,7 @@ class Wiz_window(wx.Dialog):
             self.main_sizer.Hide(self.page_sizers[j])
 
         # Execute the page's on_display() method.
-        self.page[i].on_display()
+        self.pages[i].on_display()
 
         # Show the desired page.
         self.main_sizer.Show(self.page_sizers[i])
