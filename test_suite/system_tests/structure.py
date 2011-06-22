@@ -636,10 +636,10 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_xyz(file='Indol_test.xyz', dir=path)
 
         # Test the molecule name.
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, '1-Indolizinyl')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, 'Indol_test_mol1')
 
         # Load a single atom and test it.
-        self.interpreter.structure.load_spins('1-Indolizinyl:3@C')
+        self.interpreter.structure.load_spins('#Indol_test_mol1@3')
         self.assertEqual(count_spins(), 1)
 
         # Try loading a few protons.
