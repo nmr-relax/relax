@@ -620,6 +620,27 @@ class Wiz_panel(wx.Panel):
         return field
 
 
+    def on_display(self):
+        """To be over-ridden if an action is to be performed prior to displaying the page.
+
+        This method will be called by the wizard class method display_page() just after hiding all other pages but prior to displaying this page.
+        """
+
+
+    def on_exit(self):
+        """To be over-ridden if an action is to be performed just before exiting the page.
+
+        This method is called when moving 
+        """
+
+
+    def on_next(self):
+        """To be over-ridden if an action is to be performed just before moving to the next page.
+
+        This method is called when moving 
+        """
+
+
     def text(self, sizer, desc, default=''):
         """Build the input field.
 
@@ -841,6 +862,9 @@ class Wiz_window(wx.Dialog):
         for j in range(len(self.pages)):
             self.main_sizer.Hide(self.page_sizers[j])
 
+        # Execute the page's on_display() method.
+        self.page[i].on_display()
+
         # Show the desired page.
         self.main_sizer.Show(self.page_sizers[i])
 
@@ -869,6 +893,9 @@ class Wiz_window(wx.Dialog):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Execute the page's on_next() method.
+        self.pages[self.current_page].on_next()
 
         # Change the current page.
         self.current_page += 1
