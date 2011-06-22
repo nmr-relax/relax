@@ -154,11 +154,13 @@ class About_window(About_base):
 
 
 class Auto_model_free(Base_frame):
-    def __init__(self, gui, notebook, data_index=None):
+    def __init__(self, gui, analysis_name, notebook, data_index=None):
         """Build the automatic model-free protocol GUI element.
 
         @param gui:             The main GUI class.
         @type gui:              gui.relax_gui.Main instance
+        @param analysis_name:   The name of the analysis (the name in the tab part of the notebook).
+        @type analysis_name:    str
         @param notebook:        The notebook to pack this frame into.
         @type notebook:         wx.Notebook instance
         @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
@@ -172,6 +174,9 @@ class Auto_model_free(Base_frame):
         if data_index == None:
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add('model-free')
+
+            # Store the analysis name.
+            ds.relax_gui.analyses[data_index].analysis_name = analysis_name
 
             # Model-free variables.
             ds.relax_gui.analyses[data_index].model_source = getcwd()
