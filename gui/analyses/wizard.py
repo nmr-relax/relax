@@ -24,6 +24,7 @@
 """Module for the analysis selection wizard."""
 
 # Python module imports.
+from os import sep
 import wx
 from wx.lib import buttons
 
@@ -163,7 +164,7 @@ class New_analysis_panel(Wiz_panel):
         self.button_consist_test = self.create_button(box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+'consistency_testing_150x70.png', tooltip="Relaxation data consistency testing", fn=self.select_consist_test, disabled=True)
 
         # The model-free button.
-        self.button_mf = self.create_button(box=sizer2, size=size, bmp=paths.IMAGE_PATH+'sphere.jpg', tooltip="Model-free analysis", fn=self.select_mf)
+        self.button_mf = self.create_button(box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+'model_free'+sep+'model_free_150x150.png', tooltip="Model-free analysis", fn=self.select_mf)
 
         # The custom analysis button.
         self.button_custom = self.create_button(box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+'custom_150x150.png', tooltip="Custom analysis", fn=self.select_custom, disabled=True)
