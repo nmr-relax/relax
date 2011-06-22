@@ -662,7 +662,7 @@ class Structure(SystemTestCase):
         self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, 'SSS-cluster4-new-test_mol1')
 
         # Load a single atom and test it.
-        self.interpreter.structure.load_spins('SSS-cluster4-new-test_mol1:@C')
+        self.interpreter.structure.load_spins('#SSS-cluster4-new-test_mol1:@2')
         self.assertEqual(count_spins(), 1)
 
         # Try loading a few protons.
