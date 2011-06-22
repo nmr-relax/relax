@@ -30,6 +30,7 @@ from wx.lib import buttons
 
 # relax GUI module imports.
 from gui import paths
+from gui.misc import gui_to_str, str_to_gui
 from gui.wizard import Wiz_panel, Wiz_window
 
 
@@ -39,12 +40,12 @@ class Analysis_wizard:
     def run(self):
         """Run through the analysis selection wizard, returning the results.
 
-        @return:    The analysis type and data pipe name.
-        @rtype:     str, str
+        @return:    The analysis type, analysis name, and data pipe name.
+        @rtype:     tuple of str
         """
 
         # Set up the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title='Set parameter values')
+        wizard = Wiz_window(size_x=850, size_y=700, title='Set parameter values')
 
         # Add the new analysis panel.
         new_panel = New_analysis_panel(wizard)
@@ -57,8 +58,13 @@ class Analysis_wizard:
         # Execute the wizard.
         wizard.run()
 
+        # Get the data.
+        analysis_type = new_panel.analysis_type
+        analysis_name = gui_to_str(new_panel.analysis_name.GetValue())
+        pipe_name = gui_to_str(pipe_panel.pipe_name.GetValue())
+
         # Return the analysis type and pipe name.
-        return new_panel.analysis_type, str(pipe_panel.pipe_name.GetValue())
+        return analysis_type, analysis_name, pipe_name
 
 
 
@@ -133,9 +139,33 @@ class New_analysis_panel(Wiz_panel):
     """The panel for selection of the new analysis."""
 
     # Class variables.
-    image_path = paths.IMAGE_PATH + 'relax.gif'
-    main_text = 'Select one of the following analysis types.'
-    title = 'Start a new analysis'
+    image_path = paths.IMAGE_PATH + "relax.gif"
+    main_text = "A number of automatic analyses to be preformed using relax in GUI mode.  Although not as flexible or powerful as the prompt/scripting modes, this provides a quick and easy setup and execution for a number of analysis types.   These currently include the calculation of the steady-state NOE, the exponential curve-fitting for the R1 and R2 relaxation rates, and for a full and automatic model-free analysis using the d'Auvergne and Gooley, 2008b protocol.  All analyses perform error propagation using the gold standard Monte Calro simulations.  Please select from one of the following analysis types:"
+    title = "Start a new analysis"
+
+    def add_artwork(self, sizer):
+        """Add the artwork to the dialog.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Create a vertical box.
+        sizer2 = wx.BoxSizer(wx.VERTICAL)
+
+        # Add a spacer.
+        sizer2.AddSpacer(30)
+
+        # Add the graphics.
+        self.image = wx.StaticBitmap(self, -1, wx.Bitmap(self.image_path, wx.BITMAP_TYPE_ANY))
+        sizer2.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
+
+        # Nest the sizers.
+        sizer.Add(sizer2)
+
+        # A spacer.
+        sizer.AddSpacer(self.art_spacing)
+
 
     def add_buttons(self, box):
         """The widget of analysis buttons.
@@ -183,6 +213,12 @@ class New_analysis_panel(Wiz_panel):
 
         # Add the button widget.
         self.add_buttons(sizer)
+
+        # Add a spacer.
+        sizer.AddStretchSpacer(2)
+
+        # Add the analysis name field.
+        self.analysis_name = self.input_field(sizer, "The name of the new analysis:", tooltip='The name of the analysis can be changed to any text.')
 
 
     def create_button(self, box=None, size=None, bmp=None, text='', tooltip='', fn=None, disabled=False):
@@ -269,6 +305,9 @@ class New_analysis_panel(Wiz_panel):
         # Toggle all buttons off.
         self.toggle(self.button_mf)
 
+        # Update the analysis name.
+        self.analysis_name.SetValue(str_to_gui('Model-free'))
+
         # Set the analysis type.
         self.analysis_type = 'mf'
 
@@ -282,6 +321,9 @@ class New_analysis_panel(Wiz_panel):
 
         # Toggle all buttons off.
         self.toggle(self.button_noe)
+
+        # Update the analysis name.
+        self.analysis_name.SetValue(str_to_gui('Steady-state NOE'))
 
         # Set the analysis type.
         self.analysis_type = 'noe'
@@ -297,6 +339,9 @@ class New_analysis_panel(Wiz_panel):
         # Toggle all buttons off.
         self.toggle(self.button_r1)
 
+        # Update the analysis name.
+        self.analysis_name.SetValue(str_to_gui('R1 relaxation'))
+
         # Set the analysis type.
         self.analysis_type = 'r1'
 
@@ -310,6 +355,9 @@ class New_analysis_panel(Wiz_panel):
 
         # Toggle all buttons off.
         self.toggle(self.button_r2)
+
+        # Update the analysis name.
+        self.analysis_name.SetValue(str_to_gui('R2 relaxation'))
 
         # Set the analysis type.
         self.analysis_type = 'r2'
