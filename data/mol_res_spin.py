@@ -458,7 +458,7 @@ class ResidueList(list):
         return text
 
 
-    def add_item(self, res_name=None, res_num=None):
+    def add_item(self, res_name=None, res_num=None, res_num_exist=None):
         """Append an empty ResidueContainer to the ResidueList."""
 
         # If no residue data exists, replace the empty first residue with this residue.
@@ -478,7 +478,8 @@ class ResidueList(list):
                 # No residue numbers.
                 else:
                     if self[i].name == res_name:
-                        raise RelaxError("The unnumbered residue name '" + repr(res_name) + "' already exists.")
+                        if res_num_exist==False:
+                            raise RelaxError("The unnumbered residue name '" + repr(res_name) + "' already exists.")
 
             # Append a new ResidueContainer.
             self.append(ResidueContainer(res_name, res_num))

@@ -175,6 +175,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
     res_names = []
     spin_nums = []
     spin_names = []
+    res_num_exist = False
 
     # Loop over all atoms of the spin_id selection.
     model_index = -1
@@ -184,6 +185,10 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
         if last_model != model_num:
             model_index = model_index + 1
             last_model = model_num
+
+        # Check whether the res_num exists
+        if not res_num:
+            res_num_exist = True
 
         # Remove the '+' regular expression character from the mol, res, and spin names!
         if mol_name and search('\+', mol_name):
@@ -237,7 +242,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
         # Add the residue if it doesn't exist.
         if res_cont == None:
             # Add the residue.
-            mol_cont.res.add_item(res_name=res_name, res_num=res_num)
+            mol_cont.res.add_item(res_name=res_name, res_num=res_num, res_num_exist=res_num_exist)
 
             # Get the container.
             res_cont = mol_cont.res[-1]
