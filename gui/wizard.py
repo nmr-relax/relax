@@ -102,6 +102,9 @@ class Wiz_panel(wx.Panel):
         @type parent:   wx.object instance
         """
 
+        # Store the args.
+        self.parent = parent
+
         # Execute the base class method.
         wx.Panel.__init__(self, parent, id=-1)
 
