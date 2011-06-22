@@ -59,7 +59,7 @@ class Analysis_wizard:
         wizard.run()
 
         # Get the data.
-        analysis_type = new_panel.analysis_type
+        analysis_type = wizard.analysis_type
         analysis_name = gui_to_str(new_panel.analysis_name.GetValue())
         pipe_name = gui_to_str(pipe_panel.pipe_name.GetValue())
 
@@ -278,7 +278,7 @@ class New_analysis_panel(Wiz_panel):
         self.toggle(self.button_consist_test)
 
         # Set the analysis type.
-        self.analysis_type = 'consistency test'
+        self.parent.analysis_type = 'consistency test'
 
 
     def select_custom(self, event):
@@ -292,7 +292,7 @@ class New_analysis_panel(Wiz_panel):
         self.toggle(self.button_custom)
 
         # Set the analysis type.
-        self.analysis_type = 'custom'
+        self.parent.analysis_type = 'custom'
 
 
     def select_mf(self, event):
@@ -309,7 +309,7 @@ class New_analysis_panel(Wiz_panel):
         self.analysis_name.SetValue(str_to_gui('Model-free'))
 
         # Set the analysis type.
-        self.analysis_type = 'mf'
+        self.parent.analysis_type = 'mf'
 
 
     def select_noe(self, event):
@@ -326,7 +326,7 @@ class New_analysis_panel(Wiz_panel):
         self.analysis_name.SetValue(str_to_gui('Steady-state NOE'))
 
         # Set the analysis type.
-        self.analysis_type = 'noe'
+        self.parent.analysis_type = 'noe'
 
 
     def select_r1(self, event):
@@ -343,7 +343,7 @@ class New_analysis_panel(Wiz_panel):
         self.analysis_name.SetValue(str_to_gui('R1 relaxation'))
 
         # Set the analysis type.
-        self.analysis_type = 'r1'
+        self.parent.analysis_type = 'r1'
 
 
     def select_r2(self, event):
@@ -360,7 +360,7 @@ class New_analysis_panel(Wiz_panel):
         self.analysis_name.SetValue(str_to_gui('R2 relaxation'))
 
         # Set the analysis type.
-        self.analysis_type = 'r2'
+        self.parent.analysis_type = 'r2'
 
 
     def toggle(self, button):
