@@ -358,17 +358,19 @@ class Main(wx.Frame):
 
         # Initialise the analysis wizard, and obtain the user specified data.
         wizard = Analysis_wizard()
-        analysis_name, analysis_type, pipe_name = wizard.run()
+        analysis_type, analysis_name, pipe_name = wizard.run()
 
         # Initialise the new analysis.
-        self.new_analysis(analysis_type)
+        self.new_analysis(analysis_type, analysis_name)
 
 
-    def new_analysis(self, analysis_type, index=None):
+    def new_analysis(self, analysis_type, analysis_name, index=None):
         """Initialise a new analysis.
 
         @param analysis_type:   The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
         @type analysis_type:    str
+        @param analysis_name:   The name of the analysis to initialise.
+        @type analysis_name:    str
         @keyword index:         The index of the analysis in the relax data store (set to None if no data currently exists).
         @type index:            None or int
         """
@@ -399,12 +401,6 @@ class Main(wx.Frame):
                    'r2':  Auto_r2,
                    'mf':  Auto_model_free}
 
-        # The titles.
-        titles = {'noe': "steady-state NOE",
-                  'r1':  "R1 relaxation",
-                  'r2':  "R2 relaxation",
-                  'mf':  "Model-free"}
-
         # Bad analysis type.
         if analysis_type not in classes.keys():
             raise RelaxError("The analysis '%s' is unknown." % analysis_type)
@@ -416,7 +412,7 @@ class Main(wx.Frame):
         self.analyses.append(analysis(self, self.notebook, index))
 
         # Add to the notebook.
-        self.notebook.AddPage(self.analyses[-1].parent, titles[analysis_type])
+        self.notebook.AddPage(self.analyses[-1].parent, analysis_name)
 
         # Reset the main window layout.
         self.Layout()
