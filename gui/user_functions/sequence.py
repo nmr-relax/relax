@@ -30,7 +30,7 @@ from string import split
 from generic_fns import pipes
 
 # GUI module imports.
-from base import UF_base, UF_panel
+from base import UF_base, UF_page
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_int, gui_to_str
 from gui.wizard import Wiz_window
@@ -49,14 +49,14 @@ class Sequence(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title='Read the spin sequence from a file')
-        panel = Read_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Read_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
         wizard.run()
 
 
 
-class Read_panel(UF_panel):
-    """The sequence.delete() user function panel."""
+class Read_page(UF_page):
+    """The sequence.delete() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'sequence.png'

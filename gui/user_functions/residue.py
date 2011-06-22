@@ -31,7 +31,7 @@ from generic_fns.mol_res_spin import generate_spin_id, molecule_loop, residue_lo
 from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
-from base import UF_base, UF_panel
+from base import UF_base, UF_page
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
@@ -51,8 +51,8 @@ class Residue(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=600, title='Copy a residue')
-        panel = Copy_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Copy_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
         wizard.run()
 
 
@@ -67,12 +67,12 @@ class Residue(UF_base):
 
         # Initialise the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title='Add a residue')
-        panel = Create_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Create_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
 
         # Default molecule name.
         if mol_name:
-            panel.mol.SetValue(mol_name)
+            page.mol.SetValue(mol_name)
 
         # Execute the wizard.
         wizard.run()
@@ -93,24 +93,24 @@ class Residue(UF_base):
 
         # Initialise the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title='Delete a residue')
-        panel = Delete_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Delete_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
 
         # Default molecule name.
         if mol_name:
-            panel.mol.SetValue(mol_name)
+            page.mol.SetValue(mol_name)
 
         # Default residue.
         if res_num or res_name:
-            panel.res.SetValue("%s %s" % (res_num, res_name))
+            page.res.SetValue("%s %s" % (res_num, res_name))
 
         # Execute the wizard.
         wizard.run()
 
 
 
-class Copy_panel(UF_panel, Mol_res_spin):
-    """The residue.copy() user function panel."""
+class Copy_page(UF_page, Mol_res_spin):
+    """The residue.copy() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'residue.png'
@@ -238,8 +238,8 @@ class Copy_panel(UF_panel, Mol_res_spin):
 
 
 
-class Create_panel(UF_panel, Mol_res_spin):
-    """The residue.create() user function panel."""
+class Create_page(UF_page, Mol_res_spin):
+    """The residue.create() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'residue.png'
@@ -305,8 +305,8 @@ class Create_panel(UF_panel, Mol_res_spin):
 
 
 
-class Delete_panel(UF_panel, Mol_res_spin):
-    """The residue.delete() user function panel."""
+class Delete_page(UF_page, Mol_res_spin):
+    """The residue.delete() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'residue.png'

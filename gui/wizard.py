@@ -81,8 +81,8 @@ class File_selector:
 
 
 
-class Wiz_panel(wx.Panel):
-    """The panel base class to be placed inside the wizard-like window.
+class Wiz_page(wx.Panel):
+    """The wizard pages to be placed inside the wizard.
 
     To inherit from this class, you must supply the add_contents() and execute() methods.  The add_contents() method should build the specific GUI elements, and the execute() method is called when clicking on the apply or ok buttons.
     """

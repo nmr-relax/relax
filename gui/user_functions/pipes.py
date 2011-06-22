@@ -30,7 +30,7 @@ import wx
 from generic_fns.pipes import VALID_TYPES, cdp_name, pipe_names
 
 # GUI module imports.
-from base import UF_base, UF_panel
+from base import UF_base, UF_page
 from gui.misc import gui_to_str
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
@@ -49,8 +49,8 @@ class Pipes(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title='Add a data pipe')
-        panel = Add_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Add_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
         wizard.run()
 
 
@@ -63,8 +63,8 @@ class Pipes(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title='Copy a data pipe')
-        panel = Copy_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Copy_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
         wizard.run()
 
 
@@ -77,8 +77,8 @@ class Pipes(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title='Delete a data pipe')
-        panel = Delete_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Delete_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
         wizard.run()
 
 
@@ -91,13 +91,13 @@ class Pipes(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=650, size_y=450, title='Data pipe switching')
-        panel = Switch_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel, apply_button=False)
+        page = Switch_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page, apply_button=False)
         wizard.run()
 
 
-class Add_panel(UF_panel):
-    """The pipe.create() user function panel."""
+class Add_page(UF_page):
+    """The pipe.create() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pipe.png'
@@ -131,8 +131,8 @@ class Add_panel(UF_panel):
 
 
 
-class Copy_panel(UF_panel):
-    """The pipe.copy() user function panel."""
+class Copy_page(UF_page):
+    """The pipe.copy() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pipe.png'
@@ -187,8 +187,8 @@ class Copy_panel(UF_panel):
 
 
 
-class Delete_panel(UF_panel):
-    """The pipe.delete() user function panel."""
+class Delete_page(UF_page):
+    """The pipe.delete() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pipe.png'
@@ -239,8 +239,8 @@ class Delete_panel(UF_panel):
 
 
 
-class Switch_panel(UF_panel):
-    """The pipe.switch() user function panel."""
+class Switch_page(UF_page):
+    """The pipe.switch() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pipe_switch.png'

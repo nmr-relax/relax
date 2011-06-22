@@ -30,7 +30,7 @@ from string import split
 from generic_fns import pipes
 
 # GUI module imports.
-from base import UF_base, UF_panel
+from base import UF_base, UF_page
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_float, gui_to_int, gui_to_str
 from gui.wizard import Wiz_window
@@ -49,8 +49,8 @@ class Relax_data(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title='Delete the relaxation data')
-        panel = Delete_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Delete_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
         wizard.run()
 
 
@@ -63,14 +63,14 @@ class Relax_data(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=800, title='Read the relaxation data from a file')
-        panel = Read_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Read_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
         wizard.run()
 
 
 
-class Delete_panel(UF_panel):
-    """The relax_data.read() user function panel."""
+class Delete_page(UF_page):
+    """The relax_data.read() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'fid.png'
@@ -126,8 +126,8 @@ class Delete_panel(UF_panel):
 
 
 
-class Read_panel(UF_panel):
-    """The relax_data.read() user function panel."""
+class Read_page(UF_page):
+    """The relax_data.read() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'fid.png'

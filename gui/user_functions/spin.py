@@ -31,7 +31,7 @@ from generic_fns.mol_res_spin import generate_spin_id, molecule_loop, residue_lo
 from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
-from base import UF_base, UF_panel
+from base import UF_base, UF_page
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
@@ -51,8 +51,8 @@ class Spin(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=600, title='Copy a spin')
-        panel = Copy_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Copy_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
         wizard.run()
 
 
@@ -71,16 +71,16 @@ class Spin(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title='Add a spin')
-        panel = Create_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Create_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
 
         # Default molecule name.
         if mol_name:
-            panel.mol.SetValue(mol_name)
+            page.mol.SetValue(mol_name)
 
         # Default residue.
         if res_num or res_name:
-            panel.res.SetValue("%s %s" % (res_num, res_name))
+            page.res.SetValue("%s %s" % (res_num, res_name))
 
         # Execute the wizard.
         wizard.run()
@@ -105,28 +105,28 @@ class Spin(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title='Delete a spin')
-        panel = Delete_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Delete_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
 
         # Default molecule name.
         if mol_name:
-            panel.mol.SetValue(mol_name)
+            page.mol.SetValue(mol_name)
 
         # Default residue.
         if res_num or res_name:
-            panel.res.SetValue("%s %s" % (res_num, res_name))
+            page.res.SetValue("%s %s" % (res_num, res_name))
 
         # Default spin.
         if spin_num or spin_name:
-            panel.spin.SetValue("%s %s" % (spin_num, spin_name))
+            page.spin.SetValue("%s %s" % (spin_num, spin_name))
 
         # Execute the wizard.
         wizard.run()
 
 
 
-class Copy_panel(UF_panel, Mol_res_spin):
-    """The spin.copy() user function panel."""
+class Copy_page(UF_page, Mol_res_spin):
+    """The spin.copy() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'spin.png'
@@ -286,8 +286,8 @@ class Copy_panel(UF_panel, Mol_res_spin):
 
 
 
-class Create_panel(UF_panel, Mol_res_spin):
-    """The spin.create() user function panel."""
+class Create_page(UF_page, Mol_res_spin):
+    """The spin.create() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'spin.png'
@@ -357,8 +357,8 @@ class Create_panel(UF_panel, Mol_res_spin):
 
 
 
-class Delete_panel(UF_panel, Mol_res_spin):
-    """The spin.delete() user function panel."""
+class Delete_page(UF_page, Mol_res_spin):
+    """The spin.delete() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'spin.png'

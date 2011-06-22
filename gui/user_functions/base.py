@@ -24,7 +24,7 @@
 """Base class module for the user function GUI elements."""
 
 # relax GUI imports.
-from gui.wizard import Wiz_panel
+from gui.wizard import Wiz_page
 
 
 class UF_base:
@@ -45,8 +45,8 @@ class UF_base:
         """Dummy method to be overwritten."""
 
 
-class UF_panel(Wiz_panel):
-    """User function specific panel for the wizards."""
+class UF_page(Wiz_page):
+    """User function specific pages for the wizards."""
 
     def __init__(self, parent, gui, interpreter):
         """Set up the window.
@@ -64,4 +64,4 @@ class UF_panel(Wiz_panel):
         self.interpreter = interpreter
 
         # Execute the base class method.
-        super(UF_panel, self).__init__(parent)
+        super(UF_page, self).__init__(parent)

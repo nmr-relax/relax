@@ -28,7 +28,7 @@ from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, generate_spin_id, molecu
 from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
-from base import UF_base, UF_panel
+from base import UF_base, UF_page
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_str, str_to_gui
 from gui.wizard import Wiz_window
@@ -47,8 +47,8 @@ class Molecule(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=400, title='Copy a molecule')
-        panel = Copy_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Copy_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
         wizard.run()
 
 
@@ -61,8 +61,8 @@ class Molecule(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title='Add a molecule')
-        panel = Add_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Add_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
         wizard.run()
 
 
@@ -77,20 +77,20 @@ class Molecule(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title='Delete a molecule')
-        panel = Delete_panel(wizard, self.gui, self.interpreter)
-        wizard.add_page(panel)
+        page = Delete_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
 
         # Default molecule name.
         if mol_name:
-            panel.mol.SetValue(mol_name)
+            page.mol.SetValue(mol_name)
 
         # Execute the wizard.
         wizard.run()
 
 
 
-class Add_panel(UF_panel):
-    """The molecule.create() user function panel."""
+class Add_page(UF_page):
+    """The molecule.create() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'molecule.png'
@@ -124,8 +124,8 @@ class Add_panel(UF_panel):
 
 
 
-class Copy_panel(UF_panel):
-    """The molecule.copy() user function panel."""
+class Copy_page(UF_page):
+    """The molecule.copy() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'molecule.png'
@@ -214,8 +214,8 @@ class Copy_panel(UF_panel):
 
 
 
-class Delete_panel(UF_panel):
-    """The molecule.delete() user function panel."""
+class Delete_page(UF_page):
+    """The molecule.delete() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'molecule.png'

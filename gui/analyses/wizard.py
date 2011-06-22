@@ -32,7 +32,7 @@ from wx.lib import buttons
 # relax GUI module imports.
 from gui import paths
 from gui.misc import gui_to_str, str_to_gui
-from gui.wizard import Wiz_panel, Wiz_window
+from gui.wizard import Wiz_page, Wiz_window
 
 
 class Analysis_wizard:
@@ -49,27 +49,27 @@ class Analysis_wizard:
         wizard = Wiz_window(size_x=850, size_y=700, title='Set parameter values')
 
         # Add the new analysis panel.
-        new_panel = New_analysis_panel(wizard)
-        wizard.add_page(new_panel, apply_button=False)
+        new_page = New_analysis_page(wizard)
+        wizard.add_page(new_page, apply_button=False)
 
         # Add the data pipe name panel.
-        pipe_panel = Data_pipe_panel(wizard)
-        wizard.add_page(pipe_panel, apply_button=False)
+        pipe_page = Data_pipe_page(wizard)
+        wizard.add_page(pipe_page, apply_button=False)
 
         # Execute the wizard.
         wizard.run()
 
         # Get the data.
         analysis_type = wizard.analysis_type
-        analysis_name = gui_to_str(new_panel.analysis_name.GetValue())
-        pipe_name = gui_to_str(pipe_panel.pipe_name.GetValue())
+        analysis_name = gui_to_str(new_page.analysis_name.GetValue())
+        pipe_name = gui_to_str(pipe_page.pipe_name.GetValue())
 
         # Return the analysis type and pipe name.
         return analysis_type, analysis_name, pipe_name
 
 
 
-class Data_pipe_panel(Wiz_panel):
+class Data_pipe_page(Wiz_page):
     """The panel for setting the data pipe name."""
 
     # Class variables.
@@ -140,7 +140,7 @@ class New_analysis_button(buttons.ThemedGenBitmapTextToggleButton):
 
 
 
-class New_analysis_panel(Wiz_panel):
+class New_analysis_page(Wiz_page):
     """The panel for selection of the new analysis."""
 
     # Class variables.
