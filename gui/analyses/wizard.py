@@ -25,6 +25,7 @@
 
 # Python module imports.
 from os import sep
+from time import asctime, localtime
 import wx
 from wx.lib import buttons
 
@@ -95,7 +96,11 @@ class Data_pipe_panel(Wiz_panel):
         @type event:    wx event
         """
 
-        self.pipe_name.SetValue('test')
+        # Generate a name for the data pipe based on the type and time.
+        name = "%s (%s)" % (self.parent.analysis_type, asctime(localtime()))
+
+        # Update the field.
+        self.pipe_name.SetValue(str_to_gui(name))
 
 
 
