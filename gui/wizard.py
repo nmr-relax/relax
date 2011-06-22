@@ -152,8 +152,6 @@ class Wiz_panel(wx.Panel):
         # Add the graphics.
         if self.image_path:
             self.image = wx.StaticBitmap(self, -1, wx.Bitmap(self.image_path, wx.BITMAP_TYPE_ANY))
-
-            # Add the relax logo.
             sizer.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
         # A spacer.
