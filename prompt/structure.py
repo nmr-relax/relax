@@ -341,7 +341,7 @@ class Structure(User_fn_class):
         To load all C atoms from the 'test.xyz' (which is a single molecule), type the following two user functions:
 
         relax> structure.read_xyz('test.xyz')
-        relax> structure.load_spins(spin_id='@C')
+        relax> structure.load_spins(spin_id='@*C*')
 
         To load only the third atom from the xyz file, type the following user function:
         relax> structure.load_spins(spin_id='@3')
