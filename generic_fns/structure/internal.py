@@ -1646,7 +1646,7 @@ class MolContainer:
         """
 
         # initialisation for atom number
-        atom_number = 0
+        atom_number = 1
  
         # Loop over the records.
         for record in records:
