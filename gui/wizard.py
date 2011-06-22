@@ -718,8 +718,6 @@ class Wiz_window(wx.Dialog):
         @type panel:            wx.Panel instance
         @keyword apply_button:  A flag which if true will show the apply button for that page.
         @type apply_button:     bool
-        @return:                The index of the page.
-        @rtype:                 int
         """
 
         # Store the page.
@@ -743,8 +741,8 @@ class Wiz_window(wx.Dialog):
         # Store the apply button flag.
         self.button_apply.append(apply_button)
 
-        # Return the index of the page.
-        return len(self.pages) - 1
+        # Store the index of the page.
+        panel.page_index = len(self.pages) - 1
 
 
     def build_buttons(self):
