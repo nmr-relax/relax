@@ -126,6 +126,12 @@ class Auto_rx(Base_frame):
         complete = True
         missing = []
 
+        # The pipe name.
+        if hasattr(self.data, 'pipe_name'):
+            data.pipe_name = self.data.pipe_name
+        else:
+            data.pipe_name = 'rx_%s' % time.asctime(time.localtime())
+
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         if hasattr(self.data, 'sequence_file'):
             data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
@@ -308,7 +314,7 @@ class Auto_rx(Base_frame):
             return
 
         # Execute.
-        Relax_fit(file_root=self.filename, pipe_name='rx'+'_'+str(time.asctime(time.localtime())), seq_args=data.seq_args, results_directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, load_spin_ids=data.load_spin_ids, inc=data.inc)
+        Relax_fit(file_root=self.filename, pipe_name=data.pipe_name, seq_args=data.seq_args, results_directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, load_spin_ids=data.load_spin_ids, inc=data.inc)
 
         # Feedback about success.
         if not status.debug:

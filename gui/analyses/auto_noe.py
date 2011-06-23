@@ -126,6 +126,12 @@ class Auto_noe(Base_frame):
         complete = True
         missing = []
 
+        # The pipe name.
+        if hasattr(self.data, 'pipe_name'):
+            data.pipe_name = self.data.pipe_name
+        else:
+            data.pipe_name = 'noe_%s' % time.asctime(time.localtime())
+
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         if hasattr(self.data, 'sequence_file'):
             data.seq_args = [self.data.sequence_file, None, None, 1, None, None, None, None]
@@ -321,7 +327,7 @@ class Auto_noe(Base_frame):
             return
 
         # Execute.
-        NOE_calc(seq_args=data.seq_args, pipe_name='noe'+'_'+str(time.asctime(time.localtime())), noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, output_file=data.filename, results_dir=data.save_dir, int_method='height', heteronuc=data.heteronuc, proton=data.proton, heteronuc_pdb='@N')
+        NOE_calc(seq_args=data.seq_args, pipe_name=data.pipe_name, noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, output_file=data.filename, results_dir=data.save_dir, int_method='height', heteronuc=data.heteronuc, proton=data.proton, heteronuc_pdb='@N')
 
         # Feedback about success.
         if not status.debug:
