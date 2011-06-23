@@ -236,11 +236,26 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
 
         # Add the residue if it doesn't exist.
         if res_cont == None:
-            # Add the residue.
-            mol_cont.res.add_item(res_name=res_name, res_num=res_num)
+            # Get the unnamed residue, assuming there is only one:
+            res_cont = return_residue()
 
-            # Get the container.
-            res_cont = mol_cont.res[-1]
+            # Got something!
+            if res_cont != None:
+                # Rename the residue name if the res name is given and the sole container is unnamed.
+                if res_cont.name == None and res_name:
+                    # Print out.
+                    print(("Renaming the unnamed sole residue container to '%s'." % res_name))
+
+                    # Get the name.
+                    res_cont.name = res_name
+            
+            # Nothing exists yet.
+            else:
+                # Add the residue.
+                mol_cont.res.add_item(res_name=res_name, res_num=res_num)
+
+                # Get the container.
+                res_cont = mol_cont.res[-1]
 
         # Add the atom number to the ID string (atom name is ignored because only the number is unique).
         id = id + '@' + repr(atom_num)
