@@ -615,8 +615,11 @@ class Wiz_page(wx.Panel):
     def on_apply(self):
         """To be over-ridden if an action is to be performed on hitting the apply button.
 
-        This method will be called by the wizard class method _display_page() just after hiding all other pages but prior to displaying this page.
+        This method will be called when clicking on the apply button.  The default behaviour is to call the on_display() method.
         """
+
+        # Call the on_display method by default.
+        self.on_display()
 
 
     def on_display(self):
