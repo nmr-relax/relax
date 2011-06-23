@@ -154,12 +154,8 @@ class Copy_page(UF_page):
         self.pipe_to = self.input_field(sizer, "The destination pipe name:")
 
 
-    def on_apply(self, event):
-        """Clear the data is apply was hit.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Clear the data is apply was hit."""
 
         # Clear the previous data.
         self.pipe_from.Clear()
@@ -204,16 +200,6 @@ class Delete_page(UF_page):
         self.pipe_name = self.combo_box(sizer, "The pipe:", [])
 
 
-    def on_execute(self):
-        """Execute the user function."""
-
-        # Get the name.
-        pipe_name = str(self.pipe_name.GetValue())
-
-        # Delete the data pipe.
-        self.interpreter.pipe.delete(pipe_name)
-
-
     def on_display(self):
         """Clear and update the pipe name list."""
 
@@ -226,6 +212,16 @@ class Delete_page(UF_page):
         # The list of pipe names.
         for name in pipe_names():
             self.pipe_name.Append(name)
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the name.
+        pipe_name = str(self.pipe_name.GetValue())
+
+        # Delete the data pipe.
+        self.interpreter.pipe.delete(pipe_name)
 
 
 
@@ -252,16 +248,6 @@ class Switch_page(UF_page):
         self.pipe_name = self.combo_box(sizer, "The pipe:", [])
 
 
-    def on_execute(self):
-        """Execute the user function."""
-
-        # Get the name.
-        pipe_name = str(self.pipe_name.GetValue())
-
-        # Switch the data pipe.
-        self.interpreter.pipe.switch(pipe_name)
-
-
     def on_display(self):
         """Clear and update the pipe name list and cdp."""
 
@@ -276,3 +262,13 @@ class Switch_page(UF_page):
         # The list of pipe names.
         for name in pipe_names():
             self.pipe_name.Append(name)
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the name.
+        pipe_name = str(self.pipe_name.GetValue())
+
+        # Switch the data pipe.
+        self.interpreter.pipe.switch(pipe_name)
