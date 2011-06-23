@@ -141,9 +141,6 @@ class Wiz_page(wx.Panel):
         main_sizer.AddStretchSpacer()
         main_sizer.AddStretchSpacer()
 
-        # Bind some events.
-        self.Bind(wx.EVT_SHOW, self.update)
-
 
     def add_artwork(self, sizer):
         """Add the artwork to the dialog.
