@@ -112,7 +112,7 @@ class Add_page(UF_page):
         self.mol_type = self.combo_box(sizer, "The type of molecule:", ALLOWED_MOL_TYPES)
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # Get the name and type.
@@ -153,7 +153,7 @@ class Copy_page(UF_page):
         self.mol_to = self.input_field(sizer, "The new molecule name:", tooltip='If left blank, the new molecule will have the same name as the old.')
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # Get the pipe names.
@@ -169,16 +169,9 @@ class Copy_page(UF_page):
         # Copy the molecule.
         self.interpreter.molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
-        # Update.
-        self.update(None)
 
-
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Update the pipe name lists."""
 
         # Set the default pipe name.
         if not gui_to_str(self.pipe_from.GetValue()):
@@ -234,7 +227,7 @@ class Delete_page(UF_page):
         self.mol = self.combo_box(sizer, "The molecule:", [])
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # Get the name.
@@ -246,16 +239,9 @@ class Delete_page(UF_page):
         # Delete the molecule.
         self.interpreter.molecule.delete(mol_id=id)
 
-        # Update.
-        self.update(None)
 
-
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Clear and update the molecule list."""
 
         # Clear the previous data.
         self.mol.Clear()

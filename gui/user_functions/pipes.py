@@ -119,7 +119,7 @@ class Add_page(UF_page):
         self.pipe_type = self.combo_box(sizer, "The type of data pipe:", VALID_TYPES)
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # Get the name and type.
@@ -154,22 +154,8 @@ class Copy_page(UF_page):
         self.pipe_to = self.input_field(sizer, "The destination pipe name:")
 
 
-    def execute(self):
-        """Execute the user function."""
-
-        # Get the pipe names.
-        pipe_from = gui_to_str(self.pipe_from.GetValue())
-        pipe_to = gui_to_str(self.pipe_to.GetValue())
-
-        # Copy the data pipe.
-        self.interpreter.pipe.copy(pipe_from, pipe_to)
-
-        # Update.
-        self.update(None)
-
-
-    def update(self, event):
-        """Update the UI.
+    def on_apply(self, event):
+        """Clear the data is apply was hit.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -184,6 +170,17 @@ class Copy_page(UF_page):
         # The list of pipe names.
         for name in pipe_names():
             self.pipe_from.Append(name)
+
+
+    def on_exit(self):
+        """Execute the user function."""
+
+        # Get the pipe names.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        pipe_to = gui_to_str(self.pipe_to.GetValue())
+
+        # Copy the data pipe.
+        self.interpreter.pipe.copy(pipe_from, pipe_to)
 
 
 
@@ -207,7 +204,7 @@ class Delete_page(UF_page):
         self.pipe_name = self.combo_box(sizer, "The pipe:", [])
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # Get the name.
@@ -216,16 +213,9 @@ class Delete_page(UF_page):
         # Delete the data pipe.
         self.interpreter.pipe.delete(pipe_name)
 
-        # Update.
-        self.update(None)
 
-
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Clear and update the pipe name list."""
 
         # Clear the previous data.
         self.pipe_name.Clear()
@@ -262,7 +252,7 @@ class Switch_page(UF_page):
         self.pipe_name = self.combo_box(sizer, "The pipe:", [])
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # Get the name.
@@ -272,12 +262,8 @@ class Switch_page(UF_page):
         self.interpreter.pipe.switch(pipe_name)
 
 
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Clear and update the pipe name list and cdp."""
 
         # Clear the previous data.
         self.pipe_name.Clear()

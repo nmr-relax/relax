@@ -147,7 +147,7 @@ class Copy_page(UF_page, Mol_res_spin):
         self.res_name_to = self.input_field(sizer, "The new residue name:", tooltip='If left blank, the new residue will have the same name as the old.')
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # Get the pipe names.
@@ -163,16 +163,9 @@ class Copy_page(UF_page, Mol_res_spin):
         # Copy the molecule.
         self.interpreter.residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
 
-        # Update.
-        self.update(None)
 
-
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Update the pipe name lists."""
 
         # Set the default pipe name.
         if not gui_to_str(self.pipe_from.GetValue()):
@@ -264,7 +257,7 @@ class Create_page(UF_page, Mol_res_spin):
         self.res_num = self.input_field(sizer, "The residue number:")
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # The molecule name.
@@ -288,12 +281,8 @@ class Create_page(UF_page, Mol_res_spin):
         self.interpreter.residue.create(res_name=res_name, res_num=res_num, mol_name=mol_name)
 
 
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Update the molecule list."""
 
         # Clear the previous data.
         self.mol.Clear()
@@ -325,7 +314,7 @@ class Delete_page(UF_page, Mol_res_spin):
         self.res = self.combo_box(sizer, "The residue:", [])
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # The residue ID.
@@ -342,12 +331,8 @@ class Delete_page(UF_page, Mol_res_spin):
         self._update_residues(None)
 
 
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Clear and update the residue and molecule lists."""
 
         # Clear the previous data.
         self.mol.Clear()

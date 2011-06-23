@@ -90,7 +90,7 @@ class Delete_page(UF_page):
         self.frq_label = self.combo_box(sizer, "The frequency label in MHz:", choices=[])
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # The labels and frq.
@@ -101,12 +101,8 @@ class Delete_page(UF_page):
         self.interpreter.relax_data.delete(ri_label=ri_label, frq_label=frq_label)
 
 
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Clear previous data and update the label lists."""
 
         # Clear the previous data.
         self.ri_label.Clear()
@@ -159,7 +155,7 @@ class Read_page(UF_page):
         self.spin_id = self.input_field(sizer, "Restrict data loading to certain spins:", tooltip="This must be a valid spin ID.  Multiple spins can be selected using ranges, the '|' operator, residue ranges, etc.")
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # The labels and frq.

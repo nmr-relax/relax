@@ -82,7 +82,7 @@ class Set_page(UF_page):
         self.spin_id = self.input_field(sizer, "Restrict data loading to certain spins:", tooltip="This must be a valid spin ID.  Multiple spins can be selected using ranges, the '|' operator, residue ranges, etc.")
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # The parameter and value.
@@ -96,12 +96,8 @@ class Set_page(UF_page):
         self.interpreter.value.set(val=value, param=param, spin_id=spin_id)
 
 
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Fill out the list of parameters and their descriptions."""
 
         # Get the specific functions.
         data_names = specific_fns.setup.get_specific_fn('data_names', pipes.get_type(), raise_error=False)

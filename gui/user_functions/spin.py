@@ -169,7 +169,7 @@ class Copy_page(UF_page, Mol_res_spin):
         self.spin_name_to = self.input_field(sizer, "The new spin name:", tooltip='If left blank, the new spin will have the same name as the old.')
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # Get the pipe names.
@@ -185,11 +185,8 @@ class Copy_page(UF_page, Mol_res_spin):
         # Copy the spin.
         self.interpreter.spin.copy(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
 
-        # Update.
-        self.update(None)
 
-
-    def update(self, event):
+    def on_display(self):
         """Update the UI.
 
         @param event:   The wx event.
@@ -312,7 +309,7 @@ class Create_page(UF_page, Mol_res_spin):
         self.spin_num = self.input_field(sizer, "The spin number:")
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # Get the molecule info.
@@ -339,12 +336,8 @@ class Create_page(UF_page, Mol_res_spin):
         self.interpreter.spin.create(spin_name=spin_name, spin_num=spin_num, res_name=res_name, res_num=res_num, mol_name=mol_name)
 
 
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Clear all data and then update the list of molecule names."""
 
         # Clear the previous data.
         self.mol.Clear()
@@ -379,7 +372,7 @@ class Delete_page(UF_page, Mol_res_spin):
         self.spin = self.combo_box(sizer, "The spin:", [])
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # Get the spin ID.
@@ -396,12 +389,8 @@ class Delete_page(UF_page, Mol_res_spin):
         self._update_spins(None)
 
 
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Clear the spin data and update the mol list."""
 
         # Clear the previous data.
         self.mol.Clear()
