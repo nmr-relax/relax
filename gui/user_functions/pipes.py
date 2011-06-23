@@ -172,7 +172,7 @@ class Copy_page(UF_page):
             self.pipe_from.Append(name)
 
 
-    def on_exit(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # Get the pipe names.
