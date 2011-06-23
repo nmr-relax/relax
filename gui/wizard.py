@@ -84,7 +84,7 @@ class File_selector:
 class Wiz_page(wx.Panel):
     """The wizard pages to be placed inside the wizard.
 
-    To inherit from this class, you must supply minimally the add_contents() and on_execute() methods.  The add_contents() method should build the specific GUI elements, and the on_execute() method is called when clicking on the apply, ok, or finish buttons.  The following methods are also designed to be overwritten:
+    To inherit from this class, you must minimally supply the add_contents() method.  This method should build the specific GUI elements.  The following methods are also designed to be overwritten:
 
         - add_artwork(), this builds the left hand artwork section of the page.
         - add_contents(), this builds the right hand section of the page.
@@ -634,9 +634,6 @@ class Wiz_page(wx.Panel):
 
         This method is called when terminating the wizard or hitting the apply button. 
         """
-
-        # This must be supplied.
-        raise RelaxImplementError
 
 
     def on_next(self):
