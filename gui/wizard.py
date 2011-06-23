@@ -225,6 +225,9 @@ class Wiz_page(wx.Panel):
         except AllRelaxErrors, instance:
             error_message(instance.text, instance.__class__.__name__)
 
+        # Execute the on_apply() method.
+        self.on_apply()
+
 
     def _build_main_section(self, sizer):
         """Add the main part of the dialog.
@@ -607,6 +610,13 @@ class Wiz_page(wx.Panel):
 
         # Return the object.
         return field
+
+
+    def on_apply(self):
+        """To be over-ridden if an action is to be performed on hitting the apply button.
+
+        This method will be called by the wizard class method _display_page() just after hiding all other pages but prior to displaying this page.
+        """
 
 
     def on_display(self):
