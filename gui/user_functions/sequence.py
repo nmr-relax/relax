@@ -81,7 +81,7 @@ class Read_page(UF_page):
         self.spin_id = self.input_field(sizer, "Restrict data loading to certain spins:", tooltip="This must be a valid spin ID.  Multiple spins can be selected using ranges, the '|' operator, residue ranges, etc.")
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # The file name.
