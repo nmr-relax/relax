@@ -60,15 +60,17 @@ class Auto_noe(Base_frame):
     bitmap = None
     label = None
 
-    def __init__(self, gui, analysis_name, notebook, data_index=None):
+    def __init__(self, gui=None, notebook=None, analysis_name=None, pipe_name=None, data_index=None):
         """Build the automatic NOE analysis GUI frame elements.
 
-        @param gui:             The main GUI class.
+        @keyword gui:           The main GUI class.
         @type gui:              gui.relax_gui.Main instance
-        @param analysis_name:   The name of the analysis (the name in the tab part of the notebook).
-        @type analysis_name:    str
-        @param notebook:        The notebook to pack this frame into.
+        @keyword notebook:      The notebook to pack this frame into.
         @type notebook:         wx.Notebook instance
+        @keyword analysis_name: The name of the analysis (the name in the tab part of the notebook).
+        @type analysis_name:    str
+        @keyword pipe_name:     The name of the data pipe associated with this analysis.
+        @type pipe_name:        str
         @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
         @type data_index:       None or int
         """
@@ -81,8 +83,9 @@ class Auto_noe(Base_frame):
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add('NOE')
 
-            # Store the analysis name.
+            # Store the analysis and pipe names.
             ds.relax_gui.analyses[data_index].analysis_name = analysis_name
+            ds.relax_gui.analyses[data_index].pipe_name = pipe_name
 
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].frq = ''
