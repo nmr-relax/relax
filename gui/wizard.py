@@ -791,7 +791,7 @@ class Wiz_window(wx.Dialog):
                 button.SetToolTipString("Accept the operation")
                 button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-                self.Bind(wx.EVT_BUTTON, self.ok, button)
+                self.Bind(wx.EVT_BUTTON, self._ok, button)
                 self._buttons[i]['ok'] = button
 
             # The finish button (only for the last page with multi-pages).
