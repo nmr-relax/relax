@@ -84,7 +84,7 @@ class File_selector:
 class Wiz_page(wx.Panel):
     """The wizard pages to be placed inside the wizard.
 
-    To inherit from this class, you must supply the add_contents() and execute() methods.  The add_contents() method should build the specific GUI elements, and the execute() method is called when clicking on the apply or ok buttons.
+    To inherit from this class, you must supply minimally the add_contents() and on_exit() methods.  The add_contents() method should build the specific GUI elements, and the on_exit() method is called when clicking on the apply, ok, or finish buttons.  All other methods which are not private can be over-written.
     """
 
     # Some class variables.
@@ -230,7 +230,7 @@ class Wiz_page(wx.Panel):
 
         # Execute.
         try:
-            self.execute()
+            self.on_exit()
         except AllRelaxErrors, instance:
             error_message(instance.text, instance.__class__.__name__)
 
@@ -380,13 +380,6 @@ class Wiz_page(wx.Panel):
 
         # Return the combo box element.
         return combo
-
-
-    def execute(self):
-        """Execute the operation (dummy method).
-
-        If this method is not overridden, then the wizard panel will do nothing.
-        """
 
 
     def file_selection(self, sizer, desc, title='File selection', default="all files (*.*)|*"):
