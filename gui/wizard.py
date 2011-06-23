@@ -728,6 +728,20 @@ class Wiz_window(wx.Dialog):
         self._button_sizers = []
         self._button_apply_flag = []
 
+        # A max of 10 pages should be plenty enough (any more and the developer should be shot!).
+        for i in range(10):
+            # Append some Nones.
+            self._pages.append(None)
+
+            # Initialise all box sizers for the wizard pages.
+            self._page_sizers.append(wx.BoxSizer(wx.VERTICAL))
+
+            # Initialise all box sizers for the buttons.
+            self._button_sizers.append(wx.BoxSizer(wx.HORIZONTAL))
+
+            # Set all apply flags to True.
+            self._button_apply_flag.append(True)
+
 
     def _build_buttons(self):
         """Construct the buttons for all pages of the wizard."""
@@ -890,23 +904,22 @@ class Wiz_window(wx.Dialog):
         """
 
         # Store the page.
-        self._pages.append(panel)
+        index = self._num_pages
         self._num_pages += 1
+        self._pages[index] = panel
 
         # Store a new sizer for the page and its buttons.
-        self._page_sizers.append(wx.BoxSizer(wx.VERTICAL))
-        self.main_sizer.Add(self._page_sizers[-1], 1, wx.ALL|wx.EXPAND, 0)
+        self.main_sizer.Add(self._page_sizers[index], 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the sizer for the top half.
         top_sizer = wx.BoxSizer(wx.VERTICAL)
-        self._page_sizers[-1].Add(top_sizer, 1, wx.ALL|wx.EXPAND, 0)
+        self._page_sizers[index].Add(top_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the page to the top sizer.
         top_sizer.Add(panel, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the sizer for the wizard buttons.
-        self._button_sizers.append(wx.BoxSizer(wx.HORIZONTAL))
-        self._page_sizers[-1].Add(self._button_sizers[-1], 0, wx.ALIGN_RIGHT|wx.ALL, 0)
+        self._page_sizers[index].Add(self._button_sizers[index], 0, wx.ALIGN_RIGHT|wx.ALL, 0)
 
         # Store the apply button flag.
         self._button_apply_flag.append(apply_button)
