@@ -84,12 +84,12 @@ class File_selector:
 class Wiz_page(wx.Panel):
     """The wizard pages to be placed inside the wizard.
 
-    To inherit from this class, you must supply minimally the add_contents() and on_exit() methods.  The add_contents() method should build the specific GUI elements, and the on_exit() method is called when clicking on the apply, ok, or finish buttons.  The following methods are also designed to be overwritten:
+    To inherit from this class, you must supply minimally the add_contents() and on_execute() methods.  The add_contents() method should build the specific GUI elements, and the on_execute() method is called when clicking on the apply, ok, or finish buttons.  The following methods are also designed to be overwritten:
 
         - add_artwork(), this builds the left hand artwork section of the page.
         - add_contents(), this builds the right hand section of the page.
         - on_display(), this is executed when the page is displayed.
-        - on_exit(), this is executed when the wizard is terminated or the apply button is hit.
+        - on_execute(), this is executed when the wizard is terminated or the apply button is hit.
         - on_next(), this is executed when moving to the next wizard page.
 
     The following methods can be used by add_contents() to create standard GUI elements:
@@ -221,7 +221,7 @@ class Wiz_page(wx.Panel):
 
         # Execute.
         try:
-            self.on_exit()
+            self.on_execute()
         except AllRelaxErrors, instance:
             error_message(instance.text, instance.__class__.__name__)
 
@@ -626,7 +626,7 @@ class Wiz_page(wx.Panel):
         """
 
 
-    def on_exit(self):
+    def on_execute(self):
         """To be over-ridden if an action is to be performed just before exiting the page.
 
         This method is called when terminating the wizard or hitting the apply button. 
