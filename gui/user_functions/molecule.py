@@ -179,7 +179,9 @@ class Copy_page(UF_page):
         pipe_to = gui_to_str(self.pipe_to.GetValue())
 
         # The molecule names.
-        mol_from = "#" + gui_to_str(self.mol_from.GetValue())
+        mol_from = gui_to_str(self.mol_from.GetValue())
+        if mol_from:
+            mol_from = "#" + mol_from
         mol_to = gui_to_str(self.mol_to.GetValue())
         if mol_to:
             mol_to = "#" + mol_to
