@@ -45,8 +45,8 @@ class File_selector:
     def __init__(self, field, title='File selection', default="all files (*.*)|*"):
         """Setup the class and store the field.
 
-        @param field:   The field to update with the file selection.
-        @type field:    wx.TextCtrl instance
+        @param field:       The field to update with the file selection.
+        @type field:        wx.TextCtrl instance
         @keyword title:     The text title to put at the top of the dialog window.
         @type title:        str
         @keyword default:   The default file type.
