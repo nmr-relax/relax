@@ -358,7 +358,14 @@ class Main(wx.Frame):
 
         # Initialise the analysis wizard, and obtain the user specified data.
         wizard = Analysis_wizard()
-        analysis_type, analysis_name, pipe_name = wizard.run()
+        data = wizard.run()
+
+        # Failure, so do nothing.
+        if data == None:
+            return
+
+        # Unpack the data.
+        analysis_type, analysis_name, pipe_name = data
 
         # Initialise the new analysis.
         self.new_analysis(analysis_type, analysis_name)

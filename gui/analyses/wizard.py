@@ -57,7 +57,9 @@ class Analysis_wizard:
         wizard.add_page(pipe_page, apply_button=False)
 
         # Execute the wizard.
-        wizard.run()
+        setup = wizard.run()
+        if not setup:
+            return
 
         # Get the data.
         analysis_type = wizard.analysis_type
