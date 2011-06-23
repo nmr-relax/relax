@@ -272,6 +272,13 @@ class New_analysis_page(Wiz_page):
         return button
 
 
+    def on_display(self):
+        """Disable the next button until an analysis is selected."""
+
+        # Turn off the next button.
+        self.parent.block_next()
+
+
     def select_consist_test(self, event):
         """NOE analysis selection.
 
@@ -394,3 +401,6 @@ class New_analysis_page(Wiz_page):
 
         # Unfreeze.
         self.Thaw()
+
+        # Unblock forwards movement.
+        self.parent.block_next(False)
