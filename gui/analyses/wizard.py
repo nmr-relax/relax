@@ -89,12 +89,8 @@ class Data_pipe_page(Wiz_page):
         self.pipe_name = self.input_field(sizer, "The data pipe name:")
 
 
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Update the pipe name."""
 
         # Generate a name for the data pipe based on the type and time.
         name = "%s (%s)" % (self.parent.analysis_type, asctime(localtime()))
