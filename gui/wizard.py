@@ -677,10 +677,7 @@ class Wiz_page(wx.Panel):
 
 
 class Wiz_window(wx.Dialog):
-    """Wizard-like window GUI element base class.
-
-    To inherit from this class, you must supply the add_contents() and execute() methods.  The add_contents() method should build the specific GUI elements, and the execute() method is called when clicking on the apply or ok buttons.
-    """
+    """The wizard."""
 
     # Some class variables.
     _size_button = (100, 33)
