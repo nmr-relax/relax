@@ -119,7 +119,7 @@ class Wiz_page(wx.Panel):
         image_x, image_y = self.image.GetSize()
 
         # Calculate the size of the main section, and the subdivisions.
-        self.main_size = parent.size_x - image_x - self.art_spacing - 2*parent.border
+        self.main_size = parent._size_x - image_x - self.art_spacing - 2*parent._border
         if self.divider:
             self.div_left = self.divider
             self.div_right = self.main_size - self.divider
@@ -690,7 +690,7 @@ class Wiz_window(wx.Dialog):
     """
 
     # Some class variables.
-    size_button = (100, 33)
+    _size_button = (100, 33)
 
     def __init__(self, size_x=None, size_y=None, title='', border=10, style=wx.DEFAULT_DIALOG_STYLE):
         """Set up the window.
@@ -700,9 +700,9 @@ class Wiz_window(wx.Dialog):
         """
 
         # Store the args.
-        self.size_x = size_x
-        self.size_y = size_y
-        self.border = border
+        self._size_x = size_x
+        self._size_y = size_y
+        self._border = border
 
         # Execute the base class method.
         wx.Dialog.__init__(self, None, id=-1, title=title, style=style)
@@ -712,7 +712,7 @@ class Wiz_window(wx.Dialog):
         self.SetSizer(sizer)
 
         # Build the central sizer, with borders.
-        self.main_sizer = add_border(sizer, border=border, packing=wx.VERTICAL)
+        self._main_sizer = add_border(sizer, border=border, packing=wx.VERTICAL)
 
         # Set the default size of the dialog.
         self.SetSize((size_x, size_y))
@@ -754,7 +754,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Back")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_previous_view, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Return to the previous page")
-                button.SetSize(self.size_button)
+                button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._go_back, button)
 
@@ -767,7 +767,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Apply")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.apply, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Apply the operation")
-                button.SetSize(self.size_button)
+                button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._pages[i].apply, button)
 
@@ -780,7 +780,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Next")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_next_view, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Move to the next page")
-                button.SetSize(self.size_button)
+                button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._go_next, button)
 
@@ -789,7 +789,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " OK")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Accept the operation")
-                button.SetSize(self.size_button)
+                button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self.ok, button)
 
@@ -798,7 +798,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Finish")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Accept the operation")
-                button.SetSize(self.size_button)
+                button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._ok, button)
 
@@ -809,7 +809,7 @@ class Wiz_window(wx.Dialog):
             button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Cancel")
             button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
             button.SetToolTipString("Abort the operation")
-            button.SetSize(self.size_button)
+            button.SetSize(self._size_button)
             self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self._cancel, button)
 
@@ -834,13 +834,13 @@ class Wiz_window(wx.Dialog):
 
         # Hide all of the original contents.
         for j in range(self._num_pages):
-            self.main_sizer.Hide(self._page_sizers[j])
+            self._main_sizer.Hide(self._page_sizers[j])
 
         # Execute the page's on_display() method.
         self._pages[i].on_display()
 
         # Show the desired page.
-        self.main_sizer.Show(self._page_sizers[i])
+        self._main_sizer.Show(self._page_sizers[i])
 
         # Re-perform the window layout.
         self.Layout()
@@ -909,7 +909,7 @@ class Wiz_window(wx.Dialog):
         self._pages[index] = panel
 
         # Store a new sizer for the page and its buttons.
-        self.main_sizer.Add(self._page_sizers[index], 1, wx.ALL|wx.EXPAND, 0)
+        self._main_sizer.Add(self._page_sizers[index], 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the sizer for the top half.
         top_sizer = wx.BoxSizer(wx.VERTICAL)
