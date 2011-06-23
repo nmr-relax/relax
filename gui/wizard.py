@@ -938,7 +938,7 @@ class Wiz_window(wx.Dialog):
         self._page_sizers[index].Add(self._button_sizers[index], 0, wx.ALIGN_RIGHT|wx.ALL, 0)
 
         # Store the apply button flag.
-        self._button_apply_flag.append(apply_button)
+        self._button_apply_flag[index] = apply_button
 
         # Store the index of the page.
         panel.page_index = self._num_pages - 1
