@@ -943,6 +943,32 @@ class Wiz_window(wx.Dialog):
         panel.page_index = self._num_pages - 1
 
 
+    def block_next(self, block=True):
+        """Prevent moving forwards (or unblock).
+
+        @keyword block: A flag which if True will block forwards movement and if False will unblock.
+        @type block:    bool
+        """
+
+        # The buttons to disable.
+        buttons = ['next', 'ok', 'finish']
+
+        # Disable or enable the buttons.
+        for i in range(len(buttons)):
+            # The button.
+            button = self._buttons[self._current_page][buttons[i]]
+            if button == None:
+                continue
+
+            # Block.
+            if block:
+                button.Disable()
+
+            # Unblock.
+            else:
+                button.Enable()
+
+
     def run(self):
         """Execute the wizard."""
 
