@@ -727,6 +727,7 @@ class Wiz_window(wx.Dialog):
         self._page_sizers = []
         self._button_sizers = []
         self._button_apply_flag = []
+        self._buttons = []
 
         # A max of 10 pages should be plenty enough (any more and the developer should be shot!).
         for i in range(10):
@@ -741,6 +742,14 @@ class Wiz_window(wx.Dialog):
 
             # Set all apply flags to True.
             self._button_apply_flag.append(True)
+
+            # Initialise the button storage.
+            self._buttons.append({'back': None,
+                                  'apply': None,
+                                  'next': None,
+                                  'ok': None,
+                                  'finish': None,
+                                  'cancel': None})
 
 
     def _build_buttons(self):
@@ -757,6 +766,7 @@ class Wiz_window(wx.Dialog):
                 button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._go_back, button)
+                self._buttons[i]['back'] = button
 
                 # Spacer.
                 self._button_sizers[i].AddSpacer(5)
@@ -770,6 +780,7 @@ class Wiz_window(wx.Dialog):
                 button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._pages[i].apply, button)
+                self._buttons[i]['apply'] = button
 
                 # Spacer.
                 self._button_sizers[i].AddSpacer(5)
@@ -783,6 +794,7 @@ class Wiz_window(wx.Dialog):
                 button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._go_next, button)
+                self._buttons[i]['next'] = button
 
             # The OK button (only for single pages).
             if self._num_pages == 1:
@@ -792,6 +804,7 @@ class Wiz_window(wx.Dialog):
                 button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self.ok, button)
+                self._buttons[i]['ok'] = button
 
             # The finish button (only for the last page with multi-pages).
             if self._num_pages > 1 and i == self._num_pages - 1:
@@ -801,6 +814,7 @@ class Wiz_window(wx.Dialog):
                 button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._ok, button)
+                self._buttons[i]['finish'] = button
 
             # Spacer.
             self._button_sizers[i].AddSpacer(15)
@@ -812,6 +826,7 @@ class Wiz_window(wx.Dialog):
             button.SetSize(self._size_button)
             self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self._cancel, button)
+            self._buttons[i]['cancel'] = button
 
 
     def _cancel(self, event):
