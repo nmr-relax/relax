@@ -84,7 +84,24 @@ class File_selector:
 class Wiz_page(wx.Panel):
     """The wizard pages to be placed inside the wizard.
 
-    To inherit from this class, you must supply minimally the add_contents() and on_exit() methods.  The add_contents() method should build the specific GUI elements, and the on_exit() method is called when clicking on the apply, ok, or finish buttons.  All other methods which are not private can be over-written.
+    To inherit from this class, you must supply minimally the add_contents() and on_exit() methods.  The add_contents() method should build the specific GUI elements, and the on_exit() method is called when clicking on the apply, ok, or finish buttons.  The following methods are also designed to be overwritten:
+
+        - add_artwork(), this builds the left hand artwork section of the page.
+        - add_contents(), this builds the right hand section of the page.
+        - on_display(), this is executed when the page is displayed.
+        - on_exit(), this is executed when the wizard is terminated or the apply button is hit.
+        - on_next(), this is executed when moving to the next wizard page.
+
+    The following methods can be used by add_contents() to create standard GUI elements:
+
+        - chooser()
+        - combo_box()
+        - file_selection()
+        - free_file_format()
+        - input_field()
+        - text()
+
+    These are described in full detail in their docstrings.
     """
 
     # Some class variables.
@@ -119,21 +136,21 @@ class Wiz_page(wx.Panel):
         image_x, image_y = self.image.GetSize()
 
         # Calculate the size of the main section, and the subdivisions.
-        self.main_size = parent._size_x - image_x - self.art_spacing - 2*parent._border
+        self._main_size = parent._size_x - image_x - self.art_spacing - 2*parent._border
         if self.divider:
-            self.div_left = self.divider
-            self.div_right = self.main_size - self.divider
+            self._div_left = self.divider
+            self._div_right = self._main_size - self.divider
         else:
-            self.div_left = self.div_right = self.main_size / 2
+            self._div_left = self._div_right = self._main_size / 2
 
         # Add the main sizer.
-        main_sizer = self.build_main_section(box_main)
+        main_sizer = self._build_main_section(box_main)
 
         # Add the title.
-        self.add_title(main_sizer)
+        self._add_title(main_sizer)
 
         # Add the description.
-        self.add_desc(main_sizer)
+        self._add_desc(main_sizer)
 
         # Add the specific GUI elements (bounded by spacers).
         main_sizer.AddStretchSpacer()
@@ -142,23 +159,7 @@ class Wiz_page(wx.Panel):
         main_sizer.AddStretchSpacer()
 
 
-    def add_artwork(self, sizer):
-        """Add the artwork to the dialog.
-
-        @param sizer:   A sizer object.
-        @type sizer:    wx.Sizer instance
-        """
-
-        # Add the graphics.
-        if self.image_path:
-            self.image = wx.StaticBitmap(self, -1, wx.Bitmap(self.image_path, wx.BITMAP_TYPE_ANY))
-            sizer.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
-
-        # A spacer.
-        sizer.AddSpacer(self.art_spacing)
-
-
-    def add_desc(self, sizer):
+    def _add_desc(self, sizer):
         """Add the description to the dialog.
 
         @param sizer:   A sizer object.
@@ -177,7 +178,7 @@ class Wiz_page(wx.Panel):
         #text.SetFont(wx.Font(18, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
 
         # Wrap the text.
-        text.Wrap(self.main_size)
+        text.Wrap(self._main_size)
 
         # Add the text.
         sizer.Add(text, 0, wx.ALIGN_LEFT|wx.ALL, 0)
@@ -188,7 +189,7 @@ class Wiz_page(wx.Panel):
         sizer.AddSpacer(5)
 
 
-    def add_title(self, sizer):
+    def _add_title(self, sizer):
         """Add the title to the dialog.
 
         @param sizer:   A sizer object.
@@ -211,17 +212,7 @@ class Wiz_page(wx.Panel):
         sizer.AddSpacer(10)
 
 
-    def add_contents(self, sizer):
-        """Add the specific GUI elements (dummy method).
-
-        @param sizer:   A sizer object.
-        @type sizer:    wx.Sizer instance
-        """
-
-        raise RelaxImplementError
-
-
-    def apply(self, event):
+    def _apply(self, event):
         """Apply the operation.
 
         @param event:   The wx event.
@@ -235,26 +226,7 @@ class Wiz_page(wx.Panel):
             error_message(instance.text, instance.__class__.__name__)
 
 
-    def build_central_section(self, sizer):
-        """Add the centre part of the dialog.
-
-        @param sizer:   A sizer object.
-        @type sizer:    wx.Sizer instance
-        @return:        The sizer object for the centre part of the dialog.
-        @rtype:         wx.Sizer instance
-        """
-
-        # Use a grid sizer for packing the elements.
-        centre_sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Pack the sizer into the frame.
-        sizer.Add(centre_sizer, 1, wx.EXPAND|wx.ALL, 0)
-
-        # Return the sizer.
-        return centre_sizer
-
-
-    def build_main_section(self, sizer):
+    def _build_main_section(self, sizer):
         """Add the main part of the dialog.
 
         @param sizer:   A sizer object.
@@ -271,6 +243,60 @@ class Wiz_page(wx.Panel):
 
         # Return the sizer.
         return main_sizer
+
+
+    def _free_file_format_save(self, event):
+        """Save the free file format widget contents into the relax data store.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Get the column numbers.
+        ds.relax_gui.free_file_format.spin_id_col =   gui_to_int(self.spin_id_col.GetValue())
+        ds.relax_gui.free_file_format.mol_name_col =  gui_to_int(self.mol_name_col.GetValue())
+        ds.relax_gui.free_file_format.res_num_col =   gui_to_int(self.res_num_col.GetValue())
+        ds.relax_gui.free_file_format.res_name_col =  gui_to_int(self.res_name_col.GetValue())
+        ds.relax_gui.free_file_format.spin_num_col =  gui_to_int(self.spin_num_col.GetValue())
+        ds.relax_gui.free_file_format.spin_name_col = gui_to_int(self.spin_name_col.GetValue())
+
+        # The data and error.
+        if hasattr(self, 'data_col'):
+            ds.relax_gui.free_file_format.data_col = gui_to_int(self.data_col.GetValue())
+        if hasattr(self, 'err_col'):
+            ds.relax_gui.free_file_format.err_col = gui_to_int(self.err_col.GetValue())
+
+        # The column separator.
+        ds.relax_gui.free_file_format.sep = str(self.sep.GetValue())
+        if ds.relax_gui.free_file_format.sep == 'white space':
+            ds.relax_gui.free_file_format.sep = None
+
+
+    def add_artwork(self, sizer):
+        """Add the artwork to the dialog.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Add the graphics.
+        if self.image_path:
+            self.image = wx.StaticBitmap(self, -1, wx.Bitmap(self.image_path, wx.BITMAP_TYPE_ANY))
+            sizer.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
+
+        # A spacer.
+        sizer.AddSpacer(self.art_spacing)
+
+
+    def add_contents(self, sizer):
+        """Add the specific GUI elements (dummy method).
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # This must be supplied.
+        raise RelaxImplementError
 
 
     def chooser(self, sizer, desc, func, choices):
@@ -319,7 +345,7 @@ class Wiz_page(wx.Panel):
         @type evt_fn:       func
         @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
         @type tooltip:      str
-        @keyword divider:   The optional position of the divider.  If None, the class variable div_left will be used.
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
         @type divider:      None or int
         @keyword padding:   Spacing to the left and right of the widgets.
         @type padding:      int
@@ -343,7 +369,7 @@ class Wiz_page(wx.Panel):
 
         # The divider.
         if not divider:
-            divider = self.div_left
+            divider = self._div_left
 
         # Spacing.
         x, y = text.GetSize()
@@ -406,11 +432,11 @@ class Wiz_page(wx.Panel):
 
         # Spacing.
         x, y = text.GetSize()
-        sub_sizer.AddSpacer((self.div_left - x, 0))
+        sub_sizer.AddSpacer((self._div_left - x, 0))
 
         # The input field.
         field = wx.TextCtrl(self, -1, '')
-        field.SetMinSize((self.div_right - 27, 27))
+        field.SetMinSize((self._div_right - 27, 27))
         sub_sizer.Add(field, 0, wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The file selection object.
@@ -448,7 +474,7 @@ class Wiz_page(wx.Panel):
         # Init.
         sub_sizer = wx.StaticBoxSizer(box, wx.VERTICAL)
         sub_sizer.AddSpacer(10)
-        divider = self.div_left - 15
+        divider = self._div_left - 15
         padding = 10
         spacer = 3
 
@@ -498,7 +524,7 @@ class Wiz_page(wx.Panel):
             button_sizer.AddSpacer(padding)
 
             # Bind the click event.
-            self.Bind(wx.EVT_BUTTON, self.free_file_format_save, button)
+            self.Bind(wx.EVT_BUTTON, self._free_file_format_save, button)
 
             # Add the button sizer to the widget (with spacing).
             sub_sizer.AddSpacer(10-spacer)
@@ -507,7 +533,7 @@ class Wiz_page(wx.Panel):
         # Set the size of the widget.
         sub_sizer.AddSpacer(10)
         x, y = box.GetSize()
-        box.SetMinSize((self.main_size, y))
+        box.SetMinSize((self._main_size, y))
 
         # The border of the widget.
         border = wx.BoxSizer()
@@ -520,33 +546,6 @@ class Wiz_page(wx.Panel):
         sizer.AddStretchSpacer()
 
 
-    def free_file_format_save(self, event):
-        """Save the free file format widget contents into the relax data store.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Get the column numbers.
-        ds.relax_gui.free_file_format.spin_id_col =   gui_to_int(self.spin_id_col.GetValue())
-        ds.relax_gui.free_file_format.mol_name_col =  gui_to_int(self.mol_name_col.GetValue())
-        ds.relax_gui.free_file_format.res_num_col =   gui_to_int(self.res_num_col.GetValue())
-        ds.relax_gui.free_file_format.res_name_col =  gui_to_int(self.res_name_col.GetValue())
-        ds.relax_gui.free_file_format.spin_num_col =  gui_to_int(self.spin_num_col.GetValue())
-        ds.relax_gui.free_file_format.spin_name_col = gui_to_int(self.spin_name_col.GetValue())
-
-        # The data and error.
-        if hasattr(self, 'data_col'):
-            ds.relax_gui.free_file_format.data_col = gui_to_int(self.data_col.GetValue())
-        if hasattr(self, 'err_col'):
-            ds.relax_gui.free_file_format.err_col = gui_to_int(self.err_col.GetValue())
-
-        # The column separator.
-        ds.relax_gui.free_file_format.sep = str(self.sep.GetValue())
-        if ds.relax_gui.free_file_format.sep == 'white space':
-            ds.relax_gui.free_file_format.sep = None
-
-
     def input_field(self, sizer, desc, tooltip=None, divider=None, padding=0, spacer=None):
         """Build the input field widget.
 
@@ -556,7 +555,7 @@ class Wiz_page(wx.Panel):
         @type desc:         str
         @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
         @type tooltip:      str
-        @keyword divider:   The optional position of the divider.  If None, the class variable div_left will be used.
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
         @type divider:      None or int
         @keyword padding:   Spacing to the left and right of the widgets.
         @type padding:      int
@@ -578,7 +577,7 @@ class Wiz_page(wx.Panel):
 
         # The divider.
         if not divider:
-            divider = self.div_left
+            divider = self._div_left
 
         # Spacing.
         x, y = text.GetSize()
@@ -620,14 +619,17 @@ class Wiz_page(wx.Panel):
     def on_exit(self):
         """To be over-ridden if an action is to be performed just before exiting the page.
 
-        This method is called when moving 
+        This method is called when terminating the wizard or hitting the apply button. 
         """
+
+        # This must be supplied.
+        raise RelaxImplementError
 
 
     def on_next(self):
         """To be over-ridden if an action is to be performed just before moving to the next page.
 
-        This method is called when moving 
+        This method is called when moving to the next page of the wizard.
         """
 
 
@@ -653,14 +655,14 @@ class Wiz_page(wx.Panel):
 
         # Spacing.
         x, y = text.GetSize()
-        sub_sizer.AddSpacer((self.div_left - x, 0))
+        sub_sizer.AddSpacer((self._div_left - x, 0))
 
         # The non-editable text.
         text = wx.TextCtrl(self, -1, default, style=wx.ALIGN_LEFT)
         text.SetEditable(False)
         colour = self.GetBackgroundColour()
         text.SetOwnBackgroundColour(colour)
-        text.SetMinSize((self.div_right, 27))
+        text.SetMinSize((self._div_right, 27))
         sub_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Add to the main sizer (followed by stretchable spacing).
@@ -669,10 +671,6 @@ class Wiz_page(wx.Panel):
 
         # Return the object.
         return text
-
-
-    def update(self, event):
-        """Dummy method for updating the UI."""
 
 
 
@@ -769,7 +767,7 @@ class Wiz_window(wx.Dialog):
                 button.SetToolTipString("Apply the operation")
                 button.SetSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-                self.Bind(wx.EVT_BUTTON, self._pages[i].apply, button)
+                self.Bind(wx.EVT_BUTTON, self._pages[i]._apply, button)
                 self._buttons[i]['apply'] = button
 
                 # Spacer.
@@ -890,10 +888,10 @@ class Wiz_window(wx.Dialog):
         @type event:    wx event
         """
 
-        # Loop over all pages and execute their apply() methods.
+        # Loop over all pages and execute their _apply() methods.
         for i in range(self._num_pages):
-            # Execute the apply method.
-            self._pages[i].apply(event)
+            # Execute the _apply method.
+            self._pages[i]._apply(event)
 
         # Then destroy the dialog.
         self.Destroy()
