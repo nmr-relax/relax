@@ -620,7 +620,7 @@ class Wiz_page(wx.Panel):
     def on_display(self):
         """To be over-ridden if an action is to be performed prior to displaying the page.
 
-        This method will be called by the wizard class method display_page() just after hiding all other pages but prior to displaying this page.
+        This method will be called by the wizard class method _display_page() just after hiding all other pages but prior to displaying this page.
         """
 
 
@@ -721,12 +721,163 @@ class Wiz_window(wx.Dialog):
         self.Centre()
 
         # Initialise the page storage.
-        self.current_page = 0
-        self.pages = []
-        self.page_sizers = []
-        self.button_sizers = []
-        self.button_flags = []
-        self.button_apply = []
+        self._current_page = 0
+        self._num_pages = 0
+        self._pages = []
+        self._page_sizers = []
+        self._button_sizers = []
+        self._button_apply_flag = []
+
+
+    def _build_buttons(self):
+        """Construct the buttons for all pages of the wizard."""
+
+        # Loop over each page.
+        for i in range(self._num_pages):
+            # The back button (only for multi-pages, after the first).
+            if self._num_pages > 1 and i > 0:
+                # Create the button.
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Back")
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_previous_view, wx.BITMAP_TYPE_ANY))
+                button.SetToolTipString("Return to the previous page")
+                button.SetSize(self.size_button)
+                self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
+                self.Bind(wx.EVT_BUTTON, self._go_back, button)
+
+                # Spacer.
+                self._button_sizers[i].AddSpacer(5)
+
+            # The apply button.
+            if self._button_apply_flag[i]:
+                # Create the button.
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Apply")
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.apply, wx.BITMAP_TYPE_ANY))
+                button.SetToolTipString("Apply the operation")
+                button.SetSize(self.size_button)
+                self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
+                self.Bind(wx.EVT_BUTTON, self._pages[i].apply, button)
+
+                # Spacer.
+                self._button_sizers[i].AddSpacer(5)
+
+            # The next button (only for multi-pages, excluding the last).
+            if self._num_pages > 1 and i < self._num_pages - 1:
+                # Create the button.
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Next")
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_next_view, wx.BITMAP_TYPE_ANY))
+                button.SetToolTipString("Move to the next page")
+                button.SetSize(self.size_button)
+                self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
+                self.Bind(wx.EVT_BUTTON, self._go_next, button)
+
+            # The OK button (only for single pages).
+            if self._num_pages == 1:
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " OK")
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
+                button.SetToolTipString("Accept the operation")
+                button.SetSize(self.size_button)
+                self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
+                self.Bind(wx.EVT_BUTTON, self.ok, button)
+
+            # The finish button (only for the last page with multi-pages).
+            if self._num_pages > 1 and i == self._num_pages - 1:
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Finish")
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
+                button.SetToolTipString("Accept the operation")
+                button.SetSize(self.size_button)
+                self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
+                self.Bind(wx.EVT_BUTTON, self._ok, button)
+
+            # Spacer.
+            self._button_sizers[i].AddSpacer(15)
+
+            # The cancel button.
+            button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Cancel")
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
+            button.SetToolTipString("Abort the operation")
+            button.SetSize(self.size_button)
+            self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self._cancel, button)
+
+
+    def _cancel(self, event):
+        """Cancel the operation.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Destroy the window.
+        self.Destroy()
+
+
+    def _display_page(self, i):
+        """Display the given page.
+
+        @param i:   The index of the page to display.
+        @type i:    int
+        """
+
+        # Hide all of the original contents.
+        for j in range(self._num_pages):
+            self.main_sizer.Hide(self._page_sizers[j])
+
+        # Execute the page's on_display() method.
+        self._pages[i].on_display()
+
+        # Show the desired page.
+        self.main_sizer.Show(self._page_sizers[i])
+
+        # Re-perform the window layout.
+        self.Layout()
+        self.Refresh()
+
+
+    def _go_back(self, event):
+        """Return to the previous page.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Change the current page.
+        self._current_page -= 1
+
+        # Display the previous page.
+        self._display_page(self._current_page)
+
+
+    def _go_next(self, event):
+        """Move to the next page.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Execute the page's on_next() method.
+        self._pages[self._current_page].on_next()
+
+        # Change the current page.
+        self._current_page += 1
+
+        # Display the next page.
+        self._display_page(self._current_page)
+
+
+    def _ok(self, event):
+        """Accept the operation.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Loop over all pages and execute their apply() methods.
+        for i in range(self._num_pages):
+            # Execute the apply method.
+            self._pages[i].apply(event)
+
+        # Then destroy the dialog.
+        self.Destroy()
 
 
     def add_page(self, panel, apply_button=True):
@@ -739,192 +890,39 @@ class Wiz_window(wx.Dialog):
         """
 
         # Store the page.
-        self.pages.append(panel)
+        self._pages.append(panel)
+        self._num_pages += 1
 
         # Store a new sizer for the page and its buttons.
-        self.page_sizers.append(wx.BoxSizer(wx.VERTICAL))
-        self.main_sizer.Add(self.page_sizers[-1], 1, wx.ALL|wx.EXPAND, 0)
+        self._page_sizers.append(wx.BoxSizer(wx.VERTICAL))
+        self.main_sizer.Add(self._page_sizers[-1], 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the sizer for the top half.
         top_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.page_sizers[-1].Add(top_sizer, 1, wx.ALL|wx.EXPAND, 0)
+        self._page_sizers[-1].Add(top_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the page to the top sizer.
         top_sizer.Add(panel, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the sizer for the wizard buttons.
-        self.button_sizers.append(wx.BoxSizer(wx.HORIZONTAL))
-        self.page_sizers[-1].Add(self.button_sizers[-1], 0, wx.ALIGN_RIGHT|wx.ALL, 0)
+        self._button_sizers.append(wx.BoxSizer(wx.HORIZONTAL))
+        self._page_sizers[-1].Add(self._button_sizers[-1], 0, wx.ALIGN_RIGHT|wx.ALL, 0)
 
         # Store the apply button flag.
-        self.button_apply.append(apply_button)
+        self._button_apply_flag.append(apply_button)
 
         # Store the index of the page.
-        panel.page_index = len(self.pages) - 1
-
-
-    def build_buttons(self):
-        """Construct the buttons for all pages of the wizard."""
-
-        # The number of pages.
-        num_pages = len(self.pages)
-
-        # Loop over each page.
-        for i in range(num_pages):
-            # The back button (only for multi-pages, after the first).
-            if num_pages > 1 and i > 0:
-                # Create the button.
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Back")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_previous_view, wx.BITMAP_TYPE_ANY))
-                button.SetToolTipString("Return to the previous page")
-                button.SetSize(self.size_button)
-                self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-                self.Bind(wx.EVT_BUTTON, self.go_back, button)
-
-                # Spacer.
-                self.button_sizers[i].AddSpacer(5)
-
-            # The apply button.
-            if self.button_apply[i]:
-                # Create the button.
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Apply")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.apply, wx.BITMAP_TYPE_ANY))
-                button.SetToolTipString("Apply the operation")
-                button.SetSize(self.size_button)
-                self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-                self.Bind(wx.EVT_BUTTON, self.pages[i].apply, button)
-
-                # Spacer.
-                self.button_sizers[i].AddSpacer(5)
-
-            # The next button (only for multi-pages, excluding the last).
-            if num_pages > 1 and i < num_pages - 1:
-                # Create the button.
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Next")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_next_view, wx.BITMAP_TYPE_ANY))
-                button.SetToolTipString("Move to the next page")
-                button.SetSize(self.size_button)
-                self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-                self.Bind(wx.EVT_BUTTON, self.go_next, button)
-
-            # The OK button (only for single pages).
-            if num_pages == 1:
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " OK")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
-                button.SetToolTipString("Accept the operation")
-                button.SetSize(self.size_button)
-                self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-                self.Bind(wx.EVT_BUTTON, self.ok, button)
-
-            # The finish button (only for the last page with multi-pages).
-            if num_pages > 1 and i == num_pages - 1:
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Finish")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
-                button.SetToolTipString("Accept the operation")
-                button.SetSize(self.size_button)
-                self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-                self.Bind(wx.EVT_BUTTON, self.ok, button)
-
-            # Spacer.
-            self.button_sizers[i].AddSpacer(15)
-
-            # The cancel button.
-            button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Cancel")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
-            button.SetToolTipString("Abort the operation")
-            button.SetSize(self.size_button)
-            self.button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
-            self.Bind(wx.EVT_BUTTON, self.cancel, button)
-
-
-    def cancel(self, event):
-        """Cancel the operation.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Destroy the window.
-        self.Destroy()
-
-
-    def display_page(self, i):
-        """Display the given page.
-
-        @param i:   The index of the page to display.
-        @type i:    int
-        """
-
-        # Hide all of the original contents.
-        for j in range(len(self.pages)):
-            self.main_sizer.Hide(self.page_sizers[j])
-
-        # Execute the page's on_display() method.
-        self.pages[i].on_display()
-
-        # Show the desired page.
-        self.main_sizer.Show(self.page_sizers[i])
-
-        # Re-perform the window layout.
-        self.Layout()
-        self.Refresh()
-
-
-    def go_back(self, event):
-        """Return to the previous page.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Change the current page.
-        self.current_page -= 1
-
-        # Display the previous page.
-        self.display_page(self.current_page)
-
-
-    def go_next(self, event):
-        """Move to the next page.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Execute the page's on_next() method.
-        self.pages[self.current_page].on_next()
-
-        # Change the current page.
-        self.current_page += 1
-
-        # Display the next page.
-        self.display_page(self.current_page)
-
-
-    def ok(self, event):
-        """Accept the operation.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Loop over all pages and execute their apply() methods.
-        for i in range(len(self.pages)):
-            # Execute the apply method.
-            self.pages[i].apply(event)
-
-        # Then destroy the dialog.
-        self.Destroy()
+        panel.page_index = self._num_pages - 1
 
 
     def run(self):
         """Execute the wizard."""
 
         # Build the buttons for the entire wizard.
-        self.build_buttons()
+        self._build_buttons()
 
         # Display the first page.
-        self.display_page(0)
+        self._display_page(0)
 
         # Show the wizard.
         self.ShowModal()
