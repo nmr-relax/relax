@@ -718,6 +718,9 @@ class Wiz_window(wx.Dialog):
         # Centre the dialog.
         self.Centre()
 
+        # Initialise the wizard status.
+        self._status = True
+
         # Initialise the page storage.
         self._current_page = 0
         self._num_pages = 0
@@ -833,6 +836,9 @@ class Wiz_window(wx.Dialog):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Change the status.
+        self._status = False
 
         # Destroy the window.
         self.Destroy()
@@ -968,7 +974,11 @@ class Wiz_window(wx.Dialog):
 
 
     def run(self):
-        """Execute the wizard."""
+        """Execute the wizard.
+
+        @return:    The status, i.e. True if the wizard is run, False if cancelled or other error occur.
+        @rtype:     bool
+        """
 
         # Build the buttons for the entire wizard.
         self._build_buttons()
@@ -981,3 +991,6 @@ class Wiz_window(wx.Dialog):
 
         # Destroy the wizard.
         self.Destroy()
+
+        # Return the status.
+        return self._status
