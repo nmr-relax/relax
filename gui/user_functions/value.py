@@ -82,20 +82,6 @@ class Set_page(UF_page):
         self.spin_id = self.input_field(sizer, "Restrict data loading to certain spins:", tooltip="This must be a valid spin ID.  Multiple spins can be selected using ranges, the '|' operator, residue ranges, etc.")
 
 
-    def on_execute(self):
-        """Execute the user function."""
-
-        # The parameter and value.
-        param = gui_to_str(self.param.GetValue())
-        value = gui_to_str(self.value.GetValue())
-
-        # The spin ID.
-        spin_id = gui_to_str(self.spin_id.GetValue())
-
-        # Set the value.
-        self.interpreter.value.set(val=value, param=param, spin_id=spin_id)
-
-
     def on_display(self):
         """Fill out the list of parameters and their descriptions."""
 
@@ -115,3 +101,16 @@ class Set_page(UF_page):
         #    # Append the description.
         #    self.param.Append(str_to_gui(desc), name)
 
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The parameter and value.
+        param = gui_to_str(self.param.GetValue())
+        value = gui_to_str(self.value.GetValue())
+
+        # The spin ID.
+        spin_id = gui_to_str(self.spin_id.GetValue())
+
+        # Set the value.
+        self.interpreter.value.set(val=value, param=param, spin_id=spin_id)

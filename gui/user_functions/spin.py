@@ -169,23 +169,6 @@ class Copy_page(UF_page, Mol_res_spin):
         self.spin_name_to = self.input_field(sizer, "The new spin name:", tooltip='If left blank, the new spin will have the same name as the old.')
 
 
-    def on_execute(self):
-        """Execute the user function."""
-
-        # Get the pipe names.
-        pipe_from = gui_to_str(self.pipe_from.GetValue())
-        pipe_to = gui_to_str(self.pipe_to.GetValue())
-
-        # The spin names.
-        spin_from = self._get_spin_id(suffix='_from')
-        spin_to = self._get_spin_id(suffix='_to')
-        if spin_to == '':
-            spin_to = None
-
-        # Copy the spin.
-        self.interpreter.spin.copy(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
-
-
     def on_display(self):
         """Update the UI.
 
@@ -206,6 +189,23 @@ class Copy_page(UF_page, Mol_res_spin):
 
         # Update the molecule list.
         self.update_mol_list()
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the pipe names.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        pipe_to = gui_to_str(self.pipe_to.GetValue())
+
+        # The spin names.
+        spin_from = self._get_spin_id(suffix='_from')
+        spin_to = self._get_spin_id(suffix='_to')
+        if spin_to == '':
+            spin_to = None
+
+        # Copy the spin.
+        self.interpreter.spin.copy(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
 
 
     def update_mol_list(self, event=None):
@@ -309,6 +309,19 @@ class Create_page(UF_page, Mol_res_spin):
         self.spin_num = self.input_field(sizer, "The spin number:")
 
 
+    def on_display(self):
+        """Clear all data and then update the list of molecule names."""
+
+        # Clear the previous data.
+        self.mol.Clear()
+        self.res.Clear()
+
+        # The list of molecule names.
+        if cdp_name():
+            for mol in molecule_loop():
+                self.mol.Append(mol.name)
+
+
     def on_execute(self):
         """Execute the user function."""
 
@@ -336,19 +349,6 @@ class Create_page(UF_page, Mol_res_spin):
         self.interpreter.spin.create(spin_name=spin_name, spin_num=spin_num, res_name=res_name, res_num=res_num, mol_name=mol_name)
 
 
-    def on_display(self):
-        """Clear all data and then update the list of molecule names."""
-
-        # Clear the previous data.
-        self.mol.Clear()
-        self.res.Clear()
-
-        # The list of molecule names.
-        if cdp_name():
-            for mol in molecule_loop():
-                self.mol.Append(mol.name)
-
-
 
 class Delete_page(UF_page, Mol_res_spin):
     """The spin.delete() user function page."""
@@ -372,6 +372,20 @@ class Delete_page(UF_page, Mol_res_spin):
         self.spin = self.combo_box(sizer, "The spin:", [])
 
 
+    def on_display(self):
+        """Clear the spin data and update the mol list."""
+
+        # Clear the previous data.
+        self.mol.Clear()
+        self.res.Clear()
+        self.spin.Clear()
+
+        # The list of molecule names.
+        if cdp_name():
+            for mol in molecule_loop():
+                self.mol.Append(mol.name)
+
+
     def on_execute(self):
         """Execute the user function."""
 
@@ -387,17 +401,3 @@ class Delete_page(UF_page, Mol_res_spin):
 
         # Update the spin list.
         self._update_spins(None)
-
-
-    def on_display(self):
-        """Clear the spin data and update the mol list."""
-
-        # Clear the previous data.
-        self.mol.Clear()
-        self.res.Clear()
-        self.spin.Clear()
-
-        # The list of molecule names.
-        if cdp_name():
-            for mol in molecule_loop():
-                self.mol.Append(mol.name)

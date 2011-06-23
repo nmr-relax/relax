@@ -153,23 +153,6 @@ class Copy_page(UF_page):
         self.mol_to = self.input_field(sizer, "The new molecule name:", tooltip='If left blank, the new molecule will have the same name as the old.')
 
 
-    def on_execute(self):
-        """Execute the user function."""
-
-        # Get the pipe names.
-        pipe_from = gui_to_str(self.pipe_from.GetValue())
-        pipe_to = gui_to_str(self.pipe_to.GetValue())
-
-        # The molecule names.
-        mol_from = "#" + gui_to_str(self.mol_from.GetValue())
-        mol_to = gui_to_str(self.mol_to.GetValue())
-        if mol_to:
-            mol_to = "#" + mol_to
-
-        # Copy the molecule.
-        self.interpreter.molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
-
-
     def on_display(self):
         """Update the pipe name lists."""
 
@@ -186,6 +169,23 @@ class Copy_page(UF_page):
 
         # Update the molecule list.
         self.update_mol_list()
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the pipe names.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        pipe_to = gui_to_str(self.pipe_to.GetValue())
+
+        # The molecule names.
+        mol_from = "#" + gui_to_str(self.mol_from.GetValue())
+        mol_to = gui_to_str(self.mol_to.GetValue())
+        if mol_to:
+            mol_to = "#" + mol_to
+
+        # Copy the molecule.
+        self.interpreter.molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
 
     def update_mol_list(self, event=None):
@@ -227,6 +227,18 @@ class Delete_page(UF_page):
         self.mol = self.combo_box(sizer, "The molecule:", [])
 
 
+    def on_display(self):
+        """Clear and update the molecule list."""
+
+        # Clear the previous data.
+        self.mol.Clear()
+
+        # The list of molecule names.
+        if cdp_name():
+            for mol in molecule_loop():
+                self.mol.Append(mol.name)
+
+
     def on_execute(self):
         """Execute the user function."""
 
@@ -238,15 +250,3 @@ class Delete_page(UF_page):
 
         # Delete the molecule.
         self.interpreter.molecule.delete(mol_id=id)
-
-
-    def on_display(self):
-        """Clear and update the molecule list."""
-
-        # Clear the previous data.
-        self.mol.Clear()
-
-        # The list of molecule names.
-        if cdp_name():
-            for mol in molecule_loop():
-                self.mol.Append(mol.name)

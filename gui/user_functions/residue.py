@@ -147,23 +147,6 @@ class Copy_page(UF_page, Mol_res_spin):
         self.res_name_to = self.input_field(sizer, "The new residue name:", tooltip='If left blank, the new residue will have the same name as the old.')
 
 
-    def on_execute(self):
-        """Execute the user function."""
-
-        # Get the pipe names.
-        pipe_from = gui_to_str(self.pipe_from.GetValue())
-        pipe_to = gui_to_str(self.pipe_to.GetValue())
-
-        # The residue names.
-        res_from = self._get_res_id(suffix='_from')
-        res_to = self._get_res_id(suffix='_to')
-        if res_to == '':
-            res_to = None
-
-        # Copy the molecule.
-        self.interpreter.residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
-
-
     def on_display(self):
         """Update the pipe name lists."""
 
@@ -180,6 +163,23 @@ class Copy_page(UF_page, Mol_res_spin):
 
         # Update the molecule list.
         self.update_mol_list()
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the pipe names.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        pipe_to = gui_to_str(self.pipe_to.GetValue())
+
+        # The residue names.
+        res_from = self._get_res_id(suffix='_from')
+        res_to = self._get_res_id(suffix='_to')
+        if res_to == '':
+            res_to = None
+
+        # Copy the molecule.
+        self.interpreter.residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
 
 
     def update_mol_list(self, event=None):
@@ -257,6 +257,18 @@ class Create_page(UF_page, Mol_res_spin):
         self.res_num = self.input_field(sizer, "The residue number:")
 
 
+    def on_display(self):
+        """Update the molecule list."""
+
+        # Clear the previous data.
+        self.mol.Clear()
+
+        # The list of molecule names.
+        if cdp_name():
+            for mol in molecule_loop():
+                self.mol.Append(mol.name)
+
+
     def on_execute(self):
         """Execute the user function."""
 
@@ -281,18 +293,6 @@ class Create_page(UF_page, Mol_res_spin):
         self.interpreter.residue.create(res_name=res_name, res_num=res_num, mol_name=mol_name)
 
 
-    def on_display(self):
-        """Update the molecule list."""
-
-        # Clear the previous data.
-        self.mol.Clear()
-
-        # The list of molecule names.
-        if cdp_name():
-            for mol in molecule_loop():
-                self.mol.Append(mol.name)
-
-
 
 class Delete_page(UF_page, Mol_res_spin):
     """The residue.delete() user function page."""
@@ -314,6 +314,19 @@ class Delete_page(UF_page, Mol_res_spin):
         self.res = self.combo_box(sizer, "The residue:", [])
 
 
+    def on_display(self):
+        """Clear and update the residue and molecule lists."""
+
+        # Clear the previous data.
+        self.mol.Clear()
+        self.res.Clear()
+
+        # The list of molecule names.
+        if cdp_name():
+            for mol in molecule_loop():
+                self.mol.Append(mol.name)
+
+
     def on_execute(self):
         """Execute the user function."""
 
@@ -329,16 +342,3 @@ class Delete_page(UF_page, Mol_res_spin):
 
         # Update.
         self._update_residues(None)
-
-
-    def on_display(self):
-        """Clear and update the residue and molecule lists."""
-
-        # Clear the previous data.
-        self.mol.Clear()
-        self.res.Clear()
-
-        # The list of molecule names.
-        if cdp_name():
-            for mol in molecule_loop():
-                self.mol.Append(mol.name)
