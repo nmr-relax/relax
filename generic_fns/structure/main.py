@@ -230,9 +230,9 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
 
         # Add the residue number to the ID string (residue name is ignored because only the number is unique).
         res_cont = None
-        if res_name:
+        if res_num:
             # Update the ID string
-            id = id + ':' + res_name
+            id = id + ':' + res_num
 
             # Get the corresponding residue container.
             res_cont = return_residue(id)
