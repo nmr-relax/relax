@@ -357,8 +357,8 @@ class Main(wx.Frame):
         """
 
         # Initialise the analysis wizard, and obtain the user specified data.
-        wizard = Analysis_wizard()
-        data = wizard.run()
+        self.new_wizard = Analysis_wizard()
+        data = self.new_wizard.run()
 
         # Failure, so do nothing.
         if data == None:
@@ -369,6 +369,9 @@ class Main(wx.Frame):
 
         # Initialise the new analysis.
         self.new_analysis(analysis_type, analysis_name, pipe_name)
+
+        # Delete the wizard data.
+        del self.new_wizard
 
 
     def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, index=None):

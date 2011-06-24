@@ -46,23 +46,23 @@ class Analysis_wizard:
         """
 
         # Set up the wizard.
-        wizard = Wiz_window(size_x=850, size_y=700, title='Set parameter values')
+        self.wizard = Wiz_window(size_x=850, size_y=700, title='Set parameter values')
 
         # Add the new analysis panel.
-        new_page = New_analysis_page(wizard)
-        wizard.add_page(new_page, apply_button=False)
+        new_page = New_analysis_page(self.wizard)
+        self.wizard.add_page(new_page, apply_button=False)
 
         # Add the data pipe name panel.
-        pipe_page = Data_pipe_page(wizard)
-        wizard.add_page(pipe_page, apply_button=False)
+        pipe_page = Data_pipe_page(self.wizard)
+        self.wizard.add_page(pipe_page, apply_button=False)
 
         # Execute the wizard.
-        setup = wizard.run()
+        setup = self.wizard.run()
         if not setup:
             return
 
         # Get the data.
-        analysis_type = wizard.analysis_type
+        analysis_type = self.wizard.analysis_type
         analysis_name = gui_to_str(new_page.analysis_name.GetValue())
         pipe_name = gui_to_str(pipe_page.pipe_name.GetValue())
 
