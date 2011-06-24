@@ -33,6 +33,7 @@ from test_suite.relax_test_runner import RelaxTestRunner
 
 # relax GUI test module imports.
 from noe import Noe
+from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 
 
 __all__ = ['noe']
