@@ -729,6 +729,7 @@ class Wiz_window(wx.Dialog):
         self._button_sizers = []
         self._button_apply_flag = []
         self._buttons = []
+        self._button_ids = []
 
         # A max of 10 pages should be plenty enough (any more and the developer should be shot!).
         for i in range(10):
@@ -751,6 +752,14 @@ class Wiz_window(wx.Dialog):
                                   'ok': None,
                                   'finish': None,
                                   'cancel': None})
+
+            # Initialise a set of unique button IDs.
+            self._button_ids.append({'back': wx.NewID(),
+                                     'apply': wx.NewID(),
+                                     'next': wx.NewID(),
+                                     'ok': wx.NewID(),
+                                     'finish': wx.NewID(),
+                                     'cancel': wx.NewID()})
 
 
     def _build_buttons(self):
