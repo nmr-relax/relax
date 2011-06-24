@@ -229,10 +229,13 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
                 mol_cont = cdp.mol[-1]
 
         # Add the residue number to the ID string (residue name is ignored because only the number is unique).
-        id = id + ':' + repr(res_num)
+        res_cont = None
+        if res_name:
+            # Update the ID string
+            id = id + ':' + res_name
 
-        # Get the corresponding residue container.
-        res_cont = return_residue(id)
+            # Get the corresponding residue container.
+            res_cont = return_residue(id)
 
         # Add the residue if it doesn't exist.
         if res_cont == None:
