@@ -368,15 +368,15 @@ class Main(wx.Frame):
         analysis_type, analysis_name, pipe_name = data
 
         # Initialise the new analysis.
-        self.new_analysis(analysis_type, analysis_name)
+        self.new_analysis(analysis_type, analysis_name, pipe_name)
 
 
-    def new_analysis(self, analysis_type, analysis_name, index=None):
+    def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, index=None):
         """Initialise a new analysis.
 
-        @param analysis_type:   The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
+        @keyword analysis_type: The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
         @type analysis_type:    str
-        @param analysis_name:   The name of the analysis to initialise.
+        @keyword analysis_name: The name of the analysis to initialise.
         @type analysis_name:    str
         @keyword index:         The index of the analysis in the relax data store (set to None if no data currently exists).
         @type index:            None or int
@@ -416,7 +416,7 @@ class Main(wx.Frame):
         analysis = classes[analysis_type]
 
         # Initialise the class and append it to the analysis window object.
-        self.analyses.append(analysis(self, analysis_name, self.notebook, index))
+        self.analyses.append(analysis(gui=self, notebook=self.notebook, analysis_name=analysis_name, pipe_name=pipe_name, data_index=index))
 
         # Add to the notebook.
         self.notebook.AddPage(self.analyses[-1].parent, analysis_name)
