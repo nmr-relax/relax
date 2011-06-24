@@ -180,6 +180,9 @@ class New_analysis_page(Wiz_page):
         # The sizes.
         size = (170, 170)
 
+        # No button is initially selected.
+        self._select_flag = False
+
         # The horizontal spacers.
         sizer1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
@@ -274,7 +277,7 @@ class New_analysis_page(Wiz_page):
         """Disable the next button until an analysis is selected."""
 
         # Turn off the next button.
-        self.parent.block_next()
+        self.parent.block_next(not self._select_flag)
 
 
     def select_consist_test(self, event):
@@ -383,6 +386,9 @@ class New_analysis_page(Wiz_page):
         # First freeze the wizard.
         self.Freeze()
 
+        # The button is selected.
+        self._select_flag = True
+
         # Deselect all.
         self.button_noe.SetValue(False)
         self.button_r1.SetValue(False)
@@ -401,4 +407,4 @@ class New_analysis_page(Wiz_page):
         self.Thaw()
 
         # Unblock forwards movement.
-        self.parent.block_next(False)
+        self.parent.block_next(not self._select_flag)
