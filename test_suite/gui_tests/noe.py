@@ -22,9 +22,15 @@
 
 # Python module imports.
 from unittest import TestCase
+import wx
+
+# Dependency checks.
+import dep_check
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+if dep_check.wx_module:
+    from gui.relax_gui import Main
 from status import Status; status = Status()
 
 
@@ -34,11 +40,28 @@ class Noe(TestCase):
     def setUp(self):
         """Set up for all the functional tests."""
 
+        # Start the GUI.
+        self.app = wx.App()
+
+        # Build the GUI.
+        main = Main(parent=None, id=-1, title="")
+
+        # Make it the main application component.
+        self.app.SetTopWindow(main)
+
+        # Show it.
+        main.Show()
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Reset the relax data storage object.
         ds.__reset__()
+
+        # Kill the app.
+        wx.CallAfter(self.app.Exit)
+        self.app.MainLoop()
 
 
     def test_noe_analysis(self):
