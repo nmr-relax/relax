@@ -656,7 +656,7 @@ class Structure(SystemTestCase):
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the xyz.
-        self.interpreter.structure.read_xyz(file='SSS-cluster4-new-test.xyz', dir=path)
+        self.interpreter.structure.read_xyz(file='SSS-cluster4-new-test.xyz', dir=path, read_model=[1,3])
 
         # Test the molecule name.
         self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, 'SSS-cluster4-new-test_mol1')

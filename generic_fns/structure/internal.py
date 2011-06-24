@@ -833,13 +833,17 @@ class Internal(Base_struct_API):
         # Loop over all models in the XYZ file.
         mol_index=0
         model_index = 0
+        model_increment = 0
         orig_model_num = []
         mol_conts = []
         orig_mol_num = []
         new_mol_name = []
         for model_records in self.__parse_models_xyz(file_path):
+            # Increment the model_increment
+            model_increment = model_increment +1
+      
             # Only load the desired model.
-            if read_model and model_index not in read_model:
+            if read_model and model_increment not in read_model:
                 continue
 
             # Store the original model number.
@@ -875,7 +879,7 @@ class Internal(Base_struct_API):
 
             # Increment the model index.
             model_index = model_index + 1
-      
+
         orig_mol_num=[0]
         # Create the structural data data structures.
         self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path)
