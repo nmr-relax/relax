@@ -199,8 +199,8 @@ class Free_file_format(Base_window, Wiz_page):
         """Set up the window."""
 
         # The sizes.
-        self.main_size = self.SIZE[0] - 2*self.BORDER
-        self.div_left = self.main_size / 2
+        self._main_size = self.SIZE[0] - 2*self.BORDER
+        self._div_left = self._main_size / 2
 
         # Execute the base __init__() method.
         super(Free_file_format, self).__init__(parent=parent, id=-1, title="Free file format", heading="Settings for the free file format")
@@ -228,7 +228,7 @@ class Free_file_format(Base_window, Wiz_page):
         """
 
         # Execute the base class method.
-        self.free_file_format_save(event)
+        self._free_file_format_save(event)
 
         # Destroy the window.
         self.Destroy()
