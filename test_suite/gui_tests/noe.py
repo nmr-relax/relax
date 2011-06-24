@@ -44,13 +44,10 @@ class Noe(TestCase):
         self.app = wx.App()
 
         # Build the GUI.
-        main = Main(parent=None, id=-1, title="")
+        self.gui = Main(parent=None, id=-1, title="")
 
         # Make it the main application component.
-        self.app.SetTopWindow(main)
-
-        # Show it.
-        main.Show()
+        self.app.SetTopWindow(self.gui)
 
 
     def tearDown(self):
@@ -60,9 +57,39 @@ class Noe(TestCase):
         ds.__reset__()
 
         # Kill the app.
-        wx.CallAfter(self.app.Exit)
+        #wx.CallAfter(self.app.Exit)
         self.app.MainLoop()
+
+
+    def click_new_analysis(self):
+        """Simulate a menu click for a new analysis."""
+
+        # The event.
+        click_event = wx.CommandEvent(wx.wxEVT_COMMAND_MENU_SELECTED, 1)
+        self.gui.ProcessEvent(click_event)
+
+
+    def click_noe_analysis(self):
+        """Simulate the clicking of the NOE button in the new analysis wizard."""
+
+        # Wait for the dialog to appear.
+        while 1:
+            if hasattr(self.gui, 'new_wizard'):
+                break
+
+        # The event.
+        click_event = wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, self.gui.new_wizard.wizard.pages[0].button_ids['noe'])
+        self.gui.new_wizard.wizard.ProcessEvent(click_event)
 
 
     def test_noe_analysis(self):
         """Test the NOE analysis."""
+
+        # Open the new analysis wizard.
+        wx.CallAfter(self.click_new_analysis)
+
+        # Select the NOE analysis.
+        wx.CallAfter(self.click_noe_analysis)
+
+        # Show the GUI.
+        self.gui.Show()
