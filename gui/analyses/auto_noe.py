@@ -118,13 +118,12 @@ class Auto_noe(Base_frame):
 
         See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
-        @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a flag stating if the data is complete and a list of missing data types.
+        @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a list of missing data types.
         @rtype:     class instance, bool, list of str
         """
 
         # The data container and flag.
         data = Container()
-        complete = True
         missing = []
 
         # The pipe name.
@@ -142,14 +141,12 @@ class Auto_noe(Base_frame):
         # Reference peak list and background noe.
         data.ref_file = self.data.ref_file
         if not data.ref_file:
-            complete = False
             missing.append('Reference peak list')
         data.ref_rmsd = int(self.data.ref_rmsd)
 
         # Saturated peak list and background noe.
         data.sat_file = self.data.sat_file
         if not data.sat_file:
-            complete = False
             missing.append('Saturated peak list')
         data.sat_rmsd = int(self.data.sat_rmsd)
 
@@ -159,7 +156,7 @@ class Auto_noe(Base_frame):
         # The frequency.
         frq = gui_to_str(self.field_nmr_frq.GetValue())
         if frq == None:
-            missing.appened('NMR frequency')
+            missing.append('NMR frequency')
 
         # Filename.
         data.filename = 'noe.%s.out' % frq
@@ -197,11 +194,10 @@ class Auto_noe(Base_frame):
 
         # No sequence data.
         if not data.seq_args and not data.structure_file:
-            complete = False
             missing.append('Sequence data files (text or PDB)')
 
-        # Return the container, flag, and list of missing data.
-        return data, complete, missing
+        # Return the container and list of missing data.
+        return data, missing
 
 
     def build_left_box(self):
@@ -292,22 +288,34 @@ class Auto_noe(Base_frame):
         # Synchronise the frame data to the relax data store.
         self.sync_ds(upload=True)
 
+        # Assemble all the data needed for the auto-analysis.
+        data, missing = self.assemble_data()
+
+        # Missing data.
+        if len(missing):
+            missing_data(missing)
+            return
+
         # Display the relax controller (if not debugging).
         if not status.debug:
             self.gui.controller.Show()
 
         # Start the thread (if not debugging).
         if status.debug:
-            self.execute_thread()
+            self.execute_thread(data)
         else:
-            id = thread.start_new_thread(self.execute_thread, ())
+            id = thread.start_new_thread(self.execute_thread, (data))
 
         # Terminate the event.
         event.Skip()
 
 
-    def execute_thread(self):
-        """Execute the calculation in a thread."""
+    def execute_thread(self, data):
+        """Execute the calculation in a thread.
+
+        @param data:    The data container with all data for the analysis.
+        @type data:     class instance
+        """
 
         # Controller.
         if not status.debug:
@@ -321,17 +329,6 @@ class Auto_noe(Base_frame):
             underline = '-' * len(header)
             wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
             time.sleep(0.5)
-
-        # Assemble all the data needed for the auto-analysis.
-        data, complete, missing = self.assemble_data()
-
-        # Incomplete.
-        if not complete:
-            print 'Aborting NOE caclulation as the following informations are missing:\n'
-            for i in range(len(missing)):
-                print '\t'+missing[i]
-            print ''
-            return
 
         # Execute.
         NOE_calc(seq_args=data.seq_args, pipe_name=data.pipe_name, noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, output_file=data.filename, results_dir=data.save_dir, int_method='height', heteronuc=data.heteronuc, proton=data.proton, heteronuc_pdb='@N')
