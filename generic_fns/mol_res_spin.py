@@ -867,6 +867,7 @@ def count_spins(selection=None, pipe=None, skip_desel=True):
     # The data pipe.
     if pipe == None:
         pipe = pipes.cdp_name()
+        print "pipe", pipe
 
     # Test the data pipe.
     pipes.test(pipe)
