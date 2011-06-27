@@ -833,17 +833,17 @@ class Internal(Base_struct_API):
         # Loop over all models in the XYZ file.
         mol_index=0
         model_index = 0
-        model_increment = 0
+        xyz_model_increment = 0
         orig_model_num = []
         mol_conts = []
         orig_mol_num = []
         new_mol_name = []
         for model_records in self.__parse_models_xyz(file_path):
-            # Increment the model_increment
-            model_increment = model_increment +1
+            # Increment the xyz_model_increment
+            xyz_model_increment = xyz_model_increment +1
       
             # Only load the desired model.
-            if read_model and model_increment not in read_model:
+            if read_model and xyz_model_increment not in read_model:
                 continue
 
             # Store the original model number.
