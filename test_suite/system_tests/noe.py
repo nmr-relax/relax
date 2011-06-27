@@ -26,6 +26,7 @@ from os import sep
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.mol_res_spin import spin_loop
 from status import Status; status = Status()
 
 
@@ -50,3 +51,27 @@ class Noe(SystemTestCase):
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'noe.py')
+
+        # The real data.
+        sat = [5050.0, 51643.0, 53663.0]
+        ref = [148614.0, 166842.0, 128690.0]
+        noe = [0.033980647852826784, 0.30953237194471417, 0.4169943274535706]
+        noe_err = [0.02020329903276632, 0.2320024671657343, 0.026067523940084526]
+
+        # Check the data.
+        i = 0
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Check the intensity data.
+            self.assertEqual(sat[i], spin.intensities['sat_ave'])
+            self.assertEqual(ref[i], spin.intensities['ref_ave'])
+
+            # Check the NOE data.
+            self.assertEqual(noe[i], spin.noe)
+            self.assertEqual(noe_err[i], spin.noe_err)
+
+            # Increment the spin index.
+            i += 1
