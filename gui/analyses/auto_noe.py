@@ -304,7 +304,7 @@ class Auto_noe(Base_frame):
         if status.debug:
             self.execute_thread(data)
         else:
-            id = thread.start_new_thread(self.execute_thread, (data))
+            id = thread.start_new_thread(self.execute_thread, (data,))
 
         # Terminate the event.
         event.Skip()
