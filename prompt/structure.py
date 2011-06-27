@@ -686,6 +686,76 @@ class Structure(User_fn_class):
         generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
 
 
+    def vectors_xyz(self, spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, unit=True):
+        """Extract and store the bond vectors from the loaded structures in the spin container.
+
+        Keyword arguments
+        ~~~~~~~~~~~~~~~~~
+
+        spin_id1:  The spin identification string of the spin 1.
+
+        spin_id2:  The spin identification string of the spin 2.
+
+        model:  The model to extract bond vectors from (which if set to None will cause the vectors
+        of all models to be extracted).
+
+        verbosity:  The amount of information to print to screen.  Zero corresponds to minimal
+        output while higher values increase the amount of output.  The default value is 1.
+
+        ave:  A flag which if True will cause the bond vectors from all models to be averaged.  If
+        vectors from only one model is extracted, this argument will have no effect.
+
+        unit:  A flag which if True will cause the unit vector to calculated rather than the full
+        length bond vector.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        For a number of types of analysis, bond vectors or unit bond vectors are required for the
+        calculations.  This user function allows these vectors to be extracted from the loaded
+        structures. The bond vector will be that from the two atoms of a xyz file loaded in relax.
+
+        The extraction of vectors can occur in a number of ways.  For example if an NMR structure
+        with N models is loaded or if multiple molecules, from any source, of the same compound are
+        loaded as different models, there are three options for extracting the bond vector.  Firstly
+        the bond vector of a single model can be extracted by setting the 'model' argument.
+        Secondly the bond vectors from all models can be extracted if 'model' is None and 'ave' is
+        set to False.  Thirdly, if 'model' is None and 'ave' is set to True, then a single vector
+        which is the average for all models will be calculated.
+
+
+        Example
+        ~~~~~~~
+
+        To extract a vector of two atoms from xyz file, type:
+
+        relax> structure.vectors(spin_id1='#SSS-cluster4-new-test_mol1@2', spin_id1='#SSS-cluster4-new-test_mol1@1')
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.vectors("
+            text = text + "spin_id1=" + repr(spin_id1)
+            text = text + ", spin_id2=" + repr(spin_id2)
+            text = text + ", model=" + repr(model)
+            text = text + ", verbosity=" + repr(verbosity)
+            text = text + ", ave=" + repr(ave)
+            text = text + ", unit=" + repr(unit) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(spin_id1, 'spin_identification_string', can_be_none=True)
+        arg_check.is_str(spin_id2, 'spin identification string', can_be_none=True)
+        arg_check.is_int(model, 'model', can_be_none=True)
+        arg_check.is_int(verbosity, 'verbosity level')
+        arg_check.is_bool(ave, 'average vector flag')
+        arg_check.is_bool(unit, 'unit vector flag')
+
+        # Execute the functional code.
+        generic_fns.structure.main.vectors_xyz(spin_id1=spin_id1, spin_id2=spin_id2, model=model, verbosity=verbosity, ave=ave, unit=unit)
+    
+    
     def write_pdb(self, file=None, dir=None, model_num=None, force=False):
         """The PDB writing function.
 
