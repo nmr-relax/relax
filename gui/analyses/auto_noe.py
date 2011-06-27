@@ -173,9 +173,10 @@ class Auto_noe(Base_frame):
 
         # Unresolved spins.
         file = DummyFileObject()
-        entries = self.data.unresolved
-        entries = replace(entries, ',', '\n')
-        file.write(entries)
+        if self.data.unresolved:
+            entries = self.data.unresolved
+            entries = replace(entries, ',', '\n')
+            file.write(entries)
         file.close()
         data.unresolved = file
 
