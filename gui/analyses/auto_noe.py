@@ -26,6 +26,7 @@
 
 # Python module imports.
 from os import sep
+from os.path import dirname
 from string import replace
 import sys
 import thread
@@ -46,7 +47,7 @@ from gui.controller import Redirect_text, Thread_container
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir, openfile
 from gui.message import error_message, missing_data
-from gui.misc import add_border, str_to_gui
+from gui.misc import add_border, gui_to_str, str_to_gui
 from gui import paths
 from gui.settings import load_sequence
 
@@ -378,10 +379,15 @@ class Auto_noe(Base_frame):
         """
 
         # Store the original directory.
-        backup = self.field_ref_noe.GetValue()
+        backup = gui_to_str(self.field_ref_noe.GetValue())
+
+        # The directory.
+        directory = None
+        if backup != None:
+            directory = dirname(backup)
 
         # Select the file.
-        self.data.ref_file = openfile('Select reference NOE peak list', directory=self.field_ref_noe.GetValue(), default = 'all files (*.*)|*')
+        self.data.ref_file = openfile('Select reference NOE peak list', directory=directory, default = 'all files (*.*)|*')
 
         # Restore the backup file if no file was chosen.
         if not self.data.ref_file:
@@ -426,10 +432,15 @@ class Auto_noe(Base_frame):
         """
 
         # Store the original directory.
-        backup = self.field_sat_noe.GetValue()
+        backup = gui_to_str(self.field_sat_noe.GetValue())
+
+        # The directory.
+        directory = None
+        if backup != None:
+            directory = dirname(backup)
 
         # Select the file.
-        self.data.sat_file = openfile('Select saturated NOE peak list', directory=self.field_sat_noe.GetValue(), default = 'all files (*.*)|*')
+        self.data.sat_file = openfile('Select saturated NOE peak list', directory=directory, default = 'all files (*.*)|*')
 
         # Restore the backup file if no file was chosen.
         if not self.data.sat_file:
