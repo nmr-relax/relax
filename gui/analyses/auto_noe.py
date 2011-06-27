@@ -157,7 +157,7 @@ class Auto_noe(Base_frame):
         data.save_dir = self.data.save_dir
 
         # Filename.
-        data.filename = 'noe.' + str(self.field_nmr_frq.GetValue()) + '.out'
+        data.filename = 'noe.' + gui_to_str(self.field_nmr_frq.GetValue()) + '.out'
 
         # The integration method.
         data.int_method = 'height'
@@ -230,13 +230,13 @@ class Auto_noe(Base_frame):
         self.add_title(box, "Setup for steady-state NOE analysis")
 
         # Add the frequency selection GUI element.
-        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str(self.data.frq))
+        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str_to_gui(self.data.frq))
 
         # Add the results directory GUI element.
         self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
         # Add the sequence file selection GUI element.
-        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str(self.gui.sequence_file_msg), fn=self.load_sequence, editable=False, button=True)
+        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str_to_gui(self.gui.sequence_file_msg), fn=self.load_sequence, editable=False, button=True)
 
         # Add the structure file selection GUI element.
         self.field_structure = self.add_text_sel_element(box, self.parent, text="Sequence from PDB structure file", default=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, fn='open_file', editable=False, button=True)
@@ -251,13 +251,13 @@ class Auto_noe(Base_frame):
         self.field_sat_noe = self.add_text_sel_element(box, self.parent, text="Saturated NOE peak list", default=self.data.sat_file, fn=self.sat_file, button=True)
 
         # Add the saturated RMSD background GUI element:
-        self.field_sat_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str(self.data.sat_rmsd))
+        self.field_sat_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str_to_gui(self.data.sat_rmsd))
 
         # Add the reference NOE peak list selection GUI element.
         self.field_ref_noe = self.add_text_sel_element(box, self.parent, text="Reference NOE peak list", default=self.data.ref_file, fn=self.ref_file, button=True)
 
         # Add the reference RMSD background GUI element:
-        self.field_ref_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str(self.data.ref_rmsd))
+        self.field_ref_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str_to_gui(self.data.ref_rmsd))
 
         # Add a stretchable spacer.
         box.AddStretchSpacer()
