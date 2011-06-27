@@ -262,7 +262,7 @@ class Auto_noe(Base_frame):
         box.AddStretchSpacer()
 
         # Add the execution GUI element.
-        self.add_execute_relax(box, self.execute)
+        self.button_exec_id = self.add_execute_relax(box, self.execute)
 
         # Return the box.
         return box
