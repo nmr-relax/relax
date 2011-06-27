@@ -156,13 +156,18 @@ class Auto_noe(Base_frame):
         # Results directory.
         data.save_dir = self.data.save_dir
 
+        # The frequency.
+        frq = gui_to_str(self.field_nmr_frq.GetValue())
+        if frq == None:
+            missing.appened('NMR frequency')
+
         # Filename.
-        data.filename = 'noe.' + gui_to_str(self.field_nmr_frq.GetValue()) + '.out'
+        data.filename = 'noe.%s.out' % frq
 
         # The integration method.
         data.int_method = 'height'
 
-        # Import golbal settings.
+        # Import global settings.
         global_settings = ds.relax_gui.global_setting
 
         # Hetero nucleus name.
