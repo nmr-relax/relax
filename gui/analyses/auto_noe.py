@@ -46,7 +46,7 @@ from gui.controller import Redirect_text, Thread_container
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir, openfile
 from gui.message import error_message, missing_data
-from gui.misc import add_border
+from gui.misc import add_border, str_to_gui
 from gui import paths
 from gui.settings import load_sequence
 
@@ -364,10 +364,7 @@ class Auto_noe(Base_frame):
             return
 
         # Store the file.
-        self.data.sequence_file = file
-
-        # Sync.
-        self.sync_ds(upload=False)
+        self.field_sequence.SetValue(str_to_gui(file))
 
         # Terminate the event.
         event.Skip()
