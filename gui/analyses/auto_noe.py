@@ -464,58 +464,58 @@ class Auto_noe(Base_frame):
 
         # The frequency.
         if upload:
-            self.data.frq = str(self.field_nmr_frq.GetValue())
+            self.data.frq = gui_to_str(self.field_nmr_frq.GetValue())
         else:
-            self.field_nmr_frq.SetValue(str(self.data.frq))
+            self.field_nmr_frq.SetValue(str_to_gui(self.data.frq))
 
         # The results directory.
         if upload:
-            self.data.save_dir = str(self.field_results_dir.GetValue())
+            self.data.save_dir = gui_to_str(self.field_results_dir.GetValue())
         else:
-            self.field_results_dir.SetValue(str(self.data.save_dir))
+            self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
 
         # The sequence file.
         if upload:
-            file = str(self.field_sequence.GetValue())
+            file = gui_to_str(self.field_sequence.GetValue())
             if file != self.gui.sequence_file_msg:
-                self.data.sequence_file = str(self.field_sequence.GetValue())
+                self.data.sequence_file = gui_to_str(self.field_sequence.GetValue())
         elif hasattr(self.data, 'sequence_file'):
-            self.field_sequence.SetValue(str(self.data.sequence_file))
+            self.field_sequence.SetValue(str_to_gui(self.data.sequence_file))
 
         # The structure file.
         if upload:
-            file = str(self.field_structure.GetValue())
+            file = gui_to_str(self.field_structure.GetValue())
             if file != self.gui.structure_file_pdb_msg:
-                self.data.structure_file = str(self.field_structure.GetValue())
+                self.data.structure_file = gui_to_str(self.field_structure.GetValue())
         elif hasattr(self.data, 'structure_file'):
-            self.field_structure.SetValue(str(self.data.structure_file))
+            self.field_structure.SetValue(str_to_gui(self.data.structure_file))
 
         # Unresolved residues.
         if upload:
-            self.data.unresolved = str(self.field_unresolved.GetValue())
+            self.data.unresolved = gui_to_str(self.field_unresolved.GetValue())
         elif hasattr(self.data, 'unresolved'):
-            self.field_unresolved.SetValue(str(self.data.unresolved))
+            self.field_unresolved.SetValue(str_to_gui(self.data.unresolved))
 
         # Reference peak file.
         if upload:
-            self.data.ref_file = str(self.field_ref_noe.GetValue())
+            self.data.ref_file = gui_to_str(self.field_ref_noe.GetValue())
         elif hasattr(self.data, 'ref_file'):
-            self.field_ref_noe.SetValue(str(self.data.ref_file))
+            self.field_ref_noe.SetValue(str_to_gui(self.data.ref_file))
 
         # Reference rmsd.
         if upload:
-            self.data.ref_rmsd = str(self.field_ref_rmsd.GetValue())
+            self.data.ref_rmsd = gui_to_str(self.field_ref_rmsd.GetValue())
         elif hasattr(self.data, 'ref_rmsd'):
-            self.field_ref_rmsd.SetValue(str(self.data.ref_rmsd))
+            self.field_ref_rmsd.SetValue(str_to_gui(self.data.ref_rmsd))
 
         # Saturated peak file.
         if upload:
-            self.data.sat_file = str(self.field_sat_noe.GetValue())
+            self.data.sat_file = gui_to_str(self.field_sat_noe.GetValue())
         elif hasattr(self.data, 'sat_file'):
-            self.field_sat_noe.SetValue(str(self.data.sat_file))
+            self.field_sat_noe.SetValue(str_to_gui(self.data.sat_file))
 
         # Saturated rmsd.
         if upload:
-            self.data.sat_rmsd = str(self.field_sat_rmsd.GetValue())
+            self.data.sat_rmsd = gui_to_str(self.field_sat_rmsd.GetValue())
         elif hasattr(self.data, 'sat_rmsd'):
-            self.field_sat_rmsd.SetValue(str(self.data.sat_rmsd))
+            self.field_sat_rmsd.SetValue(str_to_gui(self.data.sat_rmsd))
