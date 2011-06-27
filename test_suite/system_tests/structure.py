@@ -665,6 +665,20 @@ class Structure(SystemTestCase):
         self.interpreter.structure.load_spins('#SSS-cluster4-new-test_mol1@2')
         self.assertEqual(count_spins(), 1)
 
+        # Test the spin coordinates.
+        mol = cdp.structure.structural_data[0].mol[0]
+        last_spin_x=[]
+        last_spin_y=[]
+        last_spin_z=[]
+        for i in xrange(len(mol.atom_num)):
+            last_spin_x.append(mol.x[i])
+            last_spin_y.append(mol.y[i])
+            last_spin_z.append(mol.z[i])
+        
+        self.assertEqual(last_spin_x[160], -9.947)
+        self.assertEqual(last_spin_y[160], -6.062)
+        self.assertEqual(last_spin_z[160], 11.682)
+
         # Try loading a few protons.
         #self.interpreter.structure.load_spins('@H')
 
