@@ -81,19 +81,27 @@ class Base_frame:
         @type box:      wx.BoxSizer instance
         @param method:  The method to execute when the button is clicked.
         @type method:   method
+        @return:        The unique ID of the button.
+        @rtype:         int
         """
 
         # A horizontal sizer for the contents.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        # A unique ID.
+        id = wx.NewId()
+
         # The button.
-        button = buttons.ThemedGenBitmapTextButton(self.parent, -1, None, " Execute relax")
+        button = buttons.ThemedGenBitmapTextButton(self.parent, id, None, " Execute relax")
         button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.gui.Bind(wx.EVT_BUTTON, method, button)
         sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
+
+        # Return the ID.
+        return id
 
 
     def add_spin_control(self, box, parent, text='', min=None, max=None, control=wx.SpinCtrl, width=-1, height=-1):
