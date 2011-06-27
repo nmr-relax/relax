@@ -32,6 +32,7 @@ import dep_check
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.mol_res_spin import spin_loop
 if dep_check.wx_module:
     from gui.relax_gui import Main
 from gui.misc import str_to_gui
@@ -137,3 +138,27 @@ class Noe(TestCase):
 
         # Show the GUI.
         self.gui.Show()
+
+        # The real data.
+        sat = [5050.0, 51643.0, 53663.0]
+        ref = [148614.0, 166842.0, 128690.0]
+        noe = [0.033980647852826784, 0.30953237194471417, 0.4169943274535706]
+        noe_err = [0.02020329903276632, 0.2320024671657343, 0.026067523940084526]
+
+        # Check the data.
+        i = 0
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Check the intensity data.
+            self.assertEqual(sat[i], spin.intensities['sat_ave'])
+            self.assertEqual(ref[i], spin.intensities['ref_ave'])
+
+            # Check the NOE data.
+            self.assertEqual(noe[i], spin.noe)
+            self.assertEqual(noe_err[i], spin.noe_err)
+
+            # Increment the spin index.
+            i += 1
