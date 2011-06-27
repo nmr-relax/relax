@@ -21,6 +21,9 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
+from shutil import rmtree
+from tempfile import mkdtemp
 from unittest import TestCase
 import wx
 
@@ -31,6 +34,7 @@ import dep_check
 from data import Relax_data_store; ds = Relax_data_store()
 if dep_check.wx_module:
     from gui.relax_gui import Main
+from gui.misc import str_to_gui
 from status import Status; status = Status()
 
 
@@ -39,6 +43,9 @@ class Noe(TestCase):
 
     def setUp(self):
         """Set up for all the functional tests."""
+
+        # Create a temporary directory for the results.
+        ds.tmpdir = mkdtemp()
 
         # Start the GUI.
         self.app = wx.App()
@@ -53,12 +60,23 @@ class Noe(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Remove the temporary directory.
+        rmtree(ds.tmpdir)
+
         # Reset the relax data storage object.
         ds.__reset__()
 
         # Kill the app.
-        #wx.CallAfter(self.app.Exit)
+        wx.CallAfter(self.app.Exit)
         self.app.MainLoop()
+
+
+    def click_execute(self, page):
+        """Simulate the clicking of the execute relax button."""
+
+        # The event.
+        click_event = wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, page.button_exec_id)
+        self.gui.ProcessEvent(click_event)
 
 
     def click_new_analysis(self):
@@ -72,11 +90,6 @@ class Noe(TestCase):
     def click_noe_analysis(self):
         """Simulate the clicking of the NOE button in the new analysis wizard."""
 
-        # Wait for the dialog to appear.
-        while 1:
-            if hasattr(self.gui, 'new_wizard'):
-                break
-
         # The event.
         click_event = wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, self.gui.new_wizard.wizard.pages[0].button_ids['noe'])
         self.gui.new_wizard.wizard.ProcessEvent(click_event)
@@ -86,10 +99,41 @@ class Noe(TestCase):
         """Test the NOE analysis."""
 
         # Open the new analysis wizard.
-        wx.CallAfter(self.click_new_analysis)
+        #wx.CallAfter(self.click_new_analysis)
 
         # Select the NOE analysis.
-        wx.CallAfter(self.click_noe_analysis)
+        #wx.CallAfter(self.click_noe_analysis)
+
+        # Directly set up the analysis.
+        self.gui.new_analysis(analysis_type='noe', analysis_name="Steady-state NOE test", pipe_name='noe test')
+
+        # Alias the page.
+        page = self.gui.analyses[0]
+
+        # The frequency label.
+        page.field_nmr_frq.SetValue(str_to_gui('500'))
+
+        # Change the results directory.
+        page.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+
+        # The sequence file.
+        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
+        page.field_sequence.SetValue(str_to_gui(file))
+
+        # The reference spectrum.
+        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'ref_ave.list'
+        page.field_ref_noe.SetValue(str_to_gui(file))
+
+        # The sat spectrum.
+        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'sat_ave.list'
+        page.field_sat_noe.SetValue(str_to_gui(file))
+
+        # Set the errors.
+        page.field_ref_rmsd.SetValue(str_to_gui('3600'))
+        page.field_sat_rmsd.SetValue(str_to_gui('3000'))
+
+        # Open the new analysis wizard.
+        wx.CallAfter(self.click_execute, page)
 
         # Show the GUI.
         self.gui.Show()
