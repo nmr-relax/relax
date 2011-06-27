@@ -138,21 +138,6 @@ class Auto_noe(Base_frame):
         else:
             data.seq_args = None
 
-        # Reference peak list and background noe.
-        data.ref_file = self.data.ref_file
-        if not data.ref_file:
-            missing.append('Reference peak list')
-        data.ref_rmsd = int(self.data.ref_rmsd)
-
-        # Saturated peak list and background noe.
-        data.sat_file = self.data.sat_file
-        if not data.sat_file:
-            missing.append('Saturated peak list')
-        data.sat_rmsd = int(self.data.sat_rmsd)
-
-        # Results directory.
-        data.save_dir = self.data.save_dir
-
         # The frequency.
         frq = gui_to_str(self.field_nmr_frq.GetValue())
         if frq == None:
@@ -160,6 +145,21 @@ class Auto_noe(Base_frame):
 
         # Filename.
         data.filename = 'noe.%s.out' % frq
+
+        # Saturated peak list and background noe.
+        data.sat_file = self.data.sat_file
+        if not data.sat_file:
+            missing.append('Saturated peak list')
+        data.sat_rmsd = int(self.data.sat_rmsd)
+
+        # Reference peak list and background noe.
+        data.ref_file = self.data.ref_file
+        if not data.ref_file:
+            missing.append('Reference peak list')
+        data.ref_rmsd = int(self.data.ref_rmsd)
+
+        # Results directory.
+        data.save_dir = self.data.save_dir
 
         # The integration method.
         data.int_method = 'height'
