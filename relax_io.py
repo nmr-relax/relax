@@ -968,8 +968,8 @@ class DummyFileObject:
         for i in xrange(len(lines)):
             lines[i] = lines[i] + '\n'
 
-        # Return the file lines (except the last as it is empty).
-        return lines[:-1]
+        # Return the file lines.
+        return lines
 
 
 
