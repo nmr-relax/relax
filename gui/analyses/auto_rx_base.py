@@ -201,24 +201,6 @@ class Auto_rx(Base_frame):
         return data, complete, missing
 
 
-    def build_left_box(self):
-        """Construct the left hand box to pack into the automatic Rx analysis frame.
-
-        @return:    The left hand box element containing the bitmap.
-        @rtype:     wx.BoxSizer instance
-        """
-
-        # Use a vertical packing of elements.
-        box = wx.BoxSizer(wx.VERTICAL)
-
-        # Add the model-free bitmap picture.
-        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
-        box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
-
-        # Return the box.
-        return box
-
-
     def build_right_box(self):
         """Construct the right hand box to pack into the main Rx box.
 
