@@ -53,7 +53,7 @@ class Controller(wx.Frame):
         self.border = 5
 
         # IO redirection.
-        if not status.debug:
+        if not status.debug and not status.test_mode:
             redir = Redirect_text(self)
             sys.stdout = redir
             sys.stderr = redir
