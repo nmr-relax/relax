@@ -29,7 +29,7 @@ from os import sep
 from os.path import dirname
 from string import replace
 import sys
-import thread
+from threading import Thread
 import time
 import wx
 
@@ -302,55 +302,13 @@ class Auto_noe(Base_frame):
 
         # Start the thread (if not debugging).
         if status.debug:
-            self.execute_thread(data)
+            self.thread = Execute(self.gui, data)
         else:
-            id = thread.start_new_thread(self.execute_thread, (data,))
+            self.thread = Execute_thread(self.gui, data)
+            self.thread.start()
 
         # Terminate the event.
         event.Skip()
-
-
-    def execute_thread(self, data):
-        """Execute the calculation in a thread.
-
-        @param data:    The data container with all data for the analysis.
-        @type data:     class instance
-        """
-
-        # Controller.
-        if not status.debug:
-            # Redirect relax output and errors to the controller.
-            redir = Redirect_text(self.gui.controller)
-            sys.stdout = redir
-            sys.stderr = redir
-
-            # Print a header in the controller.
-            header = 'Starting NOE calculation'
-            underline = '-' * len(header)
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
-            time.sleep(0.5)
-
-        # Execute.
-        NOE_calc(seq_args=data.seq_args, pipe_name=data.pipe_name, noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, output_file=data.filename, results_dir=data.save_dir, int_method='height', heteronuc=data.heteronuc, proton=data.proton, heteronuc_pdb='@N')
-
-        # Feedback about success.
-        if not status.debug:
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
-
-        # Add noe grace plot to results list.
-        self.gui.list_noe.Append(data.save_dir+sep+'grace'+sep+'noe.agr')
-
-        # Add noe grace plot to relax data store.
-        ds.relax_gui.results_noe.append(data.save_dir+sep+'grace'+sep+'noe.agr')
-
-        # Create color coded structure pymol macro.
-        color_code_noe(self, data.save_dir, data.structure_file)
-
-        # add macro to results tab
-        self.gui.list_noe.Append(data.save_dir+sep+'noe.pml')
-
-        # Add noe macro to relax data store.
-        ds.relax_gui.results_noe.append(data.save_dir+sep+'noe.pml')
 
 
     def load_sequence(self, event):
@@ -522,3 +480,84 @@ class Auto_noe(Base_frame):
             self.data.sat_rmsd = gui_to_str(self.field_sat_rmsd.GetValue())
         elif hasattr(self.data, 'sat_rmsd'):
             self.field_sat_rmsd.SetValue(str_to_gui(self.data.sat_rmsd))
+
+
+
+class Execute:
+    """The NOE analysis execution object."""
+
+    def __init__(self, gui, data):
+        """Set up the NOE analysis execution object.
+
+        @param gui:     The GUI object.
+        @type gui:      wx object
+        @param data:    The data container with all data for the analysis.
+        @type data:     class instance
+        """
+
+        # Store the args.
+        self.gui = gui
+        self.data = data
+
+        # Execute.
+        self.run()
+
+
+    def run(self):
+        """Execute the calculation."""
+
+        # Controller.
+        if not status.debug:
+            # Redirect relax output and errors to the controller.
+            redir = Redirect_text(self.gui.controller)
+            sys.stdout = redir
+            sys.stderr = redir
+
+            # Print a header in the controller.
+            header = 'Starting NOE calculation'
+            underline = '-' * len(header)
+            wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
+            time.sleep(0.5)
+
+        # Execute.
+        NOE_calc(seq_args=self.data.seq_args, pipe_name=self.data.pipe_name, noe_ref=self.data.ref_file, noe_ref_rmsd=self.data.ref_rmsd, noe_sat=self.data.sat_file, noe_sat_rmsd=self.data.sat_rmsd, unresolved=self.data.unresolved, pdb_file=self.data.structure_file, output_file=self.data.filename, results_dir=self.data.save_dir, int_method='height', heteronuc=self.data.heteronuc, proton=self.data.proton, heteronuc_pdb='@N')
+
+        # Feedback about success.
+        if not status.debug:
+            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
+
+        # Add noe grace plot to results list.
+        self.gui.list_noe.Append(self.data.save_dir+sep+'grace'+sep+'noe.agr')
+
+        # Add noe grace plot to relax data store.
+        ds.relax_gui.results_noe.append(self.data.save_dir+sep+'grace'+sep+'noe.agr')
+
+        # Create color coded structure pymol macro.
+        color_code_noe(self.data.save_dir, self.data.structure_file)
+
+        # add macro to results tab
+        self.gui.list_noe.Append(self.data.save_dir+sep+'noe.pml')
+
+        # Add noe macro to relax data store.
+        ds.relax_gui.results_noe.append(self.data.save_dir+sep+'noe.pml')
+
+
+
+class Execute_thread(Execute, Thread):
+    """The NOE analysis thread execution object."""
+
+    def __init__(self, gui, data):
+        """Set up the NOE analysis thread execution object.
+
+        @param gui:     The GUI object.
+        @type gui:      wx object
+        @param data:    The data container with all data for the analysis.
+        @type data:     class instance
+        """
+
+        # Store the args.
+        self.gui = gui
+        self.data = data
+
+        # Set up the thread object.
+        Thread.__init__(self)
