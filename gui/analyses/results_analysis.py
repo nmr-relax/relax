@@ -35,7 +35,7 @@ from generic_fns.mol_res_spin import spin_loop
 from gui.paths import IMAGE_PATH
 
 
-def color_code_noe(self, target_dir, pdb_file):
+def color_code_noe(target_dir, pdb_file):
     """Create PyMol Macro for NOE colouring."""
 
     # Open the macro file.
@@ -82,7 +82,7 @@ def color_code_noe(self, target_dir, pdb_file):
     file.close()
 
 
-def model_free_results(self, directory, pdbfile):
+def model_free_results(directory, pdbfile):
     """Create the model-free results."""
 
     # Load the interpreter.
