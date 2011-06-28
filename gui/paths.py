@@ -90,6 +90,7 @@ class I16x16:
         self.ref =                  path + 'actions'    + sep + 'flag-blue.png'
         self.uf_script =            path + 'mimetypes'  + sep + 'application-x-desktop.png'
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
+        self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
 
 
 
@@ -114,6 +115,7 @@ class I22x22:
         self.open_folder =          path + 'actions'    + sep + 'document-open-folder.png'
         self.save =                 path + 'actions'    + sep + 'document-save.png'
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
+        self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
@@ -147,6 +149,7 @@ class I32x32:
         self.open_folder =  path + 'actions' + sep + 'document-open-folder.png'
         self.save =         path + 'actions' + sep + 'document-save.png'
         self.view_refresh = path + 'actions' + sep + 'view-refresh.png'
+        self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
 
 
 
@@ -170,6 +173,7 @@ class I48x48:
         self.remove =       path + 'actions' + sep + 'list-remove.png'
         self.save =         path + 'actions' + sep + 'document-save.png'
         self.view_refresh = path + 'actions' + sep + 'view-refresh.png'
+        self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '48x48' + sep
