@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import sep
+from os import F_OK, access, sep
 from shutil import rmtree
 from tempfile import mkdtemp
 from time import sleep
@@ -145,3 +145,7 @@ class Noe(TestCase):
 
             # Increment the spin index.
             i += 1
+
+        # Check the created files.
+        self.assert_(access(ds.tmpdir+sep+'grace'+sep+'noe.arg', F_OK))
+        self.assert_(access(ds.tmpdir+sep+'grace'+sep+'noe.pml', F_OK))
