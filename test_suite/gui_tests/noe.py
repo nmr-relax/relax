@@ -114,9 +114,6 @@ class Noe(TestCase):
 
         # Wait for execution to complete.
         page.thread.join()
-        #while not status.exec_lock.locked():
-        #    sleep(1)
-        #status.exec_lock.acquire('auto noe')
 
         # The real data.
         res_nums = [4, 5, 6]
