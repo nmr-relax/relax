@@ -51,7 +51,7 @@ from gui.analyses.auto_model_free import Auto_model_free
 from gui.analyses.auto_noe import Auto_noe
 from gui.analyses.auto_r1 import Auto_r1
 from gui.analyses.auto_r2 import Auto_r2
-from gui.analyses.results import Results_summary
+from gui.analyses.results import Results_viewer
 from gui.analyses.wizard import Analysis_wizard
 from gui.base_classes import Container
 from gui.components.spin_view import Spin_view_window
@@ -532,6 +532,21 @@ class Main(wx.Frame):
 
         # Open the window.
         self.relax_prompt.Show()
+
+
+    def show_results_viewer(self, event):
+        """Display the analysis results.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Build the results viewer window.
+        if not hasattr(self, 'results_viewer'):
+            self.results_viewer = Results_viewer(gui=self)
+
+        # Open the window.
+        self.results_viewer.Show()
 
 
     def show_tree(self, event):
