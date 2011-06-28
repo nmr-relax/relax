@@ -60,6 +60,9 @@ class Status(object):
         # Execution lock object.
         self.exec_lock = Exec_lock()
 
+        # Testing mode flag.
+        self.test_mode = False
+
         # The Monte Carlo simulation status.
         self.mc_number = None
 

@@ -284,6 +284,9 @@ class Relax:
             elif options.gui_tests:
                 mode = 'GUI tests'
 
+            # Set the status flag.
+            status.test_mode = True
+
         # Test mode.
         elif options.test:
             # Make sure no script is supplied.
