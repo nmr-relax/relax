@@ -200,24 +200,6 @@ class Auto_noe(Base_frame):
         return data, missing
 
 
-    def build_left_box(self):
-        """Construct the left hand box to pack into the automatic NOE analysis frame.
-
-        @return:    The left hand box element containing the bitmap.
-        @rtype:     wx.BoxSizer instance
-        """
-
-        # Use a vertical packing of elements.
-        box = wx.BoxSizer(wx.VERTICAL)
-
-        # Add the NOE bitmap picture.
-        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'noe.png', wx.BITMAP_TYPE_ANY))
-        box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
-
-        # Return the box.
-        return box
-
-
     def build_right_box(self):
         """Construct the right hand box to pack into the main NOE box.
 
