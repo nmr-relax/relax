@@ -72,12 +72,14 @@ class Menu:
         menu.AppendItem(self.build_menu_item(menu, id=50, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.controller))
         menu.AppendItem(self.build_menu_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
         menu.AppendItem(self.build_menu_item(menu, id=52, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
+        menu.AppendItem(self.build_menu_item(menu, id=53, text="&Results viewer\tCtrl+R", icon=paths.icon_16x16.view_statistics))
         self.menubar.Append(menu, "&View")
 
         # The 'View' actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_controller,    id=50)
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_prompt,        id=51)
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_tree,          id=52)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_controller,        id=50)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_prompt,            id=51)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_tree,              id=52)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_results_viewer,    id=53)
 
         # The 'User functions' menu entries.
         self._user_functions()
