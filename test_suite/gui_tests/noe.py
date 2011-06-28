@@ -148,4 +148,3 @@ class Noe(TestCase):
 
         # Check the created files.
         self.assert_(access(ds.tmpdir+sep+'grace'+sep+'noe.agr', F_OK))
-        self.assert_(access(ds.tmpdir+sep+'grace'+sep+'noe.pml', F_OK))
