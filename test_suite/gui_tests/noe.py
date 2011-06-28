@@ -118,6 +118,7 @@ class Noe(TestCase):
         status.exec_lock.acquire('auto noe')
 
         # The real data.
+        res_nums = [4, 5, 6]
         sat = [5050.0, 51643.0, 53663.0]
         ref = [148614.0, 166842.0, 128690.0]
         noe = [0.033980647852826784, 0.30953237194471417, 0.4169943274535706]
@@ -128,10 +129,13 @@ class Noe(TestCase):
 
         # Check the data.
         i = 0
-        for spin in spin_loop():
+        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
+
+            # Spin info.
+            self.assertEqual(res_nums[i], res_num)
 
             # Check the intensity data.
             self.assertEqual(sat[i], spin.intensities['sat'])
