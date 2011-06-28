@@ -96,9 +96,11 @@ class Auto_noe(Base_frame):
             ds.relax_gui.analyses[data_index].ref_rmsd = 1000
             ds.relax_gui.analyses[data_index].sat_rmsd = 1000
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
+            ds.relax_gui.analyses[data_index].results_list = []
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
+        self.data_index = data_index
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
@@ -285,9 +287,9 @@ class Auto_noe(Base_frame):
 
         # Start the thread (if not debugging).
         if status.debug:
-            self.thread = Execute(self.gui, data)
+            self.thread = Execute(self.gui, data, self.data_index)
         else:
-            self.thread = Execute_thread(self.gui, data)
+            self.thread = Execute_thread(self.gui, data, self.data_index)
             self.thread.start()
 
         # Terminate the event.
@@ -469,18 +471,21 @@ class Auto_noe(Base_frame):
 class Execute:
     """The NOE analysis execution object."""
 
-    def __init__(self, gui, data):
+    def __init__(self, gui, data, data_index):
         """Set up the NOE analysis execution object.
 
-        @param gui:     The GUI object.
-        @type gui:      wx object
-        @param data:    The data container with all data for the analysis.
-        @type data:     class instance
+        @param gui:         The GUI object.
+        @type gui:          wx object
+        @param data:        The data container with all data for the analysis.
+        @type data:         class instance
+        @param data_index:  The index of the analysis in the relax data store.
+        @type data_index:   int
         """
 
         # Store the args.
         self.gui = gui
         self.data = data
+        self.data_index = data_index
 
         # Execute.
         self.run()
@@ -496,33 +501,26 @@ class Execute:
             sys.stdout = redir
             sys.stderr = redir
 
-            # Print a header in the controller.
-            header = 'Starting NOE calculation'
-            underline = '-' * len(header)
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
-            time.sleep(0.5)
-
         # Execute.
         NOE_calc(seq_args=self.data.seq_args, pipe_name=self.data.pipe_name, noe_ref=self.data.ref_file, noe_ref_rmsd=self.data.ref_rmsd, noe_sat=self.data.sat_file, noe_sat_rmsd=self.data.sat_rmsd, unresolved=self.data.unresolved, pdb_file=self.data.structure_file, output_file=self.data.filename, results_dir=self.data.save_dir, int_method='height', heteronuc=self.data.heteronuc, proton=self.data.proton, heteronuc_pdb='@N')
 
-        # Feedback about success.
-        if not status.debug:
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
+        # Alias the relax data store data.
+        data = ds.relax_gui.analyses[self.data_index]
 
-        # Add noe grace plot to results list.
-        self.gui.list_noe.Append(self.data.save_dir+sep+'grace'+sep+'noe.agr')
+        # Is there a results list (old results file support)?
+        if not hasattr(data, 'results_list'):
+            data.results_list = []
 
-        # Add noe grace plot to relax data store.
-        ds.relax_gui.results_noe.append(self.data.save_dir+sep+'grace'+sep+'noe.agr')
+        # Add the NOE grace plot to the results list.
+        data.results_list.append(data.save_dir+sep+'grace'+sep+'noe.agr')
 
-        # Create color coded structure pymol macro.
-        color_code_noe(self.data.save_dir, self.data.structure_file)
+        # Create a PyMOL macro, if a structure exists.
+        if hasattr(data, 'structure_file'):
+            # The macro.
+            color_code_noe(data.save_dir, data.structure_file)
 
-        # add macro to results tab
-        self.gui.list_noe.Append(self.data.save_dir+sep+'noe.pml')
-
-        # Add noe macro to relax data store.
-        ds.relax_gui.results_noe.append(self.data.save_dir+sep+'noe.pml')
+            # Add the macro to the results list.
+            data.results_list.append(data.save_dir+sep+'noe.pml')
 
 
 
@@ -532,15 +530,18 @@ class Execute_thread(Execute, Thread):
     def __init__(self, gui, data):
         """Set up the NOE analysis thread execution object.
 
-        @param gui:     The GUI object.
-        @type gui:      wx object
-        @param data:    The data container with all data for the analysis.
-        @type data:     class instance
+        @param gui:         The GUI object.
+        @type gui:          wx object
+        @param data:        The data container with all data for the analysis.
+        @type data:         class instance
+        @param data_index:  The index of the analysis in the relax data store.
+        @type data_index:   int
         """
 
         # Store the args.
         self.gui = gui
         self.data = data
+        self.data_index = data_index
 
         # Set up the thread object.
         Thread.__init__(self)
