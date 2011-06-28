@@ -527,7 +527,7 @@ class Execute:
 class Execute_thread(Execute, Thread):
     """The NOE analysis thread execution object."""
 
-    def __init__(self, gui, data):
+    def __init__(self, gui, data, data_index):
         """Set up the NOE analysis thread execution object.
 
         @param gui:         The GUI object.
