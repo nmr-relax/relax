@@ -34,41 +34,66 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
 from gui.analyses.base import Base_frame
-from gui.misc import add_border
+from gui.analyses.results_analysis import see_results
+from gui.misc import add_border, gui_to_str, str_to_gui
 from gui.paths import IMAGE_PATH
 
 
 
-class Results_summary(Base_frame):
+class Results_viewer(wx.Frame):
     """The base class for the noe frames."""
 
-    def __init__(self, gui, notebook):
+    # Some class variables.
+    border = 10
+    size = (800, 400)
+
+    def __init__(self, gui):
         """Build the results frame.
 
         @param gui:                 The main GUI class.
         @type gui:                  gui.relax_gui.Main instance
-        @param notebook:            The notebook to pack this frame into.
-        @type notebook:             wx.Notebook instance
         """
 
         # Store the main class.
         self.gui = gui
 
-        # Synchronize results.
-        self.sync_results()
+        # Initialise the base frame.
+        wx.Frame.__init__(self, parent=gui, style=wx.DEFAULT_FRAME_STYLE)
 
-        # The parent GUI element for this class.
-        self.parent = notebook
+        # Set the window title, size, etc.
+        self.SetTitle("Results viewer")
+        self.SetSize(self.size)
 
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
-        self.parent.SetSizer(box_main)
+        self.SetSizer(box_main)
 
         # Build the central sizer, with borders.
-        box_centre = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
+        box_centre = add_border(box_main, border=self.border, packing=wx.VERTICAL)
 
-        # Build and pack the main sizer box.
-        self.build_results_box(box_centre)
+        # Build the analysis selector.
+        self.build_analysis_sel(box_centre)
+
+        # Spacer.
+        box_centre.AddSpacer(self.border)
+
+        # Add the list box.
+        self.list = self.add_list_box(box_centre, fn=None)
+
+        # Spacer.
+        box_centre.AddSpacer(self.border)
+
+        # Add the open button.
+        self.button_open = wx.Button(self, -1, "Open")
+        self.button_open.SetMinSize((103, 27))
+        self.gui.Bind(wx.EVT_BUTTON, self.open_result_file, self.button_open)
+        box_centre.Add(self.button_open, 0, wx.ALIGN_RIGHT, 5)
+
+        # Bind some events.
+        self.Bind(wx.EVT_SHOW, self.update_window)
+        self.Bind(wx.EVT_LEFT_DOWN, self.update_choices, self.analysis_list)
+        self.Bind(wx.EVT_COMBOBOX, self.on_choice, self.analysis_list)
+        self.Bind(wx.EVT_CLOSE, self.handler_close)
 
 
     def add_list_box(self, box, fn=None):
@@ -83,10 +108,7 @@ class Results_summary(Base_frame):
         """
 
         # Initialise the list box.
-        list = wx.ListBox(self.parent, -1, choices=[])
-
-        # Set the properties.
-        list.SetMinSize((400, 130))
+        list = wx.ListBox(self, -1, choices=[])
 
         # Bind events.
         self.gui.Bind(wx.EVT_LISTBOX_DCLICK, fn, list)
@@ -182,6 +204,37 @@ class Results_summary(Base_frame):
         box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
 
 
+    def build_analysis_sel(self, box):
+        """Create the analysis selection element.
+
+        @param box: The horizontal box element to pack the elements into.
+        @type box:  wx.BoxSizer instance
+        """
+
+        # Use a horizontal packing of elements.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The text.
+        label = wx.StaticText(self, -1, "Analysis selection")
+
+        # The font and label properties.
+        label.SetFont(self.gui.font_subtitle)
+
+        # Add the label to the analysis box.
+        sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Add a spacer.
+        sizer.AddSpacer(self.border)
+
+        # A combo box.
+        self.analysis_list = wx.ComboBox(self, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=[])
+        self.analysis_list.SetMinSize((50, 27))
+        sizer.Add(self.analysis_list, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Add the analysis sizer to the main sizer.
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
+
+
     def build_results_box(self, box):
         """Function to pack results frame.
 
@@ -208,10 +261,102 @@ class Results_summary(Base_frame):
         box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
 
 
-    def sync_results(self):
-        """Function to synchronize results with relax data storage"""
+    def handler_close(self, event):
+        """Event handler for the close window action.
 
-        # load results from data store.
-        self.results_noe = ds.relax_gui.results_noe
-        self.results_rx = ds.relax_gui.results_rx
-        self.results_modelfree = ds.relax_gui.results_model_free
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Close the window.
+        self.Hide()
+
+
+    def on_choice(self, event):
+        """Update the list of results on choosing an analysis.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Clear the list.
+        self.list.Clear()
+
+        # Determine the analysis index.
+        found = False
+        for index in range(len(ds.relax_gui.analyses)):
+            # Match.
+            if gui_to_str(self.analysis_list.GetValue()) == ds.relax_gui.analyses[index].analysis_name:
+                found = True
+                break
+
+        # No analysis chosen.
+        if not found:
+            return
+
+        # Alias.
+        data = ds.relax_gui.analyses[index]
+
+        # Nothing to do.
+        if not hasattr(data, 'results_list'):
+            return
+
+        # Update the list.
+        for i in range(len(data.results_list)):
+            self.list.Append(str_to_gui(data.results_list[i]))
+
+
+    def open_result_file(self, event):
+        """Open the results in the appropriate program.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The selected file.
+        choice = gui_to_str(self.list.GetStringSelection())
+
+        # No choice.
+        if not choice:
+            return
+
+        # A special table.
+        if choice == 'Table_of_Results':
+            # The data.
+            model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te]
+
+            # Open.
+            see_results(choice, model_result)
+
+        # Open the file.
+        else:
+            see_results(choice, None)
+
+
+    def update_choices(self, event):
+        """Update the list of analyses.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Clear the previous analyses.
+        self.analysis_list.Clear()
+
+        # The list of analyses.
+        for i in range(len(ds.relax_gui.analyses)):
+            self.analysis_list.Append(str_to_gui(ds.relax_gui.analyses[i].analysis_name))
+
+
+    def update_window(self, event):
+        """Update the window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Update the choices.
+        self.update_choices(None)
+
+        # Update the list.
+        self.on_choice(None)
