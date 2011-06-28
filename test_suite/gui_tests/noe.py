@@ -113,13 +113,10 @@ class Noe(TestCase):
         page.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, page.button_exec_id))
 
         # Wait for execution to complete.
-        i = 0
-        while not status.exec_lock.locked():
-            sleep(1)
-            i += 1
-            if i == 10:
-                break
-        status.exec_lock.acquire('auto noe')
+        page.thread.join()
+        #while not status.exec_lock.locked():
+        #    sleep(1)
+        #status.exec_lock.acquire('auto noe')
 
         # The real data.
         res_nums = [4, 5, 6]
