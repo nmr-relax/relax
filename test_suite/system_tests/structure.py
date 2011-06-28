@@ -685,7 +685,3 @@ class Structure(SystemTestCase):
         # And now all the rest of the atoms.
         self.interpreter.structure.load_spins()
 
-        # Extract a vector between first two spins.
-        self.interpreter.structure.vectors_xyz(spin_id1='#SSS-cluster4-new-test_mol1@1', spin_id2='#SSS-cluster4-new-test_mol1@2')
-        print((cdp.mol[0].res[0].spin[0]))
-        self.assert_(hasattr(cdp.mol[0].res[0].spin[0], 'bond_vect'))
