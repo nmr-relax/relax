@@ -52,7 +52,6 @@ from gui.analyses.auto_noe import Auto_noe
 from gui.analyses.auto_r1 import Auto_r1
 from gui.analyses.auto_r2 import Auto_r2
 from gui.analyses.results import Results_summary
-from gui.analyses.results_analysis import see_results
 from gui.analyses.wizard import Analysis_wizard
 from gui.base_classes import Container
 from gui.components.spin_view import Spin_view_window
@@ -331,9 +330,6 @@ class Main(wx.Frame):
 
         # Define Global Variables
         ds.relax_gui.unresolved = ""
-        ds.relax_gui.results_noe = []
-        ds.relax_gui.results_rx = []
-        ds.relax_gui.results_model_free = []
         ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
 
         # Table of relax Results
@@ -421,22 +417,6 @@ class Main(wx.Frame):
 
         # Reset the main window layout.
         self.Layout()
-
-
-    def open_model_results_exe(self, event):    # open model-free results
-        choice = self.list_modelfree.GetStringSelection()
-        model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te] # relax results values
-        see_results(choice, model_result)
-
-
-    def open_noe_results_exe(self, event): #open results of noe run
-        choice = self.list_noe.GetStringSelection()
-        see_results(choice, None)
-
-
-    def open_rx_results_exe(self, event): # open results of r1 and r2 runs
-        choice = self.list_rx.GetStringSelection()
-        see_results(choice, None)
 
 
     def free_file_format_settings(self, event):
