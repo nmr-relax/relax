@@ -67,11 +67,6 @@ from gui.settings import Free_file_format, Global_params, load_sequence
 from gui.user_functions import User_functions
 
 
-# Variables.
-GUI_version = '1.00'
-
-
-
 class Main(wx.Frame):
     """The main GUI class."""
 
@@ -119,7 +114,7 @@ class Main(wx.Frame):
         self.controller = Controller(None, -1, "")
 
         # Set the title.
-        self.SetTitle("relaxGUI " + GUI_version)
+        self.SetTitle("relax " + version)
 
         # Set up the program icon (disabled on Macs).
         if not 'darwin' in sys.platform:
@@ -128,11 +123,11 @@ class Main(wx.Frame):
             self.SetIcon(icon)
 
         # Statusbar fields.
-        self.frame_1_statusbar = self.CreateStatusBar(3, 0)
-        self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
-        frame_1_statusbar_fields = ["relaxGUI (C) 2009 Michael Bieri and (C) 2010-2011 the relax development team", "relax:", version]
-        for i in range(len(frame_1_statusbar_fields)):
-            self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
+        bar = self.CreateStatusBar(3, 0)
+        bar.SetStatusWidths([-5, -1, -1])
+        fields = ["(C) 2001-2011 the relax development team", "relax version", version]
+        for i in range(len(fields)):
+            bar.SetStatusText(fields[i], i)
 
         # Add the start screen.
         self.add_start_screen()
