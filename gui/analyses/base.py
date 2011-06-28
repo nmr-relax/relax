@@ -389,6 +389,34 @@ class Base_frame:
         box.AddSpacer(5)
 
 
+    def build_left_box(self):
+        """Construct the left hand box to pack into the automatic Rx analysis frame.
+
+        @return:    The left hand box element containing the bitmap.
+        @rtype:     wx.BoxSizer instance
+        """
+
+        # Use a vertical packing of elements.
+        box = wx.BoxSizer(wx.VERTICAL)
+
+        # Convert the bitmap names to a list.
+        if type(self.bitmap) != list:
+            bitmaps = [self.bitmap]
+        else:
+            bitmaps = self.bitmap
+
+        # Add the bitmaps.
+        for i in range(len(bitmaps)):
+            # The bitmap.
+            bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(bitmaps[i], wx.BITMAP_TYPE_ANY))
+
+            # Add it.
+            box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
+
+        # Return the box.
+        return box
+
+
     def build_main_box(self, box):
         """Construct the highest level box to pack into the automatic analysis frames.
 
