@@ -24,6 +24,7 @@
 from os import sep
 from shutil import rmtree
 from tempfile import mkdtemp
+from time import sleep
 from unittest import TestCase
 import wx
 
@@ -33,10 +34,13 @@ import dep_check
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_loop
+from generic_fns.pipes import cdp_name
+from status import Status; status = Status()
+
+# relax GUI imports.
 if dep_check.wx_module:
     from gui.relax_gui import Main
 from gui.misc import str_to_gui
-from status import Status; status = Status()
 
 
 class Noe(TestCase):
@@ -54,9 +58,6 @@ class Noe(TestCase):
         # Build the GUI.
         self.gui = Main(parent=None, id=-1, title="")
 
-        # Make it the main application component.
-        self.app.SetTopWindow(self.gui)
-
 
     def tearDown(self):
         """Reset the relax data storage object."""
@@ -67,43 +68,12 @@ class Noe(TestCase):
         # Reset the relax data storage object.
         ds.__reset__()
 
-        # Kill the app.
-        wx.CallAfter(self.app.Exit)
-        self.app.MainLoop()
-
-
-    def click_execute(self, page):
-        """Simulate the clicking of the execute relax button."""
-
-        # The event.
-        click_event = wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, page.button_exec_id)
-        self.gui.ProcessEvent(click_event)
-
-
-    def click_new_analysis(self):
-        """Simulate a menu click for a new analysis."""
-
-        # The event.
-        click_event = wx.CommandEvent(wx.wxEVT_COMMAND_MENU_SELECTED, 1)
-        self.gui.ProcessEvent(click_event)
-
-
-    def click_noe_analysis(self):
-        """Simulate the clicking of the NOE button in the new analysis wizard."""
-
-        # The event.
-        click_event = wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, self.gui.new_wizard.wizard.pages[0].button_ids['noe'])
-        self.gui.new_wizard.wizard.ProcessEvent(click_event)
+        # Destroy the GUI.
+        self.gui.Destroy()
 
 
     def test_noe_analysis(self):
         """Test the NOE analysis."""
-
-        # Open the new analysis wizard.
-        #wx.CallAfter(self.click_new_analysis)
-
-        # Select the NOE analysis.
-        #wx.CallAfter(self.click_noe_analysis)
 
         # Directly set up the analysis.
         self.gui.new_analysis(analysis_type='noe', analysis_name="Steady-state NOE test", pipe_name='noe test')
@@ -121,6 +91,9 @@ class Noe(TestCase):
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
         page.field_sequence.SetValue(str_to_gui(file))
 
+        # Unresolved spins.
+        page.field_unresolved.SetValue(str_to_gui('3'))
+
         # The reference spectrum.
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'ref_ave.list'
         page.field_ref_noe.SetValue(str_to_gui(file))
@@ -133,17 +106,25 @@ class Noe(TestCase):
         page.field_ref_rmsd.SetValue(str_to_gui('3600'))
         page.field_sat_rmsd.SetValue(str_to_gui('3000'))
 
-        # Open the new analysis wizard.
-        wx.CallAfter(self.click_execute, page)
+        # Set the proton name.
+        ds.relax_gui.global_setting[3] = 'HN'
 
-        # Show the GUI.
-        self.gui.Show()
+        # Execute relax.
+        page.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, page.button_exec_id))
+
+        # Wait for execution to complete.
+        while not status.exec_lock.locked():
+            sleep(1)
+        status.exec_lock.acquire('auto noe')
 
         # The real data.
         sat = [5050.0, 51643.0, 53663.0]
         ref = [148614.0, 166842.0, 128690.0]
         noe = [0.033980647852826784, 0.30953237194471417, 0.4169943274535706]
         noe_err = [0.02020329903276632, 0.2320024671657343, 0.026067523940084526]
+
+        # Check the data pipe.
+        self.assertEqual(cdp_name(), ds.relax_gui.analyses[0].pipe_name)
 
         # Check the data.
         i = 0
@@ -153,8 +134,8 @@ class Noe(TestCase):
                 continue
 
             # Check the intensity data.
-            self.assertEqual(sat[i], spin.intensities['sat_ave'])
-            self.assertEqual(ref[i], spin.intensities['ref_ave'])
+            self.assertEqual(sat[i], spin.intensities['sat'])
+            self.assertEqual(ref[i], spin.intensities['ref'])
 
             # Check the NOE data.
             self.assertEqual(noe[i], spin.noe)
