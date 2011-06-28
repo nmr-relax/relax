@@ -58,7 +58,8 @@ class Auto_noe(Base_frame):
 
     # Hardcoded variables.
     analysis_type = None
-    bitmap = None
+    bitmap = [paths.ANALYSIS_IMAGE_PATH+"noe_200x200.png",
+              paths.IMAGE_PATH+'noe.png']
     label = None
 
     def __init__(self, gui=None, notebook=None, analysis_name=None, pipe_name=None, data_index=None):
