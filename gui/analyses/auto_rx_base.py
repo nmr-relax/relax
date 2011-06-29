@@ -148,7 +148,7 @@ class Auto_rx(Base_frame):
         data.relax_times = [float(i) for i in data.relax_times]
 
         # Filename.
-        self.filename = self.analysis_type + '.' + str(self.data.frq)
+        data.filename = self.analysis_type + '.' + str(self.data.frq)
 
         # The integration method.
         data.int_method = 'height'
@@ -380,7 +380,7 @@ class Execute_rx(Execute):
             sys.stderr = redir
 
         # Execute.
-        Relax_fit(file_root=self.filename, pipe_name=self.data.pipe_name, seq_args=self.data.seq_args, results_directory=self.data.save_dir, file_names=self.data.file_names, relax_times=self.data.relax_times, int_method=self.data.int_method, mc_num=self.data.mc_num, pdb_file=self.data.structure_file, unresolved=self.data.unresolved, view_plots = False, heteronuc=self.data.heteronuc, proton=self.data.proton, load_spin_ids=self.data.load_spin_ids, inc=self.data.inc)
+        Relax_fit(file_root=self.data.filename, pipe_name=self.data.pipe_name, seq_args=self.data.seq_args, results_directory=self.data.save_dir, file_names=self.data.file_names, relax_times=self.data.relax_times, int_method=self.data.int_method, mc_num=self.data.mc_num, pdb_file=self.data.structure_file, unresolved=self.data.unresolved, view_plots = False, heteronuc=self.data.heteronuc, proton=self.data.proton, load_spin_ids=self.data.load_spin_ids, inc=self.data.inc)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
@@ -390,5 +390,5 @@ class Execute_rx(Execute):
             data.results_list = []
 
         # Add Rx grace plot to the results list.
-        data.results_list.append(data.save_dir+sep+'grace'+sep+self.filename+'.agr')
+        data.results_list.append(data.save_dir+sep+'grace'+sep+self.data.filename+'.agr')
         data.results_list.append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
