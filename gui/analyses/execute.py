@@ -23,10 +23,11 @@
 # Module docstring.
 """Module containing the class for threaded and non-threaded analysis execution."""
 
-
 # Python module imports.
 from threading import Thread
 
+# relax module imports.
+from relax_errors import RelaxImplementError
 
 
 class Execute(Thread):
@@ -78,3 +79,12 @@ class Execute(Thread):
 
         # Execute the analysis.
         self.run_analysis()
+
+
+    def run_analysis(self):
+        """Execute the analysis
+        
+        This method must be overridden.
+        """
+
+        raise RelaxImplementError
