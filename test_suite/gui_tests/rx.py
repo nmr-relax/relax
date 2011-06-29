@@ -132,7 +132,7 @@ class Rx(GuiTestCase):
         # Add the spectra and number of cycles.
         for i in range(len(names)):
             # The spectrum.
-            file = data_path + sep + names[i]
+            file = data_path + sep + names[i] + '.list'
             page.peak_intensity.grid.SetCellValue(i, 0, str_to_gui(file))
 
             # The number of cycles.
