@@ -60,12 +60,12 @@ class Menu:
         self.menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.new,                    id=1)
-        self.gui.Bind(wx.EVT_MENU, self.gui.close_analysis,         id=6)
-        self.gui.Bind(wx.EVT_MENU, self.gui.state_load,             id=2)
-        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save,      id=3)
-        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save_as,   id=4)
-        self.gui.Bind(wx.EVT_MENU, self.gui.exit_gui,               id=5)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_new,   id=1)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_close, id=6)
+        self.gui.Bind(wx.EVT_MENU, self.gui.state_load,                     id=2)
+        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save,              id=3)
+        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save_as,           id=4)
+        self.gui.Bind(wx.EVT_MENU, self.gui.exit_gui,                       id=5)
 
         # The 'View' menu entries.
         menu = wx.Menu()
@@ -76,10 +76,10 @@ class Menu:
         self.menubar.Append(menu, "&View")
 
         # The 'View' actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_controller,        id=50)
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_prompt,            id=51)
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_tree,              id=52)
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_results_viewer,    id=53)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_controller,                id=50)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_prompt,                    id=51)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_tree,                      id=52)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.show_results_viewer,   id=53)
 
         # The 'User functions' menu entries.
         self._user_functions()

@@ -48,12 +48,6 @@ from version import version
 # relaxGUI module imports.
 from gui.about import About_gui, About_relax
 from gui.analyses import Analysis_controller
-from gui.analyses.auto_model_free import Auto_model_free
-from gui.analyses.auto_noe import Auto_noe
-from gui.analyses.auto_r1 import Auto_r1
-from gui.analyses.auto_r2 import Auto_r2
-from gui.analyses.results import Results_viewer
-from gui.analyses.wizard import Analysis_wizard
 from gui.base_classes import Container
 from gui.components.spin_view import Spin_view_window
 from gui.controller import Controller
@@ -83,7 +77,6 @@ class Main(wx.Frame):
         super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE)
 
         # Initialise some variables for the GUI.
-        self.init_state = True
         self.launch_dir = getcwd()
 
         # Set up the frame.
@@ -93,7 +86,7 @@ class Main(wx.Frame):
         self.Centre()
 
         # The analysis window object storage.
-        self.analysis_controller = Analysis_controller()
+        self.analysis = Analysis_controller(self)
 
         # The calculation threads list.
         self.calc_threads = []
@@ -225,57 +218,9 @@ class Main(wx.Frame):
         self.Refresh()
 
 
-    def close_analysis(self, event):
-        """Close the currently opened analysis.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Get the current analysis index.
-        index = self.notebook.GetSelection()
-
-        # Ask if this should be done.
-        msg = "Are you sure you would like to close the current %s analysis tab?" % ds.relax_gui.analyses[index].analysis_type
-        if not question(msg, default=False):
-            return
-
-        # Delete.
-        self.delete_analysis(index)
-
-
     def contact_relax(self, event):
         """Write an email to the relax mailing-list using the standard mailing program."""
         webbrowser.open_new('mailto:relax-users@gna.org')
-
-
-    def delete_analysis(self, index):
-        """Delete the analysis tab and data store corresponding to the index.
-
-        @param index:   The index of the analysis to delete.
-        @type index:    int
-        """
-
-        # Delete the data store object.
-        ds.relax_gui.analyses.pop(index)
-
-        # Delete the tab.
-        self.notebook.DeletePage(index)
-
-        # Delete the tab object.
-        self.analyses.pop(index)
-
-        # No more analyses, so in the initial state.
-        if len(ds.relax_gui.analyses) == 0:
-            # Reset the flag.
-            self.init_state = True
-
-            # Delete the previous sizer.
-            old_sizer = self.GetSizer()
-            old_sizer.DeleteWindows()
-
-            # Recreate the start screen.
-            self.add_start_screen()
 
 
     def exit_gui(self, event=None):
@@ -339,85 +284,6 @@ class Main(wx.Frame):
         ds.relax_gui.table_s2 = []
         ds.relax_gui.table_rex = []
         ds.relax_gui.table_te = []
-
-
-    def new(self, event):
-        """Launch a wizard to select the new analysis.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Initialise the analysis wizard, and obtain the user specified data.
-        self.new_wizard = Analysis_wizard()
-        data = self.new_wizard.run()
-
-        # Failure, so do nothing.
-        if data == None:
-            return
-
-        # Unpack the data.
-        analysis_type, analysis_name, pipe_name = data
-
-        # Initialise the new analysis.
-        self.new_analysis(analysis_type, analysis_name, pipe_name)
-
-        # Delete the wizard data.
-        del self.new_wizard
-
-
-    def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, index=None):
-        """Initialise a new analysis.
-
-        @keyword analysis_type: The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
-        @type analysis_type:    str
-        @keyword analysis_name: The name of the analysis to initialise.
-        @type analysis_name:    str
-        @keyword index:         The index of the analysis in the relax data store (set to None if no data currently exists).
-        @type index:            None or int
-        """
-
-        # Starting from the initial state.
-        if self.init_state:
-            # A new sizer for the notebook (to replace the current sizer).
-            sizer = wx.BoxSizer(wx.VERTICAL)
-
-            # Create a notebook and add it to the sizer.
-            self.notebook = wx.Notebook(self, -1, style=wx.NB_TOP)
-            sizer.Add(self.notebook, 1, wx.ALL|wx.EXPAND, 0)
-
-            # Delete the previous sizer.
-            old_sizer = self.GetSizer()
-            old_sizer.DeleteWindows()
-
-            # Add the new sizer to the main window.
-            self.SetSizer(sizer)
-            sizer.Layout()
-
-            # Set the flag.
-            self.init_state = False
-
-        # The analysis classes.
-        classes = {'noe': Auto_noe,
-                   'r1':  Auto_r1,
-                   'r2':  Auto_r2,
-                   'mf':  Auto_model_free}
-
-        # Bad analysis type.
-        if analysis_type not in classes.keys():
-            raise RelaxError("The analysis '%s' is unknown." % analysis_type)
-
-        # Get the class.
-        analysis = classes[analysis_type]
-
-        # Initialise the class and append it to the analysis window object.
-        self.analyses.append(analysis(gui=self, notebook=self.notebook, analysis_name=analysis_name, pipe_name=pipe_name, data_index=index))
-
-        # Add to the notebook.
-        self.notebook.AddPage(self.analyses[-1].parent, analysis_name)
-
-        # Reset the main window layout.
-        self.Layout()
 
 
     def free_file_format_settings(self, event):
@@ -535,21 +401,6 @@ class Main(wx.Frame):
         self.relax_prompt.Show()
 
 
-    def show_results_viewer(self, event):
-        """Display the analysis results.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Build the results viewer window.
-        if not hasattr(self, 'results_viewer'):
-            self.results_viewer = Results_viewer(gui=self)
-
-        # Open the window.
-        self.results_viewer.Show()
-
-
     def show_tree(self, event):
         """Display the molecule, residue, and spin tree window.
 
@@ -573,7 +424,7 @@ class Main(wx.Frame):
         """
 
         # Warning.
-        if not self.init_state:
+        if not self.analysis.init_state:
             # The message.
             msg = "Loading a saved relax state file will cause all unsaved data to be lost.  Are you sure you would to open a save file?"
 
@@ -597,9 +448,7 @@ class Main(wx.Frame):
         self.SetCursor(wx.StockCursor(wx.CURSOR_ARROWWAIT))
 
         # Delete the current tabs.
-        while len(self.analyses):
-            # Remove the last analysis, until there is nothing left.
-            self.delete_analysis(len(self.analyses)-1)
+        self.analysis.delete_all()
 
         # Reset the relax data store.
         reset()
@@ -658,9 +507,7 @@ class Main(wx.Frame):
         """
 
         # Loop over each analysis.
-        for i in range(len(self.analyses)):
-            # Execute the analysis frame specific update methods.
-            if hasattr(self.analyses[i], 'sync_ds'):
-                self.analyses[i].sync_ds(upload)
-
-
+        for page in self.analysis.analysis_loop():
+            # Execute the analysis page specific update methods.
+            if hasattr(page, 'sync_ds'):
+                page.sync_ds(upload)

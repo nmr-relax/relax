@@ -23,15 +23,209 @@
 # Package docstring.
 """Package for the automatic and custom analysis GUI elements."""
 
+# Python module imports.
+import wx
 
-__all__ = []
+# relax GUI module imports.
+from gui.analyses.auto_model_free import Auto_model_free
+from gui.analyses.auto_noe import Auto_noe
+from gui.analyses.auto_r1 import Auto_r1
+from gui.analyses.auto_r2 import Auto_r2
+from gui.analyses.results import Results_viewer
+from gui.analyses.wizard import Analysis_wizard
+
+
+# The package contents.
+__all__ = ['auto_model_free',
+           'auto_noe',
+           'auto_r1',
+           'auto_r2',
+           'auto_rx_base',
+           'base',
+           'relax_control',
+           'results_analysis',
+           'results',
+           'select_model_calc']
 
 
 class Analysis_controller:
     """Class for controlling all aspects of analyses."""
 
-    def __init__(self):
-        """Initialise the analysis controller."""
+    def __init__(self, gui):
+        """Initialise the analysis controller.
+
+        @param gui:         The gui object.
+        @type gui:          wx object
+        """
+
+        # Store the args.
+        self.gui = gui
+
+        # Initialise some variables.
+        self.init_state = True
 
         # The analyses page objects.
         self.analyses = []
+
+
+    def analysis_loop(self):
+        """Loop over the analyses, yielding the page objects.
+
+        @return:    The page object.
+        @rtype:     wx.Frame object
+        """
+
+        # Loop over the analyses.
+        for i in range(len(self.analyses)):
+            yield self.analyses[i]
+
+
+    def delete_all(self):
+        """Remove all analyses."""
+
+        # Delete the current tabs.
+        while len(self.analyses):
+            # Remove the last analysis, until there is nothing left.
+            self.delete_analysis(len(self.analyses)-1)
+
+
+    def delete_analysis(self, index):
+        """Delete the analysis tab and data store corresponding to the index.
+
+        @param index:   The index of the analysis to delete.
+        @type index:    int
+        """
+
+        # Delete the data store object.
+        ds.relax_gui.analyses.pop(index)
+
+        # Delete the tab.
+        self.notebook.DeletePage(index)
+
+        # Delete the tab object.
+        self.analyses.pop(index)
+
+        # No more analyses, so in the initial state.
+        if len(ds.relax_gui.analyses) == 0:
+            # Reset the flag.
+            self.init_state = True
+
+            # Delete the previous sizer.
+            old_sizer = self.GetSizer()
+            old_sizer.DeleteWindows()
+
+            # Recreate the start screen.
+            self.add_start_screen()
+
+
+    def menu_close(self, event):
+        """Close the currently opened analysis.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Get the current analysis index.
+        index = self.notebook.GetSelection()
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to close the current %s analysis tab?" % ds.relax_gui.analyses[index].analysis_type
+        if not question(msg, default=False):
+            return
+
+        # Delete.
+        self.delete_analysis(index)
+
+
+    def menu_new(self, event):
+        """Launch a wizard to select the new analysis.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Initialise the analysis wizard, and obtain the user specified data.
+        self.new_wizard = Analysis_wizard()
+        data = self.new_wizard.run()
+
+        # Failure, so do nothing.
+        if data == None:
+            return
+
+        # Unpack the data.
+        analysis_type, analysis_name, pipe_name = data
+
+        # Initialise the new analysis.
+        self.new_analysis(analysis_type, analysis_name, pipe_name)
+
+        # Delete the wizard data.
+        del self.new_wizard
+
+
+    def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, index=None):
+        """Initialise a new analysis.
+
+        @keyword analysis_type: The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
+        @type analysis_type:    str
+        @keyword analysis_name: The name of the analysis to initialise.
+        @type analysis_name:    str
+        @keyword index:         The index of the analysis in the relax data store (set to None if no data currently exists).
+        @type index:            None or int
+        """
+
+        # Starting from the initial state.
+        if self.init_state:
+            # A new sizer for the notebook (to replace the current sizer).
+            sizer = wx.BoxSizer(wx.VERTICAL)
+
+            # Create a notebook and add it to the sizer.
+            self.notebook = wx.Notebook(self.gui, -1, style=wx.NB_TOP)
+            sizer.Add(self.notebook, 1, wx.ALL|wx.EXPAND, 0)
+
+            # Delete the previous sizer.
+            old_sizer = self.gui.GetSizer()
+            old_sizer.DeleteWindows()
+
+            # Add the new sizer to the main window.
+            self.gui.SetSizer(sizer)
+            sizer.Layout()
+
+            # Set the flag.
+            self.init_state = False
+
+        # The analysis classes.
+        classes = {'noe': Auto_noe,
+                   'r1':  Auto_r1,
+                   'r2':  Auto_r2,
+                   'mf':  Auto_model_free}
+
+        # Bad analysis type.
+        if analysis_type not in classes.keys():
+            raise RelaxError("The analysis '%s' is unknown." % analysis_type)
+
+        # Get the class.
+        analysis = classes[analysis_type]
+
+        # Initialise the class and append it to the analysis window object.
+        self.analyses.append(analysis(gui=self.gui, notebook=self.notebook, analysis_name=analysis_name, pipe_name=pipe_name, data_index=index))
+
+        # Add to the notebook.
+        self.notebook.AddPage(self.analyses[-1].parent, analysis_name)
+
+        # Reset the main window layout.
+        self.gui.Layout()
+
+
+    def show_results_viewer(self, event):
+        """Display the analysis results.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Build the results viewer window.
+        if not hasattr(self, 'results_viewer'):
+            self.results_viewer = Results_viewer(gui=self.gui)
+
+        # Open the window.
+        self.results_viewer.Show()
