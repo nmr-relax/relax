@@ -129,6 +129,23 @@ def gui_to_int(string):
     return int(string)
 
 
+def float_to_gui(num):
+    """Convert the float into the GUI string.
+
+    @param num:     The number in float or None form.
+    @type num:      float or None
+    @return:        The GUI string.
+    @rtype:         str
+    """
+
+    # No input.
+    if num == None:
+        num = ''
+
+    # Convert.
+    return unicode(num)
+
+
 def int_to_gui(num):
     """Convert the int into the GUI string.
 
