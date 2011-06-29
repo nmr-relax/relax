@@ -33,10 +33,12 @@ from test_suite.relax_test_runner import RelaxTestRunner
 
 # relax GUI test module imports.
 from noe import Noe
+from rx import Rx
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 
 
-__all__ = ['noe']
+__all__ = ['noe',
+           'rx']
 
 
 class GUI_test_runner:
@@ -76,6 +78,7 @@ class GUI_test_runner:
         # All tests.
         if not tests:
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Rx))
 
         # Group all tests together.
         full_suite = TestSuite(suite_array)
