@@ -26,6 +26,9 @@
 # Python module imports.
 import wx
 
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+
 # relax GUI module imports.
 from gui.analyses.auto_model_free import Auto_model_free
 from gui.analyses.auto_noe import Auto_noe
