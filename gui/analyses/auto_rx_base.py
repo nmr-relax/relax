@@ -28,7 +28,7 @@
 from os import sep
 from string import replace
 import sys
-import thread
+from threading import Thread
 import time
 import wx
 
