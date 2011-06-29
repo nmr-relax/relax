@@ -97,6 +97,7 @@ class Auto_rx(Base_frame):
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
+        self.data_index = data_index
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
@@ -269,41 +270,10 @@ class Auto_rx(Base_frame):
 
         # Start the thread.
         if status.debug:
-            self.execute_thread('dummy')
+            self.thread = Execute(self.gui, data, self.data_index)
         else:
-            id = thread.start_new_thread(self.execute_thread, ('dummy',))
-
-
-    def execute_thread(self, dummy_string):
-        """Execute the calculation in a thread."""
-
-        # Controller.
-        if not status.debug:
-            # Redirect relax output and errors to the controller.
-            redir = Redirect_text(self.gui.controller)
-            sys.stdout = redir
-            sys.stderr = redir
-
-            # Print a header in the controller.
-            header = 'Starting %s calculation' % self.label
-            underline = '-' * len(header)
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
-            time.sleep(0.5)
-
-        # Execute.
-        Relax_fit(file_root=self.filename, pipe_name=data.pipe_name, seq_args=data.seq_args, results_directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, load_spin_ids=data.load_spin_ids, inc=data.inc)
-
-        # Feedback about success.
-        if not status.debug:
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated Rx values\n__________________________________________________________')
-
-        # Add noe grace plot to results list.
-        self.gui.list_rx.Append(data.save_dir+sep+'grace'+sep+self.filename+'.agr')
-        self.gui.list_rx.Append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
-
-        # Add noe grace plot to relax data store.
-        ds.relax_gui.results_rx.append(data.save_dir+sep+'grace'+sep+self.filename+'.agr')
-        ds.relax_gui.results_rx.append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
+            self.thread = Execute_thread(self.gui, data, self.data_index)
+            self.thread.start()
 
 
     def load_sequence(self, event):
@@ -391,3 +361,76 @@ class Auto_rx(Base_frame):
 
         # The peak lists and relaxation times.
         self.peak_intensity.sync_ds(upload)
+
+
+
+class Execute:
+    """The Rx analysis execution object."""
+
+    def __init__(self, gui, data, data_index):
+        """Set up the Rx analysis execution object.
+
+        @param gui:         The GUI object.
+        @type gui:          wx object
+        @param data:        The data container with all data for the analysis.
+        @type data:         class instance
+        @param data_index:  The index of the analysis in the relax data store.
+        @type data_index:   int
+        """
+
+        # Store the args.
+        self.gui = gui
+        self.data = data
+        self.data_index = data_index
+
+        # Execute.
+        self.run()
+
+
+    def run(self):
+        """Execute the calculation."""
+
+        # Controller.
+        if not status.debug:
+            # Redirect relax output and errors to the controller.
+            redir = Redirect_text(self.gui.controller)
+            sys.stdout = redir
+            sys.stderr = redir
+
+        # Execute.
+        Relax_fit(file_root=self.filename, pipe_name=self.data.pipe_name, seq_args=self.data.seq_args, results_directory=self.data.save_dir, file_names=self.data.file_names, relax_times=self.data.relax_times, int_method=self.data.int_method, mc_num=self.data.mc_num, pdb_file=self.data.structure_file, unresolved=self.data.unresolved, view_plots = False, heteronuc=self.data.heteronuc, proton=self.data.proton, load_spin_ids=self.data.load_spin_ids, inc=self.data.inc)
+
+        # Alias the relax data store data.
+        data = ds.relax_gui.analyses[self.data_index]
+
+        # Is there a results list (old results file support)?
+        if not hasattr(data, 'results_list'):
+            data.results_list = []
+
+        # Add Rx grace plot to the results list.
+        data.results_list.append(data.save_dir+sep+'grace'+sep+self.filename+'.agr')
+        data.results_list.append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
+
+
+
+class Execute_thread(Execute, Thread):
+    """The NOE analysis thread execution object."""
+
+    def __init__(self, gui, data, data_index):
+        """Set up the NOE analysis thread execution object.
+
+        @param gui:         The GUI object.
+        @type gui:          wx object
+        @param data:        The data container with all data for the analysis.
+        @type data:         class instance
+        @param data_index:  The index of the analysis in the relax data store.
+        @type data_index:   int
+        """
+
+        # Store the args.
+        self.gui = gui
+        self.data = data
+        self.data_index = data_index
+
+        # Set up the thread object.
+        Thread.__init__(self)
