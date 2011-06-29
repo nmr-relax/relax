@@ -36,6 +36,7 @@ from gui.analyses.auto_r1 import Auto_r1
 from gui.analyses.auto_r2 import Auto_r2
 from gui.analyses.results import Results_viewer
 from gui.analyses.wizard import Analysis_wizard
+from gui.message import question
 
 
 # The package contents.
