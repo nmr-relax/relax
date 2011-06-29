@@ -217,8 +217,11 @@ class Results_viewer(wx.Frame):
         self.analysis_list.Clear()
 
         # The list of analyses.
-        for i in range(len(ds.relax_gui.analyses)):
-            self.analysis_list.Append(str_to_gui(ds.relax_gui.analyses[i].analysis_name))
+        for data in self.gui.analysis.analysis_data_loop():
+            self.analysis_list.Append(str_to_gui(data.analysis_name))
+
+        # Set the name to the current analysis.
+        self.analysis_list.SetValue(str_to_gui(self.gui.analysis.current_analysis_name()))
 
 
     def update_window(self, event):

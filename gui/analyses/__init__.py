@@ -72,6 +72,18 @@ class Analysis_controller:
         self.analyses = []
 
 
+    def analysis_data_loop(self):
+        """Loop over the analyses, yielding the data objects.
+
+        @return:    The analysis data object from the relax data store.
+        @rtype:     data.gui.Analyses instance
+        """
+
+        # Loop over the analyses.
+        for i in range(len(self.analyses)):
+            yield ds.relax_gui.analyses[i]
+
+
     def analysis_loop(self):
         """Loop over the analyses, yielding the page objects.
 
