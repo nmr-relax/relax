@@ -142,7 +142,12 @@ class Analysis_controller:
 
         # The current page has been deleted, so switch one back.
         if index == self._current:
+            # Decrement.
             self._current -= 1
+
+            # Switch to that page.
+            self.notebook.SetSelection(self._current)
+
 
         # No more analyses, so in the initial state.
         if self._num_analyses == 0:
