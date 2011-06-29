@@ -22,9 +22,11 @@
 
 # Python module imports.
 from os import F_OK, access, sep
+import Queue
 from shutil import rmtree
 from tempfile import mkdtemp
 from time import sleep
+from traceback import print_exception
 from unittest import TestCase
 import wx
 
@@ -70,6 +72,27 @@ class Rx(TestCase):
 
         # Destroy the GUI.
         self.gui.Destroy()
+
+
+    def check_exceptions(self):
+        """Check that no exception has occurred."""
+
+        # Check.
+        try:
+            # Get the exception from the queue.
+            index, exc = status.analyses.exception_queue.get(block=False)
+
+            # Print it.
+            print("Exception raised in thread.\n")
+            print_exception(exc[0], exc[1], exc[2])
+            print("\n\n")
+
+            # Fail.
+            self.fail()
+
+        # No exception.
+        except Queue.Empty:
+            pass
 
 
     def test_r1_analysis(self):
@@ -144,6 +167,9 @@ class Rx(TestCase):
 
         # Wait for execution to complete.
         page.thread.join()
+
+        # Exceptions in the thread.
+        self.check_exceptions()
 
         # The real data.
         res_nums = [4, 5, 6]
