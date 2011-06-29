@@ -139,6 +139,7 @@ class Auto_rx(Base_frame):
             data.seq_args = None
 
         # The file names and relaxation times.
+        i = 0
         for i in range(len(self.data.file_list)):
             # Hit the end of the list.
             if self.data.file_list[i] == '':
