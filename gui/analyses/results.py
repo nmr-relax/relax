@@ -167,28 +167,16 @@ class Results_viewer(wx.Frame):
         # Clear the list.
         self.list.Clear()
 
-        # Determine the analysis index.
-        found = False
-        for index in range(len(ds.relax_gui.analyses)):
-            # Match.
-            if gui_to_str(self.analysis_list.GetValue()) == ds.relax_gui.analyses[index].analysis_name:
-                found = True
-                break
-
-        # No analysis chosen.
-        if not found:
-            return
-
-        # Alias.
-        data = ds.relax_gui.analyses[index]
+        # Get the page corresponding to the choice.
+        page = self.gui.analysis.get_page_from_name(gui_to_str(self.analysis_list.GetValue()))
 
         # Nothing to do.
-        if not hasattr(data, 'results_list'):
+        if not hasattr(page, 'results_list'):
             return
 
         # Update the list.
-        for i in range(len(data.results_list)):
-            self.list.Append(str_to_gui(data.results_list[i]))
+        for i in range(len(page.results_list)):
+            self.list.Append(str_to_gui(page.results_list[i]))
 
 
     def open_result_file(self, event):

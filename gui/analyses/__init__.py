@@ -121,6 +121,29 @@ class Analysis_controller:
             self.add_start_screen()
 
 
+    def get_page_from_name(self, name):
+        """Return the page corresponding to the given name.
+
+        @return:    The page which matches the given name, or nothing otherwise.
+        @rtype:     wx.Frame object or None
+        """
+
+        # Determine the analysis index.
+        found = False
+        for index in range(len(ds.relax_gui.analyses)):
+            # Match.
+            if name == ds.relax_gui.analyses[index].analysis_name:
+                found = True
+                break
+
+        # No analysis found, so return nothing.
+        if not found:
+            return
+
+        # Return the analysis page.
+        return ds.relax_gui.analyses[index]
+
+
     def load_from_store(self):
         """Recreate the analyses from the relax data store."""
 
