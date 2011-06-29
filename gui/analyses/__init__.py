@@ -230,6 +230,22 @@ class Analysis_controller:
         self.delete_analysis(index)
 
 
+    def menu_close_all(self, event):
+        """Close all analyses.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to close all analyses?  All data will be erased and the relax data store reset."
+        if not question(msg, default=False):
+            return
+
+        # Delete.
+        self.delete_all()
+
+
     def menu_new(self, event):
         """Launch a wizard to select the new analysis.
 

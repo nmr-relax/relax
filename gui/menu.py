@@ -51,6 +51,7 @@ class Menu:
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_item(menu, id=1, text="&New analysis\tCtrl+N", icon=paths.icon_16x16.new))
         menu.AppendItem(self.build_menu_item(menu, id=6, text="&Close analysis", icon=paths.icon_16x16.document_close))
+        menu.AppendItem(self.build_menu_item(menu, id=7, text="&Close all analyses", icon=paths.icon_16x16.dialog_close))
         menu.AppendSeparator()
         menu.AppendItem(self.build_menu_item(menu, id=2, text="&Open relax state\tCtrl+O", icon=paths.icon_16x16.open))
         menu.AppendItem(self.build_menu_item(menu, id=3, text="S&ave relax state\tCtrl+S", icon=paths.icon_16x16.save))
@@ -60,8 +61,9 @@ class Menu:
         self.menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_new,   id=1)
-        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_close, id=6)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_new,              id=1)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_close,            id=6)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_close_all,        id=7)
         self.gui.Bind(wx.EVT_MENU, self.gui.state_load,                     id=2)
         self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save,              id=3)
         self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save_as,           id=4)
