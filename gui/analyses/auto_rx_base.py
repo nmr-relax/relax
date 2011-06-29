@@ -257,6 +257,14 @@ class Auto_rx(Base_frame):
         # Synchronise the frame data to the relax data store.
         self.sync_ds(upload=True)
 
+        # Assemble all the data needed for the Relax_fit class.
+        data, missing = self.assemble_data()
+
+        # Missing data.
+        if len(missing):
+            missing_data(missing)
+            return
+
         # Display the relax controller.
         if not status.debug:
             self.gui.controller.Show()
@@ -283,17 +291,6 @@ class Auto_rx(Base_frame):
             underline = '-' * len(header)
             wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
             time.sleep(0.5)
-
-        # Assemble all the data needed for the Relax_fit class.
-        data, complete, missing = self.assemble_data()
-
-        # Incomplete.
-        if not complete:
-            print 'Aborting Rx caclulation as the following informations are missing:\n'
-            for i in range(len(missing)):
-                print '\t'+missing[i]
-            print ''
-            return
 
         # Execute.
         Relax_fit(file_root=self.filename, pipe_name=data.pipe_name, seq_args=data.seq_args, results_directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, load_spin_ids=data.load_spin_ids, inc=data.inc)
