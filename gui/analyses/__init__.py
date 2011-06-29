@@ -71,7 +71,7 @@ class Analysis_controller:
         self._num_analyses = 0
 
         # The analyses page objects.
-        self.analyses = []
+        self._analyses = []
 
 
     def analysis_data_loop(self):
@@ -95,7 +95,7 @@ class Analysis_controller:
 
         # Loop over the analyses.
         for i in range(self._num_analyses):
-            yield self.analyses[i]
+            yield self._analyses[i]
 
 
     def current_analysis_name(self):
@@ -110,7 +110,7 @@ class Analysis_controller:
             return
 
         # Return the name.
-        return self.analyses[self._current]
+        return self._analyses[self._current]
 
 
     def delete_all(self):
@@ -136,7 +136,7 @@ class Analysis_controller:
         self.notebook.DeletePage(index)
 
         # Delete the tab object.
-        self.analyses.pop(index)
+        self._analyses.pop(index)
 
         # Decrement the number of analyses.
         self._num_analyses -= 1
@@ -316,10 +316,10 @@ class Analysis_controller:
         analysis = classes[analysis_type]
 
         # Initialise the class and append it to the analysis window object.
-        self.analyses.append(analysis(gui=self.gui, notebook=self.notebook, analysis_name=analysis_name, pipe_name=pipe_name, data_index=index))
+        self._analyses.append(analysis(gui=self.gui, notebook=self.notebook, analysis_name=analysis_name, pipe_name=pipe_name, data_index=index))
 
         # Add to the notebook.
-        self.notebook.AddPage(self.analyses[-1].parent, analysis_name)
+        self.notebook.AddPage(self._analyses[-1].parent, analysis_name)
 
         # Increment the number of analyses.
         self._num_analyses += 1
