@@ -184,7 +184,7 @@ class Analysis_controller:
             return
 
         # Return the analysis page.
-        return ds.relax_gui.analyses[index]
+        return self._analyses[index]
 
 
     def load_from_store(self):
