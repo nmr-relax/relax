@@ -116,7 +116,7 @@ class Analysis_controller:
             return
 
         # Return the name.
-        return self._analyses[self._current]
+        return ds.relax_gui.analyses[self._current].analysis_name
 
 
     def delete_all(self):
