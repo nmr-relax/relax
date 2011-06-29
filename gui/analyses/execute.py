@@ -57,8 +57,13 @@ class Execute(Thread):
 
         # No treaded execution.
         else:
-            # Alias the start method.
+            # Alias the a few dummy methods.
+            self.join = self._join
             self.start = self._start
+
+
+    def _join(self):
+        """Dummy join() method for non-threaded execution."""
 
 
     def _start(self):
