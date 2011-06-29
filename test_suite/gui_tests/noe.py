@@ -27,13 +27,13 @@ from shutil import rmtree
 from tempfile import mkdtemp
 from time import sleep
 from traceback import print_exception
-from unittest import TestCase
 import wx
 
 # Dependency checks.
 import dep_check
 
 # relax module imports.
+from base_classes import GuiTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import cdp_name
@@ -45,7 +45,7 @@ if dep_check.wx_module:
 from gui.misc import str_to_gui
 
 
-class Noe(TestCase):
+class Noe(GuiTestCase):
     """Class for testing various aspects specific to the NOE analysis."""
 
     def setUp(self):
@@ -72,27 +72,6 @@ class Noe(TestCase):
 
         # Destroy the GUI.
         self.gui.Destroy()
-
-
-    def check_exceptions(self):
-        """Check that no exception has occurred."""
-
-        # Check.
-        try:
-            # Get the exception from the queue.
-            index, exc = status.analyses.exception_queue.get(block=False)
-
-            # Print it.
-            print("Exception raised in thread.\n")
-            print_exception(exc[0], exc[1], exc[2])
-            print("\n\n")
-
-            # Fail.
-            self.fail()
-
-        # No exception.
-        except Queue.Empty:
-            pass
 
 
     def test_noe_analysis(self):
