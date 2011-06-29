@@ -25,19 +25,14 @@
 """Module containing the base class for the results frame."""
 
 # Python module imports.
-from os import sep
-import sys
 import wx
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
-from gui.analyses.base import Base_frame
 from gui.analyses.results_analysis import see_results
 from gui.misc import add_border, gui_to_str, str_to_gui
-from gui.paths import IMAGE_PATH
-
 
 
 class Results_viewer(wx.Frame):
@@ -120,90 +115,6 @@ class Results_viewer(wx.Frame):
         return list
 
 
-    def add_model_free_results(self, box):
-        """Function to pack rx results."""
-
-        # Use a vertical packing of elements.
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Add a label.
-        self.add_subsubtitle(sizer, "Model-free results")
-
-        # Selection to open.
-        sizer1 = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Add results list box.
-        self.gui.list_modelfree = self.add_list_box(sizer1, fn=self.gui.open_model_results_exe)
-
-        # Add open button.
-        button_modelfree = wx.Button(self.parent, -1, "Open")
-        button_modelfree.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.gui.open_model_results_exe, button_modelfree)
-        sizer1.Add(button_modelfree, 0, wx.LEFT, 5)
-
-        # Add selection.
-        sizer.Add(sizer1, 1, wx.ALL|wx.EXPAND, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
-
-
-    def add_noe_results(self, box):
-        """Function to pack noe results."""
-
-        # Use a vertical packing of elements.
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Add a label.
-        self.add_subsubtitle(sizer, "Steady-state NOE results")
-
-        # Selection to open.
-        sizer1 = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Add results list box.
-        self.gui.list_noe = self.add_list_box(sizer1, fn=self.gui.open_noe_results_exe)
-
-        # Add open button.
-        button_noe = wx.Button(self.parent, -1, "Open")
-        button_noe.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.gui.open_noe_results_exe, button_noe)
-        sizer1.Add(button_noe, 0, wx.LEFT, 5)
-
-        # Add selection.
-        sizer.Add(sizer1, 1, wx.ALL|wx.EXPAND, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
-
-
-    def add_rx_results(self, box):
-        """Function to pack rx results."""
-
-        # Use a vertical packing of elements.
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Add a label.
-        self.add_subsubtitle(sizer, "Relaxation results")
-
-        # Selection to open.
-        sizer1 = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Add results list box.
-        self.gui.list_rx = self.add_list_box(sizer1, fn=self.gui.open_rx_results_exe)
-
-        # Add open button.
-        button_rx = wx.Button(self.parent, -1, "Open")
-        button_rx.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.gui.open_rx_results_exe, button_rx)
-        sizer1.Add(button_rx, 0, wx.LEFT, 5)
-
-        # Add selection.
-        sizer.Add(sizer1, 1, wx.ALL|wx.EXPAND, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
-
-
     def build_analysis_sel(self, box):
         """Create the analysis selection element.
 
@@ -233,32 +144,6 @@ class Results_viewer(wx.Frame):
 
         # Add the analysis sizer to the main sizer.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
-
-
-    def build_results_box(self, box):
-        """Function to pack results frame.
-
-        @param box: The horizontal box element to pack the elements into.
-        @type box:  wx.BoxSizer instance
-        """
-
-        # Use a vertical packing of elements.
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Add the title.
-        self.add_title(sizer, "Results")
-
-        # Add Noe results.
-        self.add_noe_results(sizer)
-
-        # Add rx results.
-        self.add_rx_results(sizer)
-
-        # Add model-free results.
-        self.add_model_free_results(sizer)
-
-        # Add the sizer to the main box.
-        box.Add(sizer, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def handler_close(self, event):
