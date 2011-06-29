@@ -305,6 +305,9 @@ class Analysis_controller:
         # Set this new analysis to the current one.
         self._current = self._num_analyses - 1
 
+        # Switch to the new page.
+        self.notebook.SetSelection(self._current)
+
         # Reset the main window layout.
         self.gui.Layout()
 
