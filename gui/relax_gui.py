@@ -47,6 +47,7 @@ from version import version
 
 # relaxGUI module imports.
 from gui.about import About_gui, About_relax
+from gui.analyses import Analysis_controller
 from gui.analyses.auto_model_free import Auto_model_free
 from gui.analyses.auto_noe import Auto_noe
 from gui.analyses.auto_r1 import Auto_r1
@@ -92,7 +93,7 @@ class Main(wx.Frame):
         self.Centre()
 
         # The analysis window object storage.
-        self.analyses = []
+        self.analysis_controller = Analysis_controller()
 
         # The calculation threads list.
         self.calc_threads = []

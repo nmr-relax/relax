@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,3 +25,13 @@
 
 
 __all__ = []
+
+
+class Analysis_controller:
+    """Class for controlling all aspects of analyses."""
+
+    def __init__(self):
+        """Initialise the analysis controller."""
+
+        # The analyses page objects.
+        self.analyses = []
