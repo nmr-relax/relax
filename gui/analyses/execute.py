@@ -24,10 +24,12 @@
 """Module containing the class for threaded and non-threaded analysis execution."""
 
 # Python module imports.
+import sys
 from threading import Thread
 
 # relax module imports.
 from relax_errors import RelaxImplementError
+from status import Status; status = Status()
 
 
 class Execute(Thread):
@@ -77,8 +79,12 @@ class Execute(Thread):
     def run(self):
         """Execute the thread (or pseudo-thread)."""
 
-        # Execute the analysis.
-        self.run_analysis()
+        # Execute the analysis, catching errors.
+        try:
+            self.run_analysis()
+        except:
+            # Place the analysis index and execution info into the exception queue.
+            status.analyses.exception_queue.put([self.data_index, sys.exc_info()])
 
 
     def run_analysis(self):
