@@ -122,7 +122,7 @@ class Auto_noe(Base_frame):
         See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
         @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a list of missing data types.
-        @rtype:     class instance, bool, list of str
+        @rtype:     class instance, list of str
         """
 
         # The data container and flag.
