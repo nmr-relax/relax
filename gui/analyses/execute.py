@@ -82,9 +82,14 @@ class Execute(Thread):
         # Execute the analysis, catching errors.
         try:
             self.run_analysis()
+
+        # Handle all errors.
         except:
             # Place the analysis index and execution info into the exception queue.
             status.analyses.exception_queue.put([self.data_index, sys.exc_info()])
+
+            # Unlock the execution lock.
+            status.exec_lock.release()
 
 
     def run_analysis(self):
