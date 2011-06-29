@@ -141,8 +141,8 @@ class Analysis_controller:
         # Decrement the number of analyses.
         self._num_analyses -= 1
 
-        # The current page has been deleted, so switch one back.
-        if index == self._current:
+        # The current page has been deleted, so switch one back (if possible).
+        if index == self._current and self._current != 0:
             # Decrement.
             self._current -= 1
 
@@ -157,11 +157,11 @@ class Analysis_controller:
             self._current = None
 
             # Delete the previous sizer.
-            old_sizer = self.GetSizer()
+            old_sizer = self.gui.GetSizer()
             old_sizer.DeleteWindows()
 
             # Recreate the start screen.
-            self.add_start_screen()
+            self.gui.add_start_screen()
 
 
     def get_page_from_name(self, name):
