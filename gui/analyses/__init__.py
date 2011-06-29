@@ -118,6 +118,30 @@ class Analysis_controller:
             self.add_start_screen()
 
 
+    def load_from_store(self):
+        """Recreate the analyses from the relax data store."""
+
+        map = {'NOE': 'noe',
+               'R1': 'r1',
+               'R2': 'r2',
+               'model-free': 'mf'}
+        for i in range(len(ds.relax_gui.analyses)):
+            # The analysis name.
+            if hasattr(ds.relax_gui.analyses[i], 'analysis_name'):
+                analysis_name = ds.relax_gui.analyses[i].analysis_name
+            elif ds.relax_gui.analyses[i].analysis_type == 'NOE':
+                analysis_name = 'Steady-state NOE'
+            elif ds.relax_gui.analyses[i].analysis_type == 'R1':
+                analysis_name = 'R1 relaxation'
+            elif ds.relax_gui.analyses[i].analysis_type == 'R2':
+                analysis_name = 'R2 relaxation'
+            elif ds.relax_gui.analyses[i].analysis_type == 'model-free':
+                analysis_name = 'Model-free'
+
+            # Set up the analysis.
+            self.new_analysis(map[ds.relax_gui.analyses[i].analysis_type], analysis_name, index=i)
+
+
     def menu_close(self, event):
         """Close the currently opened analysis.
 

@@ -459,26 +459,8 @@ class Main(wx.Frame):
         # Load the relax state.
         state.load_state(filename, verbosity=0)
 
-        # Reconstruct the analysis tabs.
-        map = {'NOE': 'noe',
-               'R1': 'r1',
-               'R2': 'r2',
-               'model-free': 'mf'}
-        for i in range(len(ds.relax_gui.analyses)):
-            # The analysis name.
-            if hasattr(ds.relax_gui.analyses[i], 'analysis_name'):
-                analysis_name = ds.relax_gui.analyses[i].analysis_name
-            elif ds.relax_gui.analyses[i].analysis_type == 'NOE':
-                analysis_name = 'Steady-state NOE'
-            elif ds.relax_gui.analyses[i].analysis_type == 'R1':
-                analysis_name = 'R1 relaxation'
-            elif ds.relax_gui.analyses[i].analysis_type == 'R2':
-                analysis_name = 'R2 relaxation'
-            elif ds.relax_gui.analyses[i].analysis_type == 'model-free':
-                analysis_name = 'Model-free'
-
-            # Set up the analysis.
-            self.new_analysis(map[ds.relax_gui.analyses[i].analysis_type], analysis_name, index=i)
+        # Reconstruct the analyses.
+        self.analysis.load_from_store()
 
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
