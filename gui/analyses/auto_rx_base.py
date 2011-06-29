@@ -274,10 +274,8 @@ class Auto_rx(Base_frame):
             thread = False
 
         # Start the thread.
-            self.thread = Execute_rx(self.gui, data, self.data_index, thread=False)
-        else:
-            self.thread = Execute_rx(self.gui, data, self.data_index)
-            self.thread.start()
+        self.thread = Execute_rx(self.gui, data, self.data_index, thread=thread)
+        self.thread.start()
 
 
     def load_sequence(self, event):
