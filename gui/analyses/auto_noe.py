@@ -29,7 +29,6 @@ from os import sep
 from os.path import dirname
 from string import replace
 import sys
-from threading import Thread
 import time
 import wx
 
@@ -41,6 +40,7 @@ from status import Status; status = Status()
 
 # relaxGUI module imports.
 from gui.analyses.base import Base_frame
+from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
 from gui.controller import Redirect_text
@@ -285,12 +285,14 @@ class Auto_noe(Base_frame):
         if not status.debug:
             self.gui.controller.Show()
 
-        # Start the thread (if not debugging).
+        # Threading flag.
+        thread = True
         if status.debug:
-            self.thread = Execute(self.gui, data, self.data_index)
-        else:
-            self.thread = Execute_thread(self.gui, data, self.data_index)
-            self.thread.start()
+            thread = False
+
+        # Start the thread.
+        self.thread = Execute_noe(self.gui, data, self.data_index, thread=thread)
+        self.thread.start()
 
         # Terminate the event.
         event.Skip()
@@ -468,28 +470,8 @@ class Auto_noe(Base_frame):
 
 
 
-class Execute:
+class Execute_noe(Execute):
     """The NOE analysis execution object."""
-
-    def __init__(self, gui, data, data_index):
-        """Set up the NOE analysis execution object.
-
-        @param gui:         The GUI object.
-        @type gui:          wx object
-        @param data:        The data container with all data for the analysis.
-        @type data:         class instance
-        @param data_index:  The index of the analysis in the relax data store.
-        @type data_index:   int
-        """
-
-        # Store the args.
-        self.gui = gui
-        self.data = data
-        self.data_index = data_index
-
-        # Execute.
-        self.run()
-
 
     def run(self):
         """Execute the calculation."""
@@ -521,27 +503,3 @@ class Execute:
 
             # Add the macro to the results list.
             data.results_list.append(data.save_dir+sep+'noe.pml')
-
-
-
-class Execute_thread(Execute, Thread):
-    """The NOE analysis thread execution object."""
-
-    def __init__(self, gui, data, data_index):
-        """Set up the NOE analysis thread execution object.
-
-        @param gui:         The GUI object.
-        @type gui:          wx object
-        @param data:        The data container with all data for the analysis.
-        @type data:         class instance
-        @param data_index:  The index of the analysis in the relax data store.
-        @type data_index:   int
-        """
-
-        # Store the args.
-        self.gui = gui
-        self.data = data
-        self.data_index = data_index
-
-        # Set up the thread object.
-        Thread.__init__(self)
