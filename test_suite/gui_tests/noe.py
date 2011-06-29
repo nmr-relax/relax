@@ -76,10 +76,10 @@ class Noe(TestCase):
         """Test the NOE analysis."""
 
         # Directly set up the analysis.
-        self.gui.new_analysis(analysis_type='noe', analysis_name="Steady-state NOE test", pipe_name='noe test')
+        self.gui.analysis.new_analysis(analysis_type='noe', analysis_name="Steady-state NOE test", pipe_name='noe test')
 
         # Alias the page.
-        page = self.gui.analyses[0]
+        page = self.gui.analysis.get_page_from_name("Steady-state NOE test")
 
         # The frequency label.
         page.field_nmr_frq.SetValue(str_to_gui('500'))
