@@ -43,11 +43,6 @@ class GuiTestCase(TestCase):
             # Get the exception from the queue.
             index, exc = status.analyses.exception_queue.get(block=False)
 
-            # Print it.
-            print("Exception raised in thread.\n")
-            print_exception(exc[0], exc[1], exc[2])
-            print("\n\n")
-
             # Fail.
             self.fail()
 

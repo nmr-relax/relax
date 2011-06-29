@@ -26,6 +26,7 @@
 # Python module imports.
 import sys
 from threading import Thread
+from traceback import print_exc
 
 # relax module imports.
 from relax_errors import RelaxImplementError
@@ -87,6 +88,11 @@ class Execute(Thread):
         except:
             # Place the analysis index and execution info into the exception queue.
             status.analyses.exception_queue.put([self.data_index, sys.exc_info()])
+
+            # Print the exception.
+            print("Exception raised in thread.\n")
+            print_exc()
+            print("\n\n")
 
             # Unlock the execution lock.
             status.exec_lock.release()
