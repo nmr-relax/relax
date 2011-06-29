@@ -94,8 +94,9 @@ class Execute(Thread):
             print_exc()
             print("\n\n")
 
-            # Unlock the execution lock.
-            status.exec_lock.release()
+            # Unlock the execution lock, if needed.
+            if status.exec_lock.locked():
+                status.exec_lock.release()
 
 
     def run_analysis(self):
