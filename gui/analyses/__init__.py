@@ -25,9 +25,12 @@
 
 # Python module imports.
 import wx
+from Queue import Queue
+from types import ListType
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.analyses.auto_model_free import Auto_model_free
@@ -72,6 +75,9 @@ class Analysis_controller:
 
         # The analyses page objects.
         self._analyses = []
+
+        # Create a container in the status singleton for the analyses.
+        status.analyses = Status_container()
 
 
     def analysis_data_loop(self):
@@ -347,3 +353,14 @@ class Analysis_controller:
 
         # Open the window.
         self.results_viewer.Show()
+
+
+
+class Status_container(ListType):
+    """The status container object."""
+
+    def __init__(self):
+        """Initialise a number of data structures."""
+
+        # The exception queue.
+        self.exception_queue = Queue()
