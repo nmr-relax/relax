@@ -373,7 +373,7 @@ class Execute_rx(Execute):
         """Execute the calculation."""
 
         # Controller.
-        if not status.debug:
+        if not status.debug and not status.test_mode:
             # Redirect relax output and errors to the controller.
             redir = Redirect_text(self.gui.controller)
             sys.stdout = redir

@@ -855,7 +855,7 @@ class Auto_model_free(Base_frame):
             self.gui.calc_threads[-1].progress = 5.0
 
             # Controller.
-            if not status.debug:
+            if not status.debug and not status.test_mode:
                 # Redirect relax output and errors to the controller.
                 redir = Redirect_text(self.gui.controller)
                 sys.stdout = redir
