@@ -42,7 +42,7 @@ from status import Status; status = Status()
 from gui.analyses.base import Base_frame
 from gui.base_classes import Container
 from gui.components.spectrum import Peak_intensity
-from gui.controller import Redirect_text, Thread_container
+from gui.controller import Redirect_text
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir
 from gui.message import error_message, missing_data
