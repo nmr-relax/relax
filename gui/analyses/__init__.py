@@ -66,6 +66,7 @@ class Analysis_controller:
 
         # Initialise some variables.
         self.init_state = True
+        self._current = None
 
         # The analyses page objects.
         self.analyses = []
@@ -81,6 +82,21 @@ class Analysis_controller:
         # Loop over the analyses.
         for i in range(len(self.analyses)):
             yield self.analyses[i]
+
+
+    def current_analysis_name(self):
+        """Return the name of the current analysis.
+
+        @return:    The name of the current analysis.
+        @rtype:     str
+        """
+
+        # No current page.
+        if self._current == None:
+            return
+
+        # Return the name.
+        return self.analyses[self._current]
 
 
     def delete_all(self):
