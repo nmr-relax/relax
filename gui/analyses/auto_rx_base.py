@@ -117,13 +117,12 @@ class Auto_rx(Base_frame):
 
         See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
-        @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a flag stating if the data is complete and a list of missing data types.
-        @rtype:     class instance, bool, list of str
+        @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a list of missing data types.
+        @rtype:     class instance, list of str
         """
 
         # The data container.
         data = Container()
-        complete = True
         missing = []
 
         # The pipe name.
@@ -194,11 +193,10 @@ class Auto_rx(Base_frame):
 
         # No sequence data.
         if not data.seq_args and not data.structure_file:
-            complete = False
             missing.append('Sequence data files (text or PDB)')
 
         # Return the container, flag, and list of missing data.
-        return data, complete, missing
+        return data, missing
 
 
     def build_right_box(self):
