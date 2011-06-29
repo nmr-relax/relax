@@ -235,7 +235,7 @@ class Auto_rx(Base_frame):
         box.AddSpacer(10)
 
         # Add the execution GUI element.
-        self.add_execute_relax(box, self.execute)
+        self.button_exec_id = self.add_execute_relax(box, self.execute)
 
         # Return the box.
         return box

@@ -745,7 +745,7 @@ class Auto_model_free(Base_frame):
         box.AddStretchSpacer()
 
         # Add the execution GUI element.
-        self.add_execute_relax(box, self.automatic_protocol_controller)
+        self.button_exec_id = self.add_execute_relax(box, self.automatic_protocol_controller)
 
         # Return the packed box.
         return box
