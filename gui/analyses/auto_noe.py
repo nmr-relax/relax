@@ -43,7 +43,7 @@ from status import Status; status = Status()
 from gui.analyses.base import Base_frame
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
-from gui.controller import Redirect_text, Thread_container
+from gui.controller import Redirect_text
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir, openfile
 from gui.message import error_message, missing_data
