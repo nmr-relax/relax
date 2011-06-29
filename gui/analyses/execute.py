@@ -71,3 +71,10 @@ class Execute(Thread):
 
         # Execute the run() method.
         self.run()
+
+
+    def run(self):
+        """Execute the thread (or pseudo-thread)."""
+
+        # Execute the analysis.
+        self.run_analysis()

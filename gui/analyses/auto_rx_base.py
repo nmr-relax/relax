@@ -369,7 +369,7 @@ class Auto_rx(Base_frame):
 class Execute_rx(Execute):
     """The Rx analysis execution object."""
 
-    def run(self):
+    def run_analysis(self):
         """Execute the calculation."""
 
         # Controller.
