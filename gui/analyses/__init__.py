@@ -67,6 +67,7 @@ class Analysis_controller:
         # Initialise some variables.
         self.init_state = True
         self._current = None
+        self._num_analyses = 0
 
         # The analyses page objects.
         self.analyses = []
@@ -80,7 +81,7 @@ class Analysis_controller:
         """
 
         # Loop over the analyses.
-        for i in range(len(self.analyses)):
+        for i in range(self._num_analyses):
             yield ds.relax_gui.analyses[i]
 
 
@@ -92,7 +93,7 @@ class Analysis_controller:
         """
 
         # Loop over the analyses.
-        for i in range(len(self.analyses)):
+        for i in range(self._num_analyses):
             yield self.analyses[i]
 
 
@@ -115,9 +116,9 @@ class Analysis_controller:
         """Remove all analyses."""
 
         # Delete the current tabs.
-        while len(self.analyses):
+        while self._num_analyses:
             # Remove the last analysis, until there is nothing left.
-            self.delete_analysis(len(self.analyses)-1)
+            self.delete_analysis(self._num_analyses-1)
 
 
     def delete_analysis(self, index):
@@ -136,10 +137,18 @@ class Analysis_controller:
         # Delete the tab object.
         self.analyses.pop(index)
 
+        # Decrement the number of analyses.
+        self._num_analyses -= 1
+
+        # The current page has been deleted, so switch one back.
+        if index == self._current:
+            self._current -= 1
+
         # No more analyses, so in the initial state.
-        if len(ds.relax_gui.analyses) == 0:
+        if self._num_analyses == 0:
             # Reset the flag.
             self.init_state = True
+            self._current = None
 
             # Delete the previous sizer.
             old_sizer = self.GetSizer()
@@ -158,7 +167,7 @@ class Analysis_controller:
 
         # Determine the analysis index.
         found = False
-        for index in range(len(ds.relax_gui.analyses)):
+        for index in range(self._num_analyses):
             # Match.
             if name == ds.relax_gui.analyses[index].analysis_name:
                 found = True
@@ -289,6 +298,12 @@ class Analysis_controller:
 
         # Add to the notebook.
         self.notebook.AddPage(self.analyses[-1].parent, analysis_name)
+
+        # Increment the number of analyses.
+        self._num_analyses += 1
+
+        # Set this new analysis to the current one.
+        self._current = self._num_analyses - 1
 
         # Reset the main window layout.
         self.gui.Layout()
