@@ -120,7 +120,7 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU_OPEN, self.update_menus)
 
 
-    def build_menu_item(self, menu, id=None, text='', tooltip='', icon=None):
+    def build_menu_item(self, menu, id=None, text='', tooltip='', icon=None, fn=None):
         """Construct and return the menu sub-item.
 
         @param menu:        The menu object to place this entry in.
@@ -133,9 +133,15 @@ class Menu:
         @type tooltip:      str
         @keyword icon:      The bitmap icon path.
         @type icon:         None or str
+        @keyword fn:        The function to bind to the menu entry.
+        @type fn:           class method
         @return:            The initialised wx.MenuItem() instance.
         @rtype:             wx.MenuItem() instance
         """
+
+        # A new ID if necessary.
+        if id == None:
+            id = wx.NewId()
 
         # Initialise the GUI element.
         element = wx.MenuItem(menu, id, text, tooltip)
@@ -143,6 +149,10 @@ class Menu:
         # Set the icon.
         if icon:
             element.SetBitmap(wx.Bitmap(icon))
+
+        # Bind the menu entry.
+        if fn:
+            self.gui.Bind(wx.EVT_MENU, fn, id)
 
         # Return the element.
         return element
