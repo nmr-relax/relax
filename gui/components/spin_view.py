@@ -879,7 +879,9 @@ class Spin_view_window(wx.Frame):
         # The molecule menu entry.
         menu = wx.Menu()
         menu.AppendItem(self.gui.menu.build_menu_item(menu, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.molecule.copy))
-        self.menubar.Append(menu, "&Molecule")
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, text="crea&te", icon=paths.icon_16x16.add, fn=self.gui.user_functions.molecule.create))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.molecule.delete))
+        self.menubar.Append(menu, "&molecule")
 
 
     def Show(self, show=True):
