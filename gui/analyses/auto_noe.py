@@ -227,7 +227,7 @@ class Auto_noe(Base_frame):
         self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
         # Add the spin GUI element.
-        self.spin_systems = self.add_text_sel_element(box, self.parent, text="Spin systems", default=str_to_gui(self.spin_count()), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True)
+        self.spin_systems = self.add_text_sel_element(box, self.parent, text="Spin systems", button_text=" Spin editor", default=str_to_gui(self.spin_count()), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True)
 
         # Add peak list selection header.
         self.add_subtitle(box, "NOE peak lists")
