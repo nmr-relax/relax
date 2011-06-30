@@ -229,8 +229,9 @@ class Menu:
                 [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.spin.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.spin.delete]
             ]],
-            [wx.NewId(), "s&tructure", None, None, [
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.structure.delete]
+            [wx.NewId(), "s&tructure", paths.icon_16x16.structure, None, [
+                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.structure.delete],
+                [wx.NewId(), "read_&pdb", paths.icon_16x16.open, self.gui.user_functions.structure.read_pdb]
             ]],
             [wx.NewId(), "&value", paths.icon_16x16.value, None, [
                 [wx.NewId(), "&set",   paths.icon_16x16.add, self.gui.user_functions.value.set]
