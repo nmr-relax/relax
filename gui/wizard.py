@@ -25,7 +25,7 @@
 
 # Python module imports.
 import wx
-from wx.lib import buttons
+from wx.lib import buttons, scrolledpanel
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -159,11 +159,13 @@ class Wiz_page(wx.Panel):
         main_sizer.AddStretchSpacer()
 
 
-    def _add_desc(self, sizer):
+    def _add_desc(self, sizer, max_y=220):
         """Add the description to the dialog.
 
         @param sizer:   A sizer object.
         @type sizer:    wx.Sizer instance
+        @keyword max_y: The maximum height, in number of pixels, for the description.
+        @type max_y:    int
         """
 
         # A line with spacing.
@@ -171,17 +173,45 @@ class Wiz_page(wx.Panel):
         sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, 0)
         sizer.AddSpacer(5)
 
+        # Create a scrolled panel.
+        panel = scrolledpanel.ScrolledPanel(self, -1, name="desc")
+
+        # A sizer for the panel.
+        panel_sizer = wx.BoxSizer(wx.VERTICAL)
+
         # The text.
-        text = wx.StaticText(self, -1, self.main_text, style=wx.TE_MULTILINE)
+        text = wx.StaticText(panel, -1, self.main_text, style=wx.TE_MULTILINE)
 
         # Font.
         #text.SetFont(wx.Font(18, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
 
         # Wrap the text.
-        text.Wrap(self._main_size)
+        text.Wrap(self._main_size - 20)
+
+        # The text size.
+        x, y = text.GetSizeTuple()
+
+        # Scrolling needed.
+        if y > max_y-10:
+            # Set the panel size.
+            panel.SetInitialSize((self._main_size, max_y))
+
+        # No scrolling.
+        else:
+            # Rewrap the text.
+            text.Wrap(self._main_size)
+
+            # Set the panel size.
+            panel.SetInitialSize(text.GetSize())
 
         # Add the text.
-        sizer.Add(text, 0, wx.ALIGN_LEFT|wx.ALL, 0)
+        panel_sizer.Add(text, 0, wx.ALIGN_LEFT, 0)
+
+        # Set up and add the panel to the sizer.
+        panel.SetSizer(panel_sizer)
+        panel.SetAutoLayout(1)
+        panel.SetupScrolling(scroll_x=False, scroll_y=True)
+        sizer.Add(panel, 0, wx.ALL|wx.EXPAND)
 
         # A line with spacing.
         sizer.AddSpacer(5)
