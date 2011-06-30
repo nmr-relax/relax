@@ -35,6 +35,7 @@ import wx
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.mol_res_spin import count_spins
 from relax_io import DummyFileObject
 from status import Status; status = Status()
 
@@ -222,14 +223,8 @@ class Auto_noe(Base_frame):
         # Add the results directory GUI element.
         self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
-        # Add the sequence file selection GUI element.
-        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str_to_gui(self.gui.sequence_file_msg), fn=self.load_sequence, editable=False, button=True)
-
-        # Add the structure file selection GUI element.
-        self.field_structure = self.add_text_sel_element(box, self.parent, text="Sequence from PDB structure file", default=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, fn='open_file', editable=False, button=True)
-
-        # Add the unresolved spins GUI element.
-        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues")
+        # Add the spin GUI element.
+        self.spin_systems = self.add_text_sel_element(box, self.parent, text="Spin systems", default=str_to_gui(self.spin_count()), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True)
 
         # Add peak list selection header.
         self.add_subtitle(box, "NOE peak lists")
@@ -298,7 +293,15 @@ class Auto_noe(Base_frame):
         event.Skip()
 
 
-    def load_sequence(self, event):
+    def launch_spin_editor(self, event):
+        """The spin editor GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+
+      def load_sequence(self, event):
         """The sequence loading GUI element.
 
         @param event:   The wx event.
@@ -399,6 +402,20 @@ class Auto_noe(Base_frame):
 
         # Terminate the event.
         event.Skip()
+
+
+    def spin_count(self):
+        """Count the number of loaded spins, returning a string formatted as 'xxx spins loaded'.
+
+        @return:    The number of loaded spins in the format 'xxx spins loaded'.
+        @rtype:     str
+        """
+
+        # The count.
+        num = count_spins()
+
+        # Return the formatted string.
+        return "%s spins loaded" % num
 
 
     def sync_ds(self, upload=False):
