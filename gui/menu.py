@@ -152,7 +152,7 @@ class Menu:
 
         # Bind the menu entry.
         if fn:
-            self.gui.Bind(wx.EVT_MENU, fn, id)
+            self.gui.Bind(wx.EVT_MENU, fn, id=id)
 
         # Return the element.
         return element
