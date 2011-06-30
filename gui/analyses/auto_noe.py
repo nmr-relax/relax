@@ -442,28 +442,6 @@ class Auto_noe(Base_frame):
         else:
             self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
 
-        # The sequence file.
-        if upload:
-            file = gui_to_str(self.field_sequence.GetValue())
-            if file != self.gui.sequence_file_msg:
-                self.data.sequence_file = gui_to_str(self.field_sequence.GetValue())
-        elif hasattr(self.data, 'sequence_file'):
-            self.field_sequence.SetValue(str_to_gui(self.data.sequence_file))
-
-        # The structure file.
-        if upload:
-            file = gui_to_str(self.field_structure.GetValue())
-            if file != self.gui.structure_file_pdb_msg:
-                self.data.structure_file = gui_to_str(self.field_structure.GetValue())
-        elif hasattr(self.data, 'structure_file'):
-            self.field_structure.SetValue(str_to_gui(self.data.structure_file))
-
-        # Unresolved residues.
-        if upload:
-            self.data.unresolved = gui_to_str(self.field_unresolved.GetValue())
-        elif hasattr(self.data, 'unresolved'):
-            self.field_unresolved.SetValue(str_to_gui(self.data.unresolved))
-
         # Reference peak file.
         if upload:
             self.data.ref_file = gui_to_str(self.field_ref_noe.GetValue())
