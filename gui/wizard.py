@@ -107,7 +107,7 @@ class Wiz_page(wx.Panel):
     # Some class variables.
     art_spacing = 20
     divider = None
-    image_path = None
+    image_path = paths.IMAGE_PATH + "relax.gif"
     input_size = 27
     main_text = ''
     title = ''
