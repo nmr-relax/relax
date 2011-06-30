@@ -61,6 +61,7 @@ class I16x16:
         self.residue =              path + 'residue.png'
         self.sequence =             path + 'sequence.png'
         self.spin =                 path + 'spin.png'
+        self.structure =            path + 'structure.png'
         self.value =                path + 'value.png'
 
         # Oxygen icons.
@@ -128,6 +129,7 @@ class I22x22:
         self.residue =              path + 'residue.png'
         self.sequence =             path + 'sequence.png'
         self.spin =                 path + 'spin.png'
+        self.structure =            path + 'structure.png'
         self.value =                path + 'value.png'
 
 
@@ -154,6 +156,8 @@ class I32x32:
         self.view_refresh = path + 'actions' + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
 
+        # relax icons.
+        self.structure =            path + 'structure.png'
 
 
 class I48x48:
@@ -184,6 +188,7 @@ class I48x48:
         self.pipe =                 path + 'pipe.png'
         self.relax_data =           path + 'fid.png'
         self.sequence =             path + 'sequence.png'
+        self.structure =            path + 'structure.png'
         self.value =                path + 'value.png'
 
 
