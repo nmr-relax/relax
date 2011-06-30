@@ -221,13 +221,13 @@ class Auto_noe(Base_frame):
         self.add_title(box, "Setup for steady-state NOE analysis")
 
         # Add the frequency selection GUI element.
-        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str_to_gui(self.data.frq))
+        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=self.data.frq)
 
         # Add the results directory GUI element.
         self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
         # Add the spin GUI element.
-        self.spin_systems = self.add_text_sel_element(box, self.parent, text="Spin systems", button_text=" Spin editor", default=str_to_gui(self.spin_count()), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True)
+        self.spin_systems = self.add_text_sel_element(box, self.parent, text="Spin systems", button_text=" Spin editor", default=self.spin_count(), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True)
 
         # Add peak list selection header.
         self.add_subtitle(box, "NOE peak lists")
@@ -236,13 +236,13 @@ class Auto_noe(Base_frame):
         self.field_sat_noe = self.add_text_sel_element(box, self.parent, text="Saturated NOE peak list", default=self.data.sat_file, fn=self.sat_file, button=True)
 
         # Add the saturated RMSD background GUI element:
-        self.field_sat_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str_to_gui(self.data.sat_rmsd))
+        self.field_sat_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=self.data.sat_rmsd)
 
         # Add the reference NOE peak list selection GUI element.
         self.field_ref_noe = self.add_text_sel_element(box, self.parent, text="Reference NOE peak list", default=self.data.ref_file, fn=self.ref_file, button=True)
 
         # Add the reference RMSD background GUI element:
-        self.field_ref_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str_to_gui(self.data.ref_rmsd))
+        self.field_ref_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=self.data.ref_rmsd)
 
         # Add a stretchable spacer.
         box.AddStretchSpacer()
