@@ -64,7 +64,7 @@ class Structure(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=900, size_y=800, title='PDB reader')
+        wizard = Wiz_window(size_x=800, size_y=600, title='PDB reader')
         page = Read_pdb_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
