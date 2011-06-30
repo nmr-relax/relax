@@ -30,6 +30,7 @@ from wx.lib import buttons
 
 # relax GUI module imports.
 from gui import paths
+from gui.misc import str_to_gui
 
 
 class Base_frame:
@@ -42,7 +43,7 @@ class Base_frame:
     width_text = 240
     width_button = 100
 
-    def add_button_open(self, box, parent, icon=paths.icon_16x16.open, fn=None, width=-1, height=-1):
+    def add_button_open(self, box, parent, icon=paths.icon_16x16.open, text=" Change", fn=None, width=-1, height=-1):
         """Add a button for opening and changing files and directories.
 
         @param box:         The box element to pack the control into.
@@ -51,6 +52,8 @@ class Base_frame:
         @type parent:       wx object
         @keyword icon:      The path of the icon to use for the button.
         @type icon:         str
+        @keyword text:      The text to display on the button.
+        @type text:         str
         @keyword fn:        The function or method to execute when clicking on the button.
         @type fn:           func
         @keyword width:     The minimum width of the control.
@@ -60,7 +63,7 @@ class Base_frame:
         """
 
         # The button.
-        button = buttons.ThemedGenBitmapTextButton(parent, -1, None, " Change")
+        button = buttons.ThemedGenBitmapTextButton(parent, -1, None, str_to_gui(text))
         button.SetBitmapLabel(wx.Bitmap(icon, wx.BITMAP_TYPE_ANY))
 
         # The font and button properties.
@@ -301,7 +304,7 @@ class Base_frame:
         return field
 
 
-    def add_text_sel_element(self, box, parent, text="", default="", control=wx.TextCtrl, icon=paths.icon_16x16.open, fn=None, editable=True, button=False):
+    def add_text_sel_element(self, box, parent, text="", default="", button_text=" Change", control=wx.TextCtrl, icon=paths.icon_16x16.open, fn=None, editable=True, button=False):
         """Create a text selection element for the frame.
 
         This consists of a horizontal layout with a static text element, a text control, and an optional button.
@@ -314,6 +317,8 @@ class Base_frame:
         @type text:             str
         @keyword default:       The default text of the control.
         @type default:          str
+        @keyword button_text:   The text to display on the button.
+        @type button_text:      str
         @keyword control:       The control class to use.
         @type control:          wx.TextCtrl derived class
         @keyword icon:          The path of the icon to use for the button.
@@ -355,7 +360,7 @@ class Base_frame:
                 fn = getattr(field, fn)
 
             # Add the button.
-            self.add_button_open(sizer, parent, icon=icon, fn=fn, width=self.width_button, height=size_horizontal)
+            self.add_button_open(sizer, parent, icon=icon, text=button_text, fn=fn, width=self.width_button, height=size_horizontal)
 
         # No button, so add a spacer.
         else:
