@@ -65,6 +65,14 @@ class Delete_page(UF_page):
     title = 'Structure deletion'
 
 
+    def add_contents(self, sizer):
+        """Add the spin specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+
     def on_execute(self):
         """Execute the user function."""
 
