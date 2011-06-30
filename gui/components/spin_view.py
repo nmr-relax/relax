@@ -858,12 +858,28 @@ class Spin_view_window(wx.Frame):
         # Set up the window.
         sizer = self.setup_window()
 
+        # Create a menu.
+        self._create_menu()
+
         # Build the toolbar.
         self.toolbar()
 
         # The splitter window.
         splitter = Tree_splitter(self.gui, self, -1)
         sizer.Add(splitter, 1, wx.EXPAND|wx.ALL, 0)
+
+
+    def _create_menu(self):
+        """Build a menu for the window."""
+
+        # Create the menu bar GUI item and add it to the main frame.
+        self.menubar = wx.MenuBar()
+        self.SetMenuBar(self.menubar)
+
+        # The molecule menu entry.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.molecule.copy))
+        self.menubar.Append(menu, "&Molecule")
 
 
     def Show(self, show=True):
