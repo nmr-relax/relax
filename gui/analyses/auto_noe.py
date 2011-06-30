@@ -303,6 +303,9 @@ class Auto_noe(Base_frame):
         @type event:    wx event
         """
 
+        # Show the molecule, residue, and spin tree window.
+        self.gui.show_tree(None)
+
 
     def load_sequence(self, event):
         """The sequence loading GUI element.
