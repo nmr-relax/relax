@@ -304,7 +304,7 @@ class Auto_noe(Base_frame):
         """
 
 
-      def load_sequence(self, event):
+    def load_sequence(self, event):
         """The sequence loading GUI element.
 
         @param event:   The wx event.
