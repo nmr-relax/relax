@@ -1,0 +1,903 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="200"
+   height="400"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="pdb.svg">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient3795"
+       inkscape:collect="always">
+      <stop
+         id="stop3797"
+         offset="0"
+         style="stop-color:#000000;stop-opacity:1;" />
+      <stop
+         id="stop3799"
+         offset="1"
+         style="stop-color:#ff0000;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3671">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3673" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3675" />
+    </linearGradient>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective2906"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3795"
+       id="linearGradient3677"
+       x1="94.754883"
+       y1="161"
+       x2="94.754883"
+       y2="396"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3679"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3681"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3683"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3685"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3687"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3689"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3691"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3693"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3695"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3697"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3699"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3701"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3703"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3705"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3707"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3709"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3711"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3713"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3715"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3717"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3719"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3721"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3723"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3725"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3727"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3729"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3731"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3733"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3735"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3737"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3739"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3741"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3743"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3745"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3747"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3749"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3751"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3753"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3755"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3757"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3759"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3761"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3763"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3765"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3767"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3769"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3771"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3773"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3775"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3777"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3779"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3781"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3783"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3785"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3787"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3789"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3791"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3671"
+       id="linearGradient3793"
+       gradientUnits="userSpaceOnUse"
+       x1="94.754883"
+       y1="162.16481"
+       x2="94.754883"
+       y2="422" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2"
+     inkscape:cx="83.783748"
+     inkscape:cy="178.55718"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer2"
+     showgrid="false"
+     inkscape:window-width="1600"
+     inkscape:window-height="1135"
+     inkscape:window-x="-3"
+     inkscape:window-y="-3"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3801"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="PDB Text"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-652.36218)"
+     style="display:none">
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3433"
+       style="font-size:4px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="translate(7,656.36218)"><flowRegion
+         id="flowRegion3435"><rect
+           id="rect3437"
+           width="586"
+           height="578"
+           x="0"
+           y="161"
+           style="font-size:4px" /></flowRegion><flowPara
+         id="flowPara3439"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007</flowPara><flowPara
+         id="flowPara3441"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)</flowPara><flowPara
+         id="flowPara3443"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM      1    N MET A   1      46.658  10.951  -7.469  1.00  0.00           N  </flowPara><flowPara
+         id="flowPara3445"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM      2   CA MET A   1      46.723  11.539  -6.138  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3447"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM      3    C MET A   1      47.358  10.600  -5.113  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3449"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM      4    O MET A   1      48.557  10.326  -5.179  1.00  0.00           O  </flowPara><flowPara
+         id="flowPara3451"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM      5   CB MET A   1      45.339  11.992  -5.675  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3453"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM      6   CG MET A   1      44.681  13.000  -6.601  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3455"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM      7   SD MET A   1      43.214  13.750  -5.871  1.00  0.00           S  </flowPara><flowPara
+         id="flowPara3457"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM      8   CE MET A   1      42.287  12.293  -5.400  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3459"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM      9    N ARG A   2      46.558  10.114  -4.164  1.00  0.00           N  </flowPara><flowPara
+         id="flowPara3461"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     10   CA ARG A   2      47.078   9.239  -3.114  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3463"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     11    C ARG A   2      46.024   8.796  -2.091  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3465"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     12    O ARG A   2      45.247   7.875  -2.351  1.00  0.00           O  </flowPara><flowPara
+         id="flowPara3467"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     13   CB ARG A   2      48.264   9.921  -2.427  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3469"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     14   CG ARG A   2      48.113  11.439  -2.336  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3471"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     15   CD ARG A   2      49.294  12.165  -2.969  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3473"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     16   NE ARG A   2      48.931  13.517  -3.387  1.00  0.00           N  </flowPara><flowPara
+         id="flowPara3475"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     17   CZ ARG A   2      49.567  14.204  -4.331  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3477"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     18  NH1 ARG A   2      50.597  13.664  -4.968  1.00  0.00           N  </flowPara><flowPara
+         id="flowPara3479"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     19  NH2 ARG A   2      49.164  15.428  -4.647  1.00  0.00           N  </flowPara><flowPara
+         id="flowPara3481"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     20    N GLY A   3      46.012   9.435  -0.925  1.00  0.00           N  </flowPara><flowPara
+         id="flowPara3483"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     21   CA GLY A   3      45.066   9.103   0.126  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3485"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     22    C GLY A   3      45.744   8.716   1.426  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3487"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     23    O GLY A   3      46.357   9.554   2.089  1.00  0.00           O  </flowPara><flowPara
+         id="flowPara3489"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     24    N SER A   4      45.631   7.442   1.797  1.00  0.00           N  </flowPara><flowPara
+         id="flowPara3491"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     25   CA SER A   4      46.237   6.945   3.029  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3493"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     26    C SER A   4      46.819   5.542   2.864  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3495">ATOM     27    O SER A   4      47.357   5.201   1.810  1.00  0.00           O  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3497">ATOM     28   CB SER A   4      45.224   6.966   4.180  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3499">ATOM     29   OG SER A   4      44.962   8.291   4.613  1.00  0.00           O  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3501">ATOM     30    N ALA A   5      46.716   4.737   3.917  1.00  0.00           N  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3503">ATOM     31   CA ALA A   5      47.230   3.372   3.900  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3505">ATOM     32    C ALA A   5      46.551   2.509   4.960  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3507">ATOM     33    O ALA A   5      47.153   1.580   5.500  1.00  0.00           O  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3509">ATOM     34   CB ALA A   5      48.735   3.371   4.099  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3511">ATOM     35    N VAL A   6      45.293   2.823   5.251  1.00  0.00           N  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3513">ATOM     36   CA VAL A   6      44.523   2.082   6.246  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3515">ATOM     37    C VAL A   6      43.302   1.320   5.710  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3517">ATOM     38    O VAL A   6      43.417   0.161   5.311  1.00  0.00           O  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3519">ATOM     39   CB VAL A   6      44.188   2.941   7.486  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3521">ATOM     40  CG1 VAL A   6      45.422   3.131   8.349  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3523">ATOM     41  CG2 VAL A   6      43.620   4.291   7.073  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3525">ATOM     42    N PRO A   7      42.113   1.955   5.719  1.00  0.00           N  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3527">ATOM     43   CA PRO A   7      40.840   1.355   5.316  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3529">ATOM     44    C PRO A   7      40.628  -0.010   5.958  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3531">ATOM     45    O PRO A   7      41.439  -0.919   5.791  1.00  0.00           O  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3533">ATOM     46   CB PRO A   7      40.995   1.222   3.804  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3535">ATOM     47   CG PRO A   7      41.908   2.360   3.418  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3537">ATOM     48   CD PRO A   7      42.624   2.843   4.661  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3539">ATOM     49    N PRO A   8      39.530  -0.164   6.714  1.00  0.00           N  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3541">ATOM     50   CA PRO A   8      39.178  -1.393   7.429  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3543">ATOM     51    C PRO A   8      38.707  -2.505   6.501  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3545">ATOM     52    O PRO A   8      39.318  -2.759   5.464  1.00  0.00           O  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3547">ATOM     53   CB PRO A   8      38.024  -0.945   8.317  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3549" /></flowRoot>  </g>
+  <g
+     transform="translate(0,-652.36218)"
+     id="g3551"
+     inkscape:groupmode="layer"
+     inkscape:label="PDB Text copy"
+     style="opacity:1">
+    <flowRoot
+       transform="translate(5.2451172,656.36218)"
+       style="font-size:4px;font-style:normal;font-weight:normal;fill:url(#linearGradient3677);fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       id="flowRoot3553"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3555"
+         style="fill:url(#linearGradient3681);fill-opacity:1.0"><rect
+           style="font-size:4px;fill:url(#linearGradient3679);fill-opacity:1.0"
+           y="161"
+           x="0"
+           height="578"
+           width="586"
+           id="rect3557" /></flowRegion><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3683);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3559">REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007</flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3685);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3561">REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)</flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3687);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3563">ATOM      1    N MET A   1      46.658  10.951  -7.469  1.00  0.00           N  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3689);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3565">ATOM      2   CA MET A   1      46.723  11.539  -6.138  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3691);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3567">ATOM      3    C MET A   1      47.358  10.600  -5.113  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3693);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3569">ATOM      4    O MET A   1      48.557  10.326  -5.179  1.00  0.00           O  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3695);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3571">ATOM      5   CB MET A   1      45.339  11.992  -5.675  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3697);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3573">ATOM      6   CG MET A   1      44.681  13.000  -6.601  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3699);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3575">ATOM      7   SD MET A   1      43.214  13.750  -5.871  1.00  0.00           S  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3701);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3577">ATOM      8   CE MET A   1      42.287  12.293  -5.400  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3703);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3579">ATOM      9    N ARG A   2      46.558  10.114  -4.164  1.00  0.00           N  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3705);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3581">ATOM     10   CA ARG A   2      47.078   9.239  -3.114  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3707);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3583">ATOM     11    C ARG A   2      46.024   8.796  -2.091  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3709);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3585">ATOM     12    O ARG A   2      45.247   7.875  -2.351  1.00  0.00           O  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3711);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3587">ATOM     13   CB ARG A   2      48.264   9.921  -2.427  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3713);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3589">ATOM     14   CG ARG A   2      48.113  11.439  -2.336  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3715);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3591">ATOM     15   CD ARG A   2      49.294  12.165  -2.969  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3717);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3593">ATOM     16   NE ARG A   2      48.931  13.517  -3.387  1.00  0.00           N  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3719);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3595">ATOM     17   CZ ARG A   2      49.567  14.204  -4.331  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3721);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3597">ATOM     18  NH1 ARG A   2      50.597  13.664  -4.968  1.00  0.00           N  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3723);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3599">ATOM     19  NH2 ARG A   2      49.164  15.428  -4.647  1.00  0.00           N  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3725);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3601">ATOM     20    N GLY A   3      46.012   9.435  -0.925  1.00  0.00           N  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3727);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3603">ATOM     21   CA GLY A   3      45.066   9.103   0.126  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3729);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3605">ATOM     22    C GLY A   3      45.744   8.716   1.426  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3731);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3607">ATOM     23    O GLY A   3      46.357   9.554   2.089  1.00  0.00           O  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3733);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3609">ATOM     24    N SER A   4      45.631   7.442   1.797  1.00  0.00           N  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3735);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3611">ATOM     25   CA SER A   4      46.237   6.945   3.029  1.00  0.00           C  </flowPara><flowPara
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3737);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New"
+         id="flowPara3613">ATOM     26    C SER A   4      46.819   5.542   2.864  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3615"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3739);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     27    O SER A   4      47.357   5.201   1.810  1.00  0.00           O  </flowPara><flowPara
+         id="flowPara3617"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3741);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     28   CB SER A   4      45.224   6.966   4.180  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3619"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3743);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     29   OG SER A   4      44.962   8.291   4.613  1.00  0.00           O  </flowPara><flowPara
+         id="flowPara3621"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3745);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     30    N ALA A   5      46.716   4.737   3.917  1.00  0.00           N  </flowPara><flowPara
+         id="flowPara3623"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3747);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     31   CA ALA A   5      47.230   3.372   3.900  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3625"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3749);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     32    C ALA A   5      46.551   2.509   4.960  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3627"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3751);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     33    O ALA A   5      47.153   1.580   5.500  1.00  0.00           O  </flowPara><flowPara
+         id="flowPara3629"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3753);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     34   CB ALA A   5      48.735   3.371   4.099  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3631"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3755);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     35    N VAL A   6      45.293   2.823   5.251  1.00  0.00           N  </flowPara><flowPara
+         id="flowPara3633"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3757);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     36   CA VAL A   6      44.523   2.082   6.246  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3635"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3759);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     37    C VAL A   6      43.302   1.320   5.710  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3637"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3761);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     38    O VAL A   6      43.417   0.161   5.311  1.00  0.00           O  </flowPara><flowPara
+         id="flowPara3639"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3763);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     39   CB VAL A   6      44.188   2.941   7.486  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3641"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3765);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     40  CG1 VAL A   6      45.422   3.131   8.349  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3643"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3767);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     41  CG2 VAL A   6      43.620   4.291   7.073  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3645"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3769);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     42    N PRO A   7      42.113   1.955   5.719  1.00  0.00           N  </flowPara><flowPara
+         id="flowPara3647"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3771);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     43   CA PRO A   7      40.840   1.355   5.316  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3649"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3773);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     44    C PRO A   7      40.628  -0.010   5.958  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3651"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3775);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     45    O PRO A   7      41.439  -0.919   5.791  1.00  0.00           O  </flowPara><flowPara
+         id="flowPara3653"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3777);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     46   CB PRO A   7      40.995   1.222   3.804  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3655"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3779);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     47   CG PRO A   7      41.908   2.360   3.418  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3657"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3781);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     48   CD PRO A   7      42.624   2.843   4.661  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3659"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3783);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     49    N PRO A   8      39.530  -0.164   6.714  1.00  0.00           N  </flowPara><flowPara
+         id="flowPara3661"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3785);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     50   CA PRO A   8      39.178  -1.393   7.429  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3663"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3787);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     51    C PRO A   8      38.707  -2.505   6.501  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3665"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3789);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     52    O PRO A   8      39.318  -2.759   5.464  1.00  0.00           O  </flowPara><flowPara
+         id="flowPara3667"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3791);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New">ATOM     53   CB PRO A   8      38.024  -0.945   8.317  1.00  0.00           C  </flowPara><flowPara
+         id="flowPara3669"
+         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:url(#linearGradient3793);fill-opacity:1.0;font-family:Courier New;-inkscape-font-specification:Courier New" /></flowRoot>  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="VDAC">
+    <image
+       sodipodi:absref="/data/edau/relax/branches/gui_testing/graphics/wizards/structure_read_pdb/2JK4.png"
+       xlink:href="2JK4.png"
+       width="200"
+       height="201"
+       id="image2908"
+       x="-0.49999997"
+       y="-6.0678076e-09" />
+  </g>
+</svg>
