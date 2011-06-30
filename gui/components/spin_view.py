@@ -925,9 +925,6 @@ class Spin_view_window(wx.Frame):
         # Set the default size of the controller.
         self.SetSize((self.size_x, self.size_y))
 
-        # Start maximised.
-        self.Maximize(True)
-
         # Return the sizer.
         return sizer
 
