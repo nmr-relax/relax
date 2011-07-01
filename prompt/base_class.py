@@ -25,11 +25,18 @@
 
 # Python module imports.
 import platform
+from re import split
 from textwrap import wrap
 
 # relax module imports.
 import help
 from string import split, strip
+
+# The width of the text.
+if platform.uname()[0] in ['Windows', 'Microsoft']:
+    width = 80
+else:
+    width = 100
 
 
 def _build_doc(fn):
@@ -40,38 +47,35 @@ def _build_doc(fn):
     """
 
     # Initialise.
-    doc = ""
+    fn.__doc__ = ""
 
     # Add the title.
-    doc = "%s%s\n\n" % (doc, fn._doc_title)
+    fn.__doc__ = "%s%s\n" % (fn.__doc__, fn._doc_title)
 
     # Add the keyword args.
-    doc = doc + _build_subtitle("Keyword Arguments")
+    fn.__doc__ = fn.__doc__ + _build_subtitle("Keyword Arguments")
     for arg, desc in fn._doc_args:
-        doc = "%s%s:  %s\n\n" % (doc, arg, desc)
+        # The text.
+        text = "%s:  %s" % (arg, desc)
+
+        # Format.
+        text = _format_text(text)
+
+        # Add to the docstring.
+        fn.__doc__ = "%s%s\n" % (fn.__doc__, text)
 
     # Add the description.
-    doc = doc + _build_subtitle("Description")
-    doc = doc + _strip_lead(fn._doc_desc)
+    fn.__doc__ = fn.__doc__ + _build_subtitle("Description")
+    fn.__doc__ = fn.__doc__ + _format_text(fn._doc_desc)
 
     # Add the examples.
-    doc = doc + _build_subtitle("Examples")
-    doc = doc + _strip_lead(fn._doc_examples)
-
-    # The width of the document text.
-    if platform.uname()[0] in ['Windows', 'Microsoft']:
-        width = 80
-    else:
-        width = 100
-
-    # Create and wrap the docstring.
-    fn.__doc__ = ""
-    for line in wrap(doc, width):
-        fn.__doc__ = fn.__doc__ + line + "\n"
+    fn.__doc__ = fn.__doc__ + '\n' + _build_subtitle("Examples")
+    fn.__doc__ = fn.__doc__ + _format_text(fn._doc_examples)
 
 
 def _build_subtitle(text):
     """Create the formatted subtitle string.
+
     @param text:    The name of the subtitle.
     @type text:     str
     @return:        The formatted subtitle.
@@ -79,7 +83,51 @@ def _build_subtitle(text):
     """
 
     # Format and return.
-    return "%s\n%s\n\n" % (text, "~"*len(text))
+    return "\n%s\n%s\n\n" % (text, "~"*len(text))
+
+
+def _format_text(text):
+    """Format the text by stripping whitespace and wrapping.
+
+    @param text:    The text to strip and wrap.
+    @type text:     str
+    @return:        The stripped and wrapped text.
+    @rtype:         str
+    """
+
+    # First strip whitespace.
+    stripped_text = _strip_lead(text)
+
+    # Remove the first characters if newlines.
+    while 1:
+        if stripped_text[0] == "\n":
+            stripped_text = stripped_text[1:]
+        else:
+            break
+
+    # Remove the last character if a newline.
+    while 1:
+        if stripped_text[-1] == "\n":
+            stripped_text = stripped_text[:-1]
+        else:
+            break
+
+    # Then split into lines.
+    lines = split(stripped_text, "\n")
+
+    # Then wrap each line.
+    new_text = ""
+    for line in lines:
+        # Empty line, so preserve.
+        if not len(line):
+            new_text = new_text + "\n"
+
+        # Wrap the line.
+        for wrapped_line in wrap(line, width):
+            new_text = new_text + wrapped_line + "\n"
+
+    # Return the formatted text.
+    return new_text
 
 
 def _strip_lead(text):
