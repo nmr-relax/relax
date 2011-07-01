@@ -866,8 +866,9 @@ class Mol_res_spin_tree(wx.Window):
         else:
             pipe = get_pipe(pipe_name)
 
-        # No data pipe, so do nothing.
+        # No data pipe, so delete everything and return.
         if not pipe:
+            self.tree.DeleteChildren(self.root)
             return
 
         # Update the molecules.
