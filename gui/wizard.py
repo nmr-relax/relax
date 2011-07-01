@@ -725,8 +725,8 @@ class Wiz_page(wx.Panel):
             sizer.AddSpacer(spacer)
 
         # Tooltip (the ID string documentation).
-        text.SetToolTipString(id_string_doc)
-        field.SetToolTipString(id_string_doc)
+        text.SetToolTipString(id_string_doc[1])
+        field.SetToolTipString(id_string_doc[1])
 
         # Return the object.
         return field
