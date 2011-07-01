@@ -119,18 +119,7 @@ class Read_pdb_page(UF_page):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'read_pdb.png'
-    main_text = """The reading of PDB files into relax is quite a flexible procedure allowing for both models, defined as an ensemble of the same molecule but with different atomic positions, and different molecules within the same model.  One of more molecules can exist in one or more models.  The flexibility allows PDB models to be converted into different molecules and different PDB files loaded as the same molecule but as different models.  This flexibility is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 'read_model', and 'set_model_num'.
-
-        A few different PDB parsers can be used to read the structural data.  The choice of which to use depends on whether your PDB file is supported by that reader.  These are selected by setting the 'parser' argument to one of:
-
-            'scientific' - the Scientific Python PDB parser.
-            'internal' - a lower quality and less reliable, although faster, PDB parser built into relax.
-
-        In a PDB file, the models are specified by the MODEL PDB record.  All the supported PDB readers in relax recognise this.  The molecule level is quite different between the Scientific Python and internal readers.  For how Scientific Python defines molecules, please see its documentation.  The internal reader is far simpler as it defines molecules using the TER PDB record.  In both cases, the molecules will be numbered consecutively from 1.
-
-        The 'set_mol_name' argument is used to name the molecules within the PDB (within one model).  If not set, then the molecules will be named after the file name, with the molecule number appended if more than one exists.
-
-        Note that relax will complain if it cannot work out what to do."""
+    uf_path = ['structure', 'read_pdb']
     title = 'PDB loading'
 
 
