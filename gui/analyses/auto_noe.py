@@ -119,6 +119,9 @@ class Auto_noe(Base_frame):
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
         self.build_main_box(box_centre)
 
+        # Register the method for updating the spin count for the completion of user functions.
+        self.gui.user_functions.register_observer('auto_noe', self.update_spin_count)
+
 
     def assemble_data(self):
         """Assemble the data required for the Auto_noe class.
@@ -252,6 +255,13 @@ class Auto_noe(Base_frame):
 
         # Return the box.
         return box
+
+
+    def delete(self):
+        """Unregister the spin count from the user functions."""
+
+        # Remove.
+        self.gui.user_functions.unregister_observer('auto_noe')
 
 
     def execute(self, event):
@@ -468,6 +478,13 @@ class Auto_noe(Base_frame):
             self.data.sat_rmsd = gui_to_str(self.field_sat_rmsd.GetValue())
         elif hasattr(self.data, 'sat_rmsd'):
             self.field_sat_rmsd.SetValue(str_to_gui(self.data.sat_rmsd))
+
+
+    def update_spin_count(self):
+        """Update the spin count."""
+
+        # Set the new value.
+        self.spin_systems.SetValue(str_to_gui(self.spin_count()))
 
 
 

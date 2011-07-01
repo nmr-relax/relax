@@ -141,6 +141,10 @@ class Analysis_controller:
         # Delete the tab.
         self.notebook.DeletePage(index)
 
+        # Execute the analysis delete method, if it exists.
+        if hasattr(self._analyses[index], 'delete'):
+            self._analyses[index].delete()
+
         # Delete the tab object.
         self._analyses.pop(index)
 
