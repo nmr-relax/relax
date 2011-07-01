@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,7 +30,7 @@ from string import replace, split
 import wx
 
 # relax module imports.
-from generic_fns.mol_res_spin import generate_spin_id, molecule_loop, residue_loop, return_spin, spin_loop
+from generic_fns.mol_res_spin import get_molecule_ids, get_residue_ids, get_spin_ids, generate_spin_id, molecule_loop, residue_loop, return_spin, spin_loop
 from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
@@ -745,6 +745,74 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.user_functions.molecule.delete(event, mol_name=self.info[1])
 
 
+    def prune_mol(self):
+        """Remove any molecules which have been deleted."""
+
+        # Get a list of molecule IDs from the relax data store.
+        mol_ids = get_molecule_ids()
+
+        # Find if the molecule has been removed.
+        prune_list = []
+        for key in self.tree_ids.keys():
+            # Get the python data.
+            info = self.tree.GetItemPyData(key)
+
+            # Prune if it has been removed.
+            if info[2] not in mol_ids:
+                self.tree.Delete(key)
+                self.tree_ids.pop(key)
+
+
+    def prune_res(self, mol_branch_id, mol_id):
+        """Remove any molecules which have been deleted.
+
+        @param mol_branch_id:   The molecule branch ID of the wx.TreeCtrl object.
+        @type mol_branch_id:    TreeItemId
+        @param mol_id:          The molecule identification string.
+        @type mol_id:           str
+        """
+
+        # Get a list of residue IDs from the relax data store.
+        res_ids = get_residue_ids(mol_id)
+
+        # Find if the molecule has been removed.
+        prune_list = []
+        for key in self.tree_ids[mol_branch_id].keys():
+            # Get the python data.
+            info = self.tree.GetItemPyData(key)
+
+            # Prune if it has been removed.
+            if info[4] not in res_ids:
+                self.tree.Delete(key)
+                self.tree_ids[mol_branch_id].pop(key)
+
+
+    def prune_spin(self, mol_branch_id, res_branch_id, res_id):
+        """Remove any spins which have been deleted.
+
+        @param mol_branch_id:   The molecule branch ID of the wx.TreeCtrl object.
+        @type mol_branch_id:    TreeItemId
+        @param res_branch_id:   The residue branch ID of the wx.TreeCtrl object.
+        @type res_branch_id:    TreeItemId
+        @param res_id:          The residue identification string.
+        @type res_id:           str
+        """
+
+        # Get a list of spin IDs from the relax data store.
+        spin_ids = get_spin_ids(res_id)
+
+        # Find if the molecule has been removed.
+        prune_list = []
+        for key in self.tree_ids[mol_branch_id][res_branch_id].keys():
+            # Get the python data.
+            info = self.tree.GetItemPyData(key)
+
+            # Prune if it has been removed.
+            if info[6] not in spin_ids:
+                self.tree.Delete(key)
+                self.tree_ids[mol_branch_id][res_branch_id].pop(key)
+
+
     def residue_create(self, event):
         """Wrapper method.
 
@@ -806,6 +874,9 @@ class Mol_res_spin_tree(wx.Window):
         for mol, mol_id in molecule_loop(return_id=True):
             self.update_mol(mol, mol_id)
 
+        # Remove any deleted molecules.
+        self.prune_mol()
+
 
     def update_mol(self, mol, mol_id):
         """Update the given molecule in the tree.
@@ -848,6 +919,9 @@ class Mol_res_spin_tree(wx.Window):
         # Start new molecules expanded.
         if new_mol:
             self.tree.Expand(mol_branch_id)
+
+        # Remove any deleted residues.
+        self.prune_res(mol_branch_id, mol_id)
 
         # Expand the root.
         self.tree.Expand(self.root)
@@ -897,6 +971,9 @@ class Mol_res_spin_tree(wx.Window):
         # Start new residues expanded.
         if new_res:
             self.tree.Expand(res_branch_id)
+
+        # Remove any deleted spins.
+        self.prune_spin(mol_branch_id, res_branch_id, res_id)
 
 
     def update_spin(self, mol_branch_id, res_branch_id, mol, res, spin, spin_id):
