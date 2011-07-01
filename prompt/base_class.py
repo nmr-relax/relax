@@ -53,24 +53,27 @@ def _build_doc(fn):
     fn.__doc__ = "%s%s\n" % (fn.__doc__, fn._doc_title)
 
     # Add the keyword args.
-    fn.__doc__ = fn.__doc__ + _build_subtitle("Keyword Arguments")
-    for arg, desc in fn._doc_args:
-        # The text.
-        text = "%s:  %s" % (arg, desc)
+    if hasattr(fn, '_doc_args'):
+        fn.__doc__ = fn.__doc__ + _build_subtitle("Keyword Arguments")
+        for arg, desc in fn._doc_args:
+            # The text.
+            text = "%s:  %s" % (arg, desc)
 
-        # Format.
-        text = _format_text(text)
+            # Format.
+            text = _format_text(text)
 
-        # Add to the docstring.
-        fn.__doc__ = "%s%s\n" % (fn.__doc__, text)
+            # Add to the docstring.
+            fn.__doc__ = "%s%s\n" % (fn.__doc__, text)
 
     # Add the description.
-    fn.__doc__ = fn.__doc__ + _build_subtitle("Description")
-    fn.__doc__ = fn.__doc__ + _format_text(fn._doc_desc)
+    if hasattr(fn, '_doc_desc'):
+        fn.__doc__ = fn.__doc__ + _build_subtitle("Description")
+        fn.__doc__ = fn.__doc__ + _format_text(fn._doc_desc)
 
     # Add the examples.
-    fn.__doc__ = fn.__doc__ + '\n' + _build_subtitle("Examples")
-    fn.__doc__ = fn.__doc__ + _format_text(fn._doc_examples)
+    if hasattr(fn, '_doc_examples'):
+        fn.__doc__ = fn.__doc__ + '\n' + _build_subtitle("Examples")
+        fn.__doc__ = fn.__doc__ + _format_text(fn._doc_examples)
 
 
 def _build_subtitle(text):
