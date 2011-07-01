@@ -23,10 +23,13 @@
 # Module docstring.
 """The base class for all the user function classes."""
 
+# Python module imports.
+import platform
+from textwrap import wrap
+
 # relax module imports.
 import help
 from string import split, strip
-
 
 
 class Basic_class:
@@ -124,3 +127,53 @@ class User_fn_class:
 
         # Return the new text.
         return new_text
+
+
+    def _build_doc(self, fn):
+        """Build the fn.__doc__ docstring.
+
+        @param fn:  The user function to build the docstring for.
+        @type fn:   method
+        """
+
+        # Initialise.
+        doc = ""
+
+        # Add the title.
+        doc = "%s%s\n\n" % (doc, fn._doc_title)
+
+        # Add the keyword args.
+        doc = doc + self._build_subtitle("Keyword Arguments")
+        for arg, desc in fn._doc_args:
+            doc = "%s%s:  %s\n\n" % (doc, arg, desc)
+
+        # Add the description.
+        doc = doc + self._build_subtitle("Description")
+        doc = doc + fn._doc_desc
+
+        # Add the examples.
+        doc = doc + self._build_subtitle("Examples")
+        doc = doc + fn._doc_examples
+
+        # The width of the document text.
+        if platform.uname()[0] in ['Windows', 'Microsoft']:
+            width = 80
+        else:
+            width = 100
+
+        # Create and wrap the docstring.
+        fn.__doc__ = ""
+        for line in wrap(doc, width):
+            fn.__doc__ = fn.__doc__ + line + "\n"
+
+
+    def _build_subtitle(self, text):
+        """Create the formatted subtitle string.
+        @param text:    The name of the subtitle.
+        @type text:     str
+        @return:        The formatted subtitle.
+        @rtype:         str
+        """
+
+        # Format and return.
+        return "%s\n%s\n\n" % (text, "~"*len(text))
