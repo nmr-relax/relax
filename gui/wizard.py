@@ -255,6 +255,8 @@ class Wiz_page(wx.Panel):
             self.on_execute()
         except AllRelaxErrors, instance:
             error_message(instance.text, instance.__class__.__name__)
+        finally:
+            self.on_completion()
 
         # Execute the on_apply() method.
         self.on_apply()
@@ -651,6 +653,13 @@ class Wiz_page(wx.Panel):
 
         # Call the on_display method by default.
         self.on_display()
+
+
+    def on_completion(self):
+        """To be over-ridden if an action is to be performed just after executing self.on_execute().
+
+        This method is called just after self.on_execute() has been called
+        """
 
 
     def on_display(self):
