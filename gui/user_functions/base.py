@@ -123,3 +123,10 @@ class UF_page(Wiz_page):
 
         # Return the text.
         return stripped_text
+
+
+    def on_completion(self):
+        """Notify that the user function has completed."""
+
+        # Notify.
+        self.gui.user_functions.notify_observers()
