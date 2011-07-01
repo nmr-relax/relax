@@ -557,6 +557,9 @@ class Mol_res_spin_tree(wx.Window):
         # The tree.
         self.tree = wx.TreeCtrl(parent=self, id=-1, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TR_DEFAULT_STYLE)
 
+        # A tracking structure for the tree IDs.
+        self.tree_ids = {}
+
         # Resize the tree element.
         self.Bind(wx.EVT_SIZE, self._resize)
 
@@ -813,37 +816,58 @@ class Mol_res_spin_tree(wx.Window):
         @type mol_id:   str
         """
 
-        # Append a molecule with name to the tree.
-        mol_branch = self.tree.AppendItem(self.root, "Molecule: %s" % mol.name)
-        self.tree.SetPyData(mol_branch, ['mol', mol.name, mol_id])
+        # Find the molecule, if it already exists.
+        new_mol = True
+        for key in self.tree_ids.keys():
+            # Get the python data.
+            info = self.tree.GetItemPyData(key)
 
-        # Set the bitmap.
-        self.tree.SetItemImage(mol_branch, self.icon_mol_index, wx.TreeItemIcon_Normal)
-        self.tree.SetItemImage(mol_branch, self.icon_mol_unfold_index, wx.TreeItemIcon_Expanded)
+            # Check the mol_id for a match and, if so, terminate to speed things up.
+            if mol_id == info[2]:
+                new_mol = False
+                mol_branch_id = key
+                break
+
+        # A new molecule.
+        if new_mol:
+            # Append a molecule with name to the tree.
+            mol_branch_id = self.tree.AppendItem(self.root, "Molecule: %s" % mol.name)
+            self.tree.SetPyData(mol_branch_id, ['mol', mol.name, mol_id])
+
+            # Add the id to the tracking structure.
+            self.tree_ids[mol_branch_id] = None
+
+            # Set the bitmap.
+            self.tree.SetItemImage(mol_branch_id, self.icon_mol_index, wx.TreeItemIcon_Normal)
+            self.tree.SetItemImage(mol_branch_id, self.icon_mol_unfold_index, wx.TreeItemIcon_Expanded)
 
         # Update the residues of this molecule.
         for res, res_id in residue_loop(mol_id, return_id=True):
-            self.update_res(mol_branch, mol, res, res_id)
+            self.update_res(mol_branch_id, mol, res, res_id)
+
+        # Start new molecules expanded.
+        if new_mol:
+            self.tree.Expand(mol_branch_id)
 
         # Expand the root.
         self.tree.Expand(self.root)
 
 
-    def update_res(self, mol_branch, mol, res, res_id):
+    def update_res(self, mol_branch_id, mol, res, res_id):
         """Update the given residue in the tree.
 
-        @param mol_branch:  The molecule branch ID of the wx.TreeCtrl object.
-        @type mol_branch:   TreeItemId
-        @param mol:     The molecule container.
-        @type mol:      MoleculeContainer instance
-        @param res:         The residue container.
-        @type res:          ResidueContainer instance
-        @param res_id:      The residue identification string.
-        @type res_id:       str
+        @param mol_branch_id:   The molecule branch ID of the wx.TreeCtrl object.
+        @type mol_branch_id:    TreeItemId
+        @param mol:             The molecule container.
+        @type mol:              MoleculeContainer instance
+        @param res:             The residue container.
+        @type res:              ResidueContainer instance
+        @param res_id:          The residue identification string.
+        @type res_id:           str
         """
 
         # Append a residue with name and number to the tree.
-        res_branch = self.tree.AppendItem(mol_branch, "Residue: %s %s" % (res.num, res.name))
+        res_branch = self.tree.AppendItem(mol_branch_id, "Residue: %s %s" % (res.num, res.name))
         self.tree.SetPyData(res_branch, ['res', mol.name, res.num, res.name])
 
         # Set the bitmap.
