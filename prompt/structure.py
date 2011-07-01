@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2006-2010 Edward d'Auvergne                       #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -354,61 +354,55 @@ class Structure(User_fn_class):
 
 
     def read_pdb(self, file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal'):
-        """The PDB loading function.
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.read_pdb("
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", read_mol=" + repr(read_mol)
+            text = text + ", set_mol_name=" + repr(set_mol_name)
+            text = text + ", read_model=" + repr(read_model)
+            text = text + ", set_model_num=" + repr(set_model_num)
+            text = text + ", parser=" + repr(parser) + ")"
+            print(text)
 
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
+        # The argument checks.
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int_or_int_list(read_mol, 'read molecule number', can_be_none=True)
+        arg_check.is_int_or_int_list(read_model, 'read model', can_be_none=True)
+        arg_check.is_int_or_int_list(set_model_num, 'set model numbers', can_be_none=True)
+        arg_check.is_str_or_str_list(set_mol_name, 'set molecule names', can_be_none=True)
+        arg_check.is_str(parser, 'PDB parser')
 
-        file:  The name of the PDB file.
+        # Execute the functional code.
+        generic_fns.structure.main.read_pdb(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
 
-        dir:  The directory where the file is located.
+    # The function doc info.
+    read_pdb._doc_title = "The PDB loading function."
+    read_pdb._doc_args = [
+        ["file", "The name of the PDB file."],
+        ["dir", "The directory where the file is located."],
+        ["read_mol", "If set, only the given molecule(s) will be read."],
+        ["set_mol_name", "Set the names of the read molecules."],
+        ["read_model", "If set, only the given model number(s) from the PDB file will be read."],
+        ["set_model_num", "Set the model numbers of the read molecules."],
+        ["parser", "The PDB parser used to read the file."]]
+    read_pdb._doc_desc = """
+        The reading of PDB files into relax is quite a flexible procedure allowing for both models, defined as an ensemble of the same molecule but with different atomic positions, and different molecules within the same model.  One of more molecules can exist in one or more models.  The flexibility allows PDB models to be converted into different molecules and different PDB files loaded as the same molecule but as different models.  This flexibility is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 'read_model', and 'set_model_num'.
 
-        read_mol:  If set, only the given molecule(s) will be read.
-
-        set_mol_name:  Set the names of the read molecules.
-
-        read_model:  If set, only the given model number(s) from the PDB file will be read.
-
-        set_model_num:  Set the model numbers of the read molecules.
-
-        parser:  The PDB parser used to read the file.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        The reading of PDB files into relax is quite a flexible procedure allowing for both models,
-        defined as an ensemble of the same molecule but with different atomic positions, and
-        different molecules within the same model.  One of more molecules can exist in one or more
-        models.  The flexibility allows PDB models to be converted into different molecules and
-        different PDB files loaded as the same molecule but as different models.  This flexibility
-        is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 'read_model', and
-        'set_model_num'.
-
-        A few different PDB parsers can be used to read the structural data.  The choice of which to
-        use depends on whether your PDB file is supported by that reader.  These are selected by
-        setting the 'parser' argument to one of:
+        A few different PDB parsers can be used to read the structural data.  The choice of which to use depends on whether your PDB file is supported by that reader.  These are selected by setting the 'parser' argument to one of:
 
             'scientific' - the Scientific Python PDB parser.
-            'internal' - a lower quality and less reliable, although faster, PDB parser built into
-                relax.
+            'internal' - a lower quality and less reliable, although faster, PDB parser built into relax.
 
-        In a PDB file, the models are specified by the MODEL PDB record.  All the supported PDB
-        readers in relax recognise this.  The molecule level is quite different between the
-        Scientific Python and internal readers.  For how Scientific Python defines molecules, please
-        see its documentation.  The internal reader is far simpler as it defines molecules using the
-        TER PDB record.  In both cases, the molecules will be numbered consecutively from 1.
+        In a PDB file, the models are specified by the MODEL PDB record.  All the supported PDB readers in relax recognise this.  The molecule level is quite different between the Scientific Python and internal readers.  For how Scientific Python defines molecules, please see its documentation.  The internal reader is far simpler as it defines molecules using the TER PDB record.  In both cases, the molecules will be numbered consecutively from 1.
 
-        The 'set_mol_name' argument is used to name the molecules within the PDB (within one
-        model).  If not set, then the molecules will be named after the file name, with the molecule
-        number appended if more than one exists.
+        The 'set_mol_name' argument is used to name the molecules within the PDB (within one model).  If not set, then the molecules will be named after the file name, with the molecule number appended if more than one exists.
 
         Note that relax will complain if it cannot work out what to do.
-
-
-        Examples
-        ~~~~~~~~
-
+        """
+    read_pdb._doc_examples = """
         To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', including all
         models and all molecules, type one of:
 
@@ -445,30 +439,7 @@ class Structure(User_fn_class):
         relax> structure.read_pdb('lactose_MCMM4_S1_4.pdb', set_mol_name='lactose_MCMM4_S1',
                                   set_model_num=4)
         """
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.read_pdb("
-            text = text + "file=" + repr(file)
-            text = text + ", dir=" + repr(dir)
-            text = text + ", read_mol=" + repr(read_mol)
-            text = text + ", set_mol_name=" + repr(set_mol_name)
-            text = text + ", read_model=" + repr(read_model)
-            text = text + ", set_model_num=" + repr(set_model_num)
-            text = text + ", parser=" + repr(parser) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(file, 'file name')
-        arg_check.is_str(dir, 'directory name', can_be_none=True)
-        arg_check.is_int_or_int_list(read_mol, 'read molecule number', can_be_none=True)
-        arg_check.is_int_or_int_list(read_model, 'read model', can_be_none=True)
-        arg_check.is_int_or_int_list(set_model_num, 'set model numbers', can_be_none=True)
-        arg_check.is_str_or_str_list(set_mol_name, 'set molecule names', can_be_none=True)
-        arg_check.is_str(parser, 'PDB parser')
-
-        # Execute the functional code.
-        generic_fns.structure.main.read_pdb(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
+    _build_doc(read_pdb)
 
 
     def vectors(self, attached='H', spin_id=None, model=None, verbosity=1, ave=True, unit=True):
