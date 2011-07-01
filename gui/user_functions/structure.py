@@ -182,8 +182,7 @@ class Write_pdb_page(UF_page):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'write_pdb.png'
-    main_text = """
-    """
+    uf_path = ['structure', 'write_pdb']
     title = 'PDB writing'
 
 
