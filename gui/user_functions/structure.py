@@ -134,7 +134,7 @@ class Load_spins_page(UF_page):
     """The structure.load_spins() user function page."""
 
     # Some class variables.
-    #image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'load_spins.png'
+    image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'load_spins.png'
     uf_path = ['structure', 'load_spins']
     title = 'Load spins from structure'
 
