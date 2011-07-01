@@ -1009,9 +1009,17 @@ class Spin_view_window(wx.Frame):
         @type event:    wx event
         """
 
+        # Init.
+        pipe_switch = False
+
         # The selected pipe.
         if event:
+            # The name of the selected pipe.
             pipe = str(event.GetString())
+
+            # A pipe change.
+            if pipe != cdp_name():
+                pipe_switch = True
         else:
             pipe = cdp_name()
         if not pipe:
@@ -1025,7 +1033,7 @@ class Spin_view_window(wx.Frame):
             self.pipe_name.Append(name)
 
         # Switch.
-        if pipe:
+        if pipe_switch:
             # Switch data pipes.
             self.gui.user_functions.interpreter.pipe.switch(pipe)
 
