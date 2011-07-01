@@ -24,7 +24,7 @@
 """Base class module for the user function GUI elements."""
 
 # relax module imports.
-from prompt.base_class import _format_text
+from prompt.base_class import _strip_lead
 
 # relax GUI imports.
 from gui.wizard import Wiz_page
@@ -82,7 +82,7 @@ class UF_page(Wiz_page):
 
             # Set the main text to the description doc.
             if hasattr(uf, '_doc_desc'):
-                self.main_text = _format_text(uf._doc_desc)
+                self.main_text = self._format_text(uf._doc_desc)
 
                 # Remove trailing newlines.
                 if self.main_text[-1] == '\n':
@@ -90,3 +90,33 @@ class UF_page(Wiz_page):
 
         # Execute the base class method.
         super(UF_page, self).__init__(parent)
+
+
+    def _format_text(self, text):
+        """Format the text by stripping whitespace.
+
+        @param text:    The text to strip.
+        @type text:     str
+        @return:        The stripped text.
+        @rtype:         str
+        """
+
+        # First strip whitespace.
+        stripped_text = _strip_lead(text)
+
+        # Remove the first characters if newlines.
+        while 1:
+            if stripped_text[0] == "\n":
+                stripped_text = stripped_text[1:]
+            else:
+                break
+
+        # Remove the last character if a newline.
+        while 1:
+            if stripped_text[-1] == "\n":
+                stripped_text = stripped_text[:-1]
+            else:
+                break
+
+        # Return the text.
+        return stripped_text
