@@ -25,6 +25,7 @@
 
 # relax module imports.
 from prompt.interpreter import Interpreter
+from relax_errors import RelaxError
 
 # GUI module imports.
 from molecule import Molecule
@@ -52,7 +53,10 @@ __all__ = ['base',
 
 
 class User_functions:
-    """Container for all the user function GUI elements."""
+    """Container for all the user function GUI elements.
+
+    This uses the observer design pattern to allow for GUI updates upon completion of a user function.
+    """
 
     def __init__(self, gui):
         """Set up the container."""
@@ -76,6 +80,9 @@ class User_functions:
         self.structure = Structure(self.gui, self.interpreter)
         self.value = Value(self.gui, self.interpreter)
 
+        # The dictionary of callback methods.
+        self._callback = {}
+
 
     def destroy(self):
         """Close all windows."""
@@ -89,3 +96,43 @@ class User_functions:
         self.spin.destroy()
         self.structure.destroy()
         self.value.destroy()
+
+
+    def notify_observers(self):
+        """Notify all observers that a user function has completed."""
+
+        # Loop over the callback methods and execute them.
+        for key in self._callback.keys():
+            self._callback[key]()
+
+
+    def register_observer(self, key, method):
+        """Register a method to be called when all user functions complete.
+
+        @param key:     The key to identify the observer's method.
+        @type key:      str
+        @param method:  The observer's method to be called after completion of the user function.
+        @type method:   method
+        """
+
+        # Already exists.
+        if key in self._callback.keys():
+            raise RelaxError("The key '%s' already exists." % key)
+
+        # Add the method to the dictionary of callbacks.
+        self._callback[key] = method
+
+
+    def unregister_observer(self, key):
+        """Unregister the method corresponding to the key.
+
+        @param method:  The observer's method to be called after completion of the user function.
+        @type method:   method
+        """
+
+        # Does not exist.
+        if key not in self._callback.keys():
+            raise RelaxError("The key '%s' does not exist." % key)
+
+        # Remove the method from the dictionary of callbacks.
+        self._callback.pop(key)
