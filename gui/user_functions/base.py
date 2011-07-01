@@ -23,6 +23,9 @@
 # Module docstring.
 """Base class module for the user function GUI elements."""
 
+# relax module imports.
+from prompt.base_class import _format_text
+
 # relax GUI imports.
 from gui.wizard import Wiz_page
 
@@ -48,6 +51,9 @@ class UF_base:
 class UF_page(Wiz_page):
     """User function specific pages for the wizards."""
 
+    # The path to the user function.
+    uf_path = None
+
     def __init__(self, parent, gui, interpreter):
         """Set up the window.
 
@@ -62,6 +68,25 @@ class UF_page(Wiz_page):
         # Store the args.
         self.gui = gui
         self.interpreter = interpreter
+
+        # User function path is supplied, so set the main text to the docstring.
+        if self.uf_path != None:
+            # Get the user function class (or function).
+            uf_class = getattr(self.interpreter, self.uf_path[0])
+
+            # Get the user function.
+            if len(self.uf_path) == 1:
+                uf = uf_class
+            else:
+                uf = getattr(uf_class, self.uf_path[1])
+
+            # Set the main text to the description doc.
+            if hasattr(uf, '_doc_desc'):
+                self.main_text = _format_text(uf._doc_desc)
+
+                # Remove trailing newlines.
+                if self.main_text[-1] == '\n':
+                    self.main_text = self.main_text[:-1]
 
         # Execute the base class method.
         super(UF_page, self).__init__(parent)
