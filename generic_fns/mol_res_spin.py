@@ -1451,6 +1451,24 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, 
     return id
 
 
+def get_molecule_ids(selection=None):
+    """Return a list of the molecule ID strings.
+
+    @param selection:   The molecule selection identifier.
+    @type selection:    str
+    @return:            The molecule ID strings.
+    @rtype:             list of str
+    """
+
+    # Loop over the molecules, append the ID of each within the selection.
+    mol_ids = []
+    for mol, mol_id in molecule_loop(selection, return_id=True):
+        mol_ids.append(mol_id)
+
+    # Return the IDs.
+    return mol_ids
+
+
 def get_molecule_names(selection=None):
     """Return a list of the molecule names.
 
@@ -1467,6 +1485,24 @@ def get_molecule_names(selection=None):
 
     # Return the names.
     return mol_names
+
+
+def get_residue_ids(selection=None):
+    """Return a list of the residue ID strings.
+
+    @param selection:   The molecule and residue selection identifier.
+    @type selection:    str
+    @return:            The residue ID strings.
+    @rtype:             list of str
+    """
+
+    # Loop over the residues, appending the ID of each within the selection.
+    res_ids = []
+    for res, res_id in residue_loop(selection, return_id=True):
+        res_ids.append(res_id)
+
+    # Return the IDs.
+    return res_ids
 
 
 def get_residue_names(selection=None):
@@ -1503,6 +1539,24 @@ def get_residue_nums(selection=None):
 
     # Return the numbers.
     return res_nums
+
+
+def get_spin_ids(selection=None):
+    """Return a list of the spin ID strings.
+
+    @param selection:   The molecule and spin selection identifier.
+    @type selection:    str
+    @return:            The spin ID strings.
+    @rtype:             list of str
+    """
+
+    # Loop over the spins, appending the ID of each within the selection.
+    spin_ids = []
+    for spin, spin_id in spin_loop(selection, return_id=True):
+        spin_ids.append(spin_id)
+
+    # Return the IDs.
+    return spin_ids
 
 
 def last_residue_num(selection=None):
