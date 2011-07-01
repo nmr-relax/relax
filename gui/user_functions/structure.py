@@ -32,7 +32,7 @@ from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.misc import gui_to_str, str_to_gui
+from gui.misc import gui_to_bool, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
 
@@ -51,6 +51,22 @@ class Structure(UF_base):
         # Create the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title='Delete all structural data')
         page = Delete_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
+
+        # Execute the wizard.
+        wizard.run()
+
+
+    def load_spins(self, event):
+        """The structure.load_spins user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Create the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title='Spin loader')
+        page = Load_spins_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -111,6 +127,47 @@ class Delete_page(UF_page):
 
         # Delete all structures.
         self.interpreter.structure.delete()
+
+
+
+class Load_spins_page(UF_page):
+    """The structure.load_spins() user function page."""
+
+    # Some class variables.
+    #image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'load_spins.png'
+    uf_path = ['structure', 'load_spins']
+    title = 'Load spins from structure'
+
+
+    def add_contents(self, sizer):
+        """Add the structure specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The spin_id arg.
+        self.spin_id = self.spin_id_field(sizer, "The spin identification string:", tooltip="The 'spin_id' user function argument.")
+
+        # The combine_model arg.
+        self.combine_model = self.combo_box(sizer, "Combine spins of all models:", choices=['True', 'False'], tooltip="The 'combine_models' user function argument:  A flag which specifies if spins from separate models should be combined.")
+        self.combine_model.SetValue('True')
+
+        # The ave_pos arg.
+        self.ave_pos = self.combo_box(sizer, "Average the atom position across models:", choices=['True', 'False'], tooltip="The 'ave_pos' user function argument:  A flag specifying if the position of the atom is to be averaged across models.")
+        self.ave_pos.SetValue('True')
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The args.
+        spin_id = gui_to_str(self.spin_id.GetValue())
+        combine_model = gui_to_bool(self.combine_model.GetValue())
+        ave_pos = gui_to_bool(self.ave_pos.GetValue())
+
+        # Execute the user function.
+        self.interpreter.structure.load_spins(spin_id=spin_id, combine_model=combine_model, ave_pos=ave_pos)
 
 
 

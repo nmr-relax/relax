@@ -231,6 +231,7 @@ class Menu:
             ]],
             [wx.NewId(), "s&tructure", paths.icon_16x16.structure, None, [
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.structure.delete],
+                [wx.NewId(), "&load_spins", paths.icon_16x16.spin, self.gui.user_functions.structure.load_spins],
                 [wx.NewId(), "&read_pdb", paths.icon_16x16.open, self.gui.user_functions.structure.read_pdb],
                 [wx.NewId(), "&write_pdb", paths.icon_16x16.save, self.gui.user_functions.structure.write_pdb]
             ]],
