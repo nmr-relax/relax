@@ -102,7 +102,7 @@ class Read_pdb_page(UF_page):
     """The structure.read_pdb() user function page."""
 
     # Some class variables.
-    image_path = WIZARD_IMAGE_PATH + sep + 'structure_read_pdb' + sep + 'pdb.png'
+    image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'read_pdb.png'
     main_text = """The reading of PDB files into relax is quite a flexible procedure allowing for both models, defined as an ensemble of the same molecule but with different atomic positions, and different molecules within the same model.  One of more molecules can exist in one or more models.  The flexibility allows PDB models to be converted into different molecules and different PDB files loaded as the same molecule but as different models.  This flexibility is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 'read_model', and 'set_model_num'.
 
         A few different PDB parsers can be used to read the structural data.  The choice of which to use depends on whether your PDB file is supported by that reader.  These are selected by setting the 'parser' argument to one of:
