@@ -94,7 +94,7 @@ class Delete_page(UF_page):
     """The structure.delete() user function page."""
 
     # Some class variables.
-    main_text = 'Delete all structural information from the current data pipe.'
+    uf_path = ['structure', 'delete']
     title = 'Structure deletion'
 
 
