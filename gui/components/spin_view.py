@@ -876,6 +876,14 @@ class Spin_view_window(wx.Frame):
         self.menubar = wx.MenuBar()
         self.SetMenuBar(self.menubar)
 
+        # The structure menu entry.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.structure.delete))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&load_spins", icon=paths.icon_16x16.spin, fn=self.gui.user_functions.structure.load_spins))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&read_pdb", icon=paths.icon_16x16.open, fn=self.gui.user_functions.structure.read_pdb))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&write_pdb", icon=paths.icon_16x16.save, fn=self.gui.user_functions.structure.write_pdb))
+        self.menubar.Append(menu, "&structure")
+
         # The molecule menu entry.
         menu = wx.Menu()
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.molecule.copy))
