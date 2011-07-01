@@ -52,11 +52,11 @@ def _build_doc(fn):
 
     # Add the description.
     doc = doc + _build_subtitle("Description")
-    doc = doc + fn._doc_desc
+    doc = doc + _strip_lead(fn._doc_desc)
 
     # Add the examples.
     doc = doc + _build_subtitle("Examples")
-    doc = doc + fn._doc_examples
+    doc = doc + _strip_lead(fn._doc_examples)
 
     # The width of the document text.
     if platform.uname()[0] in ['Windows', 'Microsoft']:
