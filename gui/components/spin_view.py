@@ -835,7 +835,7 @@ class Mol_res_spin_tree(wx.Window):
             self.tree.SetPyData(mol_branch_id, ['mol', mol.name, mol_id])
 
             # Add the id to the tracking structure.
-            self.tree_ids[mol_branch_id] = None
+            self.tree_ids[mol_branch_id] = {}
 
             # Set the bitmap.
             self.tree.SetItemImage(mol_branch_id, self.icon_mol_index, wx.TreeItemIcon_Normal)
@@ -866,39 +866,83 @@ class Mol_res_spin_tree(wx.Window):
         @type res_id:           str
         """
 
-        # Append a residue with name and number to the tree.
-        res_branch = self.tree.AppendItem(mol_branch_id, "Residue: %s %s" % (res.num, res.name))
-        self.tree.SetPyData(res_branch, ['res', mol.name, res.num, res.name])
+        # Find the residue, if it already exists.
+        new_res = True
+        for key in self.tree_ids[mol_branch_id].keys():
+            # Get the python data.
+            info = self.tree.GetItemPyData(key)
 
-        # Set the bitmap.
-        self.tree.SetItemImage(res_branch, self.icon_res_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+            # Check the res_id for a match and, if so, terminate to speed things up.
+            if res_id == info[4]:
+                new_res = False
+                res_branch_id = key
+                break
+
+        # A new residue.
+        if new_res:
+            # Append a residue with name and number to the tree.
+            res_branch_id = self.tree.AppendItem(mol_branch_id, "Residue: %s %s" % (res.num, res.name))
+            self.tree.SetPyData(res_branch_id, ['res', mol.name, res.num, res.name, res_id])
+
+            # Add the id to the tracking structure.
+            self.tree_ids[mol_branch_id][res_branch_id] = {}
+
+            # Set the bitmap.
+            self.tree.SetItemImage(res_branch_id, self.icon_res_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
 
         # Update the spins of this residue.
         for spin, spin_id in spin_loop(res_id, return_id=True):
-            self.update_spin(res_branch, mol, res, spin, spin_id)
+            self.update_spin(mol_branch_id, res_branch_id, mol, res, spin, spin_id)
+
+        # Start new residues expanded.
+        if new_res:
+            self.tree.Expand(res_branch_id)
 
 
-    def update_spin(self, res_branch, mol, res, spin, spin_id):
+    def update_spin(self, mol_branch_id, res_branch_id, mol, res, spin, spin_id):
         """Update the given spin in the tree.
 
-        @param res_branch:  The residue branch ID of the wx.TreeCtrl object.
-        @type res_branch:   TreeItemId
-        @param mol:     The molecule container.
-        @type mol:      MoleculeContainer instance
-        @param res:         The residue container.
-        @type res:          ResidueContainer instance
-        @param spin:        The spin container.
-        @type spin:         SpinContainer instance
-        @param spin_id:     The spin identification string.
-        @type spin_id:      str
+        @param mol_branch_id:   The molecule branch ID of the wx.TreeCtrl object.
+        @type mol_branch_id:    TreeItemId
+        @param res_branch_id:   The residue branch ID of the wx.TreeCtrl object.
+        @type res_branch_id:    TreeItemId
+        @param mol:             The molecule container.
+        @type mol:              MoleculeContainer instance
+        @param res:             The residue container.
+        @type res:              ResidueContainer instance
+        @param spin:            The spin container.
+        @type spin:             SpinContainer instance
+        @param spin_id:         The spin identification string.
+        @type spin_id:          str
         """
 
-        # Append a spin with name and number to the tree.
-        spin_branch = self.tree.AppendItem(res_branch, "Spin: %s %s" % (spin.num, spin.name))
-        self.tree.SetPyData(spin_branch, ['spin', mol.name, res.num, res.name, spin.num, spin.name])
+        # Find the spin, if it already exists.
+        new_spin = True
+        for key in self.tree_ids[mol_branch_id][res_branch_id].keys():
+            # Get the python data.
+            info = self.tree.GetItemPyData(key)
 
-        # Set the bitmap.
-        self.tree.SetItemImage(spin_branch, self.icon_spin_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+            # Check the spin_id for a match and, if so, terminate to speed things up.
+            if spin_id == info[6]:
+                new_spin = False
+                spin_branch_id = key
+                break
+
+        # A new spin.
+        if new_spin:
+            # Append a spin with name and number to the tree.
+            spin_branch_id = self.tree.AppendItem(res_branch_id, "Spin: %s %s" % (spin.num, spin.name))
+            self.tree.SetPyData(spin_branch_id, ['spin', mol.name, res.num, res.name, spin.num, spin.name, spin_id])
+
+            # Add the id to the tracking structure.
+            self.tree_ids[mol_branch_id][res_branch_id][spin_branch_id] = True
+
+            # Set the bitmap.
+            self.tree.SetItemImage(spin_branch_id, self.icon_spin_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+
+        # Start new spins expanded.
+        if new_spin:
+            self.tree.Expand(spin_branch_id)
 
 
 
