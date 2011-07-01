@@ -251,23 +251,6 @@ class Structure(User_fn_class):
 
 
     def delete(self):
-        """Delete all structural information from the current data pipe.
-
-        Description
-        ~~~~~~~~~~~
-
-        This function will delete all the structural information.
-
-
-        Example
-        ~~~~~~~
-
-        Simply type:
-
-        relax> structure.delete()
-
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.delete()"
@@ -275,6 +258,18 @@ class Structure(User_fn_class):
 
         # Execute the functional code.
         generic_fns.structure.main.delete()
+
+    # The function doc info.
+    delete._doc_title = "Delete all structural information from the current data pipe."
+    delete._doc_desc = """
+        This function will delete all the structural information.
+        """
+    delete._doc_examples = """
+        Simply type:
+
+        relax> structure.delete()
+        """
+    _build_doc(delete)
 
 
     def load_spins(self, spin_id=None, combine_models=True, ave_pos=True):
