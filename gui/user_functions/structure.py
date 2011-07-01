@@ -73,6 +73,22 @@ class Structure(UF_base):
         wizard.run()
 
 
+    def write_pdb(self, event):
+        """The structure.write_pdb user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Create the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title='PDB writer')
+        page = Write_pdb_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
+
+        # Execute the wizard.
+        wizard.run()
+
+
 
 class Delete_page(UF_page):
     """The structure.delete() user function page."""
@@ -158,3 +174,39 @@ class Read_pdb_page(UF_page):
 
         # Execute the user function.
         self.interpreter.structure.read_pdb(file=file, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
+
+
+
+class Write_pdb_page(UF_page):
+    """The structure.write_pdb() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'write_pdb.png'
+    main_text = """
+    """
+    title = 'PDB writing'
+
+
+    def add_contents(self, sizer):
+        """Add the structure specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Add a file selection.
+        self.file = self.file_selection(sizer, "The PDB file:", title="PDB file selection")
+
+        # The model_num arg.
+        self.model_num = self.input_field(sizer, "Only write model number:", tooltip="This is the 'model_num' user function argument.")
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The args.
+        file = gui_to_str(self.file.GetValue())
+        model_num = gui_to_str(self.model_num.GetValue())
+
+        # Execute the user function.
+        self.interpreter.structure.write_pdb(file=file, model_num=model_num)

@@ -231,7 +231,8 @@ class Menu:
             ]],
             [wx.NewId(), "s&tructure", paths.icon_16x16.structure, None, [
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.structure.delete],
-                [wx.NewId(), "read_&pdb", paths.icon_16x16.open, self.gui.user_functions.structure.read_pdb]
+                [wx.NewId(), "&read_pdb", paths.icon_16x16.open, self.gui.user_functions.structure.read_pdb],
+                [wx.NewId(), "&write_pdb", paths.icon_16x16.save, self.gui.user_functions.structure.write_pdb]
             ]],
             [wx.NewId(), "&value", paths.icon_16x16.value, None, [
                 [wx.NewId(), "&set",   paths.icon_16x16.add, self.gui.user_functions.value.set]
