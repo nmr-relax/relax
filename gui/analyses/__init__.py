@@ -30,6 +30,7 @@ from types import ListType
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -135,15 +136,18 @@ class Analysis_controller:
         @type index:    int
         """
 
+        # Execute the analysis delete method, if it exists.
+        if hasattr(self._analyses[index], 'delete'):
+            self._analyses[index].delete()
+
+        # Delete all data pipes associated with the analysis.
+        pipes.delete(ds.relax_gui.analyses[index].pipe_name)
+
         # Delete the data store object.
         ds.relax_gui.analyses.pop(index)
 
         # Delete the tab.
         self.notebook.DeletePage(index)
-
-        # Execute the analysis delete method, if it exists.
-        if hasattr(self._analyses[index], 'delete'):
-            self._analyses[index].delete()
 
         # Delete the tab object.
         self._analyses.pop(index)
