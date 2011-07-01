@@ -25,7 +25,7 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import User_fn_class
+from base_class import User_fn_class, _build_doc
 import arg_check
 import generic_fns.structure.geometric
 import generic_fns.structure.main
@@ -578,42 +578,6 @@ class Structure(User_fn_class):
 
 
     def write_pdb(self, file=None, dir=None, model_num=None, force=False):
-        """The PDB writing function.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        file:  The name of the PDB file.
-
-        dir:  The directory where the file is located.
-
-        model_num:  The optional model to place in the PDB file.
-
-        force:  A flag which, if set to True, will overwrite the any pre-existing file.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        If the model_num argument is None, then all models will be written to a single file.
-
-
-        Example
-        ~~~~~~~
-
-        To write all models and molecules to the PDB file 'ensemble.pdb' within the directory '~/pdb', type
-        one of:
-
-        relax> structure.write_pdb('ensemble.pdb', '~/pdb')
-        relax> structure.write_pdb(file='ensemble.pdb', dir='pdb')
-
-
-        To write model number 3 into the new file 'test.pdb', use one of:
-
-        relax> structure.write_pdb('test.pdb', model_num=3)
-        relax> structure.write_pdb(file='test.pdb', model_num=3)
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.write_pdb("
@@ -631,3 +595,27 @@ class Structure(User_fn_class):
 
         # Execute the functional code.
         generic_fns.structure.main.write_pdb(file=file, dir=dir, model_num=model_num, force=force)
+
+    # The function doc info.
+    write_pdb._doc_title = "The PDB writing function."
+    write_pdb._doc_args = [["file", "The name of the PDB file."],
+                           ["dir", "The directory where the file is located."],
+                           ["model_num", "The optional model to place in the PDB file."],
+                           ["force", "A flag which, if set to True, will overwrite the any pre-existing file."]]
+    write_pdb._doc_desc = """
+        If the model_num argument is None, then all models will be written to a single file.
+        """
+    write_pdb._doc_examples = """
+        To write all models and molecules to the PDB file 'ensemble.pdb' within the directory '~/pdb', type
+        one of:
+
+        relax> structure.write_pdb('ensemble.pdb', '~/pdb')
+        relax> structure.write_pdb(file='ensemble.pdb', dir='pdb')
+
+
+        To write model number 3 into the new file 'test.pdb', use one of:
+
+        relax> structure.write_pdb('test.pdb', model_num=3)
+        relax> structure.write_pdb(file='test.pdb', model_num=3)
+        """
+    _build_doc(write_pdb)
