@@ -107,7 +107,7 @@ class Auto_rx(Base_frame):
 
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         if hasattr(self.data, 'sequence_file'):
-            data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
+            data.seq_args = [ds.relax_gui.sequence_file, None, None, 1, None, None, None, None]
         else:
             data.seq_args = None
 
