@@ -163,6 +163,23 @@ def int_to_gui(num):
     return unicode(num)
 
 
+def gui_to_bool(string):
+    """Convert the GUI obtained string to a bool.
+
+    @param string:  The bool in string form.
+    @type string:   str
+    @return:        The bool.
+    @rtype:         bool
+    """
+
+    # No value.
+    if string == '':
+        return None
+
+    # Convert.
+    return bool(string)
+
+
 def gui_to_str(string):
     """Convert the GUI obtained string to a string.
 
