@@ -913,6 +913,9 @@ class Spin_view_window(wx.Frame):
         @type show:     bool
         """
 
+        # Add the refresh function to the user function subject object.
+        self.gui.user_functions.register_observer('spin_view_refresh', self.refresh)
+
         # First update.
         self.refresh()
 
@@ -940,6 +943,9 @@ class Spin_view_window(wx.Frame):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Remove the refresh function from the user function subject object.
+        self.gui.user_functions.unregister_observer('spin_view_refresh')
 
         # Close the window.
         self.Hide()
