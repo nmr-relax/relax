@@ -27,7 +27,7 @@ __docformat__ = 'plaintext'
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
-from generic_fns.mol_res_spin import copy_molecule, create_molecule, delete_molecule, display_molecule, id_string_doc, name_molecule, type_molecule
+from generic_fns.mol_res_spin import copy_molecule, create_molecule, delete_molecule, display_molecule, id_string_doc_wrap, name_molecule, type_molecule
 
 
 class Molecule(User_fn_class):
@@ -295,7 +295,7 @@ class Molecule(User_fn_class):
     #########################
 
     # Add the residue identification string description.
-    copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc + "\n"
-    delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
-    display.__doc__ = display.__doc__ + "\n\n" + id_string_doc + "\n"
-    name.__doc__ = name.__doc__ + "\n\n" + id_string_doc + "\n"
+    copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc_wrap + "\n"
+    delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc_wrap + "\n"
+    display.__doc__ = display.__doc__ + "\n\n" + id_string_doc_wrap + "\n"
+    name.__doc__ = name.__doc__ + "\n\n" + id_string_doc_wrap + "\n"

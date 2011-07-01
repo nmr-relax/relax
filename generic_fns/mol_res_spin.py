@@ -73,7 +73,7 @@ Regular expression can be used to select spins.  For example the string '@H*' wi
 string = ''
 for line in split('\n', id_string_doc):
     string = string + fill(line, width=100, initial_indent=8*' ', subsequent_indent=8*' ') + '\n'
-id_string_doc = string
+id_string_doc_wrap = string
 
 
 

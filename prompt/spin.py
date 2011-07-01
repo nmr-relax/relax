@@ -27,7 +27,7 @@ __docformat__ = 'plaintext'
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
-from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin, set_spin_element
+from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, id_string_doc_wrap, name_spin, number_spin, set_spin_element
 
 
 class Spin(User_fn_class):
@@ -404,9 +404,9 @@ class Spin(User_fn_class):
     #########################
 
     # Add the identification string description.
-    copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc + "\n"
-    create.__doc__ = create.__doc__ + "\n\n" + id_string_doc + "\n"
-    delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
-    display.__doc__ = display.__doc__ + "\n\n" + id_string_doc + "\n"
-    name.__doc__ = name.__doc__ + "\n\n" + id_string_doc + "\n"
-    number.__doc__ = number.__doc__ + "\n\n" + id_string_doc + "\n"
+    copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc_wrap + "\n"
+    create.__doc__ = create.__doc__ + "\n\n" + id_string_doc_wrap + "\n"
+    delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc_wrap + "\n"
+    display.__doc__ = display.__doc__ + "\n\n" + id_string_doc_wrap + "\n"
+    name.__doc__ = name.__doc__ + "\n\n" + id_string_doc_wrap + "\n"
+    number.__doc__ = number.__doc__ + "\n\n" + id_string_doc_wrap + "\n"
