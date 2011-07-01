@@ -29,6 +29,7 @@ from wx.lib import buttons, scrolledpanel
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.mol_res_spin import id_string_doc
 from relax_errors import AllRelaxErrors, RelaxImplementError
 
 # relax GUI module imports.
@@ -671,6 +672,64 @@ class Wiz_page(wx.Panel):
 
         This method is called when moving to the next page of the wizard.
         """
+
+
+    def spin_id_element(self, sizer, divider=None, padding=0, spacer=None):
+        """Build a special the input field widget.
+
+        @param sizer:       The sizer to put the input field widget into.
+        @type sizer:        wx.Sizer instance
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
+        @return:            The input field object.
+        @rtype:             wx.TextCtrl instance
+        """
+
+        # Init.
+        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Left padding.
+        sub_sizer.AddSpacer(padding)
+
+        # The description.
+        text = wx.StaticText(self, -1, "The spin identification string:", style=wx.ALIGN_LEFT)
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # The divider.
+        if not divider:
+            divider = self._div_left
+
+        # Spacing.
+        x, y = text.GetSize()
+        sub_sizer.AddSpacer((divider - x, 0))
+
+        # The input field.
+        field = wx.TextCtrl(self, -1, '')
+        field.SetMinSize((50, 27))
+        sub_sizer.Add(field, 1, wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Right padding.
+        sub_sizer.AddSpacer(padding)
+
+        # Add to the main sizer.
+        sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
+
+        # Spacing below the widget.
+        if spacer == None:
+            sizer.AddStretchSpacer()
+        else:
+            sizer.AddSpacer(spacer)
+
+        # Tooltip (the ID string documentation).
+        text.SetToolTipString(id_string_doc)
+        field.SetToolTipString(id_string_doc)
+
+        # Return the object.
+        return field
 
 
     def text(self, sizer, desc, default=''):
