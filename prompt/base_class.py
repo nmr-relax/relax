@@ -79,7 +79,7 @@ def _build_doc(fn):
     if hasattr(fn, '_doc_additional'):
         # Loop over each section.
         for i in range(len(fn._doc_additional)):
-            fn.__doc__ = fn.__doc__ + '\n' + _build_subtitle(fn_doc_additional[0])
+            fn.__doc__ = fn.__doc__ + '\n' + _build_subtitle(fn._doc_additional[0])
             fn.__doc__ = fn.__doc__ + _format_text(fn._doc_additional[1])
 
 
