@@ -82,6 +82,44 @@ def _build_subtitle(text):
     return "%s\n%s\n\n" % (text, "~"*len(text))
 
 
+def _strip_lead(text):
+    """Strip the leading whitespace from the given text.
+
+    @param text:    The text to strip the leading whitespace from.
+    @type text:     str
+    @return:        The text with leading whitespace removed.
+    @rtype:         str
+    """
+
+    # Split by newline.
+    lines = split(text, '\n')
+
+    # Find the minimum whitespace.
+    min_white = 1000
+    for line in lines:
+        # Empty lines.
+        if strip(line) == '':
+            continue
+
+        # Count the whitespace for the current line.
+        num_white = 0
+        for i in range(len(line)):
+            if line[i] != ' ':
+                break
+            num_white = num_white + 1
+
+        # The min value.
+        min_white = min(min_white, num_white)
+
+    # Strip the whitespace.
+    new_text = ''
+    for line in lines:
+        new_text = new_text + line[min_white:] + '\n'
+
+    # Return the new text.
+    return new_text
+
+
 
 class Basic_class:
     def __init__(self, exec_info=None):
@@ -139,42 +177,4 @@ class User_fn_class:
 
         # Add a description to the help string.
         if hasattr(self, '__description__'):
-            self.__relax_help__ = self.__relax_help__ + "\n\n" + self.__strip_lead(self.__description__)
-
-
-    def __strip_lead(self, text):
-        """Strip the leading whitespace from the given text.
-
-        @param text:    The text to strip the leading whitespace from.
-        @type text:     str
-        @return:        The text with leading whitespace removed.
-        @rtype:         str
-        """
-
-        # Split by newline.
-        lines = split(text, '\n')
-
-        # Find the minimum whitespace.
-        min_white = 1000
-        for line in lines:
-            # Empty lines.
-            if strip(line) == '':
-                continue
-
-            # Count the whitespace for the current line.
-            num_white = 0
-            for i in range(len(line)):
-                if line[i] != ' ':
-                    break
-                num_white = num_white + 1
-
-            # The min value.
-            min_white = min(min_white, num_white)
-
-        # Strip the whitespace.
-        new_text = ''
-        for line in lines:
-            new_text = new_text + line[min_white:] + '\n'
-
-        # Return the new text.
-        return new_text
+            self.__relax_help__ = self.__relax_help__ + "\n\n" + _strip_lead(self.__description__)
