@@ -149,9 +149,9 @@ class Load_spins_page(UF_page):
         # The spin_id arg.
         self.spin_id = self.spin_id_element(sizer)
 
-        # The combine_model arg.
-        self.combine_model = self.combo_box(sizer, "Combine spins of all models:", choices=['True', 'False'], tooltip="The 'combine_models' user function argument:  A flag which specifies if spins from separate models should be combined.")
-        self.combine_model.SetValue('True')
+        # The combine_models arg.
+        self.combine_models = self.combo_box(sizer, "Combine spins of all models:", choices=['True', 'False'], tooltip="The 'combine_models' user function argument:  A flag which specifies if spins from separate models should be combined.")
+        self.combine_models.SetValue('True')
 
         # The ave_pos arg.
         self.ave_pos = self.combo_box(sizer, "Average the atom position across models:", choices=['True', 'False'], tooltip="The 'ave_pos' user function argument:  A flag specifying if the position of the atom is to be averaged across models.")
@@ -163,11 +163,11 @@ class Load_spins_page(UF_page):
 
         # The args.
         spin_id = gui_to_str(self.spin_id.GetValue())
-        combine_model = gui_to_bool(self.combine_model.GetValue())
+        combine_models = gui_to_bool(self.combine_models.GetValue())
         ave_pos = gui_to_bool(self.ave_pos.GetValue())
 
         # Execute the user function.
-        self.interpreter.structure.load_spins(spin_id=spin_id, combine_model=combine_model, ave_pos=ave_pos)
+        self.interpreter.structure.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
 
 
 
