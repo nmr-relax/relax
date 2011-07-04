@@ -35,6 +35,8 @@ from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
 from gui import paths
+from gui.message import question
+from gui.misc import gui_to_str
 
 
 class Container(wx.Window):
@@ -741,8 +743,16 @@ class Mol_res_spin_tree(wx.Window):
         @type event:    wx event
         """
 
-        # Call the dialog.
-        self.gui.user_functions.molecule.delete(event, mol_name=self.info[1])
+        # Ask if this should be done.
+        msg = "Are you sure you would like to delete this molecule?  This operation cannot be undone."
+        if not question(msg, default=False):
+            return
+
+        # Delete the molecule.
+        self.gui.user_functions.interpreter.molecule.delete(gui_to_str(self.info[2]))
+
+        # Update.
+        self.update()
 
 
     def prune_mol(self):
@@ -831,8 +841,16 @@ class Mol_res_spin_tree(wx.Window):
         @type event:    wx event
         """
 
-        # Call the dialog.
-        self.gui.user_functions.residue.delete(event, mol_name=self.info[1], res_num=self.info[2], res_name=self.info[3])
+        # Ask if this should be done.
+        msg = "Are you sure you would like to delete this residue?  This operation cannot be undone."
+        if not question(msg, default=False):
+            return
+
+        # Delete the residue.
+        self.gui.user_functions.interpreter.residue.delete(gui_to_str(self.info[4]))
+
+        # Update.
+        self.update()
 
 
     def spin_create(self, event):
@@ -853,8 +871,16 @@ class Mol_res_spin_tree(wx.Window):
         @type event:    wx event
         """
 
-        # Call the dialog.
-        self.gui.user_functions.spin.delete(event, mol_name=self.info[1], res_num=self.info[2], res_name=self.info[3], spin_num=self.info[4], spin_name=self.info[5])
+        # Ask if this should be done.
+        msg = "Are you sure you would like to delete this spin?  This operation cannot be undone."
+        if not question(msg, default=False):
+            return
+
+        # Delete the spin.
+        self.gui.user_functions.interpreter.spin.delete(gui_to_str(self.info[6]))
+
+        # Update.
+        self.update()
 
 
     def update(self, pipe_name=None):
