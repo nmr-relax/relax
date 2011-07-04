@@ -677,3 +677,9 @@ class Structure(SystemTestCase):
         # And now all the rest of the atoms.
         self.interpreter.structure.load_spins()
 
+        # Extract a vector between first two spins.
+        self.interpreter.structure.vectors(attached='@10', spin_id='#SSS-cluster4-new-test_mol1@2')
+        self.assertAlmostEqual(a.bond_vect[0], -2.162)
+        self.assertAlmostEqual(a.bond_vect[1], 3.274)
+        self.assertAlmostEqual(a.bond_vect[2], -3.518)
+
