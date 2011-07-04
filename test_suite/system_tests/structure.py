@@ -26,7 +26,7 @@ from os import sep
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import count_spins
+from generic_fns.mol_res_spin import count_spins, return_spin
 from status import Status; status = Status()
 
 
@@ -656,7 +656,7 @@ class Structure(SystemTestCase):
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the xyz.
-        self.interpreter.structure.read_xyz(file='SSS-cluster4-new-test.xyz', dir=path, read_model=[1,3])
+        self.interpreter.structure.read_xyz(file='SSS-cluster4-new-test.xyz', dir=path, read_model=[1])
 
         # Test the molecule name.
         self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, 'SSS-cluster4-new-test_mol1')
@@ -666,18 +666,10 @@ class Structure(SystemTestCase):
         self.assertEqual(count_spins(), 1)
 
         # Test the spin coordinates.
-        mol = cdp.structure.structural_data[0].mol[0]
-        last_spin_x=[]
-        last_spin_y=[]
-        last_spin_z=[]
-        for i in xrange(len(mol.atom_num)):
-            last_spin_x.append(mol.x[i])
-            last_spin_y.append(mol.y[i])
-            last_spin_z.append(mol.z[i])
-        
-        self.assertEqual(last_spin_x[160], -9.947)
-        self.assertEqual(last_spin_y[160], -6.062)
-        self.assertEqual(last_spin_z[160], 11.682)
+        a=return_spin('#SSS-cluster4-new-test_mol1@2')
+        self.assertAlmostEqual(a.pos[0], -12.398)
+        self.assertAlmostEqual(a.pos[1], -15.992)
+        self.assertAlmostEqual(a.pos[2], 11.448)
 
         # Try loading a few protons.
         #self.interpreter.structure.load_spins('@H')
