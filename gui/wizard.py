@@ -717,9 +717,12 @@ class Wiz_page(wx.Panel):
         sub_sizer.AddSpacer((divider - x, 0))
 
         # The input field.
-        field = wx.TextCtrl(self, -1, '')
+        field = wx.ComboBox(self, -1, '', choices=['@N', '@C'])
         field.SetMinSize((50, 27))
         sub_sizer.Add(field, 1, wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Set the default to nitrogen.
+        field.SetValue(str_to_gui('@N'))
 
         # Right padding.
         sub_sizer.AddSpacer(padding)
