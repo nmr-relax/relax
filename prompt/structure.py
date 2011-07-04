@@ -580,7 +580,7 @@ class Structure(User_fn_class):
 
 
 
-    def vectors(self, attached='H', spin_id=None, model=None, verbosity=1, ave=True, unit=True):
+    def vectors(self, attached='H', spin_id=None, model=None, verbosity=1, ave=True, unit=False):
         """Extract and store the bond vectors from the loaded structures in the spin container.
 
         Keyword arguments
