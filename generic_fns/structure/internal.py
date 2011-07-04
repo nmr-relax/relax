@@ -35,6 +35,7 @@ from warnings import warn
 from api_base import Base_struct_API, ModelList
 from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
+from generic_fns.mol_res_spin import spin_loop
 from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError, RelaxNoPdbError
 from relax_io import file_root, open_read_file
@@ -107,7 +108,27 @@ class Internal(Base_struct_API):
 
         # No attached atoms.
         if num_attached == 0:
-            return None, None, None, None, None, "No attached atom could be found"
+            if relax_re.search('@*', attached_atom):
+                matching_list = []
+                bonded_num=[]
+                bonded_name=[]
+                element=[]
+                pos=[]
+                for spin, mol_name, res_num, res_name in spin_loop(selection=attached_atom, full_info=True):
+                    bonded_num.append(spin.num)
+                    bonded_name.append(spin.name)
+                    element.append(spin.element)
+                    pos.append(spin.pos)
+                if len(bonded_num) == 1:
+                    return bonded_num[0], bonded_name[0], element[0], pos[0], attached_atom, None
+                elif len(bonded_num) > 1:
+                    # Return nothing but a warning.
+                    return None, None, None, None, None, 'More than one attached atom found: ' + repr(matching_names)
+                elif len(bonded_num) > 1:
+                    # Return nothing but a warning.
+                    return None, None, None, None, None, "No attached atom could be found"
+            else:
+                return None, None, None, None, None, "No attached atom could be found"
 
         # The bonded atom info.
         index = matching_list[0]
@@ -634,7 +655,7 @@ class Internal(Base_struct_API):
                 if index != None:
                     # Get the atom bonded to this model/molecule/residue/atom.
                     bonded_num, bonded_name, element, pos, attached_name, warnings = self.__bonded_atom(attached_atom, index, mol)
-
+                    
                     # No bonded atom.
                     if (bonded_num, bonded_name, element) == (None, None, None):
                         continue
@@ -1596,7 +1617,7 @@ class MolContainer:
         @keyword index2:        The index of the second atom.
         @type index2:           int
         """
-
+        
         # Update the bonded array structure, if necessary.
         if index2 not in self.bonded[index1]:
             self.bonded[index1].append(index2)
