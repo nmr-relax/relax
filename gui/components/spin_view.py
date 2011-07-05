@@ -30,6 +30,7 @@ from string import replace, split
 import wx
 
 # relax module imports.
+from generic_fns.selection import is_mol_selected, is_res_selected, is_spin_selected
 from generic_fns.mol_res_spin import get_molecule_ids, get_residue_ids, get_spin_ids, generate_spin_id, molecule_loop, residue_loop, return_spin, spin_loop
 from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
@@ -571,10 +572,20 @@ class Mol_res_spin_tree(wx.Window):
 
         # Build the icon list.
         icon_list = wx.ImageList(self.icon_size, self.icon_size)
+
+        # The normal icons.
         self.icon_mol_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.molecule, wx.BITMAP_TYPE_ANY))
         self.icon_mol_unfold_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.molecule_unfolded, wx.BITMAP_TYPE_ANY))
         self.icon_res_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.residue, wx.BITMAP_TYPE_ANY))
         self.icon_spin_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.spin, wx.BITMAP_TYPE_ANY))
+
+        # The deselected icons.
+        self.icon_mol_index_desel = icon_list.Add(wx.Bitmap(paths.icon_22x22.molecule_grey, wx.BITMAP_TYPE_ANY))
+        self.icon_mol_unfold_index_desel = icon_list.Add(wx.Bitmap(paths.icon_22x22.molecule_unfolded_grey, wx.BITMAP_TYPE_ANY))
+        self.icon_res_index_desel = icon_list.Add(wx.Bitmap(paths.icon_22x22.residue_grey, wx.BITMAP_TYPE_ANY))
+        self.icon_spin_index_desel = icon_list.Add(wx.Bitmap(paths.icon_22x22.spin_grey, wx.BITMAP_TYPE_ANY))
+
+        # Set the icon list.
         self.tree.SetImageList(icon_list)
 
         # Some weird black magic (this is essential)!!
@@ -935,7 +946,8 @@ class Mol_res_spin_tree(wx.Window):
             data = {
                 'type': 'mol',
                 'mol_name': mol.name,
-                'id': mol_id
+                'id': mol_id,
+                'select': is_mol_selected(mol_id)
             }
             self.tree.SetPyData(mol_branch_id, data)
 
@@ -943,8 +955,14 @@ class Mol_res_spin_tree(wx.Window):
             self.tree_ids[mol_branch_id] = {}
 
             # Set the bitmap.
-            self.tree.SetItemImage(mol_branch_id, self.icon_mol_index, wx.TreeItemIcon_Normal)
-            self.tree.SetItemImage(mol_branch_id, self.icon_mol_unfold_index, wx.TreeItemIcon_Expanded)
+            if data['select']:
+                bmp = self.icon_mol_index
+                bmp_unfold = self.icon_mol_unfold_index
+            else:
+                bmp = self.icon_mol_index_desel
+                bmp_unfold = self.icon_mol_unfold_index_desel
+            self.tree.SetItemImage(mol_branch_id, bmp, wx.TreeItemIcon_Normal)
+            self.tree.SetItemImage(mol_branch_id, bmp_unfold, wx.TreeItemIcon_Expanded)
 
         # Update the residues of this molecule.
         for res, res_id in residue_loop(mol_id, return_id=True):
@@ -997,7 +1015,8 @@ class Mol_res_spin_tree(wx.Window):
                 'mol_name': mol.name,
                 'res_name': res.name,
                 'res_num': res.num,
-                'id': res_id
+                'id': res_id,
+                'select': is_res_selected(res_id)
             }
             self.tree.SetPyData(res_branch_id, data)
 
@@ -1005,7 +1024,11 @@ class Mol_res_spin_tree(wx.Window):
             self.tree_ids[mol_branch_id][res_branch_id] = {}
 
             # Set the bitmap.
-            self.tree.SetItemImage(res_branch_id, self.icon_res_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+            if data['select']:
+                bmp = self.icon_res_index
+            else:
+                bmp = self.icon_res_index_desel
+            self.tree.SetItemImage(res_branch_id, bmp, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
 
         # Update the spins of this residue.
         for spin, spin_id in spin_loop(res_id, return_id=True):
@@ -1061,7 +1084,8 @@ class Mol_res_spin_tree(wx.Window):
                 'res_num': res.num,
                 'spin_name': spin.name,
                 'spin_num': spin.num,
-                'id': spin_id
+                'id': spin_id,
+                'select': is_spin_selected(spin_id)
             }
             self.tree.SetPyData(spin_branch_id, data)
 
@@ -1069,7 +1093,11 @@ class Mol_res_spin_tree(wx.Window):
             self.tree_ids[mol_branch_id][res_branch_id][spin_branch_id] = True
 
             # Set the bitmap.
-            self.tree.SetItemImage(spin_branch_id, self.icon_spin_index, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+            if data['select']:
+                bmp = self.icon_spin_index
+            else:
+                bmp = self.icon_spin_index_desel
+            self.tree.SetItemImage(spin_branch_id, bmp, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
 
         # Start new spins expanded.
         if new_spin:
