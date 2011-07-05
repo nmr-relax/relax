@@ -52,17 +52,21 @@ class I16x16:
 
         # relax icons.
         path = ICON_RELAX_PATH + '16x16' + sep
-        self.about_relax =          IMAGE_PATH + 'relax_16x16.png'
-        self.about_relaxgui =       IMAGE_PATH + 'relax_16x16.png'
-        self.molecule =             path + 'molecule.png'
-        self.molecule_unfolded =    path + 'molecule_unfolded.png'
-        self.pipe =                 path + 'pipe.png'
-        self.relax_data =           path + 'fid.png'
-        self.residue =              path + 'residue.png'
-        self.sequence =             path + 'sequence.png'
-        self.spin =                 path + 'spin.png'
-        self.structure =            path + 'structure.png'
-        self.value =                path + 'value.png'
+        self.about_relax =              IMAGE_PATH + 'relax_16x16.png'
+        self.about_relaxgui =           IMAGE_PATH + 'relax_16x16.png'
+        self.molecule =                 path + 'molecule.png'
+        self.molecule_grey =            path + 'molecule_grey.png'
+        self.molecule_unfolded =        path + 'molecule_unfolded.png'
+        self.molecule_unfolded_grey =   path + 'molecule_unfolded_grey.png'
+        self.pipe =                     path + 'pipe.png'
+        self.relax_data =               path + 'fid.png'
+        self.residue =                  path + 'residue.png'
+        self.residue_grey =             path + 'residue_grey.png'
+        self.sequence =                 path + 'sequence.png'
+        self.spin =                     path + 'spin.png'
+        self.spin_grey =                path + 'spin_grey.png'
+        self.structure =                path + 'structure.png'
+        self.value =                    path + 'value.png'
 
         # Oxygen icons.
         path = OXY_ICON_PATH + '16x16' + sep
@@ -122,15 +126,19 @@ class I22x22:
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
-        self.molecule =             path + 'molecule.png'
-        self.molecule_unfolded =    path + 'molecule_unfolded.png'
-        self.pipe =                 path + 'pipe.png'
-        self.relax_data =           path + 'fid.png'
-        self.residue =              path + 'residue.png'
-        self.sequence =             path + 'sequence.png'
-        self.spin =                 path + 'spin.png'
-        self.structure =            path + 'structure.png'
-        self.value =                path + 'value.png'
+        self.molecule =                 path + 'molecule.png'
+        self.molecule_grey =            path + 'molecule_grey.png'
+        self.molecule_unfolded =        path + 'molecule_unfolded.png'
+        self.molecule_unfolded_grey =   path + 'molecule_unfolded_grey.png'
+        self.pipe =                     path + 'pipe.png'
+        self.relax_data =               path + 'fid.png'
+        self.residue =                  path + 'residue.png'
+        self.residue_grey =             path + 'residue_grey.png'
+        self.sequence =                 path + 'sequence.png'
+        self.spin =                     path + 'spin.png'
+        self.spin_grey =                path + 'spin_grey.png'
+        self.structure =                path + 'structure.png'
+        self.value =                    path + 'value.png'
 
 
 
