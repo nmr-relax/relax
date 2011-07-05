@@ -864,6 +864,72 @@ class Mol_res_spin_tree(wx.Window):
         self.update()
 
 
+    def set_bitmap_mol(self, mol_branch_id, select=True):
+        """Set the molecule bitmaps.
+
+        @param mol_branch_id:   The molecule branch ID of the wx.TreeCtrl object.
+        @type mol_branch_id:    TreeItemId
+        @keyword select:        The selection flag.
+        @type select:           bool
+        """
+
+        # The bitmaps for the selected state.
+        if select:
+            bmp = self.icon_mol_index
+            bmp_unfold = self.icon_mol_unfold_index
+
+        # The bitmaps for the deselected state.
+        else:
+            bmp = self.icon_mol_index_desel
+            bmp_unfold = self.icon_mol_unfold_index_desel
+
+        # Set the image.
+        self.tree.SetItemImage(mol_branch_id, bmp, wx.TreeItemIcon_Normal)
+        self.tree.SetItemImage(mol_branch_id, bmp_unfold, wx.TreeItemIcon_Expanded)
+
+
+    def set_bitmap_res(self, res_branch_id, select=True):
+        """Set the residue bitmaps.
+
+        @param res_branch_id:   The residue branch ID of the wx.TreeCtrl object.
+        @type res_branch_id:    TreeItemId
+        @keyword select:        The selection flag.
+        @type select:           bool
+        """
+
+        # The bitmaps for the selected state.
+        if select:
+            bmp = self.icon_res_index
+
+        # The bitmaps for the deselected state.
+        else:
+            bmp = self.icon_res_index_desel
+
+        # Set the image.
+        self.tree.SetItemImage(res_branch_id, bmp, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+
+
+    def set_bitmap_spin(self, spin_branch_id, select=True):
+        """Set the spin bitmaps.
+
+        @param spin_branch_id:  The spin branch ID of the wx.TreeCtrl object.
+        @type spin_branch_id:   TreeItemId
+        @keyword select:        The selection flag.
+        @type select:           bool
+        """
+
+        # The bitmaps for the selected state.
+        if select:
+            bmp = self.icon_spin_index
+
+        # The bitmaps for the deselected state.
+        else:
+            bmp = self.icon_spin_index_desel
+
+        # Set the image.
+        self.tree.SetItemImage(spin_branch_id, bmp, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+
+
     def spin_create(self, event):
         """Wrapper method.
 
@@ -929,10 +995,10 @@ class Mol_res_spin_tree(wx.Window):
         new_mol = True
         for key in self.tree_ids.keys():
             # Get the python data.
-            info = self.tree.GetItemPyData(key)
+            data = self.tree.GetItemPyData(key)
 
             # Check the mol_id for a match and, if so, terminate to speed things up.
-            if mol_id == info['id']:
+            if mol_id == data['id']:
                 new_mol = False
                 mol_branch_id = key
                 break
@@ -955,14 +1021,20 @@ class Mol_res_spin_tree(wx.Window):
             self.tree_ids[mol_branch_id] = {}
 
             # Set the bitmap.
-            if data['select']:
-                bmp = self.icon_mol_index
-                bmp_unfold = self.icon_mol_unfold_index
-            else:
-                bmp = self.icon_mol_index_desel
-                bmp_unfold = self.icon_mol_unfold_index_desel
-            self.tree.SetItemImage(mol_branch_id, bmp, wx.TreeItemIcon_Normal)
-            self.tree.SetItemImage(mol_branch_id, bmp_unfold, wx.TreeItemIcon_Expanded)
+            self.set_bitmap_mol(mol_branch_id, select=data['select'])
+
+        # An old molecule.
+        else:
+            # Check the selection state.
+            select = is_mol_selected(data['id'])
+
+            # Change of state.
+            if select != data['select']:
+                # Store the new state.
+                data['select'] = select
+
+                # Set the bitmap.
+                self.set_bitmap_mol(mol_branch_id, select=data['select'])
 
         # Update the residues of this molecule.
         for res, res_id in residue_loop(mol_id, return_id=True):
@@ -996,10 +1068,10 @@ class Mol_res_spin_tree(wx.Window):
         new_res = True
         for key in self.tree_ids[mol_branch_id].keys():
             # Get the python data.
-            info = self.tree.GetItemPyData(key)
+            data = self.tree.GetItemPyData(key)
 
             # Check the res_id for a match and, if so, terminate to speed things up.
-            if res_id == info['id']:
+            if res_id == data['id']:
                 new_res = False
                 res_branch_id = key
                 break
@@ -1024,11 +1096,20 @@ class Mol_res_spin_tree(wx.Window):
             self.tree_ids[mol_branch_id][res_branch_id] = {}
 
             # Set the bitmap.
-            if data['select']:
-                bmp = self.icon_res_index
-            else:
-                bmp = self.icon_res_index_desel
-            self.tree.SetItemImage(res_branch_id, bmp, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+            self.set_bitmap_res(res_branch_id, select=data['select'])
+
+        # An old residue.
+        else:
+            # Check the selection state.
+            select = is_res_selected(data['id'])
+
+            # Change of state.
+            if select != data['select']:
+                # Store the new state.
+                data['select'] = select
+
+                # Set the bitmap.
+                self.set_bitmap_res(res_branch_id, select=data['select'])
 
         # Update the spins of this residue.
         for spin, spin_id in spin_loop(res_id, return_id=True):
@@ -1063,10 +1144,10 @@ class Mol_res_spin_tree(wx.Window):
         new_spin = True
         for key in self.tree_ids[mol_branch_id][res_branch_id].keys():
             # Get the python data.
-            info = self.tree.GetItemPyData(key)
+            data = self.tree.GetItemPyData(key)
 
             # Check the spin_id for a match and, if so, terminate to speed things up.
-            if spin_id == info['id']:
+            if spin_id == data['id']:
                 new_spin = False
                 spin_branch_id = key
                 break
@@ -1093,11 +1174,20 @@ class Mol_res_spin_tree(wx.Window):
             self.tree_ids[mol_branch_id][res_branch_id][spin_branch_id] = True
 
             # Set the bitmap.
-            if data['select']:
-                bmp = self.icon_spin_index
-            else:
-                bmp = self.icon_spin_index_desel
-            self.tree.SetItemImage(spin_branch_id, bmp, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
+            self.set_bitmap_spin(spin_branch_id, select=data['select'])
+
+        # An old spin.
+        else:
+            # Check the selection state.
+            select = is_spin_selected(data['id'])
+
+            # Change of state.
+            if select != data['select']:
+                # Store the new state.
+                data['select'] = select
+
+                # Set the bitmap.
+                self.set_bitmap_spin(spin_branch_id, select=data['select'])
 
         # Start new spins expanded.
         if new_spin:
