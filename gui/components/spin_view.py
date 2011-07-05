@@ -172,16 +172,16 @@ class Container(wx.Window):
             self.display_root()
 
         # The molecule container display.
-        elif info[0] == 'mol':
-            self.mol_container(info[1])
+        elif info['type'] == 'mol':
+            self.mol_container(mol_name=info['mol_name'])
 
         # The residue container display.
-        elif info[0] == 'res':
-            self.res_container(info[1], info[2], info[3])
+        elif info['type'] == 'res':
+            self.res_container(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'])
 
         # The spin container display.
-        elif info[0] == 'spin':
-            self.spin_container(info[1], info[2], info[3], info[4], info[5])
+        elif info['type'] == 'spin':
+            self.spin_container(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'], spin_num=info['spin_num'], spin_name=info['spin_name'])
 
         # Re-perform the window layout.
         self.Layout()
@@ -667,15 +667,15 @@ class Mol_res_spin_tree(wx.Window):
             self._root_menu()
 
         # Bring up the molecule menu.
-        elif self.info[0] == 'mol':
+        elif self.info['type'] == 'mol':
             self._mol_menu()
 
         # Bring up the residue menu.
-        elif self.info[0] == 'res':
+        elif self.info['type'] == 'res':
             self._res_menu()
 
         # Bring up the spin menu.
-        elif self.info[0] == 'spin':
+        elif self.info['type'] == 'spin':
             self._spin_menu()
 
 
@@ -749,7 +749,7 @@ class Mol_res_spin_tree(wx.Window):
             return
 
         # Delete the molecule.
-        self.gui.user_functions.interpreter.molecule.delete(gui_to_str(self.info[2]))
+        self.gui.user_functions.interpreter.molecule.delete(gui_to_str(self.info['id']))
 
         # Update.
         self.update()
@@ -768,7 +768,7 @@ class Mol_res_spin_tree(wx.Window):
             info = self.tree.GetItemPyData(key)
 
             # Prune if it has been removed.
-            if info[2] not in mol_ids:
+            if info['id'] not in mol_ids:
                 self.tree.Delete(key)
                 self.tree_ids.pop(key)
 
@@ -792,7 +792,7 @@ class Mol_res_spin_tree(wx.Window):
             info = self.tree.GetItemPyData(key)
 
             # Prune if it has been removed.
-            if info[4] not in res_ids:
+            if info['id'] not in res_ids:
                 self.tree.Delete(key)
                 self.tree_ids[mol_branch_id].pop(key)
 
@@ -818,7 +818,7 @@ class Mol_res_spin_tree(wx.Window):
             info = self.tree.GetItemPyData(key)
 
             # Prune if it has been removed.
-            if info[6] not in spin_ids:
+            if info['id'] not in spin_ids:
                 self.tree.Delete(key)
                 self.tree_ids[mol_branch_id][res_branch_id].pop(key)
 
@@ -831,7 +831,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Call the dialog.
-        self.gui.user_functions.residue.create(event, mol_name=self.info[1])
+        self.gui.user_functions.residue.create(event, mol_name=self.info['mol_name'])
 
 
     def residue_delete(self, event):
@@ -847,7 +847,7 @@ class Mol_res_spin_tree(wx.Window):
             return
 
         # Delete the residue.
-        self.gui.user_functions.interpreter.residue.delete(gui_to_str(self.info[4]))
+        self.gui.user_functions.interpreter.residue.delete(gui_to_str(self.info['id']))
 
         # Update.
         self.update()
@@ -861,7 +861,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Call the dialog.
-        self.gui.user_functions.spin.create(event, mol_name=self.info[1], res_num=self.info[2], res_name=self.info[3])
+        self.gui.user_functions.spin.create(event, mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
 
 
     def spin_delete(self, event):
@@ -877,7 +877,7 @@ class Mol_res_spin_tree(wx.Window):
             return
 
         # Delete the spin.
-        self.gui.user_functions.interpreter.spin.delete(gui_to_str(self.info[6]))
+        self.gui.user_functions.interpreter.spin.delete(gui_to_str(self.info['id']))
 
         # Update.
         self.update()
@@ -921,7 +921,7 @@ class Mol_res_spin_tree(wx.Window):
             info = self.tree.GetItemPyData(key)
 
             # Check the mol_id for a match and, if so, terminate to speed things up.
-            if mol_id == info[2]:
+            if mol_id == info['id']:
                 new_mol = False
                 mol_branch_id = key
                 break
@@ -930,7 +930,14 @@ class Mol_res_spin_tree(wx.Window):
         if new_mol:
             # Append a molecule with name to the tree.
             mol_branch_id = self.tree.AppendItem(self.root, "Molecule: %s" % mol.name)
-            self.tree.SetPyData(mol_branch_id, ['mol', mol.name, mol_id])
+
+            # The data to store.
+            data = {
+                'type': 'mol',
+                'mol_name': mol.name,
+                'id': mol_id
+            }
+            self.tree.SetPyData(mol_branch_id, data)
 
             # Add the id to the tracking structure.
             self.tree_ids[mol_branch_id] = {}
@@ -974,7 +981,7 @@ class Mol_res_spin_tree(wx.Window):
             info = self.tree.GetItemPyData(key)
 
             # Check the res_id for a match and, if so, terminate to speed things up.
-            if res_id == info[4]:
+            if res_id == info['id']:
                 new_res = False
                 res_branch_id = key
                 break
@@ -983,7 +990,16 @@ class Mol_res_spin_tree(wx.Window):
         if new_res:
             # Append a residue with name and number to the tree.
             res_branch_id = self.tree.AppendItem(mol_branch_id, "Residue: %s %s" % (res.num, res.name))
-            self.tree.SetPyData(res_branch_id, ['res', mol.name, res.num, res.name, res_id])
+
+            # The data to store.
+            data = {
+                'type': 'res',
+                'mol_name': mol.name,
+                'res_name': res.name,
+                'res_num': res.num,
+                'id': res_id
+            }
+            self.tree.SetPyData(res_branch_id, data)
 
             # Add the id to the tracking structure.
             self.tree_ids[mol_branch_id][res_branch_id] = {}
@@ -1027,7 +1043,7 @@ class Mol_res_spin_tree(wx.Window):
             info = self.tree.GetItemPyData(key)
 
             # Check the spin_id for a match and, if so, terminate to speed things up.
-            if spin_id == info[6]:
+            if spin_id == info['id']:
                 new_spin = False
                 spin_branch_id = key
                 break
@@ -1036,7 +1052,18 @@ class Mol_res_spin_tree(wx.Window):
         if new_spin:
             # Append a spin with name and number to the tree.
             spin_branch_id = self.tree.AppendItem(res_branch_id, "Spin: %s %s" % (spin.num, spin.name))
-            self.tree.SetPyData(spin_branch_id, ['spin', mol.name, res.num, res.name, spin.num, spin.name, spin_id])
+
+            # The data to store.
+            data = {
+                'type': 'spin',
+                'mol_name': mol.name,
+                'res_name': res.name,
+                'res_num': res.num,
+                'spin_name': spin.name,
+                'spin_num': spin.num,
+                'id': spin_id
+            }
+            self.tree.SetPyData(spin_branch_id, data)
 
             # Add the id to the tracking structure.
             self.tree_ids[mol_branch_id][res_branch_id][spin_branch_id] = True
