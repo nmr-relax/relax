@@ -304,7 +304,7 @@ class Base_frame:
         return field
 
 
-    def add_text_sel_element(self, box, parent, text="", default="", button_text=" Change", control=wx.TextCtrl, icon=paths.icon_16x16.open, fn=None, editable=True, button=False):
+    def add_text_sel_element(self, box, parent, text="", default="", tooltip=None, button_text=" Change", control=wx.TextCtrl, icon=paths.icon_16x16.open, fn=None, editable=True, button=False):
         """Create a text selection element for the frame.
 
         This consists of a horizontal layout with a static text element, a text control, and an optional button.
@@ -317,6 +317,8 @@ class Base_frame:
         @type text:             str
         @keyword default:       The default text of the control.
         @type default:          str
+        @keyword tooltip:   	The tooltip which appears on hovering over the text or input field.
+        @type tooltip:      	str
         @keyword button_text:   The text to display on the button.
         @type button_text:      str
         @keyword control:       The control class to use.
@@ -360,7 +362,7 @@ class Base_frame:
                 fn = getattr(field, fn)
 
             # Add the button.
-            self.add_button_open(sizer, parent, icon=icon, text=button_text, fn=fn, width=self.width_button, height=size_horizontal)
+            button_open = self.add_button_open(sizer, parent, icon=icon, text=button_text, fn=fn, width=self.width_button, height=size_horizontal)
 
         # No button, so add a spacer.
         else:
@@ -368,6 +370,13 @@ class Base_frame:
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
+
+        # Tooltip.
+        if tooltip:
+            label.SetToolTipString(tooltip)
+            field.SetToolTipString(tooltip)
+	    if button:
+            	button_open.SetToolTipString(tooltip)
 
         # Return the text control object.
         return field
