@@ -599,70 +599,6 @@ class Mol_res_spin_tree(wx.Window):
         self.tree.Bind(wx.EVT_RIGHT_DOWN, self._right_click)
 
 
-    def _mol_menu(self):
-        """The right click molecule menu."""
-
-        # Some ids.
-        ids = []
-        for i in range(3):
-            ids.append(wx.NewId())
-
-        # The menu.
-        menu = wx.Menu()
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add residue", icon=paths.icon_16x16.add))
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Delete molecule", icon=paths.icon_16x16.remove))
-
-        # Selection or deselection.
-        if self.info['select']:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Deselect"))
-        else:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Select"))
-
-        # The menu actions.
-        self.Bind(wx.EVT_MENU, self.residue_create, id=ids[0])
-        self.Bind(wx.EVT_MENU, self.molecule_delete, id=ids[1])
-        if self.info['select']:
-            self.Bind(wx.EVT_MENU, self.deselect_molecule, id=ids[2])
-        else:
-            self.Bind(wx.EVT_MENU, self.select_molecule, id=ids[2])
-
-        # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
-
-
-    def _res_menu(self):
-        """The right click molecule menu."""
-
-        # Some ids.
-        ids = []
-        for i in range(3):
-            ids.append(wx.NewId())
-
-        # The menu.
-        menu = wx.Menu()
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add spin", icon=paths.icon_16x16.add))
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Delete residue", icon=paths.icon_16x16.remove))
-
-        # Selection or deselection.
-        if self.info['select']:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Deselect"))
-        else:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Select"))
-
-        # The menu actions.
-        self.Bind(wx.EVT_MENU, self.spin_create, id=ids[0])
-        self.Bind(wx.EVT_MENU, self.residue_delete, id=ids[1])
-        if self.info['select']:
-            self.Bind(wx.EVT_MENU, self.deselect_residue, id=ids[2])
-        else:
-            self.Bind(wx.EVT_MENU, self.select_residue, id=ids[2])
-
-        # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
-
-
     def _resize(self, event):
         """Resize the tree element.
 
@@ -695,39 +631,19 @@ class Mol_res_spin_tree(wx.Window):
 
         # Bring up the root menu.
         if self.info == 'root':
-            self._root_menu()
+            self.menu_root()
 
         # Bring up the molecule menu.
         elif self.info['type'] == 'mol':
-            self._mol_menu()
+            self.menu_molecule()
 
         # Bring up the residue menu.
         elif self.info['type'] == 'res':
-            self._res_menu()
+            self.menu_residue()
 
         # Bring up the spin menu.
         elif self.info['type'] == 'spin':
-            self._spin_menu()
-
-
-    def _root_menu(self):
-        """The right click root menu."""
-
-        # Some ids.
-        ids = []
-        for i in range(1):
-            ids.append(wx.NewId())
-
-        # The menu.
-        menu = wx.Menu()
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add molecule", icon=paths.icon_16x16.add))
-
-        # The menu actions.
-        self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.create, id=ids[0])
-
-        # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+            self.menu_spin()
 
 
     def _selection(self, event):
@@ -747,34 +663,83 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.spin_view.container.display(info)
 
 
-    def _spin_menu(self):
-        """The right click spin menu."""
+    def create_residue(self, event):
+        """Wrapper method.
 
-        # Some ids.
-        ids = []
-        for i in range(2):
-            ids.append(wx.NewId())
+        @param event:   The wx event.
+        @type event:    wx event
+        """
 
-        # The menu.
-        menu = wx.Menu()
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Delete spin", icon=paths.icon_16x16.remove))
+        # Call the dialog.
+        self.gui.user_functions.residue.create(event, mol_name=self.info['mol_name'])
 
-        # Selection or deselection.
-        if self.info['select']:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Deselect"))
-        else:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Select"))
 
-        # The menu actions.
-        self.Bind(wx.EVT_MENU, self.spin_delete, id=ids[0])
-        if self.info['select']:
-            self.Bind(wx.EVT_MENU, self.deselect_spin, id=ids[1])
-        else:
-            self.Bind(wx.EVT_MENU, self.select_spin, id=ids[1])
+    def create_spin(self, event):
+        """Wrapper method.
 
-        # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the dialog.
+        self.gui.user_functions.spin.create(event, mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
+
+
+    def delete_molecule(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to delete this molecule?  This operation cannot be undone."
+        if not question(msg, default=False):
+            return
+
+        # Delete the molecule.
+        self.gui.user_functions.interpreter.molecule.delete(gui_to_str(self.info['id']))
+
+        # Update.
+        self.update()
+
+
+    def delete_residue(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to delete this residue?  This operation cannot be undone."
+        if not question(msg, default=False):
+            return
+
+        # Delete the residue.
+        self.gui.user_functions.interpreter.residue.delete(gui_to_str(self.info['id']))
+
+        # Update.
+        self.update()
+
+
+    def delete_spin(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to delete this spin?  This operation cannot be undone."
+        if not question(msg, default=False):
+            return
+
+        # Delete the spin.
+        self.gui.user_functions.interpreter.spin.delete(gui_to_str(self.info['id']))
+
+        # Update.
+        self.update()
 
 
     def deselect_molecule(self, event):
@@ -829,23 +794,118 @@ class Mol_res_spin_tree(wx.Window):
         self.update()
 
 
-    def molecule_delete(self, event):
-        """Wrapper method.
+    def menu_molecule(self):
+        """The right click molecule menu."""
 
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+        # Some ids.
+        ids = []
+        for i in range(3):
+            ids.append(wx.NewId())
 
-        # Ask if this should be done.
-        msg = "Are you sure you would like to delete this molecule?  This operation cannot be undone."
-        if not question(msg, default=False):
-            return
+        # The menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add residue", icon=paths.icon_16x16.add))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Delete molecule", icon=paths.icon_16x16.remove))
 
-        # Delete the molecule.
-        self.gui.user_functions.interpreter.molecule.delete(gui_to_str(self.info['id']))
+        # Selection or deselection.
+        if self.info['select']:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Deselect"))
+        else:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Select"))
 
-        # Update.
-        self.update()
+        # The menu actions.
+        self.Bind(wx.EVT_MENU, self.create_residue, id=ids[0])
+        self.Bind(wx.EVT_MENU, self.delete_molecule, id=ids[1])
+        if self.info['select']:
+            self.Bind(wx.EVT_MENU, self.deselect_molecule, id=ids[2])
+        else:
+            self.Bind(wx.EVT_MENU, self.select_molecule, id=ids[2])
+
+        # Show the menu.
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+
+    def menu_residue(self):
+        """The right click molecule menu."""
+
+        # Some ids.
+        ids = []
+        for i in range(3):
+            ids.append(wx.NewId())
+
+        # The menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add spin", icon=paths.icon_16x16.add))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Delete residue", icon=paths.icon_16x16.remove))
+
+        # Selection or deselection.
+        if self.info['select']:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Deselect"))
+        else:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Select"))
+
+        # The menu actions.
+        self.Bind(wx.EVT_MENU, self.create_spin, id=ids[0])
+        self.Bind(wx.EVT_MENU, self.delete_residue, id=ids[1])
+        if self.info['select']:
+            self.Bind(wx.EVT_MENU, self.deselect_residue, id=ids[2])
+        else:
+            self.Bind(wx.EVT_MENU, self.select_residue, id=ids[2])
+
+        # Show the menu.
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+
+    def menu_root(self):
+        """The right click root menu."""
+
+        # Some ids.
+        ids = []
+        for i in range(1):
+            ids.append(wx.NewId())
+
+        # The menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add molecule", icon=paths.icon_16x16.add))
+
+        # The menu actions.
+        self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.create, id=ids[0])
+
+        # Show the menu.
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+
+    def menu_spin(self):
+        """The right click spin menu."""
+
+        # Some ids.
+        ids = []
+        for i in range(2):
+            ids.append(wx.NewId())
+
+        # The menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Delete spin", icon=paths.icon_16x16.remove))
+
+        # Selection or deselection.
+        if self.info['select']:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Deselect"))
+        else:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Select"))
+
+        # The menu actions.
+        self.Bind(wx.EVT_MENU, self.delete_spin, id=ids[0])
+        if self.info['select']:
+            self.Bind(wx.EVT_MENU, self.deselect_spin, id=ids[1])
+        else:
+            self.Bind(wx.EVT_MENU, self.select_spin, id=ids[1])
+
+        # Show the menu.
+        self.PopupMenu(menu)
+        menu.Destroy()
 
 
     def prune_mol(self):
@@ -914,36 +974,6 @@ class Mol_res_spin_tree(wx.Window):
             if info['id'] not in spin_ids:
                 self.tree.Delete(key)
                 self.tree_ids[mol_branch_id][res_branch_id].pop(key)
-
-
-    def residue_create(self, event):
-        """Wrapper method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Call the dialog.
-        self.gui.user_functions.residue.create(event, mol_name=self.info['mol_name'])
-
-
-    def residue_delete(self, event):
-        """Wrapper method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Ask if this should be done.
-        msg = "Are you sure you would like to delete this residue?  This operation cannot be undone."
-        if not question(msg, default=False):
-            return
-
-        # Delete the residue.
-        self.gui.user_functions.interpreter.residue.delete(gui_to_str(self.info['id']))
-
-        # Update.
-        self.update()
 
 
     def select_molecule(self, event):
@@ -1062,36 +1092,6 @@ class Mol_res_spin_tree(wx.Window):
 
         # Set the image.
         self.tree.SetItemImage(spin_branch_id, bmp, wx.TreeItemIcon_Normal & wx.TreeItemIcon_Expanded)
-
-
-    def spin_create(self, event):
-        """Wrapper method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Call the dialog.
-        self.gui.user_functions.spin.create(event, mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
-
-
-    def spin_delete(self, event):
-        """Wrapper method.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Ask if this should be done.
-        msg = "Are you sure you would like to delete this spin?  This operation cannot be undone."
-        if not question(msg, default=False):
-            return
-
-        # Delete the spin.
-        self.gui.user_functions.interpreter.spin.delete(gui_to_str(self.info['id']))
-
-        # Update.
-        self.update()
 
 
     def update(self, pipe_name=None):
