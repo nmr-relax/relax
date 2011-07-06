@@ -147,7 +147,7 @@ class Load_spins_page(UF_page):
         """
 
         # The spin_id arg.
-        self.spin_id = self.spin_id_element(sizer)
+        self.spin_id = self.spin_id_element(sizer, default='@N')
 
         # The combine_models arg.
         self.combine_models = self.combo_box(sizer, "Combine spins of all models:", choices=['True', 'False'], tooltip="The 'combine_models' user function argument:  A flag which specifies if spins from separate models should be combined.")
