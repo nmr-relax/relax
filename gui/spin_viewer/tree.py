@@ -163,8 +163,21 @@ class Mol_res_spin_tree(wx.Window):
         # The python data.
         info = self.tree.GetItemPyData(item)
 
-        # Display the container.
-        self.gui.spin_view.container.display(info)
+        # The root window display.
+        if info == 'root':
+            self.gui.spin_viewer.container.display_root()
+
+        # The molecule container display.
+        elif info['type'] == 'mol':
+            self.gui.spin_viewer.container.container_molecule(mol_name=info['mol_name'], mol_id=info['id'], select=info['select'])
+
+        # The residue container display.
+        elif info['type'] == 'res':
+            self.gui.spin_viewer.container.container_residue(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'], res_id=info['id'], select=info['select'])
+
+        # The spin container display.
+        elif info['type'] == 'spin':
+            self.gui.spin_viewer.container.container_spin(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'], spin_num=info['spin_num'], spin_name=info['spin_name'], spin_id=info['id'], select=info['select'])
 
 
     def create_residue(self, event):
