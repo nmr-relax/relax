@@ -169,12 +169,12 @@ class Select(User_fn_class):
         arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
-        reverse(selection=selection)
+        selection.reverse(spin_id=spin_id)
 
     # The function doc info.
     reverse._doc_title = "Reversal of the spin selection for the given spins."
     reverse._doc_args = [
-        spin_id", "The spin identification string.
+        ["spin_id", "The spin identification string."]
     ]
     reverse._doc_desc = """
         By supplying the spin_id argument, a subset of spin can have their selection status reversed.
@@ -207,9 +207,9 @@ class Select(User_fn_class):
     # The function doc info.
     spin._doc_title = "Select specific spins."
     spin._doc_args = [
-        spin_id", "The spin identification string.
-        boolean", "The boolean operator specifying how spins should be selected.
-        change_all", "A flag specifying if all other spins should be changed.
+        ["spin_id", "The spin identification string."],
+        ["boolean", "The boolean operator specifying how spins should be selected."],
+        ["change_all", "A flag specifying if all other spins should be changed."]
     ]
     spin._doc_desc = """
         The 'change_all' flag argument default is False meaning that all spins currently either selected or deselected will remain that way.  Setting the argument to True will cause all spins not specified by 'spin_id' to be selected.
@@ -226,4 +226,5 @@ class Select(User_fn_class):
         relax> select.spin(':5&:CYS')
         relax> select.spin(spin_id=':5&:CYS')
         """
+    spin._doc_additional = [boolean_doc]
     _build_doc(spin)
