@@ -68,6 +68,19 @@ def add_border(box, border=0, packing=wx.VERTICAL):
     return sizer_cent
 
 
+def bool_to_gui(bool):
+    """Convert the bool into the GUI string.
+
+    @param num:     The boolean value of True or False.
+    @type num:      bool
+    @return:        The GUI string.
+    @rtype:         str
+    """
+
+    # Convert.
+    return unicode(bool)
+
+
 def convert_to_float(string):
     """Method to convert a string like '1.02*1e-10' to a float variable.
 
