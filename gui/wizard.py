@@ -335,6 +335,48 @@ class Wiz_page(wx.Panel):
         raise RelaxImplementError
 
 
+    def boolean_selector(self, sizer, desc, tooltip=None, default=True):
+        """Build the boolean selector widget for selecting between True and False.
+
+        @param sizer:       The sizer to put the combo box widget into.
+        @type sizer:        wx.Sizer instance
+        @param desc:        The text description.
+        @type desc:         str
+        @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
+        @type tooltip:      str
+        @keyword default:   The default boolean value.
+        @type default:      bool
+        """
+
+        # Init.
+        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The description.
+        text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        x, y = text.GetSize()
+        sub_sizer.AddSpacer((self._div_left - x, 0))
+
+        # The combo box element.
+        style = wx.CB_DROPDOWN | wx.CB_READONLY
+        combo = wx.ComboBox(self, -1, value=bool_to_gui(default), style=style, choices=['True', 'False'])
+        combo.SetMinSize((50, 27))
+        sub_sizer.Add(combo, 1, wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Add to the main sizer.
+        sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
+
+        # Tooltip.
+        if tooltip:
+            text.SetToolTipString(tooltip)
+            combo.SetToolTipString(tooltip)
+
+        # Return the combo box element.
+        return combo
+
+
     def chooser(self, sizer, desc, func, choices):
         """Build the choice element.
 
