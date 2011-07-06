@@ -298,14 +298,17 @@ class Mol_res_spin_tree(wx.Window):
         self.update()
 
 
-    def info(self):
+    def get_info(self):
         """Get the python data structure associated with the current item.
 
         @return:    The dictionary of data.
         @rtype:     dict
         """
 
-        # Return the python data.
+        # The current item.
+        item = self.tree.GetSelection()
+
+        # Return the associated python data.
         return self.tree.GetItemPyData(item)
 
 
