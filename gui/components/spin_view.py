@@ -89,6 +89,100 @@ class Container(wx.Window):
         self.Refresh()
 
 
+    def container_molecule(self, mol_name=None):
+        """Build and display the molecule container
+
+        @keyword mol_name:  The name of the molecule.
+        @type mol_name:     str
+        """
+
+        # Store the args.
+        self.mol_name = mol_name
+
+        # The molecule ID.
+        self.mol_id = generate_spin_id(mol_name=mol_name)
+
+        # Create the header.
+        sizer = self.header_molecule()
+
+        # Add to the sizer.
+        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
+
+        # A divider.
+        line = wx.StaticLine(self, -1, (25, 50))
+        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
+
+
+    def container_residue(self, mol_name=None, res_num=None, res_name=None):
+        """Build and display the residue container
+
+        @keyword mol_name:  The molecule name.
+        @type mol_name:     str
+        @keyword res_num:   The residue number.
+        @type res_num:      str
+        @keyword res_name:  The residue name.
+        @type res_name:     str
+        """
+
+        # Store the args.
+        self.mol_name = mol_name
+        self.res_num = res_num
+        self.res_name = res_name
+
+        # The residue ID.
+        self.res_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name)
+
+        # Create the header.
+        sizer = self.header_residue()
+
+        # Add to the main sizer.
+        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
+
+        # A divider.
+        line = wx.StaticLine(self, -1, (25, 50))
+        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
+
+
+    def container_spin(self, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+        """Build and display the spin container
+
+        @keyword mol_name:  The molecule name.
+        @type mol_name:     str
+        @keyword res_num:   The residue number.
+        @type res_num:      str
+        @keyword res_name:  The residue name.
+        @type res_name:     str
+        @keyword spin_num:   The spin number.
+        @type spin_num:      str
+        @keyword spin_name:  The spin name.
+        @type spin_name:     str
+        """
+
+        # Store the args.
+        self.mol_name = mol_name
+        self.res_num = res_num
+        self.res_name = res_name
+        self.spin_num = spin_num
+        self.spin_name = spin_name
+
+        # The spin ID.
+        self.spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+
+        # Create the header.
+        sizer = self.header_spin()
+
+        # Add to the main sizer.
+        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
+
+        # A divider.
+        line = wx.StaticLine(self, -1, (25, 50))
+        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
+
+        # The spin container variables.
+        sizer2 = self.spin_vars()
+        self.main_sizer.Add(sizer2, 1, wx.ALL|wx.EXPAND, border=self.border)
+
+
     def create_head_text(self, text):
         """Generate the wx.StaticText object for header text.
 
@@ -174,15 +268,15 @@ class Container(wx.Window):
 
         # The molecule container display.
         elif info['type'] == 'mol':
-            self.mol_container(mol_name=info['mol_name'])
+            self.container_molecule(mol_name=info['mol_name'])
 
         # The residue container display.
         elif info['type'] == 'res':
-            self.res_container(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'])
+            self.container_residue(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'])
 
         # The spin container display.
         elif info['type'] == 'spin':
-            self.spin_container(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'], spin_num=info['spin_num'], spin_name=info['spin_name'])
+            self.container_spin(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'], spin_num=info['spin_num'], spin_name=info['spin_name'])
 
         # Re-perform the window layout.
         self.Layout()
@@ -203,31 +297,7 @@ class Container(wx.Window):
         self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
 
 
-    def mol_container(self, mol_name=None):
-        """Build and display the molecule container
-
-        @keyword mol_name:  The name of the molecule.
-        @type mol_name:     str
-        """
-
-        # Store the args.
-        self.mol_name = mol_name
-
-        # The molecule ID.
-        self.mol_id = generate_spin_id(mol_name=mol_name)
-
-        # Create the header.
-        sizer = self.mol_header()
-
-        # Add to the sizer.
-        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
-
-        # A divider.
-        line = wx.StaticLine(self, -1, (25, 50))
-        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
-
-
-    def mol_header(self):
+    def header_molecule(self):
         """Create the header for the molecule container.
 
         @return:    The sizer containing the header.
@@ -269,37 +339,7 @@ class Container(wx.Window):
         return sizer
 
 
-    def res_container(self, mol_name=None, res_num=None, res_name=None):
-        """Build and display the residue container
-
-        @keyword mol_name:  The molecule name.
-        @type mol_name:     str
-        @keyword res_num:   The residue number.
-        @type res_num:      str
-        @keyword res_name:  The residue name.
-        @type res_name:     str
-        """
-
-        # Store the args.
-        self.mol_name = mol_name
-        self.res_num = res_num
-        self.res_name = res_name
-
-        # The residue ID.
-        self.res_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name)
-
-        # Create the header.
-        sizer = self.res_header()
-
-        # Add to the main sizer.
-        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
-
-        # A divider.
-        line = wx.StaticLine(self, -1, (25, 50))
-        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
-
-
-    def res_header(self):
+    def header_residue(self):
         """Create the header for the residue container.
 
         @return:    The sizer containing the header.
@@ -345,47 +385,7 @@ class Container(wx.Window):
         return sizer
 
 
-    def spin_container(self, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
-        """Build and display the spin container
-
-        @keyword mol_name:  The molecule name.
-        @type mol_name:     str
-        @keyword res_num:   The residue number.
-        @type res_num:      str
-        @keyword res_name:  The residue name.
-        @type res_name:     str
-        @keyword spin_num:   The spin number.
-        @type spin_num:      str
-        @keyword spin_name:  The spin name.
-        @type spin_name:     str
-        """
-
-        # Store the args.
-        self.mol_name = mol_name
-        self.res_num = res_num
-        self.res_name = res_name
-        self.spin_num = spin_num
-        self.spin_name = spin_name
-
-        # The spin ID.
-        self.spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
-
-        # Create the header.
-        sizer = self.spin_header()
-
-        # Add to the main sizer.
-        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
-
-        # A divider.
-        line = wx.StaticLine(self, -1, (25, 50))
-        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
-
-        # The spin container variables.
-        sizer2 = self.spin_vars()
-        self.main_sizer.Add(sizer2, 1, wx.ALL|wx.EXPAND, border=self.border)
-
-
-    def spin_header(self):
+    def header_spin(self):
         """Create the header for the spin container.
 
         @return:    The sizer containing the header.
