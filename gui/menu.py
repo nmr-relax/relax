@@ -200,6 +200,12 @@ class Menu:
 
         # The list of entries to build.
         self.entries_uf = [
+            [wx.NewId(), "&deselect", None, None, [
+                [wx.NewId(), "&all",    None, self.gui.user_functions.deselect.all],
+                [wx.NewId(), "&read",   paths.icon_16x16.open, self.gui.user_functions.deselect.read],
+                [wx.NewId(), "re&verse", None, self.gui.user_functions.deselect.reverse],
+                [wx.NewId(), "&spin", None, self.gui.user_functions.deselect.spin],
+            ]],
             [wx.NewId(), "&molecule", paths.icon_16x16.molecule, None, [
                 [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.molecule.copy],
                 [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.molecule.create],
@@ -223,6 +229,12 @@ class Menu:
             [wx.NewId(), "s&cript",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
             [wx.NewId(), "se&quence", paths.icon_16x16.sequence, None, [
                 [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.sequence.read]
+            ]],
+            [wx.NewId(), "se&lect", None, None, [
+                [wx.NewId(), "&all",    None, self.gui.user_functions.select.all],
+                [wx.NewId(), "&read",   paths.icon_16x16.open, self.gui.user_functions.select.read],
+                [wx.NewId(), "re&verse", None, self.gui.user_functions.select.reverse],
+                [wx.NewId(), "&spin", None, self.gui.user_functions.select.spin],
             ]],
             [wx.NewId(), "&spin", paths.icon_16x16.spin, None, [
                 [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.spin.copy],
