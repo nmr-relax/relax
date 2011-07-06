@@ -28,7 +28,7 @@ __docformat__ = 'plaintext'
 from select import boolean_doc
 
 # relax module imports.
-from base_class import User_fn_class
+from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import selection
 
