@@ -149,6 +149,9 @@ class Spin_view_window(wx.Frame):
         # Update the tree.
         self.tree_panel.update()
 
+        # Redisplay the container.
+        self.container.display(self.tree_panel.get_info())
+
 
     def handler_close(self, event):
         """Event handler for the close window action.
