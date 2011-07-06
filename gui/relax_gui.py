@@ -49,7 +49,7 @@ from version import version
 from gui.about import About_gui, About_relax
 from gui.analyses import Analysis_controller
 from gui.base_classes import Container
-from gui.components.spin_view import Spin_view_window
+from gui.spin_viewer.spin_view import Spin_view_window
 from gui.controller import Controller
 from gui.filedialog import opendir, openfile, savefile
 from gui.menu import Menu
@@ -409,11 +409,11 @@ class Main(wx.Frame):
         """
 
         # Build the spin view window.
-        if not hasattr(self, 'spin_view'):
-            self.spin_view = Spin_view_window(None, -1, "", parent=self)
+        if not hasattr(self, 'spin_viewer'):
+            self.spin_viewer = Spin_view_window(None, -1, "", parent=self)
 
         # Open the window.
-        self.spin_view.Show()
+        self.spin_viewer.Show()
 
 
     def state_load(self, event):
