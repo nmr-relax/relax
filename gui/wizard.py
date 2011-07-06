@@ -36,7 +36,7 @@ from relax_errors import AllRelaxErrors, RelaxImplementError
 from gui.controller import Redirect_text
 from gui.filedialog import openfile
 from gui.message import error_message
-from gui.misc import add_border, gui_to_int, int_to_gui, str_to_gui
+from gui.misc import add_border, bool_to_gui, gui_to_int, int_to_gui, str_to_gui
 from gui import paths
 
 
@@ -112,6 +112,7 @@ class Wiz_page(wx.Panel):
     input_size = 27
     main_text = ''
     title = ''
+    desc_height = 220
 
     def __init__(self, parent):
         """Set up the window.
@@ -151,7 +152,7 @@ class Wiz_page(wx.Panel):
         self._add_title(main_sizer)
 
         # Add the description.
-        self._add_desc(main_sizer)
+        self._add_desc(main_sizer, max_y=self.desc_height)
 
         # Add the specific GUI elements (bounded by spacers).
         main_sizer.AddStretchSpacer()
