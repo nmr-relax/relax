@@ -28,11 +28,13 @@ from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
 
 # GUI module imports.
+from deselect import Deselect
 from molecule import Molecule
 from pipes import Pipes
 from residue import Residue
 from relax_data import Relax_data
 from script import Script
+from select import Select
 from sequence import Sequence
 from spin import Spin
 from structure import Structure
@@ -41,11 +43,13 @@ from value import Value
 
 # The package __all__ list.
 __all__ = ['base',
+           'deselect',
            'molecule',
            'pipes',
            'residue',
            'relax_data',
            'script',
+           'select',
            'sequence',
            'spin',
            'structure',
@@ -70,11 +74,13 @@ class User_functions:
         self.interpreter.on(verbose=False)
 
         # The user functions.
+        self.deselect = Deselect(self.gui, self.interpreter)
         self.molecule = Molecule(self.gui, self.interpreter)
         self.pipes = Pipes(self.gui, self.interpreter)
         self.residue = Residue(self.gui, self.interpreter)
         self.relax_data = Relax_data(self.gui, self.interpreter)
         self.script = Script(self.gui, self.interpreter)
+        self.select = Select(self.gui, self.interpreter)
         self.sequence = Sequence(self.gui, self.interpreter)
         self.spin = Spin(self.gui, self.interpreter)
         self.structure = Structure(self.gui, self.interpreter)
@@ -88,10 +94,12 @@ class User_functions:
         """Close all windows."""
 
         # Send the commands onwards to the user function classes.
+        self.deselect.destroy()
         self.molecule.destroy()
         self.pipes.destroy()
         self.residue.destroy()
         self.relax_data.destroy()
+        self.select.destroy()
         self.sequence.destroy()
         self.spin.destroy()
         self.structure.destroy()
