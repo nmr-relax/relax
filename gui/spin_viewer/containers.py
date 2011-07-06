@@ -334,7 +334,11 @@ class Container(wx.Window):
         sizer.AddStretchSpacer()
 
         # The graphic.
-        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.WIZARD_IMAGE_PATH + 'molecule.png', wx.BITMAP_TYPE_ANY))
+        if self.select:
+            path = paths.WIZARD_IMAGE_PATH + 'molecule.png'
+        else:
+            path = paths.WIZARD_IMAGE_PATH + 'molecule_grey.png'
+        image = wx.StaticBitmap(self, -1, wx.Bitmap(path, wx.BITMAP_TYPE_ANY))
         sizer.Add(image, 0, wx.RIGHT, 0)
 
         # Return the sizer.
@@ -380,7 +384,11 @@ class Container(wx.Window):
         sizer.AddStretchSpacer()
 
         # The graphic.
-        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.WIZARD_IMAGE_PATH + 'residue.png', wx.BITMAP_TYPE_ANY))
+        if self.select:
+            path = paths.WIZARD_IMAGE_PATH + 'residue.png'
+        else:
+            path = paths.WIZARD_IMAGE_PATH + 'residue_grey.png'
+        image = wx.StaticBitmap(self, -1, wx.Bitmap(path, wx.BITMAP_TYPE_ANY))
         sizer.Add(image, 0, wx.RIGHT, 0)
 
         # Return the sizer.
@@ -430,7 +438,11 @@ class Container(wx.Window):
         sizer.AddStretchSpacer()
 
         # The graphic.
-        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.WIZARD_IMAGE_PATH + 'spin.png', wx.BITMAP_TYPE_ANY))
+        if self.select:
+            path = paths.WIZARD_IMAGE_PATH + 'spin.png'
+        else:
+            path = paths.WIZARD_IMAGE_PATH + 'spin_grey.png'
+        image = wx.StaticBitmap(self, -1, wx.Bitmap(path, wx.BITMAP_TYPE_ANY))
         sizer.Add(image, 0, wx.RIGHT, 0)
 
         # Return the sizer.
