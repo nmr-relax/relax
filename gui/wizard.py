@@ -726,11 +726,15 @@ class Wiz_page(wx.Panel):
         """
 
 
-    def spin_id_element(self, sizer, divider=None, padding=0, spacer=None):
+    def spin_id_element(self, sizer, desc="The spin identification string:", default='@N', divider=None, padding=0, spacer=None):
         """Build a special the input field widget.
 
         @param sizer:       The sizer to put the input field widget into.
         @type sizer:        wx.Sizer instance
+        @keyword desc:      The text description.
+        @type desc:         str
+        @keyword default:   The default value.
+        @type default:      str or None
         @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
         @type divider:      None or int
         @keyword padding:   Spacing to the left and right of the widgets.
@@ -748,7 +752,7 @@ class Wiz_page(wx.Panel):
         sub_sizer.AddSpacer(padding)
 
         # The description.
-        text = wx.StaticText(self, -1, "The spin identification string:", style=wx.ALIGN_LEFT)
+        text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The divider.
@@ -764,8 +768,8 @@ class Wiz_page(wx.Panel):
         field.SetMinSize((50, 27))
         sub_sizer.Add(field, 1, wx.ALIGN_CENTER_VERTICAL, 0)
 
-        # Set the default to nitrogen.
-        field.SetValue(str_to_gui('@N'))
+        # Set the default.
+        field.SetValue(str_to_gui(default))
 
         # Right padding.
         sub_sizer.AddSpacer(padding)
