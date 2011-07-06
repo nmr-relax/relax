@@ -164,7 +164,7 @@ class Mol_res_spin_tree(wx.Window):
         info = self.tree.GetItemPyData(item)
 
         # Display the container.
-        self.gui.spin_view.container.display(info)
+        self.gui.spin_viewer.container.display(info)
 
 
     def create_residue(self, event):
