@@ -604,7 +604,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Some ids.
         ids = []
-        for i in range(2):
+        for i in range(3):
             ids.append(wx.NewId())
 
         # The menu.
@@ -612,9 +612,19 @@ class Mol_res_spin_tree(wx.Window):
         menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add residue", icon=paths.icon_16x16.add))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Delete molecule", icon=paths.icon_16x16.remove))
 
+        # Selection or deselection.
+        if self.info['select']:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Deselect"))
+        else:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Select"))
+
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.residue_create, id=ids[0])
         self.Bind(wx.EVT_MENU, self.molecule_delete, id=ids[1])
+        if self.info['select']:
+            self.Bind(wx.EVT_MENU, self.deselect_molecule, id=ids[2])
+        else:
+            self.Bind(wx.EVT_MENU, self.select_molecule, id=ids[2])
 
         # Show the menu.
         self.PopupMenu(menu)
@@ -626,7 +636,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Some ids.
         ids = []
-        for i in range(2):
+        for i in range(3):
             ids.append(wx.NewId())
 
         # The menu.
@@ -634,9 +644,19 @@ class Mol_res_spin_tree(wx.Window):
         menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add spin", icon=paths.icon_16x16.add))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Delete residue", icon=paths.icon_16x16.remove))
 
+        # Selection or deselection.
+        if self.info['select']:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Deselect"))
+        else:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Select"))
+
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.spin_create, id=ids[0])
         self.Bind(wx.EVT_MENU, self.residue_delete, id=ids[1])
+        if self.info['select']:
+            self.Bind(wx.EVT_MENU, self.deselect_residue, id=ids[2])
+        else:
+            self.Bind(wx.EVT_MENU, self.select_residue, id=ids[2])
 
         # Show the menu.
         self.PopupMenu(menu)
@@ -732,19 +752,81 @@ class Mol_res_spin_tree(wx.Window):
 
         # Some ids.
         ids = []
-        for i in range(1):
+        for i in range(2):
             ids.append(wx.NewId())
 
         # The menu.
         menu = wx.Menu()
         menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Delete spin", icon=paths.icon_16x16.remove))
 
+        # Selection or deselection.
+        if self.info['select']:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Deselect"))
+        else:
+            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Select"))
+
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.spin_delete, id=ids[0])
+        if self.info['select']:
+            self.Bind(wx.EVT_MENU, self.deselect_spin, id=ids[1])
+        else:
+            self.Bind(wx.EVT_MENU, self.select_spin, id=ids[1])
 
         # Show the menu.
         self.PopupMenu(menu)
         menu.Destroy()
+
+
+    def deselect_molecule(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to deselect all spins of this molecule?"
+        if not question(msg, default=False):
+            return
+
+        # Deselect the molecule.
+        self.gui.user_functions.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+
+        # Update.
+        self.update()
+
+
+    def deselect_residue(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to deselect all spins of this residue?"
+        if not question(msg, default=False):
+            return
+
+        # Deselect the residue.
+        self.gui.user_functions.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+
+        # Update.
+        self.update()
+
+
+    def deselect_spin(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Deselect the spin.
+        self.gui.user_functions.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+
+        # Update.
+        self.update()
 
 
     def molecule_delete(self, event):
@@ -859,6 +941,58 @@ class Mol_res_spin_tree(wx.Window):
 
         # Delete the residue.
         self.gui.user_functions.interpreter.residue.delete(gui_to_str(self.info['id']))
+
+        # Update.
+        self.update()
+
+
+    def select_molecule(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to select all spins of this molecule?"
+        if not question(msg, default=False):
+            return
+
+        # Select the molecule.
+        self.gui.user_functions.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+
+        # Update.
+        self.update()
+
+
+    def select_residue(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "Are you sure you would like to select all spins of this residue?"
+        if not question(msg, default=False):
+            return
+
+        # Select the residue.
+        self.gui.user_functions.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+
+        # Update.
+        self.update()
+
+
+    def select_spin(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Select the spin.
+        self.gui.user_functions.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Update.
         self.update()
