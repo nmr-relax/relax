@@ -54,9 +54,6 @@ class Container(wx.Window):
         # Store the args.
         self.gui = gui
 
-        # Some variables.
-        self.border = 10
-
         # Execute the base class method.
         wx.Window.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
 
@@ -120,6 +117,9 @@ class Container(wx.Window):
 
 class Container_base:
     """The base class for the molecule, residue, and spin containers."""
+
+    # Some class variables.
+    border = 10
 
     def create_head_text(self, text):
         """Generate the wx.StaticText object for header text.
@@ -219,11 +219,11 @@ class Molecule(Container_base):
         sizer = self.header_molecule()
 
         # Add to the sizer.
-        box.Add(sizer, 0, wx.ALL|wx.EXPAND)
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
 
         # A divider.
         line = wx.StaticLine(self.parent, -1, (25, 50))
-        box.Add(line, 0, wx.EXPAND|wx.ALL)
+        box.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
 
 
     def header_molecule(self):
@@ -307,11 +307,11 @@ class Residue(Container_base):
         sizer = self.header_residue()
 
         # Add to the main sizer.
-        box.Add(sizer, 0, wx.ALL|wx.EXPAND)
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
 
         # A divider.
         line = wx.StaticLine(self.parent, -1, (25, 50))
-        box.Add(line, 0, wx.EXPAND|wx.ALL)
+        box.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
 
 
     def header_residue(self):
@@ -405,15 +405,15 @@ class Spin(Container_base):
         sizer = self.header_spin()
 
         # Add to the main sizer.
-        box.Add(sizer, 0, wx.ALL|wx.EXPAND)
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
 
         # A divider.
         line = wx.StaticLine(self.parent, -1, (25, 50))
-        box.Add(line, 0, wx.EXPAND|wx.ALL)
+        box.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
 
         # The spin container variables.
         sizer2 = self.spin_vars()
-        box.Add(sizer2, 1, wx.ALL|wx.EXPAND)
+        box.Add(sizer2, 1, wx.ALL|wx.EXPAND, border=self.border)
 
 
     def header_spin(self):
@@ -592,4 +592,4 @@ class Root(Container_base):
         sizer.Add(title, 0, wx.LEFT, 0)
 
         # Add to the sizer.
-        box.Add(sizer, 0, wx.ALL|wx.EXPAND)
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
