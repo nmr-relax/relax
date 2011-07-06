@@ -298,6 +298,17 @@ class Mol_res_spin_tree(wx.Window):
         self.update()
 
 
+    def info(self):
+        """Get the python data structure associated with the current item.
+
+        @return:    The dictionary of data.
+        @rtype:     dict
+        """
+
+        # Return the python data.
+        return self.tree.GetItemPyData(item)
+
+
     def menu_molecule(self):
         """The right click molecule menu."""
 
