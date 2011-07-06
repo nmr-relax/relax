@@ -49,7 +49,7 @@ from version import version
 from gui.about import About_gui, About_relax
 from gui.analyses import Analysis_controller
 from gui.base_classes import Container
-from gui.spin_viewer.spin_view import Spin_view_window
+from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
 from gui.filedialog import opendir, openfile, savefile
 from gui.menu import Menu

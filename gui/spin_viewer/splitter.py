@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,10 +20,43 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""Package for the spin viewer window."""
+# Module docstring.
+"""The splitter window element to hold the tree view and containers."""
 
-__all__ = ['containers',
-           'frame',
-           'splitter',
-           'tree']
+
+# Python module imports.
+import wx
+
+# GUI module imports.
+from gui.spin_viewer.containers import Container
+from gui.spin_viewer.tree import Mol_res_spin_tree
+
+
+class Tree_splitter(wx.SplitterWindow):
+    """This splits the view of the tree view and spin container."""
+
+    def __init__(self, gui, parent, id):
+        """Initialise the tree splitter window.
+
+        @param gui:     The gui object.
+        @type gui:      wx object
+        @param parent:  The parent wx object.
+        @type parent:   wx object
+        @param id:      The ID number.
+        @type id:       int
+        """
+
+        # Execute the base class __init__() method.
+        wx.SplitterWindow.__init__(self, parent, id, style=wx.SP_LIVE_UPDATE)
+
+        # Add the tree view panel.
+        parent.tree_panel = Mol_res_spin_tree(gui, parent=self, id=-1)
+
+        # The container window.
+        parent.container = Container(gui, parent=self, id=-1)
+
+        # Make sure the panes cannot be hidden.
+        self.SetMinimumPaneSize(100)
+
+        # Split.
+        self.SplitVertically(parent.tree_panel, parent.container, 400)
