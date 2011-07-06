@@ -36,6 +36,7 @@ from generic_fns.mol_res_spin import generate_spin_id, return_spin
 from gui import paths
 
 
+
 class Container(wx.Window):
     """The molecule, residue, and spin container window."""
 
@@ -85,99 +86,40 @@ class Container(wx.Window):
         self.Refresh()
 
 
-    def container_molecule(self, mol_name=None):
-        """Build and display the molecule container
+    def display(self, info):
+        """Display the info for the selected container.
 
-        @keyword mol_name:  The name of the molecule.
-        @type mol_name:     str
+        @param info:    The information list consisting of the container type ('root', 'mol', 'res', or 'spin'), the molecule name, the residue number, the residue name, the spin number, and the spin name.  The name and number information is dropped when not needed.
+        @type info:     list of str and int
         """
 
-        # Store the args.
-        self.mol_name = mol_name
+        # Destroy all the original contents.
+        self.main_sizer.Clear(deleteWindows=True)
 
-        # The molecule ID.
-        self.mol_id = generate_spin_id(mol_name=mol_name)
+        # The root window display.
+        if info == 'root':
+            self.display_root()
 
-        # Create the header.
-        sizer = self.header_molecule()
+        # The molecule container display.
+        elif info['type'] == 'mol':
+            self.container_molecule(mol_name=info['mol_name'])
 
-        # Add to the sizer.
-        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
+        # The residue container display.
+        elif info['type'] == 'res':
+            self.container_residue(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'])
 
-        # A divider.
-        line = wx.StaticLine(self, -1, (25, 50))
-        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
+        # The spin container display.
+        elif info['type'] == 'spin':
+            self.container_spin(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'], spin_num=info['spin_num'], spin_name=info['spin_name'])
 
-
-    def container_residue(self, mol_name=None, res_num=None, res_name=None):
-        """Build and display the residue container
-
-        @keyword mol_name:  The molecule name.
-        @type mol_name:     str
-        @keyword res_num:   The residue number.
-        @type res_num:      str
-        @keyword res_name:  The residue name.
-        @type res_name:     str
-        """
-
-        # Store the args.
-        self.mol_name = mol_name
-        self.res_num = res_num
-        self.res_name = res_name
-
-        # The residue ID.
-        self.res_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name)
-
-        # Create the header.
-        sizer = self.header_residue()
-
-        # Add to the main sizer.
-        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
-
-        # A divider.
-        line = wx.StaticLine(self, -1, (25, 50))
-        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
+        # Re-perform the window layout.
+        self.Layout()
+        self.Refresh()
 
 
-    def container_spin(self, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
-        """Build and display the spin container
 
-        @keyword mol_name:  The molecule name.
-        @type mol_name:     str
-        @keyword res_num:   The residue number.
-        @type res_num:      str
-        @keyword res_name:  The residue name.
-        @type res_name:     str
-        @keyword spin_num:   The spin number.
-        @type spin_num:      str
-        @keyword spin_name:  The spin name.
-        @type spin_name:     str
-        """
-
-        # Store the args.
-        self.mol_name = mol_name
-        self.res_num = res_num
-        self.res_name = res_name
-        self.spin_num = spin_num
-        self.spin_name = spin_name
-
-        # The spin ID.
-        self.spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
-
-        # Create the header.
-        sizer = self.header_spin()
-
-        # Add to the main sizer.
-        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
-
-        # A divider.
-        line = wx.StaticLine(self, -1, (25, 50))
-        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
-
-        # The spin container variables.
-        sizer2 = self.spin_vars()
-        self.main_sizer.Add(sizer2, 1, wx.ALL|wx.EXPAND, border=self.border)
-
+class Container_base(wx.Panel):
+    """The molecule, residue, and spin container window."""
 
     def create_head_text(self, text):
         """Generate the wx.StaticText object for header text.
@@ -248,49 +190,49 @@ class Container(wx.Window):
         return title
 
 
-    def display(self, info):
-        """Display the info for the selected container.
 
-        @param info:    The information list consisting of the container type ('root', 'mol', 'res', or 'spin'), the molecule name, the residue number, the residue name, the spin number, and the spin name.  The name and number information is dropped when not needed.
-        @type info:     list of str and int
+class Molecule(Container_base):
+    """The molecule, residue, and spin container window."""
+
+    def __init__(self, parent=None, id=None):
+        """Set up the tree GUI element.
+
+        @keyword parent:    The parent GUI element that this is to be attached to.
+        @type parent:       wx object
+        @keyword id:        The ID number.
+        @type id:           int
         """
 
-        # Destroy all the original contents.
-        self.main_sizer.Clear(deleteWindows=True)
+        # Execute the base class method.
+        wx.Panel.__init__(self, parent, id)
 
-        # The root window display.
-        if info == 'root':
-            self.display_root()
-
-        # The molecule container display.
-        elif info['type'] == 'mol':
-            self.container_molecule(mol_name=info['mol_name'])
-
-        # The residue container display.
-        elif info['type'] == 'res':
-            self.container_residue(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'])
-
-        # The spin container display.
-        elif info['type'] == 'spin':
-            self.container_spin(mol_name=info['mol_name'], res_num=info['res_num'], res_name=info['res_name'], spin_num=info['spin_num'], spin_name=info['spin_name'])
-
-        # Re-perform the window layout.
-        self.Layout()
-        self.Refresh()
+        # Add a sizer.
+        self.main_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self.main_sizer)
 
 
-    def display_root(self):
-        """Build and display the root window."""
+    def container_molecule(self, mol_name=None):
+        """Build and display the molecule container
 
-        # A sizer for the header.
-        sizer = wx.BoxSizer(wx.VERTICAL)
+        @keyword mol_name:  The name of the molecule.
+        @type mol_name:     str
+        """
 
-        # The title
-        title = self.create_title("The spin view window")
-        sizer.Add(title, 0, wx.LEFT, 0)
+        # Store the args.
+        self.mol_name = mol_name
+
+        # The molecule ID.
+        self.mol_id = generate_spin_id(mol_name=mol_name)
+
+        # Create the header.
+        sizer = self.header_molecule()
 
         # Add to the sizer.
         self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
+
+        # A divider.
+        line = wx.StaticLine(self, -1, (25, 50))
+        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
 
 
     def header_molecule(self):
@@ -337,6 +279,60 @@ class Container(wx.Window):
 
         # Return the sizer.
         return sizer
+
+
+
+class Residue(Container_base):
+    """The molecule, residue, and spin container window."""
+
+    def __init__(self, parent=None, id=None):
+        """Set up the tree GUI element.
+
+        @keyword parent:    The parent GUI element that this is to be attached to.
+        @type parent:       wx object
+        @keyword id:        The ID number.
+        @type id:           int
+        """
+
+        # Store the args.
+        self.gui = gui
+
+        # Execute the base class method.
+        wx.Panel.__init__(self, parent, id)
+
+        # Add a sizer.
+        self.main_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self.main_sizer)
+
+
+    def container_residue(self, mol_name=None, res_num=None, res_name=None):
+        """Build and display the residue container
+
+        @keyword mol_name:  The molecule name.
+        @type mol_name:     str
+        @keyword res_num:   The residue number.
+        @type res_num:      str
+        @keyword res_name:  The residue name.
+        @type res_name:     str
+        """
+
+        # Store the args.
+        self.mol_name = mol_name
+        self.res_num = res_num
+        self.res_name = res_name
+
+        # The residue ID.
+        self.res_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name)
+
+        # Create the header.
+        sizer = self.header_residue()
+
+        # Add to the main sizer.
+        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
+
+        # A divider.
+        line = wx.StaticLine(self, -1, (25, 50))
+        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
 
 
     def header_residue(self):
@@ -387,6 +383,67 @@ class Container(wx.Window):
 
         # Return the sizer.
         return sizer
+
+
+
+class Spin(Container_base):
+    """The molecule, residue, and spin container window."""
+
+    def __init__(self, parent=None, id=None):
+        """Set up the tree GUI element.
+
+        @keyword parent:    The parent GUI element that this is to be attached to.
+        @type parent:       wx object
+        @keyword id:        The ID number.
+        @type id:           int
+        """
+
+        # Execute the base class method.
+        wx.Panel.__init__(self, parent, id, style=wx.BORDER_SUNKEN)
+
+        # Add a sizer.
+        self.main_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self.main_sizer)
+
+
+    def container_spin(self, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+        """Build and display the spin container
+
+        @keyword mol_name:  The molecule name.
+        @type mol_name:     str
+        @keyword res_num:   The residue number.
+        @type res_num:      str
+        @keyword res_name:  The residue name.
+        @type res_name:     str
+        @keyword spin_num:   The spin number.
+        @type spin_num:      str
+        @keyword spin_name:  The spin name.
+        @type spin_name:     str
+        """
+
+        # Store the args.
+        self.mol_name = mol_name
+        self.res_num = res_num
+        self.res_name = res_name
+        self.spin_num = spin_num
+        self.spin_name = spin_name
+
+        # The spin ID.
+        self.spin_id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+
+        # Create the header.
+        sizer = self.header_spin()
+
+        # Add to the main sizer.
+        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
+
+        # A divider.
+        line = wx.StaticLine(self, -1, (25, 50))
+        self.main_sizer.Add(line, 0, wx.EXPAND|wx.ALL, border=self.border)
+
+        # The spin container variables.
+        sizer2 = self.spin_vars()
+        self.main_sizer.Add(sizer2, 1, wx.ALL|wx.EXPAND, border=self.border)
 
 
     def header_spin(self):
@@ -539,3 +596,38 @@ class Container(wx.Window):
 
         # Return the sizer.
         return sizer
+
+
+
+class Root(Container_base):
+    """The molecule, residue, and spin container window."""
+
+    def __init__(self, parent=None, id=None):
+        """Set up the tree GUI element.
+
+        @keyword parent:    The parent GUI element that this is to be attached to.
+        @type parent:       wx object
+        @keyword id:        The ID number.
+        @type id:           int
+        """
+
+        # Execute the base class method.
+        wx.Panel.__init__(self, parent, id)
+
+        # Add a sizer.
+        self.main_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self.main_sizer)
+
+
+    def display_root(self):
+        """Build and display the root window."""
+
+        # A sizer for the header.
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # The title
+        title = self.create_title("The spin view window")
+        sizer.Add(title, 0, wx.LEFT, 0)
+
+        # Add to the sizer.
+        self.main_sizer.Add(sizer, 0, wx.ALL|wx.EXPAND, border=self.border)
