@@ -726,7 +726,7 @@ class Wiz_page(wx.Panel):
         """
 
 
-    def spin_id_element(self, sizer, desc="The spin identification string:", default='@N', divider=None, padding=0, spacer=None):
+    def spin_id_element(self, sizer, desc="The spin identification string:", default=None, divider=None, padding=0, spacer=None):
         """Build a special the input field widget.
 
         @param sizer:       The sizer to put the input field widget into.
