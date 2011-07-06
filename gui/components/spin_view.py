@@ -1239,7 +1239,7 @@ class Spin_view_window(wx.Frame):
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&load_spins", icon=paths.icon_16x16.spin, fn=self.gui.user_functions.structure.load_spins))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&read_pdb", icon=paths.icon_16x16.open, fn=self.gui.user_functions.structure.read_pdb))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&write_pdb", icon=paths.icon_16x16.save, fn=self.gui.user_functions.structure.write_pdb))
-        self.menubar.Append(menu, "&structure")
+        self.menubar.Append(menu, "st&ructure")
 
         # The molecule menu entry.
         menu = wx.Menu()
@@ -1257,10 +1257,26 @@ class Spin_view_window(wx.Frame):
 
         # The spin menu entry.
         menu = wx.Menu()
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, id=1, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.spin.copy))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.spin.copy))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="crea&te", icon=paths.icon_16x16.add, fn=self.gui.user_functions.spin.create))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.spin.delete))
         self.menubar.Append(menu, "&spin")
+
+        # The select menu entry.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&all", icon=None, fn=self.gui.user_functions.select.all))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&read", icon=paths.icon_16x16.open, fn=self.gui.user_functions.select.read))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="re&verse", icon=None, fn=self.gui.user_functions.select.reverse))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&spin", icon=None, fn=self.gui.user_functions.select.spin))
+        self.menubar.Append(menu, "se&lect")
+
+        # The deselect menu entry.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&all", icon=None, fn=self.gui.user_functions.deselect.all))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&read", icon=paths.icon_16x16.open, fn=self.gui.user_functions.deselect.read))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="re&verse", icon=None, fn=self.gui.user_functions.deselect.reverse))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&spin", icon=None, fn=self.gui.user_functions.deselect.spin))
+        self.menubar.Append(menu, "&deselect")
 
 
     def Show(self, show=True):
