@@ -204,8 +204,8 @@ class Mol_res_spin_tree(wx.Window):
         # Delete the molecule.
         self.gui.user_functions.interpreter.molecule.delete(gui_to_str(self.info['id']))
 
-        # Update.
-        self.update()
+        # Refresh the whole spin viewer.
+        self.gui.spin_viewer.refresh()
 
 
     def delete_residue(self, event):
@@ -223,8 +223,8 @@ class Mol_res_spin_tree(wx.Window):
         # Delete the residue.
         self.gui.user_functions.interpreter.residue.delete(gui_to_str(self.info['id']))
 
-        # Update.
-        self.update()
+        # Refresh the whole spin viewer.
+        self.gui.spin_viewer.refresh()
 
 
     def delete_spin(self, event):
@@ -242,8 +242,8 @@ class Mol_res_spin_tree(wx.Window):
         # Delete the spin.
         self.gui.user_functions.interpreter.spin.delete(gui_to_str(self.info['id']))
 
-        # Update.
-        self.update()
+        # Refresh the whole spin viewer.
+        self.gui.spin_viewer.refresh()
 
 
     def deselect_molecule(self, event):
@@ -261,8 +261,8 @@ class Mol_res_spin_tree(wx.Window):
         # Deselect the molecule.
         self.gui.user_functions.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
-        # Update.
-        self.update()
+        # Refresh the whole spin viewer.
+        self.gui.spin_viewer.refresh()
 
 
     def deselect_residue(self, event):
@@ -280,8 +280,8 @@ class Mol_res_spin_tree(wx.Window):
         # Deselect the residue.
         self.gui.user_functions.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
-        # Update.
-        self.update()
+        # Refresh the whole spin viewer.
+        self.gui.spin_viewer.refresh()
 
 
     def deselect_spin(self, event):
@@ -294,8 +294,8 @@ class Mol_res_spin_tree(wx.Window):
         # Deselect the spin.
         self.gui.user_functions.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
-        # Update.
-        self.update()
+        # Refresh the whole spin viewer.
+        self.gui.spin_viewer.refresh()
 
 
     def get_info(self):
@@ -509,8 +509,8 @@ class Mol_res_spin_tree(wx.Window):
         # Select the molecule.
         self.gui.user_functions.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
-        # Update.
-        self.update()
+        # Refresh the whole spin viewer.
+        self.gui.spin_viewer.refresh()
 
 
     def select_residue(self, event):
@@ -528,8 +528,8 @@ class Mol_res_spin_tree(wx.Window):
         # Select the residue.
         self.gui.user_functions.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
-        # Update.
-        self.update()
+        # Refresh the whole spin viewer.
+        self.gui.spin_viewer.refresh()
 
 
     def select_spin(self, event):
@@ -542,8 +542,8 @@ class Mol_res_spin_tree(wx.Window):
         # Select the spin.
         self.gui.user_functions.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
-        # Update.
-        self.update()
+        # Refresh the whole spin viewer.
+        self.gui.spin_viewer.refresh()
 
 
     def set_bitmap_mol(self, mol_branch_id, select=True):
