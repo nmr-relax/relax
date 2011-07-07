@@ -334,7 +334,7 @@ class Wiz_page(wx.Panel):
         raise RelaxImplementError
 
 
-    def boolean_selector(self, sizer, desc, tooltip=None, default=True):
+    def boolean_selector(self, sizer, desc, tooltip=None, divider=None, padding=0, spacer=None, default=True):
         """Build the boolean selector widget for selecting between True and False.
 
         @param sizer:       The sizer to put the combo box widget into.
@@ -343,6 +343,12 @@ class Wiz_page(wx.Panel):
         @type desc:         str
         @keyword tooltip:   The tooltip which appears on hovering over the text or input field.
         @type tooltip:      str
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
         @keyword default:   The default boolean value.
         @type default:      bool
         """
@@ -350,13 +356,20 @@ class Wiz_page(wx.Panel):
         # Init.
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        # Left padding.
+        sub_sizer.AddSpacer(padding)
+
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
+        # The divider.
+        if not divider:
+            divider = self._div_left
+
         # Spacing.
         x, y = text.GetSize()
-        sub_sizer.AddSpacer((self._div_left - x, 0))
+        sub_sizer.AddSpacer((divider - x, 0))
 
         # The combo box element.
         style = wx.CB_DROPDOWN | wx.CB_READONLY
@@ -364,8 +377,17 @@ class Wiz_page(wx.Panel):
         combo.SetMinSize((50, 27))
         sub_sizer.Add(combo, 1, wx.ALIGN_CENTER_VERTICAL, 0)
 
+        # Right padding.
+        sub_sizer.AddSpacer(padding)
+
         # Add to the main sizer.
         sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
+
+        # Spacing below the widget.
+        if spacer == None:
+            sizer.AddStretchSpacer()
+        else:
+            sizer.AddSpacer(spacer)
 
         # Tooltip.
         if tooltip:
@@ -821,7 +843,7 @@ class Wiz_page(wx.Panel):
         return field
 
 
-    def text(self, sizer, desc, default=''):
+    def text(self, sizer, desc, default='', divider=None, padding=0, spacer=None):
         """Build the input field.
 
         @param sizer:       The sizer to put the input field into.
@@ -830,6 +852,12 @@ class Wiz_page(wx.Panel):
         @type desc:         str
         @keyword default:   The default text.
         @type default:      str
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
         @return:            The input field object.
         @rtype:             wx.TextCtrl instance
         """
@@ -837,13 +865,20 @@ class Wiz_page(wx.Panel):
         # Init.
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        # Left padding.
+        sub_sizer.AddSpacer(padding)
+
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
+        # The divider.
+        if not divider:
+            divider = self._div_left
+
         # Spacing.
         x, y = text.GetSize()
-        sub_sizer.AddSpacer((self._div_left - x, 0))
+        sub_sizer.AddSpacer((divider - x, 0))
 
         # The non-editable text.
         text = wx.TextCtrl(self, -1, default, style=wx.ALIGN_LEFT)
@@ -853,9 +888,17 @@ class Wiz_page(wx.Panel):
         text.SetMinSize((self._div_right, 27))
         sub_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL, 0)
 
+        # Right padding.
+        sub_sizer.AddSpacer(padding)
+
         # Add to the main sizer (followed by stretchable spacing).
         sizer.Add(sub_sizer)
-        sizer.AddStretchSpacer()
+
+        # Spacing below the widget.
+        if spacer == None:
+            sizer.AddStretchSpacer()
+        else:
+            sizer.AddSpacer(spacer)
 
         # Return the object.
         return text
