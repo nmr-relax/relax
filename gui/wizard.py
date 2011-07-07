@@ -545,11 +545,15 @@ class Wiz_page(wx.Panel):
         return field
 
 
-    def free_file_format(self, sizer, data_cols=False, save=True):
+    def free_file_format(self, sizer, padding=10, spacer=3, data_cols=False, save=True):
         """Build the free format file settings widget.
 
         @param sizer:       The sizer to put the input field into.
         @type sizer:        wx.Sizer instance
+        @keyword padding:   The size of the padding between the wx.StaticBoxSizer border and the internal elements, in pixels.
+        @type padding:      int
+        @keyword spacer:    The horizontal spacing between the elements, in pixels.
+        @type spacer:       int
         @keyword data_cols: A flag which if True causes the data and error column elements to be displayed.
         @type data_cols:    bool
         @keyword save:      A flag which if True will cause the save button to be displayed.
@@ -561,10 +565,8 @@ class Wiz_page(wx.Panel):
 
         # Init.
         sub_sizer = wx.StaticBoxSizer(box, wx.VERTICAL)
-        sub_sizer.AddSpacer(10)
+        sub_sizer.AddSpacer(padding)
         divider = self._div_left - 15
-        padding = 10
-        spacer = 3
 
         # The columns.
         self.spin_id_col = self.input_field(sub_sizer, "Spin ID column:", divider=divider, padding=padding, spacer=spacer)
@@ -615,11 +617,11 @@ class Wiz_page(wx.Panel):
             self.Bind(wx.EVT_BUTTON, self._free_file_format_save, button)
 
             # Add the button sizer to the widget (with spacing).
-            sub_sizer.AddSpacer(10-spacer)
+            sub_sizer.AddSpacer(padding)
             sub_sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT|wx.ALL, 0)
 
         # Set the size of the widget.
-        sub_sizer.AddSpacer(10)
+        sub_sizer.AddSpacer(padding)
         x, y = box.GetSize()
         box.SetMinSize((self._main_size, y))
 
