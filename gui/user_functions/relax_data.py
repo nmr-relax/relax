@@ -117,7 +117,7 @@ class Read_page(UF_page):
     """The relax_data.read() user function page."""
 
     # Some class variables.
-    desc_height = 100
+    desc_height = 140
     image_path = WIZARD_IMAGE_PATH + 'fid.png'
     uf_path = ['relax_data', 'read']
 
@@ -139,7 +139,7 @@ class Read_page(UF_page):
         self.frq = self.input_field(sizer, "The proton frequency in Hz:", tooltip=self.uf._doc_args_dict['frq'])
 
         # The parameter file settings.
-        self.free_file_format(sizer, data_cols=True)
+        self.free_file_format(sizer, data_cols=True, padding=5, spacer=0)
 
         # The spin ID restriction.
         self.spin_id = self.spin_id_element(sizer, desc="Restrict data loading to certain spins:")
