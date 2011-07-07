@@ -129,11 +129,12 @@ class Molecule(User_fn_class):
         delete_molecule(mol_id=mol_id)
 
     # The function doc info.
-    delete._doc_title = "Delete molecules."
+    delete._doc_title = "Molecule deletion."
+    delete._doc_title_short = "Delete molecules."
     delete._doc_args = [
         ["mol_id", "The molecule ID string."]]
     delete._doc_desc = """
-        This can be used to delete a single or sets of molecules.
+        This can be used to delete a single or sets of molecules from the relax data store.  The molecule will be deleted from the current data pipe.
         """
     delete._doc_additional = [id_string_doc]
     _build_doc(delete)
