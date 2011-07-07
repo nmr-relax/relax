@@ -144,7 +144,7 @@ class Read_page(UF_page):
         self.boolean.SetValue('OR')
 
         # The change_all flag.
-        self.change_all = self.boolean_selector(sizer, "Change all:", tooltip="A flag specifying if all other spins should be changed.")
+        self.change_all = self.boolean_selector(sizer, "Change all:", tooltip="A flag specifying if all other spins should be changed.", default=False)
 
 
     def on_execute(self):
