@@ -202,7 +202,7 @@ class Create_page(UF_page):
         mol_type = str(self.mol_type.GetValue())
 
         # Set the name.
-        self.interpreter.molecule.create(mol_name=mol_name, type=mol_type)
+        self.interpreter.molecule.create(mol_name=mol_name, mol_type=mol_type)
 
 
 
