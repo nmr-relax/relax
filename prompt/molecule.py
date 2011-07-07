@@ -57,11 +57,11 @@ class Molecule(User_fn_class):
     copy._doc_title_short = "Copy a molecule."
     copy._doc_args = [
         ["pipe_from", "The data pipe containing the molecule from which the data will be copied.  This defaults to the current data pipe."],
-        ["mol_from", "The molecule ID string of the molecule to copy the data from."],
+        ["mol_from", "The name of the molecule from which to copy data from."],
         ["pipe_to", "The data pipe to copy the data to.  This defaults to the current data pipe."],
-        ["mol_to", "The molecule ID string of the molecule to copy the data to."]]
+        ["mol_to", "The name of the new molecule.  If left blank, the new molecule will have the same name as the old."]]
     copy._doc_desc = """
-        This will copy all the data associated with a molecule to a second molecule.  This includes residue and spin system information.  The new molecule name must be unique.
+        This will copy all the data associated with a molecule to a second molecule.  This includes all residue and spin system information.  The new molecule name must be unique in the destination data pipe.
         """
     copy._doc_examples = """
         To copy the molecule data from the molecule 'GST' to the new molecule 'wt-GST', type:
@@ -79,29 +79,29 @@ class Molecule(User_fn_class):
     _build_doc(copy)
 
 
-    def create(self, mol_name=None, type=None):
+    def create(self, mol_name=None, mol_type=None):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "molecule.create("
             text = text + "mol_name=" + repr(mol_name)
-            text = text + ", type=" + repr(type) + ")"
+            text = text + ", mol_type=" + repr(mol_type) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_str(mol_name, 'molecule name')
-        arg_check.is_str(type, 'molecule type', can_be_none=True)
+        arg_check.is_str(mol_type, 'molecule type', can_be_none=True)
 
         # Execute the functional code.
-        create_molecule(mol_name=mol_name, mol_type=type)
+        create_molecule(mol_name=mol_name, mol_type=mol_type)
 
     # The function doc info.
     create._doc_title = "Create a new molecule."
     create._doc_title_new = "New molecule."
     create._doc_args = [
-        ["mol_name", "The name of the molecule."],
-        ["type", "The type of molecule."]]
+        ["mol_name", "The name of the new molecule."],
+        ["mol_type", "The type of molecule."]]
     create._doc_desc = """
-        This adds a new molecule data container to the relax data storage object.  The same molecule name cannot be used more than once.  The molecule type need not be specified.  However if it given, it should be one of"""
+        This adds a new molecule data container to the relax data storage object.  The same molecule name cannot be used more than once.  The molecule type need not be specified.  However, if given, it should be one of"""
     for i in range(len(ALLOWED_MOL_TYPES)):
         create._doc_desc = "%s '%s'," % (create._doc_desc, ALLOWED_MOL_TYPES[i]) 
     create._doc_desc = "%s or '%s'." % (create._doc_desc, ALLOWED_MOL_TYPES[-1]) 
