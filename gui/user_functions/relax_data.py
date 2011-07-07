@@ -117,7 +117,7 @@ class Read_page(UF_page):
     """The relax_data.read() user function page."""
 
     # Some class variables.
-    desc_height = 140
+    desc_height = 180
     image_path = WIZARD_IMAGE_PATH + 'fid.png'
     uf_path = ['relax_data', 'read']
 
