@@ -35,7 +35,6 @@ import wx
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import count_spins
 from relax_io import DummyFileObject
 from status import Status; status = Status()
 
@@ -230,7 +229,7 @@ class Auto_noe(Base_frame):
         self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
         # Add the spin GUI element.
-        self.spin_systems = self.add_text_sel_element(box, self.parent, text="Spin systems", button_text=" Spin editor", default=self.spin_count(), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True)
+        self.add_spin_systems(box, self.parent)
 
         # Add peak list selection header.
         self.add_subtitle(box, "NOE peak lists")
@@ -420,20 +419,6 @@ class Auto_noe(Base_frame):
         event.Skip()
 
 
-    def spin_count(self):
-        """Count the number of loaded spins, returning a string formatted as 'xxx spins loaded'.
-
-        @return:    The number of loaded spins in the format 'xxx spins loaded'.
-        @rtype:     str
-        """
-
-        # The count.
-        num = count_spins()
-
-        # Return the formatted string.
-        return "%s spins loaded and selected" % num
-
-
     def sync_ds(self, upload=False):
         """Synchronise the noe analysis frame and the relax data store, both ways.
 
@@ -478,13 +463,6 @@ class Auto_noe(Base_frame):
             self.data.sat_rmsd = gui_to_str(self.field_sat_rmsd.GetValue())
         elif hasattr(self.data, 'sat_rmsd'):
             self.field_sat_rmsd.SetValue(str_to_gui(self.data.sat_rmsd))
-
-
-    def update_spin_count(self):
-        """Update the spin count."""
-
-        # Set the new value.
-        self.spin_systems.SetValue(str_to_gui(self.spin_count()))
 
 
 

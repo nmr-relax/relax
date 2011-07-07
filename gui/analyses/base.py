@@ -28,6 +28,9 @@
 import wx
 from wx.lib import buttons
 
+# relax module imports.
+from generic_fns.mol_res_spin import count_spins
+
 # relax GUI module imports.
 from gui import paths
 from gui.misc import str_to_gui
@@ -194,6 +197,21 @@ class Base_frame:
 
         # Return the text control object.
         return field
+
+
+    def add_spin_systems(self, box, parent):
+        """Add a special control for spin systems.
+
+        Only one of these per analysis are allowed.
+
+        @param box:         The box element to pack the control into.
+        @type box:          wx.BoxSizer instance
+        @param parent:      The parent GUI element.
+        @type parent:       wx object
+        """
+
+        # Add the element.
+        self.spin_systems = self.add_text_sel_element(box, self.parent, text="Spin systems", button_text=" Spin editor", default=self.spin_count(), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True)
 
 
     def add_static_text(self, box, parent, text='', width=-1, height=-1):
@@ -448,3 +466,24 @@ class Base_frame:
         # Build the right hand box and pack it next to the bitmap.
         right_box = self.build_right_box()
         box.Add(right_box, 1, wx.ALL|wx.EXPAND, 0)
+
+
+    def spin_count(self):
+        """Count the number of loaded spins, returning a string formatted as 'xxx spins loaded'.
+
+        @return:    The number of loaded spins in the format 'xxx spins loaded'.
+        @rtype:     str
+        """
+
+        # The count.
+        num = count_spins()
+
+        # Return the formatted string.
+        return "%s spins loaded and selected" % num
+
+
+    def update_spin_count(self):
+        """Update the spin count."""
+
+        # Set the new value.
+        self.spin_systems.SetValue(str_to_gui(self.spin_count()))
