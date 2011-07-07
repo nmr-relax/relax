@@ -36,37 +36,6 @@ class Pipe(User_fn_class):
     """Class for holding the functions for manipulating data pipes."""
 
     def copy(self, pipe_from=None, pipe_to=None):
-        """Function for copying a data pipe.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        pipe_from:  The name of the source data pipe to copy the data from.
-
-        pipe_to:  The name of the target data pipe to copy the data to.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This user function allows the contents of a data pipe to be copied.  If the 'pipe_from'
-        keyword argument is set to None the current data pipe is assumed.  The data pipe
-        corresponding to 'pipe_to' must not yet exist.
-
-
-        Examples
-        ~~~~~~~~
-
-        To copy the contents of the 'm1' data pipe to the 'm2' data pipe, type:
-
-        relax> pipe.copy('m1', 'm2')
-        relax> pipe.copy(pipe_from='m1', pipe_to='m2')
-
-        If the current data pipe is 'm1', then the following command can be used:
-
-        relax> pipe.copy(pipe_to='m2')
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pipe.copy("
@@ -85,40 +54,30 @@ class Pipe(User_fn_class):
         # Execute the functional code.
         pipes.copy(pipe_from=pipe_from, pipe_to=pipe_to)
 
+    # The function doc info.
+    copy._doc_title = "Copy a data pipe."
+    copy._doc_title_short = "Pipe copy."
+    copy._doc_args = [
+        ["pipe_from", "The name of the source data pipe to copy the data from."],
+        ["pipe_to", "The name of the target data pipe to copy the data to."]
+    ]
+    copy._doc_desc = """
+        This allows the contents of a data pipe to be copied.  If the 'pipe_from' keyword argument is set to None the current data pipe is assumed.  The data pipe corresponding to 'pipe_to' must not yet exist.
+        """
+    copy._doc_examples = """
+        To copy the contents of the 'm1' data pipe to the 'm2' data pipe, type:
+
+        relax> pipe.copy('m1', 'm2')
+        relax> pipe.copy(pipe_from='m1', pipe_to='m2')
+
+        If the current data pipe is 'm1', then the following command can be used:
+
+        relax> pipe.copy(pipe_to='m2')
+        """
+    _build_doc(copy)
+
 
     def create(self, pipe_name=None, pipe_type=None):
-        """Function for initialising a data pipe.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        pipe_name:  The name of the data pipe.
-
-        pipe_type:  The type of data pipe.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        The data pipe name can be any string however the data pipe type can only be one of the
-        following:
-
-            'frame order':  The Frame Order theories,
-            'jw':  Reduced spectral density mapping,
-            'mf':  Model-free analysis,
-            'N-state':  N-state model of domain motions,
-            'noe':  Steady state NOE calculation,
-            'relax_fit':  Relaxation curve fitting,
-
-
-        Examples
-        ~~~~~~~~
-
-        To set up a model-free analysis data pipe with the name 'm5', type:
-
-        relax> pipe.create('m5', 'mf')
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pipe.create("
@@ -133,18 +92,32 @@ class Pipe(User_fn_class):
         # Execute the functional code.
         pipes.create(pipe_name=pipe_name, pipe_type=pipe_type)
 
+    # The function doc info.
+    create._doc_title = "Add a new data pipe to the relax data store."
+    create._doc_title_short = "Create a data pipe."
+    create._doc_args = [
+        ["pipe_name", "The name of the data pipe."],
+        ["pipe_type", "The type of data pipe."]
+    ]
+    create._doc_desc = """
+        The data pipe name can be any string however the data pipe type can only be one of the following:
+
+            'frame order':  The Frame Order theories,
+            'jw':  Reduced spectral density mapping,
+            'mf':  Model-free analysis,
+            'N-state':  N-state model of domain motions,
+            'noe':  Steady state NOE calculation,
+            'relax_fit':  Relaxation curve fitting,
+        """
+    create._doc_examples = """
+        To set up a model-free analysis data pipe with the name 'm5', type:
+
+        relax> pipe.create('m5', 'mf')
+        """
+    _build_doc(create)
+
 
     def current(self):
-        """Print the name of the current pipe.
-
-        Examples
-        ~~~~~~~~
-
-        To run the user function, type:
-
-        relax> pipe.current()
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pipe.current()"
@@ -153,23 +126,18 @@ class Pipe(User_fn_class):
         # Execute the functional code.
         pipes.current()
 
+     # The function doc info.
+    current._doc_title = "Print the name of the current data pipe."
+    current._doc_title_short = "The current pipe."
+    current._doc_examples = """
+        To run the user function, type:
+
+        relax> pipe.current()
+        """
+    _build_doc(current)
+
 
     def delete(self, pipe_name=None):
-        """Function for deleting a data pipe.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        pipe_name:  The name of the data pipe.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function will permanently remove the data pipe and all of its contents.  If the pipe
-        name is not given, then all data pipes will be deleted.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pipe.delete("
@@ -182,18 +150,19 @@ class Pipe(User_fn_class):
         # Execute the functional code.
         pipes.delete(pipe_name=pipe_name)
 
+    # The function doc info.
+    delete._doc_title = "Delete a data pipe from the relax data store."
+    delete._doc_title_short = "Data pipe deletion."
+    delete._doc_args = [
+        ["pipe_name", "The name of the data pipe to delete."]
+    ]
+    delete._doc_desc = """
+        This will permanently remove the data pipe and all of its contents from the relax data store.  If the pipe name is not given, then all data pipes will be deleted.
+        """
+    _build_doc(delete)
+
 
     def display(self):
-        """Print a list of all the data pipes.
-
-        Examples
-        ~~~~~~~~
-
-        To run the user function, type:
-
-        relax> pipe.display()
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pipe.display()"
@@ -202,40 +171,18 @@ class Pipe(User_fn_class):
         # Execute the functional code.
         pipes.display()
 
+    # The function doc info.
+    display._doc_title = "Print a list of all the data pipes."
+    display._doc_title_short = "Data pipe list."
+    display._doc_examples = """
+        To run the user function, type:
+
+        relax> pipe.display()
+        """
+    _build_doc(display)
+
 
     def hybridise(self, hybrid=None, pipes=None):
-        """Create a hybrid data pipe by fusing a number of other data pipes.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        hybrid:  The name of the hybrid data pipe to create.
-
-        pipes:  An array containing the names of all data pipes to hybridise.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This user function can be used to construct hybrid models.  An example of the use of a
-        hybrid model could be if the protein consists of two independent domains.  These two domains
-        could be analysed separately, each having their own optimised diffusion tensors.  The
-        N-terminal domain data pipe could be called 'N_sphere' while the C-terminal domain could be
-        called 'C_ellipsoid'.  These two data pipes could then be hybridised into a single data pipe
-        called 'mixed model' by typing:
-
-        relax> pipe.hybridise('mixed model', ['N_sphere', 'C_ellipsoid'])
-        relax> pipe.hybridise(hybrid='mixed model', pipes=['N_sphere', 'C_ellipsoid'])
-
-        This hybrid data pipe can then be compared via model selection to a data pipe whereby the
-        entire protein is assumed to have a single diffusion tensor.
-
-        The requirements for data pipes to be hybridised is that the molecules, sequences, and spin
-        systems for all the data pipes is the same, and that no spin system is allowed to be
-        selected in two or more data pipes.  The selections must not overlap to allow for
-        rigorous statistical comparisons.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pipe.hybridise("
@@ -250,31 +197,27 @@ class Pipe(User_fn_class):
         # Execute the functional code.
         hybrid_obj._hybridise(hybrid=hybrid, pipe_list=pipes)
 
+    # The function doc info.
+    hybridise._doc_title = "Create a hybrid data pipe by fusing a number of other data pipes."
+    hybridise._doc_title_short = "Hybrid data pipe creation."
+    hybridise._doc_args = [
+        ["hybrid", "The name of the hybrid data pipe to create."],
+        ["pipes", "An array containing the names of all data pipes to hybridise."]
+    ]
+    hybridise._doc_desc = """
+        This user function can be used to construct hybrid models.  An example of the use of a hybrid model could be if the protein consists of two independent domains.  These two domains could be analysed separately, each having their own optimised diffusion tensors.  The N-terminal domain data pipe could be called 'N_sphere' while the C-terminal domain could be called 'C_ellipsoid'.  These two data pipes could then be hybridised into a single data pipe called 'mixed model' by typing:
+
+        relax> pipe.hybridise('mixed model', ['N_sphere', 'C_ellipsoid'])
+        relax> pipe.hybridise(hybrid='mixed model', pipes=['N_sphere', 'C_ellipsoid'])
+
+        This hybrid data pipe can then be compared via model selection to a data pipe whereby the entire protein is assumed to have a single diffusion tensor.
+
+        The requirements for data pipes to be hybridised is that the molecules, sequences, and spin systems for all the data pipes is the same, and that no spin system is allowed to be selected in two or more data pipes.  The selections must not overlap to allow for rigorous statistical comparisons.
+        """
+    _build_doc(hybridise)
+
 
     def switch(self, pipe_name=None):
-        """Function for switching between data pipes.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        pipe_name:  The name of the data pipe.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function will switch from the current data pipe to the given data pipe.
-
-
-        Examples
-        ~~~~~~~~
-
-        To switch to the 'ellipsoid' data pipe, type:
-
-        relax> pipe.switch('ellipsoid')
-        relax> pipe.switch(pipe_name='ellipsoid')
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pipe.switch("
@@ -286,3 +229,20 @@ class Pipe(User_fn_class):
 
         # Execute the functional code.
         pipes.switch(pipe_name=pipe_name)
+
+    # The function doc info.
+    switch._doc_title = "Switch between the data pipes of the relax data store."
+    switch._doc_title_short = "Data pipe switching."
+    switch._doc_args = [
+        ["pipe_name", "The name of the data pipe."]
+    ]
+    switch._doc_desc = """
+        This will switch between the various data pipes within the relax data store.
+        """
+    switch._doc_examples = """
+        To switch to the 'ellipsoid' data pipe, type:
+
+        relax> pipe.switch('ellipsoid')
+        relax> pipe.switch(pipe_name='ellipsoid')
+        """
+    _build_doc(switch)
