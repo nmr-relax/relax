@@ -81,11 +81,14 @@ class UF_page(Wiz_page):
                 uf = getattr(uf_class, self.uf_path[1])
 
             # Set the user function title.
-            self.title = uf._doc_title
+            if hasattr(uf, '_doc_title_short'):
+                self.title = uf._doc_title_short
+            else:
+                self.title = uf._doc_title
 
             # Set the main text to the description doc.
             if hasattr(uf, '_doc_desc'):
-                self.main_text = self.title + '\n\n' + self._format_text(uf._doc_desc)
+                self.main_text = uf._doc_title + '\n\n' + self._format_text(uf._doc_desc)
 
                 # Remove trailing newlines.
                 if self.main_text[-1] == '\n':
