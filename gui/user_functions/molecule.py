@@ -46,7 +46,7 @@ class Molecule(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=400, title='Copy a molecule')
+        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('molecule', 'copy'))
         page = Copy_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -60,8 +60,8 @@ class Molecule(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title='Add a molecule')
-        page = Add_page(wizard, self.gui, self.interpreter)
+        wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('molecule', 'create'))
+        page = Create_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
 
@@ -76,7 +76,7 @@ class Molecule(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title='Delete a molecule')
+        wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('molecule', 'delete'))
         page = Delete_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
@@ -89,49 +89,12 @@ class Molecule(UF_base):
 
 
 
-class Add_page(UF_page):
-    """The molecule.create() user function page."""
-
-    # Some class variables.
-    image_path = WIZARD_IMAGE_PATH + 'molecule.png'
-    main_text = 'This dialog allows you to add new molecules to the relax data store.  The molecule will be added to the current data pipe.'
-    title = 'Addition of new molecules'
-
-
-    def add_contents(self, sizer):
-        """Add the molecule specific GUI elements.
-
-        @param sizer:   A sizer object.
-        @type sizer:    wx.Sizer instance
-        """
-
-        # The molecule name input.
-        self.mol = self.input_field(sizer, "The name of the molecule:")
-
-        # The type selection.
-        self.mol_type = self.combo_box(sizer, "The type of molecule:", ALLOWED_MOL_TYPES)
-
-
-    def on_execute(self):
-        """Execute the user function."""
-
-        # Get the name and type.
-        mol_name = str(self.mol.GetValue())
-        mol_type = str(self.mol_type.GetValue())
-
-        # Set the name.
-        self.interpreter.molecule.create(mol_name=mol_name, type=mol_type)
-
-
-
 class Copy_page(UF_page):
     """The molecule.copy() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'molecule.png'
-    main_text = 'This dialog allows you to copy molecules.'
-    title = 'Molecule copy'
-
+    uf_path = ['molecule', 'copy']
 
     def add_contents(self, sizer):
         """Add the molecule specific GUI elements.
@@ -141,16 +104,16 @@ class Copy_page(UF_page):
         """
 
         # The source pipe.
-        self.pipe_from = self.combo_box(sizer, "The source data pipe:", [], evt_fn=self.update_mol_list)
+        self.pipe_from = self.combo_box(sizer, "The source data pipe:", [], evt_fn=self.update_mol_list, tooltip=self.uf._doc_args_dict['pipe_from'])
 
         # The molecule selection.
-        self.mol_from = self.combo_box(sizer, "The source molecule:", [])
+        self.mol_from = self.combo_box(sizer, "The source molecule:", [], tooltip=self.uf._doc_args_dict['mol_from'])
 
         # The destination pipe.
-        self.pipe_to = self.combo_box(sizer, "The destination data pipe name:", [])
+        self.pipe_to = self.combo_box(sizer, "The destination data pipe name:", [], tooltip=self.uf._doc_args_dict['pipe_to'])
 
         # The new molecule name.
-        self.mol_to = self.input_field(sizer, "The new molecule name:", tooltip='If left blank, the new molecule will have the same name as the old.')
+        self.mol_to = self.input_field(sizer, "The new molecule name:", tooltip=self.uf._doc_args_dict['mol_to'])
 
 
     def on_display(self):
@@ -209,13 +172,46 @@ class Copy_page(UF_page):
 
 
 
+class Create_page(UF_page):
+    """The molecule.create() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'molecule.png'
+    uf_path = ['molecule', 'create']
+
+
+    def add_contents(self, sizer):
+        """Add the molecule specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The molecule name input.
+        self.mol_name = self.input_field(sizer, "Molecule name:", tooltip=self.uf._doc_args_dict['mol_name'])
+
+        # The type selection.
+        self.mol_type = self.combo_box(sizer, "Molecule type:", ALLOWED_MOL_TYPES, tooltip=self.uf._doc_args_dict['mol_type'])
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the name and type.
+        mol_name = str(self.mol_name.GetValue())
+        mol_type = str(self.mol_type.GetValue())
+
+        # Set the name.
+        self.interpreter.molecule.create(mol_name=mol_name, type=mol_type)
+
+
+
 class Delete_page(UF_page):
     """The molecule.delete() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'molecule.png'
-    main_text = 'This dialog allows you to delete molecules from the relax data store.  The molecule will be deleted from the current data pipe.'
-    title = 'Molecule deletion'
+    uf_path = ['molecule', 'delete']
 
 
     def add_contents(self, sizer):
@@ -226,29 +222,26 @@ class Delete_page(UF_page):
         """
 
         # The molecule selection.
-        self.mol = self.combo_box(sizer, "The molecule:", [])
+        self.mol_id = self.combo_box(sizer, "Molecule ID:", [], tooltip=self.uf._doc_args_dict['mol_id'])
 
 
     def on_display(self):
         """Clear and update the molecule list."""
 
         # Clear the previous data.
-        self.mol.Clear()
+        self.mol_id.Clear()
 
         # The list of molecule names.
         if cdp_name():
-            for mol in molecule_loop():
-                self.mol.Append(mol.name)
+            for mol, mol_id in molecule_loop(return_id=True):
+                self.mol_id.Append(str_to_gui(mol_id))
 
 
     def on_execute(self):
         """Execute the user function."""
 
         # Get the name.
-        mol_name = str(self.mol.GetValue())
-
-        # The molecule ID.
-        id = generate_spin_id(mol_name=mol_name)
+        mol_id = gui_to_str(self.mol_id.GetValue())
 
         # Delete the molecule.
-        self.interpreter.molecule.delete(mol_id=id)
+        self.interpreter.molecule.delete(mol_id=mol_id)
