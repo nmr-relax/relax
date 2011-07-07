@@ -62,7 +62,7 @@ class Pipe(User_fn_class):
         ["pipe_to", "The name of the target data pipe to copy the data to."]
     ]
     copy._doc_desc = """
-        This allows the contents of a data pipe to be copied.  If the 'pipe_from' keyword argument is set to None the current data pipe is assumed.  The data pipe corresponding to 'pipe_to' must not yet exist.
+        This allows the contents of a data pipe to be copied.  If the source data pipe is not set, the current data pipe will be assumed.  The target data pipe must not yet exist.
         """
     copy._doc_examples = """
         To copy the contents of the 'm1' data pipe to the 'm2' data pipe, type:
@@ -205,14 +205,16 @@ class Pipe(User_fn_class):
         ["pipes", "An array containing the names of all data pipes to hybridise."]
     ]
     hybridise._doc_desc = """
-        This user function can be used to construct hybrid models.  An example of the use of a hybrid model could be if the protein consists of two independent domains.  These two domains could be analysed separately, each having their own optimised diffusion tensors.  The N-terminal domain data pipe could be called 'N_sphere' while the C-terminal domain could be called 'C_ellipsoid'.  These two data pipes could then be hybridised into a single data pipe called 'mixed model' by typing:
+        This user function can be used to construct hybrid models.  An example of the use of a hybrid model could be if the protein consists of two independent domains.  These two domains could be analysed separately, each having their own optimised diffusion tensors.  The N-terminal domain data pipe could be called 'N_sphere' while the C-terminal domain could be called 'C_ellipsoid'.  These two data pipes could then be hybridised into a single data pipe.  This hybrid data pipe can then be compared via model selection to a data pipe whereby the entire protein is assumed to have a single diffusion tensor.
+
+        The requirements for data pipes to be hybridised is that the molecules, sequences, and spin systems for all the data pipes is the same, and that no spin system is allowed to be selected in two or more data pipes.  The selections must not overlap to allow for rigorous statistical comparisons.
+        """
+    hybridise._doc_examples = """
+        The two data pipes 'N_sphere' and 'C_ellipsoid' could be hybridised into a single data pipe
+        called 'mixed model' by typing:
 
         relax> pipe.hybridise('mixed model', ['N_sphere', 'C_ellipsoid'])
         relax> pipe.hybridise(hybrid='mixed model', pipes=['N_sphere', 'C_ellipsoid'])
-
-        This hybrid data pipe can then be compared via model selection to a data pipe whereby the entire protein is assumed to have a single diffusion tensor.
-
-        The requirements for data pipes to be hybridised is that the molecules, sequences, and spin systems for all the data pipes is the same, and that no spin system is allowed to be selected in two or more data pipes.  The selections must not overlap to allow for rigorous statistical comparisons.
         """
     _build_doc(hybridise)
 
