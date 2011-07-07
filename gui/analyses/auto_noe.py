@@ -431,7 +431,7 @@ class Auto_noe(Base_frame):
         num = count_spins()
 
         # Return the formatted string.
-        return "%s spins loaded" % num
+        return "%s spins loaded and selected" % num
 
 
     def sync_ds(self, upload=False):
