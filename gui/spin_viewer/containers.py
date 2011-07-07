@@ -94,7 +94,7 @@ class Container(wx.Window):
         self.main_sizer.Clear(deleteWindows=True)
 
         # The root window display.
-        if info == 'root':
+        if info == 'root' or info == None:
             self.container = Root(self.main_sizer, self)
 
         # The molecule container display.
