@@ -96,7 +96,7 @@ class Molecule(User_fn_class):
 
     # The function doc info.
     create._doc_title = "Create a new molecule."
-    create._doc_title_new = "New molecule."
+    create._doc_title_short = "New molecule."
     create._doc_args = [
         ["mol_name", "The name of the new molecule."],
         ["mol_type", "The type of molecule."]]
