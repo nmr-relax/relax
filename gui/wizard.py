@@ -487,7 +487,7 @@ class Wiz_page(wx.Panel):
         return combo
 
 
-    def file_selection(self, sizer, desc, title='File selection', default="all files (*.*)|*"):
+    def file_selection(self, sizer, desc, title='File selection', default="all files (*.*)|*", tooltip=None):
         """Build the file selection element.
 
         @param sizer:       The sizer to put the input field into.
@@ -498,6 +498,8 @@ class Wiz_page(wx.Panel):
         @type title:        str
         @keyword default:   The default file type.
         @type default:      str
+        @keyword tooltip:   The tooltip which appears on hovering over all the GUI elements.
+        @type tooltip:      str
         @return:            The file selection GUI element.
         @rtype:             wx.TextCtrl
         """
@@ -523,7 +525,6 @@ class Wiz_page(wx.Panel):
 
         # The file selection button.
         button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icon_16x16.open, wx.BITMAP_TYPE_ANY))
-        button.SetToolTipString("Select the file")
         button.SetMinSize((27, 27))
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
         self.Bind(wx.EVT_BUTTON, obj.select, button)
@@ -531,6 +532,14 @@ class Wiz_page(wx.Panel):
         # Add to the main sizer (followed by stretchable spacing).
         sizer.Add(sub_sizer)
         sizer.AddStretchSpacer()
+
+        # Tooltip.
+        if tooltip:
+            text.SetToolTipString(tooltip)
+            field.SetToolTipString(tooltip)
+            button.SetToolTipString(tooltip)
+        else:
+            button.SetToolTipString("Select the file.")
 
         # Return the field element.
         return field
