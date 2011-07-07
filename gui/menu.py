@@ -89,7 +89,7 @@ class Menu:
         # The 'Settings' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_item(menu, id=20, text="&Global relax settings", icon=paths.icon_16x16.settings_global))
-        menu.AppendItem(self.build_menu_item(menu, id=21, text="&Free file format settings", icon=paths.icon_16x16.settings))
+        menu.AppendItem(self.build_menu_item(menu, id=21, text="&Free file format settings", icon=paths.icon_16x16.document_properties))
         menu.AppendItem(self.build_menu_item(menu, id=22, text="Reset a&ll settings", icon=paths.icon_16x16.settings_reset))
         self.menubar.Append(menu, "&Settings")
 
