@@ -48,7 +48,7 @@ class Sequence(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title='Read the spin sequence from a file')
+        wizard = Wiz_window(size_x=900, size_y=700, title=self.get_title('sequence', 'read'))
         page = Read_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -60,8 +60,7 @@ class Read_page(UF_page):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'sequence.png'
-    main_text = 'This dialog allows you to read the molecule, residue, and spin information from a file.'
-    title = 'Sequence reading'
+    uf_path = ['sequence', 'read']
 
 
     def add_contents(self, sizer):
@@ -72,13 +71,13 @@ class Read_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The sequence file:", title="Sequence file selection")
+        self.file = self.file_selection(sizer, "The sequence file:", title="Sequence file selection", tooltip=self.uf._doc_args_dict['file'])
+
+        # The spin ID restriction.
+        self.spin_id = self.spin_id_element(sizer, "Restrict data loading to certain spins:")
 
         # The parameter file settings.
         self.free_file_format(sizer)
-
-        # The spin ID restriction.
-        self.spin_id = self.input_field(sizer, "Restrict data loading to certain spins:", tooltip="This must be a valid spin ID.  Multiple spins can be selected using ranges, the '|' operator, residue ranges, etc.")
 
 
     def on_execute(self):
