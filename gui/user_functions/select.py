@@ -44,7 +44,7 @@ class Select(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=300, title='Select all spins')
+        wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('select', 'all'))
         page = All_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page, apply_button=False)
         wizard.run()
@@ -58,7 +58,7 @@ class Select(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=900, size_y=800, title='Select spins from file')
+        wizard = Wiz_window(size_x=900, size_y=800, title=self.get_title('select', 'read'))
         page = Read_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -72,7 +72,7 @@ class Select(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=400, title='Reverse spin selection')
+        wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('select', 'reverse'))
         page = Reverse_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page, apply_button=False)
         wizard.run()
@@ -86,7 +86,7 @@ class Select(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=500, title='Select spins')
+        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('select', 'spin'))
         page = Spin_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()

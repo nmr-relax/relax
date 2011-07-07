@@ -58,7 +58,7 @@ class Deselect(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=900, size_y=800, title='Deselect spins from file')
+        wizard = Wiz_window(size_x=900, size_y=800, title=self.get_title('deselect', 'read'))
         page = Read_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -72,7 +72,7 @@ class Deselect(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=400, title='Reverse spin selection')
+        wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('deselect', 'reverse'))
         page = Reverse_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page, apply_button=False)
         wizard.run()
@@ -86,7 +86,7 @@ class Deselect(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=500, title='Deselect spins')
+        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('deselect', 'spin'))
         page = Spin_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
