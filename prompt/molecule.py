@@ -27,7 +27,7 @@ __docformat__ = 'plaintext'
 # relax module imports.
 from base_class import User_fn_class, _build_doc
 import arg_check
-from generic_fns.mol_res_spin import copy_molecule, create_molecule, delete_molecule, display_molecule, id_string_doc, name_molecule, type_molecule
+from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, copy_molecule, create_molecule, delete_molecule, display_molecule, id_string_doc, name_molecule, type_molecule
 
 
 class Molecule(User_fn_class):
@@ -54,13 +54,14 @@ class Molecule(User_fn_class):
 
     # The function doc info.
     copy._doc_title = "Copy all data associated with a molecule."
+    copy._doc_title_short = "Copy a molecule."
     copy._doc_args = [
         ["pipe_from", "The data pipe containing the molecule from which the data will be copied.  This defaults to the current data pipe."],
-        ["mol_from", "The molecule identifier string of the molecule to copy the data from."],
+        ["mol_from", "The molecule ID string of the molecule to copy the data from."],
         ["pipe_to", "The data pipe to copy the data to.  This defaults to the current data pipe."],
-        ["mol_to", "The molecule identifier string of the molecule to copy the data to."]]
+        ["mol_to", "The molecule ID string of the molecule to copy the data to."]]
     copy._doc_desc = """
-        This function will copy all the data associated with a molecule to a second molecule.  This includes residue and spin system information.  The new molecule must not yet exist.
+        This will copy all the data associated with a molecule to a second molecule.  This includes residue and spin system information.  The new molecule name must be unique.
         """
     copy._doc_examples = """
         To copy the molecule data from the molecule 'GST' to the new molecule 'wt-GST', type:
@@ -95,11 +96,12 @@ class Molecule(User_fn_class):
 
     # The function doc info.
     create._doc_title = "Create a new molecule."
+    create._doc_title_new = "New molecule."
     create._doc_args = [
         ["mol_name", "The name of the molecule."],
         ["type", "The type of molecule."]]
     create._doc_desc = """
-        This function will add a new molecule data container to the relax data storage object.  The same molecule name cannot be used more than once.  The molecule type need not be specified. However if it given, it should be one of 'protein', 'RNA', 'DNA', 'organic molecule', 'inorganic molecule', 'other'.
+        This adds a new molecule data container to the relax data storage object.  The same molecule name cannot be used more than once.  The molecule type need not be specified.  However if it given, it should be one of 'protein', 'RNA', 'DNA', 'organic molecule', 'inorganic molecule', 'other'.
         """
     create._doc_examples = """
         To create the molecules 'Ap4Aase', 'ATP', and 'MgF4', type:
@@ -119,7 +121,7 @@ class Molecule(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(mol_id, 'molecule identification string')
+        arg_check.is_str(mol_id, 'molecule ID string')
 
         # Execute the functional code.
         delete_molecule(mol_id=mol_id)
@@ -127,9 +129,9 @@ class Molecule(User_fn_class):
     # The function doc info.
     delete._doc_title = "Delete molecules."
     delete._doc_args = [
-        ["mol_id", "The molecule identifier string."]]
+        ["mol_id", "The molecule ID string."]]
     delete._doc_desc = """
-        This function can be used to delete a single or sets of molecules.
+        This can be used to delete a single or sets of molecules.
         """
     delete._doc_additional = [id_string_doc]
     _build_doc(delete)
@@ -143,15 +145,16 @@ class Molecule(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(mol_id, 'molecule identification string', can_be_none=True)
+        arg_check.is_str(mol_id, 'molecule ID string', can_be_none=True)
 
         # Execute the functional code.
         display_molecule(mol_id=mol_id)
 
     # The function doc info.
     display._doc_title = "Display the molecule information."
+    display._doc_title_short = "Molecule information."
     display._doc_args = [
-        ["mol_id", "The molecule identifier string."]]
+        ["mol_id", "The molecule ID string."]]
     display._doc_additional = [id_string_doc]
     _build_doc(display)
 
@@ -166,7 +169,7 @@ class Molecule(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(mol_id, 'molecule identification string', can_be_none=True)
+        arg_check.is_str(mol_id, 'molecule ID string', can_be_none=True)
         arg_check.is_str(name, 'new molecule name')
         arg_check.is_bool(force, 'force flag')
 
@@ -176,11 +179,11 @@ class Molecule(User_fn_class):
     # The function doc info.
     name._doc_title = "Name a molecule."
     name._doc_args = [
-        ["mol_id", "The molecule identification string corresponding to one or more molecules."],
+        ["mol_id", "The molecule ID string corresponding to one or more molecules."],
         ["name", "The new molecule name."],
         ["force", "A flag which if True will cause the molecule to be renamed."]]
     name._doc_desc = """
-        This function simply allows molecules to be named (or renamed).
+        This simply allows molecules to be named (or renamed).
         """
     name._doc_examples = """
         To rename the molecule 'Ap4Aase' to 'Inhib Ap4Aase', type one of:
@@ -204,7 +207,7 @@ class Molecule(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(mol_id, 'molecule identification string', can_be_none=True)
+        arg_check.is_str(mol_id, 'molecule ID string', can_be_none=True)
         arg_check.is_str(type, 'molecule type')
         arg_check.is_bool(force, 'force flag')
 
@@ -213,29 +216,22 @@ class Molecule(User_fn_class):
 
     # The function doc info.
     type._doc_title = "Set the molecule type."
+    type._doc_title_short = "Set molecule type."
     type._doc_args = [
-        ["mol_id", "The molecule identification string corresponding to one or more molecules."],
+        ["mol_id", "The molecule ID string corresponding to one or more molecules."],
         ["type", "The molecule type."],
         ["force", "A flag which if True will cause the molecule to type to be overwritten."]]
     type._doc_desc = """
-        This function allows the type of the molecule to be specified.  It can be one of:
+        This allows the type of the molecule to be specified.  It can be one of:
 
-            'protein'
-            'organic molecule',
-            'DNA/RNA hybrid',
-            'polydeoxyribonucleotide',
-            'polypeptide(D)',
-            'polypeptide(L)',
-            'polyribonucleotide',
-            'polysaccharide(D)',
-            'polysaccharide(L)',
-            'other'.
         """
+    for name in ALLOWED_MOL_TYPES:
+        type._doc_desc = "%s            '%s'\n" % (type._doc_desc, name) 
     type._doc_examples = """
-        To set the molecule 'Ap4Aase' to the 'polypeptide(L)' type, type one of:
+        To set the molecule 'Ap4Aase' to the 'protein' type, type one of:
 
-        relax> molecule.type('#Ap4Aase', 'polypeptide(L)', True)
-        relax> molecule.type(mol_id='#Ap4Aase', type='polypeptide(L)', force=True)
+        relax> molecule.type('#Ap4Aase', 'protein', True)
+        relax> molecule.type(mol_id='#Ap4Aase', type='protein', force=True)
         """
     type._doc_additional = [id_string_doc]
     _build_doc(type)
