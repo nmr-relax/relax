@@ -157,8 +157,6 @@ class Wiz_page(wx.Panel):
         # Add the specific GUI elements (bounded by spacers).
         main_sizer.AddStretchSpacer()
         self.add_contents(main_sizer)
-        main_sizer.AddStretchSpacer()
-        main_sizer.AddStretchSpacer()
 
 
     def _add_desc(self, sizer, max_y=220):
