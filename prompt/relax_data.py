@@ -244,8 +244,8 @@ class Relax_data(User_fn_class):
     read._doc_title = "Read R1, R2, or NOE relaxation data from a file."
     read._doc_title_short = "Read relaxation data from file."
     read._doc_args = [
-        ["ri_id", "The relaxation data ID string."],
-        ["ri_type", "The relaxation data type, ie 'R1', 'R2', or 'NOE'."],
+        ["ri_id", "The relaxation data ID string.  This must be a unique identifier."],
+        ["ri_type", "The relaxation data type, i.e. 'R1', 'R2', or 'NOE'."],
         ["frq", "The spectrometer frequency in Hz."],
         ["file", "The name of the file containing the relaxation data."],
         ["dir", "The directory where the file is located."],
