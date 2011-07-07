@@ -95,6 +95,7 @@ class Deselect(User_fn_class):
 
     # The function doc info.
     read._doc_title = "Deselect the spins contained in a file."
+    read._doc_title_short = "Deselect spins from file."
     read._doc_args = [
         ["file", "The name of the file containing the list of spins to deselect."],
         ["dir", "The directory where the file is located."],
@@ -112,11 +113,11 @@ class Deselect(User_fn_class):
         ["change_all", "A flag specifying if all other spins should be changed."]
     ]
     read._doc_desc = """
-        The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the mol_name_col, res_num_col, res_name_col, spin_num_col, and/or spin_name_col arguments can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin_id argument can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.
+        The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.
 
         Empty lines and lines beginning with a hash are ignored.
 
-        The 'change_all' flag argument default is False meaning that all spins currently either selected or deselected will remain that way.  Setting the argument to True will cause all spins not specified in the file to be selected.
+        The 'change all' flag default is False meaning that all spins currently either selected or deselected will remain that way.  Setting this to True will cause all spins not specified in the file to be selected.
         """
     read._doc_examples = """
         To deselect all overlapped residues listed with residue numbers in the first column of the
@@ -143,18 +144,19 @@ class Deselect(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
         selection.reverse(spin_id=spin_id)
 
     # The function doc info.
     reverse._doc_title = "Reversal of the spin selection for the given spins."
+    reverse._doc_title_short = "Reversal of spin selection."
     reverse._doc_args = [
-        ["spin_id", "The spin identification string."]
+        ["spin_id", "The spin ID string."]
     ]
     reverse._doc_desc = """
-        By supplying the spin_id argument, a subset of spin can have their selection status reversed.
+        By supplying the spin ID string, a subset of spins can have their selection status reversed.
         """
     reverse._doc_examples = """
         To deselect all currently selected spins and select those which are deselected type:
@@ -173,7 +175,7 @@ class Deselect(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
         arg_check.is_bool(change_all, 'change all')
 
         # Execute the functional code.
@@ -182,11 +184,11 @@ class Deselect(User_fn_class):
     # The function doc info.
     spin._doc_title = "Deselect specific spins."
     spin._doc_args = [
-        ["spin_id", "The spin identification string."],
+        ["spin_id", "The spin ID string."],
         ["change_all", "A flag specifying if all other spins should be changed."]
     ]
     spin._doc_desc = """
-        The 'change_all' flag argument default is False meaning that all spins currently either selected or deselected will remain that way.  Setting the argument to True will cause all spins not specified by 'spin_id' to be selected.
+        The 'change all' flag default is False meaning that all spins currently either selected or deselected will remain that way.  Setting this to True will cause all spins not specified by the spin ID string to be selected.
         """
     spin._doc_examples = """
         To deselect all glycines and alanines, type:
