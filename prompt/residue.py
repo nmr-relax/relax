@@ -54,13 +54,14 @@ class Residue(User_fn_class):
 
     # The function doc info.
     copy._doc_title = "Copy all data associated with a residue."
+    copy._doc_title_short = "Residue copying."
     copy._doc_args = [
         ["pipe_from", "The data pipe containing the residue from which the data will be copied.  This defaults to the current data pipe."],
-        ["res_from", "The residue identifier string of the residue to copy the data from."],
+        ["res_from", "The residue ID string of the residue to copy the data from."],
         ["pipe_to", "The data pipe to copy the data to.  This defaults to the current data pipe."],
-        ["res_to", "The residue identifier string of the residue to copy the data to."]]
+        ["res_to", "The residue ID string of the residue to copy the data to."]]
     copy._doc_desc = """
-        This function will copy all the data associated with the identified residue to the new, non-existent residue.  The new residue must not already exist.
+        This will copy all the data associated with the identified residue to the new, non-existent residue.  The new residue cannot currently exist.
         """
     copy._doc_examples = """
         To copy the residue data from residue 1 to the new residue 2, type:
@@ -101,12 +102,13 @@ class Residue(User_fn_class):
 
     # The function doc info.
     create._doc_title = "Create a new residue."
+    create._doc_title_short = "Residue creation."
     create._doc_args = [
         ["res_num", "The residue number."],
         ["res_name", "The name of the residue."],
         ["mol_name", "The name of the molecule to add the residue to."]]
     create._doc_desc = """
-        Using this function a new sequence can be generated without using the sequence user functions.  However if the sequence already exists, the new residue will be added to the end of the residue list (the residue numbers of this list need not be sequential).  The same residue number cannot be used more than once.  A corresponding single spin system will be created for this residue.  The spin system number and name or additional spin systems can be added later if desired.
+        Using this, a new sequence can be generated without using the sequence user functions.  However if the sequence already exists, the new residue will be added to the end of the residue list (the residue numbers of this list need not be sequential).  The same residue number cannot be used more than once.  A corresponding single spin system will be created for this residue.  The spin system number and name or additional spin systems can be added later if desired.
         """
     create._doc_examples = """
         The following sequence of commands will generate the sequence 1 ALA, 2 GLY, 3 LYS:
@@ -126,17 +128,18 @@ class Residue(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(res_id, 'residue identification string')
+        arg_check.is_str(res_id, 'residue ID string')
 
         # Execute the functional code.
         delete_residue(res_id=res_id)
 
     # The function doc info.
-    delete._doc_title = "Delete residues."
+    delete._doc_title = "Delete residues from the current data pipe."
+    delete._doc_title_short = "Residue deletion."
     delete._doc_args = [
-        ["res_id", "The residue identifier string."]]
+        ["res_id", "The residue ID string."]]
     delete._doc_desc = """
-        This function can be used to delete a single or sets of residues.  See the identification string documentation below for more information.  If spin system/atom ids are included a RelaxError will be raised.
+        This can be used to delete a single or sets of residues.  See the ID string documentation for more information.  If spin system/atom ids are included a RelaxError will be raised.
         """
     delete._doc_additional = [id_string_doc]
     _build_doc(delete)
@@ -150,7 +153,7 @@ class Residue(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(res_id, 'residue identification string', can_be_none=True)
+        arg_check.is_str(res_id, 'residue ID string', can_be_none=True)
 
         # Execute the functional code.
         display_residue(res_id=res_id)
@@ -158,7 +161,7 @@ class Residue(User_fn_class):
     # The function doc info.
     display._doc_title = "Display information about the residue(s)."
     display._doc_args = [
-        ["res_id", "The residue identification string."]]
+        ["res_id", "The residue ID string."]]
     display._doc_additional = [id_string_doc]
     _build_doc(display)
 
@@ -173,7 +176,7 @@ class Residue(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(res_id, 'residue identification string')
+        arg_check.is_str(res_id, 'residue ID string')
         arg_check.is_str(name, 'new residue name')
         arg_check.is_bool(force, 'force flag')
 
@@ -181,9 +184,10 @@ class Residue(User_fn_class):
         name_residue(res_id=res_id, name=name, force=force)
 
      # The function doc info.
-    name._doc_title = "Name residues."
+    name._doc_title = "Name the residues."
+    name._doc_title_short = "Residue naming."
     name._doc_args = [
-        ["res_id", "The residue identification string corresponding to one or more residues."],
+        ["res_id", "The residue ID string corresponding to one or more residues."],
         ["name", "The new name."],
         ["force", "A flag which if True will cause the residue to be renamed."]]
     name._doc_desc = """
@@ -215,7 +219,7 @@ class Residue(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(res_id, 'residue identification string')
+        arg_check.is_str(res_id, 'residue ID string')
         arg_check.is_int(number, 'new residue number')
         arg_check.is_bool(force, 'force flag')
 
@@ -223,13 +227,14 @@ class Residue(User_fn_class):
         number_residue(res_id=res_id, number=number, force=force)
 
     # The function doc info.
-    number._doc_title = "Number residues."
+    number._doc_title = "Number the residues."
+    number._doc_title_short = "Residue numbering."
     number._doc_args = [
-        ["res_id", "The residue identification string corresponding to a single residue."],
+        ["res_id", "The residue ID string corresponding to a single residue."],
         ["number", "The new residue number."],
         ["force", "A flag which if True will cause the residue to be renumbered."]]
     number._doc_desc = """
-        This function simply allows residues to be numbered.  The new number cannot correspond to an existing residue.
+        This simply allows residues to be numbered.  The new number cannot correspond to an existing residue.
         """
     number._doc_examples = """
         The following sequence of commands will renumber the sequence {1 ALA, 2 GLY, 3 LYS} to
