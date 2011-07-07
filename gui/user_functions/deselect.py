@@ -131,7 +131,7 @@ class Read_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The deselection file:", title="Deselection file selection")
+        self.file = self.file_selection(sizer, "The deselection file:", title="Deselection file selection", tooltip=self.uf._doc_args_dict['file'])
 
         # The parameter file settings.
         self.free_file_format(sizer)
@@ -144,7 +144,7 @@ class Read_page(UF_page):
         self.boolean.SetValue('OR')
 
         # The change_all flag.
-        self.change_all = self.boolean_selector(sizer, "Change all:", tooltip="A flag specifying if all other spins should be changed.", default=False)
+        self.change_all = self.boolean_selector(sizer, "Change all:", tooltip=self.uf._doc_args_dict['change_all'], default=False)
 
 
     def on_execute(self):
@@ -227,7 +227,7 @@ class Spin_page(UF_page):
         self.spin_id = self.spin_id_element(sizer)
 
         # The change_all flag.
-        self.change_all = self.boolean_selector(sizer, "Change all:", tooltip="A flag specifying if all other spins should be changed.")
+        self.change_all = self.boolean_selector(sizer, "Change all:", tooltip=self.uf._doc_args_dict['change_all'])
 
 
     def on_execute(self):
