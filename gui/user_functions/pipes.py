@@ -48,8 +48,8 @@ class Pipes(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title='Add a data pipe')
-        page = Add_page(wizard, self.gui, self.interpreter)
+        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('pipe', 'create'))
+        page = Create_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
 
@@ -62,7 +62,7 @@ class Pipes(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title='Copy a data pipe')
+        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('pipe', 'copy'))
         page = Copy_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -76,7 +76,7 @@ class Pipes(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title='Delete a data pipe')
+        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('pipe', 'delete'))
         page = Delete_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -90,44 +90,10 @@ class Pipes(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=650, size_y=450, title='Data pipe switching')
+        wizard = Wiz_window(size_x=650, size_y=450, title=self.get_title('pipe', 'switch'))
         page = Switch_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page, apply_button=False)
         wizard.run()
-
-
-class Add_page(UF_page):
-    """The pipe.create() user function page."""
-
-    # Some class variables.
-    image_path = WIZARD_IMAGE_PATH + 'pipe.png'
-    main_text = 'This dialog allows you to add new data pipes to the relax data store.'
-    title = 'Addition of new data pipes'
-
-
-    def add_contents(self, sizer):
-        """Add the pipe specific GUI elements.
-
-        @param sizer:   A sizer object.
-        @type sizer:    wx.Sizer instance
-        """
-
-        # The pipe name input.
-        self.pipe_name = self.input_field(sizer, "The data pipe name:")
-
-        # The type selection.
-        self.pipe_type = self.combo_box(sizer, "The type of data pipe:", VALID_TYPES)
-
-
-    def on_execute(self):
-        """Execute the user function."""
-
-        # Get the name and type.
-        pipe_name = str(self.pipe_name.GetValue())
-        pipe_type = str(self.pipe_type.GetValue())
-
-        # Set the name.
-        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
 
 
 
@@ -136,9 +102,7 @@ class Copy_page(UF_page):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pipe.png'
-    main_text = 'This dialog allows you to copy data pipes.'
-    title = 'Data pipe copy'
-
+    uf_path = ['pipe', 'copy']
 
     def add_contents(self, sizer):
         """Add the pipe specific GUI elements.
@@ -148,10 +112,10 @@ class Copy_page(UF_page):
         """
 
         # The source pipe.
-        self.pipe_from = self.combo_box(sizer, "The source pipe:", [])
+        self.pipe_from = self.combo_box(sizer, "The source pipe:", [], tooltip=self.uf._doc_args_dict['pipe_from'])
 
         # The destination pipe.
-        self.pipe_to = self.input_field(sizer, "The destination pipe name:")
+        self.pipe_to = self.input_field(sizer, "The destination pipe name:", tooltip=self.uf._doc_args_dict['pipe_to'])
 
 
     def on_display(self):
@@ -180,13 +144,45 @@ class Copy_page(UF_page):
 
 
 
+class Create_page(UF_page):
+    """The pipe.create() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'pipe.png'
+    uf_path = ['pipe', 'create']
+
+    def add_contents(self, sizer):
+        """Add the pipe specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The pipe name input.
+        self.pipe_name = self.input_field(sizer, "The data pipe name:", tooltip=self.uf._doc_args_dict['pipe_name'])
+
+        # The type selection.
+        self.pipe_type = self.combo_box(sizer, "The type of data pipe:", VALID_TYPES, tooltip=self.uf._doc_args_dict['pipe_type'])
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the name and type.
+        pipe_name = str(self.pipe_name.GetValue())
+        pipe_type = str(self.pipe_type.GetValue())
+
+        # Set the name.
+        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
+
+
+
 class Delete_page(UF_page):
     """The pipe.delete() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pipe.png'
-    main_text = 'This dialog allows you to delete data pipes from the relax data store.'
-    title = 'Data pipe deletion'
+    uf_path = ['pipe', 'delete']
 
 
     def add_contents(self, sizer):
@@ -197,7 +193,7 @@ class Delete_page(UF_page):
         """
 
         # The pipe selection.
-        self.pipe_name = self.combo_box(sizer, "The pipe:", [])
+        self.pipe_name = self.combo_box(sizer, "The pipe:", [], tooltip=self.uf._doc_args_dict['pipe_name'])
 
 
     def on_display(self):
@@ -230,9 +226,7 @@ class Switch_page(UF_page):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pipe_switch.png'
-    main_text = 'This dialog allows you to switch between the various data pipes within the relax data store.'
-    title = 'Switch between data pipes'
-
+    uf_path = ['pipe', 'switch']
 
     def add_contents(self, sizer):
         """Add the pipe specific GUI elements.
@@ -245,7 +239,7 @@ class Switch_page(UF_page):
         self.cdp = self.text(sizer, "The current data pipe (cdp):")
 
         # The pipe selection.
-        self.pipe_name = self.combo_box(sizer, "The pipe:", [])
+        self.pipe_name = self.combo_box(sizer, "The pipe:", [], tooltip=self.uf._doc_args_dict['pipe_name'])
 
 
     def on_display(self):
