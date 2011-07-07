@@ -291,6 +291,7 @@ class Structure(User_fn_class):
 
     # The function doc info.
     load_spins._doc_title = "Load spins from the structure into the relax data store."
+    load_spins._doc_title_short = "Load spins from the structure."
     load_spins._doc_args = [
         ["spin_id", "The spin identification string."],
         ["combine_models", "A flag which specifies if spins from separate models should be combined."],
