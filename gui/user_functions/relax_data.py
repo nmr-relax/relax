@@ -48,7 +48,7 @@ class Relax_data(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title='Delete the relaxation data')
+        wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('relax_data', 'delete'))
         page = Delete_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -62,7 +62,7 @@ class Relax_data(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=800, title='Read the relaxation data from a file')
+        wizard = Wiz_window(size_x=1000, size_y=800, title=self.get_title('relax_data', 'read'))
         page = Read_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -74,9 +74,7 @@ class Delete_page(UF_page):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'fid.png'
-    main_text = 'This dialog allows you to delete read relaxation data.'
-    title = 'Relaxation data deletion'
-
+    uf_path = ['relax_data', 'delete']
 
     def add_contents(self, sizer):
         """Add the relaxation data deletion specific GUI elements.
@@ -85,40 +83,33 @@ class Delete_page(UF_page):
         @type sizer:    wx.Sizer instance
         """
 
-        # The data labels.
-        self.ri_label = self.combo_box(sizer, "The relaxation data label:", choices=[])
-        self.frq_label = self.combo_box(sizer, "The frequency label in MHz:", choices=[])
+        # The ID.
+        self.ri_id = self.combo_box(sizer, "The relaxation data ID:", tooltip=self.uf._doc_args_dict['ri_id'])
 
 
     def on_execute(self):
         """Execute the user function."""
 
         # The labels and frq.
-        ri_label = gui_to_str(self.ri_label.GetValue())
-        frq_label = gui_to_str(self.frq_label.GetValue())
+        ri_id = gui_to_str(self.ri_id.GetValue())
 
         # Read the relaxation data.
-        self.interpreter.relax_data.delete(ri_label=ri_label, frq_label=frq_label)
+        self.interpreter.relax_data.delete(ri_id=ri_id)
 
 
     def on_display(self):
         """Clear previous data and update the label lists."""
 
         # Clear the previous data.
-        self.ri_label.Clear()
-        self.frq_label.Clear()
+        self.ri_id.Clear()
 
         # No data, so don't try to fill the combo boxes.
-        if not hasattr(cdp, 'ri_labels'):
+        if not hasattr(cdp, 'ri_ids'):
             return
 
-        # The relaxation data labels.
-        for i in range(len(cdp.ri_labels)):
-            self.ri_label.Append(cdp.ri_labels[i])
-
-        # The frq labels.
-        for i in range(len(cdp.frq_labels)):
-            self.frq_label.Append(cdp.frq_labels[i])
+        # The relaxation data IDs.
+        for i in range(len(cdp.ri_ids)):
+            self.ri_id.Append(cdp.ri_ids[i])
 
 
 
@@ -126,10 +117,9 @@ class Read_page(UF_page):
     """The relax_data.read() user function page."""
 
     # Some class variables.
+    desc_height = 100
     image_path = WIZARD_IMAGE_PATH + 'fid.png'
-    main_text = 'This dialog allows you to read relaxation data from a file.'
-    title = 'Relaxation data reading'
-
+    uf_path = ['relax_data', 'read']
 
     def add_contents(self, sizer):
         """Add the relaxation data reading specific GUI elements.
@@ -139,28 +129,28 @@ class Read_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The relaxation data file:", title="Relaxation data file selection")
+        self.file = self.file_selection(sizer, "The relaxation data file:", title="Relaxation data file selection", tooltip=self.uf._doc_args_dict['file'])
 
-        # The data labels.
-        self.ri_label = self.combo_box(sizer, "The relaxation data label:", choices=['R1', 'R2', 'NOE'], tooltip="This must be a unique identifier.")
-        self.frq_label = self.input_field(sizer, "The frequency label in MHz:", tooltip="This must be a unique identifier.")
+        # The labels.
+        self.ri_id = self.input_field(sizer, "The relaxation data ID:", tooltip=self.uf._doc_args_dict['ri_id'])
+        self.ri_type = self.combo_box(sizer, "The relaxation data type:", choices=['R1', 'R2', 'NOE'], tooltip=self.uf._doc_args_dict['ri_type'])
 
         # The frequency.
-        self.frq = self.input_field(sizer, "The proton frequency in Hz:")
+        self.frq = self.input_field(sizer, "The proton frequency in Hz:", tooltip=self.uf._doc_args_dict['frq'])
 
         # The parameter file settings.
         self.free_file_format(sizer, data_cols=True)
 
         # The spin ID restriction.
-        self.spin_id = self.input_field(sizer, "Restrict data loading to certain spins:", tooltip="This must be a valid spin ID.  Multiple spins can be selected using ranges, the '|' operator, residue ranges, etc.")
+        self.spin_id = self.spin_id_element(sizer, desc="Restrict data loading to certain spins:")
 
 
     def on_execute(self):
         """Execute the user function."""
 
         # The labels and frq.
-        ri_label = gui_to_str(self.ri_label.GetValue())
-        frq_label = gui_to_str(self.frq_label.GetValue())
+        ri_id = gui_to_str(self.ri_id.GetValue())
+        ri_type = gui_to_str(self.ri_type.GetValue())
         frq = gui_to_float(self.frq.GetValue())
 
         # The file name.
@@ -189,4 +179,4 @@ class Read_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the relaxation data.
-        self.interpreter.relax_data.read(ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=err_col, sep=sep, spin_id=spin_id)
+        self.interpreter.relax_data.read(ri_id=ri_id, ri_type=ri_type, frq=frq, file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=err_col, sep=sep, spin_id=spin_id)
