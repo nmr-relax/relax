@@ -82,6 +82,16 @@ def _build_doc(fn):
             fn.__doc__ = fn.__doc__ + '\n' + _build_subtitle(fn._doc_additional[i][0])
             fn.__doc__ = fn.__doc__ + _format_text(fn._doc_additional[i][1])
 
+    # Convert the _doc_args list into a dictionary for easy argument description retrieval.
+    if hasattr(fn, '_doc_args'):
+        # Init.
+        fn._doc_args_dict = {}
+
+        # Loop over the args.
+        for arg, desc in fn._doc_args:
+            fn._doc_args_dict[arg] = desc
+
+
 
 def _build_subtitle(text):
     """Create the formatted subtitle string.
