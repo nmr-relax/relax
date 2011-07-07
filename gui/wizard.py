@@ -487,7 +487,7 @@ class Wiz_page(wx.Panel):
         return combo
 
 
-    def file_selection(self, sizer, desc, title='File selection', default="all files (*.*)|*", tooltip=None):
+    def file_selection(self, sizer, desc, title='File selection', default="all files (*.*)|*", tooltip=None, divider=None, padding=0, spacer=None):
         """Build the file selection element.
 
         @param sizer:       The sizer to put the input field into.
@@ -500,6 +500,12 @@ class Wiz_page(wx.Panel):
         @type default:      str
         @keyword tooltip:   The tooltip which appears on hovering over all the GUI elements.
         @type tooltip:      str
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
         @return:            The file selection GUI element.
         @rtype:             wx.TextCtrl
         """
@@ -507,13 +513,20 @@ class Wiz_page(wx.Panel):
         # Init.
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        # Left padding.
+        sub_sizer.AddSpacer(padding)
+
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
+        # The divider.
+        if not divider:
+            divider = self._div_left
+
         # Spacing.
         x, y = text.GetSize()
-        sub_sizer.AddSpacer((self._div_left - x, 0))
+        sub_sizer.AddSpacer((divider - x, 0))
 
         # The input field.
         field = wx.TextCtrl(self, -1, '')
@@ -526,12 +539,20 @@ class Wiz_page(wx.Panel):
         # The file selection button.
         button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icon_16x16.open, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((27, 27))
-        sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+        sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         self.Bind(wx.EVT_BUTTON, obj.select, button)
 
+        # Right padding.
+        sub_sizer.AddSpacer(padding)
+
         # Add to the main sizer (followed by stretchable spacing).
-        sizer.Add(sub_sizer)
-        sizer.AddStretchSpacer()
+        sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
+
+        # Spacing below the widget.
+        if spacer == None:
+            sizer.AddStretchSpacer()
+        else:
+            sizer.AddSpacer(spacer)
 
         # Tooltip.
         if tooltip:
