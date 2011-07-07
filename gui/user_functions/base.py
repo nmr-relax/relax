@@ -40,12 +40,6 @@ class UF_base:
         self.gui = gui
         self.interpreter = interpreter
 
-        # Specific set up.
-        self.setup()
-
-
-    def setup(self):
-        """Dummy method to be overwritten."""
 
 
 class UF_page(Wiz_page):
