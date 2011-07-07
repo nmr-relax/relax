@@ -832,7 +832,7 @@ class Wiz_page(wx.Panel):
 
 
 
-class Wiz_window(wx.Dialog):
+class Wiz_window(wx.Frame):
     """The wizard."""
 
     # Some class variables.
@@ -851,7 +851,7 @@ class Wiz_window(wx.Dialog):
         self._border = border
 
         # Execute the base class method.
-        wx.Dialog.__init__(self, None, id=-1, title=title, style=style)
+        wx.Frame.__init__(self, None, id=-1, title=title, style=style)
 
         # The sizer for the dialog.
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -1144,10 +1144,7 @@ class Wiz_window(wx.Dialog):
         self._display_page(0)
 
         # Show the wizard.
-        self.ShowModal()
-
-        # Destroy the wizard.
-        self.Destroy()
+        self.Show()
 
         # Return the status.
         return self._status
