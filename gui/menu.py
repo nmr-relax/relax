@@ -228,7 +228,9 @@ class Menu:
             ]],
             [wx.NewId(), "s&cript",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
             [wx.NewId(), "se&quence", paths.icon_16x16.sequence, None, [
-                [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.sequence.read]
+                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.sequence.copy],
+                [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.sequence.read],
+                [wx.NewId(), "&write", paths.icon_16x16.save, self.gui.user_functions.sequence.write]
             ]],
             [wx.NewId(), "se&lect", None, None, [
                 [wx.NewId(), "&all",    None, self.gui.user_functions.select.all],
