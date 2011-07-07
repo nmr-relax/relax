@@ -27,6 +27,7 @@
 from prompt.base_class import _strip_lead
 
 # relax GUI imports.
+from gui.misc import str_to_gui
 from gui.wizard import Wiz_page
 
 
@@ -40,6 +41,40 @@ class UF_base:
         self.gui = gui
         self.interpreter = interpreter
 
+
+    def get_title(self, base=None, fn=None):
+        """Get the title for the wizard window from the user function documentation.
+
+        @keyword base:  The name of the user function base class, if it exists.
+        @type base:     str
+        @keyword fn:    The name of the function of the base class, or the user function itself if there is no base class.
+        @type fn:       str
+        @return:        The title for the window.
+        @rtype:         GUI str
+        """
+
+        # Get the user function class (or function).
+        if base:
+            uf_class = getattr(self.interpreter, base)
+
+        # Get the user function.
+        if base:
+            uf = getattr(uf_class, fn)
+        else:
+            uf = getattr(self.interpreter, fn)
+
+        # The title (default to the short one).
+        if hasattr(uf, '_doc_title_short'):
+            title = uf._doc_title_short
+        else:
+            title = uf._doc_title
+
+        # Remove full stops, if present.
+        if title[-1] == '.':
+            title = title[:-1]
+
+        # Return the title as a GUI string.
+        return str_to_gui(title)
 
 
 class UF_page(Wiz_page):

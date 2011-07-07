@@ -44,7 +44,7 @@ class Deselect(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=300, title='Deselect all spins')
+        wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('deselect', 'all'))
         page = All_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page, apply_button=False)
         wizard.run()
