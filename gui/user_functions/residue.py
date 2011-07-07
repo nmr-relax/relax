@@ -50,7 +50,7 @@ class Residue(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=600, title='Copy a residue')
+        wizard = Wiz_window(size_x=700, size_y=600, title=self.get_title('residue', 'copy'))
         page = Copy_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -66,7 +66,7 @@ class Residue(UF_base):
         """
 
         # Initialise the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title='Add a residue')
+        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('residue', 'create'))
         page = Create_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
@@ -92,7 +92,7 @@ class Residue(UF_base):
         """
 
         # Initialise the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title='Delete a residue')
+        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('residue', 'delete'))
         page = Delete_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
@@ -114,9 +114,7 @@ class Copy_page(UF_page, Mol_res_spin):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'residue.png'
-    main_text = 'This dialog allows you to copy residues.'
-    title = 'Residue copy'
-
+    uf_path = ['residue', 'copy']
 
     def add_contents(self, sizer):
         """Add the residue specific GUI elements.
@@ -126,7 +124,7 @@ class Copy_page(UF_page, Mol_res_spin):
         """
 
         # The source pipe.
-        self.pipe_from = self.combo_box(sizer, "The source data pipe:", evt_fn=self.update_mol_list)
+        self.pipe_from = self.combo_box(sizer, "The source data pipe:", evt_fn=self.update_mol_list, tooltip=self.uf._doc_args_dict['pipe_from'])
 
         # The molecule selection.
         self.mol_from = self.combo_box(sizer, "The source molecule:", evt_fn=self.update_res_list)
@@ -135,7 +133,7 @@ class Copy_page(UF_page, Mol_res_spin):
         self.res_from = self.combo_box(sizer, "The source residue:")
 
         # The destination pipe.
-        self.pipe_to = self.combo_box(sizer, "The destination data pipe name:", evt_fn=self.update_mol_list)
+        self.pipe_to = self.combo_box(sizer, "The destination data pipe name:", tooltip=self.uf._doc_args_dict['pipe_to'], evt_fn=self.update_mol_list)
 
         # The destination molecule name.
         self.mol_to = self.combo_box(sizer, "The destination molecule name:")
@@ -236,9 +234,7 @@ class Create_page(UF_page, Mol_res_spin):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'residue.png'
-    main_text = 'This dialog allows you to add new residues to the relax data store.  The residue will be added to the current data pipe.'
-    title = 'Addition of new residues'
-
+    uf_path = ['residue', 'create']
 
     def add_contents(self, sizer):
         """Add the residue specific GUI elements.
@@ -248,32 +244,32 @@ class Create_page(UF_page, Mol_res_spin):
         """
 
         # Molecule and residue selections.
-        self.mol = self.combo_box(sizer, "The molecule:", [])
+        self.mol_name = self.combo_box(sizer, "The molecule:", [], tooltip=self.uf._doc_args_dict['mol_name'])
 
         # The residue name input.
-        self.res_name = self.input_field(sizer, "The name of the residue:")
+        self.res_name = self.input_field(sizer, "The name of the residue:", tooltip=self.uf._doc_args_dict['res_name'])
 
         # The type selection.
-        self.res_num = self.input_field(sizer, "The residue number:")
+        self.res_num = self.input_field(sizer, "The residue number:", tooltip=self.uf._doc_args_dict['res_num'])
 
 
     def on_display(self):
         """Update the molecule list."""
 
         # Clear the previous data.
-        self.mol.Clear()
+        self.mol_name.Clear()
 
         # The list of molecule names.
         if cdp_name():
             for mol in molecule_loop():
-                self.mol.Append(mol.name)
+                self.mol_name.Append(mol.name)
 
 
     def on_execute(self):
         """Execute the user function."""
 
         # The molecule name.
-        mol_name = str(self.mol.GetValue())
+        mol_name = str(self.mol_name.GetValue())
         if mol_name == '':
             mol_name = None
 
@@ -299,8 +295,7 @@ class Delete_page(UF_page, Mol_res_spin):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'residue.png'
-    main_text = 'This dialog allows you to delete residues from the relax data store.  The residue will be deleted from the current data pipe.'
-    title = 'Residue deletion'
+    uf_path = ['residue', 'delete']
 
     def add_contents(self, sizer):
         """Add the residue specific GUI elements.
