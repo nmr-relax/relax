@@ -40,20 +40,6 @@ from gui.wizard import Wiz_window
 class Pipes(UF_base):
     """The container class for holding all GUI elements."""
 
-    def create(self, event):
-        """The pipe.create user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('pipe', 'create'))
-        page = Create_page(wizard, self.gui, self.interpreter)
-        wizard.add_page(page)
-        wizard.run()
-
-
     def copy(self, event):
         """The pipe.copy user function.
 
@@ -64,6 +50,20 @@ class Pipes(UF_base):
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('pipe', 'copy'))
         page = Copy_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
+        wizard.run()
+
+
+    def create(self, event):
+        """The pipe.create user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('pipe', 'create'))
+        page = Create_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
 
@@ -112,10 +112,10 @@ class Copy_page(UF_page):
         """
 
         # The source pipe.
-        self.pipe_from = self.combo_box(sizer, "The source pipe:", [], tooltip=self.uf._doc_args_dict['pipe_from'])
+        self.pipe_from = self.combo_box(sizer, "Source pipe:", [], tooltip=self.uf._doc_args_dict['pipe_from'])
 
         # The destination pipe.
-        self.pipe_to = self.input_field(sizer, "The destination pipe name:", tooltip=self.uf._doc_args_dict['pipe_to'])
+        self.pipe_to = self.input_field(sizer, "Destination pipe name:", tooltip=self.uf._doc_args_dict['pipe_to'])
 
 
     def on_display(self):
