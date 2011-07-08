@@ -57,7 +57,7 @@ class Analysis_wizard:
         self.wizard.add_page(pipe_page, apply_button=False)
 
         # Execute the wizard.
-        setup = self.wizard.run()
+        setup = self.wizard.run(modal=True)
         if not setup:
             return
 
