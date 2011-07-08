@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -791,7 +791,7 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
         sep = ''
 
     # Open the file.
-    file = open_write_file(file_name=file, dir=dir)
+    file = open_write_file(file_name=file, dir=dir, force=force)
 
     # The spin ID column lengths.
     len_args = [10] * 6
