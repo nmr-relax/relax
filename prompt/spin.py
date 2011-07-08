@@ -54,13 +54,14 @@ class Spin(User_fn_class):
 
     # The function doc info.
     copy._doc_title = "Copy all data associated with a spin."
+    copy._doc_title_short = "Spin copy."
     copy._doc_args = [
         ["pipe_from", "The data pipe containing the spin from which the data will be copied.  This defaults to the current data pipe."],
         ["spin_from", "The spin identifier string of the spin to copy the data from."],
         ["pipe_to", "The data pipe to copy the data to.  This defaults to the current data pipe."],
         ["spin_to", "The spin identifier string of the spin to copy the data to."]]
     copy._doc_desc = """
-        This function will copy all the data associated with the identified spin to the new, non-existent spin.  The new spin must not already exist.
+        This will copy all the data associated with the identified spin to the new, non-existent spin.  The new spin must not already exist.
         """
     copy._doc_examples = """
         To copy the spin data from spin 1 to the new spin 2, type:
@@ -105,6 +106,7 @@ class Spin(User_fn_class):
 
     # The function doc info.
     create._doc_title = "Create a new spin."
+    create._doc_title_short = "Spin creation."
     create._doc_args = [
         ["spin_num", "The spin number."],
         ["spin_name", "The name of the spin."],
@@ -112,7 +114,7 @@ class Spin(User_fn_class):
         ["res_name", "The name of the residue to add the spin to."],
         ["mol_name", "The name of the molecule to add the spin to."]]
     create._doc_desc = """
-        This function will add a new spin data container to the relax data storage object.  The same spin number cannot be used more than once.
+        This will add a new spin data container to the relax data storage object.  The same spin number cannot be used more than once.
         """
     create._doc_examples = """
         The following sequence of commands will generate the sequence 1 C4, 2 C9, 3 C15:
@@ -147,6 +149,7 @@ class Spin(User_fn_class):
 
     # The function doc info.
     create_pseudo._doc_title = "Create a spin system representing a pseudo-atom."
+    create_pseudo._doc_title_short = "Pseudo-atom creation."
     create_pseudo._doc_args = [
         ["spin_name", "The name of the pseudo-atom spin."],
         ["spin_num", "The spin number."],
@@ -155,7 +158,7 @@ class Spin(User_fn_class):
         ["members", "A list of the atoms the pseudo-atom is composed of."],
         ["averaging", "The positional averaging technique."]]
     create_pseudo._doc_desc = """
-        This function will create a spin data container representing a number of pre-existing spin containers as a pseudo-atom.  The optional spin number must not already exist.
+        This will create a spin data container representing a number of pre-existing spin containers as a pseudo-atom.  The optional spin number must not already exist.
         """
     create_pseudo._doc_examples = """
         The following will create the pseudo-atom named 'Q9' consisting of the protons '@H16',
@@ -182,10 +185,11 @@ class Spin(User_fn_class):
 
      # The function doc info.
     delete._doc_title = "Delete spins."
+    delete._doc_title_short = "Spin deletion."
     delete._doc_args = [
         ["spin_id", "The spin identifier string."]]
     delete._doc_desc = """
-        This function can be used to delete a single or sets of spins.  See the identification string documentation below for more information.
+        This can be used to delete a single or sets of spins.  See the identification string documentation below for more information.
         """
     delete._doc_additional = [id_string_doc]
     _build_doc(delete)
@@ -206,6 +210,7 @@ class Spin(User_fn_class):
 
     # The function doc info.
     display._doc_title = "Display information about the spin(s)."
+    display._doc_title_short = "Spin information."
     display._doc_args = [
         ["spin_id", "The spin identification string."]]
     display._doc_additional = [id_string_doc]
@@ -231,6 +236,7 @@ class Spin(User_fn_class):
 
      # The function doc info.
     element._doc_title = "Set the element type of the spin."
+    element._doc_title_short = "Spin element."
     element._doc_args = [
         ["spin_id", "The spin identification string corresponding to one or more spins."],
         ["element", "The IUPAC element name."],
@@ -266,13 +272,14 @@ class Spin(User_fn_class):
         name_spin(spin_id=spin_id, name=name, force=force)
 
      # The function doc info.
-    name._doc_title = "Name spins."
+    name._doc_title = "Name the spins."
+    name._doc_title_short = "Spin naming."
     name._doc_args = [
         ["spin_id", "The spin identification string corresponding to one or more spins."],
         ["name", "The new name."],
         ["force", "A flag which if True will cause the spin to be renamed."]]
     name._doc_desc = """
-        This function simply allows spins to be named (or renamed).
+        This simply allows spins to be named (or renamed).
         """
     name._doc_examples = """
         The following sequence of commands will rename the sequence {1 C1, 2 C2, 3 C3} to {1 C11,
@@ -304,13 +311,14 @@ class Spin(User_fn_class):
         number_spin(spin_id=spin_id, number=number, force=force)
 
     # The function doc info.
-    number._doc_title = "Number spins."
+    number._doc_title = "Number the spins."
+    number._doc_title_short = "Spin numbering."
     number._doc_args = [
         ["spin_id", "The spin identification string corresponding to a single spin."],
         ["number", "The new spin number."],
         ["force", "A flag which if True will cause the spin to be renumbered."]]
     number._doc_desc = """
-        This function simply allows spins to be numbered.  The new number cannot correspond to an existing spin number.
+        This simply allows spins to be numbered.  The new number cannot correspond to an existing spin number.
         """
     number._doc_examples = """
         The following sequence of commands will renumber the sequence {1 C1, 2 C2, 3 C3} to
