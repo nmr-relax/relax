@@ -180,7 +180,7 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_id, 'relaxation label')
+        arg_check.is_str(ri_id, 'relaxation data ID string')
         arg_check.is_str(type, 'peak intensity type')
 
         # Execute the functional code.
@@ -262,8 +262,6 @@ class Relax_data(User_fn_class):
     ]
     read._doc_desc = """
         The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.
-
-        The frequency label can be anything as long as data collected at the same field strength have the same label.
         """
     read._doc_examples = """
         The following commands will read the protein NOE relaxation data collected at 600 MHz out of
@@ -303,7 +301,7 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_id, 'relaxation label')
+        arg_check.is_str(ri_id, 'relaxation data ID string')
         arg_check.is_str(method, 'temperature calibration method')
 
         # Execute the functional code.
@@ -337,7 +335,7 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_id, 'relaxation label')
+        arg_check.is_str(ri_id, 'relaxation data ID string')
         arg_check.is_str(method, 'temperature control method')
 
         # Execute the functional code.
@@ -374,7 +372,7 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(ri_id, 'relaxation label')
+        arg_check.is_str(ri_id, 'relaxation data ID string')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
         arg_check.is_bool(force, 'force flag')
