@@ -53,25 +53,15 @@ class UF_base:
         @rtype:         GUI str
         """
 
-        # Get the user function class (or function).
+        # Prefix.
+        title = 'relax:  '
+
+        # Add the base.
         if base:
-            uf_class = getattr(self.interpreter, base)
+            title = "%s%s." % (title, base)
 
-        # Get the user function.
-        if base:
-            uf = getattr(uf_class, fn)
-        else:
-            uf = getattr(self.interpreter, fn)
-
-        # The title (default to the short one).
-        if hasattr(uf, '_doc_title_short'):
-            title = uf._doc_title_short
-        else:
-            title = uf._doc_title
-
-        # Remove full stops, if present.
-        if title[-1] == '.':
-            title = title[:-1]
+        # Add the function.
+        title = "%s%s" % (title, fn)
 
         # Return the title as a GUI string.
         return str_to_gui(title)
