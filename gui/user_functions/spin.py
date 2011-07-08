@@ -104,7 +104,7 @@ class Spin(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('residue', 'delete'))
+        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('spin', 'delete'))
         page = Delete_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
