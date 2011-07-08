@@ -1042,9 +1042,7 @@ class Relax_fit(API_base, API_common):
 
 
     set_doc = ["Relaxation curve fitting set details", """
-        Only three parameters can be set, the relaxation rate (Rx), the initial intensity (I0), and
-        the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen
-        model is that of the exponential curve which decays to zero.
+        Only three parameters can be set, the relaxation rate (Rx), the initial intensity (I0), and the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen model is that of the exponential curve which decays to zero.
         """]
 
 
