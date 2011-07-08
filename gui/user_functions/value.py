@@ -49,7 +49,7 @@ class Value(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title='Set parameter values')
+        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('value', 'set'))
         page = Set_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -61,9 +61,7 @@ class Set_page(UF_page):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
-    main_text = 'This dialog allows you to set spin specific data values.'
-    title = 'Value setting'
-
+    uf_path = ['value', 'set']
 
     def add_contents(self, sizer):
         """Add the sequence specific GUI elements.
@@ -73,13 +71,13 @@ class Set_page(UF_page):
         """
 
         # The parameter.
-        self.param = self.input_field(sizer, "The parameter:")
+        self.param = self.input_field(sizer, "The parameter:", tooltip=self.uf._doc_args_dict['param'])
 
         # The value.
-        self.value = self.input_field(sizer, "The value:")
+        self.val = self.input_field(sizer, "The value:", tooltip=self.uf._doc_args_dict['val'])
 
         # The spin ID restriction.
-        self.spin_id = self.input_field(sizer, "Restrict data loading to certain spins:", tooltip="This must be a valid spin ID.  Multiple spins can be selected using ranges, the '|' operator, residue ranges, etc.")
+        self.spin_id = self.spin_id_element(sizer, "Restrict data loading to certain spins:")
 
 
     def on_display(self):
@@ -107,10 +105,10 @@ class Set_page(UF_page):
 
         # The parameter and value.
         param = gui_to_str(self.param.GetValue())
-        value = gui_to_str(self.value.GetValue())
+        val = gui_to_str(self.val.GetValue())
 
         # The spin ID.
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Set the value.
-        self.interpreter.value.set(val=value, param=param, spin_id=spin_id)
+        self.interpreter.value.set(val=val, param=param, spin_id=spin_id)
