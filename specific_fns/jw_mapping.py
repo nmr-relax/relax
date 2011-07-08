@@ -259,9 +259,7 @@ class Jw_mapping(API_base, API_common):
         return names
 
 
-    default_value_doc = """
-        Reduced spectral density mapping default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    default_value_doc = ["Reduced spectral density mapping default values", """
         These default values are found in the file 'physical_constants.py'.
 
         _______________________________________________________________________________________
@@ -278,7 +276,7 @@ class Jw_mapping(API_base, API_common):
         | Proton type                           | 'proton_type'      | '1H'                   |
         |_______________________________________|____________________|________________________|
 
-        """
+        """]
 
     def default_value(self, param):
         """The default J(w) mapping parameter values.
@@ -329,10 +327,7 @@ class Jw_mapping(API_base, API_common):
                 spin.select = False
 
 
-    return_data_name_doc = """
-        Reduced spectral density mapping data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    return_data_name_doc = ["Reduced spectral density mapping data type string matching patterns", """
         ____________________________________________________________________________________________
         |                        |                  |                                              |
         | Data type              | Object name      | Patterns                                     |
@@ -353,7 +348,7 @@ class Jw_mapping(API_base, API_common):
         | Proton type            | 'proton_type'    | '^[Pp]roton$'                                |
         |________________________|__________________|______________________________________________|
 
-        """
+        """]
 
     def return_data_name(self, param):
         """Return a unique identifying string for the J(w) mapping parameter.
@@ -457,13 +452,9 @@ class Jw_mapping(API_base, API_common):
             return 'ppm'
 
 
-    set_doc = """
-        Reduced spectral density mapping set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        In reduced spectral density mapping, three values must be set prior to the calculation of
-        spectral density values:  the bond length, CSA, and heteronucleus type.
-        """
+    set_doc = ["Reduced spectral density mapping set details", """
+        In reduced spectral density mapping, three values must be set prior to the calculation of spectral density values:  the bond length, CSA, and heteronucleus type.
+        """]
 
 
     def set_error(self, model_info, index, error):
