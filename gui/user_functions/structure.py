@@ -49,7 +49,7 @@ class Structure(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title='Delete all structural data')
+        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('structure', 'delete'))
         page = Delete_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
@@ -65,7 +65,7 @@ class Structure(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title='Spin loader')
+        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'load_spins'))
         page = Load_spins_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
@@ -81,7 +81,7 @@ class Structure(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title='PDB reader')
+        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'read_pdb'))
         page = Read_pdb_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
@@ -97,7 +97,7 @@ class Structure(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title='PDB writer')
+        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'write_pdb'))
         page = Write_pdb_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
@@ -111,8 +111,6 @@ class Delete_page(UF_page):
 
     # Some class variables.
     uf_path = ['structure', 'delete']
-    title = 'Structure deletion'
-
 
     def add_contents(self, sizer):
         """Add the structure specific GUI elements.
@@ -136,8 +134,6 @@ class Load_spins_page(UF_page):
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'load_spins.png'
     uf_path = ['structure', 'load_spins']
-    title = 'Load spins from structure'
-
 
     def add_contents(self, sizer):
         """Add the structure specific GUI elements.
@@ -150,11 +146,11 @@ class Load_spins_page(UF_page):
         self.spin_id = self.spin_id_element(sizer, default='@N')
 
         # The combine_models arg.
-        self.combine_models = self.combo_box(sizer, "Combine spins of all models:", choices=['True', 'False'], tooltip="The 'combine_models' user function argument:  A flag which specifies if spins from separate models should be combined.")
+        self.combine_models = self.boolean_selector(sizer, "Combine spins of all models:", tooltip=self.uf._doc_args_dict['combine_models'])
         self.combine_models.SetValue('True')
 
         # The ave_pos arg.
-        self.ave_pos = self.combo_box(sizer, "Average the atom position across models:", choices=['True', 'False'], tooltip="The 'ave_pos' user function argument:  A flag specifying if the position of the atom is to be averaged across models.")
+        self.ave_pos = self.boolean_selector(sizer, "Average the atom position across models:", tooltip=self.uf._doc_args_dict['ave_pos'])
         self.ave_pos.SetValue('True')
 
 
@@ -177,8 +173,6 @@ class Read_pdb_page(UF_page):
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'read_pdb.png'
     uf_path = ['structure', 'read_pdb']
-    title = 'PDB loading'
-
 
     def add_contents(self, sizer):
         """Add the structure specific GUI elements.
@@ -188,22 +182,22 @@ class Read_pdb_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The PDB file:", title="PDB file selection")
+        self.file = self.file_selection(sizer, "The PDB file:", title="PDB file selection", tooltip=self.uf._doc_args_dict['file'])
 
         # The read_mol arg.
-        self.read_mol = self.input_field(sizer, "Read molecule number:", tooltip="This is the 'read_mol' user function argument.")
+        self.read_mol = self.input_field(sizer, "Read molecule number:", tooltip=self.uf._doc_args_dict['read_mol'])
 
         # The set_mol_name arg.
-        self.set_mol_name = self.input_field(sizer, "Set the molecule name:", tooltip="This is the 'set_mol_name' user function argument.")
+        self.set_mol_name = self.input_field(sizer, "Set the molecule name:", tooltip=self.uf._doc_args_dict['set_mol_name'])
 
         # The read_model arg.
-        self.read_model = self.input_field(sizer, "Read model number:", tooltip="This is the 'read_model' user function argument.")
+        self.read_model = self.input_field(sizer, "Read model number:", tooltip=self.uf._doc_args_dict['read_model'])
 
         # The set_model_num arg.
-        self.set_model_num = self.input_field(sizer, "Set the model number:", tooltip="This is the 'set_model_num' user function argument.")
+        self.set_model_num = self.input_field(sizer, "Set the model number:", tooltip=self.uf._doc_args_dict['set_model_num'])
 
         # The PDB reader (default to internal).
-        self.parser = self.combo_box(sizer, "The PDB parser:", choices=['internal', 'scientific'], tooltip="This is the 'parser' user function argument.")
+        self.parser = self.combo_box(sizer, "The PDB parser:", choices=['internal', 'scientific'], tooltip=self.uf._doc_args_dict['parser'])
         self.parser.SetValue('internal')
 
 
@@ -229,8 +223,6 @@ class Write_pdb_page(UF_page):
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'write_pdb.png'
     uf_path = ['structure', 'write_pdb']
-    title = 'PDB writing'
-
 
     def add_contents(self, sizer):
         """Add the structure specific GUI elements.
@@ -240,10 +232,10 @@ class Write_pdb_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The PDB file:", title="PDB file selection")
+        self.file = self.file_selection(sizer, "The PDB file:", title="PDB file selection", tooltip=self.uf._doc_args_dict['file'])
 
         # The model_num arg.
-        self.model_num = self.input_field(sizer, "Only write model number:", tooltip="This is the 'model_num' user function argument.")
+        self.model_num = self.input_field(sizer, "Only write model number:", tooltip=self.uf._doc_args_dict['model_num'])
 
 
     def on_execute(self):
