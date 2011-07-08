@@ -43,14 +43,14 @@ class Spin(UF_base):
     """The container class for holding all GUI elements."""
 
     def copy(self, event):
-        """The residue.copy user function.
+        """The spin.copy user function.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=600, title='Copy a spin')
+        wizard = Wiz_window(size_x=700, size_y=600, title=self.get_title('spin', 'copy'))
         page = Copy_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -70,7 +70,7 @@ class Spin(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title='Add a spin')
+        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('spin', 'create'))
         page = Create_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
@@ -104,7 +104,7 @@ class Spin(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title='Delete a spin')
+        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('residue', 'delete'))
         page = Delete_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
 
@@ -130,9 +130,7 @@ class Copy_page(UF_page, Mol_res_spin):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'spin.png'
-    main_text = 'This dialog allows you to copy spin.'
-    title = 'Spin copy'
-
+    uf_path = ['spin', 'copy']
 
     def add_contents(self, sizer):
         """Add the spin specific GUI elements.
@@ -142,7 +140,7 @@ class Copy_page(UF_page, Mol_res_spin):
         """
 
         # The source pipe.
-        self.pipe_from = self.combo_box(sizer, "The source data pipe:", evt_fn=self.update_mol_list)
+        self.pipe_from = self.combo_box(sizer, "The source data pipe:", tooltip=self.uf._doc_args_dict['pipe_from'], evt_fn=self.update_mol_list)
 
         # The molecule selection.
         self.mol_from = self.combo_box(sizer, "The source molecule:", evt_fn=self.update_res_list)
@@ -154,18 +152,17 @@ class Copy_page(UF_page, Mol_res_spin):
         self.spin_from = self.combo_box(sizer, "The source spin:")
 
         # The destination pipe.
-        self.pipe_to = self.combo_box(sizer, "The destination data pipe name:", evt_fn=self.update_mol_list)
+        self.pipe_to = self.combo_box(sizer, "The destination data pipe name:", tooltip=self.uf._doc_args_dict['pipe_to'], evt_fn=self.update_mol_list)
 
         # The destination molecule name.
         self.mol_to = self.combo_box(sizer, "The destination molecule name:")
 
         # The destination residue.
-        self.res_to = self.combo_box(sizer, "The destination residue:")
+        self.res_num_to = self.input_field(sizer, "The new residue number:")
+        self.res_name_to = self.input_field(sizer, "The new residue name:")
 
-        # The new spin number.
+        # The destination spin.
         self.spin_num_to = self.input_field(sizer, "The new spin number:", tooltip='If left blank, the new spin will have the same number as the old.')
-
-        # The new spin name.
         self.spin_name_to = self.input_field(sizer, "The new spin name:", tooltip='If left blank, the new spin will have the same name as the old.')
 
 
@@ -288,8 +285,7 @@ class Create_page(UF_page, Mol_res_spin):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'spin.png'
-    main_text = 'This dialog allows you to add new spins to the relax data store.  The spin will be added to the current data pipe.'
-    title = 'Addition of new spins'
+    uf_path = ['spin', 'create']
 
     def add_contents(self, sizer):
         """Add the spin specific GUI elements.
@@ -303,10 +299,10 @@ class Create_page(UF_page, Mol_res_spin):
         self.res = self.combo_box(sizer, "The residue:", [])
 
         # The spin name input.
-        self.spin_name = self.input_field(sizer, "The name of the spin:")
+        self.spin_name = self.input_field(sizer, "The name of the spin:", tooltip=self.uf._doc_args_dict['spin_name'])
 
         # The type selection.
-        self.spin_num = self.input_field(sizer, "The spin number:")
+        self.spin_num = self.input_field(sizer, "The spin number:", tooltip=self.uf._doc_args_dict['spin_num'])
 
 
     def on_display(self):
@@ -355,9 +351,7 @@ class Delete_page(UF_page, Mol_res_spin):
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'spin.png'
-    main_text = 'This dialog allows you to delete spins from the relax data store.  The spin will be deleted from the current data pipe.'
-    title = 'Spin deletion'
-
+    uf_path = ['spin', 'delete']
 
     def add_contents(self, sizer):
         """Add the spin specific GUI elements.
