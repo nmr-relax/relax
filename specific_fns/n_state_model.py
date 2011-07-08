@@ -1797,10 +1797,7 @@ class N_state_model(API_base, API_common):
         return names
 
 
-    default_value_doc = """
-        N-state model default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    default_value_doc = ["N-state model default values", """
         ______________________________________________________________________________________
         |                             |                             |                        |
         | Data type                   | Object name                 | Value                  |
@@ -1815,13 +1812,10 @@ class N_state_model(API_base, API_common):
         | Euler angle gamma           | 'gamma0', 'gamma1', ...     | (c+1) * pi / (N+1)     |
         |_____________________________|_____________________________|________________________|
 
-        In this table, N is the total number of states and c is the index of a given state ranging
-        from 0 to N-1.  The default probabilities are all set to be equal whereas the angles are
-        given a range of values so that no 2 states are equal at the start of optimisation.
+        In this table, N is the total number of states and c is the index of a given state ranging from 0 to N-1.  The default probabilities are all set to be equal whereas the angles are given a range of values so that no 2 states are equal at the start of optimisation.
 
-        Note that setting the probability for state N will do nothing as it is equal to one minus
-        all the other probabilities.
-        """
+        Note that setting the probability for state N will do nothing as it is equal to one minus all the other probabilities.
+        """]
 
     def default_value(self, param):
         """The default N-state model parameter values.
@@ -2137,10 +2131,7 @@ class N_state_model(API_base, API_common):
         return self._param_num(), self._num_data_points(), cdp.chi2
 
 
-    return_data_name_doc = """
-        N-state model data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    return_data_name_doc = ["N-state model data type string matching patterns", """
         ____________________________________________________________________________________________
         |                        |                             |                                   |
         | Data type              | Object name                 | Patterns                          |
@@ -2161,9 +2152,8 @@ class N_state_model(API_base, API_common):
         | Proton type            | 'proton_type'               | '^[Pp]roton$'                     |
         |________________________|_____________________________|___________________________________|
 
-        The objects corresponding to the object names are lists (or arrays) with each element
-        corrsponding to each state.
-        """
+        The objects corresponding to the object names are lists (or arrays) with each element corrsponding to each state.
+        """]
 
     def return_data_name(self, param):
         """Return a unique identifying string for the N-state model parameter.
@@ -2307,17 +2297,9 @@ class N_state_model(API_base, API_common):
             return 'Hz'
 
 
-    set_doc = """
-        N-state model set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        Setting parameters for the N-state model is a little different from the other type of
-        analyses as each state has a set of parameters with the same names as the other states.
-        To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the
-        last, the number c should be added to the end of the parameter name.  So the Euler angle
-        gamma of the third state is specified using the string 'gamma2'.
-
-        """
+    set_doc = ["N-state model set details", """
+        Setting parameters for the N-state model is a little different from the other type of analyses as each state has a set of parameters with the same names as the other states. To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the last, the number c should be added to the end of the parameter name.  So the Euler angle gamma of the third state is specified using the string 'gamma2'.
+        """]
 
 
     def set_error(self, model_info, index, error):
