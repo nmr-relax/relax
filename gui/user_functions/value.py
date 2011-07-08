@@ -77,7 +77,7 @@ class Set_page(UF_page):
         self.val = self.input_field(sizer, "The value:", tooltip=self.uf._doc_args_dict['val'])
 
         # The spin ID restriction.
-        self.spin_id = self.spin_id_element(sizer, "Restrict data loading to certain spins:")
+        self.spin_id = self.spin_id_element(sizer, "Restrict value setting to certain spins:")
 
 
     def on_display(self):
