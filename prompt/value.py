@@ -62,9 +62,9 @@ class Value(User_fn_class):
     copy._doc_title = "Copy spin specific data values from one data pipe to another."
     copy._doc_title_short = "Value copying."
     copy._doc_args = [
-        pipe_from:  The name of the pipe to copy from.
-        pipe_to:  The name of the pipe to copy to.
-        param:  The parameter to copy.  Only one parameter may be selected.
+        ["pipe_from", "The name of the pipe to copy from."],
+        ["pipe_to", "The name of the pipe to copy to."],
+        ["param", "The parameter to copy.  Only one parameter may be selected."]
     ]
     copy._doc_desc = """
         If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.
@@ -105,7 +105,7 @@ class Value(User_fn_class):
     display._doc_title = "Display spin specific data values."
     display._doc_title_short = "Display values."
     display._doc_args = [
-        param:  The parameter to display.  Only one parameter may be selected.
+        ["param", "The parameter to display.  Only one parameter may be selected."]
     ]
     display._doc_examples = """
         To show all CSA values, type:
@@ -166,20 +166,20 @@ class Value(User_fn_class):
     read._doc_title = "Read spin specific data values from a file."
     read._doc_title_short = "Reading values from file."
     read._doc_args = [
-        param:  The parameter.  Only one parameter may be selected.
-        scaling:  The factor to scale parameters by.
-        file:  The name of the file containing the values.
-        dir:  The directory where the file is located.
-        spin_id_col:  The spin ID string column (an alternative to the mol, res, and spin name and number columns).
-        mol_name_col:  The molecule name column (alternative to the spin_id_col).
-        res_num_col:  The residue number column (alternative to the spin_id_col).
-        res_name_col:  The residue name column (alternative to the spin_id_col).
-        spin_num_col:  The spin number column (alternative to the spin_id_col).
-        spin_name_col:  The spin name column (alternative to the spin_id_col).
-        data_col:  The RDC data column.
-        error_col:  The experimental error column.
-        sep:  The column separator (the default is white space).
-        spin_id:  The spin ID string to restrict the loading of data to certain spin subsets.
+        ["param", "The parameter.  Only one parameter may be selected."],
+        ["scaling", "The factor to scale parameters by."],
+        ["file", "The name of the file containing the values."],
+        ["dir", "The directory where the file is located."],
+        ["spin_id_col", "The spin ID string column (an alternative to the mol, res, and spin name and number columns)."],
+        ["mol_name_col", "The molecule name column (alternative to the spin_id_col)."],
+        ["res_num_col", "The residue number column (alternative to the spin_id_col)."],
+        ["res_name_col", "The residue name column (alternative to the spin_id_col)."],
+        ["spin_num_col", "The spin number column (alternative to the spin_id_col)."],
+        ["spin_name_col", "The spin name column (alternative to the spin_id_col)."],
+        ["data_col", "The RDC data column."],
+        ["error_col", "The experimental error column."],
+        ["sep", "The column separator (the default is white space)."],
+        ["spin_id", "The spin ID string to restrict the loading of data to certain spin subsets."]
     ]
     read._doc_desc = """
         The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.
@@ -242,9 +242,9 @@ class Value(User_fn_class):
     set._doc_title = "Set spin specific data values."
     set._doc_title_short = "Value setting."
     set._doc_args = [
-        val:  The value(s).
-        param:  The parameter(s).
-        spin_id:  The spin identifier.
+        ["val", "The value(s)."],
+        ["param", "The parameter(s)."],
+        ["spin_id", "The spin identifier."]
     ]
     set._doc_desc = """
         If this function is used to change values of previously minimised results, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset to None.
@@ -378,10 +378,10 @@ class Value(User_fn_class):
     write._doc_title = "Write spin specific data values to a file."
     write._doc_title_short = "Value writing."
     write._doc_args = [
-        param:  The parameter.
-        file:  The name of the file.
-        dir:  The directory name.
-        force:  A flag which, if set to True, will cause the file to be overwritten.
+        ["param", "The parameter."],
+        ["file", "The name of the file."],
+        ["dir", "The directory name."],
+        ["force", "A flag which, if set to True, will cause the file to be overwritten."]
     ]
     write._doc_desc = """
         The values corresponding to the given parameter will be written to file.
