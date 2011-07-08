@@ -1203,11 +1203,13 @@ class Wiz_window(wx.Dialog):
                 button.Enable()
 
 
-    def run(self):
+    def run(self, modal=False):
         """Execute the wizard.
 
-        @return:    The status, i.e. True if the wizard is run, False if cancelled or other error occur.
-        @rtype:     bool
+        @keyword modal: A flag which if True will cause the wizard to be run as a modal dialog.
+        @type modal:    bool
+        @return:        The status from the modal operation, i.e. True if the wizard is run, False if cancelled or other error occur.  For modeless operation, this returns nothing.
+        @rtype:         bool or None
         """
 
         # Build the buttons for the entire wizard.
@@ -1216,11 +1218,18 @@ class Wiz_window(wx.Dialog):
         # Display the first page.
         self._display_page(0)
 
-        # Show the wizard.
-        self.ShowModal()
+        # Modal operation.
+        if modal:
+            # Show the wizard.
+            self.ShowModal()
 
-        # Destroy the wizard.
-        self.Destroy()
+            # Destroy the wizard.
+            self.Destroy()
 
-        # Return the status.
-        return self._status
+            # Return the status.
+            return self._status
+
+        # Modeless operation.
+        else:
+            # Show the wizard.
+            self.Show()
