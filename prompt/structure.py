@@ -261,8 +261,9 @@ class Structure(User_fn_class):
 
     # The function doc info.
     delete._doc_title = "Delete all structural information from the current data pipe."
+    delete._doc_title_short = "Structure deletion."
     delete._doc_desc = """
-        This function will delete all the structural information.
+        This will delete all the structural information from the relax data store.
         """
     delete._doc_examples = """
         Simply type:
@@ -297,7 +298,7 @@ class Structure(User_fn_class):
         ["combine_models", "A flag which specifies if spins from separate models should be combined."],
         ["ave_pos", "A flag specifying if the position of the atom is to be averaged across models."]]
     load_spins._doc_desc = """
-        This function allows a sequence to be generated within the relax data store using the atomic information from the structure already associated with this data pipe.  The spin_id string is used to select which molecules, which residues, and which atoms will be recognised as spin systems within relax.  If spin_id is left as None, then all molecules, residues, and atoms will be placed within the data store.
+        This allows a sequence to be generated within the relax data store using the atomic information from the structure already associated with this data pipe.  The spin_id string is used to select which molecules, which residues, and which atoms will be recognised as spin systems within relax.  If spin_id is left as None, then all molecules, residues, and atoms will be placed within the data store.
 
         If the combine_models flag is True, then the spins from only a single structure from the ensemble of models will be taken.  If False, then spins will be loaded for each model.
 
@@ -359,8 +360,8 @@ class Structure(User_fn_class):
         generic_fns.structure.main.read_pdb(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
 
     # The function doc info.
-    read_pdb._doc_title = "Loading structures from PDB files."
-    read_pdb._doc_title_short = "PDB loading."
+    read_pdb._doc_title = "Reading structures from PDB files."
+    read_pdb._doc_title_short = "PDB reading."
     read_pdb._doc_args = [
         ["file", "The name of the PDB file."],
         ["dir", "The directory where the file is located."],
@@ -549,7 +550,8 @@ class Structure(User_fn_class):
         generic_fns.structure.main.write_pdb(file=file, dir=dir, model_num=model_num, force=force)
 
     # The function doc info.
-    write_pdb._doc_title = "The PDB writing function."
+    write_pdb._doc_title = "Writing structures to a PDB file."
+    write_pdb._doc_title_short = "PDB writing."
     write_pdb._doc_args = [["file", "The name of the PDB file."],
                            ["dir", "The directory where the file is located."],
                            ["model_num", "The optional model to place in the PDB file."],
