@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005,2007-2010 Edward d'Auvergne                         #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -165,10 +165,7 @@ class Noe_main:
                 spin.select = False
 
 
-    return_data_name_doc = """
-        NOE calculation data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    return_data_name_doc = ["NOE calculation data type string matching patterns", """
         ____________________________________________________________________________________________
         |                        |              |                                                  |
         | Data type              | Object name  | Patterns                                         |
@@ -181,7 +178,7 @@ class Noe_main:
         | NOE                    | 'noe'        | '^[Nn][Oo][Ee]$'                                 |
         |________________________|______________|__________________________________________________|
 
-        """
+        """]
 
     def return_data_name(self, param):
         """Return a unique identifying string for the steady-state NOE parameter.
