@@ -1345,10 +1345,7 @@ class Model_free_main:
         return names
 
 
-    default_value_doc = """
-        Model-free default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    default_value_doc = ["Model-free default values", """
         _______________________________________________________________________________________
         |                                       |                    |                        |
         | Data type                             | Object name        | Value                  |
@@ -1375,7 +1372,7 @@ class Model_free_main:
         | Proton type                           | 'proton_type'      | '1H'                   |
         |_______________________________________|____________________|________________________|
 
-        """
+        """]
 
     def default_value(self, param):
         """The default model-free parameter values.
@@ -1611,42 +1608,23 @@ class Model_free_main:
             dp_to.mol = deepcopy(dp_from.mol)
 
 
-    eliminate_doc = """
-        Local tm model elimination rule
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        The local tm, in some cases, may exceed the value expected for a global correlation time.
-        Generally the tm value will be stuck at the upper limit defined for the parameter.  These
-        models are eliminated using the rule:
+    eliminate_doc = [["Local tm model elimination rule", """
+        The local tm, in some cases, may exceed the value expected for a global correlation time. Generally the tm value will be stuck at the upper limit defined for the parameter.  These models are eliminated using the rule:
 
             tm >= c
 
-        The default value of c is 50 ns, although this can be overridden by supplying the value (in
-        seconds) as the first element of the args tuple.
-
-
-        Internal correlation times {te, tf, ts} model elimination rules
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        These parameters may experience the same problem as the local tm in that the model fails and
-        the parameter value is stuck at the upper limit.  These parameters are constrained using the
-        formula (te, tf, ts <= 2tm).  These failed models are eliminated using the rule:
+        The default value of c is 50 ns, although this can be overridden by supplying the value (in seconds) as the first element of the args tuple.
+        """],
+        ["Internal correlation times {te, tf, ts} model elimination rules", """
+        These parameters may experience the same problem as the local tm in that the model fails and the parameter value is stuck at the upper limit.  These parameters are constrained using the formula (te, tf, ts <= 2tm).  These failed models are eliminated using the rule:
 
             te, tf, ts >= c . tm
 
-        The default value of c is 1.5.  Because of round-off errors and the constraint algorithm,
-        setting c to 2 will result in no models being eliminated as the minimised parameters will
-        always be less than 2tm.  The value can be changed by supplying the value as the second
-        element of the tuple.
-
-
-        Arguments
-        ~~~~~~~~~
-
-        The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For
-        example, to eliminate models which have a local tm value greater than 25 ns and models with
-        internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).
-        """
+        The default value of c is 1.5.  Because of round-off errors and the constraint algorithm, setting c to 2 will result in no models being eliminated as the minimised parameters will always be less than 2tm.  The value can be changed by supplying the value as the second element of the tuple.
+        """],
+        ["Arguments", """
+        The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For example, to eliminate models which have a local tm value greater than 25 ns and models with internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).
+        """]]
 
     def eliminate(self, name, value, model_info, args, sim=None):
         """Model-free model elimination, parameter by parameter.
@@ -2191,10 +2169,7 @@ class Model_free_main:
         return relax_data.return_data_desc(name)
 
 
-    return_data_name_doc = """
-        Model-free data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    return_data_name_doc = ["Model-free data type string matching patterns", """
         ____________________________________________________________________________________________
         |                        |                  |                                              |
         | Data type              | Object name      | Patterns                                     |
@@ -2225,7 +2200,7 @@ class Model_free_main:
         | Proton type            | 'proton_type'    | '^[Pp]roton$'                                |
         |________________________|__________________|______________________________________________|
 
-        """
+        """]
 
     def return_data_name(self, param):
         """Return a unique identifying string for the model-free parameter.
@@ -2395,17 +2370,10 @@ class Model_free_main:
             return 'ppm'
 
 
-    set_doc = """
-        Model-free set details
-        ~~~~~~~~~~~~~~~~~~~~~~
+    set_doc = ["Model-free set details", """
+        Setting a parameter value may have no effect depending on which model-free model is chosen, for example if S2f values and S2s values are set but the run corresponds to model-free model 'm4' then, because these data values are not parameters of the model, they will have no effect.
 
-        Setting a parameter value may have no effect depending on which model-free model is chosen,
-        for example if S2f values and S2s values are set but the run corresponds to model-free model
-        'm4' then, because these data values are not parameters of the model, they will have no
-        effect.
-
-        Note that the Rex values are scaled quadratically with field strength and should be supplied
-        as a field strength independent value.  Use the following formula to get the correct value:
+        Note that the Rex values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:
 
             value = Rex / (2.0 * pi * frequency) ** 2
 
@@ -2413,7 +2381,7 @@ class Model_free_main:
             Rex is the chemical exchange value for the current frequency.
             pi is in the namespace of relax, ie just type 'pi'.
             frequency is the proton frequency corresponding to the data.
-        """
+        """]
 
 
     def set_error(self, model_info, index, error):
