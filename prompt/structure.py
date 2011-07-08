@@ -35,100 +35,6 @@ class Structure(User_fn_class):
     """Class containing the structural related functions."""
 
     def create_diff_tensor_pdb(self, scale=1.8e-6, file='tensor.pdb', dir=None, force=False):
-        """Create a PDB file to represent the diffusion tensor.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        scale:  Value for scaling the diffusion rates.
-
-        file:  The name of the PDB file.
-
-        dir:  The directory where the file is located.
-
-        force:  A flag which, if set to True, will overwrite the any pre-existing file.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function creates a PDB file containing an artificial geometric structure to represent
-        the diffusion tensor.  A structure must have previously been read into relax.  The diffusion
-        tensor is represented by an ellipsoidal, spheroidal, or spherical geometric object with its
-        origin located at the centre of mass (of the selected residues).  This diffusion tensor PDB
-        file can subsequently read into any molecular viewer.
-
-        There are four different types of residue within the PDB.  The centre of mass of the
-        selected residues is represented as a single carbon atom of the residue 'COM'.  The
-        ellipsoidal geometric shape consists of numerous H atoms of the residue 'TNS'.  The axes
-        of the tensor, when defined, are presented as the residue 'AXS' and consist of carbon atoms:
-        one at the centre of mass and one at the end of each eigenvector.  Finally, if Monte Carlo
-        simulations were run and the diffusion tensor parameters were allowed to vary then there
-        will be multiple 'SIM' residues, one for each simulation.  These are essentially the same as
-        the 'AXS' residue, representing the axes of the simulated tensors, and they will appear as a
-        distribution.
-
-        As the Brownian rotational diffusion tensor is a measure of the rate of rotation about
-        different axes - the larger the geometric object, the faster the diffusion of a molecule.
-        For example the diffusion tensor of a water molecule is much larger than that of a
-        macromolecule.
-
-        The effective global correlation time experienced by an XH bond vector, not to be confused
-        with the Lipari and Szabo parameter tau_e, will be approximately proportional to the
-        component of the diffusion tensor parallel to it.  The approximation is not exact due to the
-        multiexponential form of the correlation function of Brownian rotational diffusion.  If an
-        XH bond vector is parallel to the longest axis of the tensor, it will be unaffected by
-        rotations about that axis, which are the fastest rotations of the molecule, and therefore
-        its effective global correlation time will be maximal.
-
-        To set the size of the diffusion tensor within the PDB frame the unit vectors used to
-        generate the geometric object are first multiplied by the diffusion tensor (which has the
-        units of inverse seconds) then by the scaling factor (which has the units of second
-        Angstroms and has the default value of 1.8e-6 s.Angstrom).  Therefore the rotational
-        diffusion rate per Angstrom is equal the inverse of the scale value (which defaults to
-        5.56e5 s^-1.Angstrom^-1).  Using the default scaling value for spherical diffusion, the
-        correspondence between global correlation time, Diso diffusion rate, and the radius of the
-        sphere for a number of discrete cases will be:
-
-        _________________________________________________
-        |           |               |                   |
-        | tm (ns)   | Diso (s^-1)   | Radius (Angstrom) |
-        |___________|_______________|___________________|
-        |           |               |                   |
-        | 1         | 1.67e8        | 300               |
-        |           |               |                   |
-        | 3         | 5.56e7        | 100               |
-        |           |               |                   |
-        | 10        | 1.67e7        | 30                |
-        |           |               |                   |
-        | 30        | 5.56e6        | 10                |
-        |___________|_______________|___________________|
-
-
-        The scaling value has been fixed to facilitate comparisons within or between publications,
-        but can be changed to vary the size of the tensor geometric object if necessary.  Reporting
-        the rotational diffusion rate per Angstrom within figure legends would be useful.
-
-        To create the tensor PDB representation, a number of algorithms are utilised.  Firstly the
-        centre of mass is calculated for the selected residues and is represented in the PDB by a C
-        atom.  Then the axes of the diffusion are calculated, as unit vectors scaled to the
-        appropriate length (multiplied by the eigenvalue Dx, Dy, Dz, Dpar, Dper, or Diso as well as
-        the scale value), and a C atom placed at the position of this vector plus the centre of
-        mass.  Finally a uniform distribution of vectors on a sphere is generated using spherical
-        coordinates.  By incrementing the polar angle using an arccos distribution, a radial array
-        of vectors representing latitude are created while incrementing the azimuthal angle evenly
-        creates the longitudinal vectors.  These unit vectors, which are distributed within the PDB
-        frame and are of 1 Angstrom in length, are first rotated into the diffusion frame using a
-        rotation matrix (the spherical diffusion tensor is not rotated).  Then they are multiplied
-        by the diffusion tensor matrix to extend the vector out to the correct length, and finally
-        multiplied by the scale value so that the vectors reasonably superimpose onto the
-        macromolecular structure.  The last set of algorithms place all this information into a PDB
-        file.  The distribution of vectors are represented by H atoms and are all connected using
-        PDB CONECT records.  Each H atom is connected to its two neighbours on the both the
-        longitude and latitude.  This creates a geometric PDB object with longitudinal and
-        latitudinal lines.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.create_diff_tensor_pdb("
@@ -147,39 +53,49 @@ class Structure(User_fn_class):
         # Execute the functional code.
         generic_fns.structure.geometric.create_diff_tensor_pdb(scale=scale, file=file, dir=dir, force=force)
 
+    # The function doc info.
+    create_diff_tensor_pdb._doc_title = "Create a PDB file to represent the diffusion tensor."
+    create_diff_tensor_pdb._doc_title_short = "Diffusion tensor PDB file creation."
+    create_diff_tensor_pdb._doc_args = [
+        ["scale", "Value for scaling the diffusion rates."],
+        ["file", "The name of the PDB file."],
+        ["dir", "The directory where the file is located."],
+        ["force", "A flag which, if set to True, will overwrite the any pre-existing file."]
+    ]
+    create_diff_tensor_pdb._doc_desc = """
+        This creates a PDB file containing an artificial geometric structure to represent the diffusion tensor.  A structure must have previously been read into relax.  The diffusion tensor is represented by an ellipsoidal, spheroidal, or spherical geometric object with its origin located at the centre of mass (of the selected residues).  This diffusion tensor PDB file can subsequently read into any molecular viewer.
+
+        There are four different types of residue within the PDB.  The centre of mass of the selected residues is represented as a single carbon atom of the residue 'COM'.  The ellipsoidal geometric shape consists of numerous H atoms of the residue 'TNS'.  The axes of the tensor, when defined, are presented as the residue 'AXS' and consist of carbon atoms: one at the centre of mass and one at the end of each eigenvector.  Finally, if Monte Carlo simulations were run and the diffusion tensor parameters were allowed to vary then there will be multiple 'SIM' residues, one for each simulation.  These are essentially the same as the 'AXS' residue, representing the axes of the simulated tensors, and they will appear as a distribution.
+
+        As the Brownian rotational diffusion tensor is a measure of the rate of rotation about different axes - the larger the geometric object, the faster the diffusion of a molecule. For example the diffusion tensor of a water molecule is much larger than that of a macromolecule.
+
+        The effective global correlation time experienced by an XH bond vector, not to be confused with the Lipari and Szabo parameter tau_e, will be approximately proportional to the component of the diffusion tensor parallel to it.  The approximation is not exact due to the multiexponential form of the correlation function of Brownian rotational diffusion.  If an XH bond vector is parallel to the longest axis of the tensor, it will be unaffected by rotations about that axis, which are the fastest rotations of the molecule, and therefore its effective global correlation time will be maximal.
+
+        To set the size of the diffusion tensor within the PDB frame the unit vectors used to generate the geometric object are first multiplied by the diffusion tensor (which has the units of inverse seconds) then by the scaling factor (which has the units of second Angstroms and has the default value of 1.8e-6 s.Angstrom).  Therefore the rotational diffusion rate per Angstrom is equal the inverse of the scale value (which defaults to 5.56e5 s^-1.Angstrom^-1).  Using the default scaling value for spherical diffusion, the correspondence between global correlation time, Diso diffusion rate, and the radius of the sphere for a number of discrete cases will be:
+
+        _________________________________________________
+        |           |               |                   |
+        | tm (ns)   | Diso (s^-1)   | Radius (Angstrom) |
+        |___________|_______________|___________________|
+        |           |               |                   |
+        | 1         | 1.67e8        | 300               |
+        |           |               |                   |
+        | 3         | 5.56e7        | 100               |
+        |           |               |                   |
+        | 10        | 1.67e7        | 30                |
+        |           |               |                   |
+        | 30        | 5.56e6        | 10                |
+        |___________|_______________|___________________|
+
+
+        The scaling value has been fixed to facilitate comparisons within or between publications, but can be changed to vary the size of the tensor geometric object if necessary.  Reporting the rotational diffusion rate per Angstrom within figure legends would be useful.
+
+        To create the tensor PDB representation, a number of algorithms are utilised.  Firstly the centre of mass is calculated for the selected residues and is represented in the PDB by a C atom.  Then the axes of the diffusion are calculated, as unit vectors scaled to the appropriate length (multiplied by the eigenvalue Dx, Dy, Dz, Dpar, Dper, or Diso as well as the scale value), and a C atom placed at the position of this vector plus the centre of mass.  Finally a uniform distribution of vectors on a sphere is generated using spherical coordinates.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These unit vectors, which are distributed within the PDB frame and are of 1 Angstrom in length, are first rotated into the diffusion frame using a rotation matrix (the spherical diffusion tensor is not rotated).  Then they are multiplied by the diffusion tensor matrix to extend the vector out to the correct length, and finally multiplied by the scale value so that the vectors reasonably superimpose onto the macromolecular structure.  The last set of algorithms place all this information into a PDB file.  The distribution of vectors are represented by H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines.
+        """
+    _build_doc(create_diff_tensor_pdb)
+
 
     def create_vector_dist(self, length=2e-9, file='XH_dist.pdb', dir=None, symmetry=True, force=False):
-        """Create a PDB file representation of the distribution of XH bond vectors.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        length:  The length of the vectors in the PDB representation (meters).
-
-        file:  The name of the PDB file.
-
-        dir:  The directory to place the file into.
-
-        symmetry:  A flag which if True will create a second chain with reversed XH bond
-            orientations.
-
-        force:  A flag which if True will overwrite the file if it already exists.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function creates a PDB file containing an artificial vectors, the length of which
-        default to the length argument of 20 Angstrom.  A structure must have previously been read
-        into relax.  The origin of the vector distribution is located at the centre of mass (of the
-        selected residues).  This vector distribution PDB file can subsequently be read into any
-        molecular viewer.
-
-        Because of the symmetry of the diffusion tensor reversing the orientation of the XH bond
-        vector has no effect.  Therefore by setting the symmetry flag two chains 'A' and 'B' will
-        be added to the PDB file whereby chain 'B' is chain 'A' with the XH bonds reversed.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.create_vector_dist("
@@ -200,41 +116,25 @@ class Structure(User_fn_class):
         # Execute the functional code.
         generic_fns.structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
 
+    # The function doc info.
+    create_vector_dist._doc_title = "Create a PDB file representation of the distribution of XH bond vectors."
+    create_vector_dist._doc_title_short = "XH vector distribution PDB representation."
+    create_vector_dist._doc_args = [
+        ["length", "The length of the vectors in the PDB representation (meters)."],
+        ["file", "The name of the PDB file."],
+        ["dir", "The directory to place the file into."],
+        ["symmetry", "A flag which if True will create a second chain with reversed XH bond orientations."],
+        ["force", "A flag which if True will overwrite the file if it already exists."]
+    ]
+    create_vector_dist._doc_desc = """
+        This creates a PDB file containing an artificial vectors, the length of which default to the length argument of 20 Angstrom.  A structure must have previously been read into relax.  The origin of the vector distribution is located at the centre of mass (of the selected residues).  This vector distribution PDB file can subsequently be read into any molecular viewer.
+
+        Because of the symmetry of the diffusion tensor reversing the orientation of the XH bond vector has no effect.  Therefore by setting the symmetry flag two chains 'A' and 'B' will be added to the PDB file whereby chain 'B' is chain 'A' with the XH bonds reversed.
+        """
+    _build_doc(create_vector_dist)
+
 
     def get_pos(self, spin_id=None, ave_pos=True):
-        """Extract the atomic positions from the loaded structures for the given spins.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        spin_id:  The spin identification string.
-
-        ave_pos:  A flag specifying if the position of the atom is to be averaged across models.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function allows the atomic positions of the spins to be extracted from the loaded
-        structures.  This is automatically performed by the structure.load_spins() user function,
-        but if the sequence information is generated in other ways, this user function allows the
-        structural information to be obtained.
-
-        If the ave_pos flag is True, the average position of all models will be loaded into the spin
-        container.  If False, then the positions from all models will be loaded.
-
-
-        Example
-        ~~~~~~~
-
-        For a model-free backbone amide nitrogen analysis whereby the N spins have already been
-        created, to obtain the backbone N positions from the file '1F3Y.pdb' (which is a single
-        protein), type the following two user functions:
-
-        relax> structure.read_pdb('1F3Y.pdb')
-        relax> structure.get_pos(spin_id='@N')
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.get_pos("
@@ -249,6 +149,28 @@ class Structure(User_fn_class):
         # Execute the functional code.
         generic_fns.structure.main.get_pos(spin_id=spin_id, ave_pos=ave_pos)
 
+    # The function doc info.
+    get_pos._doc_title = "Extract the atomic positions from the loaded structures for the given spins."
+    get_pos._doc_title_short = "Atomic position extraction."
+    get_pos._doc_args = [
+        ["spin_id", "The spin identification string."],
+        ["ave_pos", "A flag specifying if the position of the atom is to be averaged across models."]
+    ]
+    get_pos._doc_desc = """
+        This allows the atomic positions of the spins to be extracted from the loaded structures.  This is automatically performed by the structure.load_spins() user function, but if the sequence information is generated in other ways, this user function allows the structural information to be obtained.
+
+        If averaging the atomic positions, then average position of all models will be loaded into the spin container.  Otherwise the positions from all models will be loaded separately.
+        """
+    get_pos._doc_examples = """
+        For a model-free backbone amide nitrogen analysis whereby the N spins have already been
+        created, to obtain the backbone N positions from the file '1F3Y.pdb' (which is a single
+        protein), type the following two user functions:
+
+        relax> structure.read_pdb('1F3Y.pdb')
+        relax> structure.get_pos(spin_id='@N')
+        """
+    _build_doc(get_pos)
+
 
     def delete(self):
         # Function intro text.
@@ -260,10 +182,10 @@ class Structure(User_fn_class):
         generic_fns.structure.main.delete()
 
     # The function doc info.
-    delete._doc_title = "Delete all structural information from the current data pipe."
+    delete._doc_title = "Delete all structural information."
     delete._doc_title_short = "Structure deletion."
     delete._doc_desc = """
-        This will delete all the structural information from the relax data store.
+        This will delete all the structural information from the current data pipe.  All spin and sequence information loaded from these structures will be preserved - this only affects the structural data.
         """
     delete._doc_examples = """
         Simply type:
@@ -298,11 +220,11 @@ class Structure(User_fn_class):
         ["combine_models", "A flag which specifies if spins from separate models should be combined."],
         ["ave_pos", "A flag specifying if the position of the atom is to be averaged across models."]]
     load_spins._doc_desc = """
-        This allows a sequence to be generated within the relax data store using the atomic information from the structure already associated with this data pipe.  The spin_id string is used to select which molecules, which residues, and which atoms will be recognised as spin systems within relax.  If spin_id is left as None, then all molecules, residues, and atoms will be placed within the data store.
+        This allows a sequence to be generated within the relax data store using the atomic information from the structure already associated with this data pipe.  The spin ID string is used to select which molecules, which residues, and which atoms will be recognised as spin systems within relax.  If the spin ID is left unspecified, then all molecules, residues, and atoms will be placed within the data store (and all atoms will be treated as spins).
 
-        If the combine_models flag is True, then the spins from only a single structure from the ensemble of models will be taken.  If False, then spins will be loaded for each model.
+        If combining models, then the spins from only a single structure from the ensemble of models will be taken.  Otherwise spins will be loaded for each model separately.
 
-        If the ave_pos flag is True, the average position of all models will be loaded into the spin container.  If False, then the positions from all models will be loaded.
+        If averaging the atomic positions, then average position of all models will be loaded into the spin container.  Otherwise the positions from all models will be loaded separately.
         """
     load_spins._doc_examples = """
         For a model-free backbone amide nitrogen analysis, to load just the backbone N sequence from
@@ -365,22 +287,22 @@ class Structure(User_fn_class):
     read_pdb._doc_args = [
         ["file", "The name of the PDB file."],
         ["dir", "The directory where the file is located."],
-        ["read_mol", "If set, only the given molecule(s) will be read."],
-        ["set_mol_name", "Set the names of the read molecules."],
-        ["read_model", "If set, only the given model number(s) from the PDB file will be read."],
-        ["set_model_num", "Set the model numbers of the read molecules."],
+        ["read_mol", "If set, only the given molecule(s) will be read.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If unset, then all molecules will be loaded.  By providing a list of numbers such as [1, 2], multiple molecules will be read."],
+        ["set_mol_name", "Set the names of the read molecules.  If unset, then the molecules will be automatically labelled based on the file name or other information.  This can either be a single name or a list of names."],
+        ["read_model", "If set, only the given model number(s) from the PDB file will be read.  This can be a single number or list of numbers."],
+        ["set_model_num", "Set the model numbers of the loaded molecules.  If unset, then the PDB model numbers will be preserved if they exist.  This can be a single number or list of numbers."],
         ["parser", "The PDB parser used to read the file."]]
     read_pdb._doc_desc = """
-        The reading of PDB files into relax is quite a flexible procedure allowing for both models, defined as an ensemble of the same molecule but with different atomic positions, and different molecules within the same model.  One of more molecules can exist in one or more models.  The flexibility allows PDB models to be converted into different molecules and different PDB files loaded as the same molecule but as different models.  This flexibility is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 'read_model', and 'set_model_num'.
+        The reading of PDB files into relax is quite a flexible procedure allowing for both models, defined as an ensemble of the same molecule but with different atomic positions, and different molecules within the same model.  One of more molecules can exist in one or more models.  The flexibility allows PDB models to be converted into different molecules and different PDB files loaded as the same molecule but as different models.
 
         A few different PDB parsers can be used to read the structural data.  The choice of which to use depends on whether your PDB file is supported by that reader.  These are selected by setting the 'parser' argument to one of:
 
+            'internal' - a fast PDB parser built into relax.
             'scientific' - the Scientific Python PDB parser.
-            'internal' - a lower quality and less reliable, although faster, PDB parser built into relax.
 
         In a PDB file, the models are specified by the MODEL PDB record.  All the supported PDB readers in relax recognise this.  The molecule level is quite different between the Scientific Python and internal readers.  For how Scientific Python defines molecules, please see its documentation.  The internal reader is far simpler as it defines molecules using the TER PDB record.  In both cases, the molecules will be numbered consecutively from 1.
 
-        The 'set_mol_name' argument is used to name the molecules within the PDB (within one model).  If not set, then the molecules will be named after the file name, with the molecule number appended if more than one exists.
+        Setting the molecule name allows the molecule within the PDB (within one model) to have a custom name.  If not set, then the molecules will be named after the file name, with the molecule number appended if more than one exists.
 
         Note that relax will complain if it cannot work out what to do.
         """
@@ -425,52 +347,45 @@ class Structure(User_fn_class):
 
 
     def vectors(self, attached='H', spin_id=None, model=None, verbosity=1, ave=True, unit=True):
-        """Extract and store the bond vectors from the loaded structures in the spin container.
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.vectors("
+            text = text + "attached=" + repr(attached)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", model=" + repr(model)
+            text = text + ", verbosity=" + repr(verbosity)
+            text = text + ", ave=" + repr(ave)
+            text = text + ", unit=" + repr(unit) + ")"
+            print(text)
 
-        Keyword arguments
-        ~~~~~~~~~~~~~~~~~
+        # The argument checks.
+        arg_check.is_str(attached, 'attached atom')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_int(model, 'model', can_be_none=True)
+        arg_check.is_int(verbosity, 'verbosity level')
+        arg_check.is_bool(ave, 'average vector flag')
+        arg_check.is_bool(unit, 'unit vector flag')
 
-        attached:  The name of the second atom which attached to the spin of interest.  Regular
-        expression is allowed, for example 'H*'.
+        # Execute the functional code.
+        generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
 
-        spin_id:  The spin identification string.
+    # The function doc info.
+    vectors._doc_title = "Extract and store the bond vectors from the loaded structures in the spin container."
+    vectors._doc_title_short = "Bond vector extraction."
+    vectors._doc_args = [
+        ["attached", "The name of the second atom which attached to the spin of interest.  Regular expression is allowed, for example 'H*'."],
+        ["spin_id", "The spin identification string."],
+        ["model", "The model to extract bond vectors from (which if set to None will cause the vectors of all models to be extracted)."],
+        ["verbosity", "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."],
+        ["ave", "A flag which if True will cause the bond vectors from all models to be averaged.  If vectors from only one model is extracted, this argument will have no effect."],
+        ["unit", "A flag which if True will cause the unit vector to calculated rather than the full length bond vector."]
+    ]
+    vectors._doc_desc = """
+        For a number of types of analysis, bond vectors or unit bond vectors are required for the calculations.  This user function allows these vectors to be extracted from the loaded structures.  The bond vector will be that from the atom associated with the spin system loaded in relax to the bonded atom specified by the 'attached' argument.  For example if 'attached' is set to 'H' and the protein backbone amide spins 'N' are loaded, the all 'N-H' vectors will be extracted.  But if set to 'CA', all atoms named 'CA' in the structures will be searched for and all 'N-Ca' bond vectors will be extracted.
 
-        model:  The model to extract bond vectors from (which if set to None will cause the vectors
-        of all models to be extracted).
-
-        verbosity:  The amount of information to print to screen.  Zero corresponds to minimal
-        output while higher values increase the amount of output.  The default value is 1.
-
-        ave:  A flag which if True will cause the bond vectors from all models to be averaged.  If
-        vectors from only one model is extracted, this argument will have no effect.
-
-        unit:  A flag which if True will cause the unit vector to calculated rather than the full
-        length bond vector.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        For a number of types of analysis, bond vectors or unit bond vectors are required for the
-        calculations.  This user function allows these vectors to be extracted from the loaded
-        structures.  The bond vector will be that from the atom associated with the spin system
-        loaded in relax to the bonded atom specified by the 'attached' argument.  For example if
-        'attached' is set to 'H' and the protein backbone amide spins 'N' are loaded, the all 'N-H'
-        vectors will be extracted.  But if set to 'CA', all atoms named 'CA' in the structures will
-        be searched for and all 'N-Ca' bond vectors will be extracted.
-
-        The extraction of vectors can occur in a number of ways.  For example if an NMR structure
-        with N models is loaded or if multiple molecules, from any source, of the same compound are
-        loaded as different models, there are three options for extracting the bond vector.  Firstly
-        the bond vector of a single model can be extracted by setting the 'model' argument.
-        Secondly the bond vectors from all models can be extracted if 'model' is None and 'ave' is
-        set to False.  Thirdly, if 'model' is None and 'ave' is set to True, then a single vector
-        which is the average for all models will be calculated.
-
-
-        Example
-        ~~~~~~~
-
+        The extraction of vectors can occur in a number of ways.  For example if an NMR structure with N models is loaded or if multiple molecules, from any source, of the same compound are loaded as different models, there are three options for extracting the bond vector.  Firstly the bond vector of a single model can be extracted by setting the 'model' argument. Secondly the bond vectors from all models can be extracted if 'model' is None and 'ave' is set to False.  Thirdly, if 'model' is None and 'ave' is set to True, then a single vector which is the average for all models will be calculated.
+        """
+    vectors._doc_examples = """
         To extract the XH vectors of the backbone amide nitrogens where in the PDB file the backbone
         nitrogen is called 'N' and the attached atom is called 'H', assuming multiple types of
         spin have already been loaded, type one of:
@@ -506,28 +421,7 @@ class Structure(User_fn_class):
 
         relax> structure.vectors('H*')
         """
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "structure.vectors("
-            text = text + "attached=" + repr(attached)
-            text = text + ", spin_id=" + repr(spin_id)
-            text = text + ", model=" + repr(model)
-            text = text + ", verbosity=" + repr(verbosity)
-            text = text + ", ave=" + repr(ave)
-            text = text + ", unit=" + repr(unit) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(attached, 'attached atom')
-        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        arg_check.is_int(model, 'model', can_be_none=True)
-        arg_check.is_int(verbosity, 'verbosity level')
-        arg_check.is_bool(ave, 'average vector flag')
-        arg_check.is_bool(unit, 'unit vector flag')
-
-        # Execute the functional code.
-        generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
+    _build_doc(vectors)
 
 
     def write_pdb(self, file=None, dir=None, model_num=None, force=False):
@@ -554,10 +448,10 @@ class Structure(User_fn_class):
     write_pdb._doc_title_short = "PDB writing."
     write_pdb._doc_args = [["file", "The name of the PDB file."],
                            ["dir", "The directory where the file is located."],
-                           ["model_num", "The optional model to place in the PDB file."],
-                           ["force", "A flag which, if set to True, will overwrite the any pre-existing file."]]
+                           ["model_num", "Restrict the writing of structural data to a single model in the PDB file."],
+                           ["force", "A flag which if set to True will cause any pre-existing files to be overwritten."]]
     write_pdb._doc_desc = """
-        If the model_num argument is None, then all models will be written to a single file.
+        This will write all of the structural data loaded in the current data pipe to be converted to the PDB format and written to file.  Specifying the model number allows single models to be output.
         """
     write_pdb._doc_examples = """
         To write all models and molecules to the PDB file 'ensemble.pdb' within the directory '~/pdb', type
