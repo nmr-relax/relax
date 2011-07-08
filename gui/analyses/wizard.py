@@ -62,7 +62,7 @@ class Analysis_wizard:
             return
 
         # Get the data.
-        analysis_type = self.wizard.analysis_type
+        analysis_type = gui_to_str(self.wizard.analysis_type)
         analysis_name = gui_to_str(new_page.analysis_name.GetValue())
         pipe_name = gui_to_str(pipe_page.pipe_name.GetValue())
 
