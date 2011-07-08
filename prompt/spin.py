@@ -183,7 +183,7 @@ class Spin(User_fn_class):
         # Execute the functional code.
         delete_spin(spin_id=spin_id)
 
-     # The function doc info.
+    # The function doc info.
     delete._doc_title = "Delete spins."
     delete._doc_title_short = "Spin deletion."
     delete._doc_args = [
@@ -234,7 +234,7 @@ class Spin(User_fn_class):
         # Execute the functional code.
         set_spin_element(spin_id=spin_id, element=element, force=force)
 
-     # The function doc info.
+    # The function doc info.
     element._doc_title = "Set the element type of the spin."
     element._doc_title_short = "Spin element type setting."
     element._doc_args = [
@@ -271,7 +271,7 @@ class Spin(User_fn_class):
         # Execute the functional code.
         name_spin(spin_id=spin_id, name=name, force=force)
 
-     # The function doc info.
+    # The function doc info.
     name._doc_title = "Name the spins."
     name._doc_title_short = "Spin naming."
     name._doc_args = [
