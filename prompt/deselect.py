@@ -95,7 +95,7 @@ class Deselect(User_fn_class):
 
     # The function doc info.
     read._doc_title = "Deselect the spins contained in a file."
-    read._doc_title_short = "Deselect spins from file."
+    read._doc_title_short = "Deselecting spins from file."
     read._doc_args = [
         ["file", "The name of the file containing the list of spins to deselect."],
         ["dir", "The directory where the file is located."],
@@ -151,7 +151,7 @@ class Deselect(User_fn_class):
 
     # The function doc info.
     reverse._doc_title = "Reversal of the spin selection for the given spins."
-    reverse._doc_title_short = "Reversal of spin selection."
+    reverse._doc_title_short = "Spin selection reversal."
     reverse._doc_args = [
         ["spin_id", "The spin ID string."]
     ]

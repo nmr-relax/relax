@@ -291,7 +291,7 @@ class Structure(User_fn_class):
 
     # The function doc info.
     load_spins._doc_title = "Load spins from the structure into the relax data store."
-    load_spins._doc_title_short = "Load spins from the structure."
+    load_spins._doc_title_short = "Loading spins from structure."
     load_spins._doc_args = [
         ["spin_id", "The spin identification string."],
         ["combine_models", "A flag which specifies if spins from separate models should be combined."],
@@ -359,7 +359,8 @@ class Structure(User_fn_class):
         generic_fns.structure.main.read_pdb(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
 
     # The function doc info.
-    read_pdb._doc_title = "The PDB loading function."
+    read_pdb._doc_title = "Loading structures from PDB files."
+    read_pdb._doc_title_short = "PDB loading."
     read_pdb._doc_args = [
         ["file", "The name of the PDB file."],
         ["dir", "The directory where the file is located."],

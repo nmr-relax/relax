@@ -56,7 +56,7 @@ class Pipe(User_fn_class):
 
     # The function doc info.
     copy._doc_title = "Copy a data pipe."
-    copy._doc_title_short = "Pipe copy."
+    copy._doc_title_short = "Data pipe copying."
     copy._doc_args = [
         ["pipe_from", "The name of the source data pipe to copy the data from."],
         ["pipe_to", "The name of the target data pipe to copy the data to."]
@@ -94,7 +94,7 @@ class Pipe(User_fn_class):
 
     # The function doc info.
     create._doc_title = "Add a new data pipe to the relax data store."
-    create._doc_title_short = "Create a data pipe."
+    create._doc_title_short = "Data pipe creation."
     create._doc_args = [
         ["pipe_name", "The name of the data pipe."],
         ["pipe_type", "The type of data pipe."]
@@ -128,7 +128,7 @@ class Pipe(User_fn_class):
 
      # The function doc info.
     current._doc_title = "Print the name of the current data pipe."
-    current._doc_title_short = "The current pipe."
+    current._doc_title_short = "Current data pipe printing."
     current._doc_examples = """
         To run the user function, type:
 
@@ -173,7 +173,7 @@ class Pipe(User_fn_class):
 
     # The function doc info.
     display._doc_title = "Print a list of all the data pipes."
-    display._doc_title_short = "Data pipe list."
+    display._doc_title_short = "Data pipe listing."
     display._doc_examples = """
         To run the user function, type:
 

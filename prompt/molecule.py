@@ -54,7 +54,7 @@ class Molecule(User_fn_class):
 
     # The function doc info.
     copy._doc_title = "Copy all data associated with a molecule."
-    copy._doc_title_short = "Copy a molecule."
+    copy._doc_title_short = "Molecule copying."
     copy._doc_args = [
         ["pipe_from", "The data pipe containing the molecule from which the data will be copied.  This defaults to the current data pipe."],
         ["mol_from", "The name of the molecule from which to copy data from."],
@@ -96,7 +96,7 @@ class Molecule(User_fn_class):
 
     # The function doc info.
     create._doc_title = "Create a new molecule."
-    create._doc_title_short = "New molecule."
+    create._doc_title_short = "Molecule creation."
     create._doc_args = [
         ["mol_name", "The name of the new molecule."],
         ["mol_type", "The type of molecule."]]
@@ -129,8 +129,8 @@ class Molecule(User_fn_class):
         delete_molecule(mol_id=mol_id)
 
     # The function doc info.
-    delete._doc_title = "Molecule deletion."
-    delete._doc_title_short = "Delete molecules."
+    delete._doc_title = "Deleting molecules from the relax data store."
+    delete._doc_title_short = "Molecule deletion."
     delete._doc_args = [
         ["mol_id", "The molecule ID string."]]
     delete._doc_desc = """
@@ -219,7 +219,7 @@ class Molecule(User_fn_class):
 
     # The function doc info.
     type._doc_title = "Set the molecule type."
-    type._doc_title_short = "Set molecule type."
+    type._doc_title_short = "Setting molecule type."
     type._doc_args = [
         ["mol_id", "The molecule ID string corresponding to one or more molecules."],
         ["type", "The molecule type."],

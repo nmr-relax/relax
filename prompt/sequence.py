@@ -108,7 +108,7 @@ class Sequence(User_fn_class):
 
     # The function doc info.
     display._doc_title = "Display sequences of molecules, residues, and/or spins."
-    display._doc_title_short = "Sequence display."
+    display._doc_title_short = "Sequence data display."
     display._doc_args = [
         ["sep", "The column separator (the default of None corresponds to white space)."],
         ["mol_name_flag", "A flag whic if True will cause the molecule name column to be shown."],
@@ -153,7 +153,7 @@ class Sequence(User_fn_class):
 
     # The function doc info.
     read._doc_title = "Read the molecule, residue, and spin sequence from a file."
-    read._doc_title_short = "Read sequence from file."
+    read._doc_title_short = "Sequence data reading."
     read._doc_args = [
         ["file", "The name of the file containing the sequence data."],
         ["dir", "The directory where the file is located."],
@@ -237,7 +237,7 @@ class Sequence(User_fn_class):
 
     # The function doc info.
     write._doc_title = "Write the molecule, residue, and spin sequence to a file."
-    write._doc_title_short = "Write sequence to file."
+    write._doc_title_short = "Sequence data writing."
     write._doc_args = [
         ["file", "The name of the file."],
         ["dir", "The directory name."],

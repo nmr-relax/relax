@@ -131,7 +131,7 @@ class Select(User_fn_class):
 
     # The function doc info.
     read._doc_title = "Select the spins contained in a file."
-    read._doc_title_short = "Select spins from file."
+    read._doc_title_short = "Selecting spins from file."
     read._doc_args = [
         ["file", "The name of the file containing the list of spins to select."],
         ["dir", "The directory where the file is located."],
@@ -187,7 +187,7 @@ class Select(User_fn_class):
 
     # The function doc info.
     reverse._doc_title = "Reversal of the spin selection for the given spins."
-    reverse._doc_title_short = "Reversal of spin selection."
+    reverse._doc_title_short = "Spin selection reversal."
     reverse._doc_args = [
         ["spin_id", "The spin ID string."]
     ]

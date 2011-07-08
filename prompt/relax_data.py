@@ -159,7 +159,7 @@ class Relax_data(User_fn_class):
 
     # The function doc info.
     display._doc_title = "Display the data corresponding to the relaxation data ID string."
-    display._doc_title_short = "Display the relaxation data."
+    display._doc_title_short = "Displaying relaxation data."
     display._doc_args = [
         ["ri_id", "The relaxation data ID string."]
     ]
@@ -188,7 +188,7 @@ class Relax_data(User_fn_class):
 
     # The function doc info.
     peak_intensity_type._doc_title = "Specify the type of peak intensity measurement used - i.e. height or volume."
-    peak_intensity_type._doc_title_short = "Peak intensity type."
+    peak_intensity_type._doc_title_short = "Setting peak intensity type."
     peak_intensity_type._doc_args = [
         ["ri_id", "The relaxation data ID string."],
         ["type", "The peak intensity type."]
@@ -242,7 +242,7 @@ class Relax_data(User_fn_class):
 
     # The function doc info.
     read._doc_title = "Read R1, R2, or NOE relaxation data from a file."
-    read._doc_title_short = "Read relaxation data from file."
+    read._doc_title_short = "Reading relaxation data from file."
     read._doc_args = [
         ["ri_id", "The relaxation data ID string.  This must be a unique identifier."],
         ["ri_type", "The relaxation data type, i.e. 'R1', 'R2', or 'NOE'."],
@@ -311,7 +311,7 @@ class Relax_data(User_fn_class):
 
      # The function doc info.
     temp_calibration._doc_title = "Specify the temperature calibration method used."
-    temp_calibration._doc_title_short = "Temperature calibration method."
+    temp_calibration._doc_title_short = "Setting temperature calibration method."
     temp_calibration._doc_args = [
         ["ri_id", "The relaxation data ID string."],
         ["method", "The calibration method."]
@@ -345,7 +345,7 @@ class Relax_data(User_fn_class):
 
     # The function doc info.
     temp_control._doc_title = "Specify the temperature control method used."
-    temp_control._doc_title_short = "Temperature control method."
+    temp_control._doc_title_short = "Setting temperature control method."
     temp_control._doc_args = [
         ["ri_id", "The relaxation data ID string."],
         ["method", "The control method."]

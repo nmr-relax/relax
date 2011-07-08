@@ -54,7 +54,7 @@ class Spin(User_fn_class):
 
     # The function doc info.
     copy._doc_title = "Copy all data associated with a spin."
-    copy._doc_title_short = "Spin copy."
+    copy._doc_title_short = "Spin copying."
     copy._doc_args = [
         ["pipe_from", "The data pipe containing the spin from which the data will be copied.  This defaults to the current data pipe."],
         ["spin_from", "The spin identifier string of the spin to copy the data from."],
@@ -236,7 +236,7 @@ class Spin(User_fn_class):
 
      # The function doc info.
     element._doc_title = "Set the element type of the spin."
-    element._doc_title_short = "Spin element."
+    element._doc_title_short = "Spin element type setting."
     element._doc_args = [
         ["spin_id", "The spin identification string corresponding to one or more spins."],
         ["element", "The IUPAC element name."],
