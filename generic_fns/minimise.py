@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -280,10 +280,7 @@ def return_conversion_factor(stat_type, spin):
     return 1.0
 
 
-return_data_name_doc = """
-        Minimisation statistic data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+return_data_name_doc = ["Minimisation statistic data type string matching patterns", """
         ____________________________________________________________________________________________
         |                        |              |                                                  |
         | Data type              | Object name  | Patterns                                         |
@@ -299,8 +296,7 @@ return_data_name_doc = """
         |                        |              |                                                  |
         | Hessian call count     | 'h_count'    | '^[Hh].*[ -_][Cc]ount'                           |
         |________________________|______________|__________________________________________________|
-
-"""
+"""]
 
 def return_data_name(name):
     """Return a unique identifying string for the minimisation parameter.
