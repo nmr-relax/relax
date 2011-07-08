@@ -28,10 +28,12 @@ from os import sep
 
 # relax module imports.
 from generic_fns import pipes
+from relax_errors import RelaxImplementError, RelaxNoPipeError
 import specific_fns
 
 # GUI module imports.
 from base import UF_base, UF_page
+from gui.errors import gui_raise
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
@@ -71,7 +73,7 @@ class Set_page(UF_page):
         """
 
         # The parameter.
-        self.param = self.input_field(sizer, "The parameter:", tooltip=self.uf._doc_args_dict['param'])
+        self.param = self.combo_box(sizer, "The parameter:", tooltip=self.uf._doc_args_dict['param'])
 
         # The value.
         self.val = self.input_field(sizer, "The value:", tooltip=self.uf._doc_args_dict['val'])
@@ -83,21 +85,35 @@ class Set_page(UF_page):
     def on_display(self):
         """Fill out the list of parameters and their descriptions."""
 
+        # Check the current data pipe.
+        if cdp == None:
+            gui_raise(RelaxNoPipeError())
+
         # Get the specific functions.
-        data_names = specific_fns.setup.get_specific_fn('data_names', pipes.get_type(), raise_error=False)
-        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', pipes.get_type(), raise_error=False)
+        data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
+        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
+
+        # The data names, if they exist.
+        try:
+            names = data_names(set='params')
+        except RelaxImplementError:
+            gui_raise(RelaxImplementError())
 
         # Loop over the parameters.
-        #for name in data_names(set='params'):
-        #    # Get the description.
-        #    desc = return_data_desc(name)
+        for name in data_names(set='params'):
+            # Get the description.
+            desc = return_data_desc(name)
 
-        #    # No description.
-        #    if not desc:
-        #        desc = name
+            # No description.
+            if not desc:
+                text = name
 
-        #    # Append the description.
-        #    self.param.Append(str_to_gui(desc), name)
+            # The text.
+            else:
+                text = "%s:  %s" % (name, desc)
+
+            # Append the description.
+            self.param.Append(str_to_gui(text), name)
 
 
     def on_execute(self):
