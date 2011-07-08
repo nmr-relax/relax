@@ -36,8 +36,7 @@ def gui_raise(relax_error):
     """
 
     # Show a dialog explaining the error.
-    msg = "RelaxError:  %s" % relax_error.text
-    wx.MessageBox(msg, caption='', style=wx.OK|wx.ICON_ERROR)
+    wx.MessageBox(relax_error.text, caption=relax_error.__class__.__name__, style=wx.OK|wx.ICON_ERROR)
 
     # Throw the error to terminate execution.
     raise relax_error
