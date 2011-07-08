@@ -796,6 +796,11 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
     # The spin ID column lengths.
     len_args = [10] * 6
     for i in range(len(args)):
+        # Different separator.
+        if sep:
+            len_args[i] = 0
+            continue
+
         # Minimum width of the header name lengths.
         if args[i] and len(arg_names[i]) > len_args[i]:
             len_args[i] = len(arg_names[i]) + 2
@@ -806,6 +811,8 @@ def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res
                 len_args[i] = len(repr(args[i][spin_index])) + 1
 
     # Data and error formatting strings.
+    if sep:
+        data_length = ''
     data_head_format = "%%-%ss" % data_length
     if not data_format:
         data_format = "%%%ss" % data_length
