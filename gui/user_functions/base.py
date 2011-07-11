@@ -23,6 +23,10 @@
 # Module docstring.
 """Base class module for the user function GUI elements."""
 
+# Python module imports.
+import wx
+from wx.lib import scrolledpanel
+
 # relax module imports.
 from prompt.base_class import _strip_lead
 
@@ -88,30 +92,20 @@ class UF_page(Wiz_page):
         self.gui = gui
         self.interpreter = interpreter
 
-        # User function path is supplied, so set the main text to the docstring.
-        if self.uf_path != None:
-            # Get the user function class (or function).
-            uf_class = getattr(self.interpreter, self.uf_path[0])
+        # Get the user function class (or function).
+        uf_class = getattr(self.interpreter, self.uf_path[0])
 
-            # Get the user function.
-            if len(self.uf_path) == 1:
-                self.uf = uf_class
-            else:
-                self.uf = getattr(uf_class, self.uf_path[1])
+        # Get the user function.
+        if len(self.uf_path) == 1:
+            self.uf = uf_class
+        else:
+            self.uf = getattr(uf_class, self.uf_path[1])
 
-            # Set the user function title.
-            if hasattr(self.uf, '_doc_title_short'):
-                self.title = self.uf._doc_title_short
-            else:
-                self.title = self.uf._doc_title
-
-            # Set the main text to the description doc.
-            if hasattr(self.uf, '_doc_desc'):
-                self.main_text = self.uf._doc_title + '\n\n' + self._format_text(self.uf._doc_desc)
-
-                # Remove trailing newlines.
-                if self.main_text[-1] == '\n':
-                    self.main_text = self.main_text[:-1]
+        # Set the user function title.
+        if hasattr(self.uf, '_doc_title_short'):
+            self.title = self.uf._doc_title_short
+        else:
+            self.title = self.uf._doc_title
 
         # Execute the base class method.
         super(UF_page, self).__init__(parent)
@@ -145,6 +139,115 @@ class UF_page(Wiz_page):
 
         # Return the text.
         return stripped_text
+
+
+    def add_desc(self, sizer, max_y=220):
+        """Add the description to the dialog.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        @keyword max_y: The maximum height, in number of pixels, for the description.
+        @type max_y:    int
+        """
+
+        # Initialise.
+        spacing = 5
+
+        # A line with spacing.
+        sizer.AddSpacer(5)
+        sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, 0)
+        sizer.AddSpacer(5)
+
+        # Create a scrolled panel.
+        panel = scrolledpanel.ScrolledPanel(self, -1, name="desc")
+
+        # A sizer for the panel.
+        panel_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # Initialise the text elements.
+        text_list = [[self.uf._doc_title, None]]
+        if hasattr(self.uf, '_doc_desc'):
+            text_list[0][1] = self.uf._doc_desc
+
+        # Additional documentation.
+        if hasattr(self.uf, '_doc_additional'):
+            text_list = text_list + self.uf._doc_additional
+
+        # Loop over the elements.
+        tot_x = 0
+        tot_y = 0
+        text_elements = []
+        i = 0
+        for title, desc in text_list:
+            # A new element.
+            text_elements.append([None, None])
+
+            # The title.
+            text_elements[-1][0] = wx.StaticText(panel, -1, title, style=wx.TE_MULTILINE)
+            text_elements[-1][0].SetFont(self.gui.font_subtitle)
+
+            # The description.
+            text_elements[-1][1] = wx.StaticText(panel, -1, desc, style=wx.TE_MULTILINE)
+            text_elements[-1][1].SetFont(self.gui.font_10_modern)
+
+            # Wrap the text.
+            text_elements[-1][0].Wrap(self._main_size - 20)
+            text_elements[-1][1].Wrap(self._main_size - 20)
+
+            # The text size.
+            for j in range(2):
+                x, y = text_elements[-1][j].GetSizeTuple()
+                tot_x += x
+                tot_y += y
+
+            # Size for the spacing.
+            tot_y += spacing
+            if i != 0:
+                tot_y += spacing
+
+            # Increment.
+            i += 1
+
+        # Scrolling needed.
+        if tot_y > max_y-10:
+            # Set the panel size.
+            panel.SetInitialSize((self._main_size, max_y))
+
+        # No scrolling.
+        else:
+            # Rewrap the text.
+            for i in range(len(text_elements)):
+                text_elements[i][0].Wrap(self._main_size)
+                text_elements[i][1].Wrap(self._main_size)
+
+            # Set the panel size.
+            panel.SetInitialSize((tot_x, tot_y))
+
+        # Add the text.
+        for i in range(len(text_elements)):
+            # Initial spacing.
+            if i != 0:
+                panel_sizer.AddSpacer(spacing)
+
+            # The title.
+            panel_sizer.Add(text_elements[i][0], 0, wx.ALIGN_LEFT, 0)
+
+            # Spacer.
+            panel_sizer.AddSpacer(spacing)
+
+            # The description.
+            panel_sizer.Add(text_elements[i][1], 0, wx.ALIGN_LEFT, 0)
+
+        # Set up and add the panel to the sizer.
+        panel.SetSizer(panel_sizer)
+        panel.SetAutoLayout(1)
+        panel.SetupScrolling(scroll_x=False, scroll_y=True)
+        sizer.Add(panel, 0, wx.ALL|wx.EXPAND)
+
+        # A line with spacing.
+        sizer.AddSpacer(5)
+        sizer.Add(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, 0)
+        sizer.AddSpacer(5)
 
 
     def on_completion(self):
