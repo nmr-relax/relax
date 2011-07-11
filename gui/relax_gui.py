@@ -374,6 +374,10 @@ class Main(wx.Frame):
         self.font_14 =          wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
         self.font_title =       wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
 
+        # Modern fixed-width fonts.
+        self.font_8_modern = wx.Font(8, wx.MODERN, wx.NORMAL, wx.NORMAL, 0)
+        self.font_10_modern = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, 0)
+
 
     def show_controller(self, event):
         """Display the relax controller window.
