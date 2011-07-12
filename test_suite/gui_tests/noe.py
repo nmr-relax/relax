@@ -42,7 +42,9 @@ from status import Status; status = Status()
 # relax GUI imports.
 if dep_check.wx_module:
     from gui.relax_gui import Main
-from gui.misc import str_to_gui
+from gui.misc import int_to_gui, str_to_gui
+from gui.user_functions import deselect, sequence
+from gui.wizard import Wiz_window
 
 
 class Noe(GuiTestCase):
@@ -89,12 +91,22 @@ class Noe(GuiTestCase):
         # Change the results directory.
         page.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
-        # The sequence file.
+        # Load the sequence.
+        wizard = Wiz_window(size_x=900, size_y=700)
+        seq_read = sequence.Read_page(wizard, self.gui, self.interpreter)
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
-        page.field_sequence.SetValue(str_to_gui(file))
+        seq_read.file.SetValue(str_to_gui(file))
+        seq_read.mol_name_col.SetValue(int_to_gui(None))
+        seq_read.res_name_col.SetValue(int_to_gui(2))
+        seq_read.res_num_col.SetValue(int_to_gui(1))
+        seq_read.spin_name_col.SetValue(int_to_gui(None))
+        seq_read.spin_num_col.SetValue(int_to_gui(None))
+        seq_read.on_execute()
 
         # Unresolved spins.
-        page.field_unresolved.SetValue(str_to_gui('3'))
+        deselect_spin = deselect.Spin_page(wizard, self.gui, self.interpreter)
+        deselect_spin.spin_id.SetValue(":3")
+        deselect_spin.on_execute()
 
         # The reference spectrum.
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'ref_ave.list'
