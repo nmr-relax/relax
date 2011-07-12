@@ -119,7 +119,7 @@ class Auto_noe(Base_frame):
         self.build_main_box(box_centre)
 
         # Register the method for updating the spin count for the completion of user functions.
-        self.gui.user_functions.register_observer('auto_noe', self.update_spin_count)
+        self.gui.user_functions.register_observer(self.data.pipe_name, self.update_spin_count)
 
 
     def assemble_data(self):
@@ -131,7 +131,7 @@ class Auto_noe(Base_frame):
         @rtype:     class instance, list of str
         """
 
-        # The data container and flag.
+        # The data container.
         data = Container()
         missing = []
 
@@ -260,7 +260,7 @@ class Auto_noe(Base_frame):
         """Unregister the spin count from the user functions."""
 
         # Remove.
-        self.gui.user_functions.unregister_observer('auto_noe')
+        self.gui.user_functions.unregister_observer(self.data.pipe_name)
 
 
     def execute(self, event):
