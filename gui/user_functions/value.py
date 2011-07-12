@@ -51,7 +51,7 @@ class Value(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=900, size_y=600, title=self.get_title('value', 'set'))
+        wizard = Wiz_window(size_x=1000, size_y=800, title=self.get_title('value', 'set'))
         page = Set_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
@@ -64,6 +64,7 @@ class Set_page(UF_page):
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
     uf_path = ['value', 'set']
+    desc_height = 400
 
     def add_contents(self, sizer):
         """Add the sequence specific GUI elements.
