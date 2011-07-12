@@ -36,6 +36,18 @@ from status import Status; status = Status()
 class GuiTestCase(TestCase):
     """The GUI specific test case."""
 
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the TestCase __init__ method.
+        super(GuiTestCase, self).__init__(methodName)
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+        
+
     def check_exceptions(self):
         """Check that no exception has occurred."""
 
@@ -50,8 +62,3 @@ class GuiTestCase(TestCase):
         # No exception.
         except Queue.Empty:
             pass
-
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
