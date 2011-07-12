@@ -53,7 +53,7 @@ class Sequence(User_fn_class):
         # Execute the functional code.
         sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
 
-     # The function doc info.
+    # The function doc info.
     copy._doc_title = "Copy the molecule, residue, and spin sequence data from one data pipe to another."
     copy._doc_title_short = "Sequence data copying."
     copy._doc_args = [

@@ -183,7 +183,7 @@ class Residue(User_fn_class):
         # Execute the functional code.
         name_residue(res_id=res_id, name=name, force=force)
 
-     # The function doc info.
+    # The function doc info.
     name._doc_title = "Name the residues."
     name._doc_title_short = "Residue naming."
     name._doc_args = [

@@ -86,7 +86,7 @@ class Relax_data(User_fn_class):
         # Execute the functional code.
         relax_data.copy(pipe_from=pipe_from, pipe_to=pipe_to, ri_id=ri_id)
 
-     # The function doc info.
+    # The function doc info.
     copy._doc_title = "Copy relaxation data from one pipe to another."
     copy._doc_title_short = "Relaxation data copying."
     copy._doc_args = [
@@ -127,7 +127,7 @@ class Relax_data(User_fn_class):
         # Execute the functional code.
         relax_data.delete(ri_id=ri_id)
 
-     # The function doc info.
+    # The function doc info.
     delete._doc_title = "Delete the data corresponding to the relaxation data ID string."
     delete._doc_title_short = "Relaxation data deletion."
     delete._doc_args = [
@@ -307,7 +307,7 @@ class Relax_data(User_fn_class):
         # Execute the functional code.
         relax_data.temp_calibration(ri_id=ri_id, method=method)
 
-     # The function doc info.
+    # The function doc info.
     temp_calibration._doc_title = "Specify the temperature calibration method used."
     temp_calibration._doc_title_short = "Setting temperature calibration method."
     temp_calibration._doc_args = [

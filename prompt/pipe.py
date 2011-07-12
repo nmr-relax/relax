@@ -126,7 +126,7 @@ class Pipe(User_fn_class):
         # Execute the functional code.
         pipes.current()
 
-     # The function doc info.
+    # The function doc info.
     current._doc_title = "Print the name of the current data pipe."
     current._doc_title_short = "Current data pipe printing."
     current._doc_examples = """
