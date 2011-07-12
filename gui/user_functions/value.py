@@ -51,7 +51,7 @@ class Value(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('value', 'set'))
+        wizard = Wiz_window(size_x=900, size_y=600, title=self.get_title('value', 'set'))
         page = Set_page(wizard, self.gui, self.interpreter)
         wizard.add_page(page)
         wizard.run()
