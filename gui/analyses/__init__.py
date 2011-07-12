@@ -40,7 +40,7 @@ from gui.analyses.auto_r1 import Auto_r1
 from gui.analyses.auto_r2 import Auto_r2
 from gui.analyses.results import Results_viewer
 from gui.analyses.wizard import Analysis_wizard
-from gui.message import question
+from gui.message import error_message, question
 
 
 # The package contents.
@@ -305,6 +305,9 @@ class Analysis_controller:
             self.notebook = wx.Notebook(self.gui, -1, style=wx.NB_TOP)
             sizer.Add(self.notebook, 1, wx.ALL|wx.EXPAND, 0)
 
+            # Bind changing events.
+            self.gui.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.on_page_change)
+
             # Delete the previous sizer.
             old_sizer = self.gui.GetSizer()
             old_sizer.DeleteWindows()
@@ -346,6 +349,26 @@ class Analysis_controller:
 
         # Reset the main window layout.
         self.gui.Layout()
+
+
+    def on_page_change(self, event):
+        """Handle page changes.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Execution lock.
+        if status.exec_lock.locked():
+            # Show an error message.
+            error_message("Cannot change analyses, relax is currently executing.", "relax execution lock")
+
+            # Veto the event, and return.
+            event.Veto()
+            return
+
+        # Normal operation.
+        event.Skip()
 
 
     def show_results_viewer(self, event):
