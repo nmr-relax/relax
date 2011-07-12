@@ -36,6 +36,7 @@ from relax_data import Relax_data
 from script import Script
 from select import Select
 from sequence import Sequence
+from spectrum import Spectrum
 from spin import Spin
 from structure import Structure
 from value import Value
@@ -51,6 +52,7 @@ __all__ = ['base',
            'script',
            'select',
            'sequence',
+           'spectrum',
            'spin',
            'structure',
            'value']
@@ -82,6 +84,7 @@ class User_functions:
         self.script = Script(self.gui, self.interpreter)
         self.select = Select(self.gui, self.interpreter)
         self.sequence = Sequence(self.gui, self.interpreter)
+        self.spectrum = Spectrum(self.gui, self.interpreter)
         self.spin = Spin(self.gui, self.interpreter)
         self.structure = Structure(self.gui, self.interpreter)
         self.value = Value(self.gui, self.interpreter)
@@ -101,6 +104,7 @@ class User_functions:
         self.relax_data.destroy()
         self.select.destroy()
         self.sequence.destroy()
+        self.spectrum.destroy()
         self.spin.destroy()
         self.structure.destroy()
         self.value.destroy()

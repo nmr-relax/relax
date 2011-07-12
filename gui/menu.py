@@ -238,6 +238,13 @@ class Menu:
                 [wx.NewId(), "re&verse", None, self.gui.user_functions.select.reverse],
                 [wx.NewId(), "&spin", None, self.gui.user_functions.select.spin],
             ]],
+            [wx.NewId(), "s&pectrum", None, None, [
+                [wx.NewId(), "&baseplane_rmsd", None, self.gui.user_functions.spectrum.baseplane_rmsd],
+                [wx.NewId(), "&error_analysis", None, self.gui.user_functions.spectrum.error_analysis],
+                [wx.NewId(), "&integration_points", None, self.gui.user_functions.spectrum.integration_points],
+                [wx.NewId(), "&read_intensities", paths.icon_16x16.open, self.gui.user_functions.spectrum.read_intensities],
+                [wx.NewId(), "&replicated", None, self.gui.user_functions.spectrum.replicated]
+            ]],
             [wx.NewId(), "&spin", paths.icon_16x16.spin, None, [
                 [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.spin.copy],
                 [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.spin.create],
