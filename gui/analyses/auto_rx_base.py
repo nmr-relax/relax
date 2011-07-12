@@ -26,7 +26,7 @@
 
 # Python module imports.
 from os import sep
-from string import replace
+from string import lower, replace
 import sys
 import time
 import wx
@@ -46,7 +46,7 @@ from gui.controller import Redirect_text
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir
 from gui.message import error_message, missing_data
-from gui.misc import add_border
+from gui.misc import add_border, gui_to_str, str_to_gui
 from gui import paths
 from gui.settings import load_sequence
 
@@ -94,6 +94,10 @@ class Auto_rx(Base_frame):
             ds.relax_gui.analyses[data_index].ncyc = []
             ds.relax_gui.analyses[data_index].relax_times = []
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
+            ds.relax_gui.analyses[data_index].results_list = []
+
+            # Create the data pipe.
+            self.gui.user_functions.interpreter.pipe.create(pipe_name, 'relax_fit')
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
@@ -111,6 +115,9 @@ class Auto_rx(Base_frame):
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
         self.build_main_box(box_centre)
+
+        # Register the method for updating the spin count for the completion of user functions.
+        self.gui.user_functions.register_observer(self.data.pipe_name, self.update_spin_count)
 
 
     def assemble_data(self):
@@ -215,19 +222,13 @@ class Auto_rx(Base_frame):
         self.add_title(box, "Setup for %s relaxation analysis" % self.label)
 
         # Add the frequency selection GUI element.
-        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str(self.data.frq))
+        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', %s values will be located in the file '%s.600.out'." % (self.label, lower(self.label)))
 
         # Add the results directory GUI element.
         self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
-        # Add the sequence file selection GUI element.
-        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str(self.gui.sequence_file_msg), fn=self.load_sequence, editable=False, button=True)
-
-        # Add the structure file selection GUI element.
-        self.field_structure = self.add_text_sel_element(box, self.parent, text="Sequence from PDB structure file", default=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, fn='open_file', editable=False, button=True)
-
-        # Add the unresolved spins GUI element.
-        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues")
+        # Add the spin GUI element.
+        self.add_spin_systems(box, self.parent)
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(10)
@@ -241,6 +242,13 @@ class Auto_rx(Base_frame):
         return box
 
 
+    def delete(self):
+        """Unregister the spin count from the user functions."""
+
+        # Remove.
+        self.gui.user_functions.unregister_observer(self.data.pipe_name)
+
+
     def execute(self, event):
         """Set up, execute, and process the automatic Rx analysis.
 
@@ -252,6 +260,7 @@ class Auto_rx(Base_frame):
         status = Status()
         if status.exec_lock.locked():
             error_message("relax is currently executing.", "relax execution lock")
+            event.Skip()
             return
 
         # Synchronise the frame data to the relax data store.
@@ -277,6 +286,20 @@ class Auto_rx(Base_frame):
         # Start the thread.
         self.thread = Execute_rx(self.gui, data, self.data_index, thread=thread)
         self.thread.start()
+
+        # Terminate the event.
+        event.Skip()
+
+
+    def launch_spin_editor(self, event):
+        """The spin editor GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Show the molecule, residue, and spin tree window.
+        self.gui.show_tree(None)
 
 
     def load_sequence(self, event):
@@ -332,35 +355,15 @@ class Auto_rx(Base_frame):
 
         # The frequency.
         if upload:
-            self.data.frq = str(self.field_nmr_frq.GetValue())
-        elif hasattr(self.data, 'frq'):
-            self.field_nmr_frq.SetValue(str(self.data.frq))
+            self.data.frq = gui_to_str(self.field_nmr_frq.GetValue())
+        else:
+            self.field_nmr_frq.SetValue(str_to_gui(self.data.frq))
 
         # The results directory.
         if upload:
-            self.data.save_dir = str(self.field_results_dir.GetValue())
-        elif hasattr(self.data, 'save_dir'):
-            self.field_results_dir.SetValue(str(self.data.save_dir))
-
-        # The sequence file.
-        if upload:
-            file = str(self.field_sequence.GetValue())
-            if file != self.gui.sequence_file_msg:
-                self.data.sequence_file = str(self.field_sequence.GetValue())
-        elif hasattr(self.data, 'sequence_file'):
-            self.field_sequence.SetValue(str(self.data.sequence_file))
-
-        # The structure file.
-        if upload:
-            self.data.structure_file = str(self.field_structure.GetValue())
-        elif hasattr(self.data, 'structure_file'):
-            self.field_structure.SetValue(str(self.data.structure_file))
-
-        # Unresolved residues.
-        if upload:
-            self.data.unresolved = str(self.field_unresolved.GetValue())
-        elif hasattr(self.data, 'unresolved'):
-            self.field_unresolved.SetValue(str(self.data.unresolved))
+            self.data.save_dir = gui_to_str(self.field_results_dir.GetValue())
+        else:
+            self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
 
         # The peak lists and relaxation times.
         self.peak_intensity.sync_ds(upload)
