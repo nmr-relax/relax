@@ -302,13 +302,13 @@ class Spectrum(User_fn_class):
         spectrum.replicated(spectrum_ids=spectrum_ids)
 
     # The function doc info.
-    replicated._doc_title = "Specify which spectra are replicates."
+    replicated._doc_title = "Specify which spectra are replicates of each other."
     replicated._doc_title_short = "Replicate spectra."
     replicated._doc_args = [
         ["spectrum_ids", "The list of replicated spectra ID strings."]
     ]
     replicated._doc_desc = """
-        This is used to identify which loaded spectra are replicates of each other.  This is very important for error analysis.
+        This is used to identify which of the loaded spectra are replicates of each other.  Specifying the replicates is essential for error analysis if the baseplane RMSD has not been supplied.
         """
     replicated._doc_examples = """
         To specify that the NOE spectra labelled 'ref1', 'ref2', and 'ref3' are the same spectrum
