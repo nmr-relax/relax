@@ -29,6 +29,7 @@ from traceback import print_exception
 from unittest import TestCase
 
 # relax module imports.
+from prompt.interpreter import Interpreter
 from status import Status; status = Status()
 
 
@@ -49,3 +50,8 @@ class GuiTestCase(TestCase):
         # No exception.
         except Queue.Empty:
             pass
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
