@@ -24,6 +24,8 @@
 """Base class module for the user function GUI elements."""
 
 # Python module imports.
+from re import search
+from string import split
 import wx
 from wx.lib import scrolledpanel
 
@@ -165,40 +167,43 @@ class UF_page(Wiz_page):
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Initialise the text elements.
-        text_list = [[self.uf._doc_title, None]]
+        text_list = []
+
+        # The description.
         if hasattr(self.uf, '_doc_desc'):
-            text_list[0][1] = self.uf._doc_desc
+            for element, type in self.process_doc([self.uf._doc_title, self.uf._doc_desc]):
+                text_list.append([element, type])
 
         # Additional documentation.
         if hasattr(self.uf, '_doc_additional'):
-            text_list = text_list + self.uf._doc_additional
+            for i in range(len(self.uf._doc_additional)):
+                for element, type in self.process_doc(self.uf._doc_additional[i]):
+                    text_list.append([element, type])
 
         # Loop over the elements.
         tot_x = 0
         tot_y = 0
         text_elements = []
         i = 0
-        for title, desc in text_list:
-            # A new element.
-            text_elements.append([None, None])
+        for text, type in text_list:
+            # The text.
+            text_elements.append(wx.StaticText(panel, -1, text, style=wx.TE_MULTILINE))
 
-            # The title.
-            text_elements[-1][0] = wx.StaticText(panel, -1, title, style=wx.TE_MULTILINE)
-            text_elements[-1][0].SetFont(self.gui.font_subtitle)
-
-            # The description.
-            text_elements[-1][1] = wx.StaticText(panel, -1, desc, style=wx.TE_MULTILINE)
-            text_elements[-1][1].SetFont(self.gui.font_10_modern)
+            # Format.
+            if type == 'title':
+                text_elements[-1].SetFont(self.gui.font_subtitle)
+            elif type == 'desc':
+                text_elements[-1].SetFont(self.gui.font_normal)
+            elif type == 'table':
+                text_elements[-1].SetFont(self.gui.font_8_modern)
 
             # Wrap the text.
-            text_elements[-1][0].Wrap(self._main_size - 20)
-            text_elements[-1][1].Wrap(self._main_size - 20)
+            text_elements[-1].Wrap(self._main_size - 20)
 
             # The text size.
-            for j in range(2):
-                x, y = text_elements[-1][j].GetSizeTuple()
-                tot_x += x
-                tot_y += y
+            x, y = text_elements[-1].GetSizeTuple()
+            tot_x += x
+            tot_y += y
 
             # Size for the spacing.
             tot_y += spacing
@@ -217,8 +222,7 @@ class UF_page(Wiz_page):
         else:
             # Rewrap the text.
             for i in range(len(text_elements)):
-                text_elements[i][0].Wrap(self._main_size)
-                text_elements[i][1].Wrap(self._main_size)
+                text_elements[i].Wrap(self._main_size)
 
             # Set the panel size.
             panel.SetInitialSize((tot_x, tot_y))
@@ -229,14 +233,12 @@ class UF_page(Wiz_page):
             if i != 0:
                 panel_sizer.AddSpacer(spacing)
 
-            # The title.
-            panel_sizer.Add(text_elements[i][0], 0, wx.ALIGN_LEFT, 0)
+            # The text.
+            panel_sizer.Add(text_elements[i], 0, wx.ALIGN_LEFT, 0)
 
-            # Spacer.
-            panel_sizer.AddSpacer(spacing)
-
-            # The description.
-            panel_sizer.Add(text_elements[i][1], 0, wx.ALIGN_LEFT, 0)
+            # Spacer after titles.
+            if text_list[i][1] == 'title':
+                panel_sizer.AddSpacer(spacing)
 
         # Set up and add the panel to the sizer.
         panel.SetSizer(panel_sizer)
@@ -255,3 +257,43 @@ class UF_page(Wiz_page):
 
         # Notify.
         self.gui.user_functions.notify_observers()
+
+
+    def process_doc(self, doc):
+        """Process the documentation list.
+
+        @param doc:     The documentation in the form of a list of the title and description.
+        @type doc:      list of str
+        """
+
+        # The title.
+        yield doc[0], 'title'
+
+        # Split up the description.
+        docstring_lines = split(doc[1], "\n")
+
+        # Initialise.
+        text = [""]
+        type = ['desc']
+        in_table = False
+
+        # Loop over the lines of the docstring.
+        for line in docstring_lines:
+            # Start of the table.
+            if not in_table and search('___', line):
+                in_table = True
+                text.append("")
+                type.append("table")
+
+            # Add the line to the text.
+            text[-1] = "%s%s\n" % (text[-1], line)
+
+            # End of the table.
+            if in_table and search('^\\|_', line):
+                in_table = False
+                text.append("")
+                type.append("desc")
+
+        # Yield the bits.
+        for i in range(len(text)):
+            yield text[i], type[i]
