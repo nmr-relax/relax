@@ -47,7 +47,7 @@ from gui.controller import Redirect_text
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir, openfile
 from gui.message import error_message, missing_data
-from gui.misc import add_border, gui_to_str, str_to_gui
+from gui.misc import add_border, gui_to_str, protected_exec, str_to_gui
 from gui import paths
 from gui.settings import load_sequence
 
