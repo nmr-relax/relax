@@ -30,11 +30,8 @@ from relax_errors import RelaxError
 class Observer(object):
     """The observer design pattern base class."""
 
-    def __init__(self):
-        """Set up the object."""
-
-        # The dictionary of callback methods.
-        self._callback = {}
+    # The dictionary of callback methods.
+    _callback = {}
 
 
     def notify_observers(self):
