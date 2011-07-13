@@ -67,6 +67,7 @@ class Peak_intensity:
         self.parent = parent
         self.data = data
         self.label = label
+        self.fn_add = fn_add
 
         # GUI variables.
         self.spacing = 5
@@ -85,6 +86,9 @@ class Peak_intensity:
 
         # Add a border.
         box_centre = add_border(sub_sizer, border=self.border)
+
+        # Add buttons.
+        self.add_buttons(box_centre)
 
         # Add the grid.
         box_centre.AddSpacer(self.spacing)
@@ -122,42 +126,20 @@ class Peak_intensity:
         @type box:      wx.BoxSizer instance
         """
 
+        # A panel for the buttons (to allow for tooltips).
+        panel = wx.Panel(self.parent, -1)
+        sizer.Add(panel, 0, 0, 0)
+
         # Button Sizer
-        button_sizer = wx.BoxSizer(wx.VERTICAL)
+        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        panel.SetSizer(button_sizer)
 
-        # Add peaklist button
-        add_pkl = wx.BitmapButton(self.parent, -1, bitmap=wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
-        add_pkl.SetMinSize((50, 50))
-        self.gui.Bind(wx.EVT_BUTTON, self.load_peaklist, add_pkl)
-        button_sizer.Add(add_pkl, 0, wx.ADJUST_MINSIZE, 0)
-
-        # Add VD list import
-        if self.label =='R1':
-            add_vd = wx.Button(self.parent, -1, "+VD")
-            add_vd.SetToolTipString("Add VD (variable delay) list to automatically fill in R1 relaxation times.")
-            add_vd.SetMinSize((50, 50))
-            self.gui.Bind(wx.EVT_BUTTON, self.load_delay, add_vd)
-            button_sizer.Add(add_vd, 0, wx.ADJUST_MINSIZE, 0)
-
-        # Add Vc list import
-        if self.label =='R2':
-            add_vc = wx.Button(self.parent, -1, "+VC")
-            add_vc.SetToolTipString("Add VC (variable counter) list to automatically fill in R2 relaxation times.")
-            add_vc.SetMinSize((50, 50))
-            button_sizer.Add(add_vc, 0, wx.ADJUST_MINSIZE, 0)
-
-            # Time of counter
-            self.vc_time = wx.TextCtrl(self.parent, -1, "0")
-            self.vc_time.SetToolTipString("Time of counter loop in seconds.")
-            self.vc_time.SetMinSize((50, 20))
-            self.vc_time.SetFont(wx.Font(7, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-            button_sizer.Add(self.vc_time, 0, 0 ,0)
-
-            # Action of Button
-            self.gui.Bind(wx.EVT_BUTTON, lambda event, vc=True: self.load_delay(event, vc), add_vc)
-
-        # Pack buttons
-        sizer.Add(button_sizer, 0, 0, 0)
+        # Add button.
+        button = wx.BitmapButton(panel, -1, bitmap=wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
+        button.SetMinSize((60, 40))
+        button_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        self.gui.Bind(wx.EVT_BUTTON, self.fn_add, button)
+        button.SetToolTipString("Read a peak intensity file.")
 
 
     def add_grid(self, sizer):
