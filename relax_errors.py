@@ -36,10 +36,6 @@ from sys import stderr
 import time
 from types import ClassType
 
-# relax module imports
-from status import Status; status = Status()
-
-
 # Text variables.
 BIN = 'a binary number (0 or 1)'
 BOOL = 'a Boolean (True or False)'
@@ -102,6 +98,7 @@ class BaseError(Exception):
         """Modify the behaviour of the error system."""
 
         # Save the state if debugging is turned on.
+        from status import Status; status = Status()
         if status.debug:
             save_state()
 
