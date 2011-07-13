@@ -27,7 +27,7 @@
 from relax_errors import RelaxError
 
 
-class Observer:
+class Observer(object):
     """The observer design pattern base class."""
 
     def __init__(self):
