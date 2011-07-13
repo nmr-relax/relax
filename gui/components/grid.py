@@ -205,7 +205,7 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
 
 
 
-class Peak_intensity:
+class Grid_base:
     """The peak list selection class."""
 
     # Class variables.
