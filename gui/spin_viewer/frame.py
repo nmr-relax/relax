@@ -29,6 +29,7 @@ import wx
 
 # relax module imports.
 from generic_fns.pipes import cdp_name, pipe_names
+from status import Status; status = Status()
 
 # GUI module imports.
 from gui import paths
@@ -126,8 +127,12 @@ class Spin_view_window(wx.Frame):
         @type show:     bool
         """
 
-        # Add the refresh function to the user function subject object.
-        self.gui.user_functions.register_observer('spin_view_refresh', self.refresh)
+        # Initialise observer name.
+        self.name = 'spin view refresh'
+
+        # Register a few methods in the observer objects.
+        self.gui.user_functions.register_observer(self.name, self.refresh)
+        status.observers.pipe_switch.register_observer(self.name, self.refresh)
 
         # First update.
         self.refresh()
@@ -160,8 +165,9 @@ class Spin_view_window(wx.Frame):
         @type event:    wx event
         """
 
-        # Remove the refresh function from the user function subject object.
-        self.gui.user_functions.unregister_observer('spin_view_refresh')
+        # Unregister the methods from the observers to avoid unnecessary updating.
+        self.gui.user_functions.unregister_observer(self.name)
+        status.observers.pipe_switch.unregister_observer(self.name)
 
         # Close the window.
         self.Hide()
