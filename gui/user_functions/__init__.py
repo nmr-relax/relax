@@ -24,7 +24,6 @@
 """User function GUI elements."""
 
 # relax module imports.
-from status import Observer
 from relax_errors import RelaxError
 
 # GUI module imports.
@@ -58,7 +57,7 @@ __all__ = ['base',
            'value']
 
 
-class User_functions(Observer):
+class User_functions:
     """Container for all the user function GUI elements.
 
     This uses the observer design pattern to allow for GUI updates upon completion of a user function.
@@ -69,9 +68,6 @@ class User_functions(Observer):
 
         # Store the args.
         self.gui = gui
-
-        # Execute the observer base class module __init__() method.
-        super(User_functions, self).__init__()
 
         # The user functions.
         self.deselect = Deselect(self.gui)

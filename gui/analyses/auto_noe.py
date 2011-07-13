@@ -89,8 +89,7 @@ class Auto_noe(Base_frame):
         # New data container.
         if data_index == None:
             # First create the data pipe (if this fails, then no data is set up).
-            status = protected_exec(self.gui.interpreter.pipe.create, pipe_name, 'noe')
-            if not status:
+            if not protected_exec(self.gui.interpreter.pipe.create, pipe_name, 'noe'):
                 self.init_flag = False
                 return
 
@@ -124,7 +123,7 @@ class Auto_noe(Base_frame):
         self.build_main_box(box_centre)
 
         # Register the method for updating the spin count for the completion of user functions.
-        self.gui.user_functions.register_observer(self.data.pipe_name, self.update_spin_count)
+        status.observers.uf_gui.register_observer(self.data.pipe_name, self.update_spin_count)
 
 
     def assemble_data(self):
@@ -243,7 +242,7 @@ class Auto_noe(Base_frame):
         """Unregister the spin count from the user functions."""
 
         # Remove.
-        self.gui.user_functions.unregister_observer(self.data.pipe_name)
+        status.observers.uf_gui.unregister_observer(self.data.pipe_name)
 
 
     def execute(self, event):

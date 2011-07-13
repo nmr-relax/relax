@@ -31,6 +31,7 @@ import wx
 from generic_fns.selection import is_mol_selected, is_res_selected, is_spin_selected
 from generic_fns.mol_res_spin import get_molecule_ids, get_residue_ids, get_spin_ids, molecule_loop, residue_loop, spin_loop
 from generic_fns.pipes import get_pipe
+from status import Status; status = Status()
 
 # GUI module imports.
 from gui import paths
@@ -205,7 +206,7 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.interpreter.molecule.delete(gui_to_str(self.info['id']))
 
         # Notify all observers that a user function has completed.
-        self.gui.user_functions.notify_observers()
+        status.observers.uf_gui.notify_observers()
 
 
     def delete_residue(self, event):
@@ -224,7 +225,7 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.interpreter.residue.delete(gui_to_str(self.info['id']))
 
         # Notify all observers that a user function has completed.
-        self.gui.user_functions.notify_observers()
+        status.observers.uf_gui.notify_observers()
 
 
     def delete_spin(self, event):
@@ -243,7 +244,7 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.interpreter.spin.delete(gui_to_str(self.info['id']))
 
         # Notify all observers that a user function has completed.
-        self.gui.user_functions.notify_observers()
+        status.observers.uf_gui.notify_observers()
 
 
     def deselect_molecule(self, event):
@@ -262,7 +263,7 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
-        self.gui.user_functions.notify_observers()
+        status.observers.uf_gui.notify_observers()
 
 
     def deselect_residue(self, event):
@@ -281,7 +282,7 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
-        self.gui.user_functions.notify_observers()
+        status.observers.uf_gui.notify_observers()
 
 
     def deselect_spin(self, event):
@@ -295,7 +296,7 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
-        self.gui.user_functions.notify_observers()
+        status.observers.uf_gui.notify_observers()
 
 
     def get_info(self):
@@ -510,7 +511,7 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
-        self.gui.user_functions.notify_observers()
+        status.observers.uf_gui.notify_observers()
 
 
     def select_residue(self, event):
@@ -529,7 +530,7 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
-        self.gui.user_functions.notify_observers()
+        status.observers.uf_gui.notify_observers()
 
 
     def select_spin(self, event):
@@ -543,7 +544,7 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
-        self.gui.user_functions.notify_observers()
+        status.observers.uf_gui.notify_observers()
 
 
     def set_bitmap_mol(self, mol_branch_id, select=True):
