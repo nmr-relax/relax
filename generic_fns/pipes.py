@@ -30,6 +30,7 @@ import __builtin__
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn, scipy_module
+from observer import Observer
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 
 
@@ -139,6 +140,10 @@ def delete(pipe_name=None):
         if ds.current_pipe == pipe:
             ds.current_pipe = None
             __builtin__.cdp = None
+
+            # Register the switch.
+            switch_obj = Pipe_switch_observer()
+            switch_obj.notify_observers()
 
 
 def display():
@@ -257,6 +262,10 @@ def switch(pipe_name=None):
     ds.current_pipe = pipe_name
     __builtin__.cdp = get_pipe()
 
+    # Register the switch.
+    switch_obj = Pipe_switch_observer()
+    switch_obj.notify_observers()
+
 
 def test(pipe_name=None):
     """Function for testing the existence of the current or supplied data pipe.
@@ -280,3 +289,20 @@ def test(pipe_name=None):
     if pipe_name not in ds:
         raise RelaxNoPipeError(pipe_name)
 
+
+
+class Pipe_switch_observer(Observer):
+    """Observer and singleton object for pipe switches."""
+
+    # Class variable for storing the class instance.
+    instance = None
+
+    def __new__(self, *args, **kargs):
+        """Replacement function for implementing the singleton design pattern."""
+
+        # First initialisation.
+        if self.instance is None:
+            self.instance = dict.__new__(self, *args, **kargs)
+
+        # Already initialised, so return the instance.
+        return self.instance
