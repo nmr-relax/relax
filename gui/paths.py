@@ -109,6 +109,7 @@ class I22x22:
         # Oxygen icons.
         path = OXY_ICON_PATH + '22x22' + sep
         self.about =                path + 'actions'    + sep + 'help-about.png'
+        self.add =                  path + 'actions'    + sep + 'list-add-relax-blue.png'
         self.apply =                path + 'actions'    + sep + 'dialog-ok-apply.png'
         self.cancel =               path + 'actions'    + sep + 'dialog-cancel.png'
         self.close =                path + 'actions'    + sep + 'dialog-close.png'
@@ -127,7 +128,6 @@ class I22x22:
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
-        self.add =                      path + 'actions' + sep + 'list-add-relax-blue.png'
         self.molecule =                 path + 'molecule.png'
         self.molecule_grey =            path + 'molecule_grey.png'
         self.molecule_unfolded =        path + 'molecule_unfolded.png'
