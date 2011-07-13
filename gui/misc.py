@@ -32,6 +32,9 @@ import wx
 # relax module imports.
 from relax_errors import AllRelaxErrors
 
+# relax GUI module imports.
+from gui.message import error_message
+
 
 def add_border(box, border=0, packing=wx.VERTICAL):
     """Create the main part of the frame, returning the central sizer.
