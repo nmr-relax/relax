@@ -30,6 +30,7 @@ from wx.lib import buttons
 
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins
+from generic_fns.pipes import cdp_name
 
 # relax GUI module imports.
 from gui import paths
@@ -480,8 +481,14 @@ class Base_frame:
         @rtype:     str
         """
 
+        # The data pipe.
+        if hasattr(self.data, 'pipe_name'):
+            pipe = self.data.pipe_name
+        else:
+            pipe = cdp_name()
+
         # The count.
-        num = count_spins()
+        num = count_spins(pipe=pipe)
 
         # Return the formatted string.
         return "%s spins loaded and selected" % num

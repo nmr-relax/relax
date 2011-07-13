@@ -166,17 +166,7 @@ class Analysis_controller:
 
         # No more analyses, so in the initial state.
         if self._num_analyses == 0:
-            # Reset the flag.
-            self.init_state = True
-            self._current = None
-
-            # Delete the previous sizer.
-            old_sizer = self.gui.GetSizer()
-            old_sizer.DeleteWindows()
-
-            # Recreate the start screen.
-            self.gui.add_start_screen()
-
+            self.set_init_state()
 
     def get_page_from_name(self, name):
         """Return the page corresponding to the given name.
@@ -316,9 +306,6 @@ class Analysis_controller:
             self.gui.SetSizer(sizer)
             sizer.Layout()
 
-            # Set the flag.
-            self.init_state = False
-
         # The analysis classes.
         classes = {'noe': Auto_noe,
                    'r1':  Auto_r1,
@@ -333,7 +320,19 @@ class Analysis_controller:
         analysis = classes[analysis_type]
 
         # Initialise the class and append it to the analysis window object.
-        self._analyses.append(analysis(gui=self.gui, notebook=self.notebook, analysis_name=analysis_name, pipe_name=pipe_name, data_index=index))
+        obj = analysis(gui=self.gui, notebook=self.notebook, analysis_name=analysis_name, pipe_name=pipe_name, data_index=index)
+
+        # Failure.
+        if not obj.init_flag:
+            # Reset.
+            if self.init_state:
+                self.set_init_state()
+
+            # Stop operation.
+            return
+
+        # Append the class object to the analysis window object.
+        self._analyses.append(obj)
 
         # Add to the notebook.
         self.notebook.AddPage(self._analyses[-1].parent, analysis_name)
@@ -346,6 +345,9 @@ class Analysis_controller:
 
         # Switch to the new page.
         self.notebook.SetSelection(self._current)
+
+        # Set the initialisation flag.
+        self.init_state = False
 
         # Reset the main window layout.
         self.gui.Layout()
@@ -369,6 +371,21 @@ class Analysis_controller:
 
         # Normal operation.
         event.Skip()
+
+
+    def set_init_state(self):
+        """Revert to the initial state."""
+
+        # Reset the flag.
+        self.init_state = True
+        self._current = None
+
+        # Delete the previous sizer.
+        old_sizer = self.gui.GetSizer()
+        old_sizer.DeleteWindows()
+
+        # Recreate the start screen.
+        self.gui.add_start_screen()
 
 
     def show_results_viewer(self, event):

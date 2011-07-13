@@ -78,11 +78,15 @@ class Auto_rx(Base_frame):
         # Store the main class.
         self.gui = gui
 
+        # Init.
+        self.init_flag = True
+
         # New data container.
         if data_index == None:
             # First create the data pipe (if this fails, then no data is set up).
             status = protected_exec(self.gui.user_functions.interpreter.pipe.create, pipe_name, 'relax_fit')
             if not status:
+                self.init_flag = False
                 return
 
             # Generate a storage container in the relax data store, and alias it for easy access.
