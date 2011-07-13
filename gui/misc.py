@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,9 @@
 from math import pow
 from string import split
 import wx
+
+# relax module imports.
+from relax_errors import AllRelaxErrors
 
 
 def add_border(box, border=0, packing=wx.VERTICAL):
@@ -208,6 +211,33 @@ def gui_to_str(string):
 
     # Convert.
     return str(string)
+
+
+def protected_exec(fn, *args, **kargs):
+    """Apply the given function, catching all RelaxErrors.
+
+    All args and keyword args supplied will be directly applied to the given function.
+
+    @param fn:      The function to apply.
+    @type fn:       func
+    @return:        The status of execution.
+    @rtype:         bool
+    """
+
+    # Apply the function.
+    try:
+        apply(fn, args, kargs)
+
+    # Catch RelaxErrors.
+    except AllRelaxErrors, instance:
+        # Display a dialog with the error.
+        error_message(instance.text, instance.__class__.__name__)
+
+        # Failure.
+        return False
+
+    # Success.
+    return True
 
 
 def str_to_gui(string):
