@@ -33,6 +33,7 @@ from status import Status; status = Status()
 
 # GUI module imports.
 from gui import paths
+from gui.misc import gui_to_str
 from gui.spin_viewer.splitter import Tree_splitter
 
 
@@ -237,7 +238,7 @@ class Spin_view_window(wx.Frame):
         # The selected pipe.
         if event:
             # The name of the selected pipe.
-            pipe = str(event.GetString())
+            pipe = gui_to_str(event.GetString())
 
             # A pipe change.
             if pipe != cdp_name():
