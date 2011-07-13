@@ -342,7 +342,7 @@ class Analysis_controller:
         self._num_analyses += 1
 
         # Switch to the new page.
-        self.switch(self._num_analyses-1)
+        self.switch_page(self._num_analyses-1)
 
         # Set the initialisation flag.
         self.init_state = False
