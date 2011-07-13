@@ -366,6 +366,13 @@ class Analysis_controller:
             event.Veto()
             return
 
+        # The index.
+        self._current = event.GetSelection()
+
+        # Switch to the major data pipe of that page if not the current one.
+        if pipes.cdp_name() != ds.relax_gui.analyses[self._current].pipe_name:
+            self.gui.interpreter.pipe.switch(ds.relax_gui.analyses[self._current].pipe_name)
+
         # Normal operation.
         event.Skip()
 
@@ -391,6 +398,10 @@ class Analysis_controller:
 
         # No matching page.
         if index == None:
+            return
+
+        # The page is already active, so do nothing.
+        if self._current == i:
             return
 
         # Switch to the page.
