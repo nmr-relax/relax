@@ -31,6 +31,7 @@ from wx.lib import scrolledpanel
 
 # relax module imports.
 from prompt.base_class import _strip_lead
+from status import Status; status = Status()
 
 # relax GUI imports.
 from gui.misc import str_to_gui
