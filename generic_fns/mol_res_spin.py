@@ -803,14 +803,14 @@ def count_molecules(selection=None, pipe=None):
     pipes.test(pipe)
 
     # No data, hence no molecules.
-    if not exists_mol_res_spin_data():
+    if not exists_mol_res_spin_data(pipe=pipe):
         return 0
 
     # Init.
     mol_num = 0
 
     # Spin loop.
-    for mol in molecule_loop(selection):
+    for mol in molecule_loop(selection, pipe=pipe):
         mol_num = mol_num + 1
 
     # Return the number of molecules.
@@ -836,14 +836,14 @@ def count_residues(selection=None, pipe=None):
     pipes.test(pipe)
 
     # No data, hence no residues.
-    if not exists_mol_res_spin_data():
+    if not exists_mol_res_spin_data(pipe=pipe):
         return 0
 
     # Init.
     res_num = 0
 
     # Spin loop.
-    for res in residue_loop(selection):
+    for res in residue_loop(selection, pipe=pipe):
         res_num = res_num + 1
 
     # Return the number of residues.
@@ -872,14 +872,14 @@ def count_spins(selection=None, pipe=None, skip_desel=True):
     pipes.test(pipe)
 
     # No data, hence no spins.
-    if not exists_mol_res_spin_data():
+    if not exists_mol_res_spin_data(pipe=pipe):
         return 0
 
     # Init.
     spin_num = 0
 
     # Spin loop.
-    for spin in spin_loop(selection):
+    for spin in spin_loop(selection, pipe=pipe):
         # Skip deselected spins.
         if skip_desel and not spin.select:
             continue
@@ -1554,7 +1554,7 @@ def molecule_loop(selection=None, pipe=None, return_id=False):
     dp = pipes.get_pipe(pipe)
 
     # Test for the presence of data, and end the execution of this function if there is none.
-    if not exists_mol_res_spin_data():
+    if not exists_mol_res_spin_data(pipe=pipe):
         return
 
     # Parse the selection string.
@@ -1916,7 +1916,7 @@ def residue_loop(selection=None, pipe=None, full_info=False, return_id=False):
     dp = pipes.get_pipe(pipe)
 
     # Test for the presence of data, and end the execution of this function if there is none.
-    if not exists_mol_res_spin_data():
+    if not exists_mol_res_spin_data(pipe=pipe):
         return
 
     # Parse the selection string.
@@ -2147,7 +2147,7 @@ def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
 
     # Loop over the spins.
     spin_num = 0
-    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True, pipe=pipe):
         # Match to the global index.
         if spin_num == global_index:
             # Return the spin and the spin_id string.
@@ -2483,7 +2483,7 @@ def spin_index_loop(selection=None, pipe=None):
     dp = pipes.get_pipe(pipe)
 
     # Test for the presence of data, and end the execution of this function if there is none.
-    if not exists_mol_res_spin_data():
+    if not exists_mol_res_spin_data(pipe=pipe):
         return
 
     # Parse the selection string.
@@ -2538,7 +2538,7 @@ def spin_loop(selection=None, pipe=None, full_info=False, return_id=False):
     dp = pipes.get_pipe(pipe)
 
     # Test for the presence of data, and end the execution of this function if there is none.
-    if not exists_mol_res_spin_data(pipe):
+    if not exists_mol_res_spin_data(pipe=pipe):
         return
 
     # Parse the selection string.
