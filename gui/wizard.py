@@ -30,13 +30,13 @@ from wx.lib import buttons, scrolledpanel
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import id_string_doc
-from relax_errors import AllRelaxErrors, RelaxImplementError
+from relax_errors import RelaxImplementError
 
 # relax GUI module imports.
 from gui.controller import Redirect_text
 from gui.filedialog import openfile
 from gui.message import error_message
-from gui.misc import add_border, bool_to_gui, gui_to_int, int_to_gui, str_to_gui
+from gui.misc import add_border, bool_to_gui, gui_to_int, int_to_gui, protected_exec, str_to_gui
 from gui import paths
 
 
@@ -190,12 +190,14 @@ class Wiz_page(wx.Panel):
         """
 
         # Execute.
-        try:
-            self.on_execute()
-        except AllRelaxErrors, instance:
-            error_message(instance.text, instance.__class__.__name__)
-        finally:
-            self.on_completion()
+        status = protected_exec(self.on_execute)
+
+        # Finished.
+        self.on_completion()
+
+        # Execution failure.
+        if not status:
+            return
 
         # Execute the on_apply() method.
         self.on_apply()
