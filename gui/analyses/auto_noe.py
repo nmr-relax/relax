@@ -80,13 +80,13 @@ class Auto_noe(Base_frame):
         # Store the main class.
         self.gui = gui
 
-        # First create the data pipe (if this fails, then no data is set up).
-        status = protected_exec(self.gui.user_functions.interpreter.pipe.create, pipe_name, 'noe')
-        if not status:
-            return
-
         # New data container.
         if data_index == None:
+            # First create the data pipe (if this fails, then no data is set up).
+            status = protected_exec(self.gui.user_functions.interpreter.pipe.create, pipe_name, 'noe')
+            if not status:
+                return
+
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add('NOE')
 
