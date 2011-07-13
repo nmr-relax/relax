@@ -313,7 +313,12 @@ class Base_frame:
         # The font and control properties.
         field.SetMinSize((width, height))
         field.SetFont(self.gui.font_normal)
+
+        # Editable (change the colour if not).
         field.SetEditable(editable)
+        if not editable:
+            colour = self.parent.GetBackgroundColour()
+            field.SetOwnBackgroundColour(colour)
 
         # Add the control to the box.
         box.Add(field, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
