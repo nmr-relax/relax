@@ -51,6 +51,8 @@ from gui.message import error_message, missing_data
 from gui.misc import add_border, gui_to_str, protected_exec, str_to_gui
 from gui import paths
 from gui.settings import load_sequence
+from gui.user_functions.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
+from gui.wizard import Wiz_window
 
 
 
@@ -318,8 +320,34 @@ class Auto_noe(Base_frame):
         event.Skip()
 
 
-    def peak_wizard(self):
-        """Launch the NOE peak loading wizard."""
+    def peak_wizard(self, event):
+        """Launch the NOE peak loading wizard.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Initialise a wizard.
+        wizard = Wiz_window(size_x=1000, size_y=900, title="Set up the NOE peak intensities")
+
+        # The spectrum.read_intensities page.
+        page = Read_intensities_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
+
+        # The spectrum.replicated page.
+        page = Replicated_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
+
+        # The spectrum.baseplane_rmsd page.
+        page = Baseplane_rmsd_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
+
+        # The spectrum.integration_points page.
+        page = Integration_points_page(wizard, self.gui, self.interpreter)
+        wizard.add_page(page)
+
+        # Run the wizard.
+        wizard.run()
 
 
     def results_directory(self, event):
