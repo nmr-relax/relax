@@ -46,7 +46,7 @@ from gui.controller import Redirect_text
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir
 from gui.message import error_message, missing_data
-from gui.misc import add_border, gui_to_str, str_to_gui
+from gui.misc import add_border, gui_to_str, protected_exec, str_to_gui
 from gui import paths
 from gui.settings import load_sequence
 
@@ -78,6 +78,11 @@ class Auto_rx(Base_frame):
         # Store the main class.
         self.gui = gui
 
+        # First create the data pipe (if this fails, then no data is set up).
+        status = protected_exec(self.gui.user_functions.interpreter.pipe.create, pipe_name, 'relax_fit')
+        if not status:
+            return
+
         # New data container.
         if data_index == None:
             # Generate a storage container in the relax data store, and alias it for easy access.
@@ -95,9 +100,6 @@ class Auto_rx(Base_frame):
             ds.relax_gui.analyses[data_index].relax_times = []
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
             ds.relax_gui.analyses[data_index].results_list = []
-
-            # Create the data pipe.
-            self.gui.user_functions.interpreter.pipe.create(pipe_name, 'relax_fit')
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
