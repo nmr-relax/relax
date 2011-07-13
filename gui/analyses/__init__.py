@@ -80,6 +80,11 @@ class Analysis_controller:
         # Create a container in the status singleton for the analyses.
         status.analyses = Status_container()
 
+        # Register the page switch method for pipe switches.
+        switch_obj = pipes.Pipe_switch_observer()
+        self.name = 'notebook page switcher'
+        switch_obj.register_observer(self.name, self.pipe_switch)
+
 
     def analysis_data_loop(self):
         """Loop over the analyses, yielding the data objects.
@@ -157,16 +162,12 @@ class Analysis_controller:
 
         # The current page has been deleted, so switch one back (if possible).
         if index == self._current and self._current != 0:
-            # Decrement.
-            self._current -= 1
-
-            # Switch to that page.
-            self.notebook.SetSelection(self._current)
-
+            self.switch_page(self._current-1)
 
         # No more analyses, so in the initial state.
         if self._num_analyses == 0:
             self.set_init_state()
+
 
     def get_page_from_name(self, name):
         """Return the page corresponding to the given name.
@@ -340,11 +341,8 @@ class Analysis_controller:
         # Increment the number of analyses.
         self._num_analyses += 1
 
-        # Set this new analysis to the current one.
-        self._current = self._num_analyses - 1
-
         # Switch to the new page.
-        self.notebook.SetSelection(self._current)
+        self.switch(self._num_analyses-1)
 
         # Set the initialisation flag.
         self.init_state = False
@@ -371,6 +369,33 @@ class Analysis_controller:
 
         # Normal operation.
         event.Skip()
+
+
+    def pipe_switch(self, pipe=None):
+        """Switch the page to the given or current data pipe.
+
+        @keyword pipe:  The pipe associated with the page to switch to.  If not supplied, the current data pipe will be used.
+        @type pipe:     str or None
+        """
+
+        # The data pipe.
+        if pipe == None:
+            pipe = pipes.cdp_name()
+
+        # Find the page.
+        index = None
+        for i in range(self._num_analyses):
+            # Matching page.
+            if ds.relax_gui.analyses[i].pipe_name == pipe:
+                index = i
+                break
+
+        # No matching page.
+        if index == None:
+            return
+
+        # Switch to the page.
+        self.switch_page(i)
 
 
     def set_init_state(self):
@@ -402,6 +427,19 @@ class Analysis_controller:
         # Open the window.
         self.results_viewer.Show()
 
+
+    def switch_page(self, index):
+        """Switch to the given page.
+
+        @param index:   The index of the page to switch to.
+        @type index:    int
+        """
+
+        # Set the current page number.
+        self._current = index
+
+        # Switch to the page.
+        self.notebook.SetSelection(self._current)
 
 
 class Status_container(ListType):
