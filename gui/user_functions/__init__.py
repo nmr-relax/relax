@@ -25,7 +25,6 @@
 
 # relax module imports.
 from observer import Observer
-from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
 
 # GUI module imports.
@@ -74,24 +73,19 @@ class User_functions(Observer):
         # Execute the observer base class module __init__() method.
         super(User_functions, self).__init__()
 
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=True, quit=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
-
         # The user functions.
-        self.deselect = Deselect(self.gui, self.interpreter)
-        self.molecule = Molecule(self.gui, self.interpreter)
-        self.pipes = Pipes(self.gui, self.interpreter)
-        self.residue = Residue(self.gui, self.interpreter)
-        self.relax_data = Relax_data(self.gui, self.interpreter)
-        self.script = Script(self.gui, self.interpreter)
-        self.select = Select(self.gui, self.interpreter)
-        self.sequence = Sequence(self.gui, self.interpreter)
-        self.spectrum = Spectrum(self.gui, self.interpreter)
-        self.spin = Spin(self.gui, self.interpreter)
-        self.structure = Structure(self.gui, self.interpreter)
-        self.value = Value(self.gui, self.interpreter)
+        self.deselect = Deselect(self.gui)
+        self.molecule = Molecule(self.gui)
+        self.pipes = Pipes(self.gui)
+        self.residue = Residue(self.gui)
+        self.relax_data = Relax_data(self.gui)
+        self.script = Script(self.gui)
+        self.select = Select(self.gui)
+        self.sequence = Sequence(self.gui)
+        self.spectrum = Spectrum(self.gui)
+        self.spin = Spin(self.gui)
+        self.structure = Structure(self.gui)
+        self.value = Value(self.gui)
 
 
     def destroy(self):

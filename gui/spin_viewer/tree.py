@@ -202,7 +202,7 @@ class Mol_res_spin_tree(wx.Window):
             return
 
         # Delete the molecule.
-        self.gui.user_functions.interpreter.molecule.delete(gui_to_str(self.info['id']))
+        self.gui.interpreter.molecule.delete(gui_to_str(self.info['id']))
 
         # Notify all observers that a user function has completed.
         self.gui.user_functions.notify_observers()
@@ -221,7 +221,7 @@ class Mol_res_spin_tree(wx.Window):
             return
 
         # Delete the residue.
-        self.gui.user_functions.interpreter.residue.delete(gui_to_str(self.info['id']))
+        self.gui.interpreter.residue.delete(gui_to_str(self.info['id']))
 
         # Notify all observers that a user function has completed.
         self.gui.user_functions.notify_observers()
@@ -240,7 +240,7 @@ class Mol_res_spin_tree(wx.Window):
             return
 
         # Delete the spin.
-        self.gui.user_functions.interpreter.spin.delete(gui_to_str(self.info['id']))
+        self.gui.interpreter.spin.delete(gui_to_str(self.info['id']))
 
         # Notify all observers that a user function has completed.
         self.gui.user_functions.notify_observers()
@@ -259,7 +259,7 @@ class Mol_res_spin_tree(wx.Window):
             return
 
         # Deselect the molecule.
-        self.gui.user_functions.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         self.gui.user_functions.notify_observers()
@@ -278,7 +278,7 @@ class Mol_res_spin_tree(wx.Window):
             return
 
         # Deselect the residue.
-        self.gui.user_functions.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         self.gui.user_functions.notify_observers()
@@ -292,7 +292,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Deselect the spin.
-        self.gui.user_functions.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         self.gui.user_functions.notify_observers()
@@ -507,7 +507,7 @@ class Mol_res_spin_tree(wx.Window):
             return
 
         # Select the molecule.
-        self.gui.user_functions.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         self.gui.user_functions.notify_observers()
@@ -526,7 +526,7 @@ class Mol_res_spin_tree(wx.Window):
             return
 
         # Select the residue.
-        self.gui.user_functions.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         self.gui.user_functions.notify_observers()
@@ -540,7 +540,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Select the spin.
-        self.gui.user_functions.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         self.gui.user_functions.notify_observers()

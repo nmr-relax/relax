@@ -46,7 +46,7 @@ class Spectrum(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=500, title=self.get_title('spectrum', 'baseplane_rmsd'))
-        page = Baseplane_rmsd_page(wizard, self.gui, self.interpreter)
+        page = Baseplane_rmsd_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -60,7 +60,7 @@ class Spectrum(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('spectrum', 'error_analysis'))
-        page = Error_analysis_page(wizard, self.gui, self.interpreter)
+        page = Error_analysis_page(wizard, self.gui)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -74,7 +74,7 @@ class Spectrum(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spectrum', 'integration_points'))
-        page = Integration_points_page(wizard, self.gui, self.interpreter)
+        page = Integration_points_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -88,7 +88,7 @@ class Spectrum(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=1000, size_y=900, title=self.get_title('spectrum', 'read_intensities'))
-        page = Read_intensities_page(wizard, self.gui, self.interpreter)
+        page = Read_intensities_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -102,7 +102,7 @@ class Spectrum(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spectrum', 'replicated'))
-        page = Replicated_page(wizard, self.gui, self.interpreter)
+        page = Replicated_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -154,7 +154,7 @@ class Baseplane_rmsd_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Execute.
-        self.interpreter.spectrum.baseplane_rmsd(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
+        self.gui.interpreter.spectrum.baseplane_rmsd(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
 
@@ -177,7 +177,7 @@ class Error_analysis_page(UF_page):
         """Execute the user function."""
 
         # Execute.
-        self.interpreter.spectrum.error_analysis()
+        self.gui.interpreter.spectrum.error_analysis()
 
 
 
@@ -227,7 +227,7 @@ class Integration_points_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Execute.
-        self.interpreter.spectrum.integration_points(N=N, spectrum_id=spectrum_id, spin_id=spin_id)
+        self.gui.interpreter.spectrum.integration_points(N=N, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
 
@@ -312,7 +312,7 @@ class Read_intensities_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the peak intensities.
-        self.interpreter.spectrum.read(file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
+        self.gui.interpreter.spectrum.read(file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
 
 
 
@@ -373,4 +373,4 @@ class Replicated_page(UF_page):
                 spectrum_ids.append(val[i])
 
         # Execute.
-        self.interpreter.spectrum.replicated(spectrum_ids=spectrum_ids)
+        self.gui.interpreter.spectrum.replicated(spectrum_ids=spectrum_ids)

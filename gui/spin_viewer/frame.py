@@ -251,7 +251,7 @@ class Spin_view_window(wx.Frame):
         # Switch.
         if pipe_switch:
             # Switch data pipes.
-            self.gui.user_functions.interpreter.pipe.switch(pipe)
+            self.gui.interpreter.pipe.switch(pipe)
 
             # Update the tree view.
             self.tree_panel.update()

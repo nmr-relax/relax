@@ -47,7 +47,7 @@ class Molecule(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('molecule', 'copy'))
-        page = Copy_page(wizard, self.gui, self.interpreter)
+        page = Copy_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -61,7 +61,7 @@ class Molecule(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('molecule', 'create'))
-        page = Create_page(wizard, self.gui, self.interpreter)
+        page = Create_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -77,7 +77,7 @@ class Molecule(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('molecule', 'delete'))
-        page = Delete_page(wizard, self.gui, self.interpreter)
+        page = Delete_page(wizard, self.gui)
         wizard.add_page(page)
 
         # Default molecule name.
@@ -150,7 +150,7 @@ class Copy_page(UF_page):
             mol_to = "#" + mol_to
 
         # Copy the molecule.
-        self.interpreter.molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
+        self.gui.interpreter.molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
 
     def update_mol_list(self, event=None):
@@ -202,7 +202,7 @@ class Create_page(UF_page):
         mol_type = str(self.mol_type.GetValue())
 
         # Set the name.
-        self.interpreter.molecule.create(mol_name=mol_name, mol_type=mol_type)
+        self.gui.interpreter.molecule.create(mol_name=mol_name, mol_type=mol_type)
 
 
 
@@ -244,4 +244,4 @@ class Delete_page(UF_page):
         mol_id = gui_to_str(self.mol_id.GetValue())
 
         # Delete the molecule.
-        self.interpreter.molecule.delete(mol_id=mol_id)
+        self.gui.interpreter.molecule.delete(mol_id=mol_id)

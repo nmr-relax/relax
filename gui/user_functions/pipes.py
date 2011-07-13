@@ -49,7 +49,7 @@ class Pipes(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('pipe', 'copy'))
-        page = Copy_page(wizard, self.gui, self.interpreter)
+        page = Copy_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -63,7 +63,7 @@ class Pipes(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('pipe', 'create'))
-        page = Create_page(wizard, self.gui, self.interpreter)
+        page = Create_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -77,7 +77,7 @@ class Pipes(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('pipe', 'delete'))
-        page = Delete_page(wizard, self.gui, self.interpreter)
+        page = Delete_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -91,7 +91,7 @@ class Pipes(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=650, size_y=450, title=self.get_title('pipe', 'switch'))
-        page = Switch_page(wizard, self.gui, self.interpreter)
+        page = Switch_page(wizard, self.gui)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -140,7 +140,7 @@ class Copy_page(UF_page):
         pipe_to = gui_to_str(self.pipe_to.GetValue())
 
         # Copy the data pipe.
-        self.interpreter.pipe.copy(pipe_from, pipe_to)
+        self.gui.interpreter.pipe.copy(pipe_from, pipe_to)
 
 
 
@@ -173,7 +173,7 @@ class Create_page(UF_page):
         pipe_type = str(self.pipe_type.GetValue())
 
         # Set the name.
-        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
+        self.gui.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
 
 
 
@@ -217,7 +217,7 @@ class Delete_page(UF_page):
         pipe_name = str(self.pipe_name.GetValue())
 
         # Delete the data pipe.
-        self.interpreter.pipe.delete(pipe_name)
+        self.gui.interpreter.pipe.delete(pipe_name)
 
 
 
@@ -265,4 +265,4 @@ class Switch_page(UF_page):
         pipe_name = str(self.pipe_name.GetValue())
 
         # Switch the data pipe.
-        self.interpreter.pipe.switch(pipe_name)
+        self.gui.interpreter.pipe.switch(pipe_name)

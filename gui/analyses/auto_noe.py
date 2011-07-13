@@ -89,7 +89,7 @@ class Auto_noe(Base_frame):
         # New data container.
         if data_index == None:
             # First create the data pipe (if this fails, then no data is set up).
-            status = protected_exec(self.gui.user_functions.interpreter.pipe.create, pipe_name, 'noe')
+            status = protected_exec(self.gui.interpreter.pipe.create, pipe_name, 'noe')
             if not status:
                 self.init_flag = False
                 return

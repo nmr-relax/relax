@@ -40,6 +40,7 @@ from data.gui import Gui
 from info import Info_box
 from generic_fns import state
 from generic_fns.reset import reset
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
@@ -127,6 +128,11 @@ class Main(wx.Frame):
 
         # Close Box event
         self.Bind(wx.EVT_CLOSE, self.exit_gui)
+
+        # Load a copy of the relax interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
 
         # Run a script.
         if script:

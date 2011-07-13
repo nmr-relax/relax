@@ -66,4 +66,4 @@ class Script(UF_base):
         """
 
         # Execute the user function.
-        self.interpreter.script(str(file))
+        self.gui.interpreter.script(str(file))

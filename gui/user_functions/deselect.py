@@ -45,7 +45,7 @@ class Deselect(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('deselect', 'all'))
-        page = All_page(wizard, self.gui, self.interpreter)
+        page = All_page(wizard, self.gui)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -59,7 +59,7 @@ class Deselect(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=900, size_y=800, title=self.get_title('deselect', 'read'))
-        page = Read_page(wizard, self.gui, self.interpreter)
+        page = Read_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -73,7 +73,7 @@ class Deselect(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('deselect', 'reverse'))
-        page = Reverse_page(wizard, self.gui, self.interpreter)
+        page = Reverse_page(wizard, self.gui)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -87,7 +87,7 @@ class Deselect(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('deselect', 'spin'))
-        page = Spin_page(wizard, self.gui, self.interpreter)
+        page = Spin_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -112,7 +112,7 @@ class All_page(UF_page):
         """Execute the user function."""
 
         # Deselect all.
-        self.interpreter.deselect.all()
+        self.gui.interpreter.deselect.all()
 
 
 
@@ -178,7 +178,7 @@ class Read_page(UF_page):
         change_all = gui_to_bool(self.change_all.GetValue())
 
         # Deselection.
-        self.interpreter.deselect.read(file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, boolean=boolean, change_all=change_all)
+        self.gui.interpreter.deselect.read(file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, boolean=boolean, change_all=change_all)
 
 
 
@@ -206,7 +206,7 @@ class Reverse_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Deselect all.
-        self.interpreter.deselect.reverse(spin_id=spin_id)
+        self.gui.interpreter.deselect.reverse(spin_id=spin_id)
 
 
 
@@ -240,4 +240,4 @@ class Spin_page(UF_page):
         change_all = gui_to_bool(self.change_all.GetValue())
 
         # Deselect all.
-        self.interpreter.deselect.spin(spin_id=spin_id, change_all=change_all)
+        self.gui.interpreter.deselect.spin(spin_id=spin_id, change_all=change_all)

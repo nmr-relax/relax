@@ -40,12 +40,11 @@ from gui.wizard import Wiz_page
 class UF_base:
     """User function GUI element base class."""
 
-    def __init__(self, gui, interpreter):
+    def __init__(self, gui):
         """Set up the user function class."""
 
         # Store the args.
         self.gui = gui
-        self.interpreter = interpreter
 
 
     def get_title(self, base=None, fn=None):
@@ -79,23 +78,20 @@ class UF_page(Wiz_page):
     # The path to the user function.
     uf_path = None
 
-    def __init__(self, parent, gui, interpreter):
+    def __init__(self, parent, gui):
         """Set up the window.
 
-        @param parent:      The parent class containing the GUI and interpreter objects.
+        @param parent:      The parent class containing the GUI.
         @type parent:       class instance
         @param gui:         The GUI base object.
         @type gui:          wx.Frame instance
-        @param interpreter: The relax interpreter.
-        @type interpreter:  prompt.interpreter.Interpreter instance
         """
 
         # Store the args.
         self.gui = gui
-        self.interpreter = interpreter
 
         # Get the user function class (or function).
-        uf_class = getattr(self.interpreter, self.uf_path[0])
+        uf_class = getattr(self.gui.interpreter, self.uf_path[0])
 
         # Get the user function.
         if len(self.uf_path) == 1:

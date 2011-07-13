@@ -52,7 +52,7 @@ class Value(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=1000, size_y=800, title=self.get_title('value', 'set'))
-        page = Set_page(wizard, self.gui, self.interpreter)
+        page = Set_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -128,4 +128,4 @@ class Set_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Set the value.
-        self.interpreter.value.set(val=val, param=param, spin_id=spin_id)
+        self.gui.interpreter.value.set(val=val, param=param, spin_id=spin_id)

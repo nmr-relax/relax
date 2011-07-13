@@ -50,7 +50,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('structure', 'delete'))
-        page = Delete_page(wizard, self.gui, self.interpreter)
+        page = Delete_page(wizard, self.gui)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -66,7 +66,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'load_spins'))
-        page = Load_spins_page(wizard, self.gui, self.interpreter)
+        page = Load_spins_page(wizard, self.gui)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -82,7 +82,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'read_pdb'))
-        page = Read_pdb_page(wizard, self.gui, self.interpreter)
+        page = Read_pdb_page(wizard, self.gui)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -98,7 +98,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'write_pdb'))
-        page = Write_pdb_page(wizard, self.gui, self.interpreter)
+        page = Write_pdb_page(wizard, self.gui)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -124,7 +124,7 @@ class Delete_page(UF_page):
         """Execute the user function."""
 
         # Delete all structures.
-        self.interpreter.structure.delete()
+        self.gui.interpreter.structure.delete()
 
 
 
@@ -163,7 +163,7 @@ class Load_spins_page(UF_page):
         ave_pos = gui_to_bool(self.ave_pos.GetValue())
 
         # Execute the user function.
-        self.interpreter.structure.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
+        self.gui.interpreter.structure.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
 
 
 
@@ -213,7 +213,7 @@ class Read_pdb_page(UF_page):
         parser = gui_to_str(self.parser.GetValue())
 
         # Execute the user function.
-        self.interpreter.structure.read_pdb(file=file, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
+        self.gui.interpreter.structure.read_pdb(file=file, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
 
 
 
@@ -246,4 +246,4 @@ class Write_pdb_page(UF_page):
         model_num = gui_to_str(self.model_num.GetValue())
 
         # Execute the user function.
-        self.interpreter.structure.write_pdb(file=file, model_num=model_num)
+        self.gui.interpreter.structure.write_pdb(file=file, model_num=model_num)

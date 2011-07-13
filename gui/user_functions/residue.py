@@ -51,7 +51,7 @@ class Residue(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=600, title=self.get_title('residue', 'copy'))
-        page = Copy_page(wizard, self.gui, self.interpreter)
+        page = Copy_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -67,7 +67,7 @@ class Residue(UF_base):
 
         # Initialise the wizard.
         wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('residue', 'create'))
-        page = Create_page(wizard, self.gui, self.interpreter)
+        page = Create_page(wizard, self.gui)
         wizard.add_page(page)
 
         # Default molecule name.
@@ -93,7 +93,7 @@ class Residue(UF_base):
 
         # Initialise the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('residue', 'delete'))
-        page = Delete_page(wizard, self.gui, self.interpreter)
+        page = Delete_page(wizard, self.gui)
         wizard.add_page(page)
 
         # Default molecule name.
@@ -177,7 +177,7 @@ class Copy_page(UF_page, Mol_res_spin):
             res_to = None
 
         # Copy the molecule.
-        self.interpreter.residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
+        self.gui.interpreter.residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
 
 
     def update_mol_list(self, event=None):
@@ -286,7 +286,7 @@ class Create_page(UF_page, Mol_res_spin):
             res_num = None
 
         # Set the name.
-        self.interpreter.residue.create(res_name=res_name, res_num=res_num, mol_name=mol_name)
+        self.gui.interpreter.residue.create(res_name=res_name, res_num=res_num, mol_name=mol_name)
 
 
 
@@ -333,7 +333,7 @@ class Delete_page(UF_page, Mol_res_spin):
             return
 
         # Delete the residue.
-        self.interpreter.residue.delete(res_id=id)
+        self.gui.interpreter.residue.delete(res_id=id)
 
         # Update.
         self._update_residues(None)
