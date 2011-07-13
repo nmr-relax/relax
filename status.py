@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,6 +27,9 @@
 from re import search
 import sys
 from threading import Lock
+
+# relax module imports.
+from observer import Observer
 
 
 class Status(object):
@@ -78,6 +81,20 @@ class Status(object):
         # A structure for skipped system and unit tests.
         self.skipped_tests = []
         """The skipped tests list.  Each element should be a list of the test case name, the missing Python module, and the name of the test suite category (i.e. 'system' or 'unit')."""
+
+        # Set up the observer objects.
+        self._setup_observers()
+
+
+    def _setup_observers(self):
+        """Set up all the observer objects."""
+
+        # A container for all the observers.
+        self.observers = Status_container()
+
+        # The observer object for pipe switches.
+        self.observers.pipe_switch = Observer()
+
 
 
 class Status_container:

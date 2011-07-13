@@ -81,9 +81,8 @@ class Analysis_controller:
         status.analyses = Status_container()
 
         # Register the page switch method for pipe switches.
-        switch_obj = pipes.Pipe_switch_observer()
         self.name = 'notebook page switcher'
-        switch_obj.register_observer(self.name, self.pipe_switch)
+        status.observers.pipe_switch.register_observer(self.name, self.pipe_switch)
 
 
     def analysis_data_loop(self):
