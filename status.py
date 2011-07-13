@@ -252,7 +252,7 @@ class Observer(object):
         self._callback = {}
 
 
-    def notify_observers(self):
+    def notify(self):
         """Notify all observers of the state change."""
 
         # Loop over the callback methods and execute them.
@@ -260,7 +260,7 @@ class Observer(object):
             self._callback[key]()
 
 
-    def register_observer(self, key, method):
+    def register(self, key, method):
         """Register a method to be called when the state changes.
 
         @param key:     The key to identify the observer's method.
@@ -277,7 +277,7 @@ class Observer(object):
         self._callback[key] = method
 
 
-    def unregister_observer(self, key):
+    def unregister(self, key):
         """Unregister the method corresponding to the key.
 
         @param key:     The key to identify the observer's method.

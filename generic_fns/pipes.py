@@ -142,7 +142,7 @@ def delete(pipe_name=None):
             __builtin__.cdp = None
 
             # Notify observers that the switch has occurred.
-            status.observers.pipe_switch.notify_observers()
+            status.observers.pipe_switch.notify()
 
 
 def display():
@@ -262,7 +262,7 @@ def switch(pipe_name=None):
     __builtin__.cdp = get_pipe()
 
     # Notify observers that the switch has occurred.
-    status.observers.pipe_switch.notify_observers()
+    status.observers.pipe_switch.notify()
 
 
 def test(pipe_name=None):
