@@ -227,7 +227,7 @@ class Auto_noe(Base_frame):
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(10)
-        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, subparent=self, data=self.data, label="NOE", box=box)
+        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, data=self.data, label="NOE", box=box, fn_add=self.peak_wizard)
         box.AddSpacer(10)
 
         # Add the execution GUI element.
@@ -316,6 +316,10 @@ class Auto_noe(Base_frame):
 
         # Terminate the event.
         event.Skip()
+
+
+    def peak_wizard(self):
+        """Launch the NOE peak loading wizard."""
 
 
     def results_directory(self, event):

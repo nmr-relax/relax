@@ -241,7 +241,7 @@ class Auto_rx(Base_frame):
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(10)
-        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, subparent=self, data=self.data, label=self.label, box=box)
+        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, data=self.data, label=self.label, box=box)
         box.AddSpacer(10)
 
         # Add the execution GUI element.
@@ -373,9 +373,6 @@ class Auto_rx(Base_frame):
             self.data.save_dir = gui_to_str(self.field_results_dir.GetValue())
         else:
             self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
-
-        # The peak lists and relaxation times.
-        self.peak_intensity.sync_ds(upload)
 
 
 
