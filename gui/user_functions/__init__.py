@@ -24,7 +24,7 @@
 """User function GUI elements."""
 
 # relax module imports.
-from observer import Observer
+from status import Observer
 from relax_errors import RelaxError
 
 # GUI module imports.

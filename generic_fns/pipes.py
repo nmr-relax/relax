@@ -30,7 +30,6 @@ import __builtin__
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn, scipy_module
-from observer import Observer
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 from status import Status; status = Status()
 

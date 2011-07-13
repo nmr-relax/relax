@@ -29,7 +29,7 @@ import sys
 from threading import Lock
 
 # relax module imports.
-from observer import Observer
+from relax_errors import RelaxError
 
 
 class Status(object):
@@ -236,3 +236,54 @@ class Exec_lock:
 
         # Release the real lock.
         return self._lock.release()
+
+
+
+class Observer(object):
+    """The observer design pattern base class."""
+
+    def __init__(self):
+        """Set up the object."""
+
+        # The dictionary of callback methods.
+        self._callback = {}
+
+
+    def notify_observers(self):
+        """Notify all observers of the state change."""
+
+        # Loop over the callback methods and execute them.
+        for key in self._callback.keys():
+            self._callback[key]()
+
+
+    def register_observer(self, key, method):
+        """Register a method to be called when the state changes.
+
+        @param key:     The key to identify the observer's method.
+        @type key:      str
+        @param method:  The observer's method to be called after a state change.
+        @type method:   method
+        """
+
+        # Already exists.
+        if key in self._callback.keys():
+            raise RelaxError("The observer '%s' already exists." % key)
+
+        # Add the method to the dictionary of callbacks.
+        self._callback[key] = method
+
+
+    def unregister_observer(self, key):
+        """Unregister the method corresponding to the key.
+
+        @param key:     The key to identify the observer's method.
+        @type key:      str
+        """
+
+        # Does not exist.
+        if key not in self._callback.keys():
+            raise RelaxError("The key '%s' does not exist." % key)
+
+        # Remove the method from the dictionary of callbacks.
+        self._callback.pop(key)
