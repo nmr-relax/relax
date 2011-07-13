@@ -43,6 +43,7 @@ from gui.analyses.base import Base_frame
 from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
+from gui.components.spectrum import Peak_intensity
 from gui.controller import Redirect_text
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir, openfile
@@ -100,10 +101,6 @@ class Auto_noe(Base_frame):
 
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].frq = ''
-            ds.relax_gui.analyses[data_index].ref_file = ''
-            ds.relax_gui.analyses[data_index].sat_file = ''
-            ds.relax_gui.analyses[data_index].ref_rmsd = 1000
-            ds.relax_gui.analyses[data_index].sat_rmsd = 1000
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
             ds.relax_gui.analyses[data_index].results_list = []
 
@@ -160,18 +157,6 @@ class Auto_noe(Base_frame):
 
         # Filename.
         data.filename = 'noe.%s.out' % frq
-
-        # Saturated peak list and background noe.
-        data.sat_file = self.data.sat_file
-        if not data.sat_file:
-            missing.append('Saturated peak list')
-        data.sat_rmsd = int(self.data.sat_rmsd)
-
-        # Reference peak list and background noe.
-        data.ref_file = self.data.ref_file
-        if not data.ref_file:
-            missing.append('Reference peak list')
-        data.ref_rmsd = int(self.data.ref_rmsd)
 
         # Results directory.
         data.save_dir = self.data.save_dir
@@ -240,23 +225,10 @@ class Auto_noe(Base_frame):
         # Add the spin GUI element.
         self.add_spin_systems(box, self.parent)
 
-        # Add peak list selection header.
-        self.add_subtitle(box, "NOE peak lists")
-
-        # Add the saturated NOE peak list selection GUI element.
-        self.field_sat_noe = self.add_text_sel_element(box, self.parent, text="Saturated NOE peak list", default=self.data.sat_file, fn=self.sat_file, button=True)
-
-        # Add the saturated RMSD background GUI element:
-        self.field_sat_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=self.data.sat_rmsd)
-
-        # Add the reference NOE peak list selection GUI element.
-        self.field_ref_noe = self.add_text_sel_element(box, self.parent, text="Reference NOE peak list", default=self.data.ref_file, fn=self.ref_file, button=True)
-
-        # Add the reference RMSD background GUI element:
-        self.field_ref_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=self.data.ref_rmsd)
-
-        # Add a stretchable spacer.
-        box.AddStretchSpacer()
+        # Add the peak list selection GUI element, with spacing.
+        box.AddSpacer(10)
+        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, subparent=self, data=self.data, label="NOE", box=box)
+        box.AddSpacer(10)
 
         # Add the execution GUI element.
         self.button_exec_id = self.add_execute_relax(box, self.execute)
@@ -346,35 +318,6 @@ class Auto_noe(Base_frame):
         event.Skip()
 
 
-    def ref_file(self, event):
-        """The results directory selection.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the original directory.
-        backup = gui_to_str(self.field_ref_noe.GetValue())
-
-        # The directory.
-        directory = None
-        if backup != None:
-            directory = dirname(backup)
-
-        # Select the file.
-        self.data.ref_file = openfile('Select reference NOE peak list', directory=directory, default = 'all files (*.*)|*')
-
-        # Restore the backup file if no file was chosen.
-        if not self.data.ref_file:
-            self.data.ref_file = backup
-
-        # Place the path in the text box.
-        self.field_ref_noe.SetValue(self.data.ref_file)
-
-        # Terminate the event.
-        event.Skip()
-
-
     def results_directory(self, event):
         """The results directory selection.
 
@@ -394,35 +337,6 @@ class Auto_noe(Base_frame):
 
         # Place the path in the text box.
         self.field_results_dir.SetValue(self.data.save_dir)
-
-        # Terminate the event.
-        event.Skip()
-
-
-    def sat_file(self, event):
-        """The results directory selection.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the original directory.
-        backup = gui_to_str(self.field_sat_noe.GetValue())
-
-        # The directory.
-        directory = None
-        if backup != None:
-            directory = dirname(backup)
-
-        # Select the file.
-        self.data.sat_file = openfile('Select saturated NOE peak list', directory=directory, default = 'all files (*.*)|*')
-
-        # Restore the backup file if no file was chosen.
-        if not self.data.sat_file:
-            self.data.sat_file = backup
-
-        # Place the path in the text box.
-        self.field_sat_noe.SetValue(self.data.sat_file)
 
         # Terminate the event.
         event.Skip()
@@ -449,30 +363,6 @@ class Auto_noe(Base_frame):
         else:
             self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
 
-        # Reference peak file.
-        if upload:
-            self.data.ref_file = gui_to_str(self.field_ref_noe.GetValue())
-        elif hasattr(self.data, 'ref_file'):
-            self.field_ref_noe.SetValue(str_to_gui(self.data.ref_file))
-
-        # Reference rmsd.
-        if upload:
-            self.data.ref_rmsd = gui_to_str(self.field_ref_rmsd.GetValue())
-        elif hasattr(self.data, 'ref_rmsd'):
-            self.field_ref_rmsd.SetValue(str_to_gui(self.data.ref_rmsd))
-
-        # Saturated peak file.
-        if upload:
-            self.data.sat_file = gui_to_str(self.field_sat_noe.GetValue())
-        elif hasattr(self.data, 'sat_file'):
-            self.field_sat_noe.SetValue(str_to_gui(self.data.sat_file))
-
-        # Saturated rmsd.
-        if upload:
-            self.data.sat_rmsd = gui_to_str(self.field_sat_rmsd.GetValue())
-        elif hasattr(self.data, 'sat_rmsd'):
-            self.field_sat_rmsd.SetValue(str_to_gui(self.data.sat_rmsd))
-
 
 
 class Execute_noe(Execute):
@@ -489,7 +379,7 @@ class Execute_noe(Execute):
             sys.stderr = redir
 
         # Execute.
-        NOE_calc(seq_args=self.data.seq_args, pipe_name=self.data.pipe_name, noe_ref=self.data.ref_file, noe_ref_rmsd=self.data.ref_rmsd, noe_sat=self.data.sat_file, noe_sat_rmsd=self.data.sat_rmsd, unresolved=self.data.unresolved, pdb_file=self.data.structure_file, output_file=self.data.filename, results_dir=self.data.save_dir, int_method='height', heteronuc=self.data.heteronuc, proton=self.data.proton, heteronuc_pdb='@N')
+        NOE_calc(seq_args=self.data.seq_args, pipe_name=self.data.pipe_name, unresolved=self.data.unresolved, pdb_file=self.data.structure_file, output_file=self.data.filename, results_dir=self.data.save_dir, int_method='height', heteronuc=self.data.heteronuc, proton=self.data.proton, heteronuc_pdb='@N')
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
