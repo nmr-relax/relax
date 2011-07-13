@@ -221,6 +221,9 @@ class Auto_rx(Base_frame):
         # Add the frame title.
         self.add_title(box, "Setup for %s relaxation analysis" % self.label)
 
+        # Display the data pipe.
+        self.add_text_sel_element(box, self.parent, text="The current data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False)
+
         # Add the frequency selection GUI element.
         self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', %s values will be located in the file '%s.600.out'." % (self.label, lower(self.label)))
 
