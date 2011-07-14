@@ -191,12 +191,15 @@ class Wiz_page(wx.Panel):
         # Execute.
         status = protected_exec(self.on_execute)
 
-        # Finished.
-        self.on_completion()
-
         # Execution failure.
         if not status:
             return
+
+        # Finished.
+        self.on_completion()
+
+        # Increment the execution counter.
+        self.parent._exec_count[self.parent._current_page] += 1
 
         # Execute the on_apply() method.
         self.on_apply()
@@ -950,9 +953,10 @@ class Wiz_window(wx.Dialog):
         self._page_sizers = []
         self._button_sizers = []
         self._button_apply_flag = []
-        self._exec_on_next = []
         self._buttons = []
         self._button_ids = []
+        self._exec_on_next = []
+        self._exec_count = []
 
         # A max of 10 pages should be plenty enough (any more and the developer should be shot!).
         for i in range(10):
@@ -967,9 +971,6 @@ class Wiz_window(wx.Dialog):
 
             # Set all apply flags to True.
             self._button_apply_flag.append(True)
-
-            # Execute on next by default.
-            self._exec_on_next.append(True)
 
             # Initialise the button storage.
             self._buttons.append({'back': None,
@@ -986,6 +987,12 @@ class Wiz_window(wx.Dialog):
                                      'ok': wx.NewId(),
                                      'finish': wx.NewId(),
                                      'cancel': wx.NewId()})
+
+            # Execute on next by default.
+            self._exec_on_next.append(True)
+
+            # Execution count.
+            self._exec_count.append(0)
 
 
     def _build_buttons(self):
@@ -1125,9 +1132,9 @@ class Wiz_window(wx.Dialog):
         # Execute the page's on_next() method.
         self._pages[self._current_page].on_next()
 
-        # Execute the page's on_execute() method.
+        # Execute the page's on_execute() method (via the _apply() method).
         if self._exec_on_next[self._current_page]:
-            self._pages[self._current_page].on_execute()
+            self._pages[self._current_page]._apply(event)
 
         # Change the current page.
         self._current_page += 1
