@@ -305,7 +305,10 @@ class Relax_data_store(dict):
                 pipe_type = pipe_node.getAttribute('type')
 
                 # Add the data pipe.
-                self.add(pipe_name, pipe_type, switch=False)
+                switch = False
+                if self.current_pipe == None:
+                    switch = True
+                self.add(pipe_name, pipe_type, switch=switch)
 
                 # Fill the pipe.
                 self[pipe_name].from_xml(pipe_node, file_version=file_version, dir=dir)
