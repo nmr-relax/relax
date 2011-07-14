@@ -219,6 +219,9 @@ class Analysis_controller:
         # Switch to the page of the current data pipe.
         self.pipe_switch()
 
+        # Reset the switching flag.
+        self._switch_flag = True
+
 
     def menu_close(self, event):
         """Close the currently opened analysis.
