@@ -73,6 +73,7 @@ class Analysis_controller:
         self.init_state = True
         self._current = None
         self._num_analyses = 0
+        self._switch_flag = True
 
         # The analyses page objects.
         self._analyses = []
@@ -212,7 +213,8 @@ class Analysis_controller:
                 analysis_name = 'Model-free'
 
             # Set up the analysis.
-            self.new_analysis(map[ds.relax_gui.analyses[i].analysis_type], analysis_name, index=i, switch=False)
+            self._switch_flag = False
+            self.new_analysis(map[ds.relax_gui.analyses[i].analysis_type], analysis_name, index=i)
 
         # Switch to the page of the current data pipe.
         self.pipe_switch()
@@ -278,7 +280,7 @@ class Analysis_controller:
         del self.new_wizard
 
 
-    def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, index=None, switch=True):
+    def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, index=None):
         """Initialise a new analysis.
 
         @keyword analysis_type: The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
@@ -287,8 +289,6 @@ class Analysis_controller:
         @type analysis_name:    str
         @keyword index:         The index of the analysis in the relax data store (set to None if no data currently exists).
         @type index:            None or int
-        @keyword switch:        A flag which if True will cause the new page to be switched to.
-        @type switch:           bool
         """
 
         # Starting from the initial state.
@@ -346,7 +346,7 @@ class Analysis_controller:
         self._num_analyses += 1
 
         # Switch to the new page.
-        if switch:
+        if self._switch_flag:
             self.switch_page(self._num_analyses-1)
 
         # Set the initialisation flag.
@@ -376,7 +376,7 @@ class Analysis_controller:
         self._current = event.GetSelection()
 
         # Switch to the major data pipe of that page if not the current one.
-        if pipes.cdp_name() != ds.relax_gui.analyses[self._current].pipe_name:
+        if self._switch_flag and pipes.cdp_name() != ds.relax_gui.analyses[self._current].pipe_name:
             self.gui.interpreter.pipe.switch(ds.relax_gui.analyses[self._current].pipe_name)
 
         # Normal operation.
