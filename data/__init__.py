@@ -146,17 +146,17 @@ class Relax_data_store(dict):
         self.instance.clear()
 
 
-    def add(self, pipe_name, pipe_type):
+    def add(self, pipe_name, pipe_type, switch=True):
         """Method for adding a new data pipe container to the dictionary.
 
-        This method should be used rather than importing the PipeContainer class and using the
-        statement 'D[pipe] = PipeContainer()', where D is the relax data storage object and pipe is
-        the name of the data pipe.
+        This method should be used rather than importing the PipeContainer class and using the statement 'D[pipe] = PipeContainer()', where D is the relax data storage object and pipe is the name of the data pipe.
 
         @param pipe_name:   The name of the new data pipe.
         @type pipe_name:    str
         @param pipe_type:   The data pipe type.
         @type pipe_type:    str
+        @keyword switch:    A flag which if True will cause the new data pipe to be set to the current data pipe.
+        @type switch:       bool
         """
 
         # Test if the pipe already exists.
@@ -170,8 +170,9 @@ class Relax_data_store(dict):
         self[pipe_name].pipe_type = pipe_type
 
         # Change the current data pipe.
-        self.instance.current_pipe = pipe_name
-        __builtin__.cdp = self[pipe_name]
+        if switch:
+            self.instance.current_pipe = pipe_name
+            __builtin__.cdp = self[pipe_name]
 
 
     def is_empty(self):
@@ -304,7 +305,7 @@ class Relax_data_store(dict):
                 pipe_type = pipe_node.getAttribute('type')
 
                 # Add the data pipe.
-                self.add(pipe_name, pipe_type)
+                self.add(pipe_name, pipe_type, switch=False)
 
                 # Fill the pipe.
                 self[pipe_name].from_xml(pipe_node, file_version=file_version, dir=dir)
@@ -363,6 +364,9 @@ class Relax_data_store(dict):
             if hasattr(obj, 'to_xml'):
                 obj.to_xml(xmldoc, top_element)
                 blacklist = blacklist + [name]
+
+        # Remove the current data pipe from the blacklist!
+        blacklist.remove('current_pipe')
 
         # Add all simple python objects within the PipeContainer to the pipe element.
         if all:
