@@ -1172,6 +1172,8 @@ class Wiz_window(wx.Dialog):
         @type apply_button:     bool
         @keyword exec_on_next:  A flag which if true will run the on_execute() method when clicking on the next button.
         @type exec_on_next:     bool
+        @return:                The index of the page in the wizard.
+        @rtype:                 int
         """
 
         # Store the page.
@@ -1198,6 +1200,9 @@ class Wiz_window(wx.Dialog):
 
         # Store the index of the page.
         panel.page_index = self._num_pages - 1
+
+        # Return the index of the page.
+        return panel.page_index
 
 
     def block_next(self, block=True):
