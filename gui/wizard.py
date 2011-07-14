@@ -198,9 +198,6 @@ class Wiz_page(wx.Panel):
         # Finished.
         self.on_completion()
 
-        # Increment the execution counter.
-        self.parent._exec_count[self.parent._current_page] += 1
-
         # Execute the on_apply() method.
         self.on_apply()
 
@@ -1136,6 +1133,9 @@ class Wiz_window(wx.Dialog):
         if self._exec_on_next[self._current_page]:
             self._pages[self._current_page]._apply(event)
 
+            # Increment the execution counter.
+            self._exec_count[self._current_page] += 1
+
         # Change the current page.
         self._current_page += 1
 
@@ -1154,6 +1154,9 @@ class Wiz_window(wx.Dialog):
         for i in range(self._num_pages):
             # Execute the _apply method.
             self._pages[i]._apply(event)
+
+            # Increment the execution counter.
+            self._exec_count[i] += 1
 
         # Then destroy the dialog.
         self.Destroy()
