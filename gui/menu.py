@@ -211,6 +211,10 @@ class Menu:
                 [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.molecule.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.molecule.delete]
             ]],
+            [wx.NewId(), "&noe", None, None, [
+                [wx.NewId(), "&read_restraints", paths.icon_16x16.open, self.gui.user_functions.noe.read_restraints],
+                [wx.NewId(), "&spectrum_type",   None, self.gui.user_functions.noe.spectrum_type]
+            ]],
             [wx.NewId(), "&pipe", paths.icon_16x16.pipe, None, [
                 [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.pipes.copy],
                 [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.pipes.create],

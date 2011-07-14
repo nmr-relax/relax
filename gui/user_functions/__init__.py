@@ -29,6 +29,7 @@ from relax_errors import RelaxError
 # GUI module imports.
 from deselect import Deselect
 from molecule import Molecule
+from noe import Noe
 from pipes import Pipes
 from residue import Residue
 from relax_data import Relax_data
@@ -45,6 +46,7 @@ from value import Value
 __all__ = ['base',
            'deselect',
            'molecule',
+           'noe',
            'pipes',
            'residue',
            'relax_data',
@@ -72,6 +74,7 @@ class User_functions:
         # The user functions.
         self.deselect = Deselect(self.gui)
         self.molecule = Molecule(self.gui)
+        self.noe = Noe(self.gui)
         self.pipes = Pipes(self.gui)
         self.residue = Residue(self.gui)
         self.relax_data = Relax_data(self.gui)
@@ -90,6 +93,7 @@ class User_functions:
         # Send the commands onwards to the user function classes.
         self.deselect.destroy()
         self.molecule.destroy()
+        self.noe.destroy()
         self.pipes.destroy()
         self.residue.destroy()
         self.relax_data.destroy()
