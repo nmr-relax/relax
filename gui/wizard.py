@@ -1176,8 +1176,8 @@ class Wiz_window(wx.Dialog):
         @type event:    wx event
         """
 
-        # Loop over all pages and execute their _apply() methods, if not already done.
-        for i in range(self._num_pages):
+        # Loop over the pages in the sequence and execute their _apply() methods, if not already done.
+        for i in self._seq_loop():
             if not self._exec_count[i]:
                 # Execute the _apply method.
                 self._pages[i]._apply(event)
@@ -1187,6 +1187,29 @@ class Wiz_window(wx.Dialog):
 
         # Then destroy the dialog.
         self.Destroy()
+
+
+    def _seq_loop(self):
+        """Loop over the sequence in the forwards direction."""
+
+        # Initialise.
+        current = 0
+
+        # First yield the initial element (always zero!).
+        yield current
+
+        # Loop over the sequence.
+        while 1:
+            # Update.
+            next = self._seq_next[current]
+            current = next
+
+            # End of the sequence.
+            if next == None:
+                break
+
+            # Yield the next index.
+            yield next
 
 
     def add_page(self, panel, apply_button=True, exec_on_next=True):
