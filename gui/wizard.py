@@ -954,6 +954,9 @@ class Wiz_window(wx.Dialog):
         self._button_ids = []
         self._exec_on_next = []
         self._exec_count = []
+        self._seq_fn_list = []
+        self._seq_next = []
+        self._seq_prev = []
 
         # A max of 10 pages should be plenty enough (any more and the developer should be shot!).
         for i in range(10):
@@ -990,6 +993,11 @@ class Wiz_window(wx.Dialog):
 
             # Execution count.
             self._exec_count.append(0)
+
+            # Page sequence initialisation.
+            self._seq_fn_list.append(self._next_fn)
+            self._seq_next.append(None)
+            self._seq_prev.append(None)
 
 
     def _build_buttons(self):
@@ -1112,8 +1120,8 @@ class Wiz_window(wx.Dialog):
         @type event:    wx event
         """
 
-        # Change the current page.
-        self._current_page -= 1
+        # Work back in the sequence.
+        self._current_page = self._seq_prev[self._current_page]
 
         # Display the previous page.
         self._display_page(self._current_page)
@@ -1136,13 +1144,31 @@ class Wiz_window(wx.Dialog):
             # Increment the execution counter.
             self._exec_count[self._current_page] += 1
 
+        # Determine the next page.
+        next_page = self._seq_fn_list[self._current_page]()
+
+        # Update the sequence lists.
+        self._seq_next[self._current_page] = next_page
+        self._seq_prev[next_page] = self._current_page
+
         # Change the current page.
-        self._current_page += 1
+        self._current_page = next_page
 
         # Display the next page.
         self._display_page(self._current_page)
 
 
+    def _next_fn(self):
+        """Standard function for setting the next page to the one directly next in the sequence.
+
+        @return:    The index of the next page, which is the current page index plus one.
+        @rtype:     int
+        """
+
+        # Return the next page.
+        return self._current_page + 1
+
+        
     def _ok(self, event):
         """Accept the operation.
 
