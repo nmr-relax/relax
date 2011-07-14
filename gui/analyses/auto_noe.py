@@ -328,31 +328,34 @@ class Auto_noe(Base_frame):
         """
 
         # Initialise a wizard.
-        wizard = Wiz_window(size_x=1000, size_y=900, title="Set up the NOE peak intensities")
-        page_indices = {}
+        self.wizard = Wiz_window(size_x=1000, size_y=900, title="Set up the NOE peak intensities")
+        self.page_indices = {}
 
         # The spectrum.read_intensities page.
-        page = Read_intensities_page(wizard, self.gui)
-        page_indices['read'] = wizard.add_page(page)
+        page = Read_intensities_page(self.wizard, self.gui)
+        self.page_indices['read'] = self.wizard.add_page(page)
 
         # Error type selection page.
-        page = Error_type_page(wizard, self.gui)
-        page_indices['type'] = wizard.add_page(page, apply_button=False)
+        self.page_error_type = Error_type_page(self.wizard, self.gui)
+        self.page_indices['type'] = self.wizard.add_page(self.page_error_type, apply_button=False)
+        self.wizard.set_seq_next_fn(self.page_indices['type'], self.wizard_page_after_error_type)
 
         # The spectrum.replicated page.
-        page = Replicated_page(wizard, self.gui)
-        page_indices['replicated'] = wizard.add_page(page)
+        page = Replicated_page(self.wizard, self.gui)
+        self.page_indices['repl'] = self.wizard.add_page(page)
+        self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
 
         # The spectrum.baseplane_rmsd page.
-        page = Baseplane_rmsd_page(wizard, self.gui)
-        page_indices['rmsd'] = wizard.add_page(page)
+        page = Baseplane_rmsd_page(self.wizard, self.gui)
+        self.page_indices['rmsd'] = self.wizard.add_page(page)
+        self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
 
         # The spectrum.integration_points page.
-        page = Integration_points_page(wizard, self.gui)
-        page_indices['pts'] = wizard.add_page(page)
+        page = Integration_points_page(self.wizard, self.gui)
+        self.page_indices['pts'] = self.wizard.add_page(page)
 
         # Run the wizard.
-        wizard.run()
+        self.wizard.run()
 
 
     def results_directory(self, event):
@@ -399,6 +402,44 @@ class Auto_noe(Base_frame):
             self.data.save_dir = gui_to_str(self.field_results_dir.GetValue())
         else:
             self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
+
+
+    def wizard_page_after_error_type(self):
+        """Set the page after the error type choice.
+
+        @return:    The index of the next page, which is the current page index plus one.
+        @rtype:     int
+        """
+
+        # Go to the spectrum.baseplane_rmsd page.
+        if self.page_error_type.selection == 'rmsd':
+            return self.page_indices['rmsd']
+
+        # Go to the spectrum.replicated page.
+        elif self.page_error_type.selection == 'repl':
+            return self.page_indices['repl']
+
+
+    def wizard_page_after_repl(self):
+        """Set the page that comes after the spectrum.replicated page.
+
+        @return:    The index of the next page.
+        @rtype:     int
+        """
+
+        # Go to the spectrum.integration_points page.
+        return self.page_indices['pts']
+
+
+    def wizard_page_after_rmsd(self):
+        """Set the page that comes after the spectrum.baseplane_rmsd page.
+
+        @return:    The index of the next page.
+        @rtype:     int
+        """
+
+        # Go to the spectrum.integration_points page.
+        return self.page_indices['pts']
 
 
 
@@ -481,7 +522,6 @@ class Error_type_page(UF_page):
         elif button == self.radio_repl:
             self.selection = 'repl'
 
-        print self.selection
 
 
 class Execute_noe(Execute):
