@@ -98,14 +98,10 @@ class Spectrum(User_fn_class):
         |          |                                        |                                      |
         | Volumes  | All replicated + variance averaging    | One sigma per replicated spectra set |
         |__________|________________________________________|______________________________________|
-
-
-        Peak heights with baseplane noise RMSD
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        When none of the spectra have been replicated, then the peak height errors are calculated using the RMSD of the baseplane noise, the value of which is set by the spectrum.baseplane_rmsd() user function.  This results in a different error per peak per spectrum.  The standard deviation error measure for the peak height, sigma_I, is set to the RMSD value.
         """
     error_analysis._doc_additional = [
+        ["Peak heights with baseplane noise RMSD", """
+        When none of the spectra have been replicated, then the peak height errors are calculated using the RMSD of the baseplane noise, the value of which is set by the spectrum.baseplane_rmsd() user function.  This results in a different error per peak per spectrum.  The standard deviation error measure for the peak height, sigma_I, is set to the RMSD value."""],
         ["Peak heights with partially replicated spectra", """
         When spectra are replicated, the variance for a single spin at a single replicated spectra set is calculated by the formula
 
