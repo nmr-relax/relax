@@ -1287,3 +1287,16 @@ class Wiz_window(wx.Dialog):
         else:
             # Show the wizard.
             self.Show()
+
+
+    def set_seq_next_fn(self, index, fn):
+        """A user specified function for non-linear page changing.
+
+        @param index:   The index of the page the function should be associated with.
+        @type index:    int
+        @param fn:      The function for determining the page after the current.  This function should return the index of the next page.
+        @type fn:       func or method.
+        """
+
+        # Store the function.
+        self._seq_fn_list[index] = fn
