@@ -328,22 +328,23 @@ class Auto_noe(Base_frame):
 
         # Initialise a wizard.
         wizard = Wiz_window(size_x=1000, size_y=900, title="Set up the NOE peak intensities")
+        page_indices = {}
 
         # The spectrum.read_intensities page.
         page = Read_intensities_page(wizard, self.gui)
-        wizard.add_page(page)
+        page_indices['read'] = wizard.add_page(page)
 
         # The spectrum.replicated page.
         page = Replicated_page(wizard, self.gui)
-        wizard.add_page(page)
+        page_indices['replicated'] = wizard.add_page(page)
 
         # The spectrum.baseplane_rmsd page.
         page = Baseplane_rmsd_page(wizard, self.gui)
-        wizard.add_page(page)
+        page_indices['rmsd'] = wizard.add_page(page)
 
         # The spectrum.integration_points page.
         page = Integration_points_page(wizard, self.gui)
-        wizard.add_page(page)
+        page_indices['pts'] = wizard.add_page(page)
 
         # Run the wizard.
         wizard.run()
