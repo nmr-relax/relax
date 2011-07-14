@@ -212,7 +212,10 @@ class Analysis_controller:
                 analysis_name = 'Model-free'
 
             # Set up the analysis.
-            self.new_analysis(map[ds.relax_gui.analyses[i].analysis_type], analysis_name, index=i)
+            self.new_analysis(map[ds.relax_gui.analyses[i].analysis_type], analysis_name, index=i, switch=False)
+
+        # Switch to the page of the current data pipe.
+        self.pipe_switch()
 
 
     def menu_close(self, event):
@@ -275,7 +278,7 @@ class Analysis_controller:
         del self.new_wizard
 
 
-    def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, index=None):
+    def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, index=None, switch=True):
         """Initialise a new analysis.
 
         @keyword analysis_type: The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
@@ -284,6 +287,8 @@ class Analysis_controller:
         @type analysis_name:    str
         @keyword index:         The index of the analysis in the relax data store (set to None if no data currently exists).
         @type index:            None or int
+        @keyword switch:        A flag which if True will cause the new page to be switched to.
+        @type switch:           bool
         """
 
         # Starting from the initial state.
@@ -341,7 +346,8 @@ class Analysis_controller:
         self._num_analyses += 1
 
         # Switch to the new page.
-        self.switch_page(self._num_analyses-1)
+        if switch:
+            self.switch_page(self._num_analyses-1)
 
         # Set the initialisation flag.
         self.init_state = False
