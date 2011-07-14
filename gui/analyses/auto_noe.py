@@ -52,6 +52,7 @@ from gui.misc import add_border, gui_to_str, protected_exec, str_to_gui
 from gui import paths
 from gui.settings import load_sequence
 from gui.user_functions.base import UF_page
+from gui.user_functions.noe import Spectrum_type_page
 from gui.user_functions.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
 from gui.wizard import Wiz_window
 
@@ -337,8 +338,8 @@ class Auto_noe(Base_frame):
 
         # Error type selection page.
         self.page_error_type = Error_type_page(self.wizard, self.gui)
-        self.page_indices['type'] = self.wizard.add_page(self.page_error_type, apply_button=False)
-        self.wizard.set_seq_next_fn(self.page_indices['type'], self.wizard_page_after_error_type)
+        self.page_indices['err_type'] = self.wizard.add_page(self.page_error_type, apply_button=False)
+        self.wizard.set_seq_next_fn(self.page_indices['err_type'], self.wizard_page_after_error_type)
 
         # The spectrum.replicated page.
         page = Replicated_page(self.wizard, self.gui)
@@ -353,6 +354,10 @@ class Auto_noe(Base_frame):
         # The spectrum.integration_points page.
         page = Integration_points_page(self.wizard, self.gui)
         self.page_indices['pts'] = self.wizard.add_page(page)
+
+        # The noe.spectrum_type page.
+        page = Spectrum_type_page(self.wizard, self.gui)
+        self.page_indices['spectrum_type'] = self.wizard.add_page(page)
 
         # Run the wizard.
         self.wizard.run()
