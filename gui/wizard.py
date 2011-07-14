@@ -950,6 +950,7 @@ class Wiz_window(wx.Dialog):
         self._page_sizers = []
         self._button_sizers = []
         self._button_apply_flag = []
+        self._exec_on_next = []
         self._buttons = []
         self._button_ids = []
 
@@ -966,6 +967,9 @@ class Wiz_window(wx.Dialog):
 
             # Set all apply flags to True.
             self._button_apply_flag.append(True)
+
+            # Execute on next by default.
+            self._exec_on_next.append(True)
 
             # Initialise the button storage.
             self._buttons.append({'back': None,
@@ -1121,6 +1125,10 @@ class Wiz_window(wx.Dialog):
         # Execute the page's on_next() method.
         self._pages[self._current_page].on_next()
 
+        # Execute the page's on_execute() method.
+        if self._exec_on_next[self._current_page]:
+            self._pages[self._current_page].on_execute()
+
         # Change the current page.
         self._current_page += 1
 
@@ -1144,13 +1152,15 @@ class Wiz_window(wx.Dialog):
         self.Destroy()
 
 
-    def add_page(self, panel, apply_button=True):
+    def add_page(self, panel, apply_button=True, exec_on_next=True):
         """Add a new page to the wizard.
 
         @param panel:           The page to add to the wizard.
         @type panel:            wx.Panel instance
         @keyword apply_button:  A flag which if true will show the apply button for that page.
         @type apply_button:     bool
+        @keyword exec_on_next:  A flag which if true will run the on_execute() method when clicking on the next button.
+        @type exec_on_next:     bool
         """
 
         # Store the page.
@@ -1171,8 +1181,9 @@ class Wiz_window(wx.Dialog):
         # Add the sizer for the wizard buttons.
         self._page_sizers[index].Add(self._button_sizers[index], 0, wx.ALIGN_RIGHT|wx.ALL, 0)
 
-        # Store the apply button flag.
+        # Store the flags.
         self._button_apply_flag[index] = apply_button
+        self._exec_on_next[index] = exec_on_next
 
         # Store the index of the page.
         panel.page_index = self._num_pages - 1
