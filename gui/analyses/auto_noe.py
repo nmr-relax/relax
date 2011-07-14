@@ -333,8 +333,8 @@ class Auto_noe(Base_frame):
         self.page_indices = {}
 
         # The spectrum.read_intensities page.
-        page = Read_intensities_page(self.wizard, self.gui)
-        self.page_indices['read'] = self.wizard.add_page(page)
+        self.page_intensity = Read_intensities_page(self.wizard, self.gui)
+        self.page_indices['read'] = self.wizard.add_page(self.page_intensity)
 
         # Error type selection page.
         self.page_error_type = Error_type_page(self.wizard, self.gui)
@@ -433,7 +433,13 @@ class Auto_noe(Base_frame):
         """
 
         # Go to the spectrum.integration_points page.
-        return self.page_indices['pts']
+        int_method = gui_to_str(self.page_intensity.int_method.GetValue())
+        if int_method != 'height':
+            return self.page_indices['pts']
+
+        # Skip to the noe.spectrum_type page.
+        else:
+            return self.page_indices['spectrum_type']
 
 
     def wizard_page_after_rmsd(self):
@@ -444,7 +450,13 @@ class Auto_noe(Base_frame):
         """
 
         # Go to the spectrum.integration_points page.
-        return self.page_indices['pts']
+        int_method = gui_to_str(self.page_intensity.int_method.GetValue())
+        if int_method != 'height':
+            return self.page_indices['pts']
+
+        # Skip to the noe.spectrum_type page.
+        else:
+            return self.page_indices['spectrum_type']
 
 
 
