@@ -63,7 +63,7 @@ class Noe(User_fn_class):
     read_restraints._doc_title = "Read NOESY or ROESY restraints from a file."
     read_restraints._doc_title_short = "NOESY or ROESY restraint reading."
     read_restraints._doc_args = [
-        ["file", "The name of the file containing the relaxation data."],
+        ["file", "The name of the file containing the restraint data."],
         ["dir", "The directory where the file is located."],
         ["proton1_col", "The column containing the first proton of the NOE or ROE cross peak."],
         ["proton2_col", "The column containing the second proton of the NOE or ROE cross peak."],
