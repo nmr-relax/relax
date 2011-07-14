@@ -61,7 +61,7 @@ class Noe(User_fn_class):
 
     # The function doc info.
     read_restraints._doc_title = "Read NOESY or ROESY restraints from a file."
-    read_restraints._doc_title_short = "NOESY or ROESY restraint reading."
+    read_restraints._doc_title_short = "Restraint reading."
     read_restraints._doc_args = [
         ["file", "The name of the file containing the restraint data."],
         ["dir", "The directory where the file is located."],
@@ -72,7 +72,7 @@ class Noe(User_fn_class):
         ["sep", "The column separator (the default is white space)."]
     ]
     read_restraints._doc_desc = """
-        This can automatically determine the format of the file, for example Xplor formatted restraint files.  A generically formatted file is also supported if it contains minimally four columns with the two proton names and the upper and lower bounds, as specified by the column numbers.  The proton names need to be in the spin ID string format.
+        The format of the file will be automatically determined, for example Xplor formatted restraint files.  A generically formatted file is also supported if it contains minimally four columns with the two proton names and the upper and lower bounds, as specified by the column numbers.  The proton names need to be in the spin ID string format.
         """
     read_restraints._doc_examples = """
         To read the Xplor formatted restraint file 'NOE.xpl', type one of:
@@ -105,16 +105,16 @@ class Noe(User_fn_class):
 
     # The function doc info.
     spectrum_type._doc_title = "Set the steady-state NOE spectrum type for pre-loaded peak intensities."
-    spectrum_type._doc_title = "Steady-state NOE spectrum type."
+    spectrum_type._doc_title_short = "Steady-state NOE spectrum type."
     spectrum_type._doc_args = [
-        ["spectrum_type", "The type of steady-state NOE spectrum, one of 'ref' or 'sat'."],
+        ["spectrum_type", "The type of steady-state NOE spectrum, one of 'ref' for the reference spectrum or 'sat' for the saturated spectrum."],
         ["spectrum_id", "The spectrum ID string."]
     ]
     spectrum_type._doc_desc = """
-        The spectrum_type argument can have the following values:
+        The spectrum type can be one of the following:
 
-            'ref':  The steady-state NOE reference spectrum.
-            'sat':  The steady-state NOE spectrum with proton saturation turned on.
+            The steady-state NOE reference spectrum.
+            The steady-state NOE spectrum with proton saturation turned on.
 
         Peak intensities should be loaded before this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum ID string which can be used here.
         """
