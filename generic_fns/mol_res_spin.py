@@ -996,7 +996,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
             raise RelaxNoSpinError(atom)
 
         # Test the position.
-        if not hasattr(spin, 'pos') or not spin.pos:
+        if not hasattr(spin, 'pos') or spin.pos == None:
             raise RelaxError("Positional information is not available for the atom '%s'." % atom)
 
         # Store the position.
