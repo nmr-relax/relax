@@ -108,7 +108,12 @@ class Spin_view_window(wx.Frame):
         menu = wx.Menu()
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.spin.copy))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="crea&te", icon=paths.icon_16x16.add, fn=self.gui.user_functions.spin.create))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="create_&pseudo", icon=paths.icon_16x16.add, fn=self.gui.user_functions.spin.create_pseudo))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.spin.delete))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="displa&y", icon=None, fn=self.gui.user_functions.spin.display))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&element", icon=None, fn=self.gui.user_functions.spin.element))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&name", icon=None, fn=self.gui.user_functions.spin.name))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="num&ber", icon=None, fn=self.gui.user_functions.spin.number))
         self.menubar.Append(menu, "&spin")
 
         # The select menu entry.

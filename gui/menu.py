@@ -252,7 +252,12 @@ class Menu:
             [wx.NewId(), "&spin", paths.icon_16x16.spin, None, [
                 [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.spin.copy],
                 [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.spin.create],
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.spin.delete]
+                [wx.NewId(), "create_&pseudo", paths.icon_16x16.add, self.gui.user_functions.spin.create_pseudo],
+                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.spin.delete],
+                [wx.NewId(), "displa&y", None, self.gui.user_functions.spin.display],
+                [wx.NewId(), "&element", None, self.gui.user_functions.spin.element],
+                [wx.NewId(), "&name", None, self.gui.user_functions.spin.name],
+                [wx.NewId(), "num&ber", None, self.gui.user_functions.spin.number]
             ]],
             [wx.NewId(), "s&tructure", paths.icon_16x16.structure, None, [
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.structure.delete],

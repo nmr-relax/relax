@@ -32,7 +32,7 @@ from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.misc import gui_to_str, str_to_gui
+from gui.misc import gui_to_bool, gui_to_int, gui_to_list, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
 from gui.wizard import Wiz_window
@@ -86,6 +86,20 @@ class Spin(UF_base):
         wizard.run()
 
 
+    def create_pseudo(self, event):
+        """The spin.create_pseudo user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'create_pseudo'))
+        page = Create_pseudo_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
     def delete(self, event, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
         """The spin.delete user function.
 
@@ -124,6 +138,62 @@ class Spin(UF_base):
         wizard.run()
 
 
+    def display(self, event):
+        """The spin.display user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'display'))
+        page = Display_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
+    def element(self, event):
+        """The spin.element user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'element'))
+        page = Element_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
+    def name(self, event):
+        """The spin.name user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'name'))
+        page = Name_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
+    def number(self, event):
+        """The spin.number user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'number'))
+        page = Number_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
 
 class Copy_page(UF_page, Mol_res_spin):
     """The spin.copy() user function page."""
@@ -133,7 +203,7 @@ class Copy_page(UF_page, Mol_res_spin):
     uf_path = ['spin', 'copy']
 
     def add_contents(self, sizer):
-        """Add the spin specific GUI elements.
+        """Add the page specific GUI elements.
 
         @param sizer:   A sizer object.
         @type sizer:    wx.Sizer instance
@@ -288,7 +358,7 @@ class Create_page(UF_page, Mol_res_spin):
     uf_path = ['spin', 'create']
 
     def add_contents(self, sizer):
-        """Add the spin specific GUI elements.
+        """Add the page specific GUI elements.
 
         @param sizer:   A sizer object.
         @type sizer:    wx.Sizer instance
@@ -346,6 +416,50 @@ class Create_page(UF_page, Mol_res_spin):
 
 
 
+class Create_pseudo_page(UF_page, Mol_res_spin):
+    """The spin.create_pseudo() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'spin.png'
+    uf_path = ['spin', 'create_pseudo']
+
+    def add_contents(self, sizer):
+        """Add the page specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The name and number of the spin.
+        self.spin_name = self.input_field(sizer, "The pseudo-spin name:", tooltip=self.uf._doc_args_dict['spin_name'])
+        self.spin_num = self.input_field(sizer, "The pseudo-spin number:", tooltip=self.uf._doc_args_dict['spin_num'])
+
+        # The spin ID.
+        self.res_id = self.spin_id_element(sizer, desc="The residue ID string:", choices=[])
+
+        # The members.
+        self.members = self.input_field(sizer, "The pseudo-spin members:", tooltip=self.uf._doc_args_dict['members'])
+
+        # The pos averaging.
+        self.averaging = self.combo_box(sizer, "The positional averaging:", tooltip=self.uf._doc_args_dict['averaging'], choices=['linear'])
+        self.averaging.SetValue('linear')
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the values.
+        spin_name = gui_to_str(self.spin_name.GetValue())
+        spin_num = gui_to_int(self.spin_num.GetValue())
+        res_id = gui_to_str(self.res_id.GetValue())
+        members = gui_to_list(self.members.GetValue())
+        averaging = gui_to_str(self.averaging.GetValue())
+
+        # Execute.
+        self.gui.interpreter.spin.create_pseudo(spin_name=spin_name, spin_num=spin_num, res_id=res_id, members=members, averaging=averaging)
+
+
+
 class Delete_page(UF_page, Mol_res_spin):
     """The spin.delete() user function page."""
 
@@ -354,7 +468,7 @@ class Delete_page(UF_page, Mol_res_spin):
     uf_path = ['spin', 'delete']
 
     def add_contents(self, sizer):
-        """Add the spin specific GUI elements.
+        """Add the page specific GUI elements.
 
         @param sizer:   A sizer object.
         @type sizer:    wx.Sizer instance
@@ -395,3 +509,146 @@ class Delete_page(UF_page, Mol_res_spin):
 
         # Update the spin list.
         self._update_spins(None)
+
+
+
+class Display_page(UF_page, Mol_res_spin):
+    """The spin.display() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'spin.png'
+    uf_path = ['spin', 'display']
+
+    def add_contents(self, sizer):
+        """Add the page specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The spin ID.
+        self.spin_id = self.spin_id_element(sizer, desc="Restrict to the spin ID:")
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the values.
+        spin_id = gui_to_str(self.spin_id.GetValue())
+
+        # Execute.
+        self.gui.interpreter.spin.display(spin_id=spin_id)
+
+
+
+class Element_page(UF_page, Mol_res_spin):
+    """The spin.element() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'spin.png'
+    uf_path = ['spin', 'element']
+
+    def add_contents(self, sizer):
+        """Add the page specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The spin ID.
+        self.spin_id = self.spin_id_element(sizer, desc="Restrict the element setting to the spins:")
+
+        # The element.
+        self.element = self.combo_box(sizer, "The element:", tooltip=self.uf._doc_args_dict['element'], choices=['H', 'N', 'C','O', 'P'], read_only=False)
+
+        # The force flag.
+        self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'])
+        self.force.SetValue('False')
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the values.
+        spin_id = gui_to_str(self.spin_id.GetValue())
+        element = gui_to_str(self.element.GetValue())
+        force = gui_to_bool(self.force.GetValue())
+
+        # Execute.
+        self.gui.interpreter.spin.element(spin_id=spin_id, element=element, force=force)
+
+
+
+class Name_page(UF_page, Mol_res_spin):
+    """The spin.name() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'spin.png'
+    uf_path = ['spin', 'name']
+
+    def add_contents(self, sizer):
+        """Add the page specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The spin ID.
+        self.spin_id = self.spin_id_element(sizer, desc="Restrict the naming to the spins:")
+
+        # The name.
+        self.name = self.input_field(sizer, "The name:", tooltip=self.uf._doc_args_dict['name'])
+
+        # The force flag.
+        self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'])
+        self.force.SetValue('False')
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the values.
+        spin_id = gui_to_str(self.spin_id.GetValue())
+        name = gui_to_str(self.name.GetValue())
+        force = gui_to_bool(self.force.GetValue())
+
+        # Execute.
+        self.gui.interpreter.spin.name(spin_id=spin_id, name=name, force=force)
+
+
+
+class Number_page(UF_page, Mol_res_spin):
+    """The spin.number() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'spin.png'
+    uf_path = ['spin', 'number']
+
+    def add_contents(self, sizer):
+        """Add the page specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The spin ID.
+        self.spin_id = self.spin_id_element(sizer, desc="Restrict the numbering to the spins:")
+
+        # The number.
+        self.number = self.input_field(sizer, "The number:", tooltip=self.uf._doc_args_dict['number'])
+
+        # The force flag.
+        self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'])
+        self.force.SetValue('False')
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the values.
+        spin_id = gui_to_str(self.spin_id.GetValue())
+        number = gui_to_int(self.number.GetValue())
+        force = gui_to_bool(self.force.GetValue())
+
+        # Execute.
+        self.gui.interpreter.spin.number(spin_id=spin_id, number=number, force=force)
