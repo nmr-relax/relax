@@ -782,13 +782,15 @@ class Wiz_page(wx.Panel):
         """
 
 
-    def spin_id_element(self, sizer, desc="The spin ID string:", default=None, divider=None, padding=0, spacer=None):
+    def spin_id_element(self, sizer, desc="The spin ID string:", choices=['@N', '@C'], default=None, divider=None, padding=0, spacer=None):
         """Build a special the input field widget.
 
         @param sizer:       The sizer to put the input field widget into.
         @type sizer:        wx.Sizer instance
         @keyword desc:      The text description.
         @type desc:         str
+        @keyword choices:   The list of choices to present to the user.
+        @type choices:      list of str
         @keyword default:   The default value.
         @type default:      str or None
         @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
@@ -820,7 +822,7 @@ class Wiz_page(wx.Panel):
         sub_sizer.AddSpacer((divider - x, 0))
 
         # The input field.
-        field = wx.ComboBox(self, -1, '', choices=['@N', '@C'])
+        field = wx.ComboBox(self, -1, '', choices=choices)
         field.SetMinSize((50, 27))
         sub_sizer.Add(field, 1, wx.ALIGN_CENTER_VERTICAL, 0)
 
