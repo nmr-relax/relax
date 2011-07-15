@@ -142,7 +142,7 @@ class Baseplane_rmsd_page(UF_page):
         # Set the spectrum ID names.
         if hasattr(cdp, 'spectrum_ids'):
             for id in cdp.spectrum_ids:
-                self.spectrum_id.append(str_to_gui(id))
+                self.spectrum_id.Append(str_to_gui(id))
 
 
     def on_execute(self):
@@ -215,7 +215,7 @@ class Integration_points_page(UF_page):
         # Set the spectrum ID names.
         if hasattr(cdp, 'spectrum_ids'):
             for id in cdp.spectrum_ids:
-                self.spectrum_id.append(str_to_gui(id))
+                self.spectrum_id.Append(str_to_gui(id))
 
 
     def on_execute(self):
@@ -342,11 +342,11 @@ class Replicated_page(UF_page):
         # Set the spectrum ID names.
         if hasattr(cdp, 'spectrum_ids'):
             for id in cdp.spectrum_ids:
-                self.spectrum_id1.append(str_to_gui(id))
-                self.spectrum_id2.append(str_to_gui(id))
-                self.spectrum_id3.append(str_to_gui(id))
-                self.spectrum_id4.append(str_to_gui(id))
-                self.spectrum_id5.append(str_to_gui(id))
+                self.spectrum_id1.Append(str_to_gui(id))
+                self.spectrum_id2.Append(str_to_gui(id))
+                self.spectrum_id3.Append(str_to_gui(id))
+                self.spectrum_id4.Append(str_to_gui(id))
+                self.spectrum_id5.Append(str_to_gui(id))
 
 
     def on_execute(self):
