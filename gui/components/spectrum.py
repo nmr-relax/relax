@@ -79,7 +79,7 @@ class Spectra_list:
         self.num_rows = 50
 
         # A static box to hold all the widgets, and its sizer.
-        stat_box = wx.StaticBox(self.parent, -1, "Peak lists")
+        stat_box = wx.StaticBox(self.parent, -1, "Spectra list")
         stat_box.SetFont(self.gui.font_subtitle)
         sub_sizer = wx.StaticBoxSizer(stat_box, wx.VERTICAL)
 
