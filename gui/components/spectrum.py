@@ -33,8 +33,8 @@ from gui.misc import add_border
 from gui import paths
 
 
-class Peak_intensity:
-    """The peak list selection class."""
+class Spectra_list:
+    """The GUI element for listing loaded spectral data."""
 
     # Class variables.
     col_label_width = 40
@@ -42,7 +42,7 @@ class Peak_intensity:
     col2_width = 140
 
     def __init__(self, gui=None, parent=None, data=None, label=None, width=688, height=300, box=None, fn_add=None):
-        """Build the peak list reading GUI element.
+        """Build the spectral list GUI element.
 
         @keyword gui:       The main GUI object.
         @type gui:          wx.Frame instance

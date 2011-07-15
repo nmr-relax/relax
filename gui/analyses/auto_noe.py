@@ -43,7 +43,7 @@ from gui.analyses.base import Base_frame
 from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
-from gui.components.spectrum import Peak_intensity
+from gui.components.spectrum import Spectra_list
 from gui.controller import Redirect_text
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir, openfile
@@ -230,7 +230,7 @@ class Auto_noe(Base_frame):
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(10)
-        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, data=self.data, label="NOE", box=box, fn_add=self.peak_wizard)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self.parent, data=self.data, label="NOE", box=box, fn_add=self.peak_wizard)
         box.AddSpacer(10)
 
         # Add the execution GUI element.
