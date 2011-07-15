@@ -75,6 +75,13 @@ class Spin_view_window(wx.Frame):
         self.menubar = wx.MenuBar()
         self.SetMenuBar(self.menubar)
 
+        # The sequence menu entry.
+        menu = wx.Menu()
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.sequence.copy))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&read", icon=paths.icon_16x16.open, fn=self.gui.user_functions.sequence.read))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&write", icon=paths.icon_16x16.save, fn=self.gui.user_functions.sequence.write))
+        self.menubar.Append(menu, "se&quence")
+
         # The structure menu entry.
         menu = wx.Menu()
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.structure.delete))
