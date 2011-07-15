@@ -28,7 +28,7 @@ from os import sep
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.misc import gui_to_str, str_to_gui
+from gui.misc import gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
 
@@ -281,10 +281,6 @@ class Read_intensities_page(UF_page):
         # The file name.
         file = gui_to_str(self.file.GetValue())
 
-        # No file.
-        if not file:
-            return
-
         # The values.
         spectrum_id = gui_to_str(self.spectrum_id.GetValue())
         heteronuc = gui_to_str(self.heteronuc.GetValue())
@@ -300,8 +296,6 @@ class Read_intensities_page(UF_page):
         res_name_col =  gui_to_int(self.res_name_col.GetValue())
         spin_num_col =  gui_to_int(self.spin_num_col.GetValue())
         spin_name_col = gui_to_int(self.spin_name_col.GetValue())
-        data_col =      gui_to_int(self.data_col.GetValue())
-        err_col =       gui_to_int(self.err_col.GetValue())
 
         # The column separator.
         sep = str(self.sep.GetValue())
@@ -312,7 +306,7 @@ class Read_intensities_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the peak intensities.
-        self.gui.interpreter.spectrum.read(file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
+        self.gui.interpreter.spectrum.read_intensities(file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
 
 
 
