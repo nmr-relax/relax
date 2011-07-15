@@ -329,6 +329,9 @@ class Auto_noe(Base_frame):
         @type event:    wx event
         """
 
+        # Change the cursor to waiting.
+        wx.BeginBusyCursor()
+
         # First check that at least a single spin is named!
         if not are_spins_named():
             error_message("No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.", caption='Incomplete setup')
@@ -363,6 +366,9 @@ class Auto_noe(Base_frame):
         # The noe.spectrum_type page.
         page = Spectrum_type_page(self.wizard, self.gui)
         self.page_indices['spectrum_type'] = self.wizard.add_page(page)
+
+        # Reset the cursor.
+        wx.EndBusyCursor()
 
         # Run the wizard.
         self.wizard.run()
