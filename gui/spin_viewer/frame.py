@@ -156,6 +156,9 @@ class Spin_view_window(wx.Frame):
         @type event:    wx event
         """
 
+        # Change the cursor to busy.
+        wx.BeginBusyCursor()
+
         # Update the data pipe selector.
         self.update_pipes()
 
@@ -164,6 +167,9 @@ class Spin_view_window(wx.Frame):
 
         # Redisplay the container.
         self.container.display(self.tree_panel.get_info())
+
+        # Reset the cursor.
+        wx.EndBusyCursor()
 
 
     def handler_close(self, event):
@@ -239,6 +245,10 @@ class Spin_view_window(wx.Frame):
         @type event:    wx event
         """
 
+        # Change the cursor to busy.
+        wx.Yield()
+        wx.BeginBusyCursor()
+
         # Init.
         pipe_switch = False
 
@@ -272,3 +282,6 @@ class Spin_view_window(wx.Frame):
 
         # Set the pipe name to the cdp.
         self.pipe_name.SetValue(pipe)
+
+        # Reset the cursor.
+        wx.EndBusyCursor()
