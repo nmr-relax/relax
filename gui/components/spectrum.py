@@ -28,7 +28,10 @@
 import wx
 import wx.lib.buttons
 
-# relaxGUI module imports.
+# relax module imports.
+from status import Status; status = Status()
+
+# relax GUI module imports.
 from gui.misc import add_border
 from gui import paths
 
@@ -38,10 +41,8 @@ class Spectra_list:
 
     # Class variables.
     col_label_width = 40
-    col1_width = 160
-    col2_width = 140
 
-    def __init__(self, gui=None, parent=None, data=None, label=None, width=688, height=300, box=None, fn_add=None, buttons=True):
+    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, buttons=True):
         """Build the spectral list GUI element.
 
         @keyword gui:       The main GUI object.
@@ -50,14 +51,10 @@ class Spectra_list:
         @type parent:       wx object
         @keyword data:      The data storage container.
         @type data:         class instance
-        @keyword label:     The type of analysis.
-        @type label:        str
-        @keyword width:     The initial width of the GUI element.
-        @type width:        int
-        @keyword height:    The initial height of the GUI element.
-        @type height:       int
         @keyword box:       The vertical box sizer to pack this GUI component into.
         @type box:          wx.BoxSizer instance
+        @keyword id:        A unique identification string.  This is used to register the update method with the GUI user function observer object.
+        @type id:           str
         @keyword fn_add:    The function to execute when clicking on the 'Add' button.
         @type fn_add:       func
         @keyword buttons:   A flag which if True will display the buttons at the top.
@@ -67,16 +64,11 @@ class Spectra_list:
         # Store the arguments.
         self.gui = gui
         self.parent = parent
-        self.data = data
-        self.label = label
         self.fn_add = fn_add
 
         # GUI variables.
         self.spacing = 5
         self.border = 5
-
-        # The number of rows.
-        self.num_rows = 50
 
         # A static box to hold all the widgets, and its sizer.
         stat_box = wx.StaticBox(self.parent, -1, "Spectra list")
@@ -93,33 +85,19 @@ class Spectra_list:
         if buttons:
             self.add_buttons(box_centre)
 
-        # Add the grid.
+        # Initialise the grid.
         box_centre.AddSpacer(self.spacing)
-        self.add_grid(box_centre)
+        self.init_grid(box_centre)
         box_centre.AddSpacer(self.spacing)
 
+        # Update the grid.
+        self.update()
 
-    def resize(self, event):
-        """Catch the resize to allow the grid to be resized.
+        # Initialise observer name.
+        self.name = 'spectra list: %s' % id
 
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The new grid size.
-        x, y = event.GetSize()
-
-        # The expandable column width.
-        width = x - self.col_label_width - self.col1_width - self.col2_width - 20
-
-        # Set the column sizes.
-        self.grid.SetRowLabelSize(self.col_label_width)
-        self.grid.SetColSize(0, width)
-        self.grid.SetColSize(1, self.col1_width)
-        self.grid.SetColSize(2, self.col2_width)
-
-        # Continue with the normal resizing.
-        event.Skip()
+        # Register the grid for updating when a user function completes.
+        status.observers.uf_gui.register(self.name, self.update)
 
 
     def add_buttons(self, sizer):
@@ -146,8 +124,8 @@ class Spectra_list:
         button.SetToolTipString("Read a spectral data file.")
 
 
-    def add_grid(self, sizer):
-        """Add the grid for the peak list files and delay times.
+    def init_grid(self, sizer):
+        """Initialise the grid for the spectra listing.
 
         @param box:     The sizer element to pack the grid into.
         @type box:      wx.BoxSizer instance
@@ -156,22 +134,15 @@ class Spectra_list:
         # Grid of peak list file names and relaxation time.
         self.grid = wx.grid.Grid(self.parent, -1)
 
-        # Create entries.
-        self.grid.CreateGrid(self.num_rows, 3)
-
-        # Create headers.
-        self.grid.SetColLabelValue(0, "%s peak list" % self.label)
-        self.grid.SetColLabelValue(1, "Relaxation delay [s]")
-        self.grid.SetColLabelValue(2, "No. of cycles")
+        # Initialise to a single row and column.
+        self.grid.CreateGrid(1, 1)
 
         # Properties.
         self.grid.SetDefaultCellFont(self.gui.font_normal)
         self.grid.SetLabelFont(self.gui.font_normal_bold)
 
-        # Column properties.
-        for i in range(self.grid.GetNumberRows()):
-            # Row properties.
-            self.grid.SetRowSize(i, 27)
+        # Set the row label widths.
+        self.grid.SetRowLabelSize(self.col_label_width)
 
         # No cell resizing allowed.
         self.grid.EnableDragColSize(False)
@@ -184,21 +155,60 @@ class Spectra_list:
         sizer.Add(self.grid, 1, wx.ALL|wx.EXPAND, 0)
 
 
-    def update_grid(self):
-        """Update the grid, changing the relaxation delay times as needed."""
+    def resize(self, event):
+        """Catch the resize to allow the grid to be resized.
 
-        # Loop over the rows.
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The new grid size.
+        x, y = event.GetSize()
+
+        # The expandable column width.
+        width = x - self.col_label_width - 20
+
+        # Set the column sizes.
+        self.grid.SetColSize(0, width)
+
+        # Continue with the normal resizing.
+        event.Skip()
+
+
+    def update(self):
+        """Update the spectra listing."""
+
+        # First freeze the grid, so that the GUI element doesn't update until the end.
+        self.grid.Freeze()
+
+        # Delete all rows and columns.
+        self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
+        self.grid.DeleteCols(numCols=self.grid.GetNumberCols()-1)
+
+        # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
+        if hasattr(cdp, 'spectrum_ids'):
+            # The number of IDs.
+            n = len(cdp.spectrum_ids)
+
+            # Append the appropriate number of rows.
+            self.grid.AppendRows(numRows=n)
+
+            # Set the IDs.
+            for i in range(n):
+                self.grid.SetCellValue(i, 0, cdp.spectrum_ids[i])
+
+        # Set the headers.
+        self.grid.SetColLabelValue(0, "Spectrum ID string")
+
+        # Set the grid properties once finalised.
         for i in range(self.grid.GetNumberRows()):
-            # The number of cycles.
-            ncyc = str(self.grid.GetCellValue(i, 2))
+            # Row properties.
+            self.grid.SetRowSize(i, 27)
 
-            # Update the relaxation time.
-            if time != '' and ncyc not in ['', '0']:
-                self.grid.SetCellValue(i, 1, str(int(ncyc) * time))
+            # Loop over the columns.
+            for j in range(self.grid.GetNumberCols()):
+                # Cell properties.
+                self.grid.SetReadOnly(i, j)
 
-            # The relaxation time and number of cycles.
-            relax_time = str(self.grid.GetCellValue(i, 1))
-
-            # Clear the relaxation time if set to zero.
-            if relax_time == '0.0':
-                self.grid.SetCellValue(i, 1, '')
+        # Unfreeze.
+        self.grid.Thaw()

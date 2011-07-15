@@ -240,7 +240,7 @@ class Auto_rx(Base_frame):
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(10)
-        self.peak_intensity = Spectra_list(gui=self.gui, parent=self.parent, data=self.data, label=self.label, box=box)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self.parent, id=str(self.data_index), box=box)
         box.AddSpacer(10)
 
         # Add the execution GUI element.
