@@ -229,10 +229,10 @@ class Spectrum(User_fn_class):
     read_intensities._doc_args = [
         ["file", "The name of the file containing the intensity data."],
         ["dir", "The directory where the file is located."],
-        ["spectrum_id", "The spectrum ID string."],
+        ["spectrum_id", "The unique spectrum ID string."],
         ["heteronuc", "The name of the heteronucleus as specified in the peak intensity file."],
         ["proton", "The name of the proton as specified in the peak intensity file."],
-        ["int_col", "The column containing the peak intensity data (used by the generic intensity file format)."],
+        ["int_col", "The column containing the peak intensity data (used by the generic intensity file format, or if the intensities are in a non-standard column)."],
         ["int_method", "The integration method."],
         ["spin_id_col", "The spin ID string column used by the generic intensity file format (an alternative to the mol, res, and spin name and number columns)."],
         ["mol_name_col", "The molecule name column used by the generic intensity file format (alternative to the spin_id_col)."],
