@@ -199,6 +199,28 @@ def gui_to_bool(string):
     return bool(string)
 
 
+def gui_to_list(string):
+    """Convert the GUI obtained string to a list.
+
+    @param string:  The list in string form.
+    @type string:   str
+    @return:        The list.
+    @rtype:         list
+    """
+
+    # No value.
+    if string == '':
+        return []
+
+    # Convert.
+    val = eval(string)
+    if type(val) != list:
+        val = [val]
+
+    # Return the list.
+    return val
+
+
 def gui_to_str(string):
     """Convert the GUI obtained string to a string.
 
