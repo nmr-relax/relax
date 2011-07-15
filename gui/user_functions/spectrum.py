@@ -28,7 +28,7 @@ from os import sep
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.misc import gui_to_int, gui_to_str, str_to_gui
+from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
 
@@ -149,7 +149,7 @@ class Baseplane_rmsd_page(UF_page):
         """Execute the user function."""
 
         # Get the values.
-        error = gui_to_str(self.error.GetValue())
+        error = gui_to_float(self.error.GetValue())
         spectrum_id = gui_to_str(self.spectrum_id.GetValue())
         spin_id = gui_to_str(self.spin_id.GetValue())
 
@@ -222,7 +222,7 @@ class Integration_points_page(UF_page):
         """Execute the user function."""
 
         # Get the values.
-        N = gui_to_str(self.N.GetValue())
+        N = gui_to_int(self.N.GetValue())
         spectrum_id = gui_to_str(self.spectrum_id.GetValue())
         spin_id = gui_to_str(self.spin_id.GetValue())
 
@@ -286,7 +286,7 @@ class Read_intensities_page(UF_page):
         heteronuc = gui_to_str(self.heteronuc.GetValue())
         proton = gui_to_str(self.proton.GetValue())
         int_method = gui_to_str(self.int_method.GetValue())
-        ncproc = gui_to_str(self.ncproc.GetValue())
+        ncproc = gui_to_int(self.ncproc.GetValue())
 
         # Get the column numbers.
         int_col =       gui_to_int(self.int_col.GetValue())
