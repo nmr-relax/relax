@@ -231,16 +231,16 @@ class Menu:
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.residue.delete]
             ]],
             [wx.NewId(), "s&cript",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
-            [wx.NewId(), "se&quence", paths.icon_16x16.sequence, None, [
-                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.sequence.copy],
-                [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.sequence.read],
-                [wx.NewId(), "&write", paths.icon_16x16.save, self.gui.user_functions.sequence.write]
-            ]],
             [wx.NewId(), "se&lect", None, None, [
                 [wx.NewId(), "&all",    None, self.gui.user_functions.select.all],
                 [wx.NewId(), "&read",   paths.icon_16x16.open, self.gui.user_functions.select.read],
                 [wx.NewId(), "re&verse", None, self.gui.user_functions.select.reverse],
                 [wx.NewId(), "&spin", None, self.gui.user_functions.select.spin],
+            ]],
+            [wx.NewId(), "se&quence", paths.icon_16x16.sequence, None, [
+                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.sequence.copy],
+                [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.sequence.read],
+                [wx.NewId(), "&write", paths.icon_16x16.save, self.gui.user_functions.sequence.write]
             ]],
             [wx.NewId(), "s&pectrum", None, None, [
                 [wx.NewId(), "&baseplane_rmsd", None, self.gui.user_functions.spectrum.baseplane_rmsd],
