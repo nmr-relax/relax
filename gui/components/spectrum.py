@@ -41,7 +41,7 @@ class Spectra_list:
     col1_width = 160
     col2_width = 140
 
-    def __init__(self, gui=None, parent=None, data=None, label=None, width=688, height=300, box=None, fn_add=None):
+    def __init__(self, gui=None, parent=None, data=None, label=None, width=688, height=300, box=None, fn_add=None, buttons=True):
         """Build the spectral list GUI element.
 
         @keyword gui:       The main GUI object.
@@ -60,6 +60,8 @@ class Spectra_list:
         @type box:          wx.BoxSizer instance
         @keyword fn_add:    The function to execute when clicking on the 'Add' button.
         @type fn_add:       func
+        @keyword buttons:   A flag which if True will display the buttons at the top.
+        @type buttons:      bool
         """
 
         # Store the arguments.
@@ -88,7 +90,8 @@ class Spectra_list:
         box_centre = add_border(sub_sizer, border=self.border)
 
         # Add buttons.
-        self.add_buttons(box_centre)
+        if buttons:
+            self.add_buttons(box_centre)
 
         # Add the grid.
         box_centre.AddSpacer(self.spacing)
@@ -128,18 +131,19 @@ class Spectra_list:
 
         # A panel for the buttons (to allow for tooltips).
         panel = wx.Panel(self.parent, -1)
-        sizer.Add(panel, 0, 0, 0)
+        sizer.Add(panel, 0, wx.ALL|wx.EXPAND, 0)
 
         # Button Sizer
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
         panel.SetSizer(button_sizer)
 
         # Add button.
-        button = wx.BitmapButton(panel, -1, bitmap=wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((60, 40))
-        button_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(panel, -1, None, " Add")
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
+        button.SetSize((80, 40))
+        button_sizer.Add(button, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.fn_add, button)
-        button.SetToolTipString("Read a peak intensity file.")
+        button.SetToolTipString("Read a spectral data file.")
 
 
     def add_grid(self, sizer):
