@@ -264,60 +264,6 @@ class Bruker_import:
         file.close()
 
 
-
-def __check_args(spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None):
-    """Check that the arguments have not been set.
-
-    @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity
-                            file format).  If supplied, the mol_name_col, res_name_col, res_num_col,
-                            spin_name_col, and spin_num_col arguments must be none.
-    @type spin_id_col:      int or None
-    @keyword mol_name_col:  The column containing the molecule name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
-    @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
-    @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information (used by the
-                            generic intensity file format).  If supplied, spin_id_col must be None.
-    @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
-    @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information (used by the generic
-                            intensity file format).  If supplied, spin_id_col must be None.
-    @type spin_num_col:     int or None
-    @keyword sep:           The column separator which, if None, defaults to whitespace.
-    @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
-                            spins.
-    @type spin_id:          None or str
-    """
-
-    # Args and names.
-    args = [spin_id_col,
-            mol_name_col,
-            res_num_col,
-            res_name_col,
-            spin_num_col,
-            spin_name_col,
-            sep,
-            spin_id]
-    names = ['spin_id_col',
-             'mol_name_col',
-             'res_num_col',
-             'res_name_col',
-             'spin_num_col',
-             'spin_name_col',
-             'sep',
-             'spin_id']
-
-    # Check the arguments are None.
-    for i in range(len(args)):
-        if args[i] != None:
-            raise RelaxArgNotNoneError(names[i], args[i])
-
-
 def __errors_height_no_repl():
     """Calculate the errors for peak heights when no spectra are replicated."""
 
@@ -1070,9 +1016,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Print out.
         print("Sparky formatted data file.\n")
 
-        # Check that certain args have not been set:
-        __check_args(spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
-
         # Extract the data.
         intensity_data = intensity_sparky(file_data=file_data, int_col=int_col)
 
@@ -1080,9 +1023,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     elif format == 'xeasy':
         # Print out.
         print("XEasy formatted data file.\n")
-
-        # Check that certain args have not been set:
-        __check_args(spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
 
         # Extract the data.
         intensity_data = intensity_xeasy(file_data=file_data, proton=proton, heteronuc=heteronuc, int_col=int_col)
