@@ -250,7 +250,7 @@ class Read_intensities_page(UF_page):
         self.file = self.file_selection(sizer, "The peak intensity file:", title="Peak intensity file selection", tooltip=self.uf._doc_args_dict['file'])
 
         # The spectrum ID.
-        self.spectrum_id = self.combo_box(sizer, "The spectrum ID:", tooltip=self.uf._doc_args_dict['spectrum_id'])
+        self.spectrum_id = self.input_field(sizer, "The spectrum ID:", tooltip=self.uf._doc_args_dict['spectrum_id'])
 
         # The heteronucleus and proton.
         self.heteronuc = self.input_field(sizer, "The heternucleus name:", tooltip=self.uf._doc_args_dict['heteronuc'])
