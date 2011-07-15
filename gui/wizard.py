@@ -126,6 +126,9 @@ class Wiz_page(wx.Panel):
         # Execute the base class method.
         wx.Panel.__init__(self, parent, id=-1)
 
+        # Initilise some variables.
+        self.exec_status = False
+
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(box_main)
@@ -189,10 +192,10 @@ class Wiz_page(wx.Panel):
         """
 
         # Execute.
-        status = protected_exec(self.on_execute)
+        self.exec_status = protected_exec(self.on_execute)
 
         # Execution failure.
-        if not status:
+        if not self.exec_status:
             return
 
         # Finished.
@@ -954,6 +957,7 @@ class Wiz_window(wx.Dialog):
         self._button_ids = []
         self._exec_on_next = []
         self._exec_count = []
+        self._proceed_on_error = []
         self._seq_fn_list = []
         self._seq_next = []
         self._seq_prev = []
@@ -993,6 +997,9 @@ class Wiz_window(wx.Dialog):
 
             # Execution count.
             self._exec_count.append(0)
+
+            # Proceed to next page on errors by default.
+            self._proceed_on_error.append(True)
 
             # Page sequence initialisation.
             self._seq_fn_list.append(self._next_fn)
@@ -1141,6 +1148,12 @@ class Wiz_window(wx.Dialog):
         if self._exec_on_next[self._current_page]:
             self._pages[self._current_page]._apply(event)
 
+            # Check for execution errors.
+            if not self._pages[self._current_page].exec_status:
+                # Do not proceed.
+                if not self._proceed_on_error[self._current_page]:
+                    return
+
             # Increment the execution counter.
             self._exec_count[self._current_page] += 1
 
@@ -1212,17 +1225,19 @@ class Wiz_window(wx.Dialog):
             yield next
 
 
-    def add_page(self, panel, apply_button=True, exec_on_next=True):
+    def add_page(self, panel, apply_button=True, exec_on_next=True, proceed_on_error=True):
         """Add a new page to the wizard.
 
-        @param panel:           The page to add to the wizard.
-        @type panel:            wx.Panel instance
-        @keyword apply_button:  A flag which if true will show the apply button for that page.
-        @type apply_button:     bool
-        @keyword exec_on_next:  A flag which if true will run the on_execute() method when clicking on the next button.
-        @type exec_on_next:     bool
-        @return:                The index of the page in the wizard.
-        @rtype:                 int
+        @param panel:               The page to add to the wizard.
+        @type panel:                wx.Panel instance
+        @keyword apply_button:      A flag which if true will show the apply button for that page.
+        @type apply_button:         bool
+        @keyword exec_on_next:      A flag which if true will run the on_execute() method when clicking on the next button.
+        @type exec_on_next:         bool
+        @keyword proceed_on_error:  A flag which if True will proceed to the next page (or quit if there are no more pages) despite the occurrence of an error in execution.  If False, the page will remain open.
+        @type proceed_on_error:     bool
+        @return:                    The index of the page in the wizard.
+        @rtype:                     int
         """
 
         # Store the page.
@@ -1246,6 +1261,7 @@ class Wiz_window(wx.Dialog):
         # Store the flags.
         self._button_apply_flag[index] = apply_button
         self._exec_on_next[index] = exec_on_next
+        self._proceed_on_error[index] = proceed_on_error
 
         # Store the index of the page.
         panel.page_index = self._num_pages - 1
