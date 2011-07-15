@@ -133,14 +133,30 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
                 if not hasattr(subspin, 'pos') or not subspin.pos:
                     raise RelaxError("Positional information is not available for the atom '%s'." % atom)
 
+                # Alias the position.
+                pos = subspin.pos
+
+                # Convert to a list of lists if not already.
+                multi_model = True
+                if type(pos[0]) in [float, float64]:
+                    multi_model = False
+                    pos = [pos]
+
                 # Store the position.
                 positions.append([])
-                for i in range(len(subspin.pos)):
-                    positions[-1].append(subspin.pos[i].tolist())
+                for i in range(len(pos)):
+                    positions[-1].append(pos[i].tolist())
 
             # The averaging.
             if spin.averaging == 'linear':
-                spin.pos = linear_ave(positions)
+                # Average pos.
+                ave = linear_ave(positions)
+
+                # Convert to the correct structure.
+                if multi_model:
+                    spin.pos = ave
+                else:
+                    spin.pos = ave[0]
 
 
 def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
