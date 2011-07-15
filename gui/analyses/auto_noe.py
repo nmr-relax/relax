@@ -35,6 +35,7 @@ import wx
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.mol_res_spin import are_spins_named
 from relax_io import DummyFileObject
 from status import Status; status = Status()
 
@@ -327,6 +328,10 @@ class Auto_noe(Base_frame):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # First check that at least a single spin is named!
+        if not are_spins_named():
+            error_message("No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.", caption='Incomplete setup')
 
         # Initialise a wizard.
         self.wizard = Wiz_window(size_x=1000, size_y=900, title="Set up the NOE peak intensities")
