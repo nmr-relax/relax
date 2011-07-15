@@ -334,7 +334,7 @@ class Auto_noe(Base_frame):
 
         # The spectrum.read_intensities page.
         self.page_intensity = Read_intensities_page(self.wizard, self.gui)
-        self.page_indices['read'] = self.wizard.add_page(self.page_intensity)
+        self.page_indices['read'] = self.wizard.add_page(self.page_intensity, proceed_on_error=False)
 
         # Error type selection page.
         self.page_error_type = Error_type_page(self.wizard, self.gui)
