@@ -313,6 +313,10 @@ class Relax_data_store(dict):
                 # Fill the pipe.
                 self[pipe_name].from_xml(pipe_node, file_version=file_version, dir=dir)
 
+            # Set the current pipe.
+            if self.current_pipe in self.keys():
+                __builtin__.cdp = self[self.current_pipe]
+
 
     def to_xml(self, file, pipes=None):
         """Create a XML document representation of the current data pipe.
