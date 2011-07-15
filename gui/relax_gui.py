@@ -454,8 +454,7 @@ class Main(wx.Frame):
         wx.Yield()
 
         # Change the cursor to waiting.
-        orig_cursor = self.GetCursor()
-        self.SetCursor(wx.StockCursor(wx.CURSOR_ARROWWAIT))
+        wx.BeginBusyCursor()
 
         # Delete the current tabs.
         self.analysis.delete_all()
@@ -476,7 +475,7 @@ class Main(wx.Frame):
         self.sync_ds(upload=False)
 
         # Reset the cursor.
-        self.SetCursor(orig_cursor)
+        wx.EndBusyCursor()
 
 
     def state_save(self):
