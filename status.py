@@ -277,6 +277,13 @@ class Observer(object):
         self._callback[key] = method
 
 
+    def reset(self):
+        """Reset the object."""
+
+        # Reinitialise the dictionary of callback methods.
+        self._callback = {}
+
+
     def unregister(self, key):
         """Unregister the method corresponding to the key.
 
