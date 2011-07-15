@@ -116,7 +116,7 @@ class Spin_view_window(wx.Frame):
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&all", icon=None, fn=self.gui.user_functions.select.all))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&read", icon=paths.icon_16x16.open, fn=self.gui.user_functions.select.read))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="re&verse", icon=None, fn=self.gui.user_functions.select.reverse))
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&spin", icon=None, fn=self.gui.user_functions.select.spin))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&spin", icon=paths.icon_16x16.spin, fn=self.gui.user_functions.select.spin))
         self.menubar.Append(menu, "se&lect")
 
         # The deselect menu entry.
@@ -124,7 +124,7 @@ class Spin_view_window(wx.Frame):
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&all", icon=None, fn=self.gui.user_functions.deselect.all))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&read", icon=paths.icon_16x16.open, fn=self.gui.user_functions.deselect.read))
         menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="re&verse", icon=None, fn=self.gui.user_functions.deselect.reverse))
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&spin", icon=None, fn=self.gui.user_functions.deselect.spin))
+        menu.AppendItem(self.gui.menu.build_menu_item(menu, parent=self, text="&spin", icon=paths.icon_16x16.spin, fn=self.gui.user_functions.deselect.spin))
         self.menubar.Append(menu, "&deselect")
 
 
