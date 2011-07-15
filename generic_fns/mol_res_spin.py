@@ -36,7 +36,7 @@ The functionality of this module is diverse:
 """
 
 # Python module imports.
-from numpy import array
+from numpy import array, float64
 from re import split
 from string import count, replace, strip, upper
 from textwrap import fill
@@ -999,10 +999,19 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
         if not hasattr(spin, 'pos') or spin.pos == None:
             raise RelaxError("Positional information is not available for the atom '%s'." % atom)
 
+        # Alias the position.
+        pos = spin.pos
+
+        # Convert to a list of lists if not already.
+        multi_model = True
+        if type(pos[0]) in [float, float64]:
+            multi_model = False
+            pos = [pos]
+
         # Store the position.
         positions.append([])
-        for i in range(len(spin.pos)):
-            positions[-1].append(spin.pos[i].tolist())
+        for i in range(len(pos)):
+            positions[-1].append(pos[i].tolist())
 
     # Now add the pseudo-spin name to the spins belonging to it (after the tests).
     for atom in members:
@@ -1024,7 +1033,14 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
     spin.averaging = averaging
     spin.members = members
     if averaging == 'linear':
-        spin.pos = linear_ave(positions)
+        # Average pos.
+        ave = linear_ave(positions)
+
+        # Convert to the correct structure.
+        if multi_model:
+            spin.pos = ave
+        else:
+            spin.pos = ave[0]
 
 
 def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
@@ -1644,9 +1660,7 @@ def molecule_loop(selection=None, pipe=None, return_id=False):
 def linear_ave(positions):
     """Perform linear averaging of the atomic positions.
 
-    @param positions:   The atomic positions.  The first index is that of the positions to be
-                        averaged over.  The second index is over the different models.  The last
-                        index is over the x, y, and z coordinates.
+    @param positions:   The atomic positions.  The first index is that of the positions to be averaged over.  The second index is over the different models.  The last index is over the x, y, and z coordinates.
     @type positions:    list of lists of numpy float arrays
     @return:            The averaged positions as a list of vectors.
     @rtype:             list of numpy float arrays
