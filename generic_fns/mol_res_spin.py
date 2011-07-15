@@ -486,6 +486,25 @@ class Selection(object):
 
 
 
+def are_spins_named(spin_id=None):
+    """Determine if any spins have been named.
+
+    @keyword spin_id:   The spin ID string.
+    @type spin_id:      None or str
+    @return:            True if a spin has been named or False if no spins have been named.
+    @rtype:             bool
+    """
+
+    # Loop over the spins.
+    for spin in spin_loop(spin_id):
+        # The spin is named.
+        if spin.name != None:
+            return True
+
+    # No spins have been named.
+    return False
+
+
 def bmrb_read(star):
     """Generate the molecule and residue spin containers from the entity saveframe records.
 
