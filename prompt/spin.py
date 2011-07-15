@@ -140,7 +140,7 @@ class Spin(User_fn_class):
         # The argument checks.
         arg_check.is_str(spin_name, 'spin name')
         arg_check.is_int(spin_num, 'spin number', can_be_none=True)
-        arg_check.is_str(res_id, 'residue identification string', can_be_none=True)
+        arg_check.is_str(res_id, 'residue ID string', can_be_none=True)
         arg_check.is_str_list(members, 'members')
         arg_check.is_str(averaging, 'positional averaging technique')
 
@@ -154,8 +154,7 @@ class Spin(User_fn_class):
         ["spin_name", "The name of the pseudo-atom spin."],
         ["spin_num", "The spin number."],
         ["res_id", "The molecule and residue ID string identifying the position to add the pseudo-spin to."],
-        ["mol_id", "The molecule ID string identifying the molecule to add the pseudo-spin to."],
-        ["members", "A list of the atoms the pseudo-atom is composed of."],
+        ["members", "A list of the atoms (as spin ID strings) that the pseudo-atom is composed of."],
         ["averaging", "The positional averaging technique."]]
     create_pseudo._doc_desc = """
         This will create a spin data container representing a number of pre-existing spin containers as a pseudo-atom.  The optional spin number must not already exist.
