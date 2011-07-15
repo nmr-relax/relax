@@ -329,7 +329,7 @@ class Auto_noe(Base_frame):
         @type event:    wx event
         """
 
-        # Change the cursor to waiting.
+        # Change the cursor to busy.
         wx.BeginBusyCursor()
 
         # First check that at least a single spin is named!
