@@ -120,7 +120,7 @@ class Noe(GuiTestCase):
             status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'sat_ave.list'
         ]
         errors = [3600, 3000]
-        types = ['Saturated', 'Reference']
+        types = [0, 1]
 
         # Loop over the 2 spectra.
         for i in range(2):
@@ -146,7 +146,7 @@ class Noe(GuiTestCase):
 
             # Set the type.
             page = analysis.wizard.get_page(analysis.page_indices['spectrum_type'])
-            page.spectrum_type.SetValue(str_to_gui(types[i]))
+            page.spectrum_type.SetSelection(types[i])
 
             # Go to the next page (i.e. finish).
             analysis.wizard._go_next(None)
