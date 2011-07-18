@@ -1184,6 +1184,11 @@ class Wiz_window(wx.Dialog):
         # Determine the next page.
         next_page = self._seq_fn_list[self._current_page]()
 
+        # No next page, so terminate.
+        if self._pages[next_page] == None:
+            self._ok(None)
+            return
+
         # Update the sequence lists.
         self._seq_next[self._current_page] = next_page
         self._seq_prev[next_page] = self._current_page
