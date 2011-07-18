@@ -235,7 +235,7 @@ class Spin(User_fn_class):
 
     # The function doc info.
     element._doc_title = "Set the element type of the spin."
-    element._doc_title_short = "Spin element type setting."
+    element._doc_title_short = "Spin element setting."
     element._doc_args = [
         ["spin_id", "The spin identification string corresponding to one or more spins."],
         ["element", "The IUPAC element name."],
