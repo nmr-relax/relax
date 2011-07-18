@@ -31,5 +31,7 @@ def reset():
     # Run the relax data storage object reset method.
     ds.__reset__()
 
-    # Re-setup the status object.
+    # Re-setup the status object, preserving a few flags.
+    show_gui = status.show_gui
     status._setup()
+    status.show_gui = show_gui
