@@ -108,6 +108,9 @@ class Noe(GuiTestCase):
         deselect_spin.spin_id.SetValue(":3")
         deselect_spin.on_execute()
 
+        # Set up the peak intensity wizard.
+        page.peak_wizard(None)
+
         # The reference spectrum.
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'ref_ave.list'
         page.field_ref_noe.SetValue(str_to_gui(file))
