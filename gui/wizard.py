@@ -955,6 +955,7 @@ class Wiz_window(wx.Dialog):
         self._page_sizers = []
         self._button_sizers = []
         self._button_apply_flag = []
+        self._button_skip_flag = []
         self._buttons = []
         self._button_ids = []
         self._exec_on_next = []
@@ -963,6 +964,7 @@ class Wiz_window(wx.Dialog):
         self._seq_fn_list = []
         self._seq_next = []
         self._seq_prev = []
+        self._skip_flag = []
 
         # A max of 10 pages should be plenty enough (any more and the developer should be shot!).
         for i in range(10):
@@ -975,8 +977,9 @@ class Wiz_window(wx.Dialog):
             # Initialise all box sizers for the buttons.
             self._button_sizers.append(wx.BoxSizer(wx.HORIZONTAL))
 
-            # Set all apply flags to True.
+            # Set all button flags.
             self._button_apply_flag.append(True)
+            self._button_skip_flag.append(False)
 
             # Initialise the button storage.
             self._buttons.append({'back': None,
@@ -1008,6 +1011,9 @@ class Wiz_window(wx.Dialog):
             self._seq_next.append(None)
             self._seq_prev.append(None)
 
+            # Page skipping.
+            self._skip_flag.append(False)
+
 
     def _build_buttons(self):
         """Construct the buttons for all pages of the wizard."""
@@ -1038,6 +1044,20 @@ class Wiz_window(wx.Dialog):
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._pages[i]._apply, button)
                 self._buttons[i]['apply'] = button
+
+                # Spacer.
+                self._button_sizers[i].AddSpacer(5)
+
+            # The skip button.
+            if self._button_skip_flag[i]:
+                # Create the button.
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Skip")
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.skip, wx.BITMAP_TYPE_ANY))
+                button.SetToolTipString("Skip the operation")
+                button.SetSize(self._size_button)
+                self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
+                self.Bind(wx.EVT_BUTTON, self._skip, button)
+                self._buttons[i]['skip'] = button
 
                 # Spacer.
                 self._button_sizers[i].AddSpacer(5)
@@ -1143,21 +1163,23 @@ class Wiz_window(wx.Dialog):
         @type event:    wx event
         """
 
-        # Execute the page's on_next() method.
-        self._pages[self._current_page].on_next()
+        # Operations for non-skipped pages.
+        if not self._skip_flag:
+            # Execute the page's on_next() method.
+            self._pages[self._current_page].on_next()
 
-        # Execute the page's on_execute() method (via the _apply() method).
-        if self._exec_on_next[self._current_page]:
-            self._pages[self._current_page]._apply(event)
+            # Execute the page's on_execute() method (via the _apply() method).
+            if self._exec_on_next[self._current_page]:
+                self._pages[self._current_page]._apply(event)
 
-            # Check for execution errors.
-            if not self._pages[self._current_page].exec_status:
-                # Do not proceed.
-                if not self._proceed_on_error[self._current_page]:
-                    return
+                # Check for execution errors.
+                if not self._pages[self._current_page].exec_status:
+                    # Do not proceed.
+                    if not self._proceed_on_error[self._current_page]:
+                        return
 
-            # Increment the execution counter.
-            self._exec_count[self._current_page] += 1
+                # Increment the execution counter.
+                self._exec_count[self._current_page] += 1
 
         # Determine the next page.
         next_page = self._seq_fn_list[self._current_page]()
@@ -1191,9 +1213,9 @@ class Wiz_window(wx.Dialog):
         @type event:    wx event
         """
 
-        # Loop over the pages in the sequence and execute their _apply() methods, if not already done.
+        # Loop over the pages in the sequence and execute their _apply() methods, if not already done and not skipped.
         for i in self._seq_loop():
-            if not self._exec_count[i]:
+            if not self._exec_count[i] and not self._skip_flag[i]:
                 # Execute the _apply method.
                 self._pages[i]._apply(event)
 
@@ -1227,13 +1249,29 @@ class Wiz_window(wx.Dialog):
             yield next
 
 
-    def add_page(self, panel, apply_button=True, exec_on_next=True, proceed_on_error=True):
+    def _skip(self, event):
+        """Skip the page.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the skip flag.
+        self._skip_flag[self._current_page] = True
+
+        # Go to the next page.
+        self._go_next(None)
+
+
+    def add_page(self, panel, apply_button=True, skip_button=False, exec_on_next=True, proceed_on_error=True):
         """Add a new page to the wizard.
 
         @param panel:               The page to add to the wizard.
         @type panel:                wx.Panel instance
         @keyword apply_button:      A flag which if true will show the apply button for that page.
         @type apply_button:         bool
+        @keyword skip_button:       A flag which if true will show the skip button for that page.
+        @type skip_button:          bool
         @keyword exec_on_next:      A flag which if true will run the on_execute() method when clicking on the next button.
         @type exec_on_next:         bool
         @keyword proceed_on_error:  A flag which if True will proceed to the next page (or quit if there are no more pages) despite the occurrence of an error in execution.  If False, the page will remain open.
@@ -1262,6 +1300,7 @@ class Wiz_window(wx.Dialog):
 
         # Store the flags.
         self._button_apply_flag[index] = apply_button
+        self._button_skip_flag[index] = skip_button
         self._exec_on_next[index] = exec_on_next
         self._proceed_on_error[index] = proceed_on_error
 
