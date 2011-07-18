@@ -124,6 +124,13 @@ class Spectra_list:
         button.SetToolTipString("Read a spectral data file.")
 
 
+    def delete(self):
+        """Unregister the class."""
+
+        # Unregister the class.
+        status.observers.uf_gui.unregister(self.name)
+
+
     def init_grid(self, sizer):
         """Initialise the grid for the spectra listing.
 
