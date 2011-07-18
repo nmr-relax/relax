@@ -98,8 +98,9 @@ def back_calc(align_id=None):
                 # The length.
                 r[c] = norm(vect[c])
 
-                # Normalise.
-                vect[c] = vect[c] / r[c]
+                # Normalise (only if the vector has length).
+                if r[c]:
+                    vect[c] = vect[c] / r[c]
 
                 # Calculate the PCS constant.
                 dj[c] = pcs_constant(cdp.temperature[id], cdp.frq[id] * 2.0 * pi / g1H, r[c]/1e10)
