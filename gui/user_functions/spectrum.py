@@ -258,12 +258,12 @@ class Read_intensities_page(UF_page):
         self.heteronuc.SetValue('N')
         self.proton.SetValue('H')
 
-        # The integration column.
-        self.int_col = self.input_field(sizer, "The integration column:", tooltip=self.uf._doc_args_dict['int_col'])
-
         # The integration method.
         self.int_method = self.combo_box(sizer, "The peak integration method:", tooltip=self.uf._doc_args_dict['int_method'], choices=['height', 'point sum', 'other'])
         self.int_method.SetValue('height')
+
+        # The integration column.
+        self.int_col = self.input_field(sizer, "The integration column:", tooltip=self.uf._doc_args_dict['int_col'])
 
         # The spin ID restriction.
         self.spin_id = self.spin_id_element(sizer, desc="Restrict data loading to certain spins:")
@@ -306,7 +306,7 @@ class Read_intensities_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the peak intensities.
-        self.gui.interpreter.spectrum.read_intensities(file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
+        self.gui.interpreter.spectrum.read_intensities(file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_method=int_method, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
 
 
 
