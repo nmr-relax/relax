@@ -66,6 +66,9 @@ class Status(object):
         # Testing mode flag.
         self.test_mode = False
 
+        # The GUI flag.
+        self.show_gui = False
+
         # The Monte Carlo simulation status.
         self.mc_number = None
 

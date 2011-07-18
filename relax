@@ -123,6 +123,9 @@ class Relax:
                 sys.stderr.write("Please install the wx Python module to access the relax GUI.\n\n")
                 sys.exit()
 
+            # Set the GUI flag in the status object.
+            status.show_gui = True
+
             # Start the relax GUI wx application.
             app = gui.App(script=self.script_file)
             app.MainLoop()
