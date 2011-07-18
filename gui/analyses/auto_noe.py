@@ -140,6 +140,9 @@ class Auto_noe(Base_frame):
         data = Container()
         missing = []
 
+        # The pipe name.
+        data.pipe_name = self.data.pipe_name
+
         # The frequency.
         frq = gui_to_str(self.field_nmr_frq.GetValue())
         if frq == None:
@@ -577,7 +580,7 @@ class Execute_noe(Execute):
             sys.stderr = redir
 
         # Execute.
-        NOE_calc(seq_args=self.data.seq_args, pipe_name=self.data.pipe_name, unresolved=self.data.unresolved, pdb_file=self.data.structure_file, output_file=self.data.filename, results_dir=self.data.save_dir, int_method='height', heteronuc=self.data.heteronuc, proton=self.data.proton, heteronuc_pdb='@N')
+        NOE_calc(pipe_name=self.data.pipe_name, output_file=self.data.filename, results_dir=self.data.save_dir)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
