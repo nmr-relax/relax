@@ -181,7 +181,7 @@ class Spectra_list:
         # First freeze the grid, so that the GUI element doesn't update until the end.
         self.grid.Freeze()
 
-        # Delete all rows and columns.
+        # Delete the rows and columns (leaving one row and column).
         self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
         self.grid.DeleteCols(numCols=self.grid.GetNumberCols()-1)
 
@@ -191,7 +191,7 @@ class Spectra_list:
             n = len(cdp.spectrum_ids)
 
             # Append the appropriate number of rows.
-            self.grid.AppendRows(numRows=n)
+            self.grid.AppendRows(numRows=n-1)
 
             # Set the IDs.
             for i in range(n):
