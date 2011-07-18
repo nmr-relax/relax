@@ -1352,6 +1352,19 @@ class Wiz_window(wx.Dialog):
                 button.Enable()
 
 
+    def get_page(self, index):
+        """Get a page from the wizard.
+
+        @param index:   The index of the page.
+        @type index:    int
+        @return:        The page object.
+        @rtype:         Wiz_page instance.
+        """
+
+        # Return the page.
+        return self._pages[index]
+
+
     def run(self, modal=False):
         """Execute the wizard.
 
