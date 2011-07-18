@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,6 +30,7 @@ import wx.grid
 # relax module imports.
 from prompt.interpreter import Interpreter
 from generic_fns.mol_res_spin import spin_loop
+from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.paths import IMAGE_PATH
@@ -351,7 +352,8 @@ def see_results(openfile, import_results):
 
     if 'Table_of_Results' in openfile:
         summary = Final_results(import_results, None, -1, "")
-        summary.Show()
+        if status.show_gui:
+            summary.Show()
 
 
 

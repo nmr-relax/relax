@@ -31,6 +31,7 @@ from wx.lib import buttons, scrolledpanel
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import id_string_doc
 from relax_errors import RelaxImplementError
+from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.controller import Redirect_text
@@ -1145,7 +1146,8 @@ class Wiz_window(wx.Dialog):
         self._pages[i].on_display_post()
 
         # Show the desired page.
-        self._main_sizer.Show(self._page_sizers[i])
+        if status.show_gui:
+            self._main_sizer.Show(self._page_sizers[i])
 
         # Re-perform the window layout.
         self.Layout()
@@ -1379,6 +1381,10 @@ class Wiz_window(wx.Dialog):
 
         # Display the first page.
         self._display_page(0)
+
+        # No GUI.
+        if not status.show_gui:
+            return
 
         # Modal operation.
         if modal:

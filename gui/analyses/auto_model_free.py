@@ -225,7 +225,8 @@ class Auto_model_free(Base_frame):
         dialog = About_window(self.parent)
 
         # Show the dialog.
-        dialog.Show()
+        if status.show_gui:
+            dialog.Show()
 
 
     def add_max_iterations(self, box):
@@ -641,7 +642,7 @@ class Auto_model_free(Base_frame):
         which_model = self.choose_global_model(False)
 
         # Display the relax controller.
-        if not status.debug:
+        if not status.debug and status.show_gui:
             self.gui.controller.Show()
 
         # Cancel.
@@ -810,7 +811,8 @@ class Auto_model_free(Base_frame):
 
         # The dialog.
         dlg = Select_tensor(None, -1, "", local_tm_flag=True)
-        dlg.ShowModal()
+        if status.show_gui:
+            dlg.ShowModal()
 
         # Return the choice.
         return dlg.selection

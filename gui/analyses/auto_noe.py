@@ -274,7 +274,7 @@ class Auto_noe(Base_frame):
             return
 
         # Display the relax controller (if not debugging).
-        if not status.debug:
+        if not status.debug and status.show_gui:
             self.gui.controller.Show()
 
         # Threading flag.

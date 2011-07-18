@@ -151,7 +151,8 @@ class Spin_view_window(wx.Frame):
         self.refresh()
 
         # Then show the window using the baseclass method.
-        wx.Frame.Show(self, show)
+        if status.show_gui:
+            wx.Frame.Show(self, show)
 
 
     def refresh(self, event=None):

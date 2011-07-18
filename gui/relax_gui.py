@@ -150,7 +150,8 @@ class Main(wx.Frame):
         dialog = About_gui(None, -1, "")
 
         # The dialog.
-        dialog.Show()
+        if status.show_gui:
+            dialog.Show()
 
 
     def about_relax(self, event):
@@ -164,7 +165,8 @@ class Main(wx.Frame):
         dialog = About_relax(None, -1, "")
 
         # The dialog.
-        dialog.Show()
+        if status.show_gui:
+            dialog.Show()
 
 
     def action_state_save(self, event):
@@ -303,7 +305,8 @@ class Main(wx.Frame):
         win = Free_file_format()
 
         # Show the window.
-        win.Show()
+        if status.show_gui:
+            win.Show()
 
 
     def global_parameters(self, event):
@@ -317,7 +320,8 @@ class Main(wx.Frame):
         win = Global_params()
 
         # Show the window.
-        win.Show()
+        if status.show_gui:
+            win.Show()
 
 
     def references(self, event):
@@ -329,7 +333,8 @@ class Main(wx.Frame):
 
         # Build and show the references window.
         self.references = References(self)
-        self.references.Show()
+        if status.show_gui:
+            self.references.Show()
 
 
     def relax_manual(self, event):
@@ -393,7 +398,8 @@ class Main(wx.Frame):
         """
 
         # Open the window.
-        self.controller.Show()
+        if status.show_gui:
+            self.controller.Show()
 
 
     def show_prompt(self, event):
@@ -408,7 +414,8 @@ class Main(wx.Frame):
             self.relax_prompt = Prompt(None, -1, "", parent=self)
 
         # Open the window.
-        self.relax_prompt.Show()
+        if status.show_gui:
+            self.relax_prompt.Show()
 
 
     def show_tree(self, event):
@@ -423,7 +430,8 @@ class Main(wx.Frame):
             self.spin_viewer = Spin_view_window(None, -1, "", parent=self)
 
         # Open the window.
-        self.spin_viewer.Show()
+        if status.show_gui:
+            self.spin_viewer.Show()
 
 
     def state_load(self, event):

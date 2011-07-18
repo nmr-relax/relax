@@ -444,7 +444,8 @@ class Analysis_controller:
             self.results_viewer = Results_viewer(gui=self.gui)
 
         # Open the window.
-        self.results_viewer.Show()
+        if status.show_gui:
+            self.results_viewer.Show()
 
 
     def switch_page(self, index):

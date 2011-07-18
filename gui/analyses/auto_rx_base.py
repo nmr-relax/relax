@@ -282,7 +282,7 @@ class Auto_rx(Base_frame):
             return
 
         # Display the relax controller.
-        if not status.debug:
+        if not status.debug and status.show_gui:
             self.gui.controller.Show()
 
         # Threading flag.

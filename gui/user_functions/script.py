@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,6 +25,9 @@
 
 # Python module imports.
 import thread
+
+# relax module imports.
+from status import Status; status = Status()
 
 # GUI module imports.
 from base import UF_base
@@ -52,7 +55,8 @@ class Script(UF_base):
             return
 
         # Show the relax controller.
-        self.gui.controller.Show()
+        if status.show_gui:
+            self.gui.controller.Show()
 
         # Execute the script in a thread.
         id = thread.start_new_thread(self.script_exec, (file,))

@@ -28,6 +28,9 @@ import sys
 import thread
 import wx
 
+# relax module imports.
+from status import Status; status = Status()
+
 # relaxGUI module imports.
 from gui_bieri.execution.calc_modelfree import start_model_free
 from gui_bieri.execution.calc_noe import make_noe
@@ -141,7 +144,8 @@ def start_rx(target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, f
 
     # launch log dialog
     logwindow = log_window(None, -1, "")
-    logwindow.ShowModal()
+    if status.show_gui:
+        logwindow.ShowModal()
     sys.stdout = sys.__stdout__ 
     sys.stderr = sys.__stderr__ 
     return ''
@@ -162,7 +166,8 @@ def start_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct
 
     # launch log dialog
     logwindow = log_window(None, -1, "")
-    logwindow.ShowModal()
+    if status.show_gui:
+        logwindow.ShowModal()
     sys.stdout = sys.__stdout__ 
     sys.stderr = sys.__stderr__ 
     return ''
@@ -183,7 +188,8 @@ def start_modelfree(self, model, automatic, global_setting, file_setting, sequen
 
     # launch log dialog
     logwindow = log_window(None, -1, "")
-    logwindow.ShowModal()
+    if status.show_gui:
+        logwindow.ShowModal()
     sys.stdout = sys.__stdout__ 
     sys.stderr = sys.__stderr__ 
     return ''
