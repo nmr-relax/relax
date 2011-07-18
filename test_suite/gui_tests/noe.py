@@ -120,7 +120,7 @@ class Noe(GuiTestCase):
             status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'sat_ave.list'
         ]
         errors = [3600, 3000]
-        types = [0, 1]
+        types = [1, 0]
 
         # Loop over the 2 spectra.
         for i in range(2):
