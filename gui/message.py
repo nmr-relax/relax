@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,7 +23,11 @@
 
 # Python module imports
 from os import sep
+import sys
 import wx
+
+# relax module imports.
+from status import Status; status = Status()
 
 # relax GUI module imports.
 from paths import IMAGE_PATH
@@ -41,7 +45,18 @@ def error_message(msg, caption=''):
     """
 
     # Show the message box.
-    wx.MessageBox(msg, caption=caption, style=wx.OK|wx.ICON_ERROR)
+    if status.show_gui:
+        wx.MessageBox(msg, caption=caption, style=wx.OK|wx.ICON_ERROR)
+
+
+    # Otherwise throw the error out to stderr.
+    else:
+        # Combine the caption and message.
+        if caption:
+            msg = "%s:  %s" % (caption, msg)
+
+        # Write out.
+        sys.stderr.write(msg + "\n")
 
 
 def exec_relax():
@@ -71,7 +86,12 @@ def missing_data(missing=[]):
         msg = msg + "    %s\n" % data
 
     # The GUI element.
-    wx.MessageBox(msg, caption='Missing data', style=wx.OK|wx.ICON_ERROR)
+    if status.show_gui:
+        wx.MessageBox(msg, caption='Missing data', style=wx.OK|wx.ICON_ERROR)
+
+    # Otherwise throw the error out to stderr.
+    else:
+        sys.stderr.write("Missing data:  %s\n" % msg)
 
 
 def question(msg, default=False):
@@ -101,7 +121,11 @@ def question(msg, default=False):
 
 
 def relax_run_ok(msg1):
-    wx.MessageBox(msg1, style = wx.OK)
+    """Message box stating that the relax run completed ok."""
+
+    # Show the message box.
+    if status.show_gui:
+        wx.MessageBox(msg1, style = wx.OK)
 
 
 
