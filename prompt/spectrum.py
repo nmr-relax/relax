@@ -180,7 +180,7 @@ class Spectrum(User_fn_class):
     _build_doc(integration_points)
 
 
-    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, int_method='height', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None):
+    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "spectrum.read_intensities("
@@ -189,8 +189,8 @@ class Spectrum(User_fn_class):
             text = text + ", spectrum_id=" + repr(spectrum_id)
             text = text + ", heteronuc=" + repr(heteronuc)
             text = text + ", proton=" + repr(proton)
-            text = text + ", int_col=" + repr(int_col)
             text = text + ", int_method=" + repr(int_method)
+            text = text + ", int_col=" + repr(int_col)
             text = text + ", spin_id_col=" + repr(spin_id_col)
             text = text + ", mol_name_col=" + repr(mol_name_col)
             text = text + ", res_num_col=" + repr(res_num_col)
@@ -208,8 +208,8 @@ class Spectrum(User_fn_class):
         arg_check.is_str_or_str_list(spectrum_id, 'spectrum ID string')
         arg_check.is_str(heteronuc, 'heteronucleus name')
         arg_check.is_str(proton, 'proton name')
-        arg_check.is_int_or_int_list(int_col, 'intensity column', can_be_none=True)
         arg_check.is_str(int_method, 'integration method')
+        arg_check.is_int_or_int_list(int_col, 'intensity column', can_be_none=True)
         arg_check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
         arg_check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
         arg_check.is_int(res_num_col, 'residue number column', can_be_none=True)
@@ -221,7 +221,7 @@ class Spectrum(User_fn_class):
         arg_check.is_int(ncproc, 'Bruker ncproc parameter', can_be_none=True)
 
         # Execute the functional code.
-        spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
+        spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_method=int_method, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
 
     # The function doc info.
     read_intensities._doc_title = "Read peak intensities from a file."
@@ -232,14 +232,14 @@ class Spectrum(User_fn_class):
         ["spectrum_id", "The unique spectrum ID string."],
         ["heteronuc", "The name of the heteronucleus as specified in the peak intensity file."],
         ["proton", "The name of the proton as specified in the peak intensity file."],
-        ["int_col", "The column containing the peak intensity data (used by the generic intensity file format, or if the intensities are in a non-standard column)."],
         ["int_method", "The integration method."],
+        ["int_col", "The optional column containing the peak intensity data (used by the generic intensity file format, or if the intensities are in a non-standard column)."],
         ["spin_id_col", "The spin ID string column used by the generic intensity file format (an alternative to the mol, res, and spin name and number columns)."],
-        ["mol_name_col", "The molecule name column used by the generic intensity file format (alternative to the spin_id_col)."],
-        ["res_num_col", "The residue number column used by the generic intensity file format (alternative to the spin_id_col)."],
-        ["res_name_col", "The residue name column used by the generic intensity file format (alternative to the spin_id_col)."],
-        ["spin_num_col", "The spin number column used by the generic intensity file format (alternative to the spin_id_col)."],
-        ["spin_name_col", "The spin name column used by the generic intensity file format (alternative to the spin_id_col)."],
+        ["mol_name_col", "The molecule name column used by the generic intensity file format (alternative to the spin ID column)."],
+        ["res_num_col", "The residue number column used by the generic intensity file format (alternative to the spin ID column)."],
+        ["res_name_col", "The residue name column used by the generic intensity file format (alternative to the spin ID column)."],
+        ["spin_num_col", "The spin number column used by the generic intensity file format (alternative to the spin ID column)."],
+        ["spin_name_col", "The spin name column used by the generic intensity file format (alternative to the spin ID column)."],
         ["sep", "The column separator used by the generic intensity format (the default is white space)."],
         ["spin_id", "The spin ID string used by the generic intensity file format to restrict the loading of data to certain spin subsets."],
         ["ncproc", "The Bruker specific FID intensity scaling factor."]
