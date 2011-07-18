@@ -1174,7 +1174,7 @@ class Wiz_window(wx.Dialog):
         """
 
         # Operations for non-skipped pages.
-        if not self._skip_flag:
+        if not self._skip_flag[self._current_page]:
             # Execute the page's on_next() method.
             self._pages[self._current_page].on_next()
 
