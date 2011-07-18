@@ -1005,9 +1005,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Print out.
         print("NMRView formatted data file.\n")
 
-        # Check that certain args have not been set:
-        __check_args(spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
-
         # Extract the data.
         intensity_data = intensity_nmrview(file_data=file_data)
 
