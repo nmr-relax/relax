@@ -89,6 +89,7 @@ class Wiz_page(wx.Panel):
         - add_artwork(), this builds the left hand artwork section of the page.
         - add_contents(), this builds the right hand section of the page.
         - on_display(), this is executed when the page is displayed.
+        - on_display_post(), this is executed when the page is displayed, directly after the on_display method.
         - on_execute(), this is executed when the wizard is terminated or the apply button is hit.
         - on_next(), this is executed when moving to the next wizard page.
 
@@ -747,11 +748,12 @@ class Wiz_page(wx.Panel):
     def on_apply(self):
         """To be over-ridden if an action is to be performed on hitting the apply button.
 
-        This method will be called when clicking on the apply button.  The default behaviour is to call the on_display() method.
+        This method will be called when clicking on the apply button.  The default behaviour is to call the on_display() and on_display_post() method.
         """
 
         # Call the on_display method by default.
         self.on_display()
+        self.on_display_post()
 
 
     def on_completion(self):
@@ -763,6 +765,13 @@ class Wiz_page(wx.Panel):
 
     def on_display(self):
         """To be over-ridden if an action is to be performed prior to displaying the page.
+
+        This method will be called by the wizard class method _display_page() just after hiding all other pages but prior to displaying this page.
+        """
+
+
+    def on_display_post(self):
+        """To be over-ridden if an action is to be performed after the execution of the on_display() method.
 
         This method will be called by the wizard class method _display_page() just after hiding all other pages but prior to displaying this page.
         """
@@ -1133,6 +1142,7 @@ class Wiz_window(wx.Dialog):
 
         # Execute the page's on_display() method.
         self._pages[i].on_display()
+        self._pages[i].on_display_post()
 
         # Show the desired page.
         self._main_sizer.Show(self._page_sizers[i])
