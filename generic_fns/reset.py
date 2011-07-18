@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,6 +22,7 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 
 def reset():
@@ -29,3 +30,6 @@ def reset():
 
     # Run the relax data storage object reset method.
     ds.__reset__()
+
+    # Notify all observers.
+    status.observers.reset.notify()
