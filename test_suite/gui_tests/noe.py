@@ -43,7 +43,7 @@ from status import Status; status = Status()
 if dep_check.wx_module:
     from gui.relax_gui import Main
 from gui.misc import int_to_gui, str_to_gui
-from gui.user_functions import deselect, sequence
+from gui.user_functions import deselect, sequence, spin
 from gui.wizard import Wiz_window
 
 
@@ -105,8 +105,13 @@ class Noe(GuiTestCase):
 
         # Unresolved spins.
         deselect_spin = deselect.Spin_page(wizard, self.gui)
-        deselect_spin.spin_id.SetValue(":3")
+        deselect_spin.spin_id.SetValue(str_to_gui(":3"))
         deselect_spin.on_execute()
+
+        # Name the spins.
+        page = spin.Name_page(wizard, self.gui)
+        page.name.SetValue(str_to_gui('N'))
+        page.on_execute()
 
         # The intensity data.
         ids = ['ref', 'sat']
@@ -167,21 +172,21 @@ class Noe(GuiTestCase):
 
         # Check the data.
         i = 0
-        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        for spin_cont, mol_name, res_num, res_name in spin_loop(full_info=True):
             # Skip deselected spins.
-            if not spin.select:
+            if not spin_cont.select:
                 continue
 
             # Spin info.
             self.assertEqual(res_nums[i], res_num)
 
             # Check the intensity data.
-            self.assertEqual(sat[i], spin.intensities['sat'])
-            self.assertEqual(ref[i], spin.intensities['ref'])
+            self.assertEqual(sat[i], spin_cont.intensities['sat'])
+            self.assertEqual(ref[i], spin_cont.intensities['ref'])
 
             # Check the NOE data.
-            self.assertEqual(noe[i], spin.noe)
-            self.assertEqual(noe_err[i], spin.noe_err)
+            self.assertEqual(noe[i], spin_cont.noe)
+            self.assertEqual(noe_err[i], spin_cont.noe_err)
 
             # Increment the spin index.
             i += 1
