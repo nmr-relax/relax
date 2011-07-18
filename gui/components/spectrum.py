@@ -162,21 +162,8 @@ class Spectra_list:
         @type event:    wx event
         """
 
-        # The new grid size.
-        x, y = event.GetSize()
-
-        # The expandable column width.
-        width = x - self.col_label_width - 20
-
-        # Number of columns.
-        n = self.grid.GetNumberCols()
-
-        # Set to equal sizes.
-        width = int(width / n)
-
         # Set the column sizes.
-        for i in range(n):
-            self.grid.SetColSize(i, width)
+        self.size_cols()
 
         # Continue with the normal resizing.
         event.Skip()
@@ -221,6 +208,26 @@ class Spectra_list:
             flag = True
 
 
+    def size_cols(self):
+        """Set the column sizes."""
+
+        # The grid size.
+        x, y = self.grid.GetSize()
+
+        # The expandable column width.
+        width = x - self.col_label_width - 20
+
+        # Number of columns.
+        n = self.grid.GetNumberCols()
+
+        # Set to equal sizes.
+        width = int(width / n)
+
+        # Set the column sizes.
+        for i in range(n):
+            self.grid.SetColSize(i, width)
+
+
     def update(self):
         """Update the spectra listing."""
 
@@ -262,6 +269,9 @@ class Spectra_list:
             for j in range(self.grid.GetNumberCols()):
                 # Cell properties.
                 self.grid.SetReadOnly(i, j)
+
+        # Size the columns.
+        self.size_cols()
 
         # Unfreeze.
         self.grid.Thaw()
