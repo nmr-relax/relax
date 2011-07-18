@@ -168,11 +168,57 @@ class Spectra_list:
         # The expandable column width.
         width = x - self.col_label_width - 20
 
+        # Number of columns.
+        n = self.grid.GetNumberCols()
+
+        # Set to equal sizes.
+        width = int(width / n)
+
         # Set the column sizes.
-        self.grid.SetColSize(0, width)
+        for i in range(n):
+            self.grid.SetColSize(i, width)
 
         # Continue with the normal resizing.
         event.Skip()
+
+
+    def noe_spectrum_type(self, index):
+        """Add the NOE spectral type info to the grid.
+
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if a spectrum type exists, False otherwise.
+        @rtype:         bool
+        """
+
+        # No type info.
+        if not hasattr(cdp, 'spectrum_type'):
+            return False
+
+        # Append a column.
+        self.grid.AppendCols(numCols=1)
+
+        # Set the column heading.
+        self.grid.SetColLabelValue(index, "NOE spectrum type")
+
+        # Translation table.
+        table = {
+            'sat': 'Saturated',
+            'ref': 'Reference'
+        }
+
+        # Set the values.
+        flag = False
+        for i in range(len(cdp.spectrum_ids)):
+            # No value.
+            if cdp.spectrum_ids[i] not in cdp.spectrum_type.keys():
+                continue
+
+            # Set the value.
+            self.grid.SetCellValue(i, index, table[cdp.spectrum_type[cdp.spectrum_ids[i]]])
+
+            # Flip the flag.
+            flag = True
 
 
     def update(self):
@@ -180,6 +226,9 @@ class Spectra_list:
 
         # First freeze the grid, so that the GUI element doesn't update until the end.
         self.grid.Freeze()
+
+        # Initialise the column index for the data.
+        index = 1
 
         # Delete the rows and columns (leaving one row and column).
         self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
@@ -199,6 +248,10 @@ class Spectra_list:
 
         # Set the headers.
         self.grid.SetColLabelValue(0, "Spectrum ID string")
+
+        # The NOE spectrum type.
+        if self.noe_spectrum_type(index):
+            index += 1
 
         # Set the grid properties once finalised.
         for i in range(self.grid.GetNumberRows()):
