@@ -85,6 +85,9 @@ class Analysis_controller:
         self.name = 'notebook page switcher'
         status.observers.pipe_switch.register(self.name, self.pipe_switch)
 
+        # Register the deletion of all analyses for the reset status observer.
+        status.observers.reset.register('gui analyses', self.delete_all)
+
 
     def analysis_data_loop(self):
         """Loop over the analyses, yielding the data objects.

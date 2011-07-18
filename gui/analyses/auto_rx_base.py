@@ -253,6 +253,9 @@ class Auto_rx(Base_frame):
     def delete(self):
         """Unregister the spin count from the user functions."""
 
+        # Clean up the peak intensity object.
+        self.peak_intensity.delete()
+
         # Remove.
         status.observers.uf_gui.unregister(self.data.pipe_name)
 
