@@ -353,19 +353,23 @@ class Auto_noe(Base_frame):
         page = Replicated_page(self.wizard, self.gui)
         self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True)
         self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
+        page.on_display_post = self.wizard_update_repl
 
         # The spectrum.baseplane_rmsd page.
         page = Baseplane_rmsd_page(self.wizard, self.gui)
         self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True)
         self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
+        page.on_display_post = self.wizard_update_rmsd
 
         # The spectrum.integration_points page.
         page = Integration_points_page(self.wizard, self.gui)
         self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True)
+        page.on_display_post = self.wizard_update_pts
 
         # The noe.spectrum_type page.
         page = Spectrum_type_page(self.wizard, self.gui)
         self.page_indices['spectrum_type'] = self.wizard.add_page(page, skip_button=True)
+        page.on_display_post = self.wizard_update_spectrum_type
 
         # Reset the cursor.
         wx.EndBusyCursor()
@@ -468,6 +472,62 @@ class Auto_noe(Base_frame):
         # Skip to the noe.spectrum_type page.
         else:
             return self.page_indices['spectrum_type']
+
+
+    def wizard_update_pts(self):
+        """Update the spectrum.replicated page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the spectrum.replicated page.
+        page = self.wizard.get_page(self.page_indices['pts'])
+        page.spectrum_id1.SetValue(id)
+
+
+    def wizard_update_repl(self):
+        """Update the spectrum.replicated page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the spectrum.replicated page.
+        page = self.wizard.get_page(self.page_indices['repl'])
+        page.spectrum_id1.SetValue(id)
+
+
+    def wizard_update_rmsd(self):
+        """Update the spectrum.baseplane_rmsd page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the spectrum.baseplane_rmsd page.
+        page = self.wizard.get_page(self.page_indices['rmsd'])
+        page.spectrum_id.SetValue(id)
+
+
+    def wizard_update_spectrum_type(self):
+        """Update the noe.spectrum_type page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the spectrum.baseplane_rmsd page.
+        page = self.wizard.get_page(self.page_indices['spectrum_type'])
+        page.spectrum_id.SetValue(id)
 
 
 
