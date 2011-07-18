@@ -93,7 +93,7 @@ class Noe(GuiTestCase):
 
         # Load the sequence.
         wizard = Wiz_window(size_x=900, size_y=700)
-        seq_read = sequence.Read_page(wizard, self.gui, self.interpreter)
+        seq_read = sequence.Read_page(wizard, self.gui)
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
         seq_read.file.SetValue(str_to_gui(file))
         seq_read.mol_name_col.SetValue(int_to_gui(None))
@@ -104,7 +104,7 @@ class Noe(GuiTestCase):
         seq_read.on_execute()
 
         # Unresolved spins.
-        deselect_spin = deselect.Spin_page(wizard, self.gui, self.interpreter)
+        deselect_spin = deselect.Spin_page(wizard, self.gui)
         deselect_spin.spin_id.SetValue(":3")
         deselect_spin.on_execute()
 
