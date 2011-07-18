@@ -132,27 +132,13 @@ class Auto_noe(Base_frame):
     def assemble_data(self):
         """Assemble the data required for the Auto_noe class.
 
-        See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
-
-        @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a list of missing data types.
+        @return:    A container with all the data required for the auto-analysis.
         @rtype:     class instance, list of str
         """
 
         # The data container.
         data = Container()
         missing = []
-
-        # The pipe name.
-        if hasattr(self.data, 'pipe_name'):
-            data.pipe_name = self.data.pipe_name
-        else:
-            data.pipe_name = 'noe_%s' % time.asctime(time.localtime())
-
-        # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        if hasattr(self.data, 'sequence_file'):
-            data.seq_args = [self.data.sequence_file, None, None, 1, None, None, None, None]
-        else:
-            data.seq_args = None
 
         # The frequency.
         frq = gui_to_str(self.field_nmr_frq.GetValue())
@@ -164,41 +150,6 @@ class Auto_noe(Base_frame):
 
         # Results directory.
         data.save_dir = self.data.save_dir
-
-        # The integration method.
-        data.int_method = 'height'
-
-        # Import global settings.
-        global_settings = ds.relax_gui.global_setting
-
-        # Hetero nucleus name.
-        data.heteronuc = global_settings[2]
-
-        # Proton name.
-        data.proton = global_settings[3]
-
-        # Unresolved spins.
-        file = DummyFileObject()
-        if self.data.unresolved:
-            entries = self.data.unresolved
-            entries = replace(entries, ',', '\n')
-            file.write(entries)
-        file.close()
-        data.unresolved = file
-
-        # Structure file.
-        if hasattr(self.data, 'structure_file') and self.data.structure_file != self.gui.structure_file_pdb_msg:
-            data.structure_file = self.data.structure_file
-        else:
-            data.structure_file = None
-
-        # Set Structure file as None if a sequence file is loaded.
-        if data.structure_file == '!!! Sequence file selected !!!':
-            data.structure_file = None
-
-        # No sequence data.
-        if not data.seq_args and not data.structure_file:
-            missing.append('Sequence data files (text or PDB)')
 
         # Return the container and list of missing data.
         return data, missing
