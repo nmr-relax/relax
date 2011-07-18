@@ -82,14 +82,14 @@ class Noe(GuiTestCase):
         # Directly set up the analysis.
         self.gui.analysis.new_analysis(analysis_type='noe', analysis_name="Steady-state NOE test", pipe_name='noe test')
 
-        # Alias the page.
-        page = self.gui.analysis.get_page_from_name("Steady-state NOE test")
+        # Alias the analysis.
+        analysis = self.gui.analysis.get_page_from_name("Steady-state NOE test")
 
         # The frequency label.
-        page.field_nmr_frq.SetValue(str_to_gui('500'))
+        analysis.field_nmr_frq.SetValue(str_to_gui('500'))
 
         # Change the results directory.
-        page.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+        analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Load the sequence.
         wizard = Wiz_window(size_x=900, size_y=700)
@@ -108,29 +108,49 @@ class Noe(GuiTestCase):
         deselect_spin.spin_id.SetValue(":3")
         deselect_spin.on_execute()
 
-        # Set up the peak intensity wizard.
-        page.peak_wizard(None)
+        # The intensity data.
+        ids = ['ref', 'sat']
+        files = [
+            status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'ref_ave.list',
+            status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'sat_ave.list'
+        ]
+        errors = [3600, 3000]
+        types = ['Saturated', 'Reference']
 
-        # The reference spectrum.
-        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'ref_ave.list'
-        page.field_ref_noe.SetValue(str_to_gui(file))
+        # Loop over the 2 spectra.
+        for i in range(2):
+            # Set up the peak intensity wizard.
+            analysis.peak_wizard(None)
 
-        # The sat spectrum.
-        file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep + 'sat_ave.list'
-        page.field_sat_noe.SetValue(str_to_gui(file))
+            # The reference spectrum.
+            page = analysis.wizard.get_page(analysis.page_indices['read'])
+            page.file.SetValue(str_to_gui(files[i]))
+            page.spectrum_id.SetValue(str_to_gui(ids[i]))
+            page.heteronuc.SetValue(str_to_gui('HN'))
 
-        # Set the errors.
-        page.field_ref_rmsd.SetValue(str_to_gui('3600'))
-        page.field_sat_rmsd.SetValue(str_to_gui('3000'))
+            # Move down 2 pages.
+            analysis.wizard._go_next(None)
+            analysis.wizard._go_next(None)
 
-        # Set the proton name.
-        ds.relax_gui.global_setting[3] = 'HN'
+            # Set the errors.
+            page = analysis.wizard.get_page(analysis.page_indices['rmsd'])
+            page.error.SetValue(int_to_gui(errors[i]))
+
+            # Go to the next page.
+            analysis.wizard._go_next(None)
+
+            # Set the type.
+            page = analysis.wizard.get_page(analysis.page_indices['spectrum_type'])
+            page.spectrum_type.SetValue(str_to_gui(types[i]))
+
+            # Go to the next page (i.e. finish).
+            analysis.wizard._go_next(None)
 
         # Execute relax.
-        page.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, page.button_exec_id))
+        analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_id))
 
         # Wait for execution to complete.
-        page.thread.join()
+        analysis.thread.join()
 
         # Exceptions in the thread.
         self.check_exceptions()
