@@ -93,6 +93,7 @@ class I16x16:
         self.save_as =              path + 'actions'    + sep + 'document-save-as.png'
         self.settings_global =      path + 'categories' + sep + 'preferences-system.png'
         self.settings_reset =       path + 'actions'    + sep + 'edit-delete.png'
+        self.skip =                 path + 'actions'    + sep + 'arrow-right-double-relax-blue.png'
         self.ref =                  path + 'actions'    + sep + 'flag-blue.png'
         self.uf_script =            path + 'mimetypes'  + sep + 'application-x-desktop.png'
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
@@ -123,6 +124,7 @@ class I22x22:
         self.ok =                   path + 'actions'    + sep + 'dialog-ok.png'
         self.open_folder =          path + 'actions'    + sep + 'document-open-folder.png'
         self.save =                 path + 'actions'    + sep + 'document-save.png'
+        self.skip =                 path + 'actions'    + sep + 'arrow-right-double-relax-blue.png'
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
 
@@ -165,6 +167,7 @@ class I32x32:
         self.ok =           path + 'actions' + sep + 'dialog-ok.png'
         self.open_folder =  path + 'actions' + sep + 'document-open-folder.png'
         self.save =         path + 'actions' + sep + 'document-save.png'
+        self.skip =                 path + 'actions'    + sep + 'arrow-right-double-relax-blue.png'
         self.view_refresh = path + 'actions' + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
 
@@ -193,6 +196,7 @@ class I48x48:
         self.open_folder =  path + 'actions' + sep + 'document-open-folder.png'
         self.remove =       path + 'actions' + sep + 'list-remove.png'
         self.save =         path + 'actions' + sep + 'document-save.png'
+        self.skip =                 path + 'actions'    + sep + 'arrow-right-double-relax-blue.png'
         self.view_refresh = path + 'actions' + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
 
