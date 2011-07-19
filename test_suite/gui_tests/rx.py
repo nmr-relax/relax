@@ -32,13 +32,54 @@ from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
-from gui.misc import float_to_gui, int_to_gui, float_to_gui, str_to_gui
+from gui.misc import bool_to_gui, float_to_gui, int_to_gui, float_to_gui, str_to_gui
 from gui.user_functions import deselect, sequence, spin
 from gui.wizard import Wiz_window
 
 
 class Rx(GuiTestCase):
     """Class for testing various aspects specific to the R1 and R2 analyses."""
+
+    def check_curve_fitting(self):
+        """Check the results of the curve-fitting."""
+
+        # Data.
+        relax_times = [0.0176, 0.0176, 0.0352, 0.0704, 0.0704, 0.1056, 0.1584, 0.1584, 0.1936, 0.1936]
+        chi2 = [None, None, None, 3.1727215308183405, 5.9732236976178248, 17.633333237460601, 4.7413502242106036, 10.759950979457724, None, None, None, 6.5520255580798752]
+        rx = [None, None, None, 8.0814894819861891, 8.6478971007171523, 9.5710638143380482, 10.716551832690667, 11.143793929315777, None, None, None, 12.828753698718391]
+        i0 = [None, None, None, 1996050.9679873895, 2068490.9458262245, 1611556.5193290685, 1362887.2329727132, 1877670.5629299041, None, None, None, 897044.17270784755]
+
+        # Some checks.
+        self.assertEqual(cdp.curve_type, 'exp')
+        self.assertEqual(cdp.int_method, 'height')
+        self.assertEqual(len(cdp.relax_times), 10)
+        cdp_relax_times = sorted(cdp.relax_times.values())
+        for i in range(10):
+            self.assertEqual(cdp_relax_times[i], relax_times[i])
+
+        # Check the errors.
+        #for key in cdp.sigma_I:
+        #    self.assertEqual(cdp.sigma_I[key], 10142.707367087694)
+        #    self.assertEqual(cdp.var_I[key], 102874512.734375)
+
+        # Spin data check.
+        i = 0
+        for spin in spin_loop():
+            # No data present.
+            if chi2[i] == None:
+                self.assert_(not hasattr(spin, 'chi2'))
+
+            # Data present.
+            else:
+                self.assertAlmostEqual(spin.chi2, chi2[i])
+                self.assertAlmostEqual(spin.rx, rx[i])
+                self.assertAlmostEqual(spin.i0/1e6, i0[i]/1e6)
+
+            # Increment the spin index.
+            i = i + 1
+            if i >= 12:
+                break
+
 
     def test_r1_analysis(self):
         """Test the r1 analysis."""
@@ -81,6 +122,7 @@ class Rx(GuiTestCase):
         # Unresolved spins.
         deselect_spin = deselect.Spin_page(wizard, self.gui)
         deselect_spin.spin_id.SetValue(str_to_gui(":3, 11, 18, 19, 23, 31, 42, 44, 54, 66, 82, 92, 94, 99, 101, 113, 124, 126, 136, 141, 145, 147, 332, 345, 346, 358, 361"))
+        deselect_spin.change_all.SetValue(bool_to_gui(False))
         deselect_spin.on_execute()
 
         # Name the spins.
@@ -177,36 +219,11 @@ class Rx(GuiTestCase):
         # Exceptions in the thread.
         self.check_exceptions()
 
-        # The real data.
-        res_nums = [4, 5, 6]
-        sat = [5050.0, 51643.0, 53663.0]
-        ref = [148614.0, 166842.0, 128690.0]
-        noe = [0.033980647852826784, 0.30953237194471417, 0.4169943274535706]
-        noe_err = [0.02020329903276632, 0.019181416098790607, 0.026067523940084526]
-
         # Check the data pipe.
         self.assertEqual(cdp_name(), ds.relax_gui.analyses[0].pipe_name)
 
         # Check the data.
-        i = 0
-        for spin_cont, mol_name, res_num, res_name in spin_loop(full_info=True):
-            # Skip deselected spins.
-            if not spin_cont.select:
-                continue
-
-            # Spin info.
-            self.assertEqual(res_nums[i], res_num)
-
-            # Check the intensity data.
-            self.assertEqual(sat[i], spin_cont.intensities['sat'])
-            self.assertEqual(ref[i], spin_cont.intensities['ref'])
-
-            # Check the NOE data.
-            self.assertEqual(noe[i], spin_cont.noe)
-            self.assertEqual(noe_err[i], spin_cont.noe_err)
-
-            # Increment the spin index.
-            i += 1
+        self.check_curve_fitting()
 
         # Check the created files.
         self.assert_(access(ds.tmpdir+sep+'grace'+sep+'r1.agr', F_OK))
