@@ -694,7 +694,7 @@ class Mol_res_spin_tree(wx.Window):
             self.update_res(mol_branch_id, mol, res, res_id)
 
         # Start new molecules expanded.
-        if new_mol:
+        if new_mol and data['select']:
             self.tree.Expand(mol_branch_id)
 
         # Remove any deleted residues.
@@ -769,7 +769,7 @@ class Mol_res_spin_tree(wx.Window):
             self.update_spin(mol_branch_id, res_branch_id, mol, res, spin, spin_id)
 
         # Start new residues expanded.
-        if new_res:
+        if new_res and data['select']:
             self.tree.Expand(res_branch_id)
 
         # Remove any deleted spins.
@@ -843,5 +843,5 @@ class Mol_res_spin_tree(wx.Window):
                 self.set_bitmap_spin(spin_branch_id, select=data['select'])
 
         # Start new spins expanded.
-        if new_spin:
+        if new_spin and data['select']:
             self.tree.Expand(spin_branch_id)
