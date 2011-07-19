@@ -33,6 +33,8 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
 from gui.misc import float_to_gui, int_to_gui, str_to_gui
+from gui.user_functions import deselect, sequence, spin
+from gui.wizard import Wiz_window
 
 
 class Rx(GuiTestCase):
@@ -44,24 +46,50 @@ class Rx(GuiTestCase):
         # The path to the data files.
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'curve_fitting'
 
-        # Directly set up the analysis.
-        self.gui.analysis.new_analysis(analysis_type='r1', analysis_name="R1 relaxation test", pipe_name='r1 test')
+        # Simulate the new analysis wizard.
+        self.gui.analysis.menu_new(None)
+        page = self.gui.analysis.new_wizard.wizard.get_page(0)
+        page.select_r1(None)
+        self.gui.analysis.new_wizard.wizard._go_next(None)
+        page = self.gui.analysis.new_wizard.wizard.get_page(1)
+        self.gui.analysis.new_wizard.wizard._go_next(None)
 
-        # Alias the page.
-        page = self.gui.analysis.get_page_from_name("R1 relaxation test")
+        # Get the data.
+        analysis_type, analysis_name, pipe_name = self.gui.analysis.new_wizard.get_data()
+
+        # Set up the analysis.
+        self.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
+
+        # Alias the analysis.
+        analysis = self.gui.analysis.get_page_from_name("R1 relaxation")
 
         # The frequency label.
-        page.field_nmr_frq.SetValue(str_to_gui('600'))
+        analysis.field_nmr_frq.SetValue(str_to_gui('600'))
 
         # Change the results directory.
-        page.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+        analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
-        # The sequence file.
+        # Load the sequence.
+        wizard = Wiz_window()
+        seq_read = sequence.Read_page(wizard, self.gui)
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
-        page.field_sequence.SetValue(str_to_gui(file))
+        seq_read.file.SetValue(str_to_gui(file))
+        seq_read.mol_name_col.SetValue(int_to_gui(None))
+        seq_read.res_name_col.SetValue(int_to_gui(2))
+        seq_read.res_num_col.SetValue(int_to_gui(1))
+        seq_read.spin_name_col.SetValue(int_to_gui(None))
+        seq_read.spin_num_col.SetValue(int_to_gui(None))
+        seq_read.on_execute()
 
         # Unresolved spins.
-        page.field_unresolved.SetValue(str_to_gui("3, 11, 18, 19, 23, 31, 42, 44, 54, 66, 82, 92, 94, 99, 101, 113, 124, 126, 136, 141, 145, 147, 332, 345, 346, 358, 361"))
+        deselect_spin = deselect.Spin_page(wizard, self.gui)
+        deselect_spin.spin_id.SetValue(str_to_gui(":3, 11, 18, 19, 23, 31, 42, 44, 54, 66, 82, 92, 94, 99, 101, 113, 124, 126, 136, 141, 145, 147, 332, 345, 346, 358, 361"))
+        deselect_spin.on_execute()
+
+        # Name the spins.
+        page = spin.Name_page(wizard, self.gui)
+        page.name.SetValue(str_to_gui('N'))
+        page.on_execute()
 
         # Spectrum names.
         names = [
@@ -126,21 +154,21 @@ class Rx(GuiTestCase):
 
         # Check the data.
         i = 0
-        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        for spin_cont, mol_name, res_num, res_name in spin_loop(full_info=True):
             # Skip deselected spins.
-            if not spin.select:
+            if not spin_cont.select:
                 continue
 
             # Spin info.
             self.assertEqual(res_nums[i], res_num)
 
             # Check the intensity data.
-            self.assertEqual(sat[i], spin.intensities['sat'])
-            self.assertEqual(ref[i], spin.intensities['ref'])
+            self.assertEqual(sat[i], spin_cont.intensities['sat'])
+            self.assertEqual(ref[i], spin_cont.intensities['ref'])
 
             # Check the NOE data.
-            self.assertEqual(noe[i], spin.noe)
-            self.assertEqual(noe_err[i], spin.noe_err)
+            self.assertEqual(noe[i], spin_cont.noe)
+            self.assertEqual(noe_err[i], spin_cont.noe_err)
 
             # Increment the spin index.
             i += 1
