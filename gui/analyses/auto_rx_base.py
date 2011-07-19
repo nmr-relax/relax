@@ -310,7 +310,7 @@ class Auto_rx(Base_frame):
 
         # The relax_fit.relax_time page.
         page = Relax_time_page(self.wizard, self.gui)
-        self.page_indices['relax_time'] = self.wizard.add_page(page, skip_button=True)
+        self.page_indices['relax_time'] = self.wizard.add_page(page, skip_button=False)
         page.on_display_post = self.wizard_update_relax_time
 
         # Reset the cursor.
