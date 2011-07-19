@@ -102,7 +102,7 @@ class Noe(GuiTestCase):
             # Set up the peak intensity wizard.
             analysis.peak_wizard(None)
 
-            # The reference spectrum.
+            # The spectrum.
             page = analysis.wizard.get_page(analysis.page_indices['read'])
             page.file.SetValue(str_to_gui(files[i]))
             page.spectrum_id.SetValue(str_to_gui(ids[i]))
