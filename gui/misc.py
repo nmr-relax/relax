@@ -196,7 +196,7 @@ def gui_to_bool(string):
         return None
 
     # Convert.
-    return bool(string)
+    return eval(string)
 
 
 def gui_to_list(string):
