@@ -507,4 +507,7 @@ class Execute_rx(Execute):
 
         # Add Rx grace plot to the results list.
         data.results_list.append(data.save_dir+sep+'grace'+sep+self.data.file_root+'.agr')
+        data.results_list.append(data.save_dir+sep+'grace'+sep+'intensities.agr')
         data.results_list.append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
+        data.results_list.append(data.save_dir+sep+'grace'+sep+'i0.agr')
+        data.results_list.append(data.save_dir+sep+'grace'+sep+'chi2.agr')
