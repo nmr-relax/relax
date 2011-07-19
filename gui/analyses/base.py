@@ -25,6 +25,7 @@
 """Module containing the base class for all frames."""
 
 # Python module imports.
+from os import sep
 import wx
 from wx.lib import buttons
 
@@ -35,6 +36,7 @@ from generic_fns.pipes import cdp_name
 # relax GUI module imports.
 from gui import paths
 from gui.misc import int_to_gui, str_to_gui
+from gui.user_functions.base import UF_page
 
 
 class Base_frame:
@@ -506,3 +508,84 @@ class Base_frame:
 
         # Set the new value.
         self.spin_systems.SetValue(str_to_gui(self.spin_count()))
+
+
+
+class Spectral_error_type_page(UF_page):
+    """The NOE peak intensity reading wizard page for specifying the type of error to be used."""
+
+    # Class variables.
+    image_path = paths.WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
+    uf_path = ['spectrum', 'error_analysis']
+    desc_height = 500
+
+    def add_contents(self, sizer):
+        """Add the specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Intro text.
+        msg = "Please specify from where the peak intensity errors will be obtained.  The execution of the spectrum.error_analysis user function, as described above, will be postponed until after clicking on the 'Execute relax' button at the end of the automatic NOE analysis page."
+        text = wx.StaticText(self, -1, msg)
+        text.Wrap(self._main_size)
+        sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        sizer.AddStretchSpacer()
+
+        # A box sizer for placing the box sizer in.
+        sizer2 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(sizer2, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Bottom spacing.
+        sizer.AddStretchSpacer()
+
+        # A bit of indentation.
+        sizer2.AddStretchSpacer()
+
+        # A vertical sizer for the radio buttons.
+        sizer_radio = wx.BoxSizer(wx.VERTICAL)
+        sizer2.Add(sizer_radio, 1, wx.ALL|wx.EXPAND, 0)
+
+        # The RMSD radio button.
+        self.radio_rmsd = wx.RadioButton(self, -1, "Baseplane RMSD.")
+        sizer_radio.Add(self.radio_rmsd, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        sizer_radio.AddSpacer(10)
+
+        # The replicated spectra radio button.
+        self.radio_repl = wx.RadioButton(self, -1, "Replicated spectra.")
+        sizer_radio.Add(self.radio_repl, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Bind the buttons.
+        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_rmsd)
+        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_repl)
+
+        # Right side spacing.
+        sizer2.AddStretchSpacer(3)
+
+        # Bottom spacing.
+        sizer.AddStretchSpacer()
+
+        # Set the default selection.
+        self.selection = 'rmsd'
+
+
+    def _on_select(self, event):
+        """Handle the radio button switching.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The button.
+        button = event.GetEventObject()
+
+        # RMSD.
+        if button == self.radio_rmsd:
+            self.selection = 'rmsd'
+        elif button == self.radio_repl:
+            self.selection = 'repl'
