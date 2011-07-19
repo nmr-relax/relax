@@ -428,6 +428,7 @@ class Analysis_controller:
 
         # Then unregister the observers.
         status.observers.pipe_switch.unregister(self.name)
+        status.observers.reset.unregister('gui analyses')
 
 
     def set_init_state(self):
