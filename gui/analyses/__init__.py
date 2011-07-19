@@ -86,7 +86,7 @@ class Analysis_controller:
         status.observers.pipe_switch.register(self.name, self.pipe_switch)
 
         # Register the deletion of all analyses for the reset status observer.
-        status.observers.reset.register('gui analyses', self.delete_all)
+        status.observers.reset.register('gui analyses', self.reset)
 
 
     def analysis_data_loop(self):
@@ -418,6 +418,16 @@ class Analysis_controller:
 
         # Switch to the page.
         self.switch_page(i)
+
+
+    def reset(self):
+        """Reset all the analyses to an initial state."""
+
+        # First delete all analyses.
+        self.delete_all()
+
+        # Then unregister the observers.
+        status.observers.pipe_switch.unregister(self.name)
 
 
     def set_init_state(self):
