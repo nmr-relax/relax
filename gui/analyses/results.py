@@ -171,12 +171,13 @@ class Results_viewer(wx.Frame):
         page = self.gui.analysis.get_page_from_name(gui_to_str(self.analysis_list.GetValue()))
 
         # Nothing to do.
-        if not hasattr(page, 'results_list'):
+        if not hasattr(page.data, 'results_list'):
+            print "nothing to do"
             return
 
         # Update the list.
-        for i in range(len(page.results_list)):
-            self.list.Append(str_to_gui(page.results_list[i]))
+        for i in range(len(page.data.results_list)):
+            self.list.Append(str_to_gui(page.data.results_list[i]))
 
 
     def open_result_file(self, event):
