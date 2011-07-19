@@ -450,7 +450,7 @@ class Auto_noe(Base_frame):
         # Set the spectrum ID.
         id = page.spectrum_id.GetValue()
 
-        # Set the ID in the spectrum.baseplane_rmsd page.
+        # Set the ID in the noe.spectrum_type page.
         page = self.wizard.get_page(self.page_indices['spectrum_type'])
         page.spectrum_id.SetValue(id)
 
