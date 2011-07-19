@@ -496,7 +496,7 @@ class Execute_rx(Execute):
             sys.stderr = redir
 
         # Execute.
-        Relax_fit(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_directory=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
+        Relax_fit(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_dir=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
