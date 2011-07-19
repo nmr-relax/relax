@@ -38,7 +38,7 @@ class State(SystemTestCase):
         """Common set up for these system tests."""
 
         # Create a temporary file name.
-        ds.tmpfile = mktemp()
+        self.tmpfile = mktemp()
 
 
     def test_state_pickle(self):
@@ -48,16 +48,16 @@ class State(SystemTestCase):
         self.interpreter.pipe.create('test', 'mf')
 
         # Save the state.
-        self.interpreter.state.save(ds.tmpfile, pickle=True, force=True)
+        self.interpreter.state.save(self.tmpfile, pickle=True, force=True)
 
         # Load the state.
-        self.interpreter.state.load(ds.tmpfile, force=True)
+        self.interpreter.state.load(self.tmpfile, force=True)
 
         # Save the state.
-        self.interpreter.state.save(ds.tmpfile, dir=None, pickle=True, force=True)
+        self.interpreter.state.save(self.tmpfile, dir=None, pickle=True, force=True)
 
         # Load the state.
-        self.interpreter.state.load(ds.tmpfile, force=True)
+        self.interpreter.state.load(self.tmpfile, force=True)
 
 
     def test_state_xml(self):
@@ -67,16 +67,16 @@ class State(SystemTestCase):
         self.interpreter.pipe.create('test', 'mf')
 
         # Save the state.
-        self.interpreter.state.save(ds.tmpfile, pickle=False, force=True)
+        self.interpreter.state.save(self.tmpfile, pickle=False, force=True)
 
         # Load the state.
-        self.interpreter.state.load(ds.tmpfile, force=True)
+        self.interpreter.state.load(self.tmpfile, force=True)
 
         # Save the state.
-        self.interpreter.state.save(ds.tmpfile, pickle=False, force=True)
+        self.interpreter.state.save(self.tmpfile, pickle=False, force=True)
 
         # Load the state.
-        self.interpreter.state.load(ds.tmpfile, force=True)
+        self.interpreter.state.load(self.tmpfile, force=True)
 
 
     def test_write_read_pipes(self):
@@ -97,13 +97,13 @@ class State(SystemTestCase):
             self.interpreter.pipe.create('test' + repr(i), pipe_types[i])
 
         # Write the results.
-        self.interpreter.state.save(ds.tmpfile)
+        self.interpreter.state.save(self.tmpfile)
 
         # Reset relax.
         reset()
 
         # Re-read the results.
-        self.interpreter.state.load(ds.tmpfile)
+        self.interpreter.state.load(self.tmpfile)
 
         # Test the pipes.
         for i in range(len(pipe_types)):
