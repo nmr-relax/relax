@@ -62,7 +62,7 @@ class Analysis_wizard:
             return
 
         # Return the analysis type, analysis name, and pipe name.
-        return get_data()
+        return self.get_data()
 
 
     def get_data(self):
