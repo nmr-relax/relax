@@ -67,8 +67,8 @@ class Rx(GuiTestCase):
         # Remove the temporary directory.
         rmtree(ds.tmpdir)
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Destroy the GUI.
         self.gui.Destroy()

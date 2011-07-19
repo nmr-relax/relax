@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -34,10 +34,10 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from relax_io import delete
 from status import Status; status = Status()
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-
-class Sequence_base_class:
+class Sequence_base_class(UnitTestCase):
     """Base class for the tests of both the 'prompt.sequence' and 'generic_fns.sequence' modules.
 
     This base class also contains many shared unit tests.
@@ -46,28 +46,15 @@ class Sequence_base_class:
     def setUp(self):
         """Set up for all the molecule unit tests."""
 
-        # Reset the relax data storage object.
-        ds.__reset__()
-
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
 
         # Get a temporary file name.
-        self.tmpfile = mktemp()
+        ds.tmpfile = mktemp()
 
         # Ap4Aase residue sequence data.
         self.Ap4Aase_res_num = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165]
         self.Ap4Aase_res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY', 'TYR', 'ARG', 'ARG', 'ASN', 'VAL', 'GLY', 'ILE', 'CYS', 'LEU', 'MET', 'ASN', 'ASN', 'ASP', 'LYS', 'LYS', 'ILE', 'PHE', 'ALA', 'ALA', 'SER', 'ARG', 'LEU', 'ASP', 'ILE', 'PRO', 'ASP', 'ALA', 'TRP', 'GLN', 'MET', 'PRO', 'GLN', 'GLY', 'GLY', 'ILE', 'ASP', 'GLU', 'GLY', 'GLU', 'ASP', 'PRO', 'ARG', 'ASN', 'ALA', 'ALA', 'ILE', 'ARG', 'GLU', 'LEU', 'ARG', 'GLU', 'GLU', 'THR', 'GLY', 'VAL', 'THR', 'SER', 'ALA', 'GLU', 'VAL', 'ILE', 'ALA', 'GLU', 'VAL', 'PRO', 'TYR', 'TRP', 'LEU', 'THR', 'TYR', 'ASP', 'PHE', 'PRO', 'PRO', 'LYS', 'VAL', 'ARG', 'GLU', 'LYS', 'LEU', 'ASN', 'ILE', 'GLN', 'TRP', 'GLY', 'SER', 'ASP', 'TRP', 'LYS', 'GLY', 'GLN', 'ALA', 'GLN', 'LYS', 'TRP', 'PHE', 'LEU', 'PHE', 'LYS', 'PHE', 'THR', 'GLY', 'GLN', 'ASP', 'GLN', 'GLU', 'ILE', 'ASN', 'LEU', 'LEU', 'GLY', 'ASP', 'GLY', 'SER', 'GLU', 'LYS', 'PRO', 'GLU', 'PHE', 'GLY', 'GLU', 'TRP', 'SER', 'TRP', 'VAL', 'THR', 'PRO', 'GLU', 'GLN', 'LEU', 'ILE', 'ASP', 'LEU', 'THR', 'VAL', 'GLU', 'PHE', 'LYS', 'LYS', 'PRO', 'VAL', 'TYR', 'LYS', 'GLU', 'VAL', 'LEU', 'SER', 'VAL', 'PHE', 'ALA', 'PRO', 'HIS', 'LEU']
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
-
-        # Delete the temporary file.
-        delete(self.tmpfile, fail=False)
 
 
     def test_copy_protein_sequence(self):
@@ -170,10 +157,10 @@ class Sequence_base_class:
         dp_orig.mol[0].res.add_item('SER', 5)
 
         # Write the residue sequence.
-        self.sequence_fns.write(file=self.tmpfile, res_num_flag=True, res_name_flag=True)
+        self.sequence_fns.write(file=ds.tmpfile, res_num_flag=True, res_name_flag=True)
 
         # Open the temp file.
-        file = open(self.tmpfile)
+        file = open(ds.tmpfile)
 
         # Get the md5sum of the file.
         file_md5 = md5()

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,6 @@
 # Python module imports.
 from math import pi
 from os import sep
-from shutil import rmtree
 from tempfile import mkdtemp
 
 # relax module imports.
@@ -38,26 +37,13 @@ from status import Status; status = Status()
 
 
 class Palmer(SystemTestCase):
-    """Class for testing various aspects specific to model-free analysis using the program
-    'Modelfree4'.
-    """
-
+    """Class for testing various aspects specific to model-free analysis using the program 'Modelfree4'."""
 
     def setUp(self):
         """Set up for all the functional tests."""
 
         # Create a temporary directory for ModelFree4 outputs.
         ds.tmpdir = mkdtemp()
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Remove the temporary directory.
-        rmtree(ds.tmpdir)
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
 
     def test_palmer(self):

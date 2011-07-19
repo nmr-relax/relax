@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,7 +22,6 @@
 
 # Python module imports.
 from os import sep
-import sys
 
 # relax module imports.
 from base_classes import SystemTestCase
@@ -32,12 +31,6 @@ from status import Status; status = Status()
 
 class Angles(SystemTestCase):
     """Class for testing the angle calculation function."""
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
-
 
     def test_angles(self):
         """The user function angles()."""

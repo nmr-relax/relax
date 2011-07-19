@@ -33,13 +33,6 @@ from status import Status; status = Status()
 class Relax_data(SystemTestCase):
     """Class for testing various aspects specific to relaxation data back calculation."""
 
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
-
-
     def test_back_calc(self):
         """Test the back calculation of relaxation data from model-free results."""
 

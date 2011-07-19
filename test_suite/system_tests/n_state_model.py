@@ -25,7 +25,6 @@ from math import pi, sqrt
 from numpy import array
 from numpy.linalg import norm
 from os import listdir, sep
-from shutil import rmtree
 from tempfile import mkdtemp
 
 # relax module imports.
@@ -38,17 +37,6 @@ from status import Status; status = Status()
 
 class N_state_model(SystemTestCase):
     """Class for testing various aspects specific to the N-state model."""
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Remove the temporary directory.
-        if hasattr(ds, 'tmpdir'):
-            rmtree(ds.tmpdir)
-
-        # Reset the relax data storage object.
-        ds.__reset__()
-
 
     def check_vectors(self):
         """Auxiliary method for checking the correct loading of bond vectors."""

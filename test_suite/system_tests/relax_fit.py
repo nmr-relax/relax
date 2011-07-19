@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,7 +23,6 @@
 # Python module imports.
 from os import sep
 from re import search
-from shutil import rmtree
 from string import split
 from tempfile import mkdtemp
 
@@ -46,17 +45,6 @@ class Relax_fit(SystemTestCase):
 
         # Create a temporary directory for dumping files.
         ds.tmpdir = mkdtemp()
-        self.tmpdir = ds.tmpdir
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Remove the temporary directory.
-        rmtree(self.tmpdir)
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
 
     def check_curve_fitting(self):

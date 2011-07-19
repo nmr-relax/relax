@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,12 +32,6 @@ from status import Status; status = Status()
 
 class Modsel(SystemTestCase):
     """Class for testing model selection."""
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
-
 
     def test_aic_mod_sel_diff_tensor(self):
         """AIC model selection between two diffusion tensors."""

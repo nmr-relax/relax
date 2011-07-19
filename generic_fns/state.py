@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from re import search
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.reset import reset
 from relax_errors import RelaxError
 from relax_io import open_read_file, open_write_file
 
@@ -119,7 +120,7 @@ def load_state(state=None, dir=None, verbosity=1, force=False):
 
     # Reset.
     if force:
-        ds.__reset__()
+        reset()
 
     # Make sure that the data store is empty.
     if not ds.is_empty():

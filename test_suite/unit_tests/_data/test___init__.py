@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -52,13 +52,6 @@ class Test___init__(PackageTestCase):
 
         # Add an object to the data store object.
         ds.test = 1
-
-
-    def tearDown(self):
-        """Reset the data store."""
-
-        # Execute the reset method.
-        ds.__reset__()
 
 
     def test_add(self):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,22 +26,19 @@ from math import pi
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from generic_fns.reset import reset
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class Align_tensor_base_class:
+class Align_tensor_base_class(UnitTestCase):
     """Base class for the tests of the alignment tensor modules.
 
-    This includes both the 'prompt.align_tensor' and 'generic_fns.align_tensor' modules.
-    This base class also contains many shared unit tests.
+    This includes both the 'prompt.align_tensor' and 'generic_fns.align_tensor' modules.  This base class also contains many shared unit tests.
     """
-
 
     def setUp(self):
         """Set up for all the alignment tensor unit tests."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -51,12 +48,6 @@ class Align_tensor_base_class:
 
         # Set the current data pipe to 'orig'.
         pipes.switch('orig')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
 
 
     def test_copy_pull(self):
@@ -162,8 +153,8 @@ class Align_tensor_base_class:
         prompt.align_tensor.delete().
         """
 
-        # Reset the relax data store.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Try to delete the tensor data.
         self.assertRaises(RelaxNoPipeError, self.align_tensor_fns.delete, 'Pf1')
@@ -201,8 +192,8 @@ class Align_tensor_base_class:
         prompt.align_tensor.display().
         """
 
-        # Reset the relax data store.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Try to display the tensor data.
         self.assertRaises(RelaxNoPipeError, self.align_tensor_fns.display, 'Pf1')

@@ -24,9 +24,8 @@
 from copy import deepcopy
 import inspect
 from numpy import ndarray
-from os import remove, sep
+from os import sep
 from re import search
-import sys
 from tempfile import mktemp
 
 # relax module imports.
@@ -60,19 +59,6 @@ class Bmrb(SystemTestCase):
 
         # Create a temporary file name.
         ds.tmpfile = mktemp()
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Delete the temporary file.
-        try:
-            remove(ds.tmpfile)
-        except OSError:
-            pass
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
 
     def data_check(self, old_pipe_name='results', new_pipe_name='new', version=None):

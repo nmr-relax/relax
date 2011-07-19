@@ -26,7 +26,7 @@ import platform
 import numpy
 from os import sep
 from re import search
-from shutil import copytree, rmtree
+from shutil import copytree
 from tempfile import mkdtemp
 
 # relax module imports.
@@ -66,17 +66,6 @@ class Mf(SystemTestCase):
 
         # Create the data pipe.
         self.interpreter.pipe.create('mf', 'mf')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Remove temporary directories.
-        if hasattr(ds, 'tmpdir'):
-            rmtree(ds.tmpdir)
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
 
     def mesg_opt_debug(self, spin):

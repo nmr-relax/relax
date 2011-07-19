@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,10 +24,14 @@
 """Base classes for the system tests."""
 
 # Python module imports.
+from shutil import rmtree
 from unittest import TestCase
 
 # relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.reset import reset
 from prompt.interpreter import Interpreter
+from relax_io import delete
 
 
 class SystemTestCase(TestCase):
@@ -41,3 +45,26 @@ class SystemTestCase(TestCase):
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
         self.interpreter.populate_self()
         self.interpreter.on(verbose=False)
+
+
+    def tearDown(self):
+        """Default tearDown operation - delete temp directories and files and reset relax."""
+
+        # Remove the temporary directories.
+        if hasattr(ds, 'tmpdir'):
+            # Delete the directory.
+            rmtree(ds.tmpdir)
+
+            # Remove the variable.
+            del ds.tmpdir
+
+        # Remove temporary files.
+        if hasattr(ds, 'tmpfile'):
+            # Delete the file.
+            delete(ds.tmpfile, fail=False)
+
+            # Remove the variable.
+            del ds.tmpfile
+
+        # Reset relax.
+        reset()

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,19 +20,40 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Base classes for the system tests."""
+
+# Python module imports.
+from shutil import rmtree
+from unittest import TestCase
+
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from test_suite.unit_tests.base_classes import UnitTestCase
+from generic_fns.reset import reset
+from relax_io import delete
 
 
-class N_state_model_base_class(UnitTestCase):
-    """Base class for the tests of the N-state model modules.
+class UnitTestCase(TestCase):
+    """relax test case class specific for the unit tests."""
 
-    This includes both the 'prompt.n_state_model' and 'specific_fns.n_state_model' modules.  This base class also contains many shared unit tests.
-    """
+    def tearDown(self):
+        """Default tearDown operation - delete temp directories and files and reset relax."""
 
-    def setUp(self):
-        """Set up for all the N-state model unit tests."""
+        # Remove the temporary directories.
+        if hasattr(ds, 'tmpdir'):
+            # Delete the directory.
+            rmtree(ds.tmpdir)
 
-        # Add a data pipe to the data store.
-        ds.add(pipe_name='orig', pipe_type='mf')
+            # Remove the variable.
+            del ds.tmpdir
+
+        # Remove temporary files.
+        if hasattr(ds, 'tmpfile'):
+            # Delete the file.
+            delete(ds.tmpfile, fail=False)
+
+            # Remove the variable.
+            del ds.tmpfile
+
+        # Reset relax.
+        reset()

@@ -23,18 +23,19 @@
 # Python module imports.
 from os import path, sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from generic_fns.mol_res_spin import Selection
+from generic_fns.reset import reset
 from generic_fns.structure.scientific import Scientific_data
 from relax_io import file_root
 from status import Status; status = Status()
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class Test_scientific(TestCase):
+class Test_scientific(UnitTestCase):
     """Unit tests for the functions of the 'generic_fns.structure.scientific' module."""
 
     def __init__(self, methodName='runTest'):
@@ -68,8 +69,8 @@ class Test_scientific(TestCase):
         # Delete the structural data object.
         del self.data
 
-        # Reset.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
 
     def test___residue_loop(self):

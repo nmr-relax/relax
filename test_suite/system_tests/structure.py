@@ -51,12 +51,6 @@ class Structure(SystemTestCase):
         self.interpreter.pipe.create('mf', 'mf')
 
 
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
-
-
     def test_load_internal_results(self):
         """Load the PDB file using the information in a results file (using the internal structural object)."""
 
