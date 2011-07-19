@@ -26,17 +26,13 @@
 
 # Python module imports.
 from os import sep
-from os.path import dirname
-from string import replace
 import sys
-import time
 import wx
 
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import are_spins_named
-from relax_io import DummyFileObject
 from status import Status; status = Status()
 
 # relaxGUI module imports.
@@ -46,12 +42,10 @@ from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.controller import Redirect_text
-from gui.derived_wx_classes import StructureTextCtrl
-from gui.filedialog import opendir, openfile
+from gui.filedialog import opendir
 from gui.message import error_message, missing_data
 from gui.misc import add_border, gui_to_str, protected_exec, str_to_gui
 from gui import paths
-from gui.settings import load_sequence
 from gui.user_functions.base import UF_page
 from gui.user_functions.noe import Spectrum_type_page
 from gui.user_functions.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
@@ -213,7 +207,6 @@ class Auto_noe(Base_frame):
         """
 
         # relax execution lock.
-        status = Status()
         if status.exec_lock.locked():
             error_message("relax is currently executing.", "relax execution lock")
             event.Skip()
@@ -256,27 +249,6 @@ class Auto_noe(Base_frame):
 
         # Show the molecule, residue, and spin tree window.
         self.gui.show_tree(None)
-
-
-    def load_sequence(self, event):
-        """The sequence loading GUI element.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Select the file.
-        file = load_sequence()
-
-        # Nothing selected.
-        if file == None:
-            return
-
-        # Store the file.
-        self.field_sequence.SetValue(str_to_gui(file))
-
-        # Terminate the event.
-        event.Skip()
 
 
     def peak_wizard(self, event):
@@ -354,9 +326,6 @@ class Auto_noe(Base_frame):
 
         # Place the path in the text box.
         self.field_results_dir.SetValue(self.data.save_dir)
-
-        # Terminate the event.
-        event.Skip()
 
 
     def sync_ds(self, upload=False):
