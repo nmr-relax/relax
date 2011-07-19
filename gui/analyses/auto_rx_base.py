@@ -124,7 +124,9 @@ class Auto_rx(Base_frame):
 
 
     def assemble_data(self):
-        """Assemble the data required for the Relax_fit class.
+        """Assemble the data required for the auto-analysis.
+
+        See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
         @return:    A container with all the data required for the auto-analysis.
         @rtype:     class instance, list of str
@@ -251,17 +253,6 @@ class Auto_rx(Base_frame):
 
         # Terminate the event.
         event.Skip()
-
-
-    def launch_spin_editor(self, event):
-        """The spin editor GUI element.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Show the molecule, residue, and spin tree window.
-        self.gui.show_tree(None)
 
 
     def peak_wizard(self, event):

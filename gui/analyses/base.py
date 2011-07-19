@@ -483,6 +483,17 @@ class Base_frame:
         box.Add(right_box, 1, wx.ALL|wx.EXPAND, 0)
 
 
+    def launch_spin_editor(self, event):
+        """The spin editor GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Show the molecule, residue, and spin tree window.
+        self.gui.show_tree(None)
+
+
     def spin_count(self):
         """Count the number of loaded spins, returning a string formatted as 'xxx spins loaded'.
 

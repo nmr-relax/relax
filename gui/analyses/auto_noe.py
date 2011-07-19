@@ -239,17 +239,6 @@ class Auto_noe(Base_frame):
         event.Skip()
 
 
-    def launch_spin_editor(self, event):
-        """The spin editor GUI element.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Show the molecule, residue, and spin tree window.
-        self.gui.show_tree(None)
-
-
     def peak_wizard(self, event):
         """Launch the NOE peak loading wizard.
 
