@@ -927,7 +927,7 @@ class Wiz_window(wx.Dialog):
     # Some class variables.
     _size_button = (100, 33)
 
-    def __init__(self, size_x=None, size_y=None, title='', border=10, style=wx.DEFAULT_DIALOG_STYLE):
+    def __init__(self, size_x=400, size_y=400, title='', border=10, style=wx.DEFAULT_DIALOG_STYLE):
         """Set up the window.
 
         @keyword style:     The dialog style.
