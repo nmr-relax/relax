@@ -43,11 +43,22 @@ class Noe(GuiTestCase):
     def test_noe_analysis(self):
         """Test the NOE analysis."""
 
-        # Directly set up the analysis.
-        self.gui.analysis.new_analysis(analysis_type='noe', analysis_name="Steady-state NOE test", pipe_name='noe test')
+        # Simulate the new analysis wizard.
+        self.gui.analysis.menu_new(None)
+        page = self.gui.analysis.new_wizard.wizard.get_page(0)
+        page.select_noe(None)
+        self.gui.analysis.new_wizard.wizard._go_next(None)
+        page = self.gui.analysis.new_wizard.wizard.get_page(1)
+        self.gui.analysis.new_wizard.wizard._go_next(None)
+
+        # Get the data.
+        analysis_type, analysis_name, pipe_name = self.gui.analysis.new_wizard.get_data()
+
+        # Set up the analysis.
+        self.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
 
         # Alias the analysis.
-        analysis = self.gui.analysis.get_page_from_name("Steady-state NOE test")
+        analysis = self.gui.analysis.get_page_from_name("Steady-state NOE")
 
         # The frequency label.
         analysis.field_nmr_frq.SetValue(str_to_gui('500'))
