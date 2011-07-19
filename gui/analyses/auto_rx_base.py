@@ -142,8 +142,8 @@ class Auto_rx(Base_frame):
         if frq == None:
             missing.append('NMR frequency')
 
-        # Filename.
-        data.filename = '%s.%s.out' % (self.analysis_type, frq)
+        # File root.
+        data.file_root = '%s.%s' % (self.analysis_type, frq)
 
         # Increment size.
         data.inc = gui_to_int(self.grid_inc.GetValue())
@@ -496,7 +496,7 @@ class Execute_rx(Execute):
             sys.stderr = redir
 
         # Execute.
-        Relax_fit(pipe_name=self.data.pipe_name, file_root=self.data.filename, results_directory=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
+        Relax_fit(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_directory=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
@@ -506,5 +506,5 @@ class Execute_rx(Execute):
             data.results_list = []
 
         # Add Rx grace plot to the results list.
-        data.results_list.append(data.save_dir+sep+'grace'+sep+self.data.filename+'.agr')
+        data.results_list.append(data.save_dir+sep+'grace'+sep+self.data.file_root+'.agr')
         data.results_list.append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
