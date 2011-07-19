@@ -25,32 +25,27 @@
 """Module for the automatic model-free protocol frame."""
 
 # Python module imports.
-from os import getcwd, sep
-from string import replace, split
+from os import sep
 import sys
-import thread
-import time
 import wx
 
 # relax module imports.
 from auto_analyses import dauvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
 from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
-from relax_io import DummyFileObject
 from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.about import About_base
 from gui.analyses.base import Base_frame
+from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import model_free_results, see_results
 from gui.analyses.select_model_calc import Select_tensor
 from gui.base_classes import Container
-from gui.components.conversion import str_to_float
-from gui.controller import Redirect_text, Thread_container
-from gui.derived_wx_classes import StructureTextCtrl
-from gui.filedialog import opendir, openfile
+from gui.controller import Redirect_text
+from gui.filedialog import opendir
 from gui.message import error_message, missing_data
-from gui.misc import add_border
+from gui.misc import add_border, gui_to_int, protected_exec
 from gui import paths
 
 
@@ -172,8 +167,16 @@ class Auto_model_free(Base_frame):
         # Store the main class.
         self.gui = gui
 
+        # Init.
+        self.init_flag = True
+
         # New data container.
         if data_index == None:
+            # First create the data pipe (if this fails, then no data is set up).
+            if not protected_exec(self.gui.interpreter.pipe.create, pipe_name, 'noe'):
+                self.init_flag = False
+                return
+
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add('model-free')
 
@@ -181,24 +184,17 @@ class Auto_model_free(Base_frame):
             ds.relax_gui.analyses[data_index].analysis_name = analysis_name
             ds.relax_gui.analyses[data_index].pipe_name = pipe_name
 
-            # Model-free variables.
-            ds.relax_gui.analyses[data_index].model_source = getcwd()
-            ds.relax_gui.analyses[data_index].model_save = getcwd()
-            ds.relax_gui.analyses[data_index].selection = "AIC"
+            # Initialise the variables.
             ds.relax_gui.analyses[data_index].model_toggle = [True]*10
-            ds.relax_gui.analyses[data_index].nmrfreq1 = 600
-            ds.relax_gui.analyses[data_index].nmrfreq2 = 800
-            ds.relax_gui.analyses[data_index].nmrfreq3 = 900
-            ds.relax_gui.analyses[data_index].paramfiles1 = ["", "", ""]
-            ds.relax_gui.analyses[data_index].paramfiles2 = ["", "", ""]
-            ds.relax_gui.analyses[data_index].paramfiles3 = ["", "", ""]
-            ds.relax_gui.analyses[data_index].unresolved = ''
-            ds.relax_gui.analyses[data_index].structure_file = ''
-            ds.relax_gui.analyses[data_index].results_dir_model = self.gui.launch_dir
+            ds.relax_gui.analyses[data_index].grid_inc = None
+            ds.relax_gui.analyses[data_index].mc_sim_num = None
+            ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
             ds.relax_gui.analyses[data_index].max_iter = "30"
+            ds.relax_gui.analyses[data_index].results_list = []
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
+        self.data_index = data_index
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
@@ -212,6 +208,9 @@ class Auto_model_free(Base_frame):
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
         self.build_main_box(box_centre)
+
+        # Register the method for updating the spin count for the completion of user functions.
+        status.observers.uf_gui.register(self.data.pipe_name, self.update_spin_count)
 
 
     def _about(self, event):
@@ -307,204 +306,21 @@ class Auto_model_free(Base_frame):
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
 
 
-    def add_relax_data_input(self, box):
-        """Create and add the relaxation data input GUI element to the given box.
-
-        @param box:     The box element to pack the relax data input GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Create the panel.
-        panel_4_copy_1 = wx.Panel(self.parent, -1)
-        panel_4_copy = wx.Panel(self.parent, -1)
-        panel_4 = wx.Panel(self.parent, -1)
-
-        # The 1st panel contents.
-        label_7 = wx.StaticText(panel_4, -1, "NMR freq 1:")
-        self.modelfreefreq1 = wx.TextCtrl(panel_4, -1, "")
-        label_8 = wx.StaticText(panel_4, -1, "NOE")
-        self.m_noe_1 = wx.TextCtrl(panel_4, -1, "")
-        model_noe_1 = wx.Button(panel_4, -1, "+")
-        label_8_copy = wx.StaticText(panel_4, -1, "R1")
-        self.m_r1_1 = wx.TextCtrl(panel_4, -1, "")
-        model_r1_1 = wx.Button(panel_4, -1, "+")
-        label_8_copy_copy = wx.StaticText(panel_4, -1, "R2")
-        self.m_r2_1 = wx.TextCtrl(panel_4, -1, "")
-        model_r2_1 = wx.Button(panel_4, -1, "+")
-
-        # The 2nd panel contents.
-        label_7_copy = wx.StaticText(panel_4_copy, -1, "NMR freq 2:")
-        self.modelfreefreq2 = wx.TextCtrl(panel_4_copy, -1, "")
-        label_8_copy_1 = wx.StaticText(panel_4_copy, -1, "NOE")
-        self.m_noe_2 = wx.TextCtrl(panel_4_copy, -1, "")
-        model_noe_2 = wx.Button(panel_4_copy, -1, "+")
-        label_8_copy_copy_1 = wx.StaticText(panel_4_copy, -1, "R1")
-        self.m_r1_2 = wx.TextCtrl(panel_4_copy, -1, "")
-        model_r1_2 = wx.Button(panel_4_copy, -1, "+")
-        label_8_copy_copy_copy = wx.StaticText(panel_4_copy, -1, "R2")
-        self.m_r2_2 = wx.TextCtrl(panel_4_copy, -1, "")
-        model_r2_2 = wx.Button(panel_4_copy, -1, "+")
-
-        # The 3rd panel contents.
-        label_7_copy_copy = wx.StaticText(panel_4_copy_1, -1, "NMR freq 3:")
-        self.modelfreefreq3 = wx.TextCtrl(panel_4_copy_1, -1, "")
-        label_8_copy_1_copy = wx.StaticText(panel_4_copy_1, -1, "NOE")
-        self.m_noe_3 = wx.TextCtrl(panel_4_copy_1, -1, "")
-        model_noe_3 = wx.Button(panel_4_copy_1, -1, "+")
-        label_8_copy_copy_1_copy = wx.StaticText(panel_4_copy_1, -1, "R1")
-        self.m_r1_3 = wx.TextCtrl(panel_4_copy_1, -1, "")
-        model_r1_3 = wx.Button(panel_4_copy_1, -1, "+")
-        label_8_copy_copy_copy_copy = wx.StaticText(panel_4_copy_1, -1, "R2")
-        self.m_r2_3 = wx.TextCtrl(panel_4_copy_1, -1, "")
-        model_r2_3 = wx.Button(panel_4_copy_1, -1, "+")
-
-        # Properties.
-        label_7.SetMinSize((80, 17))
-        self.modelfreefreq1.SetMinSize((80, 20))
-        label_8.SetMinSize((80, 17))
-        self.m_noe_1.SetMinSize((120, 20))
-        model_noe_1.SetMinSize((20, 20))
-        model_noe_1.SetFont(self.gui.font_smaller)
-        label_8_copy.SetMinSize((80, 17))
-        self.m_r1_1.SetMinSize((120, 20))
-        model_r1_1.SetMinSize((20, 20))
-        model_r1_1.SetFont(self.gui.font_smaller)
-        label_8_copy_copy.SetMinSize((80, 17))
-        self.m_r2_1.SetMinSize((120, 20))
-        model_r2_1.SetMinSize((20, 20))
-        model_r2_1.SetFont(self.gui.font_smaller)
-        label_7_copy.SetMinSize((80, 17))
-        self.modelfreefreq2.SetMinSize((80, 20))
-        label_8_copy_1.SetMinSize((80, 17))
-        self.m_noe_2.SetMinSize((120, 20))
-        model_noe_2.SetMinSize((20, 20))
-        model_noe_2.SetFont(self.gui.font_smaller)
-        label_8_copy_copy_1.SetMinSize((80, 17))
-        self.m_r1_2.SetMinSize((120, 20))
-        model_r1_2.SetMinSize((20, 20))
-        model_r1_2.SetFont(self.gui.font_smaller)
-        label_8_copy_copy_copy.SetMinSize((80, 17))
-        self.m_r2_2.SetMinSize((120, 20))
-        model_r2_2.SetMinSize((20, 20))
-        model_r2_2.SetFont(self.gui.font_smaller)
-        label_7_copy_copy.SetMinSize((80, 17))
-        self.modelfreefreq3.SetMinSize((80, 20))
-        label_8_copy_1_copy.SetMinSize((80, 17))
-        self.m_noe_3.SetMinSize((120, 20))
-        model_noe_3.SetMinSize((20, 20))
-        model_noe_3.SetFont(self.gui.font_smaller)
-        label_8_copy_copy_1_copy.SetMinSize((80, 17))
-        self.m_r1_3.SetMinSize((120, 20))
-        model_r1_3.SetMinSize((20, 20))
-        model_r1_3.SetFont(self.gui.font_smaller)
-        label_8_copy_copy_copy_copy.SetMinSize((80, 17))
-        self.m_r2_3.SetMinSize((120, 20))
-        model_r2_3.SetMinSize((20, 20))
-        model_r2_3.SetFont(self.gui.font_smaller)
-
-        # The box layout.
-        sizer_16 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_17 = wx.BoxSizer(wx.VERTICAL)
-        sizer_18 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_19 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_17_copy_copy = wx.BoxSizer(wx.VERTICAL)
-        sizer_19_copy_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_19_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_19_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_18_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_17_copy = wx.BoxSizer(wx.VERTICAL)
-        sizer_19_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_19_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_19_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_18_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_19_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_19_copy = wx.BoxSizer(wx.HORIZONTAL)
-        panel_4_copy_1.SetSizer(sizer_17_copy_copy)
-
-        # Setup and pack the elements.
-        panel_4.SetMinSize((230, 85))
-        panel_4.SetBackgroundColour(wx.Colour(192, 192, 192))
-        panel_4_copy.SetMinSize((230, 85))
-        panel_4_copy.SetBackgroundColour(wx.Colour(176, 176, 176))
-        panel_4_copy_1.SetMinSize((230, 85))
-        panel_4_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        sizer_18.Add(label_7, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_18.Add(self.modelfreefreq1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17.Add(sizer_18, 0, 0, 0)
-        sizer_19.Add(label_8, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19.Add(self.m_noe_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19.Add(model_noe_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17.Add(sizer_19, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy.Add(label_8_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy.Add(self.m_r1_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy.Add(model_r1_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17.Add(sizer_19_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy_copy.Add(label_8_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy.Add(self.m_r2_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy.Add(model_r2_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17.Add(sizer_19_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        panel_4.SetSizer(sizer_17)
-        sizer_16.Add(panel_4, 0, 0, 0)
-        sizer_18_copy.Add(label_7_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_18_copy.Add(self.modelfreefreq2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy.Add(sizer_18_copy, 0, 0, 0)
-        sizer_19_copy_1.Add(label_8_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_1.Add(self.m_noe_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_1.Add(model_noe_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy.Add(sizer_19_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy_copy_1.Add(label_8_copy_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_1.Add(self.m_r1_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_1.Add(model_r1_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy.Add(sizer_19_copy_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy_copy_copy.Add(label_8_copy_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_copy.Add(self.m_r2_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_copy.Add(model_r2_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy.Add(sizer_19_copy_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        panel_4_copy.SetSizer(sizer_17_copy)
-        sizer_16.Add(panel_4_copy, 0, 0, 0)
-        sizer_18_copy_copy.Add(label_7_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_18_copy_copy.Add(self.modelfreefreq3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy_copy.Add(sizer_18_copy_copy, 0, 0, 0)
-        sizer_19_copy_1_copy.Add(label_8_copy_1_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_1_copy.Add(self.m_noe_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_1_copy.Add(model_noe_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy_copy.Add(sizer_19_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy_copy_1_copy.Add(label_8_copy_copy_1_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_1_copy.Add(self.m_r1_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_1_copy.Add(model_r1_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy_copy.Add(sizer_19_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy_copy_copy_copy.Add(label_8_copy_copy_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_copy_copy.Add(self.m_r2_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_copy_copy.Add(model_r2_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy_copy.Add(sizer_19_copy_copy_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_16.Add(panel_4_copy_1, 0, 0, 0)
-
-        # Button actions.
-        self.gui.Bind(wx.EVT_BUTTON, self.model_noe1, model_noe_1)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r11,  model_r1_1)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r21,  model_r2_1)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_noe2, model_noe_2)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r12,  model_r1_2)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r22,  model_r2_2)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_noe3, model_noe_3)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r13,  model_r1_3)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r23,  model_r2_3)
-
-        # Add the sizer to the given box.
-        box.Add(sizer_16, 0, 0, 0)
-
-
     def assemble_data(self):
-        """Assemble the data required for the dAuvernge_protocol class.
+        """Assemble the data required for the auto-analysis.
 
         See the docstring for auto_analyses.dauvernge_protocol for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
-        @return:    A container with all the data required for dAuvernge_protocol, i.e. its keyword arguments mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop.
-        @rtype:     class instance
+        @return:    A container with all the data required for the auto-analysis.
+        @rtype:     class instance, list of str
         """
 
         # The data container.
         data = Container()
+        missing = []
+
+        # The pipe name.
+        data.pipe_name = self.data.pipe_name
 
         # The model-free models (do not change these unless absolutely necessary).
         data.mf_models = []
@@ -514,155 +330,26 @@ class Auto_model_free(Base_frame):
                 data.mf_models.append('m%i' % i)
                 data.local_tm_models.append('tm%i' % i)
 
-        # Structure File
-        data.structure_file = self.data.structure_file
-
-        # Set Structure file as None if a structure file is loaded.
-        if data.structure_file == '!!! Sequence file selected !!!':
-            data.structure_file = None
-
-        # Name of heteronucleus in PDB File.
-        data.het_name = 'N'
-
-        # Assign parameter file to sequence file.
-        if not self.data.paramfiles1[0] == '':     # NOE file of frq 1
-            sequence_file = self.data.paramfiles1[0]
-        if not self.data.paramfiles1[1] == '':     # R1 file of frq 1
-            sequence_file = self.data.paramfiles1[1]
-        if not self.data.paramfiles1[2] == '':     # R2 file of frq 1
-            sequence_file = self.data.paramfiles1[2]
-
-        # Alias the free file format data structure.
-        format = ds.relax_gui.free_file_format
-
-        # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        data.seq_args = [sequence_file, None, format.mol_name_col, format.res_num_col, format.res_name_col, format.spin_num_col, format.spin_name_col, format.sep]
-
-        # Import golbal settings.
-        global_settings = ds.relax_gui.global_setting
-
-        # Hetero nucleus name.
-        if 'N' in global_settings[2]:
-            data.hetnuc = '15N'
-        elif 'C' in global_settings[2]:
-            data.hetnuc = '13C'
-        else:
-            data.hetnuc = global_settings[2]
-
-        # Proton name.
-        if '2' in global_settings[3]:
-            data.proton = '2H'
-        else:
-            data.proton = '1H'
-
-        # Increment size.
-        data.inc = int(global_settings[4])
-
-        # The optimisation technique.
-        data.min_algor = global_settings[5]
-
-        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        data.mc_num = int(global_settings[6])
-
-        # The bond length, CSA values.
-        data.bond_length = str_to_float(global_settings[0])
-        data.csa = str_to_float(global_settings[1])
-
-        # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
-        data.relax_data = []
-        for i in range(3):
-            # The objects.
-            frq = getattr(self.data, 'nmrfreq%i' % (i+1))
-            files = getattr(self.data, 'paramfiles%i' % (i+1))
-
-            # Data has not been given, so skip this entry.
-            if frq == '':
-                continue
-
-            # Append the relaxation data if present.
-            if not files[1] == '':
-                data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, format.mol_name_col, format.res_num_col, format.res_name_col, format.spin_num_col, format.spin_name_col, format.data_col, format.err_col, format.sep])
-            if not files[2] == '':
-                data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, format.mol_name_col, format.res_num_col, format.res_name_col, format.spin_num_col, format.spin_name_col, format.data_col, format.err_col, format.sep])
-            if not files[0] == '':
-                data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, format.mol_name_col, format.res_num_col, format.res_name_col, format.spin_num_col, format.spin_name_col, format.data_col, format.err_col, format.sep])
-
-        # Unresolved resiudes
-        file = DummyFileObject()
-        entries = self.data.unresolved
-        entries = replace(entries, ',', '\n')
-        file.write(entries)
-        file.close()
-        data.unres = file
-
         # A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
         data.exclude = None
 
         # Automatic looping over all rounds until convergence (must be a boolean value of True or False).
         data.conv_loop = True
 
-        # Results directory.
-        data.save_dir = self.data.results_dir_model
+        # Increment size.
+        data.inc = gui_to_int(self.grid_inc.GetValue())
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
 
         # Number of maximum iterations.
         data.max_iter = self.data.max_iter
 
-        # Return the container.
-        return data
+        # Results directory.
+        data.save_dir = self.data.save_dir
 
-
-    def automatic_protocol_controller(self, event):
-        """Set up, execute, and process the automatic model-free protocol.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # relax execution lock.
-        status = Status()
-        if status.exec_lock.locked():
-            error_message("relax is currently executing.", "relax execution lock")
-            event.Skip()
-            return
-
-        # The required data has not been set up correctly or has not all been given, so clean up and exit.
-        if not self.check_entries():
-            event.Skip()
-            return
-
-        # PDB file is given.
-        if str(self.field_structure.GetValue()) in ['', 'please insert .pdb file']:
-            missing_data(missing=['No PDB file selected.'])
-            return
-
-        # Synchronise the frame data to the relax data store.
-        self.sync_ds(upload=True)
-
-        # The global model.
-        which_model = self.choose_global_model(False)
-
-        # Display the relax controller.
-        if not status.debug and status.show_gui:
-            self.gui.controller.Show()
-
-        # Cancel.
-        if which_model == None:
-            return
-
-        # Solve for all global models.
-        elif which_model == 'full':
-            # The global model list.
-            global_models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', 'final']
-
-        # Any global model selected.
-        else:
-            global_models = [which_model]
-
-        # Run the models.
-        self.execute(global_models=global_models, automatic=False)
-
-        # Skip the event.
-        event.Skip()
+        # Return the container and list of missing data.
+        return data, missing
 
 
     def build_left_box(self):
@@ -675,9 +362,17 @@ class Auto_model_free(Base_frame):
         # Build the left hand box.
         left_box = wx.BoxSizer(wx.VERTICAL)
 
+        # The images.
+        bitmaps = [paths.ANALYSIS_IMAGE_PATH+"model_free"+sep+"model_free_200x200.png",
+                   paths.IMAGE_PATH+'modelfree.png']
+
         # Add the model-free bitmap picture.
-        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
-        left_box.Add(bitmap, 0, wx.ALL, 0)
+        for i in range(len(bitmaps)):
+            # The bitmap.
+            bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(bitmaps[i], wx.BITMAP_TYPE_ANY))
+
+            # Add it.
+            left_box.Add(bitmap, 0, wx.ALL, 0)
 
         # A spacer.
         left_box.AddStretchSpacer()
@@ -722,82 +417,34 @@ class Auto_model_free(Base_frame):
         # Add the frame title.
         self.add_title(box, "Setup for model-free analysis")
 
-        # Add the relaxation data input GUI element, with spacing.
-        self.add_relax_data_input(box)
-        box.AddSpacer(10)
+        # Display the data pipe.
+        self.add_text_sel_element(box, self.parent, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False)
+
+        # Add the results directory GUI element.
+        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
+
+        # Add the spin GUI element.
+        self.add_spin_systems(box, self.parent)
 
         # Add the model-free models GUI element, with spacing.
         self.add_mf_models(box)
         box.AddSpacer(10)
 
-        # Add maximum interation selector.
+        # The optimisation settings.
+        self.grid_inc = self.add_spin_element(box, self.parent, text="Grid search increments:", default=11, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.")
+        self.mc_sim_num = self.add_spin_element(box, self.parent, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.")
+
+        # Add maximum iteration selector.
         self.max_iter = self.add_spin_element(box, self.parent, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100)
-
-        # Add the PDB file selection GUI element.
-        self.field_structure = self.add_text_sel_element(box, self.parent, text="Structure file (.pdb)", default=str(self.gui.structure_file_pdb_msg), control=StructureTextCtrl, fn='open_file', editable=False, button=True)
-
-        # Add the unresolved spins GUI element.
-        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues")
-
-        # Add the results directory GUI element.
-        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.results_dir_model, fn=self.resdir_modelfree, button=True)
 
         # Add a stretchable spacer.
         box.AddStretchSpacer()
 
         # Add the execution GUI element.
-        self.button_exec_id = self.add_execute_relax(box, self.automatic_protocol_controller)
+        self.button_exec_id = self.add_execute_relax(box, self.execute)
 
-        # Return the packed box.
+        # Return the box.
         return box
-
-
-    def check_entries(self):
-        check = False
-        counter_frq = 0
-        counter_noe = 0
-        counter_r1 = 0
-        counter_r2 = 0
-
-        # check frq 1
-        if not self.modelfreefreq1.GetValue() == '':
-            counter_frq = counter_frq + 1
-        if not self.m_noe_1.GetValue() == '':
-            counter_noe = counter_noe + 1
-        if not self.m_r1_1.GetValue() == '':
-            counter_r1 = counter_r1 + 1
-        if not self.m_r2_1.GetValue() == '':
-            counter_r2 = counter_r2 + 1
-
-        # check frq 1
-        if not self.modelfreefreq2.GetValue() == '':
-            counter_frq = counter_frq + 1
-        if not self.m_noe_2.GetValue() == '':
-            counter_noe = counter_noe + 1
-        if not self.m_r1_2.GetValue() == '':
-            counter_r1 = counter_r1 + 1
-        if not self.m_r2_2.GetValue() == '':
-            counter_r2 = counter_r2 + 1
-
-        # check frq 1
-        if not self.modelfreefreq3.GetValue() == '':
-            counter_frq = counter_frq + 1
-        if not self.m_noe_3.GetValue() == '':
-            counter_noe = counter_noe + 1
-        if not self.m_r1_3.GetValue() == '':
-            counter_r1 = counter_r1 + 1
-        if not self.m_r2_3.GetValue() == '':
-            counter_r2 = counter_r2 + 1
-
-        # each parameter has to be present at least in doublicates
-        if counter_frq > 1 and counter_noe > 1 and counter_r1 > 1 and counter_r2 > 1:
-            check = True
-
-        # missing data
-        else:
-            missing_data()
-
-        return check
 
 
     def choose_global_model(self, local_tm_complete=False):
@@ -818,68 +465,177 @@ class Auto_model_free(Base_frame):
         return dlg.selection
 
 
-    def execute(self, global_models=None, automatic=True):
-        """Execute the calculations by running execute_thread() within a thread.
+    def delete(self):
+        """Unregister the spin count from the user functions."""
 
-        @keyword global_models: The list of global models to solve.  The elements must be one of 'local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', or 'final'.
-        @type global_models:    list of str
+        # Clean up the peak intensity object.
+        self.peak_intensity.delete()
+
+        # Remove.
+        status.observers.uf_gui.unregister(self.data.pipe_name)
+
+
+    def execute(self, event):
+        """Set up, execute, and process the automatic model-free protocol.
+
+        @param event:   The wx event.
+        @type event:    wx event
         """
 
-        # The thread object storage.
-        self.gui.calc_threads.append(Thread_container())
-        thread_cont = self.gui.calc_threads[-1]
+        # relax execution lock.
+        if status.exec_lock.locked():
+            error_message("relax is currently executing.", "relax execution lock")
+            event.Skip()
+            return
+
+        # Synchronise the frame data to the relax data store.
+        self.sync_ds(upload=True)
+
+        # Assemble all the data needed for the auto-analysis.
+        data, missing = self.assemble_data()
+
+        # Missing data.
+        if len(missing):
+            missing_data(missing)
+            return
+
+        # The global model.
+        which_model = self.choose_global_model(False)
+
+        # Cancel.
+        if which_model == None:
+            return
+
+        # Solve for all global models.
+        elif which_model == 'full':
+            # The global model list.
+            data.global_models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', 'final']
+
+        # Any global model selected.
+        else:
+            data.global_models = [which_model]
+
+        # Display the relax controller (if not debugging).
+        if not status.debug and status.show_gui:
+            self.gui.controller.Show()
+
+        # Threading flag.
+        thread = True
+        if status.debug:
+            thread = False
 
         # Start the thread.
-        if status.debug:
-            self.execute_thread(global_models=global_models, automatic=automatic)
-        else:
-            id = thread.start_new_thread(self.execute_thread, (), {'global_models': global_models, 'automatic': automatic})
+        self.thread = Execute_mf(self.gui, data, self.data_index, thread=thread)
+        self.thread.start()
 
-            # Add the thread info to the container.
-            thread_cont.id = id
-            thread_cont.analysis_type = 'model-free'
-            thread_cont.global_models = global_models
+        # Terminate the event.
+        event.Skip()
 
 
-    def execute_thread(self, global_models=None, automatic=True):
-        """Execute the calculation in a thread.
 
-        @keyword global_models: The list of global models to solve.  The elements must be one of 'local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', or 'final'.
-        @type global_models:    list of str
+
+
+    def results_directory(self, event):
+        """The results directory selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
         """
 
+        # Store the original directory.
+        backup = self.field_results_dir.GetValue()
+
+        # Select the file.
+        self.data.save_dir = opendir('Select results directory', default=self.field_results_dir.GetValue())
+
+        # Restore the backup file if no file was chosen.
+        if not self.data.save_dir:
+            self.data.save_dir = backup
+
+        # Place the path in the text box.
+        self.field_results_dir.SetValue(self.data.save_dir)
+
+
+    def sync_ds(self, upload=False):
+        """Synchronise the analysis frame and the relax data store, both ways.
+
+        This method allows the frame information to be uploaded into the relax data store, or for the information in the relax data store to be downloaded by the frame.
+
+        @keyword upload:    A flag which if True will cause the frame to send data to the relax data store.  If False, data will be downloaded from the relax data store to update the frame.
+        @type upload:       bool
+        """
+
+        # The model-free models to use.
+        if upload:
+            # Loop over models m0 to m9.
+            for i in range(10):
+                # The object.
+                obj = getattr(self, 'm%i' % i)
+
+                # Upload to the store.
+                self.data.model_toggle[i] = obj.GetValue()
+        else:
+            # Loop over models m0 to m9.
+            for i in range(10):
+                # The object.
+                obj = getattr(self, 'm%i' % i)
+
+                # Download from the store.
+                obj.SetValue(self.data.model_toggle[i])
+
+        # The grid incs.
+        if upload:
+            self.data.grid_inc = gui_to_int(self.grid_inc.GetValue())
+        elif hasattr(self.data, 'grid_inc'):
+            self.grid_inc.SetValue(int(self.data.grid_inc))
+
+        # The MC sim number.
+        if upload:
+            self.data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
+        elif hasattr(self.data, 'mc_sim_num'):
+            self.mc_sim_num.SetValue(int(self.data.mc_sim_num))
+
+        # The results directory.
+        if upload:
+            self.data.save_dir = str(self.field_results_dir.GetValue())
+        else:
+            self.field_results_dir.SetValue(str(self.data.save_dir))
+
+        # Maximum iterations.
+        if upload:
+            self.data.max_iter = gui_to_int(self.max_iter.GetValue())
+        else:
+            self.max_iter.SetValue(int(self.data.max_iter))
+
+
+
+class Execute_mf(Execute):
+    """The model-free analysis execution object."""
+
+
+    def run_analysis(self):
+        """Execute the calculation."""
+
+        # Controller.
+        if not status.debug and not status.test_mode:
+            # Redirect relax output and errors to the controller.
+            redir = Redirect_text(self.gui.controller)
+            sys.stdout = redir
+            sys.stderr = redir
+
         # Loop over the models.
-        for global_model in global_models:
-            # Assemble all the data needed for the dAuvergne_protocol class.
-            data = self.assemble_data()
-
-            # Value for progress bar during Monte Carlo simulation.
-            self.gui.calc_threads[-1].progress = 5.0
-
-            # Controller.
-            if not status.debug and not status.test_mode:
-                # Redirect relax output and errors to the controller.
-                redir = Redirect_text(self.gui.controller)
-                sys.stdout = redir
-                sys.stderr = redir
-
-                # Print a header in the controller.
-                str = 'Starting model-free calculation'
-                wx.CallAfter(self.gui.controller.log_panel.AppendText, ('\n\n\n' + str + '\n' + '-'*len(str) + '\n\n') )
-                time.sleep(0.5)
-
+        for global_model in self.data.global_models:
             # Start the protocol.
-            dauvergne_protocol.dAuvergne_protocol(save_dir=data.save_dir, diff_model=global_model, mf_models=data.mf_models, local_tm_models=data.local_tm_models, pdb_file=data.structure_file, seq_args=data.seq_args, het_name=data.het_name, relax_data=data.relax_data, unres=data.unres, exclude=data.exclude, bond_length=data.bond_length, csa=data.csa, hetnuc=data.hetnuc, proton=data.proton, grid_inc=data.inc, min_algor=data.min_algor, mc_num=data.mc_num, max_iter=data.max_iter, conv_loop=data.conv_loop)
-
-            # Feedback about success.
-            str = 'Successfully calculated the %s global model.' % global_model
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n' + '_'*len(str) + '\n\n' + str + '\n' + '_'*len(str))
+            dauvergne_protocol.dAuvergne_protocol(pipe_name=self.data.pipe_name, results_dir=self.data.save_dir, diff_model=global_model, mf_models=self.data.mf_models, local_tm_models=self.data.local_tm_models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, max_iter=self.data.max_iter, conv_loop=self.data.conv_loop)
 
             # Create the results file.
             if global_model == 'final':
-                # Feedback.
-                wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\nCreating results files\n\n')
-                time.sleep(3)
+                # Alias the relax data store data.
+                data = ds.relax_gui.analyses[self.data_index]
+
+                # Is there a results list (old results file support)?
+                if not hasattr(data, 'results_list'):
+                    data.results_list = []
 
                 results_analysis = model_free_results(self, data.save_dir, data.structure_file)
 
@@ -906,219 +662,3 @@ class Auto_model_free(Base_frame):
                 ds.relax_gui.table_s2 = results_analysis[2]
                 ds.relax_gui.table_rex = results_analysis[3]
                 ds.relax_gui.table_te = results_analysis[4]
-
-        # Return successful value to automatic mode to proceed to next step.
-        if automatic == True:
-            return 'successful'
-
-        # Enable m1-m5.
-        if not automatic:
-            if global_model == 'local_tm':
-                # enable m1 - m5 to choose for calculation
-                return True
-
-
-    def model_noe1(self, event): # load noe1
-        backup = self.m_noe_1.GetValue()
-        self.data.paramfiles1[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*')
-        if self.data.paramfiles1[0] == None:
-            self.data.paramfiles1[0] = backup
-        self.m_noe_1.SetValue(self.data.paramfiles1[0])
-        self.m_noe_1.SetInsertionPoint(len(self.data.paramfiles1[0]))
-        event.Skip()
-
-
-    def model_noe2(self, event): # load noe1
-        backup = self.m_noe_2.GetValue()
-        self.data.paramfiles2[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*')
-        if self.data.paramfiles2[0] == None:
-            self.data.paramfiles2[0] = backup
-        self.m_noe_2.SetValue(self.data.paramfiles2[0])
-        self.m_noe_2.SetInsertionPoint(len(self.data.paramfiles2[0]))
-        event.Skip()
-
-
-    def model_noe3(self, event): # load noe1
-        backup = self.m_noe_3.GetValue()
-        self.data.paramfiles3[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*')
-        if self.data.paramfiles3[0] == None:
-            self.data.paramfiles3[0] = backup
-        self.m_noe_3.SetValue(self.data.paramfiles3[0])
-        self.m_noe_3.SetInsertionPoint(len(self.data.paramfiles3[0]))
-        event.Skip()
-
-
-    def model_r11(self, event): #
-        backup = self.m_r1_1.GetValue()
-        self.data.paramfiles1[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*')
-        if self.data.paramfiles1[1] == None:
-            self.data.paramfiles1[1] = backup
-        self.m_r1_1.SetValue(self.data.paramfiles1[1])
-        self.m_r1_1.SetInsertionPoint(len(self.data.paramfiles1[1]))
-        event.Skip()
-
-
-    def model_r12(self, event): #
-        backup = self.m_r1_2.GetValue()
-        self.data.paramfiles2[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*')
-        if self.data.paramfiles2[1] == None:
-            self.data.paramfiles2[1] = backup
-        self.m_r1_2.SetValue(self.data.paramfiles2[1])
-        self.m_r1_2.SetInsertionPoint(len(self.data.paramfiles2[1]))
-        event.Skip()
-
-
-    def model_r13(self, event):
-        backup = self.m_r1_3.GetValue()
-        self.data.paramfiles3[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*')
-        if self.data.paramfiles3[1] == None:
-            self.data.paramfiles3[1] = backup
-        self.m_r1_3.SetValue(self.data.paramfiles3[1])
-        self.m_r1_3.SetInsertionPoint(len(self.data.paramfiles3[1]))
-        event.Skip()
-
-
-    def model_r21(self, event): #
-        backup = self.m_r2_1.GetValue()
-        self.data.paramfiles1[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*')
-        if self.data.paramfiles1[2] == None:
-            self.data.paramfiles1[2] = backup
-        self.m_r2_1.SetValue(self.data.paramfiles1[2])
-        self.m_r2_1.SetInsertionPoint(len(self.data.paramfiles1[2]))
-        event.Skip()
-
-
-    def model_r22(self, event): #
-        backup = self.m_r2_2.GetValue()
-        self.data.paramfiles2[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*')
-        if self.data.paramfiles2[2] == None:
-            self.data.paramfiles2[2] = backup
-        self.m_r2_2.SetValue(self.data.paramfiles2[2])
-        self.m_r2_2.SetInsertionPoint(len(self.data.paramfiles2[2]))
-        event.Skip()
-
-
-    def model_r23(self, event):
-        backup = self.m_r2_3.GetValue()
-        self.data.paramfiles3[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*')
-        if self.data.paramfiles3[2] == None:
-            self.data.paramfiles3[2] = backup
-        self.m_r2_3.SetValue(self.data.paramfiles3[2])
-        self.m_r2_3.SetInsertionPoint(len(self.data.paramfiles3[2]))
-        event.Skip()
-
-
-    def open_model_results_exe(self, event):    # open model-free results
-        choice = self.list_modelfree.GetStringSelection()
-        model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te] # relax results values
-        see_results(choice, model_result)
-        event.Skip()
-
-
-    def resdir_modelfree(self, event):
-        backup = self.field_results_dir.GetValue()
-        self.data.results_dir_model = opendir('Select results directory', backup)
-        if self.data.results_dir_model == None:
-            self.data.results_dir_model = backup
-        self.field_results_dir.SetValue(self.data.results_dir_model)
-        event.Skip()
-
-
-    def sel_aic(self, event):
-        selection = "AIC"
-        event.Skip()
-
-
-    def sel_bic(self, event):
-        selection = "BIC"
-        event.Skip()
-
-
-    def sync_ds(self, upload=False):
-        """Synchronise the analysis frame and the relax data store, both ways.
-
-        This method allows the frame information to be uploaded into the relax data store, or for the information in the relax data store to be downloaded by the frame.
-
-        @keyword upload:    A flag which if True will cause the frame to send data to the relax data store.  If False, data will be downloaded from the relax data store to update the frame.
-        @type upload:       bool
-        """
-
-        # Relaxation data input.
-        if upload:
-            # First frequency.
-            self.data.nmrfreq1 = str(self.modelfreefreq1.GetValue())
-            self.data.paramfiles1[0] = str(self.m_noe_1.GetValue())
-            self.data.paramfiles1[1] = str(self.m_r1_1.GetValue())
-            self.data.paramfiles1[2] = str(self.m_r2_1.GetValue())
-
-            # Second frequency.
-            self.data.nmrfreq2 = str(self.modelfreefreq2.GetValue())
-            self.data.paramfiles2[0] = str(self.m_noe_2.GetValue())
-            self.data.paramfiles2[1] = str(self.m_r1_2.GetValue())
-            self.data.paramfiles2[2] = str(self.m_r2_2.GetValue())
-
-            # Third frequency.
-            self.data.nmrfreq3 = str(self.modelfreefreq3.GetValue())
-            self.data.paramfiles3[0] = str(self.m_noe_3.GetValue())
-            self.data.paramfiles3[1] = str(self.m_r1_3.GetValue())
-            self.data.paramfiles3[2] = str(self.m_r2_3.GetValue())
-        else:
-            # First frequency.
-            self.modelfreefreq1.SetValue(str(self.data.nmrfreq1))
-            self.m_noe_1.SetValue(str(self.data.paramfiles1[0]))
-            self.m_r1_1.SetValue(str(self.data.paramfiles1[1]))
-            self.m_r2_1.SetValue(str(self.data.paramfiles1[2]))
-
-            # Second frequency.
-            self.modelfreefreq2.SetValue(str(self.data.nmrfreq2))
-            self.m_noe_2.SetValue(str(self.data.paramfiles2[0]))
-            self.m_r1_2.SetValue(str(self.data.paramfiles2[1]))
-            self.m_r2_2.SetValue(str(self.data.paramfiles2[2]))
-
-            # Third frequency.
-            self.modelfreefreq3.SetValue(str(self.data.nmrfreq3))
-            self.m_noe_3.SetValue(str(self.data.paramfiles3[0]))
-            self.m_r1_3.SetValue(str(self.data.paramfiles3[1]))
-            self.m_r2_3.SetValue(str(self.data.paramfiles3[2]))
-
-        # The model-free models to use.
-        if upload:
-            # Loop over models m0 to m9.
-            for i in range(10):
-                # The object.
-                obj = getattr(self, 'm%i' % i)
-
-                # Upload to the store.
-                self.data.model_toggle[i] = obj.GetValue()
-        else:
-            # Loop over models m0 to m9.
-            for i in range(10):
-                # The object.
-                obj = getattr(self, 'm%i' % i)
-
-                # Download from the store.
-                obj.SetValue(self.data.model_toggle[i])
-
-        # The structure file.
-        if upload:
-            self.data.structure_file = str(self.field_structure.GetValue())
-        else:
-            self.field_structure.SetValue(str(self.data.structure_file))
-
-        # Unresolved residues.
-        if upload:
-            self.data.unresolved = str(self.field_unresolved.GetValue())
-        else:
-            self.field_unresolved.SetValue(str(self.data.unresolved))
-
-        # The results directory.
-        if upload:
-            self.data.results_dir_model = str(self.field_results_dir.GetValue())
-        else:
-            self.field_results_dir.SetValue(str(self.data.results_dir_model))
-
-        # Maximum iterations.
-        if upload:
-            self.data.max_iter = int(self.max_iter.GetValue())
-        else:
-            self.max_iter.SetValue(int(self.data.max_iter))
