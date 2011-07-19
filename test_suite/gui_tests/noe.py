@@ -67,7 +67,7 @@ class Noe(GuiTestCase):
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Load the sequence.
-        wizard = Wiz_window(size_x=900, size_y=700)
+        wizard = Wiz_window()
         seq_read = sequence.Read_page(wizard, self.gui)
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
         seq_read.file.SetValue(str_to_gui(file))
