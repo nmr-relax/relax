@@ -148,7 +148,7 @@ class Base_frame:
         return field
 
 
-    def add_spin_element(self, box, parent, text="", default=0, min=0, max=1000, control=wx.SpinCtrl):
+    def add_spin_element(self, box, parent, text="", default=0, min=0, max=1000, tooltip=None, control=wx.SpinCtrl):
         """Create a text selection element using a spinner for the frame.
 
         This consists of a horizontal layout with a static text element and a spin control
@@ -165,6 +165,8 @@ class Base_frame:
         @type min:              int
         @keyword max:           The maximum value allowed.
         @type max:              int
+        @keyword tooltip:   	The tooltip which appears on hovering over the text or spin control.
+        @type tooltip:      	str
         @keyword control:       The control class to use.
         @type control:          wx.SpinCtrl derived class
         @return:                The text control object.
@@ -195,6 +197,11 @@ class Base_frame:
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
+
+        # Tooltip.
+        if tooltip:
+            label.SetToolTipString(tooltip)
+            field.SetToolTipString(tooltip)
 
         # Return the text control object.
         return field
