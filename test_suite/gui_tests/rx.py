@@ -45,9 +45,9 @@ class Rx(GuiTestCase):
 
         # Data.
         relax_times = [0.0176, 0.0176, 0.0352, 0.0704, 0.0704, 0.1056, 0.1584, 0.1584, 0.1936, 0.1936]
-        chi2 = [None, None, None, 3.1727215308183405, 5.9732236976178248, 17.633333237460601, 4.7413502242106036, 10.759950979457724, None, None, None, 6.5520255580798752]
-        rx = [None, None, None, 8.0814894819861891, 8.6478971007171523, 9.5710638143380482, 10.716551832690667, 11.143793929315777, None, None, None, 12.828753698718391]
-        i0 = [None, None, None, 1996050.9679873895, 2068490.9458262245, 1611556.5193290685, 1362887.2329727132, 1877670.5629299041, None, None, None, 897044.17270784755]
+        chi2 = [None, None, None, 2.916952651567855, 5.4916923952919632, 16.21182245065274, 4.3591263759462926, 9.8925377583244316, None, None, None, 6.0238341559877782]
+        rx = [None, None, None, 8.0814894819820662, 8.6478971039559642, 9.5710638183013845, 10.716551838066295, 11.143793935455122, None, None, None, 12.82875370075309]
+        i0 = [None, None, None, 1996050.9679875025, 2068490.9458927638, 1611556.5194095275, 1362887.2331948928, 1877670.5623875158, None, None, None, 897044.17382064369]
 
         # Some checks.
         self.assertEqual(cdp.curve_type, 'exp')
@@ -58,9 +58,9 @@ class Rx(GuiTestCase):
             self.assertEqual(cdp_relax_times[i], relax_times[i])
 
         # Check the errors.
-        #for key in cdp.sigma_I:
-        #    self.assertEqual(cdp.sigma_I[key], 10142.707367087694)
-        #    self.assertEqual(cdp.var_I[key], 102874512.734375)
+        for key in cdp.sigma_I:
+            self.assertEqual(cdp.sigma_I[key], 10578.03948242143)
+            self.assertEqual(cdp.var_I[key], 111894919.29166666)
 
         # Spin data check.
         i = 0
@@ -121,6 +121,17 @@ class Rx(GuiTestCase):
         seq_read.spin_name_col.SetValue(int_to_gui(None))
         seq_read.spin_num_col.SetValue(int_to_gui(None))
         seq_read.on_execute()
+
+        # Unresolved spins.
+        deselect_read = deselect.Read_page(wizard, self.gui)
+        deselect_read.file.SetValue(str_to_gui(data_path + 'unresolved'))
+        deselect_read.mol_name_col.SetValue(int_to_gui(None))
+        deselect_read.res_name_col.SetValue(int_to_gui(None))
+        deselect_read.res_num_col.SetValue(int_to_gui(1))
+        deselect_read.spin_name_col.SetValue(int_to_gui(None))
+        deselect_read.spin_num_col.SetValue(int_to_gui(None))
+        deselect_read.change_all.SetValue(bool_to_gui(True))
+        deselect_read.on_execute()
 
         # Name the spins.
         page = spin.Name_page(wizard, self.gui)
@@ -200,17 +211,6 @@ class Rx(GuiTestCase):
 
             # Go to the next page (i.e. finish).
             analysis.wizard._go_next(None)
-
-        # Unresolved spins.
-        deselect_read = deselect.Read_page(wizard, self.gui)
-        deselect_read.file.SetValue(str_to_gui(data_path + 'unresolved'))
-        deselect_read.mol_name_col.SetValue(int_to_gui(None))
-        deselect_read.res_name_col.SetValue(int_to_gui(None))
-        deselect_read.res_num_col.SetValue(int_to_gui(1))
-        deselect_read.spin_name_col.SetValue(int_to_gui(None))
-        deselect_read.spin_num_col.SetValue(int_to_gui(None))
-        deselect_read.change_all.SetValue(bool_to_gui(True))
-        deselect_read.on_execute()
 
         # Set the number of MC sims.
         analysis.mc_sim_num.SetValue(3)
