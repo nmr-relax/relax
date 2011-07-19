@@ -32,7 +32,7 @@ from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
-from gui.misc import float_to_gui, int_to_gui, str_to_gui
+from gui.misc import float_to_gui, int_to_gui, float_to_gui, str_to_gui
 from gui.user_functions import deselect, sequence, spin
 from gui.wizard import Wiz_window
 
@@ -105,6 +105,14 @@ class Rx(GuiTestCase):
             'T2_ncyc11b_ave'
         ]
 
+        # Replicated spectra.
+        replicated = {
+            'T2_ncyc1b_ave': 'T2_ncyc1_ave',
+            'T2_ncyc4b_ave': 'T2_ncyc4_ave',
+            'T2_ncyc9b_ave': 'T2_ncyc9_ave',
+            'T2_ncyc11b_ave': 'T2_ncyc11_ave'
+        }
+
         # Number of cycles.
         ncyc = [1,
                 1,
@@ -118,20 +126,39 @@ class Rx(GuiTestCase):
                 11
         ]
 
-        # Set the delay time.
-        page.peak_intensity.delay_time.SetValue(float_to_gui(0.0176))
+        # The delay time.
+        time = 0.0176
 
         # Add the spectra and number of cycles.
         for i in range(len(names)):
+            # Set up the peak intensity wizard.
+            analysis.peak_wizard(None)
+
             # The spectrum.
-            file = data_path + sep + names[i] + '.list'
-            page.peak_intensity.grid.SetCellValue(i, 0, str_to_gui(file))
+            page = analysis.wizard.get_page(analysis.page_indices['read'])
+            page.file.SetValue(str_to_gui(files[i]))
+            page.spectrum_id.SetValue(str_to_gui(ids[i]))
+            page.heteronuc.SetValue(str_to_gui('HN'))
 
-            # The number of cycles.
-            page.peak_intensity.grid.SetCellValue(i, 1, int_to_gui(ncyc[i]))
+            # Go to the next page (replicated spectra).
+            analysis.wizard._go_next(None)
 
-        # Set the proton name.
-        ds.relax_gui.global_setting[3] = 'HN'
+            # Replicated spectra:
+            if names[i] in replicated.keys():
+                page = analysis.wizard.get_page(analysis.page_indices['repl'])
+                page.spectrum_id2.SetValue(str_to_gui(replicated[names[i]]))
+
+            # Move down 3 pages.
+            analysis.wizard._go_next(None)
+            analysis.wizard._go_next(None)
+            analysis.wizard._go_next(None)
+
+            # Set the delay time.
+            page = analysis.wizard.get_page(analysis.page_indices['relax_time'])
+            page.relax_time.SetValue(float_to_gui(ncyc[i]*time))
+
+            # Go to the next page (i.e. finish).
+            analysis.wizard._go_next(None)
 
         # Execute relax.
         page.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, page.button_exec_id))
