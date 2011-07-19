@@ -142,7 +142,7 @@ class Auto_noe(Base_frame):
             missing.append('NMR frequency')
 
         # Filename.
-        data.filename = 'noe.%s.out' % frq
+        data.file_root = 'noe.%s' % frq
 
         # Results directory.
         data.save_dir = self.data.save_dir
@@ -470,7 +470,7 @@ class Execute_noe(Execute):
             sys.stderr = redir
 
         # Execute.
-        NOE_calc(pipe_name=self.data.pipe_name, output_file=self.data.filename, results_dir=self.data.save_dir)
+        NOE_calc(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_dir=self.data.save_dir)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
