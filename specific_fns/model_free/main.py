@@ -2021,6 +2021,10 @@ class Model_free_main:
 
         # Loop over the sequence.
         for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Relaxation data must exist!
             if not hasattr(spin, 'ri_data'):
                 warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
