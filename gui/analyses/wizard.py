@@ -61,12 +61,23 @@ class Analysis_wizard:
         if not setup:
             return
 
+        # Return the analysis type, analysis name, and pipe name.
+        return get_data()
+
+
+    def get_data(self):
+        """Assemble and return the analysis type, analysis name, and pipe name.
+
+        @return:    The analysis type, analysis name, and data pipe name.
+        @rtype:     tuple of str
+        """
+
         # Get the data.
         analysis_type = gui_to_str(self.wizard.analysis_type)
         analysis_name = gui_to_str(new_page.analysis_name.GetValue())
         pipe_name = gui_to_str(pipe_page.pipe_name.GetValue())
 
-        # Return the analysis type and pipe name.
+        # Return it.
         return analysis_type, analysis_name, pipe_name
 
 
