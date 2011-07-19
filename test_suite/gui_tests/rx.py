@@ -84,6 +84,9 @@ class Rx(GuiTestCase):
     def test_r1_analysis(self):
         """Test the r1 analysis."""
 
+        # The path to the data files.
+        data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'curve_fitting' + sep
+
         # Simulate the new analysis wizard.
         self.gui.analysis.menu_new(None)
         page = self.gui.analysis.new_wizard.wizard.get_page(0)
@@ -119,19 +122,10 @@ class Rx(GuiTestCase):
         seq_read.spin_num_col.SetValue(int_to_gui(None))
         seq_read.on_execute()
 
-        # Unresolved spins.
-        deselect_spin = deselect.Spin_page(wizard, self.gui)
-        deselect_spin.spin_id.SetValue(str_to_gui(":3, 11, 18, 19, 23, 31, 42, 44, 54, 66, 82, 92, 94, 99, 101, 113, 124, 126, 136, 141, 145, 147, 332, 345, 346, 358, 361"))
-        deselect_spin.change_all.SetValue(bool_to_gui(False))
-        deselect_spin.on_execute()
-
         # Name the spins.
         page = spin.Name_page(wizard, self.gui)
         page.name.SetValue(str_to_gui('N'))
         page.on_execute()
-
-        # The path to the data files.
-        data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'curve_fitting' + sep
 
         # Spectrum names.
         names = [
@@ -206,6 +200,17 @@ class Rx(GuiTestCase):
 
             # Go to the next page (i.e. finish).
             analysis.wizard._go_next(None)
+
+        # Unresolved spins.
+        deselect_read = deselect.Read_page(wizard, self.gui)
+        deselect_read.file.SetValue(str_to_gui(data_path + 'unresolved'))
+        deselect_read.mol_name_col.SetValue(int_to_gui(None))
+        deselect_read.res_name_col.SetValue(int_to_gui(None))
+        deselect_read.res_num_col.SetValue(int_to_gui(1))
+        deselect_read.spin_name_col.SetValue(int_to_gui(None))
+        deselect_read.spin_num_col.SetValue(int_to_gui(None))
+        deselect_read.change_all.SetValue(bool_to_gui(True))
+        deselect_read.on_execute()
 
         # Set the number of MC sims.
         analysis.mc_sim_num.SetValue(3)
