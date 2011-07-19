@@ -58,6 +58,14 @@ class SystemTestCase(TestCase):
             # Remove the variable.
             del ds.tmpdir
 
+        # Remove the temporary directories.
+        if hasattr(self, 'tmpdir'):
+            # Delete the directory.
+            rmtree(self.tmpdir)
+
+            # Remove the variable.
+            del self.tmpdir
+
         # Remove temporary files.
         if hasattr(ds, 'tmpfile'):
             # Delete the file.
@@ -65,6 +73,14 @@ class SystemTestCase(TestCase):
 
             # Remove the variable.
             del ds.tmpfile
+
+        # Remove temporary files.
+        if hasattr(self, 'tmpfile'):
+            # Delete the file.
+            delete(self.tmpfile, fail=False)
+
+            # Remove the variable.
+            del self.tmpfile
 
         # Reset relax.
         reset()

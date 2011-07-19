@@ -88,11 +88,39 @@ class GuiTestCase(TestCase):
 
 
     def tearDown(self):
-        """Reset the relax data storage object."""
+        """Default tearDown operation - delete temp directories and files and reset relax."""
 
-        # Remove the temporary directory.
+        # Remove the temporary directories.
         if hasattr(ds, 'tmpdir'):
+            # Delete the directory.
             rmtree(ds.tmpdir)
+
+            # Remove the variable.
+            del ds.tmpdir
+
+        # Remove the temporary directories.
+        if hasattr(self, 'tmpdir'):
+            # Delete the directory.
+            rmtree(self.tmpdir)
+
+            # Remove the variable.
+            del self.tmpdir
+
+        # Remove temporary files.
+        if hasattr(ds, 'tmpfile'):
+            # Delete the file.
+            delete(ds.tmpfile, fail=False)
+
+            # Remove the variable.
+            del ds.tmpfile
+
+        # Remove temporary files.
+        if hasattr(self, 'tmpfile'):
+            # Delete the file.
+            delete(self.tmpfile, fail=False)
+
+            # Remove the variable.
+            del self.tmpfile
 
         # Reset relax.
         reset()
