@@ -296,7 +296,7 @@ class Auto_noe(Base_frame):
 
         # The noe.spectrum_type page.
         page = Spectrum_type_page(self.wizard, self.gui)
-        self.page_indices['spectrum_type'] = self.wizard.add_page(page, skip_button=True)
+        self.page_indices['spectrum_type'] = self.wizard.add_page(page, skip_button=False)
         page.on_display_post = self.wizard_update_spectrum_type
 
         # Reset the cursor.
