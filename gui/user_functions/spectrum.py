@@ -366,5 +366,6 @@ class Replicated_page(UF_page):
             if val[i] != None:
                 spectrum_ids.append(val[i])
 
-        # Execute.
-        self.gui.interpreter.spectrum.replicated(spectrum_ids=spectrum_ids)
+        # Execute (only if more than one ID is given).
+        if len(spectrum_ids) > 1:
+            self.gui.interpreter.spectrum.replicated(spectrum_ids=spectrum_ids)
