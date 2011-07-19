@@ -225,6 +225,10 @@ class Menu:
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.relax_data.delete],
                 [wx.NewId(), "&read",   paths.icon_16x16.open, self.gui.user_functions.relax_data.read]
             ]],
+            [wx.NewId(), "relax_&fit", None, None, [
+                [wx.NewId(), "&relax_time", None, self.gui.user_functions.relax_fit.relax_time],
+                [wx.NewId(), "&select_model", None,self.gui.user_functions.relax_fit.select_model]
+            ]],
             [wx.NewId(), "resid&ue", paths.icon_16x16.residue, None, [
                 [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.residue.copy],
                 [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.residue.create],

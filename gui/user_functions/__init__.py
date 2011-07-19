@@ -33,6 +33,7 @@ from noe import Noe
 from pipes import Pipes
 from residue import Residue
 from relax_data import Relax_data
+from relax_fit import Relax_fit
 from script import Script
 from select import Select
 from sequence import Sequence
@@ -50,6 +51,7 @@ __all__ = ['base',
            'pipes',
            'residue',
            'relax_data',
+           'relax_fit',
            'script',
            'select',
            'sequence',
@@ -78,6 +80,7 @@ class User_functions:
         self.pipes = Pipes(self.gui)
         self.residue = Residue(self.gui)
         self.relax_data = Relax_data(self.gui)
+        self.relax_fit = Relax_fit(self.gui)
         self.script = Script(self.gui)
         self.select = Select(self.gui)
         self.sequence = Sequence(self.gui)
@@ -97,6 +100,7 @@ class User_functions:
         self.pipes.destroy()
         self.residue.destroy()
         self.relax_data.destroy()
+        self.relax_fit.destroy()
         self.select.destroy()
         self.sequence.destroy()
         self.spectrum.destroy()
