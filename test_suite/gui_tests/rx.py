@@ -43,9 +43,6 @@ class Rx(GuiTestCase):
     def test_r1_analysis(self):
         """Test the r1 analysis."""
 
-        # The path to the data files.
-        data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'curve_fitting'
-
         # Simulate the new analysis wizard.
         self.gui.analysis.menu_new(None)
         page = self.gui.analysis.new_wizard.wizard.get_page(0)
@@ -90,6 +87,9 @@ class Rx(GuiTestCase):
         page = spin.Name_page(wizard, self.gui)
         page.name.SetValue(str_to_gui('N'))
         page.on_execute()
+
+        # The path to the data files.
+        data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'curve_fitting' + sep
 
         # Spectrum names.
         names = [
@@ -136,11 +136,18 @@ class Rx(GuiTestCase):
 
             # The spectrum.
             page = analysis.wizard.get_page(analysis.page_indices['read'])
-            page.file.SetValue(str_to_gui(files[i]))
-            page.spectrum_id.SetValue(str_to_gui(ids[i]))
+            page.file.SetValue(str_to_gui("%s%s.list" % (data_path, names[i])))
+            page.spectrum_id.SetValue(str_to_gui(names[i]))
             page.heteronuc.SetValue(str_to_gui('HN'))
 
-            # Go to the next page (replicated spectra).
+            # Go to the next page.
+            analysis.wizard._go_next(None)
+
+            # The error type.
+            page = analysis.wizard.get_page(analysis.page_indices['err_type'])
+            page.selection = 'repl'
+
+            # Go to the next page.
             analysis.wizard._go_next(None)
 
             # Replicated spectra:
@@ -148,23 +155,21 @@ class Rx(GuiTestCase):
                 page = analysis.wizard.get_page(analysis.page_indices['repl'])
                 page.spectrum_id2.SetValue(str_to_gui(replicated[names[i]]))
 
-            # Move down 3 pages.
-            analysis.wizard._go_next(None)
-            analysis.wizard._go_next(None)
+            # Go to the next page.
             analysis.wizard._go_next(None)
 
             # Set the delay time.
             page = analysis.wizard.get_page(analysis.page_indices['relax_time'])
-            page.relax_time.SetValue(float_to_gui(ncyc[i]*time))
+            page.time.SetValue(float_to_gui(ncyc[i]*time))
 
             # Go to the next page (i.e. finish).
             analysis.wizard._go_next(None)
 
         # Execute relax.
-        page.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, page.button_exec_id))
+        analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_id))
 
         # Wait for execution to complete.
-        page.thread.join()
+        analysis.thread.join()
 
         # Exceptions in the thread.
         self.check_exceptions()
