@@ -24,32 +24,34 @@
 # Module docstring.
 """The automatic relaxation curve fitting protocol."""
 
-#python modules
-import time
+# Python module imports.
 from os import sep
 
 # relax module imports.
-from prompt.interpreter import Interpreter
 from generic_fns.pipes import cdp_name, has_pipe, switch
 import generic_fns.structure.main
+from prompt.interpreter import Interpreter
 from status import Status; status = Status()
 
 
 
 class NOE_calc:
-    def __init__(self, pipe_name=None, output_file='noe.out', results_dir=None):
+    def __init__(self, pipe_name=None, file_root='noe', results_dir=None):
         """Perform relaxation curve fitting.
 
-        To use this auto-analysis, a data pipe with all the required data needs to be set up.  This data pipe should contain the NOE peak intensities from the saturated and reference spectra, peak intensity errors either from the baseplane noise or replicated spectra, all of the spins loaded and unresolved spins deselected, 
+        To use this auto-analysis, a data pipe with all the required data needs to be set up.  This data pipe should contain the following:
+
+            - All the spins loaded.
+            - Unresolved spins deselected.
+            - The NOE peak intensities from the saturated and reference spectra.
+            - Either the baseplane noise RMDS values should be set or replicated spectra loaded.
 
         @keyword pipe_name:     The name of the data pipe containing all of the data for the analysis.
         @type pipe_name:        str
-        @keyword output_file:   Name of the output file.
-        @type output_file:      str
-        @keyword results_dir:   Folder where results files are placed in.
+        @keyword file_root:     File root of the output filea.
+        @type file_root:        str
+        @keyword results_dir:   The directory where results files are saved.
         @type results_dir:      str
-        @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
-        @type int_method:       str
         """
 
         # Execution lock.
@@ -57,7 +59,7 @@ class NOE_calc:
 
         # Store the args.
         self.pipe_name = pipe_name
-        self.output_file = output_file
+        self.file_root = file_root
         self.results_dir = results_dir
         if self.results_dir:
             self.grace_dir = results_dir + sep + 'grace'
@@ -93,18 +95,19 @@ class NOE_calc:
         self.interpreter.calc()
 
         # Save the NOEs.
-        self.interpreter.value.write(param='noe', file=self.output_file, dir = self.results_dir, force=True)
+        self.interpreter.value.write(param='noe', file=self.file_root+'.out', dir=self.results_dir, force=True)
 
-        # Create grace files.
+        # Save the results.
+        self.interpreter.results.write(file='results', dir=self.results_dir, force=True)
+
+        # Create Grace plots of the data.
         self.interpreter.grace.write(y_data_type='ref', file='ref.agr', dir=self.grace_dir, force=True)
         self.interpreter.grace.write(y_data_type='sat', file='sat.agr', dir=self.grace_dir, force=True)
         self.interpreter.grace.write(y_data_type='noe', file='noe.agr', dir=self.grace_dir, force=True)
 
-        # Write the results.
-        self.interpreter.results.write(file='results', dir=self.results_dir, force=True)
 
         # Save the program state.
-        self.interpreter.state.save(state = 'save', dir=self.results_dir, force=True)
+        self.interpreter.state.save(state=self.file_root+'.save', dir=self.results_dir, force=True)
 
 
     def check_vars(self):
