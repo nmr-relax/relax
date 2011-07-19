@@ -106,7 +106,7 @@ class Noe(GuiTestCase):
             page = analysis.wizard.get_page(analysis.page_indices['read'])
             page.file.SetValue(str_to_gui(files[i]))
             page.spectrum_id.SetValue(str_to_gui(ids[i]))
-            page.heteronuc.SetValue(str_to_gui('HN'))
+            page.proton.SetValue(str_to_gui('HN'))
 
             # Move down 2 pages.
             analysis.wizard._go_next(None)

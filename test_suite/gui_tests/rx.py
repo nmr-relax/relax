@@ -138,7 +138,7 @@ class Rx(GuiTestCase):
             page = analysis.wizard.get_page(analysis.page_indices['read'])
             page.file.SetValue(str_to_gui("%s%s.list" % (data_path, names[i])))
             page.spectrum_id.SetValue(str_to_gui(names[i]))
-            page.heteronuc.SetValue(str_to_gui('HN'))
+            page.proton.SetValue(str_to_gui('HN'))
 
             # Go to the next page.
             analysis.wizard._go_next(None)
