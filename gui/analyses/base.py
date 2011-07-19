@@ -34,7 +34,7 @@ from generic_fns.pipes import cdp_name
 
 # relax GUI module imports.
 from gui import paths
-from gui.misc import str_to_gui
+from gui.misc import int_to_gui, str_to_gui
 
 
 class Base_frame:
@@ -160,7 +160,7 @@ class Base_frame:
         @keyword text:          The static text.
         @type text:             str
         @keyword default:       The default value of the control.
-        @type default:          str
+        @type default:          int
         @keyword min:           The minimum value allowed.
         @type min:              int
         @keyword max:           The maximum value allowed.
@@ -187,7 +187,7 @@ class Base_frame:
         sizer.AddSpacer((self.spacer_horizontal, -1))
 
         # The text input field.
-        field = self.add_spin_control(sizer, parent, text=default, control=control, min=min, max=max, height=size_horizontal)
+        field = self.add_spin_control(sizer, parent, text=int_to_gui(default), control=control, min=min, max=max, height=size_horizontal)
 
         # Spacer.
         sizer.AddSpacer((self.spacer_horizontal, -1))
