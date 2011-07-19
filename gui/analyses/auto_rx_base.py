@@ -26,29 +26,29 @@
 
 # Python module imports.
 from os import sep
-from string import lower, replace
+from string import lower
 import sys
-import time
 import wx
 
 # relax module imports.
 from auto_analyses.relax_fit import Relax_fit
 from data import Relax_data_store; ds = Relax_data_store()
-from relax_io import DummyFileObject
+from generic_fns.mol_res_spin import are_spins_named
 from status import Status; status = Status()
 
 # relaxGUI module imports.
-from gui.analyses.base import Base_frame
+from gui.analyses.base import Base_frame, Spectral_error_type_page
 from gui.analyses.execute import Execute
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.controller import Redirect_text
-from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir
 from gui.message import error_message, missing_data
-from gui.misc import add_border, gui_to_str, protected_exec, str_to_gui
+from gui.misc import add_border, gui_to_int, gui_to_str, int_to_gui, protected_exec, str_to_gui
 from gui import paths
-from gui.settings import load_sequence
+from gui.user_functions.relax_fit import Relax_time_page
+from gui.user_functions.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
+from gui.wizard import Wiz_window
 
 
 
@@ -97,10 +97,8 @@ class Auto_rx(Base_frame):
 
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].frq = ''
-            ds.relax_gui.analyses[data_index].num = 0
-            ds.relax_gui.analyses[data_index].file_list = []
-            ds.relax_gui.analyses[data_index].ncyc = []
-            ds.relax_gui.analyses[data_index].relax_times = []
+            ds.relax_gui.analyses[data_index].grid_inc = None
+            ds.relax_gui.analyses[data_index].mc_sim_num = None
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
             ds.relax_gui.analyses[data_index].results_list = []
 
@@ -128,9 +126,7 @@ class Auto_rx(Base_frame):
     def assemble_data(self):
         """Assemble the data required for the Relax_fit class.
 
-        See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
-
-        @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a list of missing data types.
+        @return:    A container with all the data required for the auto-analysis.
         @rtype:     class instance, list of str
         """
 
@@ -139,77 +135,26 @@ class Auto_rx(Base_frame):
         missing = []
 
         # The pipe name.
-        if hasattr(self.data, 'pipe_name'):
-            data.pipe_name = self.data.pipe_name
-        else:
-            data.pipe_name = 'rx_%s' % time.asctime(time.localtime())
+        data.pipe_name = self.data.pipe_name
 
-        # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        if hasattr(self.data, 'sequence_file'):
-            data.seq_args = [self.data.sequence_file, None, None, 1, None, None, None, None]
-        else:
-            data.seq_args = None
-
-        # The file names and relaxation times.
-        i = 0
-        for i in range(len(self.data.file_list)):
-            # Hit the end of the list.
-            if self.data.file_list[i] == '':
-                break
-        data.file_names = self.data.file_list[:i]
-        data.relax_times = self.data.relax_times[:i]
-        data.relax_times = [float(i) for i in data.relax_times]
+        # The frequency.
+        frq = gui_to_str(self.field_nmr_frq.GetValue())
+        if frq == None:
+            missing.append('NMR frequency')
 
         # Filename.
-        data.filename = self.analysis_type + '.' + str(self.data.frq)
-
-        # The integration method.
-        data.int_method = 'height'
-
-        # Import golbal settings.
-        global_settings = ds.relax_gui.global_setting
-
-        # Hetero nucleus name.
-        data.heteronuc = global_settings[2]
-
-        # Spin id of the heteronucleus.
-        data.load_spin_ids = '@' + global_settings[2]
-
-        # Proton name.
-        data.proton = global_settings[3]
+        data.filename = '%s.%s.out' % (self.analysis_type, frq)
 
         # Increment size.
-        data.inc = int(global_settings[4])
+        data.inc = gui_to_int(self.grid_inc.GetValue())
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        data.mc_num = int(global_settings[6])
-
-        # Unresolved residues
-        file = DummyFileObject()
-        entries = self.data.unresolved
-        entries = replace(entries, ',', '\n')
-        file.write(entries)
-        file.close()
-        data.unresolved = file
-
-        # Structure file.
-        if self.data.structure_file == self.gui.structure_file_pdb_msg:
-            data.structure_file = None
-        else:
-            data.structure_file = self.data.structure_file
-
-        # Set Structure file as None if a structure file is loaded.
-        if data.structure_file == '!!! Sequence file selected !!!':
-            data.structure_file = None
+        data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
 
         # Results directory.
         data.save_dir = self.data.save_dir
 
-        # No sequence data.
-        if not data.seq_args and not data.structure_file:
-            missing.append('Sequence data files (text or PDB)')
-
-        # Return the container, flag, and list of missing data.
+        # Return the container and list of missing data.
         return data, missing
 
 
@@ -230,7 +175,7 @@ class Auto_rx(Base_frame):
         self.add_text_sel_element(box, self.parent, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False)
 
         # Add the frequency selection GUI element.
-        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', %s values will be located in the file '%s.600.out'." % (self.label, lower(self.label)))
+        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR frequency label [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the %s values will be located in the file '%s.600.out'." % (self.label, lower(self.label)))
 
         # Add the results directory GUI element.
         self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
@@ -240,7 +185,14 @@ class Auto_rx(Base_frame):
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(10)
-        self.peak_intensity = Spectra_list(gui=self.gui, parent=self.parent, id=str(self.data_index), box=box)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self.parent, box=box, id=str(self.data_index), fn_add=self.peak_wizard)
+        box.AddSpacer(10)
+
+        # The optimisation settings.
+        self.grid_inc = self.add_spin_element(box, self.parent, text="Grid search increments:", default=11, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.")
+        self.mc_sim_num = self.add_spin_element(box, self.parent, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.")
+
+        # Some spacing.
         box.AddSpacer(10)
 
         # Add the execution GUI element.
@@ -276,7 +228,7 @@ class Auto_rx(Base_frame):
         # Synchronise the frame data to the relax data store.
         self.sync_ds(upload=True)
 
-        # Assemble all the data needed for the Relax_fit class.
+        # Assemble all the data needed for the auto-analysis.
         data, missing = self.assemble_data()
 
         # Missing data.
@@ -284,7 +236,7 @@ class Auto_rx(Base_frame):
             missing_data(missing)
             return
 
-        # Display the relax controller.
+        # Display the relax controller (if not debugging).
         if not status.debug and status.show_gui:
             self.gui.controller.Show()
 
@@ -312,25 +264,60 @@ class Auto_rx(Base_frame):
         self.gui.show_tree(None)
 
 
-    def load_sequence(self, event):
-        """The sequence loading GUI element.
+    def peak_wizard(self, event):
+        """Launch the NOE peak loading wizard.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
-        # Select the file.
-        file = load_sequence()
+        # Change the cursor to busy.
+        wx.BeginBusyCursor()
 
-        # Nothing selected.
-        if file == None:
-            return
+        # First check that at least a single spin is named!
+        if not are_spins_named():
+            error_message("No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.", caption='Incomplete setup')
 
-        # Store the file.
-        self.data.sequence_file = file
+        # Initialise a wizard.
+        self.wizard = Wiz_window(size_x=1000, size_y=900, title="Set up the %s peak intensities" % self.label)
+        self.page_indices = {}
 
-        # Sync.
-        self.sync_ds(upload=False)
+        # The spectrum.read_intensities page.
+        self.page_intensity = Read_intensities_page(self.wizard, self.gui)
+        self.page_indices['read'] = self.wizard.add_page(self.page_intensity, skip_button=True, proceed_on_error=False)
+
+        # Error type selection page.
+        self.page_error_type = Spectral_error_type_page(self.wizard, self.gui)
+        self.page_indices['err_type'] = self.wizard.add_page(self.page_error_type, apply_button=False)
+        self.wizard.set_seq_next_fn(self.page_indices['err_type'], self.wizard_page_after_error_type)
+
+        # The spectrum.replicated page.
+        page = Replicated_page(self.wizard, self.gui)
+        self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True)
+        self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
+        page.on_display_post = self.wizard_update_repl
+
+        # The spectrum.baseplane_rmsd page.
+        page = Baseplane_rmsd_page(self.wizard, self.gui)
+        self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True)
+        self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
+        page.on_display_post = self.wizard_update_rmsd
+
+        # The spectrum.integration_points page.
+        page = Integration_points_page(self.wizard, self.gui)
+        self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True)
+        page.on_display_post = self.wizard_update_pts
+
+        # The relax_fit.relax_time page.
+        page = Relax_time_page(self.wizard, self.gui)
+        self.page_indices['relax_time'] = self.wizard.add_page(page, skip_button=True)
+        page.on_display_post = self.wizard_update_relax_time
+
+        # Reset the cursor.
+        wx.EndBusyCursor()
+
+        # Run the wizard.
+        self.wizard.run()
 
 
     def results_directory(self, event):
@@ -369,11 +356,129 @@ class Auto_rx(Base_frame):
         else:
             self.field_nmr_frq.SetValue(str_to_gui(self.data.frq))
 
+        # The grid incs.
+        if upload:
+            self.data.grid_inc = gui_to_int(self.grid_inc.GetValue())
+        elif hasattr(self.data, 'grid_inc'):
+            self.grid_inc.SetValue(int(self.data.grid_inc))
+
+        # The MC sim number.
+        if upload:
+            self.data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
+        elif hasattr(self.data, 'mc_sim_num'):
+            self.mc_sim_num.SetValue(int(self.data.mc_sim_num))
+
         # The results directory.
         if upload:
             self.data.save_dir = gui_to_str(self.field_results_dir.GetValue())
         else:
             self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
+
+
+    def wizard_page_after_error_type(self):
+        """Set the page after the error type choice.
+
+        @return:    The index of the next page, which is the current page index plus one.
+        @rtype:     int
+        """
+
+        # Go to the spectrum.baseplane_rmsd page.
+        if self.page_error_type.selection == 'rmsd':
+            return self.page_indices['rmsd']
+
+        # Go to the spectrum.replicated page.
+        elif self.page_error_type.selection == 'repl':
+            return self.page_indices['repl']
+
+
+    def wizard_page_after_repl(self):
+        """Set the page that comes after the spectrum.replicated page.
+
+        @return:    The index of the next page.
+        @rtype:     int
+        """
+
+        # Go to the spectrum.integration_points page.
+        int_method = gui_to_str(self.page_intensity.int_method.GetValue())
+        if int_method != 'height':
+            return self.page_indices['pts']
+
+        # Skip to the relax_fit.relax_time page.
+        else:
+            return self.page_indices['relax_time']
+
+
+    def wizard_page_after_rmsd(self):
+        """Set the page that comes after the spectrum.baseplane_rmsd page.
+
+        @return:    The index of the next page.
+        @rtype:     int
+        """
+
+        # Go to the spectrum.integration_points page.
+        int_method = gui_to_str(self.page_intensity.int_method.GetValue())
+        if int_method != 'height':
+            return self.page_indices['pts']
+
+        # Skip to the relax_fit.relax_time page.
+        else:
+            return self.page_indices['relax_time']
+
+
+    def wizard_update_pts(self):
+        """Update the spectrum.replicated page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the spectrum.replicated page.
+        page = self.wizard.get_page(self.page_indices['pts'])
+        page.spectrum_id1.SetValue(id)
+
+
+    def wizard_update_repl(self):
+        """Update the spectrum.replicated page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the spectrum.replicated page.
+        page = self.wizard.get_page(self.page_indices['repl'])
+        page.spectrum_id1.SetValue(id)
+
+
+    def wizard_update_rmsd(self):
+        """Update the spectrum.baseplane_rmsd page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the spectrum.baseplane_rmsd page.
+        page = self.wizard.get_page(self.page_indices['rmsd'])
+        page.spectrum_id.SetValue(id)
+
+
+    def wizard_update_relax_time(self):
+        """Update the relax_fit.relax_time page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the relax_fit.relax_time page.
+        page = self.wizard.get_page(self.page_indices['relax_time'])
+        page.spectrum_id.SetValue(id)
 
 
 
@@ -391,7 +496,7 @@ class Execute_rx(Execute):
             sys.stderr = redir
 
         # Execute.
-        Relax_fit(file_root=self.data.filename, pipe_name=self.data.pipe_name, seq_args=self.data.seq_args, results_directory=self.data.save_dir, file_names=self.data.file_names, relax_times=self.data.relax_times, int_method=self.data.int_method, mc_num=self.data.mc_num, pdb_file=self.data.structure_file, unresolved=self.data.unresolved, view_plots = False, heteronuc=self.data.heteronuc, proton=self.data.proton, load_spin_ids=self.data.load_spin_ids, inc=self.data.inc)
+        Relax_fit(pipe_name=self.data.pipe_name, file_root=self.data.filename, results_directory=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
