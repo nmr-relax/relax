@@ -25,13 +25,23 @@
 
 # Python module imports.
 import Queue
-from traceback import print_exception
+from shutil import rmtree
+from tempfile import mkdtemp
 from unittest import TestCase
+import wx
+
+# Dependency checks.
+import dep_check
 
 # relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.reset import reset
 from prompt.interpreter import Interpreter
 from status import Status; status = Status()
 
+# relax GUI imports.
+if dep_check.wx_module:
+    from gui.relax_gui import Main
 
 class GuiTestCase(TestCase):
     """The GUI specific test case."""
@@ -62,3 +72,31 @@ class GuiTestCase(TestCase):
         # No exception.
         except Queue.Empty:
             pass
+
+
+    def setUp(self):
+        """Set up for all the functional tests."""
+
+        # Create a temporary directory for the results.
+        ds.tmpdir = mkdtemp()
+
+        # Start the GUI.
+        self.app = wx.App()
+
+        # Build the GUI.
+        self.gui = Main(parent=None, id=-1, title="")
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        # Remove the temporary directory.
+        if hasattr(ds, 'tmpdir'):
+            rmtree(ds.tmpdir)
+
+        # Reset relax.
+        reset()
+
+        # Destroy the GUI.
+        if hasattr(self, 'gui'):
+            self.gui.Destroy()

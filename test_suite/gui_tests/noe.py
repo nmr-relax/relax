@@ -22,26 +22,16 @@
 
 # Python module imports.
 from os import F_OK, access, sep
-import Queue
-from shutil import rmtree
-from tempfile import mkdtemp
-from time import sleep
-from traceback import print_exception
 import wx
 
-# Dependency checks.
-import dep_check
-
 # relax module imports.
-from base_classes import GuiTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import cdp_name
 from status import Status; status = Status()
+from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
-if dep_check.wx_module:
-    from gui.relax_gui import Main
 from gui.misc import int_to_gui, str_to_gui
 from gui.user_functions import deselect, sequence, spin
 from gui.wizard import Wiz_window
@@ -49,32 +39,6 @@ from gui.wizard import Wiz_window
 
 class Noe(GuiTestCase):
     """Class for testing various aspects specific to the NOE analysis."""
-
-    def setUp(self):
-        """Set up for all the functional tests."""
-
-        # Create a temporary directory for the results.
-        ds.tmpdir = mkdtemp()
-
-        # Start the GUI.
-        self.app = wx.App()
-
-        # Build the GUI.
-        self.gui = Main(parent=None, id=-1, title="")
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Remove the temporary directory.
-        rmtree(ds.tmpdir)
-
-        # Reset relax.
-        reset()
-
-        # Destroy the GUI.
-        self.gui.Destroy()
-
 
     def test_noe_analysis(self):
         """Test the NOE analysis."""
