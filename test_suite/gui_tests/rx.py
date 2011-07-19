@@ -165,6 +165,9 @@ class Rx(GuiTestCase):
             # Go to the next page (i.e. finish).
             analysis.wizard._go_next(None)
 
+        # Set the number of MC sims.
+        analysis.mc_sim_num.SetValue(3)
+
         # Execute relax.
         analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_id))
 
