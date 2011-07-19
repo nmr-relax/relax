@@ -448,8 +448,8 @@ def __errors_repl(verbosity=0):
         cdp.var_I[id] = cdp.var_I[id] / float(count)
 
         # Set all spectra variances.
-        for j in xrange(1, num_spectra):
-            cdp.var_I[spectra[j]] = cdp.var_I[spectra[0]]
+        for j in range(num_spectra):
+            cdp.var_I[spectra[j]] = cdp.var_I[id]
 
         # Print out.
         print(("Standard deviation:  %s" % sqrt(cdp.var_I[id])))
