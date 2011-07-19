@@ -28,8 +28,8 @@ from status import Status; status = Status()
 def reset():
     """Reset relax."""
 
-    # Run the relax data storage object reset method.
-    ds.__reset__()
-
     # Notify all observers.
     status.observers.reset.notify()
+
+    # Run the relax data storage object reset method.
+    ds.__reset__()
