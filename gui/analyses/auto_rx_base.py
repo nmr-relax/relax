@@ -36,7 +36,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import are_spins_named
 from status import Status; status = Status()
 
-# relaxGUI module imports.
+# relax GUI module imports.
 from gui.analyses.base import Base_frame, Spectral_error_type_page
 from gui.analyses.execute import Execute
 from gui.base_classes import Container
@@ -333,7 +333,7 @@ class Auto_rx(Base_frame):
 
 
     def sync_ds(self, upload=False):
-        """Synchronise the rx analysis frame and the relax data store, both ways.
+        """Synchronise the analysis frame and the relax data store, both ways.
 
         This method allows the frame information to be uploaded into the relax data store, or for the information in the relax data store to be downloaded by the frame.
 

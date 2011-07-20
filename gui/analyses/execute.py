@@ -37,7 +37,7 @@ class Execute(Thread):
     """The analysis execution object."""
 
     def __init__(self, gui, data, data_index, thread=True):
-        """Set up the NOE analysis execution object.
+        """Set up the analysis execution object.
 
         @param gui:         The GUI object.
         @type gui:          wx object
