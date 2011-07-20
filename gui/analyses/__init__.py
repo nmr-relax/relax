@@ -396,6 +396,47 @@ class Analysis_controller:
         event.Skip()
 
 
+    def page_index_from_pipe(self, pipe):
+        """Find the page holding the data pipe and return its page index.
+
+        @param pipe:    The data pipe to find the page of.
+        @type pipe:     str
+        @return:        The page index.
+        @rtype:         int or None
+        """
+
+        # Find the index.
+        index = None
+        for i in range(self._num_analyses):
+            # Matching page.
+            if ds.relax_gui.analyses[i].pipe_name == pipe:
+                index = i
+                break
+
+        # Return the index.
+        return index
+
+
+    def page_name_from_pipe(self, pipe):
+        """Find the page holding the data pipe and return its name.
+
+        @param pipe:    The data pipe to find the page of.
+        @type pipe:     str
+        @return:        The page name.
+        @rtype:         str or None
+        """
+
+        # Find the index.
+        index = self.page_index_from_pipe(pipe)
+
+        # No matching page.
+        if index == None:
+            return
+
+        # Return the page name.
+        return ds.relax_gui.analyses[index].analysis_name
+
+
     def pipe_switch(self, pipe=None):
         """Switch the page to the given or current data pipe.
 
@@ -408,23 +449,18 @@ class Analysis_controller:
             pipe = pipes.cdp_name()
 
         # Find the page.
-        index = None
-        for i in range(self._num_analyses):
-            # Matching page.
-            if ds.relax_gui.analyses[i].pipe_name == pipe:
-                index = i
-                break
+        index = self.page_index_from_pipe(pipe)
 
         # No matching page.
         if index == None:
             return
 
         # The page is already active, so do nothing.
-        if self._current == i:
+        if self._current == index:
             return
 
         # Switch to the page.
-        self.switch_page(i)
+        self.switch_page(index)
 
 
     def reset(self):
