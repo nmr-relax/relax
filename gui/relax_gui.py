@@ -282,16 +282,6 @@ class Main(wx.Frame):
         # Add the GUI object to the data store.
         ds.relax_gui = Gui()
 
-        # Define Global Variables
-        ds.relax_gui.unresolved = ""
-
-        # Table of relax Results
-        ds.relax_gui.table_residue = []
-        ds.relax_gui.table_model = []
-        ds.relax_gui.table_s2 = []
-        ds.relax_gui.table_rex = []
-        ds.relax_gui.table_te = []
-
 
     def free_file_format_settings(self, event):
         """Open the free file format settings window.
