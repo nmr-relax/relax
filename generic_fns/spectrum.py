@@ -292,19 +292,16 @@ def __errors_repl(verbosity=0):
     @type verbosity:    int
     """
 
-    # replicated spectra.
-    repl = {}
-    for i in xrange(len(cdp.replicates)):
-        for j in xrange(len(cdp.replicates[i])):
-            repl[cdp.replicates[i][j]] = True
+    # Replicated spectra.
+    repl = replicated_flags()
 
     # Are all spectra replicated?
-    if len(repl.keys()) == len(cdp.spectrum_ids):
-        all_repl = True
-        print("All spectra replicated:  Yes.")
-    else:
+    if False in repl.values():
         all_repl = False
         print("All spectra replicated:  No.")
+    else:
+        all_repl = True
+        print("All spectra replicated:  Yes.")
 
     # Test if the standard deviation has already been calculated.
     if hasattr(cdp, 'sigma_I'):
@@ -317,7 +314,7 @@ def __errors_repl(verbosity=0):
     # Loop over the spectra.
     for id in cdp.spectrum_ids:
         # Skip non-replicated spectra.
-        if not repl.has_key(id):
+        if not repl[id]:
             continue
 
         # Skip replicated spectra which already have been used.
@@ -1106,3 +1103,24 @@ def replicated(spectrum_ids=None):
 
     # Set the replicates.
     cdp.replicates.append(spectrum_ids)
+
+
+def replicated_flags():
+    """Create and return a dictionary of flags of whether the spectrum is replicated or not.
+
+    @return:    The dictionary of flags of whether the spectrum is replicated or not.
+    @rtype:     dict of bool
+    """
+
+    # Initialise all IDs to false.
+    repl = {}
+    for id in cdp.spectrum_ids:
+        repl[id] = False
+
+    # Loop over the replicates.
+    for i in range(len(cdp.replicates)):
+        for j in range(len(cdp.replicates[i])):
+            repl[cdp.replicates[i][j]] = True
+
+    # Return the dictionary.
+    return repl
