@@ -135,7 +135,7 @@ class Relax_data_list:
         # First freeze the grid, so that the GUI element doesn't update until the end.
         self.grid.Freeze()
 
-        # Delete the rows and columns (leaving one row and column).
+        # Delete the rows, leaving a single row.
         self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
 
         # Expand the number of rows to match the number of relaxation IDs, and add the IDs.
