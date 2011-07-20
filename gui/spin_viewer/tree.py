@@ -33,8 +33,9 @@ from generic_fns.mol_res_spin import get_molecule_ids, get_residue_ids, get_spin
 from generic_fns.pipes import get_pipe
 from status import Status; status = Status()
 
-# GUI module imports.
+# relax GUI module imports.
 from gui import paths
+from gui.components.menu import build_menu_item
 from gui.message import question
 from gui.misc import gui_to_str
 
@@ -323,14 +324,14 @@ class Mol_res_spin_tree(wx.Window):
 
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add residue", icon=paths.icon_16x16.add))
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Delete molecule", icon=paths.icon_16x16.remove))
+        menu.AppendItem(build_menu_item(menu, id=ids[0], text="Add residue", icon=paths.icon_16x16.add))
+        menu.AppendItem(build_menu_item(menu, id=ids[1], text="Delete molecule", icon=paths.icon_16x16.remove))
 
         # Selection or deselection.
         if self.info['select']:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Deselect"))
+            menu.AppendItem(build_menu_item(menu, id=ids[2], text="Deselect"))
         else:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Select"))
+            menu.AppendItem(build_menu_item(menu, id=ids[2], text="Select"))
 
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.create_residue, id=ids[0])
@@ -355,14 +356,14 @@ class Mol_res_spin_tree(wx.Window):
 
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add spin", icon=paths.icon_16x16.add))
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Delete residue", icon=paths.icon_16x16.remove))
+        menu.AppendItem(build_menu_item(menu, id=ids[0], text="Add spin", icon=paths.icon_16x16.add))
+        menu.AppendItem(build_menu_item(menu, id=ids[1], text="Delete residue", icon=paths.icon_16x16.remove))
 
         # Selection or deselection.
         if self.info['select']:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Deselect"))
+            menu.AppendItem(build_menu_item(menu, id=ids[2], text="Deselect"))
         else:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[2], text="Select"))
+            menu.AppendItem(build_menu_item(menu, id=ids[2], text="Select"))
 
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.create_spin, id=ids[0])
@@ -387,7 +388,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Add molecule", icon=paths.icon_16x16.add))
+        menu.AppendItem(build_menu_item(menu, id=ids[0], text="Add molecule", icon=paths.icon_16x16.add))
 
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.create, id=ids[0])
@@ -407,13 +408,13 @@ class Mol_res_spin_tree(wx.Window):
 
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[0], text="Delete spin", icon=paths.icon_16x16.remove))
+        menu.AppendItem(build_menu_item(menu, id=ids[0], text="Delete spin", icon=paths.icon_16x16.remove))
 
         # Selection or deselection.
         if self.info['select']:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Deselect"))
+            menu.AppendItem(build_menu_item(menu, id=ids[1], text="Deselect"))
         else:
-            menu.AppendItem(self.gui.menu.build_menu_item(menu, id=ids[1], text="Select"))
+            menu.AppendItem(build_menu_item(menu, id=ids[1], text="Select"))
 
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.delete_spin, id=ids[0])
