@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The pipes user function GUI elements."""
+"""The pipe user function GUI elements."""
 
 # Python module imports.
 import wx
@@ -37,7 +37,7 @@ from gui.wizard import Wiz_window
 
 
 # The container class.
-class Pipes(UF_base):
+class Pipe(UF_base):
     """The container class for holding all GUI elements."""
 
     def copy(self, event):

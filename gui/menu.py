@@ -216,10 +216,10 @@ class Menu:
                 [wx.NewId(), "&spectrum_type",   None, self.gui.user_functions.noe.spectrum_type]
             ]],
             [wx.NewId(), "&pipe", paths.icon_16x16.pipe, None, [
-                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.pipes.copy],
-                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipes.delete],
-                [wx.NewId(), "&switch", paths.icon_16x16.pipe_switch, self.gui.user_functions.pipes.switch]
+                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.pipe.copy],
+                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.pipe.create],
+                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipe.delete],
+                [wx.NewId(), "&switch", paths.icon_16x16.pipe_switch, self.gui.user_functions.pipe.switch]
             ]],
             [wx.NewId(), "&relax_data", paths.icon_16x16.relax_data, None, [
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.relax_data.delete],

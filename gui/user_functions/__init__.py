@@ -30,7 +30,7 @@ from relax_errors import RelaxError
 from deselect import Deselect
 from molecule import Molecule
 from noe import Noe
-from pipes import Pipes
+from pipe import Pipe
 from residue import Residue
 from relax_data import Relax_data
 from relax_fit import Relax_fit
@@ -48,7 +48,7 @@ __all__ = ['base',
            'deselect',
            'molecule',
            'noe',
-           'pipes',
+           'pipe',
            'residue',
            'relax_data',
            'relax_fit',
@@ -77,7 +77,7 @@ class User_functions:
         self.deselect = Deselect(self.gui)
         self.molecule = Molecule(self.gui)
         self.noe = Noe(self.gui)
-        self.pipes = Pipes(self.gui)
+        self.pipe = Pipe(self.gui)
         self.residue = Residue(self.gui)
         self.relax_data = Relax_data(self.gui)
         self.relax_fit = Relax_fit(self.gui)
@@ -97,7 +97,7 @@ class User_functions:
         self.deselect.destroy()
         self.molecule.destroy()
         self.noe.destroy()
-        self.pipes.destroy()
+        self.pipe.destroy()
         self.residue.destroy()
         self.relax_data.destroy()
         self.relax_fit.destroy()
