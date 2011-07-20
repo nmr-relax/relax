@@ -32,7 +32,7 @@ import wx.lib.buttons
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui.misc import add_border
+from gui.misc import add_border, float_to_gui
 from gui import paths
 
 
@@ -156,6 +156,10 @@ class Spectra_list:
         if self.noe_spectrum_type(index):
             index += 1
 
+        # The relaxation times.
+        if self.relax_times(index):
+            index += 1
+
         # Set the grid properties once finalised.
         for i in range(self.grid.GetNumberRows()):
             # Row properties.
@@ -262,6 +266,35 @@ class Spectra_list:
 
             # Flip the flag.
             flag = True
+
+
+    def relax_times(self, index):
+        """Add the relaxation delay time info to the grid.
+
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if relaxation times exist, False otherwise.
+        @rtype:         bool
+        """
+
+        # No type info.
+        if not hasattr(cdp, 'relax_times') or not len(cdp.relax_times):
+            return False
+
+        # Append a column.
+        self.grid.AppendCols(numCols=1)
+
+        # Set the column heading.
+        self.grid.SetColLabelValue(index, "Delay times")
+
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # No value.
+            if cdp.spectrum_ids[i] not in cdp.relax_times.keys():
+                continue
+
+            # Set the value.
+            self.grid.SetCellValue(i, index, float_to_gui(cdp.relax_times[cdp.spectrum_ids[i]]))
 
 
     def size_cols(self):
