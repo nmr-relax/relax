@@ -90,14 +90,14 @@ class Spectra_list:
         self.init_grid(box_centre)
         box_centre.AddSpacer(self.spacing)
 
-        # Update the grid.
-        self.update()
+        # Build the grid.
+        self.build_grid()
 
         # Initialise observer name.
         self.name = 'spectra list: %s' % id
 
         # Register the grid for updating when a user function completes.
-        status.observers.uf_gui.register(self.name, self.update)
+        status.observers.uf_gui.register(self.name, self.build_grid)
 
 
     def add_buttons(self, sizer):
@@ -122,6 +122,55 @@ class Spectra_list:
         button_sizer.Add(button, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.fn_add, button)
         button.SetToolTipString("Read a spectral data file.")
+
+
+    def build_grid(self):
+        """Build the spectra listing grid."""
+
+        # First freeze the grid, so that the GUI element doesn't update until the end.
+        self.grid.Freeze()
+
+        # Initialise the column index for the data.
+        index = 1
+
+        # Delete the rows and columns (leaving one row and column).
+        self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
+        self.grid.DeleteCols(numCols=self.grid.GetNumberCols()-1)
+
+        # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
+        if hasattr(cdp, 'spectrum_ids'):
+            # The number of IDs.
+            n = len(cdp.spectrum_ids)
+
+            # Append the appropriate number of rows.
+            self.grid.AppendRows(numRows=n-1)
+
+            # Set the IDs.
+            for i in range(n):
+                self.grid.SetCellValue(i, 0, cdp.spectrum_ids[i])
+
+        # Set the headers.
+        self.grid.SetColLabelValue(0, "Spectrum ID string")
+
+        # The NOE spectrum type.
+        if self.noe_spectrum_type(index):
+            index += 1
+
+        # Set the grid properties once finalised.
+        for i in range(self.grid.GetNumberRows()):
+            # Row properties.
+            self.grid.SetRowSize(i, 27)
+
+            # Loop over the columns.
+            for j in range(self.grid.GetNumberCols()):
+                # Cell properties.
+                self.grid.SetReadOnly(i, j)
+
+        # Size the columns.
+        self.size_cols()
+
+        # Unfreeze.
+        self.grid.Thaw()
 
 
     def delete(self):
@@ -233,52 +282,3 @@ class Spectra_list:
         # Set the column sizes.
         for i in range(n):
             self.grid.SetColSize(i, width)
-
-
-    def update(self):
-        """Update the spectra listing."""
-
-        # First freeze the grid, so that the GUI element doesn't update until the end.
-        self.grid.Freeze()
-
-        # Initialise the column index for the data.
-        index = 1
-
-        # Delete the rows and columns (leaving one row and column).
-        self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
-        self.grid.DeleteCols(numCols=self.grid.GetNumberCols()-1)
-
-        # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
-        if hasattr(cdp, 'spectrum_ids'):
-            # The number of IDs.
-            n = len(cdp.spectrum_ids)
-
-            # Append the appropriate number of rows.
-            self.grid.AppendRows(numRows=n-1)
-
-            # Set the IDs.
-            for i in range(n):
-                self.grid.SetCellValue(i, 0, cdp.spectrum_ids[i])
-
-        # Set the headers.
-        self.grid.SetColLabelValue(0, "Spectrum ID string")
-
-        # The NOE spectrum type.
-        if self.noe_spectrum_type(index):
-            index += 1
-
-        # Set the grid properties once finalised.
-        for i in range(self.grid.GetNumberRows()):
-            # Row properties.
-            self.grid.SetRowSize(i, 27)
-
-            # Loop over the columns.
-            for j in range(self.grid.GetNumberCols()):
-                # Cell properties.
-                self.grid.SetReadOnly(i, j)
-
-        # Size the columns.
-        self.size_cols()
-
-        # Unfreeze.
-        self.grid.Thaw()
