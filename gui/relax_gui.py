@@ -407,11 +407,13 @@ class Main(wx.Frame):
             self.spin_viewer.Show()
 
 
-    def state_load(self, event):
+    def state_load(self, event=None, file_name=None):
         """Load the program state.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param event:       The wx event.
+        @type event:        wx event
+        @keyword file_name: The name of the file to load (for dialogless operation).
+        @type file_name:    str
         """
 
         # Warning.
@@ -424,10 +426,11 @@ class Main(wx.Frame):
                 return
 
         # Open the dialog.
-        filename = openfile(msg='Select file to open', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
+        if not file_name:
+            file_name = openfile(msg='Select file to open', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
 
         # No file has been selected.
-        if not filename:
+        if not file_name:
             # Don't do anything.
             return
 
@@ -444,10 +447,10 @@ class Main(wx.Frame):
         reset()
 
         # The new save file name.
-        self.save_file = filename
+        self.save_file = file_name
 
         # Load the relax state.
-        state.load_state(filename, verbosity=0)
+        state.load_state(file_name, verbosity=0)
 
         # Reconstruct the analyses.
         self.analysis.load_from_store()
