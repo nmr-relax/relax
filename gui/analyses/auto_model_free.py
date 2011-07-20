@@ -42,6 +42,7 @@ from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import model_free_results, see_results
 from gui.analyses.select_model_calc import Select_tensor
 from gui.base_classes import Container
+from gui.components.relax_data import Relax_data_list
 from gui.controller import Redirect_text
 from gui.filedialog import opendir
 from gui.message import error_message, missing_data
@@ -426,6 +427,11 @@ class Auto_model_free(Base_frame):
         # Add the spin GUI element.
         self.add_spin_systems(box, self.parent)
 
+        # Add the relaxation data list GUI element, with spacing.
+        box.AddSpacer(10)
+        self.relax_data = Relax_data_list(gui=self.gui, parent=self.parent, box=box, id=str(self.data_index))
+        box.AddSpacer(10)
+
         # Add the model-free models GUI element, with spacing.
         self.add_mf_models(box)
         box.AddSpacer(10)
@@ -437,8 +443,8 @@ class Auto_model_free(Base_frame):
         # Add maximum iteration selector.
         self.max_iter = self.add_spin_element(box, self.parent, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100)
 
-        # Add a stretchable spacer.
-        box.AddStretchSpacer()
+        # Some spacing.
+        box.AddSpacer(10)
 
         # Add the execution GUI element.
         self.button_exec_id = self.add_execute_relax(box, self.execute)
