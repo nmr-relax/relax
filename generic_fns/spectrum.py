@@ -1124,3 +1124,46 @@ def replicated_flags():
 
     # Return the dictionary.
     return repl
+
+
+def replicated_ids(spectrum_id):
+    """Create and return a list of spectra ID which are replicates of the given ID.
+
+    @param spectrum_id: The spectrum ID to find all the replicates of.
+    @type spectrum_id:  str
+    @return:            The list of spectrum IDs which are replicates of spectrum_id.
+    @rtype:             list of str
+    """
+
+    # Initialise the ID list.
+    repl = []
+
+    # Loop over the replicate lists.
+    for i in range(len(cdp.replicates)):
+        # The spectrum ID is in the list.
+        if spectrum_id in cdp.replicates[i]:
+            # Loop over the inner list.
+            for j in range(len(cdp.replicates[i])):
+                # Spectrum ID match.
+                if spectrum_id == cdp.replicates[i][j]:
+                    continue
+
+                # Append the replicated ID.
+                repl.append(cdp.replicates[i][j])
+
+    # Sort the list.
+    repl.sort()
+
+    # Remove duplicates (backward).
+    id = repl[-1]
+    for i in range(len(repl)-2, -1, -1):
+        # Duplicate.
+        if id == repl[i]:
+            del repl[i]
+
+        # Unique.
+        else:
+            id = repl[i]
+
+    # Return the list.
+    return repl
