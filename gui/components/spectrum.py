@@ -239,7 +239,7 @@ class Spectra_list:
         """
 
         # No type info.
-        if not hasattr(cdp, 'spectrum_type'):
+        if not hasattr(cdp, 'spectrum_type') or not len(cdp.spectrum_type):
             return False
 
         # Append a column.
@@ -255,7 +255,6 @@ class Spectra_list:
         }
 
         # Set the values.
-        flag = False
         for i in range(len(cdp.spectrum_ids)):
             # No value.
             if cdp.spectrum_ids[i] not in cdp.spectrum_type.keys():
@@ -264,8 +263,8 @@ class Spectra_list:
             # Set the value.
             self.grid.SetCellValue(i, index, table[cdp.spectrum_type[cdp.spectrum_ids[i]]])
 
-            # Flip the flag.
-            flag = True
+        # Successful.
+        return True
 
 
     def relax_times(self, index):
@@ -295,6 +294,9 @@ class Spectra_list:
 
             # Set the value.
             self.grid.SetCellValue(i, index, float_to_gui(cdp.relax_times[cdp.spectrum_ids[i]]))
+
+        # Successful.
+        return True
 
 
     def size_cols(self):
