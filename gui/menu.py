@@ -72,9 +72,10 @@ class Menu:
         # The 'View' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_item(menu, id=50, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.controller))
-        menu.AppendItem(self.build_menu_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
         menu.AppendItem(self.build_menu_item(menu, id=52, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
         menu.AppendItem(self.build_menu_item(menu, id=53, text="&Results viewer\tCtrl+R", icon=paths.icon_16x16.view_statistics))
+        menu.AppendItem(self.build_menu_item(menu, id=54, text="&Data pipe editor", icon=paths.icon_16x16.pipe))
+        menu.AppendItem(self.build_menu_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
         self.menubar.Append(menu, "&View")
 
         # The 'View' actions.
@@ -82,6 +83,7 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.show_prompt,                    id=51)
         self.gui.Bind(wx.EVT_MENU, self.gui.show_tree,                      id=52)
         self.gui.Bind(wx.EVT_MENU, self.gui.analysis.show_results_viewer,   id=53)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_pipe_editor,               id=54)
 
         # The 'User functions' menu entries.
         self._user_functions()

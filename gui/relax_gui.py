@@ -379,6 +379,18 @@ class Main(wx.Frame):
             self.controller.Show()
 
 
+    def show_pipe_editor(self, event):
+        """Display the data pipe editor window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Open the window.
+        if status.show_gui:
+            self.pipe_editor.Show()
+
+
     def show_prompt(self, event):
         """Display the relax prompt window.
 
