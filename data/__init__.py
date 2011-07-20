@@ -38,6 +38,7 @@ import generic_fns
 from gui import Gui
 from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from relax_xml import fill_object_contents, xml_to_object
+from status import Status; status = Status()
 from version import version
 
 
@@ -171,8 +172,12 @@ class Relax_data_store(dict):
 
         # Change the current data pipe.
         if switch:
+            # Set the current data pipe.
             self.instance.current_pipe = pipe_name
             __builtin__.cdp = self[pipe_name]
+
+            # Signal the switch.
+            status.observers.pipe_switch.notify()
 
 
     def is_empty(self):
