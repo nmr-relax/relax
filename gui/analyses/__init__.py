@@ -198,10 +198,17 @@ class Analysis_controller:
     def load_from_store(self):
         """Recreate the analyses from the relax data store."""
 
+        # No relax_gui data store structure, so do nothing.
+        if not hasattr(ds, 'relax_gui'):
+            return
+
+        # A remapping table.
         map = {'NOE': 'noe',
                'R1': 'r1',
                'R2': 'r2',
                'model-free': 'mf'}
+
+        # Loop over each analysis.
         for i in range(len(ds.relax_gui.analyses)):
             # The analysis name.
             if hasattr(ds.relax_gui.analyses[i], 'analysis_name'):
