@@ -30,9 +30,10 @@ import wx.lib.buttons
 
 # relax module imports.
 from status import Status; status = Status()
+from generic_fns.spectrum import replicated_flags, replicated_ids
 
 # relax GUI module imports.
-from gui.misc import add_border, float_to_gui
+from gui.misc import add_border, float_to_gui, str_to_gui
 from gui import paths
 
 
@@ -158,6 +159,10 @@ class Spectra_list:
 
         # The relaxation times.
         if self.relax_times(index):
+            index += 1
+
+        # The replicated spectra.
+        if self.replicates(index):
             index += 1
 
         # Set the grid properties once finalised.
@@ -294,6 +299,54 @@ class Spectra_list:
 
             # Set the value.
             self.grid.SetCellValue(i, index, float_to_gui(cdp.relax_times[cdp.spectrum_ids[i]]))
+
+        # Successful.
+        return True
+
+
+    def replicates(self, index):
+        """Add the replicated spectra info to the grid.
+
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if relaxation times exist, False otherwise.
+        @rtype:         bool
+        """
+
+        # No type info.
+        if not hasattr(cdp, 'replicates') or not len(cdp.replicates):
+            return False
+
+        # Replicated spectra.
+        repl = replicated_flags()
+
+        # Append a column.
+        self.grid.AppendCols(numCols=1)
+
+        # Set the column heading.
+        self.grid.SetColLabelValue(index, "Replicate IDs")
+
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # No replicates.
+            if not repl[cdp.spectrum_ids[i]]:
+                continue
+
+            # The replicated spectra.
+            id_list = replicated_ids(cdp.spectrum_ids[i])
+
+            # Convert to a string.
+            text = ''
+            for j in range(len(id_list)):
+                # Add the id.
+                text = "%s%s" % (text, id_list[j])
+
+                # Separator.
+                if j < len(id_list)-1:
+                    text = "%s, " % text
+
+            # Set the value.
+            self.grid.SetCellValue(i, index, str_to_gui(text))
 
         # Successful.
         return True
