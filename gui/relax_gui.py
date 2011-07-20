@@ -39,6 +39,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 from info import Info_box
 from generic_fns import state
+from generic_fns.pipes import cdp_name
 from generic_fns.reset import reset
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
@@ -116,12 +117,12 @@ class Main(wx.Frame):
             icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
             self.SetIcon(icon)
 
-        # Statusbar fields.
-        bar = self.CreateStatusBar(3, 0)
-        bar.SetStatusWidths([-5, -1, -1])
-        fields = ["(C) 2001-2011 the relax development team", "relax version", version]
-        for i in range(len(fields)):
-            bar.SetStatusText(fields[i], i)
+        # Set up the status bar.
+        self.bar = self.CreateStatusBar(3, 0)
+        self.bar.SetStatusWidths([-4, -1, -2])
+        self.bar.SetStatusText("(C) 2001-2011 the relax development team", 0)
+        self.bar.SetStatusText("Current data pipe:", 1)
+        self.update_status_bar()
 
         # Add the start screen.
         self.add_start_screen()
@@ -137,6 +138,9 @@ class Main(wx.Frame):
         # Run a script.
         if script:
             self.user_functions.script.script_exec(script)
+
+        # Register functions with the observer objects.
+        status.observers.pipe_switch.register('status bar', self.update_status_bar)
 
 
     def about_gui(self, event):
@@ -486,3 +490,12 @@ class Main(wx.Frame):
             # Execute the analysis page specific update methods.
             if hasattr(page, 'sync_ds'):
                 page.sync_ds(upload)
+
+
+    def update_status_bar(self):
+        """Update the status bar info."""
+
+        # Set the current data pipe info.
+        pipe = cdp_name()
+        if pipe:
+            self.bar.SetStatusText(pipe, 2)
