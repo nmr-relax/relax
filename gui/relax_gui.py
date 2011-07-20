@@ -58,7 +58,7 @@ from gui.message import dir_message, error_message, question
 from gui import paths
 from gui.references import References
 from gui.relax_prompt import Prompt
-from gui.settings import Free_file_format, Global_params, load_sequence
+from gui.settings import Free_file_format, load_sequence
 from gui.user_functions import User_functions
 
 
@@ -284,7 +284,6 @@ class Main(wx.Frame):
 
         # Define Global Variables
         ds.relax_gui.unresolved = ""
-        ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
 
         # Table of relax Results
         ds.relax_gui.table_residue = []
@@ -303,21 +302,6 @@ class Main(wx.Frame):
 
         # Build the window.
         win = Free_file_format()
-
-        # Show the window.
-        if status.show_gui:
-            win.Show()
-
-
-    def global_parameters(self, event):
-        """Open the global parameters window.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Build the window.
-        win = Global_params()
 
         # Show the window.
         if status.show_gui:
@@ -368,7 +352,6 @@ class Main(wx.Frame):
 
     def reset_setting(self, event): #reset all settings
         if question('Do you realy want to change relax settings?'):
-            ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
             ds.relax_gui.free_file_format.reset()
 
 
