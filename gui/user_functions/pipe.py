@@ -82,6 +82,20 @@ class Pipe(UF_base):
         wizard.run()
 
 
+    def hybridise(self, event):
+        """The pipe.hybridise user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=800, size_y=500, title=self.get_title('pipe', 'hybridise'))
+        page = Hybridise_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
     def switch(self, event):
         """The pipe.switch user function.
 
@@ -218,6 +232,40 @@ class Delete_page(UF_page):
 
         # Delete the data pipe.
         self.gui.interpreter.pipe.delete(pipe_name)
+
+
+
+class Hybridise_page(UF_page):
+    """The pipe.hybridise() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'pipe_hybrid.png'
+    uf_path = ['pipe', 'hybridise']
+
+
+    def add_contents(self, sizer):
+        """Add the pipe specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The hybrid data pipe name input.
+        self.hybrid = self.input_field(sizer, "The hybrid pipe name:", tooltip=self.uf._doc_args_dict['hybrid'])
+
+        # The pipe selection.
+        self.pipes = self.combo_list(sizer, "The pipes to hybridise:", [[]], tooltip=self.uf._doc_args_dict['pipes'])
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the name.
+        hybrid = gui_to_str(self.hybrid.GetValue())
+        pipes = gui_to_list(self.pipes.GetValue())
+
+        # Delete the data pipe.
+        self.gui.interpreter.pipe.hybridise(hybrid=hybrid, pipes=pipes)
 
 
 

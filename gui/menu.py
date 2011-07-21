@@ -182,6 +182,7 @@ class Menu:
                 [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.pipe.copy],
                 [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.pipe.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipe.delete],
+                [wx.NewId(), "&hybridise", paths.icon_16x16.pipe_hybrid, self.gui.user_functions.pipe.hybridise],
                 [wx.NewId(), "&switch", paths.icon_16x16.pipe_switch, self.gui.user_functions.pipe.switch]
             ]],
             [wx.NewId(), "&relax_data", paths.icon_16x16.relax_data, None, [
