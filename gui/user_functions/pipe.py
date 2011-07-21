@@ -31,7 +31,8 @@ from generic_fns.pipes import VALID_TYPES, cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.misc import gui_to_str
+from gui.misc import gui_to_list, gui_to_str
+from gui.components.combo_list import Combo_list
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
 
@@ -90,7 +91,7 @@ class Pipe(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=500, title=self.get_title('pipe', 'hybridise'))
+        wizard = Wiz_window(size_x=800, size_y=800, title=self.get_title('pipe', 'hybridise'))
         page = Hybridise_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
@@ -254,7 +255,7 @@ class Hybridise_page(UF_page):
         self.hybrid = self.input_field(sizer, "The hybrid pipe name:", tooltip=self.uf._doc_args_dict['hybrid'])
 
         # The pipe selection.
-        self.pipes = self.combo_list(sizer, "The pipes to hybridise:", [[]], tooltip=self.uf._doc_args_dict['pipes'])
+        self.pipes = Combo_list(self, sizer, "The pipes to hybridise:", n=2, choices=pipe_names(), tooltip=self.uf._doc_args_dict['pipes'])
 
 
     def on_execute(self):
