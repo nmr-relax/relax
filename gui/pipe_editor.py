@@ -117,6 +117,9 @@ class Pipe_editor(wx.Frame):
         if not self.selected_pipe:
             return
 
+        # The pipe type.
+        pipe_type = get_type(self.selected_pipe)
+
         # Initialise the menu.
         menu = wx.Menu()
 
@@ -125,6 +128,10 @@ class Pipe_editor(wx.Frame):
  
         # Menu entry:  switch to this data pipe.
         menu.AppendItem(build_menu_item(menu, parent=self, text="&Switch to this pipe", icon=icon_16x16.pipe_switch, fn=self.pipe_switch))
+ 
+        # Menu entry:  new auto-analysis tab.
+        if self.gui.analysis.page_index_from_pipe(self.selected_pipe) == None and pipe_type in ['noe', 'r1', 'r2', 'mf']:
+            menu.AppendItem(build_menu_item(menu, parent=self, text="&Associate with a new auto-analysis", icon=icon_16x16.new, fn=self.associate_auto))
  
         # Show the menu.
         self.PopupMenu(menu)
@@ -226,6 +233,29 @@ class Pipe_editor(wx.Frame):
 
         # Add grid to sizer.
         sizer.Add(self.grid, 1, wx.ALL|wx.EXPAND, 0)
+
+
+    def associate_auto(self, event):
+        """Associate the selected data pipe with a new auto-analysis.
+
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The type.
+        type = get_type(self.selected_pipe)
+
+        # The name.
+        names = {
+            'noe': 'Steady-state NOE',
+            'r1': 'R1 relaxation',
+            'r2': 'R2 relaxation',
+            'mf': 'Model-free'
+        }
+
+        # Create a new analysis with the selected data pipe.
+        self.gui.analysis.new_analysis(analysis_type=type, analysis_name=names[type], pipe_name=self.selected_pipe)
 
 
     def handler_close(self, event):
