@@ -75,7 +75,7 @@ class Menu:
         menu.AppendItem(build_menu_item(menu, id=50, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.controller))
         menu.AppendItem(build_menu_item(menu, id=52, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
         menu.AppendItem(build_menu_item(menu, id=53, text="&Results viewer\tCtrl+R", icon=paths.icon_16x16.view_statistics))
-        menu.AppendItem(build_menu_item(menu, id=54, text="&Data pipe editor", icon=paths.icon_16x16.pipe))
+        menu.AppendItem(build_menu_item(menu, id=54, text="&Data pipe editor\tCtrl+D", icon=paths.icon_16x16.pipe))
         menu.AppendItem(build_menu_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
         self.menubar.Append(menu, "&View")
 
