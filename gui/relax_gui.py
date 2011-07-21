@@ -57,6 +57,7 @@ from gui.filedialog import opendir, openfile, savefile
 from gui.menu import Menu
 from gui.message import dir_message, error_message, question
 from gui import paths
+from gui.pipe_editor import Pipe_editor
 from gui.references import References
 from gui.relax_prompt import Prompt
 from gui.settings import Free_file_format, load_sequence
@@ -385,6 +386,10 @@ class Main(wx.Frame):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Build the pipe editor if needed.
+        if not hasattr(self, 'pipe_editor'):
+            self.pipe_editor = Pipe_editor(gui=self)
 
         # Open the window.
         if status.show_gui:
