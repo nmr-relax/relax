@@ -99,7 +99,7 @@ class Status(object):
         self.observers.pipe_alteration = Observer()
 
         # The observer object for GUI user function completion.
-        self.observers.uf_gui = Observer()
+        self.observers.gui_uf = Observer()
 
         # The observer object for changes to the GUI analysis tabs.
         self.observers.gui_analysis = Observer()

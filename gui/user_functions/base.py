@@ -253,7 +253,7 @@ class UF_page(Wiz_page):
         """Notify that the user function has completed."""
 
         # Notify.
-        status.observers.uf_gui.notify()
+        status.observers.gui_uf.notify()
 
 
     def process_doc(self, doc):

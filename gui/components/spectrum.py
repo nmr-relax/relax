@@ -98,7 +98,7 @@ class Spectra_list:
         self.name = 'spectra list: %s' % id
 
         # Register the grid for updating when a user function completes.
-        status.observers.uf_gui.register(self.name, self.build_grid)
+        status.observers.gui_uf.register(self.name, self.build_grid)
 
 
     def add_buttons(self, sizer):
@@ -189,7 +189,7 @@ class Spectra_list:
         """Unregister the class."""
 
         # Unregister the class.
-        status.observers.uf_gui.unregister(self.name)
+        status.observers.gui_uf.unregister(self.name)
 
 
     def init_grid(self, sizer):

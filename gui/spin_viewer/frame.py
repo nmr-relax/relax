@@ -145,7 +145,7 @@ class Spin_view_window(wx.Frame):
         self.name = 'spin view refresh'
 
         # Register a few methods in the observer objects.
-        status.observers.uf_gui.register(self.name, self.refresh)
+        status.observers.gui_uf.register(self.name, self.refresh)
         status.observers.pipe_alteration.register(self.name, self.refresh)
 
         # First update.
@@ -187,7 +187,7 @@ class Spin_view_window(wx.Frame):
         """
 
         # Unregister the methods from the observers to avoid unnecessary updating.
-        status.observers.uf_gui.unregister(self.name)
+        status.observers.gui_uf.unregister(self.name)
         status.observers.pipe_alteration.unregister(self.name)
 
         # Close the window.

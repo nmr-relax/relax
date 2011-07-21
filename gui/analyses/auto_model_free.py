@@ -211,7 +211,7 @@ class Auto_model_free(Base_frame):
         self.build_main_box(box_centre)
 
         # Register the method for updating the spin count for the completion of user functions.
-        status.observers.uf_gui.register(self.data.pipe_name, self.update_spin_count)
+        status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
 
 
     def _about(self, event):
@@ -478,7 +478,7 @@ class Auto_model_free(Base_frame):
         self.peak_intensity.delete()
 
         # Remove.
-        status.observers.uf_gui.unregister(self.data.pipe_name)
+        status.observers.gui_uf.unregister(self.data.pipe_name)
 
 
     def execute(self, event):
