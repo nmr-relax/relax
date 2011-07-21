@@ -136,6 +136,9 @@ class Analysis_controller:
             # Remove the last analysis, until there is nothing left.
             self.delete_analysis(self._num_analyses-1)
 
+        # Notify the observers of the change.
+        status.observers.gui_analysis.notify()
+
 
     def delete_analysis(self, index):
         """Delete the analysis tab and data store corresponding to the index.
@@ -170,6 +173,9 @@ class Analysis_controller:
         # No more analyses, so in the initial state.
         if self._num_analyses == 0:
             self.set_init_state()
+
+        # Notify the observers of the change.
+        status.observers.gui_analysis.notify()
 
 
     def get_page_from_name(self, name):
@@ -231,6 +237,9 @@ class Analysis_controller:
 
         # Reset the switching flag.
         self._switch_flag = True
+
+        # Notify the observers of the change.
+        status.observers.gui_analysis.notify()
 
 
     def menu_close(self, event):
@@ -368,6 +377,9 @@ class Analysis_controller:
         # Reset the main window layout.
         self.gui.Layout()
 
+        # Notify the observers of the change.
+        status.observers.gui_analysis.notify()
+
 
     def on_page_change(self, event):
         """Handle page changes.
@@ -394,6 +406,9 @@ class Analysis_controller:
 
         # Normal operation.
         event.Skip()
+
+        # Notify the observers of the change.
+        status.observers.gui_analysis.notify()
 
 
     def page_index_from_pipe(self, pipe):
@@ -462,6 +477,9 @@ class Analysis_controller:
         # Switch to the page.
         self.switch_page(index)
 
+        # Notify the observers of the change.
+        status.observers.gui_analysis.notify()
+
 
     def reset(self):
         """Reset all the analyses to an initial state."""
@@ -517,6 +535,10 @@ class Analysis_controller:
 
         # Switch to the page.
         self.notebook.SetSelection(self._current)
+
+        # Notify the observers of the change.
+        status.observers.gui_analysis.notify()
+
 
 
 class Status_container(ListType):
