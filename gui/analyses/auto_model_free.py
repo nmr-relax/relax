@@ -33,6 +33,7 @@ import wx
 from auto_analyses import dauvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
 from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
+from generic_fns.pipes import has_pipe
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -173,8 +174,8 @@ class Auto_model_free(Base_frame):
 
         # New data container.
         if data_index == None:
-            # First create the data pipe (if this fails, then no data is set up).
-            if not protected_exec(self.gui.interpreter.pipe.create, pipe_name, 'noe'):
+            # First create the data pipe if not already in existence (if this fails, then no data is set up).
+            if not has_pipe(pipe_name) and not protected_exec(self.gui.interpreter.pipe.create, pipe_name, 'noe'):
                 self.init_flag = False
                 return
 

@@ -34,6 +34,7 @@ import wx
 from auto_analyses.relax_fit import Relax_fit
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import are_spins_named
+from generic_fns.pipes import has_pipe
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -83,8 +84,8 @@ class Auto_rx(Base_frame):
 
         # New data container.
         if data_index == None:
-            # First create the data pipe (if this fails, then no data is set up).
-            if not protected_exec(self.gui.interpreter.pipe.create, pipe_name, 'relax_fit'):
+            # First create the data pipe if not already in existence (if this fails, then no data is set up).
+            if not has_pipe(pipe_name) and not protected_exec(self.gui.interpreter.pipe.create, pipe_name, 'relax_fit'):
                 self.init_flag = False
                 return
 
