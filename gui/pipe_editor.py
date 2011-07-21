@@ -165,6 +165,13 @@ class Pipe_editor(wx.Frame):
         button_sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.delete, button)
 
+        # The hybridise button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Hybridise")
+        button.SetBitmapLabel(wx.Bitmap(icon_22x22.pipe_hybrid, wx.BITMAP_TYPE_ANY))
+        button.SetToolTipString("Hybridise data pipes.")
+        button_sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
+        self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.hybridise, button)
+
         # The switch button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Switch")
         button.SetBitmapLabel(wx.Bitmap(icon_22x22.pipe_switch, wx.BITMAP_TYPE_ANY))
