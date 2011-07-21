@@ -134,7 +134,8 @@ class Pipe_editor(wx.Frame):
             menu.AppendItem(build_menu_item(menu, parent=self, text="&Associate with a new auto-analysis", icon=icon_16x16.new, fn=self.associate_auto))
  
         # Show the menu.
-        self.PopupMenu(menu)
+        if status.show_gui:
+            self.PopupMenu(menu)
 
         # Kill the menu once done.
         menu.Destroy()
