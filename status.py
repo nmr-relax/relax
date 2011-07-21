@@ -101,6 +101,9 @@ class Status(object):
         # The observer object for GUI user function completion.
         self.observers.uf_gui = Observer()
 
+        # The observer object for changes to the GUI analysis tabs.
+        self.observers.gui_analysis = Observer()
+
         # The observer object for relax resets
         self.observers.reset = Observer()
 
