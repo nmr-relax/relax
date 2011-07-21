@@ -59,6 +59,7 @@ class I16x16:
         self.molecule_unfolded =        path + 'molecule_unfolded.png'
         self.molecule_unfolded_grey =   path + 'molecule_unfolded_grey.png'
         self.pipe =                     path + 'pipe.png'
+        self.pipe_hybrid =              path + 'pipe_hybrid.png'
         self.relax_data =               path + 'fid.png'
         self.residue =                  path + 'residue.png'
         self.residue_grey =             path + 'residue_grey.png'
@@ -138,6 +139,7 @@ class I22x22:
         self.molecule_unfolded =        path + 'molecule_unfolded.png'
         self.molecule_unfolded_grey =   path + 'molecule_unfolded_grey.png'
         self.pipe =                     path + 'pipe.png'
+        self.pipe_hybrid =              path + 'pipe_hybrid.png'
         self.relax_data =               path + 'fid.png'
         self.residue =                  path + 'residue.png'
         self.residue_grey =             path + 'residue_grey.png'
@@ -177,7 +179,8 @@ class I32x32:
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
 
         # relax icons.
-        self.structure =            path + 'structure.png'
+        self.pipe_hybrid =              path + 'pipe_hybrid.png'
+        self.structure =                path + 'structure.png'
 
 
 class I48x48:
@@ -210,6 +213,7 @@ class I48x48:
         # relax icons.
         path = ICON_RELAX_PATH + '48x48' + sep
         self.pipe =                 path + 'pipe.png'
+        self.pipe_hybrid =          path + 'pipe_hybrid.png'
         self.relax_data =           path + 'fid.png'
         self.sequence =             path + 'sequence.png'
         self.structure =            path + 'structure.png'
