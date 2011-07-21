@@ -487,10 +487,6 @@ class Analysis_controller:
         # First delete all analyses.
         self.delete_all()
 
-        # Then unregister the observers.
-        status.observers.pipe_alteration.unregister(self.name)
-        status.observers.reset.unregister('gui analyses')
-
 
     def set_init_state(self):
         """Revert to the initial state."""
