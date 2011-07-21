@@ -138,6 +138,10 @@ class Relax_data_list:
         # Delete the rows, leaving a single row.
         self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
 
+        # Clear the contents of the first row.
+        for i in range(self.grid.GetNumberCols()):
+            self.grid.SetCellValue(0, i, str_to_gui(""))
+
         # Expand the number of rows to match the number of relaxation IDs, and add the IDs.
         if hasattr(cdp, 'ri_ids'):
             # The number of IDs.

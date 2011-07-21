@@ -138,6 +138,9 @@ class Spectra_list:
         self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
         self.grid.DeleteCols(numCols=self.grid.GetNumberCols()-1)
 
+        # Clear the contents of the first cell.
+        self.grid.SetCellValue(0, 0, str_to_gui(""))
+
         # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
         if hasattr(cdp, 'spectrum_ids'):
             # The number of IDs.

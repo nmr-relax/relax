@@ -307,6 +307,10 @@ class Pipe_editor(wx.Frame):
         # Delete the rows, leaving a single row.
         self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
 
+        # Clear the contents of the first row.
+        for i in range(self.grid.GetNumberCols()):
+            self.grid.SetCellValue(0, i, str_to_gui(""))
+
         # The data pipes.
         pipe_list = pipe_names()
         n = len(pipe_list)
