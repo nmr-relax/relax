@@ -125,6 +125,9 @@ class GuiTestCase(TestCase):
         # Reset relax.
         reset()
 
+        # Reset the observers.
+        status._setup_observers()
+
         # Destroy the GUI.
         if hasattr(self, 'gui'):
             self.gui.Destroy()
