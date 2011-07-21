@@ -160,7 +160,7 @@ class Relax_data_list:
                 self.grid.SetCellValue(i, 1, cdp.ri_type[id])
 
                 # Set the frequencies.
-                self.grid.SetCellValue(i, 1, cdp.frq[id])
+                self.grid.SetCellValue(i, 2, cdp.frq[id])
 
         # Set the grid properties once finalised.
         for i in range(self.grid.GetNumberRows()):
