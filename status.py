@@ -96,7 +96,7 @@ class Status(object):
         self.observers = Status_container()
 
         # The observer object for pipe switches.
-        self.observers.pipe_switch = Observer()
+        self.observers.pipe_alteration = Observer()
 
         # The observer object for GUI user function completion.
         self.observers.uf_gui = Observer()

@@ -61,6 +61,9 @@ def copy(pipe_from=None, pipe_to=None):
     # Copy the data.
     ds[pipe_to] = ds[pipe_from].__clone__()
 
+    # Notify observers that a pipe change has occurred.
+    status.observers.pipe_alteration.notify()
+
 
 def create(pipe_name=None, pipe_type=None, switch=True):
     """Create a new data pipe.
@@ -140,8 +143,8 @@ def delete(pipe_name=None):
             ds.current_pipe = None
             __builtin__.cdp = None
 
-            # Notify observers that the switch has occurred.
-            status.observers.pipe_switch.notify()
+    # Notify observers that the switch has occurred.
+    status.observers.pipe_alteration.notify()
 
 
 def display():
@@ -261,7 +264,7 @@ def switch(pipe_name=None):
     __builtin__.cdp = get_pipe()
 
     # Notify observers that the switch has occurred.
-    status.observers.pipe_switch.notify()
+    status.observers.pipe_alteration.notify()
 
 
 def test(pipe_name=None):

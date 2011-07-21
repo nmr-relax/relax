@@ -83,7 +83,7 @@ class Analysis_controller:
 
         # Register the page switch method for pipe switches.
         self.name = 'notebook page switcher'
-        status.observers.pipe_switch.register(self.name, self.pipe_switch)
+        status.observers.pipe_alteration.register(self.name, self.pipe_switch)
 
         # Register the deletion of all analyses for the reset status observer.
         status.observers.reset.register('gui analyses', self.reset)
@@ -470,7 +470,7 @@ class Analysis_controller:
         self.delete_all()
 
         # Then unregister the observers.
-        status.observers.pipe_switch.unregister(self.name)
+        status.observers.pipe_alteration.unregister(self.name)
         status.observers.reset.unregister('gui analyses')
 
 

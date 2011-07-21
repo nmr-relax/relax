@@ -96,8 +96,7 @@ class Pipe_editor(wx.Frame):
         self.update_grid()
 
         # Register the grid for updating when a user function completes.
-        status.observers.uf_gui.register('pipe editor', self.update_grid)
-        status.observers.pipe_switch.register('pipe editor', self.update_grid)
+        status.observers.pipe_alteration.register('pipe editor', self.update_grid)
 
 
     def menu(self, event):

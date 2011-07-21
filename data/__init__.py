@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -146,6 +146,10 @@ class Relax_data_store(dict):
         # Remove all items from the dictionary.
         self.instance.clear()
 
+        # Signal the change.
+        status.observers.reset.notify()
+        status.observers.pipe_alteration.notify()
+
 
     def add(self, pipe_name, pipe_type, switch=True):
         """Method for adding a new data pipe container to the dictionary.
@@ -177,7 +181,7 @@ class Relax_data_store(dict):
             __builtin__.cdp = self[pipe_name]
 
             # Signal the switch.
-            status.observers.pipe_switch.notify()
+            status.observers.pipe_alteration.notify()
 
 
     def is_empty(self):
@@ -321,6 +325,9 @@ class Relax_data_store(dict):
             # Set the current pipe.
             if self.current_pipe in self.keys():
                 __builtin__.cdp = self[self.current_pipe]
+
+        # Notify observers that a pipe change has occurred.
+        status.observers.pipe_alteration.notify()
 
 
     def to_xml(self, file, pipes=None):

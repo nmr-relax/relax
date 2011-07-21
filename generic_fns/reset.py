@@ -22,14 +22,10 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from status import Status; status = Status()
 
 
 def reset():
     """Reset relax."""
-
-    # Notify all observers.
-    status.observers.reset.notify()
 
     # Run the relax data storage object reset method.
     ds.__reset__()

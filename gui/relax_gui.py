@@ -141,7 +141,7 @@ class Main(wx.Frame):
             self.user_functions.script.script_exec(script)
 
         # Register functions with the observer objects.
-        status.observers.pipe_switch.register('status bar', self.update_status_bar)
+        status.observers.pipe_alteration.register('status bar', self.update_status_bar)
 
 
     def about_gui(self, event):
