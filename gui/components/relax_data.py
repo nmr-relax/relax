@@ -32,7 +32,7 @@ import wx.lib.buttons
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui.misc import add_border
+from gui.misc import add_border, str_to_gui
 from gui import paths
 
 
