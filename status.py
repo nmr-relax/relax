@@ -256,12 +256,15 @@ class Observer(object):
         # The dictionary of callback methods.
         self._callback = {}
 
+        # The list of keys, for ordered execution.
+        self._keys = []
+
 
     def notify(self):
         """Notify all observers of the state change."""
 
         # Loop over the callback methods and execute them.
-        for key in self._callback.keys():
+        for key in self._keys:
             self._callback[key]()
 
 
@@ -275,11 +278,14 @@ class Observer(object):
         """
 
         # Already exists.
-        if key in self._callback.keys():
+        if key in self._keys:
             raise RelaxError("The observer '%s' already exists." % key)
 
         # Add the method to the dictionary of callbacks.
         self._callback[key] = method
+
+        # Add the key to the ordered list.
+        self._keys.append(key)
 
 
     def reset(self):
@@ -287,6 +293,9 @@ class Observer(object):
 
         # Reinitialise the dictionary of callback methods.
         self._callback = {}
+
+        # Reinitialise the key list.
+        self._keys = []
 
 
     def unregister(self, key):
@@ -297,8 +306,11 @@ class Observer(object):
         """
 
         # Does not exist.
-        if key not in self._callback.keys():
+        if key not in self._keys:
             raise RelaxError("The key '%s' does not exist." % key)
 
         # Remove the method from the dictionary of callbacks.
         self._callback.pop(key)
+
+        # Remove the key for the ordered key list.
+        self._keys.remove(key)
