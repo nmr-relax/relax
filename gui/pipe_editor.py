@@ -110,7 +110,7 @@ class Pipe_editor(wx.Frame):
         row = event.GetRow()
 
         # Get the name of the data pipe.
-        self.selected_pipe = gui_to_str(self.grid.GetCellValue(0, row))
+        self.selected_pipe = gui_to_str(self.grid.GetCellValue(row, 0))
 
         # No data pipe.
         if not self.selected_pipe:
