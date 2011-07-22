@@ -181,6 +181,10 @@ class Relax_data_list:
         # Size the columns.
         self.size_cols()
 
+        # Post a size event to get the scroll panel to update correctly.
+        event = wx.PyCommandEvent(wx.EVT_SIZE.typeId, self.parent.GetId())
+        wx.PostEvent(self.parent.GetEventHandler(), event)
+
         # Unfreeze.
         self.grid.Thaw()
 
