@@ -31,6 +31,7 @@ import wx
 
 # relax module imports.
 from relax_errors import AllRelaxErrors
+from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.message import error_message
@@ -60,16 +61,52 @@ def add_border(box, border=0, packing=wx.VERTICAL):
     sizer_sub = wx.BoxSizer(orient_sub)
     sizer_cent = wx.BoxSizer(packing)
 
+    # Left and right borders (debugging).
+    if status.debug:
+        # Left coloured panel.
+        panel = wx.Panel(box.GetContainingWindow(), -1)
+        panel.SetSize((border, border))
+        panel.SetBackgroundColour("Red")
+        box.Add(panel, 0, wx.EXPAND|wx.ALL)
+
+        # Centre.
+        box.Add(sizer_sub, 1, wx.EXPAND|wx.ALL)
+
+        # Top coloured panel.
+        panel = wx.Panel(box.GetContainingWindow(), -1)
+        panel.SetSize((border, border))
+        panel.SetBackgroundColour("Yellow")
+        box.Add(panel, 0, wx.EXPAND|wx.ALL)
+ 
     # Left and right borders.
-    box.AddSpacer(border)
-    box.Add(sizer_sub, 1, wx.EXPAND|wx.ALL)
-    box.AddSpacer(border)
+    else:
+        box.AddSpacer(border)
+        box.Add(sizer_sub, 1, wx.EXPAND|wx.ALL)
+        box.AddSpacer(border)
 
+    # Top and bottom borders (debugging).
+    if status.debug:
+        # Top coloured panel.
+        panel = wx.Panel(box.GetContainingWindow(), -1)
+        panel.SetSize((border, border))
+        panel.SetBackgroundColour("Blue")
+        sizer_sub.Add(panel, 0, wx.EXPAND|wx.ALL)
+
+        # Centre.
+        sizer_sub.Add(sizer_cent, 1, wx.EXPAND|wx.ALL)
+
+        # Bottom coloured panel.
+        panel = wx.Panel(box.GetContainingWindow(), -1)
+        panel.SetSize((border, border))
+        panel.SetBackgroundColour("Green")
+        sizer_sub.Add(panel, 0, wx.EXPAND|wx.ALL)
+ 
     # Top and bottom borders.
-    sizer_sub.AddSpacer(border)
-    sizer_sub.Add(sizer_cent, 1, wx.EXPAND|wx.ALL)
-    sizer_sub.AddSpacer(border)
-
+    else:
+        sizer_sub.AddSpacer(border)
+        sizer_sub.Add(sizer_cent, 1, wx.EXPAND|wx.ALL)
+        sizer_sub.AddSpacer(border)
+ 
     # Return the central sizer.
     return sizer_cent
 
