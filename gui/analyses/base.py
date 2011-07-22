@@ -71,6 +71,9 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         # Execute the base class method.
         super(Base_analysis, self).__init__(*args, **kwds)
 
+        # Determine the size of the scrollers.
+        self.width_vscroll = wx.SystemSettings_GetMetric(wx.SYS_VSCROLL_X)
+
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(box_main)
@@ -83,7 +86,10 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
 
         # Set up the scrolled panel.
         self.SetAutoLayout(True)
-        self.SetupScrolling(scroll_x=True, scroll_y=True)
+        self.SetupScrolling(scroll_x=False, scroll_y=True)
+
+        # Bind resize events.
+        self.Bind(wx.EVT_SIZE, self.resize)
 
 
     def add_button_open(self, box, parent, icon=paths.icon_16x16.open, text=" Change", fn=None, width=-1, height=-1):
@@ -529,6 +535,19 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
 
         # Show the molecule, residue, and spin tree window.
         self.gui.show_tree(None)
+
+
+    def resize(self, event):
+        """The spin editor GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the virtual size to have the width of the visible size and the height of the virtual size.
+        x = self.GetSize()[0] - self.width_vscroll
+        y = self.GetVirtualSize()[1]
+        self.SetVirtualSize((x, y))
 
 
     def spin_count(self):
