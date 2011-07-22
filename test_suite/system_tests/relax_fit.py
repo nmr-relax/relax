@@ -185,7 +185,7 @@ class Relax_fit(SystemTestCase):
         """Test the relaxation curve fitting C modules."""
 
         # The intensity type.
-        ds.int_type = 'volume'
+        ds.int_type = 'point sum'
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_exp_2param_neg.py')

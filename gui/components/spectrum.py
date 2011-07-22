@@ -733,6 +733,14 @@ class Peak_intensity:
 
             # Loop over the rows.
             for i in range(self.num_rows):
+                # Old save file support.
+                if not hasattr(self.data, 'file_list'):
+                    self.data.file_list = []
+                if not hasattr(self.data, 'ncyc'):
+                    self.data.ncyc = []
+                if not hasattr(self.data, 'relax_times'):
+                    self.data.relax_times = []
+
                 # The cell data.
                 file_name = str(self.grid.GetCellValue(i, 0))
                 relax_time = str(self.grid.GetCellValue(i, 1))
