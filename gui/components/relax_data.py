@@ -176,6 +176,7 @@ class Relax_data_list:
             for j in range(self.grid.GetNumberCols()):
                 # Cell properties.
                 self.grid.SetReadOnly(i, j)
+                self.grid.SetCellBackgroundColour(i, j, "White")
 
         # Size the columns.
         self.size_cols()
@@ -219,6 +220,9 @@ class Relax_data_list:
         # No cell resizing allowed.
         self.grid.EnableDragColSize(False)
         self.grid.EnableDragRowSize(False)
+
+        # Set the cell colour to the background panel colour to remove visual artifacts.
+        self.grid.SetDefaultCellBackgroundColour(self.parent.GetBackgroundColour())
 
         # Bind some events.
         self.grid.Bind(wx.EVT_SIZE, self.resize)
