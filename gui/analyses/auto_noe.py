@@ -178,9 +178,11 @@ class Auto_noe(Base_analysis):
         self.add_spin_systems(box, self)
 
         # Add the peak list selection GUI element, with spacing.
-        box.AddSpacer(10)
+        box.AddSpacer(40)
         self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard)
-        box.AddSpacer(10)
+
+        # Stretchable spacing.
+        box.AddStretchSpacer()
 
         # Add the execution GUI element.
         self.button_exec_id = self.add_execute_relax(box, self.execute)
