@@ -1126,8 +1126,8 @@ class Wiz_window(wx.Dialog):
         # Change the status.
         self._status = False
 
-        # Destroy the window.
-        self.Destroy()
+        # Close the window.
+        self.Close()
 
 
     def _display_page(self, i):
@@ -1239,8 +1239,8 @@ class Wiz_window(wx.Dialog):
                 # Increment the execution counter.
                 self._exec_count[i] += 1
 
-        # Then destroy the dialog.
-        self.Destroy()
+        # Then close the dialog.
+        self.Close()
 
 
     def _seq_loop(self):
@@ -1388,7 +1388,7 @@ class Wiz_window(wx.Dialog):
 
         # Modal operation.
         if modal:
-            # Show the wizard (it should be destroyed by the _cancel() or _ok() methods).
+            # Show the wizard (it should be closed by the _cancel() or _ok() methods).
             self.ShowModal()
 
             # Return the status.
