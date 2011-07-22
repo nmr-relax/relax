@@ -32,7 +32,7 @@ import wx.lib.buttons
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui.misc import add_border, str_to_gui
+from gui.misc import add_border, float_to_gui, str_to_gui
 from gui import paths
 
 
@@ -66,14 +66,23 @@ class Relax_data_list:
         # GUI variables.
         self.spacing = 5
         self.border = 5
+        self.height_buttons = 40
+
+        # First create a panel (to allow for tooltips on the buttons).
+        self.panel = wx.Panel(self.parent)
+        box.Add(self.panel, 0, wx.ALL|wx.EXPAND, 0)
+
+        # Add a sizer to the panel.
+        panel_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.panel.SetSizer(panel_sizer)
 
         # A static box to hold all the widgets, and its sizer.
-        stat_box = wx.StaticBox(self.parent, -1, "Relaxation data list")
+        stat_box = wx.StaticBox(self.panel, -1, "Relaxation data list")
         stat_box.SetFont(self.gui.font_subtitle)
         sub_sizer = wx.StaticBoxSizer(stat_box, wx.VERTICAL)
 
         # Add the sizer to the static box and the static box to the main box.
-        box.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
+        panel_sizer.Add(sub_sizer, 0, wx.ALL|wx.EXPAND, 0)
 
         # Add a border.
         box_centre = add_border(sub_sizer, border=self.border)
@@ -104,26 +113,22 @@ class Relax_data_list:
         @type box:      wx.BoxSizer instance
         """
 
-        # A panel for the buttons (to allow for tooltips).
-        panel = wx.Panel(self.parent, -1)
-        sizer.Add(panel, 0, wx.ALL|wx.EXPAND, 0)
-
         # Button Sizer
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        panel.SetSizer(button_sizer)
+        sizer.Add(button_sizer, 0, wx.ALL|wx.EXPAND, 0)
 
         # Add button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(panel, -1, None, " Add")
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
-        button.SetSize((80, 40))
+        button.SetSize((80, self.height_buttons))
         button_sizer.Add(button, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.read, button)
         button.SetToolTipString("Read relaxation data from file.")
 
         # Delete button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(panel, -1, None, " Delete")
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
-        button.SetSize((80, 40))
+        button.SetSize((80, self.height_buttons))
         button_sizer.Add(button, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.delete, button)
         button.SetToolTipString("Delete loaded relaxation data from the relax data store.")
@@ -154,13 +159,13 @@ class Relax_data_list:
             for i in range(n):
                 # Set the IDs.
                 id = cdp.ri_ids[i]
-                self.grid.SetCellValue(i, 0, id)
+                self.grid.SetCellValue(i, 0, str_to_gui(id))
 
                 # Set the data types.
-                self.grid.SetCellValue(i, 1, cdp.ri_type[id])
+                self.grid.SetCellValue(i, 1, str_to_gui(cdp.ri_type[id]))
 
                 # Set the frequencies.
-                self.grid.SetCellValue(i, 2, cdp.frq[id])
+                self.grid.SetCellValue(i, 2, float_to_gui(cdp.frq[id]))
 
         # Set the grid properties once finalised.
         for i in range(self.grid.GetNumberRows()):
@@ -194,7 +199,7 @@ class Relax_data_list:
         """
 
         # Grid of peak list file names and relaxation time.
-        self.grid = wx.grid.Grid(self.parent, -1)
+        self.grid = wx.grid.Grid(self.panel, -1)
 
         # Initialise to a single row and 3 columns.
         self.grid.CreateGrid(1, 3)
@@ -218,8 +223,8 @@ class Relax_data_list:
         # Bind some events.
         self.grid.Bind(wx.EVT_SIZE, self.resize)
 
-        # Add grid to sizer, with spacing.
-        sizer.Add(self.grid, 1, wx.ALL|wx.EXPAND, 0)
+        # Add grid to sizer.
+        sizer.Add(self.grid, 0, wx.ALL|wx.EXPAND, 0)
 
 
     def resize(self, event):
