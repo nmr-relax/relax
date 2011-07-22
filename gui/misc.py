@@ -31,13 +31,12 @@ import wx
 
 # relax module imports.
 from relax_errors import AllRelaxErrors
-from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.message import error_message
 
 
-def add_border(box, border=0, packing=wx.VERTICAL):
+def add_border(box, border=0, packing=wx.VERTICAL, debug=False):
     """Create the main part of the frame, returning the central sizer.
 
     @param box:         The box sizer element to pack the borders into.
@@ -46,6 +45,8 @@ def add_border(box, border=0, packing=wx.VERTICAL):
     @type border:       int
     @keyword packing:   Specify if the central sizer should be vertically or horizontally packed.
     @type packing:      wx.VERTICAL or wx.HORIZONTAL
+    @keyword debug:     A flag which if true will make colourful borders.
+    @type debug:        bool
     @return:            The central sizer.
     @rtype:             wx.BoxSizer instance
     """
@@ -62,7 +63,7 @@ def add_border(box, border=0, packing=wx.VERTICAL):
     sizer_cent = wx.BoxSizer(packing)
 
     # Left and right borders (debugging).
-    if status.debug:
+    if debug:
         # Left coloured panel.
         panel = wx.Panel(box.GetContainingWindow(), -1)
         panel.SetSize((border, border))
@@ -85,7 +86,7 @@ def add_border(box, border=0, packing=wx.VERTICAL):
         box.AddSpacer(border)
 
     # Top and bottom borders (debugging).
-    if status.debug:
+    if debug:
         # Top coloured panel.
         panel = wx.Panel(box.GetContainingWindow(), -1)
         panel.SetSize((border, border))
