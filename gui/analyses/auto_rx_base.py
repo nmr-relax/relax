@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Michael Bieri                                            #
+# Copyright (C) 2009-2011 Michael Bieri                                       #
 # Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -39,18 +39,20 @@ from relax_io import DummyFileObject
 from status import Status; status = Status()
 
 # relaxGUI module imports.
+from gui.analyses.base import Base_frame
 from gui.base_classes import Container
 from gui.components.spectrum import Peak_intensity
 from gui.controller import Redirect_text, Thread_container
 from gui.derived_wx_classes import StructureTextCtrl
-from gui.filedialog import multi_openfile, opendir
+from gui.filedialog import opendir
 from gui.message import error_message, missing_data
+from gui.misc import add_border
 from gui import paths
 from gui.settings import load_sequence
 
 
 
-class Auto_rx:
+class Auto_rx(Base_frame):
     """The base class for the R1 and R2 frames."""
 
     # Hardcoded variables.
@@ -78,195 +80,15 @@ class Auto_rx:
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
 
+        # Pack a sizer into the panel.
+        box_main = wx.BoxSizer(wx.HORIZONTAL)
+        self.parent.SetSizer(box_main)
+
+        # Build the central sizer, with borders.
+        box_centre = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
+
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        main_box = self.build_main_box()
-        self.parent.SetSizer(main_box)
-
-        # Set the frame font size.
-        self.parent.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-
-
-    def add_execute_relax(self, box):
-        """Create and add the relax execution GUI element to the given box.
-
-        @param box:     The box element to pack the relax execution GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # A horizontal sizer for the contents.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((118, 17))
-        sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-        button.SetName('hello')
-        button.SetSize(button.GetBestSize())
-        self.gui.Bind(wx.EVT_BUTTON, self.execute, button)
-        sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
-
-
-    def add_frame_title(self, box):
-        """Create and add the frame title to the given box.
-
-        @param box:     The box element to pack the frame title into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # The title.
-        label = wx.StaticText(self.parent, -1, "Setup for %s relaxation analysis" % self.label)
-
-        # The font properties.
-        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-
-        # Pack the title.
-        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
-
-
-    def add_frq(self, box):
-        """Create and add the frequency selection GUI element to the given box.
-
-        @param box:     The box element to pack the PDB file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_nmr_frq = wx.TextCtrl(self.parent, -1, str(self.data.frq))
-        self.field_nmr_frq.SetMinSize((350, 27))
-        sizer.Add(self.field_nmr_frq, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_results_dir(self, box):
-        """Create and add the results directory GUI element to the given box.
-
-        @param box:     The box element to pack the results directory GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_results_dir = wx.TextCtrl(self.parent, -1, self.data.save_dir)
-        self.field_results_dir.SetMinSize((350, 27))
-        sizer.Add(self.field_results_dir, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.results_directory, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_sequence_selection(self, box):
-        """Create and add the sequence file selection GUI element to the given box.
-
-        @param box:     The box element to pack the sequence file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence file", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_sequence = wx.TextCtrl(self.parent, -1, str(self.gui.sequence_file_msg))
-        self.field_sequence.SetEditable(False)
-        self.field_sequence.SetMinSize((350, 27))
-        sizer.Add(self.field_sequence, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.load_sequence, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 1, wx.EXPAND, 0)
-
-
-    def add_structure_selection(self, box):
-        """Create and add the structure file selection GUI element to the given box.
-
-        @param box:     The box element to pack the structure file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence from PDB structure file", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_structure = StructureTextCtrl(self.parent, -1, self.gui.structure_file_pdb_msg)
-        self.field_structure.SetEditable(False)
-        self.field_structure.SetMinSize((350, 27))
-        sizer.Add(self.field_structure, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.field_structure.open_file, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 1, wx.EXPAND, 0)
-
-
-    def add_unresolved_spins(self, box):
-        """Create and add the unresolved spins GUI element to the given box.
-
-        @param box:     The box element to pack the unresolved spins GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_unresolved = wx.TextCtrl(self.parent, -1, "")
-        self.field_unresolved.SetMinSize((350, 27))
-        sizer.Add(self.field_unresolved, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+        self.build_main_box(box_centre)
 
 
     def assemble_data(self):
@@ -285,7 +107,7 @@ class Auto_rx:
 
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         if hasattr(self.data, 'sequence_file'):
-            data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
+            data.seq_args = [self.data.sequence_file, None, None, 1, None, None, None, None]
         else:
             data.seq_args = None
 
@@ -352,23 +174,19 @@ class Auto_rx:
         return data, complete, missing
 
 
-    def build_main_box(self):
-        """Construct the highest level box to pack into the automatic Rx analysis frame.
+    def build_left_box(self):
+        """Construct the left hand box to pack into the automatic Rx analysis frame.
 
-        @return:    The main box element containing all Rx GUI elements to pack directly into the automatic Rx analysis frame.
+        @return:    The left hand box element containing the bitmap.
         @rtype:     wx.BoxSizer instance
         """
 
-        # Use a horizontal packing of elements.
-        box = wx.BoxSizer(wx.HORIZONTAL)
+        # Use a vertical packing of elements.
+        box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the model-free bitmap picture.
-        self.bitmap_1_copy_copy = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
-        box.Add(self.bitmap_1_copy_copy, 0, wx.ADJUST_MINSIZE, 10)
-
-        # Build the right hand box and pack it next to the bitmap.
-        right_box = self.build_right_box()
-        box.Add(right_box, 0, 0, 0)
+        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
+        box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
 
         # Return the box.
         return box
@@ -385,28 +203,30 @@ class Auto_rx:
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the frame title.
-        self.add_frame_title(box)
+        self.add_title(box, "Setup for %s relaxation analysis" % self.label)
 
         # Add the frequency selection GUI element.
-        self.add_frq(box)
+        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str(self.data.frq))
 
         # Add the results directory GUI element.
-        self.add_results_dir(box)
+        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
         # Add the sequence file selection GUI element.
-        self.add_sequence_selection(box)
+        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str(self.gui.sequence_file_msg), fn=self.load_sequence, editable=False, button=True)
 
         # Add the structure file selection GUI element.
-        self.add_structure_selection(box)
+        self.field_structure = self.add_text_sel_element(box, self.parent, text="Sequence from PDB structure file", default=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, fn='open_file', editable=False, button=True)
 
         # Add the unresolved spins GUI element.
-        self.add_unresolved_spins(box)
+        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues")
 
-        # Add the peak list selection GUI element.
-        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, data=self.data, label=self.label, box=box)
+        # Add the peak list selection GUI element, with spacing.
+        box.AddSpacer(10)
+        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, subparent=self, data=self.data, label=self.label, box=box)
+        box.AddSpacer(10)
 
         # Add the execution GUI element.
-        self.add_execute_relax(box)
+        self.add_execute_relax(box, self.execute)
 
         # Return the box.
         return box
@@ -423,7 +243,6 @@ class Auto_rx:
         status = Status()
         if status.exec_lock.locked():
             error_message("relax is currently executing.", "relax execution lock")
-            event.Skip()
             return
 
         # Synchronise the frame data to the relax data store.
@@ -438,9 +257,6 @@ class Auto_rx:
             self.execute_thread('dummy')
         else:
             id = thread.start_new_thread(self.execute_thread, ('dummy',))
-
-        # Terminate the event.
-        event.Skip()
 
 
     def execute_thread(self, dummy_string):
@@ -464,7 +280,7 @@ class Auto_rx:
 
         # Incomplete.
         if not complete:
-            print 'Aborting NOE caclulation as the following informations are missing:\n'
+            print 'Aborting Rx caclulation as the following informations are missing:\n'
             for i in range(len(missing)):
                 print '\t'+missing[i]
             print ''
@@ -519,9 +335,6 @@ class Auto_rx:
         # Sync.
         self.sync_ds(upload=False)
 
-        # Terminate the event.
-        event.Skip()
-
 
     def results_directory(self, event):
         """The results directory selection.
@@ -542,9 +355,6 @@ class Auto_rx:
 
         # Place the path in the text box.
         self.field_results_dir.SetValue(self.data.save_dir)
-
-        # Terminate the event.
-        event.Skip()
 
 
     def sync_ds(self, upload=False):

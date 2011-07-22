@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -438,4 +438,4 @@ def write(file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res
         spin_names = None
 
     # Write the data.
-    write_spin_data(file=file, dir=dir, sep=sep, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
+    write_spin_data(file=file, dir=dir, sep=sep, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, force=force)

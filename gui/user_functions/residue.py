@@ -135,7 +135,7 @@ class Copy_window(UF_window, Mol_res_spin):
         # The molecule selection.
         self.mol_from = self.combo_box(sizer, "The source molecule:", evt_fn=self.update_res_list)
 
-        # The molecule selection.
+        # The residue selection.
         self.res_from = self.combo_box(sizer, "The source residue:")
 
         # The destination pipe.

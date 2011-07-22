@@ -128,21 +128,6 @@ except ImportError, message:
     devnull_import = False
     devnull_import_message = message.args[0]
 
-# Scientific Python import.
-try:
-    import Scientific
-    scientific_module = True
-except ImportError:
-    scientific_module = False
-
-# Scientific Python PDB module import.
-try:
-    from Scientific.IO import PDB
-    del PDB
-    scientific_pdb_module = True
-except ImportError:
-    scientific_pdb_module = False
-
 # Scipy import.
 try:
     import scipy

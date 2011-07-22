@@ -60,7 +60,7 @@ from message import dir_message, error_message, question
 from gui import paths
 from references import References
 from relax_prompt import Prompt
-from settings import Free_file_format, load_sequence, relax_global_settings
+from settings import Free_file_format, Global_params, load_sequence
 from user_functions import User_functions
 
 
@@ -73,17 +73,22 @@ class Main(wx.Frame):
     """The main GUI class."""
 
     # Hard coded variables.
+    min_width = 1000
+    min_height = 600
     sequence_file_msg = "please insert sequence file"
     structure_file_pdb_msg = "please insert .pdb file"
 
     def __init__(self, parent=None, id=-1, title="", script=None):
         """Initialise the main relax GUI frame."""
 
-        # The window style.
-        style = wx.CLOSE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN
-
         # Execute the base class __init__ method.
-        super(Main, self).__init__(parent=parent, id=id, title=title, style=style)
+        super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE)
+
+        # Set up the frame.
+        self.Layout()
+        self.SetSize((self.min_width, self.min_height))
+        self.SetMinSize((self.min_width, self.min_height))
+        self.Centre()
 
         # The analysis frame object storage.
         self.analysis_frames = []
@@ -114,6 +119,9 @@ class Main(wx.Frame):
         # Initialise the GUI data.
         self.init_data()
 
+        # Set up some standard interface-wide fonts.
+        self.setup_fonts()
+
         # The user function GUI elements.
         self.user_functions = User_functions(self)
 
@@ -132,8 +140,20 @@ class Main(wx.Frame):
         rx_data = ds.relax_gui.analyses[self.noe_index[0]]
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
 
-        self.__set_properties()
-        self.__do_layout()
+        # Set the title.
+        self.SetTitle("relaxGUI " + GUI_version)
+
+        # Set up the program icon (disabled on Macs).
+        if not 'darwin' in sys.platform:
+            icon = wx.EmptyIcon()
+            icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+            self.SetIcon(icon)
+
+        # Statusbar fields.
+        self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
+        frame_1_statusbar_fields = ["relaxGUI (C) 2009 Michael Bieri and (C) 2010-2011 the relax development team", "relax:", version]
+        for i in range(len(frame_1_statusbar_fields)):
+            self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
 
         # Close Box event
         self.Bind(wx.EVT_CLOSE, self.exit_gui)
@@ -141,27 +161,6 @@ class Main(wx.Frame):
         # Run a script.
         if script:
             self.user_functions.script.script_exec(script)
-
-
-    def __do_layout(self):
-        # Build layout
-        self.Layout()
-        self.SetSize((1000, 600))
-        self.Centre()
-
-
-    def __set_properties(self):
-        # begin wxGlade: main.__set_properties
-        self.SetTitle("relaxGUI " + GUI_version)
-        _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
-        self.SetIcon(_icon)
-        self.SetSize((1000, 600))
-        self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
-        # statusbar fields
-        frame_1_statusbar_fields = ["relaxGUI (C) by Michael Bieri 2009", "relax:", version]
-        for i in range(len(frame_1_statusbar_fields)):
-            self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
 
 
     def about_gui(self, event):
@@ -452,6 +451,7 @@ class Main(wx.Frame):
             ds.relax_gui.analyses[-1].frq = nmrfreq[i]
             ds.relax_gui.analyses[-1].num = 0
             ds.relax_gui.analyses[-1].file_list = []
+            ds.relax_gui.analyses[-1].ncyc = []
             ds.relax_gui.analyses[-1].relax_times = []
 
         # Initialise all the source and save directories.
@@ -484,7 +484,21 @@ class Main(wx.Frame):
         """
 
         # Build the window.
-        win = Free_file_format(self)
+        win = Free_file_format()
+
+        # Show the window.
+        win.Show()
+
+
+    def global_parameters(self, event):
+        """Open the global parameters window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Build the window.
+        win = Global_params()
 
         # Show the window.
         win.Show()
@@ -532,17 +546,22 @@ class Main(wx.Frame):
 
 
     def reset_setting(self, event): #reset all settings
-        global global_setting #import global variable
         if question('Do you realy want to change relax settings?'):
             ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
             ds.relax_gui.free_file_format.reset()
 
 
-    def settings(self, event): # set up for relax variables
-        tmp_global = relax_global_settings(ds.relax_gui.global_setting)
-        if not tmp_global == None:
-            if question('Do you realy want to change relax settings?'):
-                ds.relax_gui.global_setting = tmp_global
+    def setup_fonts(self):
+        """Initialise a series of fonts to be used throughout the GUI."""
+
+        # The fonts.
+        self.font_smaller =     wx.Font(6,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
+        self.font_small =       wx.Font(8,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
+        self.font_button =      wx.Font(8,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
+        self.font_normal =      wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
+        self.font_normal_bold = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD,   0, "Sans")
+        self.font_subtitle =    wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD,   0, "Sans")
+        self.font_title =       wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
 
 
     def show_controller(self, event):

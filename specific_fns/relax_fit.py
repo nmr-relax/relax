@@ -901,6 +901,10 @@ class Relax_fit(API_base, API_common):
 
         # Loop over spin data.
         for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Check if data exists.
             if not hasattr(spin, 'intensities'):
                 warn(RelaxDeselectWarning(spin_id, 'missing intensity data'))
