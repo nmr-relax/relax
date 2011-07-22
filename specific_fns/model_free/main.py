@@ -738,7 +738,7 @@ class Model_free_main:
         if not diffusion_tensor.diff_data_exists():
             # Catch when the local tm value is set but not in the parameter list.
             for spin in spin_loop():
-                if spin.local_tm != None and not 'local_tm' in spin.params:
+                if hasattr(spin, 'local_tm') and spin.local_tm != None and not 'local_tm' in spin.params:
                     raise RelaxError("The local tm value is set but not located in the model parameter list.")
 
             # Normal error.
