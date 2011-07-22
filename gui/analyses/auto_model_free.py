@@ -199,7 +199,7 @@ class Auto_model_free(Base_frame):
         self.data_index = data_index
 
         # The parent GUI element for this class.
-        self.parent = wx.Panel(notebook, -1)
+        self.parent = wx.lib.scrolledpanel.ScrolledPanel(notebook, -1)
 
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
@@ -210,6 +210,10 @@ class Auto_model_free(Base_frame):
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
         self.build_main_box(box_centre)
+
+        # Set up the scrolled panel.
+        self.parent.SetAutoLayout(True)
+        self.parent.SetupScrolling(scroll_x=False, scroll_y=True)
 
         # Register the method for updating the spin count for the completion of user functions.
         status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
@@ -445,7 +449,7 @@ class Auto_model_free(Base_frame):
         self.max_iter = self.add_spin_element(box, self.parent, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100)
 
         # Some spacing.
-        box.AddSpacer(10)
+        box.AddStretchSpacer()
 
         # Add the execution GUI element.
         self.button_exec_id = self.add_execute_relax(box, self.execute)
