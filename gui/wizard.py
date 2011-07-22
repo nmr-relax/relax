@@ -1388,11 +1388,8 @@ class Wiz_window(wx.Dialog):
 
         # Modal operation.
         if modal:
-            # Show the wizard.
+            # Show the wizard (it should be destroyed by the _cancel() or _ok() methods).
             self.ShowModal()
-
-            # Destroy the wizard.
-            self.Destroy()
 
             # Return the status.
             return self._status
