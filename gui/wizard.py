@@ -1036,7 +1036,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Back")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_previous_view, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Return to the previous page")
-                button.SetSize(self._size_button)
+                button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._go_back, button)
                 self._buttons[i]['back'] = button
@@ -1050,7 +1050,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Apply")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.apply, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Apply the operation")
-                button.SetSize(self._size_button)
+                button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._pages[i]._apply, button)
                 self._buttons[i]['apply'] = button
@@ -1064,7 +1064,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Skip")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.skip, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Skip the operation")
-                button.SetSize(self._size_button)
+                button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._skip, button)
                 self._buttons[i]['skip'] = button
@@ -1078,7 +1078,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Next")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_next_view, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Move to the next page")
-                button.SetSize(self._size_button)
+                button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._go_next, button)
                 self._buttons[i]['next'] = button
@@ -1088,7 +1088,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " OK")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Accept the operation")
-                button.SetSize(self._size_button)
+                button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._ok, button)
                 self._buttons[i]['ok'] = button
@@ -1098,7 +1098,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Finish")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Accept the operation")
-                button.SetSize(self._size_button)
+                button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._ok, button)
                 self._buttons[i]['finish'] = button
@@ -1110,7 +1110,7 @@ class Wiz_window(wx.Dialog):
             button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Cancel")
             button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
             button.SetToolTipString("Abort the operation")
-            button.SetSize(self._size_button)
+            button.SetMinSize(self._size_button)
             self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self._cancel, button)
             self._buttons[i]['cancel'] = button
