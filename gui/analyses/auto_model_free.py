@@ -383,7 +383,6 @@ class Auto_model_free(Base_analysis):
 
         # A button sizer, with some initial spacing.
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        button_sizer.AddSpacer(10)
 
         # An about button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "About")
@@ -400,9 +399,6 @@ class Auto_model_free(Base_analysis):
         # Pack the button.
         button_sizer.Add(button, 0, 0, 0)
         left_box.Add(button_sizer, 0, wx.ALL, 0)
-
-        # Bottom spacer.
-        left_box.AddSpacer(10)
 
         # Return the packed box.
         return left_box
@@ -446,7 +442,8 @@ class Auto_model_free(Base_analysis):
         # Add maximum iteration selector.
         self.max_iter = self.add_spin_element(box, self, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100)
 
-        # Some spacing.
+        # Stretchable spacing (with a minimal space).
+        box.AddSpacer(30)
         box.AddStretchSpacer()
 
         # Add the execution GUI element.

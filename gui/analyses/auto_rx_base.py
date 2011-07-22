@@ -195,8 +195,8 @@ class Auto_rx(Base_analysis):
         self.grid_inc = self.add_spin_element(box, self, text="Grid search increments:", default=11, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.")
         self.mc_sim_num = self.add_spin_element(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.")
 
-        # Stretchable spacing (with minimal spacing).
-        box.AddSpacer(10)
+        # Stretchable spacing (with a minimal space).
+        box.AddSpacer(30)
         box.AddStretchSpacer()
 
         # Add the execution GUI element.
