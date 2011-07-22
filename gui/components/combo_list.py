@@ -215,7 +215,6 @@ class Combo_list:
         for i in range(len(self._combo_boxes)):
             # Get the value.
             val = self._combo_boxes[i].GetValue()
-            print `val`
 
             # Nothing, so skip.
             if not len(val):
@@ -232,5 +231,4 @@ class Combo_list:
         text = "%s]" % text
 
         # Return the list.
-        print `text`
         return text
