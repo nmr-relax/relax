@@ -36,8 +36,8 @@ from generic_fns.mol_res_spin import are_spins_named
 from generic_fns.pipes import has_pipe
 from status import Status; status = Status()
 
-# relaxGUI module imports.
-from gui.analyses.base import Base_frame, Spectral_error_type_page
+# relax GUI module imports.
+from gui.analyses.base import Base_analysis, Spectral_error_type_page
 from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
@@ -45,7 +45,7 @@ from gui.components.spectrum import Spectra_list
 from gui.controller import Redirect_text
 from gui.filedialog import opendir
 from gui.message import error_message, missing_data
-from gui.misc import add_border, gui_to_str, protected_exec, str_to_gui
+from gui.misc import gui_to_str, protected_exec, str_to_gui
 from gui import paths
 from gui.user_functions.noe import Spectrum_type_page
 from gui.user_functions.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
@@ -53,7 +53,7 @@ from gui.wizard import Wiz_window
 
 
 
-class Auto_noe(Base_frame):
+class Auto_noe(Base_analysis):
     """The base class for the noe frames."""
 
     # Hardcoded variables.
@@ -62,13 +62,23 @@ class Auto_noe(Base_frame):
               paths.IMAGE_PATH+'noe.png']
     label = None
 
-    def __init__(self, gui=None, notebook=None, analysis_name=None, pipe_name=None, data_index=None):
+    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, data_index=None):
         """Build the automatic NOE analysis GUI frame elements.
 
+        @param parent:          The parent wx element.
+        @type parent:           wx object
+        @keyword id:            The unique ID number.
+        @type id:               int
+        @keyword pos:           The position.
+        @type pos:              wx.Size object
+        @keyword size:          The size.
+        @type size:             wx.Size object
+        @keyword style:         The style.
+        @type style:            int
+        @keyword name:          The name for the panel.
+        @type name:             unicode
         @keyword gui:           The main GUI class.
         @type gui:              gui.relax_gui.Main instance
-        @keyword notebook:      The notebook to pack this frame into.
-        @type notebook:         wx.Notebook instance
         @keyword analysis_name: The name of the analysis (the name in the tab part of the notebook).
         @type analysis_name:    str
         @keyword pipe_name:     The name of the data pipe associated with this analysis.
@@ -77,7 +87,7 @@ class Auto_noe(Base_frame):
         @type data_index:       None or int
         """
 
-        # Store the main class.
+        # Store the GUI main class.
         self.gui = gui
 
         # Init.
@@ -106,21 +116,11 @@ class Auto_noe(Base_frame):
         self.data = ds.relax_gui.analyses[data_index]
         self.data_index = data_index
 
-        # The parent GUI element for this class.
-        self.parent = wx.Panel(notebook, -1)
-
-        # Pack a sizer into the panel.
-        box_main = wx.BoxSizer(wx.HORIZONTAL)
-        self.parent.SetSizer(box_main)
-
-        # Build the central sizer, with borders.
-        box_centre = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
-
-        # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        self.build_main_box(box_centre)
-
         # Register the method for updating the spin count for the completion of user functions.
         status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
+
+        # Execute the base class method to build the panel.
+        super(Auto_noe, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
 
     def assemble_data(self):
@@ -166,20 +166,20 @@ class Auto_noe(Base_frame):
         self.add_title(box, "Setup for steady-state NOE analysis")
 
         # Display the data pipe.
-        self.add_text_sel_element(box, self.parent, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False)
+        self.add_text_sel_element(box, self, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False)
 
         # Add the frequency selection GUI element.
-        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR frequency label [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the NOE values will be located in the file 'noe.600.out'.")
+        self.field_nmr_frq = self.add_text_sel_element(box, self, text="NMR frequency label [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the NOE values will be located in the file 'noe.600.out'.")
 
         # Add the results directory GUI element.
-        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
+        self.field_results_dir = self.add_text_sel_element(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
         # Add the spin GUI element.
-        self.add_spin_systems(box, self.parent)
+        self.add_spin_systems(box, self)
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(10)
-        self.peak_intensity = Spectra_list(gui=self.gui, parent=self.parent, box=box, id=str(self.data_index), fn_add=self.peak_wizard)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard)
         box.AddSpacer(10)
 
         # Add the execution GUI element.

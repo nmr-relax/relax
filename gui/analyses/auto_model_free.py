@@ -38,7 +38,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.about import About_base
-from gui.analyses.base import Base_frame
+from gui.analyses.base import Base_analysis
 from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import model_free_results, see_results
 from gui.analyses.select_model_calc import Select_tensor
@@ -47,7 +47,7 @@ from gui.components.relax_data import Relax_data_list
 from gui.controller import Redirect_text
 from gui.filedialog import opendir
 from gui.message import error_message, missing_data
-from gui.misc import add_border, gui_to_int, protected_exec
+from gui.misc import gui_to_int, protected_exec
 from gui import paths
 
 
@@ -150,14 +150,26 @@ class About_window(About_base):
 
 
 
-class Auto_model_free(Base_frame):
-    def __init__(self, gui=None, notebook=None, analysis_name=None, pipe_name=None, data_index=None):
+class Auto_model_free(Base_analysis):
+    """The model-free auto-analysis GUI element."""
+
+    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, data_index=None):
         """Build the automatic model-free protocol GUI element.
 
+        @param parent:          The parent wx element.
+        @type parent:           wx object
+        @keyword id:            The unique ID number.
+        @type id:               int
+        @keyword pos:           The position.
+        @type pos:              wx.Size object
+        @keyword size:          The size.
+        @type size:             wx.Size object
+        @keyword style:         The style.
+        @type style:            int
+        @keyword name:          The name for the panel.
+        @type name:             unicode
         @keyword gui:           The main GUI class.
         @type gui:              gui.relax_gui.Main instance
-        @keyword notebook:      The notebook to pack this frame into.
-        @type notebook:         wx.Notebook instance
         @keyword analysis_name: The name of the analysis (the name in the tab part of the notebook).
         @type analysis_name:    str
         @keyword pipe_name:     The name of the data pipe associated with this analysis.
@@ -166,7 +178,7 @@ class Auto_model_free(Base_frame):
         @type data_index:       None or int
         """
 
-        # Store the main class.
+        # Store the GUI main class.
         self.gui = gui
 
         # Init.
@@ -198,25 +210,11 @@ class Auto_model_free(Base_frame):
         self.data = ds.relax_gui.analyses[data_index]
         self.data_index = data_index
 
-        # The parent GUI element for this class.
-        self.parent = wx.lib.scrolledpanel.ScrolledPanel(notebook, -1)
-
-        # Pack a sizer into the panel.
-        box_main = wx.BoxSizer(wx.HORIZONTAL)
-        self.parent.SetSizer(box_main)
-
-        # Build the central sizer, with borders.
-        box_centre = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
-
-        # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        self.build_main_box(box_centre)
-
-        # Set up the scrolled panel.
-        self.parent.SetAutoLayout(True)
-        self.parent.SetupScrolling(scroll_x=False, scroll_y=True)
-
         # Register the method for updating the spin count for the completion of user functions.
         status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
+
+        # Execute the base class method to build the panel.
+        super(Auto_model_free, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
 
     def _about(self, event):
@@ -227,7 +225,7 @@ class Auto_model_free(Base_frame):
         """
 
         # Initialise the dialog.
-        dialog = About_window(self.parent)
+        dialog = About_window(self)
 
         # Show the dialog.
         if status.show_gui:
@@ -245,13 +243,13 @@ class Auto_model_free(Base_frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # Text.
-        label_maxiter = wx.StaticText(self.parent, -1, "Maximum interations")
+        label_maxiter = wx.StaticText(self, -1, "Maximum interations")
         label_maxiter.SetMinSize((240, 17))
         label_maxiter.SetFont(self.gui.font_normal)
         sizer.Add(label_maxiter, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spinner.
-        self.max_iter = wx.SpinCtrl(self.parent, -1, self.data.max_iter, min=25, max=100)
+        self.max_iter = wx.SpinCtrl(self, -1, self.data.max_iter, min=25, max=100)
         sizer.Add(self.max_iter, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Add the element to the box.
@@ -266,7 +264,7 @@ class Auto_model_free(Base_frame):
         """
 
         # Add a label.
-        self.add_static_text(box, self.parent, "Select model-free models (default = all):")
+        self.add_static_text(box, self, "Select model-free models (default = all):")
 
         # Add some spacing.
         box.AddSpacer(5)
@@ -292,7 +290,7 @@ class Auto_model_free(Base_frame):
             name = "m%s" % i
 
             # The button.
-            setattr(self, name, wx.ToggleButton(self.parent, -1, name))
+            setattr(self, name, wx.ToggleButton(self, -1, name))
 
             # Get the button.
             button = getattr(self, name)
@@ -375,7 +373,7 @@ class Auto_model_free(Base_frame):
         # Add the model-free bitmap picture.
         for i in range(len(bitmaps)):
             # The bitmap.
-            bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(bitmaps[i], wx.BITMAP_TYPE_ANY))
+            bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(bitmaps[i], wx.BITMAP_TYPE_ANY))
 
             # Add it.
             left_box.Add(bitmap, 0, wx.ALL, 0)
@@ -388,12 +386,12 @@ class Auto_model_free(Base_frame):
         button_sizer.AddSpacer(10)
 
         # An about button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self.parent, -1, None, "About")
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "About")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.about, wx.BITMAP_TYPE_ANY))
         button.SetToolTipString("Information about this automatic analysis")
 
         # Bind the click.
-        self.parent.Bind(wx.EVT_BUTTON, self._about, button)
+        self.Bind(wx.EVT_BUTTON, self._about, button)
 
         # A cursor for the button.
         cursor = wx.StockCursor(wx.CURSOR_QUESTION_ARROW)
@@ -424,17 +422,17 @@ class Auto_model_free(Base_frame):
         self.add_title(box, "Setup for model-free analysis")
 
         # Display the data pipe.
-        self.add_text_sel_element(box, self.parent, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False)
+        self.add_text_sel_element(box, self, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False)
 
         # Add the results directory GUI element.
-        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
+        self.field_results_dir = self.add_text_sel_element(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
         # Add the spin GUI element.
-        self.add_spin_systems(box, self.parent)
+        self.add_spin_systems(box, self)
 
         # Add the relaxation data list GUI element, with spacing.
         box.AddSpacer(10)
-        self.relax_data = Relax_data_list(gui=self.gui, parent=self.parent, box=box, id=str(self.data_index))
+        self.relax_data = Relax_data_list(gui=self.gui, parent=self, box=box, id=str(self.data_index))
         box.AddSpacer(10)
 
         # Add the model-free models GUI element, with spacing.
@@ -442,11 +440,11 @@ class Auto_model_free(Base_frame):
         box.AddSpacer(10)
 
         # The optimisation settings.
-        self.grid_inc = self.add_spin_element(box, self.parent, text="Grid search increments:", default=11, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.")
-        self.mc_sim_num = self.add_spin_element(box, self.parent, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.")
+        self.grid_inc = self.add_spin_element(box, self, text="Grid search increments:", default=11, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.")
+        self.mc_sim_num = self.add_spin_element(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.")
 
         # Add maximum iteration selector.
-        self.max_iter = self.add_spin_element(box, self.parent, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100)
+        self.max_iter = self.add_spin_element(box, self, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100)
 
         # Some spacing.
         box.AddStretchSpacer()

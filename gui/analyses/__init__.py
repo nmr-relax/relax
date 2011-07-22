@@ -343,14 +343,11 @@ class Analysis_controller:
         if analysis_type not in classes.keys():
             raise RelaxError("The analysis '%s' is unknown." % analysis_type)
 
-        # Get the class.
-        analysis = classes[analysis_type]
-
-        # Initialise the class and append it to the analysis window object.
-        obj = analysis(gui=self.gui, notebook=self.notebook, analysis_name=analysis_name, pipe_name=pipe_name, data_index=index)
+        # Initialise the class.
+        analysis = classes[analysis_type](parent=self.notebook, id=-1, gui=self.gui, analysis_name=analysis_name, pipe_name=pipe_name, data_index=index)
 
         # Failure.
-        if not obj.init_flag:
+        if not analysis.init_flag:
             # Reset.
             if self.init_state:
                 self.set_init_state()
@@ -359,10 +356,10 @@ class Analysis_controller:
             return
 
         # Append the class object to the analysis window object.
-        self._analyses.append(obj)
+        self._analyses.append(analysis)
 
         # Add to the notebook.
-        self.notebook.AddPage(self._analyses[-1].parent, analysis_name)
+        self.notebook.AddPage(self._analyses[-1], analysis_name)
 
         # Increment the number of analyses.
         self._num_analyses += 1

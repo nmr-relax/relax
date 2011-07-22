@@ -35,11 +35,11 @@ from generic_fns.pipes import cdp_name
 
 # relax GUI module imports.
 from gui import paths
-from gui.misc import int_to_gui, str_to_gui
+from gui.misc import add_border, int_to_gui, str_to_gui
 from gui.user_functions.base import UF_page
 
 
-class Base_frame:
+class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
     """The base class for all frames."""
 
     # Hard coded variables.
@@ -48,6 +48,43 @@ class Base_frame:
     spacer_horizontal = 5
     width_text = 240
     width_button = 100
+
+    def __init__(self, *args, **kwds):
+        """Initialise the scrolled window.
+
+        @param parent:  The parent wx element.
+        @type parent:   wx object
+        @keyword id:    The unique ID number.
+        @type id:       int
+        @keyword pos:   The position.
+        @type pos:      wx.Size object
+        @keyword size:  The size.
+        @type size:     wx.Size object
+        @keyword style: The style.
+        @type style:    int
+        @keyword name:  The name for the panel.
+        @type name:     unicode
+        @keyword gui:   The main GUI class.
+        @type gui:      gui.relax_gui.Main instance
+        """
+
+        # Execute the base class method.
+        super(Base_analysis, self).__init__(*args, **kwds)
+
+        # Pack a sizer into the panel.
+        box_main = wx.BoxSizer(wx.HORIZONTAL)
+        self.SetSizer(box_main)
+
+        # Build the central sizer, with borders.
+        box_centre = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
+
+        # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
+        self.build_main_box(box_centre)
+
+        # Set up the scrolled panel.
+        self.SetAutoLayout(True)
+        self.SetupScrolling(scroll_x=True, scroll_y=True)
+
 
     def add_button_open(self, box, parent, icon=paths.icon_16x16.open, text=" Change", fn=None, width=-1, height=-1):
         """Add a button for opening and changing files and directories.
@@ -101,7 +138,7 @@ class Base_frame:
         id = wx.NewId()
 
         # The button.
-        button = buttons.ThemedGenBitmapTextButton(self.parent, id, None, " Execute relax")
+        button = buttons.ThemedGenBitmapTextButton(self, id, None, " Execute relax")
         button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.gui.Bind(wx.EVT_BUTTON, method, button)
         sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
@@ -221,7 +258,7 @@ class Base_frame:
         """
 
         # Add the element.
-        self.spin_systems = self.add_text_sel_element(box, self.parent, text="Spin systems", button_text=" Spin editor", default=self.spin_count(), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True)
+        self.spin_systems = self.add_text_sel_element(box, self, text="Spin systems", button_text=" Spin editor", default=self.spin_count(), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True)
 
 
     def add_static_text(self, box, parent, text='', width=-1, height=-1):
@@ -265,7 +302,7 @@ class Base_frame:
         """
 
         # The title.
-        label = wx.StaticText(self.parent, -1, text)
+        label = wx.StaticText(self, -1, text)
 
         # The font properties.
         label.SetFont(self.gui.font_subtitle)
@@ -286,7 +323,7 @@ class Base_frame:
         """
 
         # The text.
-        label = wx.StaticText(self.parent, -1, text)
+        label = wx.StaticText(self, -1, text)
 
         # The font properties.
         label.SetFont(self.gui.font_normal)
@@ -327,7 +364,7 @@ class Base_frame:
         # Editable (change the colour if not).
         field.SetEditable(editable)
         if not editable:
-            colour = self.parent.GetBackgroundColour()
+            colour = self.GetBackgroundColour()
             field.SetOwnBackgroundColour(colour)
 
         # Add the control to the box.
@@ -425,7 +462,7 @@ class Base_frame:
         """
 
         # The title.
-        label = wx.StaticText(self.parent, -1, text)
+        label = wx.StaticText(self, -1, text)
 
         # The font properties.
         label.SetFont(self.gui.font_title)
@@ -455,7 +492,7 @@ class Base_frame:
         # Add the bitmaps.
         for i in range(len(bitmaps)):
             # The bitmap.
-            bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(bitmaps[i], wx.BITMAP_TYPE_ANY))
+            bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(bitmaps[i], wx.BITMAP_TYPE_ANY))
 
             # Add it.
             box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
