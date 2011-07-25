@@ -94,9 +94,13 @@ def missing_data(missing=[]):
         sys.stderr.write("Missing data:  %s\n" % msg)
 
 
-def question(msg, default=False):
+def question(msg, caption='', default=False):
     """A generic question box.
 
+    @param msg:         The text message to display.
+    @type msg:          str
+    @keyword caption:   The window title.
+    @type caption:      str
     @keyword default:   If True, the default button will be 'yes', otherwise it will be 'no'.
     @type default:      bool
     @return:            The answer.
@@ -110,8 +114,9 @@ def question(msg, default=False):
         style = wx.NO_DEFAULT
 
     # The dialog window.
-    dialog = wx.MessageDialog(None, message = msg, style = wx.YES_NO | style)
+    dialog = wx.MessageDialog(None, message=msg, caption=caption, style=wx.YES_NO|style)
 
+    # The answer.
     answer = False
     if dialog.ShowModal() == wx.ID_YES:
         answer = True
