@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Copyright 2004, Edward d'Auvergne
+# Copyright 2004-2011, Edward d'Auvergne
 
 from math import acos, cos, pi, sin
 
@@ -38,7 +38,7 @@ number = 20
 # U and V.
 u = []
 val = 1.0 / float(number)
-for i in xrange(number):
+for i in range(number):
     u.append(float(i) * val)
 
 
@@ -47,14 +47,14 @@ for i in xrange(number):
 
 theta = []
 phi = []
-for i in xrange(len(u)):
+for i in range(len(u)):
     theta.append(acos(2.0 * (u[i] + val/2.0) - 1.0))
     phi.append(2.0 * pi * u[i])
-    print "\ni: " + `i`
-    print "u: " + `u[i]`
-    print "v: " + `u[i] + val/2.0`
-    print "theta: " + `theta[i]`
-    print "phi: " + `phi[i]`
+    print("\ni: %s" % i)
+    print("u: %s" % u[i])
+    print("v: %s" % (u[i] + val/2.0))
+    print("theta: %s" % theta[i])
+    print("phi: %s" % phi[i])
 
 
 # Generate the vectors:
@@ -95,10 +95,10 @@ res_num = 1
 used = []
 
 # Loop over the vectors. 
-for i in xrange(len(vectors)):
+for i in range(len(vectors)):
     # Test if the vector has already been used.
     if vectors[i] in used:
-        print "Vector " + `vectors[i]` + " already used."
+        print("Vector %s already used." % vectors[i])
         continue
 
     # Nitrogen line.
