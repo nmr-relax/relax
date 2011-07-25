@@ -58,9 +58,9 @@ value.set(val=20e-12, param='te')
 model_free.select_model(model='m2')
 
 # Back calculate the relaxation data.
-relax_data.back_calc(ri_id='NOE_600', ri_type='NOE', frq=600e6)
-relax_data.back_calc(ri_id='R1_600',  ri_type='R1',  frq=600e6)
-relax_data.back_calc(ri_id='R2_600',  ri_type='R2',  frq=600e6)
+relax_data.back_calc(ri_id='NOE_900', ri_type='NOE', frq=900e6)
+relax_data.back_calc(ri_id='R1_900',  ri_type='R1',  frq=900e6)
+relax_data.back_calc(ri_id='R2_900',  ri_type='R2',  frq=900e6)
 relax_data.back_calc(ri_id='NOE_500', ri_type='NOE', frq=500e6)
 relax_data.back_calc(ri_id='R1_500',  ri_type='R1',  frq=500e6)
 relax_data.back_calc(ri_id='R2_500',  ri_type='R2',  frq=500e6)
@@ -73,8 +73,8 @@ for spin in spin_loop():
         if not hasattr(spin, 'ri_data_err'):
             spin.ri_data_err = {}
 
-        # 600 MHz NOE.
-        if ri_id == 'NOE_600':
+        # 900 MHz NOE.
+        if ri_id == 'NOE_900':
             spin.ri_data_err[ri_id] = 0.04
 
         # 500 MHz NOE.
@@ -86,9 +86,9 @@ for spin in spin_loop():
             spin.ri_data_err[ri_id] = spin.ri_data_bc[ri_id] * 0.02
 
 # Write the relaxation data to file.
-relax_data.write(ri_id='NOE_600', file='noe.600.out', force=True)
-relax_data.write(ri_id='R1_600',  file='r1.600.out', force=True)
-relax_data.write(ri_id='R2_600',  file='r2.600.out', force=True)
+relax_data.write(ri_id='NOE_900', file='noe.900.out', force=True)
+relax_data.write(ri_id='R1_900',  file='r1.900.out', force=True)
+relax_data.write(ri_id='R2_900',  file='r2.900.out', force=True)
 relax_data.write(ri_id='NOE_500', file='noe.500.out', force=True)
 relax_data.write(ri_id='R1_500',  file='r1.500.out', force=True)
 relax_data.write(ri_id='R2_500',  file='r2.500.out', force=True)
