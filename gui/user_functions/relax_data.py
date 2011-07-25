@@ -136,7 +136,7 @@ class Read_page(UF_page):
         self.ri_type = self.combo_box(sizer, "The relaxation data type:", choices=['R1', 'R2', 'NOE'], tooltip=self.uf._doc_args_dict['ri_type'])
 
         # The frequency.
-        self.frq = self.input_field(sizer, "The proton frequency in Hz:", tooltip=self.uf._doc_args_dict['frq'])
+        self.frq = self.input_field(sizer, "The exact spectrometer frequency in Hz:", tooltip=self.uf._doc_args_dict['frq'])
 
         # The spin ID restriction.
         self.spin_id = self.spin_id_element(sizer, desc="Restrict data loading to certain spins:")
