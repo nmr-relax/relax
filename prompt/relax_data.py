@@ -246,7 +246,7 @@ class Relax_data(User_fn_class):
     read._doc_args = [
         ["ri_id", "The relaxation data ID string.  This must be a unique identifier."],
         ["ri_type", "The relaxation data type, i.e. 'R1', 'R2', or 'NOE'."],
-        ["frq", "The spectrometer frequency in Hz."],
+        ["frq", "The exact proton frequency of the spectrometer in Hertz.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."],
         ["file", "The name of the file containing the relaxation data."],
         ["dir", "The directory where the file is located."],
         ["spin_id_col", "The spin ID string column (an alternative to the mol, res, and spin name and number columns)."],
