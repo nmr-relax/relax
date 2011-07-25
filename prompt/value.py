@@ -355,13 +355,14 @@ class Value(User_fn_class):
     _build_doc(set)
 
 
-    def write(self, param=None, file=None, dir=None, force=False):
+    def write(self, param=None, file=None, dir=None, bc=False, force=False):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "value.write("
             text = text + "param=" + repr(param)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
+            text = text + ", bc=" + repr(bc)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
@@ -369,10 +370,11 @@ class Value(User_fn_class):
         arg_check.is_str(param, 'parameter')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(bc, 'back calculated value flag')
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        value.write(param=param, file=file, dir=dir, force=force)
+        value.write(param=param, file=file, dir=dir, bc=bc, force=force)
 
     # The function doc info.
     write._doc_title = "Write spin specific data values to a file."
@@ -381,6 +383,7 @@ class Value(User_fn_class):
         ["param", "The parameter."],
         ["file", "The name of the file."],
         ["dir", "The directory name."],
+        ["bc", "A flag which if True will cause the back calculated values to be written to file rather than the actual data."],
         ["force", "A flag which, if set to True, will cause the file to be overwritten."]
     ]
     write._doc_desc = """

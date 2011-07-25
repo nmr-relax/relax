@@ -361,13 +361,14 @@ class Relax_data(User_fn_class):
     _build_doc(temp_control)
 
 
-    def write(self, ri_id=None, file=None, dir=None, force=False):
+    def write(self, ri_id=None, file=None, dir=None, bc=False, force=False):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.write("
             text = text + "ri_id=" + repr(ri_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
+            text = text + ", bc=" + repr(bc)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
@@ -375,10 +376,11 @@ class Relax_data(User_fn_class):
         arg_check.is_str(ri_id, 'relaxation data ID string')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(bc, 'back calculated data flag')
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        relax_data.write(ri_id=ri_id, file=file, dir=dir, force=force)
+        relax_data.write(ri_id=ri_id, file=file, dir=dir, bc=bc, force=force)
 
     # The function doc info.
     write._doc_title = "Write relaxation data to a file."
@@ -387,6 +389,7 @@ class Relax_data(User_fn_class):
         ["ri_id", "The relaxation data ID string."],
         ["file", "The name of the file."],
         ["dir", "The directory name."],
+        ["bc", "A flag which if True will cause the back calculated relaxation data to be written to file rather than the actual data."],
         ["force", "A flag which if True will cause the file to be overwritten."]
     ]
     write._doc_desc = """
