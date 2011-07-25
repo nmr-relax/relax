@@ -921,7 +921,7 @@ def temp_control(ri_id=None, method=None):
     cdp.exp_info.temp_control_setup(ri_id, method)
 
 
-def write(ri_id=None, file=None, dir=None, force=False):
+def write(ri_id=None, file=None, dir=None, bc=False, force=False):
     """Write relaxation data to a file.
 
     @keyword ri_id: The relaxation data ID string.
@@ -930,6 +930,8 @@ def write(ri_id=None, file=None, dir=None, force=False):
     @type file:     str
     @keyword dir:   The directory to write to.
     @type dir:      str or None
+    @keyword bc:    A flag which if True will cause the back-calculated relaxation data to be written.
+    @type bc:       bool
     @keyword force: A flag which if True will cause any pre-existing file to be overwritten.
     @type force:    bool
     """
