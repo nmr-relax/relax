@@ -725,6 +725,9 @@ class Local_tm_list:
             # Set the selected flag.
             self.select[index] = True
 
+        # Update the GUI element.
+        self.field.SetValue(list_to_gui(self.GetValue()))
+
 
     def modify(self, event):
         """Modify the model-free model selection.
