@@ -33,7 +33,7 @@ def pdb_line(file=None, atom_num=0, atom=None, res_num=0, res_name=None, vector=
 
 
 # Number of increments.
-number = 20
+number = 3
 
 # U and V.
 u = []
