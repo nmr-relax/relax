@@ -86,9 +86,9 @@ for spin in spin_loop():
             spin.ri_data_err[ri_id] = spin.ri_data_bc[ri_id] * 0.02
 
 # Write the relaxation data to file.
-relax_data.write(ri_id='NOE_900', file='noe.900.out', force=True)
-relax_data.write(ri_id='R1_900',  file='r1.900.out', force=True)
-relax_data.write(ri_id='R2_900',  file='r2.900.out', force=True)
-relax_data.write(ri_id='NOE_500', file='noe.500.out', force=True)
-relax_data.write(ri_id='R1_500',  file='r1.500.out', force=True)
-relax_data.write(ri_id='R2_500',  file='r2.500.out', force=True)
+relax_data.write(ri_id='NOE_900', file='noe.900.out', bc=True, force=True)
+relax_data.write(ri_id='R1_900',  file='r1.900.out',  bc=True, force=True)
+relax_data.write(ri_id='R2_900',  file='r2.900.out',  bc=True, force=True)
+relax_data.write(ri_id='NOE_500', file='noe.500.out', bc=True, force=True)
+relax_data.write(ri_id='R1_500',  file='r1.500.out',  bc=True, force=True)
+relax_data.write(ri_id='R2_500',  file='r2.500.out',  bc=True, force=True)
