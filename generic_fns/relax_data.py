@@ -92,7 +92,7 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
         cdp.ri_type[ri_id] = ri_type
         cdp.frq[ri_id] = frq
 
-    # Specific Ri back-calculate function setup.
+    # Specific Ri back calculate function setup.
     back_calculate = specific_fns.setup.get_specific_fn('back_calc_ri', pipes.get_type())
 
     # The IDs to loop over.
@@ -832,19 +832,25 @@ def return_data_desc(name):
         return 'The relaxation data errors'
 
 
-def return_value(spin, data_type):
+def return_value(spin, data_type, bc=False):
     """Return the value and error corresponding to 'data_type'.
 
     @param spin:        The spin container.
     @type spin:         SpinContainer instance
     @param data_type:   The relaxation data ID string.
     @type data_type:    str
+    @keyword bc:        A flag which if True will cause the back calculated relaxation data to be written.
+    @type bc:           bool
     """
 
     # Relaxation data.
     data = None
-    if hasattr(spin, 'ri_data') and spin.ri_data != None and data_type in spin.ri_data.keys():
+    if not bc and hasattr(spin, 'ri_data') and spin.ri_data != None and data_type in spin.ri_data.keys():
         data = spin.ri_data[data_type]
+
+    # Back calculated relaxation data
+    if bc and hasattr(spin, 'ri_data_bc') and spin.ri_data_bc != None and data_type in spin.ri_data_bc.keys():
+        data = spin.ri_data_bc[data_type]
 
     # Relaxation errors.
     error = None
@@ -930,7 +936,7 @@ def write(ri_id=None, file=None, dir=None, bc=False, force=False):
     @type file:     str
     @keyword dir:   The directory to write to.
     @type dir:      str or None
-    @keyword bc:    A flag which if True will cause the back-calculated relaxation data to be written.
+    @keyword bc:    A flag which if True will cause the back calculated relaxation data to be written.
     @type bc:       bool
     @keyword force: A flag which if True will cause any pre-existing file to be overwritten.
     @type force:    bool
@@ -952,4 +958,4 @@ def write(ri_id=None, file=None, dir=None, bc=False, force=False):
         file = ri_id + ".out"
 
     # Write the data.
-    value.write(param=ri_id, file=file, dir=dir, force=force, return_value=return_value)
+    value.write(param=ri_id, file=file, dir=dir, bc=bc, force=force, return_value=return_value)

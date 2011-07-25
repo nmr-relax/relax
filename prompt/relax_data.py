@@ -432,7 +432,7 @@ class Relax_data(User_fn_class):
 
         dir:  The directory name.
 
-        bc:  A flag which if True will cause the back-calculated relaxation data to be written to
+        bc:  A flag which if True will cause the back calculated relaxation data to be written to
         file rather than the actual data.
 
         force:  A flag which if True will cause the file to be overwritten.
@@ -459,7 +459,7 @@ class Relax_data(User_fn_class):
         arg_check.is_str(ri_id, 'relaxation label')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
-        arg_check.is_bool(bc, 'back-calculated data flag')
+        arg_check.is_bool(bc, 'back calculated data flag')
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
