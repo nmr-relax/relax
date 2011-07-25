@@ -1,62 +1,90 @@
-# Script for generating relaxation data for the 400 bond vectors in 'sphere.pdb'.
-# Each vector will have the model-free parameter values of S2 = 0.8, te = 20 ns, Rex = 0 1/s.
-# The diffusion tensor is isotropic with a correlation time of 10 ns.
+###############################################################################
+#                                                                             #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+#                                                                             #
+# This file is part of the program relax.                                     #
+#                                                                             #
+# relax is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# relax is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with relax; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+#                                                                             #
+###############################################################################
 
-# Create the run
-name = 'sphere'
-create_run(name, 'mf')
+"""Script for generating relaxation data for the bond vectors in 'sphere.pdb'.
 
-# Set the nucleus type to nitrogen.
-nuclei('N')
+Each vector will have the model-free parameter values of S2 = 0.8, te = 20 ns, Rex = 0 1/s.  The diffusion tensor is isotropic with a correlation time of 10 ns.
+"""
+
+# relax module imports.
+from generic_fns.mol_res_spin import spin_loop
+
+
+# Create the data pipe.
+pipe.create('sphere', 'mf')
+
+# Load a PDB file.
+structure.read_pdb('sphere.pdb')
+
+# Load the backbone amide nitrogen spins from the structure.
+structure.load_spins(spin_id='@N')
+
+# Load the NH vectors.
+structure.vectors(spin_id='@N', attached='H', ave=False)
 
 # Set the diffusion tensor to isotropic with tm set to 10 ns.
-diffusion_tensor.set(name, 10e-9)
-
-# Generate the sequence from the PDB file.
-pdb(name, 'sphere.pdb')
+diffusion_tensor.init(10e-9)
 
 # Set the CSA and bond lengths.
-value.set(name, value=-170e-6, data_type='CSA')
-value.set(name, value=1.02e-10, data_type='r')
+value.set(val=-172e-6, param='CSA')
+value.set(val=1.02e-10, param='r')
+value.set('15N', 'heteronucleus')
+value.set('1H', 'proton')
 
 # Set the model-free parameters.
-value.set(name, value=0.8, data_type='S2')
-value.set(name, value=20e-12, data_type='te')
+value.set(val=0.8, param='S2')
+value.set(val=20e-12, param='te')
 
 # Select model-free model m2.
-model_free.select_model(name, model='m2')
+model_free.select_model(model='m2')
 
 # Back calculate the relaxation data.
-relax_data.back_calc(name, ri_label='NOE', frq_label='600', frq=600e6)
-relax_data.back_calc(name, ri_label='R1', frq_label='600', frq=600e6)
-relax_data.back_calc(name, ri_label='R2', frq_label='600', frq=600e6)
-relax_data.back_calc(name, ri_label='NOE', frq_label='500', frq=500e6)
-relax_data.back_calc(name, ri_label='R1', frq_label='500', frq=500e6)
-relax_data.back_calc(name, ri_label='R2', frq_label='500', frq=500e6)
+relax_data.back_calc(ri_id='NOE_600', ri_type='600', frq=600e6)
+relax_data.back_calc(ri_id='R1_600',  ri_type='600', frq=600e6)
+relax_data.back_calc(ri_id='R2_600',  ri_type='600', frq=600e6)
+relax_data.back_calc(ri_id='NOE_500', ri_type='500', frq=500e6)
+relax_data.back_calc(ri_id='R1_500',  ri_type='500', frq=500e6)
+relax_data.back_calc(ri_id='R2_500',  ri_type='500', frq=500e6)
 
 # Generate the errors.
-for i in xrange(len(self.relax.data.res[name])):
+for spin in spin_loop():
     # Loop over the relaxation data.
-    for j in xrange(len(self.relax.data.res[name][i].relax_data)):
-        # Alias.
-        data = self.relax.data.res[name][i]
-
+    for ri_id in cdp.ri_ids:
         # 600 MHz NOE.
-        if data.ri_labels[j] == 'NOE' and data.frq_labels[data.remap_table[j]] == '600':
-            data.relax_error[j] = 0.04
+        if ri_id == 'NOE_600':
+            spin.ri_data_err[ri_id] = 0.04
 
         # 500 MHz NOE.
-        elif data.ri_labels[j] == 'NOE' and data.frq_labels[data.remap_table[j]] == '500':
-            data.relax_error[j] = 0.05
+        elif ri_id == 'NOE_500':
+            spin.ri_data_err[ri_id] = 0.05
 
         # All other data.
         else:
-            data.relax_error[j] = data.relax_data[j] * 0.02
+            spin.ri_data_err[ri_id] = spin.ri_data[ri_id] * 0.02
 
 # Write the relaxation data to file.
-relax_data.write(name, ri_label='NOE', frq_label='600', file='noe.600.out', force=1)
-relax_data.write(name, ri_label='R1', frq_label='600', file='r1.600.out', force=1)
-relax_data.write(name, ri_label='R2', frq_label='600', file='r2.600.out', force=1)
-relax_data.write(name, ri_label='NOE', frq_label='500', file='noe.500.out', force=1)
-relax_data.write(name, ri_label='R1', frq_label='500', file='r1.500.out', force=1)
-relax_data.write(name, ri_label='R2', frq_label='500', file='r2.500.out', force=1)
+relax_data.write(ri_id='NOE_600', ri_type='NOE', file='noe.600.out', force=True)
+relax_data.write(ri_id='R1_600',  ri_type='R1',  file='r1.600.out', force=True)
+relax_data.write(ri_id='R2_600',  ri_type='R2',  file='r2.600.out', force=True)
+relax_data.write(ri_id='NOE_500', ri_type='NOE', file='noe.500.out', force=True)
+relax_data.write(ri_id='R1_500',  ri_type='R1',  file='r1.500.out', force=True)
+relax_data.write(ri_id='R2_500',  ri_type='R2',  file='r2.500.out', force=True)
