@@ -276,6 +276,23 @@ def gui_to_str(string):
     return str(string)
 
 
+def list_to_gui(list):
+    """Convert the list into the GUI string.
+
+    @param list:    The Python list.
+    @type list:     list
+    @return:        The GUI string.
+    @rtype:         str
+    """
+
+    # No input.
+    if list == None:
+        list = ''
+
+    # Convert.
+    return unicode(list)
+
+
 def protected_exec(fn, *args, **kargs):
     """Apply the given function, catching all RelaxErrors.
 
