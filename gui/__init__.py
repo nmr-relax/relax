@@ -48,15 +48,19 @@ __all__ = ['about',
            'base_classes',
            'controller',
            'derived_wx_classes',
+           'errors',
            'filedialog',
+           'fonts',
            'menu',
            'message',
            'misc',
            'paths',
+           'pipe_editor',
            'references',
            'relax_gui',
            'relax_prompt',
-           'settings']
+           'settings',
+           'wizard']
 
 
 
