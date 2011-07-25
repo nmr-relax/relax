@@ -256,60 +256,6 @@ class Auto_model_free(Base_analysis):
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
 
 
-    def add_mf_models(self, box):
-        """Create and add the model-free model picking GUI element to the given box.
-
-        @param box:     The box element to pack the model-free model picking GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Add a label.
-        self.add_static_text(box, self, "Select model-free models (default = all):")
-
-        # Add some spacing.
-        box.AddSpacer(5)
-
-        # A horizontal sizer for the buttons.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The help text.
-        text = ["{}",
-                "{S2}",
-                "{S2, te}",
-                "{S2, Rex}",
-                "{S2, te, Rex}",
-                "{S2, S2f, ts}",
-                "{S2, tf, S2f, ts}",
-                "{S2, S2f, ts, Rex}",
-                "{S2, tf, S2f, ts, Rex}",
-                "{Rex}"]
-
-        # Loop over the 10 models.
-        for i in range(10):
-            # The model name.
-            name = "m%s" % i
-
-            # The button.
-            setattr(self, name, wx.ToggleButton(self, -1, name))
-
-            # Get the button.
-            button = getattr(self, name)
-
-            # Set the properties.
-            button.SetMinSize((20, 25))
-            button.SetFont(self.gui.font_button)
-            button.SetToolTipString(text[i])
-
-            # Default is on.
-            button.SetValue(1)
-
-            # Add the button.
-            sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
-
-        # Add the title and buttons to the main box.
-        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
-
-
     def assemble_data(self):
         """Assemble the data required for the auto-analysis.
 
@@ -432,7 +378,7 @@ class Auto_model_free(Base_analysis):
         box.AddSpacer(10)
 
         # Add the model-free models GUI element, with spacing.
-        self.add_mf_models(box)
+        self.mf_models = Model_list(self, box)
         box.AddSpacer(10)
 
         # The optimisation settings.
@@ -668,3 +614,69 @@ class Execute_mf(Execute):
                 ds.relax_gui.table_s2 = results_analysis[2]
                 ds.relax_gui.table_rex = results_analysis[3]
                 ds.relax_gui.table_te = results_analysis[4]
+
+
+
+class Model_list:
+    """The combo list GUI element."""
+
+    # Some class variables.
+    desc = "Model-free models:"
+
+    def __init__(self, parent, box):
+        """Build the combo box list widget for a list of list selections.
+
+        @param parent:      The parent GUI element.
+        @type parent:       wx object instance
+        @param sizer:       The sizer to put the combo box widget into.
+        @type sizer:        wx.Sizer instance
+        """
+
+        # Store some args.
+        self.parent = parent
+
+        # Add a label.
+        self.parent.add_static_text(box, self.parent, self.desc)
+
+        # Add some spacing.
+        box.AddSpacer(5)
+
+        # A horizontal sizer for the buttons.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The help text.
+        text = ["{}",
+                "{S2}",
+                "{S2, te}",
+                "{S2, Rex}",
+                "{S2, te, Rex}",
+                "{S2, S2f, ts}",
+                "{S2, tf, S2f, ts}",
+                "{S2, S2f, ts, Rex}",
+                "{S2, tf, S2f, ts, Rex}",
+                "{Rex}"]
+
+        # Loop over the 10 models.
+        for i in range(10):
+            # The model name.
+            name = "m%s" % i
+
+            # The button.
+            setattr(self, name, wx.ToggleButton(self.parent, -1, name))
+
+            # Get the button.
+            button = getattr(self, name)
+
+            # Set the properties.
+            button.SetMinSize((20, 25))
+            button.SetFont(self.gui.font_button)
+            button.SetToolTipString(text[i])
+
+            # Default is on.
+            button.SetValue(1)
+
+            # Add the button.
+            sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Add the title and buttons to the main box.
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
