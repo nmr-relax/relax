@@ -48,7 +48,7 @@ from gui.controller import Redirect_text
 from gui.filedialog import opendir
 from gui.fonts import font
 from gui.message import error_message, missing_data
-from gui.misc import gui_to_int, protected_exec
+from gui.misc import gui_to_int, list_to_gui, protected_exec
 from gui import paths
 
 
@@ -200,16 +200,23 @@ class Auto_model_free(Base_analysis):
             ds.relax_gui.analyses[data_index].pipe_name = pipe_name
 
             # Initialise the variables.
-            ds.relax_gui.analyses[data_index].model_toggle = [True]*10
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].mc_sim_num = None
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
+            ds.relax_gui.analyses[data_index].local_tm_models = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+            ds.relax_gui.analyses[data_index].mf_models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
             ds.relax_gui.analyses[data_index].max_iter = "30"
             ds.relax_gui.analyses[data_index].results_list = []
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
         self.data_index = data_index
+
+        # Backward compatibility.
+        if not hasattr(self.data, 'local_tm_models'):
+            self.data.local_tm_models = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+        if not hasattr(self.data, 'mf_models'):
+            self.data.mf_models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 
         # Register the method for updating the spin count for the completion of user functions.
         status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
@@ -274,12 +281,8 @@ class Auto_model_free(Base_analysis):
         data.pipe_name = self.data.pipe_name
 
         # The model-free models (do not change these unless absolutely necessary).
-        data.mf_models = []
-        data.local_tm_models = []
-        for i in range(len(self.data.model_toggle)):
-            if self.data.model_toggle[i]:
-                data.mf_models.append('m%i' % i)
-                data.local_tm_models.append('tm%i' % i)
+        data.local_tm_models = self.local_tm_models.GetValue()
+        data.mf_models = self.mf_models.GetValue()
 
         # A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
         data.exclude = None
@@ -378,9 +381,11 @@ class Auto_model_free(Base_analysis):
         self.relax_data = Relax_data_list(gui=self.gui, parent=self, box=box, id=str(self.data_index))
         box.AddSpacer(10)
 
+        # Add the local tau_m models GUI element, with spacing.
+        self.local_tm_models = Local_tm_list(self, box)
+
         # Add the model-free models GUI element, with spacing.
-        self.mf_models = Model_list(self, box)
-        box.AddSpacer(10)
+        self.mf_models = Mf_list(self, box)
 
         # The optimisation settings.
         self.grid_inc = self.add_spin_element(box, self, text="Grid search increments:", default=11, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.")
@@ -518,23 +523,17 @@ class Auto_model_free(Base_analysis):
         @type upload:       bool
         """
 
+        # The local tau_m models to use.
+        if upload:
+            self.data.local_tm_models = self.local_tm_models.GetValue()
+        else:
+            self.local_tm_models.SetValue(self.data.local_tm_models)
+
         # The model-free models to use.
         if upload:
-            # Loop over models m0 to m9.
-            for i in range(10):
-                # The object.
-                obj = getattr(self, 'm%i' % i)
-
-                # Upload to the store.
-                self.data.model_toggle[i] = obj.GetValue()
+            self.data.mf_models = self.mf_models.GetValue()
         else:
-            # Loop over models m0 to m9.
-            for i in range(10):
-                # The object.
-                obj = getattr(self, 'm%i' % i)
-
-                # Download from the store.
-                obj.SetValue(self.data.model_toggle[i])
+            self.mf_models.SetValue(self.data.mf_models)
 
         # The grid incs.
         if upload:
@@ -618,66 +617,154 @@ class Execute_mf(Execute):
 
 
 
-class Model_list:
-    """The combo list GUI element."""
+class Local_tm_list:
+    """The model-free model list GUI element."""
 
     # Some class variables.
-    desc = "Model-free models:"
+    desc = u'Local \u03C4m models:'
+    models = [
+        "tm0",
+        "tm1",
+        "tm2",
+        "tm3",
+        "tm4",
+        "tm5",
+        "tm6",
+        "tm7",
+        "tm8",
+        "tm9"
+    ]
+    params = [
+        "{local_tm}",
+        "{local_tm, S2}",
+        "{local_tm, S2, te}",
+        "{local_tm, S2, Rex}",
+        "{local_tm, S2, te, Rex}",
+        "{local_tm, S2, S2f, ts}",
+        "{local_tm, S2, tf, S2f, ts}",
+        "{local_tm, S2, S2f, ts, Rex}",
+        "{local_tm, S2, tf, S2f, ts, Rex}",
+        "{local_tm, Rex}"
+    ]
 
     def __init__(self, parent, box):
         """Build the combo box list widget for a list of list selections.
 
         @param parent:      The parent GUI element.
         @type parent:       wx object instance
-        @param sizer:       The sizer to put the combo box widget into.
-        @type sizer:        wx.Sizer instance
+        @param box:         The sizer to put the combo box widget into.
+        @type box:          wx.Sizer instance
         """
 
         # Store some args.
         self.parent = parent
 
-        # Add a label.
-        self.parent.add_static_text(box, self.parent, self.desc)
+        # Initialise all models as being selected.
+        self.select = []
+        for i in range(len(self.models)):
+            self.select.append(True)
 
-        # Add some spacing.
-        box.AddSpacer(5)
-
-        # A horizontal sizer for the buttons.
+        # Horizontal packing for this element.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        # The help text.
-        text = ["{}",
-                "{S2}",
-                "{S2, te}",
-                "{S2, Rex}",
-                "{S2, te, Rex}",
-                "{S2, S2f, ts}",
-                "{S2, tf, S2f, ts}",
-                "{S2, S2f, ts, Rex}",
-                "{S2, tf, S2f, ts, Rex}",
-                "{Rex}"]
+        # Add a label.
+        label = self.parent.add_static_text(sizer, self.parent, text=self.desc, width=self.parent.width_text)
 
-        # Loop over the 10 models.
-        for i in range(10):
-            # The model name.
-            name = "m%s" % i
+        # Spacer.
+        sizer.AddSpacer((self.parent.spacer_horizontal, -1))
 
-            # The button.
-            setattr(self, name, wx.ToggleButton(self.parent, -1, name))
+        # The text input field.
+        field = self.parent.add_text_control(sizer, self.parent, text=list_to_gui(self.GetValue()), editable=False)
 
-            # Get the button.
-            button = getattr(self, name)
+        # Spacer.
+        sizer.AddSpacer((self.parent.spacer_horizontal, -1))
 
-            # Set the properties.
-            button.SetMinSize((20, 25))
-            button.SetFont(font_button)
-            button.SetToolTipString(text[i])
+        # Add the button.
+        button_open = self.parent.add_button_open(sizer, self.parent, icon=paths.icon_16x16.flag_blue, text="Modify", fn=self.modify, width=self.parent.width_button, height=label.GetSize()[1]+8)
 
-            # Default is on.
-            button.SetValue(1)
-
-            # Add the button.
-            sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
-
-        # Add the title and buttons to the main box.
+        # Add the contents to the main box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
+
+
+    def GetValue(self):
+        """Return the list of model-free models.
+
+        @return:    The list of model-free models.
+        @rtype:     list of str
+        """
+
+        # Initialise.
+        model_list = []
+
+        # Add the models if they are selected.
+        for i in range(len(self.models)):
+            if self.select[i]:
+                model_list.append(self.models[i])
+
+        # Return the list.
+        return model_list
+
+
+    def SetValue(self, value):
+        """Store the list of model-free models.
+
+        @param value:   The list of model-free models.
+        @type value:    list of str
+        """
+
+        # First set all models as being deselected.
+        for i in range(len(self.models)):
+            self.select[i] = False
+
+        # Select all models in the list.
+        for model in value:
+            # The model index.
+            index = self.models.index(model)
+
+            # Set the selected flag.
+            self.select[index] = True
+
+
+    def modify(self, event):
+        """Modify the model-free model selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Initialise the
+        print "mod"
+
+
+
+class Mf_list(Local_tm_list):
+    """The model-free model list GUI element."""
+
+    # Some class variables.
+    desc = "Model-free models:"
+    models = [
+        "m0",
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6",
+        "m7",
+        "m8",
+        "m9"
+    ]
+    params = [
+        "{}",
+        "{S2}",
+        "{S2, te}",
+        "{S2, Rex}",
+        "{S2, te, Rex}",
+        "{S2, S2f, ts}",
+        "{S2, tf, S2f, ts}",
+        "{S2, S2f, ts, Rex}",
+        "{S2, tf, S2f, ts, Rex}",
+        "{Rex}"
+    ]
+
+
