@@ -34,6 +34,7 @@ from prompt.base_class import _strip_lead
 from status import Status; status = Status()
 
 # relax GUI imports.
+from gui.fonts import font
 from gui.misc import str_to_gui
 from gui.wizard import Wiz_page
 
@@ -188,11 +189,11 @@ class UF_page(Wiz_page):
 
             # Format.
             if type == 'title':
-                text_elements[-1].SetFont(self.gui.font_subtitle)
+                text_elements[-1].SetFont(font.subtitle)
             elif type == 'desc':
-                text_elements[-1].SetFont(self.gui.font_normal)
+                text_elements[-1].SetFont(font.normal)
             elif type == 'table':
-                text_elements[-1].SetFont(self.gui.font_8_modern)
+                text_elements[-1].SetFont(font.modern_8)
 
             # Wrap the text.
             text_elements[-1].Wrap(self._main_size - 20)

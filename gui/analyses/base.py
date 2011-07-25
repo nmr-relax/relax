@@ -35,6 +35,7 @@ from generic_fns.pipes import cdp_name
 
 # relax GUI module imports.
 from gui import paths
+from gui.fonts import font
 from gui.misc import add_border, int_to_gui, str_to_gui
 from gui.user_functions.base import UF_page
 
@@ -117,7 +118,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
 
         # The font and button properties.
         button.SetMinSize((width, height))
-        button.SetFont(self.gui.font_normal)
+        button.SetFont(font.normal)
 
         # Bind the click.
         self.gui.Bind(wx.EVT_BUTTON, fn, button)
@@ -184,7 +185,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
 
         # The font and control properties.
         field.SetMinSize((width, height))
-        field.SetFont(self.gui.font_normal)
+        field.SetFont(font.normal)
 
         # Add the control to the box.
         box.Add(field, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
@@ -289,7 +290,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
 
         # The font and label properties.
         label.SetMinSize((width, height))
-        label.SetFont(self.gui.font_normal)
+        label.SetFont(font.normal)
 
         # Add the label to the box.
         box.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
@@ -311,7 +312,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         label = wx.StaticText(self, -1, text)
 
         # The font properties.
-        label.SetFont(self.gui.font_subtitle)
+        label.SetFont(font.subtitle)
 
         # Add the subtitle to the box, with spacing.
         box.AddSpacer(20)
@@ -332,7 +333,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         label = wx.StaticText(self, -1, text)
 
         # The font properties.
-        label.SetFont(self.gui.font_normal)
+        label.SetFont(font.normal)
 
         # Add the text to the box, with spacing.
         box.AddSpacer(10)
@@ -365,7 +366,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
 
         # The font and control properties.
         field.SetMinSize((width, height))
-        field.SetFont(self.gui.font_normal)
+        field.SetFont(font.normal)
 
         # Editable (change the colour if not).
         field.SetEditable(editable)
@@ -471,7 +472,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         label = wx.StaticText(self, -1, text)
 
         # The font properties.
-        label.SetFont(self.gui.font_title)
+        label.SetFont(font.title)
 
         # Pack the title, with spacing.
         box.AddSpacer(10)

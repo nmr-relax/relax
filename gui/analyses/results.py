@@ -32,6 +32,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
 from gui.analyses.results_analysis import see_results
+from gui.fonts import font
 from gui.misc import add_border, gui_to_str, str_to_gui
 
 
@@ -129,7 +130,7 @@ class Results_viewer(wx.Frame):
         label = wx.StaticText(self, -1, "Analysis selection")
 
         # The font and label properties.
-        label.SetFont(self.gui.font_subtitle)
+        label.SetFont(font.subtitle)
 
         # Add the label to the analysis box.
         sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)

@@ -33,6 +33,7 @@ from status import Status; status = Status()
 from generic_fns.spectrum import replicated_flags, replicated_ids
 
 # relax GUI module imports.
+from gui.fonts import font
 from gui.misc import add_border, float_to_gui, str_to_gui
 from gui import paths
 
@@ -82,7 +83,7 @@ class Spectra_list:
 
         # A static box to hold all the widgets, and its sizer.
         stat_box = wx.StaticBox(self.panel, -1, "Spectra list")
-        stat_box.SetFont(self.gui.font_subtitle)
+        stat_box.SetFont(font.subtitle)
         sub_sizer = wx.StaticBoxSizer(stat_box, wx.VERTICAL)
 
         # Add the sizer to the static box and the static box to the main box.
@@ -216,8 +217,8 @@ class Spectra_list:
         self.grid.CreateGrid(1, 1)
 
         # Properties.
-        self.grid.SetDefaultCellFont(self.gui.font_normal)
-        self.grid.SetLabelFont(self.gui.font_normal_bold)
+        self.grid.SetDefaultCellFont(font.normal)
+        self.grid.SetLabelFont(font.normal_bold)
 
         # Set the row label widths.
         self.grid.SetRowLabelSize(self.col_label_width)

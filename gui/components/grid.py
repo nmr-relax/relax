@@ -36,6 +36,7 @@ from status import Status; status = Status()
 
 # relaxGUI module imports.
 from gui.filedialog import multi_openfile, opendir, openfile
+from gui.fonts import font
 from gui.message import error_message
 from gui.misc import add_border
 from gui import paths
@@ -250,7 +251,7 @@ class Grid_base:
 
         # A static box to hold all the widgets, and its sizer.
         stat_box = wx.StaticBox(self.parent, -1, "Peak lists")
-        stat_box.SetFont(self.gui.font_subtitle)
+        stat_box.SetFont(font.subtitle)
         sub_sizer = wx.StaticBoxSizer(stat_box, wx.VERTICAL)
 
         # Add the sizer to the static box and the static box to the main box.
@@ -360,8 +361,8 @@ class Grid_base:
         self.grid.SetColLabelValue(2, "No. of cycles")
 
         # Properties.
-        self.grid.SetDefaultCellFont(self.gui.font_normal)
-        self.grid.SetLabelFont(self.gui.font_normal_bold)
+        self.grid.SetDefaultCellFont(font.normal)
+        self.grid.SetLabelFont(font.normal_bold)
 
         # Text height.
         height = self.delay_time.GetSize()[1]

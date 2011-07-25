@@ -54,6 +54,7 @@ from gui.base_classes import Container
 from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
 from gui.filedialog import opendir, openfile, savefile
+from gui.fonts import font
 from gui.menu import Menu
 from gui.message import dir_message, error_message, question
 from gui import paths
@@ -98,7 +99,7 @@ class Main(wx.Frame):
         self.init_data()
 
         # Set up some standard interface-wide fonts.
-        self.setup_fonts()
+        font.setup()
 
         # The user function GUI elements.
         self.user_functions = User_functions(self)
@@ -348,24 +349,6 @@ class Main(wx.Frame):
     def reset_setting(self, event): #reset all settings
         if question('Do you realy want to change relax settings?'):
             ds.relax_gui.free_file_format.reset()
-
-
-    def setup_fonts(self):
-        """Initialise a series of fonts to be used throughout the GUI."""
-
-        # The fonts.
-        self.font_smaller =     wx.Font(6,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
-        self.font_small =       wx.Font(8,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
-        self.font_button =      wx.Font(8,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
-        self.font_normal =      wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
-        self.font_normal_bold = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD,   0, "Sans")
-        self.font_subtitle =    wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD,   0, "Sans")
-        self.font_14 =          wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
-        self.font_title =       wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
-
-        # Modern fixed-width fonts.
-        self.font_8_modern = wx.Font(8, wx.MODERN, wx.NORMAL, wx.NORMAL, 0)
-        self.font_10_modern = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, 0)
 
 
     def show_controller(self, event):

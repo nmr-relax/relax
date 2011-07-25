@@ -33,6 +33,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.components.menu import build_menu_item
+from gui.fonts import font
 from gui.message import question
 from gui.misc import add_border, gui_to_str, str_to_gui
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
@@ -223,8 +224,8 @@ class Pipe_editor(wx.Frame):
         self.grid.SetColLabelValue(3, "Analysis tab")
 
         # Properties.
-        self.grid.SetDefaultCellFont(self.gui.font_normal)
-        self.grid.SetLabelFont(self.gui.font_normal_bold)
+        self.grid.SetDefaultCellFont(font.normal)
+        self.grid.SetLabelFont(font.normal_bold)
 
         # Set the row label widths.
         self.grid.SetRowLabelSize(self.width_col_label)

@@ -46,6 +46,7 @@ from gui.base_classes import Container
 from gui.components.relax_data import Relax_data_list
 from gui.controller import Redirect_text
 from gui.filedialog import opendir
+from gui.fonts import font
 from gui.message import error_message, missing_data
 from gui.misc import gui_to_int, protected_exec
 from gui import paths
@@ -245,7 +246,7 @@ class Auto_model_free(Base_analysis):
         # Text.
         label_maxiter = wx.StaticText(self, -1, "Maximum interations")
         label_maxiter.SetMinSize((240, 17))
-        label_maxiter.SetFont(self.gui.font_normal)
+        label_maxiter.SetFont(font.normal)
         sizer.Add(label_maxiter, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spinner.
@@ -669,7 +670,7 @@ class Model_list:
 
             # Set the properties.
             button.SetMinSize((20, 25))
-            button.SetFont(self.gui.font_button)
+            button.SetFont(font_button)
             button.SetToolTipString(text[i])
 
             # Default is on.
