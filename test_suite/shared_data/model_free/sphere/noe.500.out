@@ -1,0 +1,11 @@
+
+# mol_name     res_num    res_name   spin_num   spin_name  value                error               
+sphere_mol1    1          GLY        1          N                          None                 0.05
+sphere_mol1    2          GLY        3          N                          None                 0.05
+sphere_mol1    3          GLY        5          N                          None                 0.05
+sphere_mol1    4          GLY        7          N                          None                 0.05
+sphere_mol1    5          GLY        9          N                          None                 0.05
+sphere_mol1    6          GLY        11         N                          None                 0.05
+sphere_mol1    7          GLY        13         N                          None                 0.05
+sphere_mol1    8          GLY        15         N                          None                 0.05
+sphere_mol1    9          GLY        17         N                          None                 0.05
