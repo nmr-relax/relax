@@ -58,17 +58,21 @@ value.set(val=20e-12, param='te')
 model_free.select_model(model='m2')
 
 # Back calculate the relaxation data.
-relax_data.back_calc(ri_id='NOE_600', ri_type='600', frq=600e6)
-relax_data.back_calc(ri_id='R1_600',  ri_type='600', frq=600e6)
-relax_data.back_calc(ri_id='R2_600',  ri_type='600', frq=600e6)
-relax_data.back_calc(ri_id='NOE_500', ri_type='500', frq=500e6)
-relax_data.back_calc(ri_id='R1_500',  ri_type='500', frq=500e6)
-relax_data.back_calc(ri_id='R2_500',  ri_type='500', frq=500e6)
+relax_data.back_calc(ri_id='NOE_600', ri_type='NOE', frq=600e6)
+relax_data.back_calc(ri_id='R1_600',  ri_type='R1',  frq=600e6)
+relax_data.back_calc(ri_id='R2_600',  ri_type='R2',  frq=600e6)
+relax_data.back_calc(ri_id='NOE_500', ri_type='NOE', frq=500e6)
+relax_data.back_calc(ri_id='R1_500',  ri_type='R1',  frq=500e6)
+relax_data.back_calc(ri_id='R2_500',  ri_type='R2',  frq=500e6)
 
 # Generate the errors.
 for spin in spin_loop():
     # Loop over the relaxation data.
     for ri_id in cdp.ri_ids:
+        # Set up the error relaxation data structure if needed.
+        if not hasattr(spin, 'ri_data_err'):
+            spin.ri_data_err = {}
+
         # 600 MHz NOE.
         if ri_id == 'NOE_600':
             spin.ri_data_err[ri_id] = 0.04
@@ -79,12 +83,12 @@ for spin in spin_loop():
 
         # All other data.
         else:
-            spin.ri_data_err[ri_id] = spin.ri_data[ri_id] * 0.02
+            spin.ri_data_err[ri_id] = spin.ri_data_bc[ri_id] * 0.02
 
 # Write the relaxation data to file.
-relax_data.write(ri_id='NOE_600', ri_type='NOE', file='noe.600.out', force=True)
-relax_data.write(ri_id='R1_600',  ri_type='R1',  file='r1.600.out', force=True)
-relax_data.write(ri_id='R2_600',  ri_type='R2',  file='r2.600.out', force=True)
-relax_data.write(ri_id='NOE_500', ri_type='NOE', file='noe.500.out', force=True)
-relax_data.write(ri_id='R1_500',  ri_type='R1',  file='r1.500.out', force=True)
-relax_data.write(ri_id='R2_500',  ri_type='R2',  file='r2.500.out', force=True)
+relax_data.write(ri_id='NOE_600', file='noe.600.out', force=True)
+relax_data.write(ri_id='R1_600',  file='r1.600.out', force=True)
+relax_data.write(ri_id='R2_600',  file='r2.600.out', force=True)
+relax_data.write(ri_id='NOE_500', file='noe.500.out', force=True)
+relax_data.write(ri_id='R1_500',  file='r1.500.out', force=True)
+relax_data.write(ri_id='R2_500',  file='r2.500.out', force=True)
