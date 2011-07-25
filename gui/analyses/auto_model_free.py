@@ -48,7 +48,7 @@ from gui.components.relax_data import Relax_data_list
 from gui.controller import Redirect_text
 from gui.filedialog import opendir
 from gui.fonts import font
-from gui.message import error_message, missing_data
+from gui.message import error_message, question, missing_data
 from gui.misc import add_border, gui_to_int, list_to_gui, protected_exec, str_to_gui
 from gui import paths
 
@@ -732,6 +732,11 @@ class Local_tm_list:
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # First state that this should not be done.
+        msg = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
+        if not question(msg, caption="Warning - do not change!", default=False):
+            return
 
         # Show the model selector window.
         if status.show_gui:
