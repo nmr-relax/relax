@@ -238,6 +238,10 @@ class dAuvergne_protocol:
 
         # Spin vars.
         for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Print.
             print("Checking spin '%s'." % spin_id)
 
