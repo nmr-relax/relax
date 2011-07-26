@@ -681,7 +681,7 @@ class Local_tm_list:
         sizer.AddSpacer((self.parent.spacer_horizontal, -1))
 
         # Add the button.
-        button_open = self.parent.add_button_open(sizer, self.parent, icon=paths.icon_16x16.flag_blue, text="Modify", fn=self.modify, width=self.parent.width_button, height=label.GetSize()[1]+8)
+        self.button = self.parent.add_button_open(sizer, self.parent, icon=paths.icon_16x16.flag_blue, text="Modify", fn=self.modify, width=self.parent.width_button, height=label.GetSize()[1]+8)
 
         # Add the contents to the main box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
@@ -748,6 +748,9 @@ class Local_tm_list:
 
         # Set the values.
         self.select = self.model_win.get_selection()
+
+        # Change the flag to red to indicate to the user that changing the models is a bad thing!
+        self.button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.flag_red, wx.BITMAP_TYPE_ANY))
 
         # Update the GUI element.
         self.field.SetValue(list_to_gui(self.GetValue()))
