@@ -750,7 +750,12 @@ class Local_tm_list:
         self.select = self.model_win.get_selection()
 
         # Change the flag to red to indicate to the user that changing the models is a bad thing!
-        self.button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.flag_red, wx.BITMAP_TYPE_ANY))
+        if False in self.select:
+            self.button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.flag_red, wx.BITMAP_TYPE_ANY))
+
+        # Otherwise set it to blue (in case all models are selected again).
+        else:
+            self.button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.flag_blue, wx.BITMAP_TYPE_ANY))
 
         # Update the GUI element.
         self.field.SetValue(list_to_gui(self.GetValue()))
