@@ -118,7 +118,13 @@ def question(msg, caption='', default=False):
 
     # The answer.
     answer = False
-    if dialog.ShowModal() == wx.ID_YES:
+
+    # No GUI, so always answer True.
+    if not status.show_gui:
+        answer = True
+
+    # Otherwise get the answer from the user.
+    elif dialog.ShowModal() == wx.ID_YES:
         answer = True
 
     # Return the answer.
