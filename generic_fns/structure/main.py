@@ -602,7 +602,10 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
 
         # Print out of modified spins.
         if verbosity:
-            print(("Extracted " + str(spin.num) + "-" + str(attached_name) + " vectors for " + repr(id) + '.'))
+            if spin.name:
+                print(("Extracted " + spin.name + "-" + str(attached_name) + " vectors for " + repr(id) + '.'))
+            else:
+                print(("Extracted " + str(spin.num) + "-" + str(attached_name) + " vectors for " + repr(id) + '.'))
 
     # Right, catch the problem of missing vectors to prevent massive user confusion!
     if no_vectors:
