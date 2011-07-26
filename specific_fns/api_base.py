@@ -149,6 +149,19 @@ class API_base:
         raise RelaxImplementError
 
 
+    def data_type(self, param=None):
+        """Return the type of data that the parameter should be.
+
+        @keyword param:     The parameter name.
+        @type param:        list of str
+        @return:            The type of the parameter.  I.e. the special Python type objects of int, float, str, bool, [str], {bool}, etc.
+        @rtype:             any type
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
     # Empty documentation string.
     default_value_doc = ""
     def default_value(self, param):
