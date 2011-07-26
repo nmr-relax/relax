@@ -63,23 +63,14 @@ class Status(object):
         # Execution lock object.
         self.exec_lock = Exec_lock()
 
+        # The auto-analysis status containers.
+        self.auto_analysis = {}
+
         # Testing mode flag.
         self.test_mode = False
 
         # The GUI flag.
         self.show_gui = False
-
-        # The Monte Carlo simulation status.
-        self.mc_number = None
-
-        # The dAuvergne_protocol automatic analysis status.
-        self.dAuvergne_protocol = Status_container()
-        self.dAuvergne_protocol.diff_model = None        # The global diffusion model.
-        self.dAuvergne_protocol.round = None             # The round of optimisation, i.e. the global iteration.
-        self.dAuvergne_protocol.mf_models = None         # The list of model-free models for optimisation, i.e. the global iteration.
-        self.dAuvergne_protocol.local_tm_models = None   # The list of model-free local tm models for optimisation, i.e. the global iteration.
-        self.dAuvergne_protocol.current_model = None     # The current model-free model.
-        self.dAuvergne_protocol.convergence = False      # The convergence of the global model.
 
         # A structure for skipped system and unit tests.
         self.skipped_tests = []
@@ -106,6 +97,26 @@ class Status(object):
 
         # The observer object for relax resets
         self.observers.reset = Observer()
+
+
+    def init_auto_analysis(self, name, type):
+        """Initialise a status container for an auto-analysis.
+
+        @param name:    The unique name of the auto-analysis.  This will act as a key.
+        @type name:     str.
+        @param type:    The type of auto-analysis.
+        @type type:     str
+        """
+
+        # Add a status container.
+        self.auto_analysis[name] = Status_container()
+
+        # Store the analysis type.
+        self.auto_analysis[name].type = type
+
+        # The Monte Carlo simulation status, if used.
+        self.mc_number = None
+
 
 
 class Status_container:
