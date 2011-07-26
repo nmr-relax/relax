@@ -137,10 +137,8 @@ class Relax_data_list:
         # First freeze the element, so that the GUI element doesn't update until the end.
         self.element.Freeze()
 
-        # Delete the rows and columns.
+        # Delete the previous data.
         self.element.DeleteAllItems()
-        for i in range(1, self.element.GetColumnCount()):
-            self.element.DeleteColumn(i)
 
         # Expand the number of rows to match the number of relaxation IDs, and add the IDs.
         n = 0
