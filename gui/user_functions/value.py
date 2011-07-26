@@ -126,6 +126,7 @@ class Set_page(UF_page):
 
         # The value (converted to the correct type).
         val_str = gui_to_str(self.val.GetValue())
+        print `val_str`
         val_type = self.data_type(param)
         try:
             val = apply(val_type, val_str)
