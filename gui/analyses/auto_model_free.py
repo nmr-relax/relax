@@ -318,6 +318,10 @@ class Auto_model_free(Base_analysis):
 
         # Spin vars.
         for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Test if the bond length has been set.
             if not hasattr(spin, 'r') or spin.r == None:
                 missing.append("Bond length data for spin '%s'." % spin_id)
