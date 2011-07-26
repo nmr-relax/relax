@@ -49,6 +49,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
     spacer_horizontal = 5
     width_text = 240
     width_button = 100
+    width_main_separator = 40
 
     def __init__(self, *args, **kwds):
         """Initialise the scrolled window.
@@ -525,7 +526,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         box.Add(left_box, 0, wx.ALL|wx.EXPAND|wx.ADJUST_MINSIZE, 0)
 
         # Central spacer.
-        box.AddSpacer(self.border)
+        box.AddSpacer(self.width_main_separator)
 
         # Build the right hand box and pack it next to the bitmap.
         right_box = self.build_right_box()
