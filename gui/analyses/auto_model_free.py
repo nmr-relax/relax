@@ -285,9 +285,6 @@ class Auto_model_free(Base_analysis):
         data.local_tm_models = self.local_tm_model_field.GetValue()
         data.mf_models = self.mf_model_field.GetValue()
 
-        # A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
-        data.exclude = None
-
         # Automatic looping over all rounds until convergence (must be a boolean value of True or False).
         data.conv_loop = True
 
