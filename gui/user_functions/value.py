@@ -121,7 +121,7 @@ class Set_page(UF_page):
         """Execute the user function."""
 
         # The parameter and value.
-        param = gui_to_str(self.param.GetValue())
+        param = self.param.GetClientData(self.param.GetSelection())
         val = gui_to_str(self.val.GetValue())
 
         # The spin ID.
