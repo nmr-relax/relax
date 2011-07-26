@@ -384,9 +384,11 @@ class Auto_model_free(Base_analysis):
 
         # Add the local tau_m models GUI element, with spacing.
         self.local_tm_model_field = Local_tm_list(self, box)
+        self.local_tm_model_field.SetValue(self.data.local_tm_models)
 
         # Add the model-free models GUI element, with spacing.
         self.mf_model_field = Mf_list(self, box)
+        self.mf_model_field.SetValue(self.data.mf_models)
 
         # The optimisation settings.
         self.grid_inc = self.add_spin_element(box, self, text="Grid search increments:", default=11, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.")
@@ -725,6 +727,9 @@ class Local_tm_list:
             # Set the selected flag.
             self.select[index] = True
 
+        # Update the button.
+        self.update_button()
+
         # Update the GUI element.
         self.field.SetValue(list_to_gui(self.GetValue()))
 
@@ -741,6 +746,9 @@ class Local_tm_list:
         if not question(msg, caption="Warning - do not change!", default=False):
             return
 
+        # Set the model selector window selections.
+        self.model_win.set_selection(self.select)
+
         # Show the model selector window.
         if status.show_gui:
             self.model_win.ShowModal()
@@ -749,6 +757,16 @@ class Local_tm_list:
         # Set the values.
         self.select = self.model_win.get_selection()
 
+        # Update the button.
+        self.update_button()
+
+        # Update the GUI element.
+        self.field.SetValue(list_to_gui(self.GetValue()))
+
+
+    def update_button(self):
+        """Update the button bitmap as needed."""
+
         # Change the flag to red to indicate to the user that changing the models is a bad thing!
         if False in self.select:
             self.button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.flag_red, wx.BITMAP_TYPE_ANY))
@@ -756,9 +774,6 @@ class Local_tm_list:
         # Otherwise set it to blue (in case all models are selected again).
         else:
             self.button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.flag_blue, wx.BITMAP_TYPE_ANY))
-
-        # Update the GUI element.
-        self.field.SetValue(list_to_gui(self.GetValue()))
 
 
 
@@ -882,6 +897,18 @@ class Model_sel_window(wx.Dialog):
 
         # Close the window.
         self.Hide()
+
+
+    def set_selection(self, select):
+        """Set the selection.
+
+        @param select:  The list of selections.
+        @type select:   list of bool
+        """
+
+        # Loop over the entries.
+        for i in range(self.model_list.GetItemCount()):
+            self.model_list.CheckItem(i, check=select[i])
 
 
 
