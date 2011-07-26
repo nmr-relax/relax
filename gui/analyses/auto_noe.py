@@ -44,7 +44,7 @@ from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.controller import Redirect_text
 from gui.filedialog import opendir
-from gui.message import error_message, missing_data
+from gui.message import error_message, Missing_data
 from gui.misc import gui_to_str, protected_exec, str_to_gui
 from gui import paths
 from gui.user_functions.noe import Spectrum_type_page
@@ -223,7 +223,7 @@ class Auto_noe(Base_analysis):
 
         # Missing data.
         if len(missing):
-            missing_data(missing)
+            Missing_data(missing)
             return
 
         # Display the relax controller (if not debugging).

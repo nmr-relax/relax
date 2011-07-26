@@ -44,7 +44,7 @@ from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.controller import Redirect_text
 from gui.filedialog import opendir
-from gui.message import error_message, missing_data
+from gui.message import error_message, Missing_data
 from gui.misc import gui_to_int, gui_to_str, int_to_gui, protected_exec, str_to_gui
 from gui import paths
 from gui.user_functions.relax_fit import Relax_time_page
@@ -237,7 +237,7 @@ class Auto_rx(Base_analysis):
 
         # Missing data.
         if len(missing):
-            missing_data(missing)
+            Missing_data(missing)
             return
 
         # Display the relax controller (if not debugging).

@@ -25,12 +25,14 @@
 from os import sep
 import sys
 import wx
+import wx.lib.scrolledpanel
 
 # relax module imports.
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from paths import IMAGE_PATH
+from gui.paths import IMAGE_PATH, icon_48x48
+import gui
 
 
 def dir_message(msg):
@@ -67,31 +69,6 @@ def exec_relax():
     else:
         check = False
     return check
-
-
-def missing_data(missing=[]):
-    """Message box GUI element for when a setup is incomplete or there is missing data.
-
-    @keyword missing:   The list of missing data types.
-    @type missing:      list of str
-    """
-
-    # The message.
-    msg = "The set up is incomplete.\n\n"
-    if not len(missing):
-        msg = msg + "Please check for missing data.\n"
-    else:
-        msg = msg + "Please check for the following missing information:\n"
-    for data in missing:
-        msg = msg + "    %s\n" % data
-
-    # The GUI element.
-    if status.show_gui:
-        wx.MessageBox(msg, caption='Missing data', style=wx.OK|wx.ICON_ERROR)
-
-    # Otherwise throw the error out to stderr.
-    else:
-        sys.stderr.write("Missing data:  %s\n" % msg)
 
 
 def question(msg, caption='', default=False):
@@ -137,3 +114,69 @@ def relax_run_ok(msg1):
     # Show the message box.
     if status.show_gui:
         wx.MessageBox(msg1, style = wx.OK)
+
+
+
+class Missing_data(wx.Dialog):
+    """Message box GUI element for when a setup is incomplete or there is missing data."""
+
+    def __init__(self, missing=[]):
+        """Set up the dialog.
+
+        @keyword missing:   The list of missing data types.
+        @type missing:      list of str
+        """
+
+        # Initialise the base class.
+        wx.Dialog.__init__(self, None, title='Missing data', style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
+
+        # Set the initial size.
+        self.SetSize((600, 400))
+
+        # A sizer for the dialog.
+        main_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.SetSizer(main_sizer)
+
+        # Build the central sizer, with borders.
+        sizer = gui.misc.add_border(main_sizer, border=10, packing=wx.HORIZONTAL)
+
+        # Add the graphic.
+        bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(icon_48x48.user_busy, wx.BITMAP_TYPE_ANY))
+        sizer.Add(bitmap)
+
+        # Spacing.
+        sizer.AddSpacer(20)
+
+        # A scrolled panel for the text.
+        panel = wx.lib.scrolledpanel.ScrolledPanel(self, -1)
+        panel.SetAutoLayout(1)
+        panel.SetupScrolling()
+        sizer.Add(panel, 1, wx.ALL|wx.EXPAND, 0)
+
+        # A sizer for the panel.
+        panel_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        panel.SetSizer(panel_sizer)
+
+        # The message.
+        msg = "The set up is incomplete.\n\n"
+        if not len(missing):
+            msg = msg + "Please check for missing data.\n"
+        else:
+            msg = msg + "Please check for the following missing information:\n"
+        for data in missing:
+            msg = msg + "    %s\n" % data
+
+        # Convert to a text element.
+        text = wx.StaticText(panel, -1, msg, style=wx.TE_MULTILINE)
+        panel_sizer.Add(text)
+
+        # Show the GUI element.
+        if status.show_gui:
+            self.ShowModal()
+
+        # Otherwise throw the error out to stderr.
+        else:
+            sys.stderr.write("Missing data:  %s\n" % msg)
+
+
+

@@ -49,7 +49,7 @@ from gui.components.relax_data import Relax_data_list
 from gui.controller import Redirect_text
 from gui.filedialog import opendir
 from gui.fonts import font
-from gui.message import error_message, question, missing_data
+from gui.message import error_message, question, Missing_data
 from gui.misc import add_border, gui_to_int, gui_to_str, list_to_gui, protected_exec, str_to_gui
 from gui import paths
 
@@ -477,7 +477,7 @@ class Auto_model_free(Base_analysis):
 
         # Missing data.
         if len(missing):
-            missing_data(missing)
+            Missing_data(missing)
             return
 
         # Get the mode.
