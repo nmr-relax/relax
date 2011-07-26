@@ -83,6 +83,7 @@ class I16x16:
         self.edit_delete =          path + 'actions'    + sep + 'edit-delete.png'
         self.exit =                 path + 'actions'    + sep + 'system-shutdown.png'
         self.flag_blue =            path + 'actions'    + sep + 'flag-blue.png'
+        self.flag_red =             path + 'actions'    + sep + 'flag-red.png'
         self.list_remove =          path + 'actions'    + sep + 'list-remove.png'
         self.load =                 path + 'actions'    + sep + 'arrow-right.png'
         self.manual =               path + 'mimetypes'  + sep + 'application-pdf.png'
