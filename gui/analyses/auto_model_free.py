@@ -282,8 +282,8 @@ class Auto_model_free(Base_analysis):
         data.pipe_name = self.data.pipe_name
 
         # The model-free models (do not change these unless absolutely necessary).
-        data.local_tm_models = self.local_tm_models.GetValue()
-        data.mf_models = self.mf_models.GetValue()
+        data.local_tm_models = self.local_tm_model_field.GetValue()
+        data.mf_models = self.mf_model_field.GetValue()
 
         # A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
         data.exclude = None
@@ -383,10 +383,10 @@ class Auto_model_free(Base_analysis):
         box.AddSpacer(10)
 
         # Add the local tau_m models GUI element, with spacing.
-        self.local_tm_models = Local_tm_list(self, box)
+        self.local_tm_model_field = Local_tm_list(self, box)
 
         # Add the model-free models GUI element, with spacing.
-        self.mf_models = Mf_list(self, box)
+        self.mf_model_field = Mf_list(self, box)
 
         # The optimisation settings.
         self.grid_inc = self.add_spin_element(box, self, text="Grid search increments:", default=11, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.")
@@ -523,15 +523,15 @@ class Auto_model_free(Base_analysis):
 
         # The local tau_m models to use.
         if upload:
-            self.data.local_tm_models = self.local_tm_models.GetValue()
+            self.data.local_tm_models = self.local_tm_model_field.GetValue()
         else:
-            self.local_tm_models.SetValue(self.data.local_tm_models)
+            self.local_tm_model_field.SetValue(self.data.local_tm_models)
 
         # The model-free models to use.
         if upload:
-            self.data.mf_models = self.mf_models.GetValue()
+            self.data.mf_models = self.mf_model_field.GetValue()
         else:
-            self.mf_models.SetValue(self.data.mf_models)
+            self.mf_model_field.SetValue(self.data.mf_models)
 
         # The grid incs.
         if upload:
