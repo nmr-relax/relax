@@ -28,6 +28,7 @@
 from os import sep
 import sys
 import wx
+import wx.lib.buttons
 import wx.lib.mixins.listctrl
 
 # relax module imports.
@@ -42,14 +43,13 @@ from gui.about import About_base
 from gui.analyses.base import Base_analysis
 from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import model_free_results, see_results
-from gui.analyses.select_model_calc import Select_tensor
 from gui.base_classes import Container
 from gui.components.relax_data import Relax_data_list
 from gui.controller import Redirect_text
 from gui.filedialog import opendir
 from gui.fonts import font
 from gui.message import error_message, question, missing_data
-from gui.misc import add_border, gui_to_int, list_to_gui, protected_exec, str_to_gui
+from gui.misc import add_border, gui_to_int, gui_to_str, list_to_gui, protected_exec, str_to_gui
 from gui import paths
 
 
@@ -218,6 +218,9 @@ class Auto_model_free(Base_analysis):
             self.data.local_tm_models = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
         if not hasattr(self.data, 'mf_models'):
             self.data.mf_models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+
+        # Initialise the mode selection window.
+        self.mode_win = Protocol_mode_sel_window()
 
         # Register the method for updating the spin count for the completion of user functions.
         status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
@@ -394,6 +397,9 @@ class Auto_model_free(Base_analysis):
         # Add maximum iteration selector.
         self.max_iter = self.add_spin_element(box, self, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100)
 
+        # The calculation mode.
+        self.mode = self.add_text_sel_element(box, self, text="Protocol mode:", default='Fully automated', tooltip="Select if the dauvergne_protocol analysis will be fully automated or whether the individual global models will be optimised one by one.", icon=paths.icon_16x16.system_run, fn=self.mode_dialog, editable=False, button=True)
+
         # Stretchable spacing (with a minimal space).
         box.AddSpacer(30)
         box.AddStretchSpacer()
@@ -403,24 +409,6 @@ class Auto_model_free(Base_analysis):
 
         # Return the box.
         return box
-
-
-    def choose_global_model(self, local_tm_complete=False):
-        """Select the individual global models to solve, or all automatically.
-
-        @keyword local_tm_complete: A flag specifying if the local tm global model has been solved already.
-        @type local_tm_complete:    bool
-        @return:                    The global model selected, or 'full' for all.
-        @rtype:                     str
-        """
-
-        # The dialog.
-        dlg = Select_tensor(None, -1, "", local_tm_flag=True)
-        if status.show_gui:
-            dlg.ShowModal()
-
-        # Return the choice.
-        return dlg.selection
 
 
     def delete(self):
@@ -457,21 +445,18 @@ class Auto_model_free(Base_analysis):
             missing_data(missing)
             return
 
-        # The global model.
-        which_model = self.choose_global_model(False)
-
-        # Cancel.
-        if which_model == None:
-            return
+        # Get the mode.
+        mode = gui_to_str(self.mode.GetValue())
+        print `mode`
 
         # Solve for all global models.
-        elif which_model == 'full':
+        if mode == 'Fully automated':
             # The global model list.
             data.global_models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', 'final']
 
         # Any global model selected.
         else:
-            data.global_models = [which_model]
+            data.global_models = [mode]
 
         # Display the relax controller (if not debugging).
         if not status.debug and status.show_gui:
@@ -488,6 +473,21 @@ class Auto_model_free(Base_analysis):
 
         # Terminate the event.
         event.Skip()
+
+
+    def mode_dialog(self, event):
+        """The calculation mode selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Show the model selector window.
+        if status.show_gui:
+            self.mode_win.ShowModal()
+
+        # Set the model.
+        self.mode.SetValue(str_to_gui(self.mode_win.select))
 
 
     def results_directory(self, event):
@@ -560,7 +560,6 @@ class Auto_model_free(Base_analysis):
 
 class Execute_mf(Execute):
     """The model-free analysis execution object."""
-
 
     def run_analysis(self):
         """Execute the calculation."""
@@ -818,7 +817,7 @@ class Model_sel_window(wx.Dialog):
         @type params:   list of str
         """
 
-        # Set up the frame.
+        # Set up the dialog.
         wx.Dialog.__init__(self, None, id=-1, title="Model-free model selector")
 
         # Initialise some values
@@ -924,3 +923,235 @@ class ModelSelListCtrl(wx.ListCtrl, wx.lib.mixins.listctrl.CheckListCtrlMixin):
 
         # Execute the CheckListCtrlMixin __init__() method.
         wx.lib.mixins.listctrl.CheckListCtrlMixin.__init__(self)
+
+
+
+class Protocol_mode_sel_window(wx.Dialog):
+    """The protocol mode selector window object."""
+
+    def __init__(self):
+        """Set up the window."""
+
+        # Set up the dialog.
+        wx.Dialog.__init__(self, None, id=-1, title="Protocol mode selection")
+
+        # Initialise some values
+        size_x = 600
+        size_y = 600
+        border = 10
+        self.select = 'Fully automated'
+
+        # Set the frame properties.
+        self.SetSize((size_x, size_y))
+        self.Centre()
+        self.SetFont(font.normal)
+
+        # The main box sizer.
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # Pack the sizer into the frame.
+        self.SetSizer(main_sizer)
+
+        # Build the central sizer, with borders.
+        sizer = add_border(main_sizer, border=border, packing=wx.HORIZONTAL)
+
+        # Build the automatic part.
+        self.build_auto(sizer)
+
+        # Line separator.
+        sizer.Add(wx.StaticLine(self, -1, style=wx.LI_VERTICAL), 0, wx.EXPAND|wx.ALL, border)
+
+        # Build the manual part.
+        self.build_manual(sizer)
+
+
+    def build_auto(self, sizer):
+        """Build the fully automated part of the window.
+
+        @param sizer:   The sizer to pack the elements into.
+        @type sizer:    wx.BoxSizer instance
+        """
+
+        # Create a vertical sizer for the elements.
+        sub_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # The title.
+        title = wx.StaticText(self, -1, "Fully automated")
+        title.SetFont(font.subtitle)
+        sub_sizer.Add(title, 0, wx.ALIGN_CENTRE_HORIZONTAL, 0)
+
+        # Spacing.
+        sub_sizer.AddStretchSpacer()
+
+        # The button.
+        button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icon_48x48.go_bottom, wx.BITMAP_TYPE_ANY))
+        button.SetMinSize((80, 80))
+        button.SetToolTipString("Perform a fully automated analysis, looping over global models I to V and terminating with the final run.  Please click on the 'About' button for more information.")
+        sub_sizer.Add(button, 3, wx.EXPAND, 0)
+        self.Bind(wx.EVT_BUTTON, self.select_full_analysis, button)
+
+        # Spacing.
+        sub_sizer.AddStretchSpacer()
+
+        # Add the sub-sizer.
+        sizer.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+
+    def build_manual(self, sizer):
+        """Build the manual part of the window.
+
+        @param sizer:   The sizer to pack the elements into.
+        @type sizer:    wx.BoxSizer instance
+        """
+
+        # Create a vertical sizer for the elements.
+        sub_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # The title.
+        title = wx.StaticText(self, -1, "Manual modes")
+        title.SetFont(font.subtitle)
+        sub_sizer.Add(title, 0, wx.ALIGN_CENTRE_HORIZONTAL, 0)
+
+        # Spacing.
+        sub_sizer.AddSpacer(10)
+
+        # The local_tm button.
+        button = wx.Button(self, -1, u"Local \u03C4m")
+        button.SetToolTipString("Optimise global model I, the local tm models.  Please click on the 'About' button for more information.")
+        sub_sizer.Add(button, 1, wx.EXPAND, 0)
+        self.Bind(wx.EVT_BUTTON, self.select_local_tm, button)
+
+        # The sphere button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Sphere"))
+        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'sphere.jpg', wx.BITMAP_TYPE_ANY))
+        button.SetToolTipString("Optimise global model II, the spherical diffusion model.  Please click on the 'About' button for more information.")
+        sub_sizer.Add(button, 1, wx.EXPAND, 0)
+        self.Bind(wx.EVT_BUTTON, self.select_sphere, button)
+
+        # The prolate spheroid button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Prolate spheroid"))
+        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'prolate.jpg', wx.BITMAP_TYPE_ANY))
+        button.SetToolTipString("Optimise global model III, the prolate spheroid diffusion model.  Please click on the 'About' button for more information.")
+        sub_sizer.Add(button, 1, wx.EXPAND, 0)
+        self.Bind(wx.EVT_BUTTON, self.select_prolate, button)
+
+        # The oblate spheroid button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Oblate spheroid"))
+        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'oblate.jpg', wx.BITMAP_TYPE_ANY))
+        button.SetToolTipString("Optimise global model IV, the oblate spheroid diffusion model.  Please click on the 'About' button for more information.")
+        sub_sizer.Add(button, 1, wx.EXPAND, 0)
+        self.Bind(wx.EVT_BUTTON, self.select_oblate, button)
+
+        # The ellipsoid button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Ellipsoid"))
+        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'ellipsoid.jpg', wx.BITMAP_TYPE_ANY))
+        button.SetToolTipString("Optimise global model V, the ellipsoid diffusion model.  Please click on the 'About' button for more information.")
+        sub_sizer.Add(button, 1, wx.EXPAND, 0)
+        self.Bind(wx.EVT_BUTTON, self.select_ellipsoid, button)
+
+        # The final button.
+        button = wx.Button(self, -1, str_to_gui("Final"))
+        button.SetToolTipString("The final run of the protocol.  Please click on the 'About' button for more information.")
+        sub_sizer.Add(button, 1, wx.EXPAND, 0)
+        self.Bind(wx.EVT_BUTTON, self.select_final, button)
+
+        # Add the sub-sizer.
+        sizer.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+
+    def select_ellipsoid(self, event):
+        """The ellipsoid global model has been selected.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the value.
+        self.select = 'ellipsoid'
+
+        # Close the dialog.
+        self.Close()
+
+
+    def select_final(self, event):
+        """The final stage of the protocol has been selected.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the value.
+        self.select = 'final'
+
+        # Close the dialog.
+        self.Close()
+
+
+    def select_full_analysis(self, event):
+        """The full analysis has been selected.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the value.
+        self.select = 'Fully automated'
+
+        # Close the dialog.
+        self.Close()
+
+
+    def select_local_tm(self, event):
+        """The local_tm global model has been selected.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the value.
+        self.select = 'local_tm'
+
+        # Close the dialog.
+        self.Close()
+
+
+    def select_prolate(self, event):
+        """The prolate global model has been selected.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the value.
+        self.select = 'prolate'
+
+        # Close the dialog.
+        self.Close()
+
+
+    def select_oblate(self, event):
+        """The oblate global model has been selected.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the value.
+        self.select = 'oblate'
+
+        # Close the dialog.
+        self.Close()
+
+
+    def select_sphere(self, event):
+        """The sphere global model has been selected.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the value.
+        self.select = 'sphere'
+
+        # Close the dialog.
+        self.Close()

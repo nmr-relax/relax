@@ -52,8 +52,7 @@ __all__ = ['auto_model_free',
            'base',
            'relax_control',
            'results_analysis',
-           'results',
-           'select_model_calc']
+           'results']
 
 
 class Analysis_controller:
