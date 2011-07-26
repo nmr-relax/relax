@@ -110,6 +110,8 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         @type width:        int
         @keyword height:    The minimum height of the control.
         @type height:       int
+        @return:            The button.
+        @rtype:             wx.lib.buttons.ThemedGenBitmapTextButton instance
         """
 
         # The button.
@@ -125,6 +127,9 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
 
         # Add the button to the box.
         box.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Return the button.
+        return button
 
 
     def add_execute_relax(self, box, method):
