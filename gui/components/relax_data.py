@@ -40,9 +40,6 @@ from gui import paths
 class Relax_data_list:
     """The GUI element for listing loaded relaxation data."""
 
-    # Class variables.
-    col_label_width = 40
-
     def __init__(self, gui=None, parent=None, box=None, id=None, buttons=True):
         """Build the relaxation data list GUI element.
 
@@ -92,19 +89,18 @@ class Relax_data_list:
         if buttons:
             self.add_buttons(box_centre)
 
-        # Initialise the grid.
+        # Initialise the element.
         box_centre.AddSpacer(self.spacing)
-        self.init_grid(box_centre)
-        box_centre.AddSpacer(self.spacing)
+        self.init_element(box_centre)
 
-        # Build the grid.
-        self.build_grid()
+        # Build the element.
+        self.build_element()
 
         # Initialise observer name.
         self.name = 'relaxation data list: %s' % id
 
-        # Register the grid for updating when a user function completes.
-        status.observers.gui_uf.register(self.name, self.build_grid)
+        # Register the element for updating when a user function completes.
+        status.observers.gui_uf.register(self.name, self.build_element)
 
 
     def add_buttons(self, sizer):
@@ -135,49 +131,34 @@ class Relax_data_list:
         button.SetToolTipString("Delete loaded relaxation data from the relax data store.")
 
 
-    def build_grid(self):
+    def build_element(self):
         """Build the relaxation data listing grid."""
 
-        # First freeze the grid, so that the GUI element doesn't update until the end.
-        self.grid.Freeze()
+        # First freeze the element, so that the GUI element doesn't update until the end.
+        self.element.Freeze()
 
-        # Delete the rows, leaving a single row.
-        self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
-
-        # Clear the contents of the first row.
-        for i in range(self.grid.GetNumberCols()):
-            self.grid.SetCellValue(0, i, str_to_gui(""))
+        # Delete the rows and columns.
+        self.element.DeleteAllItems()
+        for i in range(1, self.element.GetColumnCount()):
+            self.element.DeleteColumn(i)
 
         # Expand the number of rows to match the number of relaxation IDs, and add the IDs.
+        n = 0
         if hasattr(cdp, 'ri_ids'):
             # The number of IDs.
             n = len(cdp.ri_ids)
-
-            # Append the appropriate number of rows.
-            self.grid.AppendRows(numRows=n-1)
 
             # Add all the data.
             for i in range(n):
                 # Set the IDs.
                 id = cdp.ri_ids[i]
-                self.grid.SetCellValue(i, 0, str_to_gui(id))
+                self.element.InsertStringItem(i, str_to_gui(id))
 
                 # Set the data types.
-                self.grid.SetCellValue(i, 1, str_to_gui(cdp.ri_type[id]))
+                self.element.SetStringItem(i, 1, str_to_gui(cdp.ri_type[id]))
 
                 # Set the frequencies.
-                self.grid.SetCellValue(i, 2, float_to_gui(cdp.frq[id]))
-
-        # Set the grid properties once finalised.
-        for i in range(self.grid.GetNumberRows()):
-            # Row properties.
-            self.grid.SetRowSize(i, 27)
-
-            # Loop over the columns.
-            for j in range(self.grid.GetNumberCols()):
-                # Cell properties.
-                self.grid.SetReadOnly(i, j)
-                self.grid.SetCellBackgroundColour(i, j, "White")
+                self.element.SetStringItem(i, 2, float_to_gui(cdp.frq[id]))
 
         # Size the columns.
         self.size_cols()
@@ -186,8 +167,13 @@ class Relax_data_list:
         event = wx.PyCommandEvent(wx.EVT_SIZE.typeId, self.parent.GetId())
         wx.PostEvent(self.parent.GetEventHandler(), event)
 
+        # Set the minimum height.
+        height = self.height_base + self.height_char * n
+        self.element.SetMinSize((-1, height))
+        self.element.Layout()
+
         # Unfreeze.
-        self.grid.Thaw()
+        self.element.Thaw()
 
 
     def delete(self):
@@ -197,47 +183,37 @@ class Relax_data_list:
         status.observers.gui_uf.unregister(self.name)
 
 
-    def init_grid(self, sizer):
-        """Initialise the grid for the relaxation data listing.
+    def init_element(self, sizer):
+        """Initialise the GUI element for the relaxation data listing.
 
-        @param box:     The sizer element to pack the grid into.
+        @param box:     The sizer element to pack the element into.
         @type box:      wx.BoxSizer instance
         """
 
-        # Grid of peak list file names and relaxation time.
-        self.grid = wx.grid.Grid(self.panel, -1)
+        # List of relaxation data.
+        self.element = wx.ListCtrl(self.panel, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
 
-        # Initialise to a single row and 3 columns.
-        self.grid.CreateGrid(1, 3)
-
-        # Set the headers.
-        self.grid.SetColLabelValue(0, "Relaxation data ID")
-        self.grid.SetColLabelValue(1, "Data type")
-        self.grid.SetColLabelValue(2, "Frequency (Hz)")
+        # Initialise to 3 columns.
+        self.element.InsertColumn(0, str_to_gui("Relaxation data ID"))
+        self.element.InsertColumn(1, str_to_gui("Data type"))
+        self.element.InsertColumn(2, str_to_gui("Frequency (Hz)"))
 
         # Properties.
-        self.grid.SetDefaultCellFont(font.normal)
-        self.grid.SetLabelFont(font.normal_bold)
+        self.element.SetFont(font.normal)
 
-        # Set the row label widths.
-        self.grid.SetRowLabelSize(self.col_label_width)
-
-        # No cell resizing allowed.
-        self.grid.EnableDragColSize(False)
-        self.grid.EnableDragRowSize(False)
-
-        # Set the cell colour to the background panel colour to remove visual artifacts.
-        self.grid.SetDefaultCellBackgroundColour(self.parent.GetBackgroundColour())
+        # Store the base heights.
+        self.height_base = self.element.GetSize()[1]
+        self.height_char = self.element.GetCharHeight()
 
         # Bind some events.
-        self.grid.Bind(wx.EVT_SIZE, self.resize)
+        self.element.Bind(wx.EVT_SIZE, self.resize)
 
-        # Add grid to sizer.
-        sizer.Add(self.grid, 0, wx.ALL|wx.EXPAND, 0)
+        # Add list to sizer.
+        sizer.Add(self.element, 0, wx.ALL|wx.EXPAND, 0)
 
 
     def resize(self, event):
-        """Catch the resize to allow the grid to be resized.
+        """Catch the resize to allow the element to be resized.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -253,18 +229,15 @@ class Relax_data_list:
     def size_cols(self):
         """Set the column sizes."""
 
-        # The grid size.
-        x, y = self.grid.GetSize()
-
-        # The expandable column width.
-        width = x - self.col_label_width - 20
+        # The element size.
+        x, y = self.element.GetSize()
 
         # Number of columns.
-        n = self.grid.GetNumberCols()
+        n = self.element.GetColumnCount()
 
         # Set to equal sizes.
-        width = int(width / n)
+        width = int(x / n)
 
         # Set the column sizes.
         for i in range(n):
-            self.grid.SetColSize(i, width)
+            self.element.SetColumnWidth(i, width)
