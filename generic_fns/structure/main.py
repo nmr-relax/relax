@@ -232,7 +232,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
         res_cont = None
         if res_num:
             # Update the ID string
-            id = id + ':' + res_num
+            id = id + ':' + repr(res_num)
 
             # Get the corresponding residue container.
             res_cont = return_residue(id)
@@ -533,7 +533,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
             continue
 
         # The spin identification string.  The residue name and spin num is not included to allow molecules with point mutations to be used as different models.
-        id = generate_spin_id(res_num=res_num, res_name=None, spin_name=spin.name)
+        id = generate_spin_id(res_num=res_num, res_name=None, spin_name=spin.name, spin_num=spin.num)
 
         # Test that the spin number or name are set (one or both are essential for the identification of the atom).
         if spin.num == None and spin.name == None:
@@ -548,7 +548,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
                 continue
 
         # Get the bond info.
-        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(attached_atom=attached, model_num=model, res_num=res_num, spin_name=spin.name, return_name=True, return_warnings=True)
+        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(attached_atom=attached, model_num=model, res_num=res_num, spin_name=spin.name, spin_num=spin.num, return_name=True, return_warnings=True)
 
         # No attached atom.
         if not bond_vectors:
@@ -602,7 +602,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
 
         # Print out of modified spins.
         if verbosity:
-            print(("Extracted " + spin.name + "-" + attached_name + " vectors for " + repr(id) + '.'))
+            print(("Extracted " + str(spin.num) + "-" + str(attached_name) + " vectors for " + repr(id) + '.'))
 
     # Right, catch the problem of missing vectors to prevent massive user confusion!
     if no_vectors:
