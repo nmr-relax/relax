@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,11 +29,11 @@ from string import lower
 from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from float import floatAsByteArray
 from info import Info_box; info = Info_box()
-from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
-from generic_fns import pipes
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, spin_index_loop, spin_loop
+from generic_fns.pipes import cdp_name, get_pipe, has_pipe, switch
 from generic_fns import selection
 from prompt.interpreter import Interpreter
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
 from relax_io import DummyFileObject
 from status import Status; status = Status()
 
@@ -113,45 +113,24 @@ __doc__ = to_docstring(doc)
 
 
 class dAuvergne_protocol:
-    def __init__(self, save_dir=None, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], pdb_file=None, seq_args=None, het_name=None, attached_name='H', relax_data=None, unres=None, exclude=None, bond_length=None, csa=None, hetnuc=None, proton='1H', grid_inc=11, min_algor='newton', mc_num=500, max_iter=None, user_fns=None, conv_loop=True):
+    def __init__(self, pipe_name=None, results_dir=None, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], grid_inc=11, min_algor='newton', mc_sim_num=500, max_iter=None, user_fns=None, conv_loop=True):
         """Perform the full model-free analysis protocol of d'Auvergne and Gooley, 2008b.
 
-        @keyword save_dir:          The directory, where files are saved in.
-        @type save_dir:             str
+        @keyword pipe_name:         The name of the data pipe containing the sequence info.  This data pipe should have all values set including the CSA value, the bond length, the heteronucleus name and proton name.  It should also have all relaxation data loaded.
+        @keyword results_dir:       The directory, where files are saved in.
+        @type results_dir:          str
         @keyword diff_model:        The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.
         @type diff_model:           str
         @keyword mf_models:         The model-free models.
         @type mf_models:            list of str
         @keyword local_tm_models:   The model-free models.
         @type local_tm_models:      list of str
-        @keyword pdb_file:          The PDB file (set this to None if no structure is available).
-        @type pdb_file:             None or str
-        @keyword seq_args:          The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        @type seq_args:             list of lists of [str, None or str, None or int, None or int, None or int, None or int, None or int, None or int, None or int, None or str]
-        @keyword het_name:          The heteronucleus atom name corresponding to that of the PDB file (used if the spin name is not in the sequence data).
-        @type het_name:             None or str
-        @keyword attached_name:     The name of the proton attached to the heteronucleus.
-        @type attached_name:        str
-        @keyword relax_data:        The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
-        @type relax_data:           list of lists of [str, str, float, str, None or str, None or int, None or int, None or int, None or int, None or int, None or int, None or int, None or str]
-        @keyword unres:             The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
-        @type unres:                None or str
-        @keyword exclude:           A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
-        @type exclude:              None or str
-        @keyword bond_length:       The bond length in metres.
-        @type bond_length:          float
-        @keyword csa:               The chemical shift anisotropy value (multiply by 1e-6 to convert out of ppm).
-        @type csa:                  float
-        @keyword hetnuc:            The heteronucleus type, i.e. '15N', '13C', etc.
-        @type hetnuc:               str
-        @keyword proton:            The proton type, i.e. '1H'.
-        @type proton:               str
         @keyword grid_inc:          The grid search size (the number of increments per dimension).
         @type grid_inc:             int
         @keyword min_algor:         The minimisation algorithm (in most cases this should not be changed).
         @type min_algor:            str
-        @keyword mc_num:            The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        @type mc_num:               int
+        @keyword mc_sim_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        @type mc_sim_num:           int
         @keyword max_iter:          The maximum number of iterations for the global iteration.  Set to None, then the algorithm iterates until convergence.
         @type max_iter:             int or None.
         @keyword user_fns:          A dictionary of replacement user functions.  These will overwrite the standard user functions.  The key should be the name of the user function or user function class and the value should be the function or class instance.
@@ -164,39 +143,31 @@ class dAuvergne_protocol:
         status.exec_lock.acquire('auto dauvergne protocol')
 
         # Store the args.
+        self.pipe_name = pipe_name
         self.diff_model = diff_model
         self.mf_models = mf_models
         self.local_tm_models = local_tm_models
-        self.pdb_file = pdb_file
-        self.seq_args = seq_args
-        self.het_name = het_name
-        self.attached_name = attached_name
-        self.relax_data = relax_data
-        self.unres = unres
-        self.exclude = exclude
-        self.bond_length = bond_length
-        self.csa = csa
-        self.hetnuc = hetnuc
-        self.proton = proton
         self.grid_inc = grid_inc
         self.min_algor = min_algor
-        self.mc_num = mc_num
+        self.mc_sim_num = mc_sim_num
         self.max_iter = max_iter
         self.conv_loop = conv_loop
 
         # Project directory (i.e. directory containing the model-free model results and the newly generated files)
-        if save_dir:
-            self.save_dir = save_dir + sep
+        if results_dir:
+            self.results_dir = results_dir + sep
         else:
-            self.save_dir = getcwd() + sep
+            self.results_dir = getcwd() + sep
 
-        # User variable checks.
+        # Data checks.
         self.check_vars()
 
+        # Set the data pipe to the current data pipe.
+        if self.pipe_name != cdp_name():
+            switch(self.pipe_name)
+
         # Some info for the status.
-        status.dAuvergne_protocol.diff_model = diff_model
-        status.dAuvergne_protocol.mf_models = mf_models
-        status.dAuvergne_protocol.local_tm_models = local_tm_models
+        self.status_setup()
 
         # Initialise the convergence data structures.
         self.conv_data = Container()
@@ -253,77 +224,46 @@ class dAuvergne_protocol:
             if self.local_tm_models[i] not in local_tm_models:
                 raise RelaxError("The self.local_tm_models user variable '%s' is incorrectly set.  It must be one of %s." % (self.local_tm_models, local_tm_models))
 
-        # PDB file.
-        if self.pdb_file and not isinstance(self.pdb_file, str):
-            raise RelaxError("The pdb_file user variable '%s' is incorrectly set.  It should either be a string or None." % self.pdb_file)
-
         # Sequence data.
-        if not isinstance(self.seq_args, list):
-            raise RelaxError("The seq_args user variable '%s' must be a list." % self.seq_args)
-        if len(self.seq_args) != 8:
-            raise RelaxError("The seq_args user variable '%s' must be a list with eight elements." % self.seq_args)
-        if not isinstance(self.seq_args[0], str):
-            raise RelaxError("The file name component of the seq_args user variable '%s' must be a string." % self.seq_args)
-        for i in range(1, 8):
-            if self.seq_args[i] != None and not isinstance(self.seq_args[i], int):
-                raise RelaxError("The column components of the seq_args user variable '%s' must be either None or integers." % self.seq_args)
-
-        # Atom name.
-        if not isinstance(self.het_name, str):
-            raise RelaxError("The het_name heteronucleus atom name user variable '%s' must be a string." % self.het_name)
-        if not isinstance(self.attached_name, str):
-            raise RelaxError("The attached_name proton atom name user variable '%s' must be a string." % self.attached_name)
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError(self.pipe_name)
 
         # Relaxation data.
-        if not isinstance(self.relax_data, list):
-            raise RelaxError("The relax_data user variable '%s' must be a list." % self.relax_data)
-        labels = []
-        for i in range(len(self.relax_data)):
-            if self.relax_data[i][1] not in labels:
-                labels.append(self.relax_data[i][1])
-            if len(self.relax_data[i]) != 13:
-                raise RelaxError("The relax_data user variable component '%s' must be a list of 13 elements." % self.relax_data[i])
-            if not isinstance(self.relax_data[i][0], str):
-                raise RelaxError("The data type component '%s' of the relax_data user variable must be a string." % self.relax_data[i][0])
-            if not isinstance(self.relax_data[i][1], str):
-                raise RelaxError("The frequency label component '%s' of the relax_data user variable must be a string." % self.relax_data[i][1])
-            if not isinstance(self.relax_data[i][2], float):
-                raise RelaxError("The frequency component '%s' of the relax_data user variable must be a floating point number." % self.relax_data[i][2])
-            if not isinstance(self.relax_data[i][3], str):
-                raise RelaxError("The file name component '%s' of the relax_data user variable must be a string." % self.relax_data[i][3])
-            for j in range(4, 13):
-                if self.relax_data[i][j] != None and not isinstance(self.relax_data[i][j], int):
-                    raise RelaxError("The column components of the relax_data user variable '%s' must be either None or integers." % self.relax_data[i])
+        if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+            raise RelaxNoRiError(ri_id)
 
         # Insufficient data.
-        if len(self.relax_data) <= 3:
+        if len(cdp.ri_ids) <= 3:
             raise RelaxError("Insufficient relaxation data, 4 or more data sets are essential for the execution of this script.")
-        if len(labels) == 1:
-            raise RelaxError("Relaxation data at multiple magnetic field strengths is essential for this analysis.")
-
-        # Unresolved and exclude files. FIXME
-        if self.unres and not isinstance(self.unres, str) and not isinstance(self.unres, DummyFileObject):
-            raise RelaxError("The unres user variable '%s' is incorrectly set.  It should either be a string or None." % self.unres)
-        if self.exclude and not isinstance(self.exclude, str):
-            raise RelaxError("The exclude user variable '%s' is incorrectly set.  It should either be a string or None." % self.exclude)
 
         # Spin vars.
-        if not isinstance(self.bond_length, float):
-            raise RelaxError("The bond_length user variable '%s' is incorrectly set.  It should be a floating point number." % self.bond_length)
-        if not isinstance(self.csa, float):
-            raise RelaxError("The csa user variable '%s' is incorrectly set.  It should be a floating point number." % self.csa)
-        if not isinstance(self.hetnuc, str):
-            raise RelaxError("The hetnuc user variable '%s' is incorrectly set.  It should be a string." % self.hetnuc)
-        if not isinstance(self.proton, str):
-            raise RelaxError("The proton user variable '%s' is incorrectly set.  It should be a string." % self.proton)
+        for spin, spin_id in spin_loop(return_id=True):
+            # Print.
+            print("Checking spin '%s'." % spin_id)
+
+            # Test if the bond length has been set.
+            if not hasattr(spin, 'r') or spin.r == None:
+                raise RelaxNoValueError("bond length")
+
+            # Test if the CSA value has been set.
+            if not hasattr(spin, 'csa') or spin.csa == None:
+                raise RelaxNoValueError("CSA")
+
+            # Test if the heteronucleus type has been set.
+            if not hasattr(spin, 'heteronuc_type') or spin.heteronuc_type == None:
+                raise RelaxNoValueError("heteronucleus type")
+
+            # Test if the proton type has been set.
+            if not hasattr(spin, 'proton_type') or spin.proton_type == None:
+                raise RelaxNoValueError("proton type")
 
         # Min vars.
         if not isinstance(self.grid_inc, int):
             raise RelaxError("The grid_inc user variable '%s' is incorrectly set.  It should be an integer." % self.grid_inc)
         if not isinstance(self.min_algor, str):
             raise RelaxError("The min_algor user variable '%s' is incorrectly set.  It should be a string." % self.min_algor)
-        if not isinstance(self.mc_num, int):
-            raise RelaxError("The mc_num user variable '%s' is incorrectly set.  It should be an integer." % self.mc_num)
+        if not isinstance(self.mc_sim_num, int):
+            raise RelaxError("The mc_sim_num user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
 
         # Looping.
         if not isinstance(self.conv_loop, bool):
@@ -468,7 +408,7 @@ class dAuvergne_protocol:
         print("\nConvergence:")
         if converged:
             # Update the status.
-            status.dAuvergne_protocol.convergence = True
+            status.analysis[self.pipe_name].convergence = True
 
             # Print out.
             print("    [ Yes ]")
@@ -489,12 +429,12 @@ class dAuvergne_protocol:
         # Get a list of all files in the directory model.  If no directory exists, set the round to 'init' or 0.
         try:
             # Files are in same directory / no directory specified
-            if self.save_dir =='':
-                dir_list = listdir(self.save_dir+sep+model)
+            if self.results_dir =='':
+                dir_list = listdir(self.results_dir+sep+model)
 
             # Directory is specified
             else:
-                dir_list = listdir(self.save_dir+model)
+                dir_list = listdir(self.results_dir+model)
         except:
             return 0
 
@@ -533,7 +473,7 @@ class dAuvergne_protocol:
 
         if self.diff_model == 'local_tm':
             # Base directory to place files into.
-            self.base_dir = self.save_dir+'local_tm'+sep
+            self.base_dir = self.results_dir+'local_tm'+sep
 
             # Sequential optimisation of all model-free models (function must be modified to suit).
             self.multi_model(local_tm=True)
@@ -547,7 +487,7 @@ class dAuvergne_protocol:
 
         elif self.diff_model == 'sphere' or self.diff_model == 'prolate' or self.diff_model == 'oblate' or self.diff_model == 'ellipsoid':
             # No local_tm directory!
-            dir_list = listdir(self.save_dir)
+            dir_list = listdir(self.results_dir)
             if 'local_tm' not in dir_list:
                 raise RelaxError("The local_tm model must be optimised first.")
 
@@ -559,39 +499,26 @@ class dAuvergne_protocol:
             while True:
                 # Determine which round of optimisation to do (init, round_1, round_2, etc).
                 self.round = self.determine_rnd(model=self.diff_model)
-                status.dAuvergne_protocol.round = self.round
+                status.analysis[self.pipe_name].round = self.round
 
                 # Inital round of optimisation for diffusion models MII to MV.
                 if self.round == 0:
                     # Base directory to place files into.
-                    self.base_dir = self.save_dir+self.diff_model+sep+'init'+sep
+                    self.base_dir = self.results_dir+self.diff_model+sep+'init'+sep
 
                     # Run name.
                     name = self.diff_model
 
-                    # Create the data pipe (deleting the old one if it exists).
-                    if pipes.has_pipe(name):
+                    # Create the data pipe by copying (deleting the old one if it exists).
+                    if has_pipe(name):
                         self.interpreter.pipe.delete(name)
-                    self.interpreter.pipe.create(name, 'mf')
+                    self.interpreter.pipe.copy(self.pipe_name, name)
 
                     # Load the local tm diffusion model MI results.
-                    self.interpreter.results.read(file='results', dir=self.save_dir+'local_tm'+sep+'aic')
+                    self.interpreter.results.read(file='results', dir=self.results_dir+'local_tm'+sep+'aic')
 
                     # Remove the tm parameter.
                     self.interpreter.model_free.remove_tm()
-
-                    # Deselect the spins in the exclude list.
-                    if self.exclude:
-                        self.interpreter.deselect.read(file=self.exclude)
-
-                    # Name the spins if necessary.
-                    if self.seq_args[6] == None:
-                        self.interpreter.spin.name(name=self.het_name)
-
-                    # Load the PDB file and calculate the unit vectors parallel to the XH bond.
-                    if self.pdb_file:
-                        self.interpreter.structure.read_pdb(self.pdb_file)
-                        self.interpreter.structure.vectors(attached=self.attached_name)
 
                     # Add an arbitrary diffusion tensor which will be optimised.
                     if self.diff_model == 'sphere':
@@ -619,7 +546,7 @@ class dAuvergne_protocol:
                 # Normal round of optimisation for diffusion models MII to MV.
                 else:
                     # Base directory to place files into.
-                    self.base_dir = self.save_dir+self.diff_model + sep+'round_'+repr(self.round)+sep
+                    self.base_dir = self.results_dir+self.diff_model + sep+'round_'+repr(self.round)+sep
 
                     # Load the optimised diffusion tensor from either the previous round.
                     self.load_tensor()
@@ -648,7 +575,7 @@ class dAuvergne_protocol:
                         break
 
                 # Unset the status.
-                status.dAuvergne_protocol.round = None
+                status.analysis[self.pipe_name].round = None
 
 
         # Final run.
@@ -664,20 +591,20 @@ class dAuvergne_protocol:
             # Close all pipes that might be craeted.
             for name in self.pipes:
                 # Close the pipe
-                if pipes.has_pipe(name):
+                if has_pipe(name):
                     self.interpreter.pipe.delete(name)
 
             # Missing optimised model.
-            dir_list = listdir(self.save_dir)
+            dir_list = listdir(self.results_dir)
             for name in self.pipes:
                 if name not in dir_list:
                     raise RelaxError("The %s model must be optimised first." % name)
 
-            # Create the local_tm data pipe.
-            self.interpreter.pipe.create('local_tm', 'mf')
+            # Create the local_tm data pipe by copying.
+            self.interpreter.pipe.copy(self.pipe_name, 'local_tm')
 
             # Load the local tm diffusion model MI results.
-            self.interpreter.results.read(file='results', dir=self.save_dir+'local_tm'+sep+'aic')
+            self.interpreter.results.read(file='results', dir=self.results_dir+'local_tm'+sep+'aic')
 
             # Loop over models MII to MV.
             for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
@@ -694,11 +621,11 @@ class dAuvergne_protocol:
                     # Throw an error to prevent misuse of the script.
                     raise RelaxError("Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script.")
 
-                # Create the data pipe.
-                self.interpreter.pipe.create(model, 'mf')
+                # Create the data pipe by copying.
+                self.interpreter.pipe.copy(self.pipe_name, model)
 
                 # Load the diffusion model results.
-                self.interpreter.results.read(file='results', dir=self.save_dir+model + sep+'round_'+repr(self.round)+sep+'opt')
+                self.interpreter.results.read(file='results', dir=self.results_dir+model + sep+'round_'+repr(self.round)+sep+'opt')
 
             # Model selection between MI to MV.
             self.model_selection(modsel_pipe='final', write_flag=False)
@@ -708,11 +635,11 @@ class dAuvergne_protocol:
             ##########################
 
             # Fix the diffusion tensor, if it exists.
-            if hasattr(pipes.get_pipe('final'), 'diff_tensor'):
+            if hasattr(get_pipe('final'), 'diff_tensor'):
                 self.interpreter.fix('diff')
 
             # Simulations.
-            self.interpreter.monte_carlo.setup(number=self.mc_num)
+            self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
             self.interpreter.minimise(self.min_algor)
@@ -723,7 +650,7 @@ class dAuvergne_protocol:
             # Write the final results.
             ##########################
 
-            self.interpreter.results.write(file='results', dir=self.save_dir+'final', force=True)
+            self.interpreter.results.write(file='results', dir=self.results_dir+'final', force=True)
 
 
         # Unknown script behaviour.
@@ -733,33 +660,31 @@ class dAuvergne_protocol:
             raise RelaxError("Unknown diffusion model, change the value of 'self.diff_model'")
 
         # Unset the status info.
-        status.dAuvergne_protocol.diff_model = None
-        status.dAuvergne_protocol.mf_models = None
-        status.dAuvergne_protocol.local_tm_models = None
+        self.status_reset()
 
 
     def load_tensor(self):
         """Function for loading the optimised diffusion tensor."""
 
         # Create the data pipe for the previous data (deleting the old data pipe first if necessary).
-        if pipes.has_pipe('previous'):
+        if has_pipe('previous'):
             self.interpreter.pipe.delete('previous')
         self.interpreter.pipe.create('previous', 'mf')
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
-            self.interpreter.results.read('results', self.save_dir+self.diff_model + sep+'init')
+            self.interpreter.results.read('results', self.results_dir+self.diff_model + sep+'init')
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            self.interpreter.results.read('results', self.save_dir+self.diff_model + sep+'round_'+repr(self.round-1)+sep+'opt')
+            self.interpreter.results.read('results', self.results_dir+self.diff_model + sep+'round_'+repr(self.round-1)+sep+'opt')
 
 
     def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):
         """Model selection function."""
 
         # Model selection (delete the model selection pipe if it already exists).
-        if pipes.has_pipe(modsel_pipe):
+        if has_pipe(modsel_pipe):
             self.interpreter.pipe.delete(modsel_pipe)
         self.interpreter.model_selection(method='AIC', modsel_pipe=modsel_pipe, pipes=self.pipes)
 
@@ -780,45 +705,17 @@ class dAuvergne_protocol:
         # Loop over the data pipes.
         for name in self.pipes:
             # Place the model name into the status container.
-            status.dAuvergne_protocol.current_model = name
+            status.auto_analysis[self.pipe_name].current_model = name
 
-            # Create the data pipe.
-            if pipes.has_pipe(name):
+            # Create the data pipe (by copying).
+            if has_pipe(name):
                 self.interpreter.pipe.delete(name)
-            self.interpreter.pipe.create(name, 'mf')
-
-            # Load the sequence.
-            self.interpreter.sequence.read(file=self.seq_args[0], dir=self.seq_args[1], mol_name_col=self.seq_args[2], res_num_col=self.seq_args[3], res_name_col=self.seq_args[4], spin_num_col=self.seq_args[5], spin_name_col=self.seq_args[6], sep=self.seq_args[7])
-
-            # Name the spins if necessary.
-            if self.seq_args[6] == None:
-                self.interpreter.spin.name(name=self.het_name)
-
-            # Load the PDB file and calculate the unit vectors parallel to the XH bond.
-            if not local_tm and self.pdb_file:
-                self.interpreter.structure.read_pdb(self.pdb_file)
-                self.interpreter.structure.vectors(attached=self.attached_name)
-
-            # Load the relaxation data.
-            for data in self.relax_data:
-                self.interpreter.relax_data.read(ri_label=data[0], frq_label=data[1], frq=data[2], file=data[3], dir=data[4], mol_name_col=data[5], res_num_col=data[6], res_name_col=data[7], spin_num_col=data[8], spin_name_col=data[9], data_col=data[10], error_col=data[11], sep=data[12])
-
-            # Deselect spins to be excluded (including unresolved and specifically excluded spins).
-            if self.unres:
-                self.interpreter.deselect.read(file=self.unres, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
-            if self.exclude:
-                self.interpreter.deselect.read(file=self.exclude, spin_id_col=1)
+            self.interpreter.pipe.copy(self.pipe_name, name)
 
             # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
             if not local_tm:
                 self.interpreter.diffusion_tensor.copy('previous')
                 self.interpreter.fix('diff')
-
-            # Set all the necessary values.
-            self.interpreter.value.set(self.bond_length, 'bond_length')
-            self.interpreter.value.set(self.csa, 'csa')
-            self.interpreter.value.set(self.hetnuc, 'heteronucleus')
-            self.interpreter.value.set(self.proton, 'proton')
 
             # Select the model-free model.
             self.interpreter.model_free.select_model(model=name)
@@ -835,7 +732,55 @@ class dAuvergne_protocol:
             self.interpreter.results.write(file='results', dir=dir, force=True)
 
         # Unset the status.
-        status.dAuvergne_protocol.current_model = None
+        status.auto_analysis[self.pipe_name].current_model = None
+
+
+    def status_setup(self):
+        """Initialise the status object."""
+
+        # Initialise the status object for this auto-analysis.
+        status.init_auto_analysis(self.pipe_name, type='dauvergne_protocol')
+
+        # The global diffusion model.
+        status.analysis[self.pipe_name].diff_model = self.diff_model
+
+        # The round of optimisation, i.e. the global iteration.
+        status.analysis[self.pipe_name].round = None
+
+        # The list of model-free local tm models for optimisation, i.e. the global iteration.
+        status.analysis[self.pipe_name].local_tm_models = self.local_tm_models
+
+        # The list of model-free models for optimisation, i.e. the global iteration.
+        status.analysis[self.pipe_name].mf_models = self.mf_models
+
+        # The current model-free model.
+        status.analysis[self.pipe_name].current_model = None
+
+        # The convergence of the global model.
+        status.analysis[self.pipe_name].convergence = False
+
+
+    def status_reset(self):
+        """Initialise the status object."""
+
+        # The global diffusion model.
+        status.analysis[self.pipe_name].diff_model = None
+
+        # The round of optimisation, i.e. the global iteration.
+        status.analysis[self.pipe_name].round = None
+
+        # The list of model-free local tm models for optimisation, i.e. the global iteration.
+        status.analysis[self.pipe_name].local_tm_models = None
+
+        # The list of model-free models for optimisation, i.e. the global iteration.
+        status.analysis[self.pipe_name].mf_models = None
+
+        # The current model-free model.
+        status.analysis[self.pipe_name].current_model = None
+
+        # The convergence of the global model.
+        status.analysis[self.pipe_name].convergence = False
+
 
 
 class Container:
