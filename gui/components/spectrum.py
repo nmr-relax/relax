@@ -96,7 +96,6 @@ class Spectra_list:
         # Initialise the element.
         box_centre.AddSpacer(self.spacing)
         self.init_element(box_centre)
-        box_centre.AddSpacer(self.spacing)
 
         # Build the element.
         self.build_element()
@@ -143,6 +142,7 @@ class Spectra_list:
             self.element.DeleteColumn(i)
 
         # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
+        n = 0
         if hasattr(cdp, 'spectrum_ids'):
             # The number of IDs.
             n = len(cdp.spectrum_ids)
@@ -170,6 +170,11 @@ class Spectra_list:
         event = wx.PyCommandEvent(wx.EVT_SIZE.typeId, self.parent.GetId())
         wx.PostEvent(self.parent.GetEventHandler(), event)
 
+        # Set the minimum height.
+        height = self.height_base + self.height_char * n
+        self.element.SetMinSize((-1, height))
+        self.element.Layout()
+
         # Unfreeze.
         self.element.Thaw()
 
@@ -196,6 +201,10 @@ class Spectra_list:
 
         # Properties.
         self.element.SetFont(font.normal)
+
+        # Store the base heights.
+        self.height_base = self.element.GetSize()[1]
+        self.height_char = self.element.GetCharHeight()
 
         # Bind some events.
         self.element.Bind(wx.EVT_SIZE, self.resize)
