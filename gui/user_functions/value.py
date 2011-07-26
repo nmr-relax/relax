@@ -28,7 +28,7 @@ from os import sep
 
 # relax module imports.
 from generic_fns import pipes
-from relax_errors import RelaxImplementError, RelaxNoPipeError
+from relax_errors import RelaxError, RelaxImplementError, RelaxNoPipeError
 import specific_fns
 
 # GUI module imports.
@@ -92,6 +92,7 @@ class Set_page(UF_page):
 
         # Get the specific functions.
         data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
+        self.data_type = specific_fns.setup.get_specific_fn('data_type', cdp.pipe_type, raise_error=False)
         return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
 
         # The data names, if they exist.
@@ -101,7 +102,7 @@ class Set_page(UF_page):
             gui_raise(RelaxImplementError())
 
         # Loop over the parameters.
-        for name in data_names(set='params'):
+        for name in (data_names(set='params') + data_names(set='generic')):
             # Get the description.
             desc = return_data_desc(name)
 
@@ -120,9 +121,16 @@ class Set_page(UF_page):
     def on_execute(self):
         """Execute the user function."""
 
-        # The parameter and value.
+        # The parameter.
         param = self.param.GetClientData(self.param.GetSelection())
-        val = gui_to_str(self.val.GetValue())
+
+        # The value (converted to the correct type).
+        val_str = gui_to_str(self.val.GetValue())
+        val_type = self.data_type(param)
+        try:
+            val = apply(val_type, val_str)
+        except ValueError:
+            gui_raise(RelaxError("The value '%s' should be of the type %s." % (val_str, val_type)))
 
         # The spin ID.
         spin_id = gui_to_str(self.spin_id.GetValue())
