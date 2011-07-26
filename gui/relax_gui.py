@@ -78,7 +78,7 @@ class Main(wx.Frame):
         """Initialise the main relax GUI frame."""
 
         # Execute the base class __init__ method.
-        super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE)
+        super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE|wx.MAXIMIZE)
 
         # Initialise some variables for the GUI.
         self.launch_dir = getcwd()
