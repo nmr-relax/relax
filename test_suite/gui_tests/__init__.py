@@ -32,13 +32,15 @@ from unittest import TestSuite
 from test_suite.relax_test_runner import RelaxTestRunner
 
 # relax GUI test module imports.
+from model_free import Mf
 from noe import Noe
 from rx import Rx
 from state import State
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 
 
-__all__ = ['noe',
+__all__ = ['model_free',
+           'noe',
            'rx',
            'state']
 
@@ -79,6 +81,7 @@ class GUI_test_runner:
 
         # All tests.
         if not tests:
+            suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
             suite_array.append(TestLoader().loadTestsFromTestCase(Rx))
             suite_array.append(TestLoader().loadTestsFromTestCase(State))
