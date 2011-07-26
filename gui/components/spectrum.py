@@ -41,9 +41,6 @@ from gui import paths
 class Spectra_list:
     """The GUI element for listing loaded spectral data."""
 
-    # Class variables.
-    col_label_width = 40
-
     def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, buttons=True):
         """Build the spectral list GUI element.
 
@@ -96,19 +93,19 @@ class Spectra_list:
         if buttons:
             self.add_buttons(box_centre)
 
-        # Initialise the grid.
+        # Initialise the element.
         box_centre.AddSpacer(self.spacing)
-        self.init_grid(box_centre)
+        self.init_element(box_centre)
         box_centre.AddSpacer(self.spacing)
 
-        # Build the grid.
-        self.build_grid()
+        # Build the element.
+        self.build_element()
 
         # Initialise observer name.
         self.name = 'spectra list: %s' % id
 
-        # Register the grid for updating when a user function completes.
-        status.observers.gui_uf.register(self.name, self.build_grid)
+        # Register the element for updating when a user function completes.
+        status.observers.gui_uf.register(self.name, self.build_element)
 
 
     def add_buttons(self, sizer):
@@ -131,36 +128,28 @@ class Spectra_list:
         button.SetToolTipString("Read a spectral data file.")
 
 
-    def build_grid(self):
-        """Build the spectra listing grid."""
+    def build_element(self):
+        """Build the spectra listing GUI element."""
 
-        # First freeze the grid, so that the GUI element doesn't update until the end.
-        self.grid.Freeze()
+        # First freeze the element, so that the GUI element doesn't update until the end.
+        self.element.Freeze()
 
         # Initialise the column index for the data.
         index = 1
 
         # Delete the rows and columns (leaving one row and column).
-        self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
-        self.grid.DeleteCols(numCols=self.grid.GetNumberCols()-1)
-
-        # Clear the contents of the first cell.
-        self.grid.SetCellValue(0, 0, str_to_gui(""))
+        self.element.DeleteAllItems()
+        for i in range(1, self.element.GetColumnCount()):
+            self.element.DeleteColumn(i)
 
         # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
         if hasattr(cdp, 'spectrum_ids'):
             # The number of IDs.
             n = len(cdp.spectrum_ids)
 
-            # Append the appropriate number of rows.
-            self.grid.AppendRows(numRows=n-1)
-
             # Set the IDs.
             for i in range(n):
-                self.grid.SetCellValue(i, 0, cdp.spectrum_ids[i])
-
-        # Set the headers.
-        self.grid.SetColLabelValue(0, "Spectrum ID string")
+                self.element.InsertStringItem(i, str_to_gui(cdp.spectrum_ids[i]))
 
         # The NOE spectrum type.
         if self.noe_spectrum_type(index):
@@ -174,17 +163,6 @@ class Spectra_list:
         if self.replicates(index):
             index += 1
 
-        # Set the grid properties once finalised.
-        for i in range(self.grid.GetNumberRows()):
-            # Row properties.
-            self.grid.SetRowSize(i, 27)
-
-            # Loop over the columns.
-            for j in range(self.grid.GetNumberCols()):
-                # Cell properties.
-                self.grid.SetReadOnly(i, j)
-                self.grid.SetCellBackgroundColour(i, j, "White")
-
         # Size the columns.
         self.size_cols()
 
@@ -193,7 +171,7 @@ class Spectra_list:
         wx.PostEvent(self.parent.GetEventHandler(), event)
 
         # Unfreeze.
-        self.grid.Thaw()
+        self.element.Thaw()
 
 
     def delete(self):
@@ -203,42 +181,31 @@ class Spectra_list:
         status.observers.gui_uf.unregister(self.name)
 
 
-    def init_grid(self, sizer):
-        """Initialise the grid for the spectra listing.
+    def init_element(self, sizer):
+        """Initialise the GUI element for the spectra listing.
 
-        @param box:     The sizer element to pack the grid into.
+        @param box:     The sizer element to pack the element into.
         @type box:      wx.BoxSizer instance
         """
 
-        # Grid of peak list file names and relaxation time.
-        self.grid = wx.grid.Grid(self.panel, -1)
+        # List of peak list file names and relaxation time.
+        self.element = wx.ListCtrl(self.panel, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
 
-        # Initialise to a single row and column.
-        self.grid.CreateGrid(1, 1)
+        # Initialise to a single column.
+        self.element.InsertColumn(0, str_to_gui("Spectrum ID string"))
 
         # Properties.
-        self.grid.SetDefaultCellFont(font.normal)
-        self.grid.SetLabelFont(font.normal_bold)
-
-        # Set the row label widths.
-        self.grid.SetRowLabelSize(self.col_label_width)
-
-        # No cell resizing allowed.
-        self.grid.EnableDragColSize(False)
-        self.grid.EnableDragRowSize(False)
-
-        # Set the cell colour to the background panel colour to remove visual artifacts.
-        self.grid.SetDefaultCellBackgroundColour(self.parent.GetBackgroundColour())
+        self.element.SetFont(font.normal)
 
         # Bind some events.
-        self.grid.Bind(wx.EVT_SIZE, self.resize)
+        self.element.Bind(wx.EVT_SIZE, self.resize)
 
-        # Add grid to sizer.
-        sizer.Add(self.grid, 0, wx.ALL|wx.EXPAND, 0)
+        # Add list to sizer.
+        sizer.Add(self.element, 0, wx.ALL|wx.EXPAND, 0)
 
 
     def resize(self, event):
-        """Catch the resize to allow the grid to be resized.
+        """Catch the resize to allow the element to be resized.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -252,7 +219,7 @@ class Spectra_list:
 
 
     def noe_spectrum_type(self, index):
-        """Add the NOE spectral type info to the grid.
+        """Add the NOE spectral type info to the element.
 
         @param index:   The column index for the data.
         @type index:    int
@@ -265,10 +232,7 @@ class Spectra_list:
             return False
 
         # Append a column.
-        self.grid.AppendCols(numCols=1)
-
-        # Set the column heading.
-        self.grid.SetColLabelValue(index, "NOE spectrum type")
+        self.element.InsertColumn(index, str_to_gui("NOE spectrum type"))
 
         # Translation table.
         table = {
@@ -283,14 +247,14 @@ class Spectra_list:
                 continue
 
             # Set the value.
-            self.grid.SetCellValue(i, index, table[cdp.spectrum_type[cdp.spectrum_ids[i]]])
+            self.element.SetStringItem(i, index, str_to_gui(table[cdp.spectrum_type[cdp.spectrum_ids[i]]]))
 
         # Successful.
         return True
 
 
     def relax_times(self, index):
-        """Add the relaxation delay time info to the grid.
+        """Add the relaxation delay time info to the element.
 
         @param index:   The column index for the data.
         @type index:    int
@@ -303,10 +267,7 @@ class Spectra_list:
             return False
 
         # Append a column.
-        self.grid.AppendCols(numCols=1)
-
-        # Set the column heading.
-        self.grid.SetColLabelValue(index, "Delay times")
+        self.element.InsertColumn(index, str_to_gui("Delay times"))
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -315,14 +276,14 @@ class Spectra_list:
                 continue
 
             # Set the value.
-            self.grid.SetCellValue(i, index, float_to_gui(cdp.relax_times[cdp.spectrum_ids[i]]))
+            self.element.SetStringItem(i, index, float_to_gui(cdp.relax_times[cdp.spectrum_ids[i]]))
 
         # Successful.
         return True
 
 
     def replicates(self, index):
-        """Add the replicated spectra info to the grid.
+        """Add the replicated spectra info to the element.
 
         @param index:   The column index for the data.
         @type index:    int
@@ -338,10 +299,7 @@ class Spectra_list:
         repl = replicated_flags()
 
         # Append a column.
-        self.grid.AppendCols(numCols=1)
-
-        # Set the column heading.
-        self.grid.SetColLabelValue(index, "Replicate IDs")
+        self.element.InsertColumn(index, str_to_gui("Replicate IDs"))
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -363,7 +321,7 @@ class Spectra_list:
                     text = "%s, " % text
 
             # Set the value.
-            self.grid.SetCellValue(i, index, str_to_gui(text))
+            self.element.SetStringItem(i, index, str_to_gui(text))
 
         # Successful.
         return True
@@ -372,18 +330,18 @@ class Spectra_list:
     def size_cols(self):
         """Set the column sizes."""
 
-        # The grid size.
-        x, y = self.grid.GetSize()
+        # The element size.
+        x, y = self.element.GetSize()
 
         # The expandable column width.
-        width = x - self.col_label_width - 20
+        width = x
 
         # Number of columns.
-        n = self.grid.GetNumberCols()
+        n = self.element.GetColumnCount()
 
         # Set to equal sizes.
         width = int(width / n)
 
         # Set the column sizes.
         for i in range(n):
-            self.grid.SetColSize(i, width)
+            self.element.SetColumnWidth(i, width)
