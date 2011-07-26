@@ -104,6 +104,7 @@ class I16x16:
         self.uf_script =            path + 'mimetypes'  + sep + 'application-x-desktop.png'
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
+        self.user_busy =            path + 'status'     + sep + 'user-busy.png'
 
 
 
@@ -137,6 +138,7 @@ class I22x22:
         self.system_run =           path + 'actions'    + sep + 'system-run.png'
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
+        self.user_busy =            path + 'status'     + sep + 'user-busy.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
@@ -185,6 +187,7 @@ class I32x32:
         self.system_run =           path + 'actions'    + sep + 'system-run.png'
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
+        self.user_busy =            path + 'status'     + sep + 'user-busy.png'
 
         # relax icons.
         self.pipe_hybrid =              path + 'pipe_hybrid.png'
@@ -219,6 +222,7 @@ class I48x48:
         self.system_run =           path + 'actions'    + sep + 'system-run.png'
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
+        self.user_busy =            path + 'status'     + sep + 'user-busy.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '48x48' + sep
