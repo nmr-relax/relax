@@ -93,19 +93,11 @@ class Mf(GuiTestCase):
             relax_data_read.on_execute()
 
         # Select only the tm0 and tm1 local tm models.
-        for i in range(analysis.local_tm_model_field.model_win.model_list.GetItemCount()):
-            if i in [0, 1]:
-                analysis.local_tm_model_field.model_win.model_list.CheckItem(i, check=True)
-            else:
-                analysis.local_tm_model_field.model_win.model_list.CheckItem(i, check=False)
+        analysis.local_tm_model_field.select = [True, True, False, False, False, False, False, False, False, False]
         analysis.local_tm_model_field.modify(None)
 
         # Select only the m1 and m2 model-free models.
-        for i in range(analysis.mf_model_field.model_win.model_list.GetItemCount()):
-            if i in [1, 2]:
-                analysis.mf_model_field.model_win.model_list.CheckItem(i, check=True)
-            else:
-                analysis.mf_model_field.model_win.model_list.CheckItem(i, check=False)
+        analysis.mf_model_field.select = [False, True, True, False, False, False, False, False, False, False]
         analysis.mf_model_field.modify(None)
 
         # Change the grid increments.
