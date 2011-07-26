@@ -229,7 +229,7 @@ class dAuvergne_protocol:
             raise RelaxNoSequenceError(self.pipe_name)
 
         # Relaxation data.
-        if not hasattr(cdp, 'ri_ids') or ri_id not in cdp.ri_ids:
+        if not hasattr(cdp, 'ri_ids') or len(cdp.ri_ids) == 0:
             raise RelaxNoRiError(ri_id)
 
         # Insufficient data.
