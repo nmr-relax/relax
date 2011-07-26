@@ -447,7 +447,6 @@ class Auto_model_free(Base_analysis):
 
         # Get the mode.
         mode = gui_to_str(self.mode.GetValue())
-        print `mode`
 
         # Solve for all global models.
         if mode == 'Fully automated':
