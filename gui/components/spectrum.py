@@ -136,7 +136,7 @@ class Spectra_list:
         # Initialise the column index for the data.
         index = 1
 
-        # Delete the rows and columns (leaving one row and column).
+        # Delete the rows and columns.
         self.element.DeleteAllItems()
         for i in range(1, self.element.GetColumnCount()):
             self.element.DeleteColumn(i)
@@ -342,14 +342,11 @@ class Spectra_list:
         # The element size.
         x, y = self.element.GetSize()
 
-        # The expandable column width.
-        width = x
-
         # Number of columns.
         n = self.element.GetColumnCount()
 
         # Set to equal sizes.
-        width = int(width / n)
+        width = int(x / n)
 
         # Set the column sizes.
         for i in range(n):
