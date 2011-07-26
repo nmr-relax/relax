@@ -36,6 +36,7 @@ from auto_analyses import dauvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
 from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from generic_fns.pipes import has_pipe
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -302,6 +303,36 @@ class Auto_model_free(Base_analysis):
 
         # Results directory.
         data.save_dir = self.data.save_dir
+
+        # Check if sequence data is loaded
+        if not exists_mol_res_spin_data():
+            missing.append("Sequence data")
+
+        # Relaxation data.
+        if not hasattr(cdp, 'ri_ids') or len(cdp.ri_ids) == 0:
+            missing.append("Relaxation data")
+
+        # Insufficient data.
+        if hasattr(cdp, 'ri_ids') and len(cdp.ri_ids) <= 3:
+            missing.append("Insufficient relaxation data, 4 or more data sets are essential for the execution of the dauvergne_protocol auto-analysis.")
+
+        # Spin vars.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Test if the bond length has been set.
+            if not hasattr(spin, 'r') or spin.r == None:
+                missing.append("Bond length data for spin '%s'." % spin_id)
+
+            # Test if the CSA value has been set.
+            if not hasattr(spin, 'csa') or spin.csa == None:
+                missing.append("CSA data for spin '%s'." % spin_id)
+
+            # Test if the heteronucleus type has been set.
+            if not hasattr(spin, 'heteronuc_type') or spin.heteronuc_type == None:
+                missing.append("Heteronucleus type data for spin '%s'." % spin_id)
+
+            # Test if the proton type has been set.
+            if not hasattr(spin, 'proton_type') or spin.proton_type == None:
+                missing.append("Proton type data for spin '%s'." % spin_id)
 
         # Return the container and list of missing data.
         return data, missing
