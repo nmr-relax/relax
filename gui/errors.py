@@ -27,11 +27,13 @@
 import wx
 
 
-def gui_raise(relax_error):
+def gui_raise(relax_error, raise_flag=True):
     """Handle errors in the GUI to be reported to the user.
 
     @param relax_error:     The error object.
     @type relax_error:      RelaxError instance
+    @keyword raise_flag:    A flag which if True will cause the error to be raised, terminating execution.
+    @type raise_flag:       bool
     @raises:                The RelaxError.
     """
 
@@ -39,4 +41,5 @@ def gui_raise(relax_error):
     wx.MessageBox(relax_error.text, caption=relax_error.__class__.__name__, style=wx.OK|wx.ICON_ERROR)
 
     # Throw the error to terminate execution.
-    raise relax_error
+    if raise_flag:
+        raise relax_error
