@@ -277,15 +277,13 @@ class Structure(User_fn_class):
         generic_fns.structure.main.delete()
 
 
-    def load_spins(self, spin_id=None, combine_models=True, ave_pos=True):
+    def load_spins(self, spin_id=None, ave_pos=True):
         """Load spins from the structure into the relax data store.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         spin_id:  The spin identification string.
-
-        combine_models:  A flag which specifies if spins from separate models should be combined.
 
         ave_pos:  A flag specifying if the position of the atom is to be averaged across models.
 
@@ -298,9 +296,6 @@ class Structure(User_fn_class):
         is used to select which molecules, which residues, and which atoms will be recognised as
         spin systems within relax.  If spin_id is left as None, then all molecules, residues, and
         atoms will be placed within the data store.
-
-        If the combine_models flag is True, then the spins from only a single structure from the
-        ensemble of models will be taken.  If False, then spins will be loaded for each model.
 
         If the ave_pos flag is True, the average position of all models will be loaded into the spin
         container.  If False, then the positions from all models will be loaded.
@@ -340,17 +335,15 @@ class Structure(User_fn_class):
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.load_spins("
             text = text + "spin_id=" + repr(spin_id)
-            text = text + ", combine_models=" + repr(combine_models)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        arg_check.is_bool(combine_models, 'model combining flag')
         arg_check.is_bool(ave_pos, 'average position flag')
 
         # Execute the functional code.
-        generic_fns.structure.main.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
+        generic_fns.structure.main.load_spins(spin_id=spin_id, ave_pos=ave_pos)
 
 
     def read_pdb(self, file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal'):
