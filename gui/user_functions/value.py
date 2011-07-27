@@ -127,10 +127,19 @@ class Set_page(UF_page):
         # The value (converted to the correct type).
         val_str = gui_to_str(self.val.GetValue())
         val_type = self.data_type(param)
+
+        # Evaluate numbers.
+        if val_type in [float, int]:
+            fn = eval
+        else:
+            fn = val_type
+
+        # Convert.
         try:
-            val = val_type(val_str)
-        except ValueError:
-            gui_raise(RelaxError("The value '%s' should be of the type %s." % (val_str, val_type)))
+            val = fn(val_str)
+        except (ValueError, NameError):
+            gui_raise(RelaxError("The value '%s' should be of the type %s." % (val_str, val_type)), raise_flag=False)
+            return
 
         # The spin ID.
         spin_id = gui_to_str(self.spin_id.GetValue())
