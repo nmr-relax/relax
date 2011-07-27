@@ -114,10 +114,10 @@ class Main(wx.Frame):
         self.SetTitle("relax " + version)
 
         # Set up the program icon (disabled on Macs).
+        self.icons = wx.IconBundle()
         if not 'darwin' in sys.platform:
-            icon = wx.EmptyIcon()
-            icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
-            self.SetIcon(icon)
+            self.icons.AddIconFromFile(status.install_path + sep + 'graphics' + sep + 'ulysses.ico', wx.BITMAP_TYPE_ANY)
+            self.SetIcons(self.icons)
 
         # Set up the status bar.
         self.bar = self.CreateStatusBar(3, 0)
