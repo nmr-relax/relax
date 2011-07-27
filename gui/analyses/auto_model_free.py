@@ -1139,28 +1139,28 @@ class Protocol_mode_sel_window(wx.Dialog):
 
         # The sphere button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Sphere"))
-        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'sphere.jpg', wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'sphere.png', wx.BITMAP_TYPE_ANY))
         button.SetToolTipString("Optimise global model II, the spherical diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_sphere, button)
 
         # The prolate spheroid button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Prolate spheroid"))
-        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'prolate.jpg', wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'prolate.png', wx.BITMAP_TYPE_ANY))
         button.SetToolTipString("Optimise global model III, the prolate spheroid diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_prolate, button)
 
         # The oblate spheroid button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Oblate spheroid"))
-        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'oblate.jpg', wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'oblate.png', wx.BITMAP_TYPE_ANY))
         button.SetToolTipString("Optimise global model IV, the oblate spheroid diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_oblate, button)
 
         # The ellipsoid button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Ellipsoid"))
-        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'ellipsoid.jpg', wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'ellipsoid.png', wx.BITMAP_TYPE_ANY))
         button.SetToolTipString("Optimise global model V, the ellipsoid diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_ellipsoid, button)
