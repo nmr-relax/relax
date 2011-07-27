@@ -74,7 +74,7 @@ class Set_page(UF_page):
         """
 
         # The parameter.
-        self.param = self.combo_box(sizer, "The parameter:", tooltip=self.uf._doc_args_dict['param'])
+        self.param = self.combo_box(sizer, "The parameter:", tooltip=self.uf._doc_args_dict['param'], evt_fn=self.set_default_value)
 
         # The value.
         self.val = self.input_field(sizer, "The value:", tooltip=self.uf._doc_args_dict['val'])
@@ -146,3 +146,29 @@ class Set_page(UF_page):
 
         # Set the value.
         self.gui.interpreter.value.set(val=val, param=param, spin_id=spin_id)
+
+
+    def set_default_value(self, event=None):
+        """Set the value to the default once a parameter is selected.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The parameter.
+        param = self.param.GetClientData(self.param.GetSelection())
+
+        # Clear the previous data.
+        self.val.Clear()
+
+        # Nothing to do.
+        if param == '':
+            return
+
+        # Get the default value.
+        default_value = specific_fns.setup.get_specific_fn('default_value', cdp.pipe_type, raise_error=False)
+        value = default_value(param)
+
+        # Set the default value.
+        if value != None:
+            self.val.SetValue(str_to_gui(str(value)))
