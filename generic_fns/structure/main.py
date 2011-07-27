@@ -244,6 +244,8 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
 
             # Got something!
             if res_cont != None:
+                # Rename the residue number
+                res_cont.num = res_num
                 # Rename the residue name if the res name is given and the sole container is unnamed.
                 if res_cont.name == None and res_name:
                     # Print out.
