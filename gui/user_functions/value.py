@@ -43,17 +43,24 @@ from gui.wizard import Wiz_window
 class Value(UF_base):
     """The container class for holding all GUI elements."""
 
-    def set(self, event):
+    def set(self, event, param=None):
         """The value.set user function.
 
         @param event:   The wx event.
         @type event:    wx event
+        @keyword param: The starting parameter.
+        @type param:    str
         """
 
-        # Execute the wizard.
+        # Create the wizard.
         wizard = Wiz_window(size_x=1000, size_y=800, title=self.get_title('value', 'set'))
         page = Set_page(wizard, self.gui)
         wizard.add_page(page)
+
+        # Default parameter.
+        page.set_param(param)
+
+        # Execute the wizard.
         wizard.run()
 
 
@@ -75,47 +82,13 @@ class Set_page(UF_page):
 
         # The parameter.
         self.param = self.combo_box(sizer, "The parameter:", tooltip=self.uf._doc_args_dict['param'], evt_fn=self.set_default_value)
+        self.update_parameters()
 
         # The value.
         self.val = self.input_field(sizer, "The value:", tooltip=self.uf._doc_args_dict['val'])
 
         # The spin ID restriction.
         self.spin_id = self.spin_id_element(sizer, "Restrict value setting to certain spins:")
-
-
-    def on_display(self):
-        """Fill out the list of parameters and their descriptions."""
-
-        # Check the current data pipe.
-        if cdp == None:
-            gui_raise(RelaxNoPipeError())
-
-        # Get the specific functions.
-        data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
-        self.data_type = specific_fns.setup.get_specific_fn('data_type', cdp.pipe_type, raise_error=False)
-        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
-
-        # The data names, if they exist.
-        try:
-            names = data_names(set='params')
-        except RelaxImplementError:
-            gui_raise(RelaxImplementError())
-
-        # Loop over the parameters.
-        for name in (data_names(set='params') + data_names(set='generic')):
-            # Get the description.
-            desc = return_data_desc(name)
-
-            # No description.
-            if not desc:
-                text = name
-
-            # The text.
-            else:
-                text = "%s:  %s" % (name, desc)
-
-            # Append the description.
-            self.param.Append(str_to_gui(text), name)
 
 
     def on_execute(self):
@@ -172,3 +145,58 @@ class Set_page(UF_page):
         # Set the default value.
         if value != None:
             self.val.SetValue(str_to_gui(str(value)))
+
+
+    def set_param(self, param):
+        """Set the selection to the given parameter.
+
+        @keyword param: The starting parameter.
+        @type param:    str
+        """
+
+        # Nothing to do.
+        if param == None:
+            return
+
+        # Find the parameter in the list.
+        for i in range(self.param.GetCount()):
+            if param == self.param.GetClientData(i):
+                self.param.SetSelection(i)
+
+        # Set the default value.
+        self.set_default_value()
+
+
+    def update_parameters(self):
+        """Fill out the list of parameters and their descriptions."""
+
+        # Check the current data pipe.
+        if cdp == None:
+            gui_raise(RelaxNoPipeError())
+
+        # Get the specific functions.
+        data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
+        self.data_type = specific_fns.setup.get_specific_fn('data_type', cdp.pipe_type, raise_error=False)
+        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
+
+        # The data names, if they exist.
+        try:
+            names = data_names(set='params')
+        except RelaxImplementError:
+            gui_raise(RelaxImplementError())
+
+        # Loop over the parameters.
+        for name in (data_names(set='params') + data_names(set='generic')):
+            # Get the description.
+            desc = return_data_desc(name)
+
+            # No description.
+            if not desc:
+                text = name
+
+            # The text.
+            else:
+                text = "'%s':  %s" % (name, desc)
+
+            # Append the description.
+            self.param.Append(str_to_gui(text), name)
