@@ -1074,11 +1074,19 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
     if not res_cont:
         res_cont = cdp.mol[0].res[0]
 
-    # Add the spin.
-    res_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
+    # Rename the spin, if only a single one exists and it is empty.
+    if len(res_cont.spin) == 1 and res_cont.spin[0].is_empty():
+        spin_cont = res_cont.spin[0]
+        spin_cont.name = spin_name
+        spin_cont.num = spin_num
+
+    # Otherwise add the spin.
+    else:
+        res_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
+        spin_cont = res_cont.spin[-1]
 
     # Return the spin.
-    return res_cont.spin[-1]
+    return spin_cont
 
 
 def convert_from_global_index(global_index=None, pipe=None):
