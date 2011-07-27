@@ -907,6 +907,8 @@ def create_molecule(mol_name=None, mol_type=None):
     @type mol_name:     str
     @keyword mol_type:  The type of molecule.
     @type mol_type:     str
+    @return:            The newly created molecule.
+    @rtype:             MoleculeContainer instance
     """
 
     # Test if the current data pipe exists.
@@ -924,6 +926,9 @@ def create_molecule(mol_name=None, mol_type=None):
     # Append the molecule.
     cdp.mol.add_item(mol_name=mol_name, mol_type=mol_type)
 
+    # Return the molecule.
+    return cdp.mol[-1]
+
 
 def create_residue(res_num=None, res_name=None, mol_name=None):
     """Add a residue into the relax data store (and molecule if necessary).
@@ -934,6 +939,8 @@ def create_residue(res_num=None, res_name=None, mol_name=None):
     @type res_name:     str
     @keyword mol_name:  The name of the molecule to add the residue to.
     @type mol_name:     str
+    @return:            The newly created residue.
+    @rtype:             ResidueContainer instance
     """
 
     # Test if the current data pipe exists.
@@ -950,6 +957,9 @@ def create_residue(res_num=None, res_name=None, mol_name=None):
 
     # Add the residue.
     mol_cont.res.add_item(res_num=res_num, res_name=res_name)
+
+    # Return the residue.
+    return mol_cont.res[-1]
 
 
 def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None, averaging=None):
@@ -1056,6 +1066,8 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
     @type res_name:     str
     @keyword mol_name:  The name of the molecule to add the spin to.
     @type mol_name:     str
+    @return:            The newly created spin.
+    @rtype:             SpinContainer instance
     """
 
     # Test if the current data pipe exists.
@@ -1072,8 +1084,19 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
     if not res_cont:
         res_cont = cdp.mol[0].res[0]
 
-    # Add the spin.
-    res_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
+    # Rename the spin, if only a single one exists and it is empty.
+    if len(res_cont.spin) == 1 and res_cont.spin[0].is_empty():
+        spin_cont = res_cont.spin[0]
+        spin_cont.name = spin_name
+        spin_cont.num = spin_num
+
+    # Otherwise add the spin.
+    else:
+        res_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
+        spin_cont = res_cont.spin[-1]
+
+    # Return the spin.
+    return spin_cont
 
 
 def convert_from_global_index(global_index=None, pipe=None):
