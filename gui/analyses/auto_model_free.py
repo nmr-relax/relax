@@ -245,10 +245,10 @@ class Auto_model_free(Base_analysis):
             dialog.Show()
 
 
-    def add_max_iterations(self, box):
-        """Create and add the model-free maximum interation GUI element to the given box.
+    def add_values(self, box):
+        """Create and add the value.set buttons for the model-free analysis.
 
-        @param box:     The box element to pack the model-free maximum iteration GUI element into.
+        @param box:     The box element to pack the GUI element into.
         @type box:      wx.BoxSizer instance
         """
 
@@ -256,14 +256,45 @@ class Auto_model_free(Base_analysis):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # Text.
-        label_maxiter = wx.StaticText(self, -1, "Maximum interations")
-        label_maxiter.SetMinSize((240, 17))
-        label_maxiter.SetFont(font.normal)
-        sizer.Add(label_maxiter, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        label = wx.StaticText(self, -1, "Value setting:")
+        label.SetMinSize((self.width_text, -1))
+        label.SetFont(font.normal)
+        sizer.Add(label, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
-        # Spinner.
-        self.max_iter = wx.SpinCtrl(self, -1, self.data.max_iter, min=25, max=100)
-        sizer.Add(self.max_iter, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        # Spacer.
+        sizer.AddSpacer((self.spacer_horizontal, -1))
+
+        # CSA button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " CSA")
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        button.SetSize((-1, 20))
+        button.SetToolTipString("Set the Chemical Shift Anisotropy (CSA) values via the value.set user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.value_set_csa, button)
+        sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Bond length button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Bond length")
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        button.SetSize((-1, 20))
+        button.SetToolTipString("Set the bond length (r) values via the value.set user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.value_set_r, button)
+        sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Proton type button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " H type")
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        button.SetSize((-1, 20))
+        button.SetToolTipString("Set the type of proton via the value.set user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.value_set_proton_type, button)
+        sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Heteronucleus type button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " X type")
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        button.SetSize((-1, 20))
+        button.SetToolTipString("Set the type of heteronucleus via the value.set user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.value_set_heteronuc_type, button)
+        sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
@@ -418,6 +449,10 @@ class Auto_model_free(Base_analysis):
         # Add the relaxation data list GUI element, with spacing.
         box.AddSpacer(10)
         self.relax_data = Relax_data_list(gui=self.gui, parent=self, box=box, id=str(self.data_index))
+        box.AddSpacer(10)
+
+        # Add the value.set buttons.
+        self.add_values(box)
         box.AddSpacer(10)
 
         # Add the local tau_m models GUI element, with spacing.
@@ -592,6 +627,50 @@ class Auto_model_free(Base_analysis):
             self.data.max_iter = gui_to_int(self.max_iter.GetValue())
         else:
             self.max_iter.SetValue(int(self.data.max_iter))
+
+
+    def value_set_csa(self, event):
+        """Set the CSA via the value.set uf.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        self.gui.user_functions.value.set(None, param='csa')
+
+
+    def value_set_heteronuc_type(self, event):
+        """Set the type of heteronucleus via the value.set uf.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        self.gui.user_functions.value.set(None, param='heteronuc_type')
+
+
+    def value_set_proton_type(self, event):
+        """Set the type of proton via the value.set uf.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        self.gui.user_functions.value.set(None, param='proton_type')
+
+
+    def value_set_r(self, event):
+        """Set the bond length via the value.set uf.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        self.gui.user_functions.value.set(None, param='r')
 
 
 
