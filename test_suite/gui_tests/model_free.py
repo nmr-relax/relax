@@ -33,7 +33,7 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
 from gui.misc import float_to_gui, str_to_gui
-from gui.user_functions import relax_data, sequence
+from gui.user_functions import relax_data, sequence, value
 from gui.wizard import Wiz_window
 
 
@@ -92,6 +92,17 @@ class Mf(GuiTestCase):
             relax_data_read.frq.SetValue(float_to_gui(data[i][3]))
             relax_data_read.on_execute()
 
+        # Set the values.
+        value_set = value.Set_page(wizard, self.gui)
+        value_set.set_param('csa')
+        value_set.on_execute()
+        value_set.set_param('r')
+        value_set.on_execute()
+        value_set.set_param('heteronuc_type')
+        value_set.on_execute()
+        value_set.set_param('proton_type')
+        value_set.on_execute()
+
         # Select only the tm0 and tm1 local tm models.
         analysis.local_tm_model_field.select = [True, True, False, False, False, False, False, False, False, False]
         analysis.local_tm_model_field.modify(None)
@@ -105,6 +116,10 @@ class Mf(GuiTestCase):
 
         # Set the number of Monte Carlo simulations.
         analysis.mc_sim_num.SetValue(2)
+
+        # Set the protocol mode to automatic.
+        analysis.mode_win.select_full_analysis(None)
+        analysis.mode_dialog(None)
 
         # Check that the data has been correctly updated prior to execution.
         analysis.sync_ds(upload=True)
