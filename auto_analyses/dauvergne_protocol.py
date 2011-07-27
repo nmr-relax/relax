@@ -412,7 +412,7 @@ class dAuvergne_protocol:
         print("\nConvergence:")
         if converged:
             # Update the status.
-            status.analysis[self.pipe_name].convergence = True
+            status.auto_analysis[self.pipe_name].convergence = True
 
             # Print out.
             print("    [ Yes ]")
@@ -503,7 +503,7 @@ class dAuvergne_protocol:
             while True:
                 # Determine which round of optimisation to do (init, round_1, round_2, etc).
                 self.round = self.determine_rnd(model=self.diff_model)
-                status.analysis[self.pipe_name].round = self.round
+                status.auto_analysis[self.pipe_name].round = self.round
 
                 # Inital round of optimisation for diffusion models MII to MV.
                 if self.round == 0:
@@ -579,7 +579,7 @@ class dAuvergne_protocol:
                         break
 
                 # Unset the status.
-                status.analysis[self.pipe_name].round = None
+                status.auto_analysis[self.pipe_name].round = None
 
 
         # Final run.
@@ -746,44 +746,44 @@ class dAuvergne_protocol:
         status.init_auto_analysis(self.pipe_name, type='dauvergne_protocol')
 
         # The global diffusion model.
-        status.analysis[self.pipe_name].diff_model = self.diff_model
+        status.auto_analysis[self.pipe_name].diff_model = self.diff_model
 
         # The round of optimisation, i.e. the global iteration.
-        status.analysis[self.pipe_name].round = None
+        status.auto_analysis[self.pipe_name].round = None
 
         # The list of model-free local tm models for optimisation, i.e. the global iteration.
-        status.analysis[self.pipe_name].local_tm_models = self.local_tm_models
+        status.auto_analysis[self.pipe_name].local_tm_models = self.local_tm_models
 
         # The list of model-free models for optimisation, i.e. the global iteration.
-        status.analysis[self.pipe_name].mf_models = self.mf_models
+        status.auto_analysis[self.pipe_name].mf_models = self.mf_models
 
         # The current model-free model.
-        status.analysis[self.pipe_name].current_model = None
+        status.auto_analysis[self.pipe_name].current_model = None
 
         # The convergence of the global model.
-        status.analysis[self.pipe_name].convergence = False
+        status.auto_analysis[self.pipe_name].convergence = False
 
 
     def status_reset(self):
         """Initialise the status object."""
 
         # The global diffusion model.
-        status.analysis[self.pipe_name].diff_model = None
+        status.auto_analysis[self.pipe_name].diff_model = None
 
         # The round of optimisation, i.e. the global iteration.
-        status.analysis[self.pipe_name].round = None
+        status.auto_analysis[self.pipe_name].round = None
 
         # The list of model-free local tm models for optimisation, i.e. the global iteration.
-        status.analysis[self.pipe_name].local_tm_models = None
+        status.auto_analysis[self.pipe_name].local_tm_models = None
 
         # The list of model-free models for optimisation, i.e. the global iteration.
-        status.analysis[self.pipe_name].mf_models = None
+        status.auto_analysis[self.pipe_name].mf_models = None
 
         # The current model-free model.
-        status.analysis[self.pipe_name].current_model = None
+        status.auto_analysis[self.pipe_name].current_model = None
 
         # The convergence of the global model.
-        status.analysis[self.pipe_name].convergence = False
+        status.auto_analysis[self.pipe_name].convergence = False
 
 
 
