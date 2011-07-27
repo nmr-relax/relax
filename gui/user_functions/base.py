@@ -89,6 +89,12 @@ class UF_page(Wiz_page):
         @type gui:          wx.Frame instance
         """
 
+        # Yield to allow the cursor to be changed.
+        wx.Yield()
+
+        # Change the cursor to waiting.
+        wx.BeginBusyCursor()
+
         # Store the args.
         self.gui = gui
 
@@ -109,6 +115,9 @@ class UF_page(Wiz_page):
 
         # Execute the base class method.
         super(UF_page, self).__init__(parent)
+
+        # Reset the cursor.
+        wx.EndBusyCursor()
 
 
     def _format_text(self, text):
