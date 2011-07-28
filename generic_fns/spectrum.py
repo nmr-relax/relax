@@ -448,8 +448,8 @@ def __errors_repl(verbosity=0):
         cdp.var_I[id] = cdp.var_I[id] / float(count)
 
         # Set all spectra variances.
-        for j in xrange(1, num_spectra):
-            cdp.var_I[spectra[j]] = cdp.var_I[spectra[0]]
+        for j in range(num_spectra):
+            cdp.var_I[spectra[j]] = cdp.var_I[id]
 
         # Print out.
         print(("Standard deviation:  %s" % sqrt(cdp.var_I[id])))
@@ -632,7 +632,7 @@ def error_analysis():
             __errors_height_no_repl()
 
     # Peak volume category.
-    if cdp.int_method == 'volume':
+    if cdp.int_method == 'point sum':
         # Print out.
         print("Intensity measure:  Peak volumes.")
 
@@ -1034,8 +1034,8 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         raise RelaxError("The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method))
 
     # Check the intensity measure.
-    if not int_method in ['height', 'volume', 'other']:
-        raise RelaxError("The intensity measure '%s' is not one of 'height', 'volume', 'other'." % int_method)
+    if not int_method in ['height', 'point sum', 'other']:
+        raise RelaxError("The intensity measure '%s' is not one of 'height', 'point sum', 'other'." % int_method)
 
     # Set the peak intensity measure.
     cdp.int_method = int_method

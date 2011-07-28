@@ -144,7 +144,7 @@ class NOE_calc:
         self.interpreter.spectrum.error_analysis()
 
         # Deselect unresolved spins.
-        self.interpreter.deselect.read(file=self.unresolved)
+        self.interpreter.deselect.read(file=self.unresolved, res_num_col=1)
 
         # Calculate the NOEs.
         self.interpreter.calc()

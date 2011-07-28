@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -378,7 +378,7 @@ class Value(User_fn_class):
         value.set(val=val, param=param, spin_id=spin_id)
 
 
-    def write(self, param=None, file=None, dir=None, force=False):
+    def write(self, param=None, file=None, dir=None, bc=False, force=False):
         """Write spin specific data values to a file.
 
         Keyword Arguments
@@ -389,6 +389,9 @@ class Value(User_fn_class):
         file:  The name of the file.
 
         dir:  The directory name.
+
+        bc:  A flag which if True will cause the back calculated values to be written to file
+        rather than the actual data.
 
         force:  A flag which, if set to True, will cause the file to be overwritten.
 
@@ -424,6 +427,7 @@ class Value(User_fn_class):
             text = text + "param=" + repr(param)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
+            text = text + ", bc=" + repr(bc)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
@@ -431,10 +435,11 @@ class Value(User_fn_class):
         arg_check.is_str(param, 'parameter')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(bc, 'back calculated value flag')
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        value.write(param=param, file=file, dir=dir, force=force)
+        value.write(param=param, file=file, dir=dir, bc=bc, force=force)
 
 
     # Docstring modification.

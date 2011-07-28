@@ -27,6 +27,45 @@
 # Python module imports.
 from math import pow
 from string import split
+import wx
+
+
+def add_border(box, border=0, packing=wx.VERTICAL):
+    """Create the main part of the frame, returning the central sizer.
+
+    @param box:         The box sizer element to pack the borders into.
+    @type box:          wx.BoxSizer instance
+    @keyword border:    The size of the border in pixels.
+    @type border:       int
+    @keyword packing:   Specify if the central sizer should be vertically or horizontally packed.
+    @type packing:      wx.VERTICAL or wx.HORIZONTAL
+    @return:            The central sizer.
+    @rtype:             wx.BoxSizer instance
+    """
+
+    # The orientation of the sub sizer.
+    orient = box.GetOrientation()
+    if orient == wx.HORIZONTAL:
+        orient_sub = wx.VERTICAL
+    else:
+        orient_sub = wx.HORIZONTAL
+
+    # Some sizers.
+    sizer_sub = wx.BoxSizer(orient_sub)
+    sizer_cent = wx.BoxSizer(packing)
+
+    # Left and right borders.
+    box.AddSpacer(border)
+    box.Add(sizer_sub, 1, wx.EXPAND|wx.ALL)
+    box.AddSpacer(border)
+
+    # Top and bottom borders.
+    sizer_sub.AddSpacer(border)
+    sizer_sub.Add(sizer_cent, 1, wx.EXPAND|wx.ALL)
+    sizer_sub.AddSpacer(border)
+
+    # Return the central sizer.
+    return sizer_cent
 
 
 def convert_to_float(string):

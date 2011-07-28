@@ -127,19 +127,19 @@ class Spin(UF_base):
 
 
 class Copy_window(UF_window, Mol_res_spin):
-    """The residue.copy() user function window."""
+    """The spin.copy() user function window."""
 
     # Some class variables.
     size_x = 700
     size_y = 600
-    frame_title = 'Copy a residue'
-    image_path = WIZARD_IMAGE_PATH + 'residue.png'
-    main_text = 'This dialog allows you to copy residues.'
-    title = 'Residue copy'
+    frame_title = 'Copy a spin'
+    image_path = WIZARD_IMAGE_PATH + 'spin.png'
+    main_text = 'This dialog allows you to copy spin.'
+    title = 'Spin copy'
 
 
     def add_uf(self, sizer):
-        """Add the residue specific GUI elements.
+        """Add the spin specific GUI elements.
 
         @param sizer:   A sizer object.
         @type sizer:    wx.Sizer instance
@@ -276,7 +276,6 @@ class Copy_window(UF_window, Mol_res_spin):
         # The source data pipe and molecule name.
         pipe_from = gui_to_str(self.pipe_from.GetValue())
         res_from = self._get_res_id(suffix='_from')
-        print res_from
 
         # Clear the previous data.
         self.spin_from.Clear()

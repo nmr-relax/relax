@@ -24,11 +24,7 @@
 
 
 # Set the data pipe names (also the names of preset model-free models).
-#pipes = ['m1']
 pipes = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
-
-# Nuclei type
-value.set('15N', 'heteronucleus')
 
 # Minimise the model-free parameters.
 print("\n\n\n\n\n")
@@ -40,6 +36,9 @@ print("\n\n\n")
 for name in pipes:
     # Create the data pipe.
     pipe.create(name, 'mf')
+
+    # Nuclei type
+    value.set('15N', 'heteronucleus')
 
     # Load the sequence.
     sequence.read('noe.500.out', res_num_col=1)
