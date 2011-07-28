@@ -248,7 +248,7 @@ class Main(wx.Frame):
         """
 
         # Ask if the user is sure they would like to exit.
-        doexit = question('Are you sure you would like to quit relax?  All unsaved data will be lost.', default=True)
+        doexit = question('Are you sure you would like to quit relax?  All unsaved data will be lost.', caption='Exit relax', default=True)
 
         # Exit.
         if doexit:
