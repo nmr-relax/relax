@@ -1055,7 +1055,7 @@ class Wiz_window(wx.Dialog):
             if self._button_apply_flag[i]:
                 # Create the button.
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Apply")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_apply, wx.BITMAP_TYPE_ANY))
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_ok_apply, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Apply the operation")
                 button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
