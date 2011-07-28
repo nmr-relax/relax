@@ -206,7 +206,7 @@ class Spin_view_window(wx.Frame):
         """
 
         # Set the frame title.
-        self.SetTitle("The molecule, residue, and spin window")
+        self.SetTitle("The spin viewer")
 
         # Use a box sizer for packing the shell.
         sizer = wx.BoxSizer(wx.VERTICAL)
