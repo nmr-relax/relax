@@ -517,6 +517,7 @@ class dAuvergne_protocol:
                     if has_pipe(name):
                         self.interpreter.pipe.delete(name)
                     self.interpreter.pipe.copy(self.pipe_name, name)
+                    self.interpreter.pipe.switch(name)
 
                     # Load the local tm diffusion model MI results.
                     self.interpreter.results.read(file='results', dir=self.results_dir+'local_tm'+sep+'aic')
@@ -606,6 +607,7 @@ class dAuvergne_protocol:
 
             # Create the local_tm data pipe by copying.
             self.interpreter.pipe.copy(self.pipe_name, 'local_tm')
+            self.interpreter.pipe.switch('local_tm')
 
             # Load the local tm diffusion model MI results.
             self.interpreter.results.read(file='results', dir=self.results_dir+'local_tm'+sep+'aic')
@@ -627,6 +629,7 @@ class dAuvergne_protocol:
 
                 # Create the data pipe by copying.
                 self.interpreter.pipe.copy(self.pipe_name, model)
+                self.interpreter.pipe.switch(model)
 
                 # Load the diffusion model results.
                 self.interpreter.results.read(file='results', dir=self.results_dir+model + sep+'round_'+repr(self.round)+sep+'opt')
@@ -715,6 +718,7 @@ class dAuvergne_protocol:
             if has_pipe(name):
                 self.interpreter.pipe.delete(name)
             self.interpreter.pipe.copy(self.pipe_name, name)
+            self.interpreter.pipe.switch(name)
 
             # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
             if not local_tm:
