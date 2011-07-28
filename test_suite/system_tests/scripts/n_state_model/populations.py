@@ -23,8 +23,8 @@ for model in [1, 3, 2]:
     i += 1
 
 # Load the sequence information.
-structure.load_spins(spin_id=':UNK@C*', combine_models=False, ave_pos=False)
-structure.load_spins(spin_id=':UNK@H*', combine_models=False, ave_pos=False)
+structure.load_spins(spin_id=':UNK@C*', ave_pos=False)
+structure.load_spins(spin_id=':UNK@H*', ave_pos=False)
 
 # Deselect the CH2 protons (the rotation of these doesn't work in the model, but the carbon doesn't move).
 deselect.spin(spin_id=':UNK@H6')

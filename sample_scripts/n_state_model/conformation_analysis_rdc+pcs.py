@@ -106,7 +106,7 @@ for i in range(NUM_TAG):
     structure.read_pdb(file='LactoseMCMM4_'+`i+1`, dir='../../../structures/tag_1000/080704_MCMM4_aligned-forEd1000', parser='internal', set_model_num=i+1, set_mol_name='tag')
 
 # Load the lanthanide atoms.
-structure.load_spins(spin_id=':4@C1', combine_models=False, ave_pos=False)
+structure.load_spins(spin_id=':4@C1', ave_pos=False)
 
 # Switch back to the main analysis data pipe.
 pipe.switch('lactose')

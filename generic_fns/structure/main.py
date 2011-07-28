@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import dot, float64, ndarray, zeros
+from numpy import array, dot, float64, ndarray, zeros
 from numpy.linalg import norm
 from os import F_OK, access
 from re import search
@@ -32,7 +32,7 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns import molmol, relax_re
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, linear_ave, return_molecule, return_residue, return_spin, spin_loop
+from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id, linear_ave, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns import pipes
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
@@ -157,15 +157,13 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
                     spin.pos = ave[0]
 
 
-def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
+def load_spins(spin_id=None, str_id=None, ave_pos=False):
     """Load the spins from the structural object into the relax data store.
 
     @keyword spin_id:           The molecule, residue, and spin identifier string.
     @type spin_id:              str
     @keyword str_id:            The structure identifier.  This can be the file name, model number, or structure number.
     @type str_id:               int or str
-    @keyword combine_models:    A flag specifying if spins from only one structure of the ensemble or from all should be loaded.
-    @type combine_models:       bool
     @keyword ave_pos:           A flag specifying if the average atom position or the atom position from all loaded structures is loaded into the SpinContainer.
     @type ave_pos:              bool
     """
@@ -187,9 +185,11 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
     spin_nums = []
     spin_names = []
 
-    # Loop over all atoms of the spin_id selection.
+    # Initialise data for the atom loop.
     model_index = -1
-    last_model = None
+    last_model = 1000000
+
+    # Loop over all atoms of the spin_id selection.
     for model_num, mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
         # Update the model info.
         if last_model != model_num:
@@ -204,84 +204,48 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
         if atom_name and search('\+', atom_name):
             atom_name = replace(atom_name, '+', '')
 
-        # Initialise the identification string.
-        id = ''
+        # Generate a spin ID for the current atom.
+        id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=atom_num, spin_name=atom_name)
 
-        # Get the molecule container corresponding to the molecule name.
-        mol_cont = None
-        if mol_name:
-            # Update the ID string.
-            id = id + '#' + mol_name
+        # Create the spin.
+        try:
+            spin_cont = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=atom_num, spin_name=atom_name)
+        except RelaxError:
+            # Throw a warning if still on the first model.
+            if not model_index:
+                warn(RelaxWarning("The spin '%s' already exists." % id))
+                continue
 
-            # The container.
-            mol_cont = return_molecule(id)
+            # Otherwise, get the spin container.
+            spin_cont = return_spin(id)
 
-        # Add the molecule if it doesn't exist.
-        if mol_cont == None:
-            # Get the unnamed molecule, assuming there is only one.
-            mol_cont = return_molecule()
-
-            # Got something!
-            if mol_cont != None:
-                # Rename the molecule container if the mol name is given and the sole container is unnamed.
-                if mol_cont.name == None and mol_name:
-                    # Print out.
-                    print(("Renaming the unnamed sole molecule container to '%s'." % mol_name))
-
-                    # Set the name.
-                    mol_cont.name = mol_name
-
-            # Nothing exists yet.
-            else:
-                # Add the molecule.
-                cdp.mol.add_item(mol_name=mol_name)
-
-                # Get the container.
-                mol_cont = cdp.mol[-1]
-
-        # Add the residue number to the ID string (residue name is ignored because only the number is unique).
-        id = id + ':' + repr(res_num)
-
-        # Get the corresponding residue container.
-        res_cont = return_residue(id)
-
-        # Add the residue if it doesn't exist.
-        if res_cont == None:
-            # Add the residue.
-            mol_cont.res.add_item(res_name=res_name, res_num=res_num)
-
-            # Get the container.
-            res_cont = mol_cont.res[-1]
-
-        # Add the atom number to the ID string (atom name is ignored because only the number is unique).
-        id = id + '@' + repr(atom_num)
-
-        # Get the corresponding spin container.
-        spin_cont = return_spin(id)
-
-        # Add the spin if it doesn't exist.
-        if spin_cont == None:
-            # Add the spin.
-            res_cont.spin.add_item(spin_name=atom_name, spin_num=atom_num)
-
-            # Get the container.
-            spin_cont = res_cont.spin[-1]
-
-            # Append all the spin ID info.
+        # Append all the spin ID info for the first model for printing later.
+        if model_index == 0:
             mol_names.append(mol_name)
             res_nums.append(res_num)
             res_names.append(res_name)
             spin_nums.append(atom_num)
             spin_names.append(atom_name)
 
-        # Add the position vector and element type to the spin container.
+        # Convert the position vector to a numpy array.
+        pos = array(pos, float64)
+
+        # Average position vector (already averaged across models in the atom_loop).
         if ave_pos:
             spin_cont.pos = pos
+
+        # All positions.
         else:
+            # Initialise.
             if not hasattr(spin_cont, 'pos'):
                 spin_cont.pos = []
+
+            # Add the current model's position.
             spin_cont.pos.append(pos)
-        spin_cont.element = element
+
+        # Add the element.
+        if not model_index:
+            spin_cont.element = element
 
     # Catch no data.
     if len(mol_names) == 0:

@@ -195,34 +195,29 @@ class Structure(User_fn_class):
     _build_doc(delete)
 
 
-    def load_spins(self, spin_id=None, combine_models=True, ave_pos=True):
+    def load_spins(self, spin_id=None, ave_pos=True):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.load_spins("
             text = text + "spin_id=" + repr(spin_id)
-            text = text + ", combine_models=" + repr(combine_models)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        arg_check.is_bool(combine_models, 'model combining flag')
         arg_check.is_bool(ave_pos, 'average position flag')
 
         # Execute the functional code.
-        generic_fns.structure.main.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
+        generic_fns.structure.main.load_spins(spin_id=spin_id, ave_pos=ave_pos)
 
     # The function doc info.
     load_spins._doc_title = "Load spins from the structure into the relax data store."
     load_spins._doc_title_short = "Loading spins from structure."
     load_spins._doc_args = [
         ["spin_id", "The spin identification string."],
-        ["combine_models", "A flag which specifies if spins from separate models should be combined."],
         ["ave_pos", "A flag specifying if the position of the atom is to be averaged across models."]]
     load_spins._doc_desc = """
         This allows a sequence to be generated within the relax data store using the atomic information from the structure already associated with this data pipe.  The spin ID string is used to select which molecules, which residues, and which atoms will be recognised as spin systems within relax.  If the spin ID is left unspecified, then all molecules, residues, and atoms will be placed within the data store (and all atoms will be treated as spins).
-
-        If combining models, then the spins from only a single structure from the ensemble of models will be taken.  Otherwise spins will be loaded for each model separately.
 
         If averaging the atomic positions, then average position of all models will be loaded into the spin container.  Otherwise the positions from all models will be loaded separately.
         """
