@@ -36,6 +36,7 @@ import sys
 
 # relax module imports.
 from status import Status; status = Status()
+from version import version_full
 
 
 # Mac OS X setup.
@@ -44,10 +45,21 @@ if 'darwin' in sys.platform:
     from setuptools import setup
 
     # The relax settings.
-    APP = ['relax.py']
+    APP = ['relax_gui_mode.py']
+    NAME = 'relax'
+    VERSION = version_full()
     OPTIONS = {
         'argv_emulation': True,
-        'iconfile': status.install_path + sep + 'graphics' + sep + 'ulysses_shadowless_trans_128x128.icns'
+        'iconfile': status.install_path + sep + 'graphics' + sep + 'ulysses_shadowless_trans_128x128.icns',
+        'packages': 'wx',
+        'site_packages': True,
+        'resources': 'docs/COPYING',
+        'plist': {
+            'CFBundleName':                 'relax',
+            'CFBundleShortVersionString':   version_full(),
+            'CFBundleGetInfoString':        'relax %s' % version_full(),
+            'CFBundleIdentifier':           'com.nmr-relax.relax'
+        }
     }
 
     # All files and directories.
@@ -71,6 +83,8 @@ if 'darwin' in sys.platform:
     # Setup.
     setup(
         app=APP,
+        name=NAME,
+        version=VERSION,
         data_files=DATA_FILES,
         options={
             'py2app': OPTIONS,
