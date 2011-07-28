@@ -26,7 +26,6 @@ from os import sep
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
-import dep_check
 from generic_fns.mol_res_spin import count_spins
 from status import Status; status = Status()
 
@@ -40,14 +39,6 @@ class Structure(SystemTestCase):
         @keyword methodName:    The name of the test.
         @type methodName:       str
         """
-
-        # Scientific python tests.
-        scientific_tests = ['test_load_scientific_results', 'test_read_pdb_scientific1', 'test_read_pdb_scientific2', 'test_read_pdb_scientific3', 'test_read_pdb_scientific4', 'test_read_pdb_scientific5', 'test_read_pdb_scientific6', 'test_read_pdb_scientific7', 'test_read_pdb_mol_2_model_scientific', 'test_read_pdb_model_2_mol_scientific', 'test_read_pdb_complex_scientific']
-
-        # Missing module.
-        if methodName in scientific_tests and not dep_check.scientific_module:
-            # Store in the status object.
-            status.skipped_tests.append([methodName, 'Scientific Python', 'system'])
 
         # Execute the base class method.
         super(Structure, self).__init__(methodName)

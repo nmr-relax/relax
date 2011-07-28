@@ -44,17 +44,8 @@ class Test_api_base(TestCase):
         @type methodName:       str
         """
 
-        # Scientific python tests.
-        scientific_tests = ['test_Scientific_method_args', 'test_Scientific_objects']
-
-        # Missing module.
-        if methodName in scientific_tests and not dep_check.scientific_module:
-            # Store in the status object. 
-            status.skipped_tests.append([methodName, 'Scientific Python', 'unit'])
-
         # Execute the base class method.
         super(Test_api_base, self).__init__(methodName)
-
 
 
     def format_method(self, name, args, varargs, varkw, defaults):

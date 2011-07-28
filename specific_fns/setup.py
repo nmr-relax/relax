@@ -87,6 +87,10 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'data_names':
             function = inst.data_names
 
+        # The parameter type function.
+        if eqi == 'data_type':
+            function = inst.data_type
+
         # Default parameter value returning function.
         if eqi == 'default_value':
             function = inst.default_value

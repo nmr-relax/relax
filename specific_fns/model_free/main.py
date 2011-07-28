@@ -738,7 +738,7 @@ class Model_free_main:
         if not diffusion_tensor.diff_data_exists():
             # Catch when the local tm value is set but not in the parameter list.
             for spin in spin_loop():
-                if spin.local_tm != None and not 'local_tm' in spin.params:
+                if hasattr(spin, 'local_tm') and spin.local_tm != None and not 'local_tm' in spin.params:
                     raise RelaxError("The local tm value is set but not located in the model parameter list.")
 
             # Normal error.
@@ -1343,6 +1343,50 @@ class Model_free_main:
 
         # Return the names.
         return names
+
+
+    def data_type(self, param=None):
+        """Return the type of data, as a string, that the parameter should be.
+
+        @keyword param:     The parameter name.
+        @type param:        list of str
+        @return:            The type of the parameter, as a string.  I.e. 'int', 'float', 'str', 'bool', 'list of str', 'dict of bool', etc.
+        @rtype:             str
+        """
+
+        # A dictionary of all the types.
+        types = {
+            'select':           bool,
+            'fixed':            bool,
+            'proton_type':      str,
+            'heteronuc_type':   str,
+            'attached_proton':  str,
+            'nucleus':          str,
+            'model':            str,
+            'equation':         str,
+            'params':           [str],
+            'xh_vect':          [float],
+            's2':               float,
+            's2f':              float,
+            's2s':              float,
+            'local_tm':         float,
+            'te':               float,
+            'tf':               float,
+            'ts':               float,
+            'rex':              float,
+            'r':                float,
+            'csa':              float,
+            'chi2':             float,
+            'iter':             int,
+            'f_count':          int,
+            'g_count':          int,
+            'h_count':          int,
+            'warning':          str
+        }
+
+        # Return the type, if in the list.
+        if types.has_key(param):
+            return types[param]
 
 
     default_value_doc = """
@@ -2043,6 +2087,10 @@ class Model_free_main:
 
         # Loop over the sequence.
         for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Relaxation data must exist!
             if not hasattr(spin, 'ri_data'):
                 warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
@@ -2282,11 +2330,11 @@ class Model_free_main:
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Hh]eteronucleus$', param):
+        if search('heteronuc_type', param) or search('^[Hh]eteronucleus$', param):
             return 'heteronuc_type'
 
         # Proton type.
-        if search('^[Pp]roton$', param):
+        if search('proton_type', param) or  search('^[Pp]roton$', param):
             return 'proton_type'
 
 

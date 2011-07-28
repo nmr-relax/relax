@@ -35,23 +35,24 @@ import wx
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
-from relax_errors import RelaxError
 from relax_io import DummyFileObject
 from status import Status; status = Status()
 
 # relaxGUI module imports.
+from gui.analyses.base import Base_frame
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
 from gui.controller import Redirect_text, Thread_container
 from gui.derived_wx_classes import StructureTextCtrl
-from gui.filedialog import multi_openfile, opendir, openfile
+from gui.filedialog import opendir, openfile
 from gui.message import error_message, missing_data
-from gui.paths import IMAGE_PATH
+from gui.misc import add_border
+from gui import paths
 from gui.settings import load_sequence
 
 
 
-class Auto_noe:
+class Auto_noe(Base_frame):
     """The base class for the noe frames."""
 
     # Hardcoded variables.
@@ -74,7 +75,7 @@ class Auto_noe:
         self.gui = gui
 
         # The NOE image
-        self.bitmap = IMAGE_PATH + 'noe.png'
+        self.bitmap = paths.IMAGE_PATH + 'noe.png'
 
         # Alias the storage container in the relax data store.
         self.data = ds.relax_gui.analyses[hardcoded_index]
@@ -82,303 +83,15 @@ class Auto_noe:
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
 
+        # Pack a sizer into the panel.
+        box_main = wx.BoxSizer(wx.HORIZONTAL)
+        self.parent.SetSizer(box_main)
+
+        # Build the central sizer, with borders.
+        box_centre = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
+
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        main_box = self.build_main_box()
-        self.parent.SetSizer(main_box)
-
-        # Set the frame font size.
-        self.parent.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-
-
-    def add_execute_relax(self, box):
-        """Create and add the relax execution GUI element to the given box.
-
-        @param box:     The box element to pack the relax execution GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # A horizontal sizer for the contents.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((118, 17))
-        sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-        button.SetName('hello')
-        button.SetSize(button.GetBestSize())
-        self.gui.Bind(wx.EVT_BUTTON, self.execute, button)
-        sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
-
-
-    def add_frame_title(self, box):
-        """Create and add the frame title to the given box.
-
-        @param box:     The box element to pack the frame title into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # The title.
-        label = wx.StaticText(self.parent, -1, "Setup for steady-state NOE analysis")
-
-        # The font properties.
-        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-
-        # Pack the title.
-        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
-
-
-    def add_frq(self, box):
-        """Create and add the frequency selection GUI element to the given box.
-
-        @param box:     The box element to pack the PDB file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_nmr_frq = wx.TextCtrl(self.parent, -1, str(self.data.frq))
-        self.field_nmr_frq.SetMinSize((350, 27))
-        sizer.Add(self.field_nmr_frq, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_reference_peak_list(self, box):
-        """Create and add the reference file selection GUI element to the given box.
-
-        @param box:     The box element to pack the structure file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Reference NOE peak list:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_ref_noe = wx.TextCtrl(self.parent, -1, self.data.ref_file)
-        self.field_ref_noe.SetMinSize((350, 27))
-        sizer.Add(self.field_ref_noe, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.ref_file, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_reference_rmsd(self, box):
-        """Create and add the background RMSD GUI element to the given box.
-
-        @param box:     The box element to pack the structure file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Baseplane RMSD:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_ref_rmsd = wx.TextCtrl(self.parent, -1, str(self.data.ref_rmsd))
-        self.field_ref_rmsd.SetMinSize((350, 27))
-        sizer.Add(self.field_ref_rmsd, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_results_dir(self, box):
-        """Create and add the results directory GUI element to the given box.
-
-        @param box:     The box element to pack the results directory GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_results_dir = wx.TextCtrl(self.parent, -1, self.data.save_dir)
-        self.field_results_dir.SetMinSize((350, 27))
-        sizer.Add(self.field_results_dir, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.results_directory, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_saturated_peak_list(self, box):
-        """Create and add the saturated file selection GUI element to the given box.
-
-        @param box:     The box element to pack the structure file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Saturated NOE peak list:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_sat_noe = wx.TextCtrl(self.parent, -1, self.data.sat_file)
-        self.field_sat_noe.SetMinSize((350, 27))
-        sizer.Add(self.field_sat_noe, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.sat_file, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_saturated_rmsd(self, box):
-        """Create and add the background RMSD GUI element to the given box.
-
-        @param box:     The box element to pack the structure file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Baseplane RMSD:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_sat_rmsd = wx.TextCtrl(self.parent, -1, str(self.data.sat_rmsd))
-        self.field_sat_rmsd.SetMinSize((350, 27))
-        sizer.Add(self.field_sat_rmsd, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_sequence_selection(self, box):
-        """Create and add the sequence file selection GUI element to the given box.
-
-        @param box:     The box element to pack the sequence file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence file", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_sequence = wx.TextCtrl(self.parent, -1, str(self.gui.sequence_file_msg))
-        self.field_sequence.SetEditable(False)
-        self.field_sequence.SetMinSize((350, 27))
-        sizer.Add(self.field_sequence, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.load_sequence, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 1, wx.EXPAND, 0)
-
-
-    def add_structure_selection(self, box):
-        """Create and add the structure file selection GUI element to the given box.
-
-        @param box:     The box element to pack the structure file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Sequence from PDB structure file", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_structure = StructureTextCtrl(self.parent, -1, self.gui.structure_file_pdb_msg)
-        self.field_structure.SetEditable(False)
-        self.field_structure.SetMinSize((350, 27))
-        sizer.Add(self.field_structure, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.field_structure.open_file, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 1, wx.EXPAND, 0)
-
-
-    def add_unresolved_spins(self, box):
-        """Create and add the unresolved spins GUI element to the given box.
-
-        @param box:     The box element to pack the unresolved spins GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_unresolved = wx.TextCtrl(self.parent, -1, "")
-        self.field_unresolved.SetMinSize((350, 27))
-        sizer.Add(self.field_unresolved, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+        self.build_main_box(box_centre)
 
 
     def assemble_data(self):
@@ -460,23 +173,19 @@ class Auto_noe:
         return data, complete, missing
 
 
-    def build_main_box(self):
-        """Construct the highest level box to pack into the automatic NOE analysis frame.
+    def build_left_box(self):
+        """Construct the left hand box to pack into the automatic NOE analysis frame.
 
-        @return:    The main box element containing all Rx GUI elements to pack directly into the automatic Rx analysis frame.
+        @return:    The left hand box element containing the bitmap.
         @rtype:     wx.BoxSizer instance
         """
 
-        # Use a horizontal packing of elements.
-        box = wx.BoxSizer(wx.HORIZONTAL)
+        # Use a vertical packing of elements.
+        box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the model-free bitmap picture.
-        self.bitmap_1_copy_copy = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
-        box.Add(self.bitmap_1_copy_copy, 0, wx.ADJUST_MINSIZE, 10)
-
-        # Build the right hand box and pack it next to the bitmap.
-        right_box = self.build_right_box()
-        box.Add(right_box, 0, 0, 0)
+        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
+        box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
 
         # Return the box.
         return box
@@ -493,40 +202,43 @@ class Auto_noe:
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the frame title.
-        self.add_frame_title(box)
+        self.add_title(box, "Setup for steady-state NOE analysis")
 
         # Add the frequency selection GUI element.
-        self.add_frq(box)
+        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str(self.data.frq))
 
         # Add the results directory GUI element.
-        self.add_results_dir(box)
+        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
         # Add the sequence file selection GUI element.
-        self.add_sequence_selection(box)
+        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str(self.gui.sequence_file_msg), fn=self.load_sequence, editable=False, button=True)
 
         # Add the structure file selection GUI element.
-        self.add_structure_selection(box)
+        self.field_structure = self.add_text_sel_element(box, self.parent, text="Sequence from PDB structure file", default=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, fn='open_file', editable=False, button=True)
 
         # Add the unresolved spins GUI element.
-        self.add_unresolved_spins(box)
+        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues")
 
         # Add peak list selection header.
-        self.peak_list_header(box)
+        self.add_subtitle(box, "NOE peak lists")
 
         # Add the saturated NOE peak list selection GUI element.
-        self.add_saturated_peak_list(box)
+        self.field_sat_noe = self.add_text_sel_element(box, self.parent, text="Saturated NOE peak list", default=self.data.sat_file, fn=self.sat_file, button=True)
 
         # Add the saturated RMSD background GUI element:
-        self.add_saturated_rmsd(box)
+        self.field_sat_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str(self.data.sat_rmsd))
 
         # Add the reference NOE peak list selection GUI element.
-        self.add_reference_peak_list(box)
+        self.field_ref_noe = self.add_text_sel_element(box, self.parent, text="Reference NOE peak list", default=self.data.ref_file, fn=self.ref_file, button=True)
 
         # Add the reference RMSD background GUI element:
-        self.add_reference_rmsd(box)
+        self.field_ref_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str(self.data.ref_rmsd))
+
+        # Add a stretchable spacer.
+        box.AddStretchSpacer()
 
         # Add the execution GUI element.
-        self.add_execute_relax(box)
+        self.add_execute_relax(box, self.execute)
 
         # Return the box.
         return box
@@ -646,26 +358,6 @@ class Auto_noe:
 
         # Re-alias.
         self.data = data
-
-
-    def peak_list_header(self, box):
-        """Add header for peak list section
-
-        @param box:     The box element to pack the structure file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "\nNOE peak lists:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 34))
-        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
     def ref_file(self, event):

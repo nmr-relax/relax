@@ -229,13 +229,6 @@ class Info_box(object):
         except:
             text = text + '\n'
 
-        # ScientificPython.
-        text = text + format1 % ('ScientificPython', dep_check.scientific_module)
-        try:
-            text = text + format2 % (dep_check.Scientific.__version__, dep_check.Scientific.__path__[0])
-        except:
-            text = text + '\n'
-
         # wxPython.
         text = text + format1 % ('wxPython', dep_check.wx_module)
         try:
@@ -561,8 +554,15 @@ class Bieri11(Ref):
 
     type           = "journal"
     author         = "Bieri, M., d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Michael", "Bieri", "M.", ""], ["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "relaxGUI: a new software for fast and simple NMR relaxation data analysis and calculation of ps-ns and micro-s motion of proteins"
-    status         = "submitted"
+    journal        = "J. Biomol. NMR"
+    journal_full   = "Journal of Biomolecular NMR"
+    abstract       = "Investigation of protein dynamics on the ps-ns and mus-ms timeframes provides detailed insight into the mechanisms of enzymes and the binding properties of proteins. Nuclear magnetic resonance (NMR) is an excellent tool for studying protein dynamics at atomic resolution. Analysis of relaxation data using model-free analysis can be a tedious and time consuming process, which requires good knowledge of scripting procedures. The software relaxGUI was developed for fast and simple model-free analysis and is fully integrated into the software package relax. It is written in Python and uses wxPython to build the graphical user interface (GUI) for maximum performance and multi-platform use. This software allows the analysis of NMR relaxation data with ease and the generation of publication quality graphs as well as color coded images of molecular structures. The interface is designed for simple data analysis and management. The software was tested and validated against the command line version of relax."
+    authoraddress  = "Department of Biochemistry and Molecular Biology, University of Melbourne, Melbourne, Victoria 3010, Australia."
+    doi            = "10.1007/s10858-011-9509-1"
+    pubmed_id      = 21618018
+    status         = "published"
     year           = 2011
 
 
@@ -612,7 +612,7 @@ class dAuvergneGooley03(Ref):
     number         = "1"
     pages          = "25-39"
     abstract       = "Model-free analysis of NMR relaxation data, which is widely used for the study of protein dynamics, consists of the separation of the global rotational diffusion from internal motions relative to the diffusion frame and the description of these internal motions by amplitude and timescale. Five model-free models exist, each of which describes a different type of motion. Model-free analysis requires the selection of the model which best describes the dynamics of the NH bond. It will be demonstrated that the model selection technique currently used has two significant flaws, under-fitting, and not selecting a model when one ought to be selected. Under-fitting breaks the principle of parsimony causing bias in the final model-free results, visible as an overestimation of S2 and an underestimation of taue and Rex. As a consequence the protein falsely appears to be more rigid than it actually is. Model selection has been extensively developed in other fields. The techniques known as Akaike's Information Criteria (AIC), small sample size corrected AIC (AICc), Bayesian Information Criteria (BIC), bootstrap methods, and cross-validation will be compared to the currently used technique. To analyse the variety of techniques, synthetic noisy data covering all model-free motions was created. The data consists of two types of three-dimensional grid, the Rex grids covering single motions with chemical exchange [S2,taue,Rex], and the Double Motion grids covering two internal motions [S f 2,S s 2,tau s ]. The conclusion of the comparison is that for accurate model-free results, AIC model selection is essential. As the method neither under, nor over-fits, AIC is the best tool for applying Occam's razor and has the additional benefits of simplifying and speeding up model-free analysis."
-    authoraddress  = "Department of Biochemistry and Molecular Biology, University of Melbourne, Melbourne, Victoria 3010, Australia. ejdauv@pgrad.unimelb.edu.au"
+    authoraddress  = "Department of Biochemistry and Molecular Biology, University of Melbourne, Melbourne, Victoria 3010, Australia."
     keywords       = "Amines ; Diffusion ; *Models, Molecular ; Motion ; Nuclear Magnetic Resonance, Biomolecular/*methods ; Proteins/*chemistry ; Research Support, Non-U.S. Gov't ; Rotation"
     doi            = "10.1023/A:1021902006114"
     pubmed_id      = 12566997

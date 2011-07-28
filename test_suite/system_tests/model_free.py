@@ -531,9 +531,6 @@ class Mf(SystemTestCase):
         # Path of the files.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
-        # Read the sequence.
-        self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
-
         # Read the PDF file and set the vectors.
         self.interpreter.structure.read_pdb(file='pdb', dir=path, read_model=1)
         self.interpreter.structure.load_spins('@N')

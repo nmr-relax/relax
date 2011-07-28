@@ -40,14 +40,6 @@ class Unit_vectors(SystemTestCase):
         @type methodName:       str
         """
 
-        # Scientific python tests.
-        scientific_tests = ['test_calc_unit_vectors1', 'test_calc_unit_vectors2']
-
-        # Missing module.
-        if methodName in scientific_tests and not dep_check.scientific_module:
-            # Store in the status object.
-            status.skipped_tests.append([methodName, 'Scientific Python', 'system'])
-
         # Execute the base class method.
         super(Unit_vectors, self).__init__(methodName)
 
