@@ -513,11 +513,10 @@ class dAuvergne_protocol:
                     # Run name.
                     name = self.diff_model
 
-                    # Create the data pipe by copying (deleting the old one if it exists).
+                    # Create the data pipe (deleting the old one if it exists).
                     if has_pipe(name):
                         self.interpreter.pipe.delete(name)
-                    self.interpreter.pipe.copy(self.pipe_name, name)
-                    self.interpreter.pipe.switch(name)
+                    self.interpreter.pipe.create(name, 'mf')
 
                     # Load the local tm diffusion model MI results.
                     self.interpreter.results.read(file='results', dir=self.results_dir+'local_tm'+sep+'aic')
