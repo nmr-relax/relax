@@ -49,7 +49,7 @@ from gui.components.relax_data import Relax_data_list
 from gui.controller import Redirect_text
 from gui.filedialog import opendir
 from gui.fonts import font
-from gui.message import error_message, question, Missing_data
+from gui.message import error_message, Question, Missing_data
 from gui.misc import add_border, gui_to_int, gui_to_str, list_to_gui, protected_exec, str_to_gui
 from gui import paths
 
@@ -855,7 +855,7 @@ class Local_tm_list:
 
         # First state that this should not be done.
         msg = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
-        if not question(msg, caption="Warning - do not change!", default=False):
+        if Question(msg, title="Warning - do not change!", default=False).ShowModal() == wx.ID_YES:
             return
 
         # Set the model selector window selections.

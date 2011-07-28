@@ -132,7 +132,7 @@ class Base_window(wx.Dialog):
 
         # The cancel button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Cancel")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_cancel, wx.BITMAP_TYPE_ANY))
         button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
         self.Bind(wx.EVT_BUTTON, self.cancel, button)
 

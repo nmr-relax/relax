@@ -25,6 +25,7 @@
 from os import sep
 import sys
 import wx
+import wx.lib.buttons
 import wx.lib.scrolledpanel
 
 # relax module imports.
@@ -32,7 +33,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.icons import relax_icons
-from gui.paths import IMAGE_PATH, icon_48x48
+from gui.paths import IMAGE_PATH, icon_22x22, icon_48x48
 import gui
 
 
@@ -70,46 +71,6 @@ def exec_relax():
     else:
         check = False
     return check
-
-
-def question(msg, caption='', default=False):
-    """A generic question box.
-
-    @param msg:         The text message to display.
-    @type msg:          str
-    @keyword caption:   The window title.
-    @type caption:      str
-    @keyword default:   If True, the default button will be 'yes', otherwise it will be 'no'.
-    @type default:      bool
-    @return:            The answer.
-    @rtype:             bool
-    """
-
-    # If default.
-    if default:
-        style = wx.YES_DEFAULT
-    else:
-        style = wx.NO_DEFAULT
-
-    # The dialog window.
-    dialog = wx.MessageDialog(None, message=msg, caption=caption, style=wx.YES_NO|style)
-
-    # Set up the window icon.
-    dialog.SetIcons(relax_icons)
-
-    # The answer.
-    answer = False
-
-    # No GUI, so always answer True.
-    if not status.show_gui:
-        answer = True
-
-    # Otherwise get the answer from the user.
-    elif dialog.ShowModal() == wx.ID_YES:
-        answer = True
-
-    # Return the answer.
-    return answer
 
 
 def relax_run_ok(msg1):
@@ -184,3 +145,132 @@ class Missing_data(wx.Dialog):
         # Otherwise throw the error out to stderr.
         else:
             sys.stderr.write("Missing data:  %s\n" % msg)
+
+
+
+class Question(wx.Dialog):
+    """Question box GUI element for obtaining a yes/no response from the user."""
+
+    # Some class variables.
+    border = 10
+    spacer_button = 10
+    spacer_main = 20
+    height_button = 30
+    width_button = 50
+
+    def __init__(self, msg, title='', size=(350, 125), default=False):
+        """A generic question box.
+
+        @param msg:         The text message to display.
+        @type msg:          str
+        @keyword title:     The window title.
+        @type title:        str
+        @keyword default:   If True, the default button will be 'yes', otherwise it will be 'no'.
+        @type default:      bool
+        @return:            The answer.
+        @rtype:             bool
+        """
+
+        # The default.
+        if default:
+            self.answer = wx.ID_YES
+        else:
+            self.answer = wx.ID_NO
+
+        # Initialise the base class.
+        wx.Dialog.__init__(self, None, title=title, size=size, style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
+
+        # A sizer for the dialog.
+        main_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.SetSizer(main_sizer)
+
+        # Build the central sizer, with borders.
+        sizer = gui.misc.add_border(main_sizer, border=self.border, packing=wx.HORIZONTAL)
+
+        # Add the graphic.
+        bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(icon_48x48.dialog_warning, wx.BITMAP_TYPE_ANY))
+        sizer.Add(bitmap)
+
+        # Spacing.
+        sizer.AddSpacer(self.spacer_main)
+
+        # A vertical sizer for the right hand contents.
+        sub_sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Convert to a text element.
+        text = wx.StaticText(self, -1, msg, style=wx.TE_MULTILINE)
+        sub_sizer.Add(text, 1, wx.ALL|wx.EXPAND, 0)
+
+        # A sizer for the buttons.
+        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sub_sizer.Add(button_sizer, 0, wx.ALL|wx.EXPAND, 0)
+
+        # The yes button.
+        button_yes = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Yes")
+        button_yes.SetBitmapLabel(wx.Bitmap(icon_22x22.dialog_ok, wx.BITMAP_TYPE_ANY))
+        button_yes.SetMinSize((self.width_button, self.height_button))
+        button_sizer.Add(button_yes, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        self.Bind(wx.EVT_BUTTON, self.yes, button_yes)
+
+        # Button spacing.
+        button_sizer.AddSpacer(self.spacer_button)
+
+        # The no button.
+        button_no = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " No")
+        button_no.SetBitmapLabel(wx.Bitmap(icon_22x22.dialog_cancel, wx.BITMAP_TYPE_ANY))
+        button_no.SetMinSize((self.width_button, self.height_button))
+        button_sizer.Add(button_no, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        self.Bind(wx.EVT_BUTTON, self.no, button_no)
+
+        # Set the focus to the default button.
+        if self.answer == wx.ID_YES:
+            button_yes.SetFocus()
+        else:
+            button_no.SetFocus()
+
+
+    def ShowModal(self):
+        """Replacement ShowModal method.
+        
+        @return:    The answer to the question, either wx.ID_YES or wx.ID_NO.
+        @rtype:     int
+        """
+
+        # Call the dialog's ShowModal method.
+        if status.show_gui:
+            super(Question, self).ShowModal()
+
+        # Return the answer.
+        return self.answer
+
+
+    def no(self, event):
+        """No selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the answer.
+        self.answer = wx.ID_NO
+
+        # Close the dialog.
+        self.Close()
+
+
+    def yes(self, event):
+        """Yes selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the answer.
+        self.answer = wx.ID_YES
+
+        # Close the dialog.
+        self.Close()

@@ -40,7 +40,7 @@ from gui.analyses.auto_r1 import Auto_r1
 from gui.analyses.auto_r2 import Auto_r2
 from gui.analyses.results import Results_viewer
 from gui.analyses.wizard import Analysis_wizard
-from gui.message import error_message, question
+from gui.message import error_message, Question
 
 
 # The package contents.
@@ -253,7 +253,7 @@ class Analysis_controller:
 
         # Ask if this should be done.
         msg = "Are you sure you would like to close the current %s analysis tab?" % ds.relax_gui.analyses[index].analysis_type
-        if not question(msg, default=False):
+        if Question(msg, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete.
@@ -269,7 +269,7 @@ class Analysis_controller:
 
         # Ask if this should be done.
         msg = "Are you sure you would like to close all analyses?  All data will be erased and the relax data store reset."
-        if not question(msg, default=False):
+        if Question(msg, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete.

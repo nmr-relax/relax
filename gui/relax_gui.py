@@ -57,7 +57,7 @@ from gui.filedialog import opendir, openfile, savefile
 from gui.fonts import font
 from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.menu import Menu
-from gui.message import dir_message, error_message, question
+from gui.message import dir_message, error_message, Question
 from gui import paths
 from gui.pipe_editor import Pipe_editor
 from gui.references import References
@@ -248,10 +248,10 @@ class Main(wx.Frame):
         """
 
         # Ask if the user is sure they would like to exit.
-        doexit = question('Are you sure you would like to quit relax?  All unsaved data will be lost.', caption='Exit relax', default=True)
+        doexit = Question('Are you sure you would like to quit relax?  All unsaved data will be lost.', title='Exit relax', default=True).ShowModal()
 
         # Exit.
-        if doexit:
+        if doexit == wx.ID_YES:
             # Restore the IO streams.
             io_streams_restore(verbosity=0)
 
@@ -354,7 +354,7 @@ class Main(wx.Frame):
 
 
     def reset_setting(self, event): #reset all settings
-        if question('Do you realy want to change relax settings?'):
+        if Question('Do you realy want to change relax settings?').ShowModal() == wx.ID_YES:
             ds.relax_gui.free_file_format.reset()
 
 
@@ -433,7 +433,7 @@ class Main(wx.Frame):
             msg = "Loading a saved relax state file will cause all unsaved data to be lost.  Are you sure you would to open a save file?"
 
             # The dialog.
-            if not question(msg, default=True):
+            if Question(msg, default=True).ShowModal() == wx.ID_NO:
                 return
 
         # Open the dialog.

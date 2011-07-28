@@ -35,7 +35,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.icons import relax_icons
 from gui.paths import IMAGE_PATH
-from message import question
+from message import Question
 
 
 class Controller(wx.Frame):
@@ -180,10 +180,10 @@ class Controller(wx.Frame):
         """
 
         # Ask if the user is sure they would like to exit.
-        doexit = question('Are you sure you would like to kill your current relax session?  All unsaved data will be lost.', default=True)
+        doexit = Question('Are you sure you would like to kill your current relax session?  All unsaved data will be lost.', default=True).ShowModal()
 
         # Kill session.
-        if doexit:
+        if doexit == wx.ID_YES:
             sys.exit(0)
 
 

@@ -35,7 +35,7 @@ from status import Status; status = Status()
 from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
-from gui.message import question
+from gui.message import Question
 from gui.misc import add_border, gui_to_str, str_to_gui
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
 
@@ -289,7 +289,7 @@ class Pipe_editor(wx.Frame):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete the '%s' data pipe?  This operation cannot be undone." % self.selected_pipe
-        if not question(msg, default=False):
+        if Question(msg, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the data pipe.
