@@ -101,6 +101,9 @@ class Missing_data(wx.Dialog):
         # Set the initial size.
         self.SetSize((600, 400))
 
+        # Centre the window.
+        self.Centre()
+
         # A sizer for the dialog.
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(main_sizer)
@@ -182,6 +185,9 @@ class Question(wx.Dialog):
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
+
+        # Centre the window.
+        self.Centre()
 
         # A sizer for the dialog.
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
