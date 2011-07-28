@@ -281,7 +281,7 @@ class API_common:
         return error
 
 
-    def _return_value_general(self, spin, param, sim=None):
+    def _return_value_general(self, spin, param, sim=None, bc=False):
         """Return the value and error corresponding to the parameter 'param'.
 
         If sim is set to an integer, return the value of the simulation and None.  The values are taken from the given SpinContainer object.
@@ -293,6 +293,8 @@ class API_common:
         @type param:    str
         @param sim:     The Monte Carlo simulation index.
         @type sim:      None or int
+        @keyword bc:    The back-calculated data flag.  If True, then the back-calculated data will be returned rather than the actual data.
+        @type bc:       bool
         @return:        The value and error corresponding to
         @rtype:         tuple of length 2 of floats or None
         """
@@ -303,10 +305,11 @@ class API_common:
         # Get the object name.
         object_name = self.return_data_name(param)
 
-        # The error and simulation names.
+        # The error, simulation and back calculated names.
         if object_name:
             object_error = object_name + '_err'
             object_sim = object_name + '_sim'
+            object_bc = object_name + '_bc'
             key = None
 
         # The data type does not exist.
@@ -316,6 +319,7 @@ class API_common:
                 object_name = 'intensities'
                 object_error = 'intensity_err'
                 object_sim = 'intensity_sim'
+                object_bc = 'intensity_bc'
                 key = param
 
             # Unknown data type.
@@ -325,6 +329,10 @@ class API_common:
         # Initial values.
         value = None
         error = None
+
+        # Switch to back calculated data.
+        if bc:
+            object_name = object_bc
 
         # Value or sim value?
         if sim != None:
