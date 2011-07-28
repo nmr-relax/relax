@@ -66,16 +66,18 @@ from version import version
 putenv('PDBVIEWER', 'vmd')
 
 
-def start(profile_flag=False):
+def start(mode=None, profile_flag=False):
     """Execute relax.
 
+    @keyword mode:          Force a relax mode, overriding the command line.
+    @type mode:             str
     @keyword profile_flag:  Change this flag to True for code profiling.
     @type profile_flag:     bool
     """
 
     # Normal relax operation.
     if not profile_flag:
-        Relax()
+        Relax(mode)
 
     # relax in profiling mode.
     else:
@@ -89,7 +91,7 @@ def start(profile_flag=False):
 
         # Run relax in profiling mode.
         profile.Profile.print_stats = print_stats
-        profile.run('Relax()')
+        profile.run('Relax(mode=%s)' % repr(mode))
 
 
 
@@ -100,8 +102,12 @@ class Relax:
     whether debugging is turned on, etc.
     """
 
-    def __init__(self):
-        """The top level class for initialising the program."""
+    def __init__(self, mode=None):
+        """The top level class for initialising the program.
+
+        @keyword mode:          Force a relax mode, overriding the command line.
+        @type mode:             str
+        """
 
         # Get and store the PID of this process.
         self.pid = getpid()
@@ -110,7 +116,8 @@ class Relax:
         self.generic = generic_fns
 
         # Process the command line arguments and determine the relax mode.
-        mode, log_file, tee_file = self.arguments()
+        if not mode:
+            mode, log_file, tee_file = self.arguments()
 
         # Set up the warning system.
         relax_warnings.setup(self.pedantic)
