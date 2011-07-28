@@ -176,8 +176,7 @@ class Results_viewer(wx.Frame):
         page = self.gui.analysis.get_page_from_name(gui_to_str(self.analysis_list.GetValue()))
 
         # Nothing to do.
-        if not hasattr(page.data, 'results_list'):
-            print "nothing to do"
+        if not hasattr(page, 'data') or not hasattr(page.data, 'results_list'):
             return
 
         # Update the list.
