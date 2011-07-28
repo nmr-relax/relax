@@ -161,11 +161,13 @@ class Question(wx.Dialog):
     height_button = 30
     width_button = 50
 
-    def __init__(self, msg, title='', size=(350, 125), default=False):
+    def __init__(self, msg, parent=None, title='', size=(350, 125), default=False):
         """A generic question box.
 
         @param msg:         The text message to display.
         @type msg:          str
+        @keyword parent:    The parent wx object.
+        @type parent:       wx.object instance
         @keyword title:     The window title.
         @type title:        str
         @keyword default:   If True, the default button will be 'yes', otherwise it will be 'no'.
@@ -181,7 +183,7 @@ class Question(wx.Dialog):
             self.answer = wx.ID_NO
 
         # Initialise the base class.
-        wx.Dialog.__init__(self, None, title=title, size=size, style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
+        wx.Dialog.__init__(self, parent, title=title, size=size, style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
