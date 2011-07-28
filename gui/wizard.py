@@ -1055,7 +1055,7 @@ class Wiz_window(wx.Dialog):
             if self._button_apply_flag[i]:
                 # Create the button.
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Apply")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.apply, wx.BITMAP_TYPE_ANY))
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_apply, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Apply the operation")
                 button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
@@ -1093,7 +1093,7 @@ class Wiz_window(wx.Dialog):
             # The OK button (only for single pages).
             if self._num_pages == 1:
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " OK")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_ok, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Accept the operation")
                 button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
@@ -1103,7 +1103,7 @@ class Wiz_window(wx.Dialog):
             # The finish button (only for the last page with multi-pages).
             if self._num_pages > 1 and i == self._num_pages - 1:
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Finish")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.ok, wx.BITMAP_TYPE_ANY))
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_ok, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Accept the operation")
                 button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
@@ -1115,7 +1115,7 @@ class Wiz_window(wx.Dialog):
 
             # The cancel button.
             button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Cancel")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.cancel, wx.BITMAP_TYPE_ANY))
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_cancel, wx.BITMAP_TYPE_ANY))
             button.SetToolTipString("Abort the operation")
             button.SetMinSize(self._size_button)
             self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
