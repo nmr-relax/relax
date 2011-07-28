@@ -632,7 +632,7 @@ class Structure(SystemTestCase):
         # Path of the files.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
-        # Read the xyz.
+        # Read the XYZ file.
         self.interpreter.structure.read_xyz(file='Indol_test.xyz', dir=path)
 
         # Test the molecule name.
@@ -655,7 +655,7 @@ class Structure(SystemTestCase):
         # Path of the files.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
-        # Read the xyz.
+        # Read the XYZ file.
         self.interpreter.structure.read_xyz(file='SSS-cluster4-new-test.xyz', dir=path, read_model=[1])
 
         # Test the molecule name.
