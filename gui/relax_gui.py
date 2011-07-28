@@ -86,7 +86,7 @@ class Main(wx.Frame):
         self.SetIcons(relax_icons)
 
         # Set up the Mac OS X task bar icon.
-        if not 'darwin' in sys.platform:
+        if 'darwin' in sys.platform:
             self.taskbar_icon = Relax_task_bar_icon(self)
 
         # Initialise some variables for the GUI.
