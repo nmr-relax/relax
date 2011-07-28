@@ -110,11 +110,11 @@ class Wiz_page(wx.Panel):
     # Some class variables.
     art_spacing = 20
     divider = None
+    height_desc = 220
+    height_element = 27
     image_path = paths.IMAGE_PATH + "relax.gif"
-    input_size = 27
     main_text = ''
     title = ''
-    desc_height = 220
 
     def __init__(self, parent):
         """Set up the window.
@@ -157,7 +157,7 @@ class Wiz_page(wx.Panel):
         self._add_title(main_sizer)
 
         # Add the description.
-        self.add_desc(main_sizer, max_y=self.desc_height)
+        self.add_desc(main_sizer, max_y=self.height_desc)
 
         # Add the specific GUI elements (bounded by spacers).
         main_sizer.AddStretchSpacer()
@@ -381,8 +381,8 @@ class Wiz_page(wx.Panel):
         # The combo box element.
         style = wx.CB_DROPDOWN | wx.CB_READONLY
         combo = wx.ComboBox(self, -1, value=bool_to_gui(default), style=style, choices=['True', 'False'])
-        combo.SetMinSize((50, 27))
-        sub_sizer.Add(combo, 1, wx.ALIGN_CENTER_VERTICAL, 0)
+        combo.SetMinSize((50, self.height_element))
+        sub_sizer.Add(combo, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Right padding.
         sub_sizer.AddSpacer(padding)
@@ -486,8 +486,8 @@ class Wiz_page(wx.Panel):
         if read_only:
             style = style | wx.CB_READONLY
         combo = wx.ComboBox(self, -1, value='', style=style, choices=choices)
-        combo.SetMinSize((50, 27))
-        sub_sizer.Add(combo, 1, wx.ALIGN_CENTER_VERTICAL, 0)
+        combo.SetMinSize((50, self.height_element))
+        sub_sizer.Add(combo, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Right padding.
         sub_sizer.AddSpacer(padding)
@@ -557,15 +557,18 @@ class Wiz_page(wx.Panel):
 
         # The input field.
         field = wx.TextCtrl(self, -1, '')
-        field.SetMinSize((self._div_right - 27, 27))
-        sub_sizer.Add(field, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        field.SetMinSize((-1, self.height_element))
+        sub_sizer.Add(field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The file selection object.
         obj = File_selector(field, title=title, default=default)
 
+        # A little spacing.
+        sub_sizer.AddSpacer(5)
+
         # The file selection button.
         button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icon_16x16.open, wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((27, 27))
+        button.SetMinSize((self.height_element, self.height_element))
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         self.Bind(wx.EVT_BUTTON, obj.select, button)
 
@@ -723,8 +726,8 @@ class Wiz_page(wx.Panel):
 
         # The input field.
         field = wx.TextCtrl(self, -1, '')
-        field.SetMinSize((50, 27))
-        sub_sizer.Add(field, 1, wx.ALIGN_CENTER_VERTICAL, 0)
+        field.SetMinSize((50, self.height_element))
+        sub_sizer.Add(field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Right padding.
         sub_sizer.AddSpacer(padding)
@@ -834,8 +837,8 @@ class Wiz_page(wx.Panel):
 
         # The input field.
         field = wx.ComboBox(self, -1, '', choices=choices)
-        field.SetMinSize((50, 27))
-        sub_sizer.Add(field, 1, wx.ALIGN_CENTER_VERTICAL, 0)
+        field.SetMinSize((50, self.height_element))
+        sub_sizer.Add(field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Set the default.
         field.SetValue(str_to_gui(default))
@@ -902,8 +905,8 @@ class Wiz_page(wx.Panel):
         text.SetEditable(False)
         colour = self.GetBackgroundColour()
         text.SetOwnBackgroundColour(colour)
-        text.SetMinSize((self._div_right, 27))
-        sub_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        text.SetMinSize((self._div_right, self.height_element))
+        sub_sizer.Add(text, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Right padding.
         sub_sizer.AddSpacer(padding)
