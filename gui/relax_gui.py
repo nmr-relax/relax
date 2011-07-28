@@ -55,7 +55,7 @@ from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
 from gui.filedialog import opendir, openfile, savefile
 from gui.fonts import font
-from gui.icons import relax_icons
+from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.menu import Menu
 from gui.message import dir_message, error_message, question
 from gui import paths
@@ -84,6 +84,10 @@ class Main(wx.Frame):
         # Set up the relax icons.
         relax_icons.setup()
         self.SetIcons(relax_icons)
+
+        # Set up the Mac OS X task bar icon.
+        if not 'darwin' in sys.platform:
+            self.taskbar_icon = Relax_task_bar_icon(self)
 
         # Initialise some variables for the GUI.
         self.launch_dir = getcwd()
@@ -128,7 +132,7 @@ class Main(wx.Frame):
         # Add the start screen.
         self.add_start_screen()
 
-        # Close Box event
+        # Close Box event.
         self.Bind(wx.EVT_CLOSE, self.exit_gui)
 
         # Load a copy of the relax interpreter.
@@ -273,6 +277,10 @@ class Main(wx.Frame):
                 text = text + line + '\n'
             text = text + '\n'
             sys.__stdout__.write(text)
+
+            # Remove the Mac OS X task bar icon.
+            if hasattr(self, 'taskbar_icon'):
+                self.taskbar_icon.Destroy()
 
             # End application.
             sys.exit()
