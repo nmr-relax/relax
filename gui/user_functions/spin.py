@@ -276,7 +276,6 @@ class Copy_window(UF_window, Mol_res_spin):
         # The source data pipe and molecule name.
         pipe_from = gui_to_str(self.pipe_from.GetValue())
         res_from = self._get_res_id(suffix='_from')
-        print res_from
 
         # Clear the previous data.
         self.spin_from.Clear()

@@ -46,7 +46,8 @@ from gui.controller import Redirect_text, Thread_container
 from gui.derived_wx_classes import StructureTextCtrl
 from gui.filedialog import opendir, openfile
 from gui.message import error_message, missing_data
-from gui.paths import IMAGE_PATH
+from gui.misc import add_border
+from gui import paths
 from gui.settings import load_sequence
 
 
@@ -74,7 +75,7 @@ class Auto_noe(Base_frame):
         self.gui = gui
 
         # The NOE image
-        self.bitmap = IMAGE_PATH + 'noe.png'
+        self.bitmap = paths.IMAGE_PATH + 'noe.png'
 
         # Alias the storage container in the relax data store.
         self.data = ds.relax_gui.analyses[hardcoded_index]
@@ -82,36 +83,15 @@ class Auto_noe(Base_frame):
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
 
+        # Pack a sizer into the panel.
+        box_main = wx.BoxSizer(wx.HORIZONTAL)
+        self.parent.SetSizer(box_main)
+
+        # Build the central sizer, with borders.
+        box_centre = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
+
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        main_box = self.build_main_box()
-        self.parent.SetSizer(main_box)
-
-
-    def add_execute_relax(self, box):
-        """Create and add the relax execution GUI element to the given box.
-
-        @param box:     The box element to pack the relax execution GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # A horizontal sizer for the contents.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((118, 17))
-        label.SetFont(self.gui.font_normal)
-        sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-        button.SetName('hello')
-        button.SetSize(button.GetBestSize())
-        self.gui.Bind(wx.EVT_BUTTON, self.execute, button)
-        sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
+        self.build_main_box(box_centre)
 
 
     def assemble_data(self):
@@ -193,23 +173,19 @@ class Auto_noe(Base_frame):
         return data, complete, missing
 
 
-    def build_main_box(self):
-        """Construct the highest level box to pack into the automatic NOE analysis frame.
+    def build_left_box(self):
+        """Construct the left hand box to pack into the automatic NOE analysis frame.
 
-        @return:    The main box element containing all Rx GUI elements to pack directly into the automatic Rx analysis frame.
+        @return:    The left hand box element containing the bitmap.
         @rtype:     wx.BoxSizer instance
         """
 
-        # Use a horizontal packing of elements.
-        box = wx.BoxSizer(wx.HORIZONTAL)
+        # Use a vertical packing of elements.
+        box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the model-free bitmap picture.
-        self.bitmap_1_copy_copy = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
-        box.Add(self.bitmap_1_copy_copy, 0, wx.ADJUST_MINSIZE, 10)
-
-        # Build the right hand box and pack it next to the bitmap.
-        right_box = self.build_right_box()
-        box.Add(right_box, 0, 0, 0)
+        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
+        box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
 
         # Return the box.
         return box
@@ -229,37 +205,40 @@ class Auto_noe(Base_frame):
         self.add_title(box, "Setup for steady-state NOE analysis")
 
         # Add the frequency selection GUI element.
-        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str(self.data.frq), width_text=230, width_control=350, width_button=103)
+        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str(self.data.frq))
 
         # Add the results directory GUI element.
-        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", default=self.data.save_dir, width_text=230, width_control=350, width_button=103, fn=self.results_directory, button=True)
+        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
 
         # Add the sequence file selection GUI element.
-        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str(self.gui.sequence_file_msg), width_text=230, width_control=350, width_button=103, fn=self.load_sequence, editable=False, button=True)
+        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str(self.gui.sequence_file_msg), fn=self.load_sequence, editable=False, button=True)
 
         # Add the structure file selection GUI element.
-        self.field_structure = self.add_text_sel_element(box, self.parent, text="Sequence from PDB structure file", default=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, width_text=230, width_control=350, width_button=103, fn='open_file', editable=False, button=True)
+        self.field_structure = self.add_text_sel_element(box, self.parent, text="Sequence from PDB structure file", default=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, fn='open_file', editable=False, button=True)
 
         # Add the unresolved spins GUI element.
-        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues", width_text=230, width_control=350, width_button=103)
+        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues")
 
         # Add peak list selection header.
         self.add_subtitle(box, "NOE peak lists")
 
         # Add the saturated NOE peak list selection GUI element.
-        self.field_sat_noe = self.add_text_sel_element(box, self.parent, text="Saturated NOE peak list", default=self.data.sat_file, width_text=230, width_control=350, width_button=103, fn=self.sat_file, button=True)
+        self.field_sat_noe = self.add_text_sel_element(box, self.parent, text="Saturated NOE peak list", default=self.data.sat_file, fn=self.sat_file, button=True)
 
         # Add the saturated RMSD background GUI element:
-        self.field_sat_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str(self.data.sat_rmsd), width_text=230, width_control=350, width_button=103)
+        self.field_sat_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str(self.data.sat_rmsd))
 
         # Add the reference NOE peak list selection GUI element.
-        self.field_ref_noe = self.add_text_sel_element(box, self.parent, text="Reference NOE peak list", default=self.data.ref_file, width_text=230, width_control=350, width_button=103, fn=self.ref_file, button=True)
+        self.field_ref_noe = self.add_text_sel_element(box, self.parent, text="Reference NOE peak list", default=self.data.ref_file, fn=self.ref_file, button=True)
 
         # Add the reference RMSD background GUI element:
-        self.field_ref_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str(self.data.ref_rmsd), width_text=230, width_control=350, width_button=103)
+        self.field_ref_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str(self.data.ref_rmsd))
+
+        # Add a stretchable spacer.
+        box.AddStretchSpacer()
 
         # Add the execution GUI element.
-        self.add_execute_relax(box)
+        self.add_execute_relax(box, self.execute)
 
         # Return the box.
         return box

@@ -679,7 +679,7 @@ class Structure(SystemTestCase):
 
         # Extract a vector between first two spins.
         self.interpreter.structure.vectors(attached='@10', spin_id='@2')
-        self.assertAlmostEqual(a.bond_vect[0], -2.162)
-        self.assertAlmostEqual(a.bond_vect[1], 3.274)
-        self.assertAlmostEqual(a.bond_vect[2], -3.518)
+        self.assertAlmostEqual(a.bond_vect[0], -0.4102707)
+        self.assertAlmostEqual(a.bond_vect[1], 0.62128879)
+        self.assertAlmostEqual(a.bond_vect[2], -0.6675913)
 

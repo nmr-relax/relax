@@ -85,9 +85,19 @@ class Internal(Base_struct_API):
         # Init.
         bonded_found = False
 
-        # No bonded atoms, so go find everything within 2 Angstroms and say they are bonded.
+        # No bonded atoms, so determine the connectivities.
         if not mol.bonded[index]:
-            self.__find_bonded_atoms(index, mol, radius=2)
+            # Determine the molecule type if needed.
+            if not hasattr(mol, 'type'):
+                self._mol_type(mol)
+
+            # Protein.
+            if mol.type == 'protein':
+                self._protein_connect(mol)
+
+            # Find everything within 2 Angstroms and say they are bonded.
+            else:
+                self.__find_bonded_atoms(index, mol, radius=2)
 
         # Loop over the bonded atoms.
         matching_list = []
@@ -441,6 +451,102 @@ class Internal(Base_struct_API):
         # Check the other lengths.
         if len(struct.bonded) != num and len(struct.chain_id) != num and len(struct.element) != num and len(struct.pdb_record) != num and len(struct.res_name) != num and len(struct.res_num) != num and len(struct.seg_id) != num and len(struct.x) != num and len(struct.y) != num and len(struct.z) != num:
             raise RelaxError("The structural data is invalid.")
+
+
+    def _mol_type(self, mol):
+        """Determine the type of molecule.
+
+        @param mol:     The molecule data container.
+        @type mol:      MolContainer instance
+        """
+
+        # Amino acids.
+        aa = ['ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'GLU', 'GLN', 'GLY', 'HIS', 'ILE', 'LEU', 'LYS', 'MET', 'PHE', 'PRO', 'SER', 'THR', 'TRP', 'TYR', 'VAL']
+
+        # Set the molecule type to default to 'other'.
+        mol.type = 'other'
+
+        # Loop over the residues.
+        for res in mol.res_name:
+            # Protein.
+            if res in aa:
+                # Set the molecule type and return.
+                mol.type = 'protein'
+                return
+
+
+    def _protein_connect(self, mol):
+        """Set up the connectivities for the protein.
+
+        @param mol:     The molecule data container.
+        @type mol:      MolContainer instance
+        """
+
+        # Initialise some residue data.
+        curr_res_num = None
+        res_atoms = []
+
+        # Loop over all atoms.
+        for i in range(len(mol.atom_num)):
+            # New residue.
+            if mol.res_num[i] != curr_res_num:
+                # Intra-residue connectivites.
+                if len(res_atoms):
+                    self._protein_intra_connect(mol, res_atoms)
+
+                # Update the residue number.
+                curr_res_num = mol.res_num[i]
+
+                # Reset the residue atom index list.
+                res_atoms = []
+
+            # Add the atom index to the list.
+            res_atoms.append(i)
+
+            # Last atom.
+            if i == len(mol.atom_num) - 1 and len(res_atoms):
+                self._protein_intra_connect(mol, res_atoms)
+
+
+    def _protein_intra_connect(self, mol, res_atoms):
+        """Set up the connectivities for the protein.
+
+        @param mol:         The molecule data container.
+        @type mol:          MolContainer instance
+        @param res_atoms:   The list of atom indices corresponding to the residue.
+        @type res_atoms:    list of int
+        """
+
+        # Back bond connectivity.
+        indices = {
+            'N': None,
+            'C': None,
+            'O': None,
+            'CA': None,
+            'HN': None,
+            'H': None,  # Same as HN.
+            'HA': None
+        }
+
+        # Loop over all atoms to find the indices.
+        for index in res_atoms:
+            if indices.has_key(mol.atom_name[index]):
+                indices[mol.atom_name[index]] = index
+
+        # Connect the atom pairs.
+        pairs = [
+            ['N', 'HN'],
+            ['N', 'H'],
+            ['N', 'CA'],
+            ['CA', 'HA'],
+            ['CA', 'C'],
+            ['C', 'O']
+        ]
+
+        # Loop over the atoms pairs and connect them.
+        for pair in pairs:
+            if indices[pair[0]] != None and indices[pair[1]] != None:
+                mol.atom_connect(indices[pair[0]], indices[pair[1]])
 
 
     def _translate(self, data, format='str'):

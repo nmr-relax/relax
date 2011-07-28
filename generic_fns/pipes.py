@@ -80,8 +80,7 @@ def create(pipe_name=None, pipe_type=None, switch=True):
         'relax_fit':  Relaxation curve fitting,
         'relax_disp':  Relaxation dispersion,
     @type pipe_type:    str
-    @keyword switch:    If True, this new pipe will be switched to, otherwise the current data pipe
-                        will remain as is.
+    @keyword switch:    If True, this new pipe will be switched to, otherwise the current data pipe will remain as is.
     @type switch:       bool
     """
 
@@ -98,7 +97,7 @@ def create(pipe_name=None, pipe_type=None, switch=True):
         raise RelaxError("The frame order analysis is not available.  Please install the scipy Python package.")
 
     # Add the data pipe.
-    ds.add(pipe_name=pipe_name, pipe_type=pipe_type)
+    ds.add(pipe_name=pipe_name, pipe_type=pipe_type, switch=switch)
 
 
 def cdp_name():

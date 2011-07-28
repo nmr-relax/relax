@@ -344,6 +344,10 @@ class Consistency_tests(API_base, API_common):
 
         # Loop over spin data.
         for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Check if data exists.
             if not hasattr(spin, 'ri_data'):
                 warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))

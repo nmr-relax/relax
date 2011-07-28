@@ -37,6 +37,7 @@ from status import Status; status = Status()
 # relaxGUI module imports.
 from gui.filedialog import multi_openfile, opendir, openfile
 from gui.message import error_message
+from gui.misc import add_border
 from gui import paths
 
 
@@ -161,7 +162,7 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
 
         # Update the relaxation delay time.
         delay_time = float(time) * float(value)
-        grid.GetTable().SetValue(row, col+1, str(delay_time))
+        grid.GetTable().SetValue(row, col-1, str(delay_time))
 
         # A change occurred.
         return True
@@ -207,6 +208,11 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
 class Peak_intensity:
     """The peak list selection class."""
 
+    # Class variables.
+    col_label_width = 40
+    col1_width = 160
+    col2_width = 140
+
     def __init__(self, gui=None, parent=None, subparent=None, data=None, label=None, width=688, height=300, box=None):
         """Build the peak list reading GUI element.
 
@@ -224,7 +230,7 @@ class Peak_intensity:
         @type width:        int
         @keyword height:    The initial height of the GUI element.
         @type height:       int
-        @keyword box:       The box sizer to pack this GUI component into.
+        @keyword box:       The vertical box sizer to pack this GUI component into.
         @type box:          wx.BoxSizer instance
         """
 
@@ -237,29 +243,57 @@ class Peak_intensity:
 
         # GUI variables.
         self.spacing = 5
+        self.border = 5
 
         # The number of rows.
         self.num_rows = 50
 
-        # Add peak list selection header.
-        self.subparent.add_subtitle(box, "Data points")
+        # A static box to hold all the widgets, and its sizer.
+        stat_box = wx.StaticBox(self.parent, -1, "Peak lists")
+        stat_box.SetFont(self.gui.font_subtitle)
+        sub_sizer = wx.StaticBoxSizer(stat_box, wx.VERTICAL)
+
+        # Add the sizer to the static box and the static box to the main box.
+        box.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Add a border.
+        box_centre = add_border(sub_sizer, border=self.border)
 
         # Add the cycle delay time element.
-        self.delay_time = self.subparent.add_text_sel_element(box, self.parent, text="Single delay cycle time [s]", width_text=230, width_control=350)
-
-        # A sizer for the buttons and grid.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Add the buttons.
-        #self.add_buttons(sizer)
+        box_centre.AddSpacer(self.spacing)
+        self.delay_time = self.subparent.add_text_sel_element(box_centre, self.parent, text="Single delay cycle time [s]")
 
         # Add the grid.
-        self.add_grid(sizer)
+        box_centre.AddSpacer(self.spacing)
+        self.add_grid(box_centre)
+        box_centre.AddSpacer(self.spacing)
 
-        # Pack the box.
-        box.AddSpacer(self.spacing)
-        box.Add(sizer, 0, wx.EXPAND, 0)
-        box.AddSpacer(self.spacing)
+        # Bind some events.
+        self.delay_time.Bind(wx.EVT_KEY_DOWN, self.change_delay_down)
+        self.delay_time.Bind(wx.EVT_KEY_UP, self.change_delay_up)
+
+
+    def resize(self, event):
+        """Catch the resize to allow the grid to be resized.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The new grid size.
+        x, y = event.GetSize()
+
+        # The expandable column width.
+        width = x - self.col_label_width - self.col1_width - self.col2_width - 20
+
+        # Set the column sizes.
+        self.grid.SetRowLabelSize(self.col_label_width)
+        self.grid.SetColSize(0, width)
+        self.grid.SetColSize(1, self.col1_width)
+        self.grid.SetColSize(2, self.col2_width)
+
+        # Continue with the normal resizing.
+        event.Skip()
 
 
     def add_buttons(self, sizer):
@@ -315,36 +349,43 @@ class Peak_intensity:
         """
 
         # Grid of peak list file names and relaxation time.
-        self.grid = wx.grid.Grid(self.parent, -1, size=(1, 210))
+        self.grid = wx.grid.Grid(self.parent, -1)
 
         # Create entries.
         self.grid.CreateGrid(self.num_rows, 3)
 
         # Create headers.
         self.grid.SetColLabelValue(0, "%s peak list" % self.label)
-        self.grid.SetColLabelValue(1, "No. of cycles")
-        self.grid.SetColLabelValue(2, "Relaxation delay [s]")
+        self.grid.SetColLabelValue(1, "Relaxation delay [s]")
+        self.grid.SetColLabelValue(2, "No. of cycles")
 
-        # Set the sizes.
-        self.grid.SetRowLabelSize(40)
-        self.grid.SetColSize(0, 320)
-        self.grid.SetColSize(1, 140)
-        self.grid.SetColSize(2, 160)
+        # Properties.
+        self.grid.SetDefaultCellFont(self.gui.font_normal)
+        self.grid.SetLabelFont(self.gui.font_normal_bold)
+
+        # Text height.
+        height = self.delay_time.GetSize()[1]
 
         # Column properties.
         for i in range(self.grid.GetNumberRows()):
             # Set the editor for the number of cycles column.
-            self.grid.SetCellEditor(i, 1, Delay_num_cell_editor(0, 200, self))
+            self.grid.SetCellEditor(i, 2, Delay_num_cell_editor(0, 200, self))
 
-            # Make the relaxation delay column read only.
-            self.grid.SetReadOnly(i, 2)
+            # Row properties.
+            self.grid.SetRowSize(i, height)
+
+        # No cell resizing allowed.
+        self.grid.EnableDragColSize(False)
+        self.grid.EnableDragRowSize(False)
 
         # Bind some events.
         self.grid.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
         self.grid.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
+        self.grid.Bind(wx.EVT_KEY_UP, self.event_key_up)
+        self.grid.Bind(wx.EVT_SIZE, self.resize)
 
         # Add grid to sizer, with spacing.
-        sizer.Add(self.grid, -1, wx.EXPAND, 0)
+        sizer.Add(self.grid, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def change_delay_down(self, event):
@@ -444,6 +485,20 @@ class Peak_intensity:
 
             # Do nothing else.
             return
+
+        # Skip the event to allow for normal operation.
+        event.Skip()
+
+
+    def event_key_up(self, event):
+        """Control what happens when a key is released.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Update the grid.
+        self.update_grid()
 
         # Skip the event to allow for normal operation.
         event.Skip()
@@ -678,10 +733,18 @@ class Peak_intensity:
 
             # Loop over the rows.
             for i in range(self.num_rows):
+                # Old save file support.
+                if not hasattr(self.data, 'file_list'):
+                    self.data.file_list = []
+                if not hasattr(self.data, 'ncyc'):
+                    self.data.ncyc = []
+                if not hasattr(self.data, 'relax_times'):
+                    self.data.relax_times = []
+
                 # The cell data.
                 file_name = str(self.grid.GetCellValue(i, 0))
-                ncyc = str(self.grid.GetCellValue(i, 1))
-                relax_time = str(self.grid.GetCellValue(i, 2))
+                relax_time = str(self.grid.GetCellValue(i, 1))
+                ncyc = str(self.grid.GetCellValue(i, 2))
 
                 # No data, so stop.
                 if file_name == '' and ncyc == '':
@@ -711,13 +774,13 @@ class Peak_intensity:
                 if hasattr(self.data, 'file_list'):
                     self.grid.SetCellValue(i, 0, str(self.data.file_list[i]))
 
-                # The number of cycles.
-                if hasattr(self.data, 'ncyc'):
-                    self.grid.SetCellValue(i, 1, str(self.data.ncyc[i]))
-
                 # The relaxation time.
                 if hasattr(self.data, 'relax_times'):
-                    self.grid.SetCellValue(i, 2, str(self.data.relax_times[i]))
+                    self.grid.SetCellValue(i, 1, str(self.data.relax_times[i]))
+
+                # The number of cycles.
+                if hasattr(self.data, 'ncyc'):
+                    self.grid.SetCellValue(i, 2, str(self.data.ncyc[i]))
 
             # Update the grid.
             self.update_grid()
@@ -736,12 +799,15 @@ class Peak_intensity:
         # Loop over the rows.
         for i in range(self.grid.GetNumberRows()):
             # The number of cycles.
-            ncyc = str(self.grid.GetCellValue(i, 1))
-
-            # No time or no cycles, so set the value to nothing.
-            if time == '' or ncyc in ['', '0']:
-                self.grid.SetCellValue(i, 2, '')
+            ncyc = str(self.grid.GetCellValue(i, 2))
 
             # Update the relaxation time.
-            else:
-                self.grid.SetCellValue(i, 2, str(int(ncyc) * time))
+            if time != '' and ncyc not in ['', '0']:
+                self.grid.SetCellValue(i, 1, str(int(ncyc) * time))
+
+            # The relaxation time and number of cycles.
+            relax_time = str(self.grid.GetCellValue(i, 1))
+
+            # Clear the relaxation time if set to zero.
+            if relax_time == '0.0':
+                self.grid.SetCellValue(i, 1, '')

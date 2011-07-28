@@ -805,7 +805,7 @@ class dAuvergne_protocol:
 
             # Deselect spins to be excluded (including unresolved and specifically excluded spins).
             if self.unres:
-                self.interpreter.deselect.read(file=self.unres, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=None)
+                self.interpreter.deselect.read(file=self.unres, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
             if self.exclude:
                 self.interpreter.deselect.read(file=self.exclude, spin_id_col=1)
 

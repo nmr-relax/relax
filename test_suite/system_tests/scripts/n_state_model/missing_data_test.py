@@ -18,8 +18,8 @@ pipe.create('missing_data_test', 'N-state')
 structure.read_pdb(file='LE_trunc.pdb', dir=str_path, set_mol_name='LE')
 
 # Load the sequence information.
-structure.load_spins(spin_id='@C*', combine_models=False, ave_pos=False)
-structure.load_spins(spin_id='@H*', combine_models=False, ave_pos=False)
+structure.load_spins(spin_id='@C*', ave_pos=False)
+structure.load_spins(spin_id='@H*', ave_pos=False)
 
 # Load the CH vectors for the C atoms.
 structure.vectors(spin_id='@C*', attached='H*', ave=False)
