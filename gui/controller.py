@@ -32,7 +32,8 @@ import wx
 # relax module imports.
 from status import Status; status = Status()
 
-# relaxGUI module imports.
+# relax GUI module imports.
+from gui.icons import relax_icons
 from gui.paths import IMAGE_PATH
 from message import question
 
@@ -205,6 +206,9 @@ class Controller(wx.Frame):
 
         # Set the frame title.
         self.SetTitle("The relax controller")
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
 
         # Use a grid sizer for packing the elements.
         main_sizer = wx.BoxSizer(wx.VERTICAL)

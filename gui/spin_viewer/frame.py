@@ -34,6 +34,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui import paths
 from gui.components.menu import build_menu_item
+from gui.icons import relax_icons
 from gui.misc import gui_to_str
 from gui.spin_viewer.splitter import Tree_splitter
 
@@ -50,6 +51,9 @@ class Spin_view_window(wx.Frame):
         # Create GUI elements
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
 
         # Some default values.
         self.size_x = 1200

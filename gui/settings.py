@@ -31,6 +31,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 # relax GUI module imports.
 from gui.filedialog import openfile
+from gui.icons import relax_icons
 from gui.message import error_message
 from gui.misc import gui_to_int, int_to_gui
 from gui import paths
@@ -76,6 +77,9 @@ class Base_window(wx.Dialog):
 
         # Execute the base __init__() method.
         wx.Dialog.__init__(self, parent, id=id, title=title, style=style)
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
 
         # The main sizer.
         self.main_sizer = self.build_frame()

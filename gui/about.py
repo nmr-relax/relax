@@ -35,7 +35,8 @@ from info import Info_box
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from paths import IMAGE_PATH
+from gui.icons import relax_icons
+from gui.paths import IMAGE_PATH
 
 
 class About_base(wx.Frame):
@@ -68,6 +69,9 @@ class About_base(wx.Frame):
 
         # Execute the base class __init__() method.
         super(About_base, self).__init__(parent=parent, id=id, title=title, style=self.style)
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
 
         # Create a scrolled window.
         self.window = wx.ScrolledWindow(self, -1)

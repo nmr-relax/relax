@@ -36,6 +36,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.controller import Redirect_text
 from gui.filedialog import openfile
+from gui.icons import relax_icons
 from gui.misc import add_border, bool_to_gui, gui_to_int, int_to_gui, protected_exec, str_to_gui
 from gui import paths
 
@@ -941,6 +942,9 @@ class Wiz_window(wx.Dialog):
 
         # Execute the base class method.
         wx.Dialog.__init__(self, None, id=-1, title=title, style=style)
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
 
         # The sizer for the dialog.
         sizer = wx.BoxSizer(wx.VERTICAL)

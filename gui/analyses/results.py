@@ -30,9 +30,10 @@ import wx
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 
-# relaxGUI module imports.
+# relax GUI module imports.
 from gui.analyses.results_analysis import see_results
 from gui.fonts import font
+from gui.icons import relax_icons
 from gui.misc import add_border, gui_to_str, str_to_gui
 
 
@@ -55,6 +56,9 @@ class Results_viewer(wx.Frame):
 
         # Initialise the base frame.
         wx.Frame.__init__(self, parent=gui, style=wx.DEFAULT_FRAME_STYLE)
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
 
         # Set the window title, size, etc.
         self.SetTitle("Results viewer")

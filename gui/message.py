@@ -31,6 +31,7 @@ import wx.lib.scrolledpanel
 from status import Status; status = Status()
 
 # relax GUI module imports.
+from gui.icons import relax_icons
 from gui.paths import IMAGE_PATH, icon_48x48
 import gui
 
@@ -93,6 +94,9 @@ def question(msg, caption='', default=False):
     # The dialog window.
     dialog = wx.MessageDialog(None, message=msg, caption=caption, style=wx.YES_NO|style)
 
+    # Set up the window icon.
+    dialog.SetIcons(relax_icons)
+
     # The answer.
     answer = False
 
@@ -129,6 +133,9 @@ class Missing_data(wx.Dialog):
 
         # Initialise the base class.
         wx.Dialog.__init__(self, None, title='Missing data', style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
 
         # Set the initial size.
         self.SetSize((600, 400))
@@ -177,6 +184,3 @@ class Missing_data(wx.Dialog):
         # Otherwise throw the error out to stderr.
         else:
             sys.stderr.write("Missing data:  %s\n" % msg)
-
-
-

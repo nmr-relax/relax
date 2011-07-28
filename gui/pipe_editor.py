@@ -34,6 +34,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.components.menu import build_menu_item
 from gui.fonts import font
+from gui.icons import relax_icons
 from gui.message import question
 from gui.misc import add_border, gui_to_str, str_to_gui
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
@@ -61,6 +62,9 @@ class Pipe_editor(wx.Frame):
 
         # Create GUI elements
         wx.Frame.__init__(self, None, id=-1, title="Data pipe editor")
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
 
         # Initialise some data.
         self.width_col_label = 40

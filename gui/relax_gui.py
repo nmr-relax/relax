@@ -55,6 +55,7 @@ from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
 from gui.filedialog import opendir, openfile, savefile
 from gui.fonts import font
+from gui.icons import relax_icons
 from gui.menu import Menu
 from gui.message import dir_message, error_message, question
 from gui import paths
@@ -79,6 +80,10 @@ class Main(wx.Frame):
 
         # Execute the base class __init__ method.
         super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE|wx.MAXIMIZE)
+
+        # Set up the relax icons.
+        relax_icons.setup()
+        self.SetIcons(relax_icons)
 
         # Initialise some variables for the GUI.
         self.launch_dir = getcwd()
@@ -112,12 +117,6 @@ class Main(wx.Frame):
 
         # Set the title.
         self.SetTitle("relax " + version)
-
-        # Set up the program icon (disabled on Macs).
-        self.icons = wx.IconBundle()
-        if not 'darwin' in sys.platform:
-            self.icons.AddIconFromFile(status.install_path + sep + 'graphics' + sep + 'ulysses.ico', wx.BITMAP_TYPE_ANY)
-            self.SetIcons(self.icons)
 
         # Set up the status bar.
         self.bar = self.CreateStatusBar(3, 0)
