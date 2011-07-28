@@ -38,6 +38,7 @@ from gui.controller import Redirect_text
 from gui.filedialog import openfile
 from gui.icons import relax_icons
 from gui.misc import add_border, bool_to_gui, gui_to_int, int_to_gui, protected_exec, str_to_gui
+from gui.message import Question
 from gui import paths
 
 
@@ -227,6 +228,18 @@ class Wiz_page(wx.Panel):
         return main_sizer
 
 
+    def _free_file_format_reset(self, event):
+        """Reset the free file format widget contents to the original values.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Reset.
+        if Question('Would you really like to reset the free file format settings?', parent=self).ShowModal() == wx.ID_YES:
+            ds.relax_gui.free_file_format.reset()
+
+
     def _free_file_format_save(self, event):
         """Save the free file format widget contents into the relax data store.
 
@@ -252,6 +265,31 @@ class Wiz_page(wx.Panel):
         ds.relax_gui.free_file_format.sep = str(self.sep.GetValue())
         if ds.relax_gui.free_file_format.sep == 'white space':
             ds.relax_gui.free_file_format.sep = None
+
+
+    def _free_file_format_set_vals(self, data_cols=False):
+        """Set the free file format widget contents to the values from the relax data store.
+
+        @keyword data_cols: A flag which if True causes the data and error column elements to be displayed.
+        @type data_cols:    bool
+        """
+
+        # The column numbers.
+        self.spin_id_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_id_col))
+        self.mol_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.mol_name_col))
+        self.res_num_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.res_num_col))
+        self.res_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.res_name_col))
+        self.spin_num_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_num_col))
+        self.spin_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_name_col))
+        if data_cols:
+            self.data_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.data_col))
+            self.err_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.err_col))
+
+        # The column separator.
+        if not ds.relax_gui.free_file_format.sep:
+            self.sep.SetValue("white space")
+        else:
+            self.sep.SetValue(str_to_gui(ds.relax_gui.free_file_format.sep))
 
 
     def add_artwork(self, sizer):
@@ -596,7 +634,7 @@ class Wiz_page(wx.Panel):
         return field
 
 
-    def free_file_format(self, sizer, padding=10, spacer=3, data_cols=False, save=True):
+    def free_file_format(self, sizer, padding=10, spacer=3, data_cols=False, save=True, reset=True):
         """Build the free format file settings widget.
 
         @param sizer:       The sizer to put the input field into.
@@ -609,6 +647,8 @@ class Wiz_page(wx.Panel):
         @type data_cols:    bool
         @keyword save:      A flag which if True will cause the save button to be displayed.
         @type save:         bool
+        @keyword reset:     A flag which if True will cause the reset button to be displayed.
+        @type reset:        bool
         """
 
         # A static box to hold all the widgets.
@@ -630,23 +670,11 @@ class Wiz_page(wx.Panel):
             self.data_col = self.input_field(sub_sizer, "Data column:", divider=divider, padding=padding, spacer=spacer)
             self.err_col = self.input_field(sub_sizer, "Error column:", divider=divider, padding=padding, spacer=spacer)
 
-        # Set the values.
-        self.spin_id_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_id_col))
-        self.mol_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.mol_name_col))
-        self.res_num_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.res_num_col))
-        self.res_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.res_name_col))
-        self.spin_num_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_num_col))
-        self.spin_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_name_col))
-        if data_cols:
-            self.data_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.data_col))
-            self.err_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.err_col))
-
         # The column separator.
         self.sep = self.combo_box(sub_sizer, "Column separator:", ["white space", ",", ";", ":", ""], divider=divider, padding=padding, spacer=spacer, read_only=False)
-        if not ds.relax_gui.free_file_format.sep:
-            self.sep.SetValue("white space")
-        else:
-            self.sep.SetValue(str_to_gui(ds.relax_gui.free_file_format.sep))
+
+        # Set the values.
+        self._free_file_format_set_vals(data_cols=data_cols)
 
         # Add a save button.
         if save:
@@ -656,7 +684,7 @@ class Wiz_page(wx.Panel):
             # Build the button.
             button = buttons.ThemedGenBitmapTextButton(self, -1, None, "  Save")
             button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.save, wx.BITMAP_TYPE_ANY))
-            button.SetToolTipString("Save the free file format settings within the relax data store")
+            button.SetToolTipString("Save the free file format settings within the relax data store.")
 
             # Add the button.
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
@@ -666,6 +694,29 @@ class Wiz_page(wx.Panel):
 
             # Bind the click event.
             self.Bind(wx.EVT_BUTTON, self._free_file_format_save, button)
+
+            # Add the button sizer to the widget (with spacing).
+            sub_sizer.AddSpacer(padding)
+            sub_sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT|wx.ALL, 0)
+
+        # Add a reset button.
+        if reset:
+            # A sizer.
+            button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+            # Build the button.
+            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "  Reset")
+            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
+            button.SetToolTipString("Reset the free file format settings to the original values.")
+
+            # Add the button.
+            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+
+            # Right padding.
+            button_sizer.AddSpacer(padding)
+
+            # Bind the click event.
+            self.Bind(wx.EVT_BUTTON, self._free_file_format_reset, button)
 
             # Add the button sizer to the widget (with spacing).
             sub_sizer.AddSpacer(padding)

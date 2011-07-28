@@ -130,6 +130,15 @@ class Base_window(wx.Dialog):
         # Spacer.
         button_sizer.AddSpacer(20)
 
+        # The reset button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Reset")
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
+        button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+        self.Bind(wx.EVT_BUTTON, self.reset, button)
+
+        # Spacer.
+        button_sizer.AddSpacer(20)
+
         # The cancel button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Cancel")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_cancel, wx.BITMAP_TYPE_ANY))
@@ -218,10 +227,24 @@ class Free_file_format(Base_window, Wiz_page):
         """
 
         # The widget.
-        self.free_file_format(sizer, data_cols=True, save=False)
+        self.free_file_format(sizer, data_cols=True, save=False, reset=False)
 
         # Spacing.
         self.main_sizer.AddStretchSpacer()
+
+
+    def reset(self, event):
+        """Reset the free file format settings.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Execute the base class method.
+        self._free_file_format_reset(event)
+
+        # Update the values.
+        self._free_file_format_set_vals(data_cols=True)
 
 
     def save(self, event):

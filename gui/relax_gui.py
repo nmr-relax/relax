@@ -353,11 +353,6 @@ class Main(wx.Frame):
                 os.system('/usr/bin/xdg-open %s' % file)
 
 
-    def reset_setting(self, event): #reset all settings
-        if Question('Do you realy want to change relax settings?').ShowModal() == wx.ID_YES:
-            ds.relax_gui.free_file_format.reset()
-
-
     def show_controller(self, event):
         """Display the relax controller window.
 
