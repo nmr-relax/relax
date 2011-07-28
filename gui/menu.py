@@ -44,9 +44,8 @@ class Menu:
         # Store the args.
         self.gui = gui
 
-        # Create the menu bar GUI item and add it to the main frame.
+        # Create the menu bar GUI item.
         self.menubar = wx.MenuBar()
-        self.gui.SetMenuBar(self.menubar)
 
         # The 'File' menu entries.
         menu = wx.Menu()
@@ -116,6 +115,9 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.references,     id=42)
         self.gui.Bind(wx.EVT_MENU, self.gui.about_gui,      id=43)
         self.gui.Bind(wx.EVT_MENU, self.gui.about_relax,    id=44)
+
+        # Add the menu bar GUI item to the main frame.
+        self.gui.SetMenuBar(self.menubar)
 
         # Menu update.
         self.gui.Bind(wx.EVT_MENU_OPEN, self.update_menus)
