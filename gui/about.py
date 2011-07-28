@@ -492,6 +492,9 @@ class About_gui(About_base):
     def build_widget(self):
         """Build the about dialog."""
 
+        # The title.
+        self.SetTitle("About relax GUI")
+
         # The image.
         bitmap = wx.Bitmap(IMAGE_PATH+'start.png', wx.BITMAP_TYPE_ANY)
 
@@ -514,7 +517,7 @@ class About_relax(About_base):
     # Spacer size (px).
     border = 10
 
-    def __init__(self, parent=None, id=-1, title=''):
+    def __init__(self, parent=None, id=-1, title="About relax"):
         """Build the dialog."""
 
         # Initialise the program information container.

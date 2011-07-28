@@ -167,7 +167,7 @@ class Main(wx.Frame):
         """
 
         # Build the dialog.
-        dialog = About_relax(None, -1, "")
+        dialog = About_relax(None, -1)
 
         # The dialog.
         if status.show_gui:
