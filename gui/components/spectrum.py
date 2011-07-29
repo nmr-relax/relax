@@ -171,7 +171,7 @@ class Spectra_list:
         wx.PostEvent(self.parent.GetEventHandler(), event)
 
         # Set the minimum height.
-        height = self.height_base + self.height_char * n
+        height = self.height_char * (n + 1) + 50
         self.element.SetMinSize((-1, height))
         self.element.Layout()
 
@@ -203,7 +203,6 @@ class Spectra_list:
         self.element.SetFont(font.normal)
 
         # Store the base heights.
-        self.height_base = self.element.GetSize()[1]
         self.height_char = self.element.GetCharHeight()
 
         # Bind some events.
