@@ -202,7 +202,7 @@ class Main(wx.Frame):
         """
 
         # The dialog.
-        dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save files (*.bz2, *.gz, *)|*.bz2;*.gz;*', style=wx.FD_SAVE)
+        dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save files (*.bz2;*.gz)|*.bz2;*.gz|All files (*)|*', style=wx.FD_SAVE)
 
         # Show the dialog and catch if no file has been selected.
         if dialog.ShowModal() != wx.ID_OK:
@@ -437,7 +437,7 @@ class Main(wx.Frame):
 
         # Open the dialog.
         if not file_name:
-            dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save files (*.bz2, *.gz, *)|*.bz2;*.gz;*', style=wx.FD_OPEN)
+            dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save files (*.bz2;*.gz)|*.bz2;*.gz|All files (*)|*', style=wx.FD_OPEN)
 
             # Show the dialog and catch if no file has been selected.
             if dialog.ShowModal() != wx.ID_OK:
