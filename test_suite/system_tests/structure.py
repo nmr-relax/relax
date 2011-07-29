@@ -153,6 +153,16 @@ class Structure(SystemTestCase):
             i = i + 1
 
 
+    def test_read_not_pdb(self):
+        """Test the reading of a file by structure.read_pdb that is not a PDB."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states'
+
+        # Read the non-PDB file.
+        self.interpreter.structure.read_pdb(file='basic_single_pipe.bz2', dir=path, parser='internal')
+
+
     def test_read_pdb_internal1(self):
         """Load the '1F35_N_H_molmol.pdb' PDB file (using the internal structural object PDB reader)."""
 
