@@ -49,15 +49,15 @@ class Spin_view_window(wx.Frame):
         self.gui = kwds.pop('parent')
 
         # Create GUI elements
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        kwds["style"] = wx.DEFAULT_FRAME_STYLE | wx.MAXIMISE
         wx.Frame.__init__(self, *args, **kwds)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
 
         # Some default values.
-        self.size_x = 1200
-        self.size_y = 800
+        self.size_x = 1000
+        self.size_y = 750
 
         # Set up the window.
         sizer = self.setup_window()
