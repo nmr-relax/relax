@@ -52,7 +52,6 @@ def error_message(msg, caption=''):
     if status.show_gui:
         wx.MessageBox(msg, caption=caption, style=wx.OK|wx.ICON_ERROR)
 
-
     # Otherwise throw the error out to stderr.
     else:
         # Combine the caption and message.
