@@ -30,6 +30,7 @@ from types import ListType
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from generic_fns import pipes
 from status import Status; status = Status()
 
@@ -311,6 +312,11 @@ class Analysis_controller:
         @keyword index:         The index of the analysis in the relax data store (set to None if no data currently exists).
         @type index:            None or int
         """
+
+        # Check the C modules.
+        if analysis_type in ['r1', 'r2'] and not dep_check.C_module_exp_fn:
+            error_message("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
+            return
 
         # Starting from the initial state.
         if self.init_state:
