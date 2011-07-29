@@ -49,7 +49,7 @@ class Spin_view_window(wx.Frame):
         self.gui = kwds.pop('parent')
 
         # Create GUI elements
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE | wx.MAXIMISE
+        kwds["style"] = wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE
         wx.Frame.__init__(self, *args, **kwds)
 
         # Set up the window icon.
