@@ -473,38 +473,26 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
     Description
     ===========
 
-    This function reads a columnar formatted file where each line corresponds to a spin system.
-    Spin identification is either through a spin ID string or through columns containing the
-    molecule name, residue name and number, and/or spin name and number.
+    This function reads a columnar formatted file where each line corresponds to a spin system. Spin identification is either through a spin ID string or through columns containing the molecule name, residue name and number, and/or spin name and number.
 
 
     @keyword file:          The name of the file to open.
     @type file:             str
-    @keyword dir:           The directory containing the file (defaults to the current directory
-                            if None).
+    @keyword dir:           The directory containing the file (defaults to the current directory if None).
     @type dir:              str or None
-    @keyword file_data:     An alternative to opening a file, if the data already exists in the
-                            correct format.  The format is a list of lists where the first index
-                            corresponds to the row and the second the column.
+    @keyword file_data:     An alternative to opening a file, if the data already exists in the correct format.  The format is a list of lists where the first index corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
-                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
-                            arguments must be none.
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
-    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied, spin_id_col must be None.
     @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword res_name_col:  The column containing the residue name information.  If supplied, spin_id_col must be None.
     @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information.  If supplied,
-                            spin_id_col must be None.
+    @keyword res_num_col:   The column containing the residue number information.  If supplied, spin_id_col must be None.
     @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword spin_name_col: The column containing the spin name information.  If supplied, spin_id_col must be None.
     @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
-                            spin_id_col must be None.
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied, spin_id_col must be None.
     @type spin_num_col:     int or None
     @keyword data_col:      The column containing the data.
     @type data_col:         int or None
@@ -512,13 +500,9 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
     @type error_col:        int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
-                            spins.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
     @type spin_id:          None or str
-    @return:                A list of the spin specific data is yielded.  The format is a list
-                            consisting of the spin ID string, the data value (if data_col is give),
-                            and the error value (if error_col is given).  If both data_col and
-                            error_col are None, then the spin ID string is simply yielded.
+    @return:                A list of the spin specific data is yielded.  The format is a list consisting of the spin ID string, the data value (if data_col is give), and the error value (if error_col is given).  If both data_col and error_col are None, then the spin ID string is simply yielded.
     @rtype:                 str, list of [str, float], or list of [str, float, float]
     """
 
@@ -550,10 +534,6 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
     # Yield the data, spin by spin.
     missing_data = True
     for line in file_data:
-        # Skip missing data.
-        if len(line) < min_col_num:
-            continue
-
         # Validate the sequence.
         try:
             generic_fns.sequence.validate_sequence(line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
