@@ -158,7 +158,7 @@ class Question(wx.Dialog):
     spacer_button = 10
     spacer_main = 20
     height_button = 30
-    width_button = 50
+    width_button = 100
 
     def __init__(self, msg, parent=None, title='', size=(350, 125), default=False):
         """A generic question box.
@@ -198,7 +198,7 @@ class Question(wx.Dialog):
         sizer = gui.misc.add_border(main_sizer, border=self.border, packing=wx.HORIZONTAL)
 
         # Add the graphic.
-        bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(icon_48x48.dialog_warning, wx.BITMAP_TYPE_ANY))
+        bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(icon_48x48.dialog_warning_relax, wx.BITMAP_TYPE_ANY))
         sizer.Add(bitmap)
 
         # Spacing.
@@ -214,13 +214,13 @@ class Question(wx.Dialog):
 
         # A sizer for the buttons.
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sub_sizer.Add(button_sizer, 0, wx.ALL|wx.EXPAND, 0)
+        sub_sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT, 0)
 
         # The yes button.
         button_yes = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Yes")
         button_yes.SetBitmapLabel(wx.Bitmap(icon_22x22.dialog_ok, wx.BITMAP_TYPE_ANY))
         button_yes.SetMinSize((self.width_button, self.height_button))
-        button_sizer.Add(button_yes, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        button_sizer.Add(button_yes, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         self.Bind(wx.EVT_BUTTON, self.yes, button_yes)
 
         # Button spacing.
@@ -230,7 +230,7 @@ class Question(wx.Dialog):
         button_no = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " No")
         button_no.SetBitmapLabel(wx.Bitmap(icon_22x22.dialog_cancel, wx.BITMAP_TYPE_ANY))
         button_no.SetMinSize((self.width_button, self.height_button))
-        button_sizer.Add(button_no, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        button_sizer.Add(button_no, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         self.Bind(wx.EVT_BUTTON, self.no, button_no)
 
         # Set the focus to the default button.
