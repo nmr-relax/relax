@@ -75,6 +75,7 @@ class Wiz_page(wx.Panel):
     image_path = paths.IMAGE_PATH + "relax.gif"
     main_text = ''
     size_button = (100, 33)
+    size_square_button = (33, 33)
     title = ''
 
     def __init__(self, parent):
@@ -622,44 +623,57 @@ class Wiz_page(wx.Panel):
         box.SetFont(font.subtitle)
 
         # Init.
-        sub_sizer = wx.StaticBoxSizer(box, wx.VERTICAL)
-        sub_sizer.AddSpacer(padding)
-        divider = self._div_left - 15
+        main_sizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
+        field_sizer = wx.BoxSizer(wx.VERTICAL)
+        button_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # The border of the widget.
+        border = wx.BoxSizer()
+
+        # Place the box sizer inside the border.
+        border.Add(main_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Add to the main sizer (followed by stretchable spacing).
+        sizer.Add(border, 0, wx.EXPAND)
+        sizer.AddStretchSpacer()
+
+        # Calculate the divider position.
+        divider = self._div_left - border.GetMinSize()[0] / 2 - padding
 
         # The columns.
-        self.spin_id_col = self.input_field(sub_sizer, "Spin ID column:", divider=divider, padding=padding, spacer=spacer)
-        self.mol_name_col = self.input_field(sub_sizer, "Molecule name column:", divider=divider, padding=padding, spacer=spacer)
-        self.res_num_col = self.input_field(sub_sizer, "Residue number column:", divider=divider, padding=padding, spacer=spacer)
-        self.res_name_col = self.input_field(sub_sizer, "Residue name column:", divider=divider, padding=padding, spacer=spacer)
-        self.spin_num_col = self.input_field(sub_sizer, "Spin number column:", divider=divider, padding=padding, spacer=spacer)
-        self.spin_name_col = self.input_field(sub_sizer, "Spin name column:", divider=divider, padding=padding, spacer=spacer)
+        self.spin_id_col = self.input_field(field_sizer, "Spin ID column:", divider=divider, padding=padding, spacer=spacer)
+        self.mol_name_col = self.input_field(field_sizer, "Molecule name column:", divider=divider, padding=padding, spacer=spacer)
+        self.res_num_col = self.input_field(field_sizer, "Residue number column:", divider=divider, padding=padding, spacer=spacer)
+        self.res_name_col = self.input_field(field_sizer, "Residue name column:", divider=divider, padding=padding, spacer=spacer)
+        self.spin_num_col = self.input_field(field_sizer, "Spin number column:", divider=divider, padding=padding, spacer=spacer)
+        self.spin_name_col = self.input_field(field_sizer, "Spin name column:", divider=divider, padding=padding, spacer=spacer)
         if data_cols:
-            self.data_col = self.input_field(sub_sizer, "Data column:", divider=divider, padding=padding, spacer=spacer)
-            self.err_col = self.input_field(sub_sizer, "Error column:", divider=divider, padding=padding, spacer=spacer)
+            self.data_col = self.input_field(field_sizer, "Data column:", divider=divider, padding=padding, spacer=spacer)
+            self.err_col = self.input_field(field_sizer, "Error column:", divider=divider, padding=padding, spacer=spacer)
 
         # The column separator.
-        self.sep = self.combo_box(sub_sizer, "Column separator:", ["white space", ",", ";", ":", ""], divider=divider, padding=padding, spacer=spacer, read_only=False)
+        self.sep = self.combo_box(field_sizer, "Column separator:", ["white space", ",", ";", ":", ""], divider=divider, padding=padding, spacer=spacer, read_only=False)
+
+        # Add the field sizer to the main sizer.
+        main_sizer.Add(field_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
         # Set the values.
         self._free_file_format_set_vals(data_cols=data_cols)
 
         # Buttons!
         if save or reset:
-            # A sizer.
-            button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-
             # Add a save button.
             if save:
                 # Build the button.
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, "  Save")
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, "")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.save, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Save the free file format settings within the relax data store.")
-                button.SetMinSize(self.size_button)
+                button.SetMinSize(self.size_square_button)
 
                 # Add the button.
                 button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
-                # Right padding.
+                # Padding.
                 button_sizer.AddSpacer(padding)
 
                 # Bind the click event.
@@ -668,38 +682,20 @@ class Wiz_page(wx.Panel):
             # Add a reset button.
             if reset:
                 # Build the button.
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, "  Reset")
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, "")
                 button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
                 button.SetToolTipString("Reset the free file format settings to the original values.")
-                button.SetMinSize(self.size_button)
+                button.SetMinSize(self.size_square_button)
 
                 # Add the button.
                 button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-
-                # Right padding.
-                button_sizer.AddSpacer(padding)
 
                 # Bind the click event.
                 self.Bind(wx.EVT_BUTTON, self._free_file_format_reset, button)
 
             # Add the button sizer to the widget (with spacing).
-            sub_sizer.AddSpacer(padding)
-            sub_sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT|wx.ALL, 0)
-
-        # Set the size of the widget.
-        sub_sizer.AddSpacer(padding)
-        x, y = box.GetSize()
-        box.SetMinSize((self._main_size, y))
-
-        # The border of the widget.
-        border = wx.BoxSizer()
-
-        # Place the box sizer inside the border.
-        border.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
-
-        # Add to the main sizer (followed by stretchable spacing).
-        sizer.Add(border, 0, wx.EXPAND)
-        sizer.AddStretchSpacer()
+            main_sizer.AddSpacer(padding)
+            main_sizer.Add(button_sizer, 0, wx.ALL, 0)
 
 
     def input_field(self, sizer, desc, tooltip=None, divider=None, padding=0, spacer=None):
