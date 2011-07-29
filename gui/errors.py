@@ -24,6 +24,7 @@
 """Module for handling errors in the GUI."""
 
 # Python module imports.
+import sys
 import wx
 
 
@@ -43,3 +44,8 @@ def gui_raise(relax_error, raise_flag=True):
     # Throw the error to terminate execution.
     if raise_flag:
         raise relax_error
+
+    # Otherwise, send the text to STDERR.
+    else:
+        sys.stderr.write(relax_error.__str__())
+        sys.stderr.write("\n")
