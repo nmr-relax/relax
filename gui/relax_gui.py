@@ -443,8 +443,9 @@ class Main(wx.Frame):
         # Yield to allow the cursor to be changed.
         wx.Yield()
 
-        # Change the cursor to waiting.
+        # Change the cursor to waiting, and freeze the GUI.
         wx.BeginBusyCursor()
+        self.Freeze()
 
         # Delete the current tabs.
         self.analysis.delete_all()
@@ -464,7 +465,8 @@ class Main(wx.Frame):
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
 
-        # Reset the cursor.
+        # Reset the cursor, and thaw the GUI.
+        self.Thaw()
         wx.EndBusyCursor()
 
 
