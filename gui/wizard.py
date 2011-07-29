@@ -36,6 +36,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.controller import Redirect_text
 from gui.filedialog import openfile
+from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import add_border, bool_to_gui, gui_to_int, int_to_gui, protected_exec, str_to_gui
 from gui.message import Question
@@ -115,6 +116,7 @@ class Wiz_page(wx.Panel):
     height_element = 27
     image_path = paths.IMAGE_PATH + "relax.gif"
     main_text = ''
+    size_button = (100, 33)
     title = ''
 
     def __init__(self, parent):
@@ -237,7 +239,11 @@ class Wiz_page(wx.Panel):
 
         # Reset.
         if Question('Would you really like to reset the free file format settings?', parent=self).ShowModal() == wx.ID_YES:
+            # First reset.
             ds.relax_gui.free_file_format.reset()
+
+            # Then update the values.
+            self._free_file_format_set_vals(data_cols=True)
 
 
     def _free_file_format_save(self, event):
@@ -653,6 +659,7 @@ class Wiz_page(wx.Panel):
 
         # A static box to hold all the widgets.
         box = wx.StaticBox(self, -1, "Free format file settings")
+        box.SetFont(font.subtitle)
 
         # Init.
         sub_sizer = wx.StaticBoxSizer(box, wx.VERTICAL)
@@ -676,47 +683,44 @@ class Wiz_page(wx.Panel):
         # Set the values.
         self._free_file_format_set_vals(data_cols=data_cols)
 
-        # Add a save button.
-        if save:
+        # Buttons!
+        if save or reset:
             # A sizer.
             button_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-            # Build the button.
-            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "  Save")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.save, wx.BITMAP_TYPE_ANY))
-            button.SetToolTipString("Save the free file format settings within the relax data store.")
+            # Add a save button.
+            if save:
+                # Build the button.
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, "  Save")
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.save, wx.BITMAP_TYPE_ANY))
+                button.SetToolTipString("Save the free file format settings within the relax data store.")
+                button.SetMinSize(self.size_button)
 
-            # Add the button.
-            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+                # Add the button.
+                button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
-            # Right padding.
-            button_sizer.AddSpacer(padding)
+                # Right padding.
+                button_sizer.AddSpacer(padding)
 
-            # Bind the click event.
-            self.Bind(wx.EVT_BUTTON, self._free_file_format_save, button)
+                # Bind the click event.
+                self.Bind(wx.EVT_BUTTON, self._free_file_format_save, button)
 
-            # Add the button sizer to the widget (with spacing).
-            sub_sizer.AddSpacer(padding)
-            sub_sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT|wx.ALL, 0)
+            # Add a reset button.
+            if reset:
+                # Build the button.
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, "  Reset")
+                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
+                button.SetToolTipString("Reset the free file format settings to the original values.")
+                button.SetMinSize(self.size_button)
 
-        # Add a reset button.
-        if reset:
-            # A sizer.
-            button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+                # Add the button.
+                button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
-            # Build the button.
-            button = buttons.ThemedGenBitmapTextButton(self, -1, None, "  Reset")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
-            button.SetToolTipString("Reset the free file format settings to the original values.")
+                # Right padding.
+                button_sizer.AddSpacer(padding)
 
-            # Add the button.
-            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-
-            # Right padding.
-            button_sizer.AddSpacer(padding)
-
-            # Bind the click event.
-            self.Bind(wx.EVT_BUTTON, self._free_file_format_reset, button)
+                # Bind the click event.
+                self.Bind(wx.EVT_BUTTON, self._free_file_format_reset, button)
 
             # Add the button sizer to the widget (with spacing).
             sub_sizer.AddSpacer(padding)
