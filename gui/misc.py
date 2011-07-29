@@ -33,7 +33,7 @@ import wx
 from relax_errors import AllRelaxErrors
 
 # relax GUI module imports.
-from gui.message import error_message
+from gui.errors import gui_raise
 
 
 def add_border(box, border=0, packing=wx.VERTICAL, debug=False):
@@ -311,7 +311,7 @@ def protected_exec(fn, *args, **kargs):
     # Catch RelaxErrors.
     except AllRelaxErrors, instance:
         # Display a dialog with the error.
-        error_message(instance.text, instance.__class__.__name__)
+        gui_raise(instance, raise_flag=True)
 
         # Failure.
         return False
