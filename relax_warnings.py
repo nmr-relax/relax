@@ -42,7 +42,7 @@ def format(message, category, filename, lineno, line=None):
     message = "RelaxWarning: %s\n" % message
 
     # Print stack-trace in debug mode.
-    if status.debug:
+    if status.debug == 2:
         tb = ""
         for frame in inspect.stack()[4:]:
             file = frame[1]
