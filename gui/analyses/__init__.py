@@ -318,6 +318,10 @@ class Analysis_controller:
             error_message("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
             return
 
+        # Freeze the GUI.
+        wx.BeginBusyCursor()
+        self.gui.Freeze()
+
         # Starting from the initial state.
         if self.init_state:
             # A new sizer for the notebook (to replace the current sizer).
@@ -378,6 +382,10 @@ class Analysis_controller:
 
         # Reset the main window layout.
         self.gui.Layout()
+
+        # Thaw the GUI.
+        self.gui.Thaw()
+        wx.EndBusyCursor()
 
         # Notify the observers of the change.
         status.observers.gui_analysis.notify()
