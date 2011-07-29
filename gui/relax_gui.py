@@ -94,7 +94,6 @@ class Main(wx.Frame):
 
         # Set up the frame.
         self.Layout()
-        self.SetSize((self.min_width, self.min_height))
         self.SetMinSize((self.min_width, self.min_height))
         self.Centre()
 
