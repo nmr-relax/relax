@@ -150,7 +150,7 @@ class UF_page(Wiz_page):
         return stripped_text
 
 
-    def add_desc(self, sizer, max_y=220):
+    def add_desc(self, sizer, max_y=self.height_desc):
         """Add the description to the dialog.
 
         @param sizer:   A sizer object.
