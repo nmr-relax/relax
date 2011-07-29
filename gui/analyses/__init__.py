@@ -319,6 +319,7 @@ class Analysis_controller:
             return
 
         # Freeze the GUI.
+        wx.Yield()
         wx.BeginBusyCursor()
         self.gui.Freeze()
 
