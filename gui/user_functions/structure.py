@@ -145,10 +145,6 @@ class Load_spins_page(UF_page):
         # The spin_id arg.
         self.spin_id = self.spin_id_element(sizer, default='@N')
 
-        # The combine_models arg.
-        self.combine_models = self.boolean_selector(sizer, "Combine spins of all models:", tooltip=self.uf._doc_args_dict['combine_models'])
-        self.combine_models.SetValue('True')
-
         # The ave_pos arg.
         self.ave_pos = self.boolean_selector(sizer, "Average the atom position across models:", tooltip=self.uf._doc_args_dict['ave_pos'])
         self.ave_pos.SetValue('True')
@@ -159,11 +155,10 @@ class Load_spins_page(UF_page):
 
         # The args.
         spin_id = gui_to_str(self.spin_id.GetValue())
-        combine_models = gui_to_bool(self.combine_models.GetValue())
         ave_pos = gui_to_bool(self.ave_pos.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.structure.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
+        self.gui.interpreter.structure.load_spins(spin_id=spin_id, ave_pos=ave_pos)
 
 
 
