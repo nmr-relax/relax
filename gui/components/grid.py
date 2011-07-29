@@ -35,7 +35,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 # relaxGUI module imports.
-from gui.filedialog import multi_openfile, opendir, openfile
+from gui.filedialog import RelaxFileDialog, opendir
 from gui.fonts import font
 from gui.message import error_message
 from gui.misc import add_border
@@ -446,12 +446,16 @@ class Grid_base:
 
         # File selection.
         if col == 0:
-            # The file.
-            filename = openfile(msg='Select file.', filetype='*.*', default='all files (*.*)|*')
+            # The dialog.
+            dialog = RelaxFileDialog(parent=self, style=wx.FD_OPEN)
 
-            # Abort if nothing selected.
-            if not filename:
+            # Show the dialog and catch if no file has been selected.
+            if dialog.ShowModal() != wx.ID_OK:
+                # Don't do anything.
                 return
+
+            # The files.
+            filename = dialog.get_file()
 
             # Set the file name.
             self.grid.SetCellValue(row, col, str(filename))
@@ -653,12 +657,16 @@ class Grid_base:
         else:
             vc_factor = 1
 
-        # The file
-        filename = openfile(msg='Select file.', filetype='*.*', default='all files (*.*)|*')
+        # The dialog.
+        dialog = RelaxFileDialog(parent=self, style=wx.FD_OPEN)
 
-        # Abort if nothing selected
-        if not filename:
+        # Show the dialog and catch if no file has been selected.
+        if dialog.ShowModal() != wx.ID_OK:
+            # Don't do anything.
             return
+
+        # The files.
+        filename = dialog.get_file()
 
         # Open the file
         file = open(filename, 'r')
@@ -691,12 +699,16 @@ class Grid_base:
         @type event:    wx event
         """
 
-        # Open files
-        files = multi_openfile(msg='Select %s peak list file' % self.label, filetype='*.*', default='all files (*.*)|*')
+        # The dialog.
+        dialog = RelaxFileDialog(parent=self, message='Select the %s peak list file'%self.label, style=wx.FD_OPEN|wx.FD_MULTIPLE)
 
-        # Abort if no files have been selected
-        if not files:
+        # Show the dialog and catch if no file has been selected.
+        if dialog.ShowModal() != wx.ID_OK:
+            # Don't do anything.
             return
+
+        # The files.
+        files = dialog.get_file()
 
         # Fill values in data grid
         index = 0

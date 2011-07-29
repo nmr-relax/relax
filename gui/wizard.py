@@ -35,54 +35,12 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.controller import Redirect_text
-from gui.filedialog import openfile
+from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import add_border, bool_to_gui, gui_to_int, int_to_gui, protected_exec, str_to_gui
 from gui.message import Question
 from gui import paths
-
-
-class File_selector:
-    """Class for handling file selection dialogs and updating the respective fields."""
-
-    def __init__(self, field, title='File selection', default="all files (*.*)|*"):
-        """Setup the class and store the field.
-
-        @param field:       The field to update with the file selection.
-        @type field:        wx.TextCtrl instance
-        @keyword title:     The text title to put at the top of the dialog window.
-        @type title:        str
-        @keyword default:   The default file type.
-        @type default:      str
-        """
-
-        # Store the args.
-        self.field = field
-        self.title = title
-        self.default = default
-
-
-    def select(self, event):
-        """The file selector GUI element.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Open the file selection dialog.
-        file = openfile(msg=self.title, default=self.default)
-
-        # Check the file.
-        if not file:
-            return
-
-        # Update the field.
-        self.field.SetValue(file)
-
-        # Scroll the text to the end.
-        self.field.SetInsertionPoint(len(file))
-
 
 
 class Wiz_page(wx.Panel):
@@ -558,17 +516,19 @@ class Wiz_page(wx.Panel):
         return combo
 
 
-    def file_selection(self, sizer, desc, title='File selection', default="all files (*.*)|*", tooltip=None, divider=None, padding=0, spacer=None):
+    def file_selection(self, sizer, desc, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None):
         """Build the file selection element.
 
         @param sizer:       The sizer to put the input field into.
         @type sizer:        wx.Sizer instance
         @param desc:        The text description.
         @type desc:         str
-        @keyword title:     The text title to put at the top of the dialog window.
-        @type title:        str
-        @keyword default:   The default file type.
-        @type default:      str
+        @keyword message:   The file selector prompt string.
+        @type message:      String
+        @keyword wildcard:  The file wildcard pattern.  For example for opening PDB files, this could be "PDB files (*.pdb)|*.pdb;*.PDB".
+        @type wildcard:     String
+        @keyword style:     The dialog style.  To open a single file, set to wx.FD_OPEN.  To open multiple files, set to wx.FD_OPEN|wx.FD_MULTIPLE.  To save a single file, set to wx.FD_SAVE.  To save multiple files, set to wx.FD_SAVE|wx.FD_MULTIPLE.
+        @type style:        long
         @keyword tooltip:   The tooltip which appears on hovering over all the GUI elements.
         @type tooltip:      str
         @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
@@ -605,7 +565,7 @@ class Wiz_page(wx.Panel):
         sub_sizer.Add(field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The file selection object.
-        obj = File_selector(field, title=title, default=default)
+        obj = RelaxFileDialog(self, field=field, message=message, wildcard=wildcard, style=style)
 
         # A little spacing.
         sub_sizer.AddSpacer(5)
@@ -614,7 +574,7 @@ class Wiz_page(wx.Panel):
         button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icon_16x16.open, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((self.height_element, self.height_element))
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
-        self.Bind(wx.EVT_BUTTON, obj.select, button)
+        self.Bind(wx.EVT_BUTTON, obj.select_event, button)
 
         # Right padding.
         sub_sizer.AddSpacer(padding)

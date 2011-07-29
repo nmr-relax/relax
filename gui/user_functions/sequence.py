@@ -25,6 +25,7 @@
 
 # Python module imports.
 from string import split
+import wx
 
 # relax module imports.
 from generic_fns.pipes import cdp_name, pipe_names
@@ -147,7 +148,7 @@ class Read_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The sequence file:", title="Sequence file selection", tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The sequence file:", message="Sequence file selection", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
 
         # The spin ID restriction.
         self.spin_id = self.spin_id_element(sizer, "Restrict data loading to certain spins:")
@@ -188,7 +189,7 @@ class Read_page(UF_page):
 
 
 class Write_page(UF_page):
-    """The sequence.delete() user function page."""
+    """The sequence.write() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'sequence.png'
@@ -203,7 +204,7 @@ class Write_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The sequence file:", title="Sequence file selection", tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The sequence file:", message="Sequence file selection", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
 
         # The column separator.
         self.sep = self.combo_box(sizer, "Column separator:", ["white space", ",", ";", ":", ""], tooltip=self.uf._doc_args_dict['sep'], read_only=False)

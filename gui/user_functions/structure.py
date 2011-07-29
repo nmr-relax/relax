@@ -26,6 +26,7 @@
 # Python module imports.
 from os import sep
 from string import split
+import wx
 
 # relax module imports.
 from generic_fns.pipes import cdp_name, pipe_names
@@ -177,7 +178,7 @@ class Read_pdb_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The PDB file:", title="PDB file selection", default="PDB files (*.pdb)|*.pdb;*.PDB", tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The PDB file:", message="PDB file selection", wildcard="PDB files (*.pdb)|*.pdb;*.PDB", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
 
         # The read_mol arg.
         self.read_mol = self.input_field(sizer, "Read molecule number:", tooltip=self.uf._doc_args_dict['read_mol'])
@@ -227,7 +228,7 @@ class Write_pdb_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The PDB file:", title="PDB file selection", tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The PDB file:", message="PDB file selection", wildcard="PDB files (*.pdb)|*.pdb;*.PDB", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
 
         # The model_num arg.
         self.model_num = self.input_field(sizer, "Only write model number:", tooltip=self.uf._doc_args_dict['model_num'])

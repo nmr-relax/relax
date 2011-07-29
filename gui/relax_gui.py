@@ -53,7 +53,7 @@ from gui.analyses import Analysis_controller
 from gui.base_classes import Container
 from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
-from gui.filedialog import opendir, openfile, savefile
+from gui.filedialog import RelaxFileDialog, opendir
 from gui.fonts import font
 from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.menu import Menu
@@ -201,15 +201,19 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
-        # Open the dialog.
-        filename = savefile(msg='Select file to save', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
+        # The dialog.
+        dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save files (*.bz2, *.gz, *)|*.bz2;*.gz;*', style=wx.FD_SAVE)
 
-        # Do nothing - no file was selected.
-        if not filename:
+        # Show the dialog and catch if no file has been selected.
+        if dialog.ShowModal() != wx.ID_OK:
+            # Don't do anything.
             return
 
+        # The file.
+        file_name = dialog.get_file()
+
         # Set the file name.
-        self.save_file = filename
+        self.save_file = file_name
 
         # Save.
         self.state_save()
@@ -433,12 +437,15 @@ class Main(wx.Frame):
 
         # Open the dialog.
         if not file_name:
-            file_name = openfile(msg='Select file to open', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
+            dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save files (*.bz2, *.gz, *)|*.bz2;*.gz;*', style=wx.FD_OPEN)
 
-        # No file has been selected.
-        if not file_name:
-            # Don't do anything.
-            return
+            # Show the dialog and catch if no file has been selected.
+            if dialog.ShowModal() != wx.ID_OK:
+                # Don't do anything.
+                return
+
+            # The file.
+            file_name = dialog.get_file()
 
         # Yield to allow the cursor to be changed.
         wx.Yield()

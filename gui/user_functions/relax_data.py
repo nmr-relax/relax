@@ -25,6 +25,7 @@
 
 # Python module imports.
 from string import split
+import wx
 
 # relax module imports.
 from generic_fns import pipes
@@ -129,7 +130,7 @@ class Read_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The relaxation data file:", title="Relaxation data file selection", tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The relaxation data file:", message="Relaxation data file selection", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
 
         # The labels.
         self.ri_id = self.input_field(sizer, "The relaxation data ID:", tooltip=self.uf._doc_args_dict['ri_id'])

@@ -26,6 +26,7 @@
 # Python module imports.
 from os import sep
 from string import split
+import wx
 
 # relax module imports.
 from generic_fns import pipes
@@ -85,7 +86,7 @@ class Read_restraints_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The restraint file:", title="Restraint file selection", tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The restraint file:", message="Restraint file selection", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
 
         # The columns.
         self.proton1_col = self.input_field(sizer, "The 1st proton column:", tooltip=self.uf._doc_args_dict['proton1_col'])

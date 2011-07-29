@@ -30,7 +30,7 @@ import wx
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relax GUI module imports.
-from gui.filedialog import openfile
+from gui.filedialog import RelaxFileDialog
 from gui.icons import relax_icons
 from gui.message import error_message
 from gui.misc import gui_to_int, int_to_gui
@@ -42,11 +42,15 @@ def load_sequence():
     """GUI element for loading the sequence file."""
 
     # The dialog.
-    seqfile = openfile('Choose a sequence file', '', '', 'all files (*.*)|*.*')
+    dialog = RelaxFileDialog(parent=self, message='Select a sequence file', style=wx.FD_OPEN)
 
-    # No file.
-    if not seqfile:
-        return None
+    # Show the dialog and catch if no file has been selected.
+    if dialog.ShowModal() != wx.ID_OK:
+        # Don't do anything.
+        return
+
+    # The file.
+    seqfile = dialog.get_file()
 
     # Does not exist.
     if not access(seqfile, F_OK):

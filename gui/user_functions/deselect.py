@@ -23,6 +23,9 @@
 # Module docstring.
 """The deselect user function GUI elements."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from prompt.select import boolean_doc
 
@@ -131,7 +134,7 @@ class Read_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The deselection file:", title="Deselection file selection", tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The deselection file:", message="Deselection file selection", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
 
         # The parameter file settings.
         self.free_file_format(sizer)

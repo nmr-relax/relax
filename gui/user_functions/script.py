@@ -25,13 +25,14 @@
 
 # Python module imports.
 import thread
+import wx
 
 # relax module imports.
 from status import Status; status = Status()
 
 # GUI module imports.
 from base import UF_base
-from gui.filedialog import openfile
+from gui.filedialog import RelaxFileDialog
 
 
 class Script(UF_base):
@@ -48,11 +49,15 @@ class Script(UF_base):
 
         # User selection of the file.
         if not file:
-            file = openfile(msg='Select the relax script to execute', default='relax scripts (*.py)|*.py')
+            dialog = RelaxFileDialog(parent=self, message='Select the relax script to execute', wildcard='relax scripts (*.py)|*.py', style=wx.FD_OPEN)
 
-        # Check the file.
-        if not file:
-            return
+            # Show the dialog and catch if no file has been selected.
+            if dialog.ShowModal() != wx.ID_OK:
+                # Don't do anything.
+                return
+
+            # The file.
+            file = dialog.get_file()
 
         # Show the relax controller.
         if status.show_gui:
