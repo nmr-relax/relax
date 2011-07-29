@@ -202,7 +202,7 @@ class Wiz_page(wx.Panel):
             ds.relax_gui.free_file_format.reset()
 
             # Then update the values.
-            self._free_file_format_set_vals(data_cols=True)
+            self._free_file_format_set_vals()
 
 
     def _free_file_format_save(self, event):
@@ -232,12 +232,8 @@ class Wiz_page(wx.Panel):
             ds.relax_gui.free_file_format.sep = None
 
 
-    def _free_file_format_set_vals(self, data_cols=False):
-        """Set the free file format widget contents to the values from the relax data store.
-
-        @keyword data_cols: A flag which if True causes the data and error column elements to be displayed.
-        @type data_cols:    bool
-        """
+    def _free_file_format_set_vals(self):
+        """Set the free file format widget contents to the values from the relax data store."""
 
         # The column numbers.
         self.spin_id_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_id_col))
@@ -246,13 +242,14 @@ class Wiz_page(wx.Panel):
         self.res_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.res_name_col))
         self.spin_num_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_num_col))
         self.spin_name_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.spin_name_col))
-        if data_cols:
+        if hasattr(self, 'data_col'):
             self.data_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.data_col))
+        if hasattr(self, 'err_col'):
             self.err_col.SetValue(int_to_gui(ds.relax_gui.free_file_format.err_col))
 
         # The column separator.
         if not ds.relax_gui.free_file_format.sep:
-            self.sep.SetValue("white space")
+            self.sep.SetValue(str_to_gui("white space"))
         else:
             self.sep.SetValue(str_to_gui(ds.relax_gui.free_file_format.sep))
 
@@ -658,7 +655,7 @@ class Wiz_page(wx.Panel):
         main_sizer.Add(field_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
         # Set the values.
-        self._free_file_format_set_vals(data_cols=data_cols)
+        self._free_file_format_set_vals()
 
         # Buttons!
         if save or reset:
