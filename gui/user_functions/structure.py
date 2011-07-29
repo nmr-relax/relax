@@ -177,7 +177,7 @@ class Read_pdb_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The PDB file:", title="PDB file selection", tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The PDB file:", title="PDB file selection", default="PDB files (*.pdb)|*.pdb;*.PDB", tooltip=self.uf._doc_args_dict['file'])
 
         # The read_mol arg.
         self.read_mol = self.input_field(sizer, "Read molecule number:", tooltip=self.uf._doc_args_dict['read_mol'])
