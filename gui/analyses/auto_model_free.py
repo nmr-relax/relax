@@ -487,8 +487,8 @@ class Auto_model_free(Base_analysis):
     def delete(self):
         """Unregister the spin count from the user functions."""
 
-        # Clean up the peak intensity object.
-        self.peak_intensity.delete()
+        # Clean up the relaxation data list object.
+        self.relax_data.delete()
 
         # Remove.
         status.observers.gui_uf.unregister(self.data.pipe_name)
