@@ -61,7 +61,7 @@ class Deselect(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=900, size_y=800, title=self.get_title('deselect', 'read'))
+        wizard = Wiz_window(size_x=900, size_y=700, title=self.get_title('deselect', 'read'))
         page = Read_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
@@ -124,7 +124,7 @@ class Read_page(UF_page):
 
     # Some class variables.
     uf_path = ['deselect', 'read']
-    desc_height = 200
+    height_desc = 200
 
     def add_contents(self, sizer):
         """Add the sequence specific GUI elements.
@@ -136,9 +136,6 @@ class Read_page(UF_page):
         # Add a file selection.
         self.file = self.file_selection(sizer, "The deselection file:", message="Deselection file selection", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
 
-        # The parameter file settings.
-        self.free_file_format(sizer)
-
         # The spin ID restriction.
         self.spin_id = self.spin_id_element(sizer, desc="Restrict data loading to certain spins:")
 
@@ -148,6 +145,9 @@ class Read_page(UF_page):
 
         # The change_all flag.
         self.change_all = self.boolean_selector(sizer, "Change all:", tooltip=self.uf._doc_args_dict['change_all'], default=False)
+
+        # The parameter file settings.
+        self.free_file_format(sizer, data_cols=False, padding=3, spacer=0)
 
 
     def on_execute(self):

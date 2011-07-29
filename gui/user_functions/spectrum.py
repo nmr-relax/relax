@@ -88,7 +88,7 @@ class Spectrum(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=900, title=self.get_title('spectrum', 'read_intensities'))
+        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('spectrum', 'read_intensities'))
         page = Read_intensities_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
@@ -165,7 +165,7 @@ class Error_analysis_page(UF_page):
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
     uf_path = ['spectrum', 'error_analysis']
-    desc_height = 550
+    height_desc = 550
 
     def add_contents(self, sizer):
         """Add the specific GUI elements.
@@ -236,7 +236,7 @@ class Read_intensities_page(UF_page):
     """The spectrum.read_intensities() user function page."""
 
     # Some class variables.
-    desc_height = 180
+    height_desc = 140
     image_path = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
     uf_path = ['spectrum', 'read_intensities']
 
@@ -273,7 +273,7 @@ class Read_intensities_page(UF_page):
         self.ncproc = self.input_field(sizer, "The Bruker ncproc value:", tooltip=self.uf._doc_args_dict['ncproc'])
 
         # The parameter file settings.
-        self.free_file_format(sizer, data_cols=False, padding=5, spacer=0)
+        self.free_file_format(sizer, data_cols=False, padding=3, spacer=0)
 
 
     def on_execute(self):
@@ -299,7 +299,7 @@ class Read_intensities_page(UF_page):
         spin_name_col = gui_to_int(self.spin_name_col.GetValue())
 
         # The column separator.
-        sep = str(self.sep.GetValue())
+        sep = gui_to_str(self.sep.GetValue())
         if sep == 'white space':
             sep = None
 

@@ -63,7 +63,7 @@ class Relax_data(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=800, title=self.get_title('relax_data', 'read'))
+        wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('relax_data', 'read'))
         page = Read_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
@@ -118,7 +118,7 @@ class Read_page(UF_page):
     """The relax_data.read() user function page."""
 
     # Some class variables.
-    desc_height = 180
+    height_desc = 140
     image_path = WIZARD_IMAGE_PATH + 'fid.png'
     uf_path = ['relax_data', 'read']
 
@@ -143,7 +143,7 @@ class Read_page(UF_page):
         self.spin_id = self.spin_id_element(sizer, desc="Restrict data loading to certain spins:")
 
         # The parameter file settings.
-        self.free_file_format(sizer, data_cols=True, padding=5, spacer=0)
+        self.free_file_format(sizer, data_cols=True, padding=3, spacer=0)
 
 
     def on_execute(self):

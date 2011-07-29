@@ -154,7 +154,7 @@ class Read_page(UF_page):
         self.spin_id = self.spin_id_element(sizer, "Restrict data loading to certain spins:")
 
         # The parameter file settings.
-        self.free_file_format(sizer)
+        self.free_file_format(sizer, data_cols=False, padding=3, spacer=0)
 
 
     def on_execute(self):

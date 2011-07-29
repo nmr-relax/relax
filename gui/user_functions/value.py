@@ -71,7 +71,7 @@ class Set_page(UF_page):
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
     uf_path = ['value', 'set']
-    desc_height = 400
+    height_desc = 400
 
     def add_contents(self, sizer):
         """Add the sequence specific GUI elements.
