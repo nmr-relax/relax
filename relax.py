@@ -121,7 +121,7 @@ class Relax:
             mode = cmd_mode
 
         # Set up the warning system.
-        relax_warnings.setup(self.pedantic)
+        relax_warnings.setup()
 
         # Show the version number and exit.
         if mode == 'version':
@@ -236,9 +236,8 @@ class Relax:
             status.debug = True
 
         # Pedantic flag.
-        self.pedantic = False
         if options.pedantic:
-            self.pedantic = True
+            status.pedantic = True
 
         # Logging.
         if options.log:

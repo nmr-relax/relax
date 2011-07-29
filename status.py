@@ -48,6 +48,7 @@ class Status(object):
 
             # Initialise some variables.
             self._instance.debug = False
+            self._instance.pedantic = False
             self._instance.install_path = sys.path[0]
 
             # Set up the singleton.
