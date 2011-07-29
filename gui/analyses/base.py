@@ -591,7 +591,7 @@ class Spectral_error_type_page(UF_page):
     # Class variables.
     image_path = paths.WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
     uf_path = ['spectrum', 'error_analysis']
-    height_desc = 500
+    height_desc = 450
 
     def add_contents(self, sizer):
         """Add the specific GUI elements.

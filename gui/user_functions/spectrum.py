@@ -88,7 +88,7 @@ class Spectrum(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('spectrum', 'read_intensities'))
+        wizard = Wiz_window(size_x=1000, size_y=800, title=self.get_title('spectrum', 'read_intensities'))
         page = Read_intensities_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()

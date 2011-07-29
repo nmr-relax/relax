@@ -258,7 +258,7 @@ class Auto_noe(Base_analysis):
             error_message("No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.", caption='Incomplete setup')
 
         # Initialise a wizard.
-        self.wizard = Wiz_window(size_x=1000, size_y=750, title="Set up the NOE peak intensities")
+        self.wizard = Wiz_window(size_x=1000, size_y=800, title="Set up the NOE peak intensities")
         self.page_indices = {}
 
         # The spectrum.read_intensities page.
