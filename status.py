@@ -87,6 +87,9 @@ class Status(object):
         # A container for all the observers.
         self.observers = Status_container()
 
+        # The observer object for status changes in the auto-analyses.
+        self.observers.auto_analyses = Observer()
+
         # The observer object for pipe switches.
         self.observers.pipe_alteration = Observer()
 
@@ -110,13 +113,40 @@ class Status(object):
         """
 
         # Add a status container.
-        self.auto_analysis[name] = Status_container()
+        self.auto_analysis[name] = Auto_analysis()
 
         # Store the analysis type.
         self.auto_analysis[name].type = type
 
         # The Monte Carlo simulation status, if used.
-        self.mc_number = None
+        self.auto_analysis[name].mc_number = None
+
+
+
+class Auto_analysis:
+    """The auto-analysis status container."""
+
+    def __init__(self):
+        """Initialise the auto-analysis status object."""
+
+        # The status container.
+        self.status = Status()
+
+
+    def __setattr__(self, name, value):
+        """Replacement __setattr__() method.
+
+        @param name:    The name of the attribute.
+        @type name:     str
+        @param value:   The value of the attribute.
+        @type value:    anything
+        """
+
+        # First set the attribute.
+        self.__dict__[name] = value
+
+        # Then notify the observers.
+        self.status.observers.auto_analyses.notify()
 
 
 
