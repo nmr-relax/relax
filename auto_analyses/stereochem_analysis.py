@@ -190,7 +190,8 @@ class Stereochem_analysis:
         if self.log:
             mkdir_nofail(self.results_dir + sep + "logs")
 
-        # Unlock execution.
+        # Finish and unlock execution.
+        status.auto_analysis[self.pipe_name].fin = True
         status.exec_lock.release()
 
 

@@ -89,7 +89,8 @@ class Relax_fit:
         # Execute.
         self.run()
 
-        # Unlock execution.
+        # Finish and unlock execution.
+        status.auto_analysis[self.pipe_name].fin = True
         status.exec_lock.release()
 
 

@@ -198,7 +198,8 @@ class dAuvergne_protocol:
         try:
             self.execute()
         finally:
-            # Unlock execution.
+            # Finish and unlock execution.
+            status.auto_analysis[self.pipe_name].fin = True
             status.exec_lock.release()
 
 

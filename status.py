@@ -121,6 +121,9 @@ class Status(object):
         # Store the analysis type.
         self.auto_analysis[name].type = type
 
+        # The completion flag.
+        self.auto_analysis[name].fin = False
+
         # The Monte Carlo simulation status, if used.
         self.auto_analysis[name].mc_number = None
 
