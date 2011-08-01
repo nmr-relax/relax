@@ -153,6 +153,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         # The button.
         button = buttons.ThemedGenBitmapTextButton(self, id, None, " Execute relax")
         button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         self.gui.Bind(wx.EVT_BUTTON, method, button)
         sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
