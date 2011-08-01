@@ -508,5 +508,10 @@ class Main(wx.Frame):
 
         # Set the current data pipe info.
         pipe = cdp_name()
-        if pipe:
-            self.bar.SetStatusText(pipe, 2)
+
+        # No data pipe.
+        if pipe == None:
+            pipe = ''
+
+        # Set the status.
+        self.bar.SetStatusText(pipe, 2)
