@@ -36,23 +36,26 @@ from status import Status; status = Status()
 class Execute(Thread):
     """The analysis execution object."""
 
-    def __init__(self, gui, data, data_index, thread=True):
+    def __init__(self, gui, data, data_index, results_display=True, thread=True):
         """Set up the analysis execution object.
 
-        @param gui:         The GUI object.
-        @type gui:          wx object
-        @param data:        The data container with all data for the analysis.
-        @type data:         class instance
-        @param data_index:  The index of the analysis in the relax data store.
-        @type data_index:   int
-        @keyword thread:    The flag for turning threading on and off.
-        @type thread:       bool
+        @param gui:                 The GUI object.
+        @type gui:                  wx object
+        @param data:                The data container with all data for the analysis.
+        @type data:                 class instance
+        @param data_index:          The index of the analysis in the relax data store.
+        @type data_index:           int
+        @keyword results_display:   A flag which if True will cause the results display window to be shown at then end of the execution.
+        @type results_display:      bool
+        @keyword thread:            The flag for turning threading on and off.
+        @type thread:               bool
         """
 
         # Store the args.
         self.gui = gui
         self.data = data
         self.data_index = data_index
+        self.results_display = results_display
 
         # Threaded execution.
         if thread:
@@ -97,6 +100,10 @@ class Execute(Thread):
             # Unlock the execution lock, if needed.
             if status.exec_lock.locked():
                 status.exec_lock.release()
+
+        # Display the results viewer.
+        if self.results_display:
+            self.gui.analysis.show_results_viewer(None)
 
 
     def run_analysis(self):
