@@ -140,7 +140,7 @@ class Wiz_page(wx.Panel):
         title = wx.StaticText(self, -1, self.title)
 
         # Font.
-        title.SetFont(wx.Font(18, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
+        title.SetFont(font.title)
 
         # Add the title.
         sizer.Add(title, 0, wx.ALIGN_CENTRE|wx.ALL, 0)
@@ -303,9 +303,7 @@ class Wiz_page(wx.Panel):
 
         # The text.
         text = wx.StaticText(panel, -1, self.main_text, style=wx.TE_MULTILINE)
-
-        # Font.
-        #text.SetFont(wx.Font(18, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
+        text.SetFont(font.normal)
 
         # Wrap the text.
         text.Wrap(self._main_size - 20)
@@ -368,6 +366,7 @@ class Wiz_page(wx.Panel):
 
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        text.SetFont(font.normal)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The divider.
@@ -382,6 +381,7 @@ class Wiz_page(wx.Panel):
         style = wx.CB_DROPDOWN | wx.CB_READONLY
         combo = wx.ComboBox(self, -1, value=bool_to_gui(default), style=style, choices=['True', 'False'])
         combo.SetMinSize((50, self.height_element))
+        combo.SetFont(font.normal)
         sub_sizer.Add(combo, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Right padding.
@@ -423,6 +423,7 @@ class Wiz_page(wx.Panel):
 
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        text.SetFont(font.normal)
         sub_sizer.Add(text, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacing.
@@ -431,6 +432,7 @@ class Wiz_page(wx.Panel):
         # The choice element.
         type_choice = wx.Choice(self, -1, style=wx.ALIGN_LEFT, choices=choices)
         sub_sizer.Add(type_choice, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+        type_choice.SetFont(font.normal)
         self.Bind(wx.EVT_CHOICE, func, type_choice)
 
         # Add to the main sizer (followed by stretchable spacing).
@@ -471,6 +473,7 @@ class Wiz_page(wx.Panel):
 
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        text.SetFont(font.normal)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The divider.
@@ -487,6 +490,7 @@ class Wiz_page(wx.Panel):
             style = style | wx.CB_READONLY
         combo = wx.ComboBox(self, -1, value='', style=style, choices=choices)
         combo.SetMinSize((50, self.height_element))
+        combo.SetFont(font.normal)
         sub_sizer.Add(combo, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Right padding.
@@ -547,6 +551,7 @@ class Wiz_page(wx.Panel):
 
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        text.SetFont(font.normal)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The divider.
@@ -560,6 +565,7 @@ class Wiz_page(wx.Panel):
         # The input field.
         field = wx.TextCtrl(self, -1, '')
         field.SetMinSize((-1, self.height_element))
+        field.SetFont(font.normal)
         sub_sizer.Add(field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The file selection object.
@@ -722,6 +728,7 @@ class Wiz_page(wx.Panel):
 
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        text.SetFont(font.normal)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The divider.
@@ -735,6 +742,7 @@ class Wiz_page(wx.Panel):
         # The input field.
         field = wx.TextCtrl(self, -1, '')
         field.SetMinSize((50, self.height_element))
+        field.SetFont(font.normal)
         sub_sizer.Add(field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Right padding.
@@ -833,6 +841,7 @@ class Wiz_page(wx.Panel):
 
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        text.SetFont(font.normal)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The divider.
@@ -846,6 +855,7 @@ class Wiz_page(wx.Panel):
         # The input field.
         field = wx.ComboBox(self, -1, '', choices=choices)
         field.SetMinSize((50, self.height_element))
+        field.SetFont(font.normal)
         sub_sizer.Add(field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Set the default.
@@ -898,6 +908,7 @@ class Wiz_page(wx.Panel):
 
         # The description.
         text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        text.SetFont(font.normal)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # The divider.
@@ -911,6 +922,7 @@ class Wiz_page(wx.Panel):
         # The non-editable text.
         text = wx.TextCtrl(self, -1, default, style=wx.ALIGN_LEFT)
         text.SetEditable(False)
+        text.SetFont(font.normal)
         colour = self.GetBackgroundColour()
         text.SetOwnBackgroundColour(colour)
         text.SetMinSize((self._div_right, self.height_element))
