@@ -46,7 +46,6 @@ from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import model_free_results, see_results
 from gui.base_classes import Container
 from gui.components.relax_data import Relax_data_list
-from gui.controller import Redirect_text
 from gui.filedialog import opendir
 from gui.fonts import font
 from gui.message import error_message, Question, Missing_data
@@ -679,13 +678,6 @@ class Execute_mf(Execute):
 
     def run_analysis(self):
         """Execute the calculation."""
-
-        # Controller.
-        if not status.debug and not status.test_mode:
-            # Redirect relax output and errors to the controller.
-            redir = Redirect_text(self.gui.controller)
-            sys.stdout = redir
-            sys.stderr = redir
 
         # Loop over the models.
         for global_model in self.data.global_models:

@@ -42,7 +42,6 @@ from gui.analyses.base import Base_analysis, Spectral_error_type_page
 from gui.analyses.execute import Execute
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
-from gui.controller import Redirect_text
 from gui.filedialog import opendir
 from gui.message import error_message, Missing_data
 from gui.misc import gui_to_int, gui_to_str, int_to_gui, protected_exec, str_to_gui
@@ -480,13 +479,6 @@ class Execute_rx(Execute):
 
     def run_analysis(self):
         """Execute the calculation."""
-
-        # Controller.
-        if not status.debug and not status.test_mode:
-            # Redirect relax output and errors to the controller.
-            redir = Redirect_text(self.gui.controller)
-            sys.stdout = redir
-            sys.stderr = redir
 
         # Execute.
         Relax_fit(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_dir=self.data.save_dir, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, view_plots=False)

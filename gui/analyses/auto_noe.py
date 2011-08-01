@@ -42,7 +42,6 @@ from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
-from gui.controller import Redirect_text
 from gui.filedialog import opendir
 from gui.message import error_message, Missing_data
 from gui.misc import gui_to_str, protected_exec, str_to_gui
@@ -454,13 +453,6 @@ class Execute_noe(Execute):
 
     def run_analysis(self):
         """Execute the calculation."""
-
-        # Controller.
-        if not status.debug and not status.test_mode:
-            # Redirect relax output and errors to the controller.
-            redir = Redirect_text(self.gui.controller)
-            sys.stdout = redir
-            sys.stderr = redir
 
         # Execute.
         NOE_calc(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_dir=self.data.save_dir, save_state=False)
