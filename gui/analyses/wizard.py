@@ -45,6 +45,10 @@ class Analysis_wizard:
         @rtype:     tuple of str
         """
 
+        # Change the cursor to busy.
+        wx.Yield()
+        wx.BeginBusyCursor()
+
         # Set up the wizard.
         self.wizard = Wiz_window(size_x=850, size_y=700, title='Set parameter values')
 
@@ -55,6 +59,9 @@ class Analysis_wizard:
         # Add the data pipe name panel.
         self.pipe_page = Data_pipe_page(self.wizard)
         self.wizard.add_page(self.pipe_page, apply_button=False)
+
+        # Reset the cursor.
+        wx.EndBusyCursor()
 
         # Execute the wizard.
         setup = self.wizard.run(modal=True)
