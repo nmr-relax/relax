@@ -62,6 +62,9 @@ class Relax_fit:
         # Execution lock.
         status.exec_lock.acquire('auto relax fit')
 
+        # Set up the analysis status object.
+        status.init_auto_analysis(pipe_name, type='relax_fit')
+
         # Store the args.
         self.pipe_name = pipe_name
         self.file_root = file_root

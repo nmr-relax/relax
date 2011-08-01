@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -142,6 +142,9 @@ class Stereochem_analysis:
 
         # Execution lock.
         status.exec_lock.acquire('auto stereochem analysis')
+
+        # Set up the analysis status object.
+        status.init_auto_analysis('stereochem', type='stereochem')
 
         # Store all the args.
         self.stage = stage

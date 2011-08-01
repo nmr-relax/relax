@@ -56,13 +56,14 @@ class NOE_calc:
         @type save_state:       bool
         """
 
-        # Store the args.
-        self.save_state = save_state
-
         # Execution lock.
         status.exec_lock.acquire('auto noe')
 
+        # Set up the analysis status object.
+        status.init_auto_analysis(pipe_name, type='noe')
+
         # Store the args.
+        self.save_state = save_state
         self.pipe_name = pipe_name
         self.file_root = file_root
         self.results_dir = results_dir
