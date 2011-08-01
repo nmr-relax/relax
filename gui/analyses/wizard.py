@@ -86,9 +86,8 @@ class Data_pipe_page(Wiz_page):
     """The panel for setting the data pipe name."""
 
     # Class variables.
-    pipe_name = 'x'
     image_path = paths.WIZARD_IMAGE_PATH + 'pipe.png'
-    main_text = 'Select the name of the pipe name to be associated with the analysis'
+    main_text = 'Select the name of the data pipe to be associated with this analysis.  All data in relax is kept within a special structure known as the relax data store.  This store is composed of multiple data pipes, each being associated with a specific analysis type.  Simple analyses such as the steady-state NOE and the R1 and R2 curve-fitting will be located within a single data pipe.  More complex analyses such as the automated model-free analysis will be spread across multiple data pipes, internally created by forking the original data pipe which holds the input data.'
     title = 'Data pipe name'
 
     def add_contents(self, sizer):
@@ -100,6 +99,9 @@ class Data_pipe_page(Wiz_page):
 
         # The pipe name input.
         self.pipe_name = self.input_field(sizer, "The data pipe name:")
+
+        # Spacing.
+        sizer.AddStretchSpacer(3)
 
 
     def on_display(self):
