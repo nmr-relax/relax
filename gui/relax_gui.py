@@ -117,7 +117,7 @@ class Main(wx.Frame):
         self.menu = Menu(self)
 
         # Build the controller, but don't show it.
-        self.controller = Controller(None, -1, "")
+        self.controller = Controller(self)
 
         # Set the title.
         self.SetTitle("relax " + version)
