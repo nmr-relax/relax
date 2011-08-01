@@ -116,27 +116,33 @@ class Status(object):
         """
 
         # Add a status container.
-        self.auto_analysis[name] = Auto_analysis()
-
-        # Store the analysis type.
-        self.auto_analysis[name].type = type
-
-        # The completion flag.
-        self.auto_analysis[name].fin = False
-
-        # The Monte Carlo simulation status, if used.
-        self.auto_analysis[name].mc_number = None
+        self.auto_analysis[name] = Auto_analysis(name, type)
 
 
 
 class Auto_analysis:
     """The auto-analysis status container."""
 
-    def __init__(self):
-        """Initialise the auto-analysis status object."""
+    def __init__(self, name, type):
+        """Initialise the auto-analysis status object.
+
+        @param name:    The unique name of the auto-analysis.  This will act as a key.
+        @type name:     str.
+        @param type:    The type of auto-analysis.
+        @type type:     str
+        """
 
         # The status container.
-        self.status = Status()
+        self._status = Status()
+
+        # Store the analysis type.
+        self.__dict__['type'] = type
+
+        # The completion flag.
+        self.__dict__['fin'] = False
+
+        # The Monte Carlo simulation status, if used.
+        self.__dict__['mc_number'] = None
 
 
     def __setattr__(self, name, value):
@@ -152,7 +158,7 @@ class Auto_analysis:
         self.__dict__[name] = value
 
         # Then notify the observers.
-        self.status.observers.auto_analyses.notify()
+        self._status.observers.auto_analyses.notify()
 
 
 
