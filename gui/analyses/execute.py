@@ -27,6 +27,7 @@
 import sys
 from threading import Thread
 from traceback import print_exc
+import wx
 
 # relax module imports.
 from relax_errors import RelaxImplementError
@@ -103,7 +104,7 @@ class Execute(Thread):
 
         # Display the results viewer.
         if self.results_display:
-            self.gui.analysis.show_results_viewer(None)
+            wx.CallAfter(self.gui.analysis.show_results_viewer, None)
 
 
     def run_analysis(self):
