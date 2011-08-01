@@ -34,7 +34,6 @@ from relax_errors import RelaxImplementError
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui.controller import Redirect_text
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import relax_icons
