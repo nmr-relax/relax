@@ -465,9 +465,14 @@ class Execute_noe(Execute):
             data.results_list = []
 
         # Add the NOE grace plots to the results list.
-        data.results_list.append(data.save_dir+sep+'grace'+sep+'ref.agr')
-        data.results_list.append(data.save_dir+sep+'grace'+sep+'sat.agr')
-        data.results_list.append(data.save_dir+sep+'grace'+sep+'noe.agr')
+        files = [
+            data.save_dir+sep+'grace'+sep+'ref.agr',
+            data.save_dir+sep+'grace'+sep+'sat.agr',
+            data.save_dir+sep+'grace'+sep+'noe.agr'
+        ]
+        for file in files:
+            if not file in data.results_list:
+                data.results_list.append(file)
 
         # FIXME:  This must be shifted to the core of relax!!!
         # Create a PyMOL macro, if a structure exists.

@@ -491,8 +491,13 @@ class Execute_rx(Execute):
             data.results_list = []
 
         # Add Rx grace plot to the results list.
-        data.results_list.append(data.save_dir+sep+'grace'+sep+self.data.file_root+'.agr')
-        data.results_list.append(data.save_dir+sep+'grace'+sep+'intensities.agr')
-        data.results_list.append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
-        data.results_list.append(data.save_dir+sep+'grace'+sep+'i0.agr')
-        data.results_list.append(data.save_dir+sep+'grace'+sep+'chi2.agr')
+        files = [
+            data.save_dir+sep+'grace'+sep+self.data.file_root+'.agr',
+            data.save_dir+sep+'grace'+sep+'intensities.agr',
+            data.save_dir+sep+'grace'+sep+'intensities_norm.agr',
+            data.save_dir+sep+'grace'+sep+'i0.agr',
+            data.save_dir+sep+'grace'+sep+'chi2.agr' 
+        ]
+        for file in files:
+            if not file in data.results_list:
+                data.results_list.append(file)
