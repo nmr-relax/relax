@@ -764,6 +764,9 @@ class dAuvergne_protocol:
         # The current model-free model.
         status.auto_analysis[self.pipe_name].current_model = None
 
+        # The maximum number of iterations of the global model.
+        status.auto_analysis[self.pipe_name].max_iter = self.max_iter
+
         # The convergence of the global model.
         status.auto_analysis[self.pipe_name].convergence = False
 
