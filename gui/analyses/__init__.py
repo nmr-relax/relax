@@ -113,6 +113,21 @@ class Analysis_controller:
             yield self._analyses[i]
 
 
+    def current_data(self):
+        """Return the data container of the current analysis from the relax data store.
+
+        @return:    The data container of the current analysis.
+        @rtype:     str
+        """
+
+        # No current page.
+        if self._current == None:
+            return
+
+        # Return the name.
+        return ds.relax_gui.analyses[self._current]
+
+
     def current_analysis_name(self):
         """Return the name of the current analysis.
 
