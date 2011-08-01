@@ -81,6 +81,9 @@ class Analysis_controller:
         # Create a container in the status singleton for the analyses.
         status.analyses = Status_container()
 
+        # Create the results viewer window.
+        self.results_viewer = Results_viewer(gui=self.gui)
+
         # Register the page switch method for pipe switches.
         self.name = 'notebook page switcher'
         status.observers.pipe_alteration.register(self.name, self.pipe_switch)
@@ -564,10 +567,6 @@ class Analysis_controller:
         @param event:   The wx event.
         @type event:    wx event
         """
-
-        # Build the results viewer window.
-        if not hasattr(self, 'results_viewer'):
-            self.results_viewer = Results_viewer(gui=self.gui)
 
         # Open the window.
         if status.show_gui:

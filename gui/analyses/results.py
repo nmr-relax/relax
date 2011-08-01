@@ -38,7 +38,7 @@ from gui.misc import add_border, gui_to_str, str_to_gui
 
 
 class Results_viewer(wx.Frame):
-    """The base class for the noe frames."""
+    """The results viewer frame."""
 
     # Some class variables.
     border = 10
@@ -90,7 +90,6 @@ class Results_viewer(wx.Frame):
         box_centre.Add(self.button_open, 0, wx.ALIGN_RIGHT, 5)
 
         # Bind some events.
-        self.Bind(wx.EVT_SHOW, self.update_window)
         self.Bind(wx.EVT_LEFT_DOWN, self.update_choices, self.analysis_list)
         self.Bind(wx.EVT_COMBOBOX, self.on_choice, self.analysis_list)
         self.Bind(wx.EVT_CLOSE, self.handler_close)
@@ -229,7 +228,7 @@ class Results_viewer(wx.Frame):
         self.analysis_list.SetValue(str_to_gui(self.gui.analysis.current_analysis_name()))
 
 
-    def update_window(self, event):
+    def update_window(self, event=None):
         """Update the window.
 
         @param event:   The wx event.

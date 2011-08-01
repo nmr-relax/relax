@@ -104,6 +104,7 @@ class Execute(Thread):
 
         # Display the results viewer.
         if self.results_display:
+            wx.CallAfter(self.gui.analysis.results_viewer.update_window, None)
             wx.CallAfter(self.gui.analysis.show_results_viewer, None)
 
 
