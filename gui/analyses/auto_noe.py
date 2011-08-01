@@ -463,7 +463,7 @@ class Execute_noe(Execute):
             sys.stderr = redir
 
         # Execute.
-        NOE_calc(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_dir=self.data.save_dir)
+        NOE_calc(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_dir=self.data.save_dir, save_state=False)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
@@ -472,9 +472,12 @@ class Execute_noe(Execute):
         if not hasattr(data, 'results_list'):
             data.results_list = []
 
-        # Add the NOE grace plot to the results list.
+        # Add the NOE grace plots to the results list.
+        data.results_list.append(data.save_dir+sep+'grace'+sep+'ref.agr')
+        data.results_list.append(data.save_dir+sep+'grace'+sep+'sat.agr')
         data.results_list.append(data.save_dir+sep+'grace'+sep+'noe.agr')
 
+        # FIXME:  This must be shifted to the core of relax!!!
         # Create a PyMOL macro, if a structure exists.
         if hasattr(data, 'structure_file'):
             # The macro.
