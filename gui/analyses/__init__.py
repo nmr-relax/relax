@@ -254,7 +254,7 @@ class Analysis_controller:
 
         # Ask if this should be done.
         msg = "Are you sure you would like to close the current %s analysis tab?" % ds.relax_gui.analyses[index].analysis_type
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if Question(msg, title="Close current analysis", size=(350, 140), default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete.
@@ -270,7 +270,7 @@ class Analysis_controller:
 
         # Ask if this should be done.
         msg = "Are you sure you would like to close all analyses?  All data will be erased and the relax data store reset."
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if Question(msg, title="Close all analyses", size=(350, 150), default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete.
