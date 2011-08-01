@@ -36,7 +36,7 @@ from status import Status; status = Status()
 
 
 class NOE_calc:
-    def __init__(self, pipe_name=None, file_root='noe', results_dir=None):
+    def __init__(self, pipe_name=None, file_root='noe', results_dir=None, save_state=True):
         """Perform relaxation curve fitting.
 
         To use this auto-analysis, a data pipe with all the required data needs to be set up.  This data pipe should contain the following:
@@ -52,7 +52,12 @@ class NOE_calc:
         @type file_root:        str
         @keyword results_dir:   The directory where results files are saved.
         @type results_dir:      str
+        @keyword save_state:    A flag which if True will cause a relax save state to be created at the end of the analysis.
+        @type save_state:       bool
         """
+
+        # Store the args.
+        self.save_state = save_state
 
         # Execution lock.
         status.exec_lock.acquire('auto noe')
@@ -105,9 +110,9 @@ class NOE_calc:
         self.interpreter.grace.write(y_data_type='sat', file='sat.agr', dir=self.grace_dir, force=True)
         self.interpreter.grace.write(y_data_type='noe', file='noe.agr', dir=self.grace_dir, force=True)
 
-
         # Save the program state.
-        self.interpreter.state.save(state=self.file_root+'.save', dir=self.results_dir, force=True)
+        if self.save_state:
+            self.interpreter.state.save(state=self.file_root+'.save', dir=self.results_dir, force=True)
 
 
     def check_vars(self):
