@@ -128,6 +128,21 @@ class Analysis_controller:
         return ds.relax_gui.analyses[self._current].analysis_name
 
 
+    def current_analysis_type(self):
+        """Return the type of the current analysis.
+
+        @return:    The type of the current analysis.
+        @rtype:     str
+        """
+
+        # No current page.
+        if self._current == None:
+            return
+
+        # Return the name.
+        return ds.relax_gui.analyses[self._current].analysis_type
+
+
     def delete_all(self):
         """Remove all analyses."""
 
