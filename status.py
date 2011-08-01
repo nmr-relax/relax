@@ -99,8 +99,11 @@ class Status(object):
         # The observer object for changes to the GUI analysis tabs.
         self.observers.gui_analysis = Observer()
 
-        # The observer object for relax resets
+        # The observer object for relax resets.
         self.observers.reset = Observer()
+
+        # The observer object for the execution lock.
+        self.observers.exec_lock = Observer()
 
 
     def init_auto_analysis(self, name, type):
@@ -159,7 +162,11 @@ class Exec_lock:
     """A type of locking object for locking execution of relax."""
 
     def __init__(self, debug=False):
-        """Set up the lock-like object."""
+        """Set up the lock-like object.
+
+        @keyword debug: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
+        @type debug:    bool
+        """
 
         # Store the arg.
         self.debug = debug
@@ -187,6 +194,10 @@ class Exec_lock:
         @param name:    The name of the locking code.
         @type name:     str
         """
+
+        # Notify observers.
+        status = Status()
+        status.observers.exec_lock.notify()
 
         # Do not acquire if lunching a script from a script.
         if name == 'script UI' and self._name == 'script UI' and self.locked():
@@ -243,6 +254,10 @@ class Exec_lock:
 
     def release(self):
         """Simulate the Lock.release() mechanism."""
+
+        # Notify observers.
+        status = Status()
+        status.observers.exec_lock.notify()
 
         # Nested scripting.
         if self._script_nest:
