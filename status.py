@@ -24,6 +24,7 @@
 """Module containing the status singleton object."""
 
 # Python module imports.
+from Queue import Queue
 from re import search
 import sys
 from threading import Lock
@@ -63,6 +64,9 @@ class Status(object):
 
         # Execution lock object.
         self.exec_lock = Exec_lock()
+
+        # The exception queue for handling exceptions in threads.
+        self.exception_queue = Queue()
 
         # The auto-analysis status containers.
         self.auto_analysis = {}

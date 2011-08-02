@@ -25,7 +25,6 @@
 
 # Python module imports.
 import wx
-from Queue import Queue
 from types import ListType
 
 # relax module imports.
@@ -77,9 +76,6 @@ class Analysis_controller:
 
         # The analyses page objects.
         self._analyses = []
-
-        # Create a container in the status singleton for the analyses.
-        status.analyses = Status_container()
 
         # Create the results viewer window.
         self.results_viewer = Results_viewer(gui=self.gui)
@@ -588,14 +584,3 @@ class Analysis_controller:
 
         # Notify the observers of the change.
         status.observers.gui_analysis.notify()
-
-
-
-class Status_container(ListType):
-    """The status container object."""
-
-    def __init__(self):
-        """Initialise a number of data structures."""
-
-        # The exception queue.
-        self.exception_queue = Queue()

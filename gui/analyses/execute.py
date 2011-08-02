@@ -91,7 +91,7 @@ class Execute(Thread):
         # Handle all errors.
         except:
             # Place the analysis index and execution info into the exception queue.
-            status.analyses.exception_queue.put([self.data_index, sys.exc_info()])
+            status.exception_queue.put([self.data_index, sys.exc_info()])
 
             # Print the exception.
             print("Exception raised in thread.\n")

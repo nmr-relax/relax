@@ -64,7 +64,7 @@ class GuiTestCase(TestCase):
         # Check.
         try:
             # Get the exception from the queue.
-            index, exc = status.analyses.exception_queue.get(block=False)
+            index, exc = status.exception_queue.get(block=False)
 
             # Fail.
             self.fail()
