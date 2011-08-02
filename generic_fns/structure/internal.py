@@ -902,6 +902,11 @@ class Internal(Base_struct_API):
             # Increment the model index.
             model_index = model_index + 1
 
+        # No data, so throw a warning and exit.
+        if not len(mol_conts):
+            warn(RelaxWarning("No structural data could be read from the file '%s'." % file_path))
+            return False
+
         # Create the structural data data structures.
         self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path)
 
