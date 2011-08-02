@@ -303,10 +303,6 @@ def __errors_repl(verbosity=0):
         all_repl = True
         print("All spectra replicated:  Yes.")
 
-    # Test if the standard deviation has already been calculated.
-    if hasattr(cdp, 'sigma_I'):
-        raise RelaxError("The peak intensity standard deviation of all spectra has already been calculated.")
-
     # Initialise.
     cdp.sigma_I = {}
     cdp.var_I = {}
