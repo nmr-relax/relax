@@ -517,7 +517,7 @@ class Redirect_text(object):
             self.control.Refresh()
 
         # Append the text to the controller asynchronously.
-        self.control.AppendText(string)
+        self.control.WriteText(string)
 
 
     def write(self, string):
