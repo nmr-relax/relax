@@ -97,6 +97,10 @@ class Controller(wx.Frame):
         # Initial update of the controller.
         self.update_controller()
 
+        # Create a timer for updating the gauges.
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.handler_timer, self.timer)
+
         # Register functions with the observer objects.
         status.observers.pipe_alteration.register('controller', self.update_controller)
         status.observers.auto_analyses.register('controller', self.update_controller)
@@ -285,6 +289,22 @@ class Controller(wx.Frame):
         self.Hide()
 
 
+    def handler_timer(self, event):
+        """Event handler for the timer.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Pulse.
+        self.main_gauge.Pulse()
+
+        # Stop the timer and update the gauge.
+        if not status.exec_lock.locked() and self.timer.IsRunning():
+            self.timer.Stop()
+            self.update_gauge()
+
+
     def setup_frame(self):
         """Set up the relax controller frame.
         @return:    The sizer object.
@@ -370,22 +390,34 @@ class Controller(wx.Frame):
 
         # Pulse during execution.
         if status.exec_lock.locked():
-            self.main_gauge.Pulse()
+            # Start the timer.
+            if not self.timer.IsRunning():
+                self.timer.Start(100)
+
+            # Finish.
+            return
 
         # Finished.
         key = self.analysis_key()
         if key and status.auto_analysis.has_key(key) and status.auto_analysis[key].fin:
+            # Stop the timer.
+            if self.timer.IsRunning():
+                self.timer.Stop()
+
+            # Fill the gauge.
             self.main_gauge.SetValue(100)
 
-        # Reset the gauge.
-        if not status.exec_lock.locked():
-            # No key, so reset.
-            if not key or not status.auto_analysis.has_key(key):
-                self.main_gauge.SetValue(0)
+        # Gauge is in the initial state, so no need to reset.
+        if not self.main_gauge.GetValue():
+            return
 
-            # Key present, but analysis not started.
-            if key and status.auto_analysis.has_key(key) and not status.auto_analysis[key].fin:
-                self.main_gauge.SetValue(0)
+        # No key, so reset.
+        if not key or not status.auto_analysis.has_key(key):
+            self.main_gauge.SetValue(0)
+
+        # Key present, but analysis not started.
+        if key and status.auto_analysis.has_key(key) and not status.auto_analysis[key].fin:
+            self.main_gauge.SetValue(0)
 
 
     def update_mf(self):
