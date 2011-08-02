@@ -76,6 +76,9 @@ class Controller(wx.Frame):
         # Add the current data pipe info.
         self.cdp = self.add_text(self, sizer, "Current data pipe:")
 
+        # Create the relaxation curve-fitting specific panel.
+        self.create_rx(sizer)
+
         # Create the model-free specific panel.
         self.create_mf(sizer)
 
@@ -252,6 +255,25 @@ class Controller(wx.Frame):
         self.mc_gauge = self.add_gauge(self.panel_mf, panel_sizer, "Monte Carlo simulations:")
 
 
+    def create_rx(self, sizer):
+        """Create the relaxation curve-fitting specific panel.
+
+        @param sizer:   The sizer element to pack the element into.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Create a panel.
+        self.panel_rx = wx.Panel(self, -1)
+        sizer.Add(self.panel_rx, 0, wx.ALL|wx.EXPAND, 0)
+
+        # The panel sizer.
+        panel_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.panel_rx.SetSizer(panel_sizer)
+
+        # MC sim gauge.
+        self.mc_gauge = self.add_gauge(self.panel_rx, panel_sizer, "Monte Carlo simulations:")
+
+
     def handler_close(self, event):
         """Event handler for the close window action.
 
@@ -317,6 +339,13 @@ class Controller(wx.Frame):
 
         # The analysis type.
         type = self.gui.analysis.current_analysis_type()
+
+        # Rx fitting auto-analysis.
+        if type in ['R1', 'R2']:
+            self.panel_rx.Show()
+            self.update_rx()
+        else:
+            self.panel_rx.Hide()
 
         # Model-free auto-analysis.
         if type == 'model-free':
@@ -405,6 +434,24 @@ class Controller(wx.Frame):
             # Update the progress bar.
             wx.CallAfter(self.mc_gauge.SetValue, percent)
 
+
+    def update_rx(self):
+        """Update the model-free specific elements."""
+
+        # The analysis key.
+        key = self.analysis_key()
+        if not key or not status.auto_analysis.has_key(key):
+            return
+
+        # Monte Carlo simulations.
+        if status.auto_analysis[key].mc_number:
+            # The simulation number as a percentage.
+            percent = int(100 * (status.auto_analysis[key].mc_number + 2) / cdp.sim_number)
+            if percent > 100:
+                percent = 100
+
+            # Update the progress bar.
+            wx.CallAfter(self.mc_gauge.SetValue, percent)
 
 
 

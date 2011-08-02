@@ -93,7 +93,7 @@ class Missing_data(wx.Dialog):
         """
 
         # Initialise the base class.
-        wx.Dialog.__init__(self, None, title='Missing data', style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
+        wx.Dialog.__init__(self, None, title='Missing data', style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER|wx.STAY_ON_TOP)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
@@ -183,7 +183,7 @@ class Question(wx.Dialog):
             self.answer = wx.ID_NO
 
         # Initialise the base class.
-        wx.Dialog.__init__(self, parent, title=title, size=size, style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
+        wx.Dialog.__init__(self, parent, title=title, size=size, style=wx.DEFAULT_DIALOG_STYLE|wx.STAY_ON_TOP)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
