@@ -172,6 +172,10 @@ def gui_to_float(string):
     # Convert.
     val = eval(string)
 
+    # An int.
+    if type(val) == int:
+        val = float(val)
+
     # Not a float!
     if type(val) != float:
         return string
