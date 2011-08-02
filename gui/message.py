@@ -211,6 +211,7 @@ class Question(wx.Dialog):
 
         # Convert to a text element.
         text = wx.StaticText(self, -1, msg, style=wx.TE_MULTILINE)
+        text.SetFont(font.normal)
         sub_sizer.Add(text, 1, wx.ALL|wx.EXPAND, 0)
 
         # A sizer for the buttons.
