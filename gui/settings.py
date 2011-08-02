@@ -31,6 +31,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 # relax GUI module imports.
 from gui.filedialog import RelaxFileDialog
+from gui.fonts import font
 from gui.icons import relax_icons
 from gui.message import error_message
 from gui.misc import gui_to_int, int_to_gui

@@ -32,6 +32,7 @@ import wx.lib.scrolledpanel
 from status import Status; status = Status()
 
 # relax GUI module imports.
+from gui.fonts import font
 from gui.icons import relax_icons
 from gui.paths import IMAGE_PATH, icon_22x22, icon_48x48
 import gui

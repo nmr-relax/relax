@@ -31,6 +31,7 @@ from wx.lib import buttons
 
 # relax GUI module imports.
 from gui import paths
+from gui.fonts import font
 from gui.misc import gui_to_str, str_to_gui
 from gui.wizard import Wiz_page, Wiz_window
 

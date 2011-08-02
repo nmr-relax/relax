@@ -34,7 +34,7 @@ import wx.lib.buttons
 from data import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
-# relaxGUI module imports.
+# relax GUI module imports.
 from gui.filedialog import RelaxFileDialog, opendir
 from gui.fonts import font
 from gui.message import error_message
