@@ -157,6 +157,9 @@ class Controller(wx.Frame):
         # Set the font info.
         self.log_panel.SetFont(font.modern_8)
 
+        # Override mouse clicks to prevent weird text insertions.
+        self.log_panel.Bind(wx.EVT_LEFT_DOWN, self.mouse_override)
+
         # Add to the sizer.
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
 
@@ -303,6 +306,17 @@ class Controller(wx.Frame):
         if not status.exec_lock.locked() and self.timer.IsRunning():
             self.timer.Stop()
             self.update_gauge()
+
+
+    def mouse_override(self, event):
+        """Override mouse events in the log window to prevent strange text insertion points.
+
+        This method does nothing!
+
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
 
 
     def setup_frame(self):
