@@ -155,7 +155,7 @@ class Controller(wx.Frame):
         self.log_panel = wx.TextCtrl(self, -1, "", style=wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_RICH2)
 
         # Set the font info.
-        self.log_panel.SetFont(font.normal)
+        self.log_panel.SetFont(font.modern_8)
 
         # Add to the sizer.
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
