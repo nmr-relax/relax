@@ -165,6 +165,10 @@ def gui_to_float(string):
     if string in ['', u'']:
         return None
 
+    # Already a float.
+    if type(string) == float:
+        return string
+
     # Convert.
     val = eval(string)
 
@@ -188,6 +192,10 @@ def gui_to_int(string):
     # No input.
     if string in ['', u'']:
         return None
+
+    # Already an int.
+    if type(string) == int:
+        return string
 
     # Convert.
     val = eval(string)
