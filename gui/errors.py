@@ -27,6 +27,9 @@
 import sys
 import wx
 
+# relax module imports.
+from status import Status; status = Status()
+
 
 def gui_raise(relax_error, raise_flag=True):
     """Handle errors in the GUI to be reported to the user.
@@ -39,7 +42,8 @@ def gui_raise(relax_error, raise_flag=True):
     """
 
     # Show a dialog explaining the error.
-    wx.MessageBox(relax_error.text, caption=relax_error.__class__.__name__, style=wx.OK|wx.ICON_ERROR)
+    if status.show_gui:
+        wx.MessageBox(relax_error.text, caption=relax_error.__class__.__name__, style=wx.OK|wx.ICON_ERROR)
 
     # Throw the error to terminate execution.
     if raise_flag:
