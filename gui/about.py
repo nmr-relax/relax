@@ -25,10 +25,11 @@
 from copy import deepcopy
 from numpy import uint8, zeros
 from os import sep
-from textwrap import wrap
+from string import split
 import webbrowser
 import wx
 import wx.html
+from wx.lib.wordwrap import wordwrap
 
 # relax module imports.
 from info import Info_box
@@ -293,7 +294,7 @@ class About_base(wx.Frame):
         self.offset(y)
 
 
-    def draw_wrapped_text(self, text, point_size=10, family=wx.FONTFAMILY_ROMAN, width=69, spacer=10):
+    def draw_wrapped_text(self, text, point_size=10, family=wx.FONTFAMILY_ROMAN, spacer=10):
         """Generic method for drawing wrapped text in the relax about widget.
 
         @param text:        The text to wrap and draw.
@@ -307,21 +308,17 @@ class About_base(wx.Frame):
         self.dc.SetFont(font)
 
         # Wrap the text.
-        lines = wrap(text, width)
+        width = self.dim_x - 2*self.border
+        wrapped_text = wordwrap(text, width, self.dc)
 
-        # Find the max extents.
-        max_y = 0
-        for line in lines:
-            x, y = self.dc.GetTextExtent(line)
-            if x > self.text_max_x:
-                self.text_max_x = x
-            if y > max_y:
-                max_y = y
+        # Find the full extents.
+        full_x, full_y = self.dc.GetTextExtent(wrapped_text)
 
         # Add a top spacer.
         self.offset(10)
 
         # Draw.
+        lines = split(wrapped_text, '\n')
         for line in lines:
             # Find and break out the URLs from the text.
             text_elements, url = self.split_refs(line)
@@ -342,7 +339,7 @@ class About_base(wx.Frame):
                 pos_x += x
 
             # Update the offset.
-            self.offset(max_y + 1)
+            self.offset(y + 1)
 
 
     def generate(self, event):
