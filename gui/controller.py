@@ -27,6 +27,7 @@
 # Python module imports.
 import sys
 import wx
+import wx.stc
 
 # relax module imports.
 from generic_fns.pipes import cdp_name
@@ -151,14 +152,8 @@ class Controller(wx.Frame):
         @type sizer:    wx.Sizer instance
         """
 
-        # Log panel (TE_RICH2 is to prevent problems on MS Windows).
-        self.log_panel = wx.TextCtrl(self, -1, "", style=wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_RICH2)
-
-        # Set the font info.
-        self.log_panel.SetFont(font.modern_8)
-
-        # Override mouse clicks to prevent weird text insertions.
-        self.log_panel.Bind(wx.EVT_LEFT_DOWN, self.mouse_override)
+        # Log panel.
+        self.log_panel = LogCtrl(self, -1)
 
         # Add to the sizer.
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
@@ -306,17 +301,6 @@ class Controller(wx.Frame):
         if not status.exec_lock.locked() and self.timer.IsRunning():
             self.timer.Stop()
             self.update_gauge()
-
-
-    def mouse_override(self, event):
-        """Override mouse events in the log window to prevent strange text insertion points.
-
-        This method does nothing!
-
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
 
 
     def setup_frame(self):
@@ -501,6 +485,55 @@ class Controller(wx.Frame):
 
 
 
+class LogCtrl(wx.stc.StyledTextCtrl):
+    """A special control designed to display relax output messages."""
+
+    def __init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.BORDER_SUNKEN, name=wx.stc.STCNameStr):
+        """Set up the log control.
+
+        @param parent:          The parent wx window object.
+        @type parent:           Window
+        @keyword id:            The wx ID.
+        @type id:               int
+        @keyword pos:           The window position.
+        @type pos:              Point
+        @keyword size:          The window size.
+        @type size:             Size
+        @keyword style:         The StyledTextCtrl to apply.
+        @type style:            long
+        @keyword name:          The window name.
+        @type name:             str
+        """
+
+        # Initialise the base class.
+        super(LogCtrl, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
+
+        # Set the font info.
+        self.SetFont(font.modern_8)
+
+
+    def limit_scrollback(self):
+        """Limit scroll back to the maximum number of lines."""
+
+        # Limit scroll back by removing lines.
+        if self.control.GetNumberOfLines() > self.max_entries:
+            self.control.Remove(0, self.control.GetLineLength(0) + 1)
+            self.control.Refresh()
+
+
+    def write(self, string):
+        """Write the text to the log control.
+
+        @param string:  The text to add.
+        @type string:   str
+        """
+
+        # Add the text.
+        sys.__stdout__.write(string)
+        self.AppendText(string)
+
+
+
 class Redirect_text(object):
     """The IO redirection to text control object."""
 
@@ -518,22 +551,6 @@ class Redirect_text(object):
         self.max_entries = max_entries
 
 
-    def add_text(self, string):
-        """Update the text control.
-
-        @param string:  The text to write.
-        @type string:   str
-        """
-
-        # Limit scroll back by removing lines.
-        if self.control.GetNumberOfLines() > self.max_entries:
-            self.control.Remove(0, self.control.GetLineLength(0) + 1)
-            self.control.Refresh()
-
-        # Append the text to the controller asynchronously.
-        self.control.WriteText(string)
-
-
     def write(self, string):
         """Simulate the file object write method.
 
@@ -542,4 +559,4 @@ class Redirect_text(object):
         """
 
         # Append the text to the controller asynchronously, with limited scroll back.
-        wx.CallAfter(self.add_text, string)
+        wx.CallAfter(self.control.write, string)
