@@ -32,7 +32,7 @@ import wx
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import are_spins_named
+from generic_fns.mol_res_spin import are_spins_named, exists_mol_res_spin_data
 from generic_fns.pipes import has_pipe
 from status import Status; status = Status()
 
@@ -146,6 +146,14 @@ class Auto_noe(Base_analysis):
 
         # Results directory.
         data.save_dir = self.data.save_dir
+
+        # Check if sequence data is loaded
+        if not exists_mol_res_spin_data():
+            missing.append("Sequence data")
+
+        # Spectral data.
+        if not hasattr(cdp, 'spectrum_ids') or len(cdp.spectrum_ids) < 3:
+            missing.append("Spectral data")
 
         # Return the container and list of missing data.
         return data, missing

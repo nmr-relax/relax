@@ -33,7 +33,7 @@ import wx
 # relax module imports.
 from auto_analyses.relax_fit import Relax_fit
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import are_spins_named
+from generic_fns.mol_res_spin import are_spins_named, exists_mol_res_spin_data
 from generic_fns.pipes import has_pipe
 from status import Status; status = Status()
 
@@ -146,6 +146,14 @@ class Auto_rx(Base_analysis):
 
         # File root.
         data.file_root = '%s.%s' % (self.analysis_type, frq)
+
+        # Check if sequence data is loaded
+        if not exists_mol_res_spin_data():
+            missing.append("Sequence data")
+
+        # Spectral data.
+        if not hasattr(cdp, 'spectrum_ids') or len(cdp.spectrum_ids) < 3:
+            missing.append("Spectral data")
 
         # Increment size.
         data.inc = gui_to_int(self.grid_inc.GetValue())
