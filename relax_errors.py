@@ -101,8 +101,8 @@ class BaseError(Exception):
     def __str__(self):
         """Modify the behaviour of the error system."""
 
-        # Save the state if debugging is turned on.
-        if status.debug:
+        # Save the state if the pedantic flag is turned on.
+        if status.pedantic:
             save_state()
 
         # Modify the error message to include 'RelaxError' at the start.
