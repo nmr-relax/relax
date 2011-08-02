@@ -166,7 +166,14 @@ def gui_to_float(string):
         return None
 
     # Convert.
-    return float(string)
+    val = eval(string)
+
+    # Not a float!
+    if type(val) != float:
+        return string
+
+    # A float.
+    return val
 
 
 def gui_to_int(string):
@@ -183,7 +190,14 @@ def gui_to_int(string):
         return None
 
     # Convert.
-    return int(string)
+    val = eval(string)
+
+    # Not an int!
+    if type(val) != int:
+        return string
+
+    # An int.
+    return val
 
 
 def float_to_gui(num):
