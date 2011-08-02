@@ -306,7 +306,7 @@ def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=Non
     write_spin_data(sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
-def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
+def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None):
     """Test if the sequence data is valid.
 
     The only function this performs is to raise a RelaxError if the data is invalid.
@@ -314,6 +314,8 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
 
     @param data:            The sequence data.
     @type data:             list of lists.
+    @keyword spin_id_col:   The column containing the spin ID strings.
+    @type spin_id_col:      int or None
     @param mol_name_col:    The column containing the molecule name information.
     @type mol_name_col:     int or None
     @param res_name_col:    The column containing the residue name information.
@@ -325,6 +327,13 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
     @param spin_num_col:    The column containing the spin number information.
     @type spin_num_col:     int or None
     """
+
+    # Spin ID.
+    if spin_id_col:
+        try:
+            data[spin_id_col-1]
+        except IndexError:
+            raise RelaxInvalidSeqError(data)
 
     # Molecule name data.
     if mol_name_col:
@@ -372,6 +381,20 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
     if spin_name_col:
         try:
             data[spin_name_col-1]
+        except IndexError:
+            raise RelaxInvalidSeqError(data)
+
+    # Data.
+    if data_col:
+        try:
+            data[data_col-1]
+        except IndexError:
+            raise RelaxInvalidSeqError(data)
+
+    # Errors
+    if error_col:
+        try:
+            data[error_col-1]
         except IndexError:
             raise RelaxInvalidSeqError(data)
 
