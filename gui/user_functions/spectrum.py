@@ -355,11 +355,16 @@ class Replicated_page(UF_page):
 
         # Get the values.
         val = []
-        val.append(gui_to_str(self.spectrum_id1.GetValue()))
-        val.append(gui_to_str(self.spectrum_id2.GetValue()))
-        val.append(gui_to_str(self.spectrum_id3.GetValue()))
-        val.append(gui_to_str(self.spectrum_id4.GetValue()))
-        val.append(gui_to_str(self.spectrum_id5.GetValue()))
+        if self.spectrum_id1.GetSelection() != wx.NOT_FOUND:
+            val.append(gui_to_str(self.spectrum_id1.GetValue()))
+        if self.spectrum_id2.GetSelection() != wx.NOT_FOUND:
+            val.append(gui_to_str(self.spectrum_id2.GetValue()))
+        if self.spectrum_id3.GetSelection() != wx.NOT_FOUND:
+            val.append(gui_to_str(self.spectrum_id3.GetValue()))
+        if self.spectrum_id4.GetSelection() != wx.NOT_FOUND:
+            val.append(gui_to_str(self.spectrum_id4.GetValue()))
+        if self.spectrum_id5.GetSelection() != wx.NOT_FOUND:
+            val.append(gui_to_str(self.spectrum_id5.GetValue()))
 
         # The ID list.
         spectrum_ids = []
