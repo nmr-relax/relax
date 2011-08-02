@@ -152,7 +152,7 @@ class Auto_noe(Base_analysis):
             missing.append("Sequence data")
 
         # Spectral data.
-        if not hasattr(cdp, 'spectrum_ids') or len(cdp.spectrum_ids) < 3:
+        if not hasattr(cdp, 'spectrum_ids') or len(cdp.spectrum_ids) < 2:
             missing.append("Spectral data")
 
         # Return the container and list of missing data.
