@@ -139,8 +139,10 @@ class Spectra_list:
 
         # Delete the rows and columns.
         self.element.DeleteAllItems()
-        for i in range(1, self.element.GetColumnCount()):
-            self.element.DeleteColumn(i)
+        self.element.DeleteAllColumns()
+
+        # Initialise to a single column.
+        self.element.InsertColumn(0, str_to_gui("Spectrum ID string"))
 
         # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
         n = 0
@@ -196,9 +198,6 @@ class Spectra_list:
 
         # List of peak list file names and relaxation time.
         self.element = wx.ListCtrl(self.panel, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
-
-        # Initialise to a single column.
-        self.element.InsertColumn(0, str_to_gui("Spectrum ID string"))
 
         # Properties.
         self.element.SetFont(font.normal)
