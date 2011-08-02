@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,11 +23,13 @@
 # Module docstring.
 """Module containing all of the RelaxWarning objects."""
 
+
 # Python module imports.
 import inspect
 import warnings
 
 # relax module imports.
+from relax_errors import BaseError
 from status import Status; status = Status()
 
 
@@ -36,10 +38,11 @@ def format(message, category, filename, lineno, line=None):
     """ Replacement for warnings.formatwarning to customise output format."""
 
     # Add the text 'RelaxWarning: ' to the start of the warning message.
+    #if issubclass(category, BaseWarning):
     message = "RelaxWarning: %s\n" % message
 
-    # Print stack-trace in pedantic mode.
-    if status.pedantic:
+    # Print stack-trace in debug mode.
+    if status.debug:
         tb = ""
         for frame in inspect.stack()[4:]:
             file = frame[1]
@@ -60,14 +63,14 @@ def format(message, category, filename, lineno, line=None):
     return message
 
 
-def setup():
+def setup(pedantic=False):
     """Set up the warning system."""
 
     # Format warning messages.
     warnings.formatwarning = format
 
     # Set warning filters.
-    if status.pedantic:
+    if pedantic:
         warnings.filterwarnings('error', category=BaseWarning)
     else:
         warnings.filterwarnings('always', category=BaseWarning)
@@ -77,7 +80,7 @@ def setup():
 # Base class for all warnings.
 ##############################
 
-class BaseWarning(Warning):
+class BaseWarning(Warning, BaseError):
     def __str__(self):
         return self.text
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -45,7 +45,6 @@ class Status(object):
 
             # Initialise some variables.
             self._instance.debug = False
-            self._instance.pedantic = False
             self._instance.install_path = sys.path[0]
 
             # Set up the singleton.
