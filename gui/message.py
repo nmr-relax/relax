@@ -176,14 +176,17 @@ class Question(wx.Dialog):
         @rtype:             bool
         """
 
+        # Initialise the base class.
+        wx.Dialog.__init__(self, parent, title=title, size=size, style=wx.DEFAULT_DIALOG_STYLE|wx.STAY_ON_TOP)
+
+        # Flag to indicate that a button was pressed.
+        self.pressed = False
+
         # The default.
         if default:
             self.answer = wx.ID_YES
         else:
             self.answer = wx.ID_NO
-
-        # Initialise the base class.
-        wx.Dialog.__init__(self, parent, title=title, size=size, style=wx.DEFAULT_DIALOG_STYLE|wx.STAY_ON_TOP)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
@@ -243,6 +246,9 @@ class Question(wx.Dialog):
         else:
             button_no.SetFocus()
 
+        # Bind some events.
+        self.Bind(wx.EVT_CLOSE, self.handler_close)
+
 
     def ShowModal(self):
         """Replacement ShowModal method.
@@ -259,12 +265,30 @@ class Question(wx.Dialog):
         return self.answer
 
 
+    def handler_close(self, event):
+        """Event handler for the close window action.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the answer to no.
+        if not self.pressed:
+            self.answer = wx.ID_NO
+
+        # Continue the event.
+        event.Skip()
+
+
     def no(self, event):
         """No selection.
 
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Button flag.
+        self.pressed = True
 
         # Set the answer.
         self.answer = wx.ID_NO
@@ -279,6 +303,9 @@ class Question(wx.Dialog):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Button flag.
+        self.pressed = True
 
         # Set the answer.
         self.answer = wx.ID_YES
