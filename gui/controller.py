@@ -504,7 +504,7 @@ class Redirect_text(object):
         self.max_entries = max_entries
 
 
-    def append_text(self, string):
+    def add_text(self, string):
         """Update the text control.
 
         @param string:  The text to write.
@@ -528,4 +528,4 @@ class Redirect_text(object):
         """
 
         # Append the text to the controller asynchronously, with limited scroll back.
-        wx.CallAfter(self.append_text, string)
+        wx.CallAfter(self.add_text, string)
