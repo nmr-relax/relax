@@ -266,6 +266,7 @@ class Auto_model_free(Base_analysis):
         # CSA button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " CSA")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetSize((-1, 20))
         button.SetToolTipString("Set the Chemical Shift Anisotropy (CSA) values via the value.set user function.")
         self.gui.Bind(wx.EVT_BUTTON, self.value_set_csa, button)
@@ -274,6 +275,7 @@ class Auto_model_free(Base_analysis):
         # Bond length button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Bond length")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetSize((-1, 20))
         button.SetToolTipString("Set the bond length (r) values via the value.set user function.")
         self.gui.Bind(wx.EVT_BUTTON, self.value_set_r, button)
@@ -282,6 +284,7 @@ class Auto_model_free(Base_analysis):
         # Proton type button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " H type")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetSize((-1, 20))
         button.SetToolTipString("Set the type of proton via the value.set user function.")
         self.gui.Bind(wx.EVT_BUTTON, self.value_set_proton_type, button)
@@ -290,6 +293,7 @@ class Auto_model_free(Base_analysis):
         # Heteronucleus type button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " X type")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetSize((-1, 20))
         button.SetToolTipString("Set the type of heteronucleus via the value.set user function.")
         self.gui.Bind(wx.EVT_BUTTON, self.value_set_heteronuc_type, button)
@@ -406,6 +410,7 @@ class Auto_model_free(Base_analysis):
         # An about button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "About")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.about, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Information about this automatic analysis")
 
         # Bind the click.
@@ -1126,12 +1131,14 @@ class Protocol_mode_sel_window(wx.Dialog):
         # The local_tm button.
         button = wx.Button(self, -1, u"Local \u03C4m")
         button.SetToolTipString("Optimise global model I, the local tm models.  Please click on the 'About' button for more information.")
+        button.SetFont(font.normal)
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_local_tm, button)
 
         # The sphere button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Sphere"))
         button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'sphere.png', wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Optimise global model II, the spherical diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_sphere, button)
@@ -1139,6 +1146,7 @@ class Protocol_mode_sel_window(wx.Dialog):
         # The prolate spheroid button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Prolate spheroid"))
         button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'prolate.png', wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Optimise global model III, the prolate spheroid diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_prolate, button)
@@ -1146,6 +1154,7 @@ class Protocol_mode_sel_window(wx.Dialog):
         # The oblate spheroid button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Oblate spheroid"))
         button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'oblate.png', wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Optimise global model IV, the oblate spheroid diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_oblate, button)
@@ -1153,6 +1162,7 @@ class Protocol_mode_sel_window(wx.Dialog):
         # The ellipsoid button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Ellipsoid"))
         button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'ellipsoid.png', wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Optimise global model V, the ellipsoid diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_ellipsoid, button)
@@ -1160,6 +1170,7 @@ class Protocol_mode_sel_window(wx.Dialog):
         # The final button.
         button = wx.Button(self, -1, str_to_gui("Final"))
         button.SetToolTipString("The final run of the protocol.  Please click on the 'About' button for more information.")
+        button.SetFont(font.normal)
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_final, button)
 

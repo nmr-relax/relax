@@ -161,6 +161,7 @@ class Pipe_editor(wx.Frame):
         # The create button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Create")
         button.SetBitmapLabel(wx.Bitmap(icon_22x22.add, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Create a new data pipe.")
         button_sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.create, button)
@@ -168,6 +169,7 @@ class Pipe_editor(wx.Frame):
         # The copy button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Copy")
         button.SetBitmapLabel(wx.Bitmap(icon_22x22.copy, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Copy a data pipe.")
         button_sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.copy, button)
@@ -175,6 +177,7 @@ class Pipe_editor(wx.Frame):
         # The delete button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Delete")
         button.SetBitmapLabel(wx.Bitmap(icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Delete a data pipe.")
         button_sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.delete, button)
@@ -182,6 +185,7 @@ class Pipe_editor(wx.Frame):
         # The hybridise button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Hybridise")
         button.SetBitmapLabel(wx.Bitmap(icon_22x22.pipe_hybrid, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Hybridise data pipes.")
         button_sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.hybridise, button)
@@ -189,6 +193,7 @@ class Pipe_editor(wx.Frame):
         # The switch button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Switch")
         button.SetBitmapLabel(wx.Bitmap(icon_22x22.pipe_switch, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Switch data pipes.")
         button_sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.switch, button)

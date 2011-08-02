@@ -130,6 +130,7 @@ class Base_window(wx.Dialog):
         # The save button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Save")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.save, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Save the free file format settings within the relax data store.")
         button.SetMinSize(self.SIZE_BUTTON)
         button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
@@ -141,6 +142,7 @@ class Base_window(wx.Dialog):
         # The reset button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Reset")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetToolTipString("Reset the free file format settings to the original values.")
         button.SetMinSize(self.SIZE_BUTTON)
         button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
@@ -152,6 +154,7 @@ class Base_window(wx.Dialog):
         # The cancel button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Cancel")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_cancel, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetMinSize(self.SIZE_BUTTON)
         button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
         self.Bind(wx.EVT_BUTTON, self.cancel, button)

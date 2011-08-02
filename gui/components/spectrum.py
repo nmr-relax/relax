@@ -121,6 +121,7 @@ class Spectra_list:
         # Add button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetSize((80, self.height_buttons))
         button_sizer.Add(button, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.fn_add, button)

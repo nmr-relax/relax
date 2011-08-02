@@ -219,6 +219,7 @@ class Question(wx.Dialog):
         # The yes button.
         button_yes = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Yes")
         button_yes.SetBitmapLabel(wx.Bitmap(icon_22x22.dialog_ok, wx.BITMAP_TYPE_ANY))
+        button_yes.SetFont(font.normal)
         button_yes.SetMinSize((self.width_button, self.height_button))
         button_sizer.Add(button_yes, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         self.Bind(wx.EVT_BUTTON, self.yes, button_yes)
@@ -229,6 +230,7 @@ class Question(wx.Dialog):
         # The no button.
         button_no = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " No")
         button_no.SetBitmapLabel(wx.Bitmap(icon_22x22.dialog_cancel, wx.BITMAP_TYPE_ANY))
+        button_no.SetFont(font.normal)
         button_no.SetMinSize((self.width_button, self.height_button))
         button_sizer.Add(button_no, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         self.Bind(wx.EVT_BUTTON, self.no, button_no)

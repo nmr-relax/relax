@@ -117,6 +117,7 @@ class Relax_data_list:
         # Add button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetSize((80, self.height_buttons))
         button_sizer.Add(button, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.read, button)
@@ -125,6 +126,7 @@ class Relax_data_list:
         # Delete button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         button.SetSize((80, self.height_buttons))
         button_sizer.Add(button, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.delete, button)

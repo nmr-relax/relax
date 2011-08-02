@@ -370,6 +370,7 @@ class Final_results(wx.Frame):        # Dialog that displays relax results in wi
         self.label_1 = wx.StaticText(self, -1, "Results of relax Analysis")
         self.grid_1 = wx.grid.Grid(self, -1, size=(1, 1))
         self.close_button = wx.Button(self, -1, "Close")
+        self.close_button.SetFont(font.normal)
 
         self.__set_properties()
         self.__do_layout()

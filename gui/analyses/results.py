@@ -85,6 +85,7 @@ class Results_viewer(wx.Frame):
 
         # Add the open button.
         self.button_open = wx.Button(self, -1, "Open")
+        self.button_open.SetFont(font.normal)
         self.button_open.SetMinSize((103, 27))
         self.gui.Bind(wx.EVT_BUTTON, self.open_result_file, self.button_open)
         box_centre.Add(self.button_open, 0, wx.ALIGN_RIGHT, 5)
