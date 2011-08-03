@@ -495,6 +495,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Set the font info.
         self.SetFont(font.modern_8)
 
+        # Create the STDERR style (with assignment 1).
+        self.StyleSetForeground(1, wx.NamedColour('red'))
+
         # Bind events.
         self.Bind(wx.EVT_KEY_DOWN, self.capture_keys)
 
@@ -514,12 +517,13 @@ class LogCtrl(wx.stc.StyledTextCtrl):
     def get_text(self):
         """Concatenate all of the text from the log queue and return it as a string.
 
-        @return:    The text from the log queue.
-        @rtype:     str
+        @return:    A list of the text from the log queue and a list of the streams these correspond to.
+        @rtype:     list of str, list of int
         """
 
-        # Init the text.
-        string = ''
+        # Initialise.
+        string_list = ['']
+        stream_list = [0]
 
         # Loop until the queue is empty.
         while 1:
@@ -530,11 +534,16 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             # Get the data.
             msg, stream = self.log_queue.get()
 
+            # A different stream.
+            if stream_list[-1] != stream:
+                string_list.append('')
+                stream_list.append(stream)
+
             # Add the text.
-            string = string + msg
+            string_list[-1] = string_list[-1] + msg
 
         # Return the concatenated text.
-        return string
+        return string_list, stream_list
 
 
     def limit_scrollback(self, prune=20):
@@ -573,10 +582,10 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         """Write the text in the log queue to the log control."""
 
         # Get the text.
-        string = self.get_text()
+        string_list, stream_list = self.get_text()
 
         # Nothing to do.
-        if string == '':
+        if len(string_list) == 1 and string_list[0] == '':
             return
 
         # At the end?
@@ -585,7 +594,19 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             at_end = True
 
         # Add the text.
-        self.AppendText(string)
+        for i in range(len(string_list)):
+            # Add the text.
+            self.AppendText(string_list[i])
+
+            # STDERR style.
+            if stream_list[i] == 1:
+                # Get the text extents.
+                len_string = len(string_list[i].encode('utf8'))
+                end = self.GetLength()
+
+                # Change the style.
+                self.StartStyling(end - len_string, 31)
+                self.SetStyling(len_string, 1)
 
         # Limit the scroll back.
         self.limit_scrollback()
