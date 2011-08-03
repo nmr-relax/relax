@@ -25,7 +25,9 @@
 """Log window of relax GUI controlling all calculations."""
 
 # Python module imports.
+from Queue import Queue
 import sys
+from thread import start_new_thread
 import wx
 import wx.stc
 
@@ -93,7 +95,7 @@ class Controller(wx.Frame):
         if not status.debug and not status.test_mode:
             redir = Redirect_text(self.log_panel)
             sys.stdout = redir
-            sys.stderr = redir
+            #sys.stderr = redir
 
         # Initial update of the controller.
         self.update_controller()
@@ -602,6 +604,15 @@ class Redirect_text(object):
         # Store the args.
         self.control = control
 
+        # Flag for forcing the killing of the thread.
+        self.active = True
+
+        # Create a FIFO queue.
+        self.queue = Queue()
+
+        # Run the writer thread.
+        start_new_thread(self.writer_thread, ())
+
 
     def write(self, string):
         """Simulate the file object write method.
@@ -610,5 +621,17 @@ class Redirect_text(object):
         @type string:   str
         """
 
-        # Append the text to the controller asynchronously, with limited scroll back.
-        wx.CallAfter(self.control.write, string)
+        # Add the text to the queue, with a flag specifying stdout vs. stderr.
+        self.queue.put([string, 0])
+
+
+    def writer_thread(self):
+        """Method run in a thread to read the FIFO and send text to the controller."""
+
+        # Inifinite loop.
+        while self.active:
+            # Read from the FIFO (blocking as needed).
+            data = self.queue.get()
+
+            # Append the text to the controller asynchronously, with limited scroll back.
+            wx.CallAfter(self.control.write, data[0])
