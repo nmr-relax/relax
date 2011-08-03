@@ -95,9 +95,8 @@ class Controller(wx.Frame):
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
 
         # IO redirection.
-        redir = Redirect_text(self.log_panel, self.log_queue)
-        sys.stdout = redir
-        sys.stderr = redir
+        sys.stdout = Redirect_text(self.log_panel, self.log_queue, stream=0)
+        sys.stderr = Redirect_text(self.log_panel, self.log_queue, stream=1)
 
         # Initial update of the controller.
         self.update_controller()
@@ -528,8 +527,11 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             if self.log_queue.empty():
                 break
 
+            # Get the data.
+            msg, stream = self.log_queue.get()
+
             # Add the text.
-            string = string + self.log_queue.get()
+            string = string + msg
 
         # Return the concatenated text.
         return string
@@ -597,18 +599,21 @@ class LogCtrl(wx.stc.StyledTextCtrl):
 class Redirect_text(object):
     """The IO redirection to text control object."""
 
-    def __init__(self, control, log_queue):
+    def __init__(self, control, log_queue, stream=0):
         """Set up the text redirection object.
 
         @param control:         The text control object to redirect IO to.
         @type control:          wx.TextCtrl instance
         @param log_queue:       The queue of log messages.
         @type log_queue:        Queue.Queue instance
+        @keyword stream:        The type of steam (0 for STDOUT and 1 for STDERR).
+        @type stream:           int
         """
 
         # Store the args.
         self.control = control
         self.log_queue = log_queue
+        self.stream = stream
 
 
     def write(self, string):
@@ -618,12 +623,15 @@ class Redirect_text(object):
         @type string:   str
         """
 
-        # Debugging.
+        # Debugging print out to the terminal.
         if status.debug:
-            sys.__stdout__.write(string)
+            if self.stream == 0:
+                sys.__stdout__.write(string)
+            else:
+                sys.__stderr__.write(string)
 
         # Add the text to the queue.
-        self.log_queue.put(string)
+        self.log_queue.put([string, self.stream])
 
         # Call the log control write method one the GUI is responsive.
         wx.CallAfter(self.control.write)
