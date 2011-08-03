@@ -74,8 +74,9 @@ class Status(object):
         # Testing mode flag.
         self.test_mode = False
 
-        # The GUI flag.
-        self.show_gui = False
+        # GUI structures.
+        self.show_gui = False    # The GUI flag.
+        self.controller_max_entries = 100000    # Scroll back limit in the relax controller.
 
         # A structure for skipped system and unit tests.
         self.skipped_tests = []

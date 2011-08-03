@@ -512,13 +512,36 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.SetFont(font.modern_8)
 
 
-    def limit_scrollback(self):
-        """Limit scroll back to the maximum number of lines."""
+    def limit_scrollback(self, prune=20):
+        """Limit scroll back to the maximum number of lines.
 
-        # Limit scroll back by removing lines.
-        if self.control.GetNumberOfLines() > self.max_entries:
-            self.control.Remove(0, self.control.GetLineLength(0) + 1)
-            self.control.Refresh()
+        Lines are deleted in blocks of 'prune' number of lines for faster operation.
+        """
+
+        # Maximum not reached, so do nothing.
+        if self.GetLineCount() < status.controller_max_entries:
+            return
+
+        # Get the current selection, scroll position and caret position.
+        pos_start, pos_end = self.GetSelection()
+        curr_pos = self.GetCurrentPos()
+
+        # Prune the first x lines.
+        del_start = 0
+        del_end = self.GetLineEndPosition(prune) + 1
+        del_extent = del_end - del_start
+        self.SetSelection(del_start, del_end)
+        self.DeleteBack()
+
+        # Determine the new settings.
+        new_curr_pos = curr_pos - del_extent
+        new_pos_start = pos_start - del_extent
+        new_pos_end = pos_end - del_extent
+
+        # Return to the original position and state.
+        self.SetCurrentPos(new_curr_pos)
+        self.SetSelection(new_pos_start, new_pos_end)
+        self.LineScroll(0, prune)
 
 
     def write(self, string):
@@ -528,27 +551,32 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         @type string:   str
         """
 
+        # First freeze the element.
+        self.Freeze()
+
         # Add the text.
         sys.__stdout__.write(string)
         self.AppendText(string)
 
+        # Limit the scroll back.
+        self.limit_scrollback()
+
+        # Finally thaw.
+        self.Thaw()
 
 
 class Redirect_text(object):
     """The IO redirection to text control object."""
 
-    def __init__(self, control, max_entries=100000):
+    def __init__(self, control):
         """Set up the text redirection object.
 
         @param control:         The text control object to redirect IO to.
         @type control:          wx.TextCtrl instance
-        @keyword max_entries:   Limit the scroll back to this many lines.
-        @type max_entries:      int
         """
 
         # Store the args.
         self.control = control
-        self.max_entries = max_entries
 
 
     def write(self, string):
