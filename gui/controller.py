@@ -511,6 +511,21 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Set the font info.
         self.SetFont(font.modern_8)
 
+        # Bind events.
+        self.Bind(wx.EVT_KEY_DOWN, self.capture_keys)
+
+
+    def capture_keys(self, event):
+        """Control which key events are active, preventing text insertion and deletion.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Allow Ctrl+C events.
+        if event.ControlDown() and event.GetKeyCode() == 67:
+            event.Skip()
+
 
     def limit_scrollback(self, prune=20):
         """Limit scroll back to the maximum number of lines.
