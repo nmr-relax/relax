@@ -25,9 +25,7 @@
 """Log window of relax GUI controlling all calculations."""
 
 # Python module imports.
-from Queue import Queue
 import sys
-from thread import start_new_thread
 import wx
 import wx.stc
 
@@ -88,17 +86,14 @@ class Controller(wx.Frame):
         # Add the main execution gauge.
         self.main_gauge = self.add_gauge(self, sizer, "Execution status:")
 
-        # Initialise the FIFO.
-        self.fifo = Queue()
-
         # Add the log panel.
         self.add_log(sizer)
 
         # IO redirection.
         if not status.debug and not status.test_mode:
-            # Redirect both stdout and stderr.
-            sys.stdout = Redirect_text(fifo=self.fifo, stream=0)
-            sys.stderr = Redirect_text(fifo=self.fifo, stream=1)
+            redir = Redirect_text(self.log_panel)
+            sys.stdout = redir
+            sys.stderr = redir
 
         # Initial update of the controller.
         self.update_controller()
@@ -158,7 +153,7 @@ class Controller(wx.Frame):
         """
 
         # Log panel.
-        self.log_panel = LogCtrl(self, fifo=self.fifo, id=-1)
+        self.log_panel = LogCtrl(self, -1)
 
         # Add to the sizer.
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
@@ -493,13 +488,11 @@ class Controller(wx.Frame):
 class LogCtrl(wx.stc.StyledTextCtrl):
     """A special control designed to display relax output messages."""
 
-    def __init__(self, parent, fifo=None, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.BORDER_SUNKEN, name=wx.stc.STCNameStr):
+    def __init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.BORDER_SUNKEN, name=wx.stc.STCNameStr):
         """Set up the log control.
 
         @param parent:          The parent wx window object.
         @type parent:           Window
-        @param fifo:            The FIFO object.
-        @type fifo:             Queue instance
         @keyword id:            The wx ID.
         @type id:               int
         @keyword pos:           The window position.
@@ -512,9 +505,6 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         @type name:             str
         """
 
-        # Store the args.
-        self.fifo = fifo
-
         # Initialise the base class.
         super(LogCtrl, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
@@ -523,12 +513,6 @@ class LogCtrl(wx.stc.StyledTextCtrl):
 
         # Bind events.
         self.Bind(wx.EVT_KEY_DOWN, self.capture_keys)
-
-        # Flag for forcing the killing of the thread.
-        self.active = True
-
-        # Run the writer thread.
-        start_new_thread(self.writer_thread, ())
 
 
     def capture_keys(self, event):
@@ -591,6 +575,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             at_end = True
 
         # Add the text.
+        sys.__stdout__.write(string)
         self.AppendText(string)
 
         # Limit the scroll back.
@@ -604,34 +589,18 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.Thaw()
 
 
-    def writer_thread(self):
-        """Method run in a thread to read the FIFO and send text to the controller."""
-
-        # Infinite loop.
-        while self.active:
-            # Read from the FIFO (blocking as needed).
-            data = self.fifo.get()
-
-            # Append the text to the log control asynchronously.
-            wx.CallAfter(self.write, data[0])
-
-
-
 class Redirect_text(object):
     """The IO redirection to text control object."""
 
-    def __init__(self, fifo=None, stream=0):
+    def __init__(self, control):
         """Set up the text redirection object.
 
-        @param fifo:        The FIFO object.
-        @type fifo:         Queue instance
-        @keyword stream:    The steam (0 = STDOUT, 1 = STDERR).
-        @type stream:       int
+        @param control:         The text control object to redirect IO to.
+        @type control:          wx.TextCtrl instance
         """
 
         # Store the args.
-        self.fifo = fifo
-        self.stream = stream
+        self.control = control
 
 
     def write(self, string):
@@ -641,5 +610,5 @@ class Redirect_text(object):
         @type string:   str
         """
 
-        # Place STDOUT and STDERR in the queue with the flag specifying which is which.
-        self.fifo.put([string, self.stream])
+        # Append the text to the controller asynchronously, with limited scroll back.
+        wx.CallAfter(self.control.write, string)
