@@ -340,47 +340,37 @@ class Controller(wx.Frame):
     def update_controller(self):
         """Update the relax controller."""
 
-        # First freeze the controller.
-        self.Freeze()
-
         # Set the current data pipe info.
         pipe = cdp_name()
         if pipe == None:
             pipe = ''
-        self.cdp.SetValue(str_to_gui(pipe))
+        wx.CallAfter(self.cdp.SetValue, str_to_gui(pipe))
 
         # Set the current GUI analysis info.
         name = self.gui.analysis.current_analysis_name()
         if name == None:
             name = ''
-        self.name.SetValue(str_to_gui(name))
+        wx.CallAfter(self.name.SetValue, str_to_gui(name))
 
         # The analysis type.
         type = self.gui.analysis.current_analysis_type()
 
         # Rx fitting auto-analysis.
         if type in ['R1', 'R2']:
-            self.panel_rx.Show()
-            self.update_rx()
+            wx.CallAfter(self.panel_rx.Show)
+            wx.CallAfter(self.update_rx)
         else:
-            self.panel_rx.Hide()
+            wx.CallAfter(self.panel_rx.Hide)
 
         # Model-free auto-analysis.
         if type == 'model-free':
-            self.panel_mf.Show()
-            self.update_mf()
+            wx.CallAfter(self.panel_mf.Show)
+            wx.CallAfter(self.update_mf)
         else:
-            self.panel_mf.Hide()
+            wx.CallAfter(self.panel_mf.Hide)
 
         # Update the main gauge.
-        self.update_gauge()
-
-        # Re-perform a layout.
-        self.Layout()
-        self.Refresh()
-
-        # Finally thaw the controller.
-        self.Thaw()
+        wx.CallAfter(self.update_gauge)
 
 
     def update_gauge(self):
@@ -403,7 +393,7 @@ class Controller(wx.Frame):
                 self.timer.Stop()
 
             # Fill the gauge.
-            self.main_gauge.SetValue(100)
+            wx.CallAfter(self.main_gauge.SetValue, 100)
 
         # Gauge is in the initial state, so no need to reset.
         if not self.main_gauge.GetValue():
@@ -411,11 +401,11 @@ class Controller(wx.Frame):
 
         # No key, so reset.
         if not key or not status.auto_analysis.has_key(key):
-            self.main_gauge.SetValue(0)
+            wx.CallAfter(self.main_gauge.SetValue, 0)
 
         # Key present, but analysis not started.
         if key and status.auto_analysis.has_key(key) and not status.auto_analysis[key].fin:
-            self.main_gauge.SetValue(0)
+            wx.CallAfter(self.main_gauge.SetValue, 0)
 
 
     def update_mf(self):
@@ -427,7 +417,7 @@ class Controller(wx.Frame):
             return
 
         # Set the diffusion model.
-        self.global_model.SetValue(status.auto_analysis[key].diff_model)
+        wx.CallAfter(self.global_model.SetValue, status.auto_analysis[key].diff_model)
 
         # Update the progress gauge for the local tm model.
         if status.auto_analysis[key].diff_model == 'local_tm':
@@ -566,16 +556,12 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         @type string:   str
         """
 
-        # First freeze the element.
-        self.Freeze()
-
         # At the end?
         at_end = False
         if self.GetScrollPos(wx.VERTICAL) == self.GetScrollRange(wx.VERTICAL) - self.LinesOnScreen():
             at_end = True
 
         # Add the text.
-        sys.__stdout__.write(string)
         self.AppendText(string)
 
         # Limit the scroll back.
@@ -585,8 +571,6 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         if at_end:
             self.ScrollToLine(self.GetLineCount())
 
-        # Finally thaw.
-        self.Thaw()
 
 
 class Redirect_text(object):
@@ -611,4 +595,5 @@ class Redirect_text(object):
         """
 
         # Append the text to the controller asynchronously, with limited scroll back.
+        sys.__stdout__.write(string)
         wx.CallAfter(self.control.write, string)
