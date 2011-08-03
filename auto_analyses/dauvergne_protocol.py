@@ -140,7 +140,7 @@ class dAuvergne_protocol:
         """
 
         # Execution lock.
-        status.exec_lock.acquire('auto dauvergne protocol')
+        status.exec_lock.acquire(pipe_name)
 
         # Store the args.
         self.pipe_name = pipe_name
@@ -200,6 +200,7 @@ class dAuvergne_protocol:
         finally:
             # Finish and unlock execution.
             status.auto_analysis[self.pipe_name].fin = True
+            status.current_analysis = None
             status.exec_lock.release()
 
 
@@ -748,6 +749,7 @@ class dAuvergne_protocol:
 
         # Initialise the status object for this auto-analysis.
         status.init_auto_analysis(self.pipe_name, type='dauvergne_protocol')
+        status.current_analysis = pipe_name
 
         # The global diffusion model.
         status.auto_analysis[self.pipe_name].diff_model = self.diff_model

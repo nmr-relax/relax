@@ -70,6 +70,7 @@ class Status(object):
 
         # The auto-analysis status containers.
         self.auto_analysis = {}
+        self.current_analysis = None
 
         # Testing mode flag.
         self.test_mode = False

@@ -57,10 +57,11 @@ class NOE_calc:
         """
 
         # Execution lock.
-        status.exec_lock.acquire('auto noe')
+        status.exec_lock.acquire(pipe_name)
 
         # Set up the analysis status object.
         status.init_auto_analysis(pipe_name, type='noe')
+        status.current_analysis = pipe_name
 
         # Store the args.
         self.save_state = save_state
@@ -89,6 +90,7 @@ class NOE_calc:
 
         # Finish and unlock execution.
         status.auto_analysis[self.pipe_name].fin = True
+        status.current_analysis = None
         status.exec_lock.release()
 
 

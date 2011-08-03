@@ -145,6 +145,7 @@ class Stereochem_analysis:
 
         # Set up the analysis status object.
         status.init_auto_analysis('stereochem', type='stereochem')
+        status.current_analysis = 'auto stereochem analysis'
 
         # Store all the args.
         self.stage = stage
@@ -195,6 +196,7 @@ class Stereochem_analysis:
 
         # Finish and unlock execution.
         status.auto_analysis[self.pipe_name].fin = True
+        status.current_analysis = None
         status.exec_lock.release()
 
 
