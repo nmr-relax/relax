@@ -498,6 +498,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Create the STDERR style (with assignment 1).
         self.StyleSetForeground(1, wx.NamedColour('red'))
 
+        # Create the relax prompt style (assignment 2).
+        self.StyleSetForeground(2, wx.NamedColour('blue'))
+
         # Bind events.
         self.Bind(wx.EVT_KEY_DOWN, self.capture_keys)
 
@@ -533,6 +536,22 @@ class LogCtrl(wx.stc.StyledTextCtrl):
 
             # Get the data.
             msg, stream = self.log_queue.get()
+
+            # The relax prompt.
+            if msg[1:7] == 'relax>':
+                # Add a new line to the last block.
+                string_list[-1] += '\n'
+
+                # Add the prompt part.
+                string_list.append('relax>')
+                stream_list.append(2)
+
+                # Shorten the message.
+                msg = msg[7:]
+
+                # Start a new section.
+                string_list.append('')
+                stream_list.append(stream)
 
             # A different stream.
             if stream_list[-1] != stream:
@@ -598,15 +617,15 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             # Add the text.
             self.AppendText(string_list[i])
 
-            # STDERR style.
-            if stream_list[i] == 1:
+            # The different styles.
+            if stream_list[i] != 0:
                 # Get the text extents.
                 len_string = len(string_list[i].encode('utf8'))
                 end = self.GetLength()
 
                 # Change the style.
                 self.StartStyling(end - len_string, 31)
-                self.SetStyling(len_string, 1)
+                self.SetStyling(len_string, stream_list[i])
 
         # Limit the scroll back.
         self.limit_scrollback()
