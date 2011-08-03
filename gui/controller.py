@@ -25,6 +25,7 @@
 """Log window of relax GUI controlling all calculations."""
 
 # Python module imports.
+from Queue import Queue
 import sys
 import wx
 import wx.stc
@@ -86,12 +87,16 @@ class Controller(wx.Frame):
         # Add the main execution gauge.
         self.main_gauge = self.add_gauge(self, sizer, "Execution status:")
 
+        # Initialise a queue for log messages.
+        self.log_queue = Queue()
+
         # Add the log panel.
-        self.add_log(sizer)
+        self.log_panel = LogCtrl(self, log_queue=self.log_queue, id=-1)
+        sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
 
         # IO redirection.
         if not status.debug and not status.test_mode:
-            redir = Redirect_text(self.log_panel)
+            redir = Redirect_text(self.log_panel, self.log_queue)
             sys.stdout = redir
             sys.stderr = redir
 
@@ -143,20 +148,6 @@ class Controller(wx.Frame):
 
         # Return the gauge.
         return gauge
-
-
-    def add_log(self, sizer):
-        """Add the log panel to the sizer.
-
-        @param sizer:   The sizer element to pack the log panel into.
-        @type sizer:    wx.Sizer instance
-        """
-
-        # Log panel.
-        self.log_panel = LogCtrl(self, -1)
-
-        # Add to the sizer.
-        sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
 
 
     def add_relax_logo(self, sizer):
@@ -478,11 +469,13 @@ class Controller(wx.Frame):
 class LogCtrl(wx.stc.StyledTextCtrl):
     """A special control designed to display relax output messages."""
 
-    def __init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.BORDER_SUNKEN, name=wx.stc.STCNameStr):
+    def __init__(self, parent, log_queue=None, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.BORDER_SUNKEN, name=wx.stc.STCNameStr):
         """Set up the log control.
 
         @param parent:          The parent wx window object.
         @type parent:           Window
+        @keyword log_queue:     The queue of log messages.
+        @type log_queue:        Queue.Queue instance
         @keyword id:            The wx ID.
         @type id:               int
         @keyword pos:           The window position.
@@ -494,6 +487,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         @keyword name:          The window name.
         @type name:             str
         """
+
+        # Store the args.
+        self.log_queue = log_queue
 
         # Initialise the base class.
         super(LogCtrl, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
@@ -515,6 +511,29 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Allow Ctrl+C events.
         if event.ControlDown() and event.GetKeyCode() == 67:
             event.Skip()
+
+
+    def get_text(self):
+        """Concatenate all of the text from the log queue and return it as a string.
+
+        @return:    The text from the log queue.
+        @rtype:     str
+        """
+
+        # Init the text.
+        string = ''
+
+        # Loop until the queue is empty.
+        while 1:
+            # End condition.
+            if self.log_queue.empty():
+                break
+
+            # Add the text.
+            string = string + self.log_queue.get()
+
+        # Return the concatenated text.
+        return string
 
 
     def limit_scrollback(self, prune=20):
@@ -549,12 +568,15 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.LineScroll(0, prune)
 
 
-    def write(self, string):
-        """Write the text to the log control.
+    def write(self):
+        """Write the text in the log queue to the log control."""
 
-        @param string:  The text to add.
-        @type string:   str
-        """
+        # Get the text.
+        string = self.get_text()
+
+        # Nothing to do.
+        if string == '':
+            return
 
         # At the end?
         at_end = False
@@ -576,15 +598,18 @@ class LogCtrl(wx.stc.StyledTextCtrl):
 class Redirect_text(object):
     """The IO redirection to text control object."""
 
-    def __init__(self, control):
+    def __init__(self, control, log_queue):
         """Set up the text redirection object.
 
         @param control:         The text control object to redirect IO to.
         @type control:          wx.TextCtrl instance
+        @param log_queue:       The queue of log messages.
+        @type log_queue:        Queue.Queue instance
         """
 
         # Store the args.
         self.control = control
+        self.log_queue = log_queue
 
 
     def write(self, string):
@@ -594,6 +619,9 @@ class Redirect_text(object):
         @type string:   str
         """
 
-        # Append the text to the controller asynchronously, with limited scroll back.
+        # Add the text to the queue.
+        self.log_queue.put(string)
+
+        # Call the log control write method one the GUI is responsive.
         sys.__stdout__.write(string)
-        wx.CallAfter(self.control.write, string)
+        wx.CallAfter(self.control.write)
