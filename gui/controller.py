@@ -95,10 +95,9 @@ class Controller(wx.Frame):
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
 
         # IO redirection.
-        if not status.debug and not status.test_mode:
-            redir = Redirect_text(self.log_panel, self.log_queue)
-            sys.stdout = redir
-            sys.stderr = redir
+        redir = Redirect_text(self.log_panel, self.log_queue)
+        sys.stdout = redir
+        sys.stderr = redir
 
         # Initial update of the controller.
         self.update_controller()
@@ -619,9 +618,12 @@ class Redirect_text(object):
         @type string:   str
         """
 
+        # Debugging.
+        if status.debug:
+            sys.__stdout__.write(string)
+
         # Add the text to the queue.
         self.log_queue.put(string)
 
         # Call the log control write method one the GUI is responsive.
-        sys.__stdout__.write(string)
         wx.CallAfter(self.control.write)

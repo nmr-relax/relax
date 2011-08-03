@@ -247,17 +247,12 @@ class Auto_rx(Base_analysis):
             Missing_data(missing)
             return
 
-        # Display the relax controller (if not debugging).
-        if not status.debug and status.show_gui:
+        # Display the relax controller.
+        if status.show_gui:
             self.gui.controller.Show()
 
-        # Threading flag.
-        thread = True
-        if status.debug:
-            thread = False
-
         # Start the thread.
-        self.thread = Execute_rx(self.gui, data, self.data_index, thread=thread)
+        self.thread = Execute_rx(self.gui, data, self.data_index)
         self.thread.start()
 
         # Terminate the event.
