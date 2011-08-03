@@ -554,12 +554,21 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # First freeze the element.
         self.Freeze()
 
+        # At the end?
+        at_end = False
+        if self.GetScrollPos(wx.VERTICAL) == self.GetScrollRange(wx.VERTICAL) - self.LinesOnScreen():
+            at_end = True
+
         # Add the text.
         sys.__stdout__.write(string)
         self.AppendText(string)
 
         # Limit the scroll back.
         self.limit_scrollback()
+
+        # Stay at the end.
+        if at_end:
+            self.ScrollToLine(self.GetLineCount())
 
         # Finally thaw.
         self.Thaw()
