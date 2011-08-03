@@ -54,7 +54,7 @@ class Controller(wx.Frame):
         self.gui = gui
 
         # Initialise the base class.
-        super(Controller, self).__init__(self.gui, -1, style=wx.DEFAULT_FRAME_STYLE|wx.STAY_ON_TOP)
+        super(Controller, self).__init__(self.gui, -1, style=wx.DEFAULT_FRAME_STYLE)
 
         # Some default values.
         self.size_x = 800
