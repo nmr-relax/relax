@@ -61,13 +61,19 @@ def calc(verbosity=1):
                 print(("Simulation " + repr(i+1)))
 
             # Status.
-            status.mc_number = i
+            if status.current_analysis:
+                status.auto_analysis[status.current_analysis].mc_number = i
+            else:
+                status.mc_number = i
 
             # Calculation.
             calculate(verbosity=verbosity-1, sim_index=i)
 
         # Unset the status.
-        status.mc_number = None
+        if status.current_analysis:
+            status.auto_analysis[status.current_analysis].mc_number = None
+        else:
+            status.mc_number = None
 
     # Minimisation.
     else:
@@ -114,13 +120,19 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
                 print(("Simulation " + repr(i+1)))
 
             # Status.
-            status.mc_number = i
+            if status.current_analysis:
+                status.auto_analysis[status.current_analysis].mc_number = i
+            else:
+                status.mc_number = i
 
             # Optimisation.
             grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
 
         # Unset the status.
-        status.mc_number = None
+        if status.current_analysis:
+            status.auto_analysis[status.current_analysis].mc_number = None
+        else:
+            status.mc_number = None
 
     # Grid search.
     else:
@@ -177,13 +189,19 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
                 print(("Simulation " + repr(i+1)))
 
             # Status.
-            status.mc_number = i
+            if status.current_analysis:
+                status.auto_analysis[status.current_analysis].mc_number = i
+            else:
+                status.mc_number = i
 
             # Optimisation.
             minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
 
         # Unset the status.
-        status.mc_number = None
+        if status.current_analysis:
+            status.auto_analysis[status.current_analysis].mc_number = None
+        else:
+            status.mc_number = None
 
     # Standard minimisation.
     else:
