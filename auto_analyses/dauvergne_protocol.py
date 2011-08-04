@@ -749,7 +749,7 @@ class dAuvergne_protocol:
 
         # Initialise the status object for this auto-analysis.
         status.init_auto_analysis(self.pipe_name, type='dauvergne_protocol')
-        status.current_analysis = pipe_name
+        status.current_analysis = self.pipe_name
 
         # The global diffusion model.
         status.auto_analysis[self.pipe_name].diff_model = self.diff_model
