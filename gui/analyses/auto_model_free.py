@@ -360,6 +360,11 @@ class Auto_model_free(Base_analysis):
         else:
             data.global_models = [mode]
 
+        # Check for vectors.
+        vector_check = False
+        if 'prolate' in data.global_models or 'oblate' in data.global_models or 'ellipsoid' in data.global_models:
+            vector_check = True
+
         # Spin vars.
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
@@ -386,7 +391,7 @@ class Auto_model_free(Base_analysis):
                 missing.append(msg % ("proton type data", "value.set"))
 
             # Test if the unit vectors have been loaded.
-            if not hasattr(spin, 'unit_vect') or spin.unit_vect == None:
+            if vector_check and (not hasattr(spin, 'unit_vect') or spin.unit_vect == None):
                 missing.append(msg % ("unit vectors", "structure.vectors"))
 
         # Return the container and list of missing data.
