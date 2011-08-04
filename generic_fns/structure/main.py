@@ -36,7 +36,7 @@ from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, gene
 from generic_fns import pipes
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
-from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxPdbError
+from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import get_file_path, open_write_file, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
@@ -378,7 +378,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):
-        raise RelaxPdbError
+        raise RelaxNoPdbError
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
