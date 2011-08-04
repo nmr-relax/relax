@@ -103,6 +103,17 @@ class Mf(GuiTestCase):
         value_set.set_param('proton_type')
         value_set.on_execute()
 
+        # The unit vector loading wizard.
+        analysis.load_unit_vectors(None)
+
+        # The PDB file.
+        page = analysis.vect_wizard.get_page(0)
+        page.file.SetValue(str_to_gui(status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep + 'sphere.pdb'))
+        analysis.vect_wizard._go_next(None)
+
+        # The unit vectors.
+        analysis.vect_wizard._go_next(None)
+
         # Select only the tm0 and tm1 local tm models.
         analysis.local_tm_model_field.select = [True, True, False, False, False, False, False, False, False, False]
         analysis.local_tm_model_field.modify(None)
