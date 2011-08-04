@@ -211,19 +211,14 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['S2', 'te', 'Rex'])
 
 
-    # FIXME!
-    def xxx_test_dauvergne_protocol(self):
+    def test_dauvergne_protocol(self):
         """Check the execution of auto_analyses.dauvergne_protocol."""
 
         # Create a temporary directory for dumping files.
         ds.tmpdir = mkdtemp()
 
-        # Copy the files into the temporary directory.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data'+sep+'13259_bug_reproducing_data'
-        copytree(path, ds.tmpdir + sep + 'data')
-
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'full_analysis_trunc.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'dauvergne_protocol.py')
 
 
     def test_generate_ri(self):
