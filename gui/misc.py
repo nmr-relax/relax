@@ -359,7 +359,7 @@ def protected_exec(fn, *args, **kargs):
     # Catch RelaxErrors.
     except AllRelaxErrors, instance:
         # Display a dialog with the error.
-        gui_raise(instance, raise_flag=True)
+        gui_raise(instance, raise_flag=False)
 
         # Failure.
         return False
