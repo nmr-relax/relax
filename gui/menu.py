@@ -173,6 +173,9 @@ class Menu:
                 [wx.NewId(), "&spin", paths.icon_16x16.spin, self.gui.user_functions.deselect.spin],
             ]],
             [wx.NewId(), "&gpl",   paths.icon_16x16.gnu_head, self.gui.user_functions.gpl.run, []],
+            [wx.NewId(), "gra&ce", paths.icon_16x16.grace, None, [
+                [wx.NewId(), "&view",   paths.icon_16x16.grace, self.gui.user_functions.grace.view]
+            ]],
             [wx.NewId(), "&molecule", paths.icon_16x16.molecule, None, [
                 [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.molecule.copy],
                 [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.molecule.create],

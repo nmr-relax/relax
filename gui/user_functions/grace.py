@@ -37,19 +37,23 @@ from gui.wizard import Wiz_window
 class Grace(UF_base):
     """The container class for holding all GUI elements."""
 
-    def view(self, event, param=None):
+    def view(self, event, file=None):
         """The grace.view user function.
 
         @param event:   The wx event.
         @type event:    wx event
-        @keyword param: The starting parameter.
-        @type param:    str
+        @keyword file:  The file to start the user function with.
+        @type file:     str
         """
 
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('grace', 'view'))
         page = View_page(wizard, self.gui)
         wizard.add_page(page)
+
+        # Default file name.
+        if file:
+            page.file.SetValue(file)
 
         # Execute the wizard.
         wizard.run()
