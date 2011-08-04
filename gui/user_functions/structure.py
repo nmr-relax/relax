@@ -33,7 +33,7 @@ from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.misc import gui_to_bool, gui_to_str, str_to_gui
+from gui.misc import gui_to_bool, gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
 
@@ -100,6 +100,22 @@ class Structure(UF_base):
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'write_pdb'))
         page = Write_pdb_page(wizard, self.gui)
+        wizard.add_page(page)
+
+        # Execute the wizard.
+        wizard.run()
+
+
+    def vectors(self, event):
+        """The structure.vectors user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Create the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'vectors'))
+        page = Vectors_page(wizard, self.gui)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -243,3 +259,54 @@ class Write_pdb_page(UF_page):
 
         # Execute the user function.
         self.gui.interpreter.structure.write_pdb(file=file, model_num=model_num)
+
+
+
+class Vectors_page(UF_page):
+    """The structure.vectors() user function page."""
+
+    # Some class variables.
+    uf_path = ['structure', 'vectors']
+
+    def add_contents(self, sizer):
+        """Add the structure specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The attached atom.
+        self.attached = self.input_field(sizer, "The attached atom:", tooltip=self.uf._doc_args_dict['attached'])
+        self.attached.SetValue(str_to_gui("H"))
+
+        # The spin_id arg.
+        self.spin_id = self.spin_id_element(sizer, desc='Restrict vector loading to the spins:')
+
+        # The model.
+        self.model = self.input_field(sizer, "The model:", tooltip=self.uf._doc_args_dict['model'])
+
+        # The verbosity level.
+        self.verbosity = self.spin_control(sizer, "The verbosity level:", default=1, min=0, tooltip=self.uf._doc_args_dict['verbosity'])
+
+        # The average.
+        self.ave = self.boolean_selector(sizer, "Average the vector across models:", tooltip=self.uf._doc_args_dict['ave'])
+        self.ave.SetValue('True')
+
+        # The unit flag.
+        self.unit = self.boolean_selector(sizer, "Calculate unit vectors:", tooltip=self.uf._doc_args_dict['unit'])
+        self.unit.SetValue('True')
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The args.
+        attached =  gui_to_str(self.attached.GetValue())
+        spin_id =   gui_to_str(self.spin_id.GetValue())
+        model =     gui_to_int(self.model.GetValue())
+        verbosity = gui_to_int(self.verbosity.GetValue())
+        ave =       gui_to_bool(self.ave.GetValue())
+        unit =      gui_to_bool(self.unit.GetValue())
+
+        # Execute the user function.
+        self.gui.interpreter.structure.vectors(attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)

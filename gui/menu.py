@@ -239,7 +239,8 @@ class Menu:
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.structure.delete],
                 [wx.NewId(), "&load_spins", paths.icon_16x16.spin, self.gui.user_functions.structure.load_spins],
                 [wx.NewId(), "&read_pdb", paths.icon_16x16.open, self.gui.user_functions.structure.read_pdb],
-                [wx.NewId(), "&write_pdb", paths.icon_16x16.save, self.gui.user_functions.structure.write_pdb]
+                [wx.NewId(), "&write_pdb", paths.icon_16x16.save, self.gui.user_functions.structure.write_pdb],
+                [wx.NewId(), "&vectors", None, self.gui.user_functions.structure.vectors]
             ]],
             [wx.NewId(), "&value", paths.icon_16x16.value, None, [
                 [wx.NewId(), "&set",   paths.icon_16x16.add, self.gui.user_functions.value.set]
