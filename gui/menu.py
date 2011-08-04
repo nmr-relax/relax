@@ -169,6 +169,7 @@ class Menu:
                 [wx.NewId(), "re&verse", None, self.gui.user_functions.deselect.reverse],
                 [wx.NewId(), "&spin", paths.icon_16x16.spin, self.gui.user_functions.deselect.spin],
             ]],
+            [wx.NewId(), "&gpl",   None, self.gui.user_functions.gpl.run, []],
             [wx.NewId(), "&molecule", paths.icon_16x16.molecule, None, [
                 [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.molecule.copy],
                 [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.molecule.create],

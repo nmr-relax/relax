@@ -28,6 +28,7 @@ from relax_errors import RelaxError
 
 # GUI module imports.
 from deselect import Deselect
+from gpl import Gpl
 from molecule import Molecule
 from noe import Noe
 from pipe import Pipe
@@ -46,6 +47,7 @@ from value import Value
 # The package __all__ list.
 __all__ = ['base',
            'deselect',
+           'gpl',
            'molecule',
            'noe',
            'pipe',
@@ -75,6 +77,7 @@ class User_functions:
 
         # The user functions.
         self.deselect = Deselect(self.gui)
+        self.gpl = Gpl(self.gui)
         self.molecule = Molecule(self.gui)
         self.noe = Noe(self.gui)
         self.pipe = Pipe(self.gui)
@@ -95,6 +98,7 @@ class User_functions:
 
         # Send the commands onwards to the user function classes.
         self.deselect.destroy()
+        self.gpl.destroy()
         self.molecule.destroy()
         self.noe.destroy()
         self.pipe.destroy()
