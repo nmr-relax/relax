@@ -55,6 +55,7 @@ class I16x16:
         self.about_relax =              IMAGE_PATH + 'relax_16x16.png'
         self.about_relaxgui =           IMAGE_PATH + 'relax_16x16.png'
         self.gnu_head =                 path + 'gnu-head-mini.png'
+        self.grace =                    path + 'grace_icon.png'
         self.molecule =                 path + 'molecule.png'
         self.molecule_grey =            path + 'molecule_grey.png'
         self.molecule_unfolded =        path + 'molecule_unfolded.png'
