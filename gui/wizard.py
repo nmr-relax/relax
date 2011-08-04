@@ -73,6 +73,7 @@ class Wiz_page(wx.Panel):
     height_element = 27
     image_path = paths.IMAGE_PATH + "relax.gif"
     main_text = ''
+    setup_fail = False
     size_button = (100, 33)
     size_square_button = (33, 33)
     title = ''
@@ -1410,6 +1411,11 @@ class Wiz_window(wx.Dialog):
         @return:        The status from the modal operation, i.e. True if the wizard is run, False if cancelled or other error occur.  For modeless operation, this returns nothing.
         @rtype:         bool or None
         """
+
+        # Check that all pages have been set up correctly, returning without doing anything if not.
+        for i in range(self._num_pages):
+            if self._pages[i].setup_fail:
+                return
 
         # Build the buttons for the entire wizard.
         self._build_buttons()

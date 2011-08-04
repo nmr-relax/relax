@@ -141,6 +141,10 @@ class Write_page(UF_page):
         self.x_data_type = self.combo_box(sizer, "The X-axis data type:", tooltip=self.uf._doc_args_dict['x_data_type'])
         self.update_parameters(self.x_data_type)
 
+        # Failure.
+        if self.setup_fail:
+            return
+
         # The Y-axis data.
         self.y_data_type = self.combo_box(sizer, "The Y-axis data type:", tooltip=self.uf._doc_args_dict['y_data_type'])
         self.update_parameters(self.y_data_type)
@@ -196,6 +200,8 @@ class Write_page(UF_page):
         # Check the current data pipe.
         if cdp == None:
             gui_raise(RelaxNoPipeError())
+            self.setup_fail = True
+            return
 
         # Get the specific functions.
         data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
@@ -207,6 +213,8 @@ class Write_page(UF_page):
             names = data_names(set='params')
         except RelaxImplementError:
             gui_raise(RelaxImplementError())
+            self.setup_fail = True
+            return
 
         # First add the sequence data.
         combo_box.Append(str_to_gui("Spin sequence"), 'spin')

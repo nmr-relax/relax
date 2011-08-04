@@ -173,6 +173,8 @@ class Set_page(UF_page):
         # Check the current data pipe.
         if cdp == None:
             gui_raise(RelaxNoPipeError())
+            self.setup_fail = True
+            return
 
         # Get the specific functions.
         data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
@@ -184,6 +186,8 @@ class Set_page(UF_page):
             names = data_names(set='params')
         except RelaxImplementError:
             gui_raise(RelaxImplementError())
+            self.setup_fail = True
+            return
 
         # Loop over the parameters.
         for name in (data_names(set='params') + data_names(set='generic')):
