@@ -370,15 +370,15 @@ class Structure(User_fn_class):
     vectors._doc_args = [
         ["attached", "The name of the second atom which attached to the spin of interest.  Regular expression is allowed, for example 'H*'."],
         ["spin_id", "The spin identification string."],
-        ["model", "The model to extract bond vectors from (which if set to None will cause the vectors of all models to be extracted)."],
+        ["model", "The model to extract bond vectors from (which if not set will cause the vectors of all models to be extracted)."],
         ["verbosity", "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."],
         ["ave", "A flag which if True will cause the bond vectors from all models to be averaged.  If vectors from only one model is extracted, this argument will have no effect."],
         ["unit", "A flag which if True will cause the unit vector to calculated rather than the full length bond vector."]
     ]
     vectors._doc_desc = """
-        For a number of types of analysis, bond vectors or unit bond vectors are required for the calculations.  This user function allows these vectors to be extracted from the loaded structures.  The bond vector will be that from the atom associated with the spin system loaded in relax to the bonded atom specified by the 'attached' argument.  For example if 'attached' is set to 'H' and the protein backbone amide spins 'N' are loaded, the all 'N-H' vectors will be extracted.  But if set to 'CA', all atoms named 'CA' in the structures will be searched for and all 'N-Ca' bond vectors will be extracted.
+        For a number of types of analysis, bond vectors or unit bond vectors are required for the calculations.  This user function allows these vectors to be extracted from the loaded structures.  The bond vector will be that from the atom associated with the spin system loaded in relax to the bonded atom specified by the 'attached' argument.  For example if the attached atom is set to 'H' and the protein backbone amide spins 'N' are loaded, the all 'N-H' vectors will be extracted.  But if set to 'CA', all atoms named 'CA' in the structures will be searched for and all 'N-Ca' bond vectors will be extracted.
 
-        The extraction of vectors can occur in a number of ways.  For example if an NMR structure with N models is loaded or if multiple molecules, from any source, of the same compound are loaded as different models, there are three options for extracting the bond vector.  Firstly the bond vector of a single model can be extracted by setting the 'model' argument. Secondly the bond vectors from all models can be extracted if 'model' is None and 'ave' is set to False.  Thirdly, if 'model' is None and 'ave' is set to True, then a single vector which is the average for all models will be calculated.
+        The extraction of vectors can occur in a number of ways.  For example if an NMR structure with N models is loaded or if multiple molecules, from any source, of the same compound are loaded as different models, there are three options for extracting the bond vector.  Firstly the bond vector of a single model can be extracted by setting the model number. Secondly the bond vectors from all models can be extracted if the model number is not set and the average vector flag is not set.  Thirdly, if the model number is not set and the average vector flag is set, then a single vector which is the average for all models will be calculated.
         """
     vectors._doc_examples = """
         To extract the XH vectors of the backbone amide nitrogens where in the PDB file the backbone
