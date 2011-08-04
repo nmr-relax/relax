@@ -213,4 +213,4 @@ value.set('1H', 'proton')
 ############
 
 # Do not change!
-dAuvergne_protocol(pipe_name=name, diff_model=DIFF_MODEL, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_num=MC_NUM, conv_loop=CONV_LOOP)
+dAuvergne_protocol(pipe_name=name, diff_model=DIFF_MODEL, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_sim_num=MC_NUM, conv_loop=CONV_LOOP)
