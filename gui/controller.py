@@ -284,7 +284,7 @@ class Controller(wx.Frame):
         """
 
         # Pulse.
-        self.main_gauge.Pulse()
+        wx.CallAfter(self.main_gauge.Pulse)
 
         # Stop the timer and update the gauge.
         if not status.exec_lock.locked() and self.timer.IsRunning():
