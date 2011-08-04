@@ -47,7 +47,7 @@ class Grace(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('grace', 'view'))
+        wizard = Wiz_window(size_x=900, size_y=500, title=self.get_title('grace', 'view'))
         page = View_page(wizard, self.gui)
         wizard.add_page(page)
 
