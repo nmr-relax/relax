@@ -119,7 +119,7 @@ class View_page(UF_page):
         grace_exe = gui_to_str(self.grace_exe.GetValue())
 
         # Open the file.
-        self.gui.interpreter.grace.view(file=file, grace_exe=grace_exe)
+        self.gui.interpreter.grace.view(file=file, dir=None, grace_exe=grace_exe)
 
 
 
