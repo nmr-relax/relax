@@ -487,6 +487,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         """
 
         # Store the args.
+        self.controller = parent
         self.log_queue = log_queue
 
         # Initialise the base class.
@@ -647,6 +648,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         if at_end:
             self.ScrollToLine(self.GetLineCount())
 
+        # Show the relax controller when text is added.
+        if status.show_gui and not self.controller.IsShown():
+            self.controller.Show()
 
 
 class Redirect_text(object):
