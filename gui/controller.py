@@ -501,6 +501,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Create the relax prompt style (assignment 2).
         self.StyleSetForeground(2, wx.NamedColour('blue'))
 
+        # Create the relax warning style (assignment 3).
+        self.StyleSetForeground(3, wx.NamedColour('orange red'))
+
         # Bind events.
         self.Bind(wx.EVT_KEY_DOWN, self.capture_keys)
 
@@ -552,6 +555,13 @@ class LogCtrl(wx.stc.StyledTextCtrl):
                 # Start a new section.
                 string_list.append('')
                 stream_list.append(stream)
+
+            # The relax warnings on STDERR.
+            if msg[0:13] == 'RelaxWarning:':
+                # Add the warning.
+                string_list.append(msg)
+                stream_list.append(3)
+                continue
 
             # A different stream.
             if stream_list[-1] != stream:
