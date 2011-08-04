@@ -95,8 +95,8 @@ class Controller(wx.Frame):
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
 
         # IO redirection.
-        sys.stdout = Redirect_text(self.log_panel, self.log_queue, stream=0)
-        sys.stderr = Redirect_text(self.log_panel, self.log_queue, stream=1)
+        sys.stdout = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stdout, stream=0)
+        sys.stderr = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stderr, stream=1)
 
         # Initial update of the controller.
         self.update_controller()
@@ -656,13 +656,15 @@ class LogCtrl(wx.stc.StyledTextCtrl):
 class Redirect_text(object):
     """The IO redirection to text control object."""
 
-    def __init__(self, control, log_queue, stream=0):
+    def __init__(self, control, log_queue, orig_io, stream=0):
         """Set up the text redirection object.
 
         @param control:         The text control object to redirect IO to.
         @type control:          wx.TextCtrl instance
         @param log_queue:       The queue of log messages.
         @type log_queue:        Queue.Queue instance
+        @param orig_io:         The original IO stream, used for debugging and the test suite.
+        @type orig_io:          file
         @keyword stream:        The type of steam (0 for STDOUT and 1 for STDERR).
         @type stream:           int
         """
@@ -670,6 +672,7 @@ class Redirect_text(object):
         # Store the args.
         self.control = control
         self.log_queue = log_queue
+        self.orig_io = orig_io
         self.stream = stream
 
 
@@ -681,11 +684,8 @@ class Redirect_text(object):
         """
 
         # Debugging print out to the terminal.
-        if status.debug:
-            if self.stream == 0:
-                sys.__stdout__.write(string)
-            else:
-                sys.__stderr__.write(string)
+        if status.debug or status.test_mode:
+            self.orig_io.write(string)
 
         # Add the text to the queue.
         self.log_queue.put([string, self.stream])
