@@ -64,7 +64,7 @@ class Grace(User_fn_class):
         ["grace_exe", "The Grace executable file."]
     ]
     view._doc_desc = """
-        This function can be used to execute Grace to view the specified file the Grace '.agr' file and the execute Grace. If the directory name is set to None, the file will be assumed to be in the current working directory.
+        This can be used to view the specified Grace '*.agr' file by opening it with Grace program.
         """
     view._doc_examples = """
         To view the file 's2.agr' in the directory 'grace', type:
