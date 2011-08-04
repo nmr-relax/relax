@@ -33,7 +33,7 @@ import specific_fns
 # GUI module imports.
 from base import UF_base, UF_page
 from gui.errors import gui_raise
-from gui.misc import gui_to_str, str_to_gui
+from gui.misc import gui_to_bool, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
 
@@ -74,7 +74,7 @@ class Grace(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=900, size_y=700, title=self.get_title('grace', 'write'))
+        wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('grace', 'write'))
         page = Write_page(wizard, self.gui)
         wizard.add_page(page)
 
@@ -153,7 +153,7 @@ class Write_page(UF_page):
         self.plot_data.SetValue('value')
 
         # Data normalisation.
-        self.norm = self.boolean_selector(sizer, "Data normalisation flag:", tooltip=self.uf._doc_args_dict['norm'])
+        self.norm = self.boolean_selector(sizer, "Data normalisation flag:", tooltip=self.uf._doc_args_dict['norm'], default=False)
 
         # Add a file selection.
         self.file = self.file_selection(sizer, "The Grace file:", message="Grace file selection", wildcard="Grace files (*.agr)|*.agr", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
@@ -165,12 +165,14 @@ class Write_page(UF_page):
     def on_execute(self):
         """Execute the user function."""
 
+        # The X and Y data types.
+        x_data_type = self.x_data_type.GetClientData(self.x_data_type.GetSelection())
+        y_data_type = self.y_data_type.GetClientData(self.y_data_type.GetSelection())
+
         # Get the values.
-        x_data_type =   gui_to_int(self.x_data_type.GetValue())
-        y_data_type =   gui_to_int(self.y_data_type.GetValue())
-        spin_id_col =   gui_to_int(self.spin_id_col.GetValue())
-        plot_data =     gui_to_int(self.plot_data.GetValue())
-        norm =          gui_to_bool(self.norm.GetValue())
+        spin_id =   gui_to_str(self.spin_id.GetValue())
+        plot_data = gui_to_str(self.plot_data.GetValue())
+        norm =      gui_to_bool(self.norm.GetValue())
 
         # The file name.
         file = gui_to_str(self.file.GetValue())
@@ -181,7 +183,7 @@ class Write_page(UF_page):
         force = gui_to_bool(self.force.GetValue())
 
         # Open the file.
-        self.gui.interpreter.grace.write(x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, force=force, norm=norm)
+        self.gui.interpreter.grace.write(x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=None, force=force, norm=norm)
 
 
     def update_parameters(self, combo_box):
@@ -206,6 +208,9 @@ class Write_page(UF_page):
         except RelaxImplementError:
             gui_raise(RelaxImplementError())
 
+        # First add the sequence data.
+        combo_box.Append(str_to_gui("Spin sequence"), 'spin')
+
         # Loop over the parameters.
         for name in (data_names(set='params') + data_names(set='generic')):
             # Get the description.
@@ -221,3 +226,6 @@ class Write_page(UF_page):
 
             # Append the description.
             combo_box.Append(str_to_gui(text), name)
+
+        # Default to the sequence.
+        combo_box.SetSelection(0)
