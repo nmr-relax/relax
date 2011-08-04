@@ -31,7 +31,7 @@ import wx
 from status import Status; status = Status()
 
 
-def gui_raise(relax_error, raise_flag=False):
+def gui_raise(relax_error, raise_flag=True):
     """Handle errors in the GUI to be reported to the user.
 
     @param relax_error:     The error object.

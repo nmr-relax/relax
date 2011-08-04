@@ -196,7 +196,6 @@ class Write_page(UF_page):
         # Check the current data pipe.
         if cdp == None:
             gui_raise(RelaxNoPipeError())
-            return
 
         # Get the specific functions.
         data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
@@ -208,7 +207,6 @@ class Write_page(UF_page):
             names = data_names(set='params')
         except RelaxImplementError:
             gui_raise(RelaxImplementError())
-            return
 
         # First add the sequence data.
         combo_box.Append(str_to_gui("Spin sequence"), 'spin')
