@@ -814,7 +814,7 @@ class Wiz_page(wx.Panel):
         """
 
 
-    def spin_control(self, sizer, desc, default='', min=None, max=None, tooltip=None, divider=None, padding=0, spacer=None):
+    def spin_control(self, sizer, desc, default='', min=0, max=100, tooltip=None, divider=None, padding=0, spacer=None):
         """Build the spin control widget.
 
         @param sizer:       The sizer to put the spin control widget into.
@@ -859,7 +859,7 @@ class Wiz_page(wx.Panel):
         sub_sizer.AddSpacer((divider - x, 0))
 
         # The spin control.
-        field = wx.SpinCtrl(self, -1, default, min=min, max=max)
+        field = wx.SpinCtrl(self, id=-1, initial=default, min=min, max=max)
         field.SetMinSize((50, self.height_element))
         field.SetFont(font.normal)
         sub_sizer.Add(field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
