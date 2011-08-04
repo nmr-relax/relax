@@ -43,7 +43,6 @@ from status import Status; status = Status()
 from gui.about import About_base
 from gui.analyses.base import Base_analysis
 from gui.analyses.execute import Execute
-from gui.analyses.results_analysis import model_free_results, see_results
 from gui.base_classes import Container
 from gui.components.relax_data import Relax_data_list
 from gui.filedialog import opendir
@@ -207,7 +206,6 @@ class Auto_model_free(Base_analysis):
             ds.relax_gui.analyses[data_index].local_tm_models = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
             ds.relax_gui.analyses[data_index].mf_models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
             ds.relax_gui.analyses[data_index].max_iter = "30"
-            ds.relax_gui.analyses[data_index].results_list = []
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
@@ -687,41 +685,6 @@ class Execute_mf(Execute):
         for global_model in self.data.global_models:
             # Start the protocol.
             dauvergne_protocol.dAuvergne_protocol(pipe_name=self.data.pipe_name, results_dir=self.data.save_dir, diff_model=global_model, mf_models=self.data.mf_models, local_tm_models=self.data.local_tm_models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, max_iter=self.data.max_iter, conv_loop=self.data.conv_loop)
-
-            # Create the results file.
-            if global_model == 'final':
-                # Alias the relax data store data.
-                data = ds.relax_gui.analyses[self.data_index]
-
-                # Is there a results list (old results file support)?
-                if not hasattr(data, 'results_list'):
-                    data.results_list = []
-
-                results_analysis = model_free_results(self, data.save_dir, data.structure_file)
-
-                # Add grace plots to results tab.
-                directory = data.save_dir+sep+'final'
-                self.gui.list_modelfree.Append(directory+sep+'grace'+sep+'s2.agr')
-                self.gui.list_modelfree.Append(directory+sep+'Model-free_Results.csv')
-                self.gui.list_modelfree.Append(directory+sep+'diffusion_tensor.pml')
-                self.gui.list_modelfree.Append(directory+sep+'s2.pml')
-                self.gui.list_modelfree.Append(directory+sep+'rex.pml')
-                self.gui.list_modelfree.Append('Table_of_Results')
-
-                # Add results to relax data storage.
-                ds.relax_gui.results_model_free.append(directory+sep+'grace'+sep+'s2.agr')
-                ds.relax_gui.results_model_free.append(directory+sep+'Model-free_Results.txt')
-                ds.relax_gui.results_model_free.append(directory+sep+'diffusion_tensor.pml')
-                ds.relax_gui.results_model_free.append(directory+sep+'s2.pml')
-                ds.relax_gui.results_model_free.append(directory+sep+'rex.pml')
-                ds.relax_gui.results_model_free.append('Table_of_Results')
-
-                # set global results variables
-                ds.relax_gui.table_residue = results_analysis[0]
-                ds.relax_gui.table_model = results_analysis[1]
-                ds.relax_gui.table_s2 = results_analysis[2]
-                ds.relax_gui.table_rex = results_analysis[3]
-                ds.relax_gui.table_te = results_analysis[4]
 
 
 

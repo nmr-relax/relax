@@ -25,6 +25,7 @@
 """Module containing the base class for the results frame."""
 
 # Python module imports.
+from string import upper
 import wx
 
 # relax module imports.
@@ -176,12 +177,16 @@ class Results_viewer(wx.Frame):
         page = self.gui.analysis.get_page_from_name(gui_to_str(self.analysis_list.GetValue()))
 
         # Nothing to do.
-        if not hasattr(page, 'data') or not hasattr(page.data, 'results_list'):
+        if not hasattr(cdp, 'result_files'):
             return
 
         # Update the list.
-        for i in range(len(page.data.results_list)):
-            self.list.Append(str_to_gui(page.data.results_list[i]))
+        for i in range(len(cdp.result_files)):
+            # The text to display.
+            text = "%s%s file:  %s" % (upper(cdp.result_files[i][0][0]), cdp.result_files[i][0][1:], cdp.result_files[i][1])
+
+            # Add the text with the Python data.
+            self.list.Append(str_to_gui(text), clientData=cdp.result_files[i])
 
 
     def open_result_file(self, event):

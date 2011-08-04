@@ -109,7 +109,6 @@ class Auto_noe(Base_analysis):
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].frq = ''
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
-            ds.relax_gui.analyses[data_index].results_list = []
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
@@ -463,20 +462,6 @@ class Execute_noe(Execute):
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
 
-        # Is there a results list (old results file support)?
-        if not hasattr(data, 'results_list'):
-            data.results_list = []
-
-        # Add the NOE grace plots to the results list.
-        files = [
-            data.save_dir+sep+'grace'+sep+'ref.agr',
-            data.save_dir+sep+'grace'+sep+'sat.agr',
-            data.save_dir+sep+'grace'+sep+'noe.agr'
-        ]
-        for file in files:
-            if not file in data.results_list:
-                data.results_list.append(file)
-
         # FIXME:  This must be shifted to the core of relax!!!
         # Create a PyMOL macro, if a structure exists.
         if hasattr(data, 'structure_file'):
@@ -484,4 +469,4 @@ class Execute_noe(Execute):
             color_code_noe(data.save_dir, data.structure_file)
 
             # Add the macro to the results list.
-            data.results_list.append(data.save_dir+sep+'noe.pml')
+            cdp.result_files.append(['pymol', data.save_dir+sep+'noe.pml'])

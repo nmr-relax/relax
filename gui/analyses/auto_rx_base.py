@@ -110,7 +110,6 @@ class Auto_rx(Base_analysis):
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].mc_sim_num = None
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
-            ds.relax_gui.analyses[data_index].results_list = []
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
@@ -488,19 +487,3 @@ class Execute_rx(Execute):
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
-
-        # Is there a results list (old results file support)?
-        if not hasattr(data, 'results_list'):
-            data.results_list = []
-
-        # Add Rx grace plot to the results list.
-        files = [
-            data.save_dir+sep+'grace'+sep+self.data.file_root+'.agr',
-            data.save_dir+sep+'grace'+sep+'intensities.agr',
-            data.save_dir+sep+'grace'+sep+'intensities_norm.agr',
-            data.save_dir+sep+'grace'+sep+'i0.agr',
-            data.save_dir+sep+'grace'+sep+'chi2.agr' 
-        ]
-        for file in files:
-            if not file in data.results_list:
-                data.results_list.append(file)
