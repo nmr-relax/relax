@@ -208,7 +208,7 @@ class Results_viewer(wx.Frame):
 
         # Grace files.
         if data[0] == 'grace':
-            print "grace"
+            self.gui.user_functions.grace.view(None, file=data[1])
 
         # A special table.
         elif data[0] == 'Table_of_Results':
