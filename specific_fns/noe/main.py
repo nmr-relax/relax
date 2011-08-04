@@ -138,6 +138,72 @@ class Noe_main:
             spin.noe_err = sqrt((sat_err * ref)**2 + (ref_err * sat)**2) / ref**2
 
 
+    def data_names(self, set='all', error_names=False, sim_names=False):
+        """Return a list of all spin container specific model-free object names.
+
+        Description
+        ===========
+
+        The names are as follows:
+
+            - 'model', the model-free model name.
+            - 'equation', the model-free equation type.
+            - 'params', an array of the model-free parameter names associated with the model.
+            - 's2', S2.
+            - 's2f', S2f.
+            - 's2s', S2s.
+            - 'local_tm', local tm.
+            - 'te', te.
+            - 'tf', tf.
+            - 'ts', ts.
+            - 'rex', Rex.
+            - 'r', bond length.
+            - 'csa', CSA value.
+            - 'nucleus', the heteronucleus type.
+            - 'chi2', chi-squared value.
+            - 'iter', iterations.
+            - 'f_count', function count.
+            - 'g_count', gradient count.
+            - 'h_count', hessian count.
+            - 'warning', minimisation warning.
+
+
+        @keyword set:           The set of object names to return.  This can be set to 'all' for all
+                                names, to 'generic' for generic object names, 'params' for
+                                model-free parameter names, or to 'min' for minimisation specific
+                                object names.
+        @type set:              str
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
+                                names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
+        """
+
+        # Initialise.
+        names = []
+
+        # Generic.
+        if set == 'all' or set == 'generic':
+            names.append('select')
+            names.append('fixed')
+            names.append('ref')
+            names.append('sat')
+
+        # Parameters.
+        if set == 'all' or set == 'params':
+            names.append('noe')
+
+        # Parameter errors.
+        if error_names and (set == 'all' or set == 'params'):
+            names.append('noe_err')
+
+        # Return the names.
+        return names
+
+
     def overfit_deselect(self):
         """Deselect spins which have insufficient data to support calculation."""
 
@@ -164,6 +230,30 @@ class Noe_main:
                 warn(RelaxDeselectWarning(spin_id, 'missing errors'))
                 spin.select = False
 
+
+    def return_data_desc(self, name, spin=None):
+        """Return a description of the spin specific object.
+
+        @param name:    The name of the spin specific object.
+        @type name:     str
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @return:        The object description, or None.
+        @rtype:         str or None
+        """
+
+        # Model-free specific objects.
+        if name == 'select':
+            return 'The spin selection flag'
+        if name == 'fixed':
+            return 'The fixed flag'
+        if name == 'ref':
+            return 'The reference peak intensity'
+        if name == 'sat':
+            return 'The saturated peak intensity'
+        if name == 'noe':
+            return 'The NOE'
+            
 
     return_data_name_doc = ["NOE calculation data type string matching patterns", """
         ____________________________________________________________________________________________
