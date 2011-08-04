@@ -237,13 +237,13 @@ class Controller(wx.Frame):
         self.panel_mf.SetSizer(panel_sizer)
 
         # Add the global model.
-        self.global_model = self.add_text(self.panel_mf, panel_sizer, "Global model:")
+        self.global_model_mf = self.add_text(self.panel_mf, panel_sizer, "Global model:")
 
         # Progress gauge.
-        self.progress_gauge = self.add_gauge(self.panel_mf, panel_sizer, "Incremental progress:")
+        self.progress_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Incremental progress:")
 
         # MC sim gauge.
-        self.mc_gauge = self.add_gauge(self.panel_mf, panel_sizer, "Monte Carlo simulations:")
+        self.mc_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Monte Carlo simulations:")
 
 
     def create_rx(self, sizer):
@@ -262,7 +262,7 @@ class Controller(wx.Frame):
         self.panel_rx.SetSizer(panel_sizer)
 
         # MC sim gauge.
-        self.mc_gauge = self.add_gauge(self.panel_rx, panel_sizer, "Monte Carlo simulations:")
+        self.mc_gauge_rx = self.add_gauge(self.panel_rx, panel_sizer, "Monte Carlo simulations:")
 
 
     def handler_close(self, event):
@@ -406,7 +406,7 @@ class Controller(wx.Frame):
             return
 
         # Set the diffusion model.
-        wx.CallAfter(self.global_model.SetValue, status.auto_analysis[key].diff_model)
+        wx.CallAfter(self.global_model_mf.SetValue, status.auto_analysis[key].diff_model)
 
         # Update the progress gauge for the local tm model.
         if status.auto_analysis[key].diff_model == 'local_tm':
@@ -421,7 +421,7 @@ class Controller(wx.Frame):
                 percent = int(100 * no / float(total_models))
                 if percent > 100:
                     percent = 100
-                wx.CallAfter(self.progress_gauge.SetValue, percent)
+                wx.CallAfter(self.progress_gauge_mf.SetValue, percent)
 
         # Sphere to Ellipsoid Models.
         elif status.auto_analysis[key].diff_model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
@@ -431,7 +431,7 @@ class Controller(wx.Frame):
                 percent = 100
 
             # Update the progress bar.
-            wx.CallAfter(self.progress_gauge.SetValue, percent)
+            wx.CallAfter(self.progress_gauge_mf.SetValue, percent)
 
         # Monte Carlo simulations.
         if status.auto_analysis[key].mc_number:
@@ -441,7 +441,7 @@ class Controller(wx.Frame):
                 percent = 100
 
             # Update the progress bar.
-            wx.CallAfter(self.mc_gauge.SetValue, percent)
+            wx.CallAfter(self.mc_gauge_mf.SetValue, percent)
 
 
     def update_rx(self):
@@ -460,7 +460,7 @@ class Controller(wx.Frame):
                 percent = 100
 
             # Update the progress bar.
-            wx.CallAfter(self.mc_gauge.SetValue, percent)
+            wx.CallAfter(self.mc_gauge_rx.SetValue, percent)
 
 
 
