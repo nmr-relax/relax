@@ -79,7 +79,7 @@ def setup():
 
 class BaseWarning(Warning):
     def __str__(self):
-        return self.text
+        return str(self.text)
 
 
 # Standard warnings.
