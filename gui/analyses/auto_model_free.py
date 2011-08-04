@@ -566,21 +566,21 @@ class Auto_model_free(Base_analysis):
         wx.BeginBusyCursor()
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title="Load unit vectors from file")
+        self.vect_wizard = Wiz_window(size_x=800, size_y=600, title="Load unit vectors from file")
 
         # Create the PDB reading page.
-        page = Read_pdb_page(wizard, self.gui)
-        wizard.add_page(page, skip_button=True)
+        page = Read_pdb_page(self.vect_wizard, self.gui)
+        self.vect_wizard.add_page(page, skip_button=True)
 
         # Create the vector loading page.
-        page = Vectors_page(wizard, self.gui)
-        wizard.add_page(page)
+        page = Vectors_page(self.vect_wizard, self.gui)
+        self.vect_wizard.add_page(page)
 
         # Reset the cursor.
         wx.EndBusyCursor()
 
         # Execute the wizard.
-        wizard.run()
+        self.vect_wizard.run()
 
 
     def mode_dialog(self, event):
