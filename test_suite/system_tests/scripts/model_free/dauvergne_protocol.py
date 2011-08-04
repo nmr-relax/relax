@@ -214,5 +214,11 @@ value.set('1H', 'proton')
 # Execution.
 ############
 
+# The results dir.
+if not hasattr(ds, 'tmpdir'):
+    results_dir = 'dauvergne_protocol'
+else:
+    results_dir = ds.tmpdir
+
 for global_model in ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', 'final']:
-    dAuvergne_protocol(pipe_name=name, results_dir=ds.tmpdir, diff_model=global_model, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_sim_num=MC_NUM, conv_loop=CONV_LOOP)
+    dAuvergne_protocol(pipe_name=name, results_dir=results_dir, diff_model=global_model, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_sim_num=MC_NUM, conv_loop=CONV_LOOP)
