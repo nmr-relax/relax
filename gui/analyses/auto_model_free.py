@@ -350,6 +350,18 @@ class Auto_model_free(Base_analysis):
         if hasattr(cdp, 'ri_ids') and len(cdp.ri_ids) <= 3:
             missing.append("Insufficient relaxation data, 4 or more data sets are essential for the execution of the dauvergne_protocol auto-analysis.")
 
+        # Get the mode.
+        mode = gui_to_str(self.mode.GetValue())
+
+        # Solve for all global models.
+        if mode == 'Fully automated':
+            # The global model list.
+            data.global_models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', 'final']
+
+        # Any global model selected.
+        else:
+            data.global_models = [mode]
+
         # Spin vars.
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
@@ -374,6 +386,10 @@ class Auto_model_free(Base_analysis):
             # Test if the proton type has been set.
             if not hasattr(spin, 'proton_type') or spin.proton_type == None:
                 missing.append(msg % "proton type data")
+
+            # Test if the unit vectors have been loaded.
+            if not hasattr(spin, 'unit_vect') or spin.unit_vect == None:
+                missing.append(msg % "unit vectors")
 
         # Return the container and list of missing data.
         return data, missing
@@ -521,18 +537,6 @@ class Auto_model_free(Base_analysis):
         if len(missing):
             Missing_data(missing)
             return
-
-        # Get the mode.
-        mode = gui_to_str(self.mode.GetValue())
-
-        # Solve for all global models.
-        if mode == 'Fully automated':
-            # The global model list.
-            data.global_models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', 'final']
-
-        # Any global model selected.
-        else:
-            data.global_models = [mode]
 
         # Display the relax controller.
         if status.show_gui:
