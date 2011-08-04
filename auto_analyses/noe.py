@@ -70,7 +70,7 @@ class NOE_calc:
         """
 
         # Execution lock.
-        status.exec_lock.acquire('auto noe')
+        status.exec_lock.acquire('auto noe', mode='auto-analysis')
 
         # Store the args.
         self.pipe_name = pipe_name

@@ -161,7 +161,7 @@ class dAuvergne_protocol:
         """
 
         # Execution lock.
-        status.exec_lock.acquire('auto dauvergne protocol')
+        status.exec_lock.acquire('auto dauvergne protocol', mode='auto-analysis')
 
         # Store the args.
         self.diff_model = diff_model

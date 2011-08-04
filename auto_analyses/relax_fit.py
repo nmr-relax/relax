@@ -71,7 +71,7 @@ class Relax_fit:
         """
 
         # Execution lock.
-        status.exec_lock.acquire('auto relax fit')
+        status.exec_lock.acquire('auto relax fit', mode='auto-analysis')
 
         # Store the args.
         self.file_root = file_root
