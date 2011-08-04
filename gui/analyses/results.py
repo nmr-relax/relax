@@ -35,7 +35,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from gui.analyses.results_analysis import see_results
 from gui.fonts import font
 from gui.icons import relax_icons
-from gui.misc import add_border, gui_to_str, str_to_gui
+from gui.misc import add_border, gui_to_str, open_file, str_to_gui
 
 
 class Results_viewer(wx.Frame):
@@ -196,24 +196,29 @@ class Results_viewer(wx.Frame):
         @type event:    wx event
         """
 
-        # The selected file.
-        choice = gui_to_str(self.list.GetStringSelection())
-
         # No choice.
-        if not choice:
+        if self.list.GetSelection() == wx.NOT_FOUND:
             return
 
+        # Get the data.
+        data = self.list.GetClientData(self.list.GetSelection())
+
+        # Grace files.
+        if data[0] == 'grace':
+            print "grace"
+
         # A special table.
-        if choice == 'Table_of_Results':
+        elif data[0] == 'Table_of_Results':
             # The data.
             model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te]
 
             # Open.
             see_results(choice, model_result)
 
-        # Open the file.
+        # Open all other files in which ever editor the platform decides on.
         else:
-            see_results(choice, None)
+            open_file(data[1])
+
 
 
     def update_choices(self, event):
