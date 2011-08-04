@@ -27,6 +27,7 @@
 # Python module imports.
 from string import upper
 import wx
+from wx.lib import buttons
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -36,6 +37,7 @@ from gui.analyses.results_analysis import see_results
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import add_border, gui_to_str, open_file, str_to_gui
+from gui.paths import icon_22x22
 
 
 class Results_viewer(wx.Frame):
@@ -85,11 +87,12 @@ class Results_viewer(wx.Frame):
         box_centre.AddSpacer(self.border)
 
         # Add the open button.
-        self.button_open = wx.Button(self, -1, "Open")
+        self.button_open = buttons.ThemedGenBitmapTextButton(self, -1, None, " Open")
+        self.button_open.SetBitmapLabel(wx.Bitmap(icon_22x22.document_open, wx.BITMAP_TYPE_ANY))
         self.button_open.SetFont(font.normal)
-        self.button_open.SetMinSize((103, 27))
+        self.button_open.SetMinSize((103, 33))
         self.gui.Bind(wx.EVT_BUTTON, self.open_result_file, self.button_open)
-        box_centre.Add(self.button_open, 0, wx.ALIGN_RIGHT, 5)
+        box_centre.Add(self.button_open, 0, wx.ALIGN_RIGHT|wx.ADJUST_MINSIZE, 5)
 
         # Bind some events.
         self.Bind(wx.EVT_LEFT_DOWN, self.update_choices, self.analysis_list)
