@@ -141,7 +141,7 @@ class Stereochem_analysis:
         """
 
         # Execution lock.
-        status.exec_lock.acquire('auto stereochem analysis')
+        status.exec_lock.acquire('auto stereochem analysis', mode='auto-analysis')
 
         # Set up the analysis status object.
         status.init_auto_analysis('stereochem', type='stereochem')

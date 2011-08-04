@@ -140,7 +140,7 @@ class dAuvergne_protocol:
         """
 
         # Execution lock.
-        status.exec_lock.acquire(pipe_name)
+        status.exec_lock.acquire(pipe_name, mode='auto-analysis')
 
         # Store the args.
         self.pipe_name = pipe_name
