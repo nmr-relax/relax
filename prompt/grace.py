@@ -116,7 +116,7 @@ class Grace(User_fn_class):
         ["force", "A flag which, if set to True, will cause the file to be overwritten."]
     ]
     write._doc_desc = """
-        This is designed to be as flexible as possible so that any combination of data can be plotted.  The output is in the format of a Grace plot (also known as ACE/gr, Xmgr, and xmgrace) which only supports two dimensional plots.  Three types of keyword arguments can be used to create various types of plot.  These include the X-axis and Y-axis data types, the spin identification string, and an argument for selecting what to actually plot.
+        This is designed to be as flexible as possible so that any combination of data can be plotted.  The output is in the format of a Grace plot (also known as ACE/gr, Xmgr, and xmgrace) which only supports two dimensional plots.  Three types of keyword arguments can be used to create various types of plot.  These include the X-axis and Y-axis data types, the spin identification string, and an argument for selecting what to plot.
 
         The X-axis and Y-axis data type arguments should be plain strings, regular expression is not allowed.  If the X-axis data type argument is not given, the plot will default to having the spin sequence along the x-axis.  The two axes of the Grace plot can be absolutely any of the data types listed in the tables below.  The only limitation, currently anyway, is that the data must belong to the same data pipe.
 
