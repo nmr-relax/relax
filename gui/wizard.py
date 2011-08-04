@@ -821,8 +821,8 @@ class Wiz_page(wx.Panel):
         @type sizer:        wx.Sizer instance
         @param desc:        The text description.
         @type desc:         str
-        @keyword default:   The default text of the control.
-        @type default:      str
+        @keyword default:   The default value of the control.
+        @type default:      int
         @keyword min:       The minimum value allowed.
         @type min:          int
         @keyword max:       The maximum value allowed.
