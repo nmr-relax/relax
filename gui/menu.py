@@ -174,7 +174,8 @@ class Menu:
             ]],
             [wx.NewId(), "&gpl",   paths.icon_16x16.gnu_head, self.gui.user_functions.gpl.run, []],
             [wx.NewId(), "gra&ce", paths.icon_16x16.grace, None, [
-                [wx.NewId(), "&view",   paths.icon_16x16.grace, self.gui.user_functions.grace.view]
+                [wx.NewId(), "&view",   paths.icon_16x16.grace, self.gui.user_functions.grace.view],
+                [wx.NewId(), "&write",  paths.icon_16x16.save, self.gui.user_functions.grace.write]
             ]],
             [wx.NewId(), "&molecule", paths.icon_16x16.molecule, None, [
                 [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.molecule.copy],
