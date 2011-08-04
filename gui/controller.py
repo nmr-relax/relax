@@ -85,7 +85,7 @@ class Controller(wx.Frame):
         self.create_mf(sizer)
 
         # Add the main execution gauge.
-        self.main_gauge = self.add_gauge(self, sizer, "Execution status:")
+        self.main_gauge = self.add_gauge(self, sizer, "Execution progress:")
 
         # Initialise a queue for log messages.
         self.log_queue = Queue()
