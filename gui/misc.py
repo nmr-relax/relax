@@ -33,6 +33,7 @@ import wx
 
 # relax module imports.
 from relax_errors import AllRelaxErrors
+from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.errors import gui_raise
@@ -358,6 +359,10 @@ def protected_exec(fn, *args, **kargs):
 
     # Catch RelaxErrors.
     except AllRelaxErrors, instance:
+        # Raise the error in debugging mode.
+        if status.debug:
+            raise
+
         # Display a dialog with the error.
         gui_raise(instance, raise_flag=False)
 
