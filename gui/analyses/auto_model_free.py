@@ -393,7 +393,7 @@ class Auto_model_free(Base_analysis):
                 missing.append(msg % ("proton type data", "value.set"))
 
             # Test if the unit vectors have been loaded.
-            if vector_check and (not hasattr(spin, 'unit_vect') or spin.unit_vect == None):
+            if vector_check and (not hasattr(spin, 'xh_vect') or spin.xh_vect == None):
                 missing.append(msg % ("unit vectors", "structure.vectors"))
 
         # Return the container and list of missing data.
