@@ -492,17 +492,20 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Initialise the base class.
         super(LogCtrl, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
-        # Set the font info.
-        self.SetFont(font.modern_8)
+        # Create the standard style (style num 0).
+        self.StyleSetFont(0, font.modern_small)
 
-        # Create the STDERR style (with assignment 1).
+        # Create the STDERR style (style num 1).
         self.StyleSetForeground(1, wx.NamedColour('red'))
+        self.StyleSetFont(1, font.modern_small)
 
-        # Create the relax prompt style (assignment 2).
+        # Create the relax prompt style (style num 2).
         self.StyleSetForeground(2, wx.NamedColour('blue'))
+        self.StyleSetFont(2, font.modern_small_bold)
 
-        # Create the relax warning style (assignment 3).
+        # Create the relax warning style (style num 3).
         self.StyleSetForeground(3, wx.NamedColour('orange red'))
+        self.StyleSetFont(3, font.modern_small)
 
         # Bind events.
         self.Bind(wx.EVT_KEY_DOWN, self.capture_keys)
