@@ -202,7 +202,7 @@ class UF_page(Wiz_page):
             elif type == 'desc':
                 text_elements[-1].SetFont(font.normal)
             elif type == 'table':
-                text_elements[-1].SetFont(font.modern_8)
+                text_elements[-1].SetFont(font.modern_small)
 
             # Wrap the text.
             text_elements[-1].Wrap(self._main_size - 20)
