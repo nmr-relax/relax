@@ -103,16 +103,19 @@ class Menu:
         menu.AppendItem(build_menu_item(menu, id=41, text="Mailing list &contact (relax-users@gna.org)", icon=paths.icon_16x16.contact))
         menu.AppendItem(build_menu_item(menu, id=42, text="&References", icon=paths.icon_16x16.ref))
         menu.AppendSeparator()
+        menu.AppendItem(build_menu_item(menu, id=45, text="&Licence", icon=paths.icon_16x16.gnu_head))
+        menu.AppendSeparator()
         menu.AppendItem(build_menu_item(menu, id=43, text="About relaxG&UI", icon=paths.icon_16x16.about_relaxgui))
         menu.AppendItem(build_menu_item(menu, id=44, text="About rela&x", icon=paths.icon_16x16.about_relax))
         self.menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.relax_manual,   id=40)
-        self.gui.Bind(wx.EVT_MENU, self.gui.contact_relax,  id=41)
-        self.gui.Bind(wx.EVT_MENU, self.gui.references,     id=42)
-        self.gui.Bind(wx.EVT_MENU, self.gui.about_gui,      id=43)
-        self.gui.Bind(wx.EVT_MENU, self.gui.about_relax,    id=44)
+        self.gui.Bind(wx.EVT_MENU, self.gui.relax_manual,               id=40)
+        self.gui.Bind(wx.EVT_MENU, self.gui.contact_relax,              id=41)
+        self.gui.Bind(wx.EVT_MENU, self.gui.references,                 id=42)
+        self.gui.Bind(wx.EVT_MENU, self.gui.about_gui,                  id=43)
+        self.gui.Bind(wx.EVT_MENU, self.gui.about_relax,                id=44)
+        self.gui.Bind(wx.EVT_MENU, self.gui.user_functions.gpl.run,     id=45)
 
         # Add the menu bar GUI item to the main frame.
         self.gui.SetMenuBar(self.menubar)
