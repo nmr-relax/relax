@@ -341,20 +341,10 @@ class Main(wx.Frame):
         # Test if it exists.
         if not access(file, F_OK):
             error_message("The relax manual '%s' cannot be found.  Please compile using the scons program." % file)
+            return
 
         # Open the relax PDF manual using the native PDF reader.
-        else:
-            # Windows.
-            if platform.uname()[0] in ['Windows', 'Microsoft']:
-                os.startfile(file)
-
-            # Mac OS X.
-            elif platform.uname()[0] == 'Darwin':
-                os.system('open %s' % file)
-
-            # POSIX Systems with xdg-open.
-            else:
-                os.system('/usr/bin/xdg-open %s' % file)
+        open_file(file)
 
 
     def show_controller(self, event):

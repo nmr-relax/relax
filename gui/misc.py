@@ -26,6 +26,8 @@
 
 # Python module imports.
 from math import pow
+import os
+import platform
 from string import split
 import wx
 
@@ -317,6 +319,26 @@ def list_to_gui(list):
 
     # Convert.
     return unicode(list)
+
+
+def open_file(file):
+    """Open the file in the platform's native editor/viewer.
+
+    @param file:    The path of the file to open.
+    @type file:     str
+    """
+
+    # Windows.
+    if platform.uname()[0] in ['Windows', 'Microsoft']:
+        os.startfile(file)
+
+    # Mac OS X.
+    elif platform.uname()[0] == 'Darwin':
+        os.system('open %s' % file)
+
+    # POSIX Systems with xdg-open.
+    else:
+        os.system('/usr/bin/xdg-open %s' % file)
 
 
 def protected_exec(fn, *args, **kargs):
