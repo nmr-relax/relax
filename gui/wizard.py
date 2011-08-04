@@ -814,6 +814,77 @@ class Wiz_page(wx.Panel):
         """
 
 
+    def spin_control(self, sizer, desc, default='', min=None, max=None, tooltip=None, divider=None, padding=0, spacer=None):
+        """Build the spin control widget.
+
+        @param sizer:       The sizer to put the spin control widget into.
+        @type sizer:        wx.Sizer instance
+        @param desc:        The text description.
+        @type desc:         str
+        @keyword default:   The default text of the control.
+        @type default:      str
+        @keyword min:       The minimum value allowed.
+        @type min:          int
+        @keyword max:       The maximum value allowed.
+        @type max:          int
+        @keyword tooltip:   The tooltip which appears on hovering over the text or spin control.
+        @type tooltip:      str
+        @keyword divider:   The optional position of the divider.  If None, the class variable _div_left will be used.
+        @type divider:      None or int
+        @keyword padding:   Spacing to the left and right of the widgets.
+        @type padding:      int
+        @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
+        @type spacer:       None or int
+        @return:            The spin control object.
+        @rtype:             wx.TextCtrl instance
+        """
+
+        # Init.
+        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Left padding.
+        sub_sizer.AddSpacer(padding)
+
+        # The description.
+        text = wx.StaticText(self, -1, desc, style=wx.ALIGN_LEFT)
+        text.SetFont(font.normal)
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # The divider.
+        if not divider:
+            divider = self._div_left
+
+        # Spacing.
+        x, y = text.GetSize()
+        sub_sizer.AddSpacer((divider - x, 0))
+
+        # The spin control.
+        field = wx.SpinCtrl(self, -1, default, min=min, max=max)
+        field.SetMinSize((50, self.height_element))
+        field.SetFont(font.normal)
+        sub_sizer.Add(field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Right padding.
+        sub_sizer.AddSpacer(padding)
+
+        # Add to the main sizer.
+        sizer.Add(sub_sizer, 1, wx.EXPAND|wx.ALL, 0)
+
+        # Spacing below the widget.
+        if spacer == None:
+            sizer.AddStretchSpacer()
+        else:
+            sizer.AddSpacer(spacer)
+
+        # Tooltip.
+        if tooltip:
+            text.SetToolTipString(tooltip)
+            field.SetToolTipString(tooltip)
+
+        # Return the object.
+        return field
+
+
     def spin_id_element(self, sizer, desc="The spin ID string:", choices=['@N', '@C'], default=None, divider=None, padding=0, spacer=None):
         """Build a special the input field widget.
 
