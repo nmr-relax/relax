@@ -367,27 +367,27 @@ class Auto_model_free(Base_analysis):
                 continue
 
             # The message skeleton.
-            msg = "Spin '%s' - %s (try the value.set user function)." % (spin_id, "%s")
+            msg = "Spin '%s' - %s (try the %s user function)." % (spin_id, "%s", "%s")
 
             # Test if the bond length has been set.
             if not hasattr(spin, 'r') or spin.r == None:
-                missing.append(msg % "bond length data")
+                missing.append(msg % ("bond length data", "value.set"))
 
             # Test if the CSA value has been set.
             if not hasattr(spin, 'csa') or spin.csa == None:
-                missing.append(msg % "CSA data")
+                missing.append(msg % ("CSA data", "value.set"))
 
             # Test if the heteronucleus type has been set.
             if not hasattr(spin, 'heteronuc_type') or spin.heteronuc_type == None:
-                missing.append(msg % "heteronucleus type data")
+                missing.append(msg % ("heteronucleus type data", "value.set"))
 
             # Test if the proton type has been set.
             if not hasattr(spin, 'proton_type') or spin.proton_type == None:
-                missing.append(msg % "proton type data")
+                missing.append(msg % ("proton type data", "value.set"))
 
             # Test if the unit vectors have been loaded.
             if not hasattr(spin, 'unit_vect') or spin.unit_vect == None:
-                missing.append(msg % "unit vectors")
+                missing.append(msg % ("unit vectors", "structure.vectors"))
 
         # Return the container and list of missing data.
         return data, missing
