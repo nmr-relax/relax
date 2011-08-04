@@ -58,6 +58,7 @@ from gui.fonts import font
 from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.menu import Menu
 from gui.message import dir_message, error_message, Question
+from gui.misc import open_file
 from gui import paths
 from gui.pipe_editor import Pipe_editor
 from gui.references import References
