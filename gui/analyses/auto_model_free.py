@@ -50,6 +50,8 @@ from gui.fonts import font
 from gui.message import error_message, Question, Missing_data
 from gui.misc import add_border, gui_to_int, gui_to_str, list_to_gui, protected_exec, str_to_gui
 from gui import paths
+from gui.user_functions.structure import Read_pdb_page, Vectors_page
+from gui.wizard import Wiz_window
 
 
 class About_window(About_base):
@@ -252,15 +254,6 @@ class Auto_model_free(Base_analysis):
         # Sizer.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        # Text.
-        label = wx.StaticText(self, -1, "Value setting:")
-        label.SetMinSize((self.width_text, -1))
-        label.SetFont(font.normal)
-        sizer.Add(label, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
-
-        # Spacer.
-        sizer.AddSpacer((self.spacer_horizontal, -1))
-
         # CSA button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " CSA")
         button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
@@ -295,6 +288,15 @@ class Auto_model_free(Base_analysis):
         button.SetSize((-1, 20))
         button.SetToolTipString("Set the type of heteronucleus via the value.set user function.")
         self.gui.Bind(wx.EVT_BUTTON, self.value_set_heteronuc_type, button)
+        sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Unit vectors button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Unit vectors")
+        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.structure, wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
+        button.SetSize((-1, 20))
+        button.SetToolTipString("Load unit vectors from PDB files.")
+        self.gui.Bind(wx.EVT_BUTTON, self.load_unit_vectors, button)
         sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the element to the box.
@@ -551,6 +553,34 @@ class Auto_model_free(Base_analysis):
 
         # Terminate the event.
         event.Skip()
+
+
+    def load_unit_vectors(self, event):
+        """Create the wizard for structure.read_pdb and structure.vectors.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Change the cursor to busy.
+        wx.BeginBusyCursor()
+
+        # Create the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title="Load unit vectors from file")
+
+        # Create the PDB reading page.
+        page = Read_pdb_page(wizard, self.gui)
+        wizard.add_page(page, skip_button=True)
+
+        # Create the vector loading page.
+        page = Vectors_page(wizard, self.gui)
+        wizard.add_page(page)
+
+        # Reset the cursor.
+        wx.EndBusyCursor()
+
+        # Execute the wizard.
+        wizard.run()
 
 
     def mode_dialog(self, event):
