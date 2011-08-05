@@ -419,18 +419,17 @@ class Controller(wx.Frame):
 
                 # Update the progress bar.
                 percent = int(100 * no / float(total_models))
-                if percent > 100:
-                    percent = 100
                 wx.CallAfter(self.progress_gauge_mf.SetValue, percent)
 
         # Sphere to ellipsoid Models.
         elif status.auto_analysis[key].diff_model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
             # Check that the round has been set.
-            if status.auto_analysis[key].round != None:
+            if status.auto_analysis[key].round == None:
+                sys.__stderr__.write("Reset progress_gauge_mf\n")
+                wx.CallAfter(self.progress_gauge_mf.SetValue, 0)
+            else:
                 # The round as a percentage.
-                percent = int(100 * (status.auto_analysis[key].round - 1) / status.auto_analysis[key].max_iter)
-                if percent > 100:
-                    percent = 100
+                percent = int(100 * (status.auto_analysis[key].round + 1) / (status.auto_analysis[key].max_iter + 1))
 
                 # Update the progress bar.
                 wx.CallAfter(self.progress_gauge_mf.SetValue, percent)
@@ -438,9 +437,7 @@ class Controller(wx.Frame):
         # Monte Carlo simulations.
         if status.auto_analysis[key].mc_number:
             # The simulation number as a percentage.
-            percent = int(100 * (status.auto_analysis[key].mc_number + 2) / cdp.sim_number)
-            if percent > 100:
-                percent = 100
+            percent = int(100 * status.auto_analysis[key].mc_number / cdp.sim_number)
 
             # Update the progress bar.
             wx.CallAfter(self.mc_gauge_mf.SetValue, percent)
@@ -457,9 +454,7 @@ class Controller(wx.Frame):
         # Monte Carlo simulations.
         if status.auto_analysis[key].mc_number:
             # The simulation number as a percentage.
-            percent = int(100 * (status.auto_analysis[key].mc_number + 2) / cdp.sim_number)
-            if percent > 100:
-                percent = 100
+            percent = int(100 * status.auto_analysis[key].mc_number / cdp.sim_number)
 
             # Update the progress bar.
             wx.CallAfter(self.mc_gauge_rx.SetValue, percent)
