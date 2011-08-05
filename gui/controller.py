@@ -423,15 +423,17 @@ class Controller(wx.Frame):
                     percent = 100
                 wx.CallAfter(self.progress_gauge_mf.SetValue, percent)
 
-        # Sphere to Ellipsoid Models.
+        # Sphere to ellipsoid Models.
         elif status.auto_analysis[key].diff_model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
-            # The round as a percentage.
-            percent = int(100 * (status.auto_analysis[key].round - 1) / status.auto_analysis[key].max_iter)
-            if percent > 100:
-                percent = 100
+            # Check that the round has been set.
+            if status.auto_analysis[key].round != None:
+                # The round as a percentage.
+                percent = int(100 * (status.auto_analysis[key].round - 1) / status.auto_analysis[key].max_iter)
+                if percent > 100:
+                    percent = 100
 
-            # Update the progress bar.
-            wx.CallAfter(self.progress_gauge_mf.SetValue, percent)
+                # Update the progress bar.
+                wx.CallAfter(self.progress_gauge_mf.SetValue, percent)
 
         # Monte Carlo simulations.
         if status.auto_analysis[key].mc_number:
