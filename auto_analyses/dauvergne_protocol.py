@@ -117,7 +117,7 @@ class dAuvergne_protocol:
 
     # Some class variables.
     opt_func_tol = 1e-25
-    opt_max_iterations = 1e7
+    opt_max_iterations = int(1e7)
 
     def __init__(self, pipe_name=None, results_dir=None, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], grid_inc=11, diff_tensor_grid_inc={'sphere': 11, 'prolate': 11, 'oblate': 11, 'ellipsoid': 6}, min_algor='newton', mc_sim_num=500, max_iter=None, user_fns=None, conv_loop=True):
         """Perform the full model-free analysis protocol of d'Auvergne and Gooley, 2008b.
