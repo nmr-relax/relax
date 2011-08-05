@@ -164,7 +164,7 @@ class Load_spins_page(UF_page):
 
         # The ave_pos arg.
         self.ave_pos = self.boolean_selector(sizer, "Average the atom position across models:", tooltip=self.uf._doc_args_dict['ave_pos'])
-        self.ave_pos.SetValue('True')
+        self.ave_pos.SetValue(str_to_gui('True'))
 
 
     def on_execute(self):
@@ -210,7 +210,7 @@ class Read_pdb_page(UF_page):
 
         # The PDB reader (default to internal).
         self.parser = self.combo_box(sizer, "The PDB parser:", choices=['internal', 'scientific'], tooltip=self.uf._doc_args_dict['parser'])
-        self.parser.SetValue('internal')
+        self.parser.SetValue(str_to_gui('internal'))
 
 
     def on_execute(self):
@@ -290,11 +290,11 @@ class Vectors_page(UF_page):
 
         # The average.
         self.ave = self.boolean_selector(sizer, "Average the vector across models:", tooltip=self.uf._doc_args_dict['ave'])
-        self.ave.SetValue('True')
+        self.ave.SetValue(str_to_gui('True'))
 
         # The unit flag.
         self.unit = self.boolean_selector(sizer, "Calculate unit vectors:", tooltip=self.uf._doc_args_dict['unit'])
-        self.unit.SetValue('True')
+        self.unit.SetValue(str_to_gui('True'))
 
 
     def on_execute(self):

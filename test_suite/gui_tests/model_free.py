@@ -49,7 +49,7 @@ class Mf(GuiTestCase):
         self.gui.analysis.menu_new(None)
         page = self.gui.analysis.new_wizard.wizard.get_page(0)
         page.select_mf(None)
-        page.analysis_name.SetValue("Model-free test")
+        page.analysis_name.SetValue(str_to_gui("Model-free test"))
         self.gui.analysis.new_wizard.wizard._go_next(None)
         page = self.gui.analysis.new_wizard.wizard.get_page(1)
         self.gui.analysis.new_wizard.wizard._go_next(None)

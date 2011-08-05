@@ -208,7 +208,7 @@ class Write_page(UF_page):
 
         # The column separator.
         self.sep = self.combo_box(sizer, "Column separator:", ["white space", ",", ";", ":", ""], tooltip=self.uf._doc_args_dict['sep'], read_only=False)
-        self.sep.SetValue("white space")
+        self.sep.SetValue(str_to_gui("white space"))
 
         # The column flags.
         self.mol_name_flag = self.boolean_selector(sizer, "Molecule name flag:", tooltip=self.uf._doc_args_dict['mol_name_flag'])

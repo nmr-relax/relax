@@ -76,11 +76,11 @@ class Spin(UF_base):
 
         # Default molecule name.
         if mol_name:
-            page.mol.SetValue(mol_name)
+            page.mol.SetValue(str_to_gui(mol_name))
 
         # Default residue.
         if res_num or res_name:
-            page.res.SetValue("%s %s" % (res_num, res_name))
+            page.res.SetValue(str_to_gui("%s %s" % (res_num, res_name)))
 
         # Execute the wizard.
         wizard.run()
@@ -124,15 +124,15 @@ class Spin(UF_base):
 
         # Default molecule name.
         if mol_name:
-            page.mol.SetValue(mol_name)
+            page.mol.SetValue(str_to_gui(mol_name))
 
         # Default residue.
         if res_num or res_name:
-            page.res.SetValue("%s %s" % (res_num, res_name))
+            page.res.SetValue(str_to_gui("%s %s" % (res_num, res_name)))
 
         # Default spin.
         if spin_num or spin_name:
-            page.spin.SetValue("%s %s" % (spin_num, spin_name))
+            page.spin.SetValue(str_to_gui("%s %s" % (spin_num, spin_name)))
 
         # Execute the wizard.
         wizard.run()
@@ -442,7 +442,7 @@ class Create_pseudo_page(UF_page, Mol_res_spin):
 
         # The pos averaging.
         self.averaging = self.combo_box(sizer, "The positional averaging:", tooltip=self.uf._doc_args_dict['averaging'], choices=['linear'])
-        self.averaging.SetValue('linear')
+        self.averaging.SetValue(str_to_gui('linear'))
 
 
     def on_execute(self):
@@ -563,7 +563,7 @@ class Element_page(UF_page, Mol_res_spin):
 
         # The force flag.
         self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'])
-        self.force.SetValue('False')
+        self.force.SetValue(str_to_gui('False'))
 
 
     def on_execute(self):
@@ -601,7 +601,7 @@ class Name_page(UF_page, Mol_res_spin):
 
         # The force flag.
         self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'])
-        self.force.SetValue('False')
+        self.force.SetValue(str_to_gui('False'))
 
 
     def on_execute(self):
@@ -639,7 +639,7 @@ class Number_page(UF_page, Mol_res_spin):
 
         # The force flag.
         self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'])
-        self.force.SetValue('False')
+        self.force.SetValue(str_to_gui('False'))
 
 
     def on_execute(self):

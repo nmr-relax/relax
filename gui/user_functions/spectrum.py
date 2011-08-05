@@ -256,12 +256,12 @@ class Read_intensities_page(UF_page):
         # The heteronucleus and proton.
         self.heteronuc = self.input_field(sizer, "The heternucleus name:", tooltip=self.uf._doc_args_dict['heteronuc'])
         self.proton = self.input_field(sizer, "The heternucleus name:", tooltip=self.uf._doc_args_dict['proton'])
-        self.heteronuc.SetValue('N')
-        self.proton.SetValue('H')
+        self.heteronuc.SetValue(str_to_gui('N'))
+        self.proton.SetValue(str_to_gui('H'))
 
         # The integration method.
         self.int_method = self.combo_box(sizer, "The peak integration method:", tooltip=self.uf._doc_args_dict['int_method'], choices=['height', 'point sum', 'other'])
-        self.int_method.SetValue('height')
+        self.int_method.SetValue(str_to_gui('height'))
 
         # The integration column.
         self.int_col = self.input_field(sizer, "The integration column:", tooltip=self.uf._doc_args_dict['int_col'])
