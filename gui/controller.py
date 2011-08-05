@@ -553,6 +553,14 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         elif 'darwin' not in sys.platform and event.GetKeyCode() == 342:
             self.find_next(event)
 
+        # Allow caret movements (arrow keys, home, end).
+        if event.GetKeyCode() in [312, 313, 314, 315, 316, 317]:
+            event.Skip()
+
+        # Allow scrolling (pg up, pg dn):
+        if event.GetKeyCode() in [366, 367]:
+            event.Skip()
+
 
     def find(self, event):
         """Find the text in the log control.
