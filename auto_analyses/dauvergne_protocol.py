@@ -622,9 +622,8 @@ class dAuvergne_protocol:
                 if name not in dir_list:
                     raise RelaxError("The %s model must be optimised first." % name)
 
-            # Create the local_tm data pipe by copying.
-            self.interpreter.pipe.copy(self.pipe_name, 'local_tm')
-            self.interpreter.pipe.switch('local_tm')
+            # Create the local_tm data pipe.
+            self.interpreter.pipe.create('local_tm', 'mf')
 
             # Load the local tm diffusion model MI results.
             self.interpreter.results.read(file='results', dir=self.results_dir+'local_tm'+sep+'aic')
@@ -644,9 +643,8 @@ class dAuvergne_protocol:
                     # Throw an error to prevent misuse of the script.
                     raise RelaxError("Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script.")
 
-                # Create the data pipe by copying.
-                self.interpreter.pipe.copy(self.pipe_name, model)
-                self.interpreter.pipe.switch(model)
+                # Create the data pipe.
+                self.interpreter.pipe.create(model, 'mf')
 
                 # Load the diffusion model results.
                 self.interpreter.results.read(file='results', dir=self.results_dir+model + sep+'round_'+repr(self.round)+sep+'opt')
