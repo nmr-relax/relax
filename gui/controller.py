@@ -518,7 +518,17 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.StyleSetForeground(3, wx.NamedColour('orange red'))
         self.StyleSetFont(3, font.modern_small)
 
+        # Initilise the find dialog.
+        self.find_dlg = None
+
+        # The data for the find dialog.
+        self.find_data = wx.FindReplaceData()
+        self.find_data.SetFlags(wx.FR_DOWN)
+
         # Bind events.
+        self.Bind(wx.EVT_FIND, self.find)
+        self.Bind(wx.EVT_FIND_NEXT, self.find)
+        self.Bind(wx.EVT_FIND_CLOSE, self.find_close)
         self.Bind(wx.EVT_KEY_DOWN, self.capture_keys)
 
 
@@ -529,9 +539,113 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         @type event:    wx event
         """
 
-        # Allow Ctrl+C events.
+        # Allow Ctrl-C events.
         if event.ControlDown() and event.GetKeyCode() == 67:
             event.Skip()
+
+        # The find dialog (Ctrl-F).
+        if event.ControlDown() and event.GetKeyCode() == 70:
+            self.find_open(event)
+
+        # Find next (Ctrl-G on Mac OS X, F3 on all others).
+        if 'darwin' in sys.platform and event.ControlDown() and event.GetKeyCode() == 71:
+            self.find_next(event)
+        elif 'darwin' not in sys.platform and event.GetKeyCode() == 342:
+            self.find_next(event)
+
+
+    def find(self, event):
+        """Find the text in the log control.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The text.
+        sel = self.find_data.GetFindString()
+
+        # The search flags.
+        flags = event.GetFlags()
+
+        # Shift the search anchor 1 character forwards (if not at the end) to ensure the next instance is found.
+        pos = self.GetCurrentPos()
+        if pos != self.GetLength():
+            self.SetCurrentPos(pos+1)
+        self.SearchAnchor()
+
+        # The direction.
+        forwards = wx.FR_DOWN & flags
+
+        # Find the next instance of the text.
+        if forwards:
+            pos = self.SearchNext(flags, sel)
+
+        # Find the previous instance of the text.
+        else:
+            pos = self.SearchPrev(flags, sel)
+
+        # Nothing found.
+        if pos == -1:
+            # Go to the start or end.
+            if forwards:
+                self.GotoPos(self.GetLength())
+            else:
+                self.GotoPos(pos)
+
+            # Show a dialog that no text was found.
+            text = "The string '%s' could not be found." % sel
+            nothing = wx.MessageDialog(self, text, caption="Not found", style=wx.ICON_INFORMATION|wx.OK)
+            nothing.SetSize((300, 200))
+            nothing.ShowModal()
+            nothing.Destroy()
+
+        # Found text.
+        else:
+            # Move to the line.
+            self.EnsureCaretVisible()
+
+
+    def find_close(self, event):
+        """Close the find dialog.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Kill the dialog.
+        self.find_dlg.Destroy()
+
+        # Set the object to None to signal the close.
+        self.find_dlg = None
+
+
+    def find_open(self, event):
+        """Display the text finding dialog.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Initialise the dialog if it doesn't exist.
+        if self.find_dlg == None:
+            self.find_dlg = wx.FindReplaceDialog(self, self.find_data, "Find")
+            self.find_dlg.Show(True)
+
+
+    def find_next(self, event):
+        """Find the next instance of the text.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Text has already been set.
+        if self.find_data.GetFindString():
+            self.find(event)
+
+        # Open the dialog.
+        else:
+            self.find_open(event)
 
 
     def get_text(self):
