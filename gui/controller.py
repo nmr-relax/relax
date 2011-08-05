@@ -525,6 +525,16 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.find_data = wx.FindReplaceData()
         self.find_data.SetFlags(wx.FR_DOWN)
 
+        # Turn off the pop up menu.
+        self.UsePopUp(0)
+
+        # IDs for the menu entries.
+        self.menu_id_find = wx.NewId()
+        self.menu_id_copy = wx.NewId()
+        self.menu_id_select_all = wx.NewId()
+        self.menu_id_zoom_in = wx.NewId()
+        self.menu_id_zoom_out = wx.NewId()
+
         # Make the control read only.
         self.SetReadOnly(True)
 
@@ -533,6 +543,12 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.Bind(wx.EVT_FIND_NEXT, self.find)
         self.Bind(wx.EVT_FIND_CLOSE, self.find_close)
         self.Bind(wx.EVT_KEY_DOWN, self.capture_keys)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.pop_up_menu)
+        self.Bind(wx.EVT_MENU, self.find_open, id=self.menu_id_find)
+        self.Bind(wx.EVT_MENU, self.on_copy, id=self.menu_id_copy)
+        self.Bind(wx.EVT_MENU, self.on_select_all, id=self.menu_id_select_all)
+        self.Bind(wx.EVT_MENU, self.on_zoom_in, id=self.menu_id_zoom_in)
+        self.Bind(wx.EVT_MENU, self.on_zoom_out, id=self.menu_id_zoom_out)
 
 
     def capture_keys(self, event):
@@ -744,6 +760,74 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.SetCurrentPos(new_curr_pos)
         self.SetSelection(new_pos_start, new_pos_end)
         self.LineScroll(0, prune)
+
+
+    def on_copy(self, event):
+        """Copy the selected text.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Copy the selection to the clipboard.
+        self.Copy()
+
+
+    def on_select_all(self, event):
+        """Select all text in the control.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Select all text in the control.
+        self.SelectAll()
+
+
+    def on_zoom_in(self, event):
+        """Zoom in by increase the font by 1 point size.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Zoom.
+        self.ZoomIn()
+
+
+    def on_zoom_out(self, event):
+        """Zoom out by decreasing the font by 1 point size.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Zoom.
+        self.ZoomOut()
+
+
+    def pop_up_menu(self, event):
+        """Override the StyledTextCtrl pop up menu.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Create the menu.
+        menu = wx.Menu()
+
+        # Add the entries.
+        menu.Append(self.menu_id_find, "Find")
+        menu.AppendSeparator()
+        menu.Append(self.menu_id_copy, "Copy")
+        menu.Append(self.menu_id_select_all, "Select all")
+        menu.AppendSeparator()
+        menu.Append(self.menu_id_zoom_in, "Zoom in")
+        menu.Append(self.menu_id_zoom_out, "Zoom out")
+
+        # Pop up the menu.
+        self.PopupMenu(menu)
+        menu.Destroy()
 
 
     def write(self):
