@@ -203,6 +203,7 @@ class Auto_model_free(Base_analysis):
 
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].grid_inc = None
+            ds.relax_gui.analyses[data_index].diff_tensor_grid_inc = {'sphere': 11, 'prolate': 11, 'oblate': 11, 'ellipsoid': 6}
             ds.relax_gui.analyses[data_index].mc_sim_num = None
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
             ds.relax_gui.analyses[data_index].local_tm_models = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
@@ -328,6 +329,7 @@ class Auto_model_free(Base_analysis):
 
         # Increment size.
         data.inc = gui_to_int(self.grid_inc.GetValue())
+        data.diff_tensor_grid_inc = self.data.diff_tensor_grid_inc
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
@@ -719,7 +721,7 @@ class Execute_mf(Execute):
         # Loop over the models.
         for global_model in self.data.global_models:
             # Start the protocol.
-            dauvergne_protocol.dAuvergne_protocol(pipe_name=self.data.pipe_name, results_dir=self.data.save_dir, diff_model=global_model, mf_models=self.data.mf_models, local_tm_models=self.data.local_tm_models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, max_iter=self.data.max_iter, conv_loop=self.data.conv_loop)
+            dauvergne_protocol.dAuvergne_protocol(pipe_name=self.data.pipe_name, results_dir=self.data.save_dir, diff_model=global_model, mf_models=self.data.mf_models, local_tm_models=self.data.local_tm_models, grid_inc=self.data.inc, diff_tensor_grid_inc=self.data.diff_tensor_grid_inc, mc_sim_num=self.data.mc_sim_num, max_iter=self.data.max_iter, conv_loop=self.data.conv_loop)
 
 
 
