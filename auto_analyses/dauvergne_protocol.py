@@ -664,8 +664,8 @@ class dAuvergne_protocol:
                     if converged or not self.conv_loop:
                         break
 
-                # Unset the status.
-                status.dAuvergne_protocol.round = None
+            # Unset the status.
+            status.dAuvergne_protocol.round = None
 
 
         # Final run.
