@@ -556,7 +556,7 @@ class Spin(Container_base):
                     table.Append((str_to_gui(''), str_to_gui(" '%s': %s," % (keys[i], obj[keys[i]])), str_to_gui('')))
 
                 # The last row.
-                table.Append((str_to_gui(')', str_to_gui(" '%s': %s}" % (keys[-1], obj[keys[-1]])), str_to_gui('')))
+                table.Append((str_to_gui(''), str_to_gui(" '%s': %s}" % (keys[-1], obj[keys[-1]])), str_to_gui('')))
 
             # All other data types.
             else:
