@@ -226,4 +226,4 @@ dAuvergne_protocol.opt_max_iterations = 1000
 
 # Loop over all global models.
 for global_model in ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', 'final']:
-    dAuvergne_protocol(pipe_name=name, results_dir=results_dir, diff_model=global_model, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, grid_inc=GRID_INC, diff_tensor_grid_inc={'sphere': 5, 'prolate': 5, 'oblate': 5, 'ellipsoid': 3}, min_algor=MIN_ALGOR, mc_sim_num=MC_NUM, max_iter=5, conv_loop=CONV_LOOP)
+    dAuvergne_protocol(pipe_name=name, results_dir=results_dir, diff_model=global_model, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, grid_inc=GRID_INC, diff_tensor_grid_inc={'sphere': 5, 'prolate': 5, 'oblate': 5, 'ellipsoid': 3}, min_algor=MIN_ALGOR, mc_sim_num=MC_NUM, max_iter=1, conv_loop=CONV_LOOP)
