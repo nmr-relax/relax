@@ -318,7 +318,7 @@ class Auto_noe(Base_analysis):
             self.data.save_dir = backup
 
         # Place the path in the text box.
-        self.field_results_dir.SetValue(self.data.save_dir)
+        self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
 
 
     def sync_ds(self, upload=False):
@@ -404,7 +404,7 @@ class Auto_noe(Base_analysis):
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['pts'])
-        page.spectrum_id1.SetValue(id)
+        page.spectrum_id1.SetValue(str_to_gui(id))
 
 
     def wizard_update_repl(self):
@@ -418,7 +418,7 @@ class Auto_noe(Base_analysis):
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['repl'])
-        page.spectrum_id1.SetValue(id)
+        page.spectrum_id1.SetValue(str_to_gui(id))
 
 
     def wizard_update_rmsd(self):
@@ -432,7 +432,7 @@ class Auto_noe(Base_analysis):
 
         # Set the ID in the spectrum.baseplane_rmsd page.
         page = self.wizard.get_page(self.page_indices['rmsd'])
-        page.spectrum_id.SetValue(id)
+        page.spectrum_id.SetValue(str_to_gui(id))
 
 
     def wizard_update_spectrum_type(self):
@@ -446,7 +446,7 @@ class Auto_noe(Base_analysis):
 
         # Set the ID in the noe.spectrum_type page.
         page = self.wizard.get_page(self.page_indices['spectrum_type'])
-        page.spectrum_id.SetValue(id)
+        page.spectrum_id.SetValue(str_to_gui(id))
 
 
 

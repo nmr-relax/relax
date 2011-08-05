@@ -31,6 +31,9 @@ import wx
 # relax module imports.
 from status import Status; status = Status()
 
+# relax GUI module imports.
+from gui.misc import str_to_gui
+
 
 def opendir(msg, default): # select directory, msg is message to display, default is starting directory
     newdir = None
@@ -108,7 +111,7 @@ class RelaxFileDialog(wx.FileDialog):
         file = self.get_file()
 
         # Update the field.
-        self.field.SetValue(file)
+        self.field.SetValue(str_to_gui(file))
 
         # Scroll the text to the end.
         self.field.SetInsertionPoint(len(file))

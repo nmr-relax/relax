@@ -406,7 +406,7 @@ class Controller(wx.Frame):
             return
 
         # Set the diffusion model.
-        wx.CallAfter(self.global_model_mf.SetValue, status.auto_analysis[key].diff_model)
+        wx.CallAfter(self.global_model_mf.SetValue, str_to_gui(status.auto_analysis[key].diff_model))
 
         # Update the progress gauge for the local tm model.
         if status.auto_analysis[key].diff_model == 'local_tm':

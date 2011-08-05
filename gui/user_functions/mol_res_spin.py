@@ -32,7 +32,7 @@ from generic_fns import pipes
 
 # GUI module imports.
 from base import UF_base
-from gui.misc import gui_to_int, gui_to_str
+from gui.misc import gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 
 
@@ -191,7 +191,7 @@ class Mol_res_spin:
         self.res.Clear()
 
         # Clear the text.
-        self.res.SetValue('')
+        self.res.SetValue(str_to_gui(''))
 
         # The list of residue names.
         mol_id = generate_spin_id(str(self.mol.GetValue()))
@@ -210,7 +210,7 @@ class Mol_res_spin:
         self.spin.Clear()
 
         # Clear the text.
-        self.spin.SetValue('')
+        self.spin.SetValue(str_to_gui(''))
 
         # Get the residue ID.
         res_id = self._get_res_id()

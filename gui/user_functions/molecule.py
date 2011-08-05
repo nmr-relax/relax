@@ -82,7 +82,7 @@ class Molecule(UF_base):
 
         # Default molecule name.
         if mol_name:
-            page.mol.SetValue(mol_name)
+            page.mol.SetValue(str_to_gui(mol_name))
 
         # Execute the wizard.
         wizard.run()

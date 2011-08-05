@@ -38,7 +38,7 @@ from status import Status; status = Status()
 from gui.filedialog import RelaxFileDialog, opendir
 from gui.fonts import font
 from gui.message import error_message
-from gui.misc import add_border
+from gui.misc import add_border, str_to_gui
 from gui import paths
 
 
@@ -86,7 +86,7 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
         self.prev_val = grid.GetTable().GetValue(row, col)
 
         # Set the starting value.
-        self.cell.SetValueString(self.prev_val)
+        self.cell.SetValueString(str_to_gui(self.prev_val))
 
         # Set the focus to the cell.
         self.cell.SetFocus()
@@ -151,7 +151,7 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
             text = ''
         else:
             text = str(value)
-        grid.GetTable().SetValue(row, col, text)
+        grid.GetTable().SetValue(row, col, str_to_gui(text))
 
         # The delay cycle time.
         time = self.parent.delay_time.GetValue()
@@ -163,7 +163,7 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
 
         # Update the relaxation delay time.
         delay_time = float(time) * float(value)
-        grid.GetTable().SetValue(row, col-1, str(delay_time))
+        grid.GetTable().SetValue(row, col-1, str_to_gui(delay_time))
 
         # A change occurred.
         return True
@@ -173,7 +173,7 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
         """Reset the cell to the previous value."""
 
         # Set the previous value.
-        self.cell.SetValueString(self.prev_val)
+        self.cell.SetValueString(str_to_gui(self.prev_val))
 
         # Set a flag for EndEdit to catch a reset.
         self.reset = True
@@ -195,7 +195,7 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
             num = int(chr(key))
 
             # Set the value.
-            self.cell.SetValue(num)
+            self.cell.SetValue(str_to_gui(num))
 
             # Set the insertion point to the end.
             self.cell.SetSelection(1,1)
@@ -779,21 +779,21 @@ class Grid_base:
         else:
             # The delay time.
             if hasattr(self.data, 'delay_time'):
-                self.delay_time.SetValue(self.data.delay_time)
+                self.delay_time.SetValue(str_to_gui(self.data.delay_time))
 
             # Loop over the rows.
             for i in range(len(self.data.file_list)):
                 # The file name.
                 if hasattr(self.data, 'file_list'):
-                    self.grid.SetCellValue(i, 0, str(self.data.file_list[i]))
+                    self.grid.SetCellValue(i, 0, str_to_gui(self.data.file_list[i]))
 
                 # The relaxation time.
                 if hasattr(self.data, 'relax_times'):
-                    self.grid.SetCellValue(i, 1, str(self.data.relax_times[i]))
+                    self.grid.SetCellValue(i, 1, str_to_gui(self.data.relax_times[i]))
 
                 # The number of cycles.
                 if hasattr(self.data, 'ncyc'):
-                    self.grid.SetCellValue(i, 2, str(self.data.ncyc[i]))
+                    self.grid.SetCellValue(i, 2, str_to_gui(self.data.ncyc[i]))
 
             # Update the grid.
             self.update_grid()

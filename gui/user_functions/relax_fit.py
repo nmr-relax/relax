@@ -32,7 +32,7 @@ from generic_fns import pipes
 # GUI module imports.
 from base import UF_base, UF_page
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.misc import gui_to_float, gui_to_int, gui_to_str
+from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.wizard import Wiz_window
 
 
@@ -136,7 +136,7 @@ class Select_model_page(UF_page):
 
         # The model.
         self.model = self.combo_box(sizer, "The model:", choices=['exp', 'inv'], tooltip=self.uf._doc_args_dict['model'])
-        self.model.SetValue('exp')
+        self.model.SetValue(str_to_gui('exp'))
 
         # Spacing.
         sizer.AddStretchSpacer()

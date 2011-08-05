@@ -58,7 +58,7 @@ class Grace(UF_base):
 
         # Default file name.
         if file:
-            page.file.SetValue(file)
+            page.file.SetValue(str_to_gui(file))
 
         # Execute the wizard.
         wizard.run()
@@ -80,7 +80,7 @@ class Grace(UF_base):
 
         # Default file name.
         if file:
-            page.file.SetValue(file)
+            page.file.SetValue(str_to_gui(file))
 
         # Execute the wizard.
         wizard.run()
@@ -154,7 +154,7 @@ class Write_page(UF_page):
 
         # The plot data.
         self.plot_data = self.combo_box(sizer, "The plot data:", ['value', 'error', 'sims'], tooltip=self.uf._doc_args_dict['plot_data'], read_only=True)
-        self.plot_data.SetValue('value')
+        self.plot_data.SetValue(str_to_gui('value'))
 
         # Data normalisation.
         self.norm = self.boolean_selector(sizer, "Data normalisation flag:", tooltip=self.uf._doc_args_dict['norm'], default=False)

@@ -35,7 +35,7 @@ from status import Status; status = Status()
 from gui import paths
 from gui.components.menu import build_menu_item
 from gui.icons import relax_icons
-from gui.misc import gui_to_str
+from gui.misc import gui_to_str, str_to_gui
 from gui.spin_viewer.splitter import Tree_splitter
 
 
@@ -298,7 +298,7 @@ class Spin_view_window(wx.Frame):
             self.tree_panel.update()
 
         # Set the pipe name to the cdp.
-        self.pipe_name.SetValue(pipe)
+        self.pipe_name.SetValue(str_to_gui(pipe))
 
         # Reset the cursor.
         wx.EndBusyCursor()

@@ -72,7 +72,7 @@ class Residue(UF_base):
 
         # Default molecule name.
         if mol_name:
-            page.mol.SetValue(mol_name)
+            page.mol.SetValue(str_to_gui(mol_name))
 
         # Execute the wizard.
         wizard.run()
@@ -98,11 +98,11 @@ class Residue(UF_base):
 
         # Default molecule name.
         if mol_name:
-            page.mol.SetValue(mol_name)
+            page.mol.SetValue(str_to_gui(mol_name))
 
         # Default residue.
         if res_num or res_name:
-            page.res.SetValue("%s %s" % (res_num, res_name))
+            page.res.SetValue(str_to_gui("%s %s" % (res_num, res_name)))
 
         # Execute the wizard.
         wizard.run()

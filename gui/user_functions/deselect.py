@@ -141,7 +141,7 @@ class Read_page(UF_page):
 
         # The boolean operator specifying how spins should be deselected.
         self.boolean = self.combo_box(sizer, "Boolean operator:", choices=['OR', 'NOR', 'AND', 'NAND', 'XOR', 'XNOR'], tooltip=boolean_doc[2])
-        self.boolean.SetValue('OR')
+        self.boolean.SetValue(str_to_gui('OR'))
 
         # The change_all flag.
         self.change_all = self.boolean_selector(sizer, "Change all:", tooltip=self.uf._doc_args_dict['change_all'], default=False)

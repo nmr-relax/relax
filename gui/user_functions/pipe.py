@@ -31,7 +31,7 @@ from generic_fns.pipes import VALID_TYPES, cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.misc import gui_to_list, gui_to_str
+from gui.misc import gui_to_list, gui_to_str, str_to_gui
 from gui.components.combo_list import Combo_list
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
@@ -140,7 +140,7 @@ class Copy_page(UF_page):
         self.pipe_from.Clear()
 
         # Clear the pipe name.
-        self.pipe_from.SetValue('')
+        self.pipe_from.SetValue(str_to_gui(''))
 
         # The list of pipe names.
         for name in pipe_names():
@@ -218,7 +218,7 @@ class Delete_page(UF_page):
         self.pipe_name.Clear()
 
         # Clear the pipe name.
-        self.pipe_name.SetValue('')
+        self.pipe_name.SetValue(str_to_gui(''))
 
         # The list of pipe names.
         for name in pipe_names():
@@ -299,8 +299,8 @@ class Switch_page(UF_page):
         self.cdp.Clear()
 
         # Clear the pipe name.
-        self.pipe_name.SetValue('')
-        self.cdp.SetValue(str(cdp_name()))
+        self.pipe_name.SetValue(str_to_gui(''))
+        self.cdp.SetValue(str_to_gui(cdp_name()))
 
         # The list of pipe names.
         for name in pipe_names():

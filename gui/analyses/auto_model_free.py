@@ -487,11 +487,11 @@ class Auto_model_free(Base_analysis):
 
         # Add the local tau_m models GUI element, with spacing.
         self.local_tm_model_field = Local_tm_list(self, box)
-        self.local_tm_model_field.SetValue(self.data.local_tm_models)
+        self.local_tm_model_field.set_value(self.data.local_tm_models)
 
         # Add the model-free models GUI element, with spacing.
         self.mf_model_field = Mf_list(self, box)
-        self.mf_model_field.SetValue(self.data.mf_models)
+        self.mf_model_field.set_value(self.data.mf_models)
 
         # The optimisation settings.
         self.grid_inc = self.add_spin_element(box, self, text="Grid search increments:", default=11, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.")
@@ -621,7 +621,7 @@ class Auto_model_free(Base_analysis):
             self.data.save_dir = backup
 
         # Place the path in the text box.
-        self.field_results_dir.SetValue(self.data.save_dir)
+        self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
 
 
     def sync_ds(self, upload=False):
@@ -637,13 +637,13 @@ class Auto_model_free(Base_analysis):
         if upload:
             self.data.local_tm_models = self.local_tm_model_field.GetValue()
         else:
-            self.local_tm_model_field.SetValue(self.data.local_tm_models)
+            self.local_tm_model_field.set_value(self.data.local_tm_models)
 
         # The model-free models to use.
         if upload:
             self.data.mf_models = self.mf_model_field.GetValue()
         else:
-            self.mf_model_field.SetValue(self.data.mf_models)
+            self.mf_model_field.set_value(self.data.mf_models)
 
         # The grid incs.
         if upload:
@@ -661,7 +661,7 @@ class Auto_model_free(Base_analysis):
         if upload:
             self.data.save_dir = str(self.field_results_dir.GetValue())
         else:
-            self.field_results_dir.SetValue(str(self.data.save_dir))
+            self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
 
         # Maximum iterations.
         if upload:
@@ -819,7 +819,7 @@ class Local_tm_list:
         return model_list
 
 
-    def SetValue(self, value):
+    def set_value(self, value):
         """Store the list of model-free models.
 
         @param value:   The list of model-free models.
