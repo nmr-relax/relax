@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+import numpy
 from os import F_OK, access, sep
 import wx
 
