@@ -353,6 +353,13 @@ class Pipe_editor(wx.Frame):
 
 
     def update_grid(self):
+        """Update the grid in a thread safe way using wx.CallAfter."""
+
+        # Thread safe.
+        wx.CallAfter(self.update_grid_safe)
+
+
+    def update_grid_safe(self):
         """Update the grid with the pipe data."""
 
         # First freeze the grid, so that the GUI element doesn't update until the end.

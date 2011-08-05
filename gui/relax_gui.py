@@ -505,4 +505,4 @@ class Main(wx.Frame):
             pipe = ''
 
         # Set the status.
-        self.bar.SetStatusText(pipe, 2)
+        wx.CallAfter(self.bar.SetStatusText, pipe, 2)

@@ -161,11 +161,17 @@ class Spin_view_window(wx.Frame):
 
 
     def refresh(self, event=None):
-        """Event handler for the refresh action.
+        """Event handler for the refresh action (thread safe).
 
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        wx.CallAfter(self.refresh_safe)
+
+
+    def refresh_safe(self):
+        """Refresh the spin viewer window."""
 
         # Change the cursor to busy.
         wx.BeginBusyCursor()

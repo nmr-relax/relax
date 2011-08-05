@@ -580,7 +580,7 @@ class Analysis_controller:
         self._current = index
 
         # Switch to the page.
-        self.notebook.SetSelection(self._current)
+        wx.CallAfter(self.notebook.SetSelection, self._current)
 
         # Notify the observers of the change.
-        status.observers.gui_analysis.notify()
+        wx.CallAfter(status.observers.gui_analysis.notify)
