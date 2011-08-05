@@ -436,7 +436,7 @@ class Controller(wx.Frame):
         # Monte Carlo simulations.
         if status.auto_analysis[key].mc_number:
             # The simulation number as a percentage.
-            percent = int(100 * status.auto_analysis[key].mc_number / cdp.sim_number)
+            percent = int(100 * (status.auto_analysis[key].mc_number + 1) / cdp.sim_number)
 
             # Update the progress bar.
             wx.CallAfter(self.mc_gauge_mf.SetValue, percent)
@@ -453,7 +453,7 @@ class Controller(wx.Frame):
         # Monte Carlo simulations.
         if status.auto_analysis[key].mc_number:
             # The simulation number as a percentage.
-            percent = int(100 * status.auto_analysis[key].mc_number / cdp.sim_number)
+            percent = int(100 * (status.auto_analysis[key].mc_number + 1) / cdp.sim_number)
 
             # Update the progress bar.
             wx.CallAfter(self.mc_gauge_rx.SetValue, percent)
