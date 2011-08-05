@@ -113,30 +113,38 @@ __doc__ = to_docstring(doc)
 
 
 class dAuvergne_protocol:
-    def __init__(self, pipe_name=None, results_dir=None, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], grid_inc=11, min_algor='newton', mc_sim_num=500, max_iter=None, user_fns=None, conv_loop=True):
+    """The model-free auto-analysis."""
+
+    # Some class variables.
+    opt_func_tol = 1e-25
+    opt_max_iterations = 1e7
+
+    def __init__(self, pipe_name=None, results_dir=None, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], grid_inc=11, diff_tensor_grid_inc={'sphere': 11, 'prolate': 11, 'oblate': 11, 'ellipsoid': 6}, min_algor='newton', mc_sim_num=500, max_iter=None, user_fns=None, conv_loop=True):
         """Perform the full model-free analysis protocol of d'Auvergne and Gooley, 2008b.
 
-        @keyword pipe_name:         The name of the data pipe containing the sequence info.  This data pipe should have all values set including the CSA value, the bond length, the heteronucleus name and proton name.  It should also have all relaxation data loaded.
-        @keyword results_dir:       The directory, where files are saved in.
-        @type results_dir:          str
-        @keyword diff_model:        The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.
-        @type diff_model:           str
-        @keyword mf_models:         The model-free models.
-        @type mf_models:            list of str
-        @keyword local_tm_models:   The model-free models.
-        @type local_tm_models:      list of str
-        @keyword grid_inc:          The grid search size (the number of increments per dimension).
-        @type grid_inc:             int
-        @keyword min_algor:         The minimisation algorithm (in most cases this should not be changed).
-        @type min_algor:            str
-        @keyword mc_sim_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        @type mc_sim_num:           int
-        @keyword max_iter:          The maximum number of iterations for the global iteration.  Set to None, then the algorithm iterates until convergence.
-        @type max_iter:             int or None.
-        @keyword user_fns:          A dictionary of replacement user functions.  These will overwrite the standard user functions.  The key should be the name of the user function or user function class and the value should be the function or class instance.
-        @type user_fns:             dict
-        @keyword conv_loop:         Automatic looping over all rounds until convergence.
-        @type conv_loop:            bool
+        @keyword pipe_name:             The name of the data pipe containing the sequence info.  This data pipe should have all values set including the CSA value, the bond length, the heteronucleus name and proton name.  It should also have all relaxation data loaded.
+        @keyword results_dir:           The directory, where files are saved in.
+        @type results_dir:              str
+        @keyword diff_model:            The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.
+        @type diff_model:               str
+        @keyword mf_models:             The model-free models.
+        @type mf_models:                list of str
+        @keyword local_tm_models:       The model-free models.
+        @type local_tm_models:          list of str
+        @keyword grid_inc:              The grid search size (the number of increments per dimension).
+        @type grid_inc:                 int
+        @keyword diff_tensor_grid_inc:  A list of grid search sizes for the optimisation of the sphere, prolate spheroid, oblate spheroid, and ellipsoid.
+        @type diff_tensor_grid_inc:     list of int
+        @keyword min_algor:             The minimisation algorithm (in most cases this should not be changed).
+        @type min_algor:                str
+        @keyword mc_sim_num:            The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        @type mc_sim_num:               int
+        @keyword max_iter:              The maximum number of iterations for the global iteration.  Set to None, then the algorithm iterates until convergence.
+        @type max_iter:                 int or None.
+        @keyword user_fns:              A dictionary of replacement user functions.  These will overwrite the standard user functions.  The key should be the name of the user function or user function class and the value should be the function or class instance.
+        @type user_fns:                 dict
+        @keyword conv_loop:             Automatic looping over all rounds until convergence.
+        @type conv_loop:                bool
         """
 
         # Execution lock.
@@ -148,6 +156,7 @@ class dAuvergne_protocol:
         self.mf_models = mf_models
         self.local_tm_models = local_tm_models
         self.grid_inc = grid_inc
+        self.diff_tensor_grid_inc = diff_tensor_grid_inc
         self.min_algor = min_algor
         self.mc_sim_num = mc_sim_num
         self.max_iter = max_iter
@@ -266,6 +275,18 @@ class dAuvergne_protocol:
         # Min vars.
         if not isinstance(self.grid_inc, int):
             raise RelaxError("The grid_inc user variable '%s' is incorrectly set.  It should be an integer." % self.grid_inc)
+        if not isinstance(self.diff_tensor_grid_inc, dict):
+            raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should be a dictionary." % self.diff_tensor_grid_inc)
+        if not self.diff_tensor_grid_inc.has_key('sphere'):
+            raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the 'sphere' key." % self.diff_tensor_grid_inc)
+        if not isinstance(self.diff_tensor_grid_inc, dict):
+            raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the 'sphere' key." % self.diff_tensor_grid_inc)
+        if not self.diff_tensor_grid_inc.has_key('prolate'):
+            raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the 'prolate' key." % self.diff_tensor_grid_inc)
+        if not self.diff_tensor_grid_inc.has_key('oblate'):
+            raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the 'oblate' key." % self.diff_tensor_grid_inc)
+        if not self.diff_tensor_grid_inc.has_key('ellipsoid'):
+            raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the 'ellipsoid' key." % self.diff_tensor_grid_inc)
         if not isinstance(self.min_algor, str):
             raise RelaxError("The min_algor user variable '%s' is incorrectly set.  It should be a string." % self.min_algor)
         if not isinstance(self.mc_sim_num, int):
@@ -529,21 +550,21 @@ class dAuvergne_protocol:
                     # Add an arbitrary diffusion tensor which will be optimised.
                     if self.diff_model == 'sphere':
                         self.interpreter.diffusion_tensor.init(10e-9, fixed=False)
-                        inc = 11
+                        inc = self.diff_tensor_grid_inc['sphere']
                     elif self.diff_model == 'prolate':
                         self.interpreter.diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=False)
-                        inc = 11
+                        inc = self.diff_tensor_grid_inc['prolate']
                     elif self.diff_model == 'oblate':
                         self.interpreter.diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=False)
-                        inc = 11
+                        inc = self.diff_tensor_grid_inc['oblate']
                     elif self.diff_model == 'ellipsoid':
                         self.interpreter.diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=False)
-                        inc = 6
+                        inc = self.diff_tensor_grid_inc['ellipsoid']
 
                     # Minimise just the diffusion tensor.
                     self.interpreter.fix('all_spins')
                     self.interpreter.grid_search(inc=inc)
-                    self.interpreter.minimise(self.min_algor)
+                    self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iterations=self.opt_max_iterations)
 
                     # Write the results.
                     self.interpreter.results.write(file='results', dir=self.base_dir, force=True)
@@ -567,7 +588,7 @@ class dAuvergne_protocol:
                     self.interpreter.fix('all', fixed=False)
 
                     # Minimise all parameters.
-                    self.interpreter.minimise(self.min_algor)
+                    self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iterations=self.opt_max_iterations)
 
                     # Write the results.
                     dir = self.base_dir + 'opt'
@@ -650,7 +671,7 @@ class dAuvergne_protocol:
             self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise(self.min_algor)
+            self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iterations=self.opt_max_iterations)
             self.interpreter.eliminate()
             self.interpreter.monte_carlo.error_analysis()
 
@@ -731,7 +752,7 @@ class dAuvergne_protocol:
 
             # Minimise.
             self.interpreter.grid_search(inc=self.grid_inc)
-            self.interpreter.minimise(self.min_algor)
+            self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iterations=self.opt_max_iterations)
 
             # Model elimination.
             self.interpreter.eliminate()
