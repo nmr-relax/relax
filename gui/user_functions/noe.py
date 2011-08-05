@@ -34,7 +34,7 @@ from generic_fns import pipes
 # GUI module imports.
 from base import UF_base, UF_page
 from gui.paths import ANALYSIS_IMAGE_PATH
-from gui.misc import gui_to_float, gui_to_int, gui_to_str
+from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.wizard import Wiz_window
 
 
@@ -178,4 +178,4 @@ class Spectrum_type_page(UF_page):
 
         # The spectrum IDs.
         for i in range(len(cdp.spectrum_ids)):
-            self.spectrum_id.Append(cdp.spectrum_ids[i])
+            self.spectrum_id.Append(str_to_gui(cdp.spectrum_ids[i]))

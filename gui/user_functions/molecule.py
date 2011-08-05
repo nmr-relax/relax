@@ -127,8 +127,8 @@ class Copy_page(UF_page):
 
         # The list of pipe names.
         for name in pipe_names():
-            self.pipe_from.Append(name)
-            self.pipe_to.Append(name)
+            self.pipe_from.Append(str_to_gui(name))
+            self.pipe_to.Append(str_to_gui(name))
 
         # Update the molecule list.
         self.update_mol_list()

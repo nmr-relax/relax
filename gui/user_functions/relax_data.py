@@ -33,7 +33,7 @@ from generic_fns import pipes
 # GUI module imports.
 from base import UF_base, UF_page
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.misc import gui_to_float, gui_to_int, gui_to_str
+from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.wizard import Wiz_window
 
 
@@ -110,7 +110,7 @@ class Delete_page(UF_page):
 
         # The relaxation data IDs.
         for i in range(len(cdp.ri_ids)):
-            self.ri_id.Append(cdp.ri_ids[i])
+            self.ri_id.Append(str_to_gui(cdp.ri_ids[i]))
 
 
 

@@ -156,8 +156,8 @@ class Copy_page(UF_page, Mol_res_spin):
 
         # The list of pipe names.
         for name in pipe_names():
-            self.pipe_from.Append(name)
-            self.pipe_to.Append(name)
+            self.pipe_from.Append(str_to_gui(name))
+            self.pipe_to.Append(str_to_gui(name))
 
         # Update the molecule list.
         self.update_mol_list()
@@ -262,7 +262,7 @@ class Create_page(UF_page, Mol_res_spin):
         # The list of molecule names.
         if cdp_name():
             for mol in molecule_loop():
-                self.mol_name.Append(mol.name)
+                self.mol_name.Append(str_to_gui(mol.name))
 
 
     def on_execute(self):
@@ -319,7 +319,7 @@ class Delete_page(UF_page, Mol_res_spin):
         # The list of molecule names.
         if cdp_name():
             for mol in molecule_loop():
-                self.mol.Append(mol.name)
+                self.mol.Append(str_to_gui(mol.name))
 
 
     def on_execute(self):

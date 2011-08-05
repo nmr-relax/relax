@@ -117,7 +117,7 @@ class Relax_time_page(UF_page):
 
         # The spectrum IDs.
         for i in range(len(cdp.spectrum_ids)):
-            self.spectrum_id.Append(cdp.spectrum_ids[i])
+            self.spectrum_id.Append(str_to_gui(cdp.spectrum_ids[i]))
 
 
 

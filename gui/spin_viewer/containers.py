@@ -34,6 +34,7 @@ from generic_fns.mol_res_spin import return_spin
 
 # GUI module imports.
 from gui import paths
+from gui.misc import str_to_gui
 
 
 
@@ -527,14 +528,14 @@ class Spin(Container_base):
             # List types.
             if obj_type in ['list', 'numpy.ndarray'] and len(obj) > 1:
                 # The first row.
-                table.Append((name, "[%s," % obj[0], obj_type))
+                table.Append((str_to_gui(name), str_to_gui("[%s," % obj[0]), str_to_gui(obj_type)))
 
                 # The rest of the rows.
                 for i in range(1, len(obj)-1):
-                    table.Append(('', " %s," % obj[i], ''))
+                    table.Append((str_to_gui(''), str_to_gui(" %s," % obj[i]), str_to_gui('')))
 
                 # The last row.
-                table.Append(('', " %s]" % obj[-1], ''))
+                table.Append((str_to_gui(''), str_to_gui(" %s]" % obj[-1]), str_to_gui('')))
 
             # Dictionary types.
             elif obj_type == 'dict':
@@ -544,22 +545,22 @@ class Spin(Container_base):
 
                 # Single entry (or None).
                 if len(keys) < 2:
-                    table.Append((name, obj, obj_type))
+                    table.Append((str_to_gui(name), str_to_gui(obj), str_to_gui(obj_type)))
                     continue
 
                 # The first row.
-                table.Append((name, "{'%s': %s," % (keys[0], obj[keys[0]]), obj_type))
+                table.Append((str_to_gui(name), str_to_gui("{'%s': %s," % (keys[0], obj[keys[0]])), str_to_gui(obj_type)))
 
                 # The rest of the rows.
                 for i in range(1, len(keys)-1):
-                    table.Append(('', " '%s': %s," % (keys[i], obj[keys[i]]), ''))
+                    table.Append((str_to_gui(''), str_to_gui(" '%s': %s," % (keys[i], obj[keys[i]])), str_to_gui('')))
 
                 # The last row.
-                table.Append(('', " '%s': %s}" % (keys[-1], obj[keys[-1]]), ''))
+                table.Append((str_to_gui(')', str_to_gui(" '%s': %s}" % (keys[-1], obj[keys[-1]])), str_to_gui('')))
 
             # All other data types.
             else:
-                table.Append((name, obj, obj_type))
+                table.Append((str_to_gui(name), str_to_gui(obj), str_to_gui(obj_type)))
 
         # Add the table to the sizer.
         sizer.Add(table, 1, wx.ALL|wx.EXPAND, 0)

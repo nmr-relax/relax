@@ -287,7 +287,7 @@ class Spin_view_window(wx.Frame):
 
         # The list of pipe names.
         for name in pipe_names():
-            self.pipe_name.Append(name)
+            self.pipe_name.Append(str_to_gui(name))
 
         # Switch.
         if pipe_switch:

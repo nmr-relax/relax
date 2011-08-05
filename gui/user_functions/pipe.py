@@ -144,7 +144,7 @@ class Copy_page(UF_page):
 
         # The list of pipe names.
         for name in pipe_names():
-            self.pipe_from.Append(name)
+            self.pipe_from.Append(str_to_gui(name))
 
 
     def on_execute(self):
@@ -222,7 +222,7 @@ class Delete_page(UF_page):
 
         # The list of pipe names.
         for name in pipe_names():
-            self.pipe_name.Append(name)
+            self.pipe_name.Append(str_to_gui(name))
 
 
     def on_execute(self):
@@ -304,7 +304,7 @@ class Switch_page(UF_page):
 
         # The list of pipe names.
         for name in pipe_names():
-            self.pipe_name.Append(name)
+            self.pipe_name.Append(str_to_gui(name))
 
 
     def on_execute(self):
