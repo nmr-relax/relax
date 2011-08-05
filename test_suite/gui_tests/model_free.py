@@ -32,6 +32,7 @@ from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
+from gui.analyses import auto_model_free
 from gui.misc import float_to_gui, str_to_gui
 from gui.user_functions import relax_data, sequence, value
 from gui.wizard import Wiz_window
@@ -124,6 +125,7 @@ class Mf(GuiTestCase):
 
         # Change the grid increments.
         analysis.grid_inc.SetValue(3)
+        analysis.data.diff_tensor_grid_inc = {'sphere': 5, 'prolate': 5, 'oblate': 5, 'ellipsoid': 3}
 
         # Set the number of Monte Carlo simulations.
         analysis.mc_sim_num.SetValue(2)
@@ -139,6 +141,10 @@ class Mf(GuiTestCase):
         self.assertEqual(analysis.data.mf_models, ['m1', 'm2'])
         self.assertEqual(analysis.data.grid_inc, 3)
         self.assertEqual(analysis.data.mc_sim_num, 2)
+
+        # Modify some of the class variables to speed up optimisation.
+        auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_func_tol = 1e-5
+        auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_max_iterations = 1000
 
         # Execute relax.
         analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_id))
