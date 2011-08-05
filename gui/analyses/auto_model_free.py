@@ -329,7 +329,10 @@ class Auto_model_free(Base_analysis):
 
         # Increment size.
         data.inc = gui_to_int(self.grid_inc.GetValue())
-        data.diff_tensor_grid_inc = self.data.diff_tensor_grid_inc
+        if hasattr(self.data, 'diff_tensor_grid_inc'):
+            data.diff_tensor_grid_inc = self.data.diff_tensor_grid_inc
+        else:
+            data.diff_tensor_grid_inc = {'sphere': 11, 'prolate': 11, 'oblate': 11, 'ellipsoid': 6}
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
