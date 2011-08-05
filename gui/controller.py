@@ -425,7 +425,6 @@ class Controller(wx.Frame):
         elif status.auto_analysis[key].diff_model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
             # Check that the round has been set.
             if status.auto_analysis[key].round == None:
-                sys.__stderr__.write("Reset progress_gauge_mf\n")
                 wx.CallAfter(self.progress_gauge_mf.SetValue, 0)
             else:
                 # The round as a percentage.
