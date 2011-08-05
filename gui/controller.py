@@ -402,7 +402,21 @@ class Controller(wx.Frame):
 
         # The analysis key.
         key = self.analysis_key()
-        if not key or not status.auto_analysis.has_key(key):
+        if not key:
+            return
+
+        # Loaded a finished state, so fill all gauges and return.
+        elif not status.auto_analysis.has_key(key) and cdp_name() == 'final':
+            wx.CallAfter(self.mc_gauge_mf.SetValue, 100)
+            wx.CallAfter(self.progress_gauge_mf.SetValue, 100)
+            wx.CallAfter(self.main_gauge.SetValue, 100)
+            return
+
+        # Nothing to do.
+        if not status.auto_analysis.has_key(key):
+            wx.CallAfter(self.mc_gauge_mf.SetValue, 0)
+            wx.CallAfter(self.progress_gauge_mf.SetValue, 0)
+            wx.CallAfter(self.main_gauge.SetValue, 0)
             return
 
         # Set the diffusion model.
