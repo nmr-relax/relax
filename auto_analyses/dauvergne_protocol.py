@@ -486,7 +486,7 @@ class dAuvergne_protocol:
             complete_round = i
 
             # The file root.
-            file_root = self.results_dir + sep + model + sep + "round_%i" %i + sep + 'results'
+            file_root = self.results_dir + sep + model + sep + "round_%i" % i + sep + 'opt' + sep + 'results'
 
             # Stop looping when the opt/results file is found.
             if access(file_root + '.bz2', F_OK):
