@@ -613,8 +613,8 @@ class dAuvergne_protocol:
                     if converged or not self.conv_loop:
                         break
 
-                # Unset the status.
-                status.auto_analysis[self.pipe_name].round = None
+            # Unset the status.
+            status.auto_analysis[self.pipe_name].round = None
 
 
         # Final run.
