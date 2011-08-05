@@ -149,36 +149,63 @@ class Mf(GuiTestCase):
         # Exceptions in the thread.
         self.check_exceptions()
 
-        # The real data.
-        res_nums = [4, 5, 6]
-        sat = [5050.0, 51643.0, 53663.0]
-        ref = [148614.0, 166842.0, 128690.0]
-        noe = [0.033980647852826784, 0.30953237194471417, 0.4169943274535706]
-        noe_err = [0.02020329903276632, 0.019181416098790607, 0.026067523940084526]
+        # Check the diffusion tensor.
+        self.assertEqual(cdp.diff_tensor.type, 'sphere')
+        self.assertAlmostEqual(cdp.diff_tensor.tm, 1e-8)
+        self.assertEqual(cdp.diff_tensor.fixed, True)
 
-        # Check the data pipe.
-        self.assertEqual(cdp_name(), ds.relax_gui.analyses[0].pipe_name)
+        # The global minimisation info.
+        self.assertAlmostEqual(cdp.chi2, 4e-19)
 
-        # Check the data.
+        # The spin ID info.
+        mol_names = ["sphere_mol1"] * 9
+        res_names = ["GLY"] * 9
+        res_nums = range(1, 10)
+        spin_names = ["N"] * 9
+        spin_nums = numpy.array(range(9)) * 2 + 1
+
+        # Check the spin data.
         i = 0
-        for spin_cont, mol_name, res_num, res_name in spin_loop(full_info=True):
-            # Skip deselected spins.
-            if not spin_cont.select:
-                continue
+        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+            # The ID info.
+            self.assertEqual(mol_name, mol_names[i])
+            self.assertEqual(res_name, res_names[i])
+            self.assertEqual(res_num,  res_nums[i])
+            self.assertEqual(spin.name, spin_names[i])
+            self.assertEqual(spin.num,  spin_nums[i])
 
-            # Spin info.
-            self.assertEqual(res_nums[i], res_num)
+            # The data.
+            self.assertEqual(spin.select, True)
+            self.assertEqual(spin.fixed, False)
+            self.assertEqual(spin.proton_type, '1H')
+            self.assertEqual(spin.heteronuc_type, '15N')
+            self.assertEqual(spin.attached_proton, None)
+            self.assertEqual(spin.nucleus, None)
+            self.assertAlmostEqual(spin.r, 1.02 * 1e-10)
+            self.assertAlmostEqual(spin.csa, -172e-6)
 
-            # Check the intensity data.
-            self.assertEqual(sat[i], spin_cont.intensities['sat'])
-            self.assertEqual(ref[i], spin_cont.intensities['ref'])
+            # The model-free data.
+            self.assertEqual(spin.model, 'm2')
+            self.assertEqual(spin.equation, 'mf_orig')
+            self.assertEqual(len(spin.params), 2)
+            self.assertEqual(spin.params[0], 'S2')
+            self.assertEqual(spin.params[1], 'te')
+            self.assertAlmostEqual(spin.s2, 0.8)
+            self.assertEqual(spin.s2f, None)
+            self.assertEqual(spin.s2s, None)
+            self.assertEqual(spin.local_tm, None)
+            self.assertAlmostEqual(spin.te, 20e-12)
+            self.assertEqual(spin.tf, None)
+            self.assertEqual(spin.ts, None)
+            self.assertEqual(spin.rex, None)
 
-            # Check the NOE data.
-            self.assertEqual(noe[i], spin_cont.noe)
-            self.assertEqual(noe_err[i], spin_cont.noe_err)
+            # The spin minimisation info.
+            self.assertEqual(spin.chi2, None)
+            self.assertEqual(spin.iter, None)
+            self.assertEqual(spin.f_count, None)
+            self.assertEqual(spin.g_count, None)
+            self.assertEqual(spin.h_count, None)
+            self.assertEqual(spin.warning, None)
 
-            # Increment the spin index.
+            # Increment the index.
             i += 1
-
-        # Check the created files.
-        self.assert_(access(ds.tmpdir+sep+'grace'+sep+'noe.agr', F_OK))
