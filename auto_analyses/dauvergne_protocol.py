@@ -277,16 +277,11 @@ class dAuvergne_protocol:
             raise RelaxError("The grid_inc user variable '%s' is incorrectly set.  It should be an integer." % self.grid_inc)
         if not isinstance(self.diff_tensor_grid_inc, dict):
             raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should be a dictionary." % self.diff_tensor_grid_inc)
-        if not self.diff_tensor_grid_inc.has_key('sphere'):
-            raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the 'sphere' key." % self.diff_tensor_grid_inc)
-        if not isinstance(self.diff_tensor_grid_inc, dict):
-            raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the 'sphere' key." % self.diff_tensor_grid_inc)
-        if not self.diff_tensor_grid_inc.has_key('prolate'):
-            raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the 'prolate' key." % self.diff_tensor_grid_inc)
-        if not self.diff_tensor_grid_inc.has_key('oblate'):
-            raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the 'oblate' key." % self.diff_tensor_grid_inc)
-        if not self.diff_tensor_grid_inc.has_key('ellipsoid'):
-            raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the 'ellipsoid' key." % self.diff_tensor_grid_inc)
+        for tensor in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
+            if not self.diff_tensor_grid_inc.has_key(tensor):
+                raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  It should contain the '%s' key." % (self.diff_tensor_grid_inc, tensor))
+            if not isinstance(self.diff_tensor_grid_inc[tensor], int):
+                raise RelaxError("The diff_tensor_grid_inc user variable '%s' is incorrectly set.  The value corresponding to the key '%s' should be an integer." % (self.diff_tensor_grid_inc, tensor))
         if not isinstance(self.min_algor, str):
             raise RelaxError("The min_algor user variable '%s' is incorrectly set.  It should be a string." % self.min_algor)
         if not isinstance(self.mc_sim_num, int):
