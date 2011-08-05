@@ -525,6 +525,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.find_data = wx.FindReplaceData()
         self.find_data.SetFlags(wx.FR_DOWN)
 
+        # Make the control read only.
+        self.SetReadOnly(True)
+
         # Bind events.
         self.Bind(wx.EVT_FIND, self.find)
         self.Bind(wx.EVT_FIND_NEXT, self.find)
@@ -758,6 +761,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         if self.GetScrollPos(wx.VERTICAL) == self.GetScrollRange(wx.VERTICAL) - self.LinesOnScreen():
             at_end = True
 
+        # Turn of the read only state.
+        self.SetReadOnly(False)
+
         # Add the text.
         for i in range(len(string_list)):
             # Add the text.
@@ -779,6 +785,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Stay at the end.
         if at_end:
             self.ScrollToLine(self.GetLineCount())
+
+        # Make the control read only again.
+        self.SetReadOnly(True)
 
         # Show the relax controller when text is added.
         if status.show_gui and not self.controller.IsShown():
