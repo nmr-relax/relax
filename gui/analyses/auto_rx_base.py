@@ -191,7 +191,7 @@ class Auto_rx(Base_analysis):
         self.field_results_dir = Text_ctrl(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the spin GUI element.
-        self.add_spin_systems(box, self)
+        self.field_spin_system = self.add_spin_systems(box, self)
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(20)

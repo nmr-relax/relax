@@ -211,10 +211,15 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         @type box:          wx.BoxSizer instance
         @param parent:      The parent GUI element.
         @type parent:       wx object
+        @return:            The spin system GUI element.
+        @rtype:             Text_ctrl instance
         """
 
         # Add the element.
-        self.spin_systems = Text_ctrl(box, self, text="Spin systems", button_text=" Spin editor", default=self.spin_count(), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        spin_view = Text_ctrl(box, self, text="Spin systems", button_text=" Spin editor", default=self.spin_count(), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+
+        # Return the control.
+        return spin_view
 
 
     def add_static_text(self, box, parent, text='', width=-1, height=-1):
