@@ -43,6 +43,20 @@ from gui.misc import gui_to_str
 class Mol_res_spin_tree(wx.Window):
     """The tree view class."""
 
+    # Some IDs for the menu entries.
+    MENU_ROOT_MOLECULE_CREATE = wx.NewId()
+    MENU_SPIN_SPIN_DELETE = wx.NewId()
+    MENU_SPIN_SPIN_SELECT = wx.NewId()
+    MENU_SPIN_SPIN_DESELECT = wx.NewId()
+    MENU_RESIDUE_SPIN_ADD = wx.NewId()
+    MENU_RESIDUE_RESIDUE_DELETE = wx.NewId()
+    MENU_RESIDUE_RESIDUE_SELECT = wx.NewId()
+    MENU_RESIDUE_RESIDUE_DESELECT = wx.NewId()
+    MENU_MOLECULE_RESIDUE_CREATE = wx.NewId()
+    MENU_MOLECULE_MOLECULE_DELETE = wx.NewId()
+    MENU_MOLECULE_MOLECULE_DESELECT = wx.NewId()
+    MENU_MOLECULE_MOLECULE_SELECT = wx.NewId()
+
     def __init__(self, gui, parent=None, id=None):
         """Set up the tree GUI element.
 
@@ -317,29 +331,24 @@ class Mol_res_spin_tree(wx.Window):
     def menu_molecule(self):
         """The right click molecule menu."""
 
-        # Some ids.
-        ids = []
-        for i in range(3):
-            ids.append(wx.NewId())
-
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=ids[0], text="Add residue", icon=paths.icon_16x16.add))
-        menu.AppendItem(build_menu_item(menu, id=ids[1], text="Delete molecule", icon=paths.icon_16x16.remove))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_MOLECULE_RESIDUE_CREATE, text="Add residue", icon=paths.icon_16x16.add))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DELETE, text="Delete molecule", icon=paths.icon_16x16.remove))
 
         # Selection or deselection.
         if self.info['select']:
-            menu.AppendItem(build_menu_item(menu, id=ids[2], text="Deselect"))
+            menu.AppendItem(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DESELECT, text="Deselect"))
         else:
-            menu.AppendItem(build_menu_item(menu, id=ids[2], text="Select"))
+            menu.AppendItem(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_SELECT, text="Select"))
 
         # The menu actions.
-        self.Bind(wx.EVT_MENU, self.create_residue, id=ids[0])
-        self.Bind(wx.EVT_MENU, self.delete_molecule, id=ids[1])
+        self.Bind(wx.EVT_MENU, self.create_residue, id=self.MENU_MOLECULE_RESIDUE_CREATE)
+        self.Bind(wx.EVT_MENU, self.delete_molecule, id=self.MENU_MOLECULE_MOLECULE_DELETE)
         if self.info['select']:
-            self.Bind(wx.EVT_MENU, self.deselect_molecule, id=ids[2])
+            self.Bind(wx.EVT_MENU, self.deselect_molecule, id=self.MENU_MOLECULE_MOLECULE_DESELECT)
         else:
-            self.Bind(wx.EVT_MENU, self.select_molecule, id=ids[2])
+            self.Bind(wx.EVT_MENU, self.select_molecule, id=self.MENU_MOLECULE_MOLECULE_SELECT)
 
         # Show the menu.
         self.PopupMenu(menu)
@@ -349,29 +358,24 @@ class Mol_res_spin_tree(wx.Window):
     def menu_residue(self):
         """The right click molecule menu."""
 
-        # Some ids.
-        ids = []
-        for i in range(3):
-            ids.append(wx.NewId())
-
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=ids[0], text="Add spin", icon=paths.icon_16x16.add))
-        menu.AppendItem(build_menu_item(menu, id=ids[1], text="Delete residue", icon=paths.icon_16x16.remove))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RESIDUE_SPIN_ADD, text="Add spin", icon=paths.icon_16x16.add))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DELETE, text="Delete residue", icon=paths.icon_16x16.remove))
 
         # Selection or deselection.
         if self.info['select']:
-            menu.AppendItem(build_menu_item(menu, id=ids[2], text="Deselect"))
+            menu.AppendItem(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DESELECT, text="Deselect"))
         else:
-            menu.AppendItem(build_menu_item(menu, id=ids[2], text="Select"))
+            menu.AppendItem(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_SELECT, text="Select"))
 
         # The menu actions.
-        self.Bind(wx.EVT_MENU, self.create_spin, id=ids[0])
-        self.Bind(wx.EVT_MENU, self.delete_residue, id=ids[1])
+        self.Bind(wx.EVT_MENU, self.create_spin, id=self.MENU_RESIDUE_SPIN_ADD)
+        self.Bind(wx.EVT_MENU, self.delete_residue, id=self.MENU_RESIDUE_RESIDUE_DELETE)
         if self.info['select']:
-            self.Bind(wx.EVT_MENU, self.deselect_residue, id=ids[2])
+            self.Bind(wx.EVT_MENU, self.deselect_residue, id=self.MENU_RESIDUE_RESIDUE_DESELECT)
         else:
-            self.Bind(wx.EVT_MENU, self.select_residue, id=ids[2])
+            self.Bind(wx.EVT_MENU, self.select_residue, id=self.MENU_RESIDUE_RESIDUE_SELECT)
 
         # Show the menu.
         self.PopupMenu(menu)
@@ -381,17 +385,12 @@ class Mol_res_spin_tree(wx.Window):
     def menu_root(self):
         """The right click root menu."""
 
-        # Some ids.
-        ids = []
-        for i in range(1):
-            ids.append(wx.NewId())
-
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=ids[0], text="Add molecule", icon=paths.icon_16x16.add))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_ROOT_MOLECULE_CREATE, text="Add molecule", icon=paths.icon_16x16.add))
 
         # The menu actions.
-        self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.create, id=ids[0])
+        self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.create, id=self.MENU_ROOT_MOLECULE_CREATE)
 
         # Show the menu.
         self.PopupMenu(menu)
@@ -401,27 +400,22 @@ class Mol_res_spin_tree(wx.Window):
     def menu_spin(self):
         """The right click spin menu."""
 
-        # Some ids.
-        ids = []
-        for i in range(2):
-            ids.append(wx.NewId())
-
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=ids[0], text="Delete spin", icon=paths.icon_16x16.remove))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPIN_SPIN_DELETE, text="Delete spin", icon=paths.icon_16x16.remove))
 
         # Selection or deselection.
         if self.info['select']:
-            menu.AppendItem(build_menu_item(menu, id=ids[1], text="Deselect"))
+            menu.AppendItem(build_menu_item(menu, id=self.MENU_SPIN_SPIN_DESELECT, text="Deselect"))
         else:
-            menu.AppendItem(build_menu_item(menu, id=ids[1], text="Select"))
+            menu.AppendItem(build_menu_item(menu, id=self.MENU_SPIN_SPIN_SELECT, text="Select"))
 
         # The menu actions.
-        self.Bind(wx.EVT_MENU, self.delete_spin, id=ids[0])
+        self.Bind(wx.EVT_MENU, self.delete_spin, id=self.MENU_SPIN_SPIN_DELETE)
         if self.info['select']:
-            self.Bind(wx.EVT_MENU, self.deselect_spin, id=ids[1])
+            self.Bind(wx.EVT_MENU, self.deselect_spin, id=self.MENU_SPIN_SPIN_DESELECT)
         else:
-            self.Bind(wx.EVT_MENU, self.select_spin, id=ids[1])
+            self.Bind(wx.EVT_MENU, self.select_spin, id=self.MENU_SPIN_SPIN_SELECT)
 
         # Show the menu.
         self.PopupMenu(menu)
