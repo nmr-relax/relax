@@ -254,7 +254,7 @@ class Controller(wx.Frame):
         self.global_model_mf = self.add_text(self.panel_mf, panel_sizer, "Global model:", tooltip="This shows the global diffusion model of the dauvergne_protocol auto-analysis currently being optimised.  It will be one of 'local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid' or 'final'.")
 
         # Progress gauge.
-        self.progress_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Incremental progress:", tooltip="This shows the global iteration round of the dauvergne_protocol auto-analysis.  Optimisation of the global model may require between 5 to 15 iterations.  Therefore the maximum number of iterations should not be reached reached.  Once the global diffusion model has converged, this gauge will be set to 100%")
+        self.progress_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Incremental progress:", tooltip="This shows the global iteration round of the dauvergne_protocol auto-analysis.  Optimisation of the global model may require between 5 to 15 iterations.  The maximum number of iterations should not be reached.  Once the global diffusion model has converged, this gauge will be set to 100%")
 
         # MC sim gauge.
         self.mc_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Monte Carlo simulations:", tooltip="The Monte Carlo simulation number.  Monte Carlo simulations are only performed at the very end of the analysis in the 'final' global model.")
