@@ -287,12 +287,17 @@ class Menu:
         # The status object.
         status = Status()
 
+        # Flag for enabling or disabling the menu entries.
+        enable = False
+        if not status.exec_lock.locked():
+            enable = True
+
+        # The file menu entries.
+        self.menubar.Enable(self.MENU_FILE_NEW, enable)
+        self.menubar.Enable(self.MENU_FILE_CLOSE, enable)
+        self.menubar.Enable(self.MENU_FILE_CLOSE_ALL, enable)
+        self.menubar.Enable(self.MENU_FILE_OPEN, enable)
+
         # Loop over the user function menu items.
         for i in range(len(self.entries_uf)):
-            # Enable the menu entries.
-            if not status.exec_lock.locked():
-                self.menubar.Enable(self.entries_uf[i][0], True)
-
-            # Disable the menu entries.
-            else:
-                self.menubar.Enable(self.entries_uf[i][0], False)
+            self.menubar.Enable(self.entries_uf[i][0], enable)
