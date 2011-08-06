@@ -54,12 +54,18 @@ def copy(pipe_from=None, pipe_to=None):
     if pipe_to in list(ds.keys()):
         raise RelaxPipeError(pipe_to)
 
+    # Acquire the pipe lock.
+    status.pipe_lock.acquire()
+
     # The current data pipe.
     if pipe_from == None:
         pipe_from = cdp_name()
 
     # Copy the data.
     ds[pipe_to] = ds[pipe_from].__clone__()
+
+    # Release the lock.
+    status.pipe_lock.release()
 
     # Notify observers that a pipe change has occurred.
     status.observers.pipe_alteration.notify()
@@ -100,8 +106,14 @@ def create(pipe_name=None, pipe_type=None, switch=True):
     if pipe_type == 'frame order' and not scipy_module:
         raise RelaxError("The frame order analysis is not available.  Please install the scipy Python package.")
 
+    # Acquire the pipe lock.
+    status.pipe_lock.acquire()
+
     # Add the data pipe.
     ds.add(pipe_name=pipe_name, pipe_type=pipe_type, switch=switch)
+
+    # Release the lock.
+    status.pipe_lock.release()
 
 
 def cdp_name():
@@ -120,6 +132,9 @@ def delete(pipe_name=None):
     @param pipe_name:   The name of the data pipe to delete.
     @type pipe_name:    str
     """
+
+    # Acquire the pipe lock.
+    status.pipe_lock.acquire()
 
     # Pipe name is supplied.
     if pipe_name != None:
@@ -143,12 +158,18 @@ def delete(pipe_name=None):
             ds.current_pipe = None
             __builtin__.cdp = None
 
+    # Release the lock.
+    status.pipe_lock.release()
+
     # Notify observers that the switch has occurred.
     status.observers.pipe_alteration.notify()
 
 
 def display():
     """Print the details of all the data pipes."""
+
+    # Acquire the pipe lock.
+    status.pipe_lock.acquire()
 
     # Heading.
     print(("%-20s%-20s%-20s" % ("Data pipe name", "Data pipe type", "Current")))
@@ -162,6 +183,9 @@ def display():
 
         # Print out.
         print("%-20s%-20s%-20s" % ("'"+pipe_name+"'", get_type(pipe_name), current))
+
+    # Release the lock.
+    status.pipe_lock.release()
 
 
 def get_pipe(name=None):
@@ -228,6 +252,9 @@ def pipe_loop(name=False):
     @rtype:         PipeContainer instance or tuple of PipeContainer instance and str if name=True
     """
 
+    # Acquire the pipe lock.
+    status.pipe_lock.acquire()
+
     # Loop over the keys.
     for key in list(ds.keys()):
         # Return the pipe and name.
@@ -237,6 +264,9 @@ def pipe_loop(name=False):
         # Return just the pipe.
         else:
             yield ds[key]
+
+    # Release the lock.
+    status.pipe_lock.release()
 
 
 def pipe_names():
@@ -256,12 +286,18 @@ def switch(pipe_name=None):
     @type pipe_name:    str
     """
 
+    # Acquire the pipe lock.
+    status.pipe_lock.acquire()
+
     # Test if the data pipe exists.
     test(pipe_name)
 
     # Switch the current data pipe.
     ds.current_pipe = pipe_name
     __builtin__.cdp = get_pipe()
+
+    # Release the lock.
+    status.pipe_lock.release()
 
     # Notify observers that the switch has occurred.
     status.observers.pipe_alteration.notify()
