@@ -395,6 +395,9 @@ class Pipe_editor(wx.Frame):
         # First freeze the grid, so that the GUI element doesn't update until the end.
         self.grid.Freeze()
 
+        # Acquire the pipe lock.
+        status.pipe_lock.acquire()
+
         # Delete the rows, leaving a single row.
         self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
 
@@ -434,6 +437,9 @@ class Pipe_editor(wx.Frame):
             for j in range(self.grid.GetNumberCols()):
                 # Cell properties.
                 self.grid.SetReadOnly(i, j)
+
+        # Release the lock.
+        status.pipe_lock.release()
 
         # Unfreeze.
         self.grid.Thaw()
