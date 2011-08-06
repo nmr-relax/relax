@@ -24,6 +24,7 @@
 """Package for the automatic and custom analysis GUI elements."""
 
 # Python module imports.
+import sys
 import wx
 from types import ListType
 
@@ -52,7 +53,8 @@ __all__ = ['auto_model_free',
            'base',
            'relax_control',
            'results_analysis',
-           'results']
+           'results',
+           'spin_ctrl']
 
 
 class Analysis_controller:
@@ -72,6 +74,7 @@ class Analysis_controller:
         self.init_state = True
         self._current = None
         self._num_analyses = 0
+        sys.stderr.write("self._num_analyses (__init__): %s\n" % self._num_analyses)
         self._switch_flag = True
 
         # The analyses page objects.
@@ -124,6 +127,9 @@ class Analysis_controller:
             return
 
         # Return the name.
+        if self._current >= len(ds.relax_gui.analyses):
+            sys.stderr.write("self._current = %s\n" % self._current)
+            sys.stderr.write("ds.relax_gui.analyses: \n%s\n" % ds.relax_gui.analyses)
         return ds.relax_gui.analyses[self._current]
 
 
@@ -164,6 +170,7 @@ class Analysis_controller:
         while self._num_analyses:
             # Remove the last analysis, until there is nothing left.
             self.delete_analysis(self._num_analyses-1)
+            sys.stderr.write("self._num_analyses (delete_all): %s\n" % self._num_analyses)
 
         # Notify the observers of the change.
         status.observers.gui_analysis.notify()
@@ -185,6 +192,7 @@ class Analysis_controller:
 
         # Delete the data store object.
         ds.relax_gui.analyses.pop(index)
+        sys.stderr.write("ds.relax_gui.analyses.pop(%s)\n" % index)
 
         # Delete the tab.
         self.notebook.DeletePage(index)
@@ -194,6 +202,7 @@ class Analysis_controller:
 
         # Decrement the number of analyses.
         self._num_analyses -= 1
+        sys.stderr.write("self._num_analyses (delete_analysis): %s\n" % self._num_analyses)
 
         # The current page has been deleted, so switch one back (if possible).
         if index == self._current and self._current != 0:
@@ -402,6 +411,7 @@ class Analysis_controller:
 
         # Increment the number of analyses.
         self._num_analyses += 1
+        sys.stderr.write("self._num_analyses (new_analysis): %s\n" % self._num_analyses)
 
         # Switch to the new page.
         if self._switch_flag:
@@ -464,6 +474,10 @@ class Analysis_controller:
         index = None
         for i in range(self._num_analyses):
             # Matching page.
+            if i > len(ds.relax_gui.analyses) or not hasattr(ds.relax_gui.analyses[i], 'pipe_name'):
+                sys.stderr.write("%s\n" % self._num_analyses)
+                sys.stderr.write("%s\n" % ds.relax_gui.analyses)
+                sys.stderr.write("%s\n" % ds.relax_gui.analyses[i])
             if ds.relax_gui.analyses[i].pipe_name == pipe:
                 index = i
                 break
@@ -537,6 +551,7 @@ class Analysis_controller:
 
             # Decrement the number of analyses.
             self._num_analyses -= 1
+            sys.stderr.write("self._num_analyses (post_reset): %s\n" % self._num_analyses)
 
             # Set the initial state.
             self.set_init_state()
