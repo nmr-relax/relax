@@ -85,7 +85,7 @@ class Controller(wx.Frame):
         self.create_mf(sizer)
 
         # Add the main execution gauge.
-        self.main_gauge = self.add_gauge(self, sizer, "Execution progress:")
+        self.main_gauge = self.add_gauge(self, sizer, "Execution progress:", tooltip="This gauge will pulse while relax is executing an auto-analysis (when the execution lock is turned on) and will be set to 100% once the analysis is completed.")
 
         # Initialise a queue for log messages.
         self.log_queue = Queue()
@@ -112,17 +112,19 @@ class Controller(wx.Frame):
         status.observers.exec_lock.register('controller', self.update_gauge)
 
 
-    def add_gauge(self, parent, sizer, desc):
+    def add_gauge(self, parent, sizer, desc, tooltip=None):
         """Add a gauge to the sizer and return it.
 
-        @param parent:  The parent GUI element.
-        @type parent:   wx object
-        @param sizer:   The sizer element to pack the element into.
-        @type sizer:    wx.Sizer instance
-        @param desc:    The description to display.
-        @type desc:     str
-        @return:        The gauge element.
-        @rtype:         wx.Gauge instance
+        @param parent:      The parent GUI element.
+        @type parent:       wx object
+        @param sizer:       The sizer element to pack the element into.
+        @type sizer:        wx.Sizer instance
+        @param desc:        The description to display.
+        @type desc:         str
+        @keyword tooltip:   The tooltip which appears on hovering over the text and the gauge.
+        @type tooltip:      str
+        @return:            The gauge element.
+        @rtype:             wx.Gauge instance
         """
 
         # Create a horizontal layout.
@@ -143,6 +145,11 @@ class Controller(wx.Frame):
 
         # Spacing.
         sizer.AddSpacer(self.spacer)
+
+        # Tooltip.
+        if tooltip:
+            text.SetToolTipString(tooltip)
+            gauge.SetToolTipString(tooltip)
 
         # Return the gauge.
         return gauge
@@ -165,17 +172,19 @@ class Controller(wx.Frame):
         sizer.AddSpacer(self.spacer)
 
 
-    def add_text(self, parent, sizer, desc):
+    def add_text(self, parent, sizer, desc, tooltip=None):
         """Add the current data pipe element.
 
-        @param parent:  The parent GUI element.
-        @type parent:   wx object
-        @param sizer:   The sizer element to pack the element into.
-        @type sizer:    wx.Sizer instance
-        @param desc:    The description to display.
-        @type desc:     str
-        @return:        The text control.
-        @rtype:         wx.TextCtrl instance
+        @param parent:      The parent GUI element.
+        @type parent:       wx object
+        @param sizer:       The sizer element to pack the element into.
+        @type sizer:        wx.Sizer instance
+        @param desc:        The description to display.
+        @type desc:         str
+        @keyword tooltip:   The tooltip which appears on hovering over the text and field.
+        @type tooltip:      str
+        @return:            The text control.
+        @rtype:             wx.TextCtrl instance
         """
 
         # Create a horizontal layout.
@@ -199,6 +208,11 @@ class Controller(wx.Frame):
 
         # Spacing.
         sizer.AddSpacer(self.spacer)
+
+        # Tooltip.
+        if tooltip:
+            text.SetToolTipString(tooltip)
+            field.SetToolTipString(tooltip)
 
         # Return the control.
         return field
@@ -237,13 +251,13 @@ class Controller(wx.Frame):
         self.panel_mf.SetSizer(panel_sizer)
 
         # Add the global model.
-        self.global_model_mf = self.add_text(self.panel_mf, panel_sizer, "Global model:")
+        self.global_model_mf = self.add_text(self.panel_mf, panel_sizer, "Global model:", tooltip="This shows the global diffusion model of the dauvergne_protocol auto-analysis currently being optimised.  It will be one of 'local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid' or 'final'.")
 
         # Progress gauge.
-        self.progress_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Incremental progress:")
+        self.progress_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Incremental progress:", tooltip="This shows the global iteration round of the dauvergne_protocol auto-analysis.  Optimisation of the global model may require between 5 to 15 iterations.  Therefore the maximum number of iterations should not be reached reached.  Once the global diffusion model has converged, this gauge will be set to 100%")
 
         # MC sim gauge.
-        self.mc_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Monte Carlo simulations:")
+        self.mc_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Monte Carlo simulations:", tooltip="The Monte Carlo simulation number.  Monte Carlo simulations are only performed at the very end of the analysis in the 'final' global model.")
 
 
     def create_rx(self, sizer):
@@ -262,7 +276,7 @@ class Controller(wx.Frame):
         self.panel_rx.SetSizer(panel_sizer)
 
         # MC sim gauge.
-        self.mc_gauge_rx = self.add_gauge(self.panel_rx, panel_sizer, "Monte Carlo simulations:")
+        self.mc_gauge_rx = self.add_gauge(self.panel_rx, panel_sizer, "Monte Carlo simulations:", tooltip="The Monte Carlo simulation number.")
 
 
     def handler_close(self, event):
