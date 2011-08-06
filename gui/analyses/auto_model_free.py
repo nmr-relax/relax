@@ -225,6 +225,7 @@ class Auto_model_free(Base_analysis):
 
         # Register the method for updating the spin count for the completion of user functions.
         status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
+        status.observers.exec_lock.register(self.data.pipe_name, self.activate)
 
         # Execute the base class method to build the panel.
         super(Auto_model_free, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
@@ -243,6 +244,20 @@ class Auto_model_free(Base_analysis):
         # Show the dialog.
         if status.show_gui:
             dialog.Show()
+
+
+    def activate(self):
+        """Activate or deactivate certain elements of the analysis in response to the execution lock."""
+
+        # Flag for enabling or disabling the elements.
+        enable = False
+        if not status.exec_lock.locked():
+            enable = True
+
+        # Activate or deactivate the elements.
+        self.grid_inc.Enable(enable)
+        self.mc_sim_num.Enable(enable)
+        self.max_iter.Enable(enable)
 
 
     def add_values(self, box):
@@ -522,6 +537,7 @@ class Auto_model_free(Base_analysis):
 
         # Remove.
         status.observers.gui_uf.unregister(self.data.pipe_name)
+        status.observers.exec_lock.unregister(self.data.pipe_name)
 
 
     def execute(self, event):
