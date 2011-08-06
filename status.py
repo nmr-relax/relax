@@ -213,10 +213,6 @@ class Exec_lock:
         @type mode:     str
         """
 
-        # Notify observers.
-        status = Status()
-        status.observers.exec_lock.notify()
-
         # Do not acquire if lunching a script from a script.
         if mode == 'script' and self._mode == 'script' and self.locked():
             # Increment the nesting counter.
@@ -254,7 +250,14 @@ class Exec_lock:
             return
 
         # Acquire the real lock.
-        return self._lock.acquire()
+        lock = self._lock.acquire()
+
+        # Notify observers.
+        status = Status()
+        status.observers.exec_lock.notify()
+
+        # Return the real lock.
+        return lock
 
 
     def locked(self):
@@ -273,10 +276,6 @@ class Exec_lock:
 
     def release(self):
         """Simulate the Lock.release() mechanism."""
-
-        # Notify observers.
-        status = Status()
-        status.observers.exec_lock.notify()
 
         # Nested scripting.
         if self._script_nest:
@@ -323,8 +322,14 @@ class Exec_lock:
             return
 
         # Release the real lock.
-        return self._lock.release()
+        release = self._lock.release()
 
+        # Notify observers.
+        status = Status()
+        status.observers.exec_lock.notify()
+
+        # Return the status.
+        return release
 
 
 class Observer(object):
