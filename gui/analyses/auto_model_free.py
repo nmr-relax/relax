@@ -86,8 +86,8 @@ class About_window(About_base):
     def build_widget(self):
         """Build the dialog using the dauvergne_protocol docstring."""
 
-        # The text width (number of characters).
-        width = 120
+        # A global Y offset for packing the elements together (initialise to the border position).
+        self.offset(self.border)
 
         # Loop over the lines.
         for i in range(len(dauvergne_protocol.doc)):
@@ -108,7 +108,7 @@ class About_window(About_base):
 
             # Paragraphs.
             elif level == PARAGRAPH:
-                self.draw_wrapped_text(text, width=width)
+                self.draw_wrapped_text(text)
 
             # Lists.
             elif level == LIST:
@@ -117,40 +117,18 @@ class About_window(About_base):
                     self.offset(10)
 
                 # The text.
-                self.draw_wrapped_text("    - %s" % text, width=width)
+                self.draw_wrapped_text("    - %s" % text)
 
                 # End of list.
                 if i < len(dauvergne_protocol.doc) and dauvergne_protocol.doc[i+1][0] == PARAGRAPH:
                     self.offset(10)
 
-
-    def virtual_size(self):
-        """Determine the virtual size of the window."""
-
-        # A temp window.
-        frame = wx.Frame(None, -1)
-        win = wx.Window(frame)
-
-        # A temp DC.
-        self.dc = wx.ClientDC(win)
-
-        # Build the widget within the temp DC.
-        self.virt_x = self.dim_x
-        self.build_widget()
-
-        # The virtual size.
-        self.virt_x = self.text_max_x + 2*self.border + 20
-        size_y = self.offset()
-        remainder = size_y - size_y / self.SCROLL_RATE * self.SCROLL_RATE
-        self.virt_y = size_y + remainder + self.border
-
-        # Destroy the temporary objects.
-        frame.Destroy()
-        win.Destroy()
-        self.dc.Destroy()
-
-        # Reset the offset.
-        self.offset(-self.offset())
+        # Resize the window.
+        dim_x = self.dim_x
+        virt_y = self.offset() + self.border
+        self.SetSize((dim_x, self.dim_y))
+        self.window.SetVirtualSize((dim_x, virt_y))
+        self.window.EnableScrolling(x_scrolling=False, y_scrolling=True)
 
 
 
