@@ -65,6 +65,9 @@ class Status(object):
         # Execution lock object.
         self.exec_lock = Exec_lock()
 
+        # The data pipe lock object.
+        self.pipe_lock = Lock()
+
         # The exception queue for handling exceptions in threads.
         self.exception_queue = Queue()
 
