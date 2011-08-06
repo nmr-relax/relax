@@ -538,6 +538,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Make the control read only.
         self.SetReadOnly(True)
 
+        # The original zoom level.
+        self.orig_zoom = self.GetZoom()
+
         # Bind events.
         self.Bind(wx.EVT_FIND, self.find)
         self.Bind(wx.EVT_FIND_NEXT, self.find)
@@ -579,6 +582,14 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Allow scrolling (pg up, pg dn):
         if event.GetKeyCode() in [366, 367]:
             event.Skip()
+
+        # Zooming.
+        if event.ControlDown() and event.GetKeyCode() == 48:
+            self.on_zoom_orig(event)
+        if event.ControlDown() and event.GetKeyCode() == 45:
+            self.on_zoom_out(event)
+        if event.ControlDown() and event.GetKeyCode() == 61:
+            self.on_zoom_in(event)
 
 
     def find(self, event):
@@ -793,6 +804,17 @@ class LogCtrl(wx.stc.StyledTextCtrl):
 
         # Zoom.
         self.ZoomIn()
+
+
+    def on_zoom_orig(self, event):
+        """Zoom to the original zoom level.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Zoom.
+        self.SetZoom(self.orig_zoom)
 
 
     def on_zoom_out(self, event):
