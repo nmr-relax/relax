@@ -141,8 +141,8 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         @type box:      wx.BoxSizer instance
         @param method:  The method to execute when the button is clicked.
         @type method:   method
-        @return:        The unique ID of the button.
-        @rtype:         int
+        @return:        The button.
+        @rtype:         wx.lib.buttons.ThemedGenBitmapTextButton instance
         """
 
         # A horizontal sizer for the contents.

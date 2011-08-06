@@ -207,7 +207,7 @@ class Auto_rx(Base_analysis):
         box.AddStretchSpacer()
 
         # Add the execution GUI element.
-        self.button_exec_id = self.add_execute_relax(box, self.execute)
+        self.button_exec_relax = self.add_execute_relax(box, self.execute)
 
         # Return the box.
         return box
