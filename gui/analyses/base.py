@@ -161,8 +161,8 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
 
-        # Return the ID.
-        return id
+        # Return the button.
+        return button
 
 
     def add_spin_control(self, box, parent, text='', min=None, max=None, control=wx.SpinCtrl, width=-1, height=-1):
