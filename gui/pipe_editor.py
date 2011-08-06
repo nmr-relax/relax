@@ -63,6 +63,9 @@ class Pipe_editor(wx.Frame):
         # Create GUI elements
         wx.Frame.__init__(self, None, id=-1, title="Data pipe editor")
 
+        # Freeze the window.
+        self.Freeze()
+
         # Set up the window icon.
         self.SetIcons(relax_icons)
 
@@ -100,11 +103,15 @@ class Pipe_editor(wx.Frame):
 
         # Update the grid.
         self.update_grid()
+        self.activate()
 
         # Register the grid for updating when a user function completes or when the GUI analysis tabs change.
         status.observers.pipe_alteration.register('pipe editor', self.update_grid)
         status.observers.gui_analysis.register('pipe editor', self.update_grid)
         status.observers.exec_lock.register('pipe editor', self.activate)
+
+        # Thaw the window.
+        self.Thaw()
 
 
     def activate(self):
