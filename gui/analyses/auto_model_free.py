@@ -256,6 +256,8 @@ class Auto_model_free(Base_analysis):
             enable = True
 
         # Activate or deactivate the elements.
+        wx.CallAfter(self.field_results_dir.Enable, enable)
+        wx.CallAfter(self.field_spin_system.Enable, enable)
         wx.CallAfter(self.relax_data.Enable, enable)
         wx.CallAfter(self.button_csa.Enable, enable)
         wx.CallAfter(self.button_r.Enable, enable)
@@ -267,6 +269,7 @@ class Auto_model_free(Base_analysis):
         wx.CallAfter(self.grid_inc.Enable, enable)
         wx.CallAfter(self.mc_sim_num.Enable, enable)
         wx.CallAfter(self.max_iter.Enable, enable)
+        wx.CallAfter(self.mode.Enable, enable)
 
 
     def add_values(self, box):
