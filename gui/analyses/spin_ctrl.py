@@ -69,7 +69,10 @@ class Spin_ctrl:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The label.
-        self.label = self.add_static_text(sizer, parent, text=text, width=width_text)
+        self.label = wx.StaticText(parent, -1, text)
+        self.label.SetMinSize((width_text, -1))
+        self.label.SetFont(font.normal)
+        sizer.Add(self.label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The size for all elements, based on this text.
         size = self.label.GetSize()
@@ -81,7 +84,7 @@ class Spin_ctrl:
         # The spin control.
         self.control = control(parent, -1, text, min=min, max=max)
         self.control.SetFont(font.normal)
-        box.Add(self.control, 1, wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer.Add(self.control, 1, wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacer.
         sizer.AddSpacer((spacer, -1))
@@ -89,13 +92,13 @@ class Spin_ctrl:
         # No button, so add a spacer.
         sizer.AddSpacer((width_button, -1))
 
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
-
         # Tooltip.
         if tooltip:
             self.label.SetToolTipString(tooltip)
             self.control.SetToolTipString(tooltip)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
 
 
     def Enable(self, enable=True):
