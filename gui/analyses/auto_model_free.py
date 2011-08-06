@@ -42,6 +42,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.about import About_base
 from gui.analyses.base import Base_analysis
+from gui.analyses.spin_ctrl import Spin_ctrl
 from gui.analyses.execute import Execute
 from gui.base_classes import Container
 from gui.components.relax_data import Relax_data_list
@@ -509,11 +510,11 @@ class Auto_model_free(Base_analysis):
         self.mf_model_field.set_value(self.data.mf_models)
 
         # The optimisation settings.
-        self.grid_inc = self.add_spin_element(box, self, text="Grid search increments:", default=11, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.")
-        self.mc_sim_num = self.add_spin_element(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.")
+        self.grid_inc = Spin_ctrl(box, self, text="Grid search increments:", default=11, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.mc_sim_num = Spin_ctrl(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add maximum iteration selector.
-        self.max_iter = self.add_spin_element(box, self, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100)
+        self.max_iter = Spin_ctrl(box, self, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The calculation mode.
         self.mode = self.add_text_sel_element(box, self, text="Protocol mode:", default='Fully automated', tooltip="Select if the dauvergne_protocol analysis will be fully automated or whether the individual global models will be optimised one by one.", icon=paths.icon_16x16.system_run, fn=self.mode_dialog, editable=False, button=True)

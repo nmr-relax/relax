@@ -201,65 +201,6 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         return field
 
 
-    def add_spin_element(self, box, parent, text="", default=0, min=0, max=1000, tooltip=None, control=wx.SpinCtrl):
-        """Create a text selection element using a spinner for the frame.
-
-        This consists of a horizontal layout with a static text element and a spin control
-
-        @param box:             The box element to pack the structure file selection GUI element into.
-        @type box:              wx.BoxSizer instance
-        @param parent:          The parent GUI element.
-        @type parent:           wx object
-        @keyword text:          The static text.
-        @type text:             str
-        @keyword default:       The default value of the control.
-        @type default:          int
-        @keyword min:           The minimum value allowed.
-        @type min:              int
-        @keyword max:           The maximum value allowed.
-        @type max:              int
-        @keyword tooltip:   	The tooltip which appears on hovering over the text or spin control.
-        @type tooltip:      	str
-        @keyword control:       The control class to use.
-        @type control:          wx.SpinCtrl derived class
-        @return:                The text control object.
-        @rtype:                 control object
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = self.add_static_text(sizer, parent, text=text, width=self.width_text)
-
-        # The size for all elements, based on this text.
-        size = label.GetSize()
-        size_horizontal = size[1] + 8
-
-        # Spacer.
-        sizer.AddSpacer((self.spacer_horizontal, -1))
-
-        # The text input field.
-        field = self.add_spin_control(sizer, parent, text=int_to_gui(default), control=control, min=min, max=max, height=size_horizontal)
-
-        # Spacer.
-        sizer.AddSpacer((self.spacer_horizontal, -1))
-
-        # No button, so add a spacer.
-        sizer.AddSpacer((self.width_button, -1))
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
-
-        # Tooltip.
-        if tooltip:
-            label.SetToolTipString(tooltip)
-            field.SetToolTipString(tooltip)
-
-        # Return the text control object.
-        return field
-
-
     def add_spin_systems(self, box, parent):
         """Add a special control for spin systems.
 

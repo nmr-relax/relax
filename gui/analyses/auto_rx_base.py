@@ -40,6 +40,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.analyses.base import Base_analysis, Spectral_error_type_page
 from gui.analyses.execute import Execute
+from gui.analyses.spin_ctrl import Spin_ctrl
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import opendir
@@ -198,8 +199,8 @@ class Auto_rx(Base_analysis):
         box.AddSpacer(10)
 
         # The optimisation settings.
-        self.grid_inc = self.add_spin_element(box, self, text="Grid search increments:", default=21, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.")
-        self.mc_sim_num = self.add_spin_element(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.  For best results, at least 500 is recommended.")
+        self.grid_inc = Spin_ctrl(box, self, text="Grid search increments:", default=21, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.mc_sim_num = Spin_ctrl(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.  For best results, at least 500 is recommended.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Stretchable spacing (with a minimal space).
         box.AddSpacer(30)
