@@ -256,6 +256,12 @@ class Auto_model_free(Base_analysis):
             enable = True
 
         # Activate or deactivate the elements.
+        wx.CallAfter(self.relax_data.Enable, enable)
+        wx.CallAfter(self.button_csa.Enable, enable)
+        wx.CallAfter(self.button_r.Enable, enable)
+        wx.CallAfter(self.button_h_type.Enable, enable)
+        wx.CallAfter(self.button_x_type.Enable, enable)
+        wx.CallAfter(self.button_vectors.Enable, enable)
         wx.CallAfter(self.local_tm_model_field.Enable, enable)
         wx.CallAfter(self.mf_model_field.Enable, enable)
         wx.CallAfter(self.grid_inc.Enable, enable)
@@ -274,49 +280,49 @@ class Auto_model_free(Base_analysis):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # CSA button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " CSA")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetSize((-1, 20))
-        button.SetToolTipString("Set the Chemical Shift Anisotropy (CSA) values via the value.set user function.")
-        self.gui.Bind(wx.EVT_BUTTON, self.value_set_csa, button)
-        sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
+        self.button_csa = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " CSA")
+        self.button_csa.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        self.button_csa.SetFont(font.normal)
+        self.button_csa.SetSize((-1, 20))
+        self.button_csa.SetToolTipString("Set the Chemical Shift Anisotropy (CSA) values via the value.set user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.value_set_csa, self.button_csa)
+        sizer.Add(self.button_csa, 1, wx.ALL|wx.EXPAND, 0)
 
         # Bond length button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Bond length")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetSize((-1, 20))
-        button.SetToolTipString("Set the bond length (r) values via the value.set user function.")
-        self.gui.Bind(wx.EVT_BUTTON, self.value_set_r, button)
-        sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
+        self.button_r = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Bond length")
+        self.button_r.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        self.button_r.SetFont(font.normal)
+        self.button_r.SetSize((-1, 20))
+        self.button_r.SetToolTipString("Set the bond length (r) values via the value.set user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.value_set_r, self.button_r)
+        sizer.Add(self.button_r, 1, wx.ALL|wx.EXPAND, 0)
 
         # Proton type button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " H type")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetSize((-1, 20))
-        button.SetToolTipString("Set the type of proton via the value.set user function.")
-        self.gui.Bind(wx.EVT_BUTTON, self.value_set_proton_type, button)
-        sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
+        self.button_h_type = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " H type")
+        self.button_h_type.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        self.button_h_type.SetFont(font.normal)
+        self.button_h_type.SetSize((-1, 20))
+        self.button_h_type.SetToolTipString("Set the type of proton via the value.set user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.value_set_proton_type, self.button_h_type)
+        sizer.Add(self.button_h_type, 1, wx.ALL|wx.EXPAND, 0)
 
         # Heteronucleus type button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " X type")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetSize((-1, 20))
-        button.SetToolTipString("Set the type of heteronucleus via the value.set user function.")
-        self.gui.Bind(wx.EVT_BUTTON, self.value_set_heteronuc_type, button)
-        sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
+        self.button_x_type = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " X type")
+        self.button_x_type.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        self.button_x_type.SetFont(font.normal)
+        self.button_x_type.SetSize((-1, 20))
+        self.button_x_type.SetToolTipString("Set the type of heteronucleus via the value.set user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.value_set_heteronuc_type, self.button_x_type)
+        sizer.Add(self.button_x_type, 1, wx.ALL|wx.EXPAND, 0)
 
         # Unit vectors button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Unit vectors")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.structure, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetSize((-1, 20))
-        button.SetToolTipString("Load unit vectors from PDB files.")
-        self.gui.Bind(wx.EVT_BUTTON, self.load_unit_vectors, button)
-        sizer.Add(button, 1, wx.ALL|wx.EXPAND, 0)
+        self.button_vectors = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Unit vectors")
+        self.button_vectors.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.structure, wx.BITMAP_TYPE_ANY))
+        self.button_vectors.SetFont(font.normal)
+        self.button_vectors.SetSize((-1, 20))
+        self.button_vectors.SetToolTipString("Load unit vectors from PDB files.")
+        self.gui.Bind(wx.EVT_BUTTON, self.load_unit_vectors, self.button_vectors)
+        sizer.Add(self.button_vectors, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
@@ -820,9 +826,9 @@ class Local_tm_list:
 
 
     def Enable(self, enable=True):
-        """Enable or disable the window for user input.
+        """Enable or disable the element.
 
-        @keyword enable:    The flag specifying if the control should be enabled or disabled.
+        @keyword enable:    The flag specifying if the element should be enabled or disabled.
         @type enable:       bool
         """
 
