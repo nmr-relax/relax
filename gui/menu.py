@@ -134,9 +134,9 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.relax_manual, id=self.MENU_HELP_MANUAL)
         self.gui.Bind(wx.EVT_MENU, self.gui.contact_relax, id=self.MENU_HELP_MAIL)
         self.gui.Bind(wx.EVT_MENU, self.gui.references, id=self.MENU_HELP_REFS)
-        self.gui.Bind(wx.EVT_MENU, self.gui.about_gui, id=self.MENU_HELP_GPL)
+        self.gui.Bind(wx.EVT_MENU, self.gui.user_functions.gpl.run, id=self.MENU_HELP_GPL)
         self.gui.Bind(wx.EVT_MENU, self.gui.about_relax, id=self.MENU_HELP_ABOUT_GUI)
-        self.gui.Bind(wx.EVT_MENU, self.gui.user_functions.gpl.run, id=self.MENU_HELP_ABOUT)
+        self.gui.Bind(wx.EVT_MENU, self.gui.about_gui, id=self.MENU_HELP_ABOUT)
 
         # Add the menu bar GUI item to the main frame.
         self.gui.SetMenuBar(self.menubar)
