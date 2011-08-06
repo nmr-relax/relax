@@ -256,11 +256,11 @@ class Auto_model_free(Base_analysis):
             enable = True
 
         # Activate or deactivate the elements.
-        self.local_tm_model_field.Enable(enable)
-        self.mf_model_field.Enable(enable)
-        self.grid_inc.Enable(enable)
-        self.mc_sim_num.Enable(enable)
-        self.max_iter.Enable(enable)
+        wx.CallAfter(self.local_tm_model_field.Enable, enable)
+        wx.CallAfter(self.mf_model_field.Enable, enable)
+        wx.CallAfter(self.grid_inc.Enable, enable)
+        wx.CallAfter(self.mc_sim_num.Enable, enable)
+        wx.CallAfter(self.max_iter.Enable, enable)
 
 
     def add_values(self, box):
