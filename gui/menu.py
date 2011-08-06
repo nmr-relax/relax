@@ -38,6 +38,27 @@ from gui.components.menu import build_menu_item
 class Menu:
     """The menu bar GUI class."""
 
+    # Some IDs for the menu entries.
+    MENU_FILE_NEW = wx.NewId()
+    MENU_FILE_CLOSE = wx.NewId()
+    MENU_FILE_CLOSE_ALL = wx.NewId()
+    MENU_FILE_OPEN = wx.NewId()
+    MENU_FILE_SAVE = wx.NewId()
+    MENU_FILE_SAVE_AS = wx.NewId()
+    MENU_FILE_EXIT = wx.NewId()
+    MENU_VIEW_CONTROLLER = wx.NewId()
+    MENU_VIEW_SPIN_VIEW = wx.NewId()
+    MENU_VIEW_RESULTS = wx.NewId()
+    MENU_VIEW_PIPE_EDIT = wx.NewId()
+    MENU_VIEW_PROMPT = wx.NewId()
+    MENU_SETTINGS_FORMAT = wx.NewId()
+    MENU_HELP_MANUAL = wx.NewId()
+    MENU_HELP_MAIL = wx.NewId()
+    MENU_HELP_REFS = wx.NewId()
+    MENU_HELP_GPL = wx.NewId()
+    MENU_HELP_ABOUT_GUI = wx.NewId()
+    MENU_HELP_ABOUT = wx.NewId()
+
     def __init__(self, gui):
         """Build the menu bar."""
 
@@ -49,73 +70,73 @@ class Menu:
 
         # The 'File' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=1, text="&New analysis\tCtrl+N", icon=paths.icon_16x16.new))
-        menu.AppendItem(build_menu_item(menu, id=6, text="&Close analysis", icon=paths.icon_16x16.document_close))
-        menu.AppendItem(build_menu_item(menu, id=7, text="&Close all analyses", icon=paths.icon_16x16.dialog_close))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_NEW, text="&New analysis\tCtrl+N", icon=paths.icon_16x16.new))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_CLOSE, text="&Close analysis", icon=paths.icon_16x16.document_close))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_CLOSE_ALL, text="&Close all analyses", icon=paths.icon_16x16.dialog_close))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=2, text="&Open relax state\tCtrl+O", icon=paths.icon_16x16.open))
-        menu.AppendItem(build_menu_item(menu, id=3, text="S&ave relax state\tCtrl+S", icon=paths.icon_16x16.save))
-        menu.AppendItem(build_menu_item(menu, id=4, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.save_as))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_OPEN, text="&Open relax state\tCtrl+O", icon=paths.icon_16x16.open))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_SAVE, text="S&ave relax state\tCtrl+S", icon=paths.icon_16x16.save))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_SAVE_AS, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.save_as))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=5, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_EXIT, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
         self.menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_new,              id=1)
-        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_close,            id=6)
-        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_close_all,        id=7)
-        self.gui.Bind(wx.EVT_MENU, self.gui.state_load,                     id=2)
-        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save,              id=3)
-        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save_as,           id=4)
-        self.gui.Bind(wx.EVT_MENU, self.gui.exit_gui,                       id=5)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_new, id=self.MENU_FILE_NEW)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_close, id=self.MENU_FILE_CLOSE)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_close_all, id=self.MENU_FILE_CLOSE_ALL)
+        self.gui.Bind(wx.EVT_MENU, self.gui.state_load, id=self.MENU_FILE_OPEN)
+        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save, id=self.MENU_FILE_SAVE)
+        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save_as, id=self.MENU_FILE_SAVE_AS)
+        self.gui.Bind(wx.EVT_MENU, self.gui.exit_gui, id=self.MENU_FILE_EXIT)
 
         # The 'View' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=50, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.controller))
-        menu.AppendItem(build_menu_item(menu, id=52, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
-        menu.AppendItem(build_menu_item(menu, id=53, text="&Results viewer\tCtrl+R", icon=paths.icon_16x16.view_statistics))
-        menu.AppendItem(build_menu_item(menu, id=54, text="&Data pipe editor\tCtrl+D", icon=paths.icon_16x16.pipe))
-        menu.AppendItem(build_menu_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_CONTROLLER, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.controller))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_SPIN_VIEW, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_RESULTS, text="&Results viewer\tCtrl+R", icon=paths.icon_16x16.view_statistics))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_PIPE_EDIT, text="&Data pipe editor\tCtrl+D", icon=paths.icon_16x16.pipe))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_PROMPT, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
         self.menubar.Append(menu, "&View")
 
         # The 'View' actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_controller,                id=50)
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_prompt,                    id=51)
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_tree,                      id=52)
-        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.show_results_viewer,   id=53)
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_pipe_editor,               id=54)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_controller, id=self.MENU_VIEW_CONTROLLER)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_prompt, id=self.MENU_VIEW_PROMPT)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_tree, id=self.MENU_VIEW_SPIN_VIEW)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.show_results_viewer, id=self.MENU_VIEW_RESULTS)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_pipe_editor, id=self.MENU_VIEW_PIPE_EDIT)
 
         # The 'User functions' menu entries.
         self._user_functions()
 
         # The 'Settings' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=21, text="&Free file format settings", icon=paths.icon_16x16.document_properties))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_SETTINGS_FORMAT, text="&Free file format settings", icon=paths.icon_16x16.document_properties))
         self.menubar.Append(menu, "&Settings")
 
         # The 'Settings' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.free_file_format_settings, id=21)
+        self.gui.Bind(wx.EVT_MENU, self.gui.free_file_format_settings, id=self.MENU_SETTINGS_FORMAT)
 
         # The 'Help' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=40, text="relax user &manual\tF1", icon=paths.icon_16x16.manual))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_MANUAL, text="relax user &manual\tF1", icon=paths.icon_16x16.manual))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=41, text="Mailing list &contact (relax-users@gna.org)", icon=paths.icon_16x16.contact))
-        menu.AppendItem(build_menu_item(menu, id=42, text="&References", icon=paths.icon_16x16.ref))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_MAIL, text="Mailing list &contact (relax-users@gna.org)", icon=paths.icon_16x16.contact))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_REFS, text="&References", icon=paths.icon_16x16.ref))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=45, text="&Licence", icon=paths.icon_16x16.gnu_head))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_GPL, text="&Licence", icon=paths.icon_16x16.gnu_head))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=43, text="About relaxG&UI", icon=paths.icon_16x16.about_relaxgui))
-        menu.AppendItem(build_menu_item(menu, id=44, text="About rela&x", icon=paths.icon_16x16.about_relax))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_ABOUT_GUI, text="About relaxG&UI", icon=paths.icon_16x16.about_relaxgui))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_ABOUT, text="About rela&x", icon=paths.icon_16x16.about_relax))
         self.menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.relax_manual,               id=40)
-        self.gui.Bind(wx.EVT_MENU, self.gui.contact_relax,              id=41)
-        self.gui.Bind(wx.EVT_MENU, self.gui.references,                 id=42)
-        self.gui.Bind(wx.EVT_MENU, self.gui.about_gui,                  id=43)
-        self.gui.Bind(wx.EVT_MENU, self.gui.about_relax,                id=44)
-        self.gui.Bind(wx.EVT_MENU, self.gui.user_functions.gpl.run,     id=45)
+        self.gui.Bind(wx.EVT_MENU, self.gui.relax_manual, id=self.MENU_HELP_MANUAL)
+        self.gui.Bind(wx.EVT_MENU, self.gui.contact_relax, id=self.MENU_HELP_MAIL)
+        self.gui.Bind(wx.EVT_MENU, self.gui.references, id=self.MENU_HELP_REFS)
+        self.gui.Bind(wx.EVT_MENU, self.gui.about_gui, id=self.MENU_HELP_GPL)
+        self.gui.Bind(wx.EVT_MENU, self.gui.about_relax, id=self.MENU_HELP_ABOUT_GUI)
+        self.gui.Bind(wx.EVT_MENU, self.gui.user_functions.gpl.run, id=self.MENU_HELP_ABOUT)
 
         # Add the menu bar GUI item to the main frame.
         self.gui.SetMenuBar(self.menubar)
