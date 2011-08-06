@@ -333,14 +333,26 @@ class Mol_res_spin_tree(wx.Window):
 
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_MOLECULE_RESIDUE_CREATE, text="Add residue", icon=paths.icon_16x16.add))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DELETE, text="Delete molecule", icon=paths.icon_16x16.remove))
+        item = build_menu_item(menu, id=self.MENU_MOLECULE_RESIDUE_CREATE, text="Add residue", icon=paths.icon_16x16.add)
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
+        item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DELETE, text="Delete molecule", icon=paths.icon_16x16.remove)
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
 
         # Selection or deselection.
         if self.info['select']:
-            menu.AppendItem(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DESELECT, text="Deselect"))
+            item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_DESELECT, text="Deselect")
+            menu.AppendItem(item)
+            if status.exec_lock.locked():
+                item.Enable(False)
         else:
-            menu.AppendItem(build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_SELECT, text="Select"))
+            item = build_menu_item(menu, id=self.MENU_MOLECULE_MOLECULE_SELECT, text="Select")
+            menu.AppendItem(item)
+            if status.exec_lock.locked():
+                item.Enable(False)
 
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.create_residue, id=self.MENU_MOLECULE_RESIDUE_CREATE)
@@ -360,14 +372,26 @@ class Mol_res_spin_tree(wx.Window):
 
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_RESIDUE_SPIN_ADD, text="Add spin", icon=paths.icon_16x16.add))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DELETE, text="Delete residue", icon=paths.icon_16x16.remove))
+        item = build_menu_item(menu, id=self.MENU_RESIDUE_SPIN_ADD, text="Add spin", icon=paths.icon_16x16.add)
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
+        item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DELETE, text="Delete residue", icon=paths.icon_16x16.remove)
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
 
         # Selection or deselection.
         if self.info['select']:
-            menu.AppendItem(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DESELECT, text="Deselect"))
+            item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_DESELECT, text="Deselect")
+            menu.AppendItem(item)
+            if status.exec_lock.locked():
+                item.Enable(False)
         else:
-            menu.AppendItem(build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_SELECT, text="Select"))
+            item = build_menu_item(menu, id=self.MENU_RESIDUE_RESIDUE_SELECT, text="Select")
+            menu.AppendItem(item)
+            if status.exec_lock.locked():
+                item.Enable(False)
 
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.create_spin, id=self.MENU_RESIDUE_SPIN_ADD)
@@ -387,7 +411,10 @@ class Mol_res_spin_tree(wx.Window):
 
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_ROOT_MOLECULE_CREATE, text="Add molecule", icon=paths.icon_16x16.add))
+        item = build_menu_item(menu, id=self.MENU_ROOT_MOLECULE_CREATE, text="Add molecule", icon=paths.icon_16x16.add)
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
 
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.create, id=self.MENU_ROOT_MOLECULE_CREATE)
@@ -402,13 +429,22 @@ class Mol_res_spin_tree(wx.Window):
 
         # The menu.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_SPIN_SPIN_DELETE, text="Delete spin", icon=paths.icon_16x16.remove))
+        item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_DELETE, text="Delete spin", icon=paths.icon_16x16.remove)
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
 
         # Selection or deselection.
         if self.info['select']:
-            menu.AppendItem(build_menu_item(menu, id=self.MENU_SPIN_SPIN_DESELECT, text="Deselect"))
+            item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_DESELECT, text="Deselect")
+            menu.AppendItem(item)
+            if status.exec_lock.locked():
+                item.Enable(False)
         else:
-            menu.AppendItem(build_menu_item(menu, id=self.MENU_SPIN_SPIN_SELECT, text="Select"))
+            item = build_menu_item(menu, id=self.MENU_SPIN_SPIN_SELECT, text="Select")
+            menu.AppendItem(item)
+            if status.exec_lock.locked():
+                item.Enable(False)
 
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.delete_spin, id=self.MENU_SPIN_SPIN_DELETE)
