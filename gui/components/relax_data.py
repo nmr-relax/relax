@@ -103,6 +103,18 @@ class Relax_data_list:
         status.observers.gui_uf.register(self.name, self.build_element)
 
 
+    def Enable(self, enable=True):
+        """Enable or disable the element.
+
+        @keyword enable:    The flag specifying if the element should be enabled or disabled.
+        @type enable:       bool
+        """
+
+        # Call buttons' methods.
+        self.button_add.Enable(enable)
+        self.button_delete.Enable(enable)
+
+
     def add_buttons(self, sizer):
         """Add the buttons for peak list manipulation.
 
@@ -115,22 +127,22 @@ class Relax_data_list:
         sizer.Add(button_sizer, 0, wx.ALL|wx.EXPAND, 0)
 
         # Add button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetSize((80, self.height_buttons))
-        button_sizer.Add(button, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.read, button)
-        button.SetToolTipString("Read relaxation data from file.")
+        self.button_add = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
+        self.button_add.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
+        self.button_add.SetFont(font.normal)
+        self.button_add.SetSize((80, self.height_buttons))
+        button_sizer.Add(self.button_add, 0, 0, 0)
+        self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.read, self.button_add)
+        self.button_add.SetToolTipString("Read relaxation data from file.")
 
         # Delete button.
-        button = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
-        button.SetFont(font.normal)
-        button.SetSize((80, self.height_buttons))
-        button_sizer.Add(button, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.delete, button)
-        button.SetToolTipString("Delete loaded relaxation data from the relax data store.")
+        self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
+        self.button_delete.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
+        self.button_delete.SetFont(font.normal)
+        self.button_delete.SetSize((80, self.height_buttons))
+        button_sizer.Add(self.button_delete, 0, 0, 0)
+        self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.delete, self.button_delete)
+        self.button_delete.SetToolTipString("Delete loaded relaxation data from the relax data store.")
 
 
     def build_element(self):
