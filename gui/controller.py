@@ -85,7 +85,7 @@ class Controller(wx.Frame):
         self.create_mf(sizer)
 
         # Add the main execution gauge.
-        self.main_gauge = self.add_gauge(self, sizer, "Execution progress:", tooltip="This gauge will pulse while relax is executing an auto-analysis (when the execution lock is turned on) and will be set to 100% once the analysis is completed.")
+        self.main_gauge = self.add_gauge(self, sizer, "Execution progress:", tooltip="This gauge will pulse while relax is executing an auto-analysis (when the execution lock is turned on) and will be set to 100% once the analysis is complete.")
 
         # Initialise a queue for log messages.
         self.log_queue = Queue()
@@ -257,7 +257,7 @@ class Controller(wx.Frame):
         self.progress_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Incremental progress:", tooltip="This shows the global iteration round of the dauvergne_protocol auto-analysis.  Optimisation of the global model may require between 5 to 15 iterations.  The maximum number of iterations should not be reached.  Once the global diffusion model has converged, this gauge will be set to 100%")
 
         # MC sim gauge.
-        self.mc_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Monte Carlo simulations:", tooltip="The Monte Carlo simulation number.  Monte Carlo simulations are only performed at the very end of the analysis in the 'final' global model.")
+        self.mc_gauge_mf = self.add_gauge(self.panel_mf, panel_sizer, "Monte Carlo simulations:", tooltip="The Monte Carlo simulation number.  Simulations are only performed at the very end of the analysis in the 'final' global model.")
 
 
     def create_rx(self, sizer):
