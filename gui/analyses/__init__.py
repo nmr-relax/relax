@@ -51,10 +51,10 @@ __all__ = ['auto_model_free',
            'auto_r2',
            'auto_rx_base',
            'base',
+           'elements',
            'relax_control',
            'results_analysis',
-           'results',
-           'spin_ctrl']
+           'results']
 
 
 class Analysis_controller:

@@ -40,7 +40,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.analyses.base import Base_analysis, Spectral_error_type_page
 from gui.analyses.execute import Execute
-from gui.analyses.spin_ctrl import Spin_ctrl
+from gui.analyses.elements import Spin_ctrl
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import opendir

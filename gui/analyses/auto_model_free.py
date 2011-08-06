@@ -42,7 +42,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.about import About_base
 from gui.analyses.base import Base_analysis
-from gui.analyses.spin_ctrl import Spin_ctrl
+from gui.analyses.elements import Spin_ctrl
 from gui.analyses.execute import Execute
 from gui.base_classes import Container
 from gui.components.relax_data import Relax_data_list
