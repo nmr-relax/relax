@@ -35,6 +35,7 @@ from generic_fns.pipes import cdp_name
 
 # relax GUI module imports.
 from gui import paths
+from gui.analyses.elements import Text_ctrl
 from gui.fonts import font
 from gui.misc import add_border, int_to_gui, str_to_gui
 from gui.user_functions.base import UF_page
@@ -213,7 +214,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         """
 
         # Add the element.
-        self.spin_systems = self.add_text_sel_element(box, self, text="Spin systems", button_text=" Spin editor", default=self.spin_count(), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True)
+        self.spin_systems = Text_ctrl(box, self, text="Spin systems", button_text=" Spin editor", default=self.spin_count(), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
 
     def add_static_text(self, box, parent, text='', width=-1, height=-1):
@@ -326,84 +327,6 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         box.Add(field, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Return the text field.
-        return field
-
-
-    def add_text_sel_element(self, box, parent, text="", default="", tooltip=None, button_text=" Change", control=wx.TextCtrl, icon=paths.icon_16x16.open, fn=None, editable=True, button=False):
-        """Create a text selection element for the frame.
-
-        This consists of a horizontal layout with a static text element, a text control, and an optional button.
-
-        @param box:             The box element to pack the structure file selection GUI element into.
-        @type box:              wx.BoxSizer instance
-        @param parent:          The parent GUI element.
-        @type parent:           wx object
-        @keyword text:          The static text.
-        @type text:             str
-        @keyword default:       The default text of the control.
-        @type default:          str
-        @keyword tooltip:   	The tooltip which appears on hovering over the text or input field.
-        @type tooltip:      	str
-        @keyword button_text:   The text to display on the button.
-        @type button_text:      str
-        @keyword control:       The control class to use.
-        @type control:          wx.TextCtrl derived class
-        @keyword icon:          The path of the icon to use for the button.
-        @type icon:             str
-        @keyword fn:            The function or method to execute when clicking on the button.  If this is a string, then an equivalent function will be searched for in the control object.
-        @type fn:               func or str
-        @keyword editable:      A flag specifying if the control is editable or not.
-        @type editable:         bool
-        @keyword button:        A flag which if True will cause a button to appear.
-        @type button:           bool
-        @return:                The text control object.
-        @rtype:                 control object
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = self.add_static_text(sizer, parent, text=text, width=self.width_text)
-
-        # The size for all elements, based on this text.
-        size = label.GetSize()
-        size_horizontal = size[1] + 8
-
-        # Spacer.
-        sizer.AddSpacer((self.spacer_horizontal, -1))
-
-        # The text input field.
-        field = self.add_text_control(sizer, parent, text=default, control=control, height=size_horizontal, editable=editable)
-
-        # Spacer.
-        sizer.AddSpacer((self.spacer_horizontal, -1))
-
-        # The button.
-        if button:
-            # Function is in the control class.
-            if type(fn) == str:
-                # The function.
-                fn = getattr(field, fn)
-
-            # Add the button.
-            button_open = self.add_button_open(sizer, parent, icon=icon, text=button_text, fn=fn, width=self.width_button, height=size_horizontal)
-
-        # No button, so add a spacer.
-        else:
-            sizer.AddSpacer((self.width_button, -1))
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
-
-        # Tooltip.
-        if tooltip:
-            label.SetToolTipString(tooltip)
-            field.SetToolTipString(tooltip)
-	    if button:
-            	button_open.SetToolTipString(tooltip)
-
-        # Return the text control object.
         return field
 
 

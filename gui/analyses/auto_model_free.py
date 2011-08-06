@@ -42,7 +42,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.about import About_base
 from gui.analyses.base import Base_analysis
-from gui.analyses.elements import Spin_ctrl
+from gui.analyses.elements import Spin_ctrl, Text_ctrl
 from gui.analyses.execute import Execute
 from gui.base_classes import Container
 from gui.components.relax_data import Relax_data_list
@@ -492,10 +492,10 @@ class Auto_model_free(Base_analysis):
         self.add_title(box, "Setup for model-free analysis")
 
         # Display the data pipe.
-        self.add_text_sel_element(box, self, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False)
+        Text_ctrl(box, self, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
-        self.field_results_dir = self.add_text_sel_element(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
+        self.field_results_dir = Text_ctrl(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the spin GUI element.
         self.add_spin_systems(box, self)
@@ -525,7 +525,7 @@ class Auto_model_free(Base_analysis):
         self.max_iter = Spin_ctrl(box, self, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The calculation mode.
-        self.mode = self.add_text_sel_element(box, self, text="Protocol mode:", default='Fully automated', tooltip="Select if the dauvergne_protocol analysis will be fully automated or whether the individual global models will be optimised one by one.", icon=paths.icon_16x16.system_run, fn=self.mode_dialog, editable=False, button=True)
+        self.mode = Text_ctrl(box, self, text="Protocol mode:", default='Fully automated', tooltip="Select if the dauvergne_protocol analysis will be fully automated or whether the individual global models will be optimised one by one.", icon=paths.icon_16x16.system_run, fn=self.mode_dialog, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Stretchable spacing (with a minimal space).
         box.AddSpacer(30)

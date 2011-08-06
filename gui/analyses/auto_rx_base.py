@@ -39,8 +39,8 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.analyses.base import Base_analysis, Spectral_error_type_page
+from gui.analyses.elements import Spin_ctrl, Text_ctrl
 from gui.analyses.execute import Execute
-from gui.analyses.elements import Spin_ctrl
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import opendir
@@ -182,13 +182,13 @@ class Auto_rx(Base_analysis):
         self.add_title(box, "Setup for %s relaxation analysis" % self.label)
 
         # Display the data pipe.
-        self.add_text_sel_element(box, self, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False)
+        Text_ctrl(box, self, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the frequency selection GUI element.
-        self.field_nmr_frq = self.add_text_sel_element(box, self, text="NMR frequency label [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the %s values will be located in the file '%s.600.out'." % (self.label, lower(self.label)))
+        self.field_nmr_frq = Text_ctrl(box, self, text="NMR frequency label [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the %s values will be located in the file '%s.600.out'." % (self.label, lower(self.label)), width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
-        self.field_results_dir = self.add_text_sel_element(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
+        self.field_results_dir = Text_ctrl(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the spin GUI element.
         self.add_spin_systems(box, self)
