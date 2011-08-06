@@ -534,6 +534,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.menu_id_select_all = wx.NewId()
         self.menu_id_zoom_in = wx.NewId()
         self.menu_id_zoom_out = wx.NewId()
+        self.menu_id_zoom_orig = wx.NewId()
 
         # Make the control read only.
         self.SetReadOnly(True)
@@ -552,6 +553,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.Bind(wx.EVT_MENU, self.on_select_all, id=self.menu_id_select_all)
         self.Bind(wx.EVT_MENU, self.on_zoom_in, id=self.menu_id_zoom_in)
         self.Bind(wx.EVT_MENU, self.on_zoom_out, id=self.menu_id_zoom_out)
+        self.Bind(wx.EVT_MENU, self.on_zoom_orig, id=self.menu_id_zoom_orig)
 
 
     def capture_keys(self, event):
@@ -846,6 +848,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         menu.AppendSeparator()
         menu.Append(self.menu_id_zoom_in, "Zoom in")
         menu.Append(self.menu_id_zoom_out, "Zoom out")
+        menu.Append(self.menu_id_zoom_orig, "Original zoom")
 
         # Pop up the menu.
         self.PopupMenu(menu)
