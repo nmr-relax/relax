@@ -92,7 +92,7 @@ class About_base(wx.Frame):
         self.virtual_size()
 
         # Set the window size.
-        self.SetSize((self.virt_x, self.dim_y + 2*self.border))
+        self.SetSize((self.virt_x, self.dim_y))
 
         # Set the window virtual size.
         self.window.SetVirtualSize((self.virt_x, self.virt_y))
@@ -137,7 +137,7 @@ class About_base(wx.Frame):
         self.html.SetDC(self.dc, 1.0)
 
         # Set the size of the HTML object.
-        self.html.SetSize(self.virt_x - 2*self.border, self.virt_y - 2*self.border)
+        self.html.SetSize(self.virt_x, self.virt_y)
 
         # Add the text.
         self.html.SetHtmlText(text)
@@ -462,17 +462,13 @@ class About_base(wx.Frame):
 
         # Dimensions of the drawing area.
         if self.max_x:
-            x = self.max_x
+            self.virt_x = self.max_x
         else:
-            x = self.dim_x
+            self.virt_x = self.dim_x
         if self.max_y:
-            y = self.max_y
+            self.virt_y = self.max_y
         else:
-            y = self.dim_y
-
-        # Borders.
-        self.virt_x = x + 2*self.border
-        self.virt_y = y + 2*self.border
+            self.virt_y = self.dim_y
 
 
 
