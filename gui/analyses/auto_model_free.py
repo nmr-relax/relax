@@ -248,6 +248,7 @@ class Auto_model_free(Base_analysis):
         wx.CallAfter(self.mc_sim_num.Enable, enable)
         wx.CallAfter(self.max_iter.Enable, enable)
         wx.CallAfter(self.mode.Enable, enable)
+        wx.CallAfter(self.button_exec_relax.Enable, enable)
 
 
     def add_values(self, box):
