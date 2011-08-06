@@ -256,6 +256,8 @@ class Auto_model_free(Base_analysis):
             enable = True
 
         # Activate or deactivate the elements.
+        self.local_tm_model_field.Enable(enable)
+        self.mf_model_field.Enable(enable)
         self.grid_inc.Enable(enable)
         self.mc_sim_num.Enable(enable)
         self.max_iter.Enable(enable)
@@ -815,6 +817,18 @@ class Local_tm_list:
 
         # Add the contents to the main box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
+
+
+    def Enable(self, enable=True):
+        """Enable or disable the window for user input.
+
+        @keyword enable:    The flag specifying if the control should be enabled or disabled.
+        @type enable:       bool
+        """
+
+        # Call the control and button's method.
+        self.field.Enable(enable)
+        self.button.Enable(enable)
 
 
     def GetValue(self):
