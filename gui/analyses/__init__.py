@@ -287,6 +287,10 @@ class Analysis_controller:
         @type event:    wx event
         """
 
+        # Execution lock.
+        if status.exec_lock.locked():
+            return
+
         # Get the current analysis index.
         index = self.notebook.GetSelection()
 
@@ -306,6 +310,10 @@ class Analysis_controller:
         @type event:    wx event
         """
 
+        # Execution lock.
+        if status.exec_lock.locked():
+            return
+
         # Ask if this should be done.
         msg = "Are you sure you would like to close all analyses?  All data will be erased and the relax data store reset."
         if Question(msg, title="Close all analyses", size=(350, 150), default=False).ShowModal() == wx.ID_NO:
@@ -321,6 +329,10 @@ class Analysis_controller:
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Execution lock.
+        if status.exec_lock.locked():
+            return
 
         # Initialise the analysis wizard, and obtain the user specified data.
         self.new_wizard = Analysis_wizard()

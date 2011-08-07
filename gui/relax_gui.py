@@ -417,6 +417,10 @@ class Main(wx.Frame):
         @type file_name:    str
         """
 
+        # Execution lock.
+        if status.exec_lock.locked():
+            return
+
         # Warning.
         if not self.analysis.init_state:
             # The message.
