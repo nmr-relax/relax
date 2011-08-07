@@ -134,7 +134,7 @@ class Auto_noe(Base_analysis):
         # Activate or deactivate the elements.
         wx.CallAfter(self.field_nmr_frq.Enable, enable)
         wx.CallAfter(self.field_results_dir.Enable, enable)
-        wx.CallAfter(self.field_spin_system.Enable, enable)
+        wx.CallAfter(self.spin_systems.Enable, enable)
         wx.CallAfter(self.peak_intensity.Enable, enable)
         wx.CallAfter(self.button_exec_relax.Enable, enable)
 
