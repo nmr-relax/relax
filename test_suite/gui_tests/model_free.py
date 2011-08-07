@@ -153,7 +153,7 @@ class Mf(GuiTestCase):
         auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_max_iterations = 1000
 
         # Execute relax.
-        analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_id))
+        analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
 
         # Wait for execution to complete.
         analysis.thread.join()

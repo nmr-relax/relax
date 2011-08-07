@@ -127,7 +127,7 @@ class Noe(GuiTestCase):
             analysis.wizard._go_next(None)
 
         # Execute relax.
-        analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_id))
+        analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
 
         # Wait for execution to complete.
         analysis.thread.join()
