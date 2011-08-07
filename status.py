@@ -131,6 +131,13 @@ class Status(object):
         self.auto_analysis[name] = Auto_analysis(name, type)
 
 
+    def reset(self):
+        """Reset the status object to its initial state."""
+
+        # Simply call the setup again.
+        self._setup()
+
+
 
 class Auto_analysis:
     """The auto-analysis status container."""
