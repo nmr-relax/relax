@@ -103,11 +103,8 @@ class Spin_view_window(wx.Frame):
         splitter = Tree_splitter(self.gui, self, -1)
         sizer.Add(splitter, 1, wx.EXPAND|wx.ALL, 0)
 
-        # Activate the frame.
-        self._activate()
-
-        # Register functions with the observer objects.
-        status.observers.exec_lock.register('spin viewer', self._activate)
+        # Initialise observer name.
+        self.name = 'spin viewer'
 
 
     def _activate(self):
@@ -225,19 +222,20 @@ class Spin_view_window(wx.Frame):
         @type show:     bool
         """
 
-        # Initialise observer name.
-        self.name = 'spin view refresh'
-
         # Register a few methods in the observer objects.
         status.observers.gui_uf.register(self.name, self.refresh)
         status.observers.pipe_alteration.register(self.name, self.refresh)
+        status.observers.exec_lock.register(self.name, self._activate)
 
         # First update.
         self.refresh()
 
-        # Then show the window using the baseclass method.
+        # Activate or deactivate the frame.
+        self._activate()
+
+        # Then show the window using the base class method.
         if status.show_gui:
-            wx.Frame.Show(self, show)
+            super(Spin_view_window, self).Show(show)
 
 
     def refresh(self, event=None):
@@ -283,6 +281,7 @@ class Spin_view_window(wx.Frame):
         # Unregister the methods from the observers to avoid unnecessary updating.
         status.observers.gui_uf.unregister(self.name)
         status.observers.pipe_alteration.unregister(self.name)
+        status.observers.exec_lock.unregister(self.name)
 
         # Close the window.
         self.Hide()
