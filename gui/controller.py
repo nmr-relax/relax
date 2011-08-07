@@ -375,6 +375,9 @@ class Controller(wx.Frame):
         # Update the main gauge.
         wx.CallAfter(self.update_gauge)
 
+        # Re-layout the window.
+        wx.CallAfter(self.Layout)
+
 
     def update_gauge(self):
         """Update the main execution gauge."""
