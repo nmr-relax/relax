@@ -68,6 +68,9 @@ class Status(object):
         # The data pipe lock object.
         self.pipe_lock = Lock()
 
+        # The molecule, residue, spin structure lock object.
+        self.spin_lock = Lock()
+
         # The exception queue for handling exceptions in threads.
         self.exception_queue = Queue()
 
