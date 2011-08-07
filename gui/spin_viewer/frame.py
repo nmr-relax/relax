@@ -247,7 +247,11 @@ class Spin_view_window(wx.Frame):
         @type event:    wx event
         """
 
+        # Thread safe.
         wx.CallAfter(self.refresh_safe)
+
+        # Flush the events.
+        wx.Yield()
 
 
     def refresh_safe(self):
