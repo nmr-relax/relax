@@ -69,7 +69,7 @@ class Status(object):
         self.pipe_lock = Lock()
 
         # The molecule, residue, spin structure lock object.
-        self.spin_lock = Lock()
+        self.spin_lock = Relax_lock()
 
         # The exception queue for handling exceptions in threads.
         self.exception_queue = Queue()
@@ -340,6 +340,7 @@ class Exec_lock:
         return release
 
 
+
 class Observer(object):
     """The observer design pattern base class."""
 
@@ -407,6 +408,80 @@ class Observer(object):
 
         # Remove the key for the ordered key list.
         self._keys.remove(key)
+
+
+
+class Relax_lock:
+    """A type of locking object for relax."""
+
+    def __init__(self, debug=True):
+        """Set up the lock-like object.
+
+        @keyword debug: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
+        @type debug:    bool
+        """
+
+        # Init a threading.Lock object.
+        self._lock = Lock()
+
+        # Debugging.
+        self.debug = debug
+        if self.debug:
+            # Track the number of acquires.
+            self._lock_level = 0
+
+
+    def acquire(self):
+        """Simulate the Lock.acquire() mechanism."""
+
+        # Debugging.
+        if self.debug:
+            # Write out.
+            sys.__stderr__.write('Acquire')
+
+            # Increment the lock level.
+            self._lock_level += 1
+
+            # Throw an error.
+            if self._lock_level > 1:
+                raise
+
+            # Return to prevent real locking.
+            return
+
+        # Acquire the real lock.
+        lock = self._lock.acquire()
+
+        # Return the real lock.
+        return lock
+
+
+    def locked(self):
+        """Simulate the Lock.locked() mechanism."""
+
+        # Call the real method.
+        return self._lock.locked()
+
+
+    def release(self):
+        """Simulate the Lock.release() mechanism."""
+
+        # Debugging.
+        if self.debug:
+            # Write out.
+            sys.__stderr__.write('Release')
+
+            # Increment the lock level.
+            self._lock_level -= 1
+
+            # Return to prevent real lock release.
+            return
+
+        # Release the real lock.
+        release = self._lock.release()
+
+        # Return the status.
+        return release
 
 
 
