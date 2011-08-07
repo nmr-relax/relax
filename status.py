@@ -181,11 +181,6 @@ class Auto_analysis:
 
 
 
-class Status_container:
-    """The generic empty container for the status data."""
-
-
-
 class Exec_lock:
     """A type of locking object for locking execution of relax."""
 
@@ -412,3 +407,10 @@ class Observer(object):
 
         # Remove the key for the ordered key list.
         self._keys.remove(key)
+
+
+
+class Status_container:
+    """The generic empty container for the status data."""
+
+
