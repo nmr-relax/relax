@@ -701,9 +701,6 @@ class dAuvergne_protocol:
         else:
             raise RelaxError("Unknown diffusion model, change the value of 'self.diff_model'")
 
-        # Unset the status info.
-        self.status_reset()
-
 
     def load_tensor(self):
         """Function for loading the optimised diffusion tensor."""
@@ -802,28 +799,6 @@ class dAuvergne_protocol:
 
         # The maximum number of iterations of the global model.
         status.auto_analysis[self.pipe_name].max_iter = self.max_iter
-
-        # The convergence of the global model.
-        status.auto_analysis[self.pipe_name].convergence = False
-
-
-    def status_reset(self):
-        """Initialise the status object."""
-
-        # The global diffusion model.
-        status.auto_analysis[self.pipe_name].diff_model = None
-
-        # The round of optimisation, i.e. the global iteration.
-        status.auto_analysis[self.pipe_name].round = None
-
-        # The list of model-free local tm models for optimisation, i.e. the global iteration.
-        status.auto_analysis[self.pipe_name].local_tm_models = None
-
-        # The list of model-free models for optimisation, i.e. the global iteration.
-        status.auto_analysis[self.pipe_name].mf_models = None
-
-        # The current model-free model.
-        status.auto_analysis[self.pipe_name].current_model = None
 
         # The convergence of the global model.
         status.auto_analysis[self.pipe_name].convergence = False
