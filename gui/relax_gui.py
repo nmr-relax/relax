@@ -257,6 +257,10 @@ class Main(wx.Frame):
         if hasattr(self, 'pipe_editor') and self.pipe_editor.IsShown():
             win_list.append('The data pipe editor')
 
+        # The windows are not open, so quit.
+        if not len(win_list):
+            return
+
         # The text.
         text = "The following windows are currently open:\n\n"
         for win in win_list:
