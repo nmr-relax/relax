@@ -239,6 +239,9 @@ class Auto_noe(Base_analysis):
             event.Skip()
             return
 
+        # User warning to close windows.
+        self.gui.close_windows()
+
         # Synchronise the frame data to the relax data store.
         self.sync_ds(upload=True)
 
