@@ -647,23 +647,32 @@ class Mol_res_spin_tree(wx.Window):
     def update(self, pipe_name=None):
         """Update the tree view using the given data pipe."""
 
-        # The data pipe.
-        if not pipe_name:
-            pipe = cdp
-        else:
-            pipe = get_pipe(pipe_name)
+        # Acquire the pipe and spin locks.
+        status.pipe_lock.acquire()
+        status.spin_lock.acquire()
+        try:
+            # The data pipe.
+            if not pipe_name:
+                pipe = cdp
+            else:
+                pipe = get_pipe(pipe_name)
 
-        # No data pipe, so delete everything and return.
-        if not pipe:
-            self.tree.DeleteChildren(self.root)
-            return
+            # No data pipe, so delete everything and return.
+            if not pipe:
+                self.tree.DeleteChildren(self.root)
+                return
 
-        # Update the molecules.
-        for mol, mol_id in molecule_loop(return_id=True):
-            self.update_mol(mol, mol_id)
+            # Update the molecules.
+            for mol, mol_id in molecule_loop(return_id=True):
+                self.update_mol(mol, mol_id)
 
-        # Remove any deleted molecules.
-        self.prune_mol()
+            # Remove any deleted molecules.
+            self.prune_mol()
+
+        # Release the locks.
+        finally:
+            status.pipe_lock.release()
+            status.spin_lock.release()
 
 
     def update_mol(self, mol, mol_id):
