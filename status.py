@@ -27,7 +27,7 @@
 from Queue import Queue
 from re import search
 import sys
-from threading import Lock
+from threading import Lock, RLock
 
 # relax module imports.
 from relax_errors import RelaxError
@@ -66,7 +66,7 @@ class Status(object):
         self.exec_lock = Exec_lock()
 
         # The data pipe lock object.
-        self.pipe_lock = Lock()
+        self.pipe_lock = RLock()
 
         # The molecule, residue, spin structure lock object.
         self.spin_lock = Relax_lock()
@@ -421,8 +421,8 @@ class Relax_lock:
         @type debug:    bool
         """
 
-        # Init a threading.Lock object.
-        self._lock = Lock()
+        # Init a reentrant lock object.
+        self._lock = RLock()
 
         # Debugging.
         self.debug = debug
@@ -432,7 +432,7 @@ class Relax_lock:
 
 
     def acquire(self):
-        """Simulate the Lock.acquire() mechanism."""
+        """Simulate the RLock.acquire() mechanism."""
 
         # Debugging.
         if self.debug:
@@ -457,14 +457,14 @@ class Relax_lock:
 
 
     def locked(self):
-        """Simulate the Lock.locked() mechanism."""
+        """Simulate the RLock.locked() mechanism."""
 
         # Call the real method.
         return self._lock.locked()
 
 
     def release(self):
-        """Simulate the Lock.release() mechanism."""
+        """Simulate the RLock.release() mechanism."""
 
         # Debugging.
         if self.debug:
