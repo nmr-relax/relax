@@ -146,6 +146,7 @@ class Main(wx.Frame):
             self.user_functions.script.script_exec(script)
 
         # Register functions with the observer objects.
+        status.observers.exec_lock.register('gui', self.close_windows)
         status.observers.pipe_alteration.register('status bar', self.update_status_bar)
 
 
@@ -238,6 +239,43 @@ class Main(wx.Frame):
         # Re-perform the layout of the GUI elements, and refresh.
         self.Layout()
         self.Refresh()
+
+
+    def close_windows(self):
+        """Throw a warning to close all of the non-essential windows when execution is locked.
+
+        This is to speed up the calculations by avoiding window updates.
+        """
+
+        # No execution lock, so return.
+        if not status.exec_lock.locked():
+            return
+
+        # Init the window list.
+        win_list = []
+
+        # Is the spin viewer window open?
+        if hasattr(self, 'spin_viewer') and self.spin_viewer.IsShown():
+            win_list.append('The spin viewer')
+
+        # Is the pipe editor window open?
+        if hasattr(self, 'pipe_editor') and self.pipe_editor.IsShown():
+            win_list.append('The data pipe editor')
+
+        # The text.
+        text = "The following windows are currently open:\n\n"
+        for win in win_list:
+            text = "%s\t%s\n" % (text, win)
+        text = text + "\nClosing these will significantly speed up the calculations."
+
+        # Display the error message dialog.
+        if status.show_gui:
+            self.close_win_dlg = wx.MessageDialog(self, text, caption="Close windows", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+            wx.CallAfter(self.close_win_dlg.ShowModal)
+
+        # Otherwise output to stderr.
+        else:
+            sys.stderr.write(text)
 
 
     def contact_relax(self, event):
