@@ -135,6 +135,9 @@ class Noe(GuiTestCase):
         # Exceptions in the thread.
         self.check_exceptions()
 
+        # Check the relax controller.
+        self.assertEqual(self.gui.controller.main_gauge.GetValue(), 100)
+
         # The real data.
         res_nums = [4, 5, 6]
         sat = [5050.0, 51643.0, 53663.0]

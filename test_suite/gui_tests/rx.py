@@ -224,6 +224,10 @@ class Rx(GuiTestCase):
         # Exceptions in the thread.
         self.check_exceptions()
 
+        # Check the relax controller.
+        self.assertEqual(self.gui.controller.mc_gauge_rx.GetValue(), 100)
+        self.assertEqual(self.gui.controller.main_gauge.GetValue(), 100)
+
         # Check the data pipe.
         self.assertEqual(cdp_name(), ds.relax_gui.analyses[0].pipe_name)
 
