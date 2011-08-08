@@ -217,9 +217,6 @@ class Results_viewer(wx.Frame):
         # Clear the list.
         self.list.Clear()
 
-        # Get the page corresponding to the choice.
-        page = self.gui.analysis.get_page_from_name(gui_to_str(self.pipe_name.GetValue()))
-
         # Nothing to do.
         if not hasattr(cdp, 'result_files'):
             return
