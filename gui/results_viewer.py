@@ -112,6 +112,7 @@ class Results_viewer(wx.Frame):
 
         # Register a few methods in the observer objects.
         status.observers.pipe_alteration.register(self.name, self.update_window)
+        status.observers.exec_lock.register(self.name, self.activate)
 
         # Update the window.
         self.update_window()
@@ -119,6 +120,21 @@ class Results_viewer(wx.Frame):
         # Show the window using the base class method.
         if status.show_gui:
             super(Results_viewer, self).Show(show)
+
+
+    def activate(self):
+        """Activate or deactivate certain elements in response to the execution lock."""
+
+        # Flag for enabling or disabling the elements.
+        enable = False
+        if not status.exec_lock.locked():
+            enable = True
+
+        # The pipe selector.
+        self.pipe_name.Enable(enable)
+
+        # The open button.
+        self.button_open.Enable(enable)
 
 
     def add_list_box(self, box, fn=None):
@@ -185,6 +201,7 @@ class Results_viewer(wx.Frame):
 
         # Unregister the methods from the observers to avoid unnecessary updating.
         status.observers.pipe_alteration.unregister(self.name)
+        status.observers.exec_lock.unregister(self.name)
 
         # Close the window.
         self.Hide()
