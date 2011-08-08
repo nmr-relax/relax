@@ -442,12 +442,17 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
+        # Throw a warning if the execution lock is on.
+        if status.exec_lock.locked():
+            dlg = wx.MessageDialog(self, "Leaving the results viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+            dlg.ShowModal()
+
         # Create the results viewer window if needed.
         if not hasattr(self, 'results_viewer'):
             self.results_viewer = Results_viewer(gui=self)
 
         # Open the window.
-        if status.show_gui:
+        if not self.results_viewer.IsShown():
             self.results_viewer.Show()
 
 
