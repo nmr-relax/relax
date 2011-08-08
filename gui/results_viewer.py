@@ -96,7 +96,7 @@ class Results_viewer(wx.Frame):
         box_centre.Add(self.button_open, 0, wx.ALIGN_RIGHT|wx.ADJUST_MINSIZE, 5)
 
         # Bind some events.
-        self.Bind(wx.EVT_COMBOBOX, self.update_pipes, self.pipe_name)
+        self.Bind(wx.EVT_COMBOBOX, self.switch_pipes, self.pipe_name)
         self.Bind(wx.EVT_CLOSE, self.handler_close)
 
         # Initialise observer name.
@@ -111,11 +111,15 @@ class Results_viewer(wx.Frame):
         """
 
         # Register a few methods in the observer objects.
-        status.observers.pipe_alteration.register(self.name, self.update_window)
+        status.observers.gui_uf.register(self.name, self.refresh)
+        status.observers.pipe_alteration.register(self.name, self.refresh)
         status.observers.exec_lock.register(self.name, self.activate)
 
-        # Update the window.
-        self.update_window()
+        # First update.
+        self.refresh()
+
+        # Activate or deactivate the frame.
+        self.activate()
 
         # Show the window using the base class method.
         if status.show_gui:
@@ -200,34 +204,12 @@ class Results_viewer(wx.Frame):
         """
 
         # Unregister the methods from the observers to avoid unnecessary updating.
+        status.observers.gui_uf.unregister(self.name)
         status.observers.pipe_alteration.unregister(self.name)
         status.observers.exec_lock.unregister(self.name)
 
         # Close the window.
         self.Hide()
-
-
-    def on_choice(self, event):
-        """Update the list of results on choosing a data pipe.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Clear the list.
-        self.list.Clear()
-
-        # Nothing to do.
-        if not hasattr(cdp, 'result_files'):
-            return
-
-        # Update the list.
-        for i in range(len(cdp.result_files)):
-            # The text to display.
-            text = "%s%s file:  %s" % (upper(cdp.result_files[i][0][0]), cdp.result_files[i][0][1:], cdp.result_files[i][1])
-
-            # Add the text with the Python data.
-            self.list.Append(str_to_gui(text), clientData=cdp.result_files[i])
 
 
     def open_result_file(self, event):
@@ -258,28 +240,62 @@ class Results_viewer(wx.Frame):
             open_file(data[1])
 
 
-    def update_pipes(self, event):
-        """Update the list of analyses.
+    def refresh(self):
+        """Update the list of results on choosing a data pipe."""
+
+        # Acquire the pipe lock.
+        status.pipe_lock.acquire()
+        try:
+            # Update the data pipe selector.
+            self.update_pipes()
+
+            # Clear the list.
+            self.list.Clear()
+
+            # Nothing to do.
+            if not hasattr(cdp, 'result_files'):
+                return
+
+            # Update the list.
+            for i in range(len(cdp.result_files)):
+                # The text to display.
+                text = "%s%s file:  %s" % (upper(cdp.result_files[i][0][0]), cdp.result_files[i][0][1:], cdp.result_files[i][1])
+
+                # Add the text with the Python data.
+                self.list.Append(str_to_gui(text), clientData=cdp.result_files[i])
+
+        # Release the locks.
+        finally:
+            status.pipe_lock.release()
+
+
+    def switch_pipes(self, event):
+        """Switch data pipes.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
-        # Init.
-        pipe_switch = False
+        # The name of the selected pipe.
+        pipe = gui_to_str(event.GetString())
 
-        # The selected pipe.
-        if event:
-            # The name of the selected pipe.
-            pipe = gui_to_str(event.GetString())
+        # No pipe change.
+        if pipe == cdp_name():
+            return
 
-            # A pipe change.
-            if pipe != cdp_name():
-                pipe_switch = True
-        else:
-            pipe = cdp_name()
-        if not pipe:
-            pipe = ''
+        # Switch data pipes.
+        self.gui.interpreter.pipe.switch(pipe)
+
+        # Update the window.
+        self.refresh()
+
+
+    def update_pipes(self):
+        """Update the data pipe list.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
 
         # Clear the previous analyses.
         self.pipe_name.Clear()
@@ -288,27 +304,5 @@ class Results_viewer(wx.Frame):
         for pipe in pipe_names():
             self.pipe_name.Append(str_to_gui(pipe))
 
-        # Switch.
-        if pipe_switch:
-            # Switch data pipes.
-            self.gui.interpreter.pipe.switch(pipe)
-
-            # Update the tree view.
-            self.on_choice(None)
-
         # Set the name to the current data pipe.
-        self.pipe_name.SetValue(str_to_gui(pipe))
-
-
-    def update_window(self, event=None):
-        """Update the window.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Update the choices.
-        self.update_pipes(None)
-
-        # Update the list.
-        self.on_choice(None)
+        self.pipe_name.SetValue(str_to_gui(cdp_name()))
