@@ -414,7 +414,7 @@ class Main(wx.Frame):
             self.pipe_editor = Pipe_editor(gui=self)
 
         # Open the window.
-        if status.show_gui and not self.spin_viewer.IsShown():
+        if status.show_gui and not self.pipe_editor.IsShown():
             self.pipe_editor.Show()
 
 
