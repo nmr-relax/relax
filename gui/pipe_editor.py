@@ -63,9 +63,6 @@ class Pipe_editor(wx.Frame):
         # Create GUI elements
         wx.Frame.__init__(self, None, id=-1, title="Data pipe editor")
 
-        # Freeze the window.
-        self.Freeze()
-
         # Set up the window icon.
         self.SetIcons(relax_icons)
 
@@ -101,17 +98,29 @@ class Pipe_editor(wx.Frame):
         # Centre the frame.
         self.Centre()
 
+        # Initialise the observer name.
+        self.name = 'pipe editor'
+
+
+    def Show(self, show=True):
+        """Change the behaviour of showing the window to update the content.
+
+        @keyword show:  A flag which is True shows the window.
+        @type show:     bool
+        """
+
         # Update the grid.
         self.update_grid()
         self.activate()
 
         # Register the grid for updating when a user function completes or when the GUI analysis tabs change.
-        status.observers.pipe_alteration.register('pipe editor', self.update_grid)
-        status.observers.gui_analysis.register('pipe editor', self.update_grid)
-        status.observers.exec_lock.register('pipe editor', self.activate)
+        status.observers.pipe_alteration.register(self.name, self.update_grid)
+        status.observers.gui_analysis.register(self.name, self.update_grid)
+        status.observers.exec_lock.register(self.name, self.activate)
 
-        # Thaw the window.
-        self.Thaw()
+        # Show the window using the base class method.
+        if status.show_gui:
+            super(Pipe_editor, self).Show(show)
 
 
     def activate(self):
@@ -317,6 +326,11 @@ class Pipe_editor(wx.Frame):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Unregister the methods from the observers to avoid unnecessary updating.
+        status.observers.pipe_alteration.unregister(self.name)
+        status.observers.gui_analysis.unregister(self.name)
+        status.observers.exec_lock.unregister(self.name)
 
         # Close the window.
         self.Hide()
