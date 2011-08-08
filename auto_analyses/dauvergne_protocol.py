@@ -694,12 +694,34 @@ class dAuvergne_protocol:
 
             self.interpreter.results.write(file='results', dir=self.results_dir+'final', force=True)
 
+            # Create Grace plots of the data.
+            self.grace_plots()
+
 
         # Unknown script behaviour.
         ###########################
 
         else:
             raise RelaxError("Unknown diffusion model, change the value of 'self.diff_model'")
+
+
+    def grace_plots(self):
+        """Create Grace plots of the final model-free results."""
+
+        # The director.
+        dir = self.results_dir + sep + 'grace'
+
+        # The plots
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2', file='s2.agr', dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr', dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr', dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='te', file='te.agr', dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='tf', file='tf.agr', dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='ts', file='ts.agr', dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='rex', file='rex.agr', dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='s2', y_data_type='te', file='s2_vs_te.agr', dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='s2', y_data_type='rex', file='s2_vs_rex.agr', dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='te', y_data_type='rex', file='te_vs_rex.agr', dir=dir, force=True)
 
 
     def load_tensor(self):
