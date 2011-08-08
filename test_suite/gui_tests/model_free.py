@@ -161,6 +161,11 @@ class Mf(GuiTestCase):
         # Exceptions in the thread.
         self.check_exceptions()
 
+        # Check the relax controller.
+        self.assertEqual(self.gui.controller.mc_gauge_mf.GetValue(), 100)
+        self.assertEqual(self.gui.controller.progress_gauge_mf.GetValue(), 100)
+        self.assertEqual(self.gui.controller.main_gauge.GetValue(), 100)
+
         # Check the diffusion tensor.
         self.assertEqual(cdp.diff_tensor.type, 'sphere')
         self.assertAlmostEqual(cdp.diff_tensor.tm, 1e-8)
