@@ -132,6 +132,9 @@ class Noe(GuiTestCase):
         # Wait for execution to complete.
         analysis.thread.join()
 
+        # Flush all wx events.
+        wx.Yield()
+
         # Exceptions in the thread.
         self.check_exceptions()
 
