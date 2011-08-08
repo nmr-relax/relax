@@ -630,7 +630,7 @@ class dAuvergne_protocol:
             # Remove all pipes.
             for name in pipe_names():
                 # Skip the original pipe.
-                if name = self.pipe_name:
+                if name == self.pipe_name:
                     continue
 
                 # Delete the pipe.
