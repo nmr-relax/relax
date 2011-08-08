@@ -31,6 +31,7 @@ from wx.lib import buttons
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.pipes import cdp_name, pipe_names
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -95,9 +96,11 @@ class Results_viewer(wx.Frame):
         box_centre.Add(self.button_open, 0, wx.ALIGN_RIGHT|wx.ADJUST_MINSIZE, 5)
 
         # Bind some events.
-        self.Bind(wx.EVT_LEFT_DOWN, self.update_choices, self.analysis_list)
-        self.Bind(wx.EVT_COMBOBOX, self.on_choice, self.analysis_list)
+        self.Bind(wx.EVT_COMBOBOX, self.update_pipes, self.pipe_name)
         self.Bind(wx.EVT_CLOSE, self.handler_close)
+
+        # Initialise observer name.
+        self.name = 'results viewer'
 
 
     def Show(self, show=True):
@@ -106,6 +109,9 @@ class Results_viewer(wx.Frame):
         @keyword show:  A flag which is True shows the window.
         @type show:     bool
         """
+
+        # Register a few methods in the observer objects.
+        status.observers.pipe_alteration.register(self.name, self.update_window)
 
         # Update the window.
         self.update_window()
@@ -162,9 +168,9 @@ class Results_viewer(wx.Frame):
         sizer.AddSpacer(self.border)
 
         # A combo box.
-        self.analysis_list = wx.ComboBox(self, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=[])
-        self.analysis_list.SetMinSize((50, 27))
-        sizer.Add(self.analysis_list, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.pipe_name = wx.ComboBox(self, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=[])
+        self.pipe_name.SetMinSize((50, 27))
+        sizer.Add(self.pipe_name, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Add the analysis sizer to the main sizer.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
@@ -177,12 +183,15 @@ class Results_viewer(wx.Frame):
         @type event:    wx event
         """
 
+        # Unregister the methods from the observers to avoid unnecessary updating.
+        status.observers.pipe_alteration.unregister(self.name)
+
         # Close the window.
         self.Hide()
 
 
     def on_choice(self, event):
-        """Update the list of results on choosing an analysis.
+        """Update the list of results on choosing a data pipe.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -192,7 +201,7 @@ class Results_viewer(wx.Frame):
         self.list.Clear()
 
         # Get the page corresponding to the choice.
-        page = self.gui.analysis.get_page_from_name(gui_to_str(self.analysis_list.GetValue()))
+        page = self.gui.analysis.get_page_from_name(gui_to_str(self.pipe_name.GetValue()))
 
         # Nothing to do.
         if not hasattr(cdp, 'result_files'):
@@ -235,23 +244,46 @@ class Results_viewer(wx.Frame):
             open_file(data[1])
 
 
-
-    def update_choices(self, event):
+    def update_pipes(self, event):
         """Update the list of analyses.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
+        # Init.
+        pipe_switch = False
+
+        # The selected pipe.
+        if event:
+            # The name of the selected pipe.
+            pipe = gui_to_str(event.GetString())
+
+            # A pipe change.
+            if pipe != cdp_name():
+                pipe_switch = True
+        else:
+            pipe = cdp_name()
+        if not pipe:
+            pipe = ''
+
         # Clear the previous analyses.
-        self.analysis_list.Clear()
+        self.pipe_name.Clear()
 
         # The list of analyses.
-        for data in self.gui.analysis.analysis_data_loop():
-            self.analysis_list.Append(str_to_gui(data.analysis_name))
+        for pipe in pipe_names():
+            self.pipe_name.Append(str_to_gui(pipe))
 
-        # Set the name to the current analysis.
-        self.analysis_list.SetValue(str_to_gui(self.gui.analysis.current_analysis_name()))
+        # Switch.
+        if pipe_switch:
+            # Switch data pipes.
+            self.gui.interpreter.pipe.switch(pipe)
+
+            # Update the tree view.
+            self.on_choice(None)
+
+        # Set the name to the current data pipe.
+        self.pipe_name.SetValue(str_to_gui(pipe))
 
 
     def update_window(self, event=None):
@@ -262,7 +294,7 @@ class Results_viewer(wx.Frame):
         """
 
         # Update the choices.
-        self.update_choices(None)
+        self.update_pipes(None)
 
         # Update the list.
         self.on_choice(None)
