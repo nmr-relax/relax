@@ -103,7 +103,7 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.show_controller, id=self.MENU_VIEW_CONTROLLER)
         self.gui.Bind(wx.EVT_MENU, self.gui.show_prompt, id=self.MENU_VIEW_PROMPT)
         self.gui.Bind(wx.EVT_MENU, self.gui.show_tree, id=self.MENU_VIEW_SPIN_VIEW)
-        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.show_results_viewer, id=self.MENU_VIEW_RESULTS)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_results_viewer, id=self.MENU_VIEW_RESULTS)
         self.gui.Bind(wx.EVT_MENU, self.gui.show_pipe_editor, id=self.MENU_VIEW_PIPE_EDIT)
 
         # The 'User functions' menu entries.

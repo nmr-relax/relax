@@ -39,7 +39,6 @@ from gui.analyses.auto_model_free import Auto_model_free
 from gui.analyses.auto_noe import Auto_noe
 from gui.analyses.auto_r1 import Auto_r1
 from gui.analyses.auto_r2 import Auto_r2
-from gui.analyses.results import Results_viewer
 from gui.analyses.wizard import Analysis_wizard
 from gui.message import error_message, Question
 
@@ -78,9 +77,6 @@ class Analysis_controller:
 
         # The analyses page objects.
         self._analyses = []
-
-        # Create the results viewer window.
-        self.results_viewer = Results_viewer(gui=self.gui)
 
         # Register the page switch method for pipe switches.
         self.name = 'notebook page switcher'
@@ -569,18 +565,6 @@ class Analysis_controller:
 
         # Recreate the start screen.
         self.gui.add_start_screen()
-
-
-    def show_results_viewer(self, event):
-        """Display the analysis results.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Open the window.
-        if status.show_gui:
-            self.results_viewer.Show()
 
 
     def switch_page(self, index):

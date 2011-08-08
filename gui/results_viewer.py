@@ -31,9 +31,9 @@ from wx.lib import buttons
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui.analyses.results_analysis import see_results
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import add_border, gui_to_str, open_file, str_to_gui
@@ -98,6 +98,21 @@ class Results_viewer(wx.Frame):
         self.Bind(wx.EVT_LEFT_DOWN, self.update_choices, self.analysis_list)
         self.Bind(wx.EVT_COMBOBOX, self.on_choice, self.analysis_list)
         self.Bind(wx.EVT_CLOSE, self.handler_close)
+
+
+    def Show(self, show=True):
+        """Change the behaviour of showing the window to update the content.
+
+        @keyword show:  A flag which is True shows the window.
+        @type show:     bool
+        """
+
+        # Update the window.
+        self.update_window()
+
+        # Show the window using the base class method.
+        if status.show_gui:
+            super(Results_viewer, self).Show(show)
 
 
     def add_list_box(self, box, fn=None):
@@ -214,9 +229,6 @@ class Results_viewer(wx.Frame):
         elif data[0] == 'Table_of_Results':
             # The data.
             model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te]
-
-            # Open.
-            see_results(choice, model_result)
 
         # Open all other files in which ever editor the platform decides on.
         else:

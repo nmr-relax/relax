@@ -63,6 +63,7 @@ from gui import paths
 from gui.pipe_editor import Pipe_editor
 from gui.references import References
 from gui.relax_prompt import Prompt
+from gui.results_viewer import Results_viewer
 from gui.settings import Free_file_format, load_sequence
 from gui.user_functions import User_functions
 
@@ -432,6 +433,22 @@ class Main(wx.Frame):
         # Open the window.
         if status.show_gui:
             self.relax_prompt.Show()
+
+
+    def show_results_viewer(self, event):
+        """Display the analysis results.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Create the results viewer window if needed.
+        if not hasattr(self, 'results_viewer'):
+            self.results_viewer = Results_viewer(gui=self)
+
+        # Open the window.
+        if status.show_gui:
+            self.results_viewer.Show()
 
 
     def show_tree(self, event):
