@@ -414,7 +414,7 @@ class Observer(object):
 class Relax_lock:
     """A type of locking object for relax."""
 
-    def __init__(self, debug=True):
+    def __init__(self, debug=False):
         """Set up the lock-like object.
 
         @keyword debug: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
