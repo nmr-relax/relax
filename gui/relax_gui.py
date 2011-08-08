@@ -414,7 +414,7 @@ class Main(wx.Frame):
             self.pipe_editor = Pipe_editor(gui=self)
 
         # Open the window.
-        if status.show_gui:
+        if status.show_gui and not self.spin_viewer.IsShown():
             self.pipe_editor.Show()
 
 
@@ -451,7 +451,8 @@ class Main(wx.Frame):
             self.spin_viewer = Spin_view_window(None, -1, "", parent=self)
 
         # Open the window (the GUI flag check is inside the Show method).
-        self.spin_viewer.Show()
+        if not self.spin_viewer.IsShown():
+            self.spin_viewer.Show()
 
 
     def state_load(self, event=None, file_name=None):
