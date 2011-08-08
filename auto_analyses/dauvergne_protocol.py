@@ -692,10 +692,14 @@ class dAuvergne_protocol:
             # Write the final results.
             ##########################
 
+            # Save the results file.
             self.interpreter.results.write(file='results', dir=self.results_dir+'final', force=True)
 
             # Create Grace plots of the data.
             self.grace_plots()
+
+            # Create a diffusion tensor representation of the tensor.
+            self.interpreter.structure.create_diff_tensor_pdb(file="tensor.pdb", force=True)
 
 
         # Unknown script behaviour.
