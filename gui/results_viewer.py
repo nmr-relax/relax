@@ -75,8 +75,8 @@ class Results_viewer(wx.Frame):
         # Build the central sizer, with borders.
         box_centre = add_border(box_main, border=self.border, packing=wx.VERTICAL)
 
-        # Build the analysis selector.
-        self.build_analysis_sel(box_centre)
+        # Build the data pipe selector.
+        self.build_pipe_sel(box_centre)
 
         # Spacer.
         box_centre.AddSpacer(self.border)
@@ -165,8 +165,8 @@ class Results_viewer(wx.Frame):
         return list
 
 
-    def build_analysis_sel(self, box):
-        """Create the analysis selection element.
+    def build_pipe_sel(self, box):
+        """Create the data pipe selection element.
 
         @param box: The horizontal box element to pack the elements into.
         @type box:  wx.BoxSizer instance
@@ -176,12 +176,12 @@ class Results_viewer(wx.Frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The text.
-        label = wx.StaticText(self, -1, "Analysis selection")
+        label = wx.StaticText(self, -1, "Data pipe selection")
 
         # The font and label properties.
         label.SetFont(font.subtitle)
 
-        # Add the label to the analysis box.
+        # Add the label to the box.
         sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Add a spacer.
@@ -192,7 +192,7 @@ class Results_viewer(wx.Frame):
         self.pipe_name.SetMinSize((50, 27))
         sizer.Add(self.pipe_name, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
-        # Add the analysis sizer to the main sizer.
+        # Add the pipe sizer to the main sizer.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
 
 
@@ -297,10 +297,10 @@ class Results_viewer(wx.Frame):
         @type event:    wx event
         """
 
-        # Clear the previous analyses.
+        # Clear the previous data pipe.
         self.pipe_name.Clear()
 
-        # The list of analyses.
+        # The list of data pipes.
         for pipe in pipe_names():
             self.pipe_name.Append(str_to_gui(pipe))
 
