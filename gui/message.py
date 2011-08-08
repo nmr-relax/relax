@@ -38,10 +38,6 @@ from gui.paths import IMAGE_PATH, icon_22x22, icon_48x48
 import gui
 
 
-def dir_message(msg):
-    wx.MessageBox(msg, style = wx.OK | wx.ICON_INFORMATION)
-
-
 def error_message(msg, caption=''):
     """Message box for general errors.
 
@@ -61,24 +57,6 @@ def error_message(msg, caption=''):
 
         # Write out.
         sys.stderr.write(msg + "\n")
-
-
-def exec_relax():
-    check = False
-    startrelax = wx.MessageDialog(None, message = 'Start relax?', style = wx.YES_NO | wx.NO_DEFAULT)
-    if startrelax.ShowModal() == wx.ID_YES:
-        check = True
-    else:
-        check = False
-    return check
-
-
-def relax_run_ok(msg1):
-    """Message box stating that the relax run completed ok."""
-
-    # Show the message box.
-    if status.show_gui:
-        wx.MessageBox(msg1, style = wx.OK)
 
 
 
