@@ -404,6 +404,11 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
+        # Throw a warning if the execution lock is on.
+        if status.exec_lock.locked():
+            dlg = wx.MessageDialog(self, "Leaving the pipe editor window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+            dlg.ShowModal()
+
         # Build the pipe editor if needed.
         if not hasattr(self, 'pipe_editor'):
             self.pipe_editor = Pipe_editor(gui=self)
@@ -435,6 +440,11 @@ class Main(wx.Frame):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Throw a warning if the execution lock is on.
+        if status.exec_lock.locked():
+            dlg = wx.MessageDialog(self, "Leaving the spin viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+            dlg.ShowModal()
 
         # Build the spin view window.
         if not hasattr(self, 'spin_viewer'):
