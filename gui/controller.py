@@ -398,7 +398,17 @@ class Controller(wx.Frame):
             if self.timer.IsRunning():
                 self.timer.Stop()
 
-            # Fill the gauge.
+            # Fill the Rx gauges.
+            if hasattr(self, 'mc_gauge_rx'):
+                wx.CallAfter(self.mc_gauge_rx.SetValue, 100)
+
+            # Fill the model-free gauges.
+            if hasattr(self, 'mc_gauge_mf'):
+                wx.CallAfter(self.mc_gauge_mf.SetValue, 100)
+            if hasattr(self, 'progress_gauge_mf'):
+                wx.CallAfter(self.progress_gauge_mf.SetValue, 100)
+
+            # Fill the main gauge.
             wx.CallAfter(self.main_gauge.SetValue, 100)
 
         # Gauge is in the initial state, so no need to reset.
@@ -411,6 +421,17 @@ class Controller(wx.Frame):
 
         # Key present, but analysis not started.
         if key and status.auto_analysis.has_key(key) and not status.auto_analysis[key].fin:
+            # Fill the Rx gauges.
+            if hasattr(self, 'mc_gauge_rx'):
+                wx.CallAfter(self.mc_gauge_rx.SetValue, 0)
+
+            # Fill the model-free gauges.
+            if hasattr(self, 'mc_gauge_mf'):
+                wx.CallAfter(self.mc_gauge_mf.SetValue, 0)
+            if hasattr(self, 'progress_gauge_mf'):
+                wx.CallAfter(self.progress_gauge_mf.SetValue, 0)
+
+            # Fill the main gauge.
             wx.CallAfter(self.main_gauge.SetValue, 0)
 
 
@@ -474,11 +495,17 @@ class Controller(wx.Frame):
 
 
     def update_rx(self):
-        """Update the model-free specific elements."""
+        """Update the Rx specific elements."""
 
         # The analysis key.
         key = self.analysis_key()
-        if not key or not status.auto_analysis.has_key(key):
+        if not key:
+            return
+
+        # Nothing to do.
+        if not status.auto_analysis.has_key(key):
+            wx.CallAfter(self.mc_gauge_rx.SetValue, 0)
+            wx.CallAfter(self.main_gauge.SetValue, 0)
             return
 
         # Monte Carlo simulations.
