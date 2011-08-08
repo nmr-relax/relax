@@ -145,6 +145,9 @@ class Relax_data_store(dict):
         # Remove all items from the dictionary.
         self.instance.clear()
 
+        # Reset the current data pipe.
+        __builtin__.cdp = None
+
 
     def add(self, pipe_name, pipe_type, switch=True):
         """Method for adding a new data pipe container to the dictionary.
