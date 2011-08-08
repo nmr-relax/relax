@@ -146,6 +146,9 @@ class Relax_data_store(dict):
         # Remove all items from the dictionary.
         self.instance.clear()
 
+        # Reset the current data pipe.
+        __builtin__.cdp = None
+
         # Signal the change.
         status.observers.reset.notify()
         status.observers.pipe_alteration.notify()
