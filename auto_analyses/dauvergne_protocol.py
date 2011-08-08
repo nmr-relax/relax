@@ -30,7 +30,7 @@ from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstrin
 from float import floatAsByteArray
 from info import Info_box; info = Info_box()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, spin_index_loop, spin_loop
-from generic_fns.pipes import cdp_name, get_pipe, has_pipe, switch
+from generic_fns.pipes import cdp_name, get_pipe, has_pipe, pipe_names, switch
 from generic_fns import selection
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
@@ -627,11 +627,14 @@ class dAuvergne_protocol:
             # All the global diffusion models to be used in the model selection.
             self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
 
-            # Close all pipes that might be craeted.
-            for name in self.pipes:
-                # Close the pipe
-                if has_pipe(name):
-                    self.interpreter.pipe.delete(name)
+            # Remove all pipes.
+            for name in pipe_names():
+                # Skip the original pipe.
+                if name = self.pipe_name:
+                    continue
+
+                # Delete the pipe.
+                self.interpreter.pipe.delete(name)
 
             # Missing optimised model.
             dir_list = listdir(self.results_dir)
