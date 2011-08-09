@@ -31,6 +31,7 @@ from deselect import Deselect
 from gpl import Gpl
 from grace import Grace
 from molecule import Molecule
+from molmol import Molmol
 from noe import Noe
 from pipe import Pipe
 from residue import Residue
@@ -51,6 +52,7 @@ __all__ = ['base',
            'gpl',
            'grace',
            'molecule',
+           'molmol',
            'noe',
            'pipe',
            'residue',
@@ -82,6 +84,7 @@ class User_functions:
         self.gpl = Gpl(self.gui)
         self.grace = Grace(self.gui)
         self.molecule = Molecule(self.gui)
+        self.molmol = Molmol(self.gui)
         self.noe = Noe(self.gui)
         self.pipe = Pipe(self.gui)
         self.residue = Residue(self.gui)
@@ -104,6 +107,7 @@ class User_functions:
         self.gpl.destroy()
         self.grace.destroy()
         self.molecule.destroy()
+        self.molmol.destroy()
         self.noe.destroy()
         self.pipe.destroy()
         self.residue.destroy()

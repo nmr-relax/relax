@@ -203,6 +203,15 @@ class Menu:
                 [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.molecule.create],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.molecule.delete]
             ]],
+            [wx.NewId(), "&molmol", paths.icon_16x16.molmol, None, [
+                [wx.NewId(), "clear_&history", None, self.gui.user_functions.molmol.clear_history],
+                [wx.NewId(), "&command", None, self.gui.user_functions.molmol.command],
+                [wx.NewId(), "&macro_exec", paths.icon_16x16.molmol, self.gui.user_functions.molmol.macro_exec],
+                [wx.NewId(), "&ribbon", None, self.gui.user_functions.molmol.ribbon],
+                [wx.NewId(), "&tensor_pdb", None, self.gui.user_functions.molmol.tensor_pdb],
+                [wx.NewId(), "&view", None, self.gui.user_functions.molmol.view],
+                [wx.NewId(), "&write", paths.icon_16x16.save, self.gui.user_functions.molmol.write]
+            ]],
             [wx.NewId(), "&noe", None, None, [
                 [wx.NewId(), "&read_restraints", paths.icon_16x16.open, self.gui.user_functions.noe.read_restraints],
                 [wx.NewId(), "&spectrum_type",   None, self.gui.user_functions.noe.spectrum_type]
