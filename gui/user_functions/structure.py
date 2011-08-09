@@ -33,7 +33,7 @@ from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.misc import gui_to_bool, gui_to_int, gui_to_str, str_to_gui
+from gui.misc import float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
 
@@ -41,6 +41,38 @@ from gui.wizard import Wiz_window
 # The container class.
 class Structure(UF_base):
     """The container class for holding all GUI elements."""
+
+    def create_diff_tensor_pdb(self, event):
+        """The structure.create_diff_tensor_pdb user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Create the wizard.
+        wizard = Wiz_window(size_x=900, size_y=800, title=self.get_title('structure', 'create_diff_tensor_pdb'))
+        page = Create_diff_tensor_pdb_page(wizard, self.gui)
+        wizard.add_page(page)
+
+        # Execute the wizard.
+        wizard.run()
+
+
+    def create_vector_dist(self, event):
+        """The structure.create_vector_dist user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Create the wizard.
+        wizard = Wiz_window(size_x=800, size_y=700, title=self.get_title('structure', 'create_vector_dist'))
+        page = Create_vector_dist_page(wizard, self.gui)
+        wizard.add_page(page)
+
+        # Execute the wizard.
+        wizard.run()
+
 
     def delete(self, event):
         """The structure.delete user function.
@@ -120,6 +152,98 @@ class Structure(UF_base):
 
         # Execute the wizard.
         wizard.run()
+
+
+
+class Create_diff_tensor_pdb_page(UF_page):
+    """The structure.create_diff_tensor_pdb() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'create_diff_tensor_pdb.png'
+    uf_path = ['structure', 'create_diff_tensor_pdb']
+    height_desc = 400
+
+    def add_contents(self, sizer):
+        """Add the structure specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The scale arg.
+        self.scale = self.input_field(sizer, "Scaling factor:", tooltip=self.uf._doc_args_dict['scale'])
+        self.scale.SetValue(float_to_gui(1.8e-6))
+
+        # Add a file selection.
+        self.file = self.file_selection(sizer, "The PDB file:", message="PDB file selection", wildcard="PDB files (*.pdb)|*.pdb;*.PDB", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
+
+        # The force flag.
+        self.force = self.boolean_selector(sizer, "Force flag:", tooltip=self.uf._doc_args_dict['force'], default=False)
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The file name.
+        file = gui_to_str(self.file.GetValue())
+        if not file:
+            return
+
+        # Force flag.
+        force = gui_to_bool(self.force.GetValue())
+
+        # The scaling.
+        scale = gui_to_float(self.scale.GetValue())
+
+        # Delete all structures.
+        self.gui.interpreter.structure.create_diff_tensor_pdb(scale=scale, file=file, force=force)
+
+
+
+class Create_vector_dist_page(UF_page):
+    """The structure.create_vector_dist() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + sep + 'structure' + sep + 'create_vector_dist.png'
+    uf_path = ['structure', 'create_vector_dist']
+
+    def add_contents(self, sizer):
+        """Add the structure specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The length arg.
+        self.length = self.input_field(sizer, "Vector length:", tooltip=self.uf._doc_args_dict['length'])
+        self.length.SetValue(float_to_gui(2e-9))
+
+        # Add a file selection.
+        self.file = self.file_selection(sizer, "The PDB file:", message="PDB file selection", wildcard="PDB files (*.pdb)|*.pdb;*.PDB", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
+
+        # The symmetry flag.
+        self.symmetry = self.boolean_selector(sizer, "Symmetry flag:", tooltip=self.uf._doc_args_dict['symmetry'], default=True)
+
+        # The force flag.
+        self.force = self.boolean_selector(sizer, "Force flag:", tooltip=self.uf._doc_args_dict['force'], default=False)
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The file name.
+        file = gui_to_str(self.file.GetValue())
+        if not file:
+            return
+
+        # Force flag.
+        force = gui_to_bool(self.force.GetValue())
+
+        # The scaling.
+        length = gui_to_float(self.length.GetValue())
+
+        # Delete all structures.
+        self.gui.interpreter.structure.create_vector_dist(length=length, file=file, symmetry=symmetry, force=force)
 
 
 
