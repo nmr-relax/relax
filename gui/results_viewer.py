@@ -261,7 +261,14 @@ class Results_viewer(wx.Frame):
 
 
     def refresh(self):
-        """Update the list of results on choosing a data pipe."""
+        """Update the list of result files."""
+
+        # Thread safe.
+        wx.CallAfter(self.refresh_safe)
+
+
+    def refresh_safe(self):
+        """Update the list of result files (thread safe)."""
 
         # Acquire the pipe lock.
         status.pipe_lock.acquire()
