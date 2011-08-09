@@ -245,7 +245,7 @@ class Results_viewer(wx.Frame):
                 self.gui.user_functions.grace.view(None, file=file)
 
             # Diffusion tensor PDB.
-            if type == 'diff_tensor_pdb':
+            elif type == 'diff_tensor_pdb':
                 self.gui.interpreter.pymol.view()
                 self.gui.interpreter.pymol.cartoon()
                 self.gui.interpreter.pymol.tensor_pdb(file=file)
