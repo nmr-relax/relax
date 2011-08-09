@@ -390,6 +390,11 @@ def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=No
         structure.write_pdb(pdb_file)
         pdb_file.close()
 
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    cdp.result_files.append(['Cone PDB', pdb_path])
+
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     """Create the PDB representation of the diffusion tensor.
@@ -565,6 +570,11 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     # Close the file.
     tensor_pdb_file.close()
 
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    cdp.result_files.append(['Diffusion tensor PDB', tensor_pdb_path])
+
 
 def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=False):
     """Create a PDB representation of the XH vector distribution.
@@ -700,6 +710,11 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
 
     # Close the file.
     tensor_pdb_file.close()
+
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    cdp.result_files.append(['Vector distribution PDB', tensor_pdb_path])
 
 
 def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), limit_check=None, scale=1.0, inc=20, distribution='uniform', debug=False):
