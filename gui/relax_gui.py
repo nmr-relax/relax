@@ -253,11 +253,15 @@ class Main(wx.Frame):
 
         # Is the spin viewer window open?
         if hasattr(self, 'spin_viewer') and self.spin_viewer.IsShown():
-            win_list.append('The spin viewer')
+            win_list.append('The spin viewer window')
 
         # Is the pipe editor window open?
         if hasattr(self, 'pipe_editor') and self.pipe_editor.IsShown():
-            win_list.append('The data pipe editor')
+            win_list.append('The data pipe editor window')
+
+        # Is the results viewer window open?
+        if hasattr(self, 'results_viewer') and self.results_viewer.IsShown():
+            win_list.append('The results viewer window')
 
         # The windows are not open, so quit.
         if not len(win_list):
