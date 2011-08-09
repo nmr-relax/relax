@@ -90,6 +90,22 @@ class Structure(UF_base):
         wizard.run()
 
 
+    def get_pos(self, event):
+        """The structure.get_pos user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Create the wizard.
+        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'get_pos'))
+        page = Get_pos_page(wizard, self.gui)
+        wizard.add_page(page)
+
+        # Execute the wizard.
+        wizard.run()
+
+
     def load_spins(self, event):
         """The structure.load_spins user function.
 
@@ -266,6 +282,39 @@ class Delete_page(UF_page):
 
         # Delete all structures.
         self.gui.interpreter.structure.delete()
+
+
+
+class Get_pos_page(UF_page):
+    """The structure.get_pos() user function page."""
+
+    # Some class variables.
+    uf_path = ['structure', 'get_pos']
+    height_desc = 300
+
+    def add_contents(self, sizer):
+        """Add the structure specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The spin_id arg.
+        self.spin_id = self.spin_id_element(sizer, default='@N')
+
+        # The ave_pos arg.
+        self.ave_pos = self.boolean_selector(sizer, "Average the atom position across models:", tooltip=self.uf._doc_args_dict['ave_pos'], default=True)
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The args.
+        spin_id = gui_to_str(self.spin_id.GetValue())
+        ave_pos = gui_to_bool(self.ave_pos.GetValue())
+
+        # Delete all structures.
+        self.gui.interpreter.structure.get_pos(spin_id=spin_id, ave_pos=ave_pos)
 
 
 

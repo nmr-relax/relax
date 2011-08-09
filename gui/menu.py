@@ -260,6 +260,7 @@ class Menu:
                 [wx.NewId(), "&create_diff_tensor_pdb", None, self.gui.user_functions.structure.create_diff_tensor_pdb],
                 [wx.NewId(), "&create_vector_dist", None, self.gui.user_functions.structure.create_vector_dist],
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.structure.delete],
+                [wx.NewId(), "&get_pos", None, self.gui.user_functions.structure.get_pos],
                 [wx.NewId(), "&load_spins", paths.icon_16x16.spin, self.gui.user_functions.structure.load_spins],
                 [wx.NewId(), "&read_pdb", paths.icon_16x16.open, self.gui.user_functions.structure.read_pdb],
                 [wx.NewId(), "&write_pdb", paths.icon_16x16.save, self.gui.user_functions.structure.write_pdb],
