@@ -562,8 +562,7 @@ class Element_page(UF_page, Mol_res_spin):
         self.element = self.combo_box(sizer, "The element:", tooltip=self.uf._doc_args_dict['element'], choices=['H', 'N', 'C','O', 'P'], read_only=False)
 
         # The force flag.
-        self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'])
-        self.force.SetValue(str_to_gui('False'))
+        self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'], default=False)
 
 
     def on_execute(self):
@@ -600,8 +599,7 @@ class Name_page(UF_page, Mol_res_spin):
         self.name = self.input_field(sizer, "The name:", tooltip=self.uf._doc_args_dict['name'])
 
         # The force flag.
-        self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'])
-        self.force.SetValue(str_to_gui('False'))
+        self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'], default=False)
 
 
     def on_execute(self):
@@ -638,8 +636,7 @@ class Number_page(UF_page, Mol_res_spin):
         self.number = self.input_field(sizer, "The number:", tooltip=self.uf._doc_args_dict['number'])
 
         # The force flag.
-        self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'])
-        self.force.SetValue(str_to_gui('False'))
+        self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'], default=False)
 
 
     def on_execute(self):

@@ -336,8 +336,7 @@ class Load_spins_page(UF_page):
         self.spin_id = self.spin_id_element(sizer, default='@N')
 
         # The ave_pos arg.
-        self.ave_pos = self.boolean_selector(sizer, "Average the atom position across models:", tooltip=self.uf._doc_args_dict['ave_pos'])
-        self.ave_pos.SetValue(str_to_gui('True'))
+        self.ave_pos = self.boolean_selector(sizer, "Average the atom position across models:", tooltip=self.uf._doc_args_dict['ave_pos'], default=True)
 
 
     def on_execute(self):
@@ -462,12 +461,10 @@ class Vectors_page(UF_page):
         self.verbosity = self.spin_control(sizer, "The verbosity level:", default=1, min=0, tooltip=self.uf._doc_args_dict['verbosity'])
 
         # The average.
-        self.ave = self.boolean_selector(sizer, "Average the vector across models:", tooltip=self.uf._doc_args_dict['ave'])
-        self.ave.SetValue(str_to_gui('True'))
+        self.ave = self.boolean_selector(sizer, "Average the vector across models:", tooltip=self.uf._doc_args_dict['ave'], default=True)
 
         # The unit flag.
-        self.unit = self.boolean_selector(sizer, "Calculate unit vectors:", tooltip=self.uf._doc_args_dict['unit'])
-        self.unit.SetValue(str_to_gui('True'))
+        self.unit = self.boolean_selector(sizer, "Calculate unit vectors:", tooltip=self.uf._doc_args_dict['unit'], default=True)
 
 
     def on_execute(self):
