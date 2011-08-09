@@ -49,8 +49,8 @@ def summary_line(name, passed, width=64):
 
     @param name:    The name of the test, test category, etc.
     @type name:     str
-    @param passed:  An argument which if True causes '[ OK ]' to be printed and if False causes '[ Failed ]' to be printed.
-    @type passed:   bool
+    @param passed:  An argument which if True causes '[ OK ]' to be printed and if False causes '[ Failed ]' to be printed.  The special string 'skip' is used to indicate that this has been skipped.
+    @type passed:   bool or str
     @keyword width: The width of the line, excluding the terminal '[ OK ]' or '[ Failed ]'.
     @type width:    int
     """
@@ -63,8 +63,12 @@ def summary_line(name, passed, width=64):
         sys.stdout.write(".")
 
     # Passed.
-    if passed:
+    if passed == True:
         sys.stdout.write(" %-10s\n" % "[ OK ]")
+
+    # Skipped.
+    elif passed == 'skip':
+        sys.stdout.write(" %-10s\n" % "[ Skipped ]")
 
     # Failed.
     else:

@@ -24,11 +24,15 @@
 import os
 import sys
 
+# Dependency checks.
+import dep_check
+
 # Formatting.
 from formatting import subtitle, summary_line, title
 
 # Import the test suite categories.
-from gui_tests import GUI_test_runner
+if dep_check.wx_module:
+    from gui_tests import GUI_test_runner
 from system_tests import System_test_runner
 from unit_tests.unit_test_runner import Unit_test_runner
 
@@ -91,8 +95,14 @@ class Test_suite_runner:
         title('GUI tests')
 
         # Run the tests.
-        gui_runner = GUI_test_runner()
-        self.gui_result = gui_runner.run(self.tests)
+        if dep_check.wx_module:
+            gui_runner = GUI_test_runner()
+            self.gui_result = gui_runner.run(self.tests)
+
+        # No wx module installed.
+        else:
+            print("All GUI tests skipped due to the missing/broken wx module.\n")
+            self.gui_result = 'skip'
 
         # Print out a summary of the test suite.
         if summary:
