@@ -23,6 +23,7 @@
 # Python module imports.
 from math import cos, pi, sin
 from numpy import arccos, array, dot, eye, float64, transpose, zeros
+from os import getcwd
 from string import ascii_uppercase
 from warnings import warn
 
@@ -33,7 +34,7 @@ from generic_fns.structure.mass import centre_of_mass
 from internal import Internal
 from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
-from relax_io import open_write_file
+from relax_io import get_file_path, open_write_file
 from relax_warnings import RelaxWarning
 
 
@@ -573,7 +574,9 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     # Add the file to the results file list.
     if not hasattr(cdp, 'result_files'):
         cdp.result_files = []
-    cdp.result_files.append(['Diffusion tensor PDB', tensor_pdb_path])
+    if dir == None:
+        dir = getcwd()
+    cdp.result_files.append(['Diffusion tensor PDB', get_file_path(file, dir)])
 
 
 def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=False):
@@ -714,7 +717,9 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     # Add the file to the results file list.
     if not hasattr(cdp, 'result_files'):
         cdp.result_files = []
-    cdp.result_files.append(['Vector distribution PDB', tensor_pdb_path])
+    if dir == None:
+        dir = getcwd()
+    cdp.result_files.append(['Vector distribution PDB', get_file_path(file, dir)])
 
 
 def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), limit_check=None, scale=1.0, inc=20, distribution='uniform', debug=False):
