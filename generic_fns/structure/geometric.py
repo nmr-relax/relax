@@ -36,7 +36,7 @@ from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import get_file_path, open_write_file
 from relax_warnings import RelaxWarning
-
+from status import Status; status = Status()
 
 
 def angles_regular(inc=None):
@@ -395,6 +395,7 @@ def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=No
     if not hasattr(cdp, 'result_files'):
         cdp.result_files = []
     cdp.result_files.append(['cone_pdb', 'Cone PDB', pdb_path])
+    status.observers.result_file.notify()
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
@@ -577,6 +578,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     if dir == None:
         dir = getcwd()
     cdp.result_files.append(['diff_tensor_pdb', 'Diffusion tensor PDB', get_file_path(file, dir)])
+    status.observers.result_file.notify()
 
 
 def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=False):
@@ -720,6 +722,7 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     if dir == None:
         dir = getcwd()
     cdp.result_files.append(['vector_dist_pdb', 'Vector distribution PDB', get_file_path(file, dir)])
+    status.observers.result_file.notify()
 
 
 def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), limit_check=None, scale=1.0, inc=20, distribution='uniform', debug=False):

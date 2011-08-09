@@ -491,3 +491,4 @@ class Execute_noe(Execute):
 
             # Add the macro to the results list.
             cdp.result_files.append(['pymol', 'PyMOL', data.save_dir+sep+'noe.pml'])
+            status.observers.result_file.notify()

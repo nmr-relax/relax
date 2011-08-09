@@ -117,6 +117,9 @@ class Status(object):
         # The observer object for the execution lock.
         self.observers.exec_lock = Observer()
 
+        # The observer object for the creation of results files.
+        self.observers.result_file = Observer()
+
 
     def init_auto_analysis(self, name, type):
         """Initialise a status container for an auto-analysis.
