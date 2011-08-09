@@ -172,7 +172,7 @@ class Pymol:
 
 
 # Initialise the Pymol executable object.
-pymol_obj = Pymol()
+pymol_obj = Pymol('external')
 """Pymol data container instance."""
 
 
