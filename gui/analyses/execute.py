@@ -98,12 +98,6 @@ class Execute(Thread):
             if status.exec_lock.locked():
                 status.exec_lock.release()
 
-<<<<<<< .working
-        # Display the results viewer.
-        if self.results_display:
-            wx.CallAfter(self.gui.show_results_viewer, None)
-=======
->>>>>>> .merge-right.r14026
 
     def run_analysis(self):
         """Execute the analysis
