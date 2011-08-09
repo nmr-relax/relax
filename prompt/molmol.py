@@ -47,6 +47,9 @@ class Molmol(User_fn_class):
     # The function doc info.
     clear_history._doc_title = "Clear the Molmol command history."
     clear_history._doc_title_short = "Clear Molmol history."""
+    clear_history._doc_desc = """
+        This will clear the Molmol history from memory.
+        """
     _build_doc(clear_history)
 
 
@@ -225,6 +228,9 @@ class Molmol(User_fn_class):
     # The function doc info.
     view._doc_title = "View the collection of molecules from the loaded PDB file."
     view._doc_title_short = "Molecule viewing."
+    view._doc_desc = """
+        This will simply launch Molmol.
+        """
     view._doc_examples = """
         relax> molmol.view()
         """
