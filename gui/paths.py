@@ -60,6 +60,7 @@ class I16x16:
         self.molecule_grey =            path + 'molecule_grey.png'
         self.molecule_unfolded =        path + 'molecule_unfolded.png'
         self.molecule_unfolded_grey =   path + 'molecule_unfolded_grey.png'
+        self.molmol =                   path + 'molmol.png'
         self.pipe =                     path + 'pipe.png'
         self.pipe_hybrid =              path + 'pipe_hybrid.png'
         self.relax_data =               path + 'fid.png'
