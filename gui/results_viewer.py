@@ -25,7 +25,7 @@
 """Module containing the base class for the results frame."""
 
 # Python module imports.
-from string import upper
+from string import lower, upper
 import wx
 from wx.lib import buttons
 
@@ -81,8 +81,8 @@ class Results_viewer(wx.Frame):
         # Spacer.
         box_centre.AddSpacer(self.border)
 
-        # Add the list box.
-        self.list = self.add_list_box(box_centre, fn=None)
+        # Add the list of results files.
+        self.add_files(box_centre, fn=None)
 
         # Spacer.
         box_centre.AddSpacer(self.border)
@@ -141,8 +141,8 @@ class Results_viewer(wx.Frame):
         self.button_open.Enable(enable)
 
 
-    def add_list_box(self, box, fn=None):
-        """Add a results list box.
+    def add_files(self, box, fn=None):
+        """Create the list of results files.
 
         @param box:     The box sizer to pack the box into.
         @type box:      wx.BoxSizer instance
@@ -153,16 +153,25 @@ class Results_viewer(wx.Frame):
         """
 
         # Initialise the list box.
-        list = wx.ListBox(self, -1, choices=[])
+        self.file_list = wx.ListCtrl(self, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
 
-        # Bind events.
-        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, fn, list)
+        # Properties.
+        self.file_list.SetFont(font.normal)
+
+        # Store the base heights.
+        self.height_char = self.file_list.GetCharHeight()
+
+        # The headers.
+        self.file_list.InsertColumn(0, "File type")
+        self.file_list.InsertColumn(1, "File path")
 
         # Add to the sizer.
-        box.Add(list, 1, wx.ALL|wx.EXPAND, 0)
+        box.Add(self.file_list, 1, wx.ALL|wx.EXPAND, 0)
 
-        # Return the list box.
-        return list
+        # Bind events.
+        self.file_list.Bind(wx.EVT_SIZE, self.resize)
+        if fn:
+            self.gui.Bind(wx.EVT_LISTBOX_DCLICK, fn, self.file_list)
 
 
     def build_pipe_sel(self, box):
@@ -219,25 +228,28 @@ class Results_viewer(wx.Frame):
         @type event:    wx event
         """
 
-        # No choice.
-        if self.list.GetSelection() == wx.NOT_FOUND:
-            return
+        # Loop over all files.
+        for i in range(self.file_list.GetItemCount()):
+            # Not selected.
+            if not self.file_list.IsSelected(i):
+                continue
 
-        # Get the data.
-        data = self.list.GetClientData(self.list.GetSelection())
+            # Get the type and file.
+            type = gui_to_str(self.file_list.GetItem(i, 0).GetText())
+            file = gui_to_str(self.file_list.GetItem(i, 1).GetText())
 
-        # Grace files.
-        if data[0] == 'grace':
-            self.gui.user_functions.grace.view(None, file=data[1])
+            # Grace files.
+            if lower(type) == 'grace':
+                self.gui.user_functions.grace.view(None, file=file)
 
-        # A special table.
-        elif data[0] == 'Table_of_Results':
-            # The data.
-            model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te]
+            # A special table.
+            elif type == 'Table_of_Results':
+                # The data.
+                model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te]
 
-        # Open all other files in which ever editor the platform decides on.
-        else:
-            open_file(data[1])
+            # Open all other files in which ever editor the platform decides on.
+            else:
+                open_file(file)
 
 
     def refresh(self):
@@ -250,7 +262,7 @@ class Results_viewer(wx.Frame):
             self.update_pipes()
 
             # Clear the list.
-            self.list.Clear()
+            self.file_list.DeleteAllItems()
 
             # Nothing to do.
             if not hasattr(cdp, 'result_files'):
@@ -258,15 +270,25 @@ class Results_viewer(wx.Frame):
 
             # Update the list.
             for i in range(len(cdp.result_files)):
-                # The text to display.
-                text = "%s%s file:  %s" % (upper(cdp.result_files[i][0][0]), cdp.result_files[i][0][1:], cdp.result_files[i][1])
-
-                # Add the text with the Python data.
-                self.list.Append(str_to_gui(text), clientData=cdp.result_files[i])
+                self.file_list.Append((str_to_gui(cdp.result_files[i][0]), str_to_gui(cdp.result_files[i][1])))
 
         # Release the locks.
         finally:
             status.pipe_lock.release()
+
+
+    def resize(self, event):
+        """Catch the resize to allow the element to be resized.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the column sizes.
+        self.size_cols()
+
+        # Continue with the normal resizing.
+        event.Skip()
 
 
     def switch_pipes(self, event):
@@ -306,3 +328,17 @@ class Results_viewer(wx.Frame):
 
         # Set the name to the current data pipe.
         self.pipe_name.SetValue(str_to_gui(cdp_name()))
+
+
+    def size_cols(self):
+        """Set the column sizes."""
+
+        # The list size.
+        x, y = self.file_list.GetSize()
+
+        # Remove a little to prevent the horizontal scroll bar from appearing.
+        x = x - 10
+
+        # Set the column sizes.
+        self.file_list.SetColumnWidth(0, int(x/3))
+        self.file_list.SetColumnWidth(1, int(2*x/3))
