@@ -24,6 +24,7 @@
 from os import F_OK, access, getcwd, listdir, sep
 from re import search
 from string import lower
+from time import sleep
 
 # relax module imports.
 from doc_builder import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
@@ -125,8 +126,8 @@ class dAuvergne_protocol:
         @keyword pipe_name:             The name of the data pipe containing the sequence info.  This data pipe should have all values set including the CSA value, the bond length, the heteronucleus name and proton name.  It should also have all relaxation data loaded.
         @keyword results_dir:           The directory, where files are saved in.
         @type results_dir:              str
-        @keyword diff_model:            The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.
-        @type diff_model:               str
+        @keyword diff_model:            The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.  If all or a subset of these are supplied as a list, then these will be automatically looped over and calculated.
+        @type diff_model:               str or list of str
         @keyword mf_models:             The model-free models.
         @type mf_models:                list of str
         @keyword local_tm_models:       The model-free models.
@@ -152,7 +153,6 @@ class dAuvergne_protocol:
 
         # Store the args.
         self.pipe_name = pipe_name
-        self.diff_model = diff_model
         self.mf_models = mf_models
         self.local_tm_models = local_tm_models
         self.grid_inc = grid_inc
@@ -161,6 +161,12 @@ class dAuvergne_protocol:
         self.mc_sim_num = mc_sim_num
         self.max_iter = max_iter
         self.conv_loop = conv_loop
+
+        # The diffusion models.
+        if isinstance(diff_model, list):
+            self.diff_model_list = diff_model
+        else:
+            self.diff_model_list = [diff_model]
 
         # Project directory (i.e. directory containing the model-free model results and the newly generated files)
         if results_dir:
@@ -178,21 +184,6 @@ class dAuvergne_protocol:
         # Some info for the status.
         self.status_setup()
 
-        # Initialise the convergence data structures.
-        self.conv_data = Container()
-        self.conv_data.chi2 = []
-        self.conv_data.models = []
-        self.conv_data.diff_vals = []
-        if self.diff_model == 'sphere':
-            self.conv_data.diff_params = ['tm']
-        elif self.diff_model == 'oblate' or self.diff_model == 'prolate':
-            self.conv_data.diff_params = ['tm', 'Da', 'theta', 'phi']
-        elif self.diff_model == 'ellipsoid':
-            self.conv_data.diff_params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
-        self.conv_data.spin_ids = []
-        self.conv_data.mf_params = []
-        self.conv_data.mf_vals = []
-
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
         self.interpreter.populate_self()
@@ -205,7 +196,33 @@ class dAuvergne_protocol:
 
         # Execute the protocol.
         try:
-            self.execute()
+            # Loop over the models.
+            for self.diff_model in self.diff_model_list:
+                # Wait a little while between diffusion models.
+                sleep(1)
+
+                # Set the global model name.
+                status.auto_analysis[self.pipe_name].diff_model = self.diff_model
+
+                # Initialise the convergence data structures.
+                self.conv_data = Container()
+                self.conv_data.chi2 = []
+                self.conv_data.models = []
+                self.conv_data.diff_vals = []
+                if self.diff_model == 'sphere':
+                    self.conv_data.diff_params = ['tm']
+                elif self.diff_model == 'oblate' or self.diff_model == 'prolate':
+                    self.conv_data.diff_params = ['tm', 'Da', 'theta', 'phi']
+                elif self.diff_model == 'ellipsoid':
+                    self.conv_data.diff_params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
+                self.conv_data.spin_ids = []
+                self.conv_data.mf_params = []
+                self.conv_data.mf_vals = []
+
+                # Execute the analysis for each diffusion model.
+                self.execute()
+
+        # Clean up.
         finally:
             # Finish and unlock execution.
             status.auto_analysis[self.pipe_name].fin = True
@@ -218,8 +235,9 @@ class dAuvergne_protocol:
 
         # The diff model.
         valid_models = ['local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', 'final']
-        if self.diff_model not in valid_models:
-            raise RelaxError("The self.diff_model user variable '%s' is incorrectly set.  It must be one of %s." % (self.diff_model, valid_models))
+        for i in range(len(self.diff_model_list)):
+            if self.diff_model_list[i] not in valid_models:
+                raise RelaxError("The diff_model value '%s' is incorrectly set.  It must be one of %s." % (self.diff_model_list[i], valid_models))
 
         # Model-free models.
         mf_models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
@@ -809,7 +827,7 @@ class dAuvergne_protocol:
         status.current_analysis = self.pipe_name
 
         # The global diffusion model.
-        status.auto_analysis[self.pipe_name].diff_model = self.diff_model
+        status.auto_analysis[self.pipe_name].diff_model = None
 
         # The round of optimisation, i.e. the global iteration.
         status.auto_analysis[self.pipe_name].round = None
