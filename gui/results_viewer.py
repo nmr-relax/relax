@@ -113,6 +113,7 @@ class Results_viewer(wx.Frame):
         # Register a few methods in the observer objects.
         status.observers.gui_uf.register(self.name, self.refresh)
         status.observers.pipe_alteration.register(self.name, self.refresh)
+        status.observers.result_file.register(self.name, self.refresh)
         status.observers.exec_lock.register(self.name, self.activate)
 
         # First update.
@@ -215,6 +216,7 @@ class Results_viewer(wx.Frame):
         # Unregister the methods from the observers to avoid unnecessary updating.
         status.observers.gui_uf.unregister(self.name)
         status.observers.pipe_alteration.unregister(self.name)
+        status.observers.result_file.unregister(self.name)
         status.observers.exec_lock.unregister(self.name)
 
         # Close the window.
