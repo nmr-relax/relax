@@ -412,7 +412,7 @@ def write(param=None, file=None, dir=None, bc=False, force=False, return_value=N
     # Add the file to the results file list.
     if not hasattr(cdp, 'result_files'):
         cdp.result_files = []
-    cdp.result_files.append(['text', file_path])
+    cdp.result_files.append(['text', 'Text', file_path])
 
 
 def write_data(param=None, file=None, bc=False, return_value=None):

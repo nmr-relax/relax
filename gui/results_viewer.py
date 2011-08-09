@@ -235,11 +235,11 @@ class Results_viewer(wx.Frame):
                 continue
 
             # Get the type and file.
-            type = gui_to_str(self.file_list.GetItem(i, 0).GetText())
+            type = self.file_data[i]
             file = gui_to_str(self.file_list.GetItem(i, 1).GetText())
 
             # Grace files.
-            if lower(type) == 'grace':
+            if type == 'grace':
                 self.gui.user_functions.grace.view(None, file=file)
 
             # A special table.
@@ -263,6 +263,7 @@ class Results_viewer(wx.Frame):
 
             # Clear the list.
             self.file_list.DeleteAllItems()
+            self.file_data = []
 
             # Nothing to do.
             if not hasattr(cdp, 'result_files'):
@@ -270,7 +271,8 @@ class Results_viewer(wx.Frame):
 
             # Update the list.
             for i in range(len(cdp.result_files)):
-                self.file_list.Append((str_to_gui(cdp.result_files[i][0]), str_to_gui(cdp.result_files[i][1])))
+                self.file_list.Append((str_to_gui(cdp.result_files[i][1]), str_to_gui(cdp.result_files[i][2])))
+                self.file_data.append(cdp.result_files[i][0])
 
         # Release the locks.
         finally:

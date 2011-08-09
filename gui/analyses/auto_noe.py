@@ -490,4 +490,4 @@ class Execute_noe(Execute):
             color_code_noe(data.save_dir, data.structure_file)
 
             # Add the macro to the results list.
-            cdp.result_files.append(['pymol', data.save_dir+sep+'noe.pml'])
+            cdp.result_files.append(['pymol', 'PyMOL', data.save_dir+sep+'noe.pml'])

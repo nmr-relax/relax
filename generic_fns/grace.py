@@ -373,7 +373,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     # Add the file to the results file list.
     if not hasattr(cdp, 'result_files'):
         cdp.result_files = []
-    cdp.result_files.append(['grace', file_path])
+    cdp.result_files.append(['grace', 'Grace', file_path])
 
 
 
