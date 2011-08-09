@@ -423,7 +423,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
                 file.write("%-30s %-30s" % (point[0], point[1]/norm_fact))
 
                 # The dx and dy errors.
-                if graph_type in ['xydx', 'xydy']:
+                if graph_type in ['xydx', 'xydy', 'xydxdy']:
                     # Catch x or y-axis errors of None.
                     error = point[2]
                     if error == None:
