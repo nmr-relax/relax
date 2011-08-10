@@ -33,7 +33,11 @@ from traceback import print_exc
 
 # relax module imports.
 from prompt import interpreter
+from relax_errors import AllRelaxErrors
 from status import Status; status = Status()
+
+# relax GUI module imports.
+from gui.errors import gui_raise
 
 
 class Interpreter(Thread):
@@ -118,7 +122,12 @@ class Interpreter(Thread):
                 finally:
                     status.exec_lock.release()
 
-        # Handle all errors.
+        # Catch all RelaxErrors.
+        except AllRelaxErrors, instance:
+            # Display a dialog with the error.
+            gui_raise(instance, raise_flag=False)
+
+        # Handle all other errors.
         except:
             # Print the exception.
             sys.stderr.write("Exception raised in thread.\n\n")
