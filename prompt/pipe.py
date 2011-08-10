@@ -102,8 +102,10 @@ class Pipe(User_fn_class):
     create._doc_desc = """
         The data pipe name can be any string however the data pipe type can only be one of the following:
 
+            'ct':  Consistency testing,
             'frame order':  The Frame Order theories,
             'jw':  Reduced spectral density mapping,
+            'hybrid':  A special hybrid pipe,
             'mf':  Model-free analysis,
             'N-state':  N-state model of domain motions,
             'noe':  Steady state NOE calculation,
