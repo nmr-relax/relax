@@ -35,6 +35,7 @@ from molmol import Molmol
 from noe import Noe
 from pipe import Pipe
 from residue import Residue
+from results import Results
 from relax_data import Relax_data
 from relax_fit import Relax_fit
 from script import Script
@@ -56,6 +57,7 @@ __all__ = ['base',
            'noe',
            'pipe',
            'residue',
+           'results',
            'relax_data',
            'relax_fit',
            'script',
@@ -88,6 +90,7 @@ class User_functions:
         self.noe = Noe(self.gui)
         self.pipe = Pipe(self.gui)
         self.residue = Residue(self.gui)
+        self.results = Results(self.gui)
         self.relax_data = Relax_data(self.gui)
         self.relax_fit = Relax_fit(self.gui)
         self.script = Script(self.gui)
@@ -111,6 +114,7 @@ class User_functions:
         self.noe.destroy()
         self.pipe.destroy()
         self.residue.destroy()
+        self.results.destroy()
         self.relax_data.destroy()
         self.relax_fit.destroy()
         self.select.destroy()
