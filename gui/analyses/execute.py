@@ -93,9 +93,9 @@ class Execute(Thread):
             status.exception_queue.put([self.data_index, sys.exc_info()])
 
             # Print the exception.
-            print("Exception raised in thread.\n")
+            sys.stderr.write("Exception raised in thread.\n\n")
             print_exc()
-            print("\n\n")
+            sys.stderr.write("\n\n\n")
 
             # Unlock the execution lock, if needed.
             if status.exec_lock.locked():

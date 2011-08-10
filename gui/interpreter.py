@@ -27,6 +27,7 @@
 from Queue import Queue
 from re import search
 from string import split
+import sys
 from threading import Thread
 from traceback import print_exc
 
@@ -120,6 +121,6 @@ class Interpreter(Thread):
         # Handle all errors.
         except:
             # Print the exception.
-            print("Exception raised in thread.\n")
+            sys.stderr.write("Exception raised in thread.\n\n")
             print_exc()
-            print("\n\n")
+            sys.stderr.write("\n\n\n")
