@@ -28,6 +28,7 @@ from Queue import Queue
 from re import search
 from string import split
 from threading import Thread
+from traceback import print_exc
 
 # relax module imports.
 from prompt import interpreter
@@ -78,39 +79,47 @@ class Interpreter(Thread):
     def run(self):
         """Execute the thread."""
 
-        # Loop until told to exit.
-        while not self._exit:
-            # Get the user function from the queue.
-            uf, args, kwds = self._queue.get()
+        # Execute the user function, catching errors.
+        try:
+            # Loop until told to exit.
+            while not self._exit:
+                # Get the user function from the queue.
+                uf, args, kwds = self._queue.get()
 
-            # No user function.
-            if uf == None:
-                continue
+                # No user function.
+                if uf == None:
+                    continue
 
-            # Execution lock.
-            status.exec_lock.acquire('gui', mode='interpreter thread')
+                # Execution lock.
+                status.exec_lock.acquire('gui', mode='interpreter thread')
 
-            # Make sure the lock is released if something goes wrong.
-            try:
-                # Handle the user function class.
-                if search('\.', uf):
-                    # Split the user function.
-                    uf_class, uf_fn = split(uf, '.')
+                # Make sure the lock is released if something goes wrong.
+                try:
+                    # Handle the user function class.
+                    if search('\.', uf):
+                        # Split the user function.
+                        uf_class, uf_fn = split(uf, '.')
 
-                    # Get the user function class.
-                    obj = getattr(self._interpreter, uf_class)
+                        # Get the user function class.
+                        obj = getattr(self._interpreter, uf_class)
 
-                    # Get the function.
-                    fn = getattr(obj, uf_fn)
+                        # Get the function.
+                        fn = getattr(obj, uf_fn)
 
-                # Simple user function.
-                else:
-                    fn = getattr(self._interpreter, uf)
+                    # Simple user function.
+                    else:
+                        fn = getattr(self._interpreter, uf)
 
-                # Apply the user function.
-                apply(fn, args, kwds)
+                    # Apply the user function.
+                    apply(fn, args, kwds)
 
-            # Release the lock.
-            finally:
-                status.exec_lock.release()
+                # Release the lock.
+                finally:
+                    status.exec_lock.release()
 
+        # Handle all errors.
+        except:
+            # Print the exception.
+            print("Exception raised in thread.\n")
+            print_exc()
+            print("\n\n")
