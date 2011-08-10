@@ -85,7 +85,7 @@ class Molmol:
         test_binary('molmol')
 
         # Open Molmol as a pipe.
-        self.molmol = Popen(['molmol', '-f -'], stdin=PIPE).stdin
+        self.molmol = Popen(['molmol', '-f', '-'], stdin=PIPE).stdin
 
         # Execute the command history.
         if len(self.command_history) > 0:
@@ -231,9 +231,6 @@ def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=No
     # Loop over the commands and execute them.
     for command in commands:
         molmol_obj.exec_cmd(command)
-
-
-
 
 
 def ribbon():
