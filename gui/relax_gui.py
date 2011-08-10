@@ -58,7 +58,7 @@ from gui.fonts import font
 from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.menu import Menu
 from gui.message import error_message, Question
-from gui.misc import open_file
+from gui.misc import gui_to_str, open_file, protected_exec
 from gui import paths
 from gui.pipe_editor import Pipe_editor
 from gui.references import References
@@ -521,7 +521,7 @@ class Main(wx.Frame):
                 return
 
             # The file.
-            file_name = dialog.get_file()
+            file_name = gui_to_str(dialog.get_file())
 
         # Yield to allow the cursor to be changed.
         wx.Yield()
@@ -530,27 +530,30 @@ class Main(wx.Frame):
         wx.BeginBusyCursor()
         self.Freeze()
 
-        # Delete the current tabs.
-        self.analysis.delete_all()
+        # Make sure the GUI returns to normal if a failure occurs.
+        try:
+            # Delete the current tabs.
+            self.analysis.delete_all()
 
-        # Reset the relax data store.
-        reset()
+            # Reset the relax data store.
+            reset()
 
-        # The new save file name.
-        self.save_file = file_name
+            # The new save file name.
+            self.save_file = file_name
 
-        # Load the relax state.
-        state.load_state(file_name, verbosity=0)
+            # Load the relax state.
+            protected_exec(state.load_state, file_name, verbosity=0)
 
-        # Reconstruct the analyses.
-        self.analysis.load_from_store()
+            # Reconstruct the analyses.
+            self.analysis.load_from_store()
 
-        # Update the core of the GUI to match the new data store.
-        self.sync_ds(upload=False)
+            # Update the core of the GUI to match the new data store.
+            self.sync_ds(upload=False)
 
         # Reset the cursor, and thaw the GUI.
-        self.Thaw()
-        wx.EndBusyCursor()
+        finally:
+            self.Thaw()
+            wx.EndBusyCursor()
 
 
     def state_save(self):
