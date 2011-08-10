@@ -150,7 +150,7 @@ class Copy_page(UF_page):
             mol_to = "#" + mol_to
 
         # Copy the molecule.
-        self.gui.interpreter.molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
+        self.gui.interpreter.queue('molecule.copy', pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
 
     def update_mol_list(self, event=None):
@@ -202,7 +202,7 @@ class Create_page(UF_page):
         mol_type = str(self.mol_type.GetValue())
 
         # Set the name.
-        self.gui.interpreter.molecule.create(mol_name=mol_name, mol_type=mol_type)
+        self.gui.interpreter.queue('molecule.create', mol_name=mol_name, mol_type=mol_type)
 
 
 
@@ -244,4 +244,4 @@ class Delete_page(UF_page):
         mol_id = gui_to_str(self.mol_id.GetValue())
 
         # Delete the molecule.
-        self.gui.interpreter.molecule.delete(mol_id=mol_id)
+        self.gui.interpreter.queue('molecule.delete', mol_id=mol_id)

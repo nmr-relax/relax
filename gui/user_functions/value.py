@@ -118,7 +118,7 @@ class Set_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Set the value.
-        self.gui.interpreter.value.set(val=val, param=param, spin_id=spin_id)
+        self.gui.interpreter.queue('value.set', val=val, param=param, spin_id=spin_id)
 
 
     def set_default_value(self, event=None):

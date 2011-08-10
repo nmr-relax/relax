@@ -177,7 +177,7 @@ class Copy_page(UF_page, Mol_res_spin):
             res_to = None
 
         # Copy the molecule.
-        self.gui.interpreter.residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
+        self.gui.interpreter.queue('residue.copy', pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
 
 
     def update_mol_list(self, event=None):
@@ -286,7 +286,7 @@ class Create_page(UF_page, Mol_res_spin):
             res_num = None
 
         # Set the name.
-        self.gui.interpreter.residue.create(res_name=res_name, res_num=res_num, mol_name=mol_name)
+        self.gui.interpreter.queue('residue.create', res_name=res_name, res_num=res_num, mol_name=mol_name)
 
 
 
@@ -333,7 +333,7 @@ class Delete_page(UF_page, Mol_res_spin):
             return
 
         # Delete the residue.
-        self.gui.interpreter.residue.delete(res_id=id)
+        self.gui.interpreter.queue('residue.delete', res_id=id)
 
         # Update.
         self._update_residues(None)

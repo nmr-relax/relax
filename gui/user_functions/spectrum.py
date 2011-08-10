@@ -155,7 +155,7 @@ class Baseplane_rmsd_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Execute.
-        self.gui.interpreter.spectrum.baseplane_rmsd(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
+        self.gui.interpreter.queue('spectrum.baseplane_rmsd', error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
 
@@ -178,7 +178,7 @@ class Error_analysis_page(UF_page):
         """Execute the user function."""
 
         # Execute.
-        self.gui.interpreter.spectrum.error_analysis()
+        self.gui.interpreter.queue('spectrum.error_analysis')
 
 
 
@@ -228,7 +228,7 @@ class Integration_points_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Execute.
-        self.gui.interpreter.spectrum.integration_points(N=N, spectrum_id=spectrum_id, spin_id=spin_id)
+        self.gui.interpreter.queue('spectrum.integration_points', N=N, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
 
@@ -307,7 +307,7 @@ class Read_intensities_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the peak intensities.
-        self.gui.interpreter.spectrum.read_intensities(file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_method=int_method, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
+        self.gui.interpreter.queue('spectrum.read_intensities', file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_method=int_method, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
 
 
 
@@ -369,4 +369,4 @@ class Replicated_page(UF_page):
 
         # Execute (only if more than one ID is given).
         if len(spectrum_ids) > 1:
-            self.gui.interpreter.spectrum.replicated(spectrum_ids=spectrum_ids)
+            self.gui.interpreter.queue('spectrum.replicated', spectrum_ids=spectrum_ids)

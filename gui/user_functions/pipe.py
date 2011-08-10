@@ -155,7 +155,7 @@ class Copy_page(UF_page):
         pipe_to = gui_to_str(self.pipe_to.GetValue())
 
         # Copy the data pipe.
-        self.gui.interpreter.pipe.copy(pipe_from, pipe_to)
+        self.gui.interpreter.queue('pipe.copy', pipe_from, pipe_to)
 
 
 
@@ -191,7 +191,7 @@ class Create_page(UF_page):
         pipe_type = self.pipe_type.GetClientData(self.pipe_type.GetSelection())
 
         # Set the name.
-        self.gui.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
+        self.gui.interpreter.queue('pipe.create', pipe_name=pipe_name, pipe_type=pipe_type)
 
 
 
@@ -235,7 +235,7 @@ class Delete_page(UF_page):
         pipe_name = str(self.pipe_name.GetValue())
 
         # Delete the data pipe.
-        self.gui.interpreter.pipe.delete(pipe_name)
+        self.gui.interpreter.queue('pipe.delete', pipe_name)
 
 
 
@@ -269,7 +269,7 @@ class Hybridise_page(UF_page):
         pipes = gui_to_list(self.pipes.GetValue())
 
         # Delete the data pipe.
-        self.gui.interpreter.pipe.hybridise(hybrid=hybrid, pipes=pipes)
+        self.gui.interpreter.queue('pipe.hybridise', hybrid=hybrid, pipes=pipes)
 
 
 
@@ -317,4 +317,4 @@ class Switch_page(UF_page):
         pipe_name = str(self.pipe_name.GetValue())
 
         # Switch the data pipe.
-        self.gui.interpreter.pipe.switch(pipe_name)
+        self.gui.interpreter.queue('pipe.switch', pipe_name)

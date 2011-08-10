@@ -98,7 +98,7 @@ class Display_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        self.gui.interpreter.results.display()
+        self.gui.interpreter.queue('results.display')
 
 
 
@@ -130,7 +130,7 @@ class Read_page(UF_page):
             return
 
         # Execute the user function.
-        self.gui.interpreter.results.read(file=file)
+        self.gui.interpreter.queue('results.read', file=file)
 
 
 
@@ -174,4 +174,4 @@ class Write_page(UF_page):
         force = gui_to_bool(self.force.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.results.write(file=file, force=force, compress_type=compress_type)
+        self.gui.interpreter.queue('results.write', file=file, force=force, compress_type=compress_type)

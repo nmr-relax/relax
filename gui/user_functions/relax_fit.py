@@ -102,7 +102,7 @@ class Relax_time_page(UF_page):
         spectrum_id = gui_to_str(self.spectrum_id.GetValue())
 
         # Read the relaxation data.
-        self.gui.interpreter.relax_fit.relax_time(time=time, spectrum_id=spectrum_id)
+        self.gui.interpreter.queue('relax_fit.relax_time', time=time, spectrum_id=spectrum_id)
 
 
     def on_display(self):
@@ -149,4 +149,4 @@ class Select_model_page(UF_page):
         model = gui_to_str(self.model.GetValue())
 
         # Read the relaxation data.
-        self.gui.interpreter.relax_fit.select_model(model=model)
+        self.gui.interpreter.queue('relax_fit.select_model', model=model)

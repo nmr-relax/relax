@@ -95,7 +95,7 @@ class Delete_page(UF_page):
         ri_id = gui_to_str(self.ri_id.GetValue())
 
         # Read the relaxation data.
-        self.gui.interpreter.relax_data.delete(ri_id=ri_id)
+        self.gui.interpreter.queue('relax_data.delete', ri_id=ri_id)
 
 
     def on_display(self):
@@ -180,4 +180,4 @@ class Read_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the relaxation data.
-        self.gui.interpreter.relax_data.read(ri_id=ri_id, ri_type=ri_type, frq=frq, file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=err_col, sep=sep, spin_id=spin_id)
+        self.gui.interpreter.queue('relax_data.read', ri_id=ri_id, ri_type=ri_type, frq=frq, file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=err_col, sep=sep, spin_id=spin_id)

@@ -128,7 +128,7 @@ class Copy_page(UF_page):
         pipe_to = gui_to_str(self.pipe_to.GetValue())
 
         # Copy the sequence.
-        self.gui.interpreter.sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
+        self.gui.interpreter.queue('sequence.copy', pipe_from=pipe_from, pipe_to=pipe_to)
 
 
 
@@ -184,7 +184,7 @@ class Read_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the sequence.
-        self.gui.interpreter.sequence.read(file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
+        self.gui.interpreter.queue('sequence.read', file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
 
 
 
@@ -247,7 +247,7 @@ class Write_page(UF_page):
         force = gui_to_bool(self.force.GetValue())
 
         # Read the sequence.
-        self.gui.interpreter.sequence.write(file=file, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag, force=force)
+        self.gui.interpreter.queue('sequence.write', file=file, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag, force=force)
 
 
 

@@ -115,7 +115,7 @@ class All_page(UF_page):
         """Execute the user function."""
 
         # Deselect all.
-        self.gui.interpreter.deselect.all()
+        self.gui.interpreter.queue('deselect.all')
 
 
 
@@ -181,7 +181,7 @@ class Read_page(UF_page):
         change_all = gui_to_bool(self.change_all.GetValue())
 
         # Deselection.
-        self.gui.interpreter.deselect.read(file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, boolean=boolean, change_all=change_all)
+        self.gui.interpreter.queue('deselect.read', file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, boolean=boolean, change_all=change_all)
 
 
 
@@ -209,7 +209,7 @@ class Reverse_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Deselect all.
-        self.gui.interpreter.deselect.reverse(spin_id=spin_id)
+        self.gui.interpreter.queue('deselect.reverse', spin_id=spin_id)
 
 
 
@@ -243,4 +243,4 @@ class Spin_page(UF_page):
         change_all = gui_to_bool(self.change_all.GetValue())
 
         # Deselect all.
-        self.gui.interpreter.deselect.spin(spin_id=spin_id, change_all=change_all)
+        self.gui.interpreter.queue('deselect.spin', spin_id=spin_id, change_all=change_all)

@@ -41,7 +41,6 @@ from info import Info_box
 from generic_fns import state
 from generic_fns.pipes import cdp_name
 from generic_fns.reset import reset
-from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
@@ -56,6 +55,7 @@ from gui.controller import Controller
 from gui.filedialog import RelaxFileDialog, opendir
 from gui.fonts import font
 from gui.icons import Relax_task_bar_icon, relax_icons
+from gui.interpreter import Interpreter
 from gui.menu import Menu
 from gui.message import error_message, Question
 from gui.misc import gui_to_str, open_file, protected_exec
@@ -137,10 +137,9 @@ class Main(wx.Frame):
         # Close Box event.
         self.Bind(wx.EVT_CLOSE, self.exit_gui)
 
-        # Load a copy of the relax interpreter.
-        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
+        # Initialise the special interpreter thread object.
+        self.interpreter = Interpreter()
+        self.interpreter.start()
 
         # Run a script.
         if script:
@@ -331,7 +330,7 @@ class Main(wx.Frame):
                 self.taskbar_icon.Destroy()
 
             # End application.
-            sys.exit()
+            wx.Exit()
 
 
     def init_data(self):

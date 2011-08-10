@@ -119,7 +119,7 @@ class View_page(UF_page):
         grace_exe = gui_to_str(self.grace_exe.GetValue())
 
         # Open the file.
-        self.gui.interpreter.grace.view(file=file, dir=None, grace_exe=grace_exe)
+        self.gui.interpreter.queue('grace.view', file=file, dir=None, grace_exe=grace_exe)
 
 
 
@@ -187,7 +187,7 @@ class Write_page(UF_page):
         force = gui_to_bool(self.force.GetValue())
 
         # Open the file.
-        self.gui.interpreter.grace.write(x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=None, force=force, norm=norm)
+        self.gui.interpreter.queue('grace.write', x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=None, force=force, norm=norm)
 
 
     def update_parameters(self, combo_box):

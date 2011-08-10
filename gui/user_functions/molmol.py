@@ -156,7 +156,7 @@ class Clear_history_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        self.gui.interpreter.molmol.clear_history()
+        self.gui.interpreter.queue('molmol.clear_history')
 
 
 
@@ -185,7 +185,7 @@ class Command_page(UF_page):
         command = gui_to_str(self.command.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.molmol.command(command=command)
+        self.gui.interpreter.queue('molmol.command', command=command)
 
 
 
@@ -232,7 +232,7 @@ class Macro_exec_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.molmol.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        self.gui.interpreter.queue('molmol.macro_exec', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
 
 
@@ -255,7 +255,7 @@ class Ribbon_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        self.gui.interpreter.molmol.ribbon()
+        self.gui.interpreter.queue('molmol.ribbon')
 
 
 
@@ -289,7 +289,7 @@ class Tensor_pdb_page(UF_page):
             return
 
         # Execute the user function.
-        self.gui.interpreter.molmol.tensor_pdb(file=file)
+        self.gui.interpreter.queue('molmol.tensor_pdb', file=file)
 
 
 
@@ -312,7 +312,7 @@ class View_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        self.gui.interpreter.molmol.view()
+        self.gui.interpreter.queue('molmol.view')
 
 
 
@@ -373,4 +373,4 @@ class Write_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.molmol.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, force=force)
+        self.gui.interpreter.queue('molmol.write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, force=force)

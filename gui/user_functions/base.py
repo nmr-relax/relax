@@ -31,6 +31,7 @@ from wx.lib import scrolledpanel
 
 # relax module imports.
 from prompt.base_class import _strip_lead
+from prompt.interpreter import Interpreter
 from status import Status; status = Status()
 
 # relax GUI imports.
@@ -99,7 +100,7 @@ class UF_page(Wiz_page):
         self.gui = gui
 
         # Get the user function class (or function).
-        uf_class = getattr(self.gui.interpreter, self.uf_path[0])
+        uf_class = getattr(interpreter, self.uf_path[0])
 
         # Get the user function.
         if len(self.uf_path) == 1:
@@ -304,3 +305,10 @@ class UF_page(Wiz_page):
         # Yield the bits.
         for i in range(len(text)):
             yield text[i], type[i]
+
+
+
+# Load a copy of the relax interpreter.
+interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+interpreter.populate_self()
+interpreter.on(verbose=False)
