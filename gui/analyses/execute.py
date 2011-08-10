@@ -59,6 +59,9 @@ class Execute(Thread):
             # Set up the thread object.
             Thread.__init__(self)
 
+            # Set the thread to be daemonic so that relax can exit.
+            self.daemon = True
+
         # No treaded execution.
         else:
             # Alias the a few dummy methods.
