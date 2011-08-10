@@ -43,6 +43,7 @@ class Interpreter(Thread):
         # Set up the thread object.
         Thread.__init__(self)
 
+        # Set the thread to be daemonic so that relax can exit.
         self.daemon = True
 
         # Create a queue object for the user function calls.
