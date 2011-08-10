@@ -181,6 +181,9 @@ class Command_page(UF_page):
     def on_execute(self):
         """Execute the user function."""
 
+        # Get the values.
+        command = gui_to_str(self.command.GetValue())
+
         # Execute the user function.
         self.gui.interpreter.molmol.command(command=command)
 
