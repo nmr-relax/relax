@@ -275,7 +275,7 @@ class Tensor_pdb_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The tensor PDB file:", message="Tensor PDB file selection", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The tensor PDB file:", message="Tensor PDB file selection", wildcard="PDB files (*.pdb)|*.pdb;*.PDB", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
 
 
     def on_execute(self):
@@ -332,7 +332,7 @@ class Write_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The macro file:", message="Molmol macro file selection", wildcard="Molmol macro files (*.mac)|*.mac", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The macro file:", message="Molmol macro file selection", wildcard="Molmol macro files (*.mac)|*.mac;*.MAC", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
 
         # The force flag.
         self.force = self.boolean_selector(sizer, "Force flag:", tooltip=self.uf._doc_args_dict['force'], default=False)

@@ -116,7 +116,7 @@ class Read_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The results file:", message="Results file selection", wildcard='relax results files (*.bz2)|*.bz2;relax results files (*.gz)|*.gz;relax results files (*.*)|*.*', style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The results file:", message="Results file selection", wildcard='relax results files (*.bz2)|*.bz2|relax results files (*.gz)|*.gz|relax results files (*.*)|*.*', style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
 
 
     def on_execute(self):
@@ -149,7 +149,7 @@ class Write_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The results file:", message="Results file selection", wildcard='relax results files (*.bz2)|*.bz2;relax results files (*.gz)|*.gz;relax results files (*.*)|*.*', style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The results file:", message="Results file selection", wildcard='relax results files (*.bz2)|*.bz2|relax results files (*.gz)|*.gz|relax results files (*.*)|*.*', style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
 
         # The force flag.
         self.force = self.boolean_selector(sizer, "Force flag:", tooltip=self.uf._doc_args_dict['force'])
