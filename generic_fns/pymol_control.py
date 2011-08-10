@@ -72,8 +72,15 @@ class Pymol:
         self.command_history = ""
 
 
-    def exec_cmd(self, command=None, store_command=1):
-        """Execute a PyMOL command."""
+    def exec_cmd(self, command=None, store_command=True):
+        """Execute a PyMOL command.
+
+        @param command:         The PyMOL command to send into the program.
+        @type command:          str
+        @param store_command:   A flag specifying if the command should be stored in the history
+                                variable.
+        @type store_command:    bool
+        """
 
         # Reopen the GUI if needed.
         if not self.running():
@@ -148,7 +155,11 @@ class Pymol:
 
 
     def running(self):
-        """Test if PyMOL is running."""
+        """Test if PyMOL is running.
+
+        @return:    Whether the Molmol pipe is open or not.
+        @rtype:     bool
+        """
 
         # Test if PyMOL module interface is already running.
         if self.exec_mode == 'module':
@@ -217,7 +228,7 @@ def cartoon():
 def command(command):
     """Function for sending PyMOL commands to the program pipe.
 
-    @param command: The command to send to PyMOL.
+    @param command: The command to send into the program.
     @type command:  str
     """
 
@@ -310,9 +321,9 @@ def cone_pdb(file=None):
 
 
 def create_macro(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
-    """Function for creating an array of PyMOL commands.
+    """Create an array of PyMOL commands.
 
-    @keyword data_type:     The data type ot map to the structure.
+    @keyword data_type:     The data type to map to the structure.
     @type data_type:        str
     @keyword style:         The style of the macro.
     @type style:            str
@@ -320,18 +331,17 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     @type colour_start:     str or RBG colour array (len 3 with vals from 0 to 1)
     @keyword colour_end:    The ending colour of the linear gradient.
     @type colour_end:       str or RBG colour array (len 3 with vals from 0 to 1)
-    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol'
-                            or 'x11'.
+    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol' or 'x11'.
     @type colour_list:      str or None
     @return:                The list of PyMOL commands.
     @rtype:                 list of str
     """
 
     # Specific PyMOL macro creation function.
-    pymol_macro = get_specific_fn('pymol_macro', cdp.pipe_type)
+    macro = get_specific_fn('pymol_macro', cdp.pipe_type)
 
     # Get the macro.
-    commands = pymol_macro(data_type, style, colour_start, colour_end, colour_list)
+    commands = macro(data_type, style, colour_start, colour_end, colour_list)
 
     # Return the macro commands.
     return commands
@@ -340,7 +350,7 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
 def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
     """Execute a PyMOL macro.
 
-    @keyword data_type:     The data type ot map to the structure.
+    @keyword data_type:     The data type to map to the structure.
     @type data_type:        str
     @keyword style:         The style of the macro.
     @type style:            str
@@ -348,8 +358,7 @@ def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=No
     @type colour_start:     str or RBG colour array (len 3 with vals from 0 to 1)
     @keyword colour_end:    The ending colour of the linear gradient.
     @type colour_end:       str or RBG colour array (len 3 with vals from 0 to 1)
-    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol'
-                            or 'x11'.
+    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol' or 'x11'.
     @type colour_list:      str or None
     """
 
@@ -485,7 +494,7 @@ def view():
 def write(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=False):
     """Create a PyMOL macro file.
 
-    @keyword data_type:     The data type ot map to the structure.
+    @keyword data_type:     The data type to map to the structure.
     @type data_type:        str
     @keyword style:         The style of the macro.
     @type style:            str
@@ -493,15 +502,13 @@ def write(data_type=None, style="classic", colour_start=None, colour_end=None, c
     @type colour_start:     str or RBG colour array (len 3 with vals from 0 to 1)
     @keyword colour_end:    The ending colour of the linear gradient.
     @type colour_end:       str or RBG colour array (len 3 with vals from 0 to 1)
-    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol'
-                            or 'x11'.
+    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol' or 'x11'.
     @type colour_list:      str or None
     @keyword file:          The name of the macro file to create.
     @type file:             str
     @keyword dir:           The name of the directory to place the macro file into.
     @type dir:              str
-    @keyword force:         Flag which if set to True will cause any pre-existing file to be
-                            overwritten.
+    @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
     @type force:            bool
     """
 
