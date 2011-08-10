@@ -561,8 +561,12 @@ class Main(wx.Frame):
         # Update the data store to match the GUI.
         self.sync_ds(upload=True)
 
-        # Save the relax state.
-        state.save_state(self.save_file, verbosity=0, force=True)
+        # Save the relax state (with save user feedback).
+        try:
+            wx.BeginBusyCursor()
+            state.save_state(self.save_file, verbosity=0, force=True)
+        finally:
+            wx.EndBusyCursor()
 
 
     def sync_ds(self, upload=False):
