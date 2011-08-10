@@ -27,7 +27,7 @@
 import wx
 
 # relax module imports.
-from generic_fns.pipes import VALID_TYPES, cdp_name, pipe_names
+from generic_fns.pipes import PIPE_DESC, VALID_TYPES, cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
@@ -177,15 +177,18 @@ class Create_page(UF_page):
         self.pipe_name = self.input_field(sizer, "The data pipe name:", tooltip=self.uf._doc_args_dict['pipe_name'])
 
         # The type selection.
-        self.pipe_type = self.combo_box(sizer, "The type of data pipe:", VALID_TYPES, tooltip=self.uf._doc_args_dict['pipe_type'])
+        self.pipe_type = self.combo_box(sizer, "The type of data pipe:", tooltip=self.uf._doc_args_dict['pipe_type'], read_only=True)
+        for i in range(len(VALID_TYPES)):
+            self.pipe_type.Append(PIPE_DESC[VALID_TYPES[i]])
+            self.pipe_type.SetClientData(i, VALID_TYPES[i])
 
 
     def on_execute(self):
         """Execute the user function."""
 
         # Get the name and type.
-        pipe_name = str(self.pipe_name.GetValue())
-        pipe_type = str(self.pipe_type.GetValue())
+        pipe_name = gui_to_str(self.pipe_name.GetValue())
+        pipe_type = self.pipe_type.GetClientData(self.pipe_type.GetSelection())
 
         # Set the name.
         self.gui.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
