@@ -34,8 +34,18 @@ from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 from status import Status; status = Status()
 
 
-# List of valid data pipe types.
+# List of valid data pipe types and descriptions.
 VALID_TYPES = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit']
+PIPE_DESC = {
+    'ct':  'Consistency testing',
+    'frame order':  'Frame Order theories',
+    'jw':  'Reduced spectral density mapping',
+    'hybrid':  'Special hybrid pipe',
+    'mf':  'Model-free analysis',
+    'N-state':  'N-state model of domain motions',
+    'noe':  'Steady state NOE calculation',
+    'relax_fit':  'Relaxation curve fitting'
+}
 
 
 def copy(pipe_from=None, pipe_to=None):
