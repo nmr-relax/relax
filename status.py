@@ -440,7 +440,7 @@ class Relax_lock:
         # Debugging.
         if self.debug:
             # Write out.
-            sys.__stderr__.write('Acquire')
+            sys.stderr.write('Acquire')
 
             # Increment the lock level.
             self._lock_level += 1
@@ -472,7 +472,7 @@ class Relax_lock:
         # Debugging.
         if self.debug:
             # Write out.
-            sys.__stderr__.write('Release')
+            sys.stderr.write('Release')
 
             # Increment the lock level.
             self._lock_level -= 1

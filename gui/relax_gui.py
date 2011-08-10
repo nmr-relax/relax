@@ -323,7 +323,7 @@ class Main(wx.Frame):
             for line in wrap(info.bib['dAuvergneGooley08b'].cite_short(), width):
                 text = text + line + '\n'
             text = text + '\n'
-            sys.__stdout__.write(text)
+            sys.stdout.write(text)
 
             # Remove the Mac OS X task bar icon.
             if hasattr(self, 'taskbar_icon'):
