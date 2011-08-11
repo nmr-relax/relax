@@ -111,7 +111,7 @@ class Molmol:
     def _molmol_classic_style(self, data_type=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """The MOLMOL classic style.
 
-        @keyword data_type:     The parameter name.
+        @keyword data_type:     The parameter name or data type.
         @type data_type:        str
         @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
         @type colour_start:     str
@@ -563,11 +563,11 @@ class Molmol:
         self._molmol_classic_colour(res_num, width, rgb_array)
 
 
-    def molmol_macro(self, param, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+    def molmol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """Create and return an array of Molmol macros of the model-free parameters.
 
-        @param param:           The parameter name.
-        @type param:            str
+        @param data_type:       The parameter name or data type.
+        @type data_type:        str
         @keyword style:         The Molmol style.
         @type style:            None or str
         @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
