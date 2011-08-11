@@ -357,7 +357,7 @@ class Molmol(User_fn_class):
         arg_check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
         arg_check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
         arg_check.is_str(colour_list, 'colour list', can_be_none=True)
-        arg_check.is_str_or_inst(file, 'file name')
+        arg_check.is_str_or_inst(file, 'file name', can_be_none=True)
         arg_check.is_str(dir, 'directory name', can_be_none=True)
         arg_check.is_bool(force, 'force flag')
 

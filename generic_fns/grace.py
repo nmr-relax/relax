@@ -342,6 +342,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
         raise RelaxNoSimError
 
     # Open the file for writing.
+    file_path = get_file_path(file, dir)
     file = open_write_file(file, dir, force)
 
     # Get the data.
@@ -368,6 +369,12 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
 
     # Close the file.
     file.close()
+
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    cdp.result_files.append(['grace', file_path])
+
 
 
 def write_xy_data(data, file=None, graph_type=None, norm=False):
@@ -416,7 +423,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
                 file.write("%-30s %-30s" % (point[0], point[1]/norm_fact))
 
                 # The dx and dy errors.
-                if graph_type in ['xydx', 'xydy']:
+                if graph_type in ['xydx', 'xydy', 'xydxdy']:
                     # Catch x or y-axis errors of None.
                     error = point[2]
                     if error == None:
