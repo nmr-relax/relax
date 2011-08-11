@@ -478,7 +478,7 @@ class Molmol:
             colour_end = 'blue'
 
         # Get the RGB colour array (swap the colours because of the inverted hyperbolic colour value).
-        rgb_array = self.relax.colour.linear_gradient(colour_value, colour_end, colour_start, colour_list)
+        rgb_array = linear_gradient(colour_value, colour_end, colour_start, colour_list)
 
         # Colour the peptide bond.
         self._molmol_classic_colour(res_num, width, rgb_array)
@@ -563,7 +563,7 @@ class Molmol:
             colour_end = 'red'
 
         # Get the RGB colour array (swap the colours because of the inverted hyperbolic colour value).
-        rgb_array = self.relax.colour.linear_gradient(colour_value, colour_end, colour_start, colour_list)
+        rgb_array = linear_gradient(colour_value, colour_end, colour_start, colour_list)
 
         # Colour the peptide bond.
         self._molmol_classic_colour(res_num, width, rgb_array)
