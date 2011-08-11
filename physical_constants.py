@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from math import pi
 from string import ascii_letters, digits, upper
 
 # relax module imports.
+from float import nan
 from relax_errors import RelaxError
 
 
@@ -101,6 +102,10 @@ def dipolar_constant(gx, gh, r):
     @type r:    float
     """
 
+    # Catch zero bond lengths, returning NaN.
+    if r == 0:
+        return nan
+
     # Calculate and return the value.
     return - mu0 / (4.0*pi) * gx * gh * h_bar / r**3
 
@@ -132,6 +137,10 @@ def pcs_constant(T, Bo, r):
     @param r:   The distance between the two nuclei.
     @type r:    float
     """
+
+    # Catch zero bond lengths, returning NaN.
+    if r == 0:
+        return nan
 
     # Calculate and return the value.
     return mu0 / (4.0*pi) * 15.0 * kB * T / Bo**2 / r**3
