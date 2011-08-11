@@ -121,7 +121,7 @@ def bool_to_gui(bool):
     @param num:     The boolean value of True or False.
     @type num:      bool
     @return:        The GUI string.
-    @rtype:         str
+    @rtype:         unicode
     """
 
     # Convert.
@@ -132,7 +132,7 @@ def convert_to_float(string):
     """Method to convert a string like '1.02*1e-10' to a float variable.
 
     @param string:  The number in string form.
-    @type string:   str
+    @type string:   str or unicode
     @return:        The floating point number.
     @rtype:         float
     """
@@ -159,7 +159,7 @@ def gui_to_float(string):
     """Convert the GUI obtained string to an float.
 
     @param string:  The number in string form.
-    @type string:   str
+    @type string:   str or unicode
     @return:        The float
     @rtype:         float or None
     """
@@ -191,7 +191,7 @@ def gui_to_int(string):
     """Convert the GUI obtained string to an int.
 
     @param string:  The number in string form.
-    @type string:   str
+    @type string:   str or unicode
     @return:        The integer
     @rtype:         int or None
     """
@@ -221,7 +221,7 @@ def float_to_gui(num):
     @param num:     The number in float or None form.
     @type num:      float or None
     @return:        The GUI string.
-    @rtype:         str
+    @rtype:         unicode
     """
 
     # No input.
@@ -238,7 +238,7 @@ def int_to_gui(num):
     @param num:     The number in int or None form.
     @type num:      int or None
     @return:        The GUI string.
-    @rtype:         str
+    @rtype:         unicode
     """
 
     # No input.
@@ -253,7 +253,7 @@ def gui_to_bool(string):
     """Convert the GUI obtained string to a bool.
 
     @param string:  The bool in string form.
-    @type string:   str
+    @type string:   str or unicode
     @return:        The bool.
     @rtype:         bool
     """
@@ -270,7 +270,7 @@ def gui_to_list(string):
     """Convert the GUI obtained string to a list.
 
     @param string:  The list in string form.
-    @type string:   str
+    @type string:   str or unicode
     @return:        The list.
     @rtype:         list
     """
@@ -292,7 +292,7 @@ def gui_to_str(string):
     """Convert the GUI obtained string to a string.
 
     @param string:  The number in string form.
-    @type string:   str
+    @type string:   str or unicode
     @return:        The string.
     @rtype:         str
     """
@@ -309,9 +309,9 @@ def list_to_gui(list):
     """Convert the list into the GUI string.
 
     @param list:    The Python list.
-    @type list:     list
+    @type list:     list or None
     @return:        The GUI string.
-    @rtype:         str
+    @rtype:         unicode
     """
 
     # No input.
@@ -376,10 +376,10 @@ def protected_exec(fn, *args, **kargs):
 def str_to_gui(string):
     """Convert the string into the GUI string.
 
-    @param num:     The number in int or None form.
-    @type num:      int or None
+    @param string:  The string or None to convert.
+    @type string:   str or None
     @return:        The GUI string.
-    @rtype:         str
+    @rtype:         unicode
     """
 
     # No input.

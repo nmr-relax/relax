@@ -300,8 +300,8 @@ class Grid_base:
     def add_buttons(self, sizer):
         """Add the buttons for peak list manipulation.
 
-        @param box:     The sizer element to pack the buttons into.
-        @type box:      wx.BoxSizer instance
+        @param sizer:   The sizer element to pack the buttons into.
+        @type sizer:    wx.BoxSizer instance
         """
 
         # Button Sizer
@@ -345,8 +345,8 @@ class Grid_base:
     def add_grid(self, sizer):
         """Add the grid for the peak list files and delay times.
 
-        @param box:     The sizer element to pack the grid into.
-        @type box:      wx.BoxSizer instance
+        @param sizer:   The sizer element to pack the grid into.
+        @type sizer:    wx.BoxSizer instance
         """
 
         # Grid of peak list file names and relaxation time.

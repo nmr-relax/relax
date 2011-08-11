@@ -52,7 +52,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
     width_button = 100
     width_main_separator = 40
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, parent, id=wx.ID_ANY, pos=None, size=None, style=None, name=None, gui=None):
         """Initialise the scrolled window.
 
         @param parent:  The parent wx element.
@@ -67,12 +67,10 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         @type style:    int
         @keyword name:  The name for the panel.
         @type name:     unicode
-        @keyword gui:   The main GUI class.
-        @type gui:      gui.relax_gui.Main instance
         """
 
         # Execute the base class method.
-        super(Base_analysis, self).__init__(*args, **kwds)
+        super(Base_analysis, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
         # Determine the size of the scrollers.
         self.width_vscroll = wx.SystemSettings_GetMetric(wx.SYS_VSCROLL_X)

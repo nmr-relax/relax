@@ -121,8 +121,8 @@ class Spectra_list:
     def add_buttons(self, sizer):
         """Add the buttons for peak list manipulation.
 
-        @param box:     The sizer element to pack the buttons into.
-        @type box:      wx.BoxSizer instance
+        @param sizer:   The sizer element to pack the buttons into.
+        @type sizer:    wx.BoxSizer instance
         """
 
         # Button Sizer
@@ -203,8 +203,8 @@ class Spectra_list:
     def init_element(self, sizer):
         """Initialise the GUI element for the spectra listing.
 
-        @param box:     The sizer element to pack the element into.
-        @type box:      wx.BoxSizer instance
+        @param sizer:   The sizer element to pack the element into.
+        @type sizer:    wx.BoxSizer instance
         """
 
         # List of peak list file names and relaxation time.

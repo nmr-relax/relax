@@ -248,8 +248,8 @@ class Pipe_editor(wx.Frame):
     def add_logo(self, box):
         """Add the logo to the sizer.
 
-        @param sizer:   The sizer element to pack the logo into.
-        @type sizer:    wx.Sizer instance
+        @param box:     The sizer element to pack the logo into.
+        @type box:      wx.Sizer instance
         """
 
         # The pipe logo.

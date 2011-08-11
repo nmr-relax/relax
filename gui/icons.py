@@ -92,7 +92,7 @@ class Relax_task_bar_icon(wx.TaskBarIcon):
         return popup
 
 
-    def exit(self, evt):
+    def exit(self, event):
         """Exit relax from the task bar.
 
         @param event:   The wx event.

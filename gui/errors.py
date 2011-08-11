@@ -38,7 +38,7 @@ def gui_raise(relax_error, raise_flag=False):
     @type relax_error:      RelaxError instance
     @keyword raise_flag:    A flag which if True will cause the error to be raised, terminating execution.
     @type raise_flag:       bool
-    @raises:                The RelaxError.
+    @raises RelaxError:     This raises all RelaxErrors, if the raise flag is given.
     """
 
     # Show a dialog explaining the error.

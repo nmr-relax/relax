@@ -237,11 +237,7 @@ class Copy_page(UF_page, Mol_res_spin):
 
 
     def on_display(self):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+        """Update the UI."""
 
         # Set the default pipe name.
         if not gui_to_str(self.pipe_from.GetValue()):

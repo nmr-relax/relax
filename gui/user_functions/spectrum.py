@@ -134,11 +134,7 @@ class Baseplane_rmsd_page(UF_page):
 
 
     def on_display(self):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+        """Update the UI."""
 
         # Set the spectrum ID names.
         if hasattr(cdp, 'spectrum_ids'):
@@ -207,11 +203,7 @@ class Integration_points_page(UF_page):
 
 
     def on_display(self):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+        """Update the UI."""
 
         # Set the spectrum ID names.
         if hasattr(cdp, 'spectrum_ids'):
@@ -334,11 +326,7 @@ class Replicated_page(UF_page):
 
 
     def on_display(self):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+        """Update the UI."""
 
         # Set the spectrum ID names.
         if hasattr(cdp, 'spectrum_ids'):

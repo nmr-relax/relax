@@ -118,8 +118,8 @@ class Relax_data_list:
     def add_buttons(self, sizer):
         """Add the buttons for peak list manipulation.
 
-        @param box:     The sizer element to pack the buttons into.
-        @type box:      wx.BoxSizer instance
+        @param sizer:   The sizer element to pack the buttons into.
+        @type sizer:    wx.BoxSizer instance
         """
 
         # Button Sizer
@@ -198,8 +198,8 @@ class Relax_data_list:
     def init_element(self, sizer):
         """Initialise the GUI element for the relaxation data listing.
 
-        @param box:     The sizer element to pack the element into.
-        @type box:      wx.BoxSizer instance
+        @param sizer:   The sizer element to pack the element into.
+        @type sizer:    wx.BoxSizer instance
         """
 
         # List of relaxation data.

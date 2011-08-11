@@ -330,11 +330,7 @@ class Results_viewer(wx.Frame):
 
 
     def update_pipes(self):
-        """Update the data pipe list.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+        """Update the data pipe list."""
 
         # Clear the previous data pipe.
         self.pipe_name.Clear()
