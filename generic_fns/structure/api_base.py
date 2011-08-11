@@ -276,6 +276,36 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
+    def load_xyz(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
+        """Method for loading structures from a XYZ file.
+
+        @param file_path:       The full path of the XYZ file.
+        @type file_path:        str
+        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
+                                molecules are determined differently by the different parsers, but
+                                are numbered consecutively from 1.  If set to None, then all
+                                molecules will be loaded.
+        @type read_mol:         None, int, or list of int
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None,
+                                then the molecules will be automatically labelled based on the file
+                                name or other information.
+        @type set_mol_name:     None, str, or list of str
+        @keyword read_model:    The XYZ model to extract from the file.  If set to None, then all
+                                models will be loaded.
+        @type read_model:       None, int, or list of int
+        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
+                                the XYZ model numbers will be preserved, if they exist.
+        @type set_model_num:    None, int, or list of int
+        @keyword verbosity:     A flag which if True will cause messages to be printed.
+        @type verbosity:        bool
+        @return:                The status of the loading of the XYZ file.
+        @rtype:                 bool
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def model_loop(self, model=None):
         """Generator method for looping over the models in numerical order.
 
