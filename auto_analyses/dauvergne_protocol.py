@@ -710,14 +710,8 @@ class dAuvergne_protocol:
             # Write the final results.
             ##########################
 
-            # Save the results file.
-            self.interpreter.results.write(file='results', dir=self.results_dir+'final', force=True)
-
-            # Create Grace plots of the data.
-            self.grace_plots()
-
-            # Create a diffusion tensor representation of the tensor.
-            self.interpreter.structure.create_diff_tensor_pdb(file="tensor.pdb", force=True)
+            # Create results files and plots of the data.
+            self.write_results()
 
 
         # Unknown script behaviour.
@@ -725,25 +719,6 @@ class dAuvergne_protocol:
 
         else:
             raise RelaxError("Unknown diffusion model, change the value of 'self.diff_model'")
-
-
-    def grace_plots(self):
-        """Create Grace plots of the final model-free results."""
-
-        # The director.
-        dir = self.results_dir + sep + 'grace'
-
-        # The plots
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2', file='s2.agr', dir=dir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr', dir=dir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr', dir=dir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='te', file='te.agr', dir=dir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='tf', file='tf.agr', dir=dir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='ts', file='ts.agr', dir=dir, force=True)
-        self.interpreter.grace.write(x_data_type='spin', y_data_type='rex', file='rex.agr', dir=dir, force=True)
-        self.interpreter.grace.write(x_data_type='s2', y_data_type='te', file='s2_vs_te.agr', dir=dir, force=True)
-        self.interpreter.grace.write(x_data_type='s2', y_data_type='rex', file='s2_vs_rex.agr', dir=dir, force=True)
-        self.interpreter.grace.write(x_data_type='te', y_data_type='rex', file='te_vs_rex.agr', dir=dir, force=True)
 
 
     def load_tensor(self):
@@ -846,6 +821,56 @@ class dAuvergne_protocol:
 
         # The convergence of the global model.
         status.auto_analysis[self.pipe_name].convergence = False
+
+
+    def write_results(self):
+        """Create Grace plots of the final model-free results."""
+
+        # Save the results file.
+        dir = self.results_dir + 'final'
+        self.interpreter.results.write(file='results', dir=dir, force=True)
+
+        # The Grace plots.
+        dir = self.results_dir + 'final' + sep + 'grace'
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2',  file='s2.agr',        dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr',       dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr',       dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='te',  file='te.agr',        dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='tf',  file='tf.agr',        dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='ts',  file='ts.agr',        dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='spin', y_data_type='rex', file='rex.agr',       dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='s2',   y_data_type='te',  file='s2_vs_te.agr',  dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='s2',   y_data_type='rex', file='s2_vs_rex.agr', dir=dir, force=True)
+        self.interpreter.grace.write(x_data_type='te',   y_data_type='rex', file='te_vs_rex.agr', dir=dir, force=True)
+
+        # Write the values to text files.
+        dir = self.results_dir + 'final'
+        self.interpreter.value.write(param='s2',       file='s2.txt',       dir=dir, force=True)
+        self.interpreter.value.write(param='s2f',      file='s2f.txt',      dir=dir, force=True)
+        self.interpreter.value.write(param='s2s',      file='s2s.txt',      dir=dir, force=True)
+        self.interpreter.value.write(param='te',       file='te.txt',       dir=dir, force=True)
+        self.interpreter.value.write(param='tf',       file='tf.txt',       dir=dir, force=True)
+        self.interpreter.value.write(param='ts',       file='ts.txt',       dir=dir, force=True)
+        self.interpreter.value.write(param='rex',      file='rex.txt',      dir=dir, force=True)
+        self.interpreter.value.write(param='local_tm', file='local_tm.txt', dir=dir, force=True)
+
+        # Create the Molmol macros.
+        dir = self.results_dir + 'final' + sep + 'molmol'
+        self.interpreter.molmol.write(data_type='S2',        dir=dir, force=True)
+        self.interpreter.molmol.write(data_type='S2f',       dir=dir, force=True)
+        self.interpreter.molmol.write(data_type='S2s',       dir=dir, force=True)
+        self.interpreter.molmol.write(data_type='amp_fast',  dir=dir, force=True)
+        self.interpreter.molmol.write(data_type='amp_slow',  dir=dir, force=True)
+        self.interpreter.molmol.write(data_type='te',        dir=dir, force=True)
+        self.interpreter.molmol.write(data_type='tf',        dir=dir, force=True)
+        self.interpreter.molmol.write(data_type='ts',        dir=dir, force=True)
+        self.interpreter.molmol.write(data_type='time_fast', dir=dir, force=True)
+        self.interpreter.molmol.write(data_type='time_slow', dir=dir, force=True)
+        self.interpreter.molmol.write(data_type='Rex',       dir=dir, force=True)
+
+        # Create a diffusion tensor representation of the tensor.
+        dir = self.results_dir + 'final'
+        self.interpreter.structure.create_diff_tensor_pdb(file="tensor.pdb", dir=dir, force=True)
 
 
 
