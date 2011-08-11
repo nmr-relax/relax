@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -310,7 +310,7 @@ class Molmol:
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
-                if not spins.select:
+                if not spin.select:
                     continue
 
                 # Skip spins which don't have a ts value.
