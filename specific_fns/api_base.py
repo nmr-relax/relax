@@ -410,7 +410,7 @@ class API_base:
         raise RelaxImplementError
 
 
-    def molmol_macro(self, param, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+    def molmol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """Create and return an array of Molmol macros.
 
         @param param:           The parameter name.
