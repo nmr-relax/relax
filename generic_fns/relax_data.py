@@ -368,7 +368,7 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
     @keyword pipe_to:   The data pipe to copy the relaxation data to.  This defaults to the current data pipe.
     @type pipe_to:      str
     @param ri_id:       The relaxation data ID string.
-    @type ri_label:     str
+    @type ri_id:        str
     """
 
     # Defaults.
@@ -931,7 +931,7 @@ def write(ri_id=None, file=None, dir=None, bc=False, force=False):
     """Write relaxation data to a file.
 
     @keyword ri_id: The relaxation data ID string.
-    @type ri_label: str
+    @type ri_id:    str
     @keyword file:  The name of the file to create.
     @type file:     str
     @keyword dir:   The directory to write to.
