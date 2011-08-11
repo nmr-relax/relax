@@ -766,6 +766,10 @@ def calc_R(Aa, Ar):
     @rtype:     float
     """
 
+    # Zero Aa value, so return NaN.
+    if Aa == 0:
+        return nan
+
     # Return R.
     return Ar / Aa
 
