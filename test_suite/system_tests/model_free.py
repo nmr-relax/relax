@@ -2523,7 +2523,7 @@ class Mf(SystemTestCase):
 
         # te correlation time.
         if type(te) == float:
-            self.assertAlmostEqual(spin.te / 1e-12, te, 6, msg=mesg)
+            self.assertAlmostEqual(spin.te / 1e-12, te, 5, msg=mesg)
         elif te == None:
             self.assertEqual(spin.te, None, msg=mesg)
 
