@@ -413,8 +413,8 @@ class API_base:
     def molmol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """Create and return an array of Molmol macros.
 
-        @param param:           The parameter name or data type.
-        @type param:            str
+        @param data_type:       The parameter name or data type.
+        @type data_type:        str
         @keyword style:         The Molmol style.
         @type style:            None or str
         @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
@@ -452,8 +452,8 @@ class API_base:
     def pymol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """Create and return an array of PyMOL macros.
 
-        @param param:           The parameter name or data type.
-        @type param:            str
+        @param data_type:       The parameter name or data type.
+        @type data_type:        str
         @keyword style:         The PyMOL style.
         @type style:            None or str
         @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
