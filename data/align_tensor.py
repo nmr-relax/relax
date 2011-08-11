@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from types import ListType
 
 # relax module imports.
 from data_classes import Element
+from float import nan
 from maths_fns.rotation_matrix import R_to_euler_zyz
 from relax_errors import RelaxError
 from relax_xml import fill_object_contents, xml_to_object
@@ -264,6 +265,10 @@ def calc_eta(A_diag):
     @return:        The eta parameter
     @rtype:         float
     """
+
+    # Zero Azz value, so return NaN.
+    if A_diag[2, 2] == 0:
+        return nan
 
     # Return eta.
     return (A_diag[0, 0] - A_diag[1, 1]) / A_diag[2, 2]
