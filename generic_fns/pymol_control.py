@@ -39,8 +39,9 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
 from maths_fns.rotation_matrix import euler_to_R_zyz, R_to_axis_angle
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
-from relax_io import file_root, open_write_file, test_binary
+from relax_io import file_root, get_file_path, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
+from status import Status; status = Status()
 
 
 class Pymol:
@@ -527,6 +528,7 @@ def write(data_type=None, style="classic", colour_start=None, colour_end=None, c
         file = data_type + '.mac'
 
     # Open the file for writing.
+    file_path = get_file_path(file, dir)
     file = open_write_file(file, dir, force)
 
     # Loop over the commands and write them.
@@ -535,3 +537,9 @@ def write(data_type=None, style="classic", colour_start=None, colour_end=None, c
 
     # Close the file.
     file.close()
+
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    cdp.result_files.append(['grace', 'Grace', file_path])
+    status.observers.result_file.notify()
