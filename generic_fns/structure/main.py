@@ -326,6 +326,67 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     molmol.molmol_obj.open_pdb()
 
 
+def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=1, fail=True):
+    """The XYZ loading function.
+
+
+    @keyword file:          The name of the XYZ file to read.
+    @type file:             str
+    @keyword dir:           The directory where the XYZ file is located.  If set to None, then the
+                            file will be searched for in the current directory.
+    @type dir:              str or None
+    @keyword read_mol:      The molecule(s) to read from the file, independent of model.
+                            If set to None, then all molecules will be loaded.
+    @type read_mol:         None, int, or list of int
+    @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then
+                            the molecules will be automatically labelled based on the file name or
+                            other information.
+    @type set_mol_name:     None, str, or list of str
+    @keyword read_model:    The XYZ model to extract from the file.  If set to None, then all models
+                            will be loaded.
+    @type read_model:       None, int, or list of int
+    @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then the
+                            XYZ model numbers will be preserved, if they exist.
+    @type set_model_num:    None, int, or list of int
+    @keyword fail:          A flag which, if True, will cause a RelaxError to be raised if the XYZ 
+                            file does not exist.  If False, then a RelaxWarning will be trown
+                            instead.
+    @type fail:             bool
+    @keyword verbosity:     The amount of information to print to screen.  Zero corresponds to
+                            minimal output while higher values increase the amount of output.  The
+                            default value is 1.
+    @type verbosity:        int
+    @raise RelaxFileError:  If the fail flag is set, then a RelaxError is raised if the XYZ file
+                            does not exist.
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # The file path.
+    file_path = get_file_path(file, dir)
+
+    # Try adding '.xyz' to the end of the file path, if the file can't be found.
+    if not access(file_path, F_OK):
+        file_path_orig = file_path
+        file_path = file_path + '.xyz'
+
+    # Test if the file exists.
+    if not access(file_path, F_OK):
+        if fail:
+            raise RelaxFileError('XYZ', file_path_orig)
+        else:
+            warn(RelaxNoPDBFileWarning(file_path))
+            return
+
+    # Place the  structural object into the relax data store.
+    if not hasattr(cdp, 'structure'):
+        cdp.structure = Internal()
+
+    # Load the structures.
+    cdp.structure.load_xyz(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, verbosity=verbosity)
+
+
 def set_vector(spin=None, xh_vect=None):
     """Place the XH unit vector into the spin container object.
 
@@ -411,7 +472,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
             continue
 
         # The spin identification string.  The residue name and spin num is not included to allow molecules with point mutations to be used as different models.
-        id = generate_spin_id(res_num=res_num, res_name=None, spin_name=spin.name)
+        id = generate_spin_id(res_num=res_num, res_name=None, spin_name=spin.name, spin_num=spin.num)
 
         # Test that the spin number or name are set (one or both are essential for the identification of the atom).
         if spin.num == None and spin.name == None:
@@ -426,7 +487,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
                 continue
 
         # Get the bond info.
-        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(attached_atom=attached, model_num=model, res_num=res_num, spin_name=spin.name, return_name=True, return_warnings=True)
+        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(attached_atom=attached, model_num=model, res_num=res_num, spin_name=spin.name, spin_num=spin.num, return_name=True, return_warnings=True)
 
         # No attached atom.
         if not bond_vectors:
@@ -480,7 +541,10 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
 
         # Print out of modified spins.
         if verbosity:
-            print(("Extracted " + spin.name + "-" + attached_name + " vectors for " + repr(id) + '.'))
+            if spin.name:
+                print(("Extracted " + spin.name + "-" + str(attached_name) + " vectors for " + repr(id) + '.'))
+            else:
+                print(("Extracted " + str(spin.num) + "-" + str(attached_name) + " vectors for " + repr(id) + '.'))
 
     # Right, catch the problem of missing vectors to prevent massive user confusion!
     if no_vectors:

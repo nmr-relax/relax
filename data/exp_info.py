@@ -159,8 +159,8 @@ class ExpInfo(Element):
     def setup_thiol(self, state):
         """Set up the thiol state of the system.
 
-        @param thiol_state:     The thiol state of the molecule.
-        @type thiol_state:      str
+        @param state:   The thiol state of the molecule.
+        @type state:    str
         """
 
         # Check.
