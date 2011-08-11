@@ -118,8 +118,8 @@ def add_border(box, border=0, packing=wx.VERTICAL, debug=False):
 def bool_to_gui(bool):
     """Convert the bool into the GUI string.
 
-    @param num:     The boolean value of True or False.
-    @type num:      bool
+    @param bool:    The boolean value of True or False.
+    @type bool:     bool
     @return:        The GUI string.
     @rtype:         unicode
     """
