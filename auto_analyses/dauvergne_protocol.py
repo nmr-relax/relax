@@ -854,6 +854,20 @@ class dAuvergne_protocol:
         self.interpreter.value.write(param='rex',      file='rex.txt',      dir=dir, force=True)
         self.interpreter.value.write(param='local_tm', file='local_tm.txt', dir=dir, force=True)
 
+        # Create the PyMOL macros.
+        dir = self.results_dir + 'final' + sep + 'pymol'
+        self.interpreter.pymol.write(data_type='S2',        dir=dir, force=True)
+        self.interpreter.pymol.write(data_type='S2f',       dir=dir, force=True)
+        self.interpreter.pymol.write(data_type='S2s',       dir=dir, force=True)
+        self.interpreter.pymol.write(data_type='amp_fast',  dir=dir, force=True)
+        self.interpreter.pymol.write(data_type='amp_slow',  dir=dir, force=True)
+        self.interpreter.pymol.write(data_type='te',        dir=dir, force=True)
+        self.interpreter.pymol.write(data_type='tf',        dir=dir, force=True)
+        self.interpreter.pymol.write(data_type='ts',        dir=dir, force=True)
+        self.interpreter.pymol.write(data_type='time_fast', dir=dir, force=True)
+        self.interpreter.pymol.write(data_type='time_slow', dir=dir, force=True)
+        self.interpreter.pymol.write(data_type='Rex',       dir=dir, force=True)
+
         # Create the Molmol macros.
         dir = self.results_dir + 'final' + sep + 'molmol'
         self.interpreter.molmol.write(data_type='S2',        dir=dir, force=True)
