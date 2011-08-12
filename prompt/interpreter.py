@@ -349,7 +349,7 @@ def exec_script(name, globals):
     """Execute the script."""
 
     # Execution lock.
-    status.exec_lock.acquire('script UI')
+    status.exec_lock.acquire('script UI', mode='script')
 
     # The module path.
     head, tail = path.split(name)

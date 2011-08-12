@@ -78,7 +78,7 @@ def start(mode=None, profile_flag=False):
 
     # Normal relax operation.
     if not profile_flag:
-        Relax()
+        relax = Relax()
 
     # Process the command line arguments.
     relax.arguments()
@@ -146,7 +146,7 @@ class Relax:
         """
 
         # Set up the warning system.
-        relax_warnings.setup(self.pedantic)
+        relax_warnings.setup()
 
         # Show the version number and exit.
         if self.mode == 'version':
@@ -253,9 +253,8 @@ class Relax:
             status.debug = True
 
         # Pedantic flag.
-        self.pedantic = False
         if options.pedantic:
-            self.pedantic = True
+            status.pedantic = True
 
         # Logging.
         if options.log:

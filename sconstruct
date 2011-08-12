@@ -562,4 +562,5 @@ class Main:
 
 
 # Execute the main class.
-Main()
+if __name__ in ['__main__', 'SCons.Script']:
+    Main()

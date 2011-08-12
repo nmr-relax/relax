@@ -410,11 +410,11 @@ class API_base:
         raise RelaxImplementError
 
 
-    def molmol_macro(self, param, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+    def molmol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """Create and return an array of Molmol macros.
 
-        @param param:           The parameter name.
-        @type param:            str
+        @param data_type:       The parameter name or data type.
+        @type data_type:        str
         @keyword style:         The Molmol style.
         @type style:            None or str
         @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
@@ -444,6 +444,27 @@ class API_base:
 
     def overfit_deselect(self):
         """Deselect models with insufficient data for minimisation."""
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
+    def pymol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+        """Create and return an array of PyMOL macros.
+
+        @param data_type:       The parameter name or data type.
+        @type data_type:        str
+        @keyword style:         The PyMOL style.
+        @type style:            None or str
+        @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
+        @type colour_start:     str
+        @keyword colour_end:    The ending colour (must be a MOLMOL or X11 name).
+        @type colour_end:       str
+        @keyword colour_list:   The colour list used, either 'molmol' or 'x11'.
+        @type colour_list:      str
+        @keyword spin_id:       The spin identification string.
+        @type spin_id:          str
+        """
 
         # Not implemented.
         raise RelaxImplementError

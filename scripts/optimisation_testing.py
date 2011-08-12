@@ -11,12 +11,6 @@ from test_suite.system_tests import model_free
 # The testing class.
 mf = model_free.Mf('run')
 
-# Add the relax namespace to the class.
-mf.relax = self.relax
-
-# Don't quit.
-self.relax.interpreter._Interpreter__quit_flag = False
-
 # Execute the tests, storing the messages.
 tests = []
 messages = []

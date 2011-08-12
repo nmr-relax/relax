@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import getcwd, listdir, sep
+from os import F_OK, access, getcwd, listdir, sep
 from re import search
 from string import lower
 
@@ -161,7 +161,7 @@ class dAuvergne_protocol:
         """
 
         # Execution lock.
-        status.exec_lock.acquire('auto dauvergne protocol')
+        status.exec_lock.acquire('auto dauvergne protocol', mode='auto-analysis')
 
         # Store the args.
         self.diff_model = diff_model
@@ -488,13 +488,7 @@ class dAuvergne_protocol:
 
         # Get a list of all files in the directory model.  If no directory exists, set the round to 'init' or 0.
         try:
-            # Files are in same directory / no directory specified
-            if self.save_dir =='':
-                dir_list = listdir(self.save_dir+sep+model)
-
-            # Directory is specified
-            else:
-                dir_list = listdir(self.save_dir+model)
+            dir_list = listdir(self.save_dir+sep+model)
         except:
             return 0
 
@@ -517,12 +511,35 @@ class dAuvergne_protocol:
                 pass
         numbers.sort()
 
-        # No directories begining with 'round_' exist, set the round to 1.
+        # No directories beginning with 'round_' exist, set the round to 1.
         if not len(numbers):
             return 1
 
-        # Determine the number for the next round (add 1 to the highest number).
-        return numbers[-1] + 1
+        # The highest number.
+        max_round = numbers[-1]
+
+        # Check that the opt/results file exists for the round (working backwards).
+        for i in range(max_round, -1, -1):
+            # Assume the round is complete.
+            complete_round = i
+
+            # The file root.
+            file_root = self.results_dir + sep + model + sep + "round_%i" % i + sep + 'opt' + sep + 'results'
+
+            # Stop looping when the opt/results file is found.
+            if access(file_root + '.bz2', F_OK):
+                break
+            if access(file_root + '.gz', F_OK):
+                break
+            if access(file_root, F_OK):
+                break
+
+        # No round, so assume the initial state.
+        if complete_round == 0:
+            return 0
+
+        # Determine the number for the next round (add 1 to the highest completed round).
+        return complete_round + 1
 
 
     def execute(self):
@@ -647,8 +664,8 @@ class dAuvergne_protocol:
                     if converged or not self.conv_loop:
                         break
 
-                # Unset the status.
-                status.dAuvergne_protocol.round = None
+            # Unset the status.
+            status.dAuvergne_protocol.round = None
 
 
         # Final run.

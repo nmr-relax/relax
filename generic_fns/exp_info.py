@@ -290,7 +290,7 @@ def software(name=None, version=None, url=None, vendor_name=None, cite_ids=None,
     @keyword vendor_name:   The name of the company or person behind the program.
     @type vendor_name:      str
     @keyword cite_ids:      The citation ID numbers.
-    @type cite:_ids         None or str
+    @type cite_ids:         None or str
     @keyword tasks:         The tasks performed by the program.
     @type tasks:            list of str
     """

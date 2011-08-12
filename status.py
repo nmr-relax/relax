@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -45,6 +45,7 @@ class Status(object):
 
             # Initialise some variables.
             self._instance.debug = False
+            self._instance.pedantic = False
             self._instance.install_path = sys.path[0]
 
             # Set up the singleton.
@@ -94,8 +95,9 @@ class Exec_lock:
         # Init a threading.Lock object.
         self._lock = Lock()
 
-        # The name of the locker.
+        # The name and mode of the locker.
         self._name = None
+        self._mode = None
 
         # Script nesting level.
         self._script_nest = 0
@@ -108,15 +110,17 @@ class Exec_lock:
             self.log = open('lock.log', 'w')
 
 
-    def acquire(self, name):
+    def acquire(self, name, mode='script'):
         """Simulate the Lock.acquire() mechanism.
 
         @param name:    The name of the locking code.
         @type name:     str
+        @keyword mode:  The mode of the code trying to obtain the lock.  This can be one of 'script' for the scripting interface or 'auto-analysis' for the auto-analyses.
+        @type mode:     str
         """
 
         # Do not acquire if lunching a script from a script.
-        if name == 'script UI' and self._name == 'script UI' and self.locked():
+        if mode == 'script' and self._mode == 'script' and self.locked():
             # Increment the nesting counter.
             self._script_nest += 1
 
@@ -129,7 +133,7 @@ class Exec_lock:
             return
 
         # Skip locking if an auto-analysis is called from a script.
-        if self.locked() and self._name == 'script UI' and search('^auto', name):
+        if self.locked() and self._mode == 'script' and mode == 'auto-analysis':
             # Debugging.
             if self.debug:
                 self.log.write("Skipped unlocking of '%s' lock by '%s'\n" % (self._name, name))
@@ -141,8 +145,9 @@ class Exec_lock:
             # Return without doing anything.
             return
 
-        # Store the new name.
+        # Store the new name and mode.
         self._name = name
+        self._mode = mode
 
         # Debugging.
         if self.debug:
@@ -197,8 +202,9 @@ class Exec_lock:
             # Return without releasing the lock.
             return
 
-        # Reset the name.
+        # Reset the name and mode.
         self._name = None
+        self._mode = None
 
         # Debugging.
         if self.debug:
