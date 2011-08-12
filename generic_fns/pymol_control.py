@@ -382,6 +382,19 @@ def tensor_pdb(file=None):
     pymol_obj.exec_cmd("load " + file)
 
 
+    # The tensor object.
+    ####################
+
+    # Select the TNS residue.
+    pymol_obj.exec_cmd("select resn TNS")
+
+    # Hide everything.
+    pymol_obj.exec_cmd("hide ('sele')")
+
+    # Show as 'sticks'.
+    pymol_obj.exec_cmd("show sticks, 'sele'")
+
+
     # Centre of mass.
     #################
 

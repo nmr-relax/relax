@@ -31,6 +31,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from float import nan
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
@@ -301,7 +302,10 @@ def q_factors(spin_id=None):
         D = dj * cdp.align_tensors[cdp.align_ids.index(align_id)].A_diag
         Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
         Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
-        R = Dr / Da
+        if Da == 0:
+            R = nan
+        else:
+            R = Dr / Da
         norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
         if Da == 0.0:
             norm = 1e-15

@@ -145,6 +145,9 @@ class Relax_data_store(dict):
         # Remove all items from the dictionary.
         self.instance.clear()
 
+        # Reset the current data pipe.
+        __builtin__.cdp = None
+
 
     def add(self, pipe_name, pipe_type, switch=True):
         """Method for adding a new data pipe container to the dictionary.
@@ -356,27 +359,27 @@ class Relax_data_store(dict):
         top_element.setAttribute('time', asctime())
 
         # Add all objects in the data store base object to the XML element.
-        blacklist = list(self.__class__.__dict__.keys() + dict.__dict__.keys())
-        for name in dir(self):
-            # Skip blacklisted objects.
-            if name in blacklist:
-                continue
-
-            # Skip special objects.
-            if search('^_', name):
-                continue
-
-            # Execute any to_xml() methods, and add that object to the blacklist.
-            obj = getattr(self, name)
-            if hasattr(obj, 'to_xml'):
-                obj.to_xml(xmldoc, top_element)
-                blacklist = blacklist + [name]
-
-        # Remove the current data pipe from the blacklist!
-        blacklist.remove('current_pipe')
-
-        # Add all simple python objects within the PipeContainer to the pipe element.
         if all:
+            blacklist = list(self.__class__.__dict__.keys() + dict.__dict__.keys())
+            for name in dir(self):
+                # Skip blacklisted objects.
+                if name in blacklist:
+                    continue
+
+                # Skip special objects.
+                if search('^_', name):
+                    continue
+
+                # Execute any to_xml() methods, and add that object to the blacklist.
+                obj = getattr(self, name)
+                if hasattr(obj, 'to_xml'):
+                    obj.to_xml(xmldoc, top_element)
+                    blacklist = blacklist + [name]
+
+            # Remove the current data pipe from the blacklist!
+            blacklist.remove('current_pipe')
+
+            # Add all simple python objects within the store.
             fill_object_contents(xmldoc, top_element, object=self, blacklist=blacklist)
 
         # Loop over the pipes.

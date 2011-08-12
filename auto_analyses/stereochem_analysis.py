@@ -141,7 +141,7 @@ class Stereochem_analysis:
         """
 
         # Execution lock.
-        status.exec_lock.acquire('auto stereochem analysis')
+        status.exec_lock.acquire('auto stereochem analysis', mode='auto-analysis')
 
         # Store all the args.
         self.stage = stage

@@ -60,8 +60,6 @@ class API_common:
 
         @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
         @type data_id:      str
-        @param sim_data:    The Monte Carlo simulation data.
-        @type sim_data:     list of float
         """
 
         # Get the spin container.

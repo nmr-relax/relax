@@ -116,11 +116,12 @@ class Relax:
         self.generic = generic_fns
 
         # Process the command line arguments and determine the relax mode.
+        cmd_mode, log_file, tee_file = self.arguments()
         if not mode:
-            mode, log_file, tee_file = self.arguments()
+            mode = cmd_mode
 
         # Set up the warning system.
-        relax_warnings.setup(self.pedantic)
+        relax_warnings.setup()
 
         # Show the version number and exit.
         if mode == 'version':
@@ -225,9 +226,8 @@ class Relax:
             status.debug = True
 
         # Pedantic flag.
-        self.pedantic = False
         if options.pedantic:
-            self.pedantic = True
+            status.pedantic = True
 
         # Logging.
         if options.log:

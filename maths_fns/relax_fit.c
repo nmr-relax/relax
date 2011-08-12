@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Edward d'Auvergne
+ * Copyright (C) 2006-2011 Edward d'Auvergne
  *
  * This file is part of the program relax.
  *
@@ -140,7 +140,7 @@ dfunc(PyObject *self, PyObject *args) {
     /* Temp Declarations */
     double aaa[MAXPARAMS] = {1.0, 2.0};
     int i;
-    double* params;
+    double *params;
 
     /* Parse the function arguments, the only argument should be the parameter array */
     if (!PyArg_ParseTuple(args, "O", &params_arg))

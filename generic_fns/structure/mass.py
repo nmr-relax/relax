@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -88,7 +88,8 @@ def centre_of_mass(return_mass=False):
 
         # No element?
         if element == None:
-            warn(RelaxWarning("Skipping the atom '%s' as the element name does not exist in the PDB file." % id))
+            warn(RelaxWarning("Skipping the atom '%s' as the element type cannot be determined." % id))
+            continue
 
         # Atomic mass.
         try:
