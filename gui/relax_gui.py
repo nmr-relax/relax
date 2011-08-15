@@ -30,6 +30,7 @@ from os import F_OK, access, getcwd, mkdir, sep
 import platform
 import sys
 from textwrap import wrap
+from time import sleep
 import webbrowser
 import wx
 from wx.lib import buttons
@@ -597,3 +598,18 @@ class Main(wx.Frame):
 
         # Set the status.
         wx.CallAfter(self.bar.SetStatusText, pipe, 2)
+
+
+    def wait_for_interpreter(self, wait_period=0.1):
+        """Return only once the interpreter thread has cleared all its queued calls.
+        @keyword wait_period:   The time in seconds to wait for the.
+        """
+
+        # Loop until finished.
+        while 1:
+            # Check that the queue has been cleared and that the global execution lock has been released.
+            if self.interpreter._queue.empty() and not status.exec_lock.locked():
+                break
+
+            # Otherwise sleep a little.
+            sleep(wait_period)

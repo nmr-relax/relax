@@ -246,9 +246,9 @@ class Results_viewer(wx.Frame):
 
             # Diffusion tensor PDB.
             elif type == 'diff_tensor_pdb':
-                self.gui.interpreter.pymol.view()
-                self.gui.interpreter.pymol.cartoon()
-                self.gui.interpreter.pymol.tensor_pdb(file=file)
+                self.gui.interpreter.queue('pymol.view')
+                self.gui.interpreter.queue('pymol.cartoon')
+                self.gui.interpreter.queue('pymol.tensor_pdb', file=file)
 
             # A special table.
             elif type == 'Table_of_Results':
@@ -323,7 +323,8 @@ class Results_viewer(wx.Frame):
             return
 
         # Switch data pipes.
-        self.gui.interpreter.pipe.switch(pipe)
+        self.gui.interpreter.queue('pipe.switch', pipe)
+        self.gui.wait_for_interpreter(0.01)
 
         # Update the window.
         self.refresh()

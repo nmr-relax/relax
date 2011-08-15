@@ -169,7 +169,7 @@ class Auto_model_free(Base_analysis):
         # New data container.
         if data_index == None:
             # First create the data pipe if not already in existence (if this fails, then no data is set up).
-            if not has_pipe(pipe_name) and not protected_exec(self.gui.interpreter.pipe.create, pipe_name, 'mf'):
+            if not has_pipe(pipe_name) and not protected_exec(self.gui.interpreter.queue, 'pipe.create', pipe_name, 'mf'):
                 self.init_flag = False
                 return
 
