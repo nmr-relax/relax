@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,38 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""The model-free specific code."""
 
-
-# The available modules.
-__all__ = [ 'bmrb',
-            'main',
-            'mf_minimise',
-            'molmol',
-            'multi_processor_commands',
-            'results'
+__all__ = ['test___init__'
 ]
-
-# relax module imports.
-from bmrb import Bmrb
-from main import Model_free_main
-from mf_minimise import Mf_minimise
-from molmol import Molmol
-from results import Results
-from specific_fns.api_base import API_base
-from specific_fns.api_common import API_common
-
-
-class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Bmrb, API_base, API_common):
-    """Parent class containing all the model-free specific functions."""
-
-    def __init__(self):
-        """Initialise the class by placing API_common methods into the API."""
-
-        # Place methods into the API.
-        self.base_data_loop = self._base_data_loop_spin
-        self.return_error = self._return_error_relax_data
-        self.return_value = self._return_value_general
-        self.sim_pack_data = self._sim_pack_relax_data
-        self.test_grid_ops = self._test_grid_ops_general

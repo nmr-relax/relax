@@ -29,6 +29,7 @@ from re import search
 # relax module imports.
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pipes
+from multi.processor import Processor_box
 from relax_errors import RelaxError
 import specific_fns
 from status import Status; status = Status()
@@ -138,6 +139,12 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     else:
         grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
 
+    # Get the Processor box singleton (it contains the Processor instance).
+    processor_box = Processor_box() 
+
+    # Execute the queued elements.
+    processor_box.processor.run_queue()
+
 
 def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
     """Minimisation function.
@@ -206,6 +213,12 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     # Standard minimisation.
     else:
         minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)
+
+    # Get the Processor box singleton (it contains the Processor instance).
+    processor_box = Processor_box() 
+
+    # Execute the queued elements.
+    processor_box.processor.run_queue()
 
 
 def reset_min_stats(data_pipe=None, spin=None):

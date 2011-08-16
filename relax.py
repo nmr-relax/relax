@@ -54,6 +54,7 @@ from info import Info_box
 import generic_fns
 if dep_check.wx_module:
     import gui
+from multi.processor import Application_callback, Processor
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
@@ -77,7 +78,27 @@ def start(mode=None, profile_flag=False):
 
     # Normal relax operation.
     if not profile_flag:
-        Relax(mode)
+        relax = Relax()
+
+    # Process the command line arguments.
+    relax.arguments()
+
+    # Override the mode.
+    if mode:
+        relax.mode = mode
+
+    # Set up the multi-processor elements.
+    callbacks = Application_callback(master=relax)
+    processor = Processor.load_multiprocessor(relax.multiprocessor_type, callbacks, processor_size=relax.n_processors)
+
+    # Place the processor fabric intro string into the info box.
+    info = Info_box()
+    info.multi_processor_string = processor.get_intro_string()
+
+    # Normal relax operation.
+    if not profile_flag:
+        # Execute relax in multi-processor mode (this includes the uni-processor for normal operation).
+        processor.run()
 
     # relax in profiling mode.
     else:
@@ -89,10 +110,12 @@ def start(mode=None, profile_flag=False):
             sys.stderr.write("The profile module is not available, please install the Python development packages for profiling.\n\n")
             sys.exit()
 
+        #FIXME: profiling won't work with multi processors.
+
         # Run relax in profiling mode.
         profile.Profile.print_stats = print_stats
-        profile.run('Relax(mode=%s)' % repr(mode))
-
+        profile.run('processor.run()')
+        
 
 
 class Relax:
@@ -102,7 +125,7 @@ class Relax:
     whether debugging is turned on, etc.
     """
 
-    def __init__(self, mode=None):
+    def __init__(self):
         """The top level class for initialising the program.
 
         @keyword mode:          Force a relax mode, overriding the command line.
@@ -115,41 +138,43 @@ class Relax:
         # Setup the object containing the generic functions.
         self.generic = generic_fns
 
-        # Process the command line arguments and determine the relax mode.
-        cmd_mode, log_file, tee_file = self.arguments()
-        if not mode:
-            mode = cmd_mode
+
+    def run(self):
+        """Execute relax.
+
+        This is the application callback method executed by the multi-processor framework.
+        """
 
         # Set up the warning system.
         relax_warnings.setup()
 
         # Show the version number and exit.
-        if mode == 'version':
+        if self.mode == 'version':
             print(('relax ' + version))
             sys.exit()
 
         # Show the relax info and exit.
-        if mode == 'info':
+        if self.mode == 'info':
             info = Info_box()
             print(info.sys_info())
             sys.exit()
 
         # Logging.
-        if log_file:
-            io_streams_log(log_file)
+        if self.log_file:
+            io_streams_log(self.log_file)
 
         # Tee.
-        elif tee_file:
-            io_streams_tee(tee_file)
+        elif self.tee_file:
+            io_streams_tee(self.tee_file)
 
         # Run the interpreter for the prompt or script modes.
-        if mode == 'prompt' or mode == 'script':
+        if self.mode == 'prompt' or self.mode == 'script':
             # Run the interpreter.
             self.interpreter = interpreter.Interpreter()
             self.interpreter.run(self.script_file)
 
         # Execute the relax GUI.
-        elif mode == 'gui':
+        elif self.mode == 'gui':
             # Dependency check.
             if not dep_check.wx_module:
                 sys.stderr.write("Please install the wx Python module to access the relax GUI.\n\n")
@@ -163,7 +188,7 @@ class Relax:
             app.MainLoop()
 
         # Execute the relax test suite
-        elif mode == 'test suite':
+        elif self.mode == 'test suite':
             # Load the interpreter and turn intros on.
             self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
             self.interpreter.on()
@@ -173,7 +198,7 @@ class Relax:
             runner.run_all_tests()
 
         # Execute the relax system tests.
-        elif mode == 'system tests':
+        elif self.mode == 'system tests':
             # Load the interpreter and turn intros on.
             self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
             self.interpreter.on()
@@ -183,7 +208,7 @@ class Relax:
             runner.run_system_tests()
 
         # Execute the relax unit tests.
-        elif mode == 'unit tests':
+        elif self.mode == 'unit tests':
             # Run the tests.
             runner = Test_suite_runner(self.tests)
             runner.run_unit_tests()
@@ -195,11 +220,11 @@ class Relax:
             runner.run_gui_tests()
 
         # Test mode.
-        elif mode == 'test':
+        elif self.mode == 'test':
             self.test_mode()
 
         # Licence mode.
-        elif mode == 'licence':
+        elif self.mode == 'licence':
             self.licence()
 
         # Unknown mode.
@@ -208,7 +233,7 @@ class Relax:
 
 
     def arguments(self):
-        """Function for processing the command line arguments."""
+        """Process the command line arguments."""
 
         # Parser object.
         parser = RelaxParser(self, usage="usage: %prog [options] [script_file]")
@@ -227,6 +252,8 @@ class Relax:
         parser.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the relax GUI tests (part of the test suite)')
         parser.add_option('-i', '--info', action='store_true', dest='info', default=0, help='display information about this version of relax')
         parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
+        parser.add_option('-m', '--multi', action='store', type='string', dest='multiprocessor', default='uni', help='set multi processor method')
+        parser.add_option('-n', '--processors', action='store', type='int', dest='n_processors', default=-1, help='set number of processors (may be ignored)')
 
         # Parse the options.
         (options, args) = parser.parse_args()
@@ -246,13 +273,13 @@ class Relax:
                 parser.error("the logging and tee options cannot be set simultaneously")
 
             # The log file.
-            log_file = options.log
+            self.log_file = options.log
 
             # Fail if the file already exists.
             if access(log_file, F_OK):
                 parser.error("the log file " + repr(log_file) + " already exists")
         else:
-            log_file = None
+            self.log_file = None
 
         # Tee.
         if options.tee:
@@ -261,13 +288,13 @@ class Relax:
                 parser.error("the tee and logging options cannot be set simultaneously")
 
             # The tee file.
-            tee_file = options.tee
+            self.tee_file = options.tee
 
             # Fail if the file already exists.
             if access(tee_file, F_OK):
                 parser.error("the tee file " + repr(tee_file) + " already exists")
         else:
-            tee_file = None
+            self.tee_file = None
 
         # Test suite mode, therefore the args are the tests to run and not a script file.
         if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
@@ -288,17 +315,25 @@ class Relax:
                 if not access(self.script_file, F_OK):
                     parser.error("the script file " + repr(self.script_file) + " does not exist")
 
+        # Set the multi-processor type and number.
+        self.multiprocessor_type = options.multiprocessor
+        self.n_processors = options.n_processors
+
+        # Checks for the multiprocessor mode.
+        if self.multiprocessor_type == 'mpi4py' and not dep_check.mpi4py_module:
+            parser.error(dep_check.mpi4py_message)
+
 
         # Determine the relax mode and test for mutually exclusive modes.
         #################################################################
 
         # Show the version number.
         if options.version:
-            mode = 'version'
+            self.mode = 'version'
 
         # Show the info about this relax version.
         elif options.info:
-            mode = 'info'
+            self.mode = 'info'
 
         # Run the relax tests.
         elif options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
@@ -310,11 +345,11 @@ class Relax:
 
             # Set the mode.
             if options.test_suite:
-                mode = 'test suite'
+                self.mode = 'test suite'
             elif options.system_tests:
-                mode = 'system tests'
+                self.mode = 'system tests'
             elif options.unit_tests:
-                mode = 'unit tests'
+                self.mode = 'unit tests'
             elif options.gui_tests:
                 mode = 'GUI tests'
 
@@ -334,7 +369,7 @@ class Relax:
                 parser.error("the relax modes test and licence are mutually exclusive")
 
             # Set the mode.
-            mode = 'test'
+            self.mode = 'test'
 
         # Licence mode.
         elif options.licence:
@@ -349,7 +384,7 @@ class Relax:
                 parser.error("the relax modes licence and test are mutually exclusive")
 
             # Set the mode.
-            mode = 'licence'
+            self.mode = 'licence'
 
         # GUI.
         elif options.gui:
@@ -368,14 +403,11 @@ class Relax:
 
         # Script mode.
         elif self.script_file:
-            mode = 'script'
+            self.mode = 'script'
 
         # Prompt mode (default).
         else:
-            mode = 'prompt'
-
-        # Return.
-        return mode, log_file, tee_file
+            self.mode = 'prompt'
 
 
     def licence(self):

@@ -401,7 +401,7 @@ class Structure(User_fn_class):
         relax> structure.read_xyz('test.xyz', set_mol_name=['CaM_1', 'CaM_2'], read_model=[1, 5],
                                   set_model_num=[1, 1])
 
-        To load the files 'test_1.xyz', 'test_2.xyz','test_3.xyz' and 'test_4.xyz' as models, type the 
+        To load the files 'test_1.xyz', 'test_2.xyz', 'test_3.xyz' and 'test_4.xyz' as models, type the 
         following sequence of commands:
 
         relax> structure.read_xyz('test_1.xyz', set_mol_name='test_1',
