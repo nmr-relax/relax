@@ -399,7 +399,7 @@ class Relax:
                 parser.error("To use the GUI, the wx python module must be installed.")
 
             # Set the mode.
-            mode = 'gui'
+            self.mode = 'gui'
 
         # Script mode.
         elif self.script_file:
