@@ -192,7 +192,6 @@ def load_multiprocessor(processor_name, callback, processor_size):
     return object
 
 
-#sys.settrace(traceit)
 # FIXME useful debugging code but where to put it
 def print_file_lineno(range=xrange(1, 2)):
     for level in range:
@@ -243,19 +242,6 @@ def raise_unimplemented(method):
     msg = "Attempt to invoke unimplemented abstract method %s"
     raise NotImplementedError(msg % method.__name__)
 
-
-#FIXME: move elsewhere
-def traceit(frame, event, arg):
-    import linecache
-    if event == "line":
-        file_name = os.path.split(frame.f_code.co_filename)[-1]
-        function_name = frame.f_code.co_name
-        line_number = frame.f_lineno
-        line = linecache.getline(file_name, line_number)
-        msg = '<< %s - %s - %d>> %s' % (file_name, function_name, line_number, line[:-1])
-        print >> sys.__stdout__, msg
-
-    return traceit
 
 
 class Application_callback(object):
