@@ -62,7 +62,7 @@ class _RelaxTestResult(_TextTestResult):
 
 
     def stopTest(self, test):
-        """Override of the TestResult.stopTest() method.
+        """Override of the _TextTestResult.stopTest() method.
 
         The end of STDOUT and STDERR capture occurs here.
         """
