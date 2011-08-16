@@ -42,9 +42,10 @@ $ scons clean
 
 
 
-* Bundle minfx by checking out the current trunk:
+* Bundle minfx and bmrblib by checking out the current trunk:
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/trunk/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/trunk/bmrblib
 
 
 
@@ -66,16 +67,18 @@ $ gpg --detach-sign --default-key xxxxx relax-1.3.1.GNU-Linux.x86_64.tar.bz2
 
 
 
-* Build other distribution packages by first checking out the tag, bundling minfx:
+* Build other distribution packages by checking out the tag and bundling minfx and bmrblib.:
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.3.1
 $ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/trunk/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/trunk/bmrblib
 $ scons binary_dist key=xxxxx
 
 Or:
 
 $ svn co http://svn.gna.org/svn/relax/tags/1.3.1
 $ svn co http://svn.gna.org/svn/minfx/trunk/minfx
+$ svn co http://svn.gna.org/svn/bmrblib/trunk/bmrblib
 $ scons binary_dist
 
 
