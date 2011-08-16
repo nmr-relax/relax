@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
+# Copyright (C) 2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -288,9 +289,10 @@ class Application_callback(object):
         @type exception:    Exception instance
         '''
 
-        #TODO: should use stderr?
-        # note we print to __stdout__ as sys.stdout may be a wrapper we applied
-        traceback.print_exc(file=sys.__stdout__)
+        # Print the traceback.
+        traceback.print_exc(file=sys.stderr)
+
+        # Stop the processor.
         processor.abort()
 
 
