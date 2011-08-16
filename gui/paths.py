@@ -63,6 +63,7 @@ class I16x16:
         self.molmol =                   path + 'molmol.png'
         self.pipe =                     path + 'pipe.png'
         self.pipe_hybrid =              path + 'pipe_hybrid.png'
+        self.pymol =                    path + 'pymol_icon.png'
         self.relax_data =               path + 'fid.png'
         self.residue =                  path + 'residue.png'
         self.residue_grey =             path + 'residue_grey.png'
