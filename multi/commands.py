@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,37 +21,47 @@
 ###############################################################################
 
 # Module docstring.
-"""The model-free specific code."""
-
-
-# The available modules.
-__all__ = [ 'bmrb',
-            'main',
-            'mf_minimise',
-            'molmol',
-            'multi_processor_commands',
-            'results'
-]
+"""Module containing classes for the multi-processor commands."""
 
 # relax module imports.
-from bmrb import Bmrb
-from main import Model_free_main
-from mf_minimise import Mf_minimise
-from molmol import Molmol
-from results import Results
-from specific_fns.api_base import API_base
-from specific_fns.api_common import API_common
+from multi.processor import Result_string, Slave_command
 
 
-class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Bmrb, API_base, API_common):
-    """Parent class containing all the model-free specific functions."""
-
+class Exit_command(Slave_command):
     def __init__(self):
-        """Initialise the class by placing API_common methods into the API."""
+        # Execute the base class __init__() method.
+        super(Exit_command, self).__init__()
 
-        # Place methods into the API.
-        self.base_data_loop = self._base_data_loop_spin
-        self.return_error = self._return_error_relax_data
-        self.return_value = self._return_value_general
-        self.sim_pack_data = self._sim_pack_relax_data
-        self.test_grid_ops = self._test_grid_ops_general
+
+    def run(self, processor, completed):
+        processor.return_object(processor.NULL_RESULT)
+        processor.do_quit = True
+
+
+class Get_name_command(Slave_command):
+    def __init__(self):
+        # Execute the base class __init__() method.
+        super(Exit_command, self).__init__()
+
+
+    def run(self, processor, completed):
+        msg = processor.get_name()
+        result = Result_string(msg, completed)
+        processor.return_object(result)
+
+
+class Set_processor_property_command(Slave_command):
+    def __init__(self, property_map):
+        # Execute the base class __init__() method.
+        super(Set_processor_property_command, self).__init__()
+
+        self.property_map = property_map
+
+
+    def run(self, processor, completed):
+        for property, value in list(self.property_map.items()):
+            try:
+                setattr(processor, property, value)
+                processor.return_object(processor.NULL_RESULT)
+            except Exception, e:
+                processor.return_object(e)

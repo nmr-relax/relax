@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2009 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,38 +20,21 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""The model-free specific code."""
-
-
-# The available modules.
-__all__ = [ 'bmrb',
-            'main',
-            'mf_minimise',
-            'molmol',
-            'multi_processor_commands',
-            'results'
-]
+# Python module imports.
+from os import sep
+import sys
 
 # relax module imports.
-from bmrb import Bmrb
-from main import Model_free_main
-from mf_minimise import Mf_minimise
-from molmol import Molmol
-from results import Results
-from specific_fns.api_base import API_base
-from specific_fns.api_common import API_common
+from test_suite.unit_tests.package_checking import PackageTestCase
+import multi
 
 
-class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Bmrb, API_base, API_common):
-    """Parent class containing all the model-free specific functions."""
+class Test___init__(PackageTestCase):
+    """Unit tests for the multi package."""
 
-    def __init__(self):
-        """Initialise the class by placing API_common methods into the API."""
+    def setUp(self):
+        """Set up for the package checking."""
 
-        # Place methods into the API.
-        self.base_data_loop = self._base_data_loop_spin
-        self.return_error = self._return_error_relax_data
-        self.return_value = self._return_value_general
-        self.sim_pack_data = self._sim_pack_relax_data
-        self.test_grid_ops = self._test_grid_ops_general
+        self.package = multi
+        self.package_name = 'multi'
+        self.package_path = sys.path[0] + sep + 'multi'

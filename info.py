@@ -179,6 +179,12 @@ class Info_box(object):
         # ImportErrors, if any.
         for i in range(len(self.errors)):
             intro_string = intro_string + '\n' + self.errors[i] + '\n'
+        intro_string = intro_string + '\n'
+
+        # The multi-processor message, if it exists.
+        if hasattr(self, 'multi_processor_string'):
+            for line in wrap('Processor fabric:  %s\n' % self.multi_processor_string, width):
+                intro_string = intro_string + line + '\n'
 
         # Return the formatted text.
         return intro_string
