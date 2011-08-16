@@ -223,6 +223,15 @@ class Menu:
                 [wx.NewId(), "&hybridise", paths.icon_16x16.pipe_hybrid, self.gui.user_functions.pipe.hybridise],
                 [wx.NewId(), "&switch", paths.icon_16x16.pipe_switch, self.gui.user_functions.pipe.switch]
             ]],
+            [wx.NewId(), "&pymol", paths.icon_16x16.pymol, None, [
+                [wx.NewId(), "clear_&history", None, self.gui.user_functions.pymol.clear_history],
+                [wx.NewId(), "&command", None, self.gui.user_functions.pymol.command],
+                [wx.NewId(), "&macro_exec", paths.icon_16x16.pymol, self.gui.user_functions.pymol.macro_exec],
+                [wx.NewId(), "&ribbon", None, self.gui.user_functions.pymol.ribbon],
+                [wx.NewId(), "&tensor_pdb", None, self.gui.user_functions.pymol.tensor_pdb],
+                [wx.NewId(), "&view", None, self.gui.user_functions.pymol.view],
+                [wx.NewId(), "&write", paths.icon_16x16.save, self.gui.user_functions.pymol.write]
+            ]],
             [wx.NewId(), "&relax_data", paths.icon_16x16.relax_data, None, [
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.relax_data.delete],
                 [wx.NewId(), "&read",   paths.icon_16x16.open, self.gui.user_functions.relax_data.read]

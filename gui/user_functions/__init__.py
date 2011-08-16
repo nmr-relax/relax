@@ -34,6 +34,7 @@ from molecule import Molecule
 from molmol import Molmol
 from noe import Noe
 from pipe import Pipe
+from pymol import Pymol
 from residue import Residue
 from results import Results
 from relax_data import Relax_data
@@ -56,6 +57,7 @@ __all__ = ['base',
            'molmol',
            'noe',
            'pipe',
+           'pymol',
            'residue',
            'results',
            'relax_data',
@@ -89,6 +91,7 @@ class User_functions:
         self.molmol = Molmol(self.gui)
         self.noe = Noe(self.gui)
         self.pipe = Pipe(self.gui)
+        self.pymol = Pymol(self.gui)
         self.residue = Residue(self.gui)
         self.results = Results(self.gui)
         self.relax_data = Relax_data(self.gui)
@@ -113,6 +116,7 @@ class User_functions:
         self.molmol.destroy()
         self.noe.destroy()
         self.pipe.destroy()
+        self.pymol.destroy()
         self.residue.destroy()
         self.results.destroy()
         self.relax_data.destroy()
