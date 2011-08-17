@@ -144,47 +144,17 @@ class Multi_processor(Processor):
 
 
     def post_run(self):
-        self.restore_stdio()
 
-#        if self.processor_size() > 1:
-#           if id(sys.stderr) != id(sys.__stderr__):
-#               sys.stderr.close()
-#               sys.stderr = sys.__stderr__
-#
-#           if id(sys.stdout) != id(sys.__stdout__):
-#               sys.stdout.close()
-#               sys.stdout = sys.__stdout__
+        self.restore_stdio()
 
         super(Multi_processor, self).post_run()
 
 
     def pre_run(self):
+
         super(Multi_processor, self).pre_run()
 
         self.capture_stdio()
-#        self.save_stdout = sys.stdout
-#        self.save_stderr = sys.stderr
-
-#        if self.processor_size() > 1 and self.rank() == 0:
-#
-#            pre_string = 'M'*self.rank_format_string_width()
-#
-#            sys.stdout = PrependOut(pre_string + ' S> ', sys.stdout)
-#            #FIXME: seems to be that writing to stderr results leeds to incorrect serialisation of output
-#            sys.stderr = PrependOut(pre_string + ' E> ', sys.__stdout__)
-#
-#        else:
-#            # add debug flag or extra channels that output immediately
-#            if self.processor_size() > 1:
-#                pre_string = self.rank_format_string() % self.rank()
-#                stderr_string = ' E> '
-#                stdout_string = ' S> '
-#            else:
-#                pre_string = ''
-#                stderr_string = ''
-#                stdout_string = ''
-#            sys.stdout = PrependStringIO(pre_string + stdout_string)
-#            sys.stderr = PrependStringIO(pre_string + stderr_string, target_stream=sys.stdout)
 
 
     #FIXME: fill out generic result processing move to processor
