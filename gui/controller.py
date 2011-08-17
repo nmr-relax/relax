@@ -970,6 +970,13 @@ class Redirect_text(object):
         self.stream = stream
 
 
+    def flush(self):
+        """Simulate the file object flush method."""
+
+        # Call the log control write method one the GUI is responsive.
+        wx.CallAfter(self.control.write)
+
+
     def write(self, string):
         """Simulate the file object write method.
 
