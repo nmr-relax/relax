@@ -103,7 +103,7 @@ import time, datetime, math, sys, os
 import traceback, textwrap
 
 # relax module imports.
-from multi.prependStringIO import PrependStringIO, PrependOut
+from multi.processor_io import PrependStringIO, PrependOut
 from relax_errors import RelaxError
 
 
@@ -754,7 +754,7 @@ class Processor(object):
                 STDOUT and STDERR are always available in sys.__stdout__ and sys.__stderr__.
         @note:  The sys.stdout and sys.stderr streams are not replaced by this function but by
                 calling capture_stdio all it does is save replacements to self.stdio_capture.
-        @see:   multi.prependStringIO.
+        @see:   multi.processor_io.
         @see:   multi.processor.restore_stdio.
         @see:   multi.processor.capture_stdio.
         @see:   sys.
