@@ -26,8 +26,8 @@ import sys
 from threading import currentThread
 
 
-class PrependOut:
-    """Class for adding a token to the end of all newlines."""
+class IO_filter:
+    """Mimic and IO stream file object, prepending a token to each line of written text."""
 
     def __init__(self, token, stream):
         """Set up the class for stream manipulation.
@@ -37,9 +37,6 @@ class PrependOut:
         @param stream:  The IO stream
         @type stream:   IO stream
         """
-
-        # Execute the base class __init__() method.
-        StringIO.__init__(self)
 
         # Store the args.
         self.token = token
