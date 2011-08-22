@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
+# Copyright (C) 2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,6 +24,7 @@
 
 __all__ = ['commands',
            'mpi4py_processor',
+           'multi_processor',
            'multi_processor_base',
            'prependStringIO',
            'processor',
