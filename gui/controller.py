@@ -233,6 +233,13 @@ class Redirect_text(object):
         self.out=aWxTextCtrl
 
 
+    def flush(self):
+        """Simulate the file object flush method."""
+
+        # Call the log control write method one the GUI is responsive.
+        wx.CallAfter(self.control.write)
+
+
     def limit_entries(self):
         """ Function to overcome feedback problem of wx.CallAfter() command"""
 
