@@ -144,16 +144,8 @@ class Multi_processor(Processor):
 
 
     def post_run(self):
-        self.restore_stdio()
 
-#        if self.processor_size() > 1:
-#           if id(sys.stderr) != id(sys.__stderr__):
-#               sys.stderr.close()
-#               sys.stderr = sys.__stderr__
-#
-#           if id(sys.stdout) != id(sys.__stdout__):
-#               sys.stdout.close()
-#               sys.stdout = sys.__stdout__
+        self.restore_stdio()
 
         super(Multi_processor, self).post_run()
 
