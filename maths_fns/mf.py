@@ -2729,38 +2729,70 @@ class Mf:
         for i in xrange(data.num_ri):
             # The R1 equations.
             if data.ri_labels[i] == 'R1':
-                data.create_csa_func[i] = comp_r1_csa_const
-                data.create_csa_grad[i] = comp_r1_csa_const
-                data.create_csa_hess[i] = comp_r1_csa_const
-                data.create_dip_jw_func[i] = comp_r1_dip_jw
-                data.create_dip_jw_grad[i] = comp_r1_dip_jw
-                data.create_dip_jw_hess[i] = comp_r1_dip_jw
-                data.create_csa_jw_func[i] = comp_r1_csa_jw
-                data.create_csa_jw_grad[i] = comp_r1_csa_jw
-                data.create_csa_jw_hess[i] = comp_r1_csa_jw
+                if data.interactions == "dip"
+                   data.create_const_func[i] = comp_dip_const_func
+                   data.create_const_grad[i] = comp_dip_const_grad
+                   data.create_const_hess[i] = comp_dip_const_hess
+                   data.create_jw_func[i] = comp_r1_dip_jw
+                   data.create_jw_grad[i] = comp_r1_dip_jw
+                   data.create_jw_hess[i] = comp_r1_dip_jw
+                elif data.interactions == "CSA"
+                   data.create_const_func[i] = comp_csa_const_func
+                   data.create_const_grad[i] = comp_csa_const_grad
+                   data.create_const_hess[i] = comp_csa_const_hess
+                   data.create_jw_func[i] = comp_r1_csa_jw
+                   data.create_jw_grad[i] = comp_r1_csa_jw
+                   data.create_jw_hess[i] = comp_r1_csa_jw
+                elif data.interactions == "Rex"
+                   data.create_const_func[i] = comp_rex_const_func
+                   data.create_const_grad[i] = comp_rex_const_grad
+                   data.create_const_hess[i] = comp_rex_const_hess
+                elif data.interactions == "cross-CSA-CSA"
+                   data.create_const_func[i] = comp_cross_csa_csa_const_func
+                   data.create_const_grad[i] = comp_cross_csa_csa_const_grad
+                   data.create_const_hess[i] = comp_cross_csa_csa_const_hess
+                   data.create_jw_func[i] = comp_r1_cross_csa_csa_jw
+                   data.create_jw_grad[i] = comp_r1_cross_csa_csa_jw
+                   data.create_jw_hess[i] = comp_r1_cross_csa_csa_jw
 
             # The R2 equations.
             elif data.ri_labels[i] == 'R2':
-                data.create_dip_func[i] = comp_r2_dip_const
-                data.create_dip_grad[i] = comp_r2_dip_const
-                data.create_dip_hess[i] = comp_r2_dip_const
-                data.create_csa_func[i] = comp_r2_csa_const
-                data.create_csa_grad[i] = comp_r2_csa_const
-                data.create_csa_hess[i] = comp_r2_csa_const
-                data.create_rex_func[i] = comp_rex_const_func
-                data.create_rex_grad[i] = comp_rex_const_grad
-                data.create_dip_jw_func[i] = comp_r2_dip_jw
-                data.create_dip_jw_grad[i] = comp_r2_dip_jw
-                data.create_dip_jw_hess[i] = comp_r2_dip_jw
-                data.create_csa_jw_func[i] = comp_r2_csa_jw
-                data.create_csa_jw_grad[i] = comp_r2_csa_jw
-                data.create_csa_jw_hess[i] = comp_r2_csa_jw
+                if data.interactions == "dip"
+                   data.create_const_func[i] = comp_dip_const_func
+                   data.create_const_grad[i] = comp_dip_const_grad
+                   data.create_const_hess[i] = comp_dip_const_hess
+                   data.create_jw_func[i] = comp_r2_dip_jw
+                   data.create_jw_grad[i] = comp_r2_dip_jw
+                   data.create_jw_hess[i] = comp_r2_dip_jw
+                elif data.interactions == "CSA"
+                   data.create_const_func[i] = comp_csa_const_func
+                   data.create_const_grad[i] = comp_csa_const_grad
+                   data.create_const_hess[i] = comp_csa_const_hess
+                   data.create_jw_func[i] = comp_r2_csa_jw
+                   data.create_jw_grad[i] = comp_r2_csa_jw
+                   data.create_jw_hess[i] = comp_r2_csa_jw
+                elif data.interactions == "Rex"
+                   data.create_const_func[i] = comp_rex_const_func
+                   data.create_const_grad[i] = comp_rex_const_grad
+                   data.create_const_hess[i] = comp_rex_const_hess
+                elif data.interactions == "cross-CSA-CSA"
+                   data.create_const_func[i] = comp_cross_csa_csa_const_func
+                   data.create_const_grad[i] = comp_cross_csa_csa_const_grad
+                   data.create_const_hess[i] = comp_cross_csa_csa_const_hess
+                   data.create_jw_func[i] = comp_r2_cross_csa_csa_jw
+                   data.create_jw_grad[i] = comp_r2_cross_csa_csa_jw
+                   data.create_jw_hess[i] = comp_r2_cross_csa_csa_jw
 
             # The NOE equations.
             elif data.ri_labels[i] == 'NOE':
-                data.create_dip_jw_func[i] = comp_sigma_noe_dip_jw
-                data.create_dip_jw_grad[i] = comp_sigma_noe_dip_jw
-                data.create_dip_jw_hess[i] = comp_sigma_noe_dip_jw
+                if data.interactions == "dip"
+                   data.create_const_func[i] = comp_dip_const_func
+                   data.create_const_grad[i] = comp_dip_const_grad
+                   data.create_const_hess[i] = comp_dip_const_hess
+                   data.create_jw_func[i] = comp_sigma_noe_dip_jw
+                   data.create_jw_grad[i] = comp_sigma_noe_dip_jw
+                   data.create_jw_hess[i] = comp_sigma_noe_dip_jw
+
                 data.create_ri[i] = calc_noe
                 data.create_dri[i] = calc_dnoe
                 data.create_d2ri[i] = calc_d2noe
