@@ -24,6 +24,7 @@
 
 __all__ = ['commands',
            'mpi4py_processor',
+           'multi_processor',
            'multi_processor_base',
            'processor_io',
            'processor',
