@@ -103,7 +103,7 @@ import time, datetime, math, sys, os
 import traceback, textwrap
 
 # relax module imports.
-from multi.processor_io import PrependStringIO, PrependOut
+from multi.processor_io import PrependStringIO, IO_filter
 from relax_errors import RelaxError
 
 
@@ -788,9 +788,9 @@ class Processor(object):
 
         # The master processor.
         if self.rank() == 0:
-            stdout_capture = PrependOut(pre_strings[0], sys.stdout)
+            stdout_capture = IO_filter(pre_strings[0], sys.stdout)
             #FIXME: seems to be that writing to stderr results leads to incorrect serialisation of output
-            stderr_capture = PrependOut(pre_strings[1], sys.stderr)
+            stderr_capture = IO_filter(pre_strings[1], sys.stderr)
 
         # The slaves.
         else:
