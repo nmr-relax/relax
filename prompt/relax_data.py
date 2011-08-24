@@ -361,7 +361,7 @@ class Relax_data(User_fn_class):
     _build_doc(temp_control)
 
 
-    def write(self, ri_id=None, file=None, dir=None, bc=bc, force=False):
+    def write(self, ri_id=None, file=None, dir=None, bc=False, force=False):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_data.write("

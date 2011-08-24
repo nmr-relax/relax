@@ -1345,7 +1345,6 @@ class Model_free_main:
         return names
 
 
-<<<<<<< .working
     def data_type(self, param=None):
         """Return the type of data, as a string, that the parameter should be.
 
