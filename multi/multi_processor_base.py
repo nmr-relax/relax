@@ -151,9 +151,12 @@ class Multi_processor(Processor):
 
 
     def pre_run(self):
+        """Method called before starting the application main loop"""
 
+        # Execute the base class method.
         super(Multi_processor, self).pre_run()
 
+        # Capture the standard IO streams for the master and slaves.
         self.capture_stdio()
 
 

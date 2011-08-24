@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,8 +29,10 @@ from re import search
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.reset import reset
 from relax_errors import RelaxError
 from relax_io import open_read_file, open_write_file
+from status import Status; status = Status()
 
 
 def determine_format(file):
@@ -119,7 +121,7 @@ def load_state(state=None, dir=None, verbosity=1, force=False):
 
     # Reset.
     if force:
-        ds.__reset__()
+        reset()
 
     # Make sure that the data store is empty.
     if not ds.is_empty():
@@ -136,6 +138,9 @@ def load_state(state=None, dir=None, verbosity=1, force=False):
     # Bad state file.
     else:
         raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
+
+    # Signal a change in the current data pipe.
+    status.observers.pipe_alteration.notify()
 
 
 def save_state(state=None, dir=None, compress_type=1, verbosity=1, force=False, pickle=False):

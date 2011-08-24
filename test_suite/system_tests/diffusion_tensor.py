@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,6 +32,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.diff_tensor import DiffTensorSimList
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import get_pipe
+from generic_fns.reset import reset
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import axis_angle_to_R, euler_to_R_zyz, two_vect_to_R
 from relax_io import delete
@@ -152,8 +153,8 @@ class Diffusion_tensor(SystemTestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Delete the temporary files.
         delete(self.tmpfile_sphere, fail=False)
@@ -359,8 +360,8 @@ class Diffusion_tensor(SystemTestCase):
     def test_back_calc_ellipsoid(self):
         """Check the back-calculation of relaxation data for the spherical diffusion tensor."""
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # The diffusion type (used by the script).
         ds.diff_type = 'ellipsoid'
@@ -381,8 +382,8 @@ class Diffusion_tensor(SystemTestCase):
     def test_back_calc_sphere(self):
         """Check the back-calculation of relaxation data for the spherical diffusion tensor."""
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # The diffusion type (used by the script).
         ds.diff_type = 'sphere'
@@ -403,8 +404,8 @@ class Diffusion_tensor(SystemTestCase):
     def test_back_calc_spheroid(self):
         """Check the back-calculation of relaxation data for the spherical diffusion tensor."""
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # The diffusion type (used by the script).
         ds.diff_type = 'spheroid'
@@ -891,8 +892,8 @@ class Diffusion_tensor(SystemTestCase):
     def test_opt_ellipsoid(self):
         """Check that the ellipsoid diffusion tensor optimisation functions correctly."""
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # The diffusion type (used by the script).
         ds.diff_type = 'ellipsoid'
@@ -918,8 +919,8 @@ class Diffusion_tensor(SystemTestCase):
     def test_opt_sphere(self):
         """Check that the sphere diffusion tensor optimisation functions correctly."""
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # The diffusion type (used by the script).
         ds.diff_type = 'sphere'
@@ -946,8 +947,8 @@ class Diffusion_tensor(SystemTestCase):
     def test_opt_spheroid(self):
         """Check that the spheroid diffusion tensor optimisation functions correctly."""
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # The diffusion type (used by the script).
         ds.diff_type = 'spheroid'

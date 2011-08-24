@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import User_fn_class
+from base_class import User_fn_class, _build_doc
 import arg_check
 import colour
 from generic_fns import molmol
@@ -36,8 +36,6 @@ class Molmol(User_fn_class):
     """Class for interfacing with Molmol."""
 
     def clear_history(self):
-        """Function for clearing the Molmol command history."""
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "molmol.clear_history()"
@@ -46,31 +44,16 @@ class Molmol(User_fn_class):
         # Execute the functional code.
         molmol.clear_history()
 
+    # The function doc info.
+    clear_history._doc_title = "Clear the Molmol command history."
+    clear_history._doc_title_short = "Clear Molmol history."""
+    clear_history._doc_desc = """
+        This will clear the Molmol history from memory.
+        """
+    _build_doc(clear_history)
+
 
     def command(self, command=None):
-        """Function for executing a user supplied Molmol command.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        command:  The Molmol command to execute.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This user function allows you to pass Molmol commands to the program.  This can be useful
-        for automation or scripting.
-
-
-        Example
-        ~~~~~~~
-
-        To reinitialise the Molmol instance:
-
-        relax> molmol.command("InitAll yes")
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "molmol.command("
@@ -83,61 +66,24 @@ class Molmol(User_fn_class):
         # Execute the functional code.
         molmol.command(command=command)
 
+    # The function doc info.
+    command._doc_title = "Execute a user supplied Molmol command."
+    command._doc_title_short = "Molmol command execution."
+    command._doc_args = [
+        ["command", "The Molmol command to execute."]
+    ]
+    command._doc_desc = """
+        This allows Molmol commands to be passed to the program.  This can be useful for automation or scripting.
+        """
+    command._doc_examples = """
+        To reinitialise the Molmol instance, type:
+
+        relax> molmol.command("InitAll yes")
+        """
+    _build_doc(command)
+
 
     def macro_exec(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
-        """Function for executing Molmol macros.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        data_type:  The data type to map to the structure.
-
-        style:  The style of the macro.
-
-        colour_start:  The starting colour, either an array or string, of the linear colour
-        gradient.
-
-        colour_end:  The ending colour, either an array or string, of the linear colour gradient.
-
-        colour_list:  The list of colours to match the start and end strings.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function allows residues specific values to be mapped to a structure through Molmol
-        macros.  Currently only the 'classic' style, which is described below, is available.
-
-
-        Colour
-        ~~~~~~
-
-        The values are coloured based on a linear colour gradient which is specified through the
-        'colour_start' and 'colour_end' arguments.  These arguments can either be a string to
-        identify one of the RGB (red, green, blue) colour arrays listed in the tables below, or you
-        can give the RGB vector itself.  For example, colour_start='white' and
-        colour_start=[1.0, 1.0, 1.0] both select the same colour.  Leaving both arguments at None
-        will select the default colour gradient which for each type of analysis is described below.
-
-        When supplying the colours as strings, two lists of colours can be selected from which to
-        match the strings.  These are the default Molmol colour list and the X11 colour list, both
-        of which are described in the tables below.  The default behaviour is to first search the
-        Molmol list and then the X11 colour list, raising an error if neither contain the string.
-        To explicitly select these lists, set the 'colour_list' argument to either 'molmol' or
-        'x11'.
-
-
-        Examples
-        ~~~~~~~~
-
-        To map the order parameter values, S2, onto the structure using the
-        classic style, type:
-
-        relax> molmol.macro_exec('S2')
-        relax> molmol.macro_exec(data_type='S2')
-        relax> molmol.macro_exec(data_type='S2', style="classic")
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "molmol.macro_exec("
@@ -158,31 +104,36 @@ class Molmol(User_fn_class):
         # Execute the functional code.
         molmol.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
+    # The function doc info.
+    macro_exec._doc_title = "Execute Molmol macros."
+    macro_exec._doc_title_short = "Molmol macro execution."
+    macro_exec._doc_args = [
+        ["data_type", "The data type to map to the structure."],
+        ["style", "The style of the macro."],
+        ["colour_start", "The starting colour, either an array or string, of the linear colour gradient."],
+        ["colour_end", "The ending colour, either an array or string, of the linear colour gradient."],
+        ["colour_list", "The list of colours to match the start and end strings."]
+    ]
+    macro_exec._doc_desc = """
+        This allows spin specific values to be mapped to a structure through Molmol macros.  Currently only the 'classic' style, which is described below, is available.
+        """
+    macro_exec._doc_examples = """
+        To map the order parameter values, S2, onto the structure using the classic style, type:
+
+        relax> molmol.macro_exec('S2')
+        relax> molmol.macro_exec(data_type='S2')
+        relax> molmol.macro_exec(data_type='S2', style="classic")
+        """
+    macro_exec._doc_additional = [
+        colour._linear_gradient_doc,
+        Molmol._molmol_classic_style_doc,
+        colour.__molmol_colours_prompt_doc__,
+        colour.__x11_colours_prompt_doc__
+    ]
+    _build_doc(macro_exec)
+
 
     def ribbon(self):
-        """Apply the Molmol ribbon style.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function applies the Molmol ribbon style which is equivalent to clicking on 'ribbon' in
-        the Molmol side menu.  To do this, the following commands are executed:
-
-            CalcAtom 'H'
-            CalcAtom 'HN'
-            CalcSecondary
-            XMacStand ribbon.mac
-
-
-        Example
-        ~~~~~~~
-
-        To apply the ribbon style to the PDB file loaded, type:
-
-        relax> molmol.ribbon()
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "molmol.ribbon()"
@@ -191,27 +142,48 @@ class Molmol(User_fn_class):
         # Execute the functional code.
         molmol.ribbon()
 
+    # The function doc info.
+    ribbon._doc_title = "Apply the Molmol ribbon style."
+    ribbon._doc_title_short = "Molmol ribbon style application."
+    ribbon._doc_desc = """
+        This applies the Molmol ribbon style which is equivalent to clicking on 'ribbon' in the Molmol side menu.  To do this, the following commands are executed:
+
+            CalcAtom 'H'
+            CalcAtom 'HN'
+            CalcSecondary
+            XMacStand ribbon.mac
+        """
+    ribbon._doc_examples = """
+        To apply the ribbon style to the PDB file loaded, type:
+
+        relax> molmol.ribbon()
+        """
+    _build_doc(ribbon)
+
 
     def tensor_pdb(self, file=None):
-        """Function displaying the diffusion tensor PDB geometric object over the loaded PDB.
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.tensor_pdb("
+            text = text + "file=" + repr(file) + ")"
+            print(text)
 
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
+        # The argument checks.
+        arg_check.is_str_or_inst(file, 'file name')
 
-        file:  The name of the PDB file containing the tensor geometric object.
+        # Execute the functional code.
+        molmol.tensor_pdb(file=file)
 
+    # The function doc info.
+    tensor_pdb._doc_title = "Display the diffusion tensor PDB geometric object over the loaded PDB."
+    tensor_pdb._doc_title_short = "Diffusion tensor and structure display."
+    tensor_pdb._doc_args = [
+        ["file", "The name of the PDB file containing the tensor geometric object."]
+    ]
+    tensor_pdb._doc_desc = """
+        In executing this user function, a PDB file must have previously been loaded , a geometric object or polygon representing the Brownian rotational diffusion tensor will be overlain with the loaded PDB file and displayed within Molmol.  The PDB file containing the geometric object must be created using the complementary structure.create_diff_tensor_pdb user function.
 
-        Description
-        ~~~~~~~~~~~
-
-        In executing this user function, a PDB file must have previously been loaded , a geometric
-        object or polygon representing the Brownian rotational diffusion tensor will be overlain
-        with the loaded PDB file and displayed within Molmol.  The PDB file containing the geometric
-        object must be created using the complementary 'pdb.create_diff_tensor_pdb()' user function.
-
-        To display the diffusion tensor, the multiple commands will be executed.  To overlay the
-        structure with the diffusion tensor, everything will be selected and reoriented and moved to
-        their original PDB frame positions:
+        To display the diffusion tensor, the multiple commands will be executed.  To overlay the structure with the diffusion tensor, everything will be selected and reoriented and moved to their original PDB frame positions:
 
             SelectAtom ''
             SelectBond ''
@@ -221,15 +193,13 @@ class Molmol(User_fn_class):
             RotateInit
             MoveInit
 
-        Next the tensor PDB file is read in, selected, and the covalent bonds of the PDB CONECT
-        records calculated:
+        Next the tensor PDB file is read in, selected, and the covalent bonds of the PDB CONECT records calculated:
 
             ReadPdb file
             SelectMol '@file'
             CalcBond 1 1 1
 
-        Then only the atoms and bonds of the geometric object are selected and the 'ball/stick'
-        style applied:
+        Then only the atoms and bonds of the geometric object are selected and the 'ball/stick' style applied:
 
             SelectAtom '0'
             SelectBond '0'
@@ -243,30 +213,10 @@ class Molmol(User_fn_class):
             SelectAtom ':TNS@C*'
             RadiusAtom 1.5
         """
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "molmol.tensor_pdb("
-            text = text + "file=" + repr(file) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str_or_inst(file, 'file name')
-
-        # Execute the functional code.
-        molmol.tensor_pdb(file=file)
+    _build_doc(tensor_pdb)
 
 
     def view(self):
-        """Function for viewing the collection of molecules extracted from the PDB file.
-
-        Example
-        ~~~~~~~
-
-        relax> molmol.view()
-        relax> molmol.view()
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "molmol.view()"
@@ -275,69 +225,19 @@ class Molmol(User_fn_class):
         # Execute the functional code.
         molmol.view()
 
+    # The function doc info.
+    view._doc_title = "View the collection of molecules from the loaded PDB file."
+    view._doc_title_short = "Molecule viewing."
+    view._doc_desc = """
+        This will simply launch Molmol.
+        """
+    view._doc_examples = """
+        relax> molmol.view()
+        """
+    _build_doc(view)
+
 
     def write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='molmol', force=False):
-        """Function for creating Molmol macros.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        data_type:  The data type to map to the structure.
-
-        style:  The style of the macro.
-
-        colour_start:  The starting colour, either an array or string, of the linear colour
-        gradient.
-
-        colour_end:  The ending colour, either an array or string, of the linear colour gradient.
-
-        colour_list:  The list of colours to match the start and end strings.
-
-        file:  The name of the file.
-
-        dir:  The directory name.
-
-        force:  A flag which, if set to True, will cause the file to be overwritten.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function allows residues specific values to be mapped to a structure through the
-        creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File,
-        Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is
-        available.
-
-
-        Colour
-        ~~~~~~
-
-        The values are coloured based on a linear colour gradient which is specified through the
-        'colour_start' and 'colour_end' arguments.  These arguments can either be a string to
-        identify one of the RGB (red, green, blue) colour arrays listed in the tables below, or you
-        can give the RGB vector itself.  For example, colour_start='white' and
-        colour_start=[1.0, 1.0, 1.0] both select the same colour.  Leaving both arguments at None
-        will select the default colour gradient which for each type of analysis is described below.
-
-        When supplying the colours as strings, two lists of colours can be selected from which to
-        match the strings.  These are the default Molmol colour list and the X11 colour list, both
-        of which are described in the tables below.  The default behaviour is to first search the
-        Molmol list and then the X11 colour list, raising an error if neither contain the string.
-        To explicitly select these lists, set the 'colour_list' argument to either 'molmol' or
-        'x11'.
-
-
-        Examples
-        ~~~~~~~~
-
-        To create a Molmol macro mapping the order parameter values, S2, onto the structure using
-        the classic style, type:
-
-        relax> molmol.write('S2')
-        relax> molmol.write(data_type='S2')
-        relax> molmol.write(data_type='S2', style="classic", file='s2.mac', dir='molmol')
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "molmol.write("
@@ -364,16 +264,34 @@ class Molmol(User_fn_class):
         # Execute the functional code.
         molmol.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
 
+    # The function doc info.
+    write._doc_title = "Create Molmol macros."
+    write._doc_title_short = "Molmol macro creation."
+    write._doc_args = [
+        ["data_type", "The data type to map to the structure."],
+        ["style", "The style of the macro."],
+        ["colour_start", "The starting colour, either an array or string, of the linear colour gradient."],
+        ["colour_end", "The ending colour, either an array or string, of the linear colour gradient."],
+        ["colour_list", "The list of colours to match the start and end strings."],
+        ["file", "The name of the file."],
+        ["dir", "The directory name."],
+        ["force", "A flag which, if set to True, will cause the file to be overwritten."]
+    ]
+    write._doc_desc = """
+        This allows residues specific values to be mapped to a structure through the creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File, Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is available.
+        """
+    write._doc_examples = """
+        To create a Molmol macro mapping the order parameter values, S2, onto the structure using
+        the classic style, type:
 
-
-    # Docstring modification.
-    #########################
-
-    # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + Molmol._molmol_classic_style_doc + "\n\n"
-
-    # Molmol RGB colour list.
-    write.__doc__ = write.__doc__ + "\n\n" + colour.__molmol_colours_prompt_doc__ + "\n\n"
-
-    # X11 RGB colour list.
-    write.__doc__ = write.__doc__ + "\n\n" + colour.__x11_colours_prompt_doc__ + "\n\n"
+        relax> molmol.write('S2')
+        relax> molmol.write(data_type='S2')
+        relax> molmol.write(data_type='S2', style="classic", file='s2.mac', dir='molmol')
+        """
+    write._doc_additional = [
+        colour._linear_gradient_doc,
+        Molmol._molmol_classic_style_doc,
+        colour.__molmol_colours_prompt_doc__,
+        colour.__x11_colours_prompt_doc__
+    ]
+    _build_doc(write)

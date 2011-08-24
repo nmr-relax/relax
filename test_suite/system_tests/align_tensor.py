@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,6 @@ from tempfile import mktemp
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
-from relax_io import delete
 
 
 class Align_tensor(SystemTestCase):
@@ -39,7 +38,7 @@ class Align_tensor(SystemTestCase):
         self.interpreter.pipe.create('test', 'N-state')
 
         # Temp file name.
-        self.tmpfile = mktemp()
+        ds.tmpfile = mktemp()
 
         # Tensor name lists.
         self.full_list = ['0 full', '1 full', '2 full', '3 full', '4 full']
@@ -85,27 +84,17 @@ class Align_tensor(SystemTestCase):
         cdp.align_tensors[2].Axx = 1
 
 
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
-
-        # Delete the temporary files.
-        delete(self.tmpfile, fail=False)
-
-
     def test_to_and_from_xml(self):
         """Test the conversion to and from XML."""
 
         # Save the data pipe.
-        self.interpreter.results.write(self.tmpfile, dir=None, compress_type=0)
+        self.interpreter.results.write(ds.tmpfile, dir=None, compress_type=0)
 
         # Create a new data pipe.
         self.interpreter.pipe.create('new', 'N-state')
 
         # Load the data.
-        self.interpreter.results.read(self.tmpfile, dir=None)
+        self.interpreter.results.read(ds.tmpfile, dir=None)
 
         # Checks.
         self.assertEqual(len(cdp.align_tensors), 10)

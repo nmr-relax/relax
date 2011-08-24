@@ -25,14 +25,23 @@
 """Module containing the base class for all frames."""
 
 # Python module imports.
+from os import sep
 import wx
 from wx.lib import buttons
 
+# relax module imports.
+from generic_fns.mol_res_spin import count_spins
+from generic_fns.pipes import cdp_name
+
 # relax GUI module imports.
 from gui import paths
+from gui.analyses.elements import Text_ctrl
+from gui.fonts import font
+from gui.misc import add_border, int_to_gui, str_to_gui
+from gui.user_functions.base import UF_page
 
 
-class Base_frame:
+class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
     """The base class for all frames."""
 
     # Hard coded variables.
@@ -41,8 +50,50 @@ class Base_frame:
     spacer_horizontal = 5
     width_text = 240
     width_button = 100
+    width_main_separator = 40
 
-    def add_button_open(self, box, parent, icon=paths.icon_16x16.open, fn=None, width=-1, height=-1):
+    def __init__(self, parent, id=wx.ID_ANY, pos=None, size=None, style=None, name=None, gui=None):
+        """Initialise the scrolled window.
+
+        @param parent:  The parent wx element.
+        @type parent:   wx object
+        @keyword id:    The unique ID number.
+        @type id:       int
+        @keyword pos:   The position.
+        @type pos:      wx.Size object
+        @keyword size:  The size.
+        @type size:     wx.Size object
+        @keyword style: The style.
+        @type style:    int
+        @keyword name:  The name for the panel.
+        @type name:     unicode
+        """
+
+        # Execute the base class method.
+        super(Base_analysis, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
+
+        # Determine the size of the scrollers.
+        self.width_vscroll = wx.SystemSettings_GetMetric(wx.SYS_VSCROLL_X)
+
+        # Pack a sizer into the panel.
+        box_main = wx.BoxSizer(wx.HORIZONTAL)
+        self.SetSizer(box_main)
+
+        # Build the central sizer, with borders.
+        box_centre = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
+
+        # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
+        self.build_main_box(box_centre)
+
+        # Set up the scrolled panel.
+        self.SetAutoLayout(True)
+        self.SetupScrolling(scroll_x=False, scroll_y=True)
+
+        # Bind resize events.
+        self.Bind(wx.EVT_SIZE, self.resize)
+
+
+    def add_button_open(self, box, parent, icon=paths.icon_16x16.open, text=" Change", fn=None, width=-1, height=-1):
         """Add a button for opening and changing files and directories.
 
         @param box:         The box element to pack the control into.
@@ -51,27 +102,34 @@ class Base_frame:
         @type parent:       wx object
         @keyword icon:      The path of the icon to use for the button.
         @type icon:         str
+        @keyword text:      The text to display on the button.
+        @type text:         str
         @keyword fn:        The function or method to execute when clicking on the button.
         @type fn:           func
         @keyword width:     The minimum width of the control.
         @type width:        int
         @keyword height:    The minimum height of the control.
         @type height:       int
+        @return:            The button.
+        @rtype:             wx.lib.buttons.ThemedGenBitmapTextButton instance
         """
 
         # The button.
-        button = buttons.ThemedGenBitmapTextButton(parent, -1, None, " Change")
+        button = buttons.ThemedGenBitmapTextButton(parent, -1, None, str_to_gui(text))
         button.SetBitmapLabel(wx.Bitmap(icon, wx.BITMAP_TYPE_ANY))
 
         # The font and button properties.
         button.SetMinSize((width, height))
-        button.SetFont(self.gui.font_normal)
+        button.SetFont(font.normal)
 
         # Bind the click.
         self.gui.Bind(wx.EVT_BUTTON, fn, button)
 
         # Add the button to the box.
         box.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Return the button.
+        return button
 
 
     def add_execute_relax(self, box, method):
@@ -81,19 +139,28 @@ class Base_frame:
         @type box:      wx.BoxSizer instance
         @param method:  The method to execute when the button is clicked.
         @type method:   method
+        @return:        The button.
+        @rtype:         wx.lib.buttons.ThemedGenBitmapTextButton instance
         """
 
         # A horizontal sizer for the contents.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        # A unique ID.
+        id = wx.NewId()
+
         # The button.
-        button = buttons.ThemedGenBitmapTextButton(self.parent, -1, None, " Execute relax")
+        button = buttons.ThemedGenBitmapTextButton(self, id, None, " Execute relax")
         button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
         self.gui.Bind(wx.EVT_BUTTON, method, button)
         sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
+
+        # Return the button.
+        return button
 
 
     def add_spin_control(self, box, parent, text='', min=None, max=None, control=wx.SpinCtrl, width=-1, height=-1):
@@ -124,7 +191,7 @@ class Base_frame:
 
         # The font and control properties.
         field.SetMinSize((width, height))
-        field.SetFont(self.gui.font_normal)
+        field.SetFont(font.normal)
 
         # Add the control to the box.
         box.Add(field, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
@@ -133,56 +200,19 @@ class Base_frame:
         return field
 
 
-    def add_spin_element(self, box, parent, text="", default=0, min=0, max=1000, control=wx.SpinCtrl):
-        """Create a text selection element using a spinner for the frame.
+    def add_spin_systems(self, box, parent):
+        """Add a special control for spin systems.
 
-        This consists of a horizontal layout with a static text element and a spin control
+        Only one of these per analysis are allowed.
 
-        @param box:             The box element to pack the structure file selection GUI element into.
-        @type box:              wx.BoxSizer instance
-        @param parent:          The parent GUI element.
-        @type parent:           wx object
-        @keyword text:          The static text.
-        @type text:             str
-        @keyword default:       The default value of the control.
-        @type default:          str
-        @keyword min:           The minimum value allowed.
-        @type min:              int
-        @keyword max:           The maximum value allowed.
-        @type max:              int
-        @keyword control:       The control class to use.
-        @type control:          wx.SpinCtrl derived class
-        @return:                The text control object.
-        @rtype:                 control object
+        @param box:         The box element to pack the control into.
+        @type box:          wx.BoxSizer instance
+        @param parent:      The parent GUI element.
+        @type parent:       wx object
         """
 
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = self.add_static_text(sizer, parent, text=text, width=self.width_text)
-
-        # The size for all elements, based on this text.
-        size = label.GetSize()
-        size_horizontal = size[1] + 8
-
-        # Spacer.
-        sizer.AddSpacer((self.spacer_horizontal, -1))
-
-        # The text input field.
-        field = self.add_spin_control(sizer, parent, text=default, control=control, min=min, max=max, height=size_horizontal)
-
-        # Spacer.
-        sizer.AddSpacer((self.spacer_horizontal, -1))
-
-        # No button, so add a spacer.
-        sizer.AddSpacer((self.width_button, -1))
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
-
-        # Return the text control object.
-        return field
+        # Add the element.
+        self.spin_systems = Text_ctrl(box, self, text="Spin systems", button_text=" Spin editor", default=self.spin_count(), icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
 
     def add_static_text(self, box, parent, text='', width=-1, height=-1):
@@ -207,7 +237,7 @@ class Base_frame:
 
         # The font and label properties.
         label.SetMinSize((width, height))
-        label.SetFont(self.gui.font_normal)
+        label.SetFont(font.normal)
 
         # Add the label to the box.
         box.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
@@ -226,10 +256,10 @@ class Base_frame:
         """
 
         # The title.
-        label = wx.StaticText(self.parent, -1, text)
+        label = wx.StaticText(self, -1, text)
 
         # The font properties.
-        label.SetFont(self.gui.font_subtitle)
+        label.SetFont(font.subtitle)
 
         # Add the subtitle to the box, with spacing.
         box.AddSpacer(20)
@@ -247,10 +277,10 @@ class Base_frame:
         """
 
         # The text.
-        label = wx.StaticText(self.parent, -1, text)
+        label = wx.StaticText(self, -1, text)
 
         # The font properties.
-        label.SetFont(self.gui.font_normal)
+        label.SetFont(font.normal)
 
         # Add the text to the box, with spacing.
         box.AddSpacer(10)
@@ -279,84 +309,22 @@ class Base_frame:
         """
 
         # The control.
-        field = control(parent, -1, text)
+        field = control(parent, -1, str_to_gui(text))
 
         # The font and control properties.
         field.SetMinSize((width, height))
-        field.SetFont(self.gui.font_normal)
+        field.SetFont(font.normal)
+
+        # Editable (change the colour if not).
         field.SetEditable(editable)
+        if not editable:
+            colour = self.GetBackgroundColour()
+            field.SetOwnBackgroundColour(colour)
 
         # Add the control to the box.
         box.Add(field, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Return the text field.
-        return field
-
-
-    def add_text_sel_element(self, box, parent, text="", default="", control=wx.TextCtrl, icon=paths.icon_16x16.open, fn=None, editable=True, button=False):
-        """Create a text selection element for the frame.
-
-        This consists of a horizontal layout with a static text element, a text control, and an optional button.
-
-        @param box:             The box element to pack the structure file selection GUI element into.
-        @type box:              wx.BoxSizer instance
-        @param parent:          The parent GUI element.
-        @type parent:           wx object
-        @keyword text:          The static text.
-        @type text:             str
-        @keyword default:       The default text of the control.
-        @type default:          str
-        @keyword control:       The control class to use.
-        @type control:          wx.TextCtrl derived class
-        @keyword icon:          The path of the icon to use for the button.
-        @type icon:             str
-        @keyword fn:            The function or method to execute when clicking on the button.  If this is a string, then an equivalent function will be searched for in the control object.
-        @type fn:               func or str
-        @keyword editable:      A flag specifying if the control is editable or not.
-        @type editable:         bool
-        @keyword button:        A flag which if True will cause a button to appear.
-        @type button:           bool
-        @return:                The text control object.
-        @rtype:                 control object
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = self.add_static_text(sizer, parent, text=text, width=self.width_text)
-
-        # The size for all elements, based on this text.
-        size = label.GetSize()
-        size_horizontal = size[1] + 8
-
-        # Spacer.
-        sizer.AddSpacer((self.spacer_horizontal, -1))
-
-        # The text input field.
-        field = self.add_text_control(sizer, parent, text=default, control=control, height=size_horizontal, editable=editable)
-
-        # Spacer.
-        sizer.AddSpacer((self.spacer_horizontal, -1))
-
-        # The button.
-        if button:
-            # Function is in the control class.
-            if type(fn) == str:
-                # The function.
-                fn = getattr(field, fn)
-
-            # Add the button.
-            self.add_button_open(sizer, parent, icon=icon, fn=fn, width=self.width_button, height=size_horizontal)
-
-        # No button, so add a spacer.
-        else:
-            sizer.AddSpacer((self.width_button, -1))
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
-
-        # Return the text control object.
         return field
 
 
@@ -370,15 +338,43 @@ class Base_frame:
         """
 
         # The title.
-        label = wx.StaticText(self.parent, -1, text)
+        label = wx.StaticText(self, -1, text)
 
         # The font properties.
-        label.SetFont(self.gui.font_title)
+        label.SetFont(font.title)
 
         # Pack the title, with spacing.
         box.AddSpacer(10)
         box.Add(label)
         box.AddSpacer(5)
+
+
+    def build_left_box(self):
+        """Construct the left hand box to pack into the automatic Rx analysis frame.
+
+        @return:    The left hand box element containing the bitmap.
+        @rtype:     wx.BoxSizer instance
+        """
+
+        # Use a vertical packing of elements.
+        box = wx.BoxSizer(wx.VERTICAL)
+
+        # Convert the bitmap names to a list.
+        if type(self.bitmap) != list:
+            bitmaps = [self.bitmap]
+        else:
+            bitmaps = self.bitmap
+
+        # Add the bitmaps.
+        for i in range(len(bitmaps)):
+            # The bitmap.
+            bitmap = wx.StaticBitmap(self, -1, wx.Bitmap(bitmaps[i], wx.BITMAP_TYPE_ANY))
+
+            # Add it.
+            box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
+
+        # Return the box.
+        return box
 
 
     def build_main_box(self, box):
@@ -393,8 +389,140 @@ class Base_frame:
         box.Add(left_box, 0, wx.ALL|wx.EXPAND|wx.ADJUST_MINSIZE, 0)
 
         # Central spacer.
-        box.AddSpacer(self.border)
+        box.AddSpacer(self.width_main_separator)
 
         # Build the right hand box and pack it next to the bitmap.
         right_box = self.build_right_box()
         box.Add(right_box, 1, wx.ALL|wx.EXPAND, 0)
+
+
+    def launch_spin_editor(self, event):
+        """The spin editor GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Show the molecule, residue, and spin tree window.
+        self.gui.show_tree(None)
+
+
+    def resize(self, event):
+        """The spin editor GUI element.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set the virtual size to have the width of the visible size and the height of the virtual size.
+        x = self.GetSize()[0] - self.width_vscroll
+        y = self.GetVirtualSize()[1]
+        self.SetVirtualSize((x, y))
+
+
+    def spin_count(self):
+        """Count the number of loaded spins, returning a string formatted as 'xxx spins loaded'.
+
+        @return:    The number of loaded spins in the format 'xxx spins loaded'.
+        @rtype:     str
+        """
+
+        # The data pipe.
+        if hasattr(self.data, 'pipe_name'):
+            pipe = self.data.pipe_name
+        else:
+            pipe = cdp_name()
+
+        # The count.
+        num = count_spins(pipe=pipe)
+
+        # Return the formatted string.
+        return "%s spins loaded and selected" % num
+
+
+    def update_spin_count(self):
+        """Update the spin count."""
+
+        # Set the new value.
+        self.spin_systems.SetValue(str_to_gui(self.spin_count()))
+
+
+
+class Spectral_error_type_page(UF_page):
+    """The NOE peak intensity reading wizard page for specifying the type of error to be used."""
+
+    # Class variables.
+    image_path = paths.WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
+    uf_path = ['spectrum', 'error_analysis']
+    height_desc = 450
+
+    def add_contents(self, sizer):
+        """Add the specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Intro text.
+        msg = "Please specify from where the peak intensity errors will be obtained.  The execution of the spectrum.error_analysis user function, as described above, will be postponed until after clicking on the 'Execute relax' button at the end of the automatic NOE analysis page."
+        text = wx.StaticText(self, -1, msg)
+        text.Wrap(self._main_size)
+        sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        sizer.AddStretchSpacer()
+
+        # A box sizer for placing the box sizer in.
+        sizer2 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(sizer2, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Bottom spacing.
+        sizer.AddStretchSpacer()
+
+        # A bit of indentation.
+        sizer2.AddStretchSpacer()
+
+        # A vertical sizer for the radio buttons.
+        sizer_radio = wx.BoxSizer(wx.VERTICAL)
+        sizer2.Add(sizer_radio, 1, wx.ALL|wx.EXPAND, 0)
+
+        # The RMSD radio button.
+        self.radio_rmsd = wx.RadioButton(self, -1, "Baseplane RMSD.")
+        sizer_radio.Add(self.radio_rmsd, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        sizer_radio.AddSpacer(10)
+
+        # The replicated spectra radio button.
+        self.radio_repl = wx.RadioButton(self, -1, "Replicated spectra.")
+        sizer_radio.Add(self.radio_repl, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Bind the buttons.
+        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_rmsd)
+        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_repl)
+
+        # Right side spacing.
+        sizer2.AddStretchSpacer(3)
+
+        # Bottom spacing.
+        sizer.AddStretchSpacer()
+
+        # Set the default selection.
+        self.selection = 'rmsd'
+
+
+    def _on_select(self, event):
+        """Handle the radio button switching.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The button.
+        button = event.GetEventObject()
+
+        # RMSD.
+        if button == self.radio_rmsd:
+            self.selection = 'rmsd'
+        elif button == self.radio_repl:
+            self.selection = 'repl'

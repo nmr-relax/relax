@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,5 +25,7 @@
 
 
 __all__ = ['conversion',
-           'spectrum',
-           'spin_view']
+           'grid',
+           'menu',
+           'relax_data',
+           'spectrum']

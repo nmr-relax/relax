@@ -34,18 +34,12 @@ from relax_errors import RelaxStyleError, RelaxUnknownDataTypeError
 class Molmol:
     """Class containing the Molmol specific functions for model-free analysis."""
 
-    _molmol_classic_style_doc = """
-        Model-free classic style
-        ~~~~~~~~~~~~~~~~~~~~~~~~
-
+    _molmol_classic_style_doc = ["Model-free classic style", """
         Creator:  Edward d'Auvergne
 
         Argument string:  "classic"
 
-        Description:  The classic style draws the backbone of a protein in the Molmol 'neon' style.
-        Rather than colouring the amino acids to which the NH bond belongs, the three covalent bonds
-        of the peptide bond from Ca to Ca in which the NH bond is located are coloured.  Deselected
-        residues are shown as black lines.
+        Description:  The classic style draws the backbone of a protein in the Molmol 'neon' style.  Rather than colouring the amino acids to which the NH bond belongs, the three covalent bonds of the peptide bond from Ca to Ca in which the NH bond is located are coloured.  Deselected residues are shown as black lines.
 
         Supported data types:
         ____________________________________________________________________________________________
@@ -112,7 +106,7 @@ class Molmol:
         | exchange       |             | chemical exchange are coloured white.  The default colour |
         |                |             | gradient starts at 'yellow' and finishes at 'red'.        |
         |________________|_____________|___________________________________________________________|
-        """
+        """]
 
     def _molmol_classic_style(self, data_type=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """The MOLMOL classic style.

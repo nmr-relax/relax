@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,6 +33,7 @@ from info import Info_box
 
 # relax GUI module imports.
 from gui import paths
+from gui.icons import relax_icons
 
 # HTML header.
 HTML_HEADER = """\
@@ -68,6 +69,9 @@ class References(wx.Frame):
 
         # Init the base class.
         super(References, self).__init__(parent, -1, "relax references", style=wx.DEFAULT_FRAME_STYLE)
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
 
         # Set an initial window size.
         self.SetSize((800, 800))

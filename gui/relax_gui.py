@@ -30,43 +30,43 @@ from os import F_OK, access, getcwd, mkdir, sep
 import platform
 import sys
 from textwrap import wrap
+from time import sleep
 import webbrowser
 import wx
+from wx.lib import buttons
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 from info import Info_box
 from generic_fns import state
+from generic_fns.pipes import cdp_name
 from generic_fns.reset import reset
+from relax_errors import RelaxError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
 from version import version
 
 # relaxGUI module imports.
-from about import About_gui, About_relax
-from analyses.auto_model_free import Auto_model_free
-from analyses.auto_noe import Auto_noe
-from analyses.auto_r1 import Auto_r1
-from analyses.auto_r2 import Auto_r2
-from analyses.results import Results_summary
-from analyses.results_analysis import see_results
-from base_classes import Container
-from components.spin_view import Spin_view_window
-from controller import Controller
-from filedialog import opendir, openfile, savefile
-from menu import Menu
-from message import dir_message, error_message, question
+from gui.about import About_gui, About_relax
+from gui.analyses import Analysis_controller
+from gui.base_classes import Container
+from gui.spin_viewer.frame import Spin_view_window
+from gui.controller import Controller
+from gui.filedialog import RelaxFileDialog, opendir
+from gui.fonts import font
+from gui.icons import Relax_task_bar_icon, relax_icons
+from gui.interpreter import Interpreter
+from gui.menu import Menu
+from gui.message import error_message, Question
+from gui.misc import gui_to_str, open_file, protected_exec
 from gui import paths
-from references import References
-from relax_prompt import Prompt
-from settings import Free_file_format, Global_params, load_sequence
-from user_functions import User_functions
-
-
-# Variables.
-GUI_version = '1.00'
-
+from gui.pipe_editor import Pipe_editor
+from gui.references import References
+from gui.relax_prompt import Prompt
+from gui.results_viewer import Results_viewer
+from gui.settings import Free_file_format, load_sequence
+from gui.user_functions import User_functions
 
 
 class Main(wx.Frame):
@@ -82,7 +82,21 @@ class Main(wx.Frame):
         """Initialise the main relax GUI frame."""
 
         # Execute the base class __init__ method.
-        super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE)
+        super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE|wx.MAXIMIZE)
+
+        # Set up some standard interface-wide fonts.
+        font.setup()
+
+        # Set up the relax icons.
+        relax_icons.setup()
+        self.SetIcons(relax_icons)
+
+        # Set up the Mac OS X task bar icon.
+        if 'darwin' in sys.platform:
+            self.taskbar_icon = Relax_task_bar_icon(self)
+
+        # Initialise some variables for the GUI.
+        self.launch_dir = getcwd()
 
         # Set up the frame.
         self.Layout()
@@ -90,28 +104,8 @@ class Main(wx.Frame):
         self.SetMinSize((self.min_width, self.min_height))
         self.Centre()
 
-        # The analysis frame object storage.
-        self.analysis_frames = []
-
-        # FIXME:  This is only for the current fixed interface.
-        self.hardcoded_index_noe_1 = 0
-        self.hardcoded_index_r1_1  = 1
-        self.hardcoded_index_r2_1  = 2
-        self.hardcoded_index_noe_2 = 3
-        self.hardcoded_index_r1_2  = 4
-        self.hardcoded_index_r2_2  = 5
-        self.hardcoded_index_noe_3 = 6
-        self.hardcoded_index_r1_3  = 7
-        self.hardcoded_index_r2_3  = 8
-        self.hardcoded_index_mf    = 9
-        for i in range(10):
-            self.analysis_frames.append(Container())
-
-        # A fixed set of indices for 3 NOE, 3 R1, and 3 R2 frames used for accessing the relax data store.
-        # FIXME:  Eliminate these!  There should be a flexible number of these frames.
-        self.noe_index = [0, 1, 2]
-        self.r1_index =  [3, 4, 5]
-        self.r2_index =  [6, 7, 8]
+        # The analysis window object storage.
+        self.analysis = Analysis_controller(self)
 
         # The calculation threads list.
         self.calc_threads = []
@@ -119,48 +113,42 @@ class Main(wx.Frame):
         # Initialise the GUI data.
         self.init_data()
 
-        # Set up some standard interface-wide fonts.
-        self.setup_fonts()
-
         # The user function GUI elements.
         self.user_functions = User_functions(self)
-
-        # Build the main window.
-        self.build_main_window()
-
-        # Build Notebooks
-        self.build_notebooks()
 
         # Build the menu bar.
         self.menu = Menu(self)
 
         # Build the controller, but don't show it.
-        self.controller = Controller(None, -1, "")
-
-        rx_data = ds.relax_gui.analyses[self.noe_index[0]]
-        self.frame_1_statusbar = self.CreateStatusBar(3, 0)
+        self.controller = Controller(self)
 
         # Set the title.
-        self.SetTitle("relaxGUI " + GUI_version)
+        self.SetTitle("relax " + version)
 
-        # Set up the program icon (disabled on Macs).
-        if not 'darwin' in sys.platform:
-            icon = wx.EmptyIcon()
-            icon.CopyFromBitmap(wx.Bitmap(paths.IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
-            self.SetIcon(icon)
+        # Set up the status bar.
+        self.bar = self.CreateStatusBar(3, 0)
+        self.bar.SetStatusWidths([-4, -1, -2])
+        self.bar.SetStatusText("(C) 2001-2011 the relax development team", 0)
+        self.bar.SetStatusText("Current data pipe:", 1)
+        self.update_status_bar()
 
-        # Statusbar fields.
-        self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
-        frame_1_statusbar_fields = ["relaxGUI (C) 2009 Michael Bieri and (C) 2010-2011 the relax development team", "relax:", version]
-        for i in range(len(frame_1_statusbar_fields)):
-            self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
+        # Add the start screen.
+        self.add_start_screen()
 
-        # Close Box event
+        # Close Box event.
         self.Bind(wx.EVT_CLOSE, self.exit_gui)
+
+        # Initialise the special interpreter thread object.
+        self.interpreter = Interpreter()
+        self.interpreter.start()
 
         # Run a script.
         if script:
             self.user_functions.script.script_exec(script)
+
+        # Register functions with the observer objects.
+        status.observers.pipe_alteration.register('status bar', self.update_status_bar)
+        status.observers.result_file.register('gui', self.show_results_viewer)
 
 
     def about_gui(self, event):
@@ -174,7 +162,8 @@ class Main(wx.Frame):
         dialog = About_gui(None, -1, "")
 
         # The dialog.
-        dialog.Show()
+        if status.show_gui:
+            dialog.Show()
 
 
     def about_relax(self, event):
@@ -185,10 +174,11 @@ class Main(wx.Frame):
         """
 
         # Build the dialog.
-        dialog = About_relax(None, -1, "")
+        dialog = About_relax(None, -1)
 
         # The dialog.
-        dialog.Show()
+        if status.show_gui:
+            dialog.Show()
 
 
     def action_state_save(self, event):
@@ -214,108 +204,83 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
-        # Open the dialog.
-        filename = savefile(msg='Select file to save', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
+        # The dialog.
+        dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save file (*.bz2)|*.bz2', style=wx.FD_SAVE)
 
-        # Do nothing - no file was selected.
-        if not filename:
+        # Show the dialog and catch if no file has been selected.
+        if dialog.ShowModal() != wx.ID_OK:
+            # Don't do anything.
             return
 
+        # The file.
+        file_name = dialog.get_file()
+
         # Set the file name.
-        self.save_file = filename
+        self.save_file = file_name
 
         # Save.
         self.state_save()
 
 
-    def build_main_window(self):
-        """Construct the main relax GUI window."""
+    def add_start_screen(self):
+        """Create a start screen for the main window when no analyses exist."""
+
+        # The sizer for the main GUI window.
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(sizer)
+
+        # The relax icon.
+        image = wx.StaticBitmap(self, -1, wx.Bitmap(paths.IMAGE_PATH+'ulysses_shadowless_400x168.png', wx.BITMAP_TYPE_ANY))
+
+        # Add the icon to the main spacer with spacing.
+        sizer.AddStretchSpacer()
+        sizer.Add(image, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer.AddStretchSpacer()
+
+        # Re-perform the layout of the GUI elements, and refresh.
+        self.Layout()
+        self.Refresh()
 
 
-        self.notebook_left = wx.Notebook(self, -1, style=wx.NB_LEFT)
-        #self.results = wx.Panel(self.notebook_left, -1)
+    def close_windows(self):
+        """Throw a warning to close all of the non-essential windows when execution is locked.
 
-        # The 5th notebook (freq 3).
-        self.frq3 = wx.Panel(self.notebook_left, -1)
-        self.notebook_frq_3 = wx.Notebook(self.frq3, -1, style=0)
+        This is to speed up the calculations by avoiding window updates.
+        """
 
-        # The automatic relaxation data analysis frames.
-        self.analysis_frames[self.hardcoded_index_r1_3] = Auto_r1(self, self.notebook_frq_3, hardcoded_index=self.r1_index[2])
-        self.analysis_frames[self.hardcoded_index_r2_3] = Auto_r2(self, self.notebook_frq_3, hardcoded_index=self.r2_index[2])
-        self.analysis_frames[self.hardcoded_index_noe_3] = Auto_noe(self, self.notebook_frq_3, hardcoded_index=self.noe_index[2])
+        # Init the window list.
+        win_list = []
 
-        # The 4th notebook (freq 2).
-        self.frq2 = wx.Panel(self.notebook_left, -1)
-        self.notebook_frq_2 = wx.Notebook(self.frq2, -1, style=0)
+        # Is the spin viewer window open?
+        if hasattr(self, 'spin_viewer') and self.spin_viewer.IsShown():
+            win_list.append('The spin viewer window')
 
-        # The automatic relaxation data analysis frames.
-        self.analysis_frames[self.hardcoded_index_r1_2] = Auto_r1(self, self.notebook_frq_2, hardcoded_index=self.r1_index[1])
-        self.analysis_frames[self.hardcoded_index_r2_2] = Auto_r2(self, self.notebook_frq_2, hardcoded_index=self.r2_index[1])
-        self.analysis_frames[self.hardcoded_index_noe_2] = Auto_noe(self, self.notebook_frq_2, hardcoded_index=self.noe_index[1])
+        # Is the pipe editor window open?
+        if hasattr(self, 'pipe_editor') and self.pipe_editor.IsShown():
+            win_list.append('The data pipe editor window')
 
-        # The 3rd notebook (freq 1).
-        self.frq1 = wx.Panel(self.notebook_left, -1)
-        self.notebook_frq_1 = wx.Notebook(self.frq1, -1, style=0)
+        # Is the results viewer window open?
+        if hasattr(self, 'results_viewer') and self.results_viewer.IsShown():
+            win_list.append('The results viewer window')
 
-        # The automatic relaxation data analysis frames.
-        self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_frq_1, hardcoded_index=self.r1_index[0])
-        self.analysis_frames[self.hardcoded_index_r2_1] = Auto_r2(self, self.notebook_frq_1, hardcoded_index=self.r2_index[0])
-        self.analysis_frames[self.hardcoded_index_noe_1] = Auto_noe(self, self.notebook_frq_1, hardcoded_index=self.noe_index[0])
+        # The windows are not open, so quit.
+        if not len(win_list):
+            return
 
-        # The automatic model-free protocol frame.
-        self.analysis_frames[self.hardcoded_index_mf] = Auto_model_free(self, self.notebook_left)
+        # The text.
+        text = "The following windows are currently open:\n\n"
+        for win in win_list:
+            text = "%s\t%s.\n" % (text, win)
+        text = text + "\nClosing these will significantly speed up the calculations."
 
+        # Display the error message dialog.
+        if status.show_gui:
+            dlg = wx.MessageDialog(self, text, caption="Close windows", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+            dlg.ShowModal()
 
-    def build_notebooks(self):
-        """Build the notebooks for the 3 frequencies and analysis modes"""
-
-        # Add NOE, R1 and R2 tabs to main notebook (1. frequency).
-        frq1sub = wx.BoxSizer(wx.HORIZONTAL)
-        # Create sub-tabs.
-        self.notebook_frq_1.AddPage(self.analysis_frames[self.hardcoded_index_noe_1].parent, "steady-state NOE")
-        self.notebook_frq_1.AddPage(self.analysis_frames[self.hardcoded_index_r1_1].parent, "R1 relaxation")
-        self.notebook_frq_1.AddPage(self.analysis_frames[self.hardcoded_index_r2_1].parent, "R2 relaxation")
-        frq1sub.Add(self.notebook_frq_1, 1, wx.EXPAND, 0)
-        self.frq1.SetSizer(frq1sub)
-        # Pack frequency 1 tab.
-        self.notebook_left.AddPage(self.frq1, "Frq. 1")
-
-        # Add NOE, R1 and R2 tabs to main notebook (2. frequency).
-        frq2sub = wx.BoxSizer(wx.HORIZONTAL)
-        # Create sub-tabs.
-        self.notebook_frq_2.AddPage(self.analysis_frames[self.hardcoded_index_noe_2].parent, "steady-state NOE")
-        self.notebook_frq_2.AddPage(self.analysis_frames[self.hardcoded_index_r1_2].parent, "R1 relaxation")
-        self.notebook_frq_2.AddPage(self.analysis_frames[self.hardcoded_index_r2_2].parent, "R2 relaxation")
-        frq2sub.Add(self.notebook_frq_2, 1, wx.EXPAND, 0)
-        self.frq2.SetSizer(frq2sub)
-        # Pack frequency 2 tab.
-        self.notebook_left.AddPage(self.frq2, "Frq. 2")
-
-        # Add NOE, R1 and R2 tabs to main notebook (3. frequency).
-        frq3sub = wx.BoxSizer(wx.HORIZONTAL)
-        # Create sub-tabs.
-        self.notebook_frq_3.AddPage(self.analysis_frames[self.hardcoded_index_noe_3].parent, "steady-state NOE")
-        self.notebook_frq_3.AddPage(self.analysis_frames[self.hardcoded_index_r1_3].parent, "R1 relaxation")
-        self.notebook_frq_3.AddPage(self.analysis_frames[self.hardcoded_index_r2_3].parent, "R2 relaxation")
-        frq3sub.Add(self.notebook_frq_3, 1, wx.EXPAND, 0)
-        self.frq3.SetSizer(frq3sub)
-        # Pack frequency 3 tab.
-        self.notebook_left.AddPage(self.frq3, "Frq. 3")
-
-        # Model-free tab.
-        self.notebook_left.AddPage(self.analysis_frames[self.hardcoded_index_mf].parent, "Model-free")
-
-        # Results tab.
-        self.results = wx.Panel(self.notebook_left, -1)
-        results_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.results_frame = Results_summary(self, self.results)
-        results_sizer.Add(results_sizer, 1, wx.EXPAND, 0)
-        self.notebook_left.AddPage(self.results, "Results")
-
-        # Pack main notebook.
-        main_sizer = wx.BoxSizer(wx.VERTICAL)
-        main_sizer.Add(self.notebook_left, 1, wx.EXPAND, 0)
-        self.SetSizer(main_sizer)
+        # Otherwise output to stderr.
+        else:
+            sys.stderr.write(text)
 
 
     def contact_relax(self, event):
@@ -331,10 +296,10 @@ class Main(wx.Frame):
         """
 
         # Ask if the user is sure they would like to exit.
-        doexit = question('Are you sure you would like to quit relax?  All unsaved data will be lost.', default=True)
+        doexit = Question('Are you sure you would like to quit relax?  All unsaved data will be lost.', title='Exit relax', default=True).ShowModal()
 
         # Exit.
-        if doexit:
+        if doexit == wx.ID_YES:
             # Restore the IO streams.
             io_streams_restore(verbosity=0)
 
@@ -359,49 +324,14 @@ class Main(wx.Frame):
             for line in wrap(info.bib['dAuvergneGooley08b'].cite_short(), width):
                 text = text + line + '\n'
             text = text + '\n'
-            sys.__stdout__.write(text)
+            sys.stdout.write(text)
+
+            # Remove the Mac OS X task bar icon.
+            if hasattr(self, 'taskbar_icon'):
+                self.taskbar_icon.Destroy()
 
             # End application.
-            sys.exit()
-
-
-    def import_seq(self, event):
-        """Open sequence loading GUI element."""
-
-        # The dialog.
-        file = load_sequence()
-
-        # Nothing selected.
-        if file == None:
-            return
-
-        # The selected file.
-        sequencefile = str(file)
-
-        # Set entries in pdb text box.
-        structure_file_pdb = '!!! Sequence file selected !!!'
-
-        # Add file to NOE tabs.
-        self.analysis_frames[self.hardcoded_index_noe_1].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_noe_2].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_noe_3].field_structure.SetValue(structure_file_pdb)
-
-        # Add file to R1 tabs.
-        self.analysis_frames[self.hardcoded_index_r1_1].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_r1_2].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_r1_3].field_structure.SetValue(structure_file_pdb)
-
-        # Add file to R2 tabs.
-        self.analysis_frames[self.hardcoded_index_r2_1].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_r2_2].field_structure.SetValue(structure_file_pdb)
-        self.analysis_frames[self.hardcoded_index_r2_3].field_structure.SetValue(structure_file_pdb)
-
-        # Load sequence file into the relax data store.
-        for i in range(10):
-            ds.relax_gui.analyses[i].sequence_file = sequencefile
-
-        # Update the core of the GUI to match the new data store.
-        self.sync_ds(upload=False)
+            wx.Exit()
 
 
     def init_data(self):
@@ -412,68 +342,6 @@ class Main(wx.Frame):
 
         # Add the GUI object to the data store.
         ds.relax_gui = Gui()
-
-        # Define Global Variables
-        ds.relax_gui.unresolved = ""
-        ds.relax_gui.results_noe = []
-        ds.relax_gui.results_rx = []
-        ds.relax_gui.results_model_free = []
-        ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
-
-        # Table of relax Results
-        ds.relax_gui.table_residue = []
-        ds.relax_gui.table_model = []
-        ds.relax_gui.table_s2 = []
-        ds.relax_gui.table_rex = []
-        ds.relax_gui.table_te = []
-
-        # Initialise the 3 NOE analyses.
-        nmrfreq = [600, 800, 900]
-        for i in range(3):
-            # Add the element.
-            ds.relax_gui.analyses.add('NOE')
-
-            # Initialise the variables.
-            ds.relax_gui.analyses[-1].frq = nmrfreq[i]
-            ds.relax_gui.analyses[-1].ref_file = ''
-            ds.relax_gui.analyses[-1].sat_file = ''
-            ds.relax_gui.analyses[-1].ref_rmsd = 1000
-            ds.relax_gui.analyses[-1].sat_rmsd = 1000
-
-        # Initialise the 3 R1 and 3 R2 analyses.
-        rx = ['R1']*3 + ['R2']*3
-        nmrfreq = nmrfreq * 2
-        for i in range(len(rx)):
-            # Add the element.
-            ds.relax_gui.analyses.add(rx[i])
-
-            # Initialise the variables.
-            ds.relax_gui.analyses[-1].frq = nmrfreq[i]
-            ds.relax_gui.analyses[-1].num = 0
-            ds.relax_gui.analyses[-1].file_list = []
-            ds.relax_gui.analyses[-1].ncyc = []
-            ds.relax_gui.analyses[-1].relax_times = []
-
-        # Initialise all the source and save directories.
-        for i in range(len(ds.relax_gui.analyses)):
-            ds.relax_gui.analyses[i].source_dir = getcwd()
-            ds.relax_gui.analyses[i].save_dir = getcwd()
-
-
-    def open_model_results_exe(self, event):    # open model-free results
-        choice = self.list_modelfree.GetStringSelection()
-        model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te] # relax results values
-        see_results(choice, model_result)
-
-
-    def open_noe_results_exe(self, event): #open results of noe run
-        choice = self.list_noe.GetStringSelection()
-        see_results(choice, None)
-
-
-    def open_rx_results_exe(self, event): # open results of r1 and r2 runs
-        choice = self.list_rx.GetStringSelection()
-        see_results(choice, None)
 
 
     def free_file_format_settings(self, event):
@@ -487,21 +355,8 @@ class Main(wx.Frame):
         win = Free_file_format()
 
         # Show the window.
-        win.Show()
-
-
-    def global_parameters(self, event):
-        """Open the global parameters window.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Build the window.
-        win = Global_params()
-
-        # Show the window.
-        win.Show()
+        if status.show_gui:
+            win.Show()
 
 
     def references(self, event):
@@ -513,7 +368,8 @@ class Main(wx.Frame):
 
         # Build and show the references window.
         self.references = References(self)
-        self.references.Show()
+        if status.show_gui:
+            self.references.Show()
 
 
     def relax_manual(self, event):
@@ -529,39 +385,10 @@ class Main(wx.Frame):
         # Test if it exists.
         if not access(file, F_OK):
             error_message("The relax manual '%s' cannot be found.  Please compile using the scons program." % file)
+            return
 
         # Open the relax PDF manual using the native PDF reader.
-        else:
-            # Windows.
-            if platform.uname()[0] in ['Windows', 'Microsoft']:
-                os.startfile(file)
-
-            # Mac OS X.
-            elif platform.uname()[0] == 'Darwin':
-                os.system('open %s' % file)
-
-            # POSIX Systems with xdg-open.
-            else:
-                os.system('/usr/bin/xdg-open %s' % file)
-
-
-    def reset_setting(self, event): #reset all settings
-        if question('Do you realy want to change relax settings?'):
-            ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
-            ds.relax_gui.free_file_format.reset()
-
-
-    def setup_fonts(self):
-        """Initialise a series of fonts to be used throughout the GUI."""
-
-        # The fonts.
-        self.font_smaller =     wx.Font(6,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
-        self.font_small =       wx.Font(8,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
-        self.font_button =      wx.Font(8,  wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
-        self.font_normal =      wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
-        self.font_normal_bold = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD,   0, "Sans")
-        self.font_subtitle =    wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD,   0, "Sans")
-        self.font_title =       wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans")
+        open_file(file)
 
 
     def show_controller(self, event):
@@ -572,7 +399,29 @@ class Main(wx.Frame):
         """
 
         # Open the window.
-        self.controller.Show()
+        if status.show_gui:
+            self.controller.Show()
+
+
+    def show_pipe_editor(self, event):
+        """Display the data pipe editor window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Throw a warning if the execution lock is on.
+        if status.exec_lock.locked():
+            dlg = wx.MessageDialog(self, "Leaving the pipe editor window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+            dlg.ShowModal()
+
+        # Build the pipe editor if needed.
+        if not hasattr(self, 'pipe_editor'):
+            self.pipe_editor = Pipe_editor(gui=self)
+
+        # Open the window.
+        if status.show_gui and not self.pipe_editor.IsShown():
+            self.pipe_editor.Show()
 
 
     def show_prompt(self, event):
@@ -587,7 +436,36 @@ class Main(wx.Frame):
             self.relax_prompt = Prompt(None, -1, "", parent=self)
 
         # Open the window.
-        self.relax_prompt.Show()
+        if status.show_gui:
+            self.relax_prompt.Show()
+
+
+    def show_results_viewer(self, event=None):
+        """Display the analysis results.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Show the results viewer in a thread safe way.
+        wx.CallAfter(self.show_results_viewer_safe)
+
+
+    def show_results_viewer_safe(self):
+        """Display the analysis results in a thread safe wx.CallAfter call."""
+
+        # Throw a warning if the execution lock is on.
+        if status.exec_lock.locked():
+            dlg = wx.MessageDialog(self, "Leaving the results viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+            wx.CallAfter(dlg.ShowModal)
+
+        # Create the results viewer window if needed.
+        if not hasattr(self, 'results_viewer'):
+            self.results_viewer = Results_viewer(gui=self)
+
+        # Open the window.
+        if not self.results_viewer.IsShown():
+            self.results_viewer.Show()
 
 
     def show_tree(self, event):
@@ -597,71 +475,85 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
+        # Throw a warning if the execution lock is on.
+        if status.exec_lock.locked():
+            dlg = wx.MessageDialog(self, "Leaving the spin viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
+            dlg.ShowModal()
+
         # Build the spin view window.
-        if not hasattr(self, 'spin_view'):
-            self.spin_view = Spin_view_window(None, -1, "", parent=self)
+        if not hasattr(self, 'spin_viewer'):
+            self.spin_viewer = Spin_view_window(None, -1, "", parent=self)
 
-        # Open the window.
-        self.spin_view.Show()
+        # Open the window (the GUI flag check is inside the Show method).
+        if not self.spin_viewer.IsShown():
+            self.spin_viewer.Show()
 
 
-    def state_load(self, event):
+    def state_load(self, event=None, file_name=None):
         """Load the program state.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param event:       The wx event.
+        @type event:        wx event
+        @keyword file_name: The name of the file to load (for dialogless operation).
+        @type file_name:    str
         """
 
-        # Open the dialog.
-        filename = openfile(msg='Select file to open', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
-
-        # No file has been selected.
-        if not filename:
-            # Don't do anything.
+        # Execution lock.
+        if status.exec_lock.locked():
             return
 
-        # Reset the relax data store.
-        reset()
+        # Warning.
+        if not self.analysis.init_state:
+            # The message.
+            msg = "Loading a saved relax state file will cause all unsaved data to be lost.  Are you sure you would to open a save file?"
 
-        # The new save file name.
-        self.save_file = filename
+            # The dialog.
+            if Question(msg, default=True).ShowModal() == wx.ID_NO:
+                return
 
-        # Load the relax state.
-        state.load_state(filename, verbosity=0)
+        # Open the dialog.
+        if not file_name:
+            dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save files (*.bz2;*.gz)|*.bz2;*.gz|All files (*)|*', style=wx.FD_OPEN)
 
-        # FIXME: (commented out until analyses are dynamically loaded and unloaded).
-        ## Build the analysis frames
-        #for i in range(len(ds.relax_gui.analyses)):
-        #    # The automatic model-free protocol frame
-        #    if ds.relax_gui.analyses[i].analysis_type == 'model-free':
-        #        self.analysis_frames.append(Auto_model_free(self))
+            # Show the dialog and catch if no file has been selected.
+            if dialog.ShowModal() != wx.ID_OK:
+                # Don't do anything.
+                return
 
-        # FIXME:  Temporary fix - set the data structures explicitly.
-        # R1 frames.
-        self.analysis_frames[self.hardcoded_index_r1_1].link_data(ds.relax_gui.analyses[self.r1_index[0]])
-        self.analysis_frames[self.hardcoded_index_r1_2].link_data(ds.relax_gui.analyses[self.r1_index[1]])
-        self.analysis_frames[self.hardcoded_index_r1_3].link_data(ds.relax_gui.analyses[self.r1_index[2]])
+            # The file.
+            file_name = gui_to_str(dialog.get_file())
 
-        # R2 frames.
-        self.analysis_frames[self.hardcoded_index_r2_1].link_data(ds.relax_gui.analyses[self.r2_index[0]])
-        self.analysis_frames[self.hardcoded_index_r2_2].link_data(ds.relax_gui.analyses[self.r2_index[1]])
-        self.analysis_frames[self.hardcoded_index_r2_3].link_data(ds.relax_gui.analyses[self.r2_index[2]])
+        # Yield to allow the cursor to be changed.
+        wx.Yield()
 
-        # NOE frames
-        self.analysis_frames[self.hardcoded_index_noe_1].link_data(ds.relax_gui.analyses[self.noe_index[0]])
-        self.analysis_frames[self.hardcoded_index_noe_2].link_data(ds.relax_gui.analyses[self.noe_index[1]])
-        self.analysis_frames[self.hardcoded_index_noe_3].link_data(ds.relax_gui.analyses[self.noe_index[2]])
+        # Change the cursor to waiting, and freeze the GUI.
+        wx.BeginBusyCursor()
+        self.Freeze()
 
-        # Model-free frame.
-        self.analysis_frames[self.hardcoded_index_mf].link_data(ds.relax_gui.analyses[9])
+        # Make sure the GUI returns to normal if a failure occurs.
+        try:
+            # Delete the current tabs.
+            self.analysis.delete_all()
 
-        # Update the core of the GUI to match the new data store.
-        self.sync_ds(upload=False)
+            # Reset the relax data store.
+            reset()
 
-        # Execute the analysis frame specific update methods.
-        for analysis in self.analysis_frames:
-            if hasattr(analysis, 'sync_ds'):
-                analysis.sync_ds(upload=False)
+            # The new save file name.
+            self.save_file = file_name
+
+            # Load the relax state.
+            protected_exec(state.load_state, file_name, verbosity=0)
+
+            # Reconstruct the analyses.
+            self.analysis.load_from_store()
+
+            # Update the core of the GUI to match the new data store.
+            self.sync_ds(upload=False)
+
+        # Reset the cursor, and thaw the GUI.
+        finally:
+            self.Thaw()
+            wx.EndBusyCursor()
 
 
     def state_save(self):
@@ -670,35 +562,12 @@ class Main(wx.Frame):
         # Update the data store to match the GUI.
         self.sync_ds(upload=True)
 
-        # Analyses updates of the new data store.
-        for i in range(len(self.analysis_frames)):
-            # Execute the analysis frame specific update methods.
-            if hasattr(self.analysis_frames[i], 'sync_ds'):
-                self.analysis_frames[i].sync_ds(upload=True)
-
-        # Save the relax state.
-        state.save_state(self.save_file, verbosity=0, force=True)
-
-
-    def structure_pdb(self, event): # open load sequence panel
-        temp = openfile('Select PDB file to open', '', '', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
-        if not temp == None:
-            structure_file_pdb = str(temp) #set sequence file
-
-            # Add file to NOE tabs.
-            self.analysis_frames[self.hardcoded_index_noe_1].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_noe_2].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_noe_3].field_structure.SetValue(structure_file_pdb)
-
-            # Add file to R1 tabs.
-            self.analysis_frames[self.hardcoded_index_r1_1].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r1_2].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r1_3].field_structure.SetValue(structure_file_pdb)
-
-            # Add file to R2 tabs.
-            self.analysis_frames[self.hardcoded_index_r2_1].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r2_2].field_structure.SetValue(structure_file_pdb)
-            self.analysis_frames[self.hardcoded_index_r2_3].field_structure.SetValue(structure_file_pdb)
+        # Save the relax state (with save user feedback).
+        try:
+            wx.BeginBusyCursor()
+            state.save_state(self.save_file, verbosity=0, force=True)
+        finally:
+            wx.EndBusyCursor()
 
 
     def sync_ds(self, upload=False):
@@ -710,6 +579,37 @@ class Main(wx.Frame):
         @type upload:       bool
         """
 
-        # Synchronise each frame.
-        for frame in self.analysis_frames:
-            frame.sync_ds(upload)
+        # Loop over each analysis.
+        for page in self.analysis.analysis_loop():
+            # Execute the analysis page specific update methods.
+            if hasattr(page, 'sync_ds'):
+                page.sync_ds(upload)
+
+
+    def update_status_bar(self):
+        """Update the status bar info."""
+
+        # Set the current data pipe info.
+        pipe = cdp_name()
+
+        # No data pipe.
+        if pipe == None:
+            pipe = ''
+
+        # Set the status.
+        wx.CallAfter(self.bar.SetStatusText, pipe, 2)
+
+
+    def wait_for_interpreter(self, wait_period=0.1):
+        """Return only once the interpreter thread has cleared all its queued calls.
+        @keyword wait_period:   The time in seconds to wait for the.
+        """
+
+        # Loop until finished.
+        while 1:
+            # Check that the queue has been cleared and that the global execution lock has been released.
+            if self.interpreter._queue.empty() and not status.exec_lock.locked():
+                break
+
+            # Otherwise sleep a little.
+            sleep(wait_period)

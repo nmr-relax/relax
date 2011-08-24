@@ -25,789 +25,339 @@
 """Module containing the classes for GUI components involving spectral data."""
 
 # Python module imports.
-from os import sep
-from re import search
 import wx
 import wx.lib.buttons
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
+from generic_fns.spectrum import replicated_flags, replicated_ids
 
-# relaxGUI module imports.
-from gui.filedialog import multi_openfile, opendir, openfile
-from gui.message import error_message
-from gui.misc import add_border
+# relax GUI module imports.
+from gui.fonts import font
+from gui.misc import add_border, float_to_gui, str_to_gui
 from gui import paths
 
 
-class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
-    """Custom GridCellEditor for the number of delays grid cells.
+class Spectra_list:
+    """The GUI element for listing loaded spectral data."""
 
-    Changing these cells will update the relaxation delay times.
-    """
-
-    def __init__(self, min=None, max=None, parent=None):
-        """Initialise the class.
-        
-        @keyword min:       The minimum value for wx.SpinCtrl.
-        @type min:          None or int
-        @keyword max:       The maximum value for wx.SpinCtrl.
-        @type max:          None or int
-        @keyword parent:    The parent wx object.
-        @type parent:       wx object
-        """
-
-        # Store the args.
-        self.min = min
-        self.max = max
-        self.parent = parent
-
-        # Initialise the base class.
-        super(Delay_num_cell_editor, self).__init__()
-
-        # A flag for a resetting event.
-        self.reset = False
-
-
-    def BeginEdit(self, row, col, grid):
-        """Start the editing.
-
-        @param row:     The row index.
-        @type row:      int
-        @param col:     The column index.
-        @type col:      int
-        @param grid:    The grid GUI element.
-        @type grid:     wx.grid.Grid instance.
-        """
-
-        # The previous value.
-        self.prev_val = grid.GetTable().GetValue(row, col)
-
-        # Set the starting value.
-        self.cell.SetValueString(self.prev_val)
-
-        # Set the focus to the cell.
-        self.cell.SetFocus()
-
-
-    def Clone(self):
-        """Create and return a new class instance."""
-
-        # Initialise and return the class.
-        return Delay_num_cell_editor(self.min, self.max, self.parent)
-
-
-    def Create(self, parent, id, evtHandler):
-        """Create the control for the cell.
-
-        @param parent:      The parent wx object.
-        @type parent:       wx object
-        @param id:          The ID number.
-        @type id:           int
-        @param evtHandler:  The event handler function.
-        @type evtHandler:   func
-        """
-
-        # Set the cell to be a spin control.
-        self.cell = wx.SpinCtrl(parent, id, "", min=self.min, max=self.max)
-        self.SetControl(self.cell)
-
-        # Handle the event handler.
-        if evtHandler:
-            self.cell.PushEventHandler(evtHandler)
-
-
-    def EndEdit(self, row, col, grid):
-        """End the editing.
-
-        @param row:     The row index.
-        @type row:      int
-        @param col:     The column index.
-        @type col:      int
-        @param grid:    The grid GUI element.
-        @type grid:     wx.grid.Grid instance.
-        """
-
-        # A reset.
-        if self.reset:
-            # Reset the reset flag.
-            self.reset = False
-
-            # No starting value, so do nothing.
-            if self.prev_val == '':
-                return False
-
-        # The new value.
-        value = self.cell.GetValue()
-
-        # No change.
-        if value == self.prev_val:
-            return False
-
-        # Set the value in the table (the value of zero shows nothing).
-        if value == 0:
-            text = ''
-        else:
-            text = str(value)
-        grid.GetTable().SetValue(row, col, text)
-
-        # The delay cycle time.
-        time = self.parent.delay_time.GetValue()
-
-        # No times to update.
-        if time == '':
-            # A change occurred.
-            return True
-
-        # Update the relaxation delay time.
-        delay_time = float(time) * float(value)
-        grid.GetTable().SetValue(row, col-1, str(delay_time))
-
-        # A change occurred.
-        return True
-
-
-    def Reset(self):
-        """Reset the cell to the previous value."""
-
-        # Set the previous value.
-        self.cell.SetValueString(self.prev_val)
-
-        # Set a flag for EndEdit to catch a reset.
-        self.reset = True
-
-
-    def StartingKey(self, event):
-        """Catch the starting key stroke to add the value to the cell.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The value.
-        key = event.GetKeyCode()
-
-        # Acceptable integers.
-        if key >= 49 and key <= 57:
-            # The number.
-            num = int(chr(key))
-
-            # Set the value.
-            self.cell.SetValue(num)
-
-            # Set the insertion point to the end.
-            self.cell.SetSelection(1,1)
-
-        # Skip everything else.
-        else:
-            event.Skip()
-
-
-
-class Peak_intensity:
-    """The peak list selection class."""
-
-    # Class variables.
-    col_label_width = 40
-    col1_width = 160
-    col2_width = 140
-
-    def __init__(self, gui=None, parent=None, subparent=None, data=None, label=None, width=688, height=300, box=None):
-        """Build the peak list reading GUI element.
+    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, buttons=True):
+        """Build the spectral list GUI element.
 
         @keyword gui:       The main GUI object.
         @type gui:          wx.Frame instance
         @keyword parent:    The parent GUI element that this is to be attached to (the panel object).
         @type parent:       wx object
-        @keyword subparent: The subparent GUI element that this is to be attached to (the analysis object).
-        @type subparent:    wx object
         @keyword data:      The data storage container.
         @type data:         class instance
-        @keyword label:     The type of analysis.
-        @type label:        str
-        @keyword width:     The initial width of the GUI element.
-        @type width:        int
-        @keyword height:    The initial height of the GUI element.
-        @type height:       int
         @keyword box:       The vertical box sizer to pack this GUI component into.
         @type box:          wx.BoxSizer instance
+        @keyword id:        A unique identification string.  This is used to register the update method with the GUI user function observer object.
+        @type id:           str
+        @keyword fn_add:    The function to execute when clicking on the 'Add' button.
+        @type fn_add:       func
+        @keyword buttons:   A flag which if True will display the buttons at the top.
+        @type buttons:      bool
         """
 
         # Store the arguments.
         self.gui = gui
         self.parent = parent
-        self.subparent = subparent
-        self.data = data
-        self.label = label
+        self.fn_add = fn_add
 
         # GUI variables.
         self.spacing = 5
         self.border = 5
+        self.height_buttons = 40
 
-        # The number of rows.
-        self.num_rows = 50
+        # First create a panel (to allow for tooltips on the buttons).
+        self.panel = wx.Panel(self.parent)
+        box.Add(self.panel, 0, wx.ALL|wx.EXPAND, 0)
+
+        # Add a sizer to the panel.
+        panel_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.panel.SetSizer(panel_sizer)
 
         # A static box to hold all the widgets, and its sizer.
-        stat_box = wx.StaticBox(self.parent, -1, "Peak lists")
-        stat_box.SetFont(self.gui.font_subtitle)
+        stat_box = wx.StaticBox(self.panel, -1, "Spectra list")
+        stat_box.SetFont(font.subtitle)
         sub_sizer = wx.StaticBoxSizer(stat_box, wx.VERTICAL)
 
         # Add the sizer to the static box and the static box to the main box.
-        box.Add(sub_sizer, 1, wx.ALL|wx.EXPAND, 0)
+        panel_sizer.Add(sub_sizer, 0, wx.ALL|wx.EXPAND, 0)
 
         # Add a border.
         box_centre = add_border(sub_sizer, border=self.border)
 
-        # Add the cycle delay time element.
+        # Add buttons.
+        if buttons:
+            self.add_buttons(box_centre)
+
+        # Initialise the element.
         box_centre.AddSpacer(self.spacing)
-        self.delay_time = self.subparent.add_text_sel_element(box_centre, self.parent, text="Single delay cycle time [s]")
+        self.init_element(box_centre)
 
-        # Add the grid.
-        box_centre.AddSpacer(self.spacing)
-        self.add_grid(box_centre)
-        box_centre.AddSpacer(self.spacing)
+        # Build the element.
+        self.build_element()
 
-        # Bind some events.
-        self.delay_time.Bind(wx.EVT_KEY_DOWN, self.change_delay_down)
-        self.delay_time.Bind(wx.EVT_KEY_UP, self.change_delay_up)
+        # Initialise observer name.
+        self.name = 'spectra list: %s' % id
+
+        # Register the element for updating when a user function completes.
+        status.observers.gui_uf.register(self.name, self.build_element)
 
 
-    def resize(self, event):
-        """Catch the resize to allow the grid to be resized.
+    def Enable(self, enable=True):
+        """Enable or disable the element.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @keyword enable:    The flag specifying if the element should be enabled or disabled.
+        @type enable:       bool
         """
 
-        # The new grid size.
-        x, y = event.GetSize()
-
-        # The expandable column width.
-        width = x - self.col_label_width - self.col1_width - self.col2_width - 20
-
-        # Set the column sizes.
-        self.grid.SetRowLabelSize(self.col_label_width)
-        self.grid.SetColSize(0, width)
-        self.grid.SetColSize(1, self.col1_width)
-        self.grid.SetColSize(2, self.col2_width)
-
-        # Continue with the normal resizing.
-        event.Skip()
+        # Call the button's method.
+        self.button_add.Enable(enable)
 
 
     def add_buttons(self, sizer):
         """Add the buttons for peak list manipulation.
 
-        @param box:     The sizer element to pack the buttons into.
-        @type box:      wx.BoxSizer instance
+        @param sizer:   The sizer element to pack the buttons into.
+        @type sizer:    wx.BoxSizer instance
         """
 
         # Button Sizer
-        button_sizer = wx.BoxSizer(wx.VERTICAL)
+        button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(button_sizer, 0, wx.ALL|wx.EXPAND, 0)
 
-        # Add peaklist button
-        add_pkl = wx.BitmapButton(self.parent, -1, bitmap=wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
-        add_pkl.SetMinSize((50, 50))
-        self.gui.Bind(wx.EVT_BUTTON, self.load_peaklist, add_pkl)
-        button_sizer.Add(add_pkl, 0, wx.ADJUST_MINSIZE, 0)
-
-        # Add VD list import
-        if self.label =='R1':
-            add_vd = wx.Button(self.parent, -1, "+VD")
-            add_vd.SetToolTipString("Add VD (variable delay) list to automatically fill in R1 relaxation times.")
-            add_vd.SetMinSize((50, 50))
-            self.gui.Bind(wx.EVT_BUTTON, self.load_delay, add_vd)
-            button_sizer.Add(add_vd, 0, wx.ADJUST_MINSIZE, 0)
-
-        # Add Vc list import
-        if self.label =='R2':
-            add_vc = wx.Button(self.parent, -1, "+VC")
-            add_vc.SetToolTipString("Add VC (variable counter) list to automatically fill in R2 relaxation times.")
-            add_vc.SetMinSize((50, 50))
-            button_sizer.Add(add_vc, 0, wx.ADJUST_MINSIZE, 0)
-
-            # Time of counter
-            self.vc_time = wx.TextCtrl(self.parent, -1, "0")
-            self.vc_time.SetToolTipString("Time of counter loop in seconds.")
-            self.vc_time.SetMinSize((50, 20))
-            self.vc_time.SetFont(wx.Font(7, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-            button_sizer.Add(self.vc_time, 0, 0 ,0)
-
-            # Action of Button
-            self.gui.Bind(wx.EVT_BUTTON, lambda event, vc=True: self.load_delay(event, vc), add_vc)
-
-        # Pack buttons
-        sizer.Add(button_sizer, 0, 0, 0)
+        # Add button.
+        self.button_add = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Add")
+        self.button_add.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
+        self.button_add.SetFont(font.normal)
+        self.button_add.SetSize((80, self.height_buttons))
+        button_sizer.Add(self.button_add, 0, 0, 0)
+        self.gui.Bind(wx.EVT_BUTTON, self.fn_add, self.button_add)
+        self.button_add.SetToolTipString("Read a spectral data file.")
 
 
-    def add_grid(self, sizer):
-        """Add the grid for the peak list files and delay times.
+    def build_element(self):
+        """Build the spectra listing GUI element."""
 
-        @param box:     The sizer element to pack the grid into.
-        @type box:      wx.BoxSizer instance
+        # First freeze the element, so that the GUI element doesn't update until the end.
+        self.element.Freeze()
+
+        # Initialise the column index for the data.
+        index = 1
+
+        # Delete the rows and columns.
+        self.element.DeleteAllItems()
+        self.element.DeleteAllColumns()
+
+        # Initialise to a single column.
+        self.element.InsertColumn(0, str_to_gui("Spectrum ID string"))
+
+        # Expand the number of rows to match the number of spectrum IDs, and add the IDs.
+        n = 0
+        if hasattr(cdp, 'spectrum_ids'):
+            # The number of IDs.
+            n = len(cdp.spectrum_ids)
+
+            # Set the IDs.
+            for i in range(n):
+                self.element.InsertStringItem(i, str_to_gui(cdp.spectrum_ids[i]))
+
+        # The NOE spectrum type.
+        if self.noe_spectrum_type(index):
+            index += 1
+
+        # The relaxation times.
+        if self.relax_times(index):
+            index += 1
+
+        # The replicated spectra.
+        if self.replicates(index):
+            index += 1
+
+        # Size the columns.
+        self.size_cols()
+
+        # Post a size event to get the scroll panel to update correctly.
+        event = wx.PyCommandEvent(wx.EVT_SIZE.typeId, self.parent.GetId())
+        wx.PostEvent(self.parent.GetEventHandler(), event)
+
+        # Set the minimum height.
+        height = self.height_char * (n + 1) + 50
+        self.element.SetMinSize((-1, height))
+        self.element.Layout()
+
+        # Unfreeze.
+        self.element.Thaw()
+
+
+    def delete(self):
+        """Unregister the class."""
+
+        # Unregister the class.
+        status.observers.gui_uf.unregister(self.name)
+
+
+    def init_element(self, sizer):
+        """Initialise the GUI element for the spectra listing.
+
+        @param sizer:   The sizer element to pack the element into.
+        @type sizer:    wx.BoxSizer instance
         """
 
-        # Grid of peak list file names and relaxation time.
-        self.grid = wx.grid.Grid(self.parent, -1)
-
-        # Create entries.
-        self.grid.CreateGrid(self.num_rows, 3)
-
-        # Create headers.
-        self.grid.SetColLabelValue(0, "%s peak list" % self.label)
-        self.grid.SetColLabelValue(1, "Relaxation delay [s]")
-        self.grid.SetColLabelValue(2, "No. of cycles")
+        # List of peak list file names and relaxation time.
+        self.element = wx.ListCtrl(self.panel, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
 
         # Properties.
-        self.grid.SetDefaultCellFont(self.gui.font_normal)
-        self.grid.SetLabelFont(self.gui.font_normal_bold)
+        self.element.SetFont(font.normal)
 
-        # Text height.
-        height = self.delay_time.GetSize()[1]
-
-        # Column properties.
-        for i in range(self.grid.GetNumberRows()):
-            # Set the editor for the number of cycles column.
-            self.grid.SetCellEditor(i, 2, Delay_num_cell_editor(0, 200, self))
-
-            # Row properties.
-            self.grid.SetRowSize(i, height)
-
-        # No cell resizing allowed.
-        self.grid.EnableDragColSize(False)
-        self.grid.EnableDragRowSize(False)
+        # Store the base heights.
+        self.height_char = self.element.GetCharHeight()
 
         # Bind some events.
-        self.grid.GetGridWindow().Bind(wx.EVT_LEFT_DCLICK, self.event_left_dclick)
-        self.grid.Bind(wx.EVT_KEY_DOWN, self.event_key_down)
-        self.grid.Bind(wx.EVT_KEY_UP, self.event_key_up)
-        self.grid.Bind(wx.EVT_SIZE, self.resize)
+        self.element.Bind(wx.EVT_SIZE, self.resize)
 
-        # Add grid to sizer, with spacing.
-        sizer.Add(self.grid, 1, wx.ALL|wx.EXPAND, 0)
+        # Add list to sizer.
+        sizer.Add(self.element, 0, wx.ALL|wx.EXPAND, 0)
 
 
-    def change_delay_down(self, event):
-        """Handle changes to the delay time.
+    def resize(self, event):
+        """Catch the resize to allow the element to be resized.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
-        # The key.
-        key = event.GetKeyCode()
+        # Set the column sizes.
+        self.size_cols()
 
-        # Get the text.
-        text = str(self.delay_time.GetString(0, self.delay_time.GetLastPosition()))
-
-        # Allowed keys.
-        allowed = []
-        allowed += [8]    # Backspace.
-        if not search('\.', text):
-            allowed += [46]    # Only one full stop.
-        allowed += [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]    # Numbers.
-        allowed += [127]    # Delete.
-        allowed += [wx.WXK_LEFT, wx.WXK_RIGHT, wx.WXK_HOME, wx.WXK_END]    # Navigation keys.
-
-        # Disallowed values, so do nothing.
-        if key not in allowed:
-            return
-
-        # Normal event handling.
+        # Continue with the normal resizing.
         event.Skip()
 
 
-    def change_delay_up(self, event):
-        """Handle updates to the delay time.
+    def noe_spectrum_type(self, index):
+        """Add the NOE spectral type info to the element.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if a spectrum type exists, False otherwise.
+        @rtype:         bool
         """
 
-        # Normal event handling.
-        event.Skip()
+        # No type info.
+        if not hasattr(cdp, 'spectrum_type') or not len(cdp.spectrum_type):
+            return False
 
-        # Update the grid.
-        self.update_grid()
+        # Append a column.
+        self.element.InsertColumn(index, str_to_gui("NOE spectrum type"))
 
+        # Translation table.
+        table = {
+            'sat': 'Saturated',
+            'ref': 'Reference'
+        }
 
-    def event_left_dclick(self, event):
-        """Handle the left mouse double click.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The row and column.
-        col = self.grid.GetGridCursorCol()
-        row = self.grid.GetGridCursorRow()
-
-        # File selection.
-        if col == 0:
-            # The file.
-            filename = openfile(msg='Select file.', filetype='*.*', default='all files (*.*)|*')
-
-            # Abort if nothing selected.
-            if not filename:
-                return
-
-            # Set the file name.
-            self.grid.SetCellValue(row, col, str(filename))
-
-        # Skip the event to allow for normal operation.
-        event.Skip()
-
-
-    def event_key_down(self, event):
-        """Control what happens when a key is pressed.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Clear cell contents (delete key).
-        if event.GetKeyCode() == wx.WXK_DELETE:
-            # Get the cell selection.
-            cells = self.get_selection()
-
-            # Debugging printout.
-            if status.debug:
-                print(cells)
-
-            # Loop over the cells.
-            for cell in cells:
-                # Set to the empty string.
-                self.grid.SetCellValue(cell[0], cell[1], '')
-
-            # Update the grid.
-            self.update_grid()
-
-            # Do nothing else.
-            return
-
-        # Skip the event to allow for normal operation.
-        event.Skip()
-
-
-    def event_key_up(self, event):
-        """Control what happens when a key is released.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Update the grid.
-        self.update_grid()
-
-        # Skip the event to allow for normal operation.
-        event.Skip()
-
-
-    def get_all_coordinates(self, top_left, bottom_right):
-        """Convert the cell range into a coordinate list.
-
-        @param top_left:        The top left hand coordinate.
-        @type top_left:         list or tuple
-        @param bottom_right:    The bottom right hand coordinate.
-        @type bottom_right:     list or tuple
-        @return:                The list of tuples of coordinates of all cells.
-        @rtype:                 list of tuples
-        """
-
-        # Init.
-        cells = []
-
-        # Loop over the x-range.
-        for x in range(top_left[0], bottom_right[0]+1):
-            # Loop over the y-range.
-            for y in range(top_left[1], bottom_right[1]+1):
-                # Append the coordinate.
-                cells.append((x, y))
-
-        # Return the coordinates.
-        return cells
-
-
-    def get_selection(self):
-        """Determine which cells are selected.
-
-        There are three possibilities for cell selections in a wx.grid.  These are:
-
-            - Single cell selection (this is not highlighted).
-            - Multiple cells are selected.
-            - Column selection.
-            - Row selection.
-
-        @return:    An array of the cell selection coordinates.
-        @rtype:     list of tuples of int
-        """
-
-        # First try to get the coordinates.
-        top_left = self.grid.GetSelectionBlockTopLeft()
-        bottom_right = self.grid.GetSelectionBlockBottomRight()
-
-        # Or the selection.
-        selection = self.grid.GetSelectedCells()
-        col = self.grid.GetSelectedCols()
-        row = self.grid.GetSelectedRows()
-
-        # Debugging printout.
-        if status.debug:
-            print("\nTop left: %s" % top_left)
-            print("Bottom right: %s" % bottom_right)
-            print("selection: %s" % selection)
-            print("col: %s" % col)
-            print("row: %s" % row)
-
-        # Column selection.
-        if col:
-            # Debugging printout.
-            if status.debug:
-                print("Column selection")
-
-            # Return the coordinates of the selected columns.
-            return self.get_all_coordinates([0, col[0]], [self.num_rows-1, col[-1]])
-
-        # Row selection.
-        elif row:
-            # Debugging printout.
-            if status.debug:
-                print("Row selection")
-
-            # Return the coordinates of the selected rows.
-            return self.get_all_coordinates([row[0], 0], [row[-1], 1])
-
-        # Multiple block selection.
-        elif top_left and not selection:
-            # Debugging printout.
-            if status.debug:
-                print("Multiple block selection.")
-
-            # The cell list.
-            cells = []
-
-            # Loop over the n blocks.
-            for n in range(len(top_left)):
-                # Append the cells.
-                cells = cells + self.get_all_coordinates(top_left[n], bottom_right[n])
-
-            # Return the selected cells.
-            return cells
-
-        # Single cell.
-        elif not selection and not top_left:
-            # Debugging printout.
-            if status.debug:
-                print("Single cell.")
-
-            # The position.
-            pos = self.grid.GetGridCursorRow(), self.grid.GetGridCursorCol()
-
-            # Return the coordinate as a list.
-            return [pos]
-
-        # Complex selection.
-        elif selection:
-            # Debugging printout.
-            if status.debug:
-                print("Complex selection.")
-
-            # The cell list.
-            cells = []
-
-            # Loop over the n blocks.
-            for n in range(len(top_left)):
-                # Append the cells.
-                cells = cells + self.get_all_coordinates(top_left[n], bottom_right[n])
-
-            # Return the selection.
-            return cells + selection
-
-        # Unknown.
-        else:
-            # Debugging printout.
-            if status.debug:
-                print("Should not be here.")
-
-
-    def load_delay(self, event, vc=False):
-        """The variable delay list loading GUI element.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # VD
-
-        # VC time is not a number
-        if vc:
-            try:
-                vc_factor = float(self.vc_time.GetValue())
-            except:
-                error_message('VC time is not a number.')
-                return
-
-        # VD
-        else:
-            vc_factor = 1
-
-        # The file
-        filename = openfile(msg='Select file.', filetype='*.*', default='all files (*.*)|*')
-
-        # Abort if nothing selected
-        if not filename:
-            return
-
-        # Open the file
-        file = open(filename, 'r')
-
-        # Read entries
-        index = 0
-        for line in file:
-            # Evaluate if line is a number
-            try:
-                t = float(line.replace('/n', ''))
-            except:
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # No value.
+            if cdp.spectrum_ids[i] not in cdp.spectrum_type.keys():
                 continue
 
-            # Write delay to peak list grid
-            self.grid.SetCellValue(index, 1, str(t*vc_factor))
+            # Set the value.
+            self.element.SetStringItem(i, index, str_to_gui(table[cdp.spectrum_type[cdp.spectrum_ids[i]]]))
 
-            # Next peak list
-            index = index + 1
-
-            # Too many entries in VD list
-            if index == self.num_rows:
-                error_message('Too many entries in list.')
-                return
+        # Successful.
+        return True
 
 
-    def load_peaklist(self, event):
-        """Function to load peak lists to data grid.
+    def relax_times(self, index):
+        """Add the relaxation delay time info to the element.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if relaxation times exist, False otherwise.
+        @rtype:         bool
         """
 
-        # Open files
-        files = multi_openfile(msg='Select %s peak list file' % self.label, filetype='*.*', default='all files (*.*)|*')
+        # No type info.
+        if not hasattr(cdp, 'relax_times') or not len(cdp.relax_times):
+            return False
 
-        # Abort if no files have been selected
-        if not files:
-            return
+        # Append a column.
+        self.element.InsertColumn(index, str_to_gui("Delay times"))
 
-        # Fill values in data grid
-        index = 0
-        for i in range(self.num_rows):
-            # Add entry if nothing is filled in already
-            if str(self.grid.GetCellValue(i, 0)) == '':
-                # Write peak file
-                self.grid.SetCellValue(i, 0, str(files[index]))
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # No value.
+            if cdp.spectrum_ids[i] not in cdp.relax_times.keys():
+                continue
 
-                # Next file
-                index = index + 1
+            # Set the value.
+            self.element.SetStringItem(i, index, float_to_gui(cdp.relax_times[cdp.spectrum_ids[i]]))
 
-                # Stop if no files left
-                if index == len(files):
-                    break
-
-        # Error message if not all files were loaded
-        if index < (len(files)-1):
-                error_message('Not all files could be loaded.')
+        # Successful.
+        return True
 
 
-    def sync_ds(self, upload=False):
-        """Synchronise the rx analysis frame and the relax data store, both ways.
+    def replicates(self, index):
+        """Add the replicated spectra info to the element.
 
-        This method allows the frame information to be uploaded into the relax data store, or for the information in the relax data store to be downloaded by the frame.
-
-        @keyword upload:    A flag which if True will cause the frame to send data to the relax data store.  If False, data will be downloaded from the relax data store to update the frame.
-        @type upload:       bool
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if relaxation times exist, False otherwise.
+        @rtype:         bool
         """
 
-        # The peak lists and relaxation times.
-        if upload:
-            # The delay time.
-            self.data.delay_time = str(self.delay_time.GetString(0, self.delay_time.GetLastPosition()))
+        # No type info.
+        if not hasattr(cdp, 'replicates') or not len(cdp.replicates):
+            return False
 
-            # Loop over the rows.
-            for i in range(self.num_rows):
-                # Old save file support.
-                if not hasattr(self.data, 'file_list'):
-                    self.data.file_list = []
-                if not hasattr(self.data, 'ncyc'):
-                    self.data.ncyc = []
-                if not hasattr(self.data, 'relax_times'):
-                    self.data.relax_times = []
+        # Replicated spectra.
+        repl = replicated_flags()
 
-                # The cell data.
-                file_name = str(self.grid.GetCellValue(i, 0))
-                relax_time = str(self.grid.GetCellValue(i, 1))
-                ncyc = str(self.grid.GetCellValue(i, 2))
+        # Append a column.
+        self.element.InsertColumn(index, str_to_gui("Replicate IDs"))
 
-                # No data, so stop.
-                if file_name == '' and ncyc == '':
-                    break
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # No replicates.
+            if not repl[cdp.spectrum_ids[i]]:
+                continue
 
-                # New row needed.
-                if i >= len(self.data.file_list):
-                    self.data.file_list.append('')
-                if i >= len(self.data.ncyc):
-                    self.data.ncyc.append('')
-                if i >= len(self.data.relax_times):
-                    self.data.relax_times.append('')
+            # The replicated spectra.
+            id_list = replicated_ids(cdp.spectrum_ids[i])
 
-                # Set the file name and relaxation time.
-                self.data.file_list[i] = file_name
-                self.data.ncyc[i] = ncyc
-                self.data.relax_times[i] = relax_time
+            # Convert to a string.
+            text = ''
+            for j in range(len(id_list)):
+                # Add the id.
+                text = "%s%s" % (text, id_list[j])
 
-        else:
-            # The delay time.
-            if hasattr(self.data, 'delay_time'):
-                self.delay_time.SetValue(self.data.delay_time)
+                # Separator.
+                if j < len(id_list)-1:
+                    text = "%s, " % text
 
-            # Loop over the rows.
-            for i in range(len(self.data.file_list)):
-                # The file name.
-                if hasattr(self.data, 'file_list'):
-                    self.grid.SetCellValue(i, 0, str(self.data.file_list[i]))
+            # Set the value.
+            self.element.SetStringItem(i, index, str_to_gui(text))
 
-                # The relaxation time.
-                if hasattr(self.data, 'relax_times'):
-                    self.grid.SetCellValue(i, 1, str(self.data.relax_times[i]))
-
-                # The number of cycles.
-                if hasattr(self.data, 'ncyc'):
-                    self.grid.SetCellValue(i, 2, str(self.data.ncyc[i]))
-
-            # Update the grid.
-            self.update_grid()
+        # Successful.
+        return True
 
 
-    def update_grid(self):
-        """Update the grid, changing the relaxation delay times as needed."""
+    def size_cols(self):
+        """Set the column sizes."""
 
-        # The time value.
-        time = self.delay_time.GetString(0, self.delay_time.GetLastPosition())
-        try:
-            time = float(time)
-        except ValueError:
-            time = ''
+        # The element size.
+        x, y = self.element.GetSize()
 
-        # Loop over the rows.
-        for i in range(self.grid.GetNumberRows()):
-            # The number of cycles.
-            ncyc = str(self.grid.GetCellValue(i, 2))
+        # Number of columns.
+        n = self.element.GetColumnCount()
 
-            # Update the relaxation time.
-            if time != '' and ncyc not in ['', '0']:
-                self.grid.SetCellValue(i, 1, str(int(ncyc) * time))
+        # Set to equal sizes.
+        width = int(x / n)
 
-            # The relaxation time and number of cycles.
-            relax_time = str(self.grid.GetCellValue(i, 1))
-
-            # Clear the relaxation time if set to zero.
-            if relax_time == '0.0':
-                self.grid.SetCellValue(i, 1, '')
+        # Set the column sizes.
+        for i in range(n):
+            self.element.SetColumnWidth(i, width)

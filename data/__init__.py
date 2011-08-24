@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,6 +38,7 @@ import generic_fns
 from gui import Gui
 from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from relax_xml import fill_object_contents, xml_to_object
+from status import Status; status = Status()
 from version import version
 
 
@@ -148,6 +149,10 @@ class Relax_data_store(dict):
         # Reset the current data pipe.
         __builtin__.cdp = None
 
+        # Signal the change.
+        status.observers.reset.notify()
+        status.observers.pipe_alteration.notify()
+
 
     def add(self, pipe_name, pipe_type, switch=True):
         """Method for adding a new data pipe container to the dictionary.
@@ -174,8 +179,12 @@ class Relax_data_store(dict):
 
         # Change the current data pipe.
         if switch:
+            # Set the current data pipe.
             self.instance.current_pipe = pipe_name
             __builtin__.cdp = self[pipe_name]
+
+            # Signal the switch.
+            status.observers.pipe_alteration.notify()
 
 
     def is_empty(self):

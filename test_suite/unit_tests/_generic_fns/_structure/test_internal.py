@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,16 +23,17 @@
 # Python module imports.
 from os import path, sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.reset import reset
 from generic_fns.structure.internal import Internal, MolContainer
 from relax_io import file_root
 from status import Status; status = Status()
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class Test_internal(TestCase):
+class Test_internal(UnitTestCase):
     """Unit tests for the functions of the 'generic_fns.structure.internal' module."""
 
     def setUp(self):
@@ -58,8 +59,8 @@ class Test_internal(TestCase):
         # Delete the structural data object.
         del self.data
 
-        # Reset.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
 
     def test___parse_pdb_record(self):

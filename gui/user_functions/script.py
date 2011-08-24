@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,10 +25,14 @@
 
 # Python module imports.
 import thread
+import wx
+
+# relax module imports.
+from status import Status; status = Status()
 
 # GUI module imports.
 from base import UF_base
-from gui.filedialog import openfile
+from gui.filedialog import RelaxFileDialog
 
 
 class Script(UF_base):
@@ -45,14 +49,19 @@ class Script(UF_base):
 
         # User selection of the file.
         if not file:
-            file = openfile(msg='Select the relax script to execute', default='relax scripts (*.py)|*.py')
+            dialog = RelaxFileDialog(parent=self, message='Select the relax script to execute', wildcard='relax scripts (*.py)|*.py', style=wx.FD_OPEN)
 
-        # Check the file.
-        if not file:
-            return
+            # Show the dialog and catch if no file has been selected.
+            if dialog.ShowModal() != wx.ID_OK:
+                # Don't do anything.
+                return
+
+            # The file.
+            file = dialog.get_file()
 
         # Show the relax controller.
-        self.gui.controller.Show()
+        if status.show_gui:
+            self.gui.controller.Show()
 
         # Execute the script in a thread.
         id = thread.start_new_thread(self.script_exec, (file,))
@@ -66,4 +75,4 @@ class Script(UF_base):
         """
 
         # Execute the user function.
-        self.interpreter.script(str(file))
+        self.gui.interpreter.queue('script', str(file))

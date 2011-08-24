@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2011 Edward d'Auvergne                             #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,10 +31,21 @@ import __builtin__
 from data import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn, scipy_module
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
+from status import Status; status = Status()
 
 
-# List of valid data pipe types.
+# List of valid data pipe types and descriptions.
 VALID_TYPES = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit']
+PIPE_DESC = {
+    'ct':  'Consistency testing',
+    'frame order':  'Frame Order theories',
+    'jw':  'Reduced spectral density mapping',
+    'hybrid':  'Special hybrid pipe',
+    'mf':  'Model-free analysis',
+    'N-state':  'N-state model of domain motions',
+    'noe':  'Steady state NOE calculation',
+    'relax_fit':  'Relaxation curve fitting'
+}
 
 
 def copy(pipe_from=None, pipe_to=None):
@@ -53,12 +64,22 @@ def copy(pipe_from=None, pipe_to=None):
     if pipe_to in list(ds.keys()):
         raise RelaxPipeError(pipe_to)
 
-    # The current data pipe.
-    if pipe_from == None:
-        pipe_from = cdp_name()
+    # Acquire the pipe lock (data modifying function), and make sure it is finally released.
+    status.pipe_lock.acquire()
+    try:
+        # The current data pipe.
+        if pipe_from == None:
+            pipe_from = cdp_name()
 
-    # Copy the data.
-    ds[pipe_to] = ds[pipe_from].__clone__()
+        # Copy the data.
+        ds[pipe_to] = ds[pipe_from].__clone__()
+
+    # Release the lock.
+    finally:
+        status.pipe_lock.release()
+
+    # Notify observers that a pipe change has occurred.
+    status.observers.pipe_alteration.notify()
 
 
 def create(pipe_name=None, pipe_type=None, switch=True):
@@ -96,8 +117,15 @@ def create(pipe_name=None, pipe_type=None, switch=True):
     if pipe_type == 'frame order' and not scipy_module:
         raise RelaxError("The frame order analysis is not available.  Please install the scipy Python package.")
 
-    # Add the data pipe.
-    ds.add(pipe_name=pipe_name, pipe_type=pipe_type, switch=switch)
+    # Acquire the pipe lock (data modifying function), and make sure it is finally released.
+    status.pipe_lock.acquire()
+    try:
+        # Add the data pipe.
+        ds.add(pipe_name=pipe_name, pipe_type=pipe_type, switch=switch)
+
+    # Release the lock.
+    finally:
+        status.pipe_lock.release()
 
 
 def cdp_name():
@@ -117,44 +145,61 @@ def delete(pipe_name=None):
     @type pipe_name:    str
     """
 
-    # Pipe name is supplied.
-    if pipe_name != None:
-        # Test if the data pipe exists.
-        test(pipe_name)
+    # Acquire the pipe lock (data modifying function), and make sure it is finally released.
+    status.pipe_lock.acquire()
+    try:
+        # Pipe name is supplied.
+        if pipe_name != None:
+            # Test if the data pipe exists.
+            test(pipe_name)
 
-        # Convert to a list.
-        pipes = [pipe_name]
+            # Convert to a list.
+            pipes = [pipe_name]
 
-    # All pipes.
-    else:
-        pipes = ds.keys()
+        # All pipes.
+        else:
+            pipes = ds.keys()
 
-    # Loop over the pipes.
-    for pipe in pipes:
-        # Delete the data pipe.
-        del ds[pipe]
+        # Loop over the pipes.
+        for pipe in pipes:
+            # Delete the data pipe.
+            del ds[pipe]
 
-        # Set the current data pipe to None if it is the deleted data pipe.
-        if ds.current_pipe == pipe:
-            ds.current_pipe = None
-            __builtin__.cdp = None
+            # Set the current data pipe to None if it is the deleted data pipe.
+            if ds.current_pipe == pipe:
+                ds.current_pipe = None
+                __builtin__.cdp = None
+
+    # Release the lock.
+    finally:
+        status.pipe_lock.release()
+
+    # Notify observers that the switch has occurred.
+    status.observers.pipe_alteration.notify()
 
 
 def display():
     """Print the details of all the data pipes."""
 
-    # Heading.
-    print(("%-20s%-20s%-20s" % ("Data pipe name", "Data pipe type", "Current")))
+    # Acquire the pipe lock, and make sure it is finally released.
+    status.pipe_lock.acquire()
+    try:
+        # Heading.
+        print(("%-20s%-20s%-20s" % ("Data pipe name", "Data pipe type", "Current")))
 
-    # Loop over the data pipes.
-    for pipe_name in ds:
-        # The current data pipe.
-        current = ''
-        if pipe_name == cdp_name():
-            current = '*'
+        # Loop over the data pipes.
+        for pipe_name in ds:
+            # The current data pipe.
+            current = ''
+            if pipe_name == cdp_name():
+                current = '*'
 
-        # Print out.
-        print("%-20s%-20s%-20s" % ("'"+pipe_name+"'", get_type(pipe_name), current))
+            # Print out.
+            print("%-20s%-20s%-20s" % ("'"+pipe_name+"'", get_type(pipe_name), current))
+
+    # Release the lock.
+    finally:
+        status.pipe_lock.release()
 
 
 def get_pipe(name=None):
@@ -221,15 +266,22 @@ def pipe_loop(name=False):
     @rtype:         PipeContainer instance or tuple of PipeContainer instance and str if name=True
     """
 
-    # Loop over the keys.
-    for key in list(ds.keys()):
-        # Return the pipe and name.
-        if name:
-            yield ds[key], key
+    # Acquire the pipe lock, and make sure it is finally released.
+    status.pipe_lock.acquire()
+    try:
+        # Loop over the keys.
+        for key in list(ds.keys()):
+            # Return the pipe and name.
+            if name:
+                yield ds[key], key
 
-        # Return just the pipe.
-        else:
-            yield ds[key]
+            # Return just the pipe.
+            else:
+                yield ds[key]
+
+    # Release the lock.
+    finally:
+        status.pipe_lock.release()
 
 
 def pipe_names():
@@ -249,12 +301,22 @@ def switch(pipe_name=None):
     @type pipe_name:    str
     """
 
-    # Test if the data pipe exists.
-    test(pipe_name)
+    # Acquire the pipe lock (data modifying function), and make sure it is finally released.
+    status.pipe_lock.acquire()
+    try:
+        # Test if the data pipe exists.
+        test(pipe_name)
 
-    # Switch the current data pipe.
-    ds.current_pipe = pipe_name
-    __builtin__.cdp = get_pipe()
+        # Switch the current data pipe.
+        ds.current_pipe = pipe_name
+        __builtin__.cdp = get_pipe()
+
+    # Release the lock.
+    finally:
+        status.pipe_lock.release()
+
+    # Notify observers that the switch has occurred.
+    status.observers.pipe_alteration.notify()
 
 
 def test(pipe_name=None):
@@ -278,4 +340,3 @@ def test(pipe_name=None):
     # Test if the data pipe exists.
     if pipe_name not in ds:
         raise RelaxNoPipeError(pipe_name)
-

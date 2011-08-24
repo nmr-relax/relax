@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,6 +33,8 @@ import wx.stc as stc
 from info import Info_box
 from prompt import interpreter
 
+# relax GUI module imports
+from gui.icons import relax_icons
 
 
 class Prompt(wx.Frame):
@@ -47,6 +49,9 @@ class Prompt(wx.Frame):
         # Create GUI elements
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
+
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
 
         # Some default values.
         self.size_x = 1000

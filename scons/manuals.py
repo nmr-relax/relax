@@ -247,7 +247,7 @@ def compile_api_manual_html(target, source, env):
         epydoc_cmd = epydoc_cmd + ' --exclude=' + name
 
     # All the files of the current directory.
-    blacklist = ['README', 'relax.bat']
+    blacklist = ['README', 'relax.bat', 'relax_gui_mode.py']
     files = listdir(getcwd())
     for file in files:
         # Blacklisted.

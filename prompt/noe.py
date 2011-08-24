@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import User_fn_class
+from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import noesy
 from specific_fns.setup import noe_obj
@@ -35,50 +35,6 @@ class Noe(User_fn_class):
     """Class for handling steady-state NOE and NOESY data."""
 
     def read_restraints(self, file=None, dir=None, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
-        """Read NOESY or ROESY restraints from a file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        file:  The name of the file containing the relaxation data.
-
-        dir:  The directory where the file is located.
-
-        proton1_col:  The column containing the first proton of the NOE or ROE cross peak.
-
-        proton2_col:  The column containing the second proton of the NOE or ROE cross peak.
-
-        lower_col:  The column containing the lower NOE bound.
-
-        upper_col:  The column containing the upper NOE bound.
-
-        sep:  The column separator (the default is white space).
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function can automatically determine the format of the file, for example Xplor
-        formatted restraint files.  A generically formatted file is also supported if it contains
-        minimally four columns with the two proton names and the upper and lower bounds, as
-        specified by the *_col arguments.  The proton names need to be in the spin identification
-        string format.
-
-
-        Examples
-        ~~~~~~~~
-
-        To read the Xplor formatted restraint file 'NOE.xpl', type one of:
-
-        relax> noe.read_restraints('NOE.xpl')
-        relax> noe.read_restraints(file='NOE.xpl')
-
-
-        To read the generic formatted file 'noes', type one of:
-
-        relax> noe.read_restraints(file='NOE.xpl', proton1_col=0, proton2_col=1, lower_col=2, upper_col=3)
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "noe.read_restraints("
@@ -103,30 +59,36 @@ class Noe(User_fn_class):
         # Execute the functional code.
         noesy.read_restraints(file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
 
+    # The function doc info.
+    read_restraints._doc_title = "Read NOESY or ROESY restraints from a file."
+    read_restraints._doc_title_short = "Restraint reading."
+    read_restraints._doc_args = [
+        ["file", "The name of the file containing the restraint data."],
+        ["dir", "The directory where the file is located."],
+        ["proton1_col", "The column containing the first proton of the NOE or ROE cross peak."],
+        ["proton2_col", "The column containing the second proton of the NOE or ROE cross peak."],
+        ["lower_col", "The column containing the lower NOE bound."],
+        ["upper_col", "The column containing the upper NOE bound."],
+        ["sep", "The column separator (the default is white space)."]
+    ]
+    read_restraints._doc_desc = """
+        The format of the file will be automatically determined, for example Xplor formatted restraint files.  A generically formatted file is also supported if it contains minimally four columns with the two proton names and the upper and lower bounds, as specified by the column numbers.  The proton names need to be in the spin ID string format.
+        """
+    read_restraints._doc_examples = """
+        To read the Xplor formatted restraint file 'NOE.xpl', type one of:
+
+        relax> noe.read_restraints('NOE.xpl')
+        relax> noe.read_restraints(file='NOE.xpl')
+
+
+        To read the generic formatted file 'noes', type one of:
+
+        relax> noe.read_restraints(file='NOE.xpl', proton1_col=0, proton2_col=1, lower_col=2, upper_col=3)
+        """
+    _build_doc(read_restraints)
+
 
     def spectrum_type(self, spectrum_type=None, spectrum_id=None):
-        """Set the steady-state NOE spectrum type for pre-loaded peak intensities.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        spectrum_type:  The type of steady-state NOE spectrum, one of 'ref' or 'sat'.
-
-        spectrum_id:  The spectrum identification string.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        The spectrum_type argument can have the following values:
-            'ref':  The steady-state NOE reference spectrum.
-            'sat':  The steady-state NOE spectrum with proton saturation turned on.
-
-        Peak intensities should be loaded before calling this user function via the
-        'spectrum.read_intensities()' user function.  The intensity values will then be associated
-        with a spectrum identifier which can be used here.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "noe.spectrum_type("
@@ -136,7 +98,24 @@ class Noe(User_fn_class):
 
         # The argument checks.
         arg_check.is_str(spectrum_type, 'spectrum type')
-        arg_check.is_str(spectrum_id, 'spectrum identification string')
+        arg_check.is_str(spectrum_id, 'spectrum ID string')
 
         # Execute the functional code.
         noe_obj._spectrum_type(spectrum_type=spectrum_type, spectrum_id=spectrum_id)
+
+    # The function doc info.
+    spectrum_type._doc_title = "Set the steady-state NOE spectrum type for pre-loaded peak intensities."
+    spectrum_type._doc_title_short = "Steady-state NOE spectrum type."
+    spectrum_type._doc_args = [
+        ["spectrum_type", "The type of steady-state NOE spectrum, one of 'ref' for the reference spectrum or 'sat' for the saturated spectrum."],
+        ["spectrum_id", "The spectrum ID string."]
+    ]
+    spectrum_type._doc_desc = """
+        The spectrum type can be one of the following:
+
+            The steady-state NOE reference spectrum.
+            The steady-state NOE spectrum with proton saturation turned on.
+
+        Peak intensities should be loaded before this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum ID string which can be used here.
+        """
+    _build_doc(spectrum_type)

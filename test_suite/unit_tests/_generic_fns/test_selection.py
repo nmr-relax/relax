@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,15 +20,13 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from unittest import TestCase
-
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import selection
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class Test_selection(TestCase):
+class Test_selection(UnitTestCase):
     """Unit tests for the functions of the 'generic_fns.selection' module."""
 
     def setUp(self):
@@ -69,13 +67,6 @@ class Test_selection(TestCase):
         cdp.mol[0].res[2].spin[0].select = 0
         cdp.mol[1].res[0].spin[0].select = 0
         cdp.mol[1].res[1].spin[1].select = 0
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Reset.
-        ds.__reset__()
 
 
     def test_reverse(self):

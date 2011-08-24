@@ -25,17 +25,19 @@
 from copy import deepcopy
 from numpy import uint8, zeros
 from os import sep
-from textwrap import wrap
+from string import split
 import webbrowser
 import wx
 import wx.html
+from wx.lib.wordwrap import wordwrap
 
 # relax module imports.
 from info import Info_box
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from paths import IMAGE_PATH
+from gui.icons import relax_icons
+from gui.paths import IMAGE_PATH
 
 
 class About_base(wx.Frame):
@@ -69,6 +71,9 @@ class About_base(wx.Frame):
         # Execute the base class __init__() method.
         super(About_base, self).__init__(parent=parent, id=id, title=title, style=self.style)
 
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
+
         # Create a scrolled window.
         self.window = wx.ScrolledWindow(self, -1)
 
@@ -87,7 +92,7 @@ class About_base(wx.Frame):
         self.virtual_size()
 
         # Set the window size.
-        self.SetSize((self.virt_x, self.dim_y + 2*self.border))
+        self.SetSize((self.virt_x, self.dim_y))
 
         # Set the window virtual size.
         self.window.SetVirtualSize((self.virt_x, self.virt_y))
@@ -132,7 +137,7 @@ class About_base(wx.Frame):
         self.html.SetDC(self.dc, 1.0)
 
         # Set the size of the HTML object.
-        self.html.SetSize(self.virt_x - 2*self.border, self.virt_y - 2*self.border)
+        self.html.SetSize(self.virt_x, self.virt_y)
 
         # Add the text.
         self.html.SetHtmlText(text)
@@ -250,7 +255,7 @@ class About_base(wx.Frame):
 
         # Draw the text centred.
         if centre:
-            pos_x = self.border + (self.dim_x - x)/2
+            pos_x = (self.dim_x - x)/2
 
         # Draw the text.
         text = self.dc.DrawText(url_text, pos_x, self.offset())
@@ -283,13 +288,13 @@ class About_base(wx.Frame):
         x, y = self.dc.GetTextExtent(text)
 
         # Draw the text, with a spacer.
-        self.dc.DrawText(text, self.border + (self.virt_x - x)/2, self.offset(15))
+        self.dc.DrawText(text, (self.virt_x - x)/2, self.offset(15))
 
         # Add the text extent.
         self.offset(y)
 
 
-    def draw_wrapped_text(self, text, point_size=10, family=wx.FONTFAMILY_ROMAN, width=69, spacer=10):
+    def draw_wrapped_text(self, text, point_size=10, family=wx.FONTFAMILY_ROMAN, spacer=10):
         """Generic method for drawing wrapped text in the relax about widget.
 
         @param text:        The text to wrap and draw.
@@ -303,21 +308,17 @@ class About_base(wx.Frame):
         self.dc.SetFont(font)
 
         # Wrap the text.
-        lines = wrap(text, width)
+        width = self.dim_x - 2*self.border
+        wrapped_text = wordwrap(text, width, self.dc)
 
-        # Find the max extents.
-        max_y = 0
-        for line in lines:
-            x, y = self.dc.GetTextExtent(line)
-            if x > self.text_max_x:
-                self.text_max_x = x
-            if y > max_y:
-                max_y = y
+        # Find the full extents.
+        full_x, full_y = self.dc.GetTextExtent(wrapped_text)
 
         # Add a top spacer.
         self.offset(10)
 
         # Draw.
+        lines = split(wrapped_text, '\n')
         for line in lines:
             # Find and break out the URLs from the text.
             text_elements, url = self.split_refs(line)
@@ -338,7 +339,7 @@ class About_base(wx.Frame):
                 pos_x += x
 
             # Update the offset.
-            self.offset(max_y + 1)
+            self.offset(y + 1)
 
 
     def generate(self, event):
@@ -461,17 +462,13 @@ class About_base(wx.Frame):
 
         # Dimensions of the drawing area.
         if self.max_x:
-            x = self.max_x
+            self.virt_x = self.max_x
         else:
-            x = self.dim_x
+            self.virt_x = self.dim_x
         if self.max_y:
-            y = self.max_y
+            self.virt_y = self.max_y
         else:
-            y = self.dim_y
-
-        # Borders.
-        self.virt_x = x + 2*self.border
-        self.virt_y = y + 2*self.border
+            self.virt_y = self.dim_y
 
 
 
@@ -487,6 +484,9 @@ class About_gui(About_base):
 
     def build_widget(self):
         """Build the about dialog."""
+
+        # The title.
+        self.SetTitle("About relax GUI")
 
         # The image.
         bitmap = wx.Bitmap(IMAGE_PATH+'start.png', wx.BITMAP_TYPE_ANY)
@@ -505,12 +505,12 @@ class About_relax(About_base):
 
     # Dimensions.
     dim_x = 450
-    dim_y = 580
+    dim_y = 600
 
     # Spacer size (px).
     border = 10
 
-    def __init__(self, parent=None, id=-1, title=''):
+    def __init__(self, parent=None, id=-1, title="About relax"):
         """Build the dialog."""
 
         # Initialise the program information container.
@@ -536,6 +536,13 @@ class About_relax(About_base):
         self.draw_desc_long()
         self.draw_licence()
 
+        # Resize the window.
+        dim_x = self.dim_x
+        dim_y = self.offset() + self.border
+        self.SetSize((dim_x, dim_y))
+        self.window.SetVirtualSize((dim_x, dim_y))
+        self.window.EnableScrolling(x_scrolling=False, y_scrolling=False)
+
 
     def draw_copyright(self):
         """Draw the copyright statements."""
@@ -549,8 +556,8 @@ class About_relax(About_base):
         x2, y2 = self.dc.GetTextExtent(self.info.copyright[1])
 
         # Draw the text, with a starting spacer.
-        self.dc.DrawText(self.info.copyright[0], self.border + (self.dim_x - x1)/2, self.offset(15))
-        self.dc.DrawText(self.info.copyright[1], self.border + (self.dim_x - x2)/2, self.offset(y1+3))
+        self.dc.DrawText(self.info.copyright[0], (self.dim_x - x1)/2, self.offset(15))
+        self.dc.DrawText(self.info.copyright[1], (self.dim_x - x2)/2, self.offset(y1+3))
 
         # Add the text extent.
         self.offset(y2)
@@ -573,7 +580,7 @@ class About_relax(About_base):
         x, y = self.dc.GetTextExtent(self.info.desc)
 
         # Draw the text, with a spacer.
-        self.dc.DrawText(self.info.desc, self.border + (self.dim_x - x)/2, self.offset(15))
+        self.dc.DrawText(self.info.desc, (self.dim_x - x)/2, self.offset(15))
 
         # Add the text extent.
         self.offset(y)
@@ -583,7 +590,7 @@ class About_relax(About_base):
         """Draw the relax icon on the canvas."""
 
         # Add the relax logo.
-        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.border + (self.dim_x - 400)/2, self.offset(20), True)
+        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), (self.dim_x - 400)/2, self.offset(20), True)
 
         # Add the bitmap width to the offset.
         self.offset(168)

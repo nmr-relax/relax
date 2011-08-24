@@ -24,15 +24,14 @@
 """Module containing the introductory text container."""
 
 # Python module imports.
+import numpy
+import platform
 from string import split
+from textwrap import wrap
 
 # relax module imports.
 import dep_check
-import numpy
-import platform
-from textwrap import wrap
 from version import version
-
 
 
 class Info_box(object):
