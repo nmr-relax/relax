@@ -147,7 +147,6 @@ class Uni_processor(Processor):
             completed = (i == last_command)
 
             command.run(self, completed)
-            self.restore_stdio()
 
         #self.run_command_queue()
         #TODO: add cheques for empty queues and maps if now warn
