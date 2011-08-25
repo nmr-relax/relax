@@ -23,6 +23,9 @@ data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_
 # Load the sequence.
 sequence.read('Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
+# Deselect unresolved spins.
+deselect.read(file='unresolved', dir=data_path, res_num_col=1)
+
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
 
@@ -64,9 +67,6 @@ spectrum.replicated(spectrum_ids=['T1_inv-recov_1950_ms', 'T1_inv-recov_1950_ms_
 
 # Peak intensity error analysis.
 spectrum.error_analysis()
-
-# Deselect unresolved spins.
-deselect.read(file='unresolved', dir=data_path, res_num_col=1)
 
 # Set the relaxation curve type.
 relax_fit.select_model('exp_3param_inv_neg')
