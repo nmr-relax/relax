@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -111,10 +111,6 @@ class Uni_processor(Processor):
 
     def return_object(self, result):
 
-        local_save_stdout = sys.stdout
-        local_save_stderr = sys.stderr
-        self.restore_stdio()
-
         if isinstance(result, Exception):
             #FIXME: clear command queue
 		    #       and finalise mpi (or restart it if we can!
@@ -132,8 +128,6 @@ class Uni_processor(Processor):
         else:
             message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__, result)
             raise Exception(message)
-        sys.stdout = local_save_stdout
-        sys.stderr = local_save_stderr
 
 
     def run(self):
@@ -152,9 +146,7 @@ class Uni_processor(Processor):
         for i, command  in enumerate(self.command_queue):
             completed = (i == last_command)
 
-            self.capture_stdio(self.std_stdio_capture(pre_strings=('', '')))
             command.run(self, completed)
-            self.restore_stdio()
 
         #self.run_command_queue()
         #TODO: add cheques for empty queues and maps if now warn

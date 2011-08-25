@@ -214,7 +214,7 @@ class Relax:
             runner.run_unit_tests()
 
         # Execute the relax GUI tests.
-        elif mode == 'GUI tests':
+        elif self.mode == 'GUI tests':
             # Run the tests.
             runner = Test_suite_runner(self.tests)
             runner.run_gui_tests()
@@ -229,7 +229,7 @@ class Relax:
 
         # Unknown mode.
         else:
-            raise relax_errors.RelaxError("The '%s' mode is unknown." % mode)
+            raise relax_errors.RelaxError("The '%s' mode is unknown." % self.mode)
 
 
     def arguments(self):
@@ -351,7 +351,7 @@ class Relax:
             elif options.unit_tests:
                 self.mode = 'unit tests'
             elif options.gui_tests:
-                mode = 'GUI tests'
+                self.mode = 'GUI tests'
 
             # Set the status flag.
             status.test_mode = True

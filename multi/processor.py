@@ -430,10 +430,6 @@ class Processor(object):
         self._processor_size = processor_size
         '''Number of slave processors available in this processor.'''
 
-        # Default STDOUT and STDERR for restoring later on.
-        self.orig_stdout = sys.__stdout__
-        self.orig_stderr = sys.__stderr__
-
         # Capture the STDIO.
         self.setup_stdio_capture(stdio_capture)
 
@@ -677,21 +673,6 @@ class Processor(object):
         '''
 
         return int(math.ceil(math.log10(self.processor_size())))
-
-
-    def restore_stdio(self):
-        '''Restore sys.stdout and sys.stderr to the system defaults.
-
-        @note:  sys.stdout and sys.stderr are replaced with sys.__stdout__ ans sys.__stderr__.
-        '''
-
-        # First flush.
-        sys.stdout.flush()
-        sys.stderr.flush()
-
-        # Then restore the IO streams.
-        sys.stdout = self.orig_stdout
-        sys.stderr = self.orig_stderr
 
 
     def return_object(self, result):

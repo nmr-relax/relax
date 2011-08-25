@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
+# Copyright (C) 2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -144,8 +145,6 @@ class Multi_processor(Processor):
 
 
     def post_run(self):
-
-        self.restore_stdio()
 
         super(Multi_processor, self).post_run()
 
