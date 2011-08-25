@@ -29,6 +29,7 @@ from re import search
 from string import split
 import sys
 from threading import Thread
+from time import sleep
 from traceback import print_exc
 import wx
 
@@ -80,6 +81,14 @@ class Interpreter(Thread):
 
         # Then queue a dummy user function.
         self._queue.put([None, None, None])
+
+
+    def flush(self):
+        """Return only once the queue is empty."""
+
+        # Loop until empty.
+        while not self.empty():
+            sleep(0.2)
 
 
     def join(self):
