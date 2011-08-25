@@ -36,6 +36,7 @@ from sys import stderr
 import time
 from types import ClassType
 
+
 # Text variables.
 BIN = 'a binary number (0 or 1)'
 BOOL = 'a Boolean (True or False)'
@@ -98,6 +99,7 @@ class BaseError(Exception):
         """Modify the behaviour of the error system."""
 
         # Save the state if the pedantic flag is turned on.
+        from status import Status; status = Status()
         if status.pedantic:
             save_state()
 
