@@ -351,7 +351,7 @@ class Relax:
             elif options.unit_tests:
                 self.mode = 'unit tests'
             elif options.gui_tests:
-                mode = 'GUI tests'
+                self.mode = 'GUI tests'
 
             # Set the status flag.
             status.test_mode = True
