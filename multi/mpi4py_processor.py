@@ -57,9 +57,12 @@ def ditch_all_results():
                     break
 
 
-# wrapper sys.exit function
-# CHECKME is status ok
 def exit(status=None):
+    """Wrapper for the sys.exit function."""
+
+    # CHECKME is status ok
+
+    # Execution on the slave.
     if MPI.COMM_WORLD.rank != 0:
         if in_main_loop:
             raise Exception('sys.exit unexpectedley called on slave!')
@@ -72,10 +75,10 @@ def exit(status=None):
             sys.__stderr__.write('***********************************************\n')
             sys.__stderr__.write('\n')
             MPI.COMM_WORLD.Abort()
+
+    # Execution on the master.
     else:
-        #print 'here'
         exit_mpi()
-        #MPI.COMM_WORLD.Abort(1)
         sys.exit(status)
 
 
@@ -83,6 +86,7 @@ def exit_mpi():
     if MPI.Is_initialized() and not MPI.Is_finalized() and MPI.COMM_WORLD.rank == 0:
         broadcast_command(Exit_command())
         ditch_all_results()
+
 
 
 class Mpi4py_processor(Multi_processor):
