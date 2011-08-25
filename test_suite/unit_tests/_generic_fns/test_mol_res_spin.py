@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,16 +20,15 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from unittest import TestCase
-
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import mol_res_spin, pipes
+from generic_fns.reset import reset
 from relax_errors import RelaxError, RelaxNoPipeError
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class Test_mol_res_spin(TestCase):
+class Test_mol_res_spin(UnitTestCase):
     """Unit tests for the functions of the 'generic_fns.mol_res_spin' module."""
 
     def setUp(self):
@@ -71,13 +70,6 @@ class Test_mol_res_spin(TestCase):
         cdp.mol[0].res[2].spin[0].select = 0
         cdp.mol[1].res[0].spin[0].select = 0
         cdp.mol[1].res[1].spin[1].select = 0
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Reset.
-        ds.__reset__()
 
 
     def test_Selection_boolean_and(self):
@@ -494,8 +486,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.count_spins().
         """
 
-        # Remove all data.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -510,8 +502,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.count_spins().
         """
 
-        # Remove all data.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Test for the error.
         self.assertRaises(RelaxNoPipeError, mol_res_spin.count_spins)
@@ -533,8 +525,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.exists_mol_res_spin_data().
         """
 
-        # Remove all data.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -553,8 +545,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.exists_mol_res_spin_data().
         """
 
-        # Remove all data.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -573,8 +565,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.exists_mol_res_spin_data().
         """
 
-        # Remove all data.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -593,8 +585,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.exists_mol_res_spin_data().
         """
 
-        # Remove all data.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -613,8 +605,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.exists_mol_res_spin_data().
         """
 
-        # Remove all data.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -633,8 +625,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.exists_mol_res_spin_data().
         """
 
-        # Remove all data.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -649,8 +641,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.exists_mol_res_spin_data().
         """
 
-        # Remove all data.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # This should fail.
         self.assertRaises(RelaxNoPipeError, mol_res_spin.exists_mol_res_spin_data)
@@ -773,8 +765,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.molecule_loop().
         """
 
-        # Reset.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -794,8 +786,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.molecule_loop().
         """
 
-        # Reset.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Function for the problem of catching an error in a generator function.
         def fail_test():
@@ -1000,8 +992,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.residue_loop().
         """
 
-        # Reset.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -1021,8 +1013,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.residue_loop().
         """
 
-        # Reset.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Function for the problem of catching an error in a generator function.
         def fail_test():
@@ -1294,8 +1286,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.spin_loop().
         """
 
-        # Reset.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -1315,8 +1307,8 @@ class Test_mol_res_spin(TestCase):
         The function tested is generic_fns.mol_res_spin.spin_loop().
         """
 
-        # Reset.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Function for the problem of catching an error in a generator function.
         def fail_test():

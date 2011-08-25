@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -34,18 +34,12 @@ from relax_errors import RelaxStyleError, RelaxUnknownDataTypeError
 class Molmol:
     """Class containing the Molmol specific functions for model-free analysis."""
 
-    _molmol_classic_style_doc = """
-        Model-free classic style
-        ~~~~~~~~~~~~~~~~~~~~~~~~
-
+    _molmol_classic_style_doc = ["Model-free classic style", """
         Creator:  Edward d'Auvergne
 
         Argument string:  "classic"
 
-        Description:  The classic style draws the backbone of a protein in the Molmol 'neon' style.
-        Rather than colouring the amino acids to which the NH bond belongs, the three covalent bonds
-        of the peptide bond from Ca to Ca in which the NH bond is located are coloured.  Deselected
-        residues are shown as black lines.
+        Description:  The classic style draws the backbone of a protein in the Molmol 'neon' style.  Rather than colouring the amino acids to which the NH bond belongs, the three covalent bonds of the peptide bond from Ca to Ca in which the NH bond is located are coloured.  Deselected residues are shown as black lines.
 
         Supported data types:
         ____________________________________________________________________________________________
@@ -112,12 +106,12 @@ class Molmol:
         | exchange       |             | chemical exchange are coloured white.  The default colour |
         |                |             | gradient starts at 'yellow' and finishes at 'red'.        |
         |________________|_____________|___________________________________________________________|
-        """
+        """]
 
     def _molmol_classic_style(self, data_type=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """The MOLMOL classic style.
 
-        @keyword data_type:     The parameter name.
+        @keyword data_type:     The parameter name or data type.
         @type data_type:        str
         @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
         @type colour_start:     str
@@ -137,7 +131,7 @@ class Molmol:
         num = 0
 
         # Loop over the spins.
-        for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+        for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
             # More than one spin.
             if prev_res_num == res_num:
                 raise RelaxError("Only a single spin per residue is allowed for the classic Molmol macro style.")
@@ -157,7 +151,7 @@ class Molmol:
 
         if data_type == 'S2':
             # Loop over the spins.
-            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -175,7 +169,7 @@ class Molmol:
 
         elif data_type == 'S2f':
             # Loop over the spins.
-            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -194,7 +188,7 @@ class Molmol:
 
         elif data_type == 'S2s':
             # Loop over the spins.
-            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -213,7 +207,7 @@ class Molmol:
 
         elif data_type == 'amp_fast':
             # Loop over the spins.
-            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -250,7 +244,7 @@ class Molmol:
 
         elif data_type == 'amp_slow':
             # Loop over the spins.
-            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -278,7 +272,7 @@ class Molmol:
 
         elif data_type == 'te':
             # Loop over the spins.
-            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -296,7 +290,7 @@ class Molmol:
 
         elif data_type == 'tf':
             # Loop over the spins.
-            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -314,9 +308,9 @@ class Molmol:
 
         elif data_type == 'ts':
             # Loop over the spins.
-            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
-                if not spins.select:
+                if not spin.select:
                     continue
 
                 # Skip spins which don't have a ts value.
@@ -338,7 +332,7 @@ class Molmol:
 
         elif data_type == 'time_fast':
             # Loop over the spins.
-            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -368,7 +362,7 @@ class Molmol:
 
         elif data_type == 'time_slow':
             # Loop over the spins.
-            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -403,7 +397,7 @@ class Molmol:
 
         elif data_type == 'Rex':
             # Loop over the spins.
-            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -478,7 +472,7 @@ class Molmol:
             colour_end = 'blue'
 
         # Get the RGB colour array (swap the colours because of the inverted hyperbolic colour value).
-        rgb_array = self.relax.colour.linear_gradient(colour_value, colour_end, colour_start, colour_list)
+        rgb_array = linear_gradient(colour_value, colour_end, colour_start, colour_list)
 
         # Colour the peptide bond.
         self._molmol_classic_colour(res_num, width, rgb_array)
@@ -563,17 +557,17 @@ class Molmol:
             colour_end = 'red'
 
         # Get the RGB colour array (swap the colours because of the inverted hyperbolic colour value).
-        rgb_array = self.relax.colour.linear_gradient(colour_value, colour_end, colour_start, colour_list)
+        rgb_array = linear_gradient(colour_value, colour_end, colour_start, colour_list)
 
         # Colour the peptide bond.
         self._molmol_classic_colour(res_num, width, rgb_array)
 
 
-    def molmol_macro(self, param, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+    def molmol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """Create and return an array of Molmol macros of the model-free parameters.
 
-        @param param:           The parameter name.
-        @type param:            str
+        @param data_type:       The parameter name or data type.
+        @type data_type:        str
         @keyword style:         The Molmol style.
         @type style:            None or str
         @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).

@@ -26,7 +26,7 @@ from os import sep
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import count_spins
+from generic_fns.mol_res_spin import count_spins, return_spin
 from status import Status; status = Status()
 
 
@@ -49,12 +49,6 @@ class Structure(SystemTestCase):
 
         # Create the data pipe.
         self.interpreter.pipe.create('mf', 'mf')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
 
 
     def test_load_internal_results(self):
@@ -151,6 +145,16 @@ class Structure(SystemTestCase):
 
             # Increment the residue counter.
             i = i + 1
+
+
+    def test_read_not_pdb(self):
+        """Test the reading of a file by structure.read_pdb that is not a PDB."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states'
+
+        # Read the non-PDB file.
+        self.interpreter.structure.read_pdb(file='basic_single_pipe.bz2', dir=path, parser='internal')
 
 
     def test_read_pdb_internal1(self):
@@ -624,3 +628,61 @@ class Structure(SystemTestCase):
                 self.assertEqual(mol.file_path, paths[i][j])
                 self.assertEqual(mol.file_model, models[i][j])
                 self.assertEqual(mol.file_mol_num, 1)
+
+
+    def test_read_xyz_internal1(self):
+        """Load the 'Indol_test.xyz' XYZ file (using the internal structural object XYZ reader)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the XYZ file.
+        self.interpreter.structure.read_xyz(file='Indol_test.xyz', dir=path)
+
+        # Test the molecule name.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, 'Indol_test_mol1')
+
+        # Load a single atom and test it.
+        self.interpreter.structure.load_spins('#Indol_test_mol1@3')
+        self.assertEqual(count_spins(), 1)
+
+        # Try loading a few protons.
+        self.interpreter.structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.interpreter.structure.load_spins()
+
+
+    def test_read_xyz_internal2(self):
+        """Load the 'SSS-cluster4-new-test.xyz' XYZ file (using the internal structural object XYZ reader)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the XYZ file.
+        self.interpreter.structure.read_xyz(file='SSS-cluster4-new-test.xyz', dir=path, read_model=[1])
+
+        # Test the molecule name.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, 'SSS-cluster4-new-test_mol1')
+
+        # Load a single atom and test it.
+        self.interpreter.structure.load_spins('#SSS-cluster4-new-test_mol1@2')
+        self.assertEqual(count_spins(), 1)
+
+        # Test the spin coordinates.
+        a=return_spin('#SSS-cluster4-new-test_mol1@2')
+        self.assertAlmostEqual(a.pos[0], -12.398)
+        self.assertAlmostEqual(a.pos[1], -15.992)
+        self.assertAlmostEqual(a.pos[2], 11.448)
+
+        # Try loading a few protons.
+        #self.interpreter.structure.load_spins('@H')
+
+        # And now all the rest of the atoms.
+        self.interpreter.structure.load_spins()
+
+        # Extract a vector between first two spins.
+        self.interpreter.structure.vectors(attached='@10', spin_id='@2')
+        self.assertAlmostEqual(a.bond_vect[0], -0.4102707)
+        self.assertAlmostEqual(a.bond_vect[1], 0.62128879)
+        self.assertAlmostEqual(a.bond_vect[2], -0.6675913)

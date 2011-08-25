@@ -149,6 +149,19 @@ class API_base:
         raise RelaxImplementError
 
 
+    def data_type(self, param=None):
+        """Return the type of data that the parameter should be.
+
+        @keyword param:     The parameter name.
+        @type param:        list of str
+        @return:            The type of the parameter.  I.e. the special Python type objects of int, float, str, bool, [str], {bool}, etc.
+        @rtype:             any type
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
     # Empty documentation string.
     default_value_doc = ""
     def default_value(self, param):
@@ -397,11 +410,11 @@ class API_base:
         raise RelaxImplementError
 
 
-    def molmol_macro(self, param, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+    def molmol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """Create and return an array of Molmol macros.
 
-        @param param:           The parameter name.
-        @type param:            str
+        @param data_type:       The parameter name or data type.
+        @type data_type:        str
         @keyword style:         The Molmol style.
         @type style:            None or str
         @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
@@ -431,6 +444,27 @@ class API_base:
 
     def overfit_deselect(self):
         """Deselect models with insufficient data for minimisation."""
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
+    def pymol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+        """Create and return an array of PyMOL macros.
+
+        @param data_type:       The parameter name or data type.
+        @type data_type:        str
+        @keyword style:         The PyMOL style.
+        @type style:            None or str
+        @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
+        @type colour_start:     str
+        @keyword colour_end:    The ending colour (must be a MOLMOL or X11 name).
+        @type colour_end:       str
+        @keyword colour_list:   The colour list used, either 'molmol' or 'x11'.
+        @type colour_list:      str
+        @keyword spin_id:       The spin identification string.
+        @type spin_id:          str
+        """
 
         # Not implemented.
         raise RelaxImplementError
@@ -553,7 +587,7 @@ class API_base:
         raise RelaxImplementError
 
 
-    def return_value(self, spin, param, sim=None):
+    def return_value(self, spin, param, sim=None, bc=False):
         """Return the value and error corresponding to the parameter.
 
         If sim is set to an integer, return the value of the simulation and None.
@@ -563,8 +597,10 @@ class API_base:
         @type spin:     SpinContainer
         @param param:   The name of the parameter to return values for.
         @type param:    str
-        @param sim:     The Monte Carlo simulation index.
+        @keyword sim:   The Monte Carlo simulation index.
         @type sim:      None or int
+        @keyword bc:    The back-calculated data flag.  If True, then the back-calculated data will be returned rather than the actual data.
+        @type bc:       bool
         @return:        The value and error corresponding to
         @rtype:         tuple of length 2 of floats or None
         """

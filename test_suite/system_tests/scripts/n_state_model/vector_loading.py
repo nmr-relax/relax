@@ -20,7 +20,7 @@ for i in range(3):
     structure.read_pdb(file='lactose_MCMM4_S1_%i.pdb' % (ds.order_struct[i]+1), dir=str_path, set_model_num=ds.order_model[i]+1, set_mol_name='LE')
 
 # Load the sequence information.
-structure.load_spins(spin_id=':UNK@C1', combine_models=False, ave_pos=False)
+structure.load_spins(spin_id=':UNK@C1', ave_pos=False)
 
 # Load the CH vectors for the C atoms.
 structure.vectors(spin_id='@C*', attached='H*', ave=False)

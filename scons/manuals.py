@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006, 2009 Edward d'Auvergne                                  #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,7 +23,7 @@
 
 # Import statements.
 from glob import glob
-from os import F_OK, access, chdir, getcwd, path, remove, rename, sep, system
+from os import F_OK, access, chdir, getcwd, listdir, path, remove, rename, sep, system
 import sys
 
 from version import version
@@ -93,7 +93,7 @@ def compile_api_manual_html(target, source, env):
 
     # exclude
     #   The list of objects to exclude.
-    exclude = ['sample_scripts', 'scripts']
+    exclude = ['graphics', 'sample_scripts', 'scripts']
 
     # output
     #   The type of output that should be generated.  Should be one
@@ -246,8 +246,16 @@ def compile_api_manual_html(target, source, env):
     for name in exclude:
         epydoc_cmd = epydoc_cmd + ' --exclude=' + name
 
-    # Document all code!
-    epydoc_cmd = epydoc_cmd + ' *'
+    # All the files of the current directory.
+    blacklist = ['README', 'relax.bat', 'relax_gui_mode.py']
+    files = listdir(getcwd())
+    for file in files:
+        # Blacklisted.
+        if file in blacklist:
+            continue
+
+        # Otherwise add it.
+        epydoc_cmd = "%s %s" % (epydoc_cmd, file)
 
 
     # Execute Epydoc.

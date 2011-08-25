@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,7 +28,7 @@ from tempfile import mktemp
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.pipes import VALID_TYPES, get_pipe
-from relax_io import delete
+from generic_fns.reset import reset
 
 
 class State(SystemTestCase):
@@ -39,16 +39,6 @@ class State(SystemTestCase):
 
         # Create a temporary file name.
         self.tmpfile = mktemp()
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
-
-        # Delete the temporary file.
-        delete(self.tmpfile, fail=False)
 
 
     def test_state_pickle(self):
@@ -95,8 +85,8 @@ class State(SystemTestCase):
         # Create a data pipe.
         self.interpreter.pipe.create('test', 'relax_fit')
 
-        # Remove the data pipe.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # The data pipe list.
         pipe_types = VALID_TYPES
@@ -109,8 +99,8 @@ class State(SystemTestCase):
         # Write the results.
         self.interpreter.state.save(self.tmpfile)
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Re-read the results.
         self.interpreter.state.load(self.tmpfile)

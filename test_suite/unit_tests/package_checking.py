@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,10 +23,12 @@
 # Python module imports.
 from os import F_OK, access, listdir, sep
 from re import search
-from unittest import TestCase
+
+# relax module imports.
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class PackageTestCase(TestCase):
+class PackageTestCase(UnitTestCase):
     """Base class for the unit tests of the relax packages."""
 
     def test___all__(self):

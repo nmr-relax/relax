@@ -35,6 +35,7 @@ from warnings import warn
 from api_base import Base_struct_API, ModelList
 from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
+from generic_fns.mol_res_spin import spin_loop
 from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError, RelaxNoPdbError
 from relax_io import file_root, open_read_file
@@ -84,9 +85,19 @@ class Internal(Base_struct_API):
         # Init.
         bonded_found = False
 
-        # No bonded atoms, so go find everything within 2 Angstroms and say they are bonded.
+        # No bonded atoms, so determine the connectivities.
         if not mol.bonded[index]:
-            self.__find_bonded_atoms(index, mol, radius=2)
+            # Determine the molecule type if needed.
+            if not hasattr(mol, 'type'):
+                self._mol_type(mol)
+
+            # Protein.
+            if mol.type == 'protein':
+                self._protein_connect(mol)
+
+            # Find everything within 2 Angstroms and say they are bonded.
+            else:
+                self.__find_bonded_atoms(index, mol, radius=2)
 
         # Loop over the bonded atoms.
         matching_list = []
@@ -107,7 +118,27 @@ class Internal(Base_struct_API):
 
         # No attached atoms.
         if num_attached == 0:
-            return None, None, None, None, None, "No attached atom could be found"
+            if relax_re.search('@*', attached_atom):
+                matching_list = []
+                bonded_num=[]
+                bonded_name=[]
+                element=[]
+                pos=[]
+                for spin, mol_name, res_num, res_name in spin_loop(selection=attached_atom, full_info=True):
+                    bonded_num.append(spin.num)
+                    bonded_name.append(spin.name)
+                    element.append(spin.element)
+                    pos.append(spin.pos)
+                if len(bonded_num) == 1:
+                    return bonded_num[0], bonded_name[0], element[0], pos[0], attached_atom, None
+                elif len(bonded_num) > 1:
+                    # Return nothing but a warning.
+                    return None, None, None, None, None, 'More than one attached atom found: ' + repr(matching_names)
+                elif len(bonded_num) > 1:
+                    # Return nothing but a warning.
+                    return None, None, None, None, None, "No attached atom could be found"
+            else:
+                return None, None, None, None, None, "No attached atom could be found"
 
         # The bonded atom info.
         index = matching_list[0]
@@ -236,7 +267,7 @@ class Internal(Base_struct_API):
             return 'Average vector'
 
 
-    def __parse_models(self, file_path):
+    def __parse_models_pdb(self, file_path):
         """Generator function for looping over the models in the PDB file.
 
         @param file_path:   The full path of the PDB file.
@@ -288,6 +319,61 @@ class Internal(Base_struct_API):
         # If records is not empty then there are no models, so yield the lot.
         if len(records):
             yield model, records
+
+
+    def __parse_models_xyz(self, file_path):
+        """Generator function for looping over the models in the XYZ file.
+
+        @param file_path:   The full path of the XYZ file.
+        @type file_path:    str
+        @return:            The model number and all the records for that model.
+        @rtype:             tuple of int and array of str
+        """
+
+        # Open the file.
+        file = open_read_file(file_path)
+        lines = file.readlines()
+        file.close()
+
+        # Check for empty files.
+        if lines == []:
+            raise RelaxError("The XYZ file is empty.")
+
+        # Init.
+        total_atom = 0
+        model = 0 
+        records = []
+
+        # Loop over the data.
+        for i in xrange(len(lines)):
+            num=0
+            word=split(lines[i])
+            # Find the total atom number and the first model.
+            if (i==0) and (len(word)==1):
+                try:
+                    total_atom = int(word[0])
+                    num = 1
+                except:
+                    raise RelaxError("The MODEL record " + repr(lines[i]) + " is corrupt, cannot read the XYZ file.")
+
+            # End of the model.
+            if (len(records) == total_atom):
+              # Yield the info
+              yield records
+
+              # Reset the records.
+              records = []
+
+            # Skip all records prior to atom coordinates record.
+            if (len(word) != 4):
+                continue
+
+            # Append the line as a record of the model.
+            records.append(lines[i])
+
+        # If records is not empty then there are no models, so yield the lot.
+        if len(records):
+            yield records
 
 
     def __parse_mols(self, records):
@@ -365,6 +451,102 @@ class Internal(Base_struct_API):
         # Check the other lengths.
         if len(struct.bonded) != num and len(struct.chain_id) != num and len(struct.element) != num and len(struct.pdb_record) != num and len(struct.res_name) != num and len(struct.res_num) != num and len(struct.seg_id) != num and len(struct.x) != num and len(struct.y) != num and len(struct.z) != num:
             raise RelaxError("The structural data is invalid.")
+
+
+    def _mol_type(self, mol):
+        """Determine the type of molecule.
+
+        @param mol:     The molecule data container.
+        @type mol:      MolContainer instance
+        """
+
+        # Amino acids.
+        aa = ['ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'GLU', 'GLN', 'GLY', 'HIS', 'ILE', 'LEU', 'LYS', 'MET', 'PHE', 'PRO', 'SER', 'THR', 'TRP', 'TYR', 'VAL']
+
+        # Set the molecule type to default to 'other'.
+        mol.type = 'other'
+
+        # Loop over the residues.
+        for res in mol.res_name:
+            # Protein.
+            if res in aa:
+                # Set the molecule type and return.
+                mol.type = 'protein'
+                return
+
+
+    def _protein_connect(self, mol):
+        """Set up the connectivities for the protein.
+
+        @param mol:     The molecule data container.
+        @type mol:      MolContainer instance
+        """
+
+        # Initialise some residue data.
+        curr_res_num = None
+        res_atoms = []
+
+        # Loop over all atoms.
+        for i in range(len(mol.atom_num)):
+            # New residue.
+            if mol.res_num[i] != curr_res_num:
+                # Intra-residue connectivites.
+                if len(res_atoms):
+                    self._protein_intra_connect(mol, res_atoms)
+
+                # Update the residue number.
+                curr_res_num = mol.res_num[i]
+
+                # Reset the residue atom index list.
+                res_atoms = []
+
+            # Add the atom index to the list.
+            res_atoms.append(i)
+
+            # Last atom.
+            if i == len(mol.atom_num) - 1 and len(res_atoms):
+                self._protein_intra_connect(mol, res_atoms)
+
+
+    def _protein_intra_connect(self, mol, res_atoms):
+        """Set up the connectivities for the protein.
+
+        @param mol:         The molecule data container.
+        @type mol:          MolContainer instance
+        @param res_atoms:   The list of atom indices corresponding to the residue.
+        @type res_atoms:    list of int
+        """
+
+        # Back bond connectivity.
+        indices = {
+            'N': None,
+            'C': None,
+            'O': None,
+            'CA': None,
+            'HN': None,
+            'H': None,  # Same as HN.
+            'HA': None
+        }
+
+        # Loop over all atoms to find the indices.
+        for index in res_atoms:
+            if indices.has_key(mol.atom_name[index]):
+                indices[mol.atom_name[index]] = index
+
+        # Connect the atom pairs.
+        pairs = [
+            ['N', 'HN'],
+            ['N', 'H'],
+            ['N', 'CA'],
+            ['CA', 'HA'],
+            ['CA', 'C'],
+            ['C', 'O']
+        ]
+
+        # Loop over the atoms pairs and connect them.
+        for pair in pairs:
+            if indices[pair[0]] != None and indices[pair[1]] != None:
+                mol.atom_connect(indices[pair[0]], indices[pair[1]])
 
 
     def _translate(self, data, format='str'):
@@ -579,7 +761,7 @@ class Internal(Base_struct_API):
                 if index != None:
                     # Get the atom bonded to this model/molecule/residue/atom.
                     bonded_num, bonded_name, element, pos, attached_name, warnings = self.__bonded_atom(attached_atom, index, mol)
-
+                    
                     # No bonded atom.
                     if (bonded_num, bonded_name, element) == (None, None, None):
                         continue
@@ -671,7 +853,7 @@ class Internal(Base_struct_API):
         model_index = 0
         orig_model_num = []
         mol_conts = []
-        for model_num, model_records in self.__parse_models(file_path):
+        for model_num, model_records in self.__parse_models_pdb(file_path):
             # Only load the desired model.
             if read_model and model_num not in read_model:
                 continue
@@ -720,12 +902,123 @@ class Internal(Base_struct_API):
             # Increment the model index.
             model_index = model_index + 1
 
+        # No data, so throw a warning and exit.
+        if not len(mol_conts):
+            warn(RelaxWarning("No structural data could be read from the file '%s'." % file_path))
+            return False
+
         # Create the structural data data structures.
         self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path)
 
         # Loading worked.
         return True
 
+
+    def load_xyz(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
+        """Method for loading structures from a XYZ file.
+
+        @param file_path:       The full path of the XYZ file.
+        @type file_path:        str
+        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
+                                molecules are determined differently by the different parsers, but
+                                are numbered consecutively from 1.  If set to None, then all
+                                molecules will be loaded.
+        @type read_mol:         None, int, or list of int
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None,
+                                then the molecules will be automatically labelled based on the file
+                                name or other information.
+        @type set_mol_name:     None, str, or list of str
+        @keyword read_model:    The XYZ model to extract from the file.  If set to None, then all
+                                models will be loaded.
+        @type read_model:       None, int, or list of int
+        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
+                                the XYZ model numbers will be preserved, if they exist.
+        @type set_model_num:    None, int, or list of int
+        @keyword verbosity:     A flag which if True will cause messages to be printed.
+        @type verbosity:        bool
+        @return:                The status of the loading of the XYZ file.
+        @rtype:                 bool
+        """
+
+        # Initial print out.
+        if verbosity:
+            print("\nInternal relax XYZ parser.")
+
+        # Test if the file exists.
+        if not access(file_path, F_OK):
+            # Exit indicating failure.
+            return False
+
+        # Separate the file name and path.
+        path, file = os.path.split(file_path)
+
+        # Convert the structure reading args into lists.
+        if read_mol and not isinstance(read_mol, list):
+            read_mol = [read_mol]
+        if set_mol_name and not isinstance(set_mol_name, list):
+            set_mol_name = [set_mol_name]
+        if read_model and not isinstance(read_model, list):
+            read_model = [read_model]
+        if set_model_num and not isinstance(set_model_num, list):
+            set_model_num = [set_model_num]
+
+        # Loop over all models in the XYZ file.
+        mol_index=0
+        model_index = 0
+        xyz_model_increment = 0
+        orig_model_num = []
+        mol_conts = []
+        orig_mol_num = []
+        new_mol_name = []
+        for model_records in self.__parse_models_xyz(file_path):
+            # Increment the xyz_model_increment
+            xyz_model_increment = xyz_model_increment +1
+      
+            # Only load the desired model.
+            if read_model and xyz_model_increment not in read_model:
+                continue
+
+            # Store the original model number.
+            orig_model_num.append(model_index)
+
+            # Loop over the molecules of the model.
+            if read_mol and mol_index not in read_mol:
+                continue
+
+            # Set the target molecule name.
+            if set_mol_name:
+                new_mol_name.append(set_mol_name[mol_index])
+            else:
+                if mol_index==0:
+                   #Set the name to the file name plus the structure number.
+                   new_mol_name.append(file_root(file) + '_mol' + repr(mol_index+1))
+
+            # Store the original mol number.
+            orig_mol_num.append(mol_index)
+
+            # Generate the molecule container.
+            mol = MolContainer()
+
+            # Fill the molecular data object.
+            mol.fill_object_from_xyz(model_records)
+
+            # Store the molecule container.
+            mol_conts.append([])
+            mol_conts[model_index].append(mol)
+
+            # Increment the molecule index.
+            mol_index = mol_index + 1
+
+            # Increment the model index.
+            model_index = model_index + 1
+
+        orig_mol_num=[0]
+        # Create the structural data data structures.
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path)
+
+        # Loading worked.
+        return True
+        
 
     def write_pdb(self, file, model_num=None):
         """Method for the creation of a PDB file from the structural data.
@@ -1328,6 +1621,61 @@ class MolContainer:
         return fields
 
 
+    def __parse_xyz_record(self, record):
+        """Parse the XYZ record string and return an array of the corresponding atomic information.
+
+        The format of the XYZ records is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1      | String       | element      |                                                |
+         |  2      | Real         | x            | Orthogonal coordinates for X in Angstroms      |
+         |  3      | Real         | y            | Orthogonal coordinates for Y in Angstroms      |
+         |  4      | Real         | z            | Orthogonal coordinates for Z in Angstroms      |
+         |_________|______________|______________|________________________________________________|
+
+
+        @param record:  The single line PDB record.
+        @type record:   str
+        @return:        The list of atomic information
+        @rtype:         list of str
+        """
+
+        # Initialise.
+        fields = []
+        word=split(record)
+
+        # ATOM and HETATM records.
+        if len(word)==4:
+            # Split up the record.
+            fields.append(word[0])
+            fields.append(word[1])
+            fields.append(word[2])
+            fields.append(word[3])
+
+            # Loop over the fields.
+            for i in xrange(len(fields)):
+                # Strip all whitespace.
+                fields[i] = strip(fields[i])
+
+                # Replace nothingness with None.
+                if fields[i] == '':
+                    fields[i] = None
+
+            # Convert strings to numbers.
+            if fields[1]:
+                fields[1] = float(fields[1])
+            if fields[2]:
+                fields[2] = float(fields[2])
+            if fields[3]:
+                fields[3] = float(fields[3])
+        
+        # Return the atomic info.
+        return fields
+
+
     def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None):
         """Method for adding an atom to the structural data object.
 
@@ -1380,7 +1728,7 @@ class MolContainer:
         @keyword index2:        The index of the second atom.
         @type index2:           int
         """
-
+        
         # Update the bonded array structure, if necessary.
         if index2 not in self.bonded[index1]:
             self.bonded[index1].append(index2)
@@ -1424,6 +1772,39 @@ class MolContainer:
 
                     # Make the connection.
                     self.atom_connect(index1=self.__atom_index(record[1]), index2=self.__atom_index(record[i+2]))
+
+
+    def fill_object_from_xyz(self, records):
+        """Method for generating a complete Structure_container object from the given xyz records.
+
+        @param records:         A list of structural xyz records.
+        @type records:          list of str
+        """
+
+        # initialisation for atom number
+        atom_number = 1
+ 
+        # Loop over the records.
+        for record in records:
+            # Parse the record.
+            record = self.__parse_xyz_record(record)
+
+            # Nothing to do.
+            if not record:
+                continue
+
+            # Add the atom.
+            if len(record) == 4:
+                # Attempt at determining the element, if missing.
+                element = record[0]
+                if not element:
+                    element = self.__det_pdb_element(record[2])
+
+                # Add.
+                self.atom_add(atom_num=atom_number, pos=[record[1], record[2], record[3]], element=element)
+
+                # Increment of atom number
+                atom_number = atom_number + 1
 
 
     def from_xml(self, mol_node):

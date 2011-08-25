@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,6 +38,7 @@ if dep_check.wx_module:
 # relax module imports.
 from relax_errors import RelaxError
 from relax_gui import Main
+from status import Status; status = Status()
 
 # relax GUI module imports.
 from paths import IMAGE_PATH
@@ -47,15 +48,21 @@ __all__ = ['about',
            'base_classes',
            'controller',
            'derived_wx_classes',
+           'errors',
            'filedialog',
+           'fonts',
+           'icons',
+           'interpreter',
            'menu',
            'message',
            'misc',
            'paths',
+           'pipe_editor',
            'references',
            'relax_gui',
            'relax_prompt',
-           'settings']
+           'settings',
+           'wizard']
 
 
 
@@ -96,11 +103,13 @@ class App(wx.App):
         # Make it the main application component.
         self.SetTopWindow(main)
 
-        # Wait a little while :)
-        sleep(1)
+        # Only show the GUI if requested.
+        if status.show_gui:
+            # Wait a little while :)
+            sleep(1)
 
-        # Show it.
-        main.Show()
+            # Show it.
+            main.Show()
 
         # All is good!
         return True

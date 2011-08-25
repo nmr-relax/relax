@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -336,10 +336,7 @@ def default_value(param):
         return 0.0
 
 # User function documentation.
-__default_value_prompt_doc__ = """
-        Diffusion tensor parameter default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+__default_value_prompt_doc__ = ["Diffusion tensor parameter default values", """
         ________________________________________________________________________
         |                        |                    |                        |
         | Data type              | Object name        | Value                  |
@@ -375,8 +372,7 @@ __default_value_prompt_doc__ = """
         |                        |                    |                        |
         | phi                    | 'phi'              | 0.0                    |
         |________________________|____________________|________________________|
-
-"""
+"""]
 
 
 def delete():
@@ -1044,10 +1040,7 @@ def return_data_name(name):
         return 'phi'
 
 # User function documentation.
-__return_data_name_prompt_doc__ = """
-        Diffusion tensor parameter string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+__return_data_name_prompt_doc__ = ["Diffusion tensor parameter string matching patterns", """
         ____________________________________________________________________________________________
         |                                                        |              |                  |
         | Data type                                              | Object name  | Patterns         |
@@ -1094,7 +1087,7 @@ __return_data_name_prompt_doc__ = """
         | The azimuthal angle defining the major axis of the     | 'phi'        | 'phi'            |
         | spheroid diffusion tensor - phi                        |              |                  |
         |________________________________________________________|______________|__________________|
-"""
+"""]
 
 
 def return_eigenvalues():
@@ -1563,13 +1556,8 @@ def set(value=None, param=None):
         fold_angles()
 
 # User function documentation.
-__set_prompt_doc__ = """
-        Diffusion tensor set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        If the diffusion tensor has not been setup, use the more powerful function
-        'diffusion_tensor.init' to initialise the tensor parameters.  This function cannot be used
-        to initialise a diffusion tensor.
+__set_prompt_doc__ = ["Diffusion tensor set details", """
+        If the diffusion tensor has not been setup, use the more powerful function 'diffusion_tensor.init' to initialise the tensor parameters.  This function cannot be used to initialise a diffusion tensor.
 
         The units of the parameters are:
 
@@ -1578,14 +1566,7 @@ __set_prompt_doc__ = """
             Unitless for Dratio and Dr.
             Radians for all angles (alpha, beta, gamma, theta, phi).
 
-        When setting a diffusion tensor parameter, the residue number has no effect.  As the
-        internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da,
-        theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying
-        geometric parameters must be done in the following way.  If a single geometric parameter is
-        supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx,
-        Dy, and Dx, it is not possible to determine how to use the currently set values together
-        with the supplied value to calculate the new internal parameters.  For spheroidal diffusion,
-        when supplying multiple geometric parameters, the set must belong to one of
+        When setting a diffusion tensor parameter, the residue number has no effect.  As the internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da, theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying geometric parameters must be done in the following way.  If a single geometric parameter is supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx, Dy, and Dx, it is not possible to determine how to use the currently set values together with the supplied value to calculate the new internal parameters.  For spheroidal diffusion, when supplying multiple geometric parameters, the set must belong to one of
 
             {tm, Da},
             {Diso, Da},
@@ -1593,17 +1574,14 @@ __set_prompt_doc__ = """
             {Dpar, Dper},
             {Diso, Dratio},
 
-        where either theta, phi, or both orientational parameters can be additionally supplied.  For
-        ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must
-        belong to one of
+        where either theta, phi, or both orientational parameters can be additionally supplied.  For ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must belong to one of
 
             {tm, Da, Dr},
             {Diso, Da, Dr},
             {Dx, Dy, Dz},
 
-        where any number of the orientational parameters, alpha, beta, or gamma can be additionally
-        supplied.
-"""
+        where any number of the orientational parameters, alpha, beta, or gamma can be additionally supplied.
+"""]
 
 
 def sphere(params=None, time_scale=None, param_types=None):

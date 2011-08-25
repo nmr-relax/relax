@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,23 +20,19 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from unittest import TestCase
-
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from generic_fns.reset import reset
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class Test_pipes(TestCase):
+class Test_pipes(UnitTestCase):
     """Unit tests for the functions of the 'generic_fns.pipes' module."""
 
     def setUp(self):
         """Set up for all the data pipe unit tests."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -52,12 +48,6 @@ class Test_pipes(TestCase):
 
         # Set the current pipe to the 'orig' data pipe.
         pipes.switch('orig')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
 
 
     def test_copy(self):
@@ -242,8 +232,8 @@ class Test_pipes(TestCase):
         # Assert that a RelaxNoPipeError occurs when the pipe doesn't exist.
         self.assertRaises(RelaxNoPipeError, pipes.test, 'x')
 
-        # Reset the relax data storage object.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Now none of the following pipes exist, hence errors should be thrown.
         self.assertRaises(RelaxNoPipeError, pipes.test)

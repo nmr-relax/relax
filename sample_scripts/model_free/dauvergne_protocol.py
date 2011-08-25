@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -139,47 +139,22 @@ Once all the diffusion models have converged, the final run can be executed.  Th
 The final black-box model-free results will be placed in the file 'final/results'.
 """
 
+# Python module imports.
+from time import asctime, localtime
+
 # relax module imports.
 from auto_analyses.dauvergne_protocol import dAuvergne_protocol
 
 
+# Analysis variables.
+#####################
+
 # The diffusion model.
 DIFF_MODEL = 'local_tm'
 
-# The model-free models (do not change these unless absolutely necessary).
+# The model-free models.  Do not change these unless absolutely necessary, the protocol is likely to fail if these are changed.
 MF_MODELS = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 LOCAL_TM_MODELS = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
-
-# The PDB file (set this to None if no structure is available).
-PDB_FILE = '1f3y.pdb'
-
-# The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-SEQ_ARGS = ['noe.600.out', None, None, 1, 2, None, None, None]
-
-# The heteronucleus and attached proton names corresponding to those in the PDB file (used if the spin name is not in the sequence data).
-HET_NAME = 'N'
-ATTACHED_NAME = 'H'
-
-# The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
-RELAX_DATA = [['R1',  '600', 599.719 * 1e6, 'r1.600.out',  None, None, 1, 2, None, None, 3, 4, None],
-              ['R2',  '600', 599.719 * 1e6, 'r2.600.out',  None, None, 1, 2, None, None, 3, 4, None],
-              ['NOE', '600', 599.719 * 1e6, 'noe.600.out', None, None, 1, 2, None, None, 3, 4, None],
-              ['R1',  '500', 500.208 * 1e6, 'r1.500.out',  None, None, 1, 2, None, None, 3, 4, None],
-              ['R2',  '500', 500.208 * 1e6, 'r2.500.out',  None, None, 1, 2, None, None, 3, 4, None],
-              ['NOE', '500', 500.208 * 1e6, 'noe.500.out', None, None, 1, 2, None, None, 3, 4, None]
-]
-
-# The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
-UNRES = 'unresolved'
-
-# A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
-EXCLUDE = None
-
-# The bond length, CSA values, heteronucleus type, and proton type.
-BOND_LENGTH = 1.02 * 1e-10
-CSA = -172 * 1e-6
-HETNUC = '15N'
-PROTON = '1H'
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 11
@@ -194,5 +169,48 @@ MC_NUM = 500
 CONV_LOOP = True
 
 
-# Execution (do not change!).
-dAuvergne_protocol(diff_model=DIFF_MODEL, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, pdb_file=PDB_FILE, seq_args=SEQ_ARGS, het_name=HET_NAME, attached_name=ATTACHED_NAME, relax_data=RELAX_DATA, unres=UNRES, exclude=EXCLUDE, bond_length=BOND_LENGTH, csa=CSA, hetnuc=HETNUC, proton=PROTON, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_num=MC_NUM, conv_loop=CONV_LOOP)
+
+# Set up the data pipe.
+#######################
+
+# The following sequence of user function calls can be changed as needed.
+
+# Create the data pipe.
+name = "mf (%s)" % asctime(localtime())
+pipe.create(name, 'mf')
+
+# Load the sequence.
+sequence.read(file='noe.500.out', dir=None, mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None)
+
+# Name the spins.
+spin.name(name='N')
+
+# Load the PDB file.
+structure.read_pdb('1f3y.pdb')
+structure.vectors(attached='H')
+
+# Load the relaxation data.
+relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=599.719*1e6, file='r1.600.out',  mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
+relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=599.719*1e6, file='r2.600.out',  mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
+relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=599.719*1e6, file='noe.600.out', mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
+relax_data.read(ri_id='R1_500',  ri_type='R1',  frq=500.208*1e6, file='r1.500.out',  mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
+relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.208*1e6, file='r2.500.out',  mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
+relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.208*1e6, file='noe.500.out', mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, data_col=3, error_col=4)
+
+# Deselect spins to be excluded (including unresolved and specifically excluded spins).
+deselect.read(file='unresolved', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
+deselect.read(file='exclude', spin_id_col=1)
+
+# Set the bond length, CSA values, heteronucleus type, and proton type.
+value.set(1.02 * 1e-10, 'bond_length')
+value.set(-172 * 1e-6, 'csa')
+value.set('15N', 'heteronucleus')
+value.set('1H', 'proton')
+
+
+
+# Execution.
+############
+
+# Do not change!
+dAuvergne_protocol(pipe_name=name, diff_model=DIFF_MODEL, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_sim_num=MC_NUM, conv_loop=CONV_LOOP)

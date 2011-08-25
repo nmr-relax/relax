@@ -36,10 +36,6 @@ from sys import stderr
 import time
 from types import ClassType
 
-# relax module imports
-from status import Status; status = Status()
-
-
 # Text variables.
 BIN = 'a binary number (0 or 1)'
 BOOL = 'a Boolean (True or False)'
@@ -101,8 +97,8 @@ class BaseError(Exception):
     def __str__(self):
         """Modify the behaviour of the error system."""
 
-        # Save the state if debugging is turned on.
-        if status.debug:
+        # Save the state if the pedantic flag is turned on.
+        if status.pedantic:
             save_state()
 
         # Modify the error message to include 'RelaxError' at the start.
@@ -193,7 +189,7 @@ class RelaxFault(BaseError):
 # Not implemented yet.
 class RelaxImplementError(BaseError):
     def __init__(self):
-        self.text = "This function has not yet been implemented."
+        self.text = "This has not yet been implemented for the current data pipe."
 
 
 # Program errors.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2008-2010 Edward d'Auvergne                         #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import User_fn_class
+from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import results
 
@@ -34,14 +34,6 @@ class Results(User_fn_class):
     """Class for manipulating results."""
 
     def display(self):
-        """Function for displaying the results.
-
-        Description
-        ~~~~~~~~~~~
-
-        This will print to screen (STDOUT) the results contained within the current data pipe.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "results.display()"
@@ -50,29 +42,16 @@ class Results(User_fn_class):
         # Execute the functional code.
         results.display()
 
+    # The function doc info.
+    display._doc_title = "Display the results."
+    display._doc_title_short = "Results display."
+    display._doc_desc = """
+        This will print to screen (STDOUT) the results contained within the current data pipe.
+        """
+    _build_doc(display)
+
 
     def read(self, file='results', dir=None):
-        """Function for reading results from a file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        file:  The name of the file to read results from.
-
-        dir:  The directory where the file is located.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        To search for the results file in the current working directory, set dir to None.
-
-        This function is able to handle uncompressed, bzip2 compressed files, or gzip compressed
-        files automatically.  The full file name including extension can be supplied, however, if
-        the file cannot be found, this function will search for the file name with '.bz2' appended
-        followed by the file name with '.gz' appended.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "results.read("
@@ -87,42 +66,20 @@ class Results(User_fn_class):
         # Execute the functional code.
         results.read(file=file, directory=dir)
 
+    # The function doc info.
+    read._doc_title = "Read results from a file."
+    read._doc_title_short = "Results reading."
+    read._doc_args = [
+        ["file", "The name of the file to read results from."],
+        ["dir", "The directory where the file is located."]
+    ]
+    read._doc_desc = """
+        This function is able to handle uncompressed, bzip2 compressed files, or gzip compressed files automatically.  The full file name including extension can be supplied, however, if the file cannot be found the file with '.bz2' appended followed by the file name with '.gz' appended will be searched for.
+        """
+    _build_doc(read)
+
 
     def write(self, file='results', dir='pipe_name', compress_type=1, force=False):
-        """Function for writing results to a file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        file:  The name of the file to output results to.  The default is 'results'.  Optionally
-        this can be a file object, or any object with a write() method.
-
-        dir:  The directory name.
-
-        compress_type:  The type of compression to use when creating the file.
-
-        force:  A flag which if True will cause the results file to be overwritten.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        To place the results file in the current working directory, set dir to None.  If dir is set
-        to the special name 'pipe_name', then the results file will be placed into a directory with
-        the same name as the current data pipe.
-
-        The default behaviour of this function is to compress the file using bzip2 compression.  If
-        the extension '.bz2' is not included in the file name, it will be added.  The compression
-        can, however, be changed to either no compression or gzip compression.  This is controlled
-        by the compress_type argument which can be set to
-
-            0:  No compression (no file extension),
-            1:  bzip2 compression ('.bz2' file extension),
-            2:  gzip compression ('.gz' file extension).
-
-        The complementary read function will automatically handle the compressed files.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "results.write("
@@ -140,3 +97,25 @@ class Results(User_fn_class):
 
         # Execute the functional code.
         results.write(file=file, directory=dir, force=force, compress_type=compress_type)
+
+    # The function doc info.
+    write._doc_title = "Write the results to a file."
+    write._doc_title_short = "Results writing."
+    write._doc_args = [
+        ["file", "The name of the file to output results to.  The default is 'results'.  Optionally this can be a file object, or any object with a write() method."],
+        ["dir", "The directory name."],
+        ["compress_type", "The type of compression to use when creating the file."],
+        ["force", "A flag which if True will cause the results file to be overwritten."]
+    ]
+    write._doc_desc = """
+        To place the results file in the current working directory in the prompt and scripting modes, set dir to None.  If dir is set to the special name 'pipe_name', then the results file will be placed into a directory with the same name as the current data pipe.
+
+        The default behaviour of this function is to compress the file using bzip2 compression.  If the extension '.bz2' is not included in the file name, it will be added.  The compression can, however, be changed to either no compression or gzip compression.  This is controlled by the compression type which can be set to
+
+            0:  No compression (no file extension),
+            1:  bzip2 compression ('.bz2' file extension),
+            2:  gzip compression ('.gz' file extension).
+
+        The complementary read function will automatically handle the compressed files.
+        """
+    _build_doc(write)

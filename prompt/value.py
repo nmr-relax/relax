@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,7 @@ __docformat__ = 'plaintext'
 
 # relax module imports.
 from doc_string import docs
-from base_class import User_fn_class
+from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import diffusion_tensor
 from generic_fns import value
@@ -42,36 +42,6 @@ class Value(User_fn_class):
     """Class for setting data values."""
 
     def copy(self, pipe_from=None, pipe_to=None, param=None):
-        """Copy spin specific data values from one data pipe to another.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        pipe_from:  The name of the pipe to copy from.
-
-        pipe_to:  The name of the pipe to copy to.
-
-        param:  The parameter to copy.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        Only one parameter may be selected, therefore the 'param' argument should be a string.
-
-        If this function is used to change values of previously minimised parameters, then the
-        minimisation statistics (chi-squared value, iteration count, function count, gradient count,
-        and Hessian count) will be reset.
-
-
-        Examples
-        ~~~~~~~~
-
-        To copy the CSA values from the data pipe 'm1' to 'm2', type:
-
-        relax> value.copy('m1', 'm2', 'CSA')
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "value.copy("
@@ -88,30 +58,37 @@ class Value(User_fn_class):
         # Execute the functional code.
         value.copy(pipe_from=pipe_from, pipe_to=pipe_to, param=param)
 
+    # The function doc info.
+    copy._doc_title = "Copy spin specific data values from one data pipe to another."
+    copy._doc_title_short = "Value copying."
+    copy._doc_args = [
+        ["pipe_from", "The name of the pipe to copy from."],
+        ["pipe_to", "The name of the pipe to copy to."],
+        ["param", "The parameter to copy.  Only one parameter may be selected."]
+    ]
+    copy._doc_desc = """
+        If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.
+        """
+    copy._doc_examples = """
+        To copy the CSA values from the data pipe 'm1' to 'm2', type:
+
+        relax> value.copy('m1', 'm2', 'CSA')
+        """
+    copy._doc_additional = [
+        docs.regexp.doc,
+        Model_free.set_doc,
+        Model_free.return_data_name_doc,
+        Jw_mapping.set_doc,
+        Jw_mapping.return_data_name_doc,
+        Relax_fit.set_doc,
+        Relax_fit.return_data_name_doc,
+        N_state_model.set_doc,
+        N_state_model.return_data_name_doc
+    ]
+    _build_doc(copy)
+
 
     def display(self, param=None):
-        """Display spin specific data values.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        param:  The parameter to display.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        Only one parameter may be selected, therefore the 'param' argument should be a string.
-
-
-        Examples
-        ~~~~~~~~
-
-        To show all CSA values, type:
-
-        relax> value.display('CSA')
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "value.display("
@@ -124,73 +101,29 @@ class Value(User_fn_class):
         # Execute the functional code.
         value.display(param=param)
 
+    # The function doc info.
+    display._doc_title = "Display spin specific data values."
+    display._doc_title_short = "Display values."
+    display._doc_args = [
+        ["param", "The parameter to display.  Only one parameter may be selected."]
+    ]
+    display._doc_examples = """
+        To show all CSA values, type:
+
+        relax> value.display('CSA')
+        """
+    display._doc_additional = [
+        docs.regexp.doc,
+        Model_free.return_data_name_doc,
+        Jw_mapping.return_data_name_doc,
+        Noe.return_data_name_doc,
+        Relax_fit.return_data_name_doc,
+        N_state_model.return_data_name_doc
+    ]
+    _build_doc(display)
+
 
     def read(self, param=None, scaling=1.0, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
-        """Read spin specific data values from a file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        param:  The parameter.
-
-        scaling:  The factor to scale parameters by.
-
-        file:  The name of the file containing the values.
-
-        dir:  The directory where the file is located.
-
-        spin_id_col:  The spin ID string column (an alternative to the mol, res, and spin name and
-            number columns).
-
-        mol_name_col:  The molecule name column (alternative to the spin_id_col).
-
-        res_num_col:  The residue number column (alternative to the spin_id_col).
-
-        res_name_col:  The residue name column (alternative to the spin_id_col).
-
-        spin_num_col:  The spin number column (alternative to the spin_id_col).
-
-        spin_name_col:  The spin name column (alternative to the spin_id_col).
-
-        data_col:  The RDC data column.
-
-        error_col:  The experimental error column.
-
-        sep:  The column separator (the default is white space).
-
-        spin_id:  The spin ID string to restrict the loading of data to certain spin subsets.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        The spin system can be identified in the file using two different formats.  The first is the
-        spin ID string column which can include the molecule name, the residue name and number, and
-        the spin name and number.  Alternatively the mol_name_col, res_num_col, res_name_col,
-        spin_num_col, and/or spin_name_col arguments can be supplied allowing this information to be
-        in separate columns.  Note that the numbering of columns starts at one.  The spin_id
-        argument can be used to restrict the reading to certain spin types, for example only 15N
-        spins when only residue information is in the file.
-
-        Only one parameter may be selected, therefore the 'param' argument should be a string.
-
-        If this function is used to change values of previously minimised parameters, then the
-        minimisation statistics (chi-squared value, iteration count, function count, gradient count,
-        and Hessian count) will be reset.
-
-
-        Examples
-        ~~~~~~~~
-
-        To load 15N CSA values from the file 'csa_values' in the directory 'data', where spins are
-        only identified by residue name and number, type one of the following:
-
-        relax> value.read('CSA', 'data/csa_value', spin_id='@N')
-        relax> value.read('CSA', 'csa_value', dir='data', spin_id='@N')
-        relax> value.read(param='CSA', file='csa_value', dir='data', res_num_col=1, res_name_col=2,
-                          data_col=3, error_col=4, spin_id='@N')
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "value.read("
@@ -229,35 +162,95 @@ class Value(User_fn_class):
         # Execute the functional code.
         value.read(param=param, scaling=scaling, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
+    # The function doc info.
+    read._doc_title = "Read spin specific data values from a file."
+    read._doc_title_short = "Reading values from file."
+    read._doc_args = [
+        ["param", "The parameter.  Only one parameter may be selected."],
+        ["scaling", "The factor to scale parameters by."],
+        ["file", "The name of the file containing the values."],
+        ["dir", "The directory where the file is located."],
+        ["spin_id_col", "The spin ID string column (an alternative to the mol, res, and spin name and number columns)."],
+        ["mol_name_col", "The molecule name column (alternative to the spin_id_col)."],
+        ["res_num_col", "The residue number column (alternative to the spin_id_col)."],
+        ["res_name_col", "The residue name column (alternative to the spin_id_col)."],
+        ["spin_num_col", "The spin number column (alternative to the spin_id_col)."],
+        ["spin_name_col", "The spin name column (alternative to the spin_id_col)."],
+        ["data_col", "The RDC data column."],
+        ["error_col", "The experimental error column."],
+        ["sep", "The column separator (the default is white space)."],
+        ["spin_id", "The spin ID string to restrict the loading of data to certain spin subsets."]
+    ]
+    read._doc_desc = """
+        The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.
+
+        If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.
+        """
+    read._doc_examples = """
+        To load 15N CSA values from the file 'csa_values' in the directory 'data', where spins are
+        only identified by residue name and number, type one of the following:
+
+        relax> value.read('CSA', 'data/csa_value', spin_id='@N')
+        relax> value.read('CSA', 'csa_value', dir='data', spin_id='@N')
+        relax> value.read(param='CSA', file='csa_value', dir='data', res_num_col=1, res_name_col=2,
+                          data_col=3, error_col=4, spin_id='@N')
+        """
+    read._doc_additional = [
+        docs.regexp.doc,
+        Model_free.set_doc,
+        Model_free.return_data_name_doc,
+        Jw_mapping.set_doc,
+        Jw_mapping.return_data_name_doc,
+        Relax_fit.set_doc,
+        Relax_fit.return_data_name_doc,
+        N_state_model.set_doc,
+        N_state_model.return_data_name_doc
+    ]
+    _build_doc(read)
+
 
     def set(self, val=None, param=None, spin_id=None):
-        """Set spin specific data values.
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "value.set("
+            text = text + "val=" + repr(val)
+            text = text + ", param=" + repr(param)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
+            print(text)
 
-        Keyword arguments
-        ~~~~~~~~~~~~~~~~~
+        # The argument checks.
+        arg_check.is_str_or_num_or_str_num_list(val, 'value', can_be_none=True)
+        arg_check.is_str_or_str_list(param, 'parameter', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
-        val:  The value(s).
+        # The invalid combination of a single value and no param argument.
+        if (isinstance(val, float) or isinstance(val, int)) and param == None:
+            raise RelaxError("Invalid value and parameter argument combination, for details by type 'help(value.set)'")
 
-        param:  The parameter(s).
+        # The invalid combination of an array of values and a single param string.
+        if isinstance(val, list) and isinstance(param, str):
+            raise RelaxError("Invalid value and parameter argument combination, for details by type 'help(value.set)'")
 
-        spin_id:  The spin identifier.
+        # Value array and parameter array of equal length.
+        if isinstance(val, list) and isinstance(param, list) and len(val) != len(param):
+            raise RelaxError("Both the value array and parameter array must be of equal length.")
+
+        # Execute the functional code.
+        value.set(val=val, param=param, spin_id=spin_id)
+
+    # The function doc info.
+    set._doc_title = "Set spin specific data values."
+    set._doc_title_short = "Value setting."
+    set._doc_args = [
+        ["val", "The value(s)."],
+        ["param", "The parameter(s)."],
+        ["spin_id", "The spin identifier."]
+    ]
+    set._doc_desc = """
+        If this function is used to change values of previously minimised results, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset to None.
 
 
-        Description
-        ~~~~~~~~~~~
-
-        If this function is used to change values of previously minimised results, then the
-        minimisation statistics (chi-squared value, iteration count, function count, gradient count,
-        and Hessian count) will be reset to None.
-
-
-        The val argument can be None, a single value, or an array of values while the parameter
-        argument can be None, a string, or array of strings.  The choice of which combination
-        determines the behaviour of this function.  The following table describes what occurs in
-        each instance.  The Value column refers to the 'val' argument while the Param column refers
-        to the 'param' argument.  In these columns, 'None' corresponds to None, '1' corresponds
-        to either a single value or single string, and 'n' corresponds to either an array of values
-        or an array of strings.
+        The val argument can be None, a single value, or an array of values while the parameter argument can be None, a string, or array of strings.  The choice of which combination determines the behaviour of this function.  The following table describes what occurs in each instance.  The Value column refers to the 'val' argument while the Param column refers to the 'param' argument.  In these columns, 'None' corresponds to None, '1' corresponds to either a single value or single string, and 'n' corresponds to either an array of values or an array of strings.
 
         ____________________________________________________________________________________________
         |       |       |                                                                          |
@@ -288,18 +281,8 @@ class Value(User_fn_class):
         |       |       | number.  Both arrays must be of equal length.                            |
         |_______|_______|__________________________________________________________________________|
 
-
-        Spin identification
-        ~~~~~~~~~~~~~~~~~~~
-
-        If the 'spin_id' argument is left as the default of None, then the function will be applied
-        to all spins.  If the data is global non-spin specific data, such as diffusion tensor
-        parameters, supplying the spin identifier will terminate the program with an error.
-
-
-        Examples
-        ~~~~~~~~
-
+        """
+    set._doc_examples = """
         To set the parameter values for the current data pipe to the default values, for all spins,
         type:
 
@@ -348,62 +331,65 @@ class Value(User_fn_class):
         relax> value.set(val=[0.56, 13e-12], param=['S2', 'te'], spin_id=':126@Ca')
         relax> value.set(val=[0.56, 13e-12], param=['S2', 'te'], spin_id=':126@Ca')
         """
+    set._doc_additional = [
+        ["Spin identification", """
+        If the spin ID is left unset, then this will be applied to all spins.  If the data is global non-spin specific data, such as diffusion tensor parameters, supplying the spin identifier will terminate the program with an error.
+        """],
+        docs.regexp.doc,
+        Model_free.set_doc,
+        Model_free.return_data_name_doc,
+        Model_free.default_value_doc,
+        Jw_mapping.set_doc,
+        Jw_mapping.return_data_name_doc,
+        Jw_mapping.default_value_doc,
+        diffusion_tensor.__set_prompt_doc__,
+        diffusion_tensor.__return_data_name_prompt_doc__,
+        diffusion_tensor.__default_value_prompt_doc__,
+        Relax_fit.set_doc,
+        Relax_fit.return_data_name_doc,
+        Relax_fit.default_value_doc,
+        N_state_model.set_doc,
+        N_state_model.return_data_name_doc,
+        N_state_model.default_value_doc
+    ]
+    _build_doc(set)
 
+
+    def write(self, param=None, file=None, dir=None, bc=False, force=False):
         # Function intro text.
         if self._exec_info.intro:
-            text = self._exec_info.ps3 + "value.set("
-            text = text + "val=" + repr(val)
-            text = text + ", param=" + repr(param)
-            text = text + ", spin_id=" + repr(spin_id) + ")"
+            text = self._exec_info.ps3 + "value.write("
+            text = text + "param=" + repr(param)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", bc=" + repr(bc)
+            text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str_or_num_or_str_num_list(val, 'value', can_be_none=True)
-        arg_check.is_str_or_str_list(param, 'parameter', can_be_none=True)
-        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
-
-        # The invalid combination of a single value and no param argument.
-        if (isinstance(val, float) or isinstance(val, int)) and param == None:
-            raise RelaxError("Invalid value and parameter argument combination, for details by type 'help(value.set)'")
-
-        # The invalid combination of an array of values and a single param string.
-        if isinstance(val, list) and isinstance(param, str):
-            raise RelaxError("Invalid value and parameter argument combination, for details by type 'help(value.set)'")
-
-        # Value array and parameter array of equal length.
-        if isinstance(val, list) and isinstance(param, list) and len(val) != len(param):
-            raise RelaxError("Both the value array and parameter array must be of equal length.")
+        arg_check.is_str(param, 'parameter')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(bc, 'back calculated value flag')
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        value.set(val=val, param=param, spin_id=spin_id)
+        value.write(param=param, file=file, dir=dir, bc=bc, force=force)
 
-
-    def write(self, param=None, file=None, dir=None, force=False):
-        """Write spin specific data values to a file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        param:  The parameter.
-
-        file:  The name of the file.
-
-        dir:  The directory name.
-
-        force:  A flag which, if set to True, will cause the file to be overwritten.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        If no directory name is given, the file will be placed in the current working directory.
-
-        The parameter argument should be a string.
-
-
-        Examples
-        ~~~~~~~~
-
+    # The function doc info.
+    write._doc_title = "Write spin specific data values to a file."
+    write._doc_title_short = "Value writing."
+    write._doc_args = [
+        ["param", "The parameter."],
+        ["file", "The name of the file."],
+        ["dir", "The directory name."],
+        ["bc", "A flag which if True will cause the back calculated values to be written to file rather than the actual data."],
+        ["force", "A flag which, if set to True, will cause the file to be overwritten."]
+    ]
+    write._doc_desc = """
+        The values corresponding to the given parameter will be written to file.
+        """
+    write._doc_examples = """
         To write the CSA values to the file 'csa.txt', type one of:
 
         relax> value.write('CSA', 'csa.txt')
@@ -417,80 +403,12 @@ class Value(User_fn_class):
         relax> value.write(param='noe', file='noe.out')
         relax> value.write(param='noe', file='noe.out', force=True)
         """
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "value.write("
-            text = text + "param=" + repr(param)
-            text = text + ", file=" + repr(file)
-            text = text + ", dir=" + repr(dir)
-            text = text + ", force=" + repr(force) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(param, 'parameter')
-        arg_check.is_str(file, 'file name')
-        arg_check.is_str(dir, 'directory name', can_be_none=True)
-        arg_check.is_bool(force, 'force flag')
-
-        # Execute the functional code.
-        value.write(param=param, file=file, dir=dir, force=force)
-
-
-    # Docstring modification.
-    #########################
-
-    # Copy function.
-    copy.__doc__ = copy.__doc__ + "\n\n" + docs.regexp.doc + "\n"
-    copy.__doc__ = copy.__doc__ + Model_free.set_doc + "\n\n"
-    copy.__doc__ = copy.__doc__ + Model_free.return_data_name_doc + "\n"
-    copy.__doc__ = copy.__doc__ + Jw_mapping.set_doc + "\n"
-    copy.__doc__ = copy.__doc__ + Jw_mapping.return_data_name_doc + "\n"
-    copy.__doc__ = copy.__doc__ + Relax_fit.set_doc + "\n"
-    copy.__doc__ = copy.__doc__ + Relax_fit.return_data_name_doc + "\n"
-    copy.__doc__ = copy.__doc__ + N_state_model.set_doc + "\n"
-    copy.__doc__ = copy.__doc__ + N_state_model.return_data_name_doc + "\n"
-
-    # Display function.
-    display.__doc__ = display.__doc__ + "\n\n" + docs.regexp.doc + "\n"
-    display.__doc__ = display.__doc__ + Model_free.return_data_name_doc + "\n\n"
-    display.__doc__ = display.__doc__ + Jw_mapping.return_data_name_doc + "\n"
-    display.__doc__ = display.__doc__ + Relax_fit.return_data_name_doc + "\n"
-    display.__doc__ = display.__doc__ + N_state_model.return_data_name_doc + "\n"
-
-    # Read function.
-    read.__doc__ = read.__doc__ + "\n\n" + docs.regexp.doc + "\n"
-    read.__doc__ = read.__doc__ + Model_free.set_doc + "\n\n"
-    read.__doc__ = read.__doc__ + Model_free.return_data_name_doc + "\n"
-    read.__doc__ = read.__doc__ + Jw_mapping.set_doc + "\n"
-    read.__doc__ = read.__doc__ + Jw_mapping.return_data_name_doc + "\n"
-    read.__doc__ = read.__doc__ + Relax_fit.set_doc + "\n"
-    read.__doc__ = read.__doc__ + Relax_fit.return_data_name_doc + "\n"
-    read.__doc__ = read.__doc__ + N_state_model.set_doc + "\n"
-    read.__doc__ = read.__doc__ + N_state_model.return_data_name_doc + "\n"
-
-    # Set function.
-    set.__doc__ = set.__doc__ + "\n\n" + docs.regexp.doc + "\n"
-    set.__doc__ = set.__doc__ + Model_free.set_doc + "\n"
-    set.__doc__ = set.__doc__ + Model_free.return_data_name_doc + "\n"
-    set.__doc__ = set.__doc__ + Model_free.default_value_doc + "\n\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.set_doc + "\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.return_data_name_doc + "\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.default_value_doc + "\n"
-    set.__doc__ = set.__doc__ + diffusion_tensor.__set_prompt_doc__ + "\n"
-    set.__doc__ = set.__doc__ + diffusion_tensor.__return_data_name_prompt_doc__ + "\n"
-    set.__doc__ = set.__doc__ + diffusion_tensor.__default_value_prompt_doc__ + "\n\n"
-    set.__doc__ = set.__doc__ + Relax_fit.set_doc + "\n"
-    set.__doc__ = set.__doc__ + Relax_fit.return_data_name_doc + "\n"
-    set.__doc__ = set.__doc__ + Relax_fit.default_value_doc + "\n\n"
-    set.__doc__ = set.__doc__ + N_state_model.set_doc + "\n"
-    set.__doc__ = set.__doc__ + N_state_model.return_data_name_doc + "\n"
-    set.__doc__ = set.__doc__ + N_state_model.default_value_doc + "\n\n"
-
-    # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + docs.regexp.doc + "\n"
-    write.__doc__ = write.__doc__ + Model_free.return_data_name_doc + "\n\n"
-    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name_doc + "\n\n"
-    write.__doc__ = write.__doc__ + Noe.return_data_name_doc + "\n"
-    write.__doc__ = write.__doc__ + Relax_fit.return_data_name_doc + "\n"
-    write.__doc__ = write.__doc__ + N_state_model.return_data_name_doc + "\n"
+    write._doc_additional = [
+        docs.regexp.doc,
+        Model_free.return_data_name_doc,
+        Jw_mapping.return_data_name_doc,
+        Noe.return_data_name_doc,
+        Relax_fit.return_data_name_doc,
+        N_state_model.return_data_name_doc
+    ]
+    _build_doc(write)

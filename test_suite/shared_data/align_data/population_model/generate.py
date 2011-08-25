@@ -24,8 +24,8 @@ for i in range(1, 4):
     structure.read_pdb(file='lactose_MCMM4_S1_%i.pdb' % i, dir=str_path, set_model_num=i, set_mol_name='LE')
 
 # Load the sequence information.
-structure.load_spins(spin_id=':UNK@C*', combine_models=False, ave_pos=False)
-structure.load_spins(spin_id=':UNK@H*', combine_models=False, ave_pos=False)
+structure.load_spins(spin_id=':UNK@C*', ave_pos=False)
+structure.load_spins(spin_id=':UNK@H*', ave_pos=False)
 
 # Deselect the CH2 protons (the rotation of these doesn't work in the model, but the carbon doesn't move).
 deselect.spin(spin_id=':UNK@H6')

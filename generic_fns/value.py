@@ -31,8 +31,9 @@ import sys
 from generic_fns import minimise, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxParamSetError, RelaxValueError
-from relax_io import open_write_file, read_spin_data, write_spin_data
+from relax_io import get_file_path, open_write_file, read_spin_data, write_spin_data
 import specific_fns
+from status import Status; status = Status()
 
 
 def copy(pipe_from=None, pipe_to=None, param=None):
@@ -373,7 +374,7 @@ def set(val=None, param=None, error=None, pipe=None, spin_id=None, force=True, r
         pipes.switch(orig_pipe)
 
 
-def write(param=None, file=None, dir=None, force=False, return_value=None):
+def write(param=None, file=None, dir=None, bc=False, force=False, return_value=None):
     """Write data to a file.
 
     @keyword param:         The name of the parameter to write to file.
@@ -383,6 +384,8 @@ def write(param=None, file=None, dir=None, force=False, return_value=None):
     @keyword dir:           The name of the directory to place the file into (defaults to the
                             current directory).
     @type dir:              str
+    @keyword bc:            A flag which if True will cause the back calculated values to be written.
+    @type bc:               bool
     @keyword force:         A flag which if True will cause any pre-existing file to be overwritten.
     @type force:            bool
     @keyword return_value:  An optional function which if supplied will override the default value
@@ -398,27 +401,32 @@ def write(param=None, file=None, dir=None, force=False, return_value=None):
         raise RelaxNoSequenceError
 
     # Open the file for writing.
+    file_path = get_file_path(file, dir)
     file = open_write_file(file, dir, force)
 
     # Write the data.
-    write_data(param, file, return_value)
+    write_data(param, file, bc, return_value)
 
     # Close the file.
     file.close()
 
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    cdp.result_files.append(['text', 'Text', file_path])
+    status.observers.result_file.notify()
 
-def write_data(param=None, file=None, return_value=None):
+
+def write_data(param=None, file=None, bc=False, return_value=None):
     """The function which actually writes the data.
 
     @keyword param:         The parameter to write.
     @type param:            str
     @keyword file:          The file to write the data to.
     @type file:             str
-    @keyword dir:           The name of the directory to place the file into (defaults to the
-                            current directory).
-    @type dir:              str
-    @keyword return_value:  An optional function which if supplied will override the default value
-                            returning function.
+    @keyword bc:            A flag which if True will cause the back calculated values to be written.
+    @type bc:               bool
+    @keyword return_value:  An optional function which if supplied will override the default value returning function.
     @type return_value:     None or func
     """
 
@@ -441,7 +449,7 @@ def write_data(param=None, file=None, return_value=None):
     # Loop over the sequence.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Get the value and error.
-        value, error = return_value(spin, param)
+        value, error = return_value(spin, param, bc=bc)
 
         # Append the data.
         mol_names.append(mol_name)

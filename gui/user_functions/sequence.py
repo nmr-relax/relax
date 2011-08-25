@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,49 +28,119 @@ from string import split
 import wx
 
 # relax module imports.
-from generic_fns import pipes
+from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
-from base import UF_base, UF_window
+from base import UF_base, UF_page
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.misc import gui_to_int, gui_to_str
+from gui.misc import gui_to_bool, gui_to_int, gui_to_str, str_to_gui
+from gui.wizard import Wiz_window
 
 
 # The container class.
 class Sequence(UF_base):
     """The container class for holding all GUI elements."""
 
+    def copy(self, event):
+        """The sequence.copy user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('sequence', 'copy'))
+        page = Copy_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
     def read(self, event):
-        """The sequence.delete user function.
+        """The sequence.read user function.
 
         @param event:       The wx event.
         @type event:        wx event
         """
 
-        # Initialise the dialog.
-        self._read_window = Read_window(self.gui, self.interpreter)
-
-        # Show the dialog.
-        self._read_window.ShowModal()
-
-        # Destroy.
-        self._read_window.Destroy()
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=900, size_y=700, title=self.get_title('sequence', 'read'))
+        page = Read_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
 
 
+    def write(self, event):
+        """The sequence.write user function.
 
-class Read_window(UF_window):
-    """The sequence.delete() user function window."""
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=900, size_y=700, title=self.get_title('sequence', 'write'))
+        page = Write_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
+
+class Copy_page(UF_page):
+    """The sequence.copy() user function page."""
 
     # Some class variables.
-    size_x = 800
-    size_y = 600
-    frame_title = 'Read the spin sequence from a file'
     image_path = WIZARD_IMAGE_PATH + 'sequence.png'
-    main_text = 'This dialog allows you to read the molecule, residue, and spin information from a file.'
-    title = 'Sequence reading'
+    uf_path = ['sequence', 'copy']
+
+    def add_contents(self, sizer):
+        """Add the sequence specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The source pipe.
+        self.pipe_from = self.combo_box(sizer, "The source data pipe:", [], tooltip=self.uf._doc_args_dict['pipe_from'])
+
+        # The destination pipe.
+        self.pipe_to = self.combo_box(sizer, "The destination data pipe name:", [], tooltip=self.uf._doc_args_dict['pipe_to'])
 
 
-    def add_uf(self, sizer):
+    def on_display(self):
+        """Update the pipe name lists."""
+
+        # Set the default pipe name.
+        if not gui_to_str(self.pipe_from.GetValue()):
+            self.pipe_from.SetValue(str_to_gui(cdp_name()))
+        if not gui_to_str(self.pipe_to.GetValue()):
+            self.pipe_to.SetValue(str_to_gui(cdp_name()))
+
+        # The list of pipe names.
+        for name in pipe_names():
+            self.pipe_from.Append(str_to_gui(name))
+            self.pipe_to.Append(str_to_gui(name))
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the pipe names.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        pipe_to = gui_to_str(self.pipe_to.GetValue())
+
+        # Copy the sequence.
+        self.gui.interpreter.queue('sequence.copy', pipe_from=pipe_from, pipe_to=pipe_to)
+
+
+
+class Read_page(UF_page):
+    """The sequence.read() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'sequence.png'
+    uf_path = ['sequence', 'read']
+
+
+    def add_contents(self, sizer):
         """Add the sequence specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -78,16 +148,16 @@ class Read_window(UF_window):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The sequence file:", title="Sequence file selection")
-
-        # The parameter file settings.
-        self.free_file_format(sizer)
+        self.file = self.file_selection(sizer, "The sequence file:", message="Sequence file selection", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
 
         # The spin ID restriction.
-        self.spin_id = self.input_field(sizer, "Restrict data loading to certain spins:", tooltip="This must be a valid spin ID.  Multiple spins can be selected using ranges, the '|' operator, residue ranges, etc.")
+        self.spin_id = self.spin_id_element(sizer, "Restrict data loading to certain spins:")
+
+        # The parameter file settings.
+        self.free_file_format(sizer, data_cols=False, padding=3, spacer=0)
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
         # The file name.
@@ -114,4 +184,70 @@ class Read_window(UF_window):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the sequence.
-        self.interpreter.sequence.read(file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
+        self.gui.interpreter.queue('sequence.read', file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
+
+
+
+class Write_page(UF_page):
+    """The sequence.write() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'sequence.png'
+    uf_path = ['sequence', 'write']
+
+
+    def add_contents(self, sizer):
+        """Add the sequence specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Add a file selection.
+        self.file = self.file_selection(sizer, "The sequence file:", message="Sequence file selection", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
+
+        # The column separator.
+        self.sep = self.combo_box(sizer, "Column separator:", ["white space", ",", ";", ":", ""], tooltip=self.uf._doc_args_dict['sep'], read_only=False)
+        self.sep.SetValue(str_to_gui("white space"))
+
+        # The column flags.
+        self.mol_name_flag = self.boolean_selector(sizer, "Molecule name flag:", tooltip=self.uf._doc_args_dict['mol_name_flag'])
+        self.res_num_flag = self.boolean_selector(sizer, "Residue number flag:", tooltip=self.uf._doc_args_dict['res_num_flag'])
+        self.res_name_flag = self.boolean_selector(sizer, "Residue name flag:", tooltip=self.uf._doc_args_dict['res_name_flag'])
+        self.spin_num_flag = self.boolean_selector(sizer, "Spin number flag:", tooltip=self.uf._doc_args_dict['spin_num_flag'])
+        self.spin_name_flag = self.boolean_selector(sizer, "Spin name flag:", tooltip=self.uf._doc_args_dict['spin_name_flag'])
+
+        # The force flag.
+        self.force = self.boolean_selector(sizer, "Force flag:", tooltip=self.uf._doc_args_dict['force'])
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The file name.
+        file = gui_to_str(self.file.GetValue())
+
+        # No file.
+        if not file:
+            return
+
+        # The column separator.
+        sep = str(self.sep.GetValue())
+        if sep == 'white space':
+            sep = None
+
+        # Get the column flags.
+        mol_name_flag =  gui_to_bool(self.mol_name_flag.GetValue())
+        res_num_flag =   gui_to_bool(self.res_num_flag.GetValue())
+        res_name_flag =  gui_to_bool(self.res_name_flag.GetValue())
+        spin_num_flag =  gui_to_bool(self.spin_num_flag.GetValue())
+        spin_name_flag = gui_to_bool(self.spin_name_flag.GetValue())
+
+        # Force flag.
+        force = gui_to_bool(self.force.GetValue())
+
+        # Read the sequence.
+        self.gui.interpreter.queue('sequence.write', file=file, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag, force=force)
+
+
+

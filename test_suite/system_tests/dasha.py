@@ -24,7 +24,6 @@
 # Python module imports.
 from os import sep
 import sys
-from shutil import rmtree
 from tempfile import mkdtemp
 
 # relax module imports.
@@ -36,10 +35,7 @@ from status import Status; status = Status()
 
 
 class Dasha(SystemTestCase):
-    """Class for testing various aspects specific to model-free analysis using the program
-    'Dasha'.
-    """
-
+    """Class for testing various aspects specific to model-free analysis using the program 'Dasha'."""
 
     def setUp(self):
         """Set up for all the functional tests."""
@@ -49,17 +45,6 @@ class Dasha(SystemTestCase):
 
         # Create a temporary directory for Dasha outputs.
         ds.tmpdir = mkdtemp()
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Remove the temporary directory.
-        rmtree(ds.tmpdir)
-
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
 
     def test_dasha(self):

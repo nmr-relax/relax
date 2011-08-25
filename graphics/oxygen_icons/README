@@ -1,0 +1,14 @@
+The following changes (performed in the GIMP) were used to create the *-relax-blue.png versions of the oxygen icons:
+
+Original colour     Master hue 
+Green               97
+Yellow              ?
+
+Original colour     Green   Yellow
+Master hue          97      180
+Y hue               .       .
+Y lightness         .       -44
+Y saturation        .       -36
+R hue               .       .
+R lightness         .       -44
+R saturation        .       100

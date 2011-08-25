@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,7 +23,6 @@
 # Python module imports.
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -31,9 +30,10 @@ from generic_fns import pipes, results, structure
 from relax_errors import RelaxError
 from specific_fns.model_free import main
 from status import Status; status = Status()
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class Test_main(TestCase):
+class Test_main(UnitTestCase):
     """Unit tests for the class methods of specific_fns.model_free.main.Model_free_main."""
 
     # Instantiate the class.
@@ -45,12 +45,6 @@ class Test_main(TestCase):
 
         # Create a model-free data pipe.
         ds.add(pipe_name='orig', pipe_type='mf')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
 
 
     def test_duplicate_data1(self):

@@ -83,12 +83,6 @@ class Frame_order(SystemTestCase):
         self.interpreter.pipe.create('test', 'frame order')
 
 
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
-
-
     def mesg_opt_debug(self):
         """Method for returning a string to help debug the minimisation.
 

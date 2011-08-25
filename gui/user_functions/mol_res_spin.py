@@ -31,8 +31,8 @@ from generic_fns.mol_res_spin import generate_spin_id, residue_loop, spin_loop
 from generic_fns import pipes
 
 # GUI module imports.
-from base import UF_base, UF_window
-from gui.misc import gui_to_int, gui_to_str
+from base import UF_base
+from gui.misc import gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 
 
@@ -191,12 +191,12 @@ class Mol_res_spin:
         self.res.Clear()
 
         # Clear the text.
-        self.res.SetValue('')
+        self.res.SetValue(str_to_gui(''))
 
         # The list of residue names.
         mol_id = generate_spin_id(str(self.mol.GetValue()))
         for res in residue_loop(mol_id):
-            self.res.Append("%s %s" % (res.num, res.name))
+            self.res.Append(str_to_gui("%s %s" % (res.num, res.name)))
 
 
     def _update_spins(self, event):
@@ -210,7 +210,7 @@ class Mol_res_spin:
         self.spin.Clear()
 
         # Clear the text.
-        self.spin.SetValue('')
+        self.spin.SetValue(str_to_gui(''))
 
         # Get the residue ID.
         res_id = self._get_res_id()
@@ -219,4 +219,4 @@ class Mol_res_spin:
 
         # Build the list of spin names.
         for spin in spin_loop(res_id):
-            self.spin.Append("%s %s" % (spin.num, spin.name))
+            self.spin.Append(str_to_gui("%s %s" % (spin.num, spin.name)))

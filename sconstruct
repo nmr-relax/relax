@@ -4,7 +4,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,6 +30,7 @@ from numpy import get_include
 from os import getcwd, path, remove, sep, walk
 import platform
 from re import search
+from shutil import rmtree
 import sys
 
 # Scons modules.
@@ -379,6 +380,14 @@ class Main:
                     if search('\.' + ext + '$', file):
                         remove(path.join(root, file))
 
+        # Remove build directories.
+        if path.isdir('build'):
+            print("Removing the build directory 'build' used to create a Mac OS X app.")
+            rmtree('build')
+        if path.isdir('dist'):
+            print("Removing the distribution directory 'dist' used to create a Mac OS X app.")
+            rmtree('dist')
+
         # Final print out.
         print "\n\n\n"
 
@@ -562,4 +571,5 @@ class Main:
 
 
 # Execute the main class.
-Main()
+if __name__ in ['__main__', 'SCons.Script']:
+    Main()

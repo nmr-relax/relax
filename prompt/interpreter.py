@@ -349,7 +349,7 @@ def exec_script(name, globals):
     """Execute the script."""
 
     # Execution lock.
-    status.exec_lock.acquire('script UI')
+    status.exec_lock.acquire('script UI', mode='script')
 
     # The module path.
     head, tail = path.split(name)
@@ -542,8 +542,9 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         sys.stdout.write("\n")
 
     # Quit relax.
-    if quit:
-        sys.exit()
+    # FIXME: need to drop off end of interpreter loop to exit cleanly
+    #if quit:
+    #    sys.exit()
 
     # Return the execution flag.
     return exec_pass

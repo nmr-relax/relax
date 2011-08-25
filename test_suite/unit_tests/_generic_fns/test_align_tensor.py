@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,22 +20,17 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from unittest import TestCase
-
 # relax module imports.
 from generic_fns import align_tensor
 from relax_errors import RelaxStrError, RelaxUnknownParamError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 
-
-class Test_align_tensor(Align_tensor_base_class, TestCase):
+class Test_align_tensor(Align_tensor_base_class):
     """Unit tests for the functions of the 'generic_fns.align_tensor' module."""
 
     # Place the generic_fns.align_tensor module into the class namespace.
     align_tensor_fns = align_tensor
-
 
     def test_return_data_name(self):
         """The returning of alignment tensor parameter names.

@@ -29,6 +29,7 @@ __all__ = [ 'bmrb',
             'main',
             'mf_minimise',
             'molmol',
+            'multi_processor_commands',
             'results'
 ]
 

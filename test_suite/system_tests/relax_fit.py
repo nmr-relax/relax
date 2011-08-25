@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 # Copyright (C) 2011 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -24,7 +24,6 @@
 # Python module imports.
 from os import sep
 from re import search
-from shutil import rmtree
 from string import split
 from tempfile import mkdtemp
 
@@ -47,17 +46,6 @@ class Relax_fit(SystemTestCase):
 
         # Create a temporary directory for dumping files.
         ds.tmpdir = mkdtemp()
-        self.tmpdir = ds.tmpdir
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Remove the temporary directory.
-        rmtree(self.tmpdir)
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
 
     def check_curve_fitting_exp_2param_neg(self):
@@ -65,9 +53,9 @@ class Relax_fit(SystemTestCase):
 
         # Data.
         relax_times = [0.0176, 0.0176, 0.0352, 0.0704, 0.0704, 0.1056, 0.1584, 0.1584, 0.1936, 0.1936]
-        chi2 = [None, None, None, 3.1727215308183405, 5.9732236976178248, 17.633333237460601, 4.7413502242106036, 10.759950979457724, None, None, None, 6.5520255580798752]
-        rx = [None, None, None, 8.0814894819861891, 8.6478971007171523, 9.5710638143380482, 10.716551832690667, 11.143793929315777, None, None, None, 12.828753698718391]
-        i0 = [None, None, None, 1996050.9679873895, 2068490.9458262245, 1611556.5193290685, 1362887.2329727132, 1877670.5629299041, None, None, None, 897044.17270784755]
+        chi2 = [None, None, None, 2.916952651567855, 5.4916923952919632, 16.21182245065274, 4.3591263759462926, 9.8925377583244316, None, None, None, 6.0238341559877782]
+        rx = [None, None, None, 8.0814894819820662, 8.6478971039559642, 9.5710638183013845, 10.716551838066295, 11.143793935455122, None, None, None, 12.82875370075309]
+        i0 = [None, None, None, 1996050.9679875025, 2068490.9458927638, 1611556.5194095275, 1362887.2331948928, 1877670.5623875158, None, None, None, 897044.17382064369]
 
         # Some checks.
         self.assertEqual(cdp.curve_type, 'exp_2param_neg')
@@ -79,8 +67,8 @@ class Relax_fit(SystemTestCase):
 
         # Check the errors.
         for key in cdp.sigma_I:
-            self.assertEqual(cdp.sigma_I[key], 10142.707367087694)
-            self.assertEqual(cdp.var_I[key], 102874512.734375)
+            self.assertEqual(cdp.sigma_I[key], 10578.03948242143)
+            self.assertEqual(cdp.var_I[key], 111894919.29166666)
 
         # Spin data check.
         i = 0
