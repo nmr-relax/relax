@@ -65,6 +65,13 @@ class Interpreter(Thread):
         self._exit = False
 
 
+    def empty(self):
+        """Wrapper method for the Queue.empty() method."""
+
+        # Return the queue empty state.
+        return self._queue.empty()
+
+
     def exit(self):
         """Cause the thread to exit once the currently running user function is complete."""
 
