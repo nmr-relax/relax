@@ -144,7 +144,7 @@ void  exp_3param(double *params, double *relax_times, double *back_calc, int num
 
         /* Back calculate */
         else
-            back_calc[i] = params[2] - (params[2] - params[1]) * exp(-relax_times[i] * params[0]);
+            back_calc[i] = params[2] + (params[2] - params[1]) * exp(relax_times[i] * params[0]);
 
     }
 }
