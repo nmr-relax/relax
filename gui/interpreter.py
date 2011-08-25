@@ -82,6 +82,13 @@ class Interpreter(Thread):
         self._queue.put([None, None, None])
 
 
+    def join(self):
+        """Wrapper method for the Queue.join() method."""
+
+        # Join the queue.
+        self._queue.join()
+
+
     def queue(self, uf, *args, **kwds):
         """Queue up a user function."""
 
