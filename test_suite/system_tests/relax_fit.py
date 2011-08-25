@@ -94,10 +94,10 @@ class Relax_fit(SystemTestCase):
 
         # Data.
         relax_times = [0.2, 0.45, 0.75, 0.75, 1.1, 1.5, 1.95, 1.95, 2.45]
-        chi2 = [1]
-        rx = [1.5]
-        i0 = [-50]
-        iinf = [14]
+        chi2 = [1, 1]
+        rx = [1.5, 1.2]
+        i0 = [-50, -30]
+        iinf = [14, 22]
 
         # Some checks.
         self.assertEqual(cdp.curve_type, 'exp_3param_inv_neg')
