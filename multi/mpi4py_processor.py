@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,9 +21,6 @@
 #                                                                             #
 ###############################################################################
 
-# TODO: clone communicators & resize
-# TODO: check exceptions on master
-
 # Dependency check module.
 import dep_check
 
@@ -37,52 +34,6 @@ import textwrap
 # relax module imports.
 from multi.commands import Exit_command
 from multi.multi_processor_base import Multi_processor, Too_few_slaves_exception
-
-
-in_main_loop = False
-
-
-def broadcast_command(command):
-    for i in range(1, MPI.COMM_WORLD.size):
-        if i != 0:
-            MPI.COMM_WORLD.send(obj=command, dest=i)
-
-
-def ditch_all_results():
-    for i in range(1, MPI.COMM_WORLD.size):
-        if i != 0:
-            while True:
-                result = MPI.COMM_WORLD.recv(source=i)
-                if result.completed:
-                    break
-
-
-# wrapper sys.exit function
-# CHECKME is status ok
-def exit(status=None):
-    if MPI.COMM_WORLD.rank != 0:
-        if in_main_loop:
-            raise Exception('sys.exit unexpectedley called on slave!')
-        else:
-            sys.__stderr__.write('\n')
-            sys.__stderr__.write('***********************************************\n')
-            sys.__stderr__.write('\n')
-            sys.__stderr__.write('warning sys.exit called before mpi4py main loop\n')
-            sys.__stderr__.write('\n')
-            sys.__stderr__.write('***********************************************\n')
-            sys.__stderr__.write('\n')
-            MPI.COMM_WORLD.Abort()
-    else:
-        #print 'here'
-        exit_mpi()
-        #MPI.COMM_WORLD.Abort(1)
-        sys.exit(status)
-
-
-def exit_mpi():
-    if MPI.Is_initialized() and not MPI.Is_finalized() and MPI.COMM_WORLD.rank == 0:
-        broadcast_command(Exit_command())
-        ditch_all_results()
 
 
 class Mpi4py_processor(Multi_processor):
@@ -153,13 +104,6 @@ class Mpi4py_processor(Multi_processor):
 
     def return_result_command(self, result_object):
         MPI.COMM_WORLD.send(obj=result_object, dest=0)
-
-
-    def run(self):
-        global in_main_loop
-        in_main_loop = True
-        super(Mpi4py_processor, self).run()
-        in_main_loop = False
 
 
     def slave_recieve_commands(self):
