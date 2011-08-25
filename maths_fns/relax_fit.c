@@ -124,9 +124,9 @@ func(PyObject *self, PyObject *args) {
     }
 
     /* Back calculated the peak intensities */
-    if(model == exp_2param_neg)
+    if(sizeof(num_params) == 2)
         exp_2param_neg(params, relax_times, back_calc, num_times);
-    if(model == exp_3param_inv_neg)
+    if(sizeof(num_params) == 3)
         exp_3param_inv_neg(params, relax_times, back_calc, num_times);
 
     /* Calculate and return the chi-squared value */
@@ -151,9 +151,9 @@ dfunc(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Back calculated the peak intensities */
-    if(model == exp_2param_neg)
+    if(sizeof(num_params) == 2)
         exp_2param_neg(params, relax_times, back_calc, num_times);
-    if(model == exp_3param_inv_neg)
+    if(sizeof(num_params) == 3)
         exp_3param_inv_neg(params, relax_times, back_calc, num_times);
 
 
