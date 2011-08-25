@@ -39,9 +39,6 @@ from multi.commands import Exit_command
 from multi.multi_processor_base import Multi_processor, Too_few_slaves_exception
 
 
-# save original sys.exit to call after wrapper
-_sys_exit = sys.exit
-
 in_main_loop = False
 
 
@@ -79,7 +76,7 @@ def exit(status=None):
         #print 'here'
         exit_mpi()
         #MPI.COMM_WORLD.Abort(1)
-        _sys_exit(status)
+        sys.exit(status)
 
 
 def exit_mpi():
