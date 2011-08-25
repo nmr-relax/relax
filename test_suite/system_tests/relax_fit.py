@@ -184,11 +184,11 @@ class Relax_fit(SystemTestCase):
         self.check_curve_fitting_exp_2param_neg()
 
 
-    def test_curve_fitting_volume_exp_3param_inv_neg(self):
+    def test_curve_fitting_height_exp_3param_inv_neg(self):
         """Test the relaxation curve fitting C modules."""
 
         # The intensity type.
-        ds.int_type = 'volume'
+        ds.int_type = 'height'
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_exp_3param_inv_neg.py')
