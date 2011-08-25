@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -152,7 +152,6 @@ class Uni_processor(Processor):
         for i, command  in enumerate(self.command_queue):
             completed = (i == last_command)
 
-            self.capture_stdio(self.std_stdio_capture(pre_strings=('', '')))
             command.run(self, completed)
             self.restore_stdio()
 
