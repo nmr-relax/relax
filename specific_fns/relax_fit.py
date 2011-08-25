@@ -214,7 +214,7 @@ class Relax_fit(API_base, API_common):
             spin.i0_sim[sim_index] = param_vector[1]
 
             # Intensity at infinity.
-            if cdp.curve_type == 'inv':
+            if len(param_vector) == 3:
                 spin.iinf_sim[sim_index] = param_vector[2]
 
         # Parameter values.
@@ -226,7 +226,7 @@ class Relax_fit(API_base, API_common):
             spin.i0 = param_vector[1]
 
             # Intensity at infinity.
-            if cdp.curve_type == 'inv':
+            if len(param_vector) == 3:
                 spin.iinf = param_vector[2]
 
 
