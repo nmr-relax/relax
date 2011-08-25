@@ -538,6 +538,9 @@ class Auto_model_free(Base_analysis):
         @type event:    wx event
         """
 
+        # Flush the GUI interpreter internal queue to make sure all user functions are complete.
+        self.gui.interpreter.flush()
+
         # relax execution lock.
         if status.exec_lock.locked():
             error_message("relax is currently executing.", "relax execution lock")
