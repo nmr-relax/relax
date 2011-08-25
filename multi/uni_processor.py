@@ -111,10 +111,6 @@ class Uni_processor(Processor):
 
     def return_object(self, result):
 
-        local_save_stdout = sys.stdout
-        local_save_stderr = sys.stderr
-        self.restore_stdio()
-
         if isinstance(result, Exception):
             #FIXME: clear command queue
 		    #       and finalise mpi (or restart it if we can!
@@ -132,8 +128,6 @@ class Uni_processor(Processor):
         else:
             message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__, result)
             raise Exception(message)
-        sys.stdout = local_save_stdout
-        sys.stderr = local_save_stderr
 
 
     def run(self):
