@@ -429,7 +429,7 @@ def macro_write(data_type=None, style="classic", colour_start=None, colour_end=N
 
     # File name.
     if file == None:
-        file = data_type + '.mac'
+        file = data_type + '.pml'
 
     # Open the file for writing.
     file_path = get_file_path(file, dir)
