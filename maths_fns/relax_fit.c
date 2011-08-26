@@ -32,20 +32,21 @@
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
     /* Python object declarations */
-    PyObject *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
+    PyObject *curve_type_arg, *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
     PyObject *element;
 
     /* Normal declarations */
+    extern char *curve_type;
     extern double *params, *values, *sd, *relax_times, *scaling_matrix;
     extern double relax_time_array;
     extern int num_params, num_times;
     int i;
 
     /* The keyword list */
-    static char *keyword_list[] = {"num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
+    static char *keyword_list[] = {"curve_type", "num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
 
     /* Parse the function arguments */
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &curve_type, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
         return NULL;
 
     /* Dynamic C arrays */
@@ -54,6 +55,15 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     sd = (double *) malloc(sizeof(double)*num_times);
     relax_times = (double *) malloc(sizeof(double)*num_times);
     scaling_matrix = (double *) malloc(sizeof(double)*num_params);
+
+    /* Place the curve_type element into the C array */
+    for (i = 0; i < PySequence_Fast_GET_SIZE(curve_type); i++) {
+        /* Get the element */
+        element = PySequence_GetItem(curve_type_arg, i);
+
+        /* Convert to a C char array */
+        curve_type[i] = PyString_AsChar(element);
+    }
 
     /* Place the value elements into the C array */
     for (i = 0; i < num_times; i++) {
@@ -107,6 +117,7 @@ func(PyObject *self, PyObject *args) {
     /* Declarations */
     PyObject *params_arg;
     PyObject *element;
+    char *curve_type;
     extern double *params;
     int i;
 
@@ -124,9 +135,9 @@ func(PyObject *self, PyObject *args) {
     }
 
     /* Back calculated the peak intensities */
-    if(sizeof(num_params) == 2)
+    if (curve_type == "exp_2param_neg")
         exp_2param_neg(params, relax_times, back_calc, num_times);
-    if(sizeof(num_params) == 3)
+    if (curve_type == "exp_3param_inv_neg")
         exp_3param_inv_neg(params, relax_times, back_calc, num_times);
 
     /* Calculate and return the chi-squared value */
@@ -139,9 +150,11 @@ dfunc(PyObject *self, PyObject *args) {
     /* Function for calculating and returning the chi-squared gradient. */
 
     /* Declarations */
+    PyObject *curve_type_arg;
     PyObject *params_arg;
 
     /* Temp Declarations */
+    char *curve_type;
     double aaa[MAXPARAMS] = {1.0, 2.0};
     int i;
     double *params;
@@ -151,9 +164,9 @@ dfunc(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Back calculated the peak intensities */
-    if(sizeof(num_params) == 2)
+    if (curve_type == "exp_2param_neg")
         exp_2param_neg(params, relax_times, back_calc, num_times);
-    if(sizeof(num_params) == 3)
+    if (curve_type == "exp_3param_inv_neg")
         exp_3param_inv_neg(params, relax_times, back_calc, num_times);
 
 
