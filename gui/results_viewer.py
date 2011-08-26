@@ -244,6 +244,10 @@ class Results_viewer(wx.Frame):
             if type == 'grace':
                 self.gui.user_functions.grace.view(None, file=file)
 
+            # PyMOL files.
+            if type == 'pymol':
+                self.gui.user_functions.pymol.macro_run(None, file=file)
+
             # Diffusion tensor PDB.
             elif type == 'diff_tensor_pdb':
                 self.gui.interpreter.queue('pymol.view')
