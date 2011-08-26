@@ -332,7 +332,7 @@ class Write_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The macro file:", message="PyMOL macro file selection", wildcard="PyMOL macro files (*.mac)|*.mac;*.MAC", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The macro file:", message="PyMOL macro file selection", wildcard="PyMOL macro files (*.pml)|*.pml;*.PML", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
 
         # The force flag.
         self.force = self.boolean_selector(sizer, "Force flag:", tooltip=self.uf._doc_args_dict['force'], default=True)
