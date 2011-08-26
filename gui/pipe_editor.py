@@ -101,6 +101,9 @@ class Pipe_editor(wx.Frame):
         # Initialise the observer name.
         self.name = 'pipe editor'
 
+        # Update the grid.
+        self.update_grid()
+
 
     def Show(self, show=True):
         """Change the behaviour of showing the window to update the content.
