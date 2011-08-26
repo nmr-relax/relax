@@ -355,8 +355,6 @@ class Macro_write_page(UF_page):
 
         # The file name.
         file = gui_to_str(self.file.GetValue())
-        if not file:
-            return
 
         # Force flag.
         force = gui_to_bool(self.force.GetValue())
