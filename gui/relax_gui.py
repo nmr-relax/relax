@@ -464,7 +464,7 @@ class Main(wx.Frame):
             self.results_viewer = Results_viewer(gui=self)
 
         # Open the window.
-        if not self.results_viewer.IsShown():
+        if status.show_gui and not self.results_viewer.IsShown():
             self.results_viewer.Show()
 
 
