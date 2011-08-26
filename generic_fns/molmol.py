@@ -301,7 +301,7 @@ def macro_write(data_type=None, style="classic", colour_start=None, colour_end=N
     # Add the file to the results file list.
     if not hasattr(cdp, 'result_files'):
         cdp.result_files = []
-    cdp.result_files.append(['grace', 'Grace', file_path])
+    cdp.result_files.append(['molmol', 'Molmol', file_path])
     status.observers.result_file.notify()
 
 
