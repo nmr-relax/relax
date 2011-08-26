@@ -245,7 +245,7 @@ def macro_run(file=None, dir=None):
 
     # Open the file for reading.
     file_path = get_file_path(file, dir)
-    file = open_read_file(file, dir, force)
+    file = open_read_file(file, dir)
 
     # Loop over the commands and apply them.
     for command in file.readlines():
