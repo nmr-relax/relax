@@ -63,7 +63,7 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
         element = PySequence_GetItem(curve_type_arg, i);
 
         /* Convert to a C char array */
-        curve_type[i] = PyString_AsChar(element);
+        curve_type[i] = PyString_AsString(element);
     }
 
     /* Place the value elements into the C array */
