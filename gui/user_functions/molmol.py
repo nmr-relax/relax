@@ -80,17 +80,25 @@ class Molmol(UF_base):
         wizard.run()
 
 
-    def macro_run(self, event):
+    def macro_run(self, event, file=None):
         """The molmol.macro_run user function.
 
         @param event:       The wx event.
         @type event:        wx event
+        @keyword file:      The macro file to start the user function with.
+        @type file:         str
         """
 
-        # Execute the wizard.
+        # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=400, title=self.get_title('molmol', 'macro_run'))
         page = Macro_run_page(wizard, self.gui)
         wizard.add_page(page)
+
+        # Default file name.
+        if file:
+            page.file.SetValue(str_to_gui(file))
+
+        # Execute the wizard.
         wizard.run()
 
 
