@@ -24,18 +24,12 @@
 """Module containing the 'pymol' user function class for interacting with PyMOL."""
 __docformat__ = 'plaintext'
 
-# Dependency check module.
-import dep_check
-
-# Python module imports.
-if dep_check.pymol_module:
-    import pymol
-
 # relax module imports.
 from base_class import User_fn_class, _build_doc
 import arg_check
 import colour
 from generic_fns import pymol_control
+from specific_fns.model_free.pymol import Pymol
 
 
 class Pymol(User_fn_class):
@@ -82,6 +76,9 @@ class Pymol(User_fn_class):
     # The function doc info.
     clear_history._doc_title = "Clear the PyMOL command history."""
     clear_history._doc_title_short = "Clear PyMOL history."""
+    clear_history._doc_desc = """
+        This will clear the Pymol history from memory.
+        """
     _build_doc(clear_history)
 
 
@@ -93,7 +90,7 @@ class Pymol(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(command, 'pymol command')
+        arg_check.is_str(command, 'PyMOL command')
 
         # Execute the functional code.
         pymol_control.command(command=command)
@@ -200,6 +197,7 @@ class Pymol(User_fn_class):
         """
     macro_apply._doc_additional = [
         colour._linear_gradient_doc,
+        Pymol._pymol_classic_style_doc,
         colour.__molmol_colours_prompt_doc__,
         colour.__x11_colours_prompt_doc__
     ]
@@ -219,7 +217,7 @@ class Pymol(User_fn_class):
         arg_check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
-        pymol.macro_run(file=file, dir=dir)
+        pymol_control.macro_run(file=file, dir=dir)
 
     # The function doc info.
     macro_run._doc_title = "Open and execute the PyMOL macro file."
@@ -243,7 +241,7 @@ class Pymol(User_fn_class):
     def macro_write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='pymol', force=False):
         # Function intro text.
         if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.write("
+            text = self._exec_info.ps3 + "pymol.macro_write("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)
@@ -265,12 +263,12 @@ class Pymol(User_fn_class):
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        pymol_control.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
+        pymol_control.macro_write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
 
     # The function doc info.
-    write._doc_title = "Create PyMOL macros."
-    write._doc_title_short = "PyMOL macro creation."
-    write._doc_args = [
+    macro_write._doc_title = "Create PyMOL macros."
+    macro_write._doc_title_short = "PyMOL macro creation."
+    macro_write._doc_args = [
         ["data_type", "The data type to map to the structure."],
         ["style", "The style of the macro."],
         ["colour_start", "The starting colour, either an array or string, of the linear colour gradient."],
@@ -280,23 +278,24 @@ class Pymol(User_fn_class):
         ["dir", "The directory name."],
         ["force", "A flag which, if set to True, will cause the file to be overwritten."]
     ]
-    write._doc_desc = """
+    macro_write._doc_desc = """
         This allows residues specific values to be mapped to a structure through the creation of a PyMOL macro which can be executed in PyMOL by clicking on 'File, Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is available.
         """
-    write._doc_examples = """
+    macro_write._doc_examples = """
         To create a PyMOL macro mapping the order parameter values, S2, onto the structure using
         the classic style, type:
 
-        relax> pymol.write('S2')
-        relax> pymol.write(data_type='S2')
-        relax> pymol.write(data_type='S2', style="classic", file='s2.mac', dir='pymol')
+        relax> pymol.macro_write('S2')
+        relax> pymol.macro_write(data_type='S2')
+        relax> pymol.macro_write(data_type='S2', style="classic", file='s2.pml', dir='pymol')
         """
-    write._doc_additional = [
+    macro_write._doc_additional = [
         colour._linear_gradient_doc,
+        Pymol._pymol_classic_style_doc,
         colour.__molmol_colours_prompt_doc__,
         colour.__x11_colours_prompt_doc__
     ]
-    _build_doc(write)
+    _build_doc(macro_write)
 
 
     def tensor_pdb(self, file=None):
@@ -388,6 +387,9 @@ class Pymol(User_fn_class):
     # The function doc info.
     view._doc_title = "View the collection of molecules from the loaded PDB file."
     view._doc_title_short = "Molecule viewing."
+    view._doc_desc = """
+        This will simply launch Pymol.
+        """
     view._doc_examples = """
         relax> pymol.view()
         """
