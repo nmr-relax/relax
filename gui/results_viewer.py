@@ -245,11 +245,11 @@ class Results_viewer(wx.Frame):
                 self.gui.user_functions.grace.view(None, file=file)
 
             # PyMOL macro files.
-            if type == 'pymol':
+            elif type == 'pymol':
                 self.gui.user_functions.pymol.macro_run(None, file=file)
 
             # Molmol macro files.
-            if type == 'molmol':
+            elif type == 'molmol':
                 self.gui.user_functions.molmol.macro_run(None, file=file)
 
             # Diffusion tensor PDB.
