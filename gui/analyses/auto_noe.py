@@ -95,10 +95,10 @@ class Auto_noe(Base_analysis):
 
         # New data container.
         if data_index == None:
-            # First create the data pipe if not already in existence (if this fails, then no data is set up).
-            if not has_pipe(pipe_name) and not protected_exec(self.gui.interpreter.queue, 'pipe.create', pipe_name, 'noe'):
-                self.init_flag = False
-                return
+            # First create the data pipe if not already in existence.
+            if not has_pipe(pipe_name):
+                self.gui.interpreter.queue('pipe.create', pipe_name, 'noe')
+                self.gui.interpreter.flush()
 
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add('NOE')
