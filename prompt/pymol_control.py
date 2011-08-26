@@ -274,8 +274,8 @@ class Pymol(User_fn_class):
         ["colour_start", "The starting colour, either an array or string, of the linear colour gradient."],
         ["colour_end", "The ending colour, either an array or string, of the linear colour gradient."],
         ["colour_list", "The list of colours to match the start and end strings."],
-        ["file", "The name of the file."],
-        ["dir", "The directory name."],
+        ["file", "The optional name of the file."],
+        ["dir", "The optional directory to save the file to."],
         ["force", "A flag which, if set to True, will cause the file to be overwritten."]
     ]
     macro_write._doc_desc = """
