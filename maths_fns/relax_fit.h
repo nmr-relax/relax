@@ -34,6 +34,7 @@
 int num_params, num_times;
 
 /* Pointers to PyObjects */
+char *curve_type;
 double *params, *values, *sd, *relax_times, *scaling_matrix;
 
 /* Variables used for storage during the function calls of optimisation */
