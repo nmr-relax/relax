@@ -33,7 +33,7 @@ from time import sleep
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError
-from relax_io import get_file_path, open_write_file, test_binary
+from relax_io import get_file_path, open_read_file, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
 from status import Status; status = Status()
 
