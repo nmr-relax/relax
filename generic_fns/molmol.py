@@ -234,6 +234,24 @@ def macro_apply(data_type=None, style="classic", colour_start=None, colour_end=N
         molmol_obj.exec_cmd(command)
 
 
+def macro_run(file=None, dir=None):
+    """Execute the Molmol macro from the given text file.
+
+    @keyword file:          The name of the macro file to execute.
+    @type file:             str
+    @keyword dir:           The name of the directory where the macro file is located.
+    @type dir:              str
+    """
+
+    # Open the file for reading.
+    file_path = get_file_path(file, dir)
+    file = open_read_file(file, dir, force)
+
+    # Loop over the commands and apply them.
+    for command in file.readlines():
+        molmol_obj.exec_cmd(command)
+
+
 def macro_write(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=False):
     """Create a Molmol macro.
 
