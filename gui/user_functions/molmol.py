@@ -66,16 +66,30 @@ class Molmol(UF_base):
         wizard.run()
 
 
-    def macro_exec(self, event):
-        """The molmol.macro_exec user function.
+    def macro_apply(self, event):
+        """The molmol.macro_apply user function.
 
         @param event:       The wx event.
         @type event:        wx event
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('molmol', 'macro_exec'))
-        page = Macro_exec_page(wizard, self.gui)
+        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('molmol', 'macro_apply'))
+        page = Macro_apply_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
+    def macro_write(self, event):
+        """The molmol.macro_write user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('molmol', 'macro_write'))
+        page = Macro_write_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -119,20 +133,6 @@ class Molmol(UF_base):
         wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('molmol', 'view'))
         page = View_page(wizard, self.gui)
         wizard.add_page(page, apply_button=False)
-        wizard.run()
-
-
-    def write(self, event):
-        """The molmol.write user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('molmol', 'write'))
-        page = Write_page(wizard, self.gui)
-        wizard.add_page(page)
         wizard.run()
 
 
@@ -189,12 +189,12 @@ class Command_page(UF_page):
 
 
 
-class Macro_exec_page(UF_page):
-    """The molmol.macro_exec() user function page."""
+class Macro_apply_page(UF_page):
+    """The molmol.macro_apply() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
-    uf_path = ['molmol', 'macro_exec']
+    uf_path = ['molmol', 'macro_apply']
     height_desc = 450
 
     def add_contents(self, sizer):
@@ -232,7 +232,68 @@ class Macro_exec_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('molmol.macro_exec', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        self.gui.interpreter.queue('molmol.macro_apply', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+
+
+
+class Macro_write_page(UF_page):
+    """The molmol.macro_write() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
+    uf_path = ['molmol', 'macro_write']
+    height_desc = 400
+
+    def add_contents(self, sizer):
+        """Add the specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Add a file selection.
+        self.file = self.file_selection(sizer, "The macro file:", message="Molmol macro file selection", wildcard="Molmol macro files (*.mac)|*.mac;*.MAC", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
+
+        # The force flag.
+        self.force = self.boolean_selector(sizer, "Force flag:", tooltip=self.uf._doc_args_dict['force'], default=True)
+
+        # The data type.
+        self.data_type = self.combo_box(sizer, "The data type:", choices=['S2', 'S2f', 'S2s', 'amp_fast', 'amp_slow', 'te', 'tf', 'ts',' time_fast', 'time_slow', 'Rex'], tooltip=self.uf._doc_args_dict['data_type'])
+
+        # The style.
+        self.style = self.input_field(sizer, "The style:", tooltip=self.uf._doc_args_dict['style'])
+        self.style.SetValue(str_to_gui("classic"))
+
+        # The starting colour.
+        self.colour_start = self.input_field(sizer, "The starting colour:", tooltip=self.uf._doc_args_dict['colour_start'])
+
+        # The ending colour.
+        self.colour_end = self.input_field(sizer, "The ending colour:", tooltip=self.uf._doc_args_dict['colour_end'])
+
+        # The colour list.
+        self.colour_list = self.input_field(sizer, "The colour list:", tooltip=self.uf._doc_args_dict['colour_list'])
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The file name.
+        file = gui_to_str(self.file.GetValue())
+        if not file:
+            return
+
+        # Force flag.
+        force = gui_to_bool(self.force.GetValue())
+
+        # Get the values.
+        data_type = gui_to_str(self.data_type.GetValue())
+        style = gui_to_str(self.style.GetValue())
+        colour_start = gui_to_str(self.colour_start.GetValue())
+        colour_end = gui_to_str(self.colour_end.GetValue())
+        colour_list = gui_to_str(self.colour_list.GetValue())
+
+        # Execute the user function.
+        self.gui.interpreter.queue('molmol.macro_write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
 
 
 
@@ -313,64 +374,3 @@ class View_page(UF_page):
 
         # Execute the user function.
         self.gui.interpreter.queue('molmol.view')
-
-
-
-class Write_page(UF_page):
-    """The molmol.write() user function page."""
-
-    # Some class variables.
-    image_path = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
-    uf_path = ['molmol', 'write']
-    height_desc = 400
-
-    def add_contents(self, sizer):
-        """Add the specific GUI elements.
-
-        @param sizer:   A sizer object.
-        @type sizer:    wx.Sizer instance
-        """
-
-        # Add a file selection.
-        self.file = self.file_selection(sizer, "The macro file:", message="Molmol macro file selection", wildcard="Molmol macro files (*.mac)|*.mac;*.MAC", style=wx.FD_SAVE, tooltip=self.uf._doc_args_dict['file'])
-
-        # The force flag.
-        self.force = self.boolean_selector(sizer, "Force flag:", tooltip=self.uf._doc_args_dict['force'], default=True)
-
-        # The data type.
-        self.data_type = self.combo_box(sizer, "The data type:", choices=['S2', 'S2f', 'S2s', 'amp_fast', 'amp_slow', 'te', 'tf', 'ts',' time_fast', 'time_slow', 'Rex'], tooltip=self.uf._doc_args_dict['data_type'])
-
-        # The style.
-        self.style = self.input_field(sizer, "The style:", tooltip=self.uf._doc_args_dict['style'])
-        self.style.SetValue(str_to_gui("classic"))
-
-        # The starting colour.
-        self.colour_start = self.input_field(sizer, "The starting colour:", tooltip=self.uf._doc_args_dict['colour_start'])
-
-        # The ending colour.
-        self.colour_end = self.input_field(sizer, "The ending colour:", tooltip=self.uf._doc_args_dict['colour_end'])
-
-        # The colour list.
-        self.colour_list = self.input_field(sizer, "The colour list:", tooltip=self.uf._doc_args_dict['colour_list'])
-
-
-    def on_execute(self):
-        """Execute the user function."""
-
-        # The file name.
-        file = gui_to_str(self.file.GetValue())
-        if not file:
-            return
-
-        # Force flag.
-        force = gui_to_bool(self.force.GetValue())
-
-        # Get the values.
-        data_type = gui_to_str(self.data_type.GetValue())
-        style = gui_to_str(self.style.GetValue())
-        colour_start = gui_to_str(self.colour_start.GetValue())
-        colour_end = gui_to_str(self.colour_end.GetValue())
-        colour_list = gui_to_str(self.colour_list.GetValue())
-
-        # Execute the user function.
-        self.gui.interpreter.queue('molmol.write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)

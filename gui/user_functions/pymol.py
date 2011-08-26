@@ -66,16 +66,30 @@ class Pymol(UF_base):
         wizard.run()
 
 
-    def macro_exec(self, event):
-        """The pymol.macro_exec user function.
+    def macro_apply(self, event):
+        """The pymol.macro_apply user function.
 
         @param event:       The wx event.
         @type event:        wx event
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('pymol', 'macro_exec'))
-        page = Macro_exec_page(wizard, self.gui)
+        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('pymol', 'macro_apply'))
+        page = Macro_apply_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
+    def macro_write(self, event):
+        """The pymol.macro_write user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('pymol', 'macro_write'))
+        page = Write_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -119,20 +133,6 @@ class Pymol(UF_base):
         wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('pymol', 'view'))
         page = View_page(wizard, self.gui)
         wizard.add_page(page, apply_button=False)
-        wizard.run()
-
-
-    def write(self, event):
-        """The pymol.write user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('pymol', 'write'))
-        page = Write_page(wizard, self.gui)
-        wizard.add_page(page)
         wizard.run()
 
 
@@ -189,12 +189,12 @@ class Command_page(UF_page):
 
 
 
-class Macro_exec_page(UF_page):
-    """The pymol.macro_exec() user function page."""
+class Macro_apply_page(UF_page):
+    """The pymol.macro_apply() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
-    uf_path = ['pymol', 'macro_exec']
+    uf_path = ['pymol', 'macro_apply']
     height_desc = 450
 
     def add_contents(self, sizer):
@@ -232,7 +232,7 @@ class Macro_exec_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('pymol.macro_exec', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        self.gui.interpreter.queue('pymol.macro_apply', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
 
 
@@ -317,11 +317,11 @@ class View_page(UF_page):
 
 
 class Write_page(UF_page):
-    """The pymol.write() user function page."""
+    """The pymol.macro_write() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
-    uf_path = ['pymol', 'write']
+    uf_path = ['pymol', 'macro_write']
     height_desc = 400
 
     def add_contents(self, sizer):
@@ -373,4 +373,4 @@ class Write_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('pymol.write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=None, force=force)
+        self.gui.interpreter.queue('pymol.macro_write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=None, force=force)
