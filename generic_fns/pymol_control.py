@@ -39,7 +39,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
 from maths_fns.rotation_matrix import euler_to_R_zyz, R_to_axis_angle
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
-from relax_io import file_root, get_file_path, open_write_file, test_binary
+from relax_io import file_root, get_file_path, open_read_file, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
 from status import Status; status = Status()
 
@@ -375,6 +375,24 @@ def macro_apply(data_type=None, style="classic", colour_start=None, colour_end=N
 
     # Loop over the commands and execute them.
     for command in commands:
+        pymol_obj.exec_cmd(command)
+
+
+def macro_run(file=None, dir=None):
+    """Execute the PyMOL macro from the given text file.
+
+    @keyword file:          The name of the macro file to execute.
+    @type file:             str
+    @keyword dir:           The name of the directory where the macro file is located.
+    @type dir:              str
+    """
+
+    # Open the file for reading.
+    file_path = get_file_path(file, dir)
+    file = open_read_file(file, dir, force)
+
+    # Loop over the commands and apply them.
+    for command in file.readlines():
         pymol_obj.exec_cmd(command)
 
 
