@@ -346,7 +346,7 @@ class Macro_write_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('molmol.macro_write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
+        self.gui.interpreter.queue('molmol.macro_write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=None, force=force)
 
 
 
