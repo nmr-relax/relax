@@ -116,6 +116,7 @@ func(PyObject *self, PyObject *args) {
      */
 
     /* Declarations */
+    PyObject *curve_type_arg;
     PyObject *params_arg;
     PyObject *element;
     char *curve_type;
@@ -123,7 +124,7 @@ func(PyObject *self, PyObject *args) {
     int i;
 
     /* Parse the function arguments, the only argument should be the parameter array */
-    if (!PyArg_ParseTuple(args, "O", &params_arg))
+    if (!PyArg_ParseTuple(args, "O", &params_arg, &curve_type_arg))
         return NULL;
 
     /* Place the parameter array elements into the C array */
@@ -161,7 +162,7 @@ dfunc(PyObject *self, PyObject *args) {
     double *params;
 
     /* Parse the function arguments, the only argument should be the parameter array */
-    if (!PyArg_ParseTuple(args, "O", &params_arg))
+    if (!PyArg_ParseTuple(args, "O", &params_arg, &curve_type_arg))
         return NULL;
 
     /* Back calculated the peak intensities */
