@@ -206,6 +206,40 @@ class Pymol(User_fn_class):
     _build_doc(macro_apply)
 
 
+    def macro_run(self, file=None, dir='pymol'):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.macro_run("
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+
+        # Execute the functional code.
+        pymol.macro_run(file=file, dir=dir)
+
+    # The function doc info.
+    macro_run._doc_title = "Open and execute the PyMOL macro file."
+    macro_run._doc_title_short = "PyMOL macro file execution."
+    macro_run._doc_args = [
+        ["file", "The name of the PyMOL macro file."],
+        ["dir", "The directory name."],
+    ]
+    macro_run._doc_desc = """
+        This user function is for opening and running a PyMOL macro located within a text file.
+        """
+    macro_run._doc_examples = """
+        To execute the macro file 's2.pml' located in the directory 'pymol', type:
+
+        relax> pymol.macro_run(file='s2.pml')
+        relax> pymol.macro_run(file='s2.pml', dir='pymol')
+        """
+    _build_doc(macro_run)
+
+
     def macro_write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='pymol', force=False):
         # Function intro text.
         if self._exec_info.intro:
