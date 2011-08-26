@@ -80,6 +80,20 @@ class Pymol(UF_base):
         wizard.run()
 
 
+    def macro_run(self, event):
+        """The pymol.macro_run user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=800, size_y=400, title=self.get_title('pymol', 'macro_run'))
+        page = Macro_run_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
     def macro_write(self, event):
         """The pymol.macro_write user function.
 
@@ -89,7 +103,7 @@ class Pymol(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('pymol', 'macro_write'))
-        page = Write_page(wizard, self.gui)
+        page = Macro_write_page(wizard, self.gui)
         wizard.add_page(page)
         wizard.run()
 
@@ -259,13 +273,12 @@ class Ribbon_page(UF_page):
 
 
 
-class Tensor_pdb_page(UF_page):
-    """The pymol.tensor_pdb() user function page."""
+class Macro_run_page(UF_page):
+    """The pymol.macro_run() user function page."""
 
     # Some class variables.
     image_path = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
-    uf_path = ['pymol', 'tensor_pdb']
-    height_desc = 450
+    uf_path = ['pymol', 'macro_run']
 
     def add_contents(self, sizer):
         """Add the specific GUI elements.
@@ -275,7 +288,7 @@ class Tensor_pdb_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The tensor PDB file:", message="Tensor PDB file selection", wildcard="PDB files (*.pdb)|*.pdb;*.PDB", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The macro file:", message="PyMOL macro file selection", wildcard="PyMOL macro files (*.pml)|*.pml;*.PML", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
 
 
     def on_execute(self):
@@ -283,40 +296,15 @@ class Tensor_pdb_page(UF_page):
 
         # The file name.
         file = gui_to_str(self.file.GetValue())
-
-        # No file.
         if not file:
             return
 
         # Execute the user function.
-        self.gui.interpreter.queue('pymol.tensor_pdb', file=file)
+        self.gui.interpreter.queue('pymol.macro_run', file=file, dir=None)
 
 
 
-class View_page(UF_page):
-    """The pymol.view() user function page."""
-
-    # Some class variables.
-    image_path = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
-    uf_path = ['pymol', 'view']
-
-    def add_contents(self, sizer):
-        """Add the specific GUI elements.
-
-        @param sizer:   A sizer object.
-        @type sizer:    wx.Sizer instance
-        """
-
-
-    def on_execute(self):
-        """Execute the user function."""
-
-        # Execute the user function.
-        self.gui.interpreter.queue('pymol.view')
-
-
-
-class Write_page(UF_page):
+class Macro_write_page(UF_page):
     """The pymol.macro_write() user function page."""
 
     # Some class variables.
@@ -374,3 +362,60 @@ class Write_page(UF_page):
 
         # Execute the user function.
         self.gui.interpreter.queue('pymol.macro_write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=None, force=force)
+
+
+
+class Tensor_pdb_page(UF_page):
+    """The pymol.tensor_pdb() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
+    uf_path = ['pymol', 'tensor_pdb']
+    height_desc = 450
+
+    def add_contents(self, sizer):
+        """Add the specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Add a file selection.
+        self.file = self.file_selection(sizer, "The tensor PDB file:", message="Tensor PDB file selection", wildcard="PDB files (*.pdb)|*.pdb;*.PDB", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The file name.
+        file = gui_to_str(self.file.GetValue())
+
+        # No file.
+        if not file:
+            return
+
+        # Execute the user function.
+        self.gui.interpreter.queue('pymol.tensor_pdb', file=file)
+
+
+
+class View_page(UF_page):
+    """The pymol.view() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
+    uf_path = ['pymol', 'view']
+
+    def add_contents(self, sizer):
+        """Add the specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Execute the user function.
+        self.gui.interpreter.queue('pymol.view')

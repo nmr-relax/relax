@@ -80,6 +80,20 @@ class Molmol(UF_base):
         wizard.run()
 
 
+    def macro_run(self, event):
+        """The molmol.macro_run user function.
+
+        @param event:       The wx event.
+        @type event:        wx event
+        """
+
+        # Execute the wizard.
+        wizard = Wiz_window(size_x=800, size_y=400, title=self.get_title('molmol', 'macro_run'))
+        page = Macro_run_page(wizard, self.gui)
+        wizard.add_page(page)
+        wizard.run()
+
+
     def macro_write(self, event):
         """The molmol.macro_write user function.
 
@@ -233,6 +247,37 @@ class Macro_apply_page(UF_page):
 
         # Execute the user function.
         self.gui.interpreter.queue('molmol.macro_apply', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+
+
+
+class Macro_run_page(UF_page):
+    """The molmol.macro_run() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'molmol' + sep + 'molmol_logo.png'
+    uf_path = ['molmol', 'macro_run']
+
+    def add_contents(self, sizer):
+        """Add the specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Add a file selection.
+        self.file = self.file_selection(sizer, "The macro file:", message="Molmol macro file selection", wildcard="Molmol macro files (*.mac)|*.mac;*.MAC", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The file name.
+        file = gui_to_str(self.file.GetValue())
+        if not file:
+            return
+
+        # Execute the user function.
+        self.gui.interpreter.queue('molmol.macro_run', file=file, dir=None)
 
 
 
