@@ -206,11 +206,12 @@ class Menu:
             [wx.NewId(), "&molmol", paths.icon_16x16.molmol, None, [
                 [wx.NewId(), "clear_&history", None, self.gui.user_functions.molmol.clear_history],
                 [wx.NewId(), "&command", None, self.gui.user_functions.molmol.command],
-                [wx.NewId(), "&macro_exec", paths.icon_16x16.molmol, self.gui.user_functions.molmol.macro_exec],
-                [wx.NewId(), "&ribbon", None, self.gui.user_functions.molmol.ribbon],
+                [wx.NewId(), "&macro_apply", paths.icon_16x16.molmol, self.gui.user_functions.molmol.macro_apply],
+                [wx.NewId(), "macro_&run", paths.icon_16x16.molmol, self.gui.user_functions.molmol.macro_run],
+                [wx.NewId(), "macro_&write", paths.icon_16x16.save, self.gui.user_functions.molmol.macro_write],
+                [wx.NewId(), "ri&bbon", None, self.gui.user_functions.molmol.ribbon],
                 [wx.NewId(), "&tensor_pdb", None, self.gui.user_functions.molmol.tensor_pdb],
-                [wx.NewId(), "&view", None, self.gui.user_functions.molmol.view],
-                [wx.NewId(), "&write", paths.icon_16x16.save, self.gui.user_functions.molmol.write]
+                [wx.NewId(), "&view", None, self.gui.user_functions.molmol.view]
             ]],
             [wx.NewId(), "&noe", None, None, [
                 [wx.NewId(), "&read_restraints", paths.icon_16x16.open, self.gui.user_functions.noe.read_restraints],
@@ -226,11 +227,12 @@ class Menu:
             [wx.NewId(), "&pymol", paths.icon_16x16.pymol, None, [
                 [wx.NewId(), "clear_&history", None, self.gui.user_functions.pymol.clear_history],
                 [wx.NewId(), "&command", None, self.gui.user_functions.pymol.command],
-                [wx.NewId(), "&macro_exec", paths.icon_16x16.pymol, self.gui.user_functions.pymol.macro_exec],
-                [wx.NewId(), "&ribbon", None, self.gui.user_functions.pymol.ribbon],
+                [wx.NewId(), "&macro_apply", paths.icon_16x16.pymol, self.gui.user_functions.pymol.macro_apply],
+                [wx.NewId(), "&macro_&run", paths.icon_16x16.pymol, self.gui.user_functions.pymol.macro_run],
+                [wx.NewId(), "macro_&write", paths.icon_16x16.save, self.gui.user_functions.pymol.macro_write],
+                [wx.NewId(), "ri&bbon", None, self.gui.user_functions.pymol.ribbon],
                 [wx.NewId(), "&tensor_pdb", None, self.gui.user_functions.pymol.tensor_pdb],
-                [wx.NewId(), "&view", None, self.gui.user_functions.pymol.view],
-                [wx.NewId(), "&write", paths.icon_16x16.save, self.gui.user_functions.pymol.write]
+                [wx.NewId(), "&view", None, self.gui.user_functions.pymol.view]
             ]],
             [wx.NewId(), "&relax_data", paths.icon_16x16.relax_data, None, [
                 [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.relax_data.delete],
