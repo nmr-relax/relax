@@ -50,7 +50,7 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
         return NULL;
 
     /* Dynamic C arrays */
-    curve_type = (char *) malloc(sizeof(char)*PySequence_Fast_GET_SIZE(curve_type));
+    curve_type = (char *) malloc(sizeof(char)*20);
     params = (double *) malloc(sizeof(double)*num_params);
     values = (double *) malloc(sizeof(double)*num_times);
     sd = (double *) malloc(sizeof(double)*num_times);
