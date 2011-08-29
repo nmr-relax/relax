@@ -395,7 +395,7 @@ def macro_apply(data_type=None, style="classic", colour_start=None, colour_end=N
         pymol_obj.exec_cmd("@%s" % tmpfile)
 
         # Wait a bit for PyMOL to catch up (it takes time for PyMOL to start and the macro to execute).
-        sleep(5)
+        sleep(3)
 
     # Delete the temporary file (no matter what).
     finally:
