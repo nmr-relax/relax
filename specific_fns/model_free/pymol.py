@@ -482,15 +482,17 @@ class Pymol:
         """Create the header for the pymol macro."""
 
         # Hide all bonds.
-        self.commands.append("SelectBond ''")
-        self.commands.append("StyleBond invisible")
+        self.commands.append("hide")
 
         # Show the backbone bonds as lines.
-        self.commands.append("SelectBond 'bb'")
-        self.commands.append("StyleBond line")
+        self.commands.append("select bb, (name ca,n,c)")
+        self.commands.append("show lines, bb")
 
         # Colour the backbone black.
-        self.commands.append("ColorBond 0 0 0")
+        self.commands.append("color black, bb")
+
+        # Set the background colour to white.
+        self.commands.append("bg_color white")
 
 
     def _pymol_classic_order_param(self, res_num, s2, colour_start, colour_end, colour_list):
