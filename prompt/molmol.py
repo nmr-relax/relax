@@ -126,7 +126,7 @@ class Molmol(User_fn_class):
         """
     macro_apply._doc_additional = [
         colour._linear_gradient_doc,
-        Molmol._classic_style_doc,
+        Molmol.classic_style_doc,
         colour.__molmol_colours_prompt_doc__,
         colour.__x11_colours_prompt_doc__
     ]
@@ -220,7 +220,7 @@ class Molmol(User_fn_class):
         """
     macro_write._doc_additional = [
         colour._linear_gradient_doc,
-        Molmol._classic_style_doc,
+        Molmol.classic_style_doc,
         colour.__molmol_colours_prompt_doc__,
         colour.__x11_colours_prompt_doc__
     ]
