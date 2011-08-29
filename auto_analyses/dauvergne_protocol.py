@@ -856,31 +856,31 @@ class dAuvergne_protocol:
 
         # Create the PyMOL macros.
         dir = self.results_dir + 'final' + sep + 'pymol'
-        self.interpreter.pymol.write(data_type='S2',        dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='S2f',       dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='S2s',       dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='amp_fast',  dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='amp_slow',  dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='te',        dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='tf',        dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='ts',        dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='time_fast', dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='time_slow', dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='Rex',       dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='S2',        dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='S2f',       dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='S2s',       dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='amp_fast',  dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='amp_slow',  dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='te',        dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='tf',        dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='ts',        dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='time_fast', dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='time_slow', dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='Rex',       dir=dir, force=True)
 
         # Create the Molmol macros.
         dir = self.results_dir + 'final' + sep + 'molmol'
-        self.interpreter.molmol.write(data_type='S2',        dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='S2f',       dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='S2s',       dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='amp_fast',  dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='amp_slow',  dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='te',        dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='tf',        dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='ts',        dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='time_fast', dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='time_slow', dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='Rex',       dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='S2',        dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='S2f',       dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='S2s',       dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='amp_fast',  dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='amp_slow',  dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='te',        dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='tf',        dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='ts',        dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='time_fast', dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='time_slow', dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='Rex',       dir=dir, force=True)
 
         # Create a diffusion tensor representation of the tensor.
         dir = self.results_dir + 'final'
