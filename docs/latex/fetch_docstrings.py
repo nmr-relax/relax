@@ -844,8 +844,8 @@ class Fetch_docstrings:
         ################
 
         # List of tables to be formatted using longtable.
-        longtable = {"molmol.write": [3],
-                     "pymol.write": [2]
+        longtable = {"molmol.macro_write": [3],
+                     "pymol.macro_write": [2]
         }
 
         # Some whitespace.
