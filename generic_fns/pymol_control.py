@@ -372,6 +372,9 @@ def macro_apply(data_type=None, style="classic", colour_start=None, colour_end=N
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Clear the PyMOL history first.
+    pymol_obj.clear_history()
+
     # Create the macro.
     commands = create_macro(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
