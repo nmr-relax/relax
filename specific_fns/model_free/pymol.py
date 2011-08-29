@@ -421,26 +421,21 @@ class Pymol:
     def _pymol_classic_colour(self, res_num=None, width=None, rgb_array=None):
         """Colour the given peptide bond."""
 
-        # Ca to C bond.
-        self.commands.append("SelectBond 'atom1.name = \"CA\"  & atom2.name = \"C\" & res.num = " + repr(res_num-1) + "'")
-        self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + repr(width))
-        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
-
-        # C to N bond.
-        self.commands.append("SelectBond 'atom1.name = \"C\"  & atom2.name = \"N\" & res.num = " + repr(res_num-1) + "'")
-        self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + repr(width))
-        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
-
-        # N to Ca bond.
-        self.commands.append("SelectBond 'atom1.name = \"N\"  & atom2.name = \"CA\" & res.num = " + repr(res_num) + "'")
-        self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + repr(width))
-        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
-
-        # Blank line.
+        # Blank line (to make the macro file easier to read for the user).
         self.commands.append("")
+
+        # Define the colour.
+        colour_name = 'pept_colour_%i' % res_num
+        self.commands.append("set_color %s, [%s, %s, %s]" % (colour_name, rgb_array[0], rgb_array[1], rgb_array[2]))
+
+        # The peptide bond.
+        self.commands.append("select pept_bond, (name ca,n and resi %i) or (name ca,c,o and resi %i)" % (res_num, res_num-1))
+        self.commands.append("as sticks, pept_bond")
+        self.commands.append("set_bond stick_radius, %s, pept_bond" % width)
+        self.commands.append("color %s, pept_bond" % colour_name)
+
+        # Delete the selection.
+        self.commands.append("delete pept_bond")
 
 
     def _pymol_classic_correlation_time(self, res_num, te, colour_start, colour_end, colour_list):
@@ -485,11 +480,14 @@ class Pymol:
         self.commands.append("hide")
 
         # Show the backbone bonds as lines.
-        self.commands.append("select bb, (name ca,n,c)")
+        self.commands.append("select bb, (name ca,n,c,o)")
         self.commands.append("show lines, bb")
 
         # Colour the backbone black.
         self.commands.append("color black, bb")
+
+        # Delete the selection.
+        self.commands.append("delete bb")
 
         # Set the background colour to white.
         self.commands.append("bg_color white")
