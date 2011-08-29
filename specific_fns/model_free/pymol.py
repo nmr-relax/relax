@@ -44,7 +44,7 @@ class Pymol(Macro):
         self.commands.append("select pept_bond, (name ca,n and resi %i) or (name ca,c and resi %i)" % (res_num, res_num-1))
         self.commands.append("as sticks, pept_bond")
         self.commands.append("set_bond stick_radius, %s, pept_bond" % width)
-        self.commands.append("color %s, pept_bond" % colour_name)
+        self.commands.append("set_bond stick_color, %s, pept_bond" % colour_name)
 
         # Delete the selection.
         self.commands.append("delete pept_bond")
