@@ -20,14 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from math import pi
-from re import search
-
 # relax module imports.
-from colour import linear_gradient
-from generic_fns.mol_res_spin import spin_loop
-from relax_errors import RelaxStyleError, RelaxUnknownDataTypeError
 from specific_fns.model_free.macro_base import Macro
 
 
