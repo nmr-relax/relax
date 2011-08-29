@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,13 +33,15 @@ from math import pi
 from numpy import float64, transpose, zeros
 from os import sep
 from subprocess import PIPE, Popen
+from tempfile import mktemp
+from time import sleep
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
 from maths_fns.rotation_matrix import euler_to_R_zyz, R_to_axis_angle
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
-from relax_io import file_root, get_file_path, open_read_file, open_write_file, test_binary
+from relax_io import delete, file_root, get_file_path, open_read_file, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
 from status import Status; status = Status()
 
@@ -373,9 +375,29 @@ def macro_apply(data_type=None, style="classic", colour_start=None, colour_end=N
     # Create the macro.
     commands = create_macro(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
-    # Loop over the commands and execute them.
-    for command in commands:
-        pymol_obj.exec_cmd(command)
+    # Save the commands as a temporary file, execute it, then delete it.
+    try:
+        # Temp file name.
+        tmpfile = "%s.pml" % mktemp()
+
+        # Open the file.
+        file = open(tmpfile, 'w')
+
+        # Loop over the commands and write them.
+        for command in commands:
+            file.write("%s\n" % command)
+        file.close()
+
+        # Execute the macro.
+        pymol_obj.exec_cmd("@%s" % tmpfile)
+
+        # Wait a bit for PyMOL to catch up (it takes time for PyMOL to start and the macro to execute).
+        sleep(5)
+
+    # Delete the temporary file (no matter what).
+    finally:
+        # Delete the file.
+        delete(tmpfile, fail=False)
 
 
 def macro_run(file=None, dir=None):
