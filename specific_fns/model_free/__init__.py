@@ -46,7 +46,7 @@ from specific_fns.api_base import API_base
 from specific_fns.api_common import API_common
 
 
-class Model_free(Model_free_main, Mf_minimise, Molmol, Pymol, Results, Bmrb, API_base, API_common):
+class Model_free(Model_free_main, Mf_minimise, Results, Bmrb, API_base, API_common):
     """Parent class containing all the model-free specific functions."""
 
     def __init__(self):
@@ -58,3 +58,11 @@ class Model_free(Model_free_main, Mf_minimise, Molmol, Pymol, Results, Bmrb, API
         self.return_value = self._return_value_general
         self.sim_pack_data = self._sim_pack_relax_data
         self.test_grid_ops = self._test_grid_ops_general
+
+        # Initialise the macro classes.
+        self._molmol_macros = Molmol()
+        self._pymol_macros = Pymol()
+
+        # Alias the macro creation methods.
+        self.pymol_macro = self._pymol_macros.create_macro
+        self.molmol_macro = self._molmol_macros.create_macro
