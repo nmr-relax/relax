@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The model-free PyMOL macro module."""
+
 # relax module imports.
 from specific_fns.model_free.macro_base import Macro
 

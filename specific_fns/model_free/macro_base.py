@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The module containing the base class for the model-free macros."""
+
 # Python module imports.
 from math import pi
 from re import search
