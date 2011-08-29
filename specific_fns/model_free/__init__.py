@@ -26,6 +26,7 @@
 
 # The available modules.
 __all__ = [ 'bmrb',
+            'macro_base',
             'main',
             'mf_minimise',
             'molmol',
