@@ -71,7 +71,7 @@ class Pymol(Macro):
 
 
     def pymol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
-        """Wrapper method for the _create_macro method.
+        """Wrapper method for the create_macro method.
 
         @param data_type:       The parameter name or data type.
         @type data_type:        str
@@ -87,4 +87,4 @@ class Pymol(Macro):
         @type spin_id:          str
         """
 
-        self._create_macro(data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, spin_id=spin_id)
+        self.create_macro(data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, spin_id=spin_id)

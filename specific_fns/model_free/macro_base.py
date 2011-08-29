@@ -37,7 +37,7 @@ from relax_errors import RelaxStyleError, RelaxUnknownDataTypeError
 class Macro:
     """The base class for the model-free analysis Molmol and PyMOL macro creation."""
 
-    _classic_style_doc = ["Model-free classic style", """
+    classic_style_doc = ["Model-free classic style", """
         Creator:  Edward d'Auvergne
 
         Argument string:  "classic"
@@ -111,7 +111,7 @@ class Macro:
         |________________|_____________|___________________________________________________________|
         """]
 
-    def _classic_style(self, data_type=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+    def classic_style(self, data_type=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """The classic macro style.
 
         @keyword data_type:     The parameter name or data type.
@@ -146,7 +146,7 @@ class Macro:
         # Generate the macro header.
         ############################
 
-        self._classic_header()
+        self.classic_header()
 
 
         # S2.
@@ -164,7 +164,7 @@ class Macro:
                     continue
 
                 # S2 width and colour.
-                self._classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
+                self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
 
         # S2f.
@@ -179,11 +179,11 @@ class Macro:
 
                 # Colour residues which don't have an S2f value white.
                 if not hasattr(spin, 's2f') or spin.s2f == None:
-                    self._classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
                 # S2f width and colour.
                 else:
-                    self._classic_order_param(res_num, spin.s2f, colour_start, colour_end, colour_list)
+                    self.classic_order_param(res_num, spin.s2f, colour_start, colour_end, colour_list)
 
 
         # S2s.
@@ -198,11 +198,11 @@ class Macro:
 
                 # Colour residues which don't have an S2s value white.
                 if not hasattr(spin, 's2s') or spin.s2s == None:
-                    self._classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
                 # S2s width and colour.
                 else:
-                    self._classic_order_param(res_num, spin.s2s, colour_start, colour_end, colour_list)
+                    self.classic_order_param(res_num, spin.s2s, colour_start, colour_end, colour_list)
 
 
         # Amplitude of fast motions.
@@ -223,19 +223,19 @@ class Macro:
 
                 # S2f width and colour (for models m5 to m8).
                 if hasattr(spin, 's2f') and spin.s2f != None:
-                    self._classic_order_param(res_num, spin.s2f, colour_start, colour_end, colour_list)
+                    self.classic_order_param(res_num, spin.s2f, colour_start, colour_end, colour_list)
 
                 # S2 width and colour (for models m1 and m3).
                 elif model == 'm1' or model == 'm3':
-                    self._classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
+                    self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
                 # S2 width and colour (for models m2 and m4 when te <= 200 ps).
                 elif (model == 'm2' or model == 'm4') and spin.te <= 200e-12:
-                    self._classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
+                    self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
                 # White bonds (for models m2 and m4 when te > 200 ps).
                 elif (model == 'm2' or model == 'm4') and spin.te > 200e-12:
-                    self._classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
                 # Catch errors.
                 else:
@@ -260,15 +260,15 @@ class Macro:
 
                 # S2 width and colour (for models m5 to m8).
                 if hasattr(spin, 'ts') and spin.ts != None:
-                    self._classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
+                    self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
                 # S2 width and colour (for models m2 and m4 when te > 200 ps).
                 elif (model == 'm2' or model == 'm4') and spin.te > 200 * 1e-12:
-                    self._classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
+                    self.classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
                 # White bonds for fast motions.
                 else:
-                    self._classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
         # te.
         #####
@@ -285,7 +285,7 @@ class Macro:
                     continue
 
                 # te width and colour.
-                self._classic_correlation_time(res_num, spin.te, colour_start, colour_end, colour_list)
+                self.classic_correlation_time(res_num, spin.te, colour_start, colour_end, colour_list)
 
 
         # tf.
@@ -303,7 +303,7 @@ class Macro:
                     continue
 
                 # tf width and colour.
-                self._classic_correlation_time(res_num, spin.tf, colour_start, colour_end, colour_list)
+                self.classic_correlation_time(res_num, spin.tf, colour_start, colour_end, colour_list)
 
 
         # ts.
@@ -327,7 +327,7 @@ class Macro:
                     colour_end = 'black'
 
                 # ts width and colour.
-                self._classic_correlation_time(res_num, spin.ts / 10.0, colour_start, colour_end, colour_list)
+                self.classic_correlation_time(res_num, spin.ts / 10.0, colour_start, colour_end, colour_list)
 
 
         # Timescale of fast motions.
@@ -348,16 +348,16 @@ class Macro:
 
                 # tf width and colour (for models m5 to m8).
                 if hasattr(spin, 'tf') and spin.tf != None:
-                    self._classic_correlation_time(res_num, spin.tf, colour_start, colour_end, colour_list)
+                    self.classic_correlation_time(res_num, spin.tf, colour_start, colour_end, colour_list)
 
                 # te width and colour (for models m2 and m4 when te <= 200 ps).
                 elif (model == 'm2' or model == 'm4') and spin.te <= 200e-12:
-                    self._classic_correlation_time(res_num, spin.te, colour_start, colour_end, colour_list)
+                    self.classic_correlation_time(res_num, spin.te, colour_start, colour_end, colour_list)
 
                 # All other residues are assumed to have a fast correlation time of zero (statistically zero, not real zero!).
                 # Colour these bonds white.
                 else:
-                    self._classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Timescale of slow motions.
@@ -384,15 +384,15 @@ class Macro:
 
                 # ts width and colour (for models m5 to m8).
                 if hasattr(spin, 'ts') and spin.ts != None:
-                    self._classic_correlation_time(res_num, spin.ts / 10.0, colour_start, colour_end, colour_list)
+                    self.classic_correlation_time(res_num, spin.ts / 10.0, colour_start, colour_end, colour_list)
 
                 # te width and colour (for models m2 and m4 when te > 200 ps).
                 elif (model == 'm2' or model == 'm4') and spin.te > 200e-12:
-                    self._classic_correlation_time(res_num, spin.te / 10.0, colour_start, colour_end, colour_list)
+                    self.classic_correlation_time(res_num, spin.te / 10.0, colour_start, colour_end, colour_list)
 
                 # White bonds for the rest.
                 else:
-                    self._classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Rex.
@@ -407,11 +407,11 @@ class Macro:
 
                 # Residues which chemical exchange.
                 if hasattr(spin, 'rex') and spin.rex != None:
-                    self._classic_rex(res_num, spin.rex, colour_start, colour_end, colour_list)
+                    self.classic_rex(res_num, spin.rex, colour_start, colour_end, colour_list)
 
                 # White bonds for the rest.
                 else:
-                    self._classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
+                    self.classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Unknown data type.
@@ -421,7 +421,7 @@ class Macro:
             raise RelaxUnknownDataTypeError(data_type)
 
 
-    def _classic_correlation_time(self, res_num, te, colour_start, colour_end, colour_list):
+    def classic_correlation_time(self, res_num, te, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for correlation times."""
 
         # The te value in picoseconds.
@@ -453,10 +453,10 @@ class Macro:
         rgb_array = linear_gradient(colour_value, colour_end, colour_start, colour_list)
 
         # Colour the peptide bond.
-        self._classic_colour(res_num, width, rgb_array)
+        self.classic_colour(res_num, width, rgb_array)
 
 
-    def _classic_order_param(self, res_num, s2, colour_start, colour_end, colour_list):
+    def classic_order_param(self, res_num, s2, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for order parameters."""
 
         # The bond width (aiming for a width range of 2 to 0 for S2 values of 0.0 to 1.0).
@@ -488,10 +488,10 @@ class Macro:
         rgb_array = linear_gradient(colour_value, colour_start, colour_end, colour_list)
 
         # Colour the peptide bond.
-        self._classic_colour(res_num, width, rgb_array)
+        self.classic_colour(res_num, width, rgb_array)
 
 
-    def _classic_rex(self, res_num, rex, colour_start, colour_end, colour_list):
+    def classic_rex(self, res_num, rex, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for correlation times."""
 
         # The Rex value at the first field strength.
@@ -523,10 +523,10 @@ class Macro:
         rgb_array = linear_gradient(colour_value, colour_end, colour_start, colour_list)
 
         # Colour the peptide bond.
-        self._classic_colour(res_num, width, rgb_array)
+        self.classic_colour(res_num, width, rgb_array)
 
 
-    def _create_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+    def create_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """Create and return an array of macros of the model-free parameters.
 
         @param data_type:       The parameter name or data type.
@@ -548,7 +548,7 @@ class Macro:
 
         # The classic style.
         if style == 'classic':
-            self._classic_style(data_type, colour_start, colour_end, colour_list, spin_id)
+            self.classic_style(data_type, colour_start, colour_end, colour_list, spin_id)
 
         # Unknown style.
         else:

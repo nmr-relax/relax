@@ -30,7 +30,7 @@ from specific_fns.model_free.macro_base import Macro
 class Molmol(Macro):
     """Class containing the Molmol specific functions for model-free analysis."""
 
-    def _classic_colour(self, res_num=None, width=None, rgb_array=None):
+    def classic_colour(self, res_num=None, width=None, rgb_array=None):
         """Colour the given peptide bond."""
 
         # Ca to C bond.
@@ -55,7 +55,7 @@ class Molmol(Macro):
         self.commands.append("")
 
 
-    def _classic_header(self):
+    def classic_header(self):
         """Create the header for the molmol macro."""
 
         # Hide all bonds.
@@ -71,7 +71,7 @@ class Molmol(Macro):
 
 
     def molmol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
-        """Wrapper method for the _create_macro method.
+        """Wrapper method for the create_macro method.
 
         @param data_type:       The parameter name or data type.
         @type data_type:        str
@@ -87,4 +87,4 @@ class Molmol(Macro):
         @type spin_id:          str
         """
 
-        self._create_macro(data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, spin_id=spin_id)
+        self.create_macro(data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, spin_id=spin_id)
