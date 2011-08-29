@@ -41,7 +41,7 @@ class Pymol(Macro):
         self.commands.append("set_color %s, [%s, %s, %s]" % (colour_name, rgb_array[0], rgb_array[1], rgb_array[2]))
 
         # The peptide bond.
-        self.commands.append("select pept_bond, (name ca,n and resi %i) or (name ca,c,o and resi %i)" % (res_num, res_num-1))
+        self.commands.append("select pept_bond, (name ca,n and resi %i) or (name ca,c and resi %i)" % (res_num, res_num-1))
         self.commands.append("as sticks, pept_bond")
         self.commands.append("set_bond stick_radius, %s, pept_bond" % width)
         self.commands.append("color %s, pept_bond" % colour_name)
@@ -57,7 +57,7 @@ class Pymol(Macro):
         self.commands.append("hide")
 
         # Show the backbone bonds as lines.
-        self.commands.append("select bb, (name ca,n,c,o)")
+        self.commands.append("select bb, (name ca,n,c)")
         self.commands.append("show lines, bb")
 
         # Colour the backbone black.
