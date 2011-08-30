@@ -86,6 +86,24 @@ class Interpreter:
         return fn
 
 
+    def apply(self, uf, *args, **kwds):
+        """Apply a user function for synchronous execution.
+
+        @param uf:      The user function as a string.
+        @type uf:       str
+        @param args:    The user function arguments.
+        @type args:     any arguments
+        @param kwds:    The user function keyword arguments.
+        @type kwds:     any keyword arguments
+        """
+
+        # Get the user function.
+        fn = self._get_uf(uf)
+
+        # Execute the user function.
+        apply(fn, args, kwds)
+
+
     def empty(self):
         """Determine if the interpreter thread queue is empty.
 
@@ -196,7 +214,15 @@ class Interpreter_thread(Thread):
 
 
     def queue(self, fn, *args, **kwds):
-        """Queue up a user function."""
+        """Queue up a user function for asynchronous execution.
+
+        @param uf:      The user function as a string.
+        @type uf:       str
+        @param args:    The user function arguments.
+        @type args:     any arguments
+        @param kwds:    The user function keyword arguments.
+        @type kwds:     any keyword arguments
+        """
 
         # Place the user function and its args onto the queue.
         self._queue.put([fn, args, kwds])
