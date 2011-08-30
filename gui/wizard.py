@@ -1352,7 +1352,7 @@ class Wiz_window(wx.Dialog):
                 self._pages[i]._apply(event)
 
                 # UF flush.
-                if self._uf_flush[self._current_page]:
+                if self._uf_flush[i]:
                     self.gui.interpreter.flush()
 
                 # Increment the execution counter.
