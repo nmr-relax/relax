@@ -66,6 +66,34 @@ class Interpreter(Thread):
         self._exit = False
 
 
+    def _get_uf(self, uf):
+        """Return the user function object corresponding to the given string.
+
+        @param uf:  The name of the user function.
+        @type uf:   str
+        @return:    The user function object.
+        @rtype:     func
+        """
+
+        # Handle the user function class.
+        if search('\.', uf):
+            # Split the user function.
+            uf_class, uf_fn = split(uf, '.')
+
+            # Get the user function class.
+            obj = getattr(self._interpreter, uf_class)
+
+            # Get the function.
+            fn = getattr(obj, uf_fn)
+
+        # Simple user function.
+        else:
+            fn = getattr(self._interpreter, uf)
+
+        # Return the user function.
+        return fn
+
+
     def empty(self):
         """Wrapper method for the Queue.empty() method."""
 
@@ -122,20 +150,8 @@ class Interpreter(Thread):
 
             # Execute the user function, catching errors.
             try:
-                # Handle the user function class.
-                if search('\.', uf):
-                    # Split the user function.
-                    uf_class, uf_fn = split(uf, '.')
-
-                    # Get the user function class.
-                    obj = getattr(self._interpreter, uf_class)
-
-                    # Get the function.
-                    fn = getattr(obj, uf_fn)
-
-                # Simple user function.
-                else:
-                    fn = getattr(self._interpreter, uf)
+                # Get the user function.
+                fn = self._get_uf(uf)
 
                 # Apply the user function.
                 apply(fn, args, kwds)
