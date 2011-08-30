@@ -260,13 +260,6 @@ class UF_page(Wiz_page):
         sizer.AddSpacer(5)
 
 
-    def on_completion(self):
-        """Notify that the user function has completed."""
-
-        # Notify.
-        status.observers.gui_uf.notify()
-
-
     def process_doc(self, doc):
         """Process the documentation list.
 

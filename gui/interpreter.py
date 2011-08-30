@@ -103,6 +103,9 @@ class Interpreter:
         # Execute the user function.
         apply(fn, args, kwds)
 
+        # Notify all observers that a user function has completed.
+        status.observers.gui_uf.notify()
+
 
     def empty(self):
         """Determine if the interpreter thread queue is empty.
@@ -260,3 +263,6 @@ class Interpreter_thread(Thread):
             # Release the lock.
             finally:
                 status.exec_lock.release()
+
+            # Notify all observers that a user function has completed.
+            status.observers.gui_uf.notify()
