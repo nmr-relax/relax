@@ -42,20 +42,31 @@ from status import Status; status = Status()
 from gui.errors import gui_raise
 
 
-class Interpreter:
+class Interpreter(object):
     """The threaded interpreter."""
 
-    def __init__(self):
-        """Initialise the object."""
+    # Class variable for storing the class instance (for the singleton).
+    _instance = None
 
-        # Load a copy of the relax interpreter.
-        self._interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
-        self._interpreter.populate_self()
-        self._interpreter.on(verbose=False)
+    def __new__(self, *args, **kargs):
+        """Replacement method for implementing the singleton design pattern."""
 
-        # Start the interpreter thread for asynchronous operations.
-        self._interpreter_thread = Interpreter_thread()
-        self._interpreter_thread.start()
+        # First instantiation.
+        if self._instance is None:
+            # Instantiate.
+            self._instance = object.__new__(self, *args, **kargs)
+
+            # Load a copy of the relax interpreter.
+            self._instance._interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
+            self._instance._interpreter.populate_self()
+            self._instance._interpreter.on(verbose=False)
+
+            # Start the interpreter thread for asynchronous operations.
+            self._instance._interpreter_thread = Interpreter_thread()
+            self._instance._interpreter_thread.start()
+
+        # Already instantiated, so return the instance.
+        return self._instance
 
 
     def _get_uf(self, uf):
