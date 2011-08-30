@@ -303,7 +303,7 @@ class Auto_rx(Base_analysis):
 
         # The spectrum.read_intensities page.
         self.page_intensity = Read_intensities_page(self.wizard, self.gui)
-        self.page_indices['read'] = self.wizard.add_page(self.page_intensity, skip_button=True, proceed_on_error=False)
+        self.page_indices['read'] = self.wizard.add_page(self.page_intensity, skip_button=True, proceed_on_error=False, flush=True)
 
         # Error type selection page.
         self.page_error_type = Spectral_error_type_page(self.wizard, self.gui)
