@@ -87,6 +87,7 @@ class Spin_ctrl:
         self.control.SetMinSize((-1, size_horizontal))
         self.control.SetFont(font.normal)
         sizer.Add(self.control, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.control.SetValue(default)
 
         # Spacer.
         sizer.AddSpacer((spacer, -1))
