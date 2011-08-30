@@ -942,9 +942,6 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Make the control read only again.
         self.SetReadOnly(True)
 
-        # Show the relax controller when text is added.
-        if status.show_gui and not self.controller.IsShown():
-            self.controller.Show()
 
 
 class Redirect_text(object):
