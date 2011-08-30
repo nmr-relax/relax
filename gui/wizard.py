@@ -34,6 +34,7 @@ from relax_errors import RelaxImplementError
 from status import Status; status = Status()
 
 # relax GUI module imports.
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import relax_icons
@@ -1297,7 +1298,7 @@ class Wiz_window(wx.Dialog):
 
                 # UF flush.
                 if self._uf_flush[self._current_page]:
-                    self.gui.interpreter.flush()
+                    interpreter.flush()
 
                 # Check for execution errors.
                 if not self._pages[self._current_page].exec_status:
@@ -1353,7 +1354,7 @@ class Wiz_window(wx.Dialog):
 
                 # UF flush.
                 if self._uf_flush[i]:
-                    self.gui.interpreter.flush()
+                    interpreter.flush()
 
                 # Increment the execution counter.
                 self._exec_count[i] += 1
