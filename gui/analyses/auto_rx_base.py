@@ -312,24 +312,24 @@ class Auto_rx(Base_analysis):
 
         # The spectrum.replicated page.
         page = Replicated_page(self.wizard, self.gui)
-        self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True)
+        self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
         page.on_display_post = self.wizard_update_repl
 
         # The spectrum.baseplane_rmsd page.
         page = Baseplane_rmsd_page(self.wizard, self.gui)
-        self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True)
+        self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
         page.on_display_post = self.wizard_update_rmsd
 
         # The spectrum.integration_points page.
         page = Integration_points_page(self.wizard, self.gui)
-        self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True)
+        self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         page.on_display_post = self.wizard_update_pts
 
         # The relax_fit.relax_time page.
         page = Relax_time_page(self.wizard, self.gui)
-        self.page_indices['relax_time'] = self.wizard.add_page(page, skip_button=False)
+        self.page_indices['relax_time'] = self.wizard.add_page(page, skip_button=False, proceed_on_error=False)
         page.on_display_post = self.wizard_update_relax_time
 
         # Reset the cursor.
