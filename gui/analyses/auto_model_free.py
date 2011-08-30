@@ -170,8 +170,7 @@ class Auto_model_free(Base_analysis):
         if data_index == None:
             # First create the data pipe if not already in existence.
             if not has_pipe(pipe_name):
-                self.gui.interpreter.queue('pipe.create', pipe_name, 'mf')
-                self.gui.interpreter.flush()
+                self.gui.interpreter.apply('pipe.create', pipe_name, 'mf')
 
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add('model-free')
