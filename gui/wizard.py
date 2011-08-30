@@ -1071,6 +1071,7 @@ class Wiz_window(wx.Dialog):
         self._exec_on_next = []
         self._exec_count = []
         self._proceed_on_error = []
+        self._uf_flush = []
         self._seq_fn_list = []
         self._seq_next = []
         self._seq_prev = []
@@ -1115,6 +1116,9 @@ class Wiz_window(wx.Dialog):
 
             # Proceed to next page on errors by default.
             self._proceed_on_error.append(True)
+
+            # No user function flushing of the GUI interpreter thread prior to proceeding.
+            self._uf_flush.append(False)
 
             # Page sequence initialisation.
             self._seq_fn_list.append(self._next_fn)
@@ -1291,6 +1295,10 @@ class Wiz_window(wx.Dialog):
             if self._exec_on_next[self._current_page]:
                 self._pages[self._current_page]._apply(event)
 
+                # UF flush.
+                if self._uf_flush[self._current_page]:
+                    self.gui.interpreter.flush()
+
                 # Check for execution errors.
                 if not self._pages[self._current_page].exec_status:
                     # Do not proceed.
@@ -1343,6 +1351,10 @@ class Wiz_window(wx.Dialog):
                 # Execute the _apply method.
                 self._pages[i]._apply(event)
 
+                # UF flush.
+                if self._uf_flush[self._current_page]:
+                    self.gui.interpreter.flush()
+
                 # Increment the execution counter.
                 self._exec_count[i] += 1
 
@@ -1387,7 +1399,7 @@ class Wiz_window(wx.Dialog):
         self._go_next(None)
 
 
-    def add_page(self, panel, apply_button=True, skip_button=False, exec_on_next=True, proceed_on_error=True):
+    def add_page(self, panel, apply_button=True, skip_button=False, exec_on_next=True, proceed_on_error=True, uf_flush=False):
         """Add a new page to the wizard.
 
         @param panel:               The page to add to the wizard.
@@ -1398,8 +1410,10 @@ class Wiz_window(wx.Dialog):
         @type skip_button:          bool
         @keyword exec_on_next:      A flag which if true will run the on_execute() method when clicking on the next button.
         @type exec_on_next:         bool
-        @keyword proceed_on_error:  A flag which if True will proceed to the next page (or quit if there are no more pages) despite the occurrence of an error in execution.  If False, the page will remain open.
+        @keyword proceed_on_error:  A flag which if True will proceed to the next page (or quit if there are no more pages) despite the occurrence of an error in execution.  If False, the page will remain open (the GUI interpreter thread will be flushed first to synchronise).
         @type proceed_on_error:     bool
+        @keyword uf_flush:          A flag which if True will cause the GUI interpreter thread to be flushed to clear out all user function call prior to proceeding.
+        @type uf_flush:             bool
         @return:                    The index of the page in the wizard.
         @rtype:                     int
         """
@@ -1427,6 +1441,8 @@ class Wiz_window(wx.Dialog):
         self._button_skip_flag[index] = skip_button
         self._exec_on_next[index] = exec_on_next
         self._proceed_on_error[index] = proceed_on_error
+        if not proceed_on_error or uf_flush:
+            self._uf_flush[index] = True
 
         # Store the index of the page.
         panel.page_index = self._num_pages - 1
