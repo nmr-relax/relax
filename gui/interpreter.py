@@ -42,28 +42,20 @@ from status import Status; status = Status()
 from gui.errors import gui_raise
 
 
-class Interpreter(Thread):
+class Interpreter:
     """The threaded interpreter."""
 
     def __init__(self):
         """Initialise the object."""
-
-        # Set up the thread object.
-        Thread.__init__(self)
-
-        # Set the thread to be daemonic so that relax can exit.
-        self.daemon = True
-
-        # Create a queue object for the user function calls.
-        self._queue = Queue()
 
         # Load a copy of the relax interpreter.
         self._interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
         self._interpreter.populate_self()
         self._interpreter.on(verbose=False)
 
-        # A flag for exiting the thread.
-        self._exit = False
+        # Start the interpreter thread for asynchronous operations.
+        self._interpreter_thread = Interpreter_thread()
+        self._interpreter_thread.start()
 
 
     def _get_uf(self, uf):
@@ -95,6 +87,83 @@ class Interpreter(Thread):
 
 
     def empty(self):
+        """Determine if the interpreter thread queue is empty.
+
+        This is a wrapper method for the thread method.
+        """
+
+        # Return the queue empty state.
+        return self._interpreter_thread.empty()
+
+
+    def exit(self):
+        """Cause the thread to exit once all currently queued user functions are processed.
+
+        This is a wrapper method for the thread method.
+        """
+
+        # Call the thread's method.
+        return self._interpreter_thread.exit()
+
+
+    def flush(self):
+        """Return only once the queue is empty.
+
+        This is a wrapper method for the interpreter thread.
+        """
+
+        # Call the thread's method.
+        self._interpreter_thread.flush()
+
+
+    def join(self):
+        """Wrapper method for the Queue.join() method."""
+
+        # Call the thread's method.
+        self._interpreter_thread.join()
+
+
+    def queue(self, uf, *args, **kwds):
+        """Queue up a user function.
+
+        This is a wrapper method for the interpreter thread.
+
+        @param uf:      The user function as a string.
+        @type uf:       str
+        @param args:    The user function arguments.
+        @type args:     any arguments
+        @param kwds:    The user function keyword arguments.
+        @type kwds:     any keyword arguments
+        """
+
+        # Get the user function.
+        fn = self._get_uf(uf)
+
+        # Call the thread's method.
+        self._interpreter_thread.queue(fn, *args, **kwds)
+
+
+
+class Interpreter_thread(Thread):
+    """The threaded interpreter."""
+
+    def __init__(self):
+        """Initialise the object."""
+
+        # Set up the thread object.
+        Thread.__init__(self)
+
+        # Set the thread to be daemonic so that relax can exit.
+        self.daemon = True
+
+        # Create a queue object for the user function calls.
+        self._queue = Queue()
+
+        # A flag for exiting the thread.
+        self._exit = False
+
+
+    def empty(self):
         """Wrapper method for the Queue.empty() method."""
 
         # Return the queue empty state.
@@ -102,7 +171,7 @@ class Interpreter(Thread):
 
 
     def exit(self):
-        """Cause the thread to exit once the currently running user function is complete."""
+        """Cause the thread to exit once all currently queued user functions are processed."""
 
         # First set the flag.
         self._exit = True
@@ -126,11 +195,11 @@ class Interpreter(Thread):
         self._queue.join()
 
 
-    def queue(self, uf, *args, **kwds):
+    def queue(self, fn, *args, **kwds):
         """Queue up a user function."""
 
         # Place the user function and its args onto the queue.
-        self._queue.put([uf, args, kwds])
+        self._queue.put([fn, args, kwds])
 
 
     def run(self):
@@ -139,10 +208,10 @@ class Interpreter(Thread):
         # Loop until told to exit.
         while not self._exit:
             # Get the user function from the queue.
-            uf, args, kwds = self._queue.get()
+            fn, args, kwds = self._queue.get()
 
             # No user function.
-            if uf == None:
+            if fn == None:
                 continue
 
             # Execution lock.
@@ -150,10 +219,6 @@ class Interpreter(Thread):
 
             # Execute the user function, catching errors.
             try:
-                # Get the user function.
-                fn = self._get_uf(uf)
-
-                # Apply the user function.
                 apply(fn, args, kwds)
 
             # Catch all RelaxErrors.
@@ -169,4 +234,3 @@ class Interpreter(Thread):
             # Release the lock.
             finally:
                 status.exec_lock.release()
-

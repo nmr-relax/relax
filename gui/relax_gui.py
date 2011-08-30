@@ -140,7 +140,6 @@ class Main(wx.Frame):
 
         # Initialise the special interpreter thread object.
         self.interpreter = Interpreter()
-        self.interpreter.start()
 
         # Run a script.
         if script:
