@@ -572,8 +572,11 @@ class RelaxNoSpinError(BaseError):
 
 # The sequence data is not valid.
 class RelaxInvalidSeqError(BaseError):
-    def __init__(self, line):
-        self.text = "The sequence data in the line %s is invalid." % line
+    def __init__(self, line, problem=None):
+        if problem == None:
+            self.text = "The sequence data in the line %s is invalid." % line
+        else:
+            self.text = "The sequence data in the line %s is invalid, %s." % (line, problem)
 
 # The spins have not been loaded
 class RelaxSpinsNotLoadedError(BaseError):
