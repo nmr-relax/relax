@@ -2577,7 +2577,7 @@ def spin_id_to_data_list(id):
     # Molecule name.
     mol_name = None
     if len(mol_info) > 1:
-        raise RelaxError("The single spin ID should only belong to one molecule, not %s." % mol_info)
+        raise RelaxError("The single spin ID '%s' should only belong to one molecule, not %s." % (id, mol_info))
     if len(mol_info) == 1:
         mol_name = mol_info[0]
 
@@ -2593,14 +2593,14 @@ def spin_id_to_data_list(id):
     # Residue number.
     res_num = None
     if len(res_nums) > 1:
-        raise RelaxError("The single spin ID should only belong to one residue number, not %s." % res_info)
+        raise RelaxError("The single spin ID '%s' should only belong to one residue number, not %s." % (id, res_info))
     elif len(res_nums) == 1:
         res_num = res_nums[0]
 
     # Residue name.
     res_name = None
     if len(res_names) > 1:
-        raise RelaxError("The single spin ID should only belong to one residue name, not %s." % res_info)
+        raise RelaxError("The single spin ID '%s' should only belong to one residue name, not %s." % (id, res_info))
     elif len(res_names) == 1:
         res_name = res_names[0]
 
@@ -2616,14 +2616,14 @@ def spin_id_to_data_list(id):
     # Spin number.
     spin_num = None
     if len(spin_nums) > 1:
-        raise RelaxError("The single spin ID should only belong to one spin number, not %s." % spin_info)
+        raise RelaxError("The single spin ID '%s' should only belong to one spin number, not %s." % (id, spin_info))
     elif len(spin_nums) == 1:
         spin_num = spin_nums[0]
 
     # Spin name.
     spin_name = None
     if len(spin_names) > 1:
-        raise RelaxError("The single spin ID should only belong to one spin name, not %s." % spin_info)
+        raise RelaxError("The single spin ID '%s' should only belong to one spin name, not %s." % (id, spin_info))
     elif len(spin_names) == 1:
         spin_name = spin_names[0]
 
