@@ -66,7 +66,7 @@ class Status(object):
         self.exec_lock = Exec_lock()
 
         # The data pipe lock object.
-        self.pipe_lock = RLock()
+        self.pipe_lock = Relax_lock()
 
         # The molecule, residue, spin structure lock object.
         self.spin_lock = Relax_lock()
