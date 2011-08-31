@@ -417,21 +417,21 @@ class Observer(object):
 class Relax_lock:
     """A type of locking object for relax."""
 
-    def __init__(self, name=None, debug=False):
+    def __init__(self, name=None, fake_lock=False):
         """Set up the lock-like object.
 
-        @keyword name:  The special name for the lock, used in debugging.
-        @type name:     str
-        @keyword debug: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
-        @type debug:    bool
+        @keyword name:      The special name for the lock, used in debugging.
+        @type name:         str
+        @keyword fake_lock: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
+        @type fake_lock:    bool
         """
 
         # Init a reentrant lock object.
         self._lock = RLock()
 
         # Debugging.
-        self.debug = debug
-        if self.debug:
+        self.fake_lock = fake_lock
+        if self.fake_lock:
             # Track the number of acquires.
             self._lock_level = 0
 
@@ -440,7 +440,7 @@ class Relax_lock:
         """Simulate the RLock.acquire() mechanism."""
 
         # Debugging.
-        if self.debug:
+        if self.fake_lock:
             # Write out.
             sys.stderr.write('Acquire')
 
@@ -472,7 +472,7 @@ class Relax_lock:
         """Simulate the RLock.release() mechanism."""
 
         # Debugging.
-        if self.debug:
+        if self.fake_lock:
             # Write out.
             sys.stderr.write('Release')
 
