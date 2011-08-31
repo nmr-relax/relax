@@ -39,6 +39,7 @@ The functionality of this module is diverse:
 from numpy import array, float64
 from re import split
 from string import count, replace, strip, upper
+import sys
 from textwrap import fill
 from warnings import warn
 
