@@ -100,25 +100,25 @@ class Status(object):
         self.observers = Status_container()
 
         # The observer object for status changes in the auto-analyses.
-        self.observers.auto_analyses = Observer()
+        self.observers.auto_analyses = Observer('auto_analyses')
 
         # The observer object for pipe switches.
-        self.observers.pipe_alteration = Observer()
+        self.observers.pipe_alteration = Observer('pipe_alteration')
 
         # The observer object for GUI user function completion.
-        self.observers.gui_uf = Observer()
+        self.observers.gui_uf = Observer('gui_uf')
 
         # The observer object for changes to the GUI analysis tabs.
-        self.observers.gui_analysis = Observer()
+        self.observers.gui_analysis = Observer('gui_analysis')
 
         # The observer object for relax resets.
-        self.observers.reset = Observer()
+        self.observers.reset = Observer('reset')
 
         # The observer object for the execution lock.
-        self.observers.exec_lock = Observer()
+        self.observers.exec_lock = Observer('exec_lock')
 
         # The observer object for the creation of results files.
-        self.observers.result_file = Observer()
+        self.observers.result_file = Observer('result_file')
 
 
     def init_auto_analysis(self, name, type):
@@ -347,8 +347,15 @@ class Exec_lock:
 class Observer(object):
     """The observer design pattern base class."""
 
-    def __init__(self):
-        """Set up the object."""
+    def __init__(self, name='unknown'):
+        """Set up the object.
+
+        @keyword name:      The special name for the observer object, used in debugging.
+        @type name:         str
+        """
+
+        # Store the args.
+        self._name = name
 
         # The dictionary of callback methods.
         self._callback = {}
@@ -356,12 +363,20 @@ class Observer(object):
         # The list of keys, for ordered execution.
         self._keys = []
 
+        # The status container.
+        self._status = Status()
+
 
     def notify(self):
         """Notify all observers of the state change."""
 
         # Loop over the callback methods and execute them.
         for key in self._keys:
+            # Debugging.
+            if self._status.debug:
+                sys.stderr.write('observer> Observer %s notifying %s.' % (self._name, key))
+
+            # Call the method.
             self._callback[key]()
 
 
@@ -378,6 +393,10 @@ class Observer(object):
         if key in self._keys:
             raise RelaxError("The observer '%s' already exists." % key)
 
+        # Debugging.
+        if self._status.debug:
+            sys.stderr.write('observer> Observer %s registering %s.' % (self._name, key))
+
         # Add the method to the dictionary of callbacks.
         self._callback[key] = method
 
@@ -387,6 +406,10 @@ class Observer(object):
 
     def reset(self):
         """Reset the object."""
+
+        # Debugging.
+        if self._status.debug:
+            sys.stderr.write('observer> Resetting observer %s.' % self._name)
 
         # Reinitialise the dictionary of callback methods.
         self._callback = {}
@@ -405,6 +428,10 @@ class Observer(object):
         # Does not exist.
         if key not in self._keys:
             raise RelaxError("The key '%s' does not exist." % key)
+
+        # Debugging.
+        if self._status.debug:
+            sys.stderr.write('observer> Observer %s unregistering %s.' % (self._name, key))
 
         # Remove the method from the dictionary of callbacks.
         self._callback.pop(key)
