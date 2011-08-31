@@ -417,7 +417,7 @@ class Observer(object):
 class Relax_lock:
     """A type of locking object for relax."""
 
-    def __init__(self, name=None, fake_lock=False):
+    def __init__(self, name='unknown', fake_lock=False):
         """Set up the lock-like object.
 
         @keyword name:      The special name for the lock, used in debugging.
@@ -426,24 +426,35 @@ class Relax_lock:
         @type fake_lock:    bool
         """
 
+        # Store the args.
+        self.name = name
+        self.fake_lock = fake_lock
+
         # Init a reentrant lock object.
         self._lock = RLock()
 
-        # Debugging.
-        self.fake_lock = fake_lock
+        # The status container.
+        self.status = Status()
+
+        # Fake lock.
         if self.fake_lock:
             # Track the number of acquires.
             self._lock_level = 0
 
 
-    def acquire(self):
-        """Simulate the RLock.acquire() mechanism."""
+    def acquire(self, acquirer='unknown'):
+        """Simulate the RLock.acquire() mechanism.
+
+        @keyword acquirer:  The optional name of the acquirer.
+        @type acquirer:     str
+        """
 
         # Debugging.
-        if self.fake_lock:
-            # Write out.
-            sys.stderr.write('Acquire')
+        if self.status.debug:
+            sys.stderr.write('relax lock>  Lock % acquire by %s.' % (self.name, acquirer))
 
+        # Fake lock.
+        if self.fake_lock:
             # Increment the lock level.
             self._lock_level += 1
 
@@ -468,15 +479,20 @@ class Relax_lock:
         return self._lock.locked()
 
 
-    def release(self):
-        """Simulate the RLock.release() mechanism."""
+    def release(self, acquirer='unknown'):
+        """Simulate the RLock.release() mechanism.
+
+        @keyword acquirer:  The optional name of the acquirer.
+        @type acquirer:     str
+        """
 
         # Debugging.
-        if self.fake_lock:
-            # Write out.
-            sys.stderr.write('Release')
+        if self.status.debug:
+            sys.stderr.write('relax lock>  Lock % release by %s.' % (self.name, acquirer))
 
-            # Increment the lock level.
+        # Fake lock.
+        if self.fake_lock:
+            # Decrement the lock level.
             self._lock_level -= 1
 
             # Return to prevent real lock release.
