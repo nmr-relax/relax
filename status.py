@@ -187,15 +187,15 @@ class Auto_analysis:
 class Exec_lock:
     """A type of locking object for locking execution of relax."""
 
-    def __init__(self, debug=False):
+    def __init__(self, fake_lock=False):
         """Set up the lock-like object.
 
-        @keyword debug: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
-        @type debug:    bool
+        @keyword fake_lock: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
+        @type fake_lock:    bool
         """
 
         # Store the arg.
-        self.debug = debug
+        self.fake_lock = fake_lock
 
         # Init a threading.Lock object.
         self._lock = Lock()
@@ -211,7 +211,7 @@ class Exec_lock:
         self._auto_from_script = False
 
         # Debugging.
-        if self.debug:
+        if self.fake_lock:
             self.log = open('lock.log', 'w')
 
 
@@ -230,7 +230,7 @@ class Exec_lock:
             self._script_nest += 1
 
             # Debugging.
-            if self.debug:
+            if self.fake_lock:
                 self.log.write("Nested by %s (to level %s)\n" % (name, self._script_nest))
                 self.log.flush()
 
@@ -240,7 +240,7 @@ class Exec_lock:
         # Skip locking if an auto-analysis is called from a script.
         if self.locked() and self._mode == 'script' and mode == 'auto-analysis':
             # Debugging.
-            if self.debug:
+            if self.fake_lock:
                 self.log.write("Skipped unlocking of '%s' lock by '%s'\n" % (self._name, name))
                 self.log.flush()
 
@@ -255,7 +255,7 @@ class Exec_lock:
         self._mode = mode
 
         # Debugging.
-        if self.debug:
+        if self.fake_lock:
             self.log.write("Acquired by %s\n" % self._name)
             self.log.flush()
             return
@@ -275,7 +275,7 @@ class Exec_lock:
         """Simulate the Lock.locked() mechanism."""
 
         # Debugging (pseudo-locking based on _name).
-        if self.debug:
+        if self.fake_lock:
             if self._name:
                 return True
             else:
@@ -291,7 +291,7 @@ class Exec_lock:
         # Nested scripting.
         if self._script_nest:
             # Debugging.
-            if self.debug:
+            if self.fake_lock:
                 self.log.write("Script termination, nest decrement (%s -> %s)\n" % (self._script_nest, self._script_nest-1))
                 self.log.flush()
 
@@ -304,7 +304,7 @@ class Exec_lock:
         # Auto-analysis launched from script.
         if self._auto_from_script:
             # Debugging.
-            if self.debug:
+            if self.fake_lock:
                 self.log.write("Auto-analysis launched from script, skipping release.\n")
                 self.log.flush()
 
@@ -319,7 +319,7 @@ class Exec_lock:
         self._mode = None
 
         # Debugging.
-        if self.debug:
+        if self.fake_lock:
             # Main text.
             text = 'Release'
 
