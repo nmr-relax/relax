@@ -562,6 +562,10 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.StyleSetForeground(3, wx.NamedColour('orange red'))
         self.StyleSetFont(3, font.modern_small)
 
+        # Create the relax debugging style (style num 4).
+        self.StyleSetForeground(4, wx.NamedColour('dark green'))
+        self.StyleSetFont(4, font.modern_small)
+
         # Initilise the find dialog.
         self.find_dlg = None
 
@@ -769,11 +773,43 @@ class LogCtrl(wx.stc.StyledTextCtrl):
                 stream_list.append(stream)
 
             # The relax warnings on STDERR.
-            if msg[0:13] == 'RelaxWarning:':
+            elif msg[0:13] == 'RelaxWarning:':
                 # Add the warning.
                 string_list.append(msg)
                 stream_list.append(3)
                 continue
+
+            # Debugging - the relax lock.
+            elif msg[1:12] == 'relax lock>':
+                # Add a new line to the last block.
+                string_list[-1] += '\n'
+
+                # Add the prompt part.
+                string_list.append('relax lock>')
+                stream_list.append(4)
+
+                # Shorten the message.
+                msg = msg[12:]
+
+                # Start a new section.
+                string_list.append('')
+                stream_list.append(stream)
+
+            # Debugging - the relax observers.
+            elif msg[1:16] == 'relax observer>':
+                # Add a new line to the last block.
+                string_list[-1] += '\n'
+
+                # Add the prompt part.
+                string_list.append('relax observer>')
+                stream_list.append(4)
+
+                # Shorten the message.
+                msg = msg[16:]
+
+                # Start a new section.
+                string_list.append('')
+                stream_list.append(stream)
 
             # A different stream.
             if stream_list[-1] != stream:
