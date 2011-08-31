@@ -1569,17 +1569,17 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, 
         id = id + "#" + data[mol_name_col-1]
 
     # Residue data.
-    if res_num_col and data[res_num_col-1] != None:
+    if res_num_col and data[res_num_col-1] not in [None, 'None']:
         id = id + ":" + str(data[res_num_col-1])
-    if (res_num_col and data[res_num_col-1] != None) and (res_name_col and data[res_name_col-1]):
+    if (res_num_col and data[res_num_col-1] not in [None, 'None']) and (res_name_col and data[res_name_col-1]):
         id = id + "&:" + data[res_name_col-1]
     elif res_name_col and data[res_name_col-1]:
         id = id + ":" + data[res_name_col-1]
 
     # Spin data.
-    if spin_num_col and data[spin_num_col-1] != None:
+    if spin_num_col and data[spin_num_col-1] not in [None, 'None']:
         id = id + "@" + str(data[spin_num_col-1])
-    if (spin_num_col and data[spin_num_col-1] != None) and (spin_name_col and data[spin_name_col-1]):
+    if (spin_num_col and data[spin_num_col-1] not in [None, 'None']) and (spin_name_col and data[spin_name_col-1]):
         id = id + "&@" + data[spin_name_col-1]
     elif spin_name_col and data[spin_name_col-1]:
         id = id + "@" + data[spin_name_col-1]
