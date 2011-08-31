@@ -352,7 +352,7 @@ def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=Non
             res_num = eval(data[res_num_col-1])
             if not (isinstance(res_num, NoneType) or isinstance(res_num, IntType)):
                 raise ValueError
-        except ValueError:
+        except:
             raise RelaxInvalidSeqError(data, "the residue number data is invalid")
 
     # Residue name data.
@@ -371,7 +371,7 @@ def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=Non
             res_num = eval(data[res_num_col-1])
             if not (isinstance(res_num, NoneType) or isinstance(res_num, IntType)):
                 raise ValueError
-        except ValueError:
+        except:
             raise RelaxInvalidSeqError(data, "the spin number data is invalid")
 
     # Spin name data.
