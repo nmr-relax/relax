@@ -66,10 +66,10 @@ class Status(object):
         self.exec_lock = Exec_lock()
 
         # The data pipe lock object.
-        self.pipe_lock = Relax_lock()
+        self.pipe_lock = Relax_lock(name='pipe_lock')
 
         # The molecule, residue, spin structure lock object.
-        self.spin_lock = Relax_lock()
+        self.spin_lock = Relax_lock(name='spin_lock')
 
         # The exception queue for handling exceptions in threads.
         self.exception_queue = Queue()
@@ -417,9 +417,11 @@ class Observer(object):
 class Relax_lock:
     """A type of locking object for relax."""
 
-    def __init__(self, debug=False):
+    def __init__(self, name=None, debug=False):
         """Set up the lock-like object.
 
+        @keyword name:  The special name for the lock, used in debugging.
+        @type name:     str
         @keyword debug: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
         @type debug:    bool
         """
