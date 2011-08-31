@@ -478,7 +478,7 @@ class Relax_lock:
 
         # Debugging.
         if self.status.debug:
-            sys.stdout.write("\nrelax lock>  Lock '%s' acquire by '%s'.\n" % (self.name, acquirer))
+            sys.stdout.write("\nrelax lock>  Acquisition of '%s' by '%s'.\n" % (self.name, acquirer))
 
         # Fake lock.
         if self.fake_lock:
@@ -515,7 +515,7 @@ class Relax_lock:
 
         # Debugging.
         if self.status.debug:
-            sys.stdout.write("\nrelax lock>  Lock '%s' release by '%s'.\n" % (self.name, acquirer))
+            sys.stdout.write("\nrelax lock>  Release of '%s' by '%s'.\n" % (self.name, acquirer))
 
         # Fake lock.
         if self.fake_lock:
