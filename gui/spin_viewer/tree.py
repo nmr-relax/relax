@@ -648,8 +648,8 @@ class Mol_res_spin_tree(wx.Window):
         """Update the tree view using the given data pipe."""
 
         # Acquire the pipe and spin locks.
-        status.pipe_lock.acquire()
-        status.spin_lock.acquire()
+        status.pipe_lock.acquire('spin viewer window')
+        status.spin_lock.acquire('spin viewer window')
         try:
             # The data pipe.
             if not pipe_name:
@@ -671,8 +671,8 @@ class Mol_res_spin_tree(wx.Window):
 
         # Release the locks.
         finally:
-            status.pipe_lock.release()
-            status.spin_lock.release()
+            status.pipe_lock.release('spin viewer window')
+            status.spin_lock.release('spin viewer window')
 
 
     def update_mol(self, mol, mol_id):

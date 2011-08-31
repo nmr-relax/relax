@@ -423,7 +423,7 @@ class Pipe_editor(wx.Frame):
         self.grid.Freeze()
 
         # Acquire the pipe lock.
-        status.pipe_lock.acquire()
+        status.pipe_lock.acquire('pipe editor window')
 
         # Delete the rows, leaving a single row.
         self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
@@ -466,7 +466,7 @@ class Pipe_editor(wx.Frame):
                 self.grid.SetReadOnly(i, j)
 
         # Release the lock.
-        status.pipe_lock.release()
+        status.pipe_lock.release('pipe editor window')
 
         # Unfreeze.
         self.grid.Thaw()

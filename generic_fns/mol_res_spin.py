@@ -603,7 +603,7 @@ def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
     """
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # The current data pipe.
         if pipe_from == None:
@@ -656,7 +656,7 @@ def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
@@ -678,7 +678,7 @@ def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
     """
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # The current data pipe.
         if pipe_from == None:
@@ -734,7 +734,7 @@ def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
@@ -756,7 +756,7 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
     """
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # The current data pipe.
         if pipe_from == None:
@@ -813,7 +813,7 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def count_molecules(selection=None, pipe=None):
@@ -937,7 +937,7 @@ def create_molecule(mol_name=None, mol_type=None):
     pipes.test()
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Test the molecule type.
         if mol_type and mol_type not in ALLOWED_MOL_TYPES:
@@ -956,7 +956,7 @@ def create_molecule(mol_name=None, mol_type=None):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
     # Return the molecule.
     return mol
@@ -983,7 +983,7 @@ def create_residue(res_num=None, res_name=None, mol_name=None):
         create_molecule(mol_name=mol_name)
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Get the molecule container to add the residue to.
         mol_cont = return_molecule(generate_spin_id(mol_name=mol_name))
@@ -998,7 +998,7 @@ def create_residue(res_num=None, res_name=None, mol_name=None):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
     # Return the residue.
     return res
@@ -1019,7 +1019,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
     pipes.test()
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Split up the selection string.
         mol_token, res_token, spin_token = tokenise(res_id)
@@ -1099,7 +1099,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
@@ -1129,7 +1129,7 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
         create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name)
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Get the residue container to add the spin to.
         res_cont = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name))
@@ -1149,7 +1149,7 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
     # Return the spin.
     return spin_cont
@@ -1193,7 +1193,7 @@ def delete_molecule(mol_id=None):
     """
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Split up the selection string.
         mol_token, res_token, spin_token = tokenise(mol_id)
@@ -1231,7 +1231,7 @@ def delete_molecule(mol_id=None):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def delete_residue(res_id=None):
@@ -1242,7 +1242,7 @@ def delete_residue(res_id=None):
     """
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Split up the selection string.
         mol_token, res_token, spin_token = tokenise(res_id)
@@ -1278,7 +1278,7 @@ def delete_residue(res_id=None):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def delete_spin(spin_id=None):
@@ -1289,7 +1289,7 @@ def delete_spin(spin_id=None):
     """
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
 
         # Split up the selection string.
@@ -1322,7 +1322,7 @@ def delete_spin(spin_id=None):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def display_molecule(mol_id=None):
@@ -1798,7 +1798,7 @@ def name_molecule(mol_id, name=None, force=False):
     """
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
 
         # Get the single molecule data container.
@@ -1820,7 +1820,7 @@ def name_molecule(mol_id, name=None, force=False):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def name_residue(res_id, name=None, force=False):
@@ -1835,7 +1835,7 @@ def name_residue(res_id, name=None, force=False):
     """
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Disallow spin selections.
         select_obj = Selection(res_id)
@@ -1851,7 +1851,7 @@ def name_residue(res_id, name=None, force=False):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def name_spin(spin_id=None, name=None, force=False):
@@ -1866,7 +1866,7 @@ def name_spin(spin_id=None, name=None, force=False):
     """
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Rename the matching spins.
         for spin, id in spin_loop(spin_id, return_id=True):
@@ -1877,7 +1877,7 @@ def name_spin(spin_id=None, name=None, force=False):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def number_residue(res_id, number=None, force=False):
@@ -1892,7 +1892,7 @@ def number_residue(res_id, number=None, force=False):
     """
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Catch multiple numberings!
         i = 0
@@ -1917,7 +1917,7 @@ def number_residue(res_id, number=None, force=False):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def number_spin(spin_id=None, number=None, force=False):
@@ -1932,7 +1932,7 @@ def number_spin(spin_id=None, number=None, force=False):
     """
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
-    status.spin_lock.acquire()
+    status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Catch multiple renumberings!
         i = 0
@@ -1952,7 +1952,7 @@ def number_spin(spin_id=None, number=None, force=False):
 
     # Release the lock.
     finally:
-        status.spin_lock.release()
+        status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
 def one_letter_code(res_names):

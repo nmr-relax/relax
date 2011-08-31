@@ -279,7 +279,7 @@ class Results_viewer(wx.Frame):
         """Update the list of result files (thread safe)."""
 
         # Acquire the pipe lock.
-        status.pipe_lock.acquire()
+        status.pipe_lock.acquire('results viewer window')
         try:
             # Update the data pipe selector.
             self.update_pipes()
@@ -299,7 +299,7 @@ class Results_viewer(wx.Frame):
 
         # Release the locks.
         finally:
-            status.pipe_lock.release()
+            status.pipe_lock.release('results viewer window')
 
 
     def resize(self, event):
