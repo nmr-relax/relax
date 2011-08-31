@@ -780,36 +780,11 @@ class LogCtrl(wx.stc.StyledTextCtrl):
                 continue
 
             # Debugging - the relax lock.
-            elif msg[1:12] == 'relax lock>':
-                # Add a new line to the last block.
-                string_list[-1] += '\n'
-
-                # Add the prompt part.
-                string_list.append('relax lock>')
+            elif msg[0:6] == 'debug>':
+                # Add the debugging text.
+                string_list.append(msg)
                 stream_list.append(4)
-
-                # Shorten the message.
-                msg = msg[12:]
-
-                # Start a new section.
-                string_list.append('')
-                stream_list.append(stream)
-
-            # Debugging - the relax observers.
-            elif msg[1:16] == 'relax observer>':
-                # Add a new line to the last block.
-                string_list[-1] += '\n'
-
-                # Add the prompt part.
-                string_list.append('relax observer>')
-                stream_list.append(4)
-
-                # Shorten the message.
-                msg = msg[16:]
-
-                # Start a new section.
-                string_list.append('')
-                stream_list.append(stream)
+                continue
 
             # A different stream.
             if stream_list[-1] != stream:
