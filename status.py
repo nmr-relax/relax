@@ -374,7 +374,7 @@ class Observer(object):
         for key in self._keys:
             # Debugging.
             if self._status.debug:
-                sys.stderr.write('observer> Observer %s notifying %s.\n' % (self._name, key))
+                sys.stderr.write("observer> Observer '%s' notifying '%s'.\n" % (self._name, key))
 
             # Call the method.
             self._callback[key]()
@@ -395,7 +395,7 @@ class Observer(object):
 
         # Debugging.
         if self._status.debug:
-            sys.stderr.write('observer> Observer %s registering %s.\n' % (self._name, key))
+            sys.stderr.write("observer> Observer '%s' registering '%s'.\n" % (self._name, key))
 
         # Add the method to the dictionary of callbacks.
         self._callback[key] = method
@@ -409,7 +409,7 @@ class Observer(object):
 
         # Debugging.
         if self._status.debug:
-            sys.stderr.write('observer> Resetting observer %s.\n' % self._name)
+            sys.stderr.write("observer> Resetting observer '%s'.\n" % self._name)
 
         # Reinitialise the dictionary of callback methods.
         self._callback = {}
@@ -431,7 +431,7 @@ class Observer(object):
 
         # Debugging.
         if self._status.debug:
-            sys.stderr.write('observer> Observer %s unregistering %s.\n' % (self._name, key))
+            sys.stderr.write("observer> Observer '%s' unregistering '%s'.\n" % (self._name, key))
 
         # Remove the method from the dictionary of callbacks.
         self._callback.pop(key)
@@ -478,7 +478,7 @@ class Relax_lock:
 
         # Debugging.
         if self.status.debug:
-            sys.stderr.write('relax lock>  Lock % acquire by %s.\n' % (self.name, acquirer))
+            sys.stderr.write("relax lock>  Lock '%s' acquire by '%s'.\n" % (self.name, acquirer))
 
         # Fake lock.
         if self.fake_lock:
@@ -515,7 +515,7 @@ class Relax_lock:
 
         # Debugging.
         if self.status.debug:
-            sys.stderr.write('relax lock>  Lock % release by %s.\n' % (self.name, acquirer))
+            sys.stderr.write("relax lock>  Lock '%s' release by '%s'.\n" % (self.name, acquirer))
 
         # Fake lock.
         if self.fake_lock:
