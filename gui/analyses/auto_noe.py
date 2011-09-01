@@ -223,6 +223,7 @@ class Auto_noe(Base_analysis):
 
         # Remove.
         status.observers.gui_uf.unregister(self.data.pipe_name)
+        status.observers.exec_lock.unregister(self.data.pipe_name)
 
 
     def execute(self, event):
