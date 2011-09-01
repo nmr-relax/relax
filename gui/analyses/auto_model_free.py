@@ -876,7 +876,7 @@ class Local_tm_list:
 
         # First state that this should not be done.
         msg = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
-        if Question(msg, title="Warning - do not change!", default=False).ShowModal() == wx.ID_YES:
+        if not Question(msg, title="Warning - do not change!", size=(400, 180), default=False).ShowModal() == wx.ID_YES:
             return
 
         # Set the model selector window selections.
