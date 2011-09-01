@@ -2441,10 +2441,6 @@ class N_state_model(API_base, API_common):
         # Get the spin container.
         spin = return_spin(data_id[0])
 
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'sim_intensities'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
-
         # RDC data.
         if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
             # Initialise.

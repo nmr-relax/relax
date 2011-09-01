@@ -1062,9 +1062,5 @@ class Relax_fit(API_base, API_common):
         # Get the spin container.
         spin = return_spin(data_id)
 
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'sim_intensities'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
-
         # Create the data structure.
         spin.sim_intensities = sim_data
