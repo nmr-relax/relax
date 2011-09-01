@@ -367,7 +367,10 @@ class Spectra_list:
         n = self.element.GetColumnCount()
 
         # Set to equal sizes.
-        width = int(x / n)
+        if n == 0:
+            width = x
+        else:
+            width = int(x / n)
 
         # Set the column sizes.
         for i in range(n):
