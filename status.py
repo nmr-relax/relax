@@ -200,6 +200,9 @@ class Exec_lock:
         # Init a threading.Lock object.
         self._lock = Lock()
 
+        # The status container.
+        self._status = Status()
+
         # The name and mode of the locker.
         self._name = None
         self._mode = None
@@ -223,6 +226,10 @@ class Exec_lock:
         @keyword mode:  The mode of the code trying to obtain the lock.  This can be one of 'script' for the scripting interface or 'auto-analysis' for the auto-analyses.
         @type mode:     str
         """
+
+        # Debugging.
+        if self._status.debug:
+            sys.stdout.write("debug> Execution lock:  Acquisition by '%s' ('%s' mode).\n" % (name, mode))
 
         # Do not acquire if lunching a script from a script.
         if mode == 'script' and self._mode == 'script' and self.locked():
@@ -287,6 +294,10 @@ class Exec_lock:
 
     def release(self):
         """Simulate the Lock.release() mechanism."""
+
+        # Debugging.
+        if self._status.debug:
+            sys.stdout.write("debug> Execution lock:  Release by '%s' ('%s' mode).\n" % (self._name, self._mode))
 
         # Nested scripting.
         if self._script_nest:
