@@ -146,6 +146,13 @@ class Spectra_list:
         if status.exec_lock.locked():
             return
 
+        # Build the GUI element in a thread safe way.
+        wx.CallAfter(self.build_element_safe)
+
+
+    def build_element_safe(self):
+        """Build the spectra listing GUI element in a thread safe wx.CallAfter call."""
+
         # First freeze the element, so that the GUI element doesn't update until the end.
         self.element.Freeze()
 
@@ -181,12 +188,12 @@ class Spectra_list:
         if self.replicates(index):
             index += 1
 
-        # Size the columns.
-        self.size_cols()
-
         # Post a size event to get the scroll panel to update correctly.
         event = wx.PyCommandEvent(wx.EVT_SIZE.typeId, self.parent.GetId())
         wx.PostEvent(self.parent.GetEventHandler(), event)
+
+        # Size the columns.
+        self.size_cols()
 
         # Set the minimum height.
         height = self.height_char * (n + 1) + 50
