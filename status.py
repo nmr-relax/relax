@@ -195,7 +195,7 @@ class Exec_lock:
         """
 
         # Store the arg.
-        self.fake_lock = fake_lock
+        self._fake_lock = fake_lock
 
         # Init a threading.Lock object.
         self._lock = Lock()
@@ -211,7 +211,7 @@ class Exec_lock:
         self._auto_from_script = False
 
         # Debugging.
-        if self.fake_lock:
+        if self._fake_lock:
             self.log = open('lock.log', 'w')
 
 
@@ -230,7 +230,7 @@ class Exec_lock:
             self._script_nest += 1
 
             # Debugging.
-            if self.fake_lock:
+            if self._fake_lock:
                 self.log.write("Nested by %s (to level %s)\n" % (name, self._script_nest))
                 self.log.flush()
 
@@ -240,7 +240,7 @@ class Exec_lock:
         # Skip locking if an auto-analysis is called from a script.
         if self.locked() and self._mode == 'script' and mode == 'auto-analysis':
             # Debugging.
-            if self.fake_lock:
+            if self._fake_lock:
                 self.log.write("Skipped unlocking of '%s' lock by '%s'\n" % (self._name, name))
                 self.log.flush()
 
@@ -255,7 +255,7 @@ class Exec_lock:
         self._mode = mode
 
         # Debugging.
-        if self.fake_lock:
+        if self._fake_lock:
             self.log.write("Acquired by %s\n" % self._name)
             self.log.flush()
             return
@@ -275,7 +275,7 @@ class Exec_lock:
         """Simulate the Lock.locked() mechanism."""
 
         # Debugging (pseudo-locking based on _name).
-        if self.fake_lock:
+        if self._fake_lock:
             if self._name:
                 return True
             else:
@@ -291,7 +291,7 @@ class Exec_lock:
         # Nested scripting.
         if self._script_nest:
             # Debugging.
-            if self.fake_lock:
+            if self._fake_lock:
                 self.log.write("Script termination, nest decrement (%s -> %s)\n" % (self._script_nest, self._script_nest-1))
                 self.log.flush()
 
@@ -304,7 +304,7 @@ class Exec_lock:
         # Auto-analysis launched from script.
         if self._auto_from_script:
             # Debugging.
-            if self.fake_lock:
+            if self._fake_lock:
                 self.log.write("Auto-analysis launched from script, skipping release.\n")
                 self.log.flush()
 
@@ -319,7 +319,7 @@ class Exec_lock:
         self._mode = None
 
         # Debugging.
-        if self.fake_lock:
+        if self._fake_lock:
             # Main text.
             text = 'Release'
 
@@ -455,7 +455,7 @@ class Relax_lock:
 
         # Store the args.
         self.name = name
-        self.fake_lock = fake_lock
+        self._fake_lock = fake_lock
 
         # Init a reentrant lock object.
         self._lock = RLock()
@@ -464,7 +464,7 @@ class Relax_lock:
         self.status = Status()
 
         # Fake lock.
-        if self.fake_lock:
+        if self._fake_lock:
             # Track the number of acquires.
             self._lock_level = 0
 
@@ -481,7 +481,7 @@ class Relax_lock:
             sys.stdout.write("debug> Acquisition of '%s' by '%s'.\n" % (self.name, acquirer))
 
         # Fake lock.
-        if self.fake_lock:
+        if self._fake_lock:
             # Increment the lock level.
             self._lock_level += 1
 
@@ -518,7 +518,7 @@ class Relax_lock:
             sys.stdout.write("debug> Release of '%s' by '%s'.\n" % (self.name, acquirer))
 
         # Fake lock.
-        if self.fake_lock:
+        if self._fake_lock:
             # Decrement the lock level.
             self._lock_level -= 1
 
