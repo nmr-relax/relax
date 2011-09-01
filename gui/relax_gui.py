@@ -147,7 +147,7 @@ class Main(wx.Frame):
 
         # Register functions with the observer objects.
         status.observers.pipe_alteration.register('status bar', self.update_status_bar)
-        status.observers.result_file.register('gui', self.show_results_viewer)
+        status.observers.result_file.register('gui', self.show_results_viewer_no_warn)
 
 
     def about_gui(self, event):
@@ -447,14 +447,18 @@ class Main(wx.Frame):
         """
 
         # Show the results viewer in a thread safe way.
-        wx.CallAfter(self.show_results_viewer_safe)
+        wx.CallAfter(self.show_results_viewer_safe, warn=True)
 
 
-    def show_results_viewer_safe(self):
-        """Display the analysis results in a thread safe wx.CallAfter call."""
+    def show_results_viewer_safe(self, warn=False):
+        """Display the analysis results in a thread safe wx.CallAfter call.
+
+        @keyword warn:  A flag which if True will cause a message dialog to appear warning about keeping the window open with the execution lock.
+        @type warn:     bool
+        """
 
         # Throw a warning if the execution lock is on.
-        if status.exec_lock.locked():
+        if warn and status.exec_lock.locked():
             dlg = wx.MessageDialog(self, "Leaving the results viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
             wx.CallAfter(dlg.ShowModal)
 
@@ -465,6 +469,13 @@ class Main(wx.Frame):
         # Open the window.
         if status.show_gui and not self.results_viewer.IsShown():
             self.results_viewer.Show()
+
+
+    def show_results_viewer_no_warn(self):
+        """Display the analysis results."""
+
+        # Show the results viewer in a thread safe way with no warning dialog.
+        wx.CallAfter(self.show_results_viewer_safe, warn=False)
 
 
     def show_tree(self, event):
