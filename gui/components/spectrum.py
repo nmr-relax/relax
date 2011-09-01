@@ -142,6 +142,10 @@ class Spectra_list:
     def build_element(self):
         """Build the spectra listing GUI element."""
 
+        # Execution lock, so do nothing.
+        if status.exec_lock.locked():
+            return
+
         # First freeze the element, so that the GUI element doesn't update until the end.
         self.element.Freeze()
 
