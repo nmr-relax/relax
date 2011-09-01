@@ -108,6 +108,10 @@ class Interpreter(object):
         @type kwds:     any keyword arguments
         """
 
+        # Debugging.
+        if status.debug:
+            sys.stdout.write("debug> GUI interpreter:  Applying the %s user function for synchronous execution.\n" % uf)
+
         # Get the user function.
         fn = self._get_uf(uf)
 
@@ -144,8 +148,16 @@ class Interpreter(object):
         This is a wrapper method for the interpreter thread.
         """
 
+        # Debugging.
+        if status.debug:
+            sys.stdout.write("debug> GUI interpreter:  Flushing.\n")
+
         # Call the thread's method.
         self._interpreter_thread.flush()
+
+        # Debugging.
+        if status.debug:
+            sys.stdout.write("debug> GUI interpreter:  Flushed.\n")
 
 
     def join(self):
@@ -167,6 +179,10 @@ class Interpreter(object):
         @param kwds:    The user function keyword arguments.
         @type kwds:     any keyword arguments
         """
+
+        # Debugging.
+        if status.debug:
+            sys.stdout.write("debug> GUI interpreter:  Queuing the %s user function for asynchronous execution.\n" % uf)
 
         # Get the user function.
         fn = self._get_uf(uf)
