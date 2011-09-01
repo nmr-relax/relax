@@ -256,6 +256,9 @@ def error_analysis(prune=0.0):
             # Increment the parameter index.
             index = index + 1
 
+    # Turn off the Monte Carlo simulation state, as the MC analysis is now finished.
+    cdp.sim_state = False
+
 
 def initial_values():
     """Set the initial simulation parameter values."""
