@@ -461,7 +461,7 @@ class Relax_lock:
         self._lock = RLock()
 
         # The status container.
-        self.status = Status()
+        self._status = Status()
 
         # Fake lock.
         if self._fake_lock:
@@ -477,7 +477,7 @@ class Relax_lock:
         """
 
         # Debugging.
-        if self.status.debug:
+        if self._status.debug:
             sys.stdout.write("debug> Acquisition of '%s' by '%s'.\n" % (self.name, acquirer))
 
         # Fake lock.
@@ -514,7 +514,7 @@ class Relax_lock:
         """
 
         # Debugging.
-        if self.status.debug:
+        if self._status.debug:
             sys.stdout.write("debug> Release of '%s' by '%s'.\n" % (self.name, acquirer))
 
         # Fake lock.
