@@ -148,6 +148,17 @@ class Relax_data_list:
     def build_element(self):
         """Build the relaxation data listing grid."""
 
+        # Execution lock, so do nothing.
+        if status.exec_lock.locked():
+            return
+
+        # Build the GUI element in a thread safe way.
+        wx.CallAfter(self.build_element_safe)
+
+
+    def build_element_safe(self):
+        """Build the spectra listing GUI element in a thread safe wx.CallAfter call."""
+
         # First freeze the element, so that the GUI element doesn't update until the end.
         self.element.Freeze()
 
@@ -248,7 +259,10 @@ class Relax_data_list:
         n = self.element.GetColumnCount()
 
         # Set to equal sizes.
-        width = int(x / n)
+        if n == 0:
+            width = x
+        else:
+            width = int(x / n)
 
         # Set the column sizes.
         for i in range(n):
