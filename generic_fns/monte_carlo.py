@@ -352,10 +352,6 @@ def setup(number=None, all_select_sim=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Test if Monte Carlo simulations have already been set up.
-    if hasattr(cdp, 'sim_number'):
-        raise RelaxError("Monte Carlo simulations have already been set up.")
-
     # Create a number of MC sim data structures.
     cdp.sim_number = number
     cdp.sim_state = True
