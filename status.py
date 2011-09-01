@@ -385,7 +385,7 @@ class Observer(object):
         for key in self._keys:
             # Debugging.
             if self._status.debug:
-                sys.stdout.write("debug> Observer '%s' notifying '%s'.\n" % (self._name, key))
+                sys.stdout.write("debug> Observer: '%s' notifying '%s'.\n" % (self._name, key))
 
             # Call the method.
             self._callback[key]()
@@ -406,7 +406,7 @@ class Observer(object):
 
         # Debugging.
         if self._status.debug:
-            sys.stdout.write("debug> Observer '%s' registering '%s'.\n" % (self._name, key))
+            sys.stdout.write("debug> Observer: '%s' registering '%s'.\n" % (self._name, key))
 
         # Add the method to the dictionary of callbacks.
         self._callback[key] = method
@@ -442,7 +442,7 @@ class Observer(object):
 
         # Debugging.
         if self._status.debug:
-            sys.stdout.write("debug> Observer '%s' unregistering '%s'.\n" % (self._name, key))
+            sys.stdout.write("debug> Observer: '%s' unregistering '%s'.\n" % (self._name, key))
 
         # Remove the method from the dictionary of callbacks.
         self._callback.pop(key)
@@ -489,7 +489,7 @@ class Relax_lock:
 
         # Debugging.
         if self._status.debug:
-            sys.stdout.write("debug> Acquisition of '%s' by '%s'.\n" % (self.name, acquirer))
+            sys.stdout.write("debug> Lock '%s':  Acquisition by '%s'.\n" % (self.name, acquirer))
 
         # Fake lock.
         if self._fake_lock:
@@ -526,7 +526,7 @@ class Relax_lock:
 
         # Debugging.
         if self._status.debug:
-            sys.stdout.write("debug> Release of '%s' by '%s'.\n" % (self.name, acquirer))
+            sys.stdout.write("debug> Lock '%s':  Release by '%s'.\n" % (self.name, acquirer))
 
         # Fake lock.
         if self._fake_lock:
