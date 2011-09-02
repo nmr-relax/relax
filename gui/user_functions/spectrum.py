@@ -318,42 +318,40 @@ class Replicated_page(UF_page):
         """
 
         # The spectrum IDs.
-        self.spectrum_id1 = self.combo_box(sizer, "The 1st spectrum ID:", tooltip="The ID string of the first of the replicated spectra.")
-        self.spectrum_id2 = self.combo_box(sizer, "The 2nd spectrum ID:", tooltip="The ID string of the second spectrum which is a replicate of the first spectrum.")
-        self.spectrum_id3 = self.combo_box(sizer, "The 3rd spectrum ID:", tooltip="The ID string of the third spectrum which is a replicate of the first spectrum.")
-        self.spectrum_id4 = self.combo_box(sizer, "The 4th spectrum ID:", tooltip="The ID string of the fourth spectrum which is a replicate of the first spectrum.")
-        self.spectrum_id5 = self.combo_box(sizer, "The 5th spectrum ID:", tooltip="The ID string of the fifth spectrum which is a replicate of the first spectrum.")
+        self.spectrum_id_boxes = []
+        self.spectrum_id_boxes.append(self.combo_box(sizer, "The 1st spectrum ID:", tooltip="The ID string of the first of the replicated spectra."))
+        self.spectrum_id_boxes.append(self.combo_box(sizer, "The 2nd spectrum ID:", tooltip="The ID string of the second spectrum which is a replicate of the first spectrum."))
+        self.spectrum_id_boxes.append(self.combo_box(sizer, "The 3rd spectrum ID:", tooltip="The ID string of the third spectrum which is a replicate of the first spectrum."))
+        self.spectrum_id_boxes.append(self.combo_box(sizer, "The 4th spectrum ID:", tooltip="The ID string of the fourth spectrum which is a replicate of the first spectrum."))
+        self.spectrum_id_boxes.append(self.combo_box(sizer, "The 5th spectrum ID:", tooltip="The ID string of the fifth spectrum which is a replicate of the first spectrum."))
 
 
     def on_display(self):
         """Update the UI."""
 
-        # Set the spectrum ID names.
-        if hasattr(cdp, 'spectrum_ids'):
-            for id in cdp.spectrum_ids:
-                self.spectrum_id1.Append(str_to_gui(id))
-                self.spectrum_id2.Append(str_to_gui(id))
-                self.spectrum_id3.Append(str_to_gui(id))
-                self.spectrum_id4.Append(str_to_gui(id))
-                self.spectrum_id5.Append(str_to_gui(id))
+        # Loop over each box.
+        for i in range(len(self.spectrum_id_boxes)):
+            # First clear all data.
+            self.spectrum_id_boxes[i].Clear()
+
+            # Set the spectrum ID names.
+            if hasattr(cdp, 'spectrum_ids'):
+                for id in cdp.spectrum_ids:
+                    self.spectrum_id_boxes[i].Append(str_to_gui(id))
 
 
     def on_execute(self):
         """Execute the user function."""
 
-        # Get the values.
-        val = []
-        val.append(gui_to_str(self.spectrum_id1.GetValue()))
-        val.append(gui_to_str(self.spectrum_id2.GetValue()))
-        val.append(gui_to_str(self.spectrum_id3.GetValue()))
-        val.append(gui_to_str(self.spectrum_id4.GetValue()))
-        val.append(gui_to_str(self.spectrum_id5.GetValue()))
-
-        # The ID list.
+        # Loop over each box.
         spectrum_ids = []
-        for i in range(len(val)):
-            if val[i] != None:
-                spectrum_ids.append(val[i])
+        for i in range(len(self.spectrum_id_boxes)):
+            # Get the value.
+            val = gui_to_str(self.spectrum_id_boxes[i].GetValue())
+
+            # Add the value to the list if not None.
+            if val != None:
+                spectrum_ids.append(val)
 
         # Execute (only if more than one ID is given).
         if len(spectrum_ids) > 1:

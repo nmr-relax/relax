@@ -456,7 +456,7 @@ class Auto_rx(Base_analysis):
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['pts'])
-        page.spectrum_id1.SetValue(str_to_gui(id))
+        page.spectrum_id_boxes[0].SetValue(str_to_gui(id))
 
 
     def wizard_update_repl(self):
@@ -470,7 +470,7 @@ class Auto_rx(Base_analysis):
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['repl'])
-        page.spectrum_id1.SetValue(str_to_gui(id))
+        page.spectrum_id_boxes[0].SetValue(str_to_gui(id))
 
 
     def wizard_update_rmsd(self):
