@@ -155,7 +155,8 @@ class Spin_view_window(wx.Frame):
 
         # Create the menu bar GUI item and add it to the main frame.
         self.menubar = wx.MenuBar()
-        self.SetMenuBar(self.menubar)
+        if status.show_gui:
+            self.SetMenuBar(self.menubar)
 
         # The sequence menu entry.
         menu = wx.Menu()
