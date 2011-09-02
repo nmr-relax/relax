@@ -46,7 +46,7 @@ from gui.analyses.elements import Spin_ctrl, Text_ctrl
 from gui.analyses.execute import Execute
 from gui.base_classes import Container
 from gui.components.relax_data import Relax_data_list
-from gui.filedialog import opendir
+from gui.filedialog import RelaxDirDialog
 from gui.fonts import font
 from gui.message import error_message, Question, Missing_data
 from gui.misc import add_border, gui_to_int, gui_to_str, list_to_gui, protected_exec, str_to_gui
@@ -622,18 +622,24 @@ class Auto_model_free(Base_analysis):
         @type event:    wx event
         """
 
-        # Store the original directory.
-        backup = self.field_results_dir.GetValue()
+        # The dialog.
+        dialog = RelaxDirDialog(parent=self, message='Select the results directory', defaultPath=self.field_results_dir.GetValue())
 
-        # Select the file.
-        self.data.save_dir = opendir('Select results directory', default=self.field_results_dir.GetValue())
+        # Show the dialog and catch if no file has been selected.
+        if dialog.ShowModal() != wx.ID_OK:
+            # Don't do anything.
+            return
 
-        # Restore the backup file if no file was chosen.
-        if not self.data.save_dir:
-            self.data.save_dir = backup
+        # The path (don't do anything if not set).
+        path = gui_to_str(dialog.get_path())
+        if not path:
+            return
+
+        # Store the path.
+        self.data.save_dir = path
 
         # Place the path in the text box.
-        self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
+        self.field_results_dir.SetValue(str_to_gui(path))
 
 
     def sync_ds(self, upload=False):

@@ -53,7 +53,7 @@ from gui.analyses import Analysis_controller
 from gui.base_classes import Container
 from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
-from gui.filedialog import RelaxFileDialog, opendir
+from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.interpreter import Interpreter

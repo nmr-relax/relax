@@ -43,7 +43,7 @@ from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
-from gui.filedialog import opendir
+from gui.filedialog import RelaxDirDialog
 from gui.message import error_message, Missing_data
 from gui.misc import gui_to_str, protected_exec, str_to_gui
 from gui import paths
@@ -331,18 +331,24 @@ class Auto_noe(Base_analysis):
         @type event:    wx event
         """
 
-        # Store the original directory.
-        backup = self.field_results_dir.GetValue()
+        # The dialog.
+        dialog = RelaxDirDialog(parent=self, message='Select the results directory', defaultPath=self.field_results_dir.GetValue())
 
-        # Select the file.
-        self.data.save_dir = opendir('Select results directory', default=self.field_results_dir.GetValue())
+        # Show the dialog and catch if no file has been selected.
+        if dialog.ShowModal() != wx.ID_OK:
+            # Don't do anything.
+            return
 
-        # Restore the backup file if no file was chosen.
-        if not self.data.save_dir:
-            self.data.save_dir = backup
+        # The path (don't do anything if not set).
+        path = gui_to_str(dialog.get_path())
+        if not path:
+            return
+
+        # Store the path.
+        self.data.save_dir = path
 
         # Place the path in the text box.
-        self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
+        self.field_results_dir.SetValue(str_to_gui(path))
 
 
     def sync_ds(self, upload=False):

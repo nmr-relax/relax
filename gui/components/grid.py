@@ -35,7 +35,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui.filedialog import RelaxFileDialog, opendir
+from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.message import error_message
 from gui.misc import add_border, str_to_gui

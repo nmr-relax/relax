@@ -32,15 +32,54 @@ import wx
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui.misc import str_to_gui
+from gui.misc import gui_to_str, str_to_gui
 
 
-def opendir(msg, default): # select directory, msg is message to display, default is starting directory
-    newdir = None
-    dlg = wx.DirDialog(None, message = msg, style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON, defaultPath = default)
-    if dlg.ShowModal() == wx.ID_OK:
-        newdir = dlg.GetPath()
-        return newdir
+class RelaxDirDialog(wx.DirDialog):
+    """relax specific replacement directory dialog for selecting directories."""
+
+    def __init__(self, parent, message=wx.DirSelectorPromptStr, defaultPath=wx.EmptyString, style=wx.DD_DEFAULT_STYLE|wx.DD_NEW_DIR_BUTTON, pos=wx.DefaultPosition, size=wx.DefaultSize, name=wx.DirDialogNameStr):
+        """Setup the class and store the field.
+
+        @param parent:          The parent wx window object.
+        @type parent:           Window
+        @keyword message:       The path selector prompt string.
+        @type message:          String
+        @keyword defaultPath:   The default directory to open in.
+        @type defaultPath:      String
+        @keyword style:         The dialog style.
+        @type style:            long
+        @keyword pos:           The window position.
+        @type pos:              Point
+        @keyword size:          The default window size.
+        @type size:             Size
+        @keyword name:          The title for the dialog.
+        @type name:             String
+        """
+
+        # No path supplied, so use the current working directory.
+        if defaultPath == wx.EmptyString:
+            defaultPath = getcwd()
+
+        # Initialise the base class.
+        super(RelaxDirDialog, self).__init__(parent, message=message, defaultPath=defaultPath, style=style, pos=pos, size=size, name=name)
+
+
+    def get_path(self):
+        """Return the selected path.
+
+        @return:        The name of the selected path.
+        @rtype:         str
+        """
+
+        # The path.
+        path = gui_to_str(self.GetPath())
+
+        # Change the current working directory.
+        chdir(path)
+
+        # Return the path.
+        return path
 
 
 
