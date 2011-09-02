@@ -75,6 +75,10 @@ class RelaxFileDialog(wx.FileDialog):
         self.field = field
         self.style = style
 
+        # No directory supplied, so use the current working directory.
+        if defaultDir == wx.EmptyString:
+            defaultDir = getcwd()
+
         # Initialise the base class.
         super(RelaxFileDialog, self).__init__(parent, message=message, defaultDir=defaultDir, defaultFile=defaultFile, wildcard=wildcard, style=style, pos=pos)
 
@@ -86,11 +90,16 @@ class RelaxFileDialog(wx.FileDialog):
         @rtype:         str or list of str
         """
 
-        # The file(s).
+        # The multiple files.
         if self.style in [wx.FD_OPEN|wx.FD_MULTIPLE, wx.FD_SAVE|wx.FD_MULTIPLE]:
             file = self.GetPaths()
+
+        # The single file.
         else:
             file = self.GetPath()
+
+        # Change the current working directory.
+        chdir(self.GetDirectory())
 
         # Return the file.
         return file
