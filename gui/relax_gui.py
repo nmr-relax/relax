@@ -207,7 +207,7 @@ class Main(wx.Frame):
         dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save file (*.bz2)|*.bz2', style=wx.FD_SAVE)
 
         # Show the dialog and catch if no file has been selected.
-        if dialog.ShowModal() != wx.ID_OK:
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
             # Don't do anything.
             return
 
@@ -273,8 +273,8 @@ class Main(wx.Frame):
         text = text + "\nClosing these will significantly speed up the calculations."
 
         # Display the error message dialog.
+        dlg = wx.MessageDialog(self, text, caption="Close windows", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
         if status.show_gui:
-            dlg = wx.MessageDialog(self, text, caption="Close windows", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
             dlg.ShowModal()
 
         # Otherwise output to stderr.
@@ -295,7 +295,9 @@ class Main(wx.Frame):
         """
 
         # Ask if the user is sure they would like to exit.
-        doexit = Question('Are you sure you would like to quit relax?  All unsaved data will be lost.', title='Exit relax', default=True).ShowModal()
+        doexit = wx.ID_YES
+        if status.show_gui:
+            doexit = Question('Are you sure you would like to quit relax?  All unsaved data will be lost.', title='Exit relax', default=True).ShowModal()
 
         # Exit.
         if doexit == wx.ID_YES:
@@ -412,7 +414,8 @@ class Main(wx.Frame):
         # Throw a warning if the execution lock is on.
         if status.exec_lock.locked():
             dlg = wx.MessageDialog(self, "Leaving the pipe editor window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
-            dlg.ShowModal()
+            if status.show_gui:
+                dlg.ShowModal()
 
         # Build the pipe editor if needed.
         if not hasattr(self, 'pipe_editor'):
@@ -460,7 +463,8 @@ class Main(wx.Frame):
         # Throw a warning if the execution lock is on.
         if warn and status.exec_lock.locked():
             dlg = wx.MessageDialog(self, "Leaving the results viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
-            wx.CallAfter(dlg.ShowModal)
+            if status.show_gui:
+                wx.CallAfter(dlg.ShowModal)
 
         # Create the results viewer window if needed.
         if not hasattr(self, 'results_viewer'):
@@ -488,14 +492,15 @@ class Main(wx.Frame):
         # Throw a warning if the execution lock is on.
         if status.exec_lock.locked():
             dlg = wx.MessageDialog(self, "Leaving the spin viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
-            dlg.ShowModal()
+            if status.show_gui:
+                dlg.ShowModal()
 
         # Build the spin view window.
         if not hasattr(self, 'spin_viewer'):
             self.spin_viewer = Spin_view_window(None, -1, "", parent=self)
 
         # Open the window (the GUI flag check is inside the Show method).
-        if not self.spin_viewer.IsShown():
+        if status.show_gui and not self.spin_viewer.IsShown():
             self.spin_viewer.Show()
 
 
@@ -518,7 +523,7 @@ class Main(wx.Frame):
             msg = "Loading a saved relax state file will cause all unsaved data to be lost.  Are you sure you would to open a save file?"
 
             # The dialog.
-            if Question(msg, default=True).ShowModal() == wx.ID_NO:
+            if status.show_gui and Question(msg, default=True).ShowModal() == wx.ID_NO:
                 return
 
         # Open the dialog.
@@ -526,7 +531,7 @@ class Main(wx.Frame):
             dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save files (*.bz2;*.gz)|*.bz2;*.gz|All files (*)|*', style=wx.FD_OPEN)
 
             # Show the dialog and catch if no file has been selected.
-            if dialog.ShowModal() != wx.ID_OK:
+            if status.show_gui and dialog.ShowModal() != wx.ID_OK:
                 # Don't do anything.
                 return
 

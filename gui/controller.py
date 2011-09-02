@@ -360,17 +360,21 @@ class Controller(wx.Frame):
 
         # Rx fitting auto-analysis.
         if type in ['R1', 'R2']:
-            wx.CallAfter(self.panel_rx.Show)
+            if status.show_gui:
+                wx.CallAfter(self.panel_rx.Show)
             wx.CallAfter(self.update_rx)
         else:
-            wx.CallAfter(self.panel_rx.Hide)
+            if status.show_gui:
+                wx.CallAfter(self.panel_rx.Hide)
 
         # Model-free auto-analysis.
         if type == 'model-free':
-            wx.CallAfter(self.panel_mf.Show)
+            if status.show_gui:
+                wx.CallAfter(self.panel_mf.Show)
             wx.CallAfter(self.update_mf)
         else:
-            wx.CallAfter(self.panel_mf.Hide)
+            if status.show_gui:
+                wx.CallAfter(self.panel_mf.Hide)
 
         # Update the main gauge.
         wx.CallAfter(self.update_gauge)
@@ -684,8 +688,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             text = "The string '%s' could not be found." % sel
             nothing = wx.MessageDialog(self, text, caption="Not found", style=wx.ICON_INFORMATION|wx.OK)
             nothing.SetSize((300, 200))
-            nothing.ShowModal()
-            nothing.Destroy()
+            if status.show_gui:
+                nothing.ShowModal()
+                nothing.Destroy()
 
         # Found text.
         else:
@@ -717,7 +722,8 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Initialise the dialog if it doesn't exist.
         if self.find_dlg == None:
             self.find_dlg = wx.FindReplaceDialog(self, self.find_data, "Find")
-            self.find_dlg.Show(True)
+            if status.show_gui:
+                self.find_dlg.Show(True)
 
 
     def find_next(self, event):
@@ -906,8 +912,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         menu.Append(self.menu_id_zoom_orig, "Original zoom")
 
         # Pop up the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def write(self):

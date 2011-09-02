@@ -214,7 +214,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete this molecule?  This operation cannot be undone."
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the molecule.
@@ -233,7 +233,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete this residue?  This operation cannot be undone."
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the residue.
@@ -252,7 +252,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete this spin?  This operation cannot be undone."
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the spin.
@@ -271,7 +271,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to deselect all spins of this molecule?"
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Deselect the molecule.
@@ -290,7 +290,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to deselect all spins of this residue?"
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Deselect the residue.
@@ -363,8 +363,9 @@ class Mol_res_spin_tree(wx.Window):
             self.Bind(wx.EVT_MENU, self.select_molecule, id=self.MENU_MOLECULE_MOLECULE_SELECT)
 
         # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def menu_residue(self):
@@ -402,8 +403,9 @@ class Mol_res_spin_tree(wx.Window):
             self.Bind(wx.EVT_MENU, self.select_residue, id=self.MENU_RESIDUE_RESIDUE_SELECT)
 
         # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def menu_root(self):
@@ -420,8 +422,9 @@ class Mol_res_spin_tree(wx.Window):
         self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.create, id=self.MENU_ROOT_MOLECULE_CREATE)
 
         # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def menu_spin(self):
@@ -454,8 +457,9 @@ class Mol_res_spin_tree(wx.Window):
             self.Bind(wx.EVT_MENU, self.select_spin, id=self.MENU_SPIN_SPIN_SELECT)
 
         # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def prune_mol(self):
@@ -535,7 +539,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to select all spins of this molecule?"
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Select the molecule.
@@ -554,7 +558,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to select all spins of this residue?"
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Select the residue.

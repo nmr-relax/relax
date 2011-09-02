@@ -197,13 +197,15 @@ class Wiz_page(wx.Panel):
         @type event:    wx event
         """
 
-        # Reset.
-        if Question('Would you really like to reset the free file format settings?', parent=self).ShowModal() == wx.ID_YES:
-            # First reset.
-            ds.relax_gui.free_file_format.reset()
+        # Ask a question.
+        if status.show_gui and Question('Would you really like to reset the free file format settings?', parent=self).ShowModal() == wx.ID_NO:
+            return
 
-            # Then update the values.
-            self._free_file_format_set_vals()
+        # First reset.
+        ds.relax_gui.free_file_format.reset()
+
+        # Then update the values.
+        self._free_file_format_set_vals()
 
 
     def _free_file_format_save(self, event):

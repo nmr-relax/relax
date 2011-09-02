@@ -335,7 +335,7 @@ class Auto_noe(Base_analysis):
         dialog = RelaxDirDialog(parent=self, message='Select the results directory', defaultPath=self.field_results_dir.GetValue())
 
         # Show the dialog and catch if no file has been selected.
-        if dialog.ShowModal() != wx.ID_OK:
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
             # Don't do anything.
             return
 

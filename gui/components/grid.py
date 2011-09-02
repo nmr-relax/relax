@@ -450,7 +450,7 @@ class Grid_base:
             dialog = RelaxFileDialog(parent=self, style=wx.FD_OPEN)
 
             # Show the dialog and catch if no file has been selected.
-            if dialog.ShowModal() != wx.ID_OK:
+            if status.show_gui and dialog.ShowModal() != wx.ID_OK:
                 # Don't do anything.
                 return
 
@@ -661,7 +661,7 @@ class Grid_base:
         dialog = RelaxFileDialog(parent=self, style=wx.FD_OPEN)
 
         # Show the dialog and catch if no file has been selected.
-        if dialog.ShowModal() != wx.ID_OK:
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
             # Don't do anything.
             return
 
@@ -703,7 +703,7 @@ class Grid_base:
         dialog = RelaxFileDialog(parent=self, message='Select the %s peak list file'%self.label, style=wx.FD_OPEN|wx.FD_MULTIPLE)
 
         # Show the dialog and catch if no file has been selected.
-        if dialog.ShowModal() != wx.ID_OK:
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
             # Don't do anything.
             return
 
