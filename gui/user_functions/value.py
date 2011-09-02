@@ -189,6 +189,9 @@ class Set_page(UF_page):
             self.setup_fail = True
             return
 
+        # Clear the previous data.
+        self.param.Clear()
+
         # Loop over the parameters.
         for name in (data_names(set='params') + data_names(set='generic')):
             # Get the description.

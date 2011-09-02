@@ -216,7 +216,8 @@ class Write_page(UF_page):
             self.setup_fail = True
             return
 
-        # First add the sequence data.
+        # First clear and then add the sequence data.
+        combo_box.Clear()
         combo_box.Append(str_to_gui("Spin sequence"), 'spin')
 
         # Loop over the parameters.

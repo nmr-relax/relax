@@ -125,6 +125,10 @@ class Copy_page(UF_page):
         if not gui_to_str(self.pipe_to.GetValue()):
             self.pipe_to.SetValue(str_to_gui(cdp_name()))
 
+        # Clear the previous data.
+        self.pipe_from.Clear()
+        self.pipe_to.Clear()
+
         # The list of pipe names.
         for name in pipe_names():
             self.pipe_from.Append(str_to_gui(name))

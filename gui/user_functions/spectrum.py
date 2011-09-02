@@ -136,6 +136,9 @@ class Baseplane_rmsd_page(UF_page):
     def on_display(self):
         """Update the UI."""
 
+        # Clear the previous data.
+        self.spectrum_id.Clear()
+
         # Set the spectrum ID names.
         if hasattr(cdp, 'spectrum_ids'):
             for id in cdp.spectrum_ids:
@@ -204,6 +207,9 @@ class Integration_points_page(UF_page):
 
     def on_display(self):
         """Update the UI."""
+
+        # Clear the previous data.
+        self.spectrum_id.Clear()
 
         # Set the spectrum ID names.
         if hasattr(cdp, 'spectrum_ids'):
