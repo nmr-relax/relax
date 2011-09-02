@@ -390,7 +390,7 @@ class Controller(wx.Frame):
         if status.exec_lock.locked():
             # Start the timer.
             if not self.timer.IsRunning():
-                self.timer.Start(100)
+                wx.CallAfter(self.timer.Start, 100)
 
             # Finish.
             return
