@@ -25,7 +25,7 @@
 """Module for the main relax menu bar."""
 
 # relax module imports.
-from status import Status
+from status import Status; status = Status()
 
 # Python module imports.
 import wx
@@ -139,7 +139,8 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.about_relax, id=self.MENU_HELP_ABOUT)
 
         # Add the menu bar GUI item to the main frame.
-        self.gui.SetMenuBar(self.menubar)
+        if status.show_gui:
+            self.gui.SetMenuBar(self.menubar)
 
         # Menu update.
         self.gui.Bind(wx.EVT_MENU_OPEN, self.update_menus)
