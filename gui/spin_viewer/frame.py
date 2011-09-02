@@ -346,7 +346,6 @@ class Spin_view_window(wx.Frame):
         """
 
         # Change the cursor to busy.
-        wx.Yield()
         wx.BeginBusyCursor()
 
         # Init.
