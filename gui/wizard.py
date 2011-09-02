@@ -808,6 +808,13 @@ class Wiz_page(wx.Panel):
         """
 
 
+    def on_init(self):
+        """To be over-ridden if an action is to be performed when a page is newly displayed.
+
+        This method will be called by the wizard class method _display_page() at the very end.
+        """
+
+
     def on_next(self):
         """To be over-ridden if an action is to be performed just before moving to the next page.
 
@@ -1264,6 +1271,9 @@ class Wiz_window(wx.Dialog):
         # Re-perform the window layout.
         self.Layout()
         self.Refresh()
+
+        # Execute the page's on_init() method.
+        self._pages[i].on_init()
 
 
     def _go_back(self, event):
