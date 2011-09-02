@@ -81,7 +81,7 @@ class GuiTestCase(TestCase):
         ds.tmpdir = mkdtemp()
 
         # Start the GUI.
-        self.app = wx.App()
+        self.app = wx.App(redirect=False)
 
         # Build the GUI.
         self.gui = Main(parent=None, id=-1, title="")
