@@ -263,6 +263,10 @@ class Results_viewer(wx.Frame):
                 # The data.
                 model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te]
 
+            # Text files.
+            elif type == 'text':
+                open_file(file, force_text=True)
+
             # Open all other files in which ever editor the platform decides on.
             else:
                 open_file(file)

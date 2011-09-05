@@ -322,20 +322,34 @@ def list_to_gui(list):
     return unicode(list)
 
 
-def open_file(file):
+def open_file(file, force_text=False):
     """Open the file in the platform's native editor/viewer.
 
-    @param file:    The path of the file to open.
-    @type file:     str
+    @param file:            The path of the file to open.
+    @type file:             str
+    @keyword force_text:    A flag which if True will cause a text editor to be launched.
+    @type force_text:       bool
     """
 
     # Windows.
     if platform.uname()[0] in ['Windows', 'Microsoft']:
-        os.startfile(file)
+        # Text file.
+        if force_text:
+            os.system('notepad %s' % os.path.normpath(file))
+
+        # All other files.
+        else:
+            os.startfile(os.path.normpath(file))
 
     # Mac OS X.
     elif platform.uname()[0] == 'Darwin':
-        os.system('open %s' % file)
+        # Text file.
+        if force_text:
+            os.system('open -t %s' % file)
+
+        # All other files.
+        else:
+            os.system('open %s' % file)
 
     # POSIX Systems with xdg-open.
     else:
