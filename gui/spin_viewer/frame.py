@@ -249,9 +249,6 @@ class Spin_view_window(wx.Frame):
         # Thread safe.
         wx.CallAfter(self.refresh_safe)
 
-        # Flush the events.
-        wx.Yield()
-
 
     def refresh_safe(self):
         """Refresh the spin viewer window."""
