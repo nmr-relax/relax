@@ -231,9 +231,17 @@ class Interpreter_thread(Thread):
     def flush(self):
         """Return only once the queue is empty."""
 
+        # Wait a little while to prevent races with the reading of the queue.
+        sleep(0.5)
+
         # Loop until empty.
         while not self.empty():
+            # Wait a bit for the queue to empty.
             sleep(0.2)
+
+            # Wait until execution is complete.
+            while status.exec_lock.locked():
+                sleep(0.5)
 
 
     def join(self):
