@@ -43,7 +43,7 @@ def gui_raise(relax_error, raise_flag=False):
 
     # Show a dialog explaining the error.
     if status.show_gui:
-        wx.MessageBox(relax_error.text, caption=relax_error.__class__.__name__, style=wx.OK|wx.ICON_ERROR)
+        wx.MessageBox(relax_error.text, caption="RelaxError", style=wx.OK|wx.ICON_ERROR)
 
     # Turn off the busy cursor if needed.
     if wx.IsBusy():
