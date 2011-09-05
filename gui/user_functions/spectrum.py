@@ -352,6 +352,10 @@ class Replicated_page(UF_page):
         # Loop over each box.
         spectrum_ids = []
         for i in range(len(self.spectrum_id_boxes)):
+            # No selection (fix for Mac OS X).
+            if self.spectrum_id_boxes[i].GetSelection() == -1:
+                continue
+
             # Get the value.
             val = gui_to_str(self.spectrum_id_boxes[i].GetValue())
 
