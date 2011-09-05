@@ -46,7 +46,8 @@ def gui_raise(relax_error, raise_flag=False):
         wx.MessageBox(relax_error.text, caption=relax_error.__class__.__name__, style=wx.OK|wx.ICON_ERROR)
 
     # Turn off the busy cursor if needed.
-    wx.EndBusyCursor()
+    if wx.IsBusy():
+        wx.EndBusyCursor()
 
     # Throw the error to terminate execution.
     if raise_flag:
