@@ -324,6 +324,10 @@ class Mol_res_spin_tree(wx.Window):
         # The current item.
         item = self.tree.GetSelection()
 
+        # No data.
+        if not item.IsOk():
+            return
+
         # Return the associated python data.
         return self.tree.GetItemPyData(item)
 
