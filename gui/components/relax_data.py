@@ -191,7 +191,10 @@ class Relax_data_list:
         wx.PostEvent(self.parent.GetEventHandler(), event)
 
         # Set the minimum height.
-        height = self.height_base + self.height_char * n
+        head = self.height_char + 10
+        centre = (self.height_char + 6) * n
+        foot = wx.SystemSettings_GetMetric(wx.SYS_HSCROLL_Y)
+        height = head + centre + foot
         self.element.SetMinSize((-1, height))
         self.element.Layout()
 
@@ -225,7 +228,6 @@ class Relax_data_list:
         self.element.SetFont(font.normal)
 
         # Store the base heights.
-        self.height_base = self.element.GetSize()[1]
         self.height_char = self.element.GetCharHeight()
 
         # Bind some events.
