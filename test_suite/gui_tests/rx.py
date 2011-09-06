@@ -200,7 +200,7 @@ class Rx(GuiTestCase):
             # Replicated spectra:
             if names[i] in replicated.keys():
                 page = analysis.wizard.get_page(analysis.page_indices['repl'])
-                page.spectrum_id_boxes[1].SetValue(str_to_gui(replicated[names[i]]))
+                page.spectrum_id_boxes[1].SetStringSelection(str_to_gui(replicated[names[i]]))
 
             # Go to the next page.
             analysis.wizard._go_next(None)
