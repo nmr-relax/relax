@@ -84,6 +84,9 @@ class Main(wx.Frame):
         # Execute the base class __init__ method.
         super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE|wx.MAXIMIZE)
 
+        # Force the main window to start maximised (needed for MS Windows).
+        self.Maximize()
+
         # Set up some standard interface-wide fonts.
         font.setup()
 
