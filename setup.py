@@ -38,6 +38,7 @@ hdiutil create -fs HFS+ -volname "relax" -srcfolder dist/relax.app relax.dmg
 # Python module import.
 from os import getcwd, listdir, sep
 from re import search
+from setuptools import setup
 import sys
 
 # relax module imports.
@@ -45,10 +46,8 @@ from status import Status; status = Status()
 from version import version_full
 
 
-# Mac OS X setup.
-if 'darwin' in sys.platform:
-    # Import the setup tools.
-    from setuptools import setup
+def mac_setup():
+    """Mac OS X setup."""
 
     # The relax settings.
     APP = ['relax_gui_mode.py']
@@ -97,3 +96,8 @@ if 'darwin' in sys.platform:
         },
         setup_requires=['py2app']
     )
+
+
+# Mac OS X.
+if __name__ == '__main__' and 'darwin' in sys.platform:
+    mac_setup()
