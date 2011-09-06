@@ -336,7 +336,7 @@ class Results_viewer(wx.Frame):
 
         # Switch data pipes.
         self.gui.interpreter.queue('pipe.switch', pipe)
-        self.gui.wait_for_interpreter(0.01)
+        self.gui.interpreter.flush()
 
         # Update the window.
         self.refresh()
