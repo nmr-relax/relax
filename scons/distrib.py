@@ -103,11 +103,17 @@ def package(target, source, env):
         # Create the special Mac OS X DMG file and then stop execution.
         if dist_type == 'dmg':
             # Create the Mac OS X universal application.
-            pipe = Popen('python setup.py py2app', shell=True, stdin=PIPE, close_fds=False)
+            print("\n# Creating the Mac OS X universal application.\n\n")
+            cmd = 'python setup.py py2app'
+            print("%s\n" % cmd)
+            pipe = Popen(cmd, shell=True, stdin=PIPE, close_fds=False)
             waitpid(pipe.pid, 0)
 
             # Create the dmg image.
-            pipe = Popen('hdiutil create -fs HFS+ -volname "relax" -srcfolder dist/relax.app %s' % file, shell=True, stdin=PIPE, close_fds=False)
+            print("\n\n# Creating the DMG image.\n\n")
+            cmd = 'hdiutil create -fs HFS+ -volname "relax" -srcfolder dist/relax.app %s' % file
+            print("%s\n" % cmd)
+            pipe = Popen(cmd, shell=True, stdin=PIPE, close_fds=False)
             waitpid(pipe.pid, 0)
 
             # Stop executing.
