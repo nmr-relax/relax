@@ -133,6 +133,11 @@ if SYSTEM == 'Windows':
     BIN_FILE = 'relax-' + version + '.' + SYS
     SRC_FILE = 'relax-' + version + '.src'
     DIST_TYPE = 'zip'
+elif SYSTEM == 'Darwin':
+    BIN_FILE = 'relax-' + version + '.' + SYS
+    SRC_FILE = 'relax-' + version + '.src'
+    DIST_TYPE = 'dmg'
+
 else:
     BIN_FILE = 'relax-' + version + '.' + SYS + '.' + MACH
     SRC_FILE = 'relax-' + version + '.src'
