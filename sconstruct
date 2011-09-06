@@ -429,6 +429,11 @@ class Main:
                 if search('^relax_state_.*.bz2', file):
                     remove(path.join(root, file))
 
+        # Remove py2app build and dist directories.
+        print("Removing the py2app 'build' and 'dist' directories.")
+        rmtree('build')
+        rmtree('dist')
+
         # Final print out.
         print "\n\n\n"
 
