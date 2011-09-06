@@ -645,14 +645,10 @@ class dAuvergne_protocol:
             # All the global diffusion models to be used in the model selection.
             self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
 
-            # Remove all pipes.
+            # Remove all temporary pipes used in this auto-analysis.
             for name in pipe_names():
-                # Skip the original pipe.
-                if name == self.pipe_name:
-                    continue
-
-                # Delete the pipe.
-                self.interpreter.pipe.delete(name)
+                if name in self.pipes + self.mf_models + self.local_tm_models + ['aic', 'previous']:
+                    self.interpreter.pipe.delete(name)
 
             # Missing optimised model.
             dir_list = listdir(self.results_dir)
