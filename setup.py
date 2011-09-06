@@ -32,7 +32,7 @@ python setup.py py2app
 
 To then create a DMG file for installation, type:
 
-hdiutil create -srcfolder dist/relax.app relax.dmg
+hdiutil create -fs HFS+ -volname "relax" -srcfolder dist/relax.app relax.dmg
 """
 
 # Python module import.
