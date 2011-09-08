@@ -99,8 +99,8 @@ class Results_viewer(wx.Frame):
         box_centre.Add(self.button_open, 0, wx.ALIGN_RIGHT|wx.ADJUST_MINSIZE, 5)
 
         # Relayout the main panel.
-       self.main_panel.Layout()
-       self.main_panel.Refresh()
+        self.main_panel.Layout()
+        self.main_panel.Refresh()
 
         # Bind some events.
         self.Bind(wx.EVT_COMBOBOX, self.switch_pipes, self.pipe_name)
