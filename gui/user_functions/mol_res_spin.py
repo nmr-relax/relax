@@ -28,7 +28,7 @@ from string import split
 
 # relax module imports.
 from generic_fns.mol_res_spin import generate_spin_id, residue_loop, spin_loop
-from generic_fns import pipes
+from generic_fns.pipes import cdp_name
 
 # GUI module imports.
 from base import UF_base
@@ -195,8 +195,9 @@ class Mol_res_spin:
 
         # The list of residue names.
         mol_id = generate_spin_id(str(self.mol.GetValue()))
-        for res in residue_loop(mol_id):
-            self.res.Append(str_to_gui("%s %s" % (res.num, res.name)))
+        if cdp_name():
+            for res in residue_loop(mol_id):
+                self.res.Append(str_to_gui("%s %s" % (res.num, res.name)))
 
 
     def _update_spins(self, event):
@@ -218,5 +219,6 @@ class Mol_res_spin:
             return
 
         # Build the list of spin names.
-        for spin in spin_loop(res_id):
-            self.spin.Append(str_to_gui("%s %s" % (spin.num, spin.name)))
+        if cdp_name():
+            for spin in spin_loop(res_id):
+                self.spin.Append(str_to_gui("%s %s" % (spin.num, spin.name)))

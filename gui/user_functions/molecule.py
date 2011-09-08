@@ -171,8 +171,9 @@ class Copy_page(UF_page):
         self.mol_from.Clear()
 
         # The list of molecule names.
-        for mol in molecule_loop(pipe=pipe_from):
-            self.mol_from.Append(str_to_gui(mol.name))
+        if cdp_name():
+            for mol in molecule_loop(pipe=pipe_from):
+                self.mol_from.Append(str_to_gui(mol.name))
 
 
 

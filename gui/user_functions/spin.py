@@ -291,10 +291,11 @@ class Copy_page(UF_page, Mol_res_spin):
         self.mol_to.Clear()
 
         # The list of molecule names.
-        for mol in molecule_loop(pipe=pipe_from):
-            self.mol_from.Append(str_to_gui(mol.name))
-        for mol in molecule_loop(pipe=pipe_to):
-            self.mol_to.Append(str_to_gui(mol.name))
+        if cdp_name():
+            for mol in molecule_loop(pipe=pipe_from):
+                self.mol_from.Append(str_to_gui(mol.name))
+            for mol in molecule_loop(pipe=pipe_to):
+                self.mol_to.Append(str_to_gui(mol.name))
 
         # Update the residues too.
         self.update_res_list()
@@ -319,8 +320,9 @@ class Copy_page(UF_page, Mol_res_spin):
             return
 
         # The list of molecule names.
-        for res in residue_loop(mol_from, pipe=pipe_from):
-            self.res_from.Append(str_to_gui("%s %s" % (res.num, res.name)))
+        if cdp_name():
+            for res in residue_loop(mol_from, pipe=pipe_from):
+                self.res_from.Append(str_to_gui("%s %s" % (res.num, res.name)))
 
         # Update the spins too.
         self.update_spin_list()
@@ -345,8 +347,9 @@ class Copy_page(UF_page, Mol_res_spin):
             return
 
         # The list of molecule names.
-        for spin in spin_loop(res_from, pipe=pipe_from):
-            self.spin_from.Append(str_to_gui("%s %s" % (spin.num, spin.name)))
+        if cdp_name():
+            for spin in spin_loop(res_from, pipe=pipe_from):
+                self.spin_from.Append(str_to_gui("%s %s" % (spin.num, spin.name)))
 
 
 
