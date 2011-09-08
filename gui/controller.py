@@ -73,10 +73,10 @@ class Controller(wx.Frame):
         sizer.AddSpacer(20)
 
         # Add the current analysis info.
-        self.name = self.add_text(self, sizer, "Current GUI analysis:")
+        self.name = self.add_text(self.main_panel, sizer, "Current GUI analysis:")
 
         # Add the current data pipe info.
-        self.cdp = self.add_text(self, sizer, "Current data pipe:")
+        self.cdp = self.add_text(self.main_panel, sizer, "Current data pipe:")
 
         # Create the relaxation curve-fitting specific panel.
         self.create_rx(sizer)
@@ -85,13 +85,13 @@ class Controller(wx.Frame):
         self.create_mf(sizer)
 
         # Add the main execution gauge.
-        self.main_gauge = self.add_gauge(self, sizer, "Execution progress:", tooltip="This gauge will pulse while relax is executing an auto-analysis (when the execution lock is turned on) and will be set to 100% once the analysis is complete.")
+        self.main_gauge = self.add_gauge(self.main_panel, sizer, "Execution progress:", tooltip="This gauge will pulse while relax is executing an auto-analysis (when the execution lock is turned on) and will be set to 100% once the analysis is complete.")
 
         # Initialise a queue for log messages.
         self.log_queue = Queue()
 
         # Add the log panel.
-        self.log_panel = LogCtrl(self, log_queue=self.log_queue, id=-1)
+        self.log_panel = LogCtrl(self.main_panel, log_queue=self.log_queue, id=-1)
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
 
         # IO redirection.
@@ -163,7 +163,7 @@ class Controller(wx.Frame):
         """
 
         # The logo.
-        logo = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+        logo = wx.StaticBitmap(self.main_panel, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
 
         # Add the relax logo.
         sizer.Add(logo, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
@@ -199,7 +199,7 @@ class Controller(wx.Frame):
         field = wx.TextCtrl(parent, -1, '', style=wx.ALIGN_LEFT)
         field.SetEditable(False)
         field.SetFont(font.normal)
-        colour = self.GetBackgroundColour()
+        colour = self.main_panel.GetBackgroundColour()
         field.SetOwnBackgroundColour(colour)
         sub_sizer.Add(field, 3, wx.ALIGN_CENTER_VERTICAL, 0)
 
@@ -243,7 +243,7 @@ class Controller(wx.Frame):
         """
 
         # Create a panel.
-        self.panel_mf = wx.Panel(self, -1)
+        self.panel_mf = wx.Panel(self.main_panel, -1)
         sizer.Add(self.panel_mf, 0, wx.ALL|wx.EXPAND, 0)
 
         # The panel sizer.
@@ -268,7 +268,7 @@ class Controller(wx.Frame):
         """
 
         # Create a panel.
-        self.panel_rx = wx.Panel(self, -1)
+        self.panel_rx = wx.Panel(self.main_panel, -1)
         sizer.Add(self.panel_rx, 0, wx.ALL|wx.EXPAND, 0)
 
         # The panel sizer.
@@ -318,11 +318,12 @@ class Controller(wx.Frame):
         # Set up the window icon.
         self.SetIcons(relax_icons)
 
+       # Place all elements within a panel (to remove the dark grey in MS Windows).
+        self.main_panel = wx.Panel(self, -1)
+
         # Use a grid sizer for packing the elements.
         main_sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Pack the sizer into the frame.
-        self.SetSizer(main_sizer)
+        self.main_panel.SetSizer(main_sizer)
 
         # Build the central sizer, with borders.
         sizer = add_border(main_sizer, border=self.border, packing=wx.VERTICAL)
@@ -380,7 +381,7 @@ class Controller(wx.Frame):
         wx.CallAfter(self.update_gauge)
 
         # Re-layout the window.
-        wx.CallAfter(self.Layout)
+        wx.CallAfter(self.main_panel.Layout)
 
 
     def update_gauge(self):

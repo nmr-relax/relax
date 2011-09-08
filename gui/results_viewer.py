@@ -68,9 +68,12 @@ class Results_viewer(wx.Frame):
         self.SetTitle("Results viewer")
         self.SetSize(self.size)
 
+       # Place all elements within a panel (to remove the dark grey in MS Windows).
+        self.main_panel = wx.Panel(self, -1)
+
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
-        self.SetSizer(box_main)
+        self.main_panel.SetSizer(box_main)
 
         # Build the central sizer, with borders.
         box_centre = add_border(box_main, border=self.border, packing=wx.VERTICAL)
@@ -88,12 +91,16 @@ class Results_viewer(wx.Frame):
         box_centre.AddSpacer(self.border)
 
         # Add the open button.
-        self.button_open = buttons.ThemedGenBitmapTextButton(self, -1, None, " Open")
+        self.button_open = buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Open")
         self.button_open.SetBitmapLabel(wx.Bitmap(icon_22x22.document_open, wx.BITMAP_TYPE_ANY))
         self.button_open.SetFont(font.normal)
         self.button_open.SetMinSize((103, 33))
         self.gui.Bind(wx.EVT_BUTTON, self.open_result_file, self.button_open)
         box_centre.Add(self.button_open, 0, wx.ALIGN_RIGHT|wx.ADJUST_MINSIZE, 5)
+
+        # Relayout the main panel.
+       self.main_panel.Layout()
+       self.main_panel.Refresh()
 
         # Bind some events.
         self.Bind(wx.EVT_COMBOBOX, self.switch_pipes, self.pipe_name)
@@ -154,7 +161,7 @@ class Results_viewer(wx.Frame):
         """
 
         # Initialise the list box.
-        self.file_list = wx.ListCtrl(self, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
+        self.file_list = wx.ListCtrl(self.main_panel, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
 
         # Properties.
         self.file_list.SetFont(font.normal)
@@ -186,7 +193,7 @@ class Results_viewer(wx.Frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The text.
-        label = wx.StaticText(self, -1, "Data pipe selection")
+        label = wx.StaticText(self.main_panel, -1, "Data pipe selection")
 
         # The font and label properties.
         label.SetFont(font.subtitle)
@@ -198,7 +205,7 @@ class Results_viewer(wx.Frame):
         sizer.AddSpacer(self.border)
 
         # A combo box.
-        self.pipe_name = wx.ComboBox(self, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=[])
+        self.pipe_name = wx.ComboBox(self.main_panel, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=[])
         self.pipe_name.SetMinSize((50, 27))
         sizer.Add(self.pipe_name, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 

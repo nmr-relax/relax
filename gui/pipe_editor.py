@@ -73,11 +73,12 @@ class Pipe_editor(wx.Frame):
         self.SetMinSize((size_x, size_y))
         self.SetSize((size_x, size_y))
 
-        # The main box sizer.
-        main_sizer = wx.BoxSizer(wx.VERTICAL)
+       # Place all elements within a panel (to remove the dark grey in MS Windows).
+        self.main_panel = wx.Panel(self, -1)
 
-        # Pack the sizer into the frame.
-        self.SetSizer(main_sizer)
+        # Pack a sizer into the panel.
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+       self.main_panel.SetSizer(main_sizer)
 
         # Build the central sizer, with borders.
         sizer = add_border(main_sizer, border=border, packing=wx.VERTICAL)
@@ -170,20 +171,20 @@ class Pipe_editor(wx.Frame):
         menu = wx.Menu()
 
         # Menu entry:  delete the data pipe.
-        item = build_menu_item(menu, parent=self, text="&Delete the pipe", icon=icon_16x16.remove, fn=self.pipe_delete)
+        item = build_menu_item(menu, parent=self.main_panel, text="&Delete the pipe", icon=icon_16x16.remove, fn=self.pipe_delete)
         menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
  
         # Menu entry:  switch to this data pipe.
-        item = build_menu_item(menu, parent=self, text="&Switch to this pipe", icon=icon_16x16.pipe_switch, fn=self.pipe_switch)
+        item = build_menu_item(menu, parent=self.main_panel, text="&Switch to this pipe", icon=icon_16x16.pipe_switch, fn=self.pipe_switch)
         menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
  
         # Menu entry:  new auto-analysis tab.
         if self.gui.analysis.page_index_from_pipe(self.selected_pipe) == None and pipe_type in ['noe', 'r1', 'r2', 'mf']:
-            item = build_menu_item(menu, parent=self, text="&Associate with a new auto-analysis", icon=icon_16x16.new, fn=self.associate_auto)
+            item = build_menu_item(menu, parent=self.main_panel, text="&Associate with a new auto-analysis", icon=icon_16x16.new, fn=self.associate_auto)
             menu.AppendItem(item)
             if status.exec_lock.locked():
                 item.Enable(False)
@@ -208,7 +209,7 @@ class Pipe_editor(wx.Frame):
         sizer.Add(button_sizer, 0, wx.ALL|wx.EXPAND, 0)
 
         # The create button.
-        self.button_create = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Create")
+        self.button_create = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Create")
         self.button_create.SetBitmapLabel(wx.Bitmap(icon_22x22.add, wx.BITMAP_TYPE_ANY))
         self.button_create.SetFont(font.normal)
         self.button_create.SetToolTipString("Create a new data pipe.")
@@ -216,7 +217,7 @@ class Pipe_editor(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.create, self.button_create)
 
         # The copy button.
-        self.button_copy = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Copy")
+        self.button_copy = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Copy")
         self.button_copy.SetBitmapLabel(wx.Bitmap(icon_22x22.copy, wx.BITMAP_TYPE_ANY))
         self.button_copy.SetFont(font.normal)
         self.button_copy.SetToolTipString("Copy a data pipe.")
@@ -224,7 +225,7 @@ class Pipe_editor(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.copy, self.button_copy)
 
         # The delete button.
-        self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Delete")
+        self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Delete")
         self.button_delete.SetBitmapLabel(wx.Bitmap(icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
         self.button_delete.SetFont(font.normal)
         self.button_delete.SetToolTipString("Delete a data pipe.")
@@ -232,7 +233,7 @@ class Pipe_editor(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.delete, self.button_delete)
 
         # The hybridise button.
-        self.button_hybrid = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Hybridise")
+        self.button_hybrid = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Hybridise")
         self.button_hybrid.SetBitmapLabel(wx.Bitmap(icon_22x22.pipe_hybrid, wx.BITMAP_TYPE_ANY))
         self.button_hybrid.SetFont(font.normal)
         self.button_hybrid.SetToolTipString("Hybridise data pipes.")
@@ -240,7 +241,7 @@ class Pipe_editor(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.hybridise, self.button_hybrid)
 
         # The switch button.
-        self.button_switch = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Switch")
+        self.button_switch = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Switch")
         self.button_switch.SetBitmapLabel(wx.Bitmap(icon_22x22.pipe_switch, wx.BITMAP_TYPE_ANY))
         self.button_switch.SetFont(font.normal)
         self.button_switch.SetToolTipString("Switch data pipes.")
@@ -256,7 +257,7 @@ class Pipe_editor(wx.Frame):
         """
 
         # The pipe logo.
-        logo = wx.StaticBitmap(self, -1, wx.Bitmap(WIZARD_IMAGE_PATH+'pipe_200x90.png', wx.BITMAP_TYPE_ANY))
+        logo = wx.StaticBitmap(self.main_panel, -1, wx.Bitmap(WIZARD_IMAGE_PATH+'pipe_200x90.png', wx.BITMAP_TYPE_ANY))
 
         # Pack the logo.
         box.Add(logo, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
@@ -270,7 +271,7 @@ class Pipe_editor(wx.Frame):
         """
 
         # Grid of all data pipes.
-        self.grid = wx.grid.Grid(self, -1)
+        self.grid = wx.grid.Grid(self.main_panel, -1)
 
         # Initialise to a single row and 4 columns.
         self.grid.CreateGrid(1, 4)
