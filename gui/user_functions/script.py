@@ -61,7 +61,8 @@ class Script(UF_base):
 
         # Show the relax controller.
         if status.show_gui:
-            self.gui.controller.Show()
+            app = wx.GetApp()
+            app.gui.controller.Show()
 
         # Execute the script in a thread.
         id = thread.start_new_thread(self.script_exec, (file,))
