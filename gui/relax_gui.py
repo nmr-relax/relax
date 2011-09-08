@@ -75,8 +75,6 @@ class Main(wx.Frame):
     # Hard coded variables.
     min_width = 1000
     min_height = 600
-    sequence_file_msg = "please insert sequence file"
-    structure_file_pdb_msg = "please insert .pdb file"
 
     def __init__(self, parent=None, id=-1, title="", script=None):
         """Initialise the main relax GUI frame."""
