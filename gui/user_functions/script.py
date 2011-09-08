@@ -49,7 +49,7 @@ class Script(UF_base):
 
         # User selection of the file.
         if not file:
-            dialog = RelaxFileDialog(parent=self, message='Select the relax script to execute', wildcard='relax scripts (*.py)|*.py', style=wx.FD_OPEN)
+            dialog = RelaxFileDialog(parent=None, message='Select the relax script to execute', wildcard='relax scripts (*.py)|*.py', style=wx.FD_OPEN)
 
             # Show the dialog and catch if no file has been selected.
             if status.show_gui and dialog.ShowModal() != wx.ID_OK:
