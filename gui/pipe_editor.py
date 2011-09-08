@@ -73,12 +73,12 @@ class Pipe_editor(wx.Frame):
         self.SetMinSize((size_x, size_y))
         self.SetSize((size_x, size_y))
 
-       # Place all elements within a panel (to remove the dark grey in MS Windows).
+        # Place all elements within a panel (to remove the dark grey in MS Windows).
         self.main_panel = wx.Panel(self, -1)
 
         # Pack a sizer into the panel.
         main_sizer = wx.BoxSizer(wx.VERTICAL)
-       self.main_panel.SetSizer(main_sizer)
+        self.main_panel.SetSizer(main_sizer)
 
         # Build the central sizer, with borders.
         sizer = add_border(main_sizer, border=border, packing=wx.VERTICAL)
