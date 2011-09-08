@@ -79,11 +79,17 @@ class Main(wx.Frame):
     def __init__(self, parent=None, id=-1, title="", script=None):
         """Initialise the main relax GUI frame."""
 
+        # The main window style.
+        style = wx.DEFAULT_FRAME_STYLE
+        if not status.debug:
+            style = style | wx.MAXIMIZE
+
         # Execute the base class __init__ method.
-        super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE|wx.MAXIMIZE)
+        super(Main, self).__init__(parent=parent, id=id, title=title, style=style)
 
         # Force the main window to start maximised (needed for MS Windows).
-        self.Maximize()
+        if not status.debug:
+            self.Maximize()
 
         # Set up some standard interface-wide fonts.
         font.setup()
