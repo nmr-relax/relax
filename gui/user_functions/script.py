@@ -33,6 +33,7 @@ from status import Status; status = Status()
 # GUI module imports.
 from base import UF_base
 from gui.filedialog import RelaxFileDialog
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 
 
 class Script(UF_base):
@@ -76,4 +77,4 @@ class Script(UF_base):
         """
 
         # Execute the user function.
-        self.gui.interpreter.queue('script', str(file))
+        interpreter.apply('script', str(file))
