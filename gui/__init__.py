@@ -98,10 +98,10 @@ class App(wx.App):
         self.show_splash()
 
         # Build the GUI.
-        main = Main(parent=None, id=-1, title="", script=self.script)
+        self.gui = Main(parent=None, id=-1, title="", script=self.script)
 
         # Make it the main application component.
-        self.SetTopWindow(main)
+        self.SetTopWindow(self.gui)
 
         # Only show the GUI if requested.
         if status.show_gui:
@@ -109,7 +109,7 @@ class App(wx.App):
             sleep(1)
 
             # Show it.
-            main.Show()
+            self.gui.Show()
 
         # All is good!
         return True
