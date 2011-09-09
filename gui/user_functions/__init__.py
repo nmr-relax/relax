@@ -77,26 +77,30 @@ class User_functions:
     This uses the observer design pattern to allow for GUI updates upon completion of a user function.
     """
 
-    def __init__(self):
-        """Set up the container."""
+    def __init__(self, parent=None):
+        """Set up the container.
+
+        @keyword parent:    The parent window.
+        @type parent:       wx.Window instance
+        """
 
         # The user functions.
-        self.deselect = Deselect()
-        self.gpl = Gpl()
-        self.grace = Grace()
-        self.molecule = Molecule()
-        self.molmol = Molmol()
-        self.noe = Noe()
-        self.pipe = Pipe()
-        self.pymol = Pymol()
-        self.residue = Residue()
-        self.results = Results()
-        self.relax_data = Relax_data()
-        self.relax_fit = Relax_fit()
-        self.script = Script()
-        self.select = Select()
-        self.sequence = Sequence()
-        self.spectrum = Spectrum()
-        self.spin = Spin()
-        self.structure = Structure()
-        self.value = Value()
+        self.deselect = Deselect(parent)
+        self.gpl = Gpl(parent)
+        self.grace = Grace(parent)
+        self.molecule = Molecule(parent)
+        self.molmol = Molmol(parent)
+        self.noe = Noe(parent)
+        self.pipe = Pipe(parent)
+        self.pymol = Pymol(parent)
+        self.residue = Residue(parent)
+        self.results = Results(parent)
+        self.relax_data = Relax_data(parent)
+        self.relax_fit = Relax_fit(parent)
+        self.script = Script(parent)
+        self.select = Select(parent)
+        self.sequence = Sequence(parent)
+        self.spectrum = Spectrum(parent)
+        self.spin = Spin(parent)
+        self.structure = Structure(parent)
+        self.value = Value(parent)

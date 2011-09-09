@@ -33,7 +33,6 @@ from prompt.select import boolean_doc
 from base import UF_base, UF_page
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_bool, gui_to_int, gui_to_str, str_to_gui
-from gui.wizard import Wiz_window
 
 
 # The container class.
@@ -48,9 +47,7 @@ class Deselect(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('deselect', 'all'))
-        page = All_page(wizard)
-        wizard.add_page(page, apply_button=False)
+        wizard = self.create_wizard(size_x=600, size_y=300, name='deselect.all', uf_page=All_page, apply_button=False)
         wizard.run()
 
 
@@ -62,9 +59,7 @@ class Deselect(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=900, size_y=700, title=self.get_title('deselect', 'read'))
-        page = Read_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=900, size_y=700, name='deselect.read', uf_page=Read_page)
         wizard.run()
 
 
@@ -76,9 +71,7 @@ class Deselect(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('deselect', 'reverse'))
-        page = Reverse_page(wizard)
-        wizard.add_page(page, apply_button=False)
+        wizard = self.create_wizard(size_x=700, size_y=400, name='deselect.reverse', uf_page=Reverse_page, apply_button=False)
         wizard.run()
 
 
@@ -90,9 +83,7 @@ class Deselect(UF_base):
         """
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('deselect', 'spin'))
-        page = Spin_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=700, size_y=500, name='deselect.spin', uf_page=Spin_page)
         wizard.run()
 
 

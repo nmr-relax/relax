@@ -37,11 +37,59 @@ from status import Status; status = Status()
 # relax GUI imports.
 from gui.fonts import font
 from gui.misc import str_to_gui
-from gui.wizard import Wiz_page
+from gui.wizard import Wiz_page, Wiz_window
 
 
 class UF_base:
     """User function GUI element base class."""
+
+    def __init__(self, parent):
+        """Set up the window.
+
+        @param parent:      The parent window.
+        @type parent:       wx.Window instance
+        """
+
+        # Store the arg.
+        self.parent = parent
+
+
+    def create_wizard(self, size_x=600, size_y=400, name=None, uf_page=None, apply_button=True):
+        """Create and return the wizard window.
+
+        @keyword size_x:        The width of the wizard.
+        @type size_x:           int
+        @keyword size_y:        The height of the wizard.
+        @type size_y:           int
+        @keyword name:          The name of the user function, such as 'deselect.all'.
+        @type name:             str
+        @keyword uf_page:       The user function page class.
+        @type uf_page:          class
+        @keyword apply_button:  A flag which if true will show the apply button for that page.  This will be passed to the wizard's add_page() method.
+        @type apply_button:     bool
+        @return:                The wizard dialog.
+        @rtype:                 gui.wizard.Wiz_window instance
+        """
+
+        # Split the name.
+        comps = split(name, '.')
+        if len(comps) == 2:
+            base = comps[0]
+            fn = comps[1]
+        else:
+            base = None
+            fn = comps[0]
+
+        # Create the wizard dialog.
+        wizard = Wiz_window(parent=self.parent, size_x=size_x, size_y=size_y, title=self.get_title(base=base, fn=fn))
+
+        # Creat the page and add it to the wizard.
+        page = uf_page(wizard)
+        wizard.add_page(page, apply_button=apply_button)
+
+        # Return the wizard.
+        return wizard
+
 
     def get_title(self, base=None, fn=None):
         """Get the title for the wizard window from the user function documentation.
