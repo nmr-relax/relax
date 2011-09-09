@@ -31,6 +31,7 @@ from prompt.select import boolean_doc
 
 # GUI module imports.
 from base import UF_base, UF_page
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_bool, gui_to_int, gui_to_str, str_to_gui
 from gui.wizard import Wiz_window
 
@@ -48,7 +49,7 @@ class Select(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('select', 'all'))
-        page = All_page(wizard, self.gui)
+        page = All_page(wizard)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -62,7 +63,7 @@ class Select(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=900, size_y=700, title=self.get_title('select', 'read'))
-        page = Read_page(wizard, self.gui)
+        page = Read_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -76,7 +77,7 @@ class Select(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('select', 'reverse'))
-        page = Reverse_page(wizard, self.gui)
+        page = Reverse_page(wizard)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -90,7 +91,7 @@ class Select(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('select', 'spin'))
-        page = Spin_page(wizard, self.gui)
+        page = Spin_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -115,7 +116,7 @@ class All_page(UF_page):
         """Execute the user function."""
 
         # Select all.
-        self.gui.interpreter.queue('select.all')
+        interpreter.queue('select.all')
 
 
 
@@ -181,7 +182,7 @@ class Read_page(UF_page):
         change_all = gui_to_bool(self.change_all.GetValue())
 
         # Selection.
-        self.gui.interpreter.queue('select.read', file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, boolean=boolean, change_all=change_all)
+        interpreter.queue('select.read', file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, boolean=boolean, change_all=change_all)
 
 
 
@@ -209,7 +210,7 @@ class Reverse_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Select all.
-        self.gui.interpreter.queue('select.reverse', spin_id=spin_id)
+        interpreter.queue('select.reverse', spin_id=spin_id)
 
 
 
@@ -248,4 +249,4 @@ class Spin_page(UF_page):
         change_all = gui_to_bool(self.change_all.GetValue())
 
         # Select all.
-        self.gui.interpreter.queue('select.spin', spin_id=spin_id, boolean=boolean, change_all=change_all)
+        interpreter.queue('select.spin', spin_id=spin_id, boolean=boolean, change_all=change_all)

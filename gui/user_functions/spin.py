@@ -32,6 +32,7 @@ from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_bool, gui_to_int, gui_to_list, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
@@ -51,7 +52,7 @@ class Spin(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=600, title=self.get_title('spin', 'copy'))
-        page = Copy_page(wizard, self.gui)
+        page = Copy_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -71,7 +72,7 @@ class Spin(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('spin', 'create'))
-        page = Create_page(wizard, self.gui)
+        page = Create_page(wizard)
         wizard.add_page(page)
 
         # Default molecule name.
@@ -95,7 +96,7 @@ class Spin(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'create_pseudo'))
-        page = Create_pseudo_page(wizard, self.gui)
+        page = Create_pseudo_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -119,7 +120,7 @@ class Spin(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('spin', 'delete'))
-        page = Delete_page(wizard, self.gui)
+        page = Delete_page(wizard)
         wizard.add_page(page)
 
         # Default molecule name.
@@ -147,7 +148,7 @@ class Spin(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'display'))
-        page = Display_page(wizard, self.gui)
+        page = Display_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -161,7 +162,7 @@ class Spin(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'element'))
-        page = Element_page(wizard, self.gui)
+        page = Element_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -175,7 +176,7 @@ class Spin(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'name'))
-        page = Name_page(wizard, self.gui)
+        page = Name_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -189,7 +190,7 @@ class Spin(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'number'))
-        page = Number_page(wizard, self.gui)
+        page = Number_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -272,7 +273,7 @@ class Copy_page(UF_page, Mol_res_spin):
             spin_to = None
 
         # Copy the spin.
-        self.gui.interpreter.queue('spin.copy', pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
+        interpreter.queue('spin.copy', pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
 
 
     def update_mol_list(self, event=None):
@@ -415,7 +416,7 @@ class Create_page(UF_page, Mol_res_spin):
             spin_num = None
 
         # Set the name.
-        self.gui.interpreter.queue('spin.create', spin_name=spin_name, spin_num=spin_num, res_name=res_name, res_num=res_num, mol_name=mol_name)
+        interpreter.queue('spin.create', spin_name=spin_name, spin_num=spin_num, res_name=res_name, res_num=res_num, mol_name=mol_name)
 
 
 
@@ -459,7 +460,7 @@ class Create_pseudo_page(UF_page, Mol_res_spin):
         averaging = gui_to_str(self.averaging.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spin.create_pseudo', spin_name=spin_name, spin_num=spin_num, res_id=res_id, members=members, averaging=averaging)
+        interpreter.queue('spin.create_pseudo', spin_name=spin_name, spin_num=spin_num, res_id=res_id, members=members, averaging=averaging)
 
 
 
@@ -508,7 +509,7 @@ class Delete_page(UF_page, Mol_res_spin):
             return
 
         # Delete the spin.
-        self.gui.interpreter.queue('spin.delete', spin_id=id)
+        interpreter.queue('spin.delete', spin_id=id)
 
         # Update the spin list.
         self._update_spins(None)
@@ -540,7 +541,7 @@ class Display_page(UF_page, Mol_res_spin):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spin.display', spin_id=spin_id)
+        interpreter.queue('spin.display', spin_id=spin_id)
 
 
 
@@ -577,7 +578,7 @@ class Element_page(UF_page, Mol_res_spin):
         force = gui_to_bool(self.force.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spin.element', spin_id=spin_id, element=element, force=force)
+        interpreter.queue('spin.element', spin_id=spin_id, element=element, force=force)
 
 
 
@@ -614,7 +615,7 @@ class Name_page(UF_page, Mol_res_spin):
         force = gui_to_bool(self.force.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spin.name', spin_id=spin_id, name=name, force=force)
+        interpreter.queue('spin.name', spin_id=spin_id, name=name, force=force)
 
 
 
@@ -651,4 +652,4 @@ class Number_page(UF_page, Mol_res_spin):
         force = gui_to_bool(self.force.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spin.number', spin_id=spin_id, number=number, force=force)
+        interpreter.queue('spin.number', spin_id=spin_id, number=number, force=force)

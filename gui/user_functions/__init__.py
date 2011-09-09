@@ -77,53 +77,26 @@ class User_functions:
     This uses the observer design pattern to allow for GUI updates upon completion of a user function.
     """
 
-    def __init__(self, gui):
+    def __init__(self):
         """Set up the container."""
 
-        # Store the args.
-        self.gui = gui
-
         # The user functions.
-        self.deselect = Deselect(self.gui)
-        self.gpl = Gpl(self.gui)
-        self.grace = Grace(self.gui)
-        self.molecule = Molecule(self.gui)
-        self.molmol = Molmol(self.gui)
-        self.noe = Noe(self.gui)
-        self.pipe = Pipe(self.gui)
-        self.pymol = Pymol(self.gui)
-        self.residue = Residue(self.gui)
-        self.results = Results(self.gui)
-        self.relax_data = Relax_data(self.gui)
-        self.relax_fit = Relax_fit(self.gui)
-        self.script = Script(self.gui)
-        self.select = Select(self.gui)
-        self.sequence = Sequence(self.gui)
-        self.spectrum = Spectrum(self.gui)
-        self.spin = Spin(self.gui)
-        self.structure = Structure(self.gui)
-        self.value = Value(self.gui)
-
-
-    def destroy(self):
-        """Close all windows."""
-
-        # Send the commands onwards to the user function classes.
-        self.deselect.destroy()
-        self.gpl.destroy()
-        self.grace.destroy()
-        self.molecule.destroy()
-        self.molmol.destroy()
-        self.noe.destroy()
-        self.pipe.destroy()
-        self.pymol.destroy()
-        self.residue.destroy()
-        self.results.destroy()
-        self.relax_data.destroy()
-        self.relax_fit.destroy()
-        self.select.destroy()
-        self.sequence.destroy()
-        self.spectrum.destroy()
-        self.spin.destroy()
-        self.structure.destroy()
-        self.value.destroy()
+        self.deselect = Deselect()
+        self.gpl = Gpl()
+        self.grace = Grace()
+        self.molecule = Molecule()
+        self.molmol = Molmol()
+        self.noe = Noe()
+        self.pipe = Pipe()
+        self.pymol = Pymol()
+        self.residue = Residue()
+        self.results = Results()
+        self.relax_data = Relax_data()
+        self.relax_fit = Relax_fit()
+        self.script = Script()
+        self.select = Select()
+        self.sequence = Sequence()
+        self.spectrum = Spectrum()
+        self.spin = Spin()
+        self.structure = Structure()
+        self.value = Value()

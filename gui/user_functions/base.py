@@ -81,13 +81,11 @@ class UF_page(Wiz_page):
     # The path to the user function.
     uf_path = None
 
-    def __init__(self, parent, gui):
+    def __init__(self, parent):
         """Set up the window.
 
         @param parent:      The parent class containing the GUI.
         @type parent:       class instance
-        @param gui:         The GUI base object.
-        @type gui:          wx.Frame instance
         """
 
         # Yield to allow the cursor to be changed.
@@ -95,9 +93,6 @@ class UF_page(Wiz_page):
 
         # Change the cursor to waiting.
         wx.BeginBusyCursor()
-
-        # Store the args.
-        self.gui = gui
 
         # Get the user function class (or function).
         uf_class = getattr(interpreter, self.uf_path[0])

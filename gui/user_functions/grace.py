@@ -33,6 +33,7 @@ import specific_fns
 # GUI module imports.
 from base import UF_base, UF_page
 from gui.errors import gui_raise
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_bool, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
@@ -53,7 +54,7 @@ class Grace(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=900, size_y=500, title=self.get_title('grace', 'view'))
-        page = View_page(wizard, self.gui)
+        page = View_page(wizard)
         wizard.add_page(page)
 
         # Default file name.
@@ -75,7 +76,7 @@ class Grace(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('grace', 'write'))
-        page = Write_page(wizard, self.gui)
+        page = Write_page(wizard)
         wizard.add_page(page)
 
         # Default file name.
@@ -119,7 +120,7 @@ class View_page(UF_page):
         grace_exe = gui_to_str(self.grace_exe.GetValue())
 
         # Open the file.
-        self.gui.interpreter.queue('grace.view', file=file, dir=None, grace_exe=grace_exe)
+        interpreter.queue('grace.view', file=file, dir=None, grace_exe=grace_exe)
 
 
 
@@ -187,7 +188,7 @@ class Write_page(UF_page):
         force = gui_to_bool(self.force.GetValue())
 
         # Open the file.
-        self.gui.interpreter.queue('grace.write', x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=None, force=force, norm=norm)
+        interpreter.queue('grace.write', x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=None, force=force, norm=norm)
 
 
     def update_parameters(self, combo_box):

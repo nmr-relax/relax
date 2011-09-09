@@ -33,6 +33,7 @@ from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
@@ -51,7 +52,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=900, size_y=800, title=self.get_title('structure', 'create_diff_tensor_pdb'))
-        page = Create_diff_tensor_pdb_page(wizard, self.gui)
+        page = Create_diff_tensor_pdb_page(wizard)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -67,7 +68,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=700, title=self.get_title('structure', 'create_vector_dist'))
-        page = Create_vector_dist_page(wizard, self.gui)
+        page = Create_vector_dist_page(wizard)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -83,7 +84,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('structure', 'delete'))
-        page = Delete_page(wizard, self.gui)
+        page = Delete_page(wizard)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -99,7 +100,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'get_pos'))
-        page = Get_pos_page(wizard, self.gui)
+        page = Get_pos_page(wizard)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -115,7 +116,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'load_spins'))
-        page = Load_spins_page(wizard, self.gui)
+        page = Load_spins_page(wizard)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -131,7 +132,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'read_pdb'))
-        page = Read_pdb_page(wizard, self.gui)
+        page = Read_pdb_page(wizard)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -147,7 +148,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'write_pdb'))
-        page = Write_pdb_page(wizard, self.gui)
+        page = Write_pdb_page(wizard)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -163,7 +164,7 @@ class Structure(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'vectors'))
-        page = Vectors_page(wizard, self.gui)
+        page = Vectors_page(wizard)
         wizard.add_page(page)
 
         # Execute the wizard.
@@ -212,7 +213,7 @@ class Create_diff_tensor_pdb_page(UF_page):
         scale = gui_to_float(self.scale.GetValue())
 
         # Delete all structures.
-        self.gui.interpreter.queue('structure.create_diff_tensor_pdb', scale=scale, file=file, force=force)
+        interpreter.queue('structure.create_diff_tensor_pdb', scale=scale, file=file, force=force)
 
 
 
@@ -259,7 +260,7 @@ class Create_vector_dist_page(UF_page):
         length = gui_to_float(self.length.GetValue())
 
         # Delete all structures.
-        self.gui.interpreter.queue('structure.create_vector_dist', length=length, file=file, symmetry=symmetry, force=force)
+        interpreter.queue('structure.create_vector_dist', length=length, file=file, symmetry=symmetry, force=force)
 
 
 
@@ -281,7 +282,7 @@ class Delete_page(UF_page):
         """Execute the user function."""
 
         # Delete all structures.
-        self.gui.interpreter.queue('structure.delete')
+        interpreter.queue('structure.delete')
 
 
 
@@ -314,7 +315,7 @@ class Get_pos_page(UF_page):
         ave_pos = gui_to_bool(self.ave_pos.GetValue())
 
         # Delete all structures.
-        self.gui.interpreter.queue('structure.get_pos', spin_id=spin_id, ave_pos=ave_pos)
+        interpreter.queue('structure.get_pos', spin_id=spin_id, ave_pos=ave_pos)
 
 
 
@@ -347,7 +348,7 @@ class Load_spins_page(UF_page):
         ave_pos = gui_to_bool(self.ave_pos.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('structure.load_spins', spin_id=spin_id, ave_pos=ave_pos)
+        interpreter.queue('structure.load_spins', spin_id=spin_id, ave_pos=ave_pos)
 
 
 
@@ -397,7 +398,7 @@ class Read_pdb_page(UF_page):
         parser = gui_to_str(self.parser.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('structure.read_pdb', file=file, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
+        interpreter.queue('structure.read_pdb', file=file, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
 
 
 
@@ -430,7 +431,7 @@ class Write_pdb_page(UF_page):
         model_num = gui_to_str(self.model_num.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('structure.write_pdb', file=file, model_num=model_num)
+        interpreter.queue('structure.write_pdb', file=file, model_num=model_num)
 
 
 
@@ -479,4 +480,4 @@ class Vectors_page(UF_page):
         unit =      gui_to_bool(self.unit.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('structure.vectors', attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
+        interpreter.queue('structure.vectors', attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)

@@ -32,6 +32,7 @@ from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
@@ -51,7 +52,7 @@ class Residue(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=600, title=self.get_title('residue', 'copy'))
-        page = Copy_page(wizard, self.gui)
+        page = Copy_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -67,7 +68,7 @@ class Residue(UF_base):
 
         # Initialise the wizard.
         wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('residue', 'create'))
-        page = Create_page(wizard, self.gui)
+        page = Create_page(wizard)
         wizard.add_page(page)
 
         # Default molecule name.
@@ -93,7 +94,7 @@ class Residue(UF_base):
 
         # Initialise the wizard.
         wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('residue', 'delete'))
-        page = Delete_page(wizard, self.gui)
+        page = Delete_page(wizard)
         wizard.add_page(page)
 
         # Default molecule name.
@@ -181,7 +182,7 @@ class Copy_page(UF_page, Mol_res_spin):
             res_to = None
 
         # Copy the molecule.
-        self.gui.interpreter.queue('residue.copy', pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
+        interpreter.queue('residue.copy', pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
 
 
     def update_mol_list(self, event=None):
@@ -292,7 +293,7 @@ class Create_page(UF_page, Mol_res_spin):
             res_num = None
 
         # Set the name.
-        self.gui.interpreter.queue('residue.create', res_name=res_name, res_num=res_num, mol_name=mol_name)
+        interpreter.queue('residue.create', res_name=res_name, res_num=res_num, mol_name=mol_name)
 
 
 
@@ -339,7 +340,7 @@ class Delete_page(UF_page, Mol_res_spin):
             return
 
         # Delete the residue.
-        self.gui.interpreter.queue('residue.delete', res_id=id)
+        interpreter.queue('residue.delete', res_id=id)
 
         # Update.
         self._update_residues(None)

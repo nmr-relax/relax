@@ -32,6 +32,7 @@ from generic_fns import pipes
 
 # GUI module imports.
 from base import UF_base, UF_page
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.wizard import Wiz_window
@@ -50,7 +51,7 @@ class Relax_data(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('relax_data', 'delete'))
-        page = Delete_page(wizard, self.gui)
+        page = Delete_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -64,7 +65,7 @@ class Relax_data(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('relax_data', 'read'))
-        page = Read_page(wizard, self.gui)
+        page = Read_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -95,7 +96,7 @@ class Delete_page(UF_page):
         ri_id = gui_to_str(self.ri_id.GetValue())
 
         # Read the relaxation data.
-        self.gui.interpreter.queue('relax_data.delete', ri_id=ri_id)
+        interpreter.queue('relax_data.delete', ri_id=ri_id)
 
 
     def on_display(self):
@@ -180,4 +181,4 @@ class Read_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the relaxation data.
-        self.gui.interpreter.queue('relax_data.read', ri_id=ri_id, ri_type=ri_type, frq=frq, file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=err_col, sep=sep, spin_id=spin_id)
+        interpreter.queue('relax_data.read', ri_id=ri_id, ri_type=ri_type, frq=frq, file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=err_col, sep=sep, spin_id=spin_id)

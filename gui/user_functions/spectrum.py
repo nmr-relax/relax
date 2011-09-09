@@ -29,6 +29,7 @@ import wx
 
 # GUI module imports.
 from base import UF_base, UF_page
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.wizard import Wiz_window
@@ -47,7 +48,7 @@ class Spectrum(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=500, title=self.get_title('spectrum', 'baseplane_rmsd'))
-        page = Baseplane_rmsd_page(wizard, self.gui)
+        page = Baseplane_rmsd_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -61,7 +62,7 @@ class Spectrum(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('spectrum', 'error_analysis'))
-        page = Error_analysis_page(wizard, self.gui)
+        page = Error_analysis_page(wizard)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -75,7 +76,7 @@ class Spectrum(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spectrum', 'integration_points'))
-        page = Integration_points_page(wizard, self.gui)
+        page = Integration_points_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -89,7 +90,7 @@ class Spectrum(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=1000, size_y=800, title=self.get_title('spectrum', 'read_intensities'))
-        page = Read_intensities_page(wizard, self.gui)
+        page = Read_intensities_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -103,7 +104,7 @@ class Spectrum(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spectrum', 'replicated'))
-        page = Replicated_page(wizard, self.gui)
+        page = Replicated_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -154,7 +155,7 @@ class Baseplane_rmsd_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spectrum.baseplane_rmsd', error=error, spectrum_id=spectrum_id, spin_id=spin_id)
+        interpreter.queue('spectrum.baseplane_rmsd', error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
 
@@ -177,7 +178,7 @@ class Error_analysis_page(UF_page):
         """Execute the user function."""
 
         # Execute.
-        self.gui.interpreter.queue('spectrum.error_analysis')
+        interpreter.queue('spectrum.error_analysis')
 
 
 
@@ -226,7 +227,7 @@ class Integration_points_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spectrum.integration_points', N=N, spectrum_id=spectrum_id, spin_id=spin_id)
+        interpreter.queue('spectrum.integration_points', N=N, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
 
@@ -305,7 +306,7 @@ class Read_intensities_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the peak intensities.
-        self.gui.interpreter.queue('spectrum.read_intensities', file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_method=int_method, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
+        interpreter.queue('spectrum.read_intensities', file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_method=int_method, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
 
 
 
@@ -365,4 +366,4 @@ class Replicated_page(UF_page):
 
         # Execute (only if more than one ID is given).
         if len(spectrum_ids) > 1:
-            self.gui.interpreter.queue('spectrum.replicated', spectrum_ids=spectrum_ids)
+            interpreter.queue('spectrum.replicated', spectrum_ids=spectrum_ids)

@@ -29,6 +29,7 @@ from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_str, str_to_gui
 from gui.wizard import Wiz_window
@@ -47,7 +48,7 @@ class Molecule(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('molecule', 'copy'))
-        page = Copy_page(wizard, self.gui)
+        page = Copy_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -61,7 +62,7 @@ class Molecule(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('molecule', 'create'))
-        page = Create_page(wizard, self.gui)
+        page = Create_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -77,7 +78,7 @@ class Molecule(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('molecule', 'delete'))
-        page = Delete_page(wizard, self.gui)
+        page = Delete_page(wizard)
         wizard.add_page(page)
 
         # Default molecule name.
@@ -154,7 +155,7 @@ class Copy_page(UF_page):
             mol_to = "#" + mol_to
 
         # Copy the molecule.
-        self.gui.interpreter.queue('molecule.copy', pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
+        interpreter.queue('molecule.copy', pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
 
     def update_mol_list(self, event=None):
@@ -207,7 +208,7 @@ class Create_page(UF_page):
         mol_type = str(self.mol_type.GetValue())
 
         # Set the name.
-        self.gui.interpreter.queue('molecule.create', mol_name=mol_name, mol_type=mol_type)
+        interpreter.queue('molecule.create', mol_name=mol_name, mol_type=mol_type)
 
 
 
@@ -249,4 +250,4 @@ class Delete_page(UF_page):
         mol_id = gui_to_str(self.mol_id.GetValue())
 
         # Delete the molecule.
-        self.gui.interpreter.queue('molecule.delete', mol_id=mol_id)
+        interpreter.queue('molecule.delete', mol_id=mol_id)

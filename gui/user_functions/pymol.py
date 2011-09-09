@@ -29,6 +29,7 @@ import wx
 
 # GUI module imports.
 from base import UF_base, UF_page
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_bool, gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.wizard import Wiz_window
@@ -47,7 +48,7 @@ class Pymol(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('pymol', 'clear_history'))
-        page = Clear_history_page(wizard, self.gui)
+        page = Clear_history_page(wizard)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -61,7 +62,7 @@ class Pymol(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('pymol', 'command'))
-        page = Command_page(wizard, self.gui)
+        page = Command_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -75,7 +76,7 @@ class Pymol(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('pymol', 'macro_apply'))
-        page = Macro_apply_page(wizard, self.gui)
+        page = Macro_apply_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -91,7 +92,7 @@ class Pymol(UF_base):
 
         # Create the wizard.
         wizard = Wiz_window(size_x=800, size_y=400, title=self.get_title('pymol', 'macro_run'))
-        page = Macro_run_page(wizard, self.gui)
+        page = Macro_run_page(wizard)
         wizard.add_page(page)
 
         # Default file name.
@@ -111,7 +112,7 @@ class Pymol(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('pymol', 'macro_write'))
-        page = Macro_write_page(wizard, self.gui)
+        page = Macro_write_page(wizard)
         wizard.add_page(page)
         wizard.run()
 
@@ -125,7 +126,7 @@ class Pymol(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('pymol', 'ribbon'))
-        page = Ribbon_page(wizard, self.gui)
+        page = Ribbon_page(wizard)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -139,7 +140,7 @@ class Pymol(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('pymol', 'tensor_pdb'))
-        page = Tensor_pdb_page(wizard, self.gui)
+        page = Tensor_pdb_page(wizard)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -153,7 +154,7 @@ class Pymol(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('pymol', 'view'))
-        page = View_page(wizard, self.gui)
+        page = View_page(wizard)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -178,7 +179,7 @@ class Clear_history_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        self.gui.interpreter.queue('pymol.clear_history')
+        interpreter.queue('pymol.clear_history')
 
 
 
@@ -207,7 +208,7 @@ class Command_page(UF_page):
         command = gui_to_str(self.command.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('pymol.command', command=command)
+        interpreter.queue('pymol.command', command=command)
 
 
 
@@ -254,7 +255,7 @@ class Macro_apply_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('pymol.macro_apply', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        interpreter.queue('pymol.macro_apply', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
 
 
@@ -277,7 +278,7 @@ class Ribbon_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        self.gui.interpreter.queue('pymol.ribbon')
+        interpreter.queue('pymol.ribbon')
 
 
 
@@ -308,7 +309,7 @@ class Macro_run_page(UF_page):
             return
 
         # Execute the user function.
-        self.gui.interpreter.queue('pymol.macro_run', file=file, dir=None)
+        interpreter.queue('pymol.macro_run', file=file, dir=None)
 
 
 
@@ -367,7 +368,7 @@ class Macro_write_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('pymol.macro_write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=None, force=force)
+        interpreter.queue('pymol.macro_write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=None, force=force)
 
 
 
@@ -401,7 +402,7 @@ class Tensor_pdb_page(UF_page):
             return
 
         # Execute the user function.
-        self.gui.interpreter.queue('pymol.tensor_pdb', file=file)
+        interpreter.queue('pymol.tensor_pdb', file=file)
 
 
 
@@ -424,4 +425,4 @@ class View_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        self.gui.interpreter.queue('pymol.view')
+        interpreter.queue('pymol.view')

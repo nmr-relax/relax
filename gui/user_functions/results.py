@@ -29,6 +29,7 @@ import wx
 
 # GUI module imports.
 from base import UF_base, UF_page
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_bool, gui_to_float, gui_to_int, gui_to_str, int_to_gui, str_to_gui
 from gui.wizard import Wiz_window
 
@@ -46,7 +47,7 @@ class Results(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('results', 'display'))
-        page = Display_page(wizard, self.gui)
+        page = Display_page(wizard)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -60,7 +61,7 @@ class Results(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('results', 'read'))
-        page = Read_page(wizard, self.gui)
+        page = Read_page(wizard)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -74,7 +75,7 @@ class Results(UF_base):
 
         # Execute the wizard.
         wizard = Wiz_window(size_x=900, size_y=700, title=self.get_title('results', 'write'))
-        page = Write_page(wizard, self.gui)
+        page = Write_page(wizard)
         wizard.add_page(page, apply_button=False)
         wizard.run()
 
@@ -98,7 +99,7 @@ class Display_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        self.gui.interpreter.queue('results.display')
+        interpreter.queue('results.display')
 
 
 
@@ -130,7 +131,7 @@ class Read_page(UF_page):
             return
 
         # Execute the user function.
-        self.gui.interpreter.queue('results.read', file=file)
+        interpreter.queue('results.read', file=file)
 
 
 
@@ -174,4 +175,4 @@ class Write_page(UF_page):
         force = gui_to_bool(self.force.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('results.write', file=file, force=force, compress_type=compress_type)
+        interpreter.queue('results.write', file=file, force=force, compress_type=compress_type)
