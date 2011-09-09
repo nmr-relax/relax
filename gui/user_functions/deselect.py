@@ -39,51 +39,35 @@ from gui.misc import gui_to_bool, gui_to_int, gui_to_str, str_to_gui
 class Deselect(UF_base):
     """The container class for holding all GUI elements."""
 
-    def all(self, event):
-        """The deselect.all user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def all(self):
+        """The deselect.all user function."""
 
         # Execute the wizard.
-        wizard = self.create_wizard(size_x=600, size_y=300, name='deselect.all', uf_page=All_page, apply_button=False)
+        wizard, page = self.create_wizard(size_x=600, size_y=300, name='deselect.all', uf_page=All_page, apply_button=False)
         wizard.run()
 
 
-    def read(self, event):
-        """The deselect.read user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def read(self):
+        """The deselect.read user function."""
 
         # Execute the wizard.
-        wizard = self.create_wizard(size_x=900, size_y=700, name='deselect.read', uf_page=Read_page)
+        wizard, page = self.create_wizard(size_x=900, size_y=700, name='deselect.read', uf_page=Read_page)
         wizard.run()
 
 
-    def reverse(self, event):
-        """The deselect.reverse user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def reverse(self):
+        """The deselect.reverse user function."""
 
         # Execute the wizard.
-        wizard = self.create_wizard(size_x=700, size_y=400, name='deselect.reverse', uf_page=Reverse_page, apply_button=False)
+        wizard, page = self.create_wizard(size_x=700, size_y=400, name='deselect.reverse', uf_page=Reverse_page, apply_button=False)
         wizard.run()
 
 
-    def spin(self, event):
-        """The deselect.spin user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def spin(self):
+        """The deselect.spin user function."""
 
         # Execute the wizard.
-        wizard = self.create_wizard(size_x=700, size_y=500, name='deselect.spin', uf_page=Spin_page)
+        wizard, page = self.create_wizard(size_x=700, size_y=500, name='deselect.spin', uf_page=Spin_page)
         wizard.run()
 
 
