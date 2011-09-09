@@ -67,8 +67,8 @@ class UF_base:
         @type uf_page:          class
         @keyword apply_button:  A flag which if true will show the apply button for that page.  This will be passed to the wizard's add_page() method.
         @type apply_button:     bool
-        @return:                The wizard dialog.
-        @rtype:                 gui.wizard.Wiz_window instance
+        @return:                The wizard dialog and wizard page.
+        @rtype:                 gui.wizard.Wiz_window instance and wizard page instance
         """
 
         # Split the name.
@@ -87,8 +87,8 @@ class UF_base:
         page = uf_page(wizard)
         wizard.add_page(page, apply_button=apply_button)
 
-        # Return the wizard.
-        return wizard
+        # Return the wizard and the page.
+        return wizard, page
 
 
     def get_title(self, base=None, fn=None):
