@@ -1034,9 +1034,19 @@ class Wiz_window(wx.Dialog):
     # Some class variables.
     _size_button = (100, 33)
 
-    def __init__(self, size_x=400, size_y=400, title='', border=10, style=wx.DEFAULT_DIALOG_STYLE):
+    def __init__(self, parent=None, size_x=400, size_y=400, title='', border=10, style=wx.DEFAULT_DIALOG_STYLE):
         """Set up the window.
 
+        @keyword parent:    The parent window.
+        @type parent:       wx.Window instance
+        @keyword size_x:    The width of the wizard.
+        @type size_x:       int
+        @keyword size_y:    The height of the wizard.
+        @type size_y:       int
+        @keyword title:     The title of the wizard dialog.
+        @type title:        str
+        @keyword border:    The size of the border inside the wizard.
+        @type border:       int
         @keyword style:     The dialog style.
         @type style:        wx style
         """
@@ -1047,7 +1057,7 @@ class Wiz_window(wx.Dialog):
         self._border = border
 
         # Execute the base class method.
-        wx.Dialog.__init__(self, None, id=-1, title=title, style=style)
+        wx.Dialog.__init__(self, parent, id=-1, title=title, style=style)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
