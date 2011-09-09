@@ -121,7 +121,7 @@ class Main(wx.Frame):
         self.init_data()
 
         # The user function GUI elements.
-        self.user_functions = User_functions(self)
+        self.user_functions = User_functions()
 
         # Build the menu bar.
         self.menu = Menu(self)
