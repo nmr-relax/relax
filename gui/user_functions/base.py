@@ -43,13 +43,6 @@ from gui.wizard import Wiz_page
 class UF_base:
     """User function GUI element base class."""
 
-    def __init__(self, gui):
-        """Set up the user function class."""
-
-        # Store the args.
-        self.gui = gui
-
-
     def get_title(self, base=None, fn=None):
         """Get the title for the wizard window from the user function documentation.
 
