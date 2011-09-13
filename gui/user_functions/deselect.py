@@ -43,7 +43,7 @@ class Deselect(UF_base):
         """The deselect.all user function."""
 
         # Execute the wizard.
-        wizard, page = self.create_wizard(size_x=600, size_y=300, name='deselect.all', uf_page=All_page, apply_button=False)
+        wizard = self.create_wizard(size_x=600, size_y=300, name='deselect.all', uf_page=All_page, apply_button=False)
         wizard.run()
 
 
@@ -51,7 +51,7 @@ class Deselect(UF_base):
         """The deselect.read user function."""
 
         # Execute the wizard.
-        wizard, page = self.create_wizard(size_x=900, size_y=700, name='deselect.read', uf_page=Read_page)
+        wizard = self.create_wizard(size_x=900, size_y=700, name='deselect.read', uf_page=Read_page)
         wizard.run()
 
 
@@ -59,7 +59,7 @@ class Deselect(UF_base):
         """The deselect.reverse user function."""
 
         # Execute the wizard.
-        wizard, page = self.create_wizard(size_x=700, size_y=400, name='deselect.reverse', uf_page=Reverse_page, apply_button=False)
+        wizard = self.create_wizard(size_x=700, size_y=400, name='deselect.reverse', uf_page=Reverse_page, apply_button=False)
         wizard.run()
 
 
@@ -67,7 +67,7 @@ class Deselect(UF_base):
         """The deselect.spin user function."""
 
         # Execute the wizard.
-        wizard, page = self.create_wizard(size_x=700, size_y=500, name='deselect.spin', uf_page=Spin_page)
+        wizard = self.create_wizard(size_x=700, size_y=500, name='deselect.spin', uf_page=Spin_page)
         wizard.run()
 
 
