@@ -299,37 +299,37 @@ class Auto_rx(Base_analysis):
             error_message("No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.", caption='Incomplete setup')
 
         # Initialise a wizard.
-        self.wizard = Wiz_window(size_x=1000, size_y=800, title="Set up the %s peak intensities" % self.label)
+        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=800, title="Set up the %s peak intensities" % self.label)
         self.page_indices = {}
 
         # The spectrum.read_intensities page.
-        self.page_intensity = Read_intensities_page(self.wizard, self.gui)
+        self.page_intensity = Read_intensities_page(self.wizard)
         self.page_indices['read'] = self.wizard.add_page(self.page_intensity, skip_button=True, proceed_on_error=False, uf_flush=True)
 
         # Error type selection page.
-        self.page_error_type = Spectral_error_type_page(self.wizard, self.gui)
+        self.page_error_type = Spectral_error_type_page(self.wizard)
         self.page_indices['err_type'] = self.wizard.add_page(self.page_error_type, apply_button=False)
         self.wizard.set_seq_next_fn(self.page_indices['err_type'], self.wizard_page_after_error_type)
 
         # The spectrum.replicated page.
-        page = Replicated_page(self.wizard, self.gui)
+        page = Replicated_page(self.wizard)
         self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
         page.on_init = self.wizard_update_repl
 
         # The spectrum.baseplane_rmsd page.
-        page = Baseplane_rmsd_page(self.wizard, self.gui)
+        page = Baseplane_rmsd_page(self.wizard)
         self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
         page.on_init = self.wizard_update_rmsd
 
         # The spectrum.integration_points page.
-        page = Integration_points_page(self.wizard, self.gui)
+        page = Integration_points_page(self.wizard)
         self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         page.on_init = self.wizard_update_pts
 
         # The relax_fit.relax_time page.
-        page = Relax_time_page(self.wizard, self.gui)
+        page = Relax_time_page(self.wizard)
         self.page_indices['relax_time'] = self.wizard.add_page(page, skip_button=False, proceed_on_error=False)
         page.on_init = self.wizard_update_relax_time
 
