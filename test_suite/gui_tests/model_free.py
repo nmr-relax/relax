@@ -72,13 +72,13 @@ class Mf(GuiTestCase):
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Set up a wizard window instance for all of the user function pages.
-        wizard = Wiz_window()
+        wizard = Wiz_window(self.gui)
 
         # The data path.
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep
 
         # Load the sequence.
-        seq_read = sequence.Read_page(wizard, self.gui)
+        seq_read = sequence.Read_page(wizard)
         seq_read.file.SetValue(str_to_gui(data_path + 'noe.500.out'))
         seq_read.on_execute()
 
@@ -92,7 +92,7 @@ class Mf(GuiTestCase):
             ['r2.900.out',  'r2_900',  'R2',  900e6]
         ]
         for i in range(len(data)):
-            relax_data_read = relax_data.Read_page(wizard, self.gui)
+            relax_data_read = relax_data.Read_page(wizard)
             relax_data_read.file.SetValue(str_to_gui(data_path + data[i][0]))
             relax_data_read.ri_id.SetValue(str_to_gui(data[i][1]))
             relax_data_read.ri_type.SetValue(str_to_gui(data[i][2]))
@@ -100,7 +100,7 @@ class Mf(GuiTestCase):
             relax_data_read.on_execute()
 
         # Set the values.
-        value_set = value.Set_page(wizard, self.gui)
+        value_set = value.Set_page(wizard)
         value_set.set_param('csa')
         value_set.on_execute()
         value_set.set_param('r')

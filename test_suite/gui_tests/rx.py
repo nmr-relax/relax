@@ -111,8 +111,8 @@ class Rx(GuiTestCase):
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Load the sequence.
-        wizard = Wiz_window()
-        seq_read = sequence.Read_page(wizard, self.gui)
+        wizard = Wiz_window(self.gui)
+        seq_read = sequence.Read_page(wizard)
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
         seq_read.file.SetValue(str_to_gui(file))
         seq_read.mol_name_col.SetValue(int_to_gui(None))
@@ -123,7 +123,7 @@ class Rx(GuiTestCase):
         seq_read.on_execute()
 
         # Unresolved spins.
-        deselect_read = deselect.Read_page(wizard, self.gui)
+        deselect_read = deselect.Read_page(wizard)
         deselect_read.file.SetValue(str_to_gui(data_path + 'unresolved'))
         deselect_read.mol_name_col.SetValue(int_to_gui(None))
         deselect_read.res_name_col.SetValue(int_to_gui(None))
@@ -134,7 +134,7 @@ class Rx(GuiTestCase):
         deselect_read.on_execute()
 
         # Name the spins.
-        page = spin.Name_page(wizard, self.gui)
+        page = spin.Name_page(wizard)
         page.name.SetValue(str_to_gui('N'))
         page.on_execute()
 
