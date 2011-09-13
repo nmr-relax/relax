@@ -36,38 +36,25 @@ from base import UF_base, UF_page
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import ANALYSIS_IMAGE_PATH
 from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Noe(UF_base):
     """The container class for holding all GUI elements."""
 
-    def read_restraints(self, event):
-        """The noe.read_restraints user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def read_restraints(self):
+        """The noe.read_restraints user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('noe', 'read_restraints'))
-        page = Read_restraints_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='noe.read_restraints', uf_page=Read_restraints_page)
         wizard.run()
 
 
-    def spectrum_type(self, event):
-        """The noe.spectrum_type user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def spectrum_type(self):
+        """The noe.spectrum_type user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('noe', 'spectrum_type'))
-        page = Spectrum_type_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='noe.spectrum_type', uf_page=Spectrum_type_page)
         wizard.run()
 
 

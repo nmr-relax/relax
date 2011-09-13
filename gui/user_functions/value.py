@@ -37,26 +37,21 @@ from gui.errors import gui_raise
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Value(UF_base):
     """The container class for holding all GUI elements."""
 
-    def set(self, event, param=None):
+    def set(self, param=None):
         """The value.set user function.
 
-        @param event:   The wx event.
-        @type event:    wx event
         @keyword param: The starting parameter.
         @type param:    str
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=800, title=self.get_title('value', 'set'))
-        page = Set_page(wizard)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=1000, size_y=800, name='value.set', uf_page=Set_page, return_page=True)
 
         # Default parameter.
         page.set_param(param)

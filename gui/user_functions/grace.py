@@ -36,26 +36,21 @@ from gui.errors import gui_raise
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_bool, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Grace(UF_base):
     """The container class for holding all GUI elements."""
 
-    def view(self, event, file=None):
+    def view(self, file=None):
         """The grace.view user function.
 
-        @param event:   The wx event.
-        @type event:    wx event
         @keyword file:  The file to start the user function with.
         @type file:     str
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=900, size_y=500, title=self.get_title('grace', 'view'))
-        page = View_page(wizard)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=900, size_y=500, name='grace.view', uf_page=View_page, return_page=True)
 
         # Default file name.
         if file:
@@ -65,19 +60,15 @@ class Grace(UF_base):
         wizard.run()
 
 
-    def write(self, event, file=None):
+    def write(self, file=None):
         """The grace.write user function.
 
-        @param event:   The wx event.
-        @type event:    wx event
         @keyword file:  The file to start the user function with.
         @type file:     str
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('grace', 'write'))
-        page = Write_page(wizard)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=1000, size_y=700, name='grace.write', uf_page=Write_page, return_page=True)
 
         # Default file name.
         if file:

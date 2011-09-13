@@ -33,66 +33,41 @@ from prompt.select import boolean_doc
 from base import UF_base, UF_page
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_bool, gui_to_int, gui_to_str, str_to_gui
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Select(UF_base):
     """The container class for holding all GUI elements."""
 
-    def all(self, event):
-        """The select.all user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def all(self):
+        """The select.all user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('select', 'all'))
-        page = All_page(wizard)
-        wizard.add_page(page, apply_button=False)
+        wizard = self.create_wizard(size_x=600, size_y=300, name='select.all', uf_page=All_page, apply_button=False)
         wizard.run()
 
 
-    def read(self, event):
-        """The select.read user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def read(self):
+        """The select.read user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=900, size_y=700, title=self.get_title('select', 'read'))
-        page = Read_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=900, size_y=700, name='select.read', uf_page=Read_page)
         wizard.run()
 
 
-    def reverse(self, event):
-        """The select.reverse user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def reverse(self):
+        """The select.reverse user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('select', 'reverse'))
-        page = Reverse_page(wizard)
-        wizard.add_page(page, apply_button=False)
+        wizard = self.create_wizard(size_x=700, size_y=400, name='select.reverse', uf_page=Reverse_page, apply_button=False)
         wizard.run()
 
 
-    def spin(self, event):
-        """The select.spin user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def spin(self):
+        """The select.spin user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('select', 'spin'))
-        page = Spin_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=700, size_y=500, name='select.spin', uf_page=Spin_page)
         wizard.run()
 
 

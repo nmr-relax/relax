@@ -36,138 +36,73 @@ from base import UF_base, UF_page
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Structure(UF_base):
     """The container class for holding all GUI elements."""
 
-    def create_diff_tensor_pdb(self, event):
-        """The structure.create_diff_tensor_pdb user function.
+    def create_diff_tensor_pdb(self):
+        """The structure.create_diff_tensor_pdb user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=900, size_y=800, title=self.get_title('structure', 'create_diff_tensor_pdb'))
-        page = Create_diff_tensor_pdb_page(wizard)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=900, size_y=800, name='structure.create_diff_tensor_pdb', uf_page=Create_diff_tensor_pdb_page)
         wizard.run()
 
 
-    def create_vector_dist(self, event):
-        """The structure.create_vector_dist user function.
+    def create_vector_dist(self):
+        """The structure.create_vector_dist user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=700, title=self.get_title('structure', 'create_vector_dist'))
-        page = Create_vector_dist_page(wizard)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=700, name='structure.create_vector_dist', uf_page=Create_vector_dist_page)
         wizard.run()
 
 
-    def delete(self, event):
-        """The structure.delete user function.
+    def delete(self):
+        """The structure.delete user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('structure', 'delete'))
-        page = Delete_page(wizard)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=600, size_y=400, name='structure.delete', uf_page=Delete_page)
         wizard.run()
 
 
-    def get_pos(self, event):
-        """The structure.get_pos user function.
+    def get_pos(self):
+        """The structure.get_pos user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'get_pos'))
-        page = Get_pos_page(wizard)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='structure.get_pos', uf_page=Get_pos_page)
         wizard.run()
 
 
-    def load_spins(self, event):
-        """The structure.load_spins user function.
+    def load_spins(self):
+        """The structure.load_spins user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'load_spins'))
-        page = Load_spins_page(wizard)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='structure.load_spins', uf_page=Load_spins_page)
         wizard.run()
 
 
-    def read_pdb(self, event):
-        """The structure.read_pdb user function.
+    def read_pdb(self):
+        """The structure.read_pdb user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'read_pdb'))
-        page = Read_pdb_page(wizard)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='structure.read_pdb', uf_page=Read_pdb_page)
         wizard.run()
 
 
-    def write_pdb(self, event):
-        """The structure.write_pdb user function.
+    def write_pdb(self):
+        """The structure.write_pdb user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'write_pdb'))
-        page = Write_pdb_page(wizard)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='structure.write_pdb', uf_page=Write_pdb_page)
         wizard.run()
 
 
-    def vectors(self, event):
-        """The structure.vectors user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def vectors(self):
+        """The structure.vectors user function."""
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'vectors'))
-        page = Vectors_page(wizard)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='structure.vectors', uf_page=Vectors_page)
         wizard.run()
 
 

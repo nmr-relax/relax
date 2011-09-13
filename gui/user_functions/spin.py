@@ -36,32 +36,23 @@ from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_bool, gui_to_int, gui_to_list, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Spin(UF_base):
     """The container class for holding all GUI elements."""
 
-    def copy(self, event):
-        """The spin.copy user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def copy(self):
+        """The spin.copy user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=600, title=self.get_title('spin', 'copy'))
-        page = Copy_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=700, size_y=600, name='spin.copy', uf_page=Copy_page)
         wizard.run()
 
 
-    def create(self, event, mol_name=None, res_num=None, res_name=None):
+    def create(self, mol_name=None, res_num=None, res_name=None):
         """The spin.create user function.
 
-        @param event:       The wx event.
-        @type event:        wx event
         @param mol_name:    The starting molecule name.
         @type mol_name:     str
         @param res_num:     The starting residue number.
@@ -71,9 +62,7 @@ class Spin(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('spin', 'create'))
-        page = Create_page(wizard)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=600, size_y=400, name='spin.create', uf_page=Create_page, return_page=True)
 
         # Default molecule name.
         if mol_name:
@@ -87,25 +76,17 @@ class Spin(UF_base):
         wizard.run()
 
 
-    def create_pseudo(self, event):
-        """The spin.create_pseudo user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def create_pseudo(self):
+        """The spin.create_pseudo user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'create_pseudo'))
-        page = Create_pseudo_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spin.create_pseudo', uf_page=Create_pseudo_page)
         wizard.run()
 
 
-    def delete(self, event, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+    def delete(self, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
         """The spin.delete user function.
 
-        @param event:       The wx event.
-        @type event:        wx event
         @param mol_name:    The starting molecule name.
         @type mol_name:     str
         @param res_num:     The starting residue number.
@@ -119,9 +100,7 @@ class Spin(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('spin', 'delete'))
-        page = Delete_page(wizard)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=600, size_y=400, name='spin.delete', uf_page=Delete_page, return_page=True)
 
         # Default molecule name.
         if mol_name:
@@ -139,59 +118,35 @@ class Spin(UF_base):
         wizard.run()
 
 
-    def display(self, event):
-        """The spin.display user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def display(self):
+        """The spin.display user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'display'))
-        page = Display_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spin.display', uf_page=Display_page)
         wizard.run()
 
 
-    def element(self, event):
-        """The spin.element user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def element(self):
+        """The spin.element user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'element'))
-        page = Element_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spin.element', uf_page=Element_page)
         wizard.run()
 
 
-    def name(self, event):
-        """The spin.name user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def name(self):
+        """The spin.name user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'name'))
-        page = Name_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spin.name', uf_page=Name_page)
         wizard.run()
 
 
-    def number(self, event):
-        """The spin.number user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def number(self):
+        """The spin.number user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'number'))
-        page = Number_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spin.number', uf_page=Number_page)
         wizard.run()
 
 

@@ -32,80 +32,49 @@ from base import UF_base, UF_page
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Spectrum(UF_base):
     """The container class for holding all GUI elements."""
 
-    def baseplane_rmsd(self, event):
-        """The spectrum.baseplane_rmsd user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def baseplane_rmsd(self):
+        """The spectrum.baseplane_rmsd user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=500, title=self.get_title('spectrum', 'baseplane_rmsd'))
-        page = Baseplane_rmsd_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=500, name='spectrum.baseplane_rmsd', uf_page=Baseplane_rmsd_page)
         wizard.run()
 
 
-    def error_analysis(self, event):
-        """The spectrum.error_analysis user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def error_analysis(self):
+        """The spectrum.error_analysis user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('spectrum', 'error_analysis'))
-        page = Error_analysis_page(wizard)
-        wizard.add_page(page, apply_button=False)
+        wizard = self.create_wizard(size_x=1000, size_y=700, name='spectrum.error_analysis', uf_page=Error_analysis_page, apply_button=False)
         wizard.run()
 
 
-    def integration_points(self, event):
-        """The spectrum.integration_points user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def integration_points(self):
+        """The spectrum.integration_points user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spectrum', 'integration_points'))
-        page = Integration_points_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spectrum.integration_points', uf_page=Integration_points_page)
         wizard.run()
 
 
-    def read_intensities(self, event):
-        """The spectrum.read_intensities user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def read_intensities(self):
+        """The spectrum.read_intensities user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=800, title=self.get_title('spectrum', 'read_intensities'))
-        page = Read_intensities_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=1000, size_y=800, name='spectrum.read_intensities', uf_page=Read_intensities_page)
         wizard.run()
 
 
-    def replicated(self, event):
-        """The spectrum.replicated user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def replicated(self):
+        """The spectrum.replicated user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spectrum', 'replicated'))
-        page = Replicated_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spectrum.replicated', uf_page=Replicated_page)
         wizard.run()
 
 

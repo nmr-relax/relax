@@ -32,68 +32,45 @@ from base import UF_base, UF_page
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_bool, gui_to_float, gui_to_int, gui_to_str, str_to_gui
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Molmol(UF_base):
     """The container class for holding all GUI elements."""
 
-    def clear_history(self, event):
-        """The molmol.clear_history user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def clear_history(self):
+        """The molmol.clear_history user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('molmol', 'clear_history'))
-        page = Clear_history_page(wizard)
-        wizard.add_page(page, apply_button=False)
+        wizard = self.create_wizard(size_x=600, size_y=300, name='molmol.clear_history', uf_page=Clear_history_page, apply_button=False)
         wizard.run()
 
 
-    def command(self, event):
-        """The molmol.command user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def command(self):
+        """The molmol.command user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('molmol', 'command'))
-        page = Command_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=700, size_y=400, name='molmol.command', uf_page=Command_page)
         wizard.run()
 
 
-    def macro_apply(self, event):
-        """The molmol.macro_apply user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def macro_apply(self):
+        """The molmol.macro_apply user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('molmol', 'macro_apply'))
-        page = Macro_apply_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=1000, size_y=750, name='molmol.macro_apply', uf_page=Macro_apply_page)
         wizard.run()
 
 
-    def macro_run(self, event, file=None):
+    def macro_run(self, file=None):
         """The molmol.macro_run user function.
 
-        @param event:       The wx event.
-        @type event:        wx event
         @keyword file:      The macro file to start the user function with.
         @type file:         str
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=400, title=self.get_title('molmol', 'macro_run'))
-        page = Macro_run_page(wizard)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=800, size_y=400, name='molmo.macro_run', uf_page=Macro_run_page, return_page=True)
 
         # Default file name.
         if file:
@@ -103,59 +80,35 @@ class Molmol(UF_base):
         wizard.run()
 
 
-    def macro_write(self, event):
-        """The molmol.macro_write user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def macro_write(self):
+        """The molmol.macro_write user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=750, title=self.get_title('molmol', 'macro_write'))
-        page = Macro_write_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=1000, size_y=750, name='molmol.macro_write', uf_page=Macro_write_page)
         wizard.run()
 
 
-    def ribbon(self, event):
-        """The molmol.ribbon user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def ribbon(self):
+        """The molmol.ribbon user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('molmol', 'ribbon'))
-        page = Ribbon_page(wizard)
-        wizard.add_page(page, apply_button=False)
+        wizard = self.create_wizard(size_x=700, size_y=400, name='molmol.ribbon', uf_page=Ribbon_page, apply_button=False)
         wizard.run()
 
 
-    def tensor_pdb(self, event):
-        """The molmol.tensor_pdb user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def tensor_pdb(self):
+        """The molmol.tensor_pdb user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('molmol', 'tensor_pdb'))
-        page = Tensor_pdb_page(wizard)
-        wizard.add_page(page, apply_button=False)
+        wizard = self.create_wizard(size_x=1000, size_y=700, name='molmol.tensor_pdb', uf_page=Tensor_pdb_page, apply_button=False)
         wizard.run()
 
 
-    def view(self, event):
-        """The molmol.view user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def view(self):
+        """The molmol.view user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=300, title=self.get_title('molmol', 'view'))
-        page = View_page(wizard)
-        wizard.add_page(page, apply_button=False)
+        wizard = self.create_wizard(size_x=600, size_y=300, name='molmol.view', uf_page=View_page, apply_button=False)
         wizard.run()
 
 

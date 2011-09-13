@@ -35,38 +35,25 @@ from base import UF_base, UF_page
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Relax_data(UF_base):
     """The container class for holding all GUI elements."""
 
-    def delete(self, event):
-        """The relax_data.delete user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def delete(self):
+        """The relax_data.delete user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('relax_data', 'delete'))
-        page = Delete_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=700, size_y=400, name='relax_data.delete', uf_page=Delete_page)
         wizard.run()
 
 
-    def read(self, event):
-        """The relax_data.read user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def read(self):
+        """The relax_data.read user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('relax_data', 'read'))
-        page = Read_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=1000, size_y=700, name='relax_data.read', uf_page=Read_page)
         wizard.run()
 
 

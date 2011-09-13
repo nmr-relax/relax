@@ -35,52 +35,33 @@ from base import UF_base, UF_page
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_bool, gui_to_int, gui_to_str, str_to_gui
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Sequence(UF_base):
     """The container class for holding all GUI elements."""
 
-    def copy(self, event):
-        """The sequence.copy user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def copy(self):
+        """The sequence.copy user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('sequence', 'copy'))
-        page = Copy_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=700, size_y=500, name='sequence.copy', uf_page=Copy_page)
         wizard.run()
 
 
-    def read(self, event):
-        """The sequence.read user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def read(self):
+        """The sequence.read user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=900, size_y=700, title=self.get_title('sequence', 'read'))
-        page = Read_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=900, size_y=700, name='sequence.read', uf_page=Read_page)
         wizard.run()
 
 
-    def write(self, event):
-        """The sequence.write user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def write(self):
+        """The sequence.write user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=900, size_y=700, title=self.get_title('sequence', 'write'))
-        page = Write_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=900, size_y=700, name='sequence.write', uf_page=Write_page)
         wizard.run()
 
 

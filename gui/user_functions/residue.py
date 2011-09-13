@@ -36,40 +36,29 @@ from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Residue(UF_base):
     """The container class for holding all GUI elements."""
 
-    def copy(self, event):
-        """The residue.copy user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def copy(self):
+        """The residue.copy user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=600, title=self.get_title('residue', 'copy'))
-        page = Copy_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=700, size_y=600, name='residue.copy', uf_page=Copy_page)
         wizard.run()
 
 
-    def create(self, event, mol_name=None):
+    def create(self, mol_name=None):
         """The residue.create user function.
 
-        @param event:       The wx event.
-        @type event:        wx event
         @param mol_name:    The starting molecule name.
         @type mol_name:     str
         """
 
         # Initialise the wizard.
-        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('residue', 'create'))
-        page = Create_page(wizard)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=700, size_y=500, name='residue.create', uf_page=Create_page, return_page=True)
 
         # Default molecule name.
         if mol_name:
@@ -79,11 +68,9 @@ class Residue(UF_base):
         wizard.run()
 
 
-    def delete(self, event, mol_name=None, res_num=None, res_name=None):
+    def delete(self, mol_name=None, res_num=None, res_name=None):
         """The residue.delete user function.
 
-        @param event:       The wx event.
-        @type event:        wx event
         @param mol_name:    The starting molecule name.
         @type mol_name:     str
         @param res_num:     The starting residue number.
@@ -93,9 +80,7 @@ class Residue(UF_base):
         """
 
         # Initialise the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('residue', 'delete'))
-        page = Delete_page(wizard)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=600, size_y=400, name='residue.delete', uf_page=Delete_page, return_page=True)
 
         # Default molecule name.
         if mol_name:

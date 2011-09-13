@@ -39,11 +39,9 @@ from gui.interpreter import Interpreter; interpreter = Interpreter()
 class Script(UF_base):
     """The script user function GUI class."""
 
-    def run(self, event, file=None):
+    def run(self, file=None):
         """The script user function GUI element.
 
-        @param event:   The wx event.
-        @type event:    wx event
         @param file:    The path of the script to execute, if already known.  If not given, a file selection dialog will appear.
         @type file:     str
         """

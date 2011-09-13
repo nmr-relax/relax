@@ -34,38 +34,25 @@ from base import UF_base, UF_page
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Relax_fit(UF_base):
     """The container class for holding all GUI elements."""
 
-    def relax_time(self, event):
-        """The relax_fit.relax_time user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def relax_time(self):
+        """The relax_fit.relax_time user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('relax_fit', 'relax_time'))
-        page = Relax_time_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='relax_fit.relax_time', uf_page=Relax_time_page)
         wizard.run()
 
 
-    def select_model(self, event):
-        """The relax_fit.select_model user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def select_model(self):
+        """The relax_fit.select_model user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('relax_fit', 'select_model'))
-        page = Select_model_page(wizard)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='relax_fit.select_model', uf_page=Select_model_page)
         wizard.run()
 
 
