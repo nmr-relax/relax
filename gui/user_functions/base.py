@@ -54,7 +54,7 @@ class UF_base:
         self.parent = parent
 
 
-    def create_wizard(self, size_x=600, size_y=400, name=None, uf_page=None, apply_button=True):
+    def create_wizard(self, size_x=600, size_y=400, name=None, uf_page=None, apply_button=True, return_page=False):
         """Create and return the wizard window.
 
         @keyword size_x:        The width of the wizard.
@@ -67,8 +67,10 @@ class UF_base:
         @type uf_page:          class
         @keyword apply_button:  A flag which if true will show the apply button for that page.  This will be passed to the wizard's add_page() method.
         @type apply_button:     bool
-        @return:                The wizard dialog and wizard page.
-        @rtype:                 gui.wizard.Wiz_window instance and wizard page instance
+        @keyword return_page:   A flag which if True will cause the user function page to be returned.
+        @type return_page:      bool
+        @return:                The wizard dialog (and wizard page if the return flag is given).
+        @rtype:                 gui.wizard.Wiz_window instance, wizard page instance
         """
 
         # Split the name.
@@ -88,7 +90,10 @@ class UF_base:
         wizard.add_page(page, apply_button=apply_button)
 
         # Return the wizard and the page.
-        return wizard, page
+        if return_page:
+            return wizard, page
+        else:
+            return wizard
 
 
     def get_title(self, base=None, fn=None):
