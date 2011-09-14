@@ -30,15 +30,17 @@ import wx
 # relax module imports.
 from generic_fns.pipes import cdp_name, pipe_names
 from status import Status; status = Status()
+from relax_errors import RelaxNoPipeError
 
 # relax GUI module imports.
-from gui import paths
+from gui.paths import icon_32x32, WIZARD_IMAGE_PATH
 from gui.components.menu import build_menu_item
 from gui.icons import relax_icons
 from gui.menu import Uf_menus
-from gui.misc import gui_to_str, str_to_gui
+from gui.misc import gui_raise, gui_to_str, str_to_gui
 from gui.spin_viewer.splitter import Tree_splitter
-from gui.user_functions import User_functions; user_functions = User_functions()
+from gui.user_functions import User_functions, sequence, structure; user_functions = User_functions()
+from gui.wizard import Wiz_page, Wiz_window
 
 
 class Spin_view_window(wx.Frame):
@@ -180,6 +182,54 @@ class Spin_view_window(wx.Frame):
         self.Hide()
 
 
+    def load_spins_wizard(self, event):
+        """The spin loading wizard.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # No current data pipe.
+        if not cdp_name():
+            gui_raise(RelaxNoPipeError())
+            return
+
+        # Change the cursor to busy.
+        wx.BeginBusyCursor()
+
+        # Initialise a wizard.
+        self.wizard = Wiz_window(parent=self, size_x=800, size_y=700, title="Load spins")
+        self.page_indices = {}
+
+        # The loading method page.
+        self.page_method = Load_method_page(self.wizard)
+        self.page_indices['method'] = self.wizard.add_page(self.page_method, apply_button=True, skip_button=True)
+        self.wizard.set_seq_next_fn(self.page_indices['method'], self.wizard_page_after_load_method)
+
+        # The sequence.read page.
+        page = sequence.Read_page(self.wizard)
+        self.page_indices['sequence.read'] = self.wizard.add_page(page, skip_button=True)
+        self.wizard.set_seq_next_fn(self.page_indices['sequence.read'], self.wizard_page_after_sequence_read)
+
+        # The structure.read_pdb page.
+        page = structure.Read_pdb_page(self.wizard)
+        self.page_indices['structure.read_pdb'] = self.wizard.add_page(page, skip_button=True)
+
+        # The structure.load_spins page.
+        page = structure.Load_spins_page(self.wizard)
+        self.page_indices['structure.load_spins'] = self.wizard.add_page(page)
+
+        # The termination page.
+        page = Finish_page(self.wizard)
+        self.page_indices['fin'] = self.wizard.add_page(page, apply_button=False, skip_button=False)
+
+        # Reset the cursor.
+        wx.EndBusyCursor()
+
+        # Run the wizard.
+        self.wizard.run()
+
+
     def setup_window(self):
         """Set up the window.
 
@@ -210,9 +260,17 @@ class Spin_view_window(wx.Frame):
         # Init.
         self.bar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT)
 
+        # The spin loading button.
+        id = wx.NewId()
+        self.bar.AddLabelTool(id, "Load spins", wx.Bitmap(icon_32x32.spin, wx.BITMAP_TYPE_ANY), shortHelp="Load spins", longHelp="Load spins from either a sequence file or from a 3D structure file")
+        self.Bind(wx.EVT_TOOL, self.load_spins_wizard, id=id)
+
+        # A separator.
+        self.bar.AddSeparator()
+
         # The refresh button.
         id = wx.NewId()
-        self.bar.AddLabelTool(id, "Refresh", wx.Bitmap(paths.icon_32x32.view_refresh, wx.BITMAP_TYPE_ANY), shortHelp="Refresh", longHelp="Refresh the spin view")
+        self.bar.AddLabelTool(id, "Refresh", wx.Bitmap(icon_32x32.view_refresh, wx.BITMAP_TYPE_ANY), shortHelp="Refresh", longHelp="Refresh the spin view")
         self.Bind(wx.EVT_TOOL, self.refresh, id=id)
 
         # A separator.
@@ -277,3 +335,129 @@ class Spin_view_window(wx.Frame):
 
         # Reset the cursor.
         wx.EndBusyCursor()
+
+
+    def wizard_page_after_load_method(self):
+        """Set the page after the load method choice.
+
+        @return:    The index of the next page.
+        @rtype:     int
+        """
+
+        # Go to the spectrum.baseplane_rmsd page.
+        if self.page_method.selection == 'sequence':
+            return self.page_indices['sequence.read']
+
+        # Go to the spectrum.replicated page.
+        elif self.page_method.selection == 'structure':
+            return self.page_indices['structure.read_pdb']
+
+
+    def wizard_page_after_sequence_read(self):
+        """Set the page after the sequence.read user function page.
+
+        @return:    The index of the last page.
+        @rtype:     int
+        """
+
+        # Return the index of the terminal page.
+        return  self.page_indices['fin']
+
+
+
+class Finish_page(Wiz_page):
+    """The terminating wizard page."""
+
+    # Class variables.
+    image_path = WIZARD_IMAGE_PATH + 'spin.png'
+    main_text = 'The spin systems should now have been loaded into the relax data store.'
+    title = 'Spin loading complete'
+
+    def add_contents(self, sizer):
+        """This blank method is needed so that the page shows and does nothing.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+
+
+class Load_method_page(Wiz_page):
+    """The wizard page for specifying how to load spins."""
+
+    # Class variables.
+    image_path = WIZARD_IMAGE_PATH + 'spin.png'
+    main_text = 'Select the method for loading spins into relax.  To options are possible.  The first is to read sequence information out of a file via the sequence.read user function.  The second is to read in a 3D structure file via the structure.read_pdb user function and then to load the spins from this structure using the structure.load_spins user function.'
+    title = 'Spin loading'
+
+
+    def add_contents(self, sizer):
+        """Add the specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Intro text.
+        msg = "Please specify which method should be used."
+        text = wx.StaticText(self, -1, msg)
+        text.Wrap(self._main_size)
+        sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        sizer.AddStretchSpacer()
+
+        # A box sizer for placing the box sizer in.
+        sizer2 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(sizer2, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Bottom spacing.
+        sizer.AddStretchSpacer()
+
+        # A bit of indentation.
+        sizer2.AddStretchSpacer()
+
+        # A vertical sizer for the radio buttons.
+        sizer_radio = wx.BoxSizer(wx.VERTICAL)
+        sizer2.Add(sizer_radio, 1, wx.ALL|wx.EXPAND, 0)
+
+        # The sequence radio button.
+        self.radio_seq = wx.RadioButton(self, -1, "Sequence file.")
+        sizer_radio.Add(self.radio_seq, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        sizer_radio.AddSpacer(20)
+
+        # The PDB radio button.
+        self.radio_structure = wx.RadioButton(self, -1, "3D structure file.")
+        sizer_radio.Add(self.radio_structure, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Bind the buttons.
+        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_seq)
+        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_structure)
+
+        # Right side spacing.
+        sizer2.AddStretchSpacer(3)
+
+        # Bottom spacing.
+        sizer.AddStretchSpacer()
+
+        # Set the default selection.
+        self.selection = 'sequence'
+
+
+    def _on_select(self, event):
+        """Handle the radio button switching.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The button.
+        button = event.GetEventObject()
+
+        # RMSD.
+        if button == self.radio_seq:
+            self.selection = 'sequence'
+        elif button == self.radio_structure:
+            self.selection = 'structure'
