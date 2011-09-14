@@ -38,6 +38,7 @@ from gui.icons import relax_icons
 from gui.message import Question
 from gui.misc import add_border, gui_to_str, str_to_gui
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
+from gui.user_functions import User_functions; user_functions = User_functions()
 
 
 class Pipe_editor(wx.Frame):
@@ -214,7 +215,7 @@ class Pipe_editor(wx.Frame):
         self.button_create.SetFont(font.normal)
         self.button_create.SetToolTipString("Create a new data pipe.")
         button_sizer.Add(self.button_create, 1, wx.ALL|wx.EXPAND, 0)
-        self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.create, self.button_create)
+        self.Bind(wx.EVT_BUTTON, self.uf_launch, self.button_create)
 
         # The copy button.
         self.button_copy = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Copy")
@@ -222,7 +223,7 @@ class Pipe_editor(wx.Frame):
         self.button_copy.SetFont(font.normal)
         self.button_copy.SetToolTipString("Copy a data pipe.")
         button_sizer.Add(self.button_copy, 1, wx.ALL|wx.EXPAND, 0)
-        self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.copy, self.button_copy)
+        self.Bind(wx.EVT_BUTTON, self.uf_launch, self.button_copy)
 
         # The delete button.
         self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Delete")
@@ -230,7 +231,7 @@ class Pipe_editor(wx.Frame):
         self.button_delete.SetFont(font.normal)
         self.button_delete.SetToolTipString("Delete a data pipe.")
         button_sizer.Add(self.button_delete, 1, wx.ALL|wx.EXPAND, 0)
-        self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.delete, self.button_delete)
+        self.Bind(wx.EVT_BUTTON, self.uf_launch, self.button_delete)
 
         # The hybridise button.
         self.button_hybrid = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Hybridise")
@@ -238,7 +239,7 @@ class Pipe_editor(wx.Frame):
         self.button_hybrid.SetFont(font.normal)
         self.button_hybrid.SetToolTipString("Hybridise data pipes.")
         button_sizer.Add(self.button_hybrid, 1, wx.ALL|wx.EXPAND, 0)
-        self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.hybridise, self.button_hybrid)
+        self.Bind(wx.EVT_BUTTON, self.uf_launch, self.button_hybrid)
 
         # The switch button.
         self.button_switch = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Switch")
@@ -246,7 +247,27 @@ class Pipe_editor(wx.Frame):
         self.button_switch.SetFont(font.normal)
         self.button_switch.SetToolTipString("Switch data pipes.")
         button_sizer.Add(self.button_switch, 1, wx.ALL|wx.EXPAND, 0)
-        self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.switch, self.button_switch)
+        self.Bind(wx.EVT_BUTTON, self.uf_launch, self.button_switch)
+
+
+    def uf_launch(self, event):
+        """Launch the user function GUI wizards.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the respective user functions.
+        if event.GetEventObject() == self.button_create:
+            user_functions.pipe.create()
+        elif event.GetEventObject() == self.button_copy:
+            user_functions.pipe.copy()
+        elif event.GetEventObject() == self.button_delete:
+            user_functions.pipe.delete()
+        elif event.GetEventObject() == self.button_hybrid:
+            user_functions.pipe.hybrid()
+        elif event.GetEventObject() == self.button_switch:
+            user_functions.pipe.switch()
 
 
     def add_logo(self, box):
@@ -299,7 +320,6 @@ class Pipe_editor(wx.Frame):
 
     def associate_auto(self, event):
         """Associate the selected data pipe with a new auto-analysis.
-
 
         @param event:   The wx event.
         @type event:    wx event
