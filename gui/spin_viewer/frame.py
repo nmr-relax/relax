@@ -35,43 +35,14 @@ from status import Status; status = Status()
 from gui import paths
 from gui.components.menu import build_menu_item
 from gui.icons import relax_icons
+from gui.menu import Uf_menus
 from gui.misc import gui_to_str, str_to_gui
 from gui.spin_viewer.splitter import Tree_splitter
+from gui.user_functions import User_functions; user_functions = User_functions()
 
 
 class Spin_view_window(wx.Frame):
     """A window element for the tree view."""
-
-    # Some IDs for the menu entries.
-    MENU_SEQUENCE_COPY = wx.NewId()
-    MENU_SEQUENCE_READ = wx.NewId()
-    MENU_SEQUENCE_WRITE = wx.NewId()
-    MENU_STRUCTURE_DELETE = wx.NewId()
-    MENU_STRUCTURE_LOAD_SPINS = wx.NewId()
-    MENU_STRUCTURE_READ_PDB = wx.NewId()
-    MENU_STRUCTURE_WRITE_PDB = wx.NewId()
-    MENU_MOLECULE_COPY = wx.NewId()
-    MENU_MOLECULE_CREATE = wx.NewId()
-    MENU_MOLECULE_DELETE = wx.NewId()
-    MENU_RESIDUE_COPY = wx.NewId()
-    MENU_RESIDUE_CREATE = wx.NewId()
-    MENU_RESIDUE_DELETE = wx.NewId()
-    MENU_SPIN_COPY = wx.NewId()
-    MENU_SPIN_CREATE = wx.NewId()
-    MENU_SPIN_CREATE_PSEUDO = wx.NewId()
-    MENU_SPIN_DELETE = wx.NewId()
-    MENU_SPIN_DISPLAY = wx.NewId()
-    MENU_SPIN_ELEMENT = wx.NewId()
-    MENU_SPIN_NAME = wx.NewId()
-    MENU_SPIN_NUMBER = wx.NewId()
-    MENU_SELECT_ALL = wx.NewId()
-    MENU_SELECT_READ = wx.NewId()
-    MENU_SELECT_REVERSE = wx.NewId()
-    MENU_SELECT_SPIN = wx.NewId()
-    MENU_DESELECT_ALL = wx.NewId()
-    MENU_DESELECT_READ = wx.NewId()
-    MENU_DESELECT_REVERSE = wx.NewId()
-    MENU_DESELECT_SPIN = wx.NewId()
 
     def __init__(self, *args, **kwds):
         """Set up the relax prompt."""
@@ -115,36 +86,11 @@ class Spin_view_window(wx.Frame):
         if not status.exec_lock.locked():
             enable = True
 
-        # The menu bar.
-        self.menubar.Enable(self.MENU_SEQUENCE_COPY, enable)
-        self.menubar.Enable(self.MENU_SEQUENCE_READ, enable)
-        self.menubar.Enable(self.MENU_SEQUENCE_WRITE, enable)
-        self.menubar.Enable(self.MENU_STRUCTURE_DELETE, enable)
-        self.menubar.Enable(self.MENU_STRUCTURE_LOAD_SPINS, enable)
-        self.menubar.Enable(self.MENU_STRUCTURE_READ_PDB, enable)
-        self.menubar.Enable(self.MENU_STRUCTURE_WRITE_PDB, enable)
-        self.menubar.Enable(self.MENU_MOLECULE_COPY, enable)
-        self.menubar.Enable(self.MENU_MOLECULE_CREATE, enable)
-        self.menubar.Enable(self.MENU_MOLECULE_DELETE, enable)
-        self.menubar.Enable(self.MENU_RESIDUE_COPY, enable)
-        self.menubar.Enable(self.MENU_RESIDUE_CREATE, enable)
-        self.menubar.Enable(self.MENU_RESIDUE_DELETE, enable)
-        self.menubar.Enable(self.MENU_SPIN_COPY, enable)
-        self.menubar.Enable(self.MENU_SPIN_CREATE, enable)
-        self.menubar.Enable(self.MENU_SPIN_CREATE_PSEUDO, enable)
-        self.menubar.Enable(self.MENU_SPIN_DELETE, enable)
-        self.menubar.Enable(self.MENU_SPIN_DISPLAY, enable)
-        self.menubar.Enable(self.MENU_SPIN_ELEMENT, enable)
-        self.menubar.Enable(self.MENU_SPIN_NAME, enable)
-        self.menubar.Enable(self.MENU_SPIN_NUMBER, enable)
-        self.menubar.Enable(self.MENU_SELECT_ALL, enable)
-        self.menubar.Enable(self.MENU_SELECT_READ, enable)
-        self.menubar.Enable(self.MENU_SELECT_REVERSE, enable)
-        self.menubar.Enable(self.MENU_SELECT_SPIN, enable)
-        self.menubar.Enable(self.MENU_DESELECT_ALL, enable)
-        self.menubar.Enable(self.MENU_DESELECT_READ, enable)
-        self.menubar.Enable(self.MENU_DESELECT_REVERSE, enable)
-        self.menubar.Enable(self.MENU_DESELECT_SPIN, enable)
+        # Loop over the menus.
+        for menu, label in self.menubar.GetMenus():
+            # Loop over the menu items.
+            for item in menu.GetMenuItems():
+                item.Enable(enable)
 
         # The pipe selector.
         self.pipe_name.Enable(enable)
@@ -158,62 +104,11 @@ class Spin_view_window(wx.Frame):
         if status.show_gui:
             self.SetMenuBar(self.menubar)
 
-        # The sequence menu entry.
+        # The user function menu entry.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SEQUENCE_COPY, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.sequence.copy))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SEQUENCE_READ, text="&read", icon=paths.icon_16x16.open, fn=self.gui.user_functions.sequence.read))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SEQUENCE_WRITE, text="&write", icon=paths.icon_16x16.save, fn=self.gui.user_functions.sequence.write))
-        self.menubar.Append(menu, "se&quence")
-
-        # The structure menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_STRUCTURE_DELETE, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.structure.delete))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_STRUCTURE_LOAD_SPINS, text="&load_spins", icon=paths.icon_16x16.spin, fn=self.gui.user_functions.structure.load_spins))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_STRUCTURE_READ_PDB, text="&read_pdb", icon=paths.icon_16x16.open, fn=self.gui.user_functions.structure.read_pdb))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_STRUCTURE_WRITE_PDB, text="&write_pdb", icon=paths.icon_16x16.save, fn=self.gui.user_functions.structure.write_pdb))
-        self.menubar.Append(menu, "st&ructure")
-
-        # The molecule menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_MOLECULE_COPY, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.molecule.copy))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_MOLECULE_CREATE, text="crea&te", icon=paths.icon_16x16.add, fn=self.gui.user_functions.molecule.create))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_MOLECULE_DELETE, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.molecule.delete))
-        self.menubar.Append(menu, "&molecule")
-
-        # The residue menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_RESIDUE_COPY, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.residue.copy))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_RESIDUE_CREATE, text="crea&te", icon=paths.icon_16x16.add, fn=self.gui.user_functions.residue.create))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_RESIDUE_DELETE, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.residue.delete))
-        self.menubar.Append(menu, "&residue")
-
-        # The spin menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_COPY, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.spin.copy))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_CREATE, text="crea&te", icon=paths.icon_16x16.add, fn=self.gui.user_functions.spin.create))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_CREATE_PSEUDO, text="create_&pseudo", icon=paths.icon_16x16.add, fn=self.gui.user_functions.spin.create_pseudo))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_DELETE, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.spin.delete))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_DISPLAY, text="displa&y", icon=None, fn=self.gui.user_functions.spin.display))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_ELEMENT, text="&element", icon=None, fn=self.gui.user_functions.spin.element))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_NAME, text="&name", icon=None, fn=self.gui.user_functions.spin.name))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_NUMBER, text="num&ber", icon=None, fn=self.gui.user_functions.spin.number))
-        self.menubar.Append(menu, "&spin")
-
-        # The select menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SELECT_ALL, text="&all", icon=None, fn=self.gui.user_functions.select.all))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SELECT_READ, text="&read", icon=paths.icon_16x16.open, fn=self.gui.user_functions.select.read))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SELECT_REVERSE, text="re&verse", icon=None, fn=self.gui.user_functions.select.reverse))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SELECT_SPIN, text="&spin", icon=paths.icon_16x16.spin, fn=self.gui.user_functions.select.spin))
-        self.menubar.Append(menu, "se&lect")
-
-        # The deselect menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_DESELECT_ALL, text="&all", icon=None, fn=self.gui.user_functions.deselect.all))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_DESELECT_READ, text="&read", icon=paths.icon_16x16.open, fn=self.gui.user_functions.deselect.read))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_DESELECT_REVERSE, text="re&verse", icon=None, fn=self.gui.user_functions.deselect.reverse))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_DESELECT_SPIN, text="&spin", icon=paths.icon_16x16.spin, fn=self.gui.user_functions.deselect.spin))
-        self.menubar.Append(menu, "&deselect")
+        uf_menus = Uf_menus(parent=self, menu=menu)
+        title = "&User functions"
+        self.menubar.Append(menu, title)
 
 
     def Show(self, show=True):
