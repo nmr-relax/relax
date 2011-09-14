@@ -37,6 +37,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.fonts import font
 from gui.icons import relax_icons
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import add_border, gui_to_str, open_file, str_to_gui
 from gui.paths import icon_22x22
 from gui.user_functions import User_functions; user_functions = User_functions()
@@ -49,18 +50,15 @@ class Results_viewer(wx.Frame):
     border = 10
     size = (800, 400)
 
-    def __init__(self, gui):
+    def __init__(self, parent):
         """Build the results frame.
 
-        @param gui:                 The main GUI class.
-        @type gui:                  gui.relax_gui.Main instance
+        @param parent:  The parent wx object.
+        @type parent:   wx object
         """
 
-        # Store the main class.
-        self.gui = gui
-
         # Initialise the base frame.
-        wx.Frame.__init__(self, parent=gui, style=wx.DEFAULT_FRAME_STYLE)
+        wx.Frame.__init__(self, parent=parent, style=wx.DEFAULT_FRAME_STYLE)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
@@ -96,7 +94,7 @@ class Results_viewer(wx.Frame):
         self.button_open.SetBitmapLabel(wx.Bitmap(icon_22x22.document_open, wx.BITMAP_TYPE_ANY))
         self.button_open.SetFont(font.normal)
         self.button_open.SetMinSize((103, 33))
-        self.gui.Bind(wx.EVT_BUTTON, self.open_result_file, self.button_open)
+        self.Bind(wx.EVT_BUTTON, self.open_result_file, self.button_open)
         box_centre.Add(self.button_open, 0, wx.ALIGN_RIGHT|wx.ADJUST_MINSIZE, 5)
 
         # Relayout the main panel.
@@ -180,7 +178,7 @@ class Results_viewer(wx.Frame):
         # Bind events.
         self.file_list.Bind(wx.EVT_SIZE, self.resize)
         if fn:
-            self.gui.Bind(wx.EVT_LISTBOX_DCLICK, fn, self.file_list)
+            self.Bind(wx.EVT_LISTBOX_DCLICK, fn, self.file_list)
 
 
     def build_pipe_sel(self, box):
@@ -262,9 +260,9 @@ class Results_viewer(wx.Frame):
 
             # Diffusion tensor PDB.
             elif type == 'diff_tensor_pdb':
-                self.gui.interpreter.queue('pymol.view')
-                self.gui.interpreter.queue('pymol.cartoon')
-                self.gui.interpreter.queue('pymol.tensor_pdb', file=file)
+                interpreter.queue('pymol.view')
+                interpreter.queue('pymol.cartoon')
+                interpreter.queue('pymol.tensor_pdb', file=file)
 
             # A special table.
             elif type == 'Table_of_Results':
@@ -343,8 +341,8 @@ class Results_viewer(wx.Frame):
             return
 
         # Switch data pipes.
-        self.gui.interpreter.queue('pipe.switch', pipe)
-        self.gui.interpreter.flush()
+        interpreter.queue('pipe.switch', pipe)
+        interpreter.flush()
 
         # Update the window.
         self.refresh()

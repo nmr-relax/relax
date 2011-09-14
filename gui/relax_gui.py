@@ -475,7 +475,7 @@ class Main(wx.Frame):
 
         # Create the results viewer window if needed.
         if not hasattr(self, 'results_viewer'):
-            self.results_viewer = Results_viewer(gui=self)
+            self.results_viewer = Results_viewer(self)
 
         # Open the window.
         if status.show_gui and not self.results_viewer.IsShown():
