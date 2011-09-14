@@ -148,13 +148,13 @@ class Main(wx.Frame):
         # Initialise the special interpreter thread object.
         self.interpreter = Interpreter()
 
-        # Run a script.
-        if script:
-            self.user_functions.script.script_exec(script)
-
         # Register functions with the observer objects.
         status.observers.pipe_alteration.register('status bar', self.update_status_bar)
         status.observers.result_file.register('gui', self.show_results_viewer_no_warn)
+
+        # Run a script.
+        if script:
+            wx.CallAfter(self.user_functions.script.script_exec, script)
 
 
     def about_gui(self, event):
