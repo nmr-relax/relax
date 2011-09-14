@@ -52,6 +52,7 @@ from gui.message import error_message, Question, Missing_data
 from gui.misc import add_border, gui_to_int, gui_to_str, list_to_gui, protected_exec, str_to_gui
 from gui import paths
 from gui.user_functions.structure import Read_pdb_page, Vectors_page
+from gui.user_functions import User_functions; user_functions = User_functions()
 from gui.wizard import Wiz_window
 
 
@@ -696,7 +697,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        self.gui.user_functions.value.set(None, param='csa')
+        user_functions.value.set(param='csa')
 
 
     def value_set_heteronuc_type(self, event):
@@ -707,7 +708,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        self.gui.user_functions.value.set(None, param='heteronuc_type')
+        user_functions.value.set(param='heteronuc_type')
 
 
     def value_set_proton_type(self, event):
@@ -718,7 +719,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        self.gui.user_functions.value.set(None, param='proton_type')
+        user_functions.value.set(param='proton_type')
 
 
     def value_set_r(self, event):
@@ -729,7 +730,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        self.gui.user_functions.value.set(None, param='r')
+        user_functions.value.set(param='r')
 
 
 
