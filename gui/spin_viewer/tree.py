@@ -45,6 +45,7 @@ class Mol_res_spin_tree(wx.Window):
 
     # Some IDs for the menu entries.
     MENU_ROOT_MOLECULE_CREATE = wx.NewId()
+    MENU_ROOT_LOAD_SPINS = wx.NewId()
     MENU_SPIN_SPIN_DELETE = wx.NewId()
     MENU_SPIN_SPIN_SELECT = wx.NewId()
     MENU_SPIN_SPIN_DESELECT = wx.NewId()
@@ -70,6 +71,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Store the args.
         self.gui = gui
+        self.parent = parent
 
         # Execute the base class method.
         wx.Window.__init__(self, parent, id, style=wx.WANTS_CHARS)
@@ -417,13 +419,22 @@ class Mol_res_spin_tree(wx.Window):
 
         # The menu.
         menu = wx.Menu()
+
+        # The add molecule entry.
         item = build_menu_item(menu, id=self.MENU_ROOT_MOLECULE_CREATE, text="Add molecule", icon=paths.icon_16x16.add)
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
+
+        # The add molecule entry.
+        item = build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="Load spins", icon=paths.icon_16x16.spin)
         menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
 
         # The menu actions.
         self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.create, id=self.MENU_ROOT_MOLECULE_CREATE)
+        self.Bind(wx.EVT_MENU, self.gui.spin_viewer.load_spins_wizard, id=self.MENU_ROOT_LOAD_SPINS)
 
         # Show the menu.
         if status.show_gui:
