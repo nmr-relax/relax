@@ -218,8 +218,9 @@ class Menu:
         self.menubar.Enable(self.MENU_FILE_OPEN, enable)
 
         # Loop over the user function menu items.
-        for i in range(len(self.entries_uf)):
-            self.menubar.Enable(self.entries_uf[i][0], enable)
+        menu = self.menubar.GetMenu(self.menu_uf_id)
+        for item in menu.GetMenuItems():
+            item.Enable(enable)
 
 
 
