@@ -207,7 +207,9 @@ class I32x32:
         self.user_busy =            path + 'status'     + sep + 'user-busy.png'
 
         # relax icons.
+        path = ICON_RELAX_PATH + '32x32' + sep
         self.pipe_hybrid =              path + 'pipe_hybrid.png'
+        self.spin =                     path + 'spin.png'
         self.structure =                path + 'structure.png'
 
 
