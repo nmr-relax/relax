@@ -135,7 +135,7 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.relax_manual, id=self.MENU_HELP_MANUAL)
         self.gui.Bind(wx.EVT_MENU, self.gui.contact_relax, id=self.MENU_HELP_MAIL)
         self.gui.Bind(wx.EVT_MENU, self.gui.references, id=self.MENU_HELP_REFS)
-        self.gui.Bind(wx.EVT_MENU, self.gui.user_functions.gpl.run, id=self.MENU_HELP_GPL)
+        self.gui.Bind(wx.EVT_MENU, self._licence, id=self.MENU_HELP_GPL)
         self.gui.Bind(wx.EVT_MENU, self.gui.about_gui, id=self.MENU_HELP_ABOUT_GUI)
         self.gui.Bind(wx.EVT_MENU, self.gui.about_relax, id=self.MENU_HELP_ABOUT)
 
@@ -179,6 +179,20 @@ class Menu:
 
             # Append the menu item.
             menu.AppendItem(menu_item)
+
+
+    def _licence(self, event):
+        """Show the GPL licence.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the user functions.
+        user_functions.gpl.run()
+
+        # Show the relax controller.
+        self.gui.show_controller(event)
 
 
     def _user_functions(self):
