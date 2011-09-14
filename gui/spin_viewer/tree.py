@@ -38,6 +38,7 @@ from gui import paths
 from gui.components.menu import build_menu_item
 from gui.message import Question
 from gui.misc import gui_to_str
+from gui.user_functions import User_functions; user_functions = User_functions()
 
 
 class Mol_res_spin_tree(wx.Window):
@@ -185,6 +186,17 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.spin_viewer.container.display(info)
 
 
+    def create_molecule(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Call the dialog.
+        user_functions.molecule.create()
+
+
     def create_residue(self, event):
         """Wrapper method.
 
@@ -193,7 +205,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Call the dialog.
-        self.gui.user_functions.residue.create(event, mol_name=self.info['mol_name'])
+        user_functions.residue.create(mol_name=self.info['mol_name'])
 
 
     def create_spin(self, event):
@@ -204,7 +216,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Call the dialog.
-        self.gui.user_functions.spin.create(event, mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
+        user_functions.spin.create(mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
 
 
     def delete_molecule(self, event):
@@ -433,7 +445,7 @@ class Mol_res_spin_tree(wx.Window):
             item.Enable(False)
 
         # The menu actions.
-        self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.create, id=self.MENU_ROOT_MOLECULE_CREATE)
+        self.Bind(wx.EVT_MENU, self.create_molecule, id=self.MENU_ROOT_MOLECULE_CREATE)
         self.Bind(wx.EVT_MENU, self.gui.spin_viewer.load_spins_wizard, id=self.MENU_ROOT_LOAD_SPINS)
 
         # Show the menu.
