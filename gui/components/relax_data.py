@@ -35,6 +35,7 @@ from status import Status; status = Status()
 from gui.fonts import font
 from gui.misc import add_border, float_to_gui, str_to_gui
 from gui import paths
+from gui.user_functions import User_functions; user_functions = User_functions()
 
 
 class Relax_data_list:
@@ -132,7 +133,7 @@ class Relax_data_list:
         self.button_add.SetFont(font.normal)
         self.button_add.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_add, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.read, self.button_add)
+        self.gui.Bind(wx.EVT_BUTTON, self.relax_data_read, self.button_add)
         self.button_add.SetToolTipString("Read relaxation data from file.")
 
         # Delete button.
@@ -141,7 +142,7 @@ class Relax_data_list:
         self.button_delete.SetFont(font.normal)
         self.button_delete.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_delete, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.delete, self.button_delete)
+        self.gui.Bind(wx.EVT_BUTTON, self.relax_data_delete, self.button_delete)
         self.button_delete.SetToolTipString("Delete loaded relaxation data from the relax data store.")
 
 
@@ -235,6 +236,28 @@ class Relax_data_list:
 
         # Add list to sizer.
         sizer.Add(self.element, 0, wx.ALL|wx.EXPAND, 0)
+
+
+    def relax_data_delete(self, event):
+        """Launch the relax_data.delete user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the dialog.
+        user_functions.relax_data.delete()
+
+
+    def relax_data_read(self, event):
+        """Launch the relax_data.read user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the dialog.
+        user_functions.relax_data.read()
 
 
     def resize(self, event):
