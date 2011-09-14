@@ -66,7 +66,7 @@ from gui.references import References
 from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
 from gui.settings import Free_file_format, load_sequence
-from gui.user_functions import User_functions
+from gui.user_functions import User_functions; user_functions = User_functions()
 
 
 class Main(wx.Frame):
@@ -120,9 +120,6 @@ class Main(wx.Frame):
         # Initialise the GUI data.
         self.init_data()
 
-        # The user function GUI elements.
-        self.user_functions = User_functions()
-
         # Build the menu bar.
         self.menu = Menu(self)
 
@@ -154,7 +151,7 @@ class Main(wx.Frame):
 
         # Run a script.
         if script:
-            wx.CallAfter(self.user_functions.script.script_exec, script)
+            wx.CallAfter(user_functions.script.script_exec, script)
 
 
     def about_gui(self, event):
