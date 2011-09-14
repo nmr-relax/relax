@@ -39,6 +39,7 @@ from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import add_border, gui_to_str, open_file, str_to_gui
 from gui.paths import icon_22x22
+from gui.user_functions import User_functions; user_functions = User_functions()
 
 
 class Results_viewer(wx.Frame):
@@ -249,15 +250,15 @@ class Results_viewer(wx.Frame):
 
             # Grace files.
             if type == 'grace':
-                self.gui.user_functions.grace.view(None, file=file)
+                user_functions.grace.view(file=file)
 
             # PyMOL macro files.
             elif type == 'pymol':
-                self.gui.user_functions.pymol.macro_run(None, file=file)
+                user_functions.pymol.macro_run(file=file)
 
             # Molmol macro files.
             elif type == 'molmol':
-                self.gui.user_functions.molmol.macro_run(None, file=file)
+                user_functions.molmol.macro_run(file=file)
 
             # Diffusion tensor PDB.
             elif type == 'diff_tensor_pdb':
