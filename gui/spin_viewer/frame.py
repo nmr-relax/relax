@@ -387,7 +387,7 @@ class Load_method_page(Wiz_page):
 
     # Class variables.
     image_path = WIZARD_IMAGE_PATH + 'spin.png'
-    main_text = 'Select the method for loading spins into relax.  To options are possible.  The first is to read sequence information out of a file via the sequence.read user function.  The second is to read in a 3D structure file via the structure.read_pdb user function and then to load the spins from this structure using the structure.load_spins user function.'
+    main_text = 'Select the method for loading spins into relax.  Two options are possible: the first is to read sequence information out of a text file via the sequence.read user function; the second is to read in a 3D structure file via the structure.read_pdb user function and then to load the spins from this structure using the structure.load_spins user function.'
     title = 'Spin loading'
 
 
