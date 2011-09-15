@@ -34,7 +34,7 @@ from warnings import warn
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxArgNotNoneError, RelaxError, RelaxImplementError, RelaxNoSequenceError
+from relax_errors import RelaxArgNotNoneError, RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
 from relax_io import extract_data, read_spin_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
@@ -533,6 +533,58 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
 
         # Set the error.
         spin.baseplane_rmsd[spectrum_id] = float(error) * scale
+
+
+def delete(spectrum_id=None):
+    """Delete spectral data corresponding to the spectrum ID.
+
+    @keyword spectrum_id:   The spectrum ID string.
+    @type spectrum_id:      str
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data exists.
+    if not hasattr(cdp, 'spectrum_ids') or spectrum_id not in cdp.spectrum_ids:
+        raise RelaxNoSpectraError(spectrum_id)
+
+    # Remove the ID.
+    cdp.spectrum_ids.pop(spectrum_id)
+
+    # The ncproc parameter.
+    if hasattr(cdp, 'ncproc') and cdp.ncproc.has_key(spectrum_id):
+        del cdp.ncproc[spectrum_id]
+
+    # Replicates.
+    if hasattr(cdp, 'replicates'): and cdp.replicates.has_key(spectrum_id):
+        # Loop over the replicates.
+        for i in range(len(replicates)):
+            # The spectrum is replicated.
+            if spectrum_id in cdp.replicates[i]:
+                # Duplicate.
+                if len(cdp.replicates[i]) == 2:
+                    cdp.replicates.pop(i)
+
+                # More than two spectra:
+                else:
+                    cdp.replicates[i].pop(cdp.replicates[i].index(spectrum_id))
+
+    # Errors.
+    if hasattr(cdp, 'sigma_I') and cdp.sigma_I.has_key(spectrum_id):
+        del cdp.sigma_I[spectrum_id]
+    if hasattr(cdp, 'var_I') and cdp.var_I.has_key(spectrum_id):
+        del cdp.var_I[spectrum_id]
+
+    # Loop over the spins.
+    for spin in spin_loop():
+        # Intensity data.
+        if hasattr(spin, 'intensities') and spin.intensites.has_key(spectrum_id):
+            del spin.intensities[spectrum_id]
 
 
 def error_analysis():
