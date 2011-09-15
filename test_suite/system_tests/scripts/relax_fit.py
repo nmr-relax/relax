@@ -57,22 +57,29 @@ times = [
     0.1936
 ]
 
-# Loop over the spectra.
-for i in xrange(len(names)):
-    # Load the peak intensities.
-    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method=ds.int_type)
+# Load the data twice to test data deletion.
+for iter in range(2):
+    # Loop over the spectra.
+    for i in xrange(len(names)):
+        # Load the peak intensities.
+        spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method=ds.int_type)
 
-    # Set the relaxation times.
-    relax_fit.relax_time(time=times[i], spectrum_id=names[i])
+        # Set the relaxation times.
+        relax_fit.relax_time(time=times[i], spectrum_id=names[i])
 
-# Specify the duplicated spectra.
-spectrum.replicated(spectrum_ids=['T2_ncyc1_ave', 'T2_ncyc1b_ave'])
-spectrum.replicated(spectrum_ids=['T2_ncyc4_ave', 'T2_ncyc4b_ave'])
-spectrum.replicated(spectrum_ids=['T2_ncyc9b_ave', 'T2_ncyc9_ave'])
-spectrum.replicated(spectrum_ids=['T2_ncyc11_ave', 'T2_ncyc11b_ave'])
+    # Specify the duplicated spectra.
+    spectrum.replicated(spectrum_ids=['T2_ncyc1_ave', 'T2_ncyc1b_ave'])
+    spectrum.replicated(spectrum_ids=['T2_ncyc4_ave', 'T2_ncyc4b_ave'])
+    spectrum.replicated(spectrum_ids=['T2_ncyc9b_ave', 'T2_ncyc9_ave'])
+    spectrum.replicated(spectrum_ids=['T2_ncyc11_ave', 'T2_ncyc11b_ave'])
 
-# Peak intensity error analysis.
-spectrum.error_analysis()
+    # Peak intensity error analysis.
+    spectrum.error_analysis()
+
+    # Delete the data.
+    if iter == 0:
+        for i in range(len(names)):
+            spectrum.delete(names[i])
 
 # Set the relaxation curve type.
 relax_fit.select_model('exp')
