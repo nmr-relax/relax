@@ -554,16 +554,16 @@ def delete(spectrum_id=None):
         raise RelaxNoSpectraError(spectrum_id)
 
     # Remove the ID.
-    cdp.spectrum_ids.pop(spectrum_id)
+    cdp.spectrum_ids.pop(cdp.spectrum_ids.index(spectrum_id))
 
     # The ncproc parameter.
     if hasattr(cdp, 'ncproc') and cdp.ncproc.has_key(spectrum_id):
         del cdp.ncproc[spectrum_id]
 
     # Replicates.
-    if hasattr(cdp, 'replicates'): and cdp.replicates.has_key(spectrum_id):
+    if hasattr(cdp, 'replicates'):
         # Loop over the replicates.
-        for i in range(len(replicates)):
+        for i in range(len(cdp.replicates)):
             # The spectrum is replicated.
             if spectrum_id in cdp.replicates[i]:
                 # Duplicate.
@@ -574,6 +574,9 @@ def delete(spectrum_id=None):
                 else:
                     cdp.replicates[i].pop(cdp.replicates[i].index(spectrum_id))
 
+                # No need to check further.
+                break
+
     # Errors.
     if hasattr(cdp, 'sigma_I') and cdp.sigma_I.has_key(spectrum_id):
         del cdp.sigma_I[spectrum_id]
@@ -583,7 +586,7 @@ def delete(spectrum_id=None):
     # Loop over the spins.
     for spin in spin_loop():
         # Intensity data.
-        if hasattr(spin, 'intensities') and spin.intensites.has_key(spectrum_id):
+        if hasattr(spin, 'intensities') and spin.intensities.has_key(spectrum_id):
             del spin.intensities[spectrum_id]
 
 
