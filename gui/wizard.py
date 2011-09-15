@@ -1270,15 +1270,16 @@ class Wiz_window(wx.Dialog):
 
         # Hide all of the original contents.
         for j in range(self._num_pages):
-            self._main_sizer.Hide(self._page_sizers[j])
-
-        # Execute the page's on_display() method.
-        self._pages[i].on_display()
-        self._pages[i].on_display_post()
+            if self._main_sizer.IsShown(self._page_sizers[j]):
+                self._main_sizer.Hide(self._page_sizers[j])
 
         # Show the desired page.
         if status.show_gui:
             self._main_sizer.Show(self._page_sizers[i])
+
+        # Execute the page's on_display() method.
+        self._pages[i].on_display()
+        self._pages[i].on_display_post()
 
         # Re-perform the window layout.
         self.Layout()
