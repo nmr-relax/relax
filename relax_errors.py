@@ -586,6 +586,20 @@ class RelaxSpinsNotLoadedError(BaseError):
 
 
 
+# Spectral data errors.
+#######################
+
+# No spectral data.
+class RelaxNoSpectraError(BaseError):
+    def __init__(self, spectrum_id):
+        self.text = "Spectral data corresponding to the ID string '%s' does not exist." % spectrum_id
+
+# Spectral data already exists.
+class RelaxSpectraError(BaseError):
+    def __init__(self, spectrum_id):
+        self.text = "Spectral data corresponding to the ID string '%s' already exists." % spectrum_id
+
+
 # Relaxation data errors.
 #########################
 
