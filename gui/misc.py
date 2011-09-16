@@ -155,6 +155,40 @@ def convert_to_float(string):
     return result
 
 
+def float_to_gui(num):
+    """Convert the float into the GUI string.
+
+    @param num:     The number in float or None form.
+    @type num:      float or None
+    @return:        The GUI string.
+    @rtype:         unicode
+    """
+
+    # No input.
+    if num == None:
+        num = ''
+
+    # Convert.
+    return unicode(num)
+
+
+def gui_to_bool(string):
+    """Convert the GUI obtained string to a bool.
+
+    @param string:  The bool in string form.
+    @type string:   str or unicode
+    @return:        The bool.
+    @rtype:         bool
+    """
+
+    # No value.
+    if string in ['', u'']:
+        return None
+
+    # Convert.
+    return eval(string)
+
+
 def gui_to_float(string):
     """Convert the GUI obtained string to an float.
 
@@ -245,82 +279,6 @@ def gui_to_int_or_list(string):
     return val
 
 
-def gui_to_str_or_list(string):
-    """Convert the GUI obtained string to a list.
-
-    @param string:  The list in string form.
-    @type string:   str or unicode
-    @return:        The integer or list of integers.
-    @rtype:         int or int list
-    """
-
-    # No value.
-    if string in ['', u'']:
-        return None
-
-    # Try converting to a list.
-    try:
-        val = eval(string)
-
-    # Failure, so return the original value.
-    except NameError:
-        return string
-
-    # Return the list.
-    return val
-
-
-def float_to_gui(num):
-    """Convert the float into the GUI string.
-
-    @param num:     The number in float or None form.
-    @type num:      float or None
-    @return:        The GUI string.
-    @rtype:         unicode
-    """
-
-    # No input.
-    if num == None:
-        num = ''
-
-    # Convert.
-    return unicode(num)
-
-
-def int_to_gui(num):
-    """Convert the int into the GUI string.
-
-    @param num:     The number in int or None form.
-    @type num:      int or None
-    @return:        The GUI string.
-    @rtype:         unicode
-    """
-
-    # No input.
-    if num == None:
-        num = ''
-
-    # Convert.
-    return unicode(num)
-
-
-def gui_to_bool(string):
-    """Convert the GUI obtained string to a bool.
-
-    @param string:  The bool in string form.
-    @type string:   str or unicode
-    @return:        The bool.
-    @rtype:         bool
-    """
-
-    # No value.
-    if string in ['', u'']:
-        return None
-
-    # Convert.
-    return eval(string)
-
-
 def gui_to_list(string):
     """Convert the GUI obtained string to a list.
 
@@ -358,6 +316,48 @@ def gui_to_str(string):
 
     # Convert.
     return str(string)
+
+
+def gui_to_str_or_list(string):
+    """Convert the GUI obtained string to a list.
+
+    @param string:  The list in string form.
+    @type string:   str or unicode
+    @return:        The integer or list of integers.
+    @rtype:         int or int list
+    """
+
+    # No value.
+    if string in ['', u'']:
+        return None
+
+    # Try converting to a list.
+    try:
+        val = eval(string)
+
+    # Failure, so return the original value.
+    except NameError:
+        return string
+
+    # Return the list.
+    return val
+
+
+def int_to_gui(num):
+    """Convert the int into the GUI string.
+
+    @param num:     The number in int or None form.
+    @type num:      int or None
+    @return:        The GUI string.
+    @rtype:         unicode
+    """
+
+    # No input.
+    if num == None:
+        num = ''
+
+    # Convert.
+    return unicode(num)
 
 
 def list_to_gui(list):
