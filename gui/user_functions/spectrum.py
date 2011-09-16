@@ -46,11 +46,21 @@ class Spectrum(UF_base):
         wizard.run()
 
 
-    def delete(self):
-        """The spectrum.delete user function."""
+    def delete(self, spectrum_id=None):
+        """The spectrum.delete user function.
+
+        @keyword spectrum_id:   The starting spectrum ID string.
+        @type spectrum_id:      str
+        """
+
+        # Create the wizard.
+        wizard, page = self.create_wizard(size_x=700, size_y=400, name='spectrum.delete', uf_page=Delete_page, return_page=True)
+
+        # Default ID.
+        if spectrum_id:
+            page.spectrum_id.SetValue(str_to_gui(spectrum_id))
 
         # Execute the wizard.
-        wizard = self.create_wizard(size_x=700, size_y=400, name='spectrum.delete', uf_page=Delete_page)
         wizard.run()
 
 
