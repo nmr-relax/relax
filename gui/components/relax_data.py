@@ -33,7 +33,7 @@ from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.fonts import font
-from gui.misc import add_border, float_to_gui, str_to_gui
+from gui.misc import add_border, float_to_gui, gui_to_str, str_to_gui
 from gui import paths
 from gui.user_functions import User_functions; user_functions = User_functions()
 
@@ -245,8 +245,20 @@ class Relax_data_list:
         @type event:    wx event
         """
 
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # No selection.
+        if item == -1:
+            id = None
+
+        # Selected item.
+        else:
+            # The spectrum ID.
+            id = gui_to_str(self.element.GetItemText(item))
+
         # Launch the dialog.
-        user_functions.relax_data.delete()
+        user_functions.relax_data.delete(ri_id=id)
 
 
     def relax_data_read(self, event):
