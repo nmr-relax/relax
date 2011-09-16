@@ -35,10 +35,11 @@ from generic_fns.pipes import cdp_name
 from status import Status; status = Status()
 
 # relax GUI module imports.
+from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import add_border, str_to_gui
-from gui.paths import IMAGE_PATH
+from gui.paths import IMAGE_PATH, icon_16x16
 
 
 class Controller(wx.Frame):
@@ -903,14 +904,14 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         menu = wx.Menu()
 
         # Add the entries.
-        menu.Append(self.menu_id_find, "Find")
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_find, text="&Find", icon=icon_16x16.edit_find))
         menu.AppendSeparator()
-        menu.Append(self.menu_id_copy, "Copy")
-        menu.Append(self.menu_id_select_all, "Select all")
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_copy, text="&Copy", icon=icon_16x16.edit_copy))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_select_all, text="&Select all", icon=icon_16x16.edit_select_all))
         menu.AppendSeparator()
-        menu.Append(self.menu_id_zoom_in, "Zoom in")
-        menu.Append(self.menu_id_zoom_out, "Zoom out")
-        menu.Append(self.menu_id_zoom_orig, "Original zoom")
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_in, text="Zoom &in", icon=icon_16x16.zoom_in))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_out, text="Zoom &out", icon=icon_16x16.zoom_out))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_orig, text="Original &zoom", icon=icon_16x16.zoom_original))
 
         # Pop up the menu.
         if status.show_gui:
