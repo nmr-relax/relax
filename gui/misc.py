@@ -182,7 +182,7 @@ def gui_to_bool(string):
     """
 
     # No value.
-    if string in ['', u'']:
+    if string in ['', u'', None]:
         return None
 
     # Convert.
@@ -199,7 +199,7 @@ def gui_to_float(string):
     """
 
     # No input.
-    if string in ['', u'']:
+    if string in ['', u'', None]:
         return None
 
     # Already a float.
@@ -231,7 +231,7 @@ def gui_to_int(string):
     """
 
     # No input.
-    if string in ['', u'']:
+    if string in ['', u'', None]:
         return None
 
     # Already an int.
@@ -259,7 +259,7 @@ def gui_to_int_or_list(string):
     """
 
     # No value.
-    if string in ['', u'']:
+    if string in ['', u'', None]:
         return None
 
     # Already an int or list.
@@ -289,7 +289,7 @@ def gui_to_list(string):
     """
 
     # No value.
-    if string in ['', u'']:
+    if string in ['', u'', None]:
         return []
 
     # Convert.
@@ -311,7 +311,7 @@ def gui_to_str(string):
     """
 
     # No value.
-    if string in ['', u'']:
+    if string in ['', u'', None]:
         return None
 
     # Convert.
@@ -328,7 +328,7 @@ def gui_to_str_or_list(string):
     """
 
     # No value.
-    if string in ['', u'']:
+    if string in ['', u'', None]:
         return None
 
     # Try converting to a list.
