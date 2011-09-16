@@ -403,6 +403,11 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
+        # Bring the window to the front.
+        if self.controller.IsShown():
+            self.controller.Raise()
+            return
+
         # Open the window.
         if status.show_gui:
             self.controller.Show()
@@ -425,6 +430,11 @@ class Main(wx.Frame):
         if not hasattr(self, 'pipe_editor'):
             self.pipe_editor = Pipe_editor(gui=self)
 
+        # Bring the window to the front.
+        if self.pipe_editor.IsShown():
+            self.pipe_editor.Raise()
+            return
+
         # Open the window.
         if status.show_gui and not self.pipe_editor.IsShown():
             self.pipe_editor.Show()
@@ -440,6 +450,11 @@ class Main(wx.Frame):
         # Build the relax prompt if needed.
         if not hasattr(self, 'relax_prompt'):
             self.relax_prompt = Prompt(None, -1, "", parent=self)
+
+        # Bring the window to the front.
+        if self.relax_prompt.IsShown():
+            self.relax_prompt.Raise()
+            return
 
         # Open the window.
         if status.show_gui:
@@ -474,6 +489,11 @@ class Main(wx.Frame):
         if not hasattr(self, 'results_viewer'):
             self.results_viewer = Results_viewer(self)
 
+        # Bring the window to the front.
+        if self.results_viewer.IsShown():
+            self.results_viewer.Raise()
+            return
+
         # Open the window.
         if status.show_gui and not self.results_viewer.IsShown():
             self.results_viewer.Show()
@@ -502,6 +522,11 @@ class Main(wx.Frame):
         # Build the spin view window.
         if not hasattr(self, 'spin_viewer'):
             self.spin_viewer = Spin_view_window(None, -1, "", parent=self)
+
+        # Bring the window to the front.
+        if self.spin_viewer.IsShown():
+            self.spin_viewer.Raise()
+            return
 
         # Open the window (the GUI flag check is inside the Show method).
         if status.show_gui and not self.spin_viewer.IsShown():
