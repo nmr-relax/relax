@@ -550,14 +550,14 @@ class Name_page(UF_page, Mol_res_spin):
         @type sizer:    wx.Sizer instance
         """
 
-        # The spin ID.
-        self.spin_id = self.spin_id_element(sizer, desc="Restrict the naming to the spins:")
-
         # The name.
         self.name = self.input_field(sizer, "The name:", tooltip=self.uf._doc_args_dict['name'])
 
         # The force flag.
         self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'], default=False)
+
+        # The spin ID.
+        self.spin_id = self.spin_id_element(sizer, desc="Restrict the naming to the spins:")
 
 
     def on_execute(self):
