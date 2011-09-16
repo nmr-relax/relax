@@ -224,7 +224,7 @@ class Spectra_list:
         """
 
         # The current selection.
-        item = self.element.GetFocusedItem()
+        item = self.element.GetFirstSelected()
 
         # No selection.
         if item == -1:
