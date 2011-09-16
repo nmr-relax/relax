@@ -31,11 +31,11 @@ from wx.lib import scrolledpanel
 
 # relax module imports.
 from prompt.base_class import _strip_lead
-from prompt.interpreter import Interpreter
 from status import Status; status = Status()
 
 # relax GUI imports.
 from gui.fonts import font
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import str_to_gui
 from gui.wizard import Wiz_page, Wiz_window
 
@@ -146,7 +146,7 @@ class UF_page(Wiz_page):
         wx.BeginBusyCursor()
 
         # Get the user function class (or function).
-        uf_class = getattr(interpreter, self.uf_path[0])
+        uf_class = getattr(interpreter._instance._interpreter, self.uf_path[0])
 
         # Get the user function.
         if len(self.uf_path) == 1:
@@ -306,6 +306,26 @@ class UF_page(Wiz_page):
         sizer.AddSpacer(5)
 
 
+    def execute(self, uf, *args, **kwds):
+        """Execute the user function, either asynchronously or synchronously.
+
+        @param uf:      The user function as a string.
+        @type uf:       str
+        @param args:    The user function arguments.
+        @type args:     any arguments
+        @param kwds:    The user function keyword arguments.
+        @type kwds:     any keyword arguments
+        """
+
+        # Synchronous execution.
+        if self.sync:
+            interpreter.apply(uf, *args, **kwds)
+
+        # Asynchronous execution.
+        else:
+            interpreter.queue(uf, *args, **kwds)
+
+
     def process_doc(self, doc):
         """Process the documentation list.
 
@@ -344,10 +364,3 @@ class UF_page(Wiz_page):
         # Yield the bits.
         for i in range(len(text)):
             yield text[i], type[i]
-
-
-
-# Load a copy of the relax interpreter.
-interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
-interpreter.populate_self()
-interpreter.on(verbose=False)
