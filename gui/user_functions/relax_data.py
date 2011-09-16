@@ -41,11 +41,21 @@ from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
 class Relax_data(UF_base):
     """The container class for holding all GUI elements."""
 
-    def delete(self):
-        """The relax_data.delete user function."""
+    def delete(self, ri_id=None):
+        """The relax_data.delete user function.
+
+        @keyword ri_id: The starting relaxation data ID string.
+        @type ri_id:    str
+        """
+
+        # Create the wizard.
+        wizard, page = self.create_wizard(size_x=700, size_y=400, name='relax_data.delete', uf_page=Delete_page, return_page=True)
+
+        # Default ID.
+        if ri_id:
+            page.ri_id.SetValue(str_to_gui(ri_id))
 
         # Execute the wizard.
-        wizard = self.create_wizard(size_x=700, size_y=400, name='relax_data.delete', uf_page=Delete_page)
         wizard.run()
 
 
