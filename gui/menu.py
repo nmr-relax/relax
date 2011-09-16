@@ -340,6 +340,7 @@ class Uf_menus:
 
         id = self.add_class(name="spectrum", text="s&pectrum", icon=None)
         self.add_uf(parent_id=id, name="spectrum.baseplane_rmsd", text="&baseplane_rmsd", icon=None, fn=user_functions.spectrum.baseplane_rmsd)
+        self.add_uf(parent_id=id, name="spectrum.delete", text="&delete", icon=paths.icon_16x16.remove, fn=user_functions.spectrum.delete)
         self.add_uf(parent_id=id, name="spectrum.error_analysis", text="&error_analysis", icon=None, fn=user_functions.spectrum.error_analysis)
         self.add_uf(parent_id=id, name="spectrum.integration_points", text="&integration_points", icon=None, fn=user_functions.spectrum.integration_points)
         self.add_uf(parent_id=id, name="spectrum.read_intensities", text="&read_intensities", icon=paths.icon_16x16.open, fn=user_functions.spectrum.read_intensities)
