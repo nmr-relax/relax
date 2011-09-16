@@ -46,6 +46,14 @@ class Spectrum(UF_base):
         wizard.run()
 
 
+    def delete(self):
+        """The spectrum.delete user function."""
+
+        # Execute the wizard.
+        wizard = self.create_wizard(size_x=700, size_y=400, name='spectrum.delete', uf_page=Delete_page)
+        wizard.run()
+
+
     def error_analysis(self):
         """The spectrum.error_analysis user function."""
 
@@ -125,6 +133,50 @@ class Baseplane_rmsd_page(UF_page):
 
         # Execute.
         interpreter.queue('spectrum.baseplane_rmsd', error=error, spectrum_id=spectrum_id, spin_id=spin_id)
+
+
+
+class Delete_page(UF_page):
+    """The spectrum.read() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'fid.png'
+    uf_path = ['spectrum', 'delete']
+
+    def add_contents(self, sizer):
+        """Add the spectral data deletion specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The ID.
+        self.spectrum_id = self.combo_box(sizer, "The spectrum ID:", tooltip=self.uf._doc_args_dict['spectrum_id'])
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The ID.
+        spectrum_id = gui_to_str(self.spectrum_id.GetValue())
+
+        # Delete the spectral data.
+        interpreter.queue('spectrum.delete', spectrum_id=spectrum_id)
+
+
+    def on_display(self):
+        """Clear previous data and update the label lists."""
+
+        # Clear the previous data.
+        self.spectrum_id.Clear()
+
+        # No data, so don't try to fill the combo boxes.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return
+
+        # The spectrum IDs.
+        for i in range(len(cdp.spectrum_ids)):
+            self.spectrum_id.Append(str_to_gui(cdp.spectrum_ids[i]))
 
 
 
