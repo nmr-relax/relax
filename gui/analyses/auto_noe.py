@@ -44,11 +44,12 @@ from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
-from gui.message import error_message, Missing_data
+from gui.message import error_message, Missing_data, Question
 from gui.misc import gui_to_str, protected_exec, str_to_gui
 from gui import paths
 from gui.user_functions.noe import Spectrum_type_page
 from gui.user_functions.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
+from gui.user_functions.spin import Name_page
 from gui.wizard import Wiz_window
 
 
@@ -278,13 +279,20 @@ class Auto_noe(Base_analysis):
         # Change the cursor to busy.
         wx.BeginBusyCursor()
 
-        # First check that at least a single spin is named!
-        if not are_spins_named():
-            error_message("No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.", caption='Incomplete setup')
-
         # Initialise a wizard.
         self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=800, title="Set up the NOE peak intensities")
         self.page_indices = {}
+
+        # First check that at least a single spin is named!
+        if not are_spins_named():
+            # The message.
+            msg = "No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.  Would you like to name the spins already loaded into the relax data store?"
+
+            # Ask about naming spins, and add the spin.name user function page.
+            if status.show_gui and Question(msg, title="Incomplete setup", size=(450, 250), default=True).ShowModal() == wx.ID_YES:
+                page = Name_page(self.wizard, sync=True)
+                self.page_indices['read'] = self.wizard.add_page(page, proceed_on_error=False)
+
 
         # The spectrum.read_intensities page.
         self.page_intensity = Read_intensities_page(self.wizard, sync=True)
