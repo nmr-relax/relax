@@ -127,12 +127,17 @@ class UF_page(Wiz_page):
     # The path to the user function.
     uf_path = None
 
-    def __init__(self, parent):
+    def __init__(self, parent, sync=False):
         """Set up the window.
 
         @param parent:      The parent class containing the GUI.
         @type parent:       class instance
+        @keyword sync:      A flag which if True will call user functions via interpreter.apply and if False via interpreter.queue.
+        @type sync:         bool
         """
+
+        # Store the args.
+        self.sync = sync
 
         # Yield to allow the cursor to be changed.
         wx.Yield()
