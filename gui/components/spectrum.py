@@ -34,8 +34,9 @@ from generic_fns.spectrum import replicated_flags, replicated_ids
 
 # relax GUI module imports.
 from gui.fonts import font
-from gui.misc import add_border, float_to_gui, str_to_gui
+from gui.misc import add_border, float_to_gui, gui_to_str, str_to_gui
 from gui import paths
+from gui.user_functions import User_functions; user_functions = User_functions()
 
 
 class Spectra_list:
@@ -116,6 +117,7 @@ class Spectra_list:
 
         # Call the button's method.
         self.button_add.Enable(enable)
+        self.button_delete.Enable(enable)
 
 
     def add_buttons(self, sizer):
@@ -137,6 +139,15 @@ class Spectra_list:
         button_sizer.Add(self.button_add, 0, 0, 0)
         self.gui.Bind(wx.EVT_BUTTON, self.fn_add, self.button_add)
         self.button_add.SetToolTipString("Read a spectral data file.")
+
+        # Delete button.
+        self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.panel, -1, None, " Delete")
+        self.button_delete.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
+        self.button_delete.SetFont(font.normal)
+        self.button_delete.SetSize((80, self.height_buttons))
+        button_sizer.Add(self.button_delete, 0, 0, 0)
+        self.gui.Bind(wx.EVT_BUTTON, self.data_delete, self.button_delete)
+        self.button_delete.SetToolTipString("Delete loaded relaxation data from the relax data store.")
 
 
     def build_element(self):
@@ -202,6 +213,29 @@ class Spectra_list:
 
         # Unfreeze.
         self.element.Thaw()
+
+
+    def data_delete(self, event):
+        """Launch the spectrum.delete user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFocusedItem()
+
+        # No selection.
+        if item == -1:
+            id = None
+
+        # Selected item.
+        else:
+            # The spectrum ID.
+            id = gui_to_str(self.element.GetItemText(item))
+
+        # Launch the dialog.
+        user_functions.spectrum.delete(spectrum_id=id)
 
 
     def delete(self):
