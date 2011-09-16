@@ -245,6 +245,31 @@ def gui_to_int_or_list(string):
     return val
 
 
+def gui_to_str_or_list(string):
+    """Convert the GUI obtained string to a list.
+
+    @param string:  The list in string form.
+    @type string:   str or unicode
+    @return:        The integer or list of integers.
+    @rtype:         int or int list
+    """
+
+    # No value.
+    if string in ['', u'']:
+        return None
+
+    # Try converting to a list.
+    try:
+        val = eval(string)
+
+    # Failure, so return the original value.
+    except NameError:
+        return string
+
+    # Return the list.
+    return val
+
+
 def float_to_gui(num):
     """Convert the float into the GUI string.
 
