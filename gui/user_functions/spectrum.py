@@ -150,7 +150,7 @@ class Delete_page(UF_page):
     """The spectrum.read() user function page."""
 
     # Some class variables.
-    image_path = WIZARD_IMAGE_PATH + 'fid.png'
+    image_path = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
     uf_path = ['spectrum', 'delete']
 
     def add_contents(self, sizer):
