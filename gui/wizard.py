@@ -1379,6 +1379,12 @@ class Wiz_window(wx.Dialog):
                 if self._uf_flush[i]:
                     interpreter.flush()
 
+                # Check for execution errors.
+                if not self._pages[self._current_page].exec_status:
+                    # Do not proceed.
+                    if not self._proceed_on_error[self._current_page]:
+                        return
+
                 # Increment the execution counter.
                 self._exec_count[i] += 1
 
