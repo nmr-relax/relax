@@ -335,9 +335,9 @@ def gui_to_str_or_list(string):
     try:
         val = eval(string)
 
-    # Failure, so return the original value.
+    # Catch failures, and try as a string.
     except NameError:
-        return string
+        return str(string)
 
     # Return the list.
     return val
