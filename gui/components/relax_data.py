@@ -32,6 +32,7 @@ import wx.lib.buttons
 from status import Status; status = Status()
 
 # relax GUI module imports.
+from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.misc import add_border, float_to_gui, gui_to_str, str_to_gui
 from gui import paths
@@ -233,9 +234,37 @@ class Relax_data_list:
 
         # Bind some events.
         self.element.Bind(wx.EVT_SIZE, self.resize)
+        self.element.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.on_right_click)  # For wxMSW!
+        self.element.Bind(wx.EVT_RIGHT_UP, self.on_right_click)   # For wxGTK!
 
         # Add list to sizer.
         sizer.Add(self.element, 0, wx.ALL|wx.EXPAND, 0)
+
+
+    def on_right_click(self, event):
+        """Pop up menu for the right click.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # New menu entry.
+        if not hasattr(self, 'popup_id_del'):
+            # ID number.
+            self.popup_id_del = wx.NewId()
+
+            # Bind clicks.
+            self.element.Bind(wx.EVT_MENU, self.relax_data_delete, id=self.popup_id_del)
+
+        # Initialise the menu.
+        menu = wx.Menu()
+
+        # Add the delete entry.
+        menu.AppendItem(build_menu_item(menu, id=self.popup_id_del, text="&Delete", icon=paths.icon_16x16.remove))
+
+        # Pop up the menu.
+        self.element.PopupMenu(menu)
+        menu.Destroy()
 
 
     def relax_data_delete(self, event):
