@@ -32,7 +32,6 @@ from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
@@ -167,7 +166,7 @@ class Copy_page(UF_page, Mol_res_spin):
             res_to = None
 
         # Copy the molecule.
-        interpreter.queue('residue.copy', pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
+        self.execute('residue.copy', pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
 
 
     def update_mol_list(self, event=None):
@@ -278,7 +277,7 @@ class Create_page(UF_page, Mol_res_spin):
             res_num = None
 
         # Set the name.
-        interpreter.queue('residue.create', res_name=res_name, res_num=res_num, mol_name=mol_name)
+        self.execute('residue.create', res_name=res_name, res_num=res_num, mol_name=mol_name)
 
 
 
@@ -325,7 +324,7 @@ class Delete_page(UF_page, Mol_res_spin):
             return
 
         # Delete the residue.
-        interpreter.queue('residue.delete', res_id=id)
+        self.execute('residue.delete', res_id=id)
 
         # Update.
         self._update_residues(None)

@@ -29,7 +29,6 @@ import wx
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_bool, gui_to_float, gui_to_int, gui_to_str, int_to_gui, str_to_gui
 
 
@@ -80,7 +79,7 @@ class Display_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        interpreter.queue('results.display')
+        self.execute('results.display')
 
 
 
@@ -112,7 +111,7 @@ class Read_page(UF_page):
             return
 
         # Execute the user function.
-        interpreter.queue('results.read', file=file)
+        self.execute('results.read', file=file)
 
 
 
@@ -156,4 +155,4 @@ class Write_page(UF_page):
         force = gui_to_bool(self.force.GetValue())
 
         # Execute the user function.
-        interpreter.queue('results.write', file=file, force=force, compress_type=compress_type)
+        self.execute('results.write', file=file, force=force, compress_type=compress_type)

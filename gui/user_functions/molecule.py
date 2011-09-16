@@ -29,7 +29,6 @@ from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_str, str_to_gui
 
@@ -138,7 +137,7 @@ class Copy_page(UF_page):
             mol_to = "#" + mol_to
 
         # Copy the molecule.
-        interpreter.queue('molecule.copy', pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
+        self.execute('molecule.copy', pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
 
     def update_mol_list(self, event=None):
@@ -191,7 +190,7 @@ class Create_page(UF_page):
         mol_type = str(self.mol_type.GetValue())
 
         # Set the name.
-        interpreter.queue('molecule.create', mol_name=mol_name, mol_type=mol_type)
+        self.execute('molecule.create', mol_name=mol_name, mol_type=mol_type)
 
 
 
@@ -233,4 +232,4 @@ class Delete_page(UF_page):
         mol_id = gui_to_str(self.mol_id.GetValue())
 
         # Delete the molecule.
-        interpreter.queue('molecule.delete', mol_id=mol_id)
+        self.execute('molecule.delete', mol_id=mol_id)

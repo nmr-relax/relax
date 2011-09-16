@@ -33,7 +33,6 @@ from generic_fns import pipes
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import ANALYSIS_IMAGE_PATH
 from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
 
@@ -111,7 +110,7 @@ class Read_restraints_page(UF_page):
             sep = None
 
         # Read the NOESY data.
-        interpreter.queue('noe.read_restraints', file=file, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
+        self.execute('noe.read_restraints', file=file, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
 
 
 
@@ -151,7 +150,7 @@ class Spectrum_type_page(UF_page):
         spectrum_id = gui_to_str(self.spectrum_id.GetValue())
 
         # Read the relaxation data.
-        interpreter.queue('noe.spectrum_type', spectrum_type=spectrum_type, spectrum_id=spectrum_id)
+        self.execute('noe.spectrum_type', spectrum_type=spectrum_type, spectrum_id=spectrum_id)
 
 
     def on_display(self):

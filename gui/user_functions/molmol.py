@@ -29,7 +29,6 @@ import wx
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_bool, gui_to_float, gui_to_int, gui_to_str, str_to_gui
 
@@ -132,7 +131,7 @@ class Clear_history_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        interpreter.queue('molmol.clear_history')
+        self.execute('molmol.clear_history')
 
 
 
@@ -161,7 +160,7 @@ class Command_page(UF_page):
         command = gui_to_str(self.command.GetValue())
 
         # Execute the user function.
-        interpreter.queue('molmol.command', command=command)
+        self.execute('molmol.command', command=command)
 
 
 
@@ -208,7 +207,7 @@ class Macro_apply_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        interpreter.queue('molmol.macro_apply', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        self.execute('molmol.macro_apply', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
 
 
@@ -239,7 +238,7 @@ class Macro_run_page(UF_page):
             return
 
         # Execute the user function.
-        interpreter.queue('molmol.macro_run', file=file, dir=None)
+        self.execute('molmol.macro_run', file=file, dir=None)
 
 
 
@@ -300,7 +299,7 @@ class Macro_write_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        interpreter.queue('molmol.macro_write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=None, force=force)
+        self.execute('molmol.macro_write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=None, force=force)
 
 
 
@@ -323,7 +322,7 @@ class Ribbon_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        interpreter.queue('molmol.ribbon')
+        self.execute('molmol.ribbon')
 
 
 
@@ -357,7 +356,7 @@ class Tensor_pdb_page(UF_page):
             return
 
         # Execute the user function.
-        interpreter.queue('molmol.tensor_pdb', file=file)
+        self.execute('molmol.tensor_pdb', file=file)
 
 
 
@@ -380,4 +379,4 @@ class View_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        interpreter.queue('molmol.view')
+        self.execute('molmol.view')

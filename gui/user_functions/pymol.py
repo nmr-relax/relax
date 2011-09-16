@@ -29,7 +29,6 @@ import wx
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_bool, gui_to_float, gui_to_int, gui_to_str, str_to_gui
 
@@ -132,7 +131,7 @@ class Clear_history_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        interpreter.queue('pymol.clear_history')
+        self.execute('pymol.clear_history')
 
 
 
@@ -161,7 +160,7 @@ class Command_page(UF_page):
         command = gui_to_str(self.command.GetValue())
 
         # Execute the user function.
-        interpreter.queue('pymol.command', command=command)
+        self.execute('pymol.command', command=command)
 
 
 
@@ -208,7 +207,7 @@ class Macro_apply_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        interpreter.queue('pymol.macro_apply', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        self.execute('pymol.macro_apply', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
 
 
@@ -231,7 +230,7 @@ class Ribbon_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        interpreter.queue('pymol.ribbon')
+        self.execute('pymol.ribbon')
 
 
 
@@ -262,7 +261,7 @@ class Macro_run_page(UF_page):
             return
 
         # Execute the user function.
-        interpreter.queue('pymol.macro_run', file=file, dir=None)
+        self.execute('pymol.macro_run', file=file, dir=None)
 
 
 
@@ -321,7 +320,7 @@ class Macro_write_page(UF_page):
         colour_list = gui_to_str(self.colour_list.GetValue())
 
         # Execute the user function.
-        interpreter.queue('pymol.macro_write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=None, force=force)
+        self.execute('pymol.macro_write', data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=None, force=force)
 
 
 
@@ -355,7 +354,7 @@ class Tensor_pdb_page(UF_page):
             return
 
         # Execute the user function.
-        interpreter.queue('pymol.tensor_pdb', file=file)
+        self.execute('pymol.tensor_pdb', file=file)
 
 
 
@@ -378,4 +377,4 @@ class View_page(UF_page):
         """Execute the user function."""
 
         # Execute the user function.
-        interpreter.queue('pymol.view')
+        self.execute('pymol.view')

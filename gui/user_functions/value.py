@@ -34,7 +34,6 @@ import specific_fns
 # GUI module imports.
 from base import UF_base, UF_page
 from gui.errors import gui_raise
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 
@@ -114,7 +113,7 @@ class Set_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Set the value.
-        interpreter.queue('value.set', val=val, param=param, spin_id=spin_id)
+        self.execute('value.set', val=val, param=param, spin_id=spin_id)
 
 
     def set_default_value(self, event=None):

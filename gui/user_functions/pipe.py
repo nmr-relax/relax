@@ -31,7 +31,6 @@ from generic_fns.pipes import PIPE_DESC, VALID_TYPES, cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_list, gui_to_str, str_to_gui
 from gui.components.combo_list import Combo_list
 from gui.paths import WIZARD_IMAGE_PATH
@@ -125,7 +124,7 @@ class Copy_page(UF_page):
         pipe_to = gui_to_str(self.pipe_to.GetValue())
 
         # Copy the data pipe.
-        interpreter.queue('pipe.copy', pipe_from, pipe_to)
+        self.execute('pipe.copy', pipe_from, pipe_to)
 
 
 
@@ -161,7 +160,7 @@ class Create_page(UF_page):
         pipe_type = self.pipe_type.GetClientData(self.pipe_type.GetSelection())
 
         # Set the name.
-        interpreter.queue('pipe.create', pipe_name=pipe_name, pipe_type=pipe_type)
+        self.execute('pipe.create', pipe_name=pipe_name, pipe_type=pipe_type)
 
 
 
@@ -205,7 +204,7 @@ class Delete_page(UF_page):
         pipe_name = str(self.pipe_name.GetValue())
 
         # Delete the data pipe.
-        interpreter.queue('pipe.delete', pipe_name)
+        self.execute('pipe.delete', pipe_name)
 
 
 
@@ -239,7 +238,7 @@ class Hybridise_page(UF_page):
         pipes = gui_to_list(self.pipes.GetValue())
 
         # Delete the data pipe.
-        interpreter.queue('pipe.hybridise', hybrid=hybrid, pipes=pipes)
+        self.execute('pipe.hybridise', hybrid=hybrid, pipes=pipes)
 
 
 
@@ -287,4 +286,4 @@ class Switch_page(UF_page):
         pipe_name = str(self.pipe_name.GetValue())
 
         # Switch the data pipe.
-        interpreter.queue('pipe.switch', pipe_name)
+        self.execute('pipe.switch', pipe_name)

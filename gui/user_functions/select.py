@@ -31,7 +31,6 @@ from prompt.select import boolean_doc
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_bool, gui_to_int, gui_to_str, str_to_gui
 
 
@@ -91,7 +90,7 @@ class All_page(UF_page):
         """Execute the user function."""
 
         # Select all.
-        interpreter.queue('select.all')
+        self.execute('select.all')
 
 
 
@@ -157,7 +156,7 @@ class Read_page(UF_page):
         change_all = gui_to_bool(self.change_all.GetValue())
 
         # Selection.
-        interpreter.queue('select.read', file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, boolean=boolean, change_all=change_all)
+        self.execute('select.read', file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, boolean=boolean, change_all=change_all)
 
 
 
@@ -185,7 +184,7 @@ class Reverse_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Select all.
-        interpreter.queue('select.reverse', spin_id=spin_id)
+        self.execute('select.reverse', spin_id=spin_id)
 
 
 
@@ -224,4 +223,4 @@ class Spin_page(UF_page):
         change_all = gui_to_bool(self.change_all.GetValue())
 
         # Select all.
-        interpreter.queue('select.spin', spin_id=spin_id, boolean=boolean, change_all=change_all)
+        self.execute('select.spin', spin_id=spin_id, boolean=boolean, change_all=change_all)

@@ -33,7 +33,6 @@ from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_int_or_list, gui_to_str, gui_to_str_or_list, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 
@@ -148,7 +147,7 @@ class Create_diff_tensor_pdb_page(UF_page):
         scale = gui_to_float(self.scale.GetValue())
 
         # Delete all structures.
-        interpreter.queue('structure.create_diff_tensor_pdb', scale=scale, file=file, force=force)
+        self.execute('structure.create_diff_tensor_pdb', scale=scale, file=file, force=force)
 
 
 
@@ -195,7 +194,7 @@ class Create_vector_dist_page(UF_page):
         length = gui_to_float(self.length.GetValue())
 
         # Delete all structures.
-        interpreter.queue('structure.create_vector_dist', length=length, file=file, symmetry=symmetry, force=force)
+        self.execute('structure.create_vector_dist', length=length, file=file, symmetry=symmetry, force=force)
 
 
 
@@ -217,7 +216,7 @@ class Delete_page(UF_page):
         """Execute the user function."""
 
         # Delete all structures.
-        interpreter.queue('structure.delete')
+        self.execute('structure.delete')
 
 
 
@@ -250,7 +249,7 @@ class Get_pos_page(UF_page):
         ave_pos = gui_to_bool(self.ave_pos.GetValue())
 
         # Delete all structures.
-        interpreter.queue('structure.get_pos', spin_id=spin_id, ave_pos=ave_pos)
+        self.execute('structure.get_pos', spin_id=spin_id, ave_pos=ave_pos)
 
 
 
@@ -283,7 +282,7 @@ class Load_spins_page(UF_page):
         ave_pos = gui_to_bool(self.ave_pos.GetValue())
 
         # Execute the user function.
-        interpreter.queue('structure.load_spins', spin_id=spin_id, ave_pos=ave_pos)
+        self.execute('structure.load_spins', spin_id=spin_id, ave_pos=ave_pos)
 
 
 
@@ -333,7 +332,7 @@ class Read_pdb_page(UF_page):
         parser = gui_to_str(self.parser.GetValue())
 
         # Execute the user function.
-        interpreter.queue('structure.read_pdb', file=file, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
+        self.execute('structure.read_pdb', file=file, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
 
 
 
@@ -366,7 +365,7 @@ class Write_pdb_page(UF_page):
         model_num = gui_to_str(self.model_num.GetValue())
 
         # Execute the user function.
-        interpreter.queue('structure.write_pdb', file=file, model_num=model_num)
+        self.execute('structure.write_pdb', file=file, model_num=model_num)
 
 
 
@@ -415,4 +414,4 @@ class Vectors_page(UF_page):
         unit =      gui_to_bool(self.unit.GetValue())
 
         # Execute the user function.
-        interpreter.queue('structure.vectors', attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
+        self.execute('structure.vectors', attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)

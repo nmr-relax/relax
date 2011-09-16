@@ -33,7 +33,6 @@ import specific_fns
 # GUI module imports.
 from base import UF_base, UF_page
 from gui.errors import gui_raise
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import gui_to_bool, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 
@@ -111,7 +110,7 @@ class View_page(UF_page):
         grace_exe = gui_to_str(self.grace_exe.GetValue())
 
         # Open the file.
-        interpreter.queue('grace.view', file=file, dir=None, grace_exe=grace_exe)
+        self.execute('grace.view', file=file, dir=None, grace_exe=grace_exe)
 
 
 
@@ -179,7 +178,7 @@ class Write_page(UF_page):
         force = gui_to_bool(self.force.GetValue())
 
         # Open the file.
-        interpreter.queue('grace.write', x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=None, force=force, norm=norm)
+        self.execute('grace.write', x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=None, force=force, norm=norm)
 
 
     def update_parameters(self, combo_box):
