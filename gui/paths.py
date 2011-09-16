@@ -90,7 +90,9 @@ class I16x16:
         self.document_open =        path + 'actions'    + sep + 'document-open.png'
         self.document_open_folder = path + 'actions'    + sep + 'document-open-folder.png'
         self.document_properties =  path + 'actions'    + sep + 'document-properties.png'
+        self.edit_copy =            path + 'actions'    + sep + 'edit-copy.png'
         self.edit_delete =          path + 'actions'    + sep + 'edit-delete.png'
+        self.edit_find =            path + 'actions'    + sep + 'edit-find.png'
         self.exit =                 path + 'actions'    + sep + 'system-shutdown.png'
         self.flag_blue =            path + 'actions'    + sep + 'flag-blue.png'
         self.flag_red =             path + 'actions'    + sep + 'flag-red.png'
@@ -114,6 +116,9 @@ class I16x16:
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
         self.user_busy =            path + 'status'     + sep + 'user-busy.png'
+        self.zoom_in =              path + 'actions'    + sep + 'zoom-in.png'
+        self.zoom_original =        path + 'actions'    + sep + 'zoom-original.png'
+        self.zoom_out =             path + 'actions'    + sep + 'zoom-out.png'
 
 
 
@@ -136,7 +141,9 @@ class I22x22:
         self.dialog_warning_relax = path + 'status'     + sep + 'dialog-warning-relax-blue.png'
         self.document_open =        path + 'actions'    + sep + 'document-open.png'
         self.document_open_folder = path + 'actions'    + sep + 'document-open-folder.png'
+        self.edit_copy =            path + 'actions'    + sep + 'edit-copy.png'
         self.edit_delete =          path + 'actions'    + sep + 'edit-delete.png'
+        self.edit_find =            path + 'actions'    + sep + 'edit-find.png'
         self.document_close =       path + 'actions'    + sep + 'document-close.png'
         self.document_properties =  path + 'actions'    + sep + 'document-properties.png'
         self.go_bottom =            path + 'actions'    + sep + 'go-bottom.png'
@@ -152,6 +159,9 @@ class I22x22:
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
         self.user_busy =            path + 'status'     + sep + 'user-busy.png'
+        self.zoom_in =              path + 'actions'    + sep + 'zoom-in.png'
+        self.zoom_original =        path + 'actions'    + sep + 'zoom-original.png'
+        self.zoom_out =             path + 'actions'    + sep + 'zoom-out.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep
@@ -193,7 +203,9 @@ class I32x32:
         self.document_open_folder = path + 'actions'    + sep + 'document-open-folder.png'
         self.document_properties =  path + 'actions'    + sep + 'document-properties.png'
         self.copy =                 path + 'actions'    + sep + 'list-add.png'
+        self.edit_copy =            path + 'actions'    + sep + 'edit-copy.png'
         self.edit_delete =          path + 'actions'    + sep + 'edit-delete.png'
+        self.edit_find =            path + 'actions'    + sep + 'edit-find.png'
         self.go_bottom =            path + 'actions'    + sep + 'go-bottom.png'
         self.list_remove =          path + 'actions'    + sep + 'list-remove.png'
         self.new =                  path + 'actions'    + sep + 'document-new.png'
@@ -205,6 +217,9 @@ class I32x32:
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
         self.user_busy =            path + 'status'     + sep + 'user-busy.png'
+        self.zoom_in =              path + 'actions'    + sep + 'zoom-in.png'
+        self.zoom_original =        path + 'actions'    + sep + 'zoom-original.png'
+        self.zoom_out =             path + 'actions'    + sep + 'zoom-out.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '32x32' + sep
@@ -235,7 +250,9 @@ class I48x48:
         self.document_open =        path + 'actions'    + sep + 'document-open.png'
         self.document_open_folder = path + 'actions'    + sep + 'document-open-folder.png'
         self.document_properties =  path + 'actions'    + sep + 'document-properties.png'
+        self.edit_copy =            path + 'actions'    + sep + 'edit-copy.png'
         self.edit_delete =          path + 'actions'    + sep + 'edit-delete.png'
+        self.edit_find =            path + 'actions'    + sep + 'edit-find.png'
         self.forwards =             path + 'actions'    + sep + 'go-next-view.png'
         self.go_bottom =            path + 'actions'    + sep + 'go-bottom.png'
         self.list_remove =          path + 'actions'    + sep + 'list-remove.png'
@@ -249,6 +266,9 @@ class I48x48:
         self.view_refresh =         path + 'actions'    + sep + 'view-refresh.png'
         self.view_statistics =      path + 'actions'    + sep + 'view-statistics.png'
         self.user_busy =            path + 'status'     + sep + 'user-busy.png'
+        self.zoom_in =              path + 'actions'    + sep + 'zoom-in.png'
+        self.zoom_original =        path + 'actions'    + sep + 'zoom-original.png'
+        self.zoom_out =             path + 'actions'    + sep + 'zoom-out.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '48x48' + sep
