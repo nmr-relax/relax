@@ -34,7 +34,7 @@ from generic_fns.pipes import cdp_name, pipe_names
 # GUI module imports.
 from base import UF_base, UF_page
 from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.misc import float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_str, str_to_gui
+from gui.misc import float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_int_or_list, gui_to_str, gui_to_str_or_list, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 
 
@@ -326,10 +326,10 @@ class Read_pdb_page(UF_page):
 
         # The args.
         file = gui_to_str(self.file.GetValue())
-        read_mol = gui_to_str(self.read_mol.GetValue())
-        set_mol_name = gui_to_str(self.set_mol_name.GetValue())
-        read_model = gui_to_str(self.read_model.GetValue())
-        set_model_num = gui_to_str(self.set_model_num.GetValue())
+        read_mol = gui_to_int_or_list(self.read_mol.GetValue())
+        set_mol_name = gui_to_str_or_list(self.set_mol_name.GetValue())
+        read_model = gui_to_int_or_list(self.read_model.GetValue())
+        set_model_num = gui_to_int_or_list(self.set_model_num.GetValue())
         parser = gui_to_str(self.parser.GetValue())
 
         # Execute the user function.
