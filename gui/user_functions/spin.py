@@ -63,13 +63,9 @@ class Spin(UF_base):
         # Create the wizard.
         wizard, page = self.create_wizard(size_x=600, size_y=400, name='spin.create', uf_page=Create_page, return_page=True)
 
-        # Default molecule name.
-        if mol_name:
-            page.mol.SetValue(str_to_gui(mol_name))
-
-        # Default residue.
-        if res_num or res_name:
-            page.res.SetValue(str_to_gui("%s %s" % (res_num, res_name)))
+        # Store the defaults.
+        page.defaults['mol'] = str_to_gui(mol_name)
+        page.defaults['res'] = str_to_gui("%s %s" % (res_num, res_name))
 
         # Execute the wizard.
         wizard.run()
@@ -344,6 +340,17 @@ class Create_page(UF_page, Mol_res_spin):
         if cdp_name():
             for mol in molecule_loop():
                 self.mol.Append(str_to_gui(mol.name))
+
+        # The default molecule.
+        if self.defaults.has_key('mol') and self.defaults['mol']:
+            self.mol.SetStringSelection(self.defaults['mol'])
+
+        # Update the residue list.
+        self._update_residues(None)
+
+        # The default residue.
+        if self.defaults.has_key('res') and self.defaults['res']:
+            self.res.SetStringSelection(self.defaults['res'])
 
 
     def on_execute(self):
