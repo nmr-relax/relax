@@ -237,7 +237,14 @@ class Menu:
         # Loop over the user function menu items.
         menu = self.menubar.GetMenu(self.menu_uf_id)
         for item in menu.GetMenuItems():
+            # Enable/disable.
             item.Enable(enable)
+
+            # Sub-menu.
+            submenu = item.GetSubMenu()
+            if submenu:
+                for subitem in submenu.GetMenuItems():
+                    subitem.Enable(enable)
 
 
 
