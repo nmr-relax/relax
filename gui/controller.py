@@ -958,12 +958,13 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             if stream_list[i] in [1, 3] and status.show_gui:
                 # Bring the window to the front.
                 if self.controller.IsShown():
-                    self.controller.Show()
                     self.controller.Raise()
 
                 # Open the window.
                 else:
+                    # Show the window, then go to the message.
                     self.controller.Show()
+                    self.GotoPos(self.GetLength())
 
         # Limit the scroll back.
         self.limit_scrollback()
