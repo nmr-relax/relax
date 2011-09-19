@@ -248,6 +248,10 @@ class Relax_data_list:
         @type event:    wx event
         """
 
+        # Execution lock, so do nothing.
+        if status.exec_lock.locked():
+            return
+
         # New menu entry.
         if not hasattr(self, 'popup_id_del'):
             # ID number.
