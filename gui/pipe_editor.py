@@ -369,7 +369,7 @@ class Pipe_editor(wx.Frame):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete the '%s' data pipe?  This operation cannot be undone." % self.selected_pipe
-        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the data pipe.
