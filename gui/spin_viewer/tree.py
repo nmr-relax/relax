@@ -38,7 +38,7 @@ from gui import paths
 from gui.components.menu import build_menu_item
 from gui.message import Question
 from gui.misc import gui_to_str
-from gui.user_functions import User_functions; user_functions = User_functions()
+from gui.user_functions import User_functions
 
 
 class Mol_res_spin_tree(wx.Window):
@@ -193,6 +193,9 @@ class Mol_res_spin_tree(wx.Window):
         @type event:    wx event
         """
 
+        # Set up the user functions.
+        user_functions = User_functions(self.gui.spin_viewer)
+
         # Call the dialog.
         user_functions.molecule.create()
 
@@ -204,6 +207,9 @@ class Mol_res_spin_tree(wx.Window):
         @type event:    wx event
         """
 
+        # Set up the user functions.
+        user_functions = User_functions(self.gui.spin_viewer)
+
         # Call the dialog.
         user_functions.residue.create(mol_name=self.info['mol_name'])
 
@@ -214,6 +220,9 @@ class Mol_res_spin_tree(wx.Window):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Set up the user functions.
+        user_functions = User_functions(self.gui.spin_viewer)
 
         # Call the dialog.
         user_functions.spin.create(mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
