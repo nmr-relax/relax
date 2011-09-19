@@ -591,6 +591,8 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.menu_id_zoom_in = wx.NewId()
         self.menu_id_zoom_out = wx.NewId()
         self.menu_id_zoom_orig = wx.NewId()
+        self.menu_id_goto_start = wx.NewId()
+        self.menu_id_goto_end = wx.NewId()
 
         # Make the control read only.
         self.SetReadOnly(True)
@@ -610,6 +612,8 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.Bind(wx.EVT_MENU, self.on_zoom_in, id=self.menu_id_zoom_in)
         self.Bind(wx.EVT_MENU, self.on_zoom_out, id=self.menu_id_zoom_out)
         self.Bind(wx.EVT_MENU, self.on_zoom_orig, id=self.menu_id_zoom_orig)
+        self.Bind(wx.EVT_MENU, self.on_goto_start, id=self.menu_id_goto_start)
+        self.Bind(wx.EVT_MENU, self.on_goto_end, id=self.menu_id_goto_end)
 
 
     def capture_keys(self, event):
@@ -648,6 +652,12 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             self.on_zoom_out(event)
         if event.ControlDown() and event.GetKeyCode() == 61:
             self.on_zoom_in(event)
+
+        # Jump to start or end (Ctrl-Home and Ctrl-End).
+        if event.ControlDown() and event.GetKeyCode() == 316:
+            self.on_goto_start(event)
+        elif event.ControlDown() and event.GetKeyCode() == 317:
+            self.on_goto_end(event)
 
 
     def find(self, event):
@@ -851,6 +861,28 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.Copy()
 
 
+    def on_goto_end(self, event):
+        """Move to the end of the text.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Go to the end.
+        self.GotoPos(self.GetLength())
+
+
+    def on_goto_start(self, event):
+        """Move to the start of the text.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Go to the start.
+        self.GotoPos(-1)
+
+
     def on_select_all(self, event):
         """Select all text in the control.
 
@@ -914,6 +946,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_in, text="Zoom &in", icon=icon_16x16.zoom_in))
         menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_out, text="Zoom &out", icon=icon_16x16.zoom_out))
         menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_orig, text="Original &zoom", icon=icon_16x16.zoom_original))
+        menu.AppendSeparator()
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_goto_start, text="&Go to start", icon=icon_16x16.go_top))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_goto_end, text="&Go to end", icon=icon_16x16.go_bottom))
 
         # Pop up the menu.
         if status.show_gui:
