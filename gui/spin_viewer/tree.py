@@ -228,7 +228,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete this molecule?  This operation cannot be undone."
-        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the molecule.
@@ -247,7 +247,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete this residue?  This operation cannot be undone."
-        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the residue.
@@ -266,7 +266,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete this spin?  This operation cannot be undone."
-        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the spin.
@@ -285,7 +285,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to deselect all spins of this molecule?"
-        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Deselect the molecule.
@@ -304,7 +304,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to deselect all spins of this residue?"
-        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Deselect the residue.
@@ -566,7 +566,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to select all spins of this molecule?"
-        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Select the molecule.
@@ -585,7 +585,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to select all spins of this residue?"
-        if status.show_gui and Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Select the residue.
