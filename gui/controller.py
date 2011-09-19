@@ -92,7 +92,7 @@ class Controller(wx.Frame):
         self.log_queue = Queue()
 
         # Add the log panel.
-        self.log_panel = LogCtrl(self.main_panel, log_queue=self.log_queue, id=-1)
+        self.log_panel = LogCtrl(self.main_panel, self, log_queue=self.log_queue, id=-1)
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
 
         # IO redirection.
@@ -527,11 +527,13 @@ class Controller(wx.Frame):
 class LogCtrl(wx.stc.StyledTextCtrl):
     """A special control designed to display relax output messages."""
 
-    def __init__(self, parent, log_queue=None, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.BORDER_SUNKEN, name=wx.stc.STCNameStr):
+    def __init__(self, parent, controller, log_queue=None, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.BORDER_SUNKEN, name=wx.stc.STCNameStr):
         """Set up the log control.
 
         @param parent:          The parent wx window object.
         @type parent:           Window
+        @param controller:      The controller window.
+        @type controller:       wx.Frame instance
         @keyword log_queue:     The queue of log messages.
         @type log_queue:        Queue.Queue instance
         @keyword id:            The wx ID.
@@ -547,7 +549,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         """
 
         # Store the args.
-        self.controller = parent
+        self.controller = controller
         self.log_queue = log_queue
 
         # Initialise the base class.
@@ -951,6 +953,17 @@ class LogCtrl(wx.stc.StyledTextCtrl):
                 # Change the style.
                 self.StartStyling(end - len_string, 31)
                 self.SetStyling(len_string, stream_list[i])
+
+            # Show the controller when there are errors or warnings.
+            if stream_list[i] in [1, 3] and status.show_gui:
+                # Bring the window to the front.
+                if self.controller.IsShown():
+                    self.controller.Show()
+                    self.controller.Raise()
+
+                # Open the window.
+                else:
+                    self.controller.Show()
 
         # Limit the scroll back.
         self.limit_scrollback()
