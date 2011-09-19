@@ -56,6 +56,10 @@ class Spin_view_window(wx.Frame):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE
         wx.Frame.__init__(self, *args, **kwds)
 
+        # Force the main window to start maximised (needed for MS Windows).
+        if not status.debug:
+            self.Maximize()
+
         # Set up the window icon.
         self.SetIcons(relax_icons)
 
