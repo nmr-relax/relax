@@ -201,6 +201,10 @@ class Analysis_controller:
         if index == self._current and self._current != 0:
             self.switch_page(self._current-1)
 
+        # Shift the current page back one if necessary.
+        if self._current > index:
+            self._current -= 1
+
         # No more analyses, so in the initial state.
         if self._num_analyses == 0:
             self.set_init_state()
