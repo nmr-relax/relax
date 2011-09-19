@@ -172,20 +172,20 @@ class Pipe_editor(wx.Frame):
         menu = wx.Menu()
 
         # Menu entry:  delete the data pipe.
-        item = build_menu_item(menu, parent=self.main_panel, text="&Delete the pipe", icon=icon_16x16.remove, fn=self.pipe_delete)
+        item = build_menu_item(menu, parent=self, text="&Delete the pipe", icon=icon_16x16.remove, fn=self.pipe_delete)
         menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
  
         # Menu entry:  switch to this data pipe.
-        item = build_menu_item(menu, parent=self.main_panel, text="&Switch to this pipe", icon=icon_16x16.pipe_switch, fn=self.pipe_switch)
+        item = build_menu_item(menu, parent=self, text="&Switch to this pipe", icon=icon_16x16.pipe_switch, fn=self.pipe_switch)
         menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
  
         # Menu entry:  new auto-analysis tab.
         if self.gui.analysis.page_index_from_pipe(self.selected_pipe) == None and pipe_type in ['noe', 'r1', 'r2', 'mf']:
-            item = build_menu_item(menu, parent=self.main_panel, text="&Associate with a new auto-analysis", icon=icon_16x16.new, fn=self.associate_auto)
+            item = build_menu_item(menu, parent=self, text="&Associate with a new auto-analysis", icon=icon_16x16.new, fn=self.associate_auto)
             menu.AppendItem(item)
             if status.exec_lock.locked():
                 item.Enable(False)
