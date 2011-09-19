@@ -380,7 +380,7 @@ class Analysis_controller:
             sizer.Add(self.notebook, 1, wx.ALL|wx.EXPAND, 0)
 
             # Bind changing events.
-            self.gui.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.on_page_change)
+            self.gui.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.on_page_change)
 
             # Delete the previous sizer.
             old_sizer = self.gui.GetSizer()
