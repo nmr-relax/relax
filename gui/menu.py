@@ -33,7 +33,7 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui import paths
 from gui.components.menu import build_menu_item
-from gui.user_functions import User_functions; user_functions = User_functions()
+from gui.user_functions import User_functions
 
 
 class Menu:
@@ -188,6 +188,9 @@ class Menu:
         @type event:    wx event
         """
 
+        # The user functions.
+        user_functions = User_functions(self.gui)
+
         # Launch the user functions.
         user_functions.gpl.run()
 
@@ -253,6 +256,9 @@ class Uf_menus:
         # Store the args.
         self.parent = parent
         self.menu = menu
+
+        # The user functions.
+        user_functions = User_functions(self.parent)
 
         # Initialise some data structures.
         self.uf_names = {}
