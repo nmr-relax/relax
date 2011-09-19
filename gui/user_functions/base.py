@@ -139,6 +139,9 @@ class UF_page(Wiz_page):
         # Store the args.
         self.sync = sync
 
+        # Default value data structure.
+        self.defaults = {}
+
         # Yield to allow the cursor to be changed.
         wx.Yield()
 
