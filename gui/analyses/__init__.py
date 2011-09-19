@@ -380,7 +380,8 @@ class Analysis_controller:
             sizer.Add(self.notebook, 1, wx.ALL|wx.EXPAND, 0)
 
             # Bind changing events.
-            self.gui.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.on_page_change)
+            self.gui.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.on_page_changing)
+            self.gui.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.on_page_changed)
 
             # Delete the previous sizer.
             old_sizer = self.gui.GetSizer()
@@ -439,8 +440,8 @@ class Analysis_controller:
         status.observers.gui_analysis.notify()
 
 
-    def on_page_change(self, event):
-        """Handle page changes.
+    def on_page_changing(self, event):
+        """Block page changing if needed.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -451,9 +452,16 @@ class Analysis_controller:
             # Show an error message.
             error_message("Cannot change analyses, relax is currently executing.", "relax execution lock")
 
-            # Veto the event, and return.
+            # Veto the event.
             event.Veto()
-            return
+
+
+    def on_page_changed(self, event):
+        """Handle page changes.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
 
         # The index.
         self._current = event.GetSelection()
