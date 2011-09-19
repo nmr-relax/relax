@@ -38,7 +38,7 @@ from gui.icons import relax_icons
 from gui.message import Question
 from gui.misc import add_border, gui_to_str, str_to_gui
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
-from gui.user_functions import User_functions; user_functions = User_functions()
+from gui.user_functions import User_functions
 
 
 class Pipe_editor(wx.Frame):
@@ -63,6 +63,9 @@ class Pipe_editor(wx.Frame):
 
         # Create GUI elements
         wx.Frame.__init__(self, None, id=-1, title="Data pipe editor")
+
+        # Initialise the user functions.
+        self.user_functions = User_functions(self)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
@@ -259,15 +262,15 @@ class Pipe_editor(wx.Frame):
 
         # Launch the respective user functions.
         if event.GetEventObject() == self.button_create:
-            user_functions.pipe.create()
+            self.user_functions.pipe.create()
         elif event.GetEventObject() == self.button_copy:
-            user_functions.pipe.copy()
+            self.user_functions.pipe.copy()
         elif event.GetEventObject() == self.button_delete:
-            user_functions.pipe.delete()
+            self.user_functions.pipe.delete()
         elif event.GetEventObject() == self.button_hybrid:
-            user_functions.pipe.hybrid()
+            self.user_functions.pipe.hybrid()
         elif event.GetEventObject() == self.button_switch:
-            user_functions.pipe.switch()
+            self.user_functions.pipe.switch()
 
 
     def add_logo(self, box):
