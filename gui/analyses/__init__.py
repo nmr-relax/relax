@@ -82,6 +82,9 @@ class Analysis_controller:
         self.name = 'notebook page switcher'
         status.observers.pipe_alteration.register(self.name, self.pipe_switch)
 
+        # Register a method for removing analyses if the associated pipe is deleted.
+        status.observers.pipe_alteration.register('notebook pipe deletion', self.pipe_deletion)
+
         # Register the deletion of all analyses for the reset status observer.
         status.observers.reset.register('gui analyses', self.post_reset)
 
@@ -179,7 +182,8 @@ class Analysis_controller:
             self._analyses[index].delete()
 
         # Delete all data pipes associated with the analysis.
-        pipes.delete(ds.relax_gui.analyses[index].pipe_name)
+        if pipes.has_pipe(ds.relax_gui.analyses[index].pipe_name):
+            pipes.delete(ds.relax_gui.analyses[index].pipe_name)
 
         # Delete the data store object.
         ds.relax_gui.analyses.pop(index)
@@ -500,6 +504,23 @@ class Analysis_controller:
 
         # Return the page name.
         return ds.relax_gui.analyses[index].analysis_name
+
+
+    def pipe_deletion(self):
+        """Remove analysis tabs for which the associated data pipe has been deleted."""
+
+        # Loop over the analyses, noting which no longer have a data pipe.
+        del_list = []
+        for i in range(self._num_analyses):
+            if not pipes.has_pipe(ds.relax_gui.analyses[i].pipe_name):
+                del_list.append(i)
+
+        # Reverse the order of the list so the removal works correctly.
+        del_list.reverse()
+
+        # Delete the analyses.
+        for index in del_list:
+            self.delete_analysis(index)
 
 
     def pipe_switch(self, pipe=None):
