@@ -177,6 +177,13 @@ class Analysis_controller:
         @type index:    int
         """
 
+        # Decrement the number of analyses.
+        self._num_analyses -= 1
+
+        # Shift the current page back one if necessary.
+        if self._current > index:
+            self._current -= 1
+
         # Execute the analysis delete method, if it exists.
         if hasattr(self._analyses[index], 'delete'):
             self._analyses[index].delete()
@@ -194,16 +201,9 @@ class Analysis_controller:
         # Delete the tab object.
         self._analyses.pop(index)
 
-        # Decrement the number of analyses.
-        self._num_analyses -= 1
-
         # The current page has been deleted, so switch one back (if possible).
         if index == self._current and self._current != 0:
             self.switch_page(self._current-1)
-
-        # Shift the current page back one if necessary.
-        if self._current > index:
-            self._current -= 1
 
         # No more analyses, so in the initial state.
         if self._num_analyses == 0:
