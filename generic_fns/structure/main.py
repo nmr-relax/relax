@@ -482,7 +482,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         # The bond vector already exists.
         if hasattr(spin, object_name):
             obj = getattr(spin, object_name)
-            if obj:
+            if obj != None:
                 warn(RelaxWarning("The bond vector for the spin " + repr(id) + " already exists."))
                 continue
 
