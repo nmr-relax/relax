@@ -228,6 +228,13 @@ class Info_box(object):
         except:
             text = text + '\n'
 
+        # scipy.
+        text = text + format1 % ('scipy', dep_check.scipy_module)
+        try:
+            text = text + format2 % (dep_check.scipy.version.version, dep_check.scipy.__path__[0])
+        except:
+            text = text + '\n'
+
         # wxPython.
         text = text + format1 % ('wxPython', dep_check.wx_module)
         try:
