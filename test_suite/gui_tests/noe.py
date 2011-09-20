@@ -44,6 +44,11 @@ class Noe(GuiTestCase):
     def test_noe_analysis(self):
         """Test the NOE analysis."""
 
+        # Initialise all the special windows (to sometimes catch rare race conditions).
+        self.gui.show_prompt(None)
+        self.gui.show_tree(None)
+        self.gui.show_pipe_editor(None)
+
         # Simulate the new analysis wizard.
         self.gui.analysis.menu_new(None)
         page = self.gui.analysis.new_wizard.wizard.get_page(0)
