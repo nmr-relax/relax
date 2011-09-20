@@ -297,6 +297,10 @@ class Interpreter_thread(Thread):
 
             # Release the lock.
             finally:
+                # Signal that the queue item has been processed.
+                self._queue.task_done()
+
+                # Release the execution lock.
                 status.exec_lock.release()
 
             # Notify all observers that a user function has completed.
