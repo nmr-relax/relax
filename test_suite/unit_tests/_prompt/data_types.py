@@ -22,8 +22,9 @@
 
 # Python module imports.
 from numpy import int8, int16, int32, int64, float32, float64, zeros
-from tempfile import mkstemp
 
+# relax module imports.
+from relax_io import DummyFileObject
 
 class Container:
     """A class to act as a container."""
@@ -77,7 +78,7 @@ DATA_TYPES.append(['int', zeros(2, int32)[0]])
 DATA_TYPES.append(['int', zeros(2, int64)[0]])
 
 # File descriptor.
-DATA_TYPES.append(['file', mkstemp()])
+DATA_TYPES.append(['file', DummyFileObject()])
 
 # Floats.
 DATA_TYPES.append(['float', 0.0])
