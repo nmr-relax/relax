@@ -470,7 +470,7 @@ class Auto_rx(Base_analysis):
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['pts'])
-        if not gui_to_str(page.spectrum_id.GetValue()):
+        if page.spectrum_id.GetSelection() != -1 and not gui_to_str(page.spectrum_id.GetValue()):
             page.spectrum_id.SetStringSelection(str_to_gui(id))
 
 
@@ -485,7 +485,7 @@ class Auto_rx(Base_analysis):
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['repl'])
-        if not gui_to_str(page.spectrum_id_boxes[0].GetValue()):
+        if page.spectrum_id.GetSelection() != -1 and not gui_to_str(page.spectrum_id_boxes[0].GetValue()):
             page.spectrum_id_boxes[0].SetStringSelection(str_to_gui(id))
 
 
@@ -500,7 +500,7 @@ class Auto_rx(Base_analysis):
 
         # Set the ID in the spectrum.baseplane_rmsd page.
         page = self.wizard.get_page(self.page_indices['rmsd'])
-        if not gui_to_str(page.spectrum_id.GetValue()):
+        if page.spectrum_id.GetSelection() != -1 and not gui_to_str(page.spectrum_id.GetValue()):
             page.spectrum_id.SetStringSelection(str_to_gui(id))
 
 
@@ -515,7 +515,7 @@ class Auto_rx(Base_analysis):
 
         # Set the ID in the relax_fit.relax_time page.
         page = self.wizard.get_page(self.page_indices['relax_time'])
-        if not gui_to_str(page.spectrum_id.GetValue()):
+        if page.spectrum_id.GetSelection() != -1 and not gui_to_str(page.spectrum_id.GetValue()):
             page.spectrum_id.SetStringSelection(str_to_gui(id))
 
 
