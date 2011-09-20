@@ -32,6 +32,7 @@ from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import int_to_gui, str_to_gui
 from gui.user_functions import deselect, sequence, spin
 from gui.wizard import Wiz_window
@@ -87,6 +88,9 @@ class Noe(GuiTestCase):
         page = spin.Name_page(wizard)
         page.name.SetValue(str_to_gui('N'))
         page.on_execute()
+
+        # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
+        interpreter.flush()
 
         # The intensity data.
         ids = ['ref', 'sat']
