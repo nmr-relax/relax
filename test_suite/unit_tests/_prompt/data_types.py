@@ -22,7 +22,7 @@
 
 # Python module imports.
 from numpy import int8, int16, int32, int64, float32, float64, zeros
-from os import tmpfile
+from tempfile import mkstemp
 
 
 class Container:
@@ -77,7 +77,7 @@ DATA_TYPES.append(['int', zeros(2, int32)[0]])
 DATA_TYPES.append(['int', zeros(2, int64)[0]])
 
 # File descriptor.
-DATA_TYPES.append(['file', tmpfile()])
+DATA_TYPES.append(['file', mkstemp()])
 
 # Floats.
 DATA_TYPES.append(['float', 0.0])
