@@ -774,12 +774,8 @@ class Wiz_page(wx.Panel):
     def on_apply(self):
         """To be over-ridden if an action is to be performed on hitting the apply button.
 
-        This method will be called when clicking on the apply button.  The default behaviour is to call the on_display() and on_display_post() method.
+        This method will be called when clicking on the apply button.
         """
-
-        # Call the on_display method by default.
-        self.on_display()
-        self.on_display_post()
 
 
     def on_completion(self):
