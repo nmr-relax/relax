@@ -1071,9 +1071,6 @@ class Wiz_window(wx.Dialog):
         # Centre the dialog.
         self.Centre()
 
-        # Initialise the wizard status.
-        self._status = True
-
         # Initialise the page storage.
         self._current_page = 0
         self._num_pages = 0
@@ -1143,9 +1140,6 @@ class Wiz_window(wx.Dialog):
 
             # Page skipping.
             self._skip_flag.append(False)
-
-        # Bind some events.
-        self.Bind(wx.EVT_CLOSE, self._handler_close)
 
 
     def _build_buttons(self):
@@ -1253,11 +1247,8 @@ class Wiz_window(wx.Dialog):
         @type event:    wx event
         """
 
-        # Change the status.
-        self._status = False
-
         # Close the window.
-        self.Destroy()
+        self.Close()
 
 
     def _display_page(self, i):
@@ -1350,20 +1341,6 @@ class Wiz_window(wx.Dialog):
         self._display_page(self._current_page)
 
 
-    def _handler_close(self, event):
-        """Event handler for the close window action.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Change the status.
-        self._status = False
-
-        # Destroy the window.
-        self.Destroy()
-
-
     def _next_fn(self):
         """Standard function for setting the next page to the one directly next in the sequence.
 
@@ -1402,7 +1379,10 @@ class Wiz_window(wx.Dialog):
                 self._exec_count[i] += 1
 
         # Then close the dialog.
-        self.Destroy()
+        if self.IsModal():
+            self.EndModal(wx.ID_OK)
+        else:
+            self.Close()
 
 
     def _seq_loop(self):
@@ -1560,10 +1540,10 @@ class Wiz_window(wx.Dialog):
         # Modal operation.
         if modal:
             # Show the wizard (it should be closed by the _cancel() or _ok() methods).
-            self.ShowModal()
+            wiz_status = self.ShowModal()
 
             # Return the status.
-            return self._status
+            return wiz_status
 
         # Modeless operation.
         else:

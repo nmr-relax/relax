@@ -66,7 +66,7 @@ class Analysis_wizard:
 
         # Execute the wizard.
         setup = self.wizard.run(modal=True)
-        if not setup:
+        if setup != wx.ID_OK:
             return
 
         # Return the analysis type, analysis name, and pipe name.
