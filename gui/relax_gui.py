@@ -151,6 +151,7 @@ class Main(wx.Frame):
         # Register functions with the observer objects.
         status.observers.pipe_alteration.register('status bar', self.update_status_bar)
         status.observers.result_file.register('gui', self.show_results_viewer_no_warn)
+        status.observers.exec_lock.register('gui', self.enable)
 
         # Run a script.
         if script:
@@ -292,6 +293,23 @@ class Main(wx.Frame):
     def contact_relax(self, event):
         """Write an email to the relax mailing-list using the standard mailing program."""
         webbrowser.open_new('mailto:relax-users@gna.org')
+
+
+    def enable(self):
+        """Enable and disable certain parts of the main window with the execution lock."""
+
+        # Flag for enabling or disabling the elements.
+        enable = False
+        if not status.exec_lock.locked():
+            enable = True
+
+        # The toolbar.
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_NEW, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_CLOSE, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_CLOSE_ALL, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_OPEN, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_SAVE, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_SAVE_AS, enable)
 
 
     def exit_gui(self, event=None):
