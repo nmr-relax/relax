@@ -123,6 +123,9 @@ class Main(wx.Frame):
         # Build the menu bar.
         self.menu = Menu(self)
 
+        # Build the toolbar.
+        self.toolbar()
+
         # Build the controller, but don't show it.
         self.controller = Controller(self)
 
@@ -628,6 +631,72 @@ class Main(wx.Frame):
             # Execute the analysis page specific update methods.
             if hasattr(page, 'sync_ds'):
                 page.sync_ds(upload)
+
+
+    def toolbar(self):
+        """Create the toolbar."""
+
+        # Init.
+        self.bar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT)
+
+        # The new analysis button.
+        self.TB_FILE_NEW = wx.NewId()
+        self.bar.AddLabelTool(self.TB_FILE_NEW, "New analysis", wx.Bitmap(paths.icon_22x22.new, wx.BITMAP_TYPE_ANY), shortHelp="New analysis")
+        self.Bind(wx.EVT_TOOL, self.analysis.menu_new, id=self.TB_FILE_NEW)
+
+        # The close analysis button.
+        self.TB_FILE_CLOSE = wx.NewId()
+        self.bar.AddLabelTool(self.TB_FILE_CLOSE, "Close analysis", wx.Bitmap(paths.icon_22x22.document_close, wx.BITMAP_TYPE_ANY), shortHelp="Close analysis")
+        self.Bind(wx.EVT_TOOL, self.analysis.menu_close, id=self.TB_FILE_CLOSE)
+
+        # The close all analyses button.
+        self.TB_FILE_CLOSE_ALL = wx.NewId()
+        self.bar.AddLabelTool(self.TB_FILE_CLOSE_ALL, "Close all analyses", wx.Bitmap(paths.icon_22x22.dialog_close, wx.BITMAP_TYPE_ANY), shortHelp="Close all analyses")
+        self.Bind(wx.EVT_TOOL, self.analysis.menu_close_all, id=self.TB_FILE_CLOSE_ALL)
+
+        # A separator.
+        self.bar.AddSeparator()
+
+        # The open state button.
+        self.TB_FILE_OPEN = wx.NewId()
+        self.bar.AddLabelTool(self.TB_FILE_OPEN, "Open relax state", wx.Bitmap(paths.icon_22x22.document_open, wx.BITMAP_TYPE_ANY), shortHelp="Open relax state")
+        self.Bind(wx.EVT_TOOL, self.state_load, id=self.TB_FILE_OPEN)
+
+        # The save state button.
+        self.TB_FILE_SAVE = wx.NewId()
+        self.bar.AddLabelTool(self.TB_FILE_SAVE, "Save relax state", wx.Bitmap(paths.icon_22x22.document_save, wx.BITMAP_TYPE_ANY), shortHelp="Save relax state")
+        self.Bind(wx.EVT_TOOL, self.action_state_save, id=self.TB_FILE_SAVE)
+
+        # The save as button.
+        self.TB_FILE_SAVE_AS = wx.NewId()
+        self.bar.AddLabelTool(self.TB_FILE_SAVE_AS, "Save as", wx.Bitmap(paths.icon_22x22.document_save_as, wx.BITMAP_TYPE_ANY), shortHelp="Save as")
+        self.Bind(wx.EVT_TOOL, self.action_state_save_as, id=self.TB_FILE_SAVE_AS)
+
+        # A separator.
+        self.bar.AddSeparator()
+
+        # The relax controller button.
+        self.TB_VIEW_CONTROLLER = wx.NewId()
+        self.bar.AddLabelTool(self.TB_VIEW_CONTROLLER, "Controller", wx.Bitmap(paths.icon_22x22.preferences_system_performance, wx.BITMAP_TYPE_ANY), shortHelp="relax controller")
+        self.Bind(wx.EVT_TOOL, self.show_controller, id=self.TB_VIEW_CONTROLLER)
+
+        # The spin viewer button.
+        self.TB_VIEW_SPIN_VIEW = wx.NewId()
+        self.bar.AddLabelTool(self.TB_VIEW_SPIN_VIEW, "Spin viewer", wx.Bitmap(paths.icon_22x22.spin, wx.BITMAP_TYPE_ANY), shortHelp="Spin viewer window")
+        self.Bind(wx.EVT_TOOL, self.show_tree, id=self.TB_VIEW_SPIN_VIEW)
+
+        # The results viewer button.
+        self.TB_VIEW_RESULTS = wx.NewId()
+        self.bar.AddLabelTool(self.TB_VIEW_RESULTS, "Results viewer", wx.Bitmap(paths.icon_22x22.view_statistics, wx.BITMAP_TYPE_ANY), shortHelp="Results viewer window")
+        self.Bind(wx.EVT_TOOL, self.show_results_viewer, id=self.TB_VIEW_RESULTS)
+
+        # The data pipe editor button.
+        self.TB_VIEW_PIPE_EDIT = wx.NewId()
+        self.bar.AddLabelTool(self.TB_VIEW_PIPE_EDIT, "Data pipe editor", wx.Bitmap(paths.icon_22x22.pipe, wx.BITMAP_TYPE_ANY), shortHelp="Data pipe editor")
+        self.Bind(wx.EVT_TOOL, self.show_pipe_editor, id=self.TB_VIEW_PIPE_EDIT)
+
+        # Build the toolbar.
+        self.bar.Realize()
 
 
     def update_status_bar(self):
