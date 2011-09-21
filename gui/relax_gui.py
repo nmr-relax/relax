@@ -134,9 +134,7 @@ class Main(wx.Frame):
 
         # Set up the status bar.
         self.status_bar = self.CreateStatusBar(3, 0)
-        wx.CallAfter(self.status_bar.SetStatusWidths, [-4, -1, -2])
-        wx.CallAfter(self.status_bar.SetStatusText, "(C) 2001-2011 the relax development team", 0)
-        wx.CallAfter(self.status_bar.SetStatusText, "Current data pipe:", 1)
+        self.status_bar.SetStatusWidths([-4, -1, -2])
         self.update_status_bar()
 
         # Add the start screen.
@@ -728,4 +726,6 @@ class Main(wx.Frame):
             pipe = ''
 
         # Set the status.
+        wx.CallAfter(self.status_bar.SetStatusText, "(C) 2001-2011 the relax development team", 0)
+        wx.CallAfter(self.status_bar.SetStatusText, "Current data pipe:", 1)
         wx.CallAfter(self.status_bar.SetStatusText, pipe, 2)
