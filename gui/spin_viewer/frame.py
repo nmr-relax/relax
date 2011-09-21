@@ -340,6 +340,9 @@ class Spin_view_window(wx.Frame):
         # Set the pipe name to the cdp.
         self.pipe_name.SetValue(str_to_gui(pipe))
 
+        # Bug fix for MS Windows.
+        wx.CallAfter(self.Raise)
+
         # Reset the cursor.
         wx.EndBusyCursor()
 
