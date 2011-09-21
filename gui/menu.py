@@ -384,6 +384,8 @@ class Uf_menus:
         self.add_uf(parent_id=id, name="structure.vectors", text="&vectors", icon=None, fn=user_functions.structure.vectors)
         self.add_uf(parent_id=id, name="structure.write_pdb", text="&write_pdb", icon=paths.icon_16x16.save, fn=user_functions.structure.write_pdb)
 
+        self.add_uf(parent_id=None, name="sys_info", text="sys_&info", icon=paths.icon_16x16.help_about, fn=user_functions.sys_info.sys_info)
+
         id = self.add_class(name="value", text="&value", icon=paths.icon_16x16.value)
         self.add_uf(parent_id=id, name="value.set", text="&set", icon=paths.icon_16x16.add, fn=user_functions.value.set)
 

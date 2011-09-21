@@ -45,6 +45,7 @@ from sequence import Sequence
 from spectrum import Spectrum
 from spin import Spin
 from structure import Structure
+from sys_info import Sys_info
 from value import Value
 
 
@@ -68,6 +69,7 @@ __all__ = ['base',
            'spectrum',
            'spin',
            'structure',
+           'sys_info',
            'value']
 
 
@@ -103,4 +105,5 @@ class User_functions:
         self.spectrum = Spectrum(parent)
         self.spin = Spin(parent)
         self.structure = Structure(parent)
+        self.sys_info = Sys_info(parent)
         self.value = Value(parent)
