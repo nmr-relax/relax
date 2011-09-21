@@ -1144,6 +1144,9 @@ class Wiz_window(wx.Dialog):
             # Page skipping.
             self._skip_flag.append(False)
 
+        # Bind some events.
+        self.Bind(wx.EVT_CLOSE, self._handler_close)
+
 
     def _build_buttons(self):
         """Construct the buttons for all pages of the wizard."""
@@ -1254,7 +1257,7 @@ class Wiz_window(wx.Dialog):
         self._status = False
 
         # Close the window.
-        self.Close()
+        self.Destroy()
 
 
     def _display_page(self, i):
@@ -1347,6 +1350,20 @@ class Wiz_window(wx.Dialog):
         self._display_page(self._current_page)
 
 
+    def _handler_close(self, event):
+        """Event handler for the close window action.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Change the status.
+        self._status = False
+
+        # Destroy the window.
+        self.Destroy()
+
+
     def _next_fn(self):
         """Standard function for setting the next page to the one directly next in the sequence.
 
@@ -1385,7 +1402,7 @@ class Wiz_window(wx.Dialog):
                 self._exec_count[i] += 1
 
         # Then close the dialog.
-        self.Close()
+        self.Destroy()
 
 
     def _seq_loop(self):
