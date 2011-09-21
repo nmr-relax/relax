@@ -326,7 +326,8 @@ class Auto_noe(Base_analysis):
         page.on_display_post = self.wizard_update_spectrum_type
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
         # Run the wizard.
         self.wizard.run()

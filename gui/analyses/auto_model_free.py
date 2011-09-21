@@ -595,7 +595,8 @@ class Auto_model_free(Base_analysis):
         self.vect_wizard.add_page(page)
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
         # Execute the wizard.
         self.vect_wizard.run()

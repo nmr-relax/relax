@@ -170,7 +170,8 @@ class Spin_view_window(wx.Frame):
         self.container.display(self.tree_panel.get_info())
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
 
     def handler_close(self, event):
@@ -231,7 +232,8 @@ class Spin_view_window(wx.Frame):
         self.page_indices['fin'] = self.wizard.add_page(page, apply_button=False, skip_button=False)
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
         # Run the wizard.
         self.wizard.run()
@@ -344,7 +346,8 @@ class Spin_view_window(wx.Frame):
         wx.CallAfter(self.Raise)
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
 
     def wizard_page_after_load_method(self):

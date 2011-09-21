@@ -342,7 +342,8 @@ class Auto_rx(Base_analysis):
         page.on_init = self.wizard_update_relax_time
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
         # Run the wizard.
         self.wizard.run()

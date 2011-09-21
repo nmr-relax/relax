@@ -616,7 +616,10 @@ class Main(wx.Frame):
         # Reset the cursor, and thaw the GUI.
         finally:
             self.Thaw()
-            wx.EndBusyCursor()
+
+            # Turn off the busy cursor.
+            if wx.IsBusy():
+                wx.EndBusyCursor()
 
 
     def state_save(self):
@@ -630,7 +633,8 @@ class Main(wx.Frame):
             wx.BeginBusyCursor()
             state.save_state(self.save_file, verbosity=0, force=True)
         finally:
-            wx.EndBusyCursor()
+            if wx.IsBusy():
+                wx.EndBusyCursor()
 
 
     def sync_ds(self, upload=False):

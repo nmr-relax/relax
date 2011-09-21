@@ -437,7 +437,8 @@ class Analysis_controller:
 
         # Thaw the GUI.
         self.gui.Thaw()
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
         # Notify the observers of the change.
         status.observers.gui_analysis.notify()

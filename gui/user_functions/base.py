@@ -167,7 +167,8 @@ class UF_page(Wiz_page):
         super(UF_page, self).__init__(parent)
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
 
     def _format_text(self, text):

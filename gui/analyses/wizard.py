@@ -62,7 +62,8 @@ class Analysis_wizard:
         self.wizard.add_page(self.pipe_page, apply_button=False)
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
         # Execute the wizard.
         setup = self.wizard.run(modal=True)
