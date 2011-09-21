@@ -163,6 +163,9 @@ class Analysis_controller:
 
         # Delete the current tabs.
         while self._num_analyses:
+            # Flush all pending events (bug fix for MS Windows).
+            wx.Yield()
+
             # Remove the last analysis, until there is nothing left.
             self.delete_analysis(self._num_analyses-1)
 
