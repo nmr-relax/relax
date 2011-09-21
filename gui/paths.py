@@ -231,6 +231,7 @@ class I32x32:
         path = ICON_RELAX_PATH + '32x32' + sep
         self.pipe_hybrid =              path + 'pipe_hybrid.png'
         self.spin =                     path + 'spin.png'
+        self.spin_grey =                path + 'spin_grey.png'
         self.structure =                path + 'structure.png'
 
 
