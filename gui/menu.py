@@ -233,6 +233,11 @@ class Menu:
         self.menubar.Enable(self.MENU_FILE_CLOSE, enable)
         self.menubar.Enable(self.MENU_FILE_CLOSE_ALL, enable)
         self.menubar.Enable(self.MENU_FILE_OPEN, enable)
+        self.menubar.Enable(self.MENU_FILE_SAVE, enable)
+        self.menubar.Enable(self.MENU_FILE_SAVE_AS, enable)
+
+        # The view menu entries.
+        self.menubar.Enable(self.MENU_VIEW_PROMPT, enable)
 
         # Loop over the user function menu items.
         menu = self.menubar.GetMenu(self.menu_uf_id)
