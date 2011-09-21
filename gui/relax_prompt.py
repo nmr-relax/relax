@@ -32,6 +32,7 @@ import wx.stc as stc
 # relax module imports
 from info import Info_box
 from prompt import interpreter
+from status import Status; status = Status()
 
 # relax GUI module imports
 from gui.icons import relax_icons
@@ -63,6 +64,9 @@ class Prompt(wx.Frame):
 
         # The shell.
         self.add_shell(sizer)
+
+        # Register functions with the observer objects.
+        status.observers.exec_lock.register('GUI prompt', self.enable)
 
 
     def add_shell(self, sizer):
@@ -97,6 +101,18 @@ class Prompt(wx.Frame):
 
         # Add the shell to the sizer.
         sizer.Add(self.prompt, 1, wx.EXPAND|wx.ALL, self.border)
+
+
+    def enable(self):
+        """Enable and disable the prompt with the execution lock."""
+
+        # Flag for enabling or disabling the prompt.
+        enable = False
+        if not status.exec_lock.locked():
+            enable = True
+
+        # Enable/disable.
+        self.prompt.Enable(enable)
 
 
     def handler_close(self, event):
