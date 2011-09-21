@@ -273,9 +273,9 @@ class Auto_rx(Base_analysis):
             Missing_data(missing)
             return
 
-        # Display the relax controller.
-        if status.show_gui:
-            self.gui.show_controller(None)
+        # Display the relax controller, and go to the end of the log window.
+        self.gui.show_controller(None)
+        self.gui.controller.log_panel.on_goto_end(None)
 
         # Start the thread.
         self.thread = Execute_rx(self.gui, data, self.data_index)
