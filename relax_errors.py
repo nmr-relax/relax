@@ -273,12 +273,12 @@ class RelaxNucleusError(BaseError):
 # Spin type not set.
 class RelaxSpinTypeError(BaseError):
     def __init__(self):
-        self.text = "The spin type has not yet been set.  Please use the value.set() user function to set the heteronucleus type."
+        self.text = "The spin type has not yet been set.  Please use the value.set user function to set the heteronucleus type."
 
 # Proton type not set.
 class RelaxProtonTypeError(BaseError):
     def __init__(self):
-        self.text = "The type of proton attached to the spin has not yet been set.  Please use the value.set() user function to set the proton type."
+        self.text = "The type of proton attached to the spin has not yet been set.  Please use the value.set user function to set the proton type."
 
 
 # Argument errors.
@@ -581,7 +581,7 @@ class RelaxInvalidSeqError(BaseError):
 # The spins have not been loaded
 class RelaxSpinsNotLoadedError(BaseError):
     def __init__(self, spin_id):
-        self.text = "The spin information for the spin " + repr(spin_id) + " has not yet been loaded, please use the structure.load_spins() user function."
+        self.text = "The spin information for the spin " + repr(spin_id) + " has not yet been loaded, please use the structure.load_spins user function."
 
 
 
@@ -713,7 +713,7 @@ class RelaxNoPipeError(BaseError):
         if pipe != None:
             self.text = "The data pipe " + repr(pipe) + " has not been created yet."
         else:
-            self.text = "No data pipes currently exist.  Please use the pipe.create() user function first."
+            self.text = "No data pipes currently exist.  Please use the pipe.create user function first."
 
 
 # Spin-Residue-Molecule errors.
