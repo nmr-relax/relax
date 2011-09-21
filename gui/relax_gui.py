@@ -605,13 +605,17 @@ class Main(wx.Frame):
             self.save_file = file_name
 
             # Load the relax state.
-            protected_exec(state.load_state, file_name, verbosity=0)
+            if protected_exec(state.load_state, file_name, verbosity=0):
+                # Reconstruct the analyses.
+                self.analysis.load_from_store()
 
-            # Reconstruct the analyses.
-            self.analysis.load_from_store()
+                # Update the core of the GUI to match the new data store.
+                self.sync_ds(upload=False)
 
-            # Update the core of the GUI to match the new data store.
-            self.sync_ds(upload=False)
+            # File loading failure.
+            else:
+                # Reinitialise the GUI data store structure.
+                self.init_data()
 
         # Reset the cursor, and thaw the GUI.
         finally:
