@@ -98,6 +98,9 @@ class Spin_view_window(wx.Frame):
             for item in menu.GetMenuItems():
                 item.Enable(enable)
 
+        # The spin loader.
+        self.spin_loader_button.Enable(enable)
+
         # The pipe selector.
         self.pipe_name.Enable(enable)
 
@@ -266,7 +269,7 @@ class Spin_view_window(wx.Frame):
 
         # The spin loading button.
         id = wx.NewId()
-        self.bar.AddLabelTool(id, "Load spins", wx.Bitmap(icon_32x32.spin, wx.BITMAP_TYPE_ANY), shortHelp="Load spins", longHelp="Load spins from either a sequence file or from a 3D structure file")
+        self.spin_loader_button = self.bar.AddLabelTool(id, "Load spins", wx.Bitmap(icon_32x32.spin, wx.BITMAP_TYPE_ANY), shortHelp="Load spins", longHelp="Load spins from either a sequence file or from a 3D structure file")
         self.Bind(wx.EVT_TOOL, self.load_spins_wizard, id=id)
 
         # A separator.
