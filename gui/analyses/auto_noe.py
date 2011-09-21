@@ -259,7 +259,7 @@ class Auto_noe(Base_analysis):
 
         # Display the relax controller.
         if status.show_gui:
-            self.gui.controller.Show()
+            self.gui.show_controller(None)
 
         # Start the thread.
         self.thread = Execute_noe(self.gui, data, self.data_index)
