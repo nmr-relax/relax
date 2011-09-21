@@ -99,7 +99,7 @@ class Spin_view_window(wx.Frame):
                 item.Enable(enable)
 
         # The spin loader.
-        self.spin_loader_button.Enable(enable)
+        self.bar.EnableTool(self.spin_loader_id, enable)
 
         # The pipe selector.
         self.pipe_name.Enable(enable)
@@ -268,9 +268,9 @@ class Spin_view_window(wx.Frame):
         self.bar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT)
 
         # The spin loading button.
-        id = wx.NewId()
-        self.spin_loader_button = self.bar.AddLabelTool(id, "Load spins", wx.Bitmap(icon_32x32.spin, wx.BITMAP_TYPE_ANY), shortHelp="Load spins", longHelp="Load spins from either a sequence file or from a 3D structure file")
-        self.Bind(wx.EVT_TOOL, self.load_spins_wizard, id=id)
+        self.spin_loader_id = wx.NewId()
+        self.bar.AddLabelTool(self.spin_loader_id, "Load spins", wx.Bitmap(icon_32x32.spin, wx.BITMAP_TYPE_ANY), bmpDisabled=wx.Bitmap(icon_32x32.spin_grey, wx.BITMAP_TYPE_ANY), shortHelp="Load spins", longHelp="Load spins from either a sequence file or from a 3D structure file")
+        self.Bind(wx.EVT_TOOL, self.load_spins_wizard, id=self.spin_loader_id)
 
         # A separator.
         self.bar.AddSeparator()
