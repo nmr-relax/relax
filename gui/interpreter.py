@@ -207,6 +207,9 @@ class Interpreter_thread(Thread):
         # Create a queue object for the user function calls.
         self._queue = Queue()
 
+        # The list of user functions still in the queue.
+        self._uf_list = []
+
         # A flag for exiting the thread.
         self._exit = False
 
@@ -235,7 +238,7 @@ class Interpreter_thread(Thread):
         sleep(0.5)
 
         # Loop until empty.
-        while not self.empty():
+        while len(self._uf_list):
             # Wait a bit for the queue to empty.
             sleep(0.2)
 
@@ -261,6 +264,9 @@ class Interpreter_thread(Thread):
         @param kwds:    The user function keyword arguments.
         @type kwds:     any keyword arguments
         """
+
+        # Add the user function name to the list.
+        self._uf_list.append(repr(fn))
 
         # Place the user function and its args onto the queue.
         self._queue.put([fn, args, kwds])
@@ -302,6 +308,9 @@ class Interpreter_thread(Thread):
 
                 # Release the execution lock.
                 status.exec_lock.release()
+
+                # Remove the user function from the list.
+                self._uf_list.pop(self._uf_list.index(repr(fn)))
 
             # Notify all observers that a user function has completed.
             status.observers.gui_uf.notify()
