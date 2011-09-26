@@ -50,8 +50,8 @@ class _RelaxTestResult(_TextTestResult):
         self.orig_stderr = sys.stderr
 
         # Catch stdout and stderr.
+        self.capt = StringIO()
         if not status.debug:
-            self.capt = StringIO()
             sys.stdout = self.capt
             sys.stderr = self.capt
 
