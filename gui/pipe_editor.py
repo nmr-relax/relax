@@ -439,6 +439,9 @@ class Pipe_editor(wx.Frame):
         # Thread safe.
         wx.CallAfter(self.update_grid_safe)
 
+        # Flush the events.
+        wx.SafeYield(None, True)
+
 
     def update_grid_safe(self):
         """Update the grid with the pipe data."""
