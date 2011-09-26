@@ -41,19 +41,25 @@ def gui_raise(relax_error, raise_flag=False):
     @raises RelaxError:     This raises all RelaxErrors, if the raise flag is given.
     """
 
-    # Show a dialog explaining the error.
-    if status.show_gui:
-        wx.MessageBox(relax_error.text, caption="RelaxError", style=wx.OK|wx.ICON_ERROR)
-
     # Turn off the busy cursor if needed.
     if wx.IsBusy():
         wx.EndBusyCursor()
 
+    # Non-fatal - the error is not raised so just send the text to STDERR.
+    if not raise_flag:
+        sys.stderr.write(relax_error.__str__())
+        sys.stderr.write("\n")
+
+    # Show the relax controller (so that the window doesn't hide the dialog).
+    app = wx.GetApp()
+    app.gui.show_controller(None)
+    wx.SafeYield(None, True)
+
+    # Show a dialog explaining the error.
+    dlg = wx.MessageDialog(None, relax_error.text, caption="RelaxError", style=wx.OK|wx.ICON_ERROR)
+    if status.show_gui:
+        dlg.ShowModal()
+
     # Throw the error to terminate execution.
     if raise_flag:
         raise relax_error
-
-    # Otherwise, send the text to STDERR.
-    else:
-        sys.stderr.write(relax_error.__str__())
-        sys.stderr.write("\n")
