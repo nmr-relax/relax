@@ -389,6 +389,9 @@ class Pipe_editor(wx.Frame):
         # Switch to the selected data pipe.
         switch(self.selected_pipe)
 
+        # Bug fix for MS Windows.
+        wx.CallAfter(self.Raise)
+
 
     def resize(self, event):
         """Catch the resize to allow the grid to be resized.
