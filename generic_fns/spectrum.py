@@ -1121,6 +1121,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
     # No data.
     if not data_flag:
+        # Delete all the data.
+        delete(spectrum_id)
+
+        # Raise the error.
         raise RelaxError("No data could be loaded from the peak list")
 
 
