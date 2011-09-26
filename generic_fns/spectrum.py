@@ -1085,6 +1085,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             cdp.ncproc[spectrum_id] = ncproc
 
     # Loop over the peak intensity data.
+    data_flag = False
     for i in xrange(len(intensity_data)):
         # Extract the data.
         H_name, X_name, spin_id, intensity = intensity_data[i]
@@ -1114,6 +1115,13 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Add the data.
         spin.intensities[spectrum_id] = intensity
+
+        # Switch the flag.
+        data_flag = True
+
+    # No data.
+    if not data_flag:
+        raise RelaxError("No data could be loaded from the peak list")
 
 
 def replicated(spectrum_ids=None):
