@@ -152,8 +152,17 @@ class Interpreter(object):
         if status.debug:
             sys.stdout.write("debug> GUI interpreter:  Flushing.\n")
 
-        # Call the thread's method.
-        self._interpreter_thread.flush()
+        # Wait a little while to prevent races with the reading of the queue.
+        sleep(0.5)
+
+        # Loop until empty.
+        while not self._interpreter_thread.empty():
+            # Wait a bit for the queue to empty.
+            sleep(0.2)
+
+            # Wait until execution is complete.
+            while status.exec_lock.locked():
+                sleep(0.5)
 
         # Debugging.
         if status.debug:
@@ -215,10 +224,19 @@ class Interpreter_thread(Thread):
 
 
     def empty(self):
-        """Wrapper method for the Queue.empty() method."""
+        """Is the queue empty?"""
 
-        # Return the queue empty state.
-        return self._queue.empty()
+        # Execution is locked.
+        if status.exec_lock.locked():
+            return False
+
+        # There are still queued calls.
+        elif len(self._uf_list):
+            return False
+
+        # The queue is empty.
+        else:
+            return True
 
 
     def exit(self):
@@ -229,22 +247,6 @@ class Interpreter_thread(Thread):
 
         # Then queue a dummy user function.
         self._queue.put([None, None, None])
-
-
-    def flush(self):
-        """Return only once the queue is empty."""
-
-        # Wait a little while to prevent races with the reading of the queue.
-        sleep(0.5)
-
-        # Loop until empty.
-        while len(self._uf_list):
-            # Wait a bit for the queue to empty.
-            sleep(0.2)
-
-            # Wait until execution is complete.
-            while status.exec_lock.locked():
-                sleep(0.5)
 
 
     def join(self):
