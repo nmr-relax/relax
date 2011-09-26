@@ -112,7 +112,7 @@ class Prompt(wx.Frame):
             enable = True
 
         # Enable/disable.
-        self.prompt.Enable(enable)
+        wx.CallAfter(self.prompt.Enable, enable)
 
 
     def handler_close(self, event):
