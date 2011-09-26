@@ -708,15 +708,11 @@ def intensity_nmrview(file_data=None, int_col=None):
 
     @keyword file_data: The data extracted from the file converted into a list of lists.
     @type file_data:    list of lists of str
-    @keyword int_col:   The column containing the peak intensity data. The default is 16 for
-                        intensities. Setting the int_col argument to 15 will use the volumes (or
-                        evolumes). For a non-standard formatted file, use a different value.
+    @keyword int_col:   The column containing the peak intensity data. The default is 16 for intensities. Setting the int_col argument to 15 will use the volumes (or evolumes). For a non-standard formatted file, use a different value.
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to
-                        the spin.  The second dimension consists of the proton name, heteronucleus
-                        name, spin ID string, and the intensity value.
-    @rtype:             list of lists of str, str, str, float
+    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, spin ID string, the intensity value, and the original line of text
+    @rtype:             list of lists of str, str, str, float, str
     """
 
     # Assume the NMRView file has six header lines!
@@ -779,7 +775,7 @@ def intensity_nmrview(file_data=None, int_col=None):
         spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
 
         # Append the data.
-        data.append([h_name, x_name, spin_id, intensity])
+        data.append([h_name, x_name, spin_id, intensity, line])
 
     # Return the data.
     return data
@@ -793,14 +789,11 @@ def intensity_sparky(file_data=None, int_col=None):
 
     @keyword file_data: The data extracted from the file converted into a list of lists.
     @type file_data:    list of lists of str
-    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
-                        file).
+    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted file).
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to
-                        the spin.  The second dimension consists of the proton name, heteronucleus
-                        name, spin ID string, and the intensity value.
-    @rtype:             list of lists of str, str, str, float
+    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, spin ID string, the intensity value, and the original line of text.
+    @rtype:             list of lists of str, str, str, float, str
     """
 
     # The number of header lines.
@@ -861,7 +854,7 @@ def intensity_sparky(file_data=None, int_col=None):
         spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
 
         # Append the data.
-        data.append([h_name, x_name, spin_id, intensity])
+        data.append([h_name, x_name, spin_id, intensity, line])
 
     # Return the data.
     return data
@@ -879,14 +872,11 @@ def intensity_xeasy(file_data=None, heteronuc=None, proton=None, int_col=None):
     @type heteronuc:    str
     @keyword proton:    The name of the proton as specified in the peak intensity file.
     @type proton:       str
-    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
-                        file).
+    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted file).
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to
-                        the spin.  The second dimension consists of the proton name, heteronucleus
-                        name, spin ID string, and the intensity value.
-    @rtype:             list of lists of str, str, str, float
+    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, spin ID string, the intensity value, and the original line of text.
+    @rtype:             list of lists of str, str, str, float, str
     """
 
     # The columns.
@@ -973,7 +963,7 @@ def intensity_xeasy(file_data=None, heteronuc=None, proton=None, int_col=None):
         spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
 
         # Append the data.
-        data.append([h_name, x_name, spin_id, intensity])
+        data.append([h_name, x_name, spin_id, intensity, line])
 
     # Return the data.
     return data
@@ -1088,11 +1078,11 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     data_flag = False
     for i in xrange(len(intensity_data)):
         # Extract the data.
-        H_name, X_name, spin_id, intensity = intensity_data[i]
+        H_name, X_name, spin_id, intensity, line = intensity_data[i]
 
         # Skip data.
         if (X_name and X_name != heteronuc) or (H_name and H_name != proton):
-            warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % repr(file_data[i])))
+            warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % line))
             continue
 
         # Get the spin container.
