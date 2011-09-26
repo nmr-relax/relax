@@ -50,9 +50,10 @@ class _RelaxTestResult(_TextTestResult):
         self.orig_stderr = sys.stderr
 
         # Catch stdout and stderr.
-        self.capt = StringIO()
-        sys.stdout = self.capt
-        sys.stderr = self.capt
+        if not status.debug:
+            self.capt = StringIO()
+            sys.stdout = self.capt
+            sys.stderr = self.capt
 
         # Place the test name in the status object.
         status.exec_lock.test_name = str(test)
