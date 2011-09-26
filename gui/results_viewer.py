@@ -350,6 +350,9 @@ class Results_viewer(wx.Frame):
         # Update the window.
         self.refresh()
 
+        # Bug fix for MS Windows (bring the window back).
+        wx.CallAfter(self.Raise)
+
 
     def update_pipes(self):
         """Update the data pipe list."""
