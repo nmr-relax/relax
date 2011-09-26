@@ -145,10 +145,10 @@ class Results_viewer(wx.Frame):
             enable = True
 
         # The pipe selector.
-        self.pipe_name.Enable(enable)
+        wx.CallAfter(self.pipe_name.Enable, enable)
 
         # The open button.
-        self.button_open.Enable(enable)
+        wx.CallAfter(self.button_open.Enable, enable)
 
 
     def add_files(self, box, fn=None):
