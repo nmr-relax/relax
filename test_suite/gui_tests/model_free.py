@@ -142,6 +142,11 @@ class Mf(GuiTestCase):
         self.assertEqual(analysis.data.mf_models, ['m1', 'm2'])
         self.assertEqual(analysis.data.grid_inc, 3)
         self.assertEqual(analysis.data.mc_sim_num, 2)
+        self.assertEqual(analysis.data.max_iter, 1)
+        self.assertEqual(analysis.data.diff_tensor_grid_inc['sphere'], 5)
+        self.assertEqual(analysis.data.diff_tensor_grid_inc['prolate'], 5)
+        self.assertEqual(analysis.data.diff_tensor_grid_inc['oblate'], 5)
+        self.assertEqual(analysis.data.diff_tensor_grid_inc['ellipsoid'], 3)
 
         # Modify some of the class variables to speed up optimisation.
         auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_func_tol = 1e-5
