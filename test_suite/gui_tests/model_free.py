@@ -131,6 +131,10 @@ class Mf(GuiTestCase):
         # Set the number of Monte Carlo simulations.
         analysis.mc_sim_num.SetValue(2)
 
+        # Set the maximum number of iterations (changing the allowed values).
+        analysis.max_iter.control.SetRange(0, 100)
+        analysis.max_iter.SetValue(1)
+
         # Set the protocol mode to automatic.
         analysis.mode_win.select_full_analysis(None)
         analysis.mode_dialog(None)
