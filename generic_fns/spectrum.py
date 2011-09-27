@@ -694,7 +694,7 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
     # Loop over the data.
     data = []
     for id, value in read_spin_data(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, sep=sep, spin_id=spin_id):
-        data.append([None, None, id, value])
+        data.append([None, None, id, value, id])
 
     # Return the data.
     return data
