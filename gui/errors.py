@@ -53,7 +53,7 @@ def gui_raise(relax_error, raise_flag=False):
     # Show the relax controller (so that the window doesn't hide the dialog).
     app = wx.GetApp()
     app.gui.show_controller(None)
-    wx.SafeYield(None, True)
+    app.Yield(True)
 
     # Show a dialog explaining the error.
     dlg = wx.MessageDialog(None, relax_error.text, caption="RelaxError", style=wx.OK|wx.ICON_ERROR)

@@ -440,7 +440,7 @@ class Pipe_editor(wx.Frame):
         wx.CallAfter(self.update_grid_safe)
 
         # Flush the events.
-        wx.SafeYield(None, True)
+        wx.GetApp().Yield(True)
 
 
     def update_grid_safe(self):
