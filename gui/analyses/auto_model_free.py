@@ -1007,9 +1007,6 @@ class Model_sel_window(wx.Dialog):
         # Add the table to the sizer.
         sizer.Add(self.model_list, 1, wx.ALL|wx.EXPAND, 0)
 
-        # Bind some events.
-        self.Bind(wx.EVT_CLOSE, self.handler_close)
-
 
     def get_selection(self):
         """Return the selection as a list of booleans.
@@ -1027,17 +1024,6 @@ class Model_sel_window(wx.Dialog):
 
         # Return the list.
         return select
-
-
-    def handler_close(self, event):
-        """Event handler for the close window action.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Close the window.
-        self.Hide()
 
 
     def set_selection(self, select):
