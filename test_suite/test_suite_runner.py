@@ -50,13 +50,13 @@ class Test_suite_runner:
         - GUI tests.
     """
 
-    def __init__(self, tests=None):
+    def __init__(self, tests=[]):
         """Store the list of tests to preform.
 
         The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
 
 
-        @keyword tests: The list of tests to preform.
+        @keyword tests: The list of tests to preform.  If left at [], then all tests will be run.
         @type tests:    list of str
         """
 
