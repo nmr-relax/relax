@@ -263,9 +263,9 @@ class Results_viewer(wx.Frame):
 
             # Diffusion tensor PDB.
             elif type == 'diff_tensor_pdb':
-                interpreter.queue('pymol.view')
-                interpreter.queue('pymol.cartoon')
-                interpreter.queue('pymol.tensor_pdb', file=file)
+                interpreter.apply('pymol.view')
+                interpreter.apply('pymol.cartoon')
+                interpreter.apply('pymol.tensor_pdb', file=file)
 
             # A special table.
             elif type == 'Table_of_Results':
