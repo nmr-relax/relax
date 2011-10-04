@@ -337,7 +337,7 @@ class Results_viewer(wx.Frame):
         """
 
         # The name of the selected pipe.
-        pipe = gui_to_str(event.GetString())
+        pipe = gui_to_str(self.pipe_name.GetString(event.GetSelection()))
 
         # No pipe change.
         if pipe == cdp_name():
