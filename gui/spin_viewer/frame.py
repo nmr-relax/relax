@@ -96,13 +96,13 @@ class Spin_view_window(wx.Frame):
         for menu, label in self.menubar.GetMenus():
             # Loop over the menu items.
             for item in menu.GetMenuItems():
-                item.Enable(enable)
+                wx.CallAfter(item.Enable, enable)
 
         # The spin loader.
-        self.bar.EnableTool(self.spin_loader_id, enable)
+        wx.CallAfter(self.bar.EnableTool, self.spin_loader_id, enable)
 
         # The pipe selector.
-        self.pipe_name.Enable(enable)
+        wx.CallAfter(self.pipe_name.Enable, enable)
 
 
     def _create_menu(self):
