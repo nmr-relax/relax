@@ -263,7 +263,11 @@ class Results_viewer(wx.Frame):
 
             # Diffusion tensor PDB.
             elif type == 'diff_tensor_pdb':
-                interpreter.apply('pymol.view')
+                # Try and see if PyMOL is installed.
+                if not interpreter.apply('pymol.view'):
+                    return
+
+                # Display the tensor.
                 interpreter.apply('pymol.cartoon')
                 interpreter.apply('pymol.tensor_pdb', file=file)
 
