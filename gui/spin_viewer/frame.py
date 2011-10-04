@@ -314,7 +314,7 @@ class Spin_view_window(wx.Frame):
         # The selected pipe.
         if event:
             # The name of the selected pipe.
-            pipe = gui_to_str(event.GetString())
+            pipe = gui_to_str(self.pipe_name.GetString(event.GetSelection()))
 
             # A pipe change.
             if pipe != cdp_name():
