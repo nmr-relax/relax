@@ -106,6 +106,8 @@ class Interpreter(object):
         @type args:     any arguments
         @param kwds:    The user function keyword arguments.
         @type kwds:     any keyword arguments
+        @return:        Whether the user function was successfully applied or not.
+        @rtype:         bool
         """
 
         # Debugging.
@@ -116,10 +118,22 @@ class Interpreter(object):
         fn = self._get_uf(uf)
 
         # Execute the user function.
-        apply(fn, args, kwds)
+        try:
+            apply(fn, args, kwds)
+
+        # Catch all RelaxErrors.
+        except AllRelaxErrors, instance:
+            # Display a dialog with the error.
+            gui_raise(instance, raise_flag=False)
+
+            # Return as a failure.
+            return False
 
         # Notify all observers that a user function has completed.
         status.observers.gui_uf.notify()
+
+        # Return success.
+        return True
 
 
     def empty(self):
