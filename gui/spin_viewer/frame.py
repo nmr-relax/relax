@@ -211,7 +211,7 @@ class Spin_view_window(wx.Frame):
 
         # The loading method page.
         self.page_method = Load_method_page(self.wizard)
-        self.page_indices['method'] = self.wizard.add_page(self.page_method, apply_button=True, skip_button=True)
+        self.page_indices['method'] = self.wizard.add_page(self.page_method, apply_button=True, skip_button=False)
         self.wizard.set_seq_next_fn(self.page_indices['method'], self.wizard_page_after_load_method)
 
         # The sequence.read page.
