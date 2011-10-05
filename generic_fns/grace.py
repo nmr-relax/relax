@@ -275,7 +275,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                     new_data[i][j][k].append(data[i][j][k][2])
 
                 # Second error set.
-                elif graph_type in ['xydy', 'xydxdy']:
+                if graph_type in ['xydy', 'xydxdy']:
                     new_data[i][j][k].append(data[i][j][k][3])
 
     # Return the data.
