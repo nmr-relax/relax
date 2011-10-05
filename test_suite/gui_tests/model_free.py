@@ -46,28 +46,28 @@ class Mf(GuiTestCase):
         """Test the model-free auto-analysis."""
 
         # Simulate the new analysis wizard.
-        self.gui.analysis.menu_new(None)
-        page = self.gui.analysis.new_wizard.wizard.get_page(0)
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
         page.select_mf(None)
         page.analysis_name.SetValue(str_to_gui("Model-free test"))
-        self.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.gui.analysis.new_wizard.wizard.get_page(1)
-        self.gui.analysis.new_wizard.wizard._go_next(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
         # Get the data.
-        analysis_type, analysis_name, pipe_name = self.gui.analysis.new_wizard.get_data()
+        analysis_type, analysis_name, pipe_name = self.app.gui.analysis.new_wizard.get_data()
 
         # Set up the analysis.
-        self.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
 
         # Alias the analysis.
-        analysis = self.gui.analysis.get_page_from_name("Model-free test")
+        analysis = self.app.gui.analysis.get_page_from_name("Model-free test")
 
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Set up a wizard window instance for all of the user function pages.
-        wizard = Wiz_window(self.gui)
+        wizard = Wiz_window(self.app.gui)
 
         # The data path.
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep
@@ -169,9 +169,9 @@ class Mf(GuiTestCase):
         self.check_exceptions()
 
         # Check the relax controller.
-        self.assertEqual(self.gui.controller.mc_gauge_mf.GetValue(), 100)
-        self.assertEqual(self.gui.controller.progress_gauge_mf.GetValue(), 100)
-        self.assertEqual(self.gui.controller.main_gauge.GetValue(), 100)
+        self.assertEqual(self.app.gui.controller.mc_gauge_mf.GetValue(), 100)
+        self.assertEqual(self.app.gui.controller.progress_gauge_mf.GetValue(), 100)
+        self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
         # Check the diffusion tensor.
         self.assertEqual(cdp.diff_tensor.type, 'sphere')

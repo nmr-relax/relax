@@ -45,26 +45,26 @@ class State(GuiTestCase):
 
         # Simulate the 'Open relax state' menu entry.
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'OMP' + sep + 'final_results_trunc_1.3'
-        self.gui.state_load(file_name=file)
+        self.app.gui.state_load(file_name=file)
 
         # Show the pipe editor.
-        self.gui.show_pipe_editor(None)
+        self.app.gui.show_pipe_editor(None)
 
         # The menu (this is used to set the selected pipe).
-        self.gui.pipe_editor.menu(Fake_grid_cell_right_click())
+        self.app.gui.pipe_editor.menu(Fake_grid_cell_right_click())
 
         # Associated an auto-analysis with the data pipe.
-        self.gui.pipe_editor.associate_auto(None)
+        self.app.gui.pipe_editor.associate_auto(None)
 
         # The index.
         index = 0
 
         # Test that the model-free analysis tab is loaded.
-        self.assert_(not self.gui.analysis.init_state)
-        self.assertEqual(self.gui.analysis._num_analyses, 1)
-        self.assertEqual(len(self.gui.analysis._analyses), 1)
-        self.assertEqual(self.gui.analysis.notebook.GetPageCount(), 1)
-        self.assert_(self.gui.analysis._analyses[index].init_flag)
+        self.assert_(not self.app.gui.analysis.init_state)
+        self.assertEqual(self.app.gui.analysis._num_analyses, 1)
+        self.assertEqual(len(self.app.gui.analysis._analyses), 1)
+        self.assertEqual(self.app.gui.analysis.notebook.GetPageCount(), 1)
+        self.assert_(self.app.gui.analysis._analyses[index].init_flag)
 
         # Test the relax data store.
         self.assert_(hasattr(ds, 'relax_gui'))

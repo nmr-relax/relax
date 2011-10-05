@@ -45,26 +45,26 @@ class Noe(GuiTestCase):
         """Test the NOE analysis."""
 
         # Initialise all the special windows (to sometimes catch rare race conditions).
-        self.gui.show_prompt(None)
-        self.gui.show_tree(None)
-        self.gui.show_pipe_editor(None)
+        self.app.gui.show_prompt(None)
+        self.app.gui.show_tree(None)
+        self.app.gui.show_pipe_editor(None)
 
         # Simulate the new analysis wizard.
-        self.gui.analysis.menu_new(None)
-        page = self.gui.analysis.new_wizard.wizard.get_page(0)
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
         page.select_noe(None)
-        self.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.gui.analysis.new_wizard.wizard.get_page(1)
-        self.gui.analysis.new_wizard.wizard._go_next(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
         # Get the data.
-        analysis_type, analysis_name, pipe_name = self.gui.analysis.new_wizard.get_data()
+        analysis_type, analysis_name, pipe_name = self.app.gui.analysis.new_wizard.get_data()
 
         # Set up the analysis.
-        self.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
 
         # Alias the analysis.
-        analysis = self.gui.analysis.get_page_from_name("Steady-state NOE")
+        analysis = self.app.gui.analysis.get_page_from_name("Steady-state NOE")
 
         # The frequency label.
         analysis.field_nmr_frq.SetValue(str_to_gui('500'))
@@ -73,7 +73,7 @@ class Noe(GuiTestCase):
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Load the sequence.
-        wizard = Wiz_window(self.gui)
+        wizard = Wiz_window(self.app.gui)
         seq_read = sequence.Read_page(wizard)
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
         seq_read.file.SetValue(str_to_gui(file))
@@ -148,7 +148,7 @@ class Noe(GuiTestCase):
         self.check_exceptions()
 
         # Check the relax controller.
-        self.assertEqual(self.gui.controller.main_gauge.GetValue(), 100)
+        self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
         # The real data.
         res_nums = [4, 5, 6]
