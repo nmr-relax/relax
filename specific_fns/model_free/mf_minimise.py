@@ -1049,7 +1049,7 @@ class Mf_minimise:
             # Set the spin index and get the spin, if not already set.
             if data_store.model_type == 'diff' or data_store.model_type == 'all':
                 spin_index = j
-                spin = return_spin_from_index(global_index=spin_index)
+                spin, spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
             # Skip deselected spins.
             if not spin.select:
@@ -1063,9 +1063,9 @@ class Mf_minimise:
             for ri_id in cdp.ri_ids:
                 # Make sure that the errors are strictly positive numbers.
                 if spin.ri_data_err[ri_id] == 0.0:
-                    raise RelaxError("Zero error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
+                    raise RelaxError("Zero error for spin '%s', minimisation not possible." % spin_id)
                 elif spin.ri_data_err[ri_id] < 0.0:
-                    raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
+                    raise RelaxError("Negative error for spin '%s', minimisation not possible." % spin_id)
 
             # The relaxation data optimisation structures.
             data = self._relax_data_opt_structs(spin, sim_index=sim_index)
