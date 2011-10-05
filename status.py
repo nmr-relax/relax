@@ -50,6 +50,8 @@ class Status(object):
             # Initialise some variables.
             self._instance.debug = False
             self._instance.pedantic = False
+            self._instance.test_mode = False
+            self._instance.show_gui = False
             self._instance.install_path = sys.path[0]
 
             # Set up the singleton.
@@ -78,11 +80,7 @@ class Status(object):
         self.auto_analysis = {}
         self.current_analysis = None
 
-        # Testing mode flag.
-        self.test_mode = False
-
         # GUI structures.
-        self.show_gui = False    # The GUI flag.
         self.controller_max_entries = 100000    # Scroll back limit in the relax controller.
 
         # A structure for skipped system and unit tests.
