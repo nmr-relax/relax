@@ -1063,9 +1063,9 @@ class Mf_minimise:
             for ri_id in cdp.ri_ids:
                 # Make sure that the errors are strictly positive numbers.
                 if spin.ri_data_err[ri_id] == 0.0:
-                    raise RelaxError("Zero error for spin '%s', minimisation not possible." % spin_id)
+                    raise RelaxError("Zero error for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (spin_id, ri_id))
                 elif spin.ri_data_err[ri_id] < 0.0:
-                    raise RelaxError("Negative error for spin '%s', minimisation not possible." % spin_id)
+                    raise RelaxError("Negative error of %s for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (spin.ri_data_err[ri_id], spin_id, ri_id))
 
             # The relaxation data optimisation structures.
             data = self._relax_data_opt_structs(spin, sim_index=sim_index)
