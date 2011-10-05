@@ -66,6 +66,9 @@ class Test_suite_runner:
         # A list for skipped tests.
         status.skip = []
 
+        # Set up the test runner.
+        self.runner = RelaxTestRunner(stream=sys.stdout)
+
 
     def run_all_tests(self):
         """Execute all of the test suite test types."""
@@ -97,7 +100,7 @@ class Test_suite_runner:
         # Run the tests.
         if dep_check.wx_module:
             gui_runner = GUI_test_runner()
-            self.gui_result = gui_runner.run(self.tests)
+            self.gui_result = gui_runner.run(self.tests, runner=self.runner)
 
         # No wx module installed.
         else:
@@ -121,7 +124,7 @@ class Test_suite_runner:
 
         # Run the tests.
         system_runner = System_test_runner()
-        self.system_result = system_runner.run(self.tests)
+        self.system_result = system_runner.run(self.tests, runner=self.runner)
 
         # Print out a summary of the test suite.
         if summary:
@@ -140,7 +143,7 @@ class Test_suite_runner:
 
         # Run the tests.
         unit_runner = Unit_test_runner(root_path=status.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
-        self.unit_result = unit_runner.run(runner=RelaxTestRunner(stream=sys.stdout))
+        self.unit_result = unit_runner.run(runner=self.runner)
 
         # Print out a summary of the test suite.
         if summary:

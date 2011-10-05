@@ -28,9 +28,6 @@ from relax_errors import RelaxError
 from string import split
 from unittest import TestSuite
 
-# relax module imports.
-from test_suite.relax_test_runner import RelaxTestRunner
-
 # relax system/functional test module imports.
 from align_tensor import Align_tensor
 from angles import Angles
@@ -94,14 +91,16 @@ __all__ = ['align_tensor',
 class System_test_runner:
     """Class for executing all of the system/functional tests."""
 
-    def run(self, tests=None):
+    def run(self, tests=None, runner=None):
         """Run the system/functional tests.
 
         The system test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
 
 
-        @keyword tests: The list of system tests to preform.
-        @type tests:    list of str
+        @keyword tests:     The list of system tests to preform.
+        @type tests:        list of str
+        @keyword runner:    A test runner such as TextTestRunner.  For an example of how to write a test runner see the python documentation for TextTestRunner in the python source.
+        @type runner:       Test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
         """
 
         # Create an array of test suites (add your new TestCase classes here).
@@ -159,7 +158,7 @@ class System_test_runner:
         full_suite = TestSuite(suite_array)
 
         # Run the test suite.
-        results = RelaxTestRunner().run(full_suite)
+        results = runner.run(full_suite)
 
         # Return the status of the tests.
         return results.wasSuccessful()
