@@ -136,8 +136,8 @@ class Relax_fit(SystemTestCase):
 
         # Check for zero errors.
         self.assertEqual(len(lines[index]), 3)
-        self.assertNotEqual(lines[index][2], '0.0')
-        self.assertNotEqual(lines[index+1][2], '0.0')
+        self.assertNotEqual(float(lines[index][2]), 0.0)
+        self.assertNotEqual(float(lines[index+1][2]), 0.0)
 
 
     def test_curve_fitting_height(self):
