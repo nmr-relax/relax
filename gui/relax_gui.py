@@ -438,6 +438,9 @@ class Main(wx.Frame):
         # Show the relax controller.
         self.show_controller(event)
 
+        # Yield
+        wx.GetApp().Yield(True)
+
         # Prevent all new GUI elements from being shown.
         status.show_gui = False
 
