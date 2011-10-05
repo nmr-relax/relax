@@ -30,6 +30,7 @@ from os import F_OK, access, getcwd, mkdir, sep
 import platform
 import sys
 from textwrap import wrap
+from thread import start_new_thread
 from time import sleep
 import webbrowser
 import wx
@@ -67,6 +68,7 @@ from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
 from gui.settings import Free_file_format, load_sequence
 from gui.user_functions import User_functions; user_functions = User_functions()
+import test_suite
 
 
 class Main(wx.Frame):
@@ -413,6 +415,42 @@ class Main(wx.Frame):
 
         # Open the relax PDF manual using the native PDF reader.
         open_file(file)
+
+
+    def run_test_suite(self, event):
+        """Execute the full test suite.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "In running the test suite, relax will be reset and all data lost.  Are you sure you would like to run the test suite?"
+        if Question(msg, parent=self, default=False).ShowModal() == wx.ID_NO:
+            return
+
+        # Change the cursor to waiting.
+        wx.BeginBusyCursor()
+
+        # Reset relax.
+        reset()
+
+        # Show the relax controller.
+        self.show_controller(event)
+
+        # Prevent all new GUI elements from being shown.
+        status.show_gui = False
+
+        # Run the tests.
+        runner = test_suite.test_suite_runner.Test_suite_runner([])
+        runner.run_all_tests()
+
+        # Reactive the GUI.
+        status.show_gui = True
+
+        # Turn off the busy cursor.
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
 
     def show_controller(self, event):
