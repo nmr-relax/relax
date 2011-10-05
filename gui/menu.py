@@ -53,6 +53,7 @@ class Menu:
     MENU_VIEW_PIPE_EDIT = wx.NewId()
     MENU_VIEW_PROMPT = wx.NewId()
     MENU_TOOLS_FORMAT = wx.NewId()
+    MENU_TOOLS_TEST_SUITE = wx.NewId()
     MENU_HELP_MANUAL = wx.NewId()
     MENU_HELP_MAIL = wx.NewId()
     MENU_HELP_REFS = wx.NewId()
@@ -113,10 +114,12 @@ class Menu:
         # The 'Tools' menu entries.
         menu = wx.Menu()
         menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_FORMAT, text="&Free file format settings", icon=paths.icon_16x16.document_properties))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_TEST_SUITE, text="&Test suite", icon=paths.icon_16x16.uf_script))
         self.menubar.Append(menu, "&Tools")
 
         # The 'Tools' menu actions.
         self.gui.Bind(wx.EVT_MENU, self.gui.free_file_format_settings, id=self.MENU_TOOLS_FORMAT)
+        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite, id=self.MENU_TOOLS_TEST_SUITE)
 
         # The 'Help' menu entries.
         menu = wx.Menu()
