@@ -140,7 +140,7 @@ class Test_suite_runner:
 
         # Run the tests.
         unit_runner = Unit_test_runner(root_path=status.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
-        self.unit_result = unit_runner.run(runner=RelaxTestRunner())
+        self.unit_result = unit_runner.run(runner=RelaxTestRunner(stream=sys.stdout))
 
         # Print out a summary of the test suite.
         if summary:
