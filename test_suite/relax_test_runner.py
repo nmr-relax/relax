@@ -111,7 +111,7 @@ class GuiTestResult(RelaxTestResult):
         """
 
         # Execute the RelaxTestResult.stopTest() method.
-        super(RelaxTestResult, self).stopTest(test)
+        super(GuiTestResult, self).stopTest(test)
 
         # Yield to allow the GUI to be updated.
         wx.GetApp().Yield(True)
