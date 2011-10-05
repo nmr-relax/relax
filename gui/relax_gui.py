@@ -445,7 +445,7 @@ class Main(wx.Frame):
         status.show_gui = False
 
         # Run the tests.
-        runner = test_suite.test_suite_runner.Test_suite_runner([])
+        runner = test_suite.test_suite_runner.Test_suite_runner([], from_gui=True)
         runner.run_all_tests()
 
         # Reactive the GUI.
