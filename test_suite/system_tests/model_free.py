@@ -201,6 +201,13 @@ class Mf(SystemTestCase):
         self.assertNotEqual(cdp.mol[0].res[1].spin[0].s2, 1.0)
 
 
+    def test_bug_18790(self):
+        """Test catching bug #18790, the negative relaxation data RelaxError reported by Vitaly Vostrikov."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_18790_negative_error.py')
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
