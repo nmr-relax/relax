@@ -58,7 +58,4 @@ rdc.back_calc()
 rdc.calc_q_factors()
 
 # Correlation plots.
-rdc.corr_plot(file="%s_rdc_corr.agr" % 'C', force=True)
-
-# Save the program state.
-state.save('relax_tensors', force=True)
+rdc.corr_plot(file="devnull", force=True)
