@@ -276,8 +276,8 @@ class Relax:
             self.log_file = options.log
 
             # Fail if the file already exists.
-            if access(log_file, F_OK):
-                parser.error("the log file " + repr(log_file) + " already exists")
+            if access(self.log_file, F_OK):
+                parser.error("the log file " + repr(self.log_file) + " already exists")
         else:
             self.log_file = None
 
@@ -291,8 +291,8 @@ class Relax:
             self.tee_file = options.tee
 
             # Fail if the file already exists.
-            if access(tee_file, F_OK):
-                parser.error("the tee file " + repr(tee_file) + " already exists")
+            if access(self.tee_file, F_OK):
+                parser.error("the tee file " + repr(self.tee_file) + " already exists")
         else:
             self.tee_file = None
 
