@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+import dep_check
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -31,7 +32,8 @@ try:
 except ImportError:
     from unittest import _TextTestResult as TextTestResult    # Python 2.6 and below.
 from unittest import TextTestRunner
-import wx
+if dep_check.wx_module:
+    import wx
 
 # relax module imports.
 from status import Status; status = Status()
