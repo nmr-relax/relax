@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,13 +21,17 @@
 ###############################################################################
 
 # Python module imports.
-import sys
-from unittest import TextTestResult, TextTestRunner
-import wx
 try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
+import sys
+try:
+    from unittest import TextTestResult    # Python 2.7 and above.
+except ImportError:
+    from unittest import _TextTestResult as TextTestResult    # Python 2.6 and below.
+from unittest import TextTestRunner
+import wx
 
 # relax module imports.
 from status import Status; status = Status()
