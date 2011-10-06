@@ -480,6 +480,13 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].rdc_bc['A'], -16.244078605100817)
 
 
+    def test_rdc_tensor(self):
+        """Test the calculation of an alignment tensor from RDC data."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'rdc_tensor.py')
+
+
     def test_stereochem_analysis(self):
         """The full relative stereochemistry analysis."""
 
