@@ -1714,8 +1714,14 @@ class N_state_model(API_base, API_common):
             if not hasattr(spin, 'rdc_bc'):
                 self.calculate()
 
+            # The data.
+            if not hasattr(spin, 'rdc_bc') or spin.rdc_bc.has_key(data_id[2]):
+                data = None
+            else:
+                data = spin.rdc_bc[data_id[2]]
+
             # Append the data.
-            mc_data.append(spin.rdc_bc[data_id[2]])
+            mc_data.append(data)
 
         # PCS data.
         elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
@@ -1723,8 +1729,14 @@ class N_state_model(API_base, API_common):
             if not hasattr(spin, 'pcs_bc'):
                 self.calculate()
 
+            # The data.
+            if not hasattr(spin, 'pcs_bc') or spin.pcs_bc.has_key(data_id[2]):
+                data = None
+            else:
+                data = spin.pcs_bc[data_id[2]]
+
             # Append the data.
-            mc_data.append(spin.pcs_bc[data_id[2]])
+            mc_data.append(data)
 
         # NOESY data.
         elif data_id[1] == 'noesy' and hasattr(spin, 'noesy'):
