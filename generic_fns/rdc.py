@@ -462,7 +462,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='2D', spi
                 spin.rdc_err = {}
 
             # Data conversion.
-            value = convert(value, align_id, to_intern=True)
+            error = convert(error, align_id, to_intern=True)
 
             # Append the error.
             spin.rdc_err[align_id] = error
