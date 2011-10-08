@@ -267,7 +267,7 @@ class RDC(User_fn_class):
         rdc.display(align_id=align_id)
 
 
-    def read(self, align_id=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
+    def read(self, align_id=None, file=None, dir=None, data_type='2D', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
         """Read the RDC data from file.
 
         Keyword Arguments
@@ -278,6 +278,8 @@ class RDC(User_fn_class):
         file:  The name of the file containing the RDC data.
 
         dir:  The directory where the file is located.
+
+        data_type:  Whether the RDC data is in the 2D or D format.
 
         spin_id_col:  The spin ID string column (an alternative to the mol, res, and spin name and
             number columns).
@@ -306,6 +308,19 @@ class RDC(User_fn_class):
         Description
         ~~~~~~~~~~~
 
+        The data_type argument is used to specify how the RDC is defined.  It is a string which can
+        be set to two values:
+        
+            - '2D' means that the splitting in the aligned sample was assumed to be J + 2D.
+            - 'D' means that the splitting in the aligned sample was taken as J + D.
+
+        Internally, relax uses the 2D notation.  Therefore if set to 'D', the values will be halved
+        when read in.
+
+        If neg_g_corr is set to True, a sign inversion will be applied to all RDC values to be
+        loaded.  This is sometimes needed for 15N if the data is not compensated for the negative
+        gyromagnetic ratio.
+
         The spin system can be identified in the file using two different formats.  The first is the
         spin ID string column which can include the molecule name, the residue name and number, and
         the spin name and number.  Alternatively the mol_name_col, res_num_col, res_name_col,
@@ -314,24 +329,21 @@ class RDC(User_fn_class):
         argument can be used to restrict the reading to certain spin types, for example only 15N
         spins when only residue information is in the file.
 
-        If neg_g_corr is set to True, a sign inversion will be applied to all RDC values to be
-        loaded.
-
 
         Examples
         ~~~~~~~~
 
         The following commands will read the RDC data out of the file 'Tb.txt' where the columns are
-        separated by the symbol ',', and store the RDCs under the ID 'Tb'.
+        separated by the symbol ',', and store the RDCs under the ID 'Tb':
 
         relax> rdc.read('Tb', 'Tb.txt', sep=',')
 
 
         If the individual spin RDC errors are located in the file 'rdc_err.txt' in column number 5,
-        then to read these values into relax, type one of:
+        then to read these values into relax, assuming J + D was measured, type one of:
 
-        relax> rdc.read('phage', 'rdc_err.txt', error_col=5)
-        relax> rdc.read(align_id='phage', file='rdc_err.txt', error_col=5)
+        relax> rdc.read('phage', 'rdc_err.txt', data_type='D', error_col=5)
+        relax> rdc.read(align_id='phage', file='rdc_err.txt', data_type='D', error_col=5)
 
 
         If the RDCs correspond to the 'N' spin and other spin types such as 1H, 13C, etc. are loaded
@@ -346,6 +358,7 @@ class RDC(User_fn_class):
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
+            text = text + ", data_type=" + repr(data_type)
             text = text + ", spin_id_col=" + repr(spin_id_col)
             text = text + ", mol_name_col=" + repr(mol_name_col)
             text = text + ", res_num_col=" + repr(res_num_col)
@@ -363,6 +376,7 @@ class RDC(User_fn_class):
         arg_check.is_str(align_id, 'alignment ID string')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(data_type, 'data type')
         arg_check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
         arg_check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
         arg_check.is_int(res_num_col, 'residue number column', can_be_none=True)
@@ -376,7 +390,7 @@ class RDC(User_fn_class):
         arg_check.is_bool(neg_g_corr, 'negative gyromagnetic ratio correction')
 
         # Execute the functional code.
-        rdc.read(align_id=align_id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id, neg_g_corr=neg_g_corr)
+        rdc.read(align_id=align_id, file=file, dir=dir, data_type=data_type, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id, neg_g_corr=neg_g_corr)
 
 
     def weight(self, align_id=None, spin_id=None, weight=1.0):
