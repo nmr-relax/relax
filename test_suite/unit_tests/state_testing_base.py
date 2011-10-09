@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,40 +21,22 @@
 ###############################################################################
 
 # Python module imports.
-from os import sep, tmpfile
+from os import sep
+from tempfile import mktemp
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from generic_fns.reset import reset
 from status import Status; status = Status()
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class State_base_class:
+class State_base_class(UnitTestCase):
     """Base class for the tests of both the 'prompt.state' and 'generic_fns.state' modules.
 
     This base class also contains shared unit tests.
     """
-
-
-    def setUp(self):
-        """Set up for all the data pipe unit tests."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Delete the temporary file descriptor.
-        try:
-            del self.tmp_file
-        except AttributeError:
-            pass
-
-        # Reset the relax data store.
-        ds.__reset__()
-
 
     def test_load(self):
         """The unpickling and restoration of the relax data storage singleton.
@@ -124,8 +106,8 @@ class State_base_class:
         # Load the state.
         self.state.load_state(state='basic_single_pipe', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
-        # Reset.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Test that there are no contents in the reset singleton.
         self.assertEqual(list(ds.keys()), [])
@@ -140,7 +122,7 @@ class State_base_class:
         """
 
         # Create a temporary file descriptor.
-        self.tmp_file = tmpfile()
+        ds.tmpfile = mktemp()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -155,4 +137,4 @@ class State_base_class:
         ds.y = 'Hello'
 
         # Save the state.
-        self.state.save_state(state=self.tmp_file)
+        self.state.save_state(state=ds.tmpfile)

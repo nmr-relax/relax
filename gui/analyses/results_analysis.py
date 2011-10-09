@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,12 +30,14 @@ import wx.grid
 # relax module imports.
 from prompt.interpreter import Interpreter
 from generic_fns.mol_res_spin import spin_loop
+from status import Status; status = Status()
 
 # relax GUI module imports.
+from gui.fonts import font
 from gui.paths import IMAGE_PATH
 
 
-def color_code_noe(self, target_dir, pdb_file):
+def color_code_noe(target_dir, pdb_file):
     """Create PyMol Macro for NOE colouring."""
 
     # Open the macro file.
@@ -82,7 +84,7 @@ def color_code_noe(self, target_dir, pdb_file):
     file.close()
 
 
-def model_free_results(self, directory, pdbfile):
+def model_free_results(directory, pdbfile):
     """Create the model-free results."""
 
     # Load the interpreter.
@@ -351,7 +353,8 @@ def see_results(openfile, import_results):
 
     if 'Table_of_Results' in openfile:
         summary = Final_results(import_results, None, -1, "")
-        summary.Show()
+        if status.show_gui:
+            summary.Show()
 
 
 
@@ -368,6 +371,7 @@ class Final_results(wx.Frame):        # Dialog that displays relax results in wi
         self.label_1 = wx.StaticText(self, -1, "Results of relax Analysis")
         self.grid_1 = wx.grid.Grid(self, -1, size=(1, 1))
         self.close_button = wx.Button(self, -1, "Close")
+        self.close_button.SetFont(font.normal)
 
         self.__set_properties()
         self.__do_layout()

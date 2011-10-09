@@ -31,8 +31,9 @@ import sys
 from generic_fns import minimise, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxParamSetError, RelaxValueError
-from relax_io import open_write_file, read_spin_data, write_spin_data
+from relax_io import get_file_path, open_write_file, read_spin_data, write_spin_data
 import specific_fns
+from status import Status; status = Status()
 
 
 def copy(pipe_from=None, pipe_to=None, param=None):
@@ -400,6 +401,7 @@ def write(param=None, file=None, dir=None, bc=False, force=False, return_value=N
         raise RelaxNoSequenceError
 
     # Open the file for writing.
+    file_path = get_file_path(file, dir)
     file = open_write_file(file, dir, force)
 
     # Write the data.
@@ -407,6 +409,12 @@ def write(param=None, file=None, dir=None, bc=False, force=False, return_value=N
 
     # Close the file.
     file.close()
+
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    cdp.result_files.append(['text', 'Text', file_path])
+    status.observers.result_file.notify()
 
 
 def write_data(param=None, file=None, bc=False, return_value=None):

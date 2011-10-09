@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,6 +38,7 @@ import generic_fns
 from gui import Gui
 from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from relax_xml import fill_object_contents, xml_to_object
+from status import Status; status = Status()
 from version import version
 
 
@@ -145,6 +146,13 @@ class Relax_data_store(dict):
         # Remove all items from the dictionary.
         self.instance.clear()
 
+        # Reset the current data pipe.
+        __builtin__.cdp = None
+
+        # Signal the change.
+        status.observers.reset.notify()
+        status.observers.pipe_alteration.notify()
+
 
     def add(self, pipe_name, pipe_type, switch=True):
         """Method for adding a new data pipe container to the dictionary.
@@ -171,8 +179,12 @@ class Relax_data_store(dict):
 
         # Change the current data pipe.
         if switch:
+            # Set the current data pipe.
             self.instance.current_pipe = pipe_name
             __builtin__.cdp = self[pipe_name]
+
+            # Signal the switch.
+            status.observers.pipe_alteration.notify()
 
 
     def is_empty(self):
@@ -356,27 +368,27 @@ class Relax_data_store(dict):
         top_element.setAttribute('time', asctime())
 
         # Add all objects in the data store base object to the XML element.
-        blacklist = list(self.__class__.__dict__.keys() + dict.__dict__.keys())
-        for name in dir(self):
-            # Skip blacklisted objects.
-            if name in blacklist:
-                continue
-
-            # Skip special objects.
-            if search('^_', name):
-                continue
-
-            # Execute any to_xml() methods, and add that object to the blacklist.
-            obj = getattr(self, name)
-            if hasattr(obj, 'to_xml'):
-                obj.to_xml(xmldoc, top_element)
-                blacklist = blacklist + [name]
-
-        # Remove the current data pipe from the blacklist!
-        blacklist.remove('current_pipe')
-
-        # Add all simple python objects within the PipeContainer to the pipe element.
         if all:
+            blacklist = list(self.__class__.__dict__.keys() + dict.__dict__.keys())
+            for name in dir(self):
+                # Skip blacklisted objects.
+                if name in blacklist:
+                    continue
+
+                # Skip special objects.
+                if search('^_', name):
+                    continue
+
+                # Execute any to_xml() methods, and add that object to the blacklist.
+                obj = getattr(self, name)
+                if hasattr(obj, 'to_xml'):
+                    obj.to_xml(xmldoc, top_element)
+                    blacklist = blacklist + [name]
+
+            # Remove the current data pipe from the blacklist!
+            blacklist.remove('current_pipe')
+
+            # Add all simple python objects within the store.
             fill_object_contents(xmldoc, top_element, object=self, blacklist=blacklist)
 
         # Loop over the pipes.

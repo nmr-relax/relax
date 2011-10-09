@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -630,12 +630,8 @@ class Relax_fit(API_base, API_common):
         return names
 
 
-    default_value_doc = """
-        Relaxation curve fitting default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        These values are completely arbitrary as peak heights (or volumes) are extremely variable
-        and the Rx value is a compensation for both the R1 and R2 values.
+    default_value_doc = ["Relaxation curve fitting default values", """
+        These values are completely arbitrary as peak heights (or volumes) are extremely variable and the Rx value is a compensation for both the R1 and R2 values.
         ___________________________________________________________________
         |                        |               |                        |
         | Data type              | Object name   | Value                  |
@@ -649,7 +645,7 @@ class Relax_fit(API_base, API_common):
         |                        |               |                        |
         |________________________|_______________|________________________|
 
-        """
+        """]
 
     def default_value(self, param):
         """Return the default relaxation curve-fitting parameter values.
@@ -928,10 +924,7 @@ class Relax_fit(API_base, API_common):
         return spin.intensities
 
 
-    return_data_name_doc = """
-        Relaxation curve fitting data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    return_data_name_doc = ["Relaxation curve fitting data type string matching patterns", """
         __________________________________________________________________________________________
         |                                   |                      |                             |
         | Data type                         | Object name          | Patterns                    |
@@ -948,7 +941,7 @@ class Relax_fit(API_base, API_common):
         | Relaxation period times (series)  | 'relax_times'        | '^[Rr]elax[ -_][Tt]imes$'   |
         |___________________________________|______________________|_____________________________|
 
-        """
+        """]
 
     def return_data_name(self, param):
         """Return a unique identifying string for the relaxation curve-fitting parameter.
@@ -1052,14 +1045,9 @@ class Relax_fit(API_base, API_common):
         return None
 
 
-    set_doc = """
-        Relaxation curve fitting set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        Only three parameters can be set, the relaxation rate (Rx), the initial intensity (I0), and
-        the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen
-        model is that of the exponential curve which decays to zero.
-        """
+    set_doc = ["Relaxation curve fitting set details", """
+        Only three parameters can be set, the relaxation rate (Rx), the initial intensity (I0), and the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen model is that of the exponential curve which decays to zero.
+        """]
 
 
     def sim_pack_data(self, data_id, sim_data):
@@ -1073,10 +1061,6 @@ class Relax_fit(API_base, API_common):
 
         # Get the spin container.
         spin = return_spin(data_id)
-
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'sim_intensities'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
 
         # Create the data structure.
         spin.sim_intensities = sim_data

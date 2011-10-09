@@ -1,3 +1,200 @@
+Version 1.3.12
+(22 August 2011, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.12
+
+    Features:
+        * The multi-processor capabilities of Gary Thompson's multi package including both uniprocessor and mpi4py modes.
+
+    Changes:
+        N/A
+
+    Bugfixes:
+        N/A
+
+
+
+Version 1.3.11
+(12 August 2011, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.11
+
+    Features:
+        * Integration of relax and the BioMagResBank (BMRB, http://www.bmrb.wisc.edu).
+        * Support for the creation of NMR-STAR version 3.1 files for BMRB deposition of model-free analysis results.
+        * Support for the reading of all versions of NMR-STAR files containing model-free or relaxation data from the BMRB.
+        * Use of the new bmrblib library for BMRB integration support (http://gna.org/projects/bmrblib).
+        * Activated the PDC peak intensity type reading.
+        * Added the Bruker PDC to the exp_info.software_select user function back end.
+        * Implemented the value.set user function in the GUI.
+        * Redesign of how relaxation data is handled within relax so that the data is identified via ID strings rather than relaxation type and frequency strings.
+        * Added two sample scripts for determining the populations of an ensemble of small molecules.  This uses RDCs and PCSs with the N-state model to study the dynamics of small organic molecules (http://dx.doi.org/10.1002/chem.201100854).
+        * The GUI can now be resized.
+        * Big clean up and simplification of the GUI code resulting in a more regularised GUI on all operating systems.
+        * Added initial support for determining protein connectivities in the internal structural reader.  This is currently only for intra-residue connectivities in the protein backbone.
+        * Support for the reading of the organic chemistry XYZ 3D structure file format.
+
+    Changes:
+        * Removed the Numeric module from the --info print out as it is completely unused now.
+        * Added the Bruker PDC software info to the exp_info module.
+        * The pdc.read user function back end is now reading the PDC version information.
+        * Added a catch for the "worst case per peak scenario" option in the PDC.  This will now throw a RelaxError, telling the user to go back to the PDC and use the other option.
+        * Converted the pdc.read user function back-end to use the \t delimitation of the PDC file for parsing.
+        * The R1 value and error are now being read directly from the PDC file.
+        * Added wrapper methods to the relaxation curve-fitting specific code for the new C modules.  These allow the parameter numpy array from minfx to be converted into a Python list prior to sending it into the C module.
+        * Added a check for the runpy Python module.
+        * Scripts can now be run again under Python versions 2.4 or lower (by avoiding the runpy module).
+        * The auto_analyses package modules are now imported by __init__ to force their existence.
+        * The relax_data.back_calc user function arguments no longer need to be supplied.
+        * Shifted all of the model-free sample scripts into the new subdirectory sample_scripts/model_free.
+        * Added copyright headers to all of the sample scripts, and updated the introduction text.  This allows users to determine the age of the scripts.
+        * Updated the OpenDX mapping sample scripts from the relax 1.2 to the 1.3 design.
+        * Added a sample script for creating plots of experimental verses back calculated relaxation data.
+        * Deleted the incomplete and useless N_state_model.py sample script.
+        * Created a sample script subdirectory called n_state_model.
+        * Added a sample script for the unsuccessful two domain N-state model optimisation.
+        * Deleted the ancient TODO file, as it is no longer relevant.
+        * Deleted the SRLS analysis type - there is no incentive to develop this part of relax.
+        * Removed 'relax_disp' from the VALID_TYPES data pipe type array.  This is supported in the relaxation dispersion 'relax_disp' branch and not in the main line.
+        * The RDC and PCS Q factor user functions now do nothing when data is missing rather than failing.  A warning is given and the function now simply returns rather than raising an error.
+        * The grace file created by the pcs.corr_plot user function now separates each element into its own graph.
+        * Converted the summary from the final_data_extraction.py sample script into comma separated file (.csv).
+        * Added the PDB reading parts of Scientific python to relax so that Scientific python is no longer a relax dependency.
+        * The Scientific python PDB reading tests are no longer skipped if the module is not installed.
+        * Removed Scientific python and Numeric from the blacklisted modules.  This is for the docstring fetching script to generate the user function section of the user manual.
+        * relax icon is not shown in window title if running on a Mac.
+        * Included the relax development team to copyright statement in the main window of the GUI.
+        * Peak lists and relaxation times are collected in data grids within the GUI.
+        * Updated the Bieri et al., 2011 reference as the relax GUI paper is now published (http://dx.doi.org/10.1007/s10858-011-9509-1).
+        * Changed the "Help->Contact relaxGUI" to "Help->Mailing list contact".
+        * Renamed the "Relaxation time [s]" column to "Relaxation delay [s]" in the GUI as this is a more correct description.
+        * Deleted Edward's ancient Melbourne Uni email address from the MEDLINE info.
+        * Normalisation of the text in the auto model-free analysis GUI tab.  The font sizes are now all the same, the text is not right aligned (not seen under Linux but very ugly in Windows), and semicolon usage and capitalisation is normalised.
+        * Regularisation of the font formatting in the steady-state NOE GUI tab.
+        * Shifted the title and subtitle creation for the NOE frame into a base class for all frames to use.
+        * Regularisation of the fonts, titles, and subtitles in the Rx auto-analysis frames.
+        * Created the add_subsubtitle() base class method for creating a sub-sub-title in the GUI.
+        * Regularised the text in the results tab.
+        * Regularised the "Single delay cycle time [s]" text in the model-free frame.
+        * Attempt to regularise the text in the text controls.
+        * Regularised all the stead-state NOE frame text controls.
+        * Created the add_static_text() base class method for all the GUI frames to use.
+        * Added the add_button_open() base class method for regularising the buttons across GUI frames.
+        * Regularised all of the auto NOE analysis frame buttons.
+        * Added the add_text_sel_element() base class method for creating one of the basic frame elements.
+        * Better layout for the base class static text, text control and button addition (for the GUI).
+        * Added a stretchable spacer to the NOE window so the execute relax button is always at the bottom right.
+        * Completely refactored the model-free model buttons code.
+        * Shifted the model-free add_execute_relax() method into the base class for all analysis tabs to use.
+        * The peak intensity GUI element is now enclosed within a StaticBox.
+        * Shifted the main GUI window layout to the start of the __init__() method.
+        * Created the function gui.misc.add_border() for adding borders to generic GUI elements.
+        * Added an internal border to the relaxation peak list selection GUI element.
+        * Created the analysis tab base class methods add_spin_control() and add_spin_element().  These are similar to the text control and text selection elements respectively, but use a SpinCtrl instead.
+        * The model-free analysis tab now uses the base class add_spin_element() method for the max iterations.
+        * Shifted the model-free list box in the results tab into the new add_list_box() method.
+        * Shifted the 'Execute relax' text to be inside the button.
+        * Added an icon to the 'Change' buttons throughout the GUI.
+        * Added the oxygen icons for opening folders.
+        * The open folder icons are now used for the 'Results directory' change buttons.
+        * The settings windows are now derived from wx.Dialog rather than wx.Frame.  This is for better operation under MS Windows.
+        * Added the document-close Oxygen icons.
+        * Added support for old save files in the Peak_intensity.sync_ds() method (for the GUI).
+        * Argument change_all for deselecting residues in the d'Auvergne protocol has to be boolean.
+        * The relax_fit overfit_deselect() method now skips deselected spins.  This prevents unnecessary warnings about missing data for deselected spins.
+        * All of the overfit_deselect() methods now skip deselected spins, avoiding confusing warnings.
+        * Created a script for byte compiling the Python source files.
+        * Added the data_type() method to the specific functions API.  This will be used to determine the type that a given parameter from data_names() should be.
+        * Implemented the model-free version of the data_type() API method.
+        * The heteronucleus and proton type parameters can now be specified by their parameter names as well.
+        * The create_molecule, create_residue, and create_spin functions now return the created container.
+        * Modified the create_spin() function to overwrite the first spin if empty.
+        * Redesign of the structure.load_spins user function back end for XYZ file reading support.
+        * Redesign of the main relax module.  The module has been renamed to 'relax.py', and the original file 'relax' is now a very basic python script which simply loads the module and runs the new start() function for launching relax.
+        * The relax mode normally specified by the command line can now be overridden.
+        * Removed the executable svn property on the info module.
+        * Shifted the pedantic flag into the status object.
+        * RelaxWarnings now only show a traceback when the pedantic flag is True.
+        * The relax state is now saved on a RelaxError when the pedantic rather than debugging flag is turned on.  As both flags can be given, this allows for this state saving to be activated or deactivated.
+        * The relax_io.read_spin_data() function no longer skips short lines so that a warning is given for it.
+        * generic_fns.sequence.validate_sequence() now also checks for the spin ID, data and error columns.  This is now used by relax_io.read_spin_data().
+        * Files created by the grace.write user function are now put into a new list cdp.results_files.
+        * The value.write user function now also adds to the cdp.result_files structure.
+        * Modified the execution lock to have a mode.  This allows for greater control and avoid string comparison of names to determine if a script or auto-analysis acquired the lock.
+        * The dauvergne_protocol is now more robust if the program is interrupted and restarted later.  The opt/results.bz2 file is now searched for, and if not the round is assumed incomplete.
+        * The pymol.tensor_pdb() user function now shows the diffusion tensor using PyMOL sticks.
+        * Creation of the new structure.read_xyz user function.
+        * Addition of two new system tests Structure.test_read_xyz_internal() and Structure.test_read_xyz_internal2().
+        * Changing the description in the user functions structure.load_spins and structure.read_xyz.
+        * Code for extracting a vector between specified spins in a XYZ file has been included in the generic_fns.structure.internal.
+        * Debugging in the function generic_fns.structure.main.load_spin() in order to load a spin for XYZ file properly.
+        * For printing out of modified spins, a test to check whether the spin_name exists or not has been added.
+        * Added the pymol_macro() method to the analysis specific API.
+        * Clean up of parameters in the _create_mc_relax_data() specific API common method.
+        * A number of epydoc docstring fixes.
+        * The sconstruct script is only executed when it is the main loaded module or if launched by scons.
+        * Improved the list of modules and packages used in the epydoc documentation.  The files and directories which are not python modules or packages are now properly skipped.
+
+
+    Bugfixes:
+        * The setting of the integration method in the pdc.read user function now works.
+        * Fixes for the pdc.read user function back-end for the NOE PDC file.
+        * Fix for the pdc.read user function back-end for reading NOE data out of the new PDC files.
+        * Fix for the relaxation curve-fitting back_calc_I C function so that it works under Python 2.5.
+        * Fix for the initialisation of the Bruker_import class.  This allows this module to be loaded in Python 2.4.
+        * The reference counting appears to not be needed in the C modules.  This allows the modules to be compiled under Python 2.4 or lower.
+        * Loosened all of the model-free tests so that the minimisation statistics are no longer checked.  This will stop users from thinking they have a problem with their version of relax, after running the test suite.
+        * Removed numpy from the relaxation curve-fitting C module code.  This should help with incompatibilities (and segfault failures) between different Python versions, as this seems to be due to the numpy C interface.
+        * Improved the RelaxWarning for the reading of NMRView peaks with missing assignments (bug #17876).
+        * Fix for the N-state model for when only the paramagnetic centre position is optimised.
+        * Fix for the grid search limits as they were being scaled iteratively for each successive spin system (bug #18030).  This only affects certain type of custom grid searches.
+        * A ":" symbol in the description of a function variable was preventing the compilation of the user manual using scons (bug #18037).
+        * Opened files are closed properly after writing in the final_data_extraction.py sample script.
+        * If no diffusion tensor is present, creation of diffusion pdb will be skipped (final_data_extraction.py sample script).
+        * Updates for the Dasha sample script for the current version of relax.
+        * Updates for the diffusion tensor optimization sample script for the current version of relax.
+        * Some fixes for the subprocess.Popen() calls on MS Windows.
+        * Removed event.skip due to conflict with Windows (auto-analysis Rx fix in the GUI).
+        * Fixes for the spin.copy GUI user function element.  This still had remnants of the residue.copy window.
+        * The relax icon is not shown in "Global relax settings" window if running on a Mac.  This fixes a bug whereby closing the window causes the GUI to crash.
+        * Complete redesign of the relax global settings window to fix the Mac OS X crashing (bug #18197).
+        * Fix for the global settings window - it needs to inherit from UF_window!
+        * Fix for the NOE auto-analysis - the column numbers for the deselected spins file are now assumed.  The residue number is assumed to be in the first column.  This is a hack until the spin selection part is better designed.
+        * Fix for the bug reported as sr #2764.  The problem was that the sequence file is now in the variable sequence_file.
+        * Fix for the sequence.read user function - the force flag is now being passed on.
+        * Fix for the sequence.write user function - the force flag is now passed to open_write_file().
+        * Fix for the sequence.write user function when the column separator is not whitespace.  The column widths are no longer fixed if the separator is not whitespace.
+        * Many bug fixes for the functions of the generic_fns.mol_res_spin module.  These fixes are for when a data pipe other than the current data pipe is used.
+        * Fix for the relax save states - the current data pipe is now saved and restored.  The info about which pipe was the current one was being blacklisted, so was not stored in the relax save file.
+        * Fix for the atomic position check in the spin.create_pseudo user function.
+        * Fix for pseudo-atom support when only a single structure is loaded.  Pseudo-atom support was only working correctly for when multiple models were loaded and atomic positions were not averaged.
+        * Fix for the spectrum.read_intensities user function int_method argument for volumes.  Volume integration should be called 'point sum', but the back end code was checking against the string 'volume'.
+        * Fix in one of the relaxation curve-fitting system tests - 'volume' should have been 'point sum'.
+        * Fix for the PCS back-calculation function - divide by zero is now avoided.  The function was calculating the normalised bond vector between the lanthanide atom and itself.  The normalisation in this case is now avoided.
+        * Fix for the spectrum user functions for when the ID order does not match those loaded.  If the order of IDs sent to spectrum.replicated did not match the order they were loaded by spectrum.read_intensities, then the spectrum.error_analysis user function would fail.  The order is no longer important.
+        * Fix - the pipe switching flag is now propagated all the way to the data store add() method.  The flag was previously not sent to the method so that the creation of a new data pipe always resulted in a switch to that pipe.  This bug is normally harmless.
+        * Fix for the model-free _determine_model_type() method when the spin container has no 'local_tm'.  This code was failing in certain rare circumstances (when the setting up of the diffusion tensor was forgotten).
+        * Fix for structure.read_pdb for when the file contains no PDB data.  This is now caught, and a warning is given and the function exists cleanly.
+        * Fix for the RelaxWarning system on Mac OS X, the base class __str__ method now returns a simple string.  On a Mac, the warning message text was in unicode whereas the __str__() method must return a standard string.  So now __str__() is using the str() method to convert.
+        * Fix for the structure.vectors user function.  It no longer complains about a PDB already loaded when no PDB has been loaded.
+        * Fix for the resetting of the global optimisation round in the dauvergne_protocol auto-analysis.  The value was being reset to None at every round.
+        * Fix for the round determination in the dauvergne_protocol auto-analysis.  The 'opt' directory was missing in the path.
+        * Fix for the saving/loading of a results file in GUI mode.  The save files were containing the ds.relax_gui object and restoring it on loading.  This caused the data storage of the GUI to change underneath the GUI resulting in a crash or race conditions.
+        * Fix for the resetting of the relax data store - the cdp structure is now set to None.  Previously the data store would be cleared, but the __builtin__.cdp structure would point to the old current data pipe, keeping it in existence and causing problems in the GUI.
+        * Fix for the xydxdy type Grace graphs - the dx data was not being placed in the file.
+        * Fix for the structure.create_diff_tensor_pdb user function for when no element info is available.  These atoms where the element is not in the PDB file or cannot be determined should have been skipped.
+        * Fix for the molmol macro user functions - one of the args 'param' should have been 'data_type'.
+        * Fix for the spin_loop() calls when generating Molmol macros.  The full_info argument should have been set to True.
+        * Fix for the molmol.write macro creation user function - the file arg can be None!
+        * Fix for the molmol.write user function for model-free parameters.  Some of the parameters were using the ancient self.relax code path which was eliminated with the redesign of relax 1.2 to 1.3.
+        * Fixes for the old scripts/optimisation_testing.py script.  This was also using the ancient self.relax code path.
+        * Fix for the molmol macro of the ts parameter, the spin container variable was spelt incorrectly.
+        * Fix for the data.align_tensor.calc_eta() function - divide by zeros are now avoided.  When Azz is zero, eta is now set to NaN.
+        * Typo fix in the unused and incomplete dfunc function to remove compilation warnings on MS Windows.
+        * Fix for the data.align_tensor.calc_R() function - divide by zeros are now avoided.  When Aa is zero, Ar is now set to NaN.
+        * Fix for the test_opt_constr_bfgs_mt_S2_0_970_te_2048_Rex_0_149 model-free system test on MS Windows.  The te parameter check was too strict.
+        * Another divide by zero problem is being caught in the RDC Q-factor code.
+        * The dipolar_constant() and pcs_constant() functions now catch division by zero problems.
+
+
 Version 1.3.10
 (18 February 2011, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.10

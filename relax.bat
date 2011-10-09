@@ -12,10 +12,6 @@ rem Attempt to prevent [Ctrl-C] and [Ctrl-Break] form asking "Terminate batch
 rem job (Y/N)?" on exit.
 break off
 
-rem Clear the screen.
-cls
-
-rem Run relax using python.  %~dp0 will expand to the path where relax is found
-rem and %0 is simply 'relax'.  %* will send all the remaining arguments to
-rem relax.
-python "%~dp0%0.py" %*
+rem Run relax using python.  %~dp0 will expand to the path where relax is found.
+rem %* will send all the remaining arguments to relax.
+python "%~dp0\relax.py" %*

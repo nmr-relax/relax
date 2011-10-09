@@ -69,7 +69,6 @@ except ImportError:
 # wx module.
 try:
     import wx
-    del wx
     wx_module = True
 except ImportError:
     wx_module = False
@@ -157,6 +156,16 @@ try:
 except ImportError, message:
     mpi4py_module = False
 
+    # The error message.
+    mpi4py_message = """The dependency 'mpi4py' has not been installed. You should either:
+
+1. Run without multiprocessor support i.e. remove the --multi mpi4py flag from the command line.
+
+2. Install mpi4py.
+
+3. Choose another multi processor method to give to the --multi command line flag.\n
+    """
+ 
 # PyMOL.
 try:
     import pymol

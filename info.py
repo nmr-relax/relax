@@ -24,15 +24,14 @@
 """Module containing the introductory text container."""
 
 # Python module imports.
+import numpy
+import platform
 from string import split
+from textwrap import wrap
 
 # relax module imports.
 import dep_check
-import numpy
-import platform
-from textwrap import wrap
 from version import version
-
 
 
 class Info_box(object):
@@ -179,6 +178,12 @@ class Info_box(object):
         # ImportErrors, if any.
         for i in range(len(self.errors)):
             intro_string = intro_string + '\n' + self.errors[i] + '\n'
+        intro_string = intro_string + '\n'
+
+        # The multi-processor message, if it exists.
+        if hasattr(self, 'multi_processor_string'):
+            for line in wrap('Processor fabric:  %s\n' % self.multi_processor_string, width):
+                intro_string = intro_string + line + '\n'
 
         # Return the formatted text.
         return intro_string
@@ -220,6 +225,13 @@ class Info_box(object):
         text = text + format1 % ('numpy', True)
         try:
             text = text + format2 % (dep_check.numpy.version.version, dep_check.numpy.__path__[0])
+        except:
+            text = text + '\n'
+
+        # scipy.
+        text = text + format1 % ('scipy', dep_check.scipy_module)
+        try:
+            text = text + format2 % (dep_check.scipy.version.version, dep_check.scipy.__path__[0])
         except:
             text = text + '\n'
 

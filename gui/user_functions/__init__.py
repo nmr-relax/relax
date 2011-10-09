@@ -24,64 +24,86 @@
 """User function GUI elements."""
 
 # relax module imports.
-from prompt.interpreter import Interpreter
+from relax_errors import RelaxError
 
 # GUI module imports.
+from deselect import Deselect
+from gpl import Gpl
+from grace import Grace
 from molecule import Molecule
-from pipes import Pipes
+from molmol import Molmol
+from noe import Noe
+from pipe import Pipe
+from pymol import Pymol
 from residue import Residue
+from results import Results
 from relax_data import Relax_data
+from relax_fit import Relax_fit
 from script import Script
+from select import Select
 from sequence import Sequence
+from spectrum import Spectrum
 from spin import Spin
+from structure import Structure
+from sys_info import Sys_info
 from value import Value
 
 
 # The package __all__ list.
 __all__ = ['base',
+           'deselect',
+           'gpl',
+           'grace',
            'molecule',
-           'pipes',
+           'molmol',
+           'noe',
+           'pipe',
+           'pymol',
            'residue',
+           'results',
            'relax_data',
+           'relax_fit',
            'script',
+           'select',
            'sequence',
+           'spectrum',
            'spin',
+           'structure',
+           'sys_info',
            'value']
 
 
 class User_functions:
-    """Container for all the user function GUI elements."""
+    """Container for all the user function GUI elements.
 
-    def __init__(self, gui):
-        """Set up the container."""
+    This uses the observer design pattern to allow for GUI updates upon completion of a user function.
+    """
 
-        # Store the args.
-        self.gui = gui
+    def __init__(self, parent=None):
+        """Set up the container.
 
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=True, quit=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
+        @keyword parent:    The parent window.
+        @type parent:       wx.Window instance
+        """
 
         # The user functions.
-        self.molecule = Molecule(self.gui, self.interpreter)
-        self.pipes = Pipes(self.gui, self.interpreter)
-        self.residue = Residue(self.gui, self.interpreter)
-        self.relax_data = Relax_data(self.gui, self.interpreter)
-        self.script = Script(self.gui, self.interpreter)
-        self.sequence = Sequence(self.gui, self.interpreter)
-        self.spin = Spin(self.gui, self.interpreter)
-        self.value = Value(self.gui, self.interpreter)
-
-
-    def destroy(self):
-        """Close all windows."""
-
-        # Send the commands onwards to the user function classes.
-        self.molecule.destroy()
-        self.pipes.destroy()
-        self.residue.destroy()
-        self.relax_data.destroy()
-        self.sequence.destroy()
-        self.spin.destroy()
-        self.value.destroy()
+        self.deselect = Deselect(parent)
+        self.gpl = Gpl(parent)
+        self.grace = Grace(parent)
+        self.molecule = Molecule(parent)
+        self.molmol = Molmol(parent)
+        self.noe = Noe(parent)
+        self.pipe = Pipe(parent)
+        self.pymol = Pymol(parent)
+        self.residue = Residue(parent)
+        self.results = Results(parent)
+        self.relax_data = Relax_data(parent)
+        self.relax_fit = Relax_fit(parent)
+        self.script = Script(parent)
+        self.select = Select(parent)
+        self.sequence = Sequence(parent)
+        self.spectrum = Spectrum(parent)
+        self.spin = Spin(parent)
+        self.structure = Structure(parent)
+        self.sys_info = Sys_info(parent)
+        self.value = Value(parent)

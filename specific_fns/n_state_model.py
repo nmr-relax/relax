@@ -1694,7 +1694,7 @@ class N_state_model(API_base, API_common):
 
 
     def create_mc_data(self, data_id=None):
-        """Create the Monte Carlo Ri data by back-calculation.
+        """Create the Monte Carlo data by back-calculation.
 
         @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
         @type data_id:      str
@@ -1714,8 +1714,14 @@ class N_state_model(API_base, API_common):
             if not hasattr(spin, 'rdc_bc'):
                 self.calculate()
 
+            # The data.
+            if not hasattr(spin, 'rdc_bc') or not spin.rdc_bc.has_key(data_id[2]):
+                data = None
+            else:
+                data = spin.rdc_bc[data_id[2]]
+
             # Append the data.
-            mc_data.append(spin.rdc_bc[data_id[2]])
+            mc_data.append(data)
 
         # PCS data.
         elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
@@ -1723,8 +1729,14 @@ class N_state_model(API_base, API_common):
             if not hasattr(spin, 'pcs_bc'):
                 self.calculate()
 
+            # The data.
+            if not hasattr(spin, 'pcs_bc') or not spin.pcs_bc.has_key(data_id[2]):
+                data = None
+            else:
+                data = spin.pcs_bc[data_id[2]]
+
             # Append the data.
-            mc_data.append(spin.pcs_bc[data_id[2]])
+            mc_data.append(data)
 
         # NOESY data.
         elif data_id[1] == 'noesy' and hasattr(spin, 'noesy'):
@@ -1797,10 +1809,7 @@ class N_state_model(API_base, API_common):
         return names
 
 
-    default_value_doc = """
-        N-state model default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    default_value_doc = ["N-state model default values", """
         ______________________________________________________________________________________
         |                             |                             |                        |
         | Data type                   | Object name                 | Value                  |
@@ -1815,13 +1824,10 @@ class N_state_model(API_base, API_common):
         | Euler angle gamma           | 'gamma0', 'gamma1', ...     | (c+1) * pi / (N+1)     |
         |_____________________________|_____________________________|________________________|
 
-        In this table, N is the total number of states and c is the index of a given state ranging
-        from 0 to N-1.  The default probabilities are all set to be equal whereas the angles are
-        given a range of values so that no 2 states are equal at the start of optimisation.
+        In this table, N is the total number of states and c is the index of a given state ranging from 0 to N-1.  The default probabilities are all set to be equal whereas the angles are given a range of values so that no 2 states are equal at the start of optimisation.
 
-        Note that setting the probability for state N will do nothing as it is equal to one minus
-        all the other probabilities.
-        """
+        Note that setting the probability for state N will do nothing as it is equal to one minus all the other probabilities.
+        """]
 
     def default_value(self, param):
         """The default N-state model parameter values.
@@ -2137,10 +2143,7 @@ class N_state_model(API_base, API_common):
         return self._param_num(), self._num_data_points(), cdp.chi2
 
 
-    return_data_name_doc = """
-        N-state model data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    return_data_name_doc = ["N-state model data type string matching patterns", """
         ____________________________________________________________________________________________
         |                        |                             |                                   |
         | Data type              | Object name                 | Patterns                          |
@@ -2161,9 +2164,8 @@ class N_state_model(API_base, API_common):
         | Proton type            | 'proton_type'               | '^[Pp]roton$'                     |
         |________________________|_____________________________|___________________________________|
 
-        The objects corresponding to the object names are lists (or arrays) with each element
-        corrsponding to each state.
-        """
+        The objects corresponding to the object names are lists (or arrays) with each element corrsponding to each state.
+        """]
 
     def return_data_name(self, param):
         """Return a unique identifying string for the N-state model parameter.
@@ -2307,17 +2309,9 @@ class N_state_model(API_base, API_common):
             return 'Hz'
 
 
-    set_doc = """
-        N-state model set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        Setting parameters for the N-state model is a little different from the other type of
-        analyses as each state has a set of parameters with the same names as the other states.
-        To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the
-        last, the number c should be added to the end of the parameter name.  So the Euler angle
-        gamma of the third state is specified using the string 'gamma2'.
-
-        """
+    set_doc = ["N-state model set details", """
+        Setting parameters for the N-state model is a little different from the other type of analyses as each state has a set of parameters with the same names as the other states. To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the last, the number c should be added to the end of the parameter name.  So the Euler angle gamma of the third state is specified using the string 'gamma2'.
+        """]
 
 
     def set_error(self, model_info, index, error):
@@ -2458,10 +2452,6 @@ class N_state_model(API_base, API_common):
 
         # Get the spin container.
         spin = return_spin(data_id[0])
-
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'sim_intensities'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
 
         # RDC data.
         if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):

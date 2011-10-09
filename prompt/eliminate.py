@@ -25,7 +25,7 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import Basic_class
+from base_class import Basic_class, _build_doc
 import arg_check
 from generic_fns import eliminate
 from relax_errors import RelaxFunctionError, RelaxListStrError, RelaxNoneStrListError, RelaxNoneTupleError
@@ -36,39 +36,6 @@ class Eliminate(Basic_class):
     """Class containing the function for model elimination."""
 
     def eliminate(self, function=None, args=None):
-        """Function for model elimination.
-
-        Keyword arguments
-        ~~~~~~~~~~~~~~~~~
-
-        function:  A user supplied function for model elimination.
-
-        args:  A tuple of arguments for model elimination.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function is used for model validation to eliminate or reject models prior to model
-        selection.  Model validation is a part of mathematical modelling whereby models are either
-        accepted or rejected.
-
-        Empirical rules are used for model rejection and are listed below.  However these can be
-        overridden by supplying a function.  The function should accept five arguments, a string
-        defining a certain parameter, the value of the parameter, the minimisation
-        instance (ie the residue index if the model is residue specific), and the function
-        arguments.  If the model is rejected, the function should return True, otherwise it should
-        return False.  The function will be executed multiple times, once for each parameter of the
-        model.
-
-        The 'args' keyword argument should be a tuple, a list enclosed in round brackets, and will
-        be passed to the user supplied function or the inbuilt function.  For a description of the
-        arguments accepted by the inbuilt functions, see below.
-
-        Once a model is rejected, the select flag corresponding to that model will be set to False
-        so that model selection, or any other function, will then skip the model.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "eliminate("
@@ -84,8 +51,23 @@ class Eliminate(Basic_class):
         # Execute the functional code.
         eliminate.eliminate(function=function, args=args)
 
+    # The function doc info.
+    eliminate._doc_title = "Elimination or rejection of models."
+    eliminate._doc_title_short = "Model elimination."
+    eliminate._doc_args = [
+        ["function", "A user supplied function for model elimination."],
+        ["args", "A tuple of arguments for model elimination."]
+    ]
+    eliminate._doc_desc = """
+        This is used for model validation to eliminate or reject models prior to model selection.  Model validation is a part of mathematical modelling whereby models are either accepted or rejected.
 
-    # Docstring modification.
-    #########################
+        Empirical rules are used for model rejection and are listed below.  However these can be overridden by supplying a function in the prompt and scripting modes.  The function should accept five arguments, a string defining a certain parameter, the value of the parameter, the minimisation instance (ie the residue index if the model is residue specific), and the function arguments.  If the model is rejected, the function should return True, otherwise it should return False.  The function will be executed multiple times, once for each parameter of the model.
 
-    eliminate.__doc__ = eliminate.__doc__ + "\n\n" + Model_free.eliminate_doc + "\n"
+        The 'args' keyword argument should be a tuple, a list enclosed in round brackets, and will be passed to the user supplied function or the inbuilt function.  For a description of the arguments accepted by the inbuilt functions, see below.
+
+        Once a model is rejected, the select flag corresponding to that model will be set to False so that model selection, or any other function, will then skip the model.
+        """
+    eliminate._doc_additional = []
+    for i in range(len(Model_free.eliminate_doc)):
+        eliminate._doc_additional.append(Model_free.eliminate_doc[i])
+    _build_doc(eliminate)

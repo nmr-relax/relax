@@ -26,169 +26,154 @@
 
 # Python module imports.
 from os import sep
-from string import replace
 import sys
-import thread
-import time
 import wx
 
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
-from relax_io import DummyFileObject
+from generic_fns.mol_res_spin import are_spins_named, exists_mol_res_spin_data
+from generic_fns.pipes import has_pipe
 from status import Status; status = Status()
 
-# relaxGUI module imports.
-from gui.analyses.base import Base_frame
+# relax GUI module imports.
+from gui.analyses.base import Base_analysis, Spectral_error_type_page
+from gui.analyses.elements import Text_ctrl
+from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
-from gui.controller import Redirect_text, Thread_container
-from gui.derived_wx_classes import StructureTextCtrl
-from gui.filedialog import opendir, openfile
-from gui.message import error_message, missing_data
-from gui.misc import add_border
+from gui.components.spectrum import Spectra_list
+from gui.filedialog import RelaxDirDialog
+from gui.message import error_message, Missing_data, Question
+from gui.misc import gui_to_str, protected_exec, str_to_gui
 from gui import paths
-from gui.settings import load_sequence
+from gui.user_functions.noe import Spectrum_type_page
+from gui.user_functions.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
+from gui.user_functions.spin import Name_page
+from gui.wizard import Wiz_window
 
 
 
-class Auto_noe(Base_frame):
+class Auto_noe(Base_analysis):
     """The base class for the noe frames."""
 
     # Hardcoded variables.
     analysis_type = None
-    bitmap = None
+    bitmap = [paths.ANALYSIS_IMAGE_PATH+"noe_200x200.png",
+              paths.IMAGE_PATH+'noe.png']
     label = None
 
-    def __init__(self, gui, notebook, hardcoded_index=None):
+    def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, data_index=None):
         """Build the automatic NOE analysis GUI frame elements.
 
-        @param gui:                 The main GUI class.
-        @type gui:                  gui.relax_gui.Main instance
-        @param notebook:            The notebook to pack this frame into.
-        @type notebook:             wx.Notebook instance
-        @keyword hardcoded_index:   Kludge for the current GUI layout.
-        @type hardcoded_index:      int
+        @param parent:          The parent wx element.
+        @type parent:           wx object
+        @keyword id:            The unique ID number.
+        @type id:               int
+        @keyword pos:           The position.
+        @type pos:              wx.Size object
+        @keyword size:          The size.
+        @type size:             wx.Size object
+        @keyword style:         The style.
+        @type style:            int
+        @keyword name:          The name for the panel.
+        @type name:             unicode
+        @keyword gui:           The main GUI class.
+        @type gui:              gui.relax_gui.Main instance
+        @keyword analysis_name: The name of the analysis (the name in the tab part of the notebook).
+        @type analysis_name:    str
+        @keyword pipe_name:     The name of the data pipe associated with this analysis.
+        @type pipe_name:        str
+        @keyword data_index:    The index of the analysis in the relax data store (set to None if no data currently exists).
+        @type data_index:       None or int
         """
 
-        # Store the main class.
+        # Store the GUI main class.
         self.gui = gui
 
-        # The NOE image
-        self.bitmap = paths.IMAGE_PATH + 'noe.png'
+        # Init.
+        self.init_flag = True
 
-        # Alias the storage container in the relax data store.
-        self.data = ds.relax_gui.analyses[hardcoded_index]
+        # New data container.
+        if data_index == None:
+            # First create the data pipe if not already in existence.
+            if not has_pipe(pipe_name):
+                self.gui.interpreter.apply('pipe.create', pipe_name, 'noe')
 
-        # The parent GUI element for this class.
-        self.parent = wx.Panel(notebook, -1)
+            # Generate a storage container in the relax data store, and alias it for easy access.
+            data_index = ds.relax_gui.analyses.add('NOE')
 
-        # Pack a sizer into the panel.
-        box_main = wx.BoxSizer(wx.HORIZONTAL)
-        self.parent.SetSizer(box_main)
+            # Store the analysis and pipe names.
+            ds.relax_gui.analyses[data_index].analysis_name = analysis_name
+            ds.relax_gui.analyses[data_index].pipe_name = pipe_name
 
-        # Build the central sizer, with borders.
-        box_centre = add_border(box_main, border=self.border, packing=wx.HORIZONTAL)
+            # Initialise the variables.
+            ds.relax_gui.analyses[data_index].frq = ''
+            ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
 
-        # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        self.build_main_box(box_centre)
+        # Alias the data.
+        self.data = ds.relax_gui.analyses[data_index]
+        self.data_index = data_index
+
+        # Register the method for updating the spin count for the completion of user functions.
+        status.observers.gui_uf.register(self.data.pipe_name, self.update_spin_count)
+        status.observers.exec_lock.register(self.data.pipe_name, self.activate)
+
+        # Execute the base class method to build the panel.
+        super(Auto_noe, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
+
+
+    def activate(self):
+        """Activate or deactivate certain elements of the analysis in response to the execution lock."""
+
+        # Flag for enabling or disabling the elements.
+        enable = False
+        if not status.exec_lock.locked():
+            enable = True
+
+        # Activate or deactivate the elements.
+        wx.CallAfter(self.field_nmr_frq.Enable, enable)
+        wx.CallAfter(self.field_results_dir.Enable, enable)
+        wx.CallAfter(self.spin_systems.Enable, enable)
+        wx.CallAfter(self.peak_intensity.Enable, enable)
+        wx.CallAfter(self.button_exec_relax.Enable, enable)
 
 
     def assemble_data(self):
         """Assemble the data required for the Auto_noe class.
 
-        See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
-
-        @return:    A container with all the data required for the auto-analysis, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.  Also a flag stating if the data is complete and a list of missing data types.
-        @rtype:     class instance, bool, list of str
+        @return:    A container with all the data required for the auto-analysis.
+        @rtype:     class instance, list of str
         """
 
-        # The data container and flag.
+        # The data container.
         data = Container()
-        complete = True
         missing = []
 
-        # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        if hasattr(self.data, 'sequence_file'):
-            data.seq_args = [self.data.sequence_file, None, None, 1, None, None, None, None]
-        else:
-            data.seq_args = None
+        # The pipe name.
+        data.pipe_name = self.data.pipe_name
 
-        # Reference peak list and background noe.
-        data.ref_file = self.data.ref_file
-        if not data.ref_file:
-            complete = False
-            missing.append('Reference peak list')
-        data.ref_rmsd = int(self.data.ref_rmsd)
+        # The frequency.
+        frq = gui_to_str(self.field_nmr_frq.GetValue())
+        if frq == None:
+            missing.append('NMR frequency')
 
-        # Saturated peak list and background noe.
-        data.sat_file = self.data.sat_file
-        if not data.sat_file:
-            complete = False
-            missing.append('Saturated peak list')
-        data.sat_rmsd = int(self.data.sat_rmsd)
+        # Filename.
+        data.file_root = 'noe.%s' % frq
 
         # Results directory.
         data.save_dir = self.data.save_dir
 
-        # Filename.
-        data.filename = 'noe.' + str(self.field_nmr_frq.GetValue()) + '.out'
+        # Check if sequence data is loaded
+        if not exists_mol_res_spin_data():
+            missing.append("Sequence data")
 
-        # The integration method.
-        data.int_method = 'height'
+        # Spectral data.
+        if not hasattr(cdp, 'spectrum_ids') or len(cdp.spectrum_ids) < 2:
+            missing.append("Spectral data")
 
-        # Import golbal settings.
-        global_settings = ds.relax_gui.global_setting
-
-        # Hetero nucleus name.
-        data.heteronuc = global_settings[2]
-
-        # Proton name.
-        data.proton = global_settings[3]
-
-        # Unresolved spins.
-        file = DummyFileObject()
-        entries = self.data.unresolved
-        entries = replace(entries, ',', '\n')
-        file.write(entries)
-        file.close()
-        data.unresolved = file
-
-        # Structure file.
-        if hasattr(self.data, 'structure_file') and self.data.structure_file != self.gui.structure_file_pdb_msg:
-            data.structure_file = self.data.structure_file
-        else:
-            data.structure_file = None
-
-        # Set Structure file as None if a sequence file is loaded.
-        if data.structure_file == '!!! Sequence file selected !!!':
-            data.structure_file = None
-
-        # No sequence data.
-        if not data.seq_args and not data.structure_file:
-            complete = False
-            missing.append('Sequence data files (text or PDB)')
-
-        # Return the container, flag, and list of missing data.
-        return data, complete, missing
-
-
-    def build_left_box(self):
-        """Construct the left hand box to pack into the automatic NOE analysis frame.
-
-        @return:    The left hand box element containing the bitmap.
-        @rtype:     wx.BoxSizer instance
-        """
-
-        # Use a vertical packing of elements.
-        box = wx.BoxSizer(wx.VERTICAL)
-
-        # Add the model-free bitmap picture.
-        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
-        box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 10)
-
-        # Return the box.
-        return box
+        # Return the container and list of missing data.
+        return data, missing
 
 
     def build_right_box(self):
@@ -204,44 +189,42 @@ class Auto_noe(Base_frame):
         # Add the frame title.
         self.add_title(box, "Setup for steady-state NOE analysis")
 
+        # Display the data pipe.
+        Text_ctrl(box, self, text="The data pipe:", default=self.data.pipe_name, tooltip="This is the data pipe associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+
         # Add the frequency selection GUI element.
-        self.field_nmr_frq = self.add_text_sel_element(box, self.parent, text="NMR Frequency [MHz]", default=str(self.data.frq))
+        self.field_nmr_frq = Text_ctrl(box, self, text="NMR frequency label [MHz]", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the NOE values will be located in the file 'noe.600.out'.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
-        self.field_results_dir = self.add_text_sel_element(box, self.parent, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True)
+        self.field_results_dir = Text_ctrl(box, self, text="Results directory", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
-        # Add the sequence file selection GUI element.
-        self.field_sequence = self.add_text_sel_element(box, self.parent, text="Sequence file", default=str(self.gui.sequence_file_msg), fn=self.load_sequence, editable=False, button=True)
+        # Add the spin GUI element.
+        self.add_spin_systems(box, self)
 
-        # Add the structure file selection GUI element.
-        self.field_structure = self.add_text_sel_element(box, self.parent, text="Sequence from PDB structure file", default=self.gui.structure_file_pdb_msg, control=StructureTextCtrl, fn='open_file', editable=False, button=True)
+        # Add the peak list selection GUI element, with spacing.
+        box.AddSpacer(40)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard)
 
-        # Add the unresolved spins GUI element.
-        self.field_unresolved = self.add_text_sel_element(box, self.parent, text="Unresolved residues")
-
-        # Add peak list selection header.
-        self.add_subtitle(box, "NOE peak lists")
-
-        # Add the saturated NOE peak list selection GUI element.
-        self.field_sat_noe = self.add_text_sel_element(box, self.parent, text="Saturated NOE peak list", default=self.data.sat_file, fn=self.sat_file, button=True)
-
-        # Add the saturated RMSD background GUI element:
-        self.field_sat_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str(self.data.sat_rmsd))
-
-        # Add the reference NOE peak list selection GUI element.
-        self.field_ref_noe = self.add_text_sel_element(box, self.parent, text="Reference NOE peak list", default=self.data.ref_file, fn=self.ref_file, button=True)
-
-        # Add the reference RMSD background GUI element:
-        self.field_ref_rmsd = self.add_text_sel_element(box, self.parent, text="Baseplane RMSD", default=str(self.data.ref_rmsd))
-
-        # Add a stretchable spacer.
+        # Stretchable spacing (with a minimal space).
+        box.AddSpacer(30)
         box.AddStretchSpacer()
 
         # Add the execution GUI element.
-        self.add_execute_relax(box, self.execute)
+        self.button_exec_relax = self.add_execute_relax(box, self.execute)
 
         # Return the box.
         return box
+
+
+    def delete(self):
+        """Unregister the spin count from the user functions."""
+
+        # Clean up the peak intensity object.
+        self.peak_intensity.delete()
+
+        # Remove.
+        status.observers.gui_uf.unregister(self.data.pipe_name)
+        status.observers.exec_lock.unregister(self.data.pipe_name)
 
 
     def execute(self, event):
@@ -251,137 +234,103 @@ class Auto_noe(Base_frame):
         @type event:    wx event
         """
 
+        # Flush the GUI interpreter internal queue to make sure all user functions are complete.
+        self.gui.interpreter.flush()
+
         # relax execution lock.
-        status = Status()
         if status.exec_lock.locked():
             error_message("relax is currently executing.", "relax execution lock")
             event.Skip()
             return
 
+        # User warning to close windows.
+        self.gui.close_windows()
+
         # Synchronise the frame data to the relax data store.
         self.sync_ds(upload=True)
 
-        # Display the relax controller (if not debugging).
-        if not status.debug:
-            self.gui.controller.Show()
-
-        # Start the thread (if not debugging).
-        if status.debug:
-            self.execute_thread()
-        else:
-            id = thread.start_new_thread(self.execute_thread, ())
-
-        # Terminate the event.
-        event.Skip()
-
-
-    def execute_thread(self):
-        """Execute the calculation in a thread."""
-
-        # Controller.
-        if not status.debug:
-            # Redirect relax output and errors to the controller.
-            redir = Redirect_text(self.gui.controller)
-            sys.stdout = redir
-            sys.stderr = redir
-
-            # Print a header in the controller.
-            header = 'Starting NOE calculation'
-            underline = '-' * len(header)
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
-            time.sleep(0.5)
-
         # Assemble all the data needed for the auto-analysis.
-        data, complete, missing = self.assemble_data()
+        data, missing = self.assemble_data()
 
-        # Incomplete.
-        if not complete:
-            print 'Aborting NOE caclulation as the following informations are missing:\n'
-            for i in range(len(missing)):
-                print '\t'+missing[i]
-            print ''
+        # Missing data.
+        if len(missing):
+            Missing_data(missing)
             return
 
-        # Execute.
-        NOE_calc(seq_args=data.seq_args, pipe_name='noe'+'_'+str(time.asctime(time.localtime())), noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, output_file=data.filename, results_dir=data.save_dir, int_method='height', heteronuc=data.heteronuc, proton=data.proton, heteronuc_pdb='@N')
+        # Display the relax controller, and go to the end of the log window.
+        self.gui.show_controller(None)
+        self.gui.controller.log_panel.on_goto_end(None)
 
-        # Feedback about success.
-        if not status.debug:
-            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
-
-        # Add noe grace plot to results list.
-        self.gui.list_noe.Append(data.save_dir+sep+'grace'+sep+'noe.agr')
-
-        # Add noe grace plot to relax data store.
-        ds.relax_gui.results_noe.append(data.save_dir+sep+'grace'+sep+'noe.agr')
-
-        # Create color coded structure pymol macro.
-        color_code_noe(self, data.save_dir, data.structure_file)
-
-        # add macro to results tab
-        self.gui.list_noe.Append(data.save_dir+sep+'noe.pml')
-
-        # Add noe macro to relax data store.
-        ds.relax_gui.results_noe.append(data.save_dir+sep+'noe.pml')
-
-
-    def load_sequence(self, event):
-        """The sequence loading GUI element.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Select the file.
-        file = load_sequence()
-
-        # Nothing selected.
-        if file == None:
-            return
-
-        # Store the file.
-        self.data.sequence_file = file
-
-        # Sync.
-        self.sync_ds(upload=False)
+        # Start the thread.
+        self.thread = Execute_noe(self.gui, data, self.data_index)
+        self.thread.start()
 
         # Terminate the event.
         event.Skip()
 
 
-    def link_data(self, data):
-        """Re-alias the storage container in the relax data store.
-
-        @keyword data:      The data storage container.
-        @type data:         class instance
-        """
-
-        # Re-alias.
-        self.data = data
-
-
-    def ref_file(self, event):
-        """The results directory selection.
+    def peak_wizard(self, event):
+        """Launch the NOE peak loading wizard.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
-        # Store the original directory.
-        backup = self.field_ref_noe.GetValue()
+        # Change the cursor to busy.
+        wx.BeginBusyCursor()
 
-        # Select the file.
-        self.data.ref_file = openfile('Select reference NOE peak list', directory=self.field_ref_noe.GetValue(), default = 'all files (*.*)|*')
+        # Initialise a wizard.
+        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=800, title="Set up the NOE peak intensities")
+        self.page_indices = {}
 
-        # Restore the backup file if no file was chosen.
-        if not self.data.ref_file:
-            self.data.ref_file = backup
+        # First check that at least a single spin is named!
+        if not are_spins_named():
+            # The message.
+            msg = "No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.  Would you like to name the spins already loaded into the relax data store?"
 
-        # Place the path in the text box.
-        self.field_ref_noe.SetValue(self.data.ref_file)
+            # Ask about naming spins, and add the spin.name user function page.
+            if status.show_gui and Question(msg, title="Incomplete setup", size=(450, 220), default=True).ShowModal() == wx.ID_YES:
+                page = Name_page(self.wizard, sync=True)
+                self.page_indices['read'] = self.wizard.add_page(page, proceed_on_error=False)
 
-        # Terminate the event.
-        event.Skip()
+
+        # The spectrum.read_intensities page.
+        self.page_intensity = Read_intensities_page(self.wizard, sync=True)
+        self.page_indices['read'] = self.wizard.add_page(self.page_intensity, skip_button=True, proceed_on_error=False)
+
+        # Error type selection page.
+        self.page_error_type = Spectral_error_type_page(self.wizard)
+        self.page_indices['err_type'] = self.wizard.add_page(self.page_error_type, apply_button=False)
+        self.wizard.set_seq_next_fn(self.page_indices['err_type'], self.wizard_page_after_error_type)
+
+        # The spectrum.replicated page.
+        page = Replicated_page(self.wizard, sync=True)
+        self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
+        self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
+        page.on_display_post = self.wizard_update_repl
+
+        # The spectrum.baseplane_rmsd page.
+        page = Baseplane_rmsd_page(self.wizard, sync=True)
+        self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
+        self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
+        page.on_display_post = self.wizard_update_rmsd
+
+        # The spectrum.integration_points page.
+        page = Integration_points_page(self.wizard, sync=True)
+        self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
+        page.on_display_post = self.wizard_update_pts
+
+        # The noe.spectrum_type page.
+        page = Spectrum_type_page(self.wizard, sync=True)
+        self.page_indices['spectrum_type'] = self.wizard.add_page(page, skip_button=False, proceed_on_error=False)
+        page.on_display_post = self.wizard_update_spectrum_type
+
+        # Reset the cursor.
+        if wx.IsBusy():
+            wx.EndBusyCursor()
+
+        # Run the wizard.
+        self.wizard.run()
 
 
     def results_directory(self, event):
@@ -391,45 +340,24 @@ class Auto_noe(Base_frame):
         @type event:    wx event
         """
 
-        # Store the original directory.
-        backup = self.field_results_dir.GetValue()
+        # The dialog.
+        dialog = RelaxDirDialog(parent=self, message='Select the results directory', defaultPath=self.field_results_dir.GetValue())
 
-        # Select the file.
-        self.data.save_dir = opendir('Select results directory', default=self.field_results_dir.GetValue())
+        # Show the dialog and catch if no file has been selected.
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
+            # Don't do anything.
+            return
 
-        # Restore the backup file if no file was chosen.
-        if not self.data.save_dir:
-            self.data.save_dir = backup
+        # The path (don't do anything if not set).
+        path = gui_to_str(dialog.get_path())
+        if not path:
+            return
 
-        # Place the path in the text box.
-        self.field_results_dir.SetValue(self.data.save_dir)
-
-        # Terminate the event.
-        event.Skip()
-
-
-    def sat_file(self, event):
-        """The results directory selection.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the original directory.
-        backup = self.field_sat_noe.GetValue()
-
-        # Select the file.
-        self.data.sat_file = openfile('Select saturated NOE peak list', directory=self.field_sat_noe.GetValue(), default = 'all files (*.*)|*')
-
-        # Restore the backup file if no file was chosen.
-        if not self.data.sat_file:
-            self.data.sat_file = backup
+        # Store the path.
+        self.data.save_dir = path
 
         # Place the path in the text box.
-        self.field_sat_noe.SetValue(self.data.sat_file)
-
-        # Terminate the event.
-        event.Skip()
+        self.field_results_dir.SetValue(str_to_gui(path))
 
 
     def sync_ds(self, upload=False):
@@ -443,58 +371,142 @@ class Auto_noe(Base_frame):
 
         # The frequency.
         if upload:
-            self.data.frq = str(self.field_nmr_frq.GetValue())
+            self.data.frq = gui_to_str(self.field_nmr_frq.GetValue())
         else:
-            self.field_nmr_frq.SetValue(str(self.data.frq))
+            self.field_nmr_frq.SetValue(str_to_gui(self.data.frq))
 
         # The results directory.
         if upload:
-            self.data.save_dir = str(self.field_results_dir.GetValue())
+            self.data.save_dir = gui_to_str(self.field_results_dir.GetValue())
         else:
-            self.field_results_dir.SetValue(str(self.data.save_dir))
+            self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
 
-        # The sequence file.
-        if upload:
-            file = str(self.field_sequence.GetValue())
-            if file != self.gui.sequence_file_msg:
-                self.data.sequence_file = str(self.field_sequence.GetValue())
-        elif hasattr(self.data, 'sequence_file'):
-            self.field_sequence.SetValue(str(self.data.sequence_file))
 
-        # The structure file.
-        if upload:
-            file = str(self.field_structure.GetValue())
-            if file != self.gui.structure_file_pdb_msg:
-                self.data.structure_file = str(self.field_structure.GetValue())
-        elif hasattr(self.data, 'structure_file'):
-            self.field_structure.SetValue(str(self.data.structure_file))
+    def wizard_page_after_error_type(self):
+        """Set the page after the error type choice.
 
-        # Unresolved residues.
-        if upload:
-            self.data.unresolved = str(self.field_unresolved.GetValue())
-        elif hasattr(self.data, 'unresolved'):
-            self.field_unresolved.SetValue(str(self.data.unresolved))
+        @return:    The index of the next page, which is the current page index plus one.
+        @rtype:     int
+        """
 
-        # Reference peak file.
-        if upload:
-            self.data.ref_file = str(self.field_ref_noe.GetValue())
-        elif hasattr(self.data, 'ref_file'):
-            self.field_ref_noe.SetValue(str(self.data.ref_file))
+        # Go to the spectrum.baseplane_rmsd page.
+        if self.page_error_type.selection == 'rmsd':
+            return self.page_indices['rmsd']
 
-        # Reference rmsd.
-        if upload:
-            self.data.ref_rmsd = str(self.field_ref_rmsd.GetValue())
-        elif hasattr(self.data, 'ref_rmsd'):
-            self.field_ref_rmsd.SetValue(str(self.data.ref_rmsd))
+        # Go to the spectrum.replicated page.
+        elif self.page_error_type.selection == 'repl':
+            return self.page_indices['repl']
 
-        # Saturated peak file.
-        if upload:
-            self.data.sat_file = str(self.field_sat_noe.GetValue())
-        elif hasattr(self.data, 'sat_file'):
-            self.field_sat_noe.SetValue(str(self.data.sat_file))
 
-        # Saturated rmsd.
-        if upload:
-            self.data.sat_rmsd = str(self.field_sat_rmsd.GetValue())
-        elif hasattr(self.data, 'sat_rmsd'):
-            self.field_sat_rmsd.SetValue(str(self.data.sat_rmsd))
+    def wizard_page_after_repl(self):
+        """Set the page that comes after the spectrum.replicated page.
+
+        @return:    The index of the next page.
+        @rtype:     int
+        """
+
+        # Go to the spectrum.integration_points page.
+        int_method = gui_to_str(self.page_intensity.int_method.GetValue())
+        if int_method != 'height':
+            return self.page_indices['pts']
+
+        # Skip to the noe.spectrum_type page.
+        else:
+            return self.page_indices['spectrum_type']
+
+
+    def wizard_page_after_rmsd(self):
+        """Set the page that comes after the spectrum.baseplane_rmsd page.
+
+        @return:    The index of the next page.
+        @rtype:     int
+        """
+
+        # Go to the spectrum.integration_points page.
+        int_method = gui_to_str(self.page_intensity.int_method.GetValue())
+        if int_method != 'height':
+            return self.page_indices['pts']
+
+        # Skip to the noe.spectrum_type page.
+        else:
+            return self.page_indices['spectrum_type']
+
+
+    def wizard_update_pts(self):
+        """Update the spectrum.replicated page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the spectrum.replicated page.
+        page = self.wizard.get_page(self.page_indices['pts'])
+        page.spectrum_id.SetStringSelection(str_to_gui(id))
+
+
+    def wizard_update_repl(self):
+        """Update the spectrum.replicated page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the spectrum.replicated page.
+        page = self.wizard.get_page(self.page_indices['repl'])
+        page.spectrum_id_boxes[0].SetStringSelection(str_to_gui(id))
+
+
+    def wizard_update_rmsd(self):
+        """Update the spectrum.baseplane_rmsd page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the spectrum.baseplane_rmsd page.
+        page = self.wizard.get_page(self.page_indices['rmsd'])
+        page.spectrum_id.SetStringSelection(str_to_gui(id))
+
+
+    def wizard_update_spectrum_type(self):
+        """Update the noe.spectrum_type page based on previous data."""
+
+        # The spectrum.read_intensities page.
+        page = self.wizard.get_page(self.page_indices['read'])
+
+        # Set the spectrum ID.
+        id = page.spectrum_id.GetValue()
+
+        # Set the ID in the noe.spectrum_type page.
+        page = self.wizard.get_page(self.page_indices['spectrum_type'])
+        page.spectrum_id.SetStringSelection(str_to_gui(id))
+
+
+
+class Execute_noe(Execute):
+    """The NOE analysis execution object."""
+
+    def run_analysis(self):
+        """Execute the calculation."""
+
+        # Execute.
+        NOE_calc(pipe_name=self.data.pipe_name, file_root=self.data.file_root, results_dir=self.data.save_dir, save_state=False)
+
+        # Alias the relax data store data.
+        data = ds.relax_gui.analyses[self.data_index]
+
+        # FIXME:  This must be shifted to the core of relax!!!
+        # Create a PyMOL macro, if a structure exists.
+        if hasattr(data, 'structure_file'):
+            # The macro.
+            color_code_noe(data.save_dir, data.structure_file)
+
+            # Add the macro to the results list.
+            cdp.result_files.append(['pymol', 'PyMOL', data.save_dir+sep+'noe.pml'])
+            status.observers.result_file.notify()

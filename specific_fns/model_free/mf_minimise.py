@@ -21,9 +21,9 @@
 ###############################################################################
 
 # Python module imports.
+from copy import deepcopy
 from math import pi
-from minfx.generic import generic_minimise
-from minfx.grid import grid
+from minfx.grid import grid_split
 from numpy import float64, array, dot, zeros
 from numpy.linalg import inv
 from re import match, search
@@ -36,10 +36,16 @@ from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
+from multi.processor import Processor_box
+from multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_warnings import RelaxWarning
 
+
+
+class Data_container:
+    """Empty class to be used for data storage."""
 
 
 class Mf_minimise:
@@ -283,6 +289,161 @@ class Mf_minimise:
                             spin.s2s_sim[sim_index] = 1e99
                         else:
                             spin.s2s_sim[sim_index] = spin.s2_sim[sim_index] / spin.s2f_sim[sim_index]
+
+
+    def _disassemble_result(self, param_vector=None, func=None, iter=None, fc=None, gc=None, hc=None, warning=None, spin=None, sim_index=None, model_type=None, scaling=None, scaling_matrix=None):
+        """Disassemble the optimisation results.
+
+        @keyword param_vector:      The model-free parameter vector.
+        @type param_vector:         numpy array
+        @keyword func:              The optimised chi-squared value.
+        @type func:                 float
+        @keyword iter:              The number of optimisation steps required to find the minimum.
+        @type iter:                 int
+        @keyword fc:                The function count.
+        @type fc:                   int
+        @keyword gc:                The gradient count.
+        @type gc:                   int
+        @keyword hc:                The Hessian count.
+        @type hc:                   int
+        @keyword warning:           Any optimisation warnings.
+        @type warning:              str or None
+        @keyword spin:              The spin container.
+        @type spin:                 SpinContainer instance or None
+        @keyword sim_index:         The Monte Carlo simulation index.
+        @type sim_index:            int or None
+        @keyword model_type:        The model-free model type, one of 'mf', 'local_tm', 'diff', or
+                                    'all'.
+        @type model_type:           str
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to
+                                    allow the problem to be better conditioned.
+        @type scaling:              bool
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Catch infinite chi-squared values.
+        if isInf(func):
+            raise RelaxInfError('chi-squared')
+
+        # Catch chi-squared values of NaN.
+        if isNaN(func):
+            raise RelaxNaNError('chi-squared')
+
+        # Scaling.
+        if scaling:
+            param_vector = dot(scaling_matrix, param_vector)
+
+        # Check if the chi-squared value is lower.  This allows for a parallelised grid search!
+        if sim_index == None:
+            # Get the correct value.
+            chi2 = None
+            if (model_type == 'mf' or model_type == 'local_tm') and hasattr(cdp, 'chi2'):
+                chi2 = spin.chi2
+            if (model_type == 'diff' or model_type == 'all') and hasattr(cdp, 'chi2'):
+                chi2 = cdp.chi2
+
+            # No improvement.
+            if chi2 != None and func >= chi2:
+                print("Discarding the optimisation results, the optimised chi-squared value is higher than the current value (%s >= %s)." % (func, chi2))
+
+                # Exit!
+                return
+
+            # New minimum.
+            else:
+                print("Storing the optimisation results, the optimised chi-squared value is lower than the current value (%s < %s)." % (func, chi2))
+
+        # Disassemble the parameter vector.
+        self._disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
+
+        # Monte Carlo minimisation statistics.
+        if sim_index != None:
+            # Sequence specific minimisation statistics.
+            if model_type == 'mf' or model_type == 'local_tm':
+
+                # Chi-squared statistic.
+                spin.chi2_sim[sim_index] = func
+
+                # Iterations.
+                spin.iter_sim[sim_index] = iter
+
+                # Function evaluations.
+                spin.f_count_sim[sim_index] = fc
+
+                # Gradient evaluations.
+                spin.g_count_sim[sim_index] = gc
+
+                # Hessian evaluations.
+                spin.h_count_sim[sim_index] = hc
+
+                # Warning.
+                spin.warning_sim[sim_index] = warning
+
+            # Global minimisation statistics.
+            elif model_type == 'diff' or model_type == 'all':
+                # Chi-squared statistic.
+                cdp.chi2_sim[sim_index] = func
+
+                # Iterations.
+                cdp.iter_sim[sim_index] = iter
+
+                # Function evaluations.
+                cdp.f_count_sim[sim_index] = fc
+
+                # Gradient evaluations.
+                cdp.g_count_sim[sim_index] = gc
+
+                # Hessian evaluations.
+                cdp.h_count_sim[sim_index] = hc
+
+                # Warning.
+                cdp.warning_sim[sim_index] = warning
+
+        # Normal statistics.
+        else:
+            # Sequence specific minimisation statistics.
+            if model_type == 'mf' or model_type == 'local_tm':
+                # Chi-squared statistic.
+                spin.chi2 = func
+
+                # Iterations.
+                spin.iter = iter
+
+                # Function evaluations.
+                spin.f_count = fc
+
+                # Gradient evaluations.
+                spin.g_count = gc
+
+                # Hessian evaluations.
+                spin.h_count = hc
+
+                # Warning.
+                spin.warning = warning
+
+            # Global minimisation statistics.
+            elif model_type == 'diff' or model_type == 'all':
+                # Chi-squared statistic.
+                cdp.chi2 = func
+
+                # Iterations.
+                cdp.iter = iter
+
+                # Function evaluations.
+                cdp.f_count = fc
+
+                # Gradient evaluations.
+                cdp.g_count = gc
+
+                # Hessian evaluations.
+                cdp.h_count = hc
+
+                # Warning.
+                cdp.warning = warning
 
 
     def _grid_search_config(self, num_params, spin=None, spin_id=None, lower=None, upper=None, inc=None, scaling_matrix=None, verbosity=1):
@@ -816,11 +977,11 @@ class Mf_minimise:
         return A, b
 
 
-    def _minimise_data_setup(self, model_type, min_algor, num_data_sets, min_options, spin=None, sim_index=None):
+    def _minimise_data_setup(self, data_store, min_algor, num_data_sets, min_options, spin=None, sim_index=None):
         """Set up all the data required for minimisation.
 
-        @param model_type:      The model type, one of 'all', 'diff', 'mf', or 'local_tm'.
-        @type model_type:       str
+        @param data_store:      A data storage container.
+        @type data_store:       class instance
         @param min_algor:       The minimisation algorithm to use.
         @type min_algor:        str
         @param num_data_sets:   The number of data sets.
@@ -836,59 +997,59 @@ class Mf_minimise:
         """
 
         # Initialise the data structures for the model-free function.
-        ri_data = []
-        ri_data_err = []
-        equations = []
-        param_types = []
-        param_values = None
-        r = []
-        csa = []
-        num_frq = []
-        frq = []
-        num_ri = []
-        remap_table = []
-        noe_r1_table = []
-        ri_types = []
-        gx = []
-        gh = []
-        num_params = []
-        xh_unit_vectors = []
-        if model_type == 'local_tm':
-            mf_params = []
-        elif model_type == 'diff':
-            param_values = []
+        data_store.ri_data = []
+        data_store.ri_data_err = []
+        data_store.equations = []
+        data_store.param_types = []
+        data_store.param_values = None
+        data_store.r = []
+        data_store.csa = []
+        data_store.num_frq = []
+        data_store.frq = []
+        data_store.num_ri = []
+        data_store.remap_table = []
+        data_store.noe_r1_table = []
+        data_store.ri_types = []
+        data_store.gx = []
+        data_store.gh = []
+        data_store.num_params = []
+        data_store.xh_unit_vectors = []
+        if data_store.model_type == 'local_tm':
+            data_store.mf_params = []
+        elif data_store.model_type == 'diff':
+            data_store.param_values = []
 
         # Set up the data for the back_calc function.
         if min_algor == 'back_calc':
             # The data.
-            ri_data = [0.0]
-            ri_data_err = [0.000001]
-            equations = [spin.equation]
-            param_types = [spin.params]
-            r = [spin.r]
-            csa = [spin.csa]
-            num_frq = [1]
-            frq = [[min_options[3]]]
-            num_ri = [1]
-            remap_table = [[0]]
-            noe_r1_table = [[None]]
-            ri_types = [[min_options[2]]]
-            gx = [return_gyromagnetic_ratio(spin.heteronuc_type)]
-            gh = [return_gyromagnetic_ratio(spin.proton_type)]
-            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
-                xh_unit_vectors = [spin.xh_vect]
+            data_store.ri_data = [0.0]
+            data_store.ri_data_err = [0.000001]
+            data_store.equations = [spin.equation]
+            data_store.param_types = [spin.params]
+            data_store.r = [spin.r]
+            data_store.csa = [spin.csa]
+            data_store.num_frq = [1]
+            data_store.frq = [[min_options[3]]]
+            data_store.num_ri = [1]
+            data_store.remap_table = [[0]]
+            data_store.noe_r1_table = [[None]]
+            data_store.ri_types = [[min_options[2]]]
+            data_store.gx = [return_gyromagnetic_ratio(spin.heteronuc_type)]
+            data_store.gh = [return_gyromagnetic_ratio(spin.proton_type)]
+            if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                data_store.xh_unit_vectors = [spin.xh_vect]
             else:
-                xh_unit_vectors = [None]
+                data_store.xh_unit_vectors = [None]
 
             # Count the number of model-free parameters for the spin index.
-            num_params = [len(spin.params)]
+            data_store.num_params = [len(spin.params)]
 
         # Loop over the number of data sets.
         for j in xrange(num_data_sets):
             # Set the spin index and get the spin, if not already set.
-            if model_type == 'diff' or model_type == 'all':
+            if data_store.model_type == 'diff' or data_store.model_type == 'all':
                 spin_index = j
-                spin = return_spin_from_index(global_index=spin_index)
+                spin, data_store.spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
             # Skip deselected spins.
             if not spin.select:
@@ -898,87 +1059,87 @@ class Mf_minimise:
             if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
                 continue
 
-            # The relaxation data.
+            # Make sure that the errors are strictly positive numbers.
             for ri_id in cdp.ri_ids:
-                # Make sure that the errors are strictly positive numbers.
-                if spin.ri_data_err[ri_id] == 0.0:
-                    raise RelaxError("Zero error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
-                elif spin.ri_data_err[ri_id] < 0.0:
-                    raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
+                # Alias.
+                err = spin.ri_data_err[ri_id]
+
+                # Checks.
+                if err != None and err == 0.0:
+                    raise RelaxError("Zero error for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (errid))
+                elif err != None and err < 0.0:
+                    raise RelaxError("Negative error of %s for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (err, data_store.spin_id, ri_id))
 
             # The relaxation data optimisation structures.
             data = self._relax_data_opt_structs(spin, sim_index=sim_index)
 
             # Append the data.
-            ri_data.append(data[0])
-            ri_data_err.append(data[1])
-            num_frq.append(data[2])
-            num_ri.append(data[3])
-            ri_types.append(data[4])
-            frq.append(data[5])
-            remap_table.append(data[6])
-            noe_r1_table.append(data[7])
+            data_store.ri_data.append(data[0])
+            data_store.ri_data_err.append(data[1])
+            data_store.num_frq.append(data[2])
+            data_store.num_ri.append(data[3])
+            data_store.ri_types.append(data[4])
+            data_store.frq.append(data[5])
+            data_store.remap_table.append(data[6])
+            data_store.noe_r1_table.append(data[7])
 
             # Repackage the data.
-            equations.append(spin.equation)
-            param_types.append(spin.params)
-            gx.append(return_gyromagnetic_ratio(spin.heteronuc_type))
-            gh.append(return_gyromagnetic_ratio(spin.proton_type))
-            if sim_index == None or model_type == 'diff':
-                r.append(spin.r)
-                csa.append(spin.csa)
+            data_store.equations.append(spin.equation)
+            data_store.param_types.append(spin.params)
+            data_store.gx.append(return_gyromagnetic_ratio(spin.heteronuc_type))
+            data_store.gh.append(return_gyromagnetic_ratio(spin.proton_type))
+            if sim_index == None or data_store.model_type == 'diff':
+                data_store.r.append(spin.r)
+                data_store.csa.append(spin.csa)
             else:
-                r.append(spin.r_sim[sim_index])
-                csa.append(spin.csa_sim[sim_index])
+                data_store.r.append(spin.r_sim[sim_index])
+                data_store.csa.append(spin.csa_sim[sim_index])
 
             # Model-free parameter values.
-            if model_type == 'local_tm':
+            if data_store.model_type == 'local_tm':
                 pass
 
             # Vectors.
-            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
-                xh_unit_vectors.append(spin.xh_vect)
+            if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                data_store.xh_unit_vectors.append(spin.xh_vect)
             else:
-                xh_unit_vectors.append(None)
+                data_store.xh_unit_vectors.append(None)
 
             # Count the number of model-free parameters for the spin index.
-            num_params.append(len(spin.params))
+            data_store.num_params.append(len(spin.params))
 
             # Repackage the parameter values for minimising just the diffusion tensor parameters.
-            if model_type == 'diff':
-                param_values.append(self._assemble_param_vector(model_type='mf'))
+            if data_store.model_type == 'diff':
+                data_store.param_values.append(self._assemble_param_vector(model_type='mf'))
 
         # Convert to numpy arrays.
-        for k in xrange(len(ri_data)):
-            ri_data[k] = array(ri_data[k], float64)
-            ri_data_err[k] = array(ri_data_err[k], float64)
+        for k in xrange(len(data_store.ri_data)):
+            data_store.ri_data[k] = array(data_store.ri_data[k], float64)
+            data_store.ri_data_err[k] = array(data_store.ri_data_err[k], float64)
 
         # Diffusion tensor type.
-        if model_type == 'local_tm':
-            diff_type = 'sphere'
+        if data_store.model_type == 'local_tm':
+            data_store.diff_type = 'sphere'
         else:
-            diff_type = cdp.diff_tensor.type
+            data_store.diff_type = cdp.diff_tensor.type
 
         # Package the diffusion tensor parameters.
-        diff_params = None
-        if model_type == 'mf':
+        data_store.diff_params = None
+        if data_store.model_type == 'mf':
             # Spherical diffusion.
-            if diff_type == 'sphere':
-                diff_params = [cdp.diff_tensor.tm]
+            if data_store.diff_type == 'sphere':
+                data_store.diff_params = [cdp.diff_tensor.tm]
 
             # Spheroidal diffusion.
-            elif diff_type == 'spheroid':
-                diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.theta, cdp.diff_tensor.phi]
+            elif data_store.diff_type == 'spheroid':
+                data_store.diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.theta, cdp.diff_tensor.phi]
 
             # Ellipsoidal diffusion.
-            elif diff_type == 'ellipsoid':
-                diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.Dr, cdp.diff_tensor.alpha, cdp.diff_tensor.beta, cdp.diff_tensor.gamma]
-        elif min_algor == 'back_calc' and model_type == 'local_tm':
+            elif data_store.diff_type == 'ellipsoid':
+                data_store.diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.Dr, cdp.diff_tensor.alpha, cdp.diff_tensor.beta, cdp.diff_tensor.gamma]
+        elif min_algor == 'back_calc' and data_store.model_type == 'local_tm':
             # Spherical diffusion.
-            diff_params = [spin.local_tm]
-
-        # Return all the data.
-        return ri_data, ri_data_err, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_types, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params
+            data_store.diff_params = [spin.local_tm]
 
 
     def _relax_data_opt_structs(self, spin, sim_index=None):
@@ -988,7 +1149,7 @@ class Mf_minimise:
         @type spin:         SpinContainer instance
         @keyword sim_index: The optional MC simulation index.
         @type sim_index:    int
-        @return:            The structures ri_data, ri_data_err, num_frq, num_ri, ri_labels, frq, remap_table, noe_r1_table.
+        @return:            The structures ri_data, ri_data_err, num_frq, num_ri, ri_ids, frq, remap_table, noe_r1_table.
         @rtype:             tuple
         """
 
@@ -1004,12 +1165,20 @@ class Mf_minimise:
         for ri_id in cdp.ri_ids:
             # The Rx data.
             if sim_index == None:
-                ri_data.append(spin.ri_data[ri_id])
+                data = spin.ri_data[ri_id]
             else:
-                ri_data.append(spin.ri_data_sim[ri_id][sim_index])
+                data = spin.ri_data_sim[ri_id][sim_index]
 
             # The errors.
-            ri_data_err.append(spin.ri_data_err[ri_id])
+            err = spin.ri_data_err[ri_id]
+
+            # Missing data, so don't add it.
+            if data == None or err == None:
+                continue
+
+            # Append the data and error.
+            ri_data.append(data)
+            ri_data_err.append(err)
 
             # The labels.
             ri_labels.append(cdp.ri_type[ri_id])
@@ -1025,7 +1194,7 @@ class Mf_minimise:
             noe_r1_table.append(None)
 
         # The number of data sets.
-        num_ri = len(cdp.ri_ids)
+        num_ri = len(ri_data)
 
         # Fill the NOE to R1 mapping table.
         for i in range(num_ri):
@@ -1092,7 +1261,7 @@ class Mf_minimise:
             raise RelaxNoPdbError
 
         # Loop over the spins.
-        for spin in spin_loop(spin_id):
+        for spin, id in spin_loop(spin_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -1132,10 +1301,14 @@ class Mf_minimise:
 
             # Make sure that the errors are strictly positive numbers.
             for ri_id in cdp.ri_ids:
-                if spin.ri_data_err[ri_id] == 0.0:
-                    raise RelaxError("Zero error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible.")
-                elif spin.ri_data_err[ri_id] < 0.0:
-                    raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible.")
+                # Alias.
+                err = spin.ri_data_err[ri_id]
+
+                # Checks.
+                if err != None and err == 0.0:
+                    raise RelaxError("Zero error for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (id, ri_id))
+                elif err != None and err < 0.0:
+                    raise RelaxError("Negative error of %s for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (err, id, ri_id))
 
             # Create the initial parameter vector.
             param_vector = self._assemble_param_vector(spin=spin, sim_index=sim_index)
@@ -1322,21 +1495,37 @@ class Mf_minimise:
         if sim_index == None and min_algor != 'back_calc':
             self._reset_min_stats()
 
+        # Containers for the model-free data and optimisation parameters.
+        data_store = Data_container()
+        opt_params = Data_container()
+
+        # Add the imported parameters.
+        data_store.h_bar = h_bar
+        data_store.mu0 = mu0
+        opt_params.min_algor = min_algor
+        opt_params.min_options = min_options
+        opt_params.func_tol = func_tol
+        opt_params.grad_tol = grad_tol
+        opt_params.max_iterations = max_iterations
+
+        # Add the keyword args.
+        opt_params.verbosity = verbosity
+
         # Determine the model type.
-        model_type = self._determine_model_type()
-        if not model_type:
+        data_store.model_type = self._determine_model_type()
+        if not data_store.model_type:
             return
 
         # Model type for the back-calculate function.
-        if min_algor == 'back_calc' and model_type != 'local_tm':
-            model_type = 'mf'
+        if min_algor == 'back_calc' and data_store.model_type != 'local_tm':
+            data_store.model_type = 'mf'
 
         # Test if diffusion tensor data exists.
-        if model_type != 'local_tm' and not diffusion_tensor.diff_data_exists():
+        if data_store.model_type != 'local_tm' and not diffusion_tensor.diff_data_exists():
             raise RelaxNoTensorError('diffusion')
 
         # Tests for the PDB file and unit vectors.
-        if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+        if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
             # Test if the structure file has been loaded.
             if not hasattr(cdp, 'structure'):
                 raise RelaxNoPdbError
@@ -1352,7 +1541,7 @@ class Mf_minimise:
                     raise RelaxNoVectorsError
 
         # Test if the model-free parameter values are set for minimising diffusion tensor parameters by themselves.
-        if model_type == 'diff':
+        if data_store.model_type == 'diff':
             # Loop over the sequence.
             for spin in spin_loop():
                 unset_param = self._are_mf_params_set(spin)
@@ -1361,13 +1550,13 @@ class Mf_minimise:
 
         # Print out.
         if verbosity >= 1:
-            if model_type == 'mf':
+            if data_store.model_type == 'mf':
                 print("Only the model-free parameters for single spins will be used.")
-            elif model_type == 'local_mf':
+            elif data_store.model_type == 'local_mf':
                 print("Only a local tm value together with the model-free parameters for single spins will be used.")
-            elif model_type == 'diff':
+            elif data_store.model_type == 'diff':
                 print("Only diffusion tensor parameters will be used.")
-            elif model_type == 'all':
+            elif data_store.model_type == 'all':
                 print("The diffusion tensor parameters together with the model-free parameters for all spins will be used.")
 
         # Test if the CSA and bond length values have been set.
@@ -1385,20 +1574,20 @@ class Mf_minimise:
                 raise RelaxNoValueError("bond length")
 
         # Number of spins, minimisation instances, and data sets for each model type.
-        if model_type == 'mf' or model_type == 'local_tm':
+        if data_store.model_type == 'mf' or data_store.model_type == 'local_tm':
             num_instances = count_spins(skip_desel=False)
             num_data_sets = 1
-            num_spins = 1
-        elif model_type == 'diff' or model_type == 'all':
+            data_store.num_spins = 1
+        elif data_store.model_type == 'diff' or data_store.model_type == 'all':
             num_instances = 1
             num_data_sets = count_spins(skip_desel=False)
-            num_spins = count_spins()
+            data_store.num_spins = count_spins()
 
         # Number of spins, minimisation instances, and data sets for the back-calculate function.
         if min_algor == 'back_calc':
             num_instances = 1
             num_data_sets = 0
-            num_spins = 1
+            data_store.num_spins = 1
 
 
         # Loop over the minimisation instances.
@@ -1406,18 +1595,18 @@ class Mf_minimise:
 
         for i in xrange(num_instances):
             # Get the spin container if required.
-            if model_type == 'diff' or model_type == 'all':
+            if data_store.model_type == 'diff' or data_store.model_type == 'all':
                 spin_index = None
-                spin, spin_id = None, None
+                spin, data_store.spin_id = None, None
             elif min_algor == 'back_calc':
-                spin_index = min_options[0]
-                spin, spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
+                spin_index = opt_params.min_options[0]
+                spin, data_store.spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
             else:
                 spin_index = i
-                spin, spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
+                spin, data_store.spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
             # Individual spin stuff.
-            if spin and (model_type == 'mf' or model_type == 'local_tm') and not min_algor == 'back_calc':
+            if spin and (data_store.model_type == 'mf' or data_store.model_type == 'local_tm') and not min_algor == 'back_calc':
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -1426,78 +1615,55 @@ class Mf_minimise:
                 if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
                     continue
 
-            # Print out.
-            if verbosity >= 1:
-                # Individual spin stuff.
-                if model_type == 'mf' or model_type == 'local_tm':
-                    if verbosity >= 2:
-                        print("\n\n")
-                    string = "Fitting to spin " + repr(spin_id)
-                    print(("\n\n" + string))
-                    print((len(string) * '~'))
-
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
                 # Create the initial parameter vector.
-                param_vector = self._assemble_param_vector(spin=spin, model_type=model_type)
+                opt_params.param_vector = self._assemble_param_vector(spin=spin, model_type=data_store.model_type)
 
                 # Diagonal scaling.
-                scaling_matrix = None
+                data_store.scaling_matrix = None
 
             else:
                 # Create the initial parameter vector.
-                param_vector = self._assemble_param_vector(spin=spin, sim_index=sim_index)
+                opt_params.param_vector = self._assemble_param_vector(spin=spin, sim_index=sim_index)
 
                 # The number of parameters.
-                num_params = len(param_vector)
+                num_params = len(opt_params.param_vector)
 
                 # Diagonal scaling.
-                scaling_matrix = self._assemble_scaling_matrix(num_params, model_type=model_type, spin=spin, scaling=scaling)
-                if len(scaling_matrix):
-                    param_vector = dot(inv(scaling_matrix), param_vector)
+                data_store.scaling_matrix = self._assemble_scaling_matrix(num_params, model_type=data_store.model_type, spin=spin, scaling=scaling)
+                if len(data_store.scaling_matrix):
+                    opt_params.param_vector = dot(inv(data_store.scaling_matrix), opt_params.param_vector)
 
             # Configure the grid search.
+            opt_params.inc, opt_params.lower, opt_params.upper = None, None, None
             if match('^[Gg]rid', min_algor):
-                inc_new, lower_new, upper_new = self._grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                opt_params.inc, opt_params.lower, opt_params.upper = self._grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=data_store.scaling_matrix)
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
-                min_options = dot(inv(scaling_matrix), min_options)
+                opt_params.min_options = dot(inv(data_store.scaling_matrix), opt_params.min_options)
 
             # Linear constraints.
             if constraints:
-                A, b = self._linear_constraints(num_params, model_type=model_type, spin=spin, scaling_matrix=scaling_matrix)
+                opt_params.A, opt_params.b = self._linear_constraints(num_params, model_type=data_store.model_type, spin=spin, scaling_matrix=data_store.scaling_matrix)
             else:
-                A, b = None, None
-
-            # Initialise the iteration counter and function, gradient, and Hessian call counters.
-            iter_count = 0
-            f_count = 0
-            g_count = 0
-            h_count = 0
+                opt_params.A, opt_params.b = None, None
 
             # Get the data for minimisation.
-            ri_data, ri_data_err, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_types, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self._minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
-
-
-            # Initialise the function to minimise.
-            ######################################
-
-            self.mf = Mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=ri_data, errors=ri_data_err, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_types, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
-
+            self._minimise_data_setup(data_store, min_algor, num_data_sets, opt_params.min_options, spin=spin, sim_index=sim_index)
 
             # Setup the minimisation algorithm when constraints are present.
-            ################################################################
-
             if constraints and not match('^[Gg]rid', min_algor):
-                algor = min_options[0]
+                algor = opt_params.min_options[0]
             else:
                 algor = min_algor
 
+            # Initialise the function to minimise (for back-calculation and LM minimisation).
+            if min_algor == 'back_calc' or match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
+                self.mf = Mf(init_params=opt_params.param_vector, model_type=data_store.model_type, diff_type=data_store.diff_type, diff_params=data_store.diff_params, scaling_matrix=data_store.scaling_matrix, num_spins=data_store.num_spins, equations=data_store.equations, param_types=data_store.param_types, param_values=data_store.param_values, relax_data=data_store.ri_data, errors=data_store.ri_data_err, bond_length=data_store.r, csa=data_store.csa, num_frq=data_store.num_frq, frq=data_store.frq, num_ri=data_store.num_ri, remap_table=data_store.remap_table, noe_r1_table=data_store.noe_r1_table, ri_labels=data_store.ri_types, gx=data_store.gx, gh=data_store.gh, h_bar=data_store.h_bar, mu0=data_store.mu0, num_params=data_store.num_params, vectors=data_store.xh_unit_vectors)
 
             # Levenberg-Marquardt minimisation.
-            ###################################
-
             if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
                 # Total number of ri.
                 number_ri = 0
@@ -1511,139 +1677,50 @@ class Mf_minimise:
                     lm_error[index:index+len(ri_data_err[k])] = ri_data_err[k]
                     index = index + len(ri_data_err[k])
 
-                min_options = min_options + (self.mf.lm_dri, lm_error)
-
+                opt_params.min_options = opt_params.min_options + (self.mf.lm_dri, lm_error)
 
             # Back-calculation.
-            ###################
-
             if min_algor == 'back_calc':
                 return self.mf.calc_ri()
 
+            # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+            processor_box = Processor_box() 
+            processor = processor_box.processor
 
-            # Minimisation.
-            ###############
+            # Parallelised grid search for the diffusion parameter space.
+            if match('^[Gg]rid', min_algor) and data_store.model_type == 'diff':
+                # Print out.
+                print("Parallelised diffusion tensor grid search.")
 
-            # Grid search.
+                # Loop over each grid subdivision.
+                for subdivision in grid_split(divisions=processor.processor_size(), lower=opt_params.lower, upper=opt_params.upper, inc=opt_params.inc):
+                    # Set the points.
+                    opt_params.subdivision = subdivision
+
+                    # Grid search initialisation.
+                    command = MF_grid_command()
+
+                    # Pass in the data and optimisation parameters.
+                    command.store_data(deepcopy(data_store), deepcopy(opt_params))
+
+                    # Set up the model-free memo and add it to the processor queue.
+                    memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
+                    processor.add_to_queue(command, memo)
+
+                # Exit this method.
+                return
+
+            # Normal grid search (command initialisation).
             if search('^[Gg]rid', min_algor):
-                results = grid(func=self.mf.func, args=(), num_incs=inc_new, lower=lower_new, upper=upper_new, A=A, b=b, verbosity=verbosity)
+                command = MF_grid_command()
 
-                # Unpack the results.
-                param_vector, func, iter, warning = results
-                fc = iter
-                gc = 0.0
-                hc = 0.0
-
-            # Minimisation.
+            # Minimisation of all other model types (command initialisation).
             else:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
+                command = MF_minimise_command()
 
-                # Unpack the results.
-                if results == None:
-                    continue
-                param_vector, func, iter, fc, gc, hc, warning = results
+            # Pass in the data and optimisation parameters.
+            command.store_data(deepcopy(data_store), deepcopy(opt_params))
 
-            # Update the stats.
-            iter_count = iter_count + iter
-            f_count = f_count + fc
-            g_count = g_count + gc
-            h_count = h_count + hc
-
-            # Catch infinite chi-squared values.
-            if isInf(func):
-                raise RelaxInfError('chi-squared')
-
-            # Catch chi-squared values of NaN.
-            if isNaN(func):
-                raise RelaxNaNError('chi-squared')
-
-            # Scaling.
-            if scaling:
-                param_vector = dot(scaling_matrix, param_vector)
-
-            # Disassemble the parameter vector.
-            self._disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
-
-            # Monte Carlo minimisation statistics.
-            if sim_index != None:
-                # Sequence specific minimisation statistics.
-                if model_type == 'mf' or model_type == 'local_tm':
-                    # Chi-squared statistic.
-                    spin.chi2_sim[sim_index] = func
-
-                    # Iterations.
-                    spin.iter_sim[sim_index] = iter_count
-
-                    # Function evaluations.
-                    spin.f_count_sim[sim_index] = f_count
-
-                    # Gradient evaluations.
-                    spin.g_count_sim[sim_index] = g_count
-
-                    # Hessian evaluations.
-                    spin.h_count_sim[sim_index] = h_count
-
-                    # Warning.
-                    spin.warning_sim[sim_index] = warning
-
-                # Global minimisation statistics.
-                elif model_type == 'diff' or model_type == 'all':
-                    # Chi-squared statistic.
-                    cdp.chi2_sim[sim_index] = func
-
-                    # Iterations.
-                    cdp.iter_sim[sim_index] = iter_count
-
-                    # Function evaluations.
-                    cdp.f_count_sim[sim_index] = f_count
-
-                    # Gradient evaluations.
-                    cdp.g_count_sim[sim_index] = g_count
-
-                    # Hessian evaluations.
-                    cdp.h_count_sim[sim_index] = h_count
-
-                    # Warning.
-                    cdp.warning_sim[sim_index] = warning
-
-            # Normal statistics.
-            else:
-                # Sequence specific minimisation statistics.
-                if model_type == 'mf' or model_type == 'local_tm':
-                    # Chi-squared statistic.
-                    spin.chi2 = func
-
-                    # Iterations.
-                    spin.iter = iter_count
-
-                    # Function evaluations.
-                    spin.f_count = f_count
-
-                    # Gradient evaluations.
-                    spin.g_count = g_count
-
-                    # Hessian evaluations.
-                    spin.h_count = h_count
-
-                    # Warning.
-                    spin.warning = warning
-
-                # Global minimisation statistics.
-                elif model_type == 'diff' or model_type == 'all':
-                    # Chi-squared statistic.
-                    cdp.chi2 = func
-
-                    # Iterations.
-                    cdp.iter = iter_count
-
-                    # Function evaluations.
-                    cdp.f_count = f_count
-
-                    # Gradient evaluations.
-                    cdp.g_count = g_count
-
-                    # Hessian evaluations.
-                    cdp.h_count = h_count
-
-                    # Warning.
-                    cdp.warning = warning
+            # Set up the model-free memo and add it to the processor queue.
+            memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
+            processor.add_to_queue(command, memo)

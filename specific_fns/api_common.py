@@ -60,8 +60,6 @@ class API_common:
 
         @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
         @type data_id:      str
-        @param sim_data:    The Monte Carlo simulation data.
-        @type sim_data:     list of float
         """
 
         # Get the spin container.
@@ -596,10 +594,6 @@ class API_common:
 
         # Get the spin container.
         spin = return_spin(data_id)
-
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'ri_data_sim'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
 
         # Initialise the data structure.
         spin.ri_data_sim = {}

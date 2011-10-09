@@ -28,10 +28,12 @@ from os import sep
 
 # relax module imports.
 from generic_fns import pipes
+from relax_errors import RelaxError, RelaxImplementError, RelaxNoPipeError
 import specific_fns
 
 # GUI module imports.
-from base import UF_base, UF_window
+from base import UF_base, UF_page
+from gui.errors import gui_raise
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 
@@ -40,33 +42,33 @@ from gui.paths import WIZARD_IMAGE_PATH
 class Value(UF_base):
     """The container class for holding all GUI elements."""
 
-    def set(self, event):
+    def set(self, param=None):
         """The value.set user function.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @keyword param: The starting parameter.
+        @type param:    str
         """
 
-        # The dialog.
-        window = Set_window(self.gui, self.interpreter)
-        window.ShowModal()
-        window.Destroy()
+        # Create the wizard.
+        wizard, page = self.create_wizard(size_x=1000, size_y=800, name='value.set', uf_page=Set_page, return_page=True)
+
+        # Default parameter.
+        page.set_param(param)
+
+        # Execute the wizard.
+        wizard.run()
 
 
 
-class Set_window(UF_window):
-    """The user function window."""
+class Set_page(UF_page):
+    """The value.set() user function page."""
 
     # Some class variables.
-    size_x = 800
-    size_y = 600
-    frame_title = 'Set parameter values'
     image_path = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
-    main_text = 'This dialog allows you to set spin specific data values.'
-    title = 'Value setting'
+    uf_path = ['value', 'set']
+    height_desc = 400
 
-
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the sequence specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -74,49 +76,129 @@ class Set_window(UF_window):
         """
 
         # The parameter.
-        self.param = self.input_field(sizer, "The parameter:")
+        self.param = self.combo_box(sizer, "The parameter:", tooltip=self.uf._doc_args_dict['param'], evt_fn=self.set_default_value)
+        self.update_parameters()
 
         # The value.
-        self.value = self.input_field(sizer, "The value:")
+        self.val = self.input_field(sizer, "The value:", tooltip=self.uf._doc_args_dict['val'])
 
         # The spin ID restriction.
-        self.spin_id = self.input_field(sizer, "Restrict data loading to certain spins:", tooltip="This must be a valid spin ID.  Multiple spins can be selected using ranges, the '|' operator, residue ranges, etc.")
+        self.spin_id = self.spin_id_element(sizer, "Restrict value setting to certain spins:")
 
 
-    def execute(self):
+    def on_execute(self):
         """Execute the user function."""
 
-        # The parameter and value.
-        param = gui_to_str(self.param.GetValue())
-        value = gui_to_str(self.value.GetValue())
+        # The parameter.
+        param = self.param.GetClientData(self.param.GetSelection())
+
+        # The value (converted to the correct type).
+        val_str = gui_to_str(self.val.GetValue())
+        val_type = self.data_type(param)
+
+        # Evaluate numbers.
+        if val_type in [float, int]:
+            fn = eval
+        else:
+            fn = val_type
+
+        # Convert.
+        try:
+            val = fn(val_str)
+        except (ValueError, NameError):
+            gui_raise(RelaxError("The value '%s' should be of the type %s." % (val_str, val_type)), raise_flag=False)
+            return
 
         # The spin ID.
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Set the value.
-        self.interpreter.value.set(val=value, param=param, spin_id=spin_id)
+        self.execute('value.set', val=val, param=param, spin_id=spin_id)
 
 
-    def update(self, event):
-        """Update the UI.
+    def set_default_value(self, event=None):
+        """Set the value to the default once a parameter is selected.
 
         @param event:   The wx event.
         @type event:    wx event
         """
 
+        # The parameter.
+        param = self.param.GetClientData(self.param.GetSelection())
+
+        # Clear the previous data.
+        self.val.Clear()
+
+        # Nothing to do.
+        if param == '':
+            return
+
+        # Get the default value.
+        default_value = specific_fns.setup.get_specific_fn('default_value', cdp.pipe_type, raise_error=False)
+        value = default_value(param)
+
+        # Set the default value.
+        if value != None:
+            self.val.SetValue(str_to_gui(str(value)))
+
+
+    def set_param(self, param):
+        """Set the selection to the given parameter.
+
+        @keyword param: The starting parameter.
+        @type param:    str
+        """
+
+        # Nothing to do.
+        if param == None:
+            return
+
+        # Find the parameter in the list.
+        for i in range(self.param.GetCount()):
+            if param == self.param.GetClientData(i):
+                self.param.SetSelection(i)
+
+        # Set the default value.
+        self.set_default_value()
+
+
+    def update_parameters(self):
+        """Fill out the list of parameters and their descriptions."""
+
+        # Check the current data pipe.
+        if cdp == None:
+            gui_raise(RelaxNoPipeError())
+            self.setup_fail = True
+            return
+
         # Get the specific functions.
-        data_names = specific_fns.setup.get_specific_fn('data_names', pipes.get_type(), raise_error=False)
-        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', pipes.get_type(), raise_error=False)
+        data_names = specific_fns.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
+        self.data_type = specific_fns.setup.get_specific_fn('data_type', cdp.pipe_type, raise_error=False)
+        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
+
+        # The data names, if they exist.
+        try:
+            names = data_names(set='params')
+        except RelaxImplementError:
+            gui_raise(RelaxImplementError())
+            self.setup_fail = True
+            return
+
+        # Clear the previous data.
+        self.param.Clear()
 
         # Loop over the parameters.
-        #for name in data_names(set='params'):
-        #    # Get the description.
-        #    desc = return_data_desc(name)
+        for name in (data_names(set='params') + data_names(set='generic')):
+            # Get the description.
+            desc = return_data_desc(name)
 
-        #    # No description.
-        #    if not desc:
-        #        desc = name
+            # No description.
+            if not desc:
+                text = name
 
-        #    # Append the description.
-        #    self.param.Append(str_to_gui(desc), name)
+            # The text.
+            else:
+                text = "'%s':  %s" % (name, desc)
 
+            # Append the description.
+            self.param.Append(str_to_gui(text), name)

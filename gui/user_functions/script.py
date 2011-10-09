@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,34 +25,43 @@
 
 # Python module imports.
 import thread
+import wx
+
+# relax module imports.
+from status import Status; status = Status()
 
 # GUI module imports.
 from base import UF_base
-from gui.filedialog import openfile
+from gui.filedialog import RelaxFileDialog
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 
 
 class Script(UF_base):
     """The script user function GUI class."""
 
-    def run(self, event, file=None):
+    def run(self, file=None):
         """The script user function GUI element.
 
-        @param event:   The wx event.
-        @type event:    wx event
         @param file:    The path of the script to execute, if already known.  If not given, a file selection dialog will appear.
         @type file:     str
         """
 
         # User selection of the file.
         if not file:
-            file = openfile(msg='Select the relax script to execute', default='relax scripts (*.py)|*.py')
+            dialog = RelaxFileDialog(parent=None, message='Select the relax script to execute', wildcard='relax scripts (*.py)|*.py', style=wx.FD_OPEN)
 
-        # Check the file.
-        if not file:
-            return
+            # Show the dialog and catch if no file has been selected.
+            if status.show_gui and dialog.ShowModal() != wx.ID_OK:
+                # Don't do anything.
+                return
+
+            # The file.
+            file = dialog.get_file()
 
         # Show the relax controller.
-        self.gui.controller.Show()
+        if status.show_gui:
+            app = wx.GetApp()
+            app.gui.controller.Show()
 
         # Execute the script in a thread.
         id = thread.start_new_thread(self.script_exec, (file,))
@@ -66,4 +75,4 @@ class Script(UF_base):
         """
 
         # Execute the user function.
-        self.interpreter.script(str(file))
+        interpreter.apply('script', str(file))

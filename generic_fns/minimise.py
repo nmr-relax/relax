@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from re import search
 # relax module imports.
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pipes
+from multi.processor import Processor_box
 from relax_errors import RelaxError
 import specific_fns
 from status import Status; status = Status()
@@ -61,13 +62,19 @@ def calc(verbosity=1):
                 print(("Simulation " + repr(i+1)))
 
             # Status.
-            status.mc_number = i
+            if status.current_analysis:
+                status.auto_analysis[status.current_analysis].mc_number = i
+            else:
+                status.mc_number = i
 
             # Calculation.
             calculate(verbosity=verbosity-1, sim_index=i)
 
         # Unset the status.
-        status.mc_number = None
+        if status.current_analysis:
+            status.auto_analysis[status.current_analysis].mc_number = None
+        else:
+            status.mc_number = None
 
     # Minimisation.
     else:
@@ -114,17 +121,29 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
                 print(("Simulation " + repr(i+1)))
 
             # Status.
-            status.mc_number = i
+            if status.current_analysis:
+                status.auto_analysis[status.current_analysis].mc_number = i
+            else:
+                status.mc_number = i
 
             # Optimisation.
             grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
 
         # Unset the status.
-        status.mc_number = None
+        if status.current_analysis:
+            status.auto_analysis[status.current_analysis].mc_number = None
+        else:
+            status.mc_number = None
 
     # Grid search.
     else:
         grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
+
+    # Get the Processor box singleton (it contains the Processor instance).
+    processor_box = Processor_box() 
+
+    # Execute the queued elements.
+    processor_box.processor.run_queue()
 
 
 def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
@@ -177,17 +196,29 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
                 print(("Simulation " + repr(i+1)))
 
             # Status.
-            status.mc_number = i
+            if status.current_analysis:
+                status.auto_analysis[status.current_analysis].mc_number = i
+            else:
+                status.mc_number = i
 
             # Optimisation.
             minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
 
         # Unset the status.
-        status.mc_number = None
+        if status.current_analysis:
+            status.auto_analysis[status.current_analysis].mc_number = None
+        else:
+            status.mc_number = None
 
     # Standard minimisation.
     else:
         minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)
+
+    # Get the Processor box singleton (it contains the Processor instance).
+    processor_box = Processor_box() 
+
+    # Execute the queued elements.
+    processor_box.processor.run_queue()
 
 
 def reset_min_stats(data_pipe=None, spin=None):
@@ -280,10 +311,7 @@ def return_conversion_factor(stat_type, spin):
     return 1.0
 
 
-return_data_name_doc = """
-        Minimisation statistic data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+return_data_name_doc = ["Minimisation statistic data type string matching patterns", """
         ____________________________________________________________________________________________
         |                        |              |                                                  |
         | Data type              | Object name  | Patterns                                         |
@@ -299,8 +327,7 @@ return_data_name_doc = """
         |                        |              |                                                  |
         | Hessian call count     | 'h_count'    | '^[Hh].*[ -_][Cc]ount'                           |
         |________________________|______________|__________________________________________________|
-
-"""
+"""]
 
 def return_data_name(name):
     """Return a unique identifying string for the minimisation parameter.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,10 +22,10 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-
-class Structure_base_class:
+class Structure_base_class(UnitTestCase):
     """Base class for the tests of both the 'prompt.structure' and 'generic_fns.structure' modules.
 
     This base class also contains many shared unit tests.
@@ -34,15 +34,5 @@ class Structure_base_class:
     def setUp(self):
         """Set up for all the molecule unit tests."""
 
-        # Reset the relax data storage object.
-        ds.__reset__()
-
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()

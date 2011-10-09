@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@
 
 # relax GUI module imports.
 from auto_rx_base import Auto_rx
-from gui.paths import IMAGE_PATH
+from gui.paths import ANALYSIS_IMAGE_PATH, IMAGE_PATH
 
 
 class Auto_r2(Auto_rx):
@@ -33,5 +33,6 @@ class Auto_r2(Auto_rx):
 
     # Hardcoded variables.
     analysis_type = 'r2'
-    bitmap = IMAGE_PATH+'r2.png'
+    bitmap = [ANALYSIS_IMAGE_PATH+"r2_200x200.png",
+              IMAGE_PATH+'r2.png']
     label = 'R2'

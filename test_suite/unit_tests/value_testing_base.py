@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,21 +27,17 @@ from math import pi
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor, pipes
 from relax_errors import RelaxError, RelaxParamSetError, RelaxUnknownParamCombError
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-
-class Value_base_class:
+class Value_base_class(UnitTestCase):
     """Base class for the tests of both the 'prompt.value' and 'generic_fns.value' modules.
 
     This base class also contains many shared unit tests.
     """
 
-
     def setUp(self):
         """Set up for all the value unit tests."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
         # Add a consistency tests data pipe to the data store for testing consistency tests parameters.
         ds.add(pipe_name='ct', pipe_type='ct')
@@ -73,12 +69,6 @@ class Value_base_class:
         ds['n_state'].alpha = [0.0] * N
         ds['n_state'].beta = [0.0] * N
         ds['n_state'].gamma = [0.0] * N
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
 
 
     def set_up_spins(self, pipe_name=None):

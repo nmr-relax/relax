@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,23 +23,19 @@
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from generic_fns.reset import reset
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-
-class Diffusion_tensor_base_class:
+class Diffusion_tensor_base_class(UnitTestCase):
     """Base class for the tests of the diffusion tensor modules.
     
-    This includes both the 'prompt.diffusion_tensor' and 'generic_fns.diffusion_tensor' modules.
-    The base class also contains many shared unit tests.
+    This includes both the 'prompt.diffusion_tensor' and 'generic_fns.diffusion_tensor' modules.  The base class also contains many shared unit tests.
     """
-
 
     def setUp(self):
         """Set up for all the diffusion tensor unit tests."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -49,12 +45,6 @@ class Diffusion_tensor_base_class:
 
         # Set the current data pipe to 'orig'.
         pipes.switch('orig')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
 
 
     def test_copy_pull_ellipsoid(self):
@@ -254,8 +244,8 @@ class Diffusion_tensor_base_class:
         prompt.diffusion_tensor.delete().
         """
 
-        # Reset the relax data store.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Try to delete the tensor data.
         self.assertRaises(RelaxNoPipeError, self.diffusion_tensor_fns.delete)
@@ -293,8 +283,8 @@ class Diffusion_tensor_base_class:
         prompt.diffusion_tensor.display().
         """
 
-        # Reset the relax data store.
-        ds.__reset__()
+        # Reset relax.
+        reset()
 
         # Try to display the tensor data.
         self.assertRaises(RelaxNoPipeError, self.diffusion_tensor_fns.display)

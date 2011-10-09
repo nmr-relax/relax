@@ -43,12 +43,6 @@ class Jw(SystemTestCase):
         self.interpreter.pipe.create('jw', 'jw')
 
 
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
-
-
     def test_calc(self):
         """The spectral density calculation test."""
 

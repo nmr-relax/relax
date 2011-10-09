@@ -31,6 +31,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from float import nan
 from generic_fns import grace, pipes
 from generic_fns.align_tensor import get_tensor_index
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
@@ -114,6 +115,38 @@ def back_calc(align_id=None):
             spin.rdc_bc[id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[get_tensor_index(id)].A, weights=weights)
 
 
+def convert(value, align_id, to_intern=False):
+    """Convert the RDC based on the 'D' or '2D' data type.
+
+    @param value:           The value or error to convert.
+    @type value:            float or None
+    @param align_id:        The alignment tensor ID string.
+    @type align_id:         str
+    @keyword to_intern:     A flag which if True will convert to the internal 2D notation if needed, or if False will convert from the internal 2D notation to the external D or 2D format.
+    @type to_intern:        bool
+    @return:                The converted value.
+    @rtype:                 float or None
+    """
+
+    # Handle values of None.
+    if value == None:
+        return None
+
+    # The conversion factor.
+    factor = 1.0
+    if hasattr(cdp, 'rdc_data_types') and cdp.rdc_data_types.has_key(align_id) and cdp.rdc_data_types[align_id] == 'D':
+        # Convert from D to 2D.
+        if to_intern:
+            factor = 0.5
+
+        # Convert from 2D to D.
+        else:
+            factor = 2.0
+
+    # Return the converted value.
+    return value * factor
+
+
 def corr_plot(format=None, file=None, dir=None, force=False):
     """Generate a correlation plot of the measured vs. back-calculated RDCs.
 
@@ -176,12 +209,12 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                 continue
 
             # Append the data.
-            data[-1].append([spin.rdc_bc[align_id], spin.rdc[align_id]])
+            data[-1].append([convert(spin.rdc_bc[align_id], align_id), convert(spin.rdc[align_id], align_id)])
 
             # Errors.
             if err_flag:
                 if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
-                    data[-1][-1].append(spin.rdc_err[align_id])
+                    data[-1][-1].append(convert(spin.rdc_err[align_id], align_id))
                 else:
                     data[-1][-1].append(None)
 
@@ -301,7 +334,10 @@ def q_factors(spin_id=None):
         D = dj * cdp.align_tensors[cdp.align_ids.index(align_id)].A_diag
         Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
         Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
-        R = Dr / Da
+        if Da == 0:
+            R = nan
+        else:
+            R = Dr / Da
         norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
         if Da == 0.0:
             norm = 1e-15
@@ -322,7 +358,7 @@ def q_factors(spin_id=None):
     cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
-def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
+def read(align_id=None, file=None, dir=None, file_data=None, data_type='2D', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
     """Read the RDC data from file.
 
     @keyword align_id:      The alignment tensor ID string.
@@ -333,6 +369,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
     @type dir:              str or None
     @keyword file_data:     An alternative to opening a file, if the data already exists in the correct format.  The format is a list of lists where the first index corresponds to the row and the second the column.
     @type file_data:        list of lists
+    @keyword data_type:     A string which is set to '2D' means that the splitting in the aligned sample was assumed to be J + 2D, or if set to 'D' then the splitting was taken as J + D.
     @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
     @keyword mol_name_col:  The column containing the molecule name information.  If supplied, spin_id_col must be None.
@@ -368,6 +405,11 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
     if data_col == None and error_col == None:
         raise RelaxError("One of either the data or error column must be supplied.")
 
+    # Store the data type as global data (need for the conversion of spin data).
+    if not hasattr(cdp, 'rdc_data_types'):
+        cdp.rdc_data_types = {}
+    if not cdp.rdc_data_types.has_key(align_id):
+        cdp.rdc_data_types[align_id] = data_type
 
     # Spin specific data.
     #####################
@@ -403,6 +445,9 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
             if not hasattr(spin, 'rdc'):
                 spin.rdc = {}
 
+            # Data conversion.
+            value = convert(value, align_id, to_intern=True)
+
             # Correction for the negative gyromagnetic ratio of 15N.
             if neg_g_corr and value != None:
                 value = -value
@@ -415,6 +460,9 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
             # Initialise.
             if not hasattr(spin, 'rdc_err'):
                 spin.rdc_err = {}
+
+            # Data conversion.
+            error = convert(error, align_id, to_intern=True)
 
             # Append the error.
             spin.rdc_err[align_id] = error
@@ -516,11 +564,15 @@ def write(align_id=None, file=None, dir=None, force=False):
         if not hasattr(spin, 'rdc') or align_id not in spin.rdc.keys():
             continue
 
-        # Store the data.
+        # Store the spin ID.
         spin_ids.append(spin_id)
-        values.append(spin.rdc[align_id])
+
+        # The value.
+        values.append(convert(spin.rdc[align_id], align_id))
+
+        # The error.
         if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
-            errors.append(spin.rdc_err[align_id])
+            errors.append(convert(spin.rdc_err[align_id], align_id))
         else:
             errors.append(None)
 

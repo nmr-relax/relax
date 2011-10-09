@@ -36,6 +36,7 @@ from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError
 from relax_io import get_file_path, open_write_file, test_binary
 from relax_warnings import RelaxWarning
 import specific_fns
+from status import Status; status = Status()
 
 
 def determine_seq_type(spin_id=None):
@@ -270,11 +271,11 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 new_data[i][j][k].append(data[i][j][k][1])
 
                 # First error set.
-                if graph_type in ['xydx', 'xydy', 'xydxdy']:
+                if graph_type in ['xydx', 'xydxdy']:
                     new_data[i][j][k].append(data[i][j][k][2])
 
                 # Second error set.
-                if graph_type == 'xydxdy':
+                if graph_type in ['xydy', 'xydxdy']:
                     new_data[i][j][k].append(data[i][j][k][3])
 
     # Return the data.
@@ -342,6 +343,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
         raise RelaxNoSimError
 
     # Open the file for writing.
+    file_path = get_file_path(file, dir)
     file = open_write_file(file, dir, force)
 
     # Get the data.
@@ -368,6 +370,13 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
 
     # Close the file.
     file.close()
+
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    cdp.result_files.append(['grace', 'Grace', file_path])
+    status.observers.result_file.notify()
+
 
 
 def write_xy_data(data, file=None, graph_type=None, norm=False):
@@ -416,7 +425,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
                 file.write("%-30s %-30s" % (point[0], point[1]/norm_fact))
 
                 # The dx and dy errors.
-                if graph_type in ['xydx', 'xydy']:
+                if graph_type in ['xydx', 'xydy', 'xydxdy']:
                     # Catch x or y-axis errors of None.
                     error = point[2]
                     if error == None:

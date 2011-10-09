@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,64 +24,18 @@
 """Module containing the 'pymol' user function class for interacting with PyMOL."""
 __docformat__ = 'plaintext'
 
-# Dependency check module.
-import dep_check
-
-# Python module imports.
-if dep_check.pymol_module:
-    import pymol
-
 # relax module imports.
-from base_class import User_fn_class
+from base_class import User_fn_class, _build_doc
 import arg_check
 import colour
 from generic_fns import pymol_control
+from specific_fns.model_free.pymol import Pymol
 
 
 class Pymol(User_fn_class):
     """Class for interfacing with PyMOL."""
 
-    def __init__(self, exec_info=None):
-        """Initialise the base class and then load pymol.cmd into here.
-
-        @keyword exec_info: The execution information container.  This must contain at least the exec_info.intro boolean variable.  If not supplied, an instance will be generated.
-        @type exec_info:    None or class instance
-        """
-
-        # Execute the base class __init__() method.
-        User_fn_class.__init__(self, exec_info)
-
-        # Load the pymol.cmd object, if pymol is available.
-        if dep_check.pymol_module:
-            self.cmd = pymol.cmd
-
-
     def cartoon(self):
-        """Apply the PyMOL cartoon style and colour by secondary structure.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function applies the PyMOL cartoon style which is equivalent to hiding everything and
-        clicking on show cartoon.  It also colours the cartoon with red helices, yellow strands, and
-        green loops.  The following commands are executed:
-
-            cmd.hide('everything', file)
-            cmd.show('cartoon', file)
-            util.cbss(file, 'red', 'yellow', 'green')
-
-        where file is the file name without the '.pdb' extension.
-
-
-        Example
-        ~~~~~~~
-
-        To apply this user function, type:
-
-        relax> pymol.cartoon()
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pymol.cartoon()"
@@ -90,10 +44,27 @@ class Pymol(User_fn_class):
         # Execute the functional code.
         pymol_control.cartoon()
 
+    # The function doc info.
+    cartoon._doc_title = "Apply the PyMOL cartoon style and colour by secondary structure."
+    cartoon._doc_title_short = "PyMOL cartoon style application."
+    cartoon._doc_desc = """
+        This applies the PyMOL cartoon style which is equivalent to hiding everything and clicking on show cartoon.  It also colours the cartoon with red helices, yellow strands, and green loops.  The following commands are executed:
+
+            cmd.hide('everything', file)
+            cmd.show('cartoon', file)
+            util.cbss(file, 'red', 'yellow', 'green')
+
+        where file is the file name without the '.pdb' extension.
+        """
+    cartoon._doc_examples = """
+        To apply this user function, type:
+
+        relax> pymol.cartoon()
+        """
+    _build_doc(cartoon)
+
 
     def clear_history(self):
-        """Function for clearing the PyMOL command history."""
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pymol.clear_history()"
@@ -102,31 +73,16 @@ class Pymol(User_fn_class):
         # Execute the functional code.
         pymol_control.clear_history()
 
+    # The function doc info.
+    clear_history._doc_title = "Clear the PyMOL command history."""
+    clear_history._doc_title_short = "Clear PyMOL history."""
+    clear_history._doc_desc = """
+        This will clear the Pymol history from memory.
+        """
+    _build_doc(clear_history)
+
 
     def command(self, command=None):
-        """Function for executing a user supplied PyMOL command.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        command:  The PyMOL command to execute.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This user function allows you to pass PyMOL commands to the program.  This can be useful
-        for automation or scripting.
-
-
-        Example
-        ~~~~~~~
-
-        To reinitialise the PyMOL instance, type:
-
-        relax> pymol.command("reinitialise")
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pymol.command("
@@ -134,26 +90,49 @@ class Pymol(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(command, 'pymol command')
+        arg_check.is_str(command, 'PyMOL command')
 
         # Execute the functional code.
         pymol_control.command(command=command)
 
+    # The function doc info.
+    command._doc_title = "Execute a user supplied PyMOL command."
+    command._doc_title_short = "PyMOL command execution."
+    command._doc_args = [
+        ["command", "The PyMOL command to execute."]
+    ]
+    command._doc_desc = """
+        This allows PyMOL commands to be passed to the program.  This can be useful for automation or scripting.
+        """
+    command._doc_examples = """
+        To reinitialise the PyMOL instance, type:
+
+        relax> pymol.command("reinitialise")
+        """
+    _build_doc(command)
+
 
     def cone_pdb(self, file=None):
-        """Display, as designed, the cone PDB geometric object from the N-state model.
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.cone_pdb("
+            text = text + "file=" + repr(file) + ")"
+            print(text)
 
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
+        # The argument checks.
+        arg_check.is_str(file, 'file name')
 
-        file:  The name of the PDB file containing the cone geometric object.
+        # Execute the functional code.
+        pymol_control.cone_pdb(file=file)
 
-
-        Description
-        ~~~~~~~~~~~
-
-        The PDB file containing the geometric object must be created using the complementary
-        'n_state_model.cone_pdb()' user function.
+    # The function doc info.
+    cone_pdb._doc_title = "Display the cone PDB geometric object."
+    cone_pdb._doc_title_short = "Cone PDB geometric object display."
+    cone_pdb._doc_args = [
+        ["file", "The name of the PDB file containing the cone geometric object."]
+    ]
+    cone_pdb._doc_desc = """
+        The PDB file containing the geometric object must be created using the complementary frame_order.cone_pdb or n_state_model.cone_pdb user functions.
 
         The cone PDB file is read in using the command:
 
@@ -172,76 +151,13 @@ class Pymol(User_fn_class):
             show sticks, 'sele'
             color white, 'sele'
         """
+    _build_doc(cone_pdb)
 
+
+    def macro_apply(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
         # Function intro text.
         if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.cone_pdb("
-            text = text + "file=" + repr(file) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(file, 'file name')
-
-        # Execute the functional code.
-        pymol_control.cone_pdb(file=file)
-
-
-    def macro_exec(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
-        """Function for executing PyMOL macros.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        data_type:  The data type to map to the structure.
-
-        style:  The style of the macro.
-
-        colour_start:  The starting colour, either an array or string, of the linear colour
-        gradient.
-
-        colour_end:  The ending colour, either an array or string, of the linear colour gradient.
-
-        colour_list:  The list of colours to match the start and end strings.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function allows residues specific values to be mapped to a structure through PyMOL
-        macros.  Currently only the 'classic' style, which is described below, is available.
-
-
-        Colour
-        ~~~~~~
-
-        The values are coloured based on a linear colour gradient which is specified through the
-        'colour_start' and 'colour_end' arguments.  These arguments can either be a string to
-        identify one of the RGB (red, green, blue) colour arrays listed in the tables below, or you
-        can give the RGB vector itself.  For example, colour_start='white' and
-        colour_start=[1.0, 1.0, 1.0] both select the same colour.  Leaving both arguments at None
-        will select the default colour gradient which for each type of analysis is described below.
-
-        When supplying the colours as strings, two lists of colours can be selected from which to
-        match the strings.  These are the default PyMOL colour list and the X11 colour list, both
-        of which are described in the tables below.  The default behaviour is to first search the
-        Molmol list and then the X11 colour list, raising an error if neither contain the string.
-        To explicitly select these lists, set the 'colour_list' argument to either 'molmol' or
-        'x11'.
-
-
-        Examples
-        ~~~~~~~~
-
-        To map the order parameter values, S2, onto the structure using the classic style, type:
-
-        relax> pymol.macro_exec('S2')
-        relax> pymol.macro_exec(data_type='S2')
-        relax> pymol.macro_exec(data_type='S2', style="classic")
-        """
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.macro_exec("
+            text = self._exec_info.ps3 + "pymol.macro_apply("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)
@@ -257,26 +173,152 @@ class Pymol(User_fn_class):
         arg_check.is_str(colour_list, 'colour list', can_be_none=True)
 
         # Execute the functional code.
-        pymol_control.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        pymol_control.macro_apply(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+
+    # The function doc info.
+    macro_apply._doc_title = "Execute PyMOL macros."
+    macro_apply._doc_title_short = "PyMOL macro execution."
+    macro_apply._doc_args = [
+        ["data_type", "The data type to map to the structure."],
+        ["style", "The style of the macro."],
+        ["colour_start", "The starting colour, either an array or string, of the linear colour gradient."],
+        ["colour_end", "The ending colour, either an array or string, of the linear colour gradient."],
+        ["colour_list", "The list of colours to match the start and end strings."]
+    ]
+    macro_apply._doc_desc = """
+        This allows spin specific values to be mapped to a structure through PyMOL macros.  Currently only the 'classic' style, which is described below, is available.
+        """
+    macro_apply._doc_examples = """
+        To map the order parameter values, S2, onto the structure using the classic style, type:
+
+        relax> pymol.macro_apply('S2')
+        relax> pymol.macro_apply(data_type='S2')
+        relax> pymol.macro_apply(data_type='S2', style="classic")
+        """
+    macro_apply._doc_additional = [
+        colour._linear_gradient_doc,
+        Pymol.classic_style_doc,
+        colour.__molmol_colours_prompt_doc__,
+        colour.__x11_colours_prompt_doc__
+    ]
+    _build_doc(macro_apply)
+
+
+    def macro_run(self, file=None, dir='pymol'):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.macro_run("
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+
+        # Execute the functional code.
+        pymol_control.macro_run(file=file, dir=dir)
+
+    # The function doc info.
+    macro_run._doc_title = "Open and execute the PyMOL macro file."
+    macro_run._doc_title_short = "PyMOL macro file execution."
+    macro_run._doc_args = [
+        ["file", "The name of the PyMOL macro file."],
+        ["dir", "The directory name."],
+    ]
+    macro_run._doc_desc = """
+        This user function is for opening and running a PyMOL macro located within a text file.
+        """
+    macro_run._doc_examples = """
+        To execute the macro file 's2.pml' located in the directory 'pymol', type:
+
+        relax> pymol.macro_run(file='s2.pml')
+        relax> pymol.macro_run(file='s2.pml', dir='pymol')
+        """
+    _build_doc(macro_run)
+
+
+    def macro_write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='pymol', force=False):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.macro_write("
+            text = text + "data_type=" + repr(data_type)
+            text = text + ", style=" + repr(style)
+            text = text + ", colour_start=" + repr(colour_start)
+            text = text + ", colour_end=" + repr(colour_end)
+            text = text + ", colour_list=" + repr(colour_list)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(data_type, 'data type')
+        arg_check.is_str(style, 'style')
+        arg_check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str(colour_list, 'colour list', can_be_none=True)
+        arg_check.is_str_or_inst(file, 'file name', can_be_none=True)
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+
+        # Execute the functional code.
+        pymol_control.macro_write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
+
+    # The function doc info.
+    macro_write._doc_title = "Create PyMOL macros."
+    macro_write._doc_title_short = "PyMOL macro creation."
+    macro_write._doc_args = [
+        ["data_type", "The data type to map to the structure."],
+        ["style", "The style of the macro."],
+        ["colour_start", "The starting colour, either an array or string, of the linear colour gradient."],
+        ["colour_end", "The ending colour, either an array or string, of the linear colour gradient."],
+        ["colour_list", "The list of colours to match the start and end strings."],
+        ["file", "The optional name of the file."],
+        ["dir", "The optional directory to save the file to."],
+        ["force", "A flag which, if set to True, will cause the file to be overwritten."]
+    ]
+    macro_write._doc_desc = """
+        This allows residues specific values to be mapped to a structure through the creation of a PyMOL macro which can be executed in PyMOL by clicking on 'File, Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is available.
+        """
+    macro_write._doc_examples = """
+        To create a PyMOL macro mapping the order parameter values, S2, onto the structure using
+        the classic style, type:
+
+        relax> pymol.macro_write('S2')
+        relax> pymol.macro_write(data_type='S2')
+        relax> pymol.macro_write(data_type='S2', style="classic", file='s2.pml', dir='pymol')
+        """
+    macro_write._doc_additional = [
+        colour._linear_gradient_doc,
+        Pymol.classic_style_doc,
+        colour.__molmol_colours_prompt_doc__,
+        colour.__x11_colours_prompt_doc__
+    ]
+    _build_doc(macro_write)
 
 
     def tensor_pdb(self, file=None):
-        """Function displaying the diffusion tensor PDB geometric object over the loaded PDB.
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.tensor_pdb("
+            text = text + "file=" + repr(file) + ")"
+            print(text)
 
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
+        # The argument checks.
+        arg_check.is_str_or_inst(file, 'file name')
 
-        file:  The name of the PDB file containing the tensor geometric object.
+        # Execute the functional code.
+        pymol_control.tensor_pdb(file=file)
 
-
-        Description
-        ~~~~~~~~~~~
-
-        In executing this user function, a PDB file must have previously been loaded into this data
-        pipe a geometric object or polygon representing the Brownian rotational diffusion tensor
-        will be overlain with the loaded PDB file and displayed within PyMOL.  The PDB file
-        containing the geometric object must be created using the complementary
-        'pdb.create_diff_tensor_pdb()' user function.
+    # The function doc info.
+    tensor_pdb._doc_title = "Display the diffusion tensor PDB geometric object over the loaded PDB."
+    tensor_pdb._doc_title_short = "Diffusion tensor and structure display."
+    tensor_pdb._doc_args = [
+        ["file", "The name of the PDB file containing the tensor geometric object."]
+    ]
+    tensor_pdb._doc_desc = """
+        In executing this user function, a PDB file must have previously been loaded into this data pipe a geometric object or polygon representing the Brownian rotational diffusion tensor will be overlain with the loaded PDB file and displayed within PyMOL.  The PDB file containing the geometric object must be created using the complementary structure.create_diff_tensor_pdb user function.
 
         The tensor PDB file is read in using the command:
 
@@ -301,43 +343,10 @@ class Pymol(User_fn_class):
             select resn SIM
             colour cyan, 'sele'
         """
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.tensor_pdb("
-            text = text + "file=" + repr(file) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str_or_inst(file, 'file name')
-
-        # Execute the functional code.
-        pymol_control.tensor_pdb(file=file)
+    _build_doc(tensor_pdb)
 
 
     def vector_dist(self, file='XH_dist.pdb'):
-        """Function displaying the PDB file representation of the XH vector distribution.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        file:  The name of the PDB file containing the vector distribution.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        A PDB file of the macromolecule must have previously been loaded as the vector distribution
-        will be overlain with the macromolecule within PyMOL.  The PDB file containing the vector
-        distribution must be created using the complementary 'pdb.create_vector_dist()' user
-        function.
-
-        The vector distribution PDB file is read in using the command:
-
-            load file
-
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pymol.vector_dist("
@@ -350,17 +359,23 @@ class Pymol(User_fn_class):
         # Execute the functional code.
         pymol_control.vector_dist(file=file)
 
+    # The function doc info.
+    vector_dist._doc_title = "Display the PDB file representation of the XH vector distribution."
+    vector_dist._doc_title_short = "XH vector distribution display."
+    vector_dist._doc_args = [
+        ["file", "The name of the PDB file containing the vector distribution."]
+    ]
+    vector_dist._doc_desc = """
+        A PDB file of the macromolecule must have previously been loaded as the vector distribution will be overlain with the macromolecule within PyMOL.  The PDB file containing the vector distribution must be created using the complementary structure.create_vector_dist user function.
+
+        The vector distribution PDB file is read in using the command:
+
+            load file
+        """
+    _build_doc(vector_dist)
+
 
     def view(self):
-        """Function for viewing the collection of molecules extracted from the PDB file.
-
-
-        Example
-        ~~~~~~~
-
-        relax> pymol.view()
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pymol.view()"
@@ -369,105 +384,13 @@ class Pymol(User_fn_class):
         # Execute the functional code.
         pymol_control.view()
 
-
-    def write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='pymol', force=False):
-        """Function for creating PyMOL macros.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        data_type:  The data type to map to the structure.
-
-        style:  The style of the macro.
-
-        colour_start:  The starting colour, either an array or string, of the linear colour
-        gradient.
-
-        colour_end:  The ending colour, either an array or string, of the linear colour gradient.
-
-        colour_list:  The list of colours to match the start and end strings.
-
-        file:  The name of the file.
-
-        dir:  The directory name.
-
-        force:  A flag which, if set to True, will cause the file to be overwritten.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function allows residues specific values to be mapped to a structure through the
-        creation of a PyMOL macro which can be executed in PyMOL by clicking on 'File,
-        Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is
-        available.
-
-
-        Colour
-        ~~~~~~
-
-        The values are coloured based on a linear colour gradient which is specified through the
-        'colour_start' and 'colour_end' arguments.  These arguments can either be a string to
-        identify one of the RGB (red, green, blue) colour arrays listed in the tables below, or you
-        can give the RGB vector itself.  For example, colour_start='white' and
-        colour_start=[1.0, 1.0, 1.0] both select the same colour.  Leaving both arguments at None
-        will select the default colour gradient which for each type of analysis is described below.
-
-        When supplying the colours as strings, two lists of colours can be selected from which to
-        match the strings.  These are the default PyMOL colour list and the X11 colour list, both
-        of which are described in the tables below.  The default behaviour is to first search the
-        PyMOL list and then the X11 colour list, raising an error if neither contain the string.
-        To explicitly select these lists, set the 'colour_list' argument to either 'molmol' or
-        'x11'.
-
-
-        Examples
-        ~~~~~~~~
-
-        To create a PyMOL macro mapping the order parameter values, S2, onto the structure using
-        the classic style, type:
-
-        relax> pymol.write('S2')
-        relax> pymol.write(data_type='S2')
-        relax> pymol.write(data_type='S2', style="classic", file='s2.mac', dir='pymol')
+    # The function doc info.
+    view._doc_title = "View the collection of molecules from the loaded PDB file."
+    view._doc_title_short = "Molecule viewing."
+    view._doc_desc = """
+        This will simply launch Pymol.
         """
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "pymol.write("
-            text = text + "data_type=" + repr(data_type)
-            text = text + ", style=" + repr(style)
-            text = text + ", colour_start=" + repr(colour_start)
-            text = text + ", colour_end=" + repr(colour_end)
-            text = text + ", colour_list=" + repr(colour_list)
-            text = text + ", file=" + repr(file)
-            text = text + ", dir=" + repr(dir)
-            text = text + ", force=" + repr(force) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(data_type, 'data type')
-        arg_check.is_str(style, 'style')
-        arg_check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
-        arg_check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
-        arg_check.is_str(colour_list, 'colour list', can_be_none=True)
-        arg_check.is_str_or_inst(file, 'file name')
-        arg_check.is_str(dir, 'directory name', can_be_none=True)
-        arg_check.is_bool(force, 'force flag')
-
-        # Execute the functional code.
-        pymol_control.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
-
-
-
-    # Docstring modification.
-    #########################
-
-    # Write function.
-    #write.__doc__ = write.__doc__ + "\n\n" + Pymol.classic.__doc__ + "\n\n"
-
-    # Molmol RGB colour list.
-    write.__doc__ = write.__doc__ + "\n\n" + colour.__molmol_colours_prompt_doc__ + "\n\n"
-
-    # X11 RGB colour list.
-    write.__doc__ = write.__doc__ + "\n\n" + colour.__x11_colours_prompt_doc__ + "\n\n"
+    view._doc_examples = """
+        relax> pymol.view()
+        """
+    _build_doc(view)
