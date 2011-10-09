@@ -768,7 +768,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         stream_list = [0]
 
         # Loop until the queue is empty.
-        while 1:
+        while True:
             # End condition.
             if self.log_queue.empty():
                 break

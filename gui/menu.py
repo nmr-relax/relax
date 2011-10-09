@@ -334,7 +334,7 @@ class Uf_menus:
 
         id = self.add_class(name="relax_fit", text="relax_&fit", icon=None)
         self.add_uf(parent_id=id, name="relax_fit.relax_time", text="&relax_time", icon=None, fn=user_functions.relax_fit.relax_time)
-        self.add_uf(parent_id=id, name="relax_fit.select_model", text="&select_model", icon=None,fn=user_functions.relax_fit.select_model)
+        self.add_uf(parent_id=id, name="relax_fit.select_model", text="&select_model", icon=None, fn=user_functions.relax_fit.select_model)
 
         id = self.add_class(name="residue", text="resid&ue", icon=paths.icon_16x16.residue)
         self.add_uf(parent_id=id, name="residue.copy", text="&copy", icon=paths.icon_16x16.copy, fn=user_functions.residue.copy)

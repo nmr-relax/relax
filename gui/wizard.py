@@ -1395,7 +1395,7 @@ class Wiz_window(wx.Dialog):
         yield current
 
         # Loop over the sequence.
-        while 1:
+        while True:
             # Update.
             next = self._seq_next[current]
             current = next

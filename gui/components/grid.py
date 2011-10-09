@@ -198,7 +198,7 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
             self.cell.SetValue(str_to_gui(num))
 
             # Set the insertion point to the end.
-            self.cell.SetSelection(1,1)
+            self.cell.SetSelection(1, 1)
 
         # Skip everything else.
         else:
@@ -333,7 +333,7 @@ class Grid_base:
             self.vc_time.SetToolTipString("Time of counter loop in seconds.")
             self.vc_time.SetMinSize((50, 20))
             self.vc_time.SetFont(wx.Font(7, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-            button_sizer.Add(self.vc_time, 0, 0 ,0)
+            button_sizer.Add(self.vc_time, 0, 0, 0)
 
             # Action of Button
             self.gui.Bind(wx.EVT_BUTTON, lambda event, vc=True: self.load_delay(event, vc), add_vc)

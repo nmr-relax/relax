@@ -524,7 +524,7 @@ class Element_page(UF_page, Mol_res_spin):
         self.spin_id = self.spin_id_element(sizer, desc="Restrict the element setting to the spins:")
 
         # The element.
-        self.element = self.combo_box(sizer, "The element:", tooltip=self.uf._doc_args_dict['element'], choices=['H', 'N', 'C','O', 'P'], read_only=False)
+        self.element = self.combo_box(sizer, "The element:", tooltip=self.uf._doc_args_dict['element'], choices=['H', 'N', 'C', 'O', 'P'], read_only=False)
 
         # The force flag.
         self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'], default=False)

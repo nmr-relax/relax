@@ -184,14 +184,14 @@ class UF_page(Wiz_page):
         stripped_text = _strip_lead(text)
 
         # Remove the first characters if newlines.
-        while 1:
+        while True:
             if stripped_text[0] == "\n":
                 stripped_text = stripped_text[1:]
             else:
                 break
 
         # Remove the last character if a newline.
-        while 1:
+        while True:
             if stripped_text[-1] == "\n":
                 stripped_text = stripped_text[:-1]
             else:

@@ -2575,25 +2575,25 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.s2s, None, msg=mesg)
 
         # te correlation time.
-        if type(te) == float:
+        if isinstance(te, float):
             self.assertAlmostEqual(spin.te / 1e-12, te, 5, msg=mesg)
         elif te == None:
             self.assertEqual(spin.te, None, msg=mesg)
 
         # tf correlation time.
-        if type(tf) == float:
+        if isinstance(tf, float):
             self.assertAlmostEqual(spin.tf / 1e-12, tf, 4, msg=mesg)
         elif tf == None:
             self.assertEqual(spin.tf, None, msg=mesg)
 
         # ts correlation time.
-        if type(ts) == float:
+        if isinstance(ts, float):
             self.assertAlmostEqual(spin.ts / 1e-12, ts, 4, msg=mesg)
         elif ts == None:
             self.assertEqual(spin.ts, None, msg=mesg)
 
         # Chemical exchange.
-        if type(rex) == float:
+        if isinstance(rex, float):
             self.assertAlmostEqual(spin.rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, msg=mesg)
         elif rex == None:
             self.assertEqual(spin.rex, None, msg=mesg)

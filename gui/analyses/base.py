@@ -360,7 +360,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Convert the bitmap names to a list.
-        if type(self.bitmap) != list:
+        if not isinstance(self.bitmap, list):
             bitmaps = [self.bitmap]
         else:
             bitmaps = self.bitmap

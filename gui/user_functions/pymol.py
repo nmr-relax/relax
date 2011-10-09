@@ -287,7 +287,7 @@ class Macro_write_page(UF_page):
         self.force = self.boolean_selector(sizer, "Force flag:", tooltip=self.uf._doc_args_dict['force'], default=True)
 
         # The data type.
-        self.data_type = self.combo_box(sizer, "The data type:", choices=['S2', 'S2f', 'S2s', 'amp_fast', 'amp_slow', 'te', 'tf', 'ts',' time_fast', 'time_slow', 'Rex'], tooltip=self.uf._doc_args_dict['data_type'])
+        self.data_type = self.combo_box(sizer, "The data type:", choices=['S2', 'S2f', 'S2s', 'amp_fast', 'amp_slow', 'te', 'tf', 'ts', ' time_fast', 'time_slow', 'Rex'], tooltip=self.uf._doc_args_dict['data_type'])
 
         # The style.
         self.style = self.input_field(sizer, "The style:", tooltip=self.uf._doc_args_dict['style'])

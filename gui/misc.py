@@ -203,18 +203,18 @@ def gui_to_float(string):
         return None
 
     # Already a float.
-    if type(string) == float:
+    if isinstance(string, float):
         return string
 
     # Convert.
     val = eval(string)
 
     # An int.
-    if type(val) == int:
+    if isinstance(val, int):
         val = float(val)
 
     # Not a float!
-    if type(val) != float:
+    if not isinstance(val, float):
         return string
 
     # A float.
@@ -235,14 +235,14 @@ def gui_to_int(string):
         return None
 
     # Already an int.
-    if type(string) == int:
+    if isinstance(string, int):
         return string
 
     # Convert.
     val = eval(string)
 
     # Not an int!
-    if type(val) != int:
+    if not isinstance(val, int):
         return string
 
     # An int.
@@ -263,7 +263,7 @@ def gui_to_int_or_list(string):
         return None
 
     # Already an int or list.
-    if type(string) == int or type(string) == list:
+    if isinstance(string, int) or isinstance(string, list):
         return string
 
     # Convert.
@@ -294,7 +294,7 @@ def gui_to_list(string):
 
     # Convert.
     val = eval(string)
-    if type(val) != list:
+    if not isinstance(val, list):
         val = [val]
 
     # Return the list.

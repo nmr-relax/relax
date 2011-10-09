@@ -210,7 +210,7 @@ class Text_ctrl:
         # The button.
         if button:
             # Function is in the control class.
-            if type(fn) == str:
+            if isinstance(fn, str):
                 # The function.
                 fn = getattr(field, fn)
 
