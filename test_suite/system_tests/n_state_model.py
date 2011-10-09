@@ -387,6 +387,58 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.q_pcs, 0.0)
 
 
+    def test_monte_carlo_sims(self):
+        """Test the Monte Carlo simulation data of fitting RDCs and PCSs."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'monte_carlo_testing.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.556994/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
+        self.assertAlmostEqual(cdp.chi2, 1745860.0485368515)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+
+        # The tensor key.
+        key = 'synth'
+
+        # The spin data.
+        for spin in spin_loop():
+            # Print out.
+            print(spin)
+
+            # Check for simulation data.
+            self.assert_(hasattr(spin, 'rdc_sim'))
+            self.assert_(hasattr(spin, 'pcs_sim'))
+            self.assert_(spin.rdc_sim.has_key(key))
+            self.assert_(spin.pcs_sim.has_key(key))
+
+            # Check the values of the simulated data.
+            for i in range(cdp.sim_number):
+                self.assertAlmostEqual(spin.rdc[key], spin.rdc_sim[key][i])
+                self.assertAlmostEqual(spin.pcs[key], spin.pcs_sim[key][i])
+
+        # Test the optimised simluation values.
+        for i in range(cdp.sim_number):
+            self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
+            self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.556994/2000)
+            self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
+            self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
+            self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
+            self.assertAlmostEqual(cdp.chi2, 1745860.0485368515)
+
+        # Test the tensor error values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx_err, 0.0)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy_err, 0.0)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy_err, 0.0)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz_err, 0.0)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz_err, 0.0)
+
+
     def test_paramag_centre_fit(self):
         """Test the use of RDCs and PCSs to find the alignment tensor."""
 
