@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -197,6 +197,56 @@ def desel_spin(spin_id=None, boolean='AND', change_all=False):
                 spin.select = (spin.select and False) or not (spin.select or False)
             else:
                 raise RelaxError("Unknown boolean operator " + repr(boolean))
+
+
+def is_mol_selected(selection=None):
+    """Query if the molecule is selected.
+
+    @keyword selection:     The molecule ID string.
+    @type selection:        str
+    """
+
+    # Find if any spins are selected.
+    select = False
+    for spin in spin_loop(selection):
+        if spin.select:
+            select = True
+            break
+
+    # Return the state.
+    return select
+
+
+def is_res_selected(selection=None):
+    """Query if the residue is selected.
+
+    @keyword selection:     The residue ID string.
+    @type selection:        str
+    """
+
+    # Find if any spins are selected.
+    select = False
+    for spin in spin_loop(selection):
+        if spin.select:
+            select = True
+            break
+
+    # Return the state.
+    return select
+
+
+def is_spin_selected(selection=None):
+    """Query if the spin is selected.
+
+    @keyword selection:     The molecule ID string.
+    @type selection:        str
+    """
+
+    # Get the spin.
+    spin = return_spin(selection)
+
+    # Return the selected state.
+    return spin.select
 
 
 def reverse(spin_id=None):

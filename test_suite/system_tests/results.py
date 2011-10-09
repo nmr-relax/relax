@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,7 +27,6 @@ from tempfile import mktemp
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
-from relax_io import delete
 from status import Status; status = Status()
 
 
@@ -41,17 +40,7 @@ class Results(SystemTestCase):
         self.interpreter.pipe.create('test', 'relax_fit')
 
         # Create a temporary file name.
-        self.tmpfile = mktemp()
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
-
-        # Delete the temporary file (if needed).
-        delete(self.tmpfile, fail=False)
+        ds.tmpfile = mktemp()
 
 
     def test_read_empty_results(self):
@@ -65,4 +54,4 @@ class Results(SystemTestCase):
         """Test the writing of an empty results file."""
 
         # Write the results.
-        self.interpreter.results.write(file=self.tmpfile, dir=None)
+        self.interpreter.results.write(file=ds.tmpfile, dir=None)

@@ -66,11 +66,9 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
 
     @keyword spin_id:           The molecule, residue, and spin identifier string.
     @type spin_id:              str
-    @keyword str_id:            The structure identifier.  This can be the file name, model number,
-                                or structure number.
+    @keyword str_id:            The structure identifier.  This can be the file name, model number, or structure number.
     @type str_id:               int or str
-    @keyword ave_pos:           A flag specifying if the average atom position or the atom position
-                                from all loaded structures is loaded into the SpinContainer.
+    @keyword ave_pos:           A flag specifying if the average atom position or the atom position from all loaded structures is loaded into the SpinContainer.
     @type ave_pos:              bool
     """
 
@@ -272,36 +270,23 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
 
     @keyword file:          The name of the PDB file to read.
     @type file:             str
-    @keyword dir:           The directory where the PDB file is located.  If set to None, then the
-                            file will be searched for in the current directory.
+    @keyword dir:           The directory where the PDB file is located.  If set to None, then the file will be searched for in the current directory.
     @type dir:              str or None
-    @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
-                            molecules are determined differently by the different parsers, but are
-                            numbered consecutively from 1.  If set to None, then all molecules will
-                            be loaded.
+    @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If set to None, then all molecules will be loaded.
     @type read_mol:         None, int, or list of int
-    @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then
-                            the molecules will be automatically labelled based on the file name or
-                            other information.
+    @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then the molecules will be automatically labelled based on the file name or other information.
     @type set_mol_name:     None, str, or list of str
-    @keyword read_model:    The PDB model to extract from the file.  If set to None, then all models
-                            will be loaded.
+    @keyword read_model:    The PDB model to extract from the file.  If set to None, then all models will be loaded.
     @type read_model:       None, int, or list of int
-    @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then the
-                            PDB model numbers will be preserved, if they exist.
+    @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then the PDB model numbers will be preserved, if they exist.
     @type set_model_num:    None, int, or list of int
     @keyword parser:        The parser to be used to read the PDB file.
     @type parser:           str
-    @keyword fail:          A flag which, if True, will cause a RelaxError to be raised if the PDB
-                            file does not exist.  If False, then a RelaxWarning will be trown
-                            instead.
+    @keyword fail:          A flag which, if True, will cause a RelaxError to be raised if the PDB file does not exist.  If False, then a RelaxWarning will be trown instead.
     @type fail:             bool
-    @keyword verbosity:     The amount of information to print to screen.  Zero corresponds to
-                            minimal output while higher values increase the amount of output.  The
-                            default value is 1.
+    @keyword verbosity:     The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
     @type verbosity:        int
-    @raise RelaxFileError:  If the fail flag is set, then a RelaxError is raised if the PDB file
-                            does not exist.
+    @raise RelaxFileError:  If the fail flag is set, then a RelaxError is raised if the PDB file does not exist.
     """
 
     # Test if the current data pipe exists.
@@ -338,7 +323,7 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     cdp.structure.load_pdb(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, verbosity=verbosity)
 
     # Load into Molmol (if running).
-    molmol.open_pdb()
+    molmol.molmol_obj.open_pdb()
 
 
 def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=1, fail=True):
@@ -418,22 +403,17 @@ def set_vector(spin=None, xh_vect=None):
 def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit=True):
     """Extract the bond vectors from the loaded structures and store them in the spin container.
 
-    @keyword attached:      The name of the atom attached to the spin, as given in the structural
-                            file.  Regular expression can be used, for example 'H*'.  This uses
-                            relax rather than Python regular expression (i.e. shell like syntax).
+    @keyword attached:      The name of the atom attached to the spin, as given in the structural file.  Regular expression can be used, for example 'H*'.  This uses relax rather than Python regular expression (i.e. shell like syntax).
     @type attached:         str
     @keyword spin_id:       The spin identifier string.
     @type spin_id:          str
-    @keyword model:         The model to extract the vector from.  If None, all vectors will be
-                            extracted.
+    @keyword model:         The model to extract the vector from.  If None, all vectors will be extracted.
     @type model:            str
     @keyword verbosity:     The higher the value, the more information is printed to screen.
     @type verbosity:        int
-    @keyword ave:           A flag which if True will cause the average of all vectors to be
-                            extracted.
+    @keyword ave:           A flag which if True will cause the average of all vectors to be extracted.
     @type ave:              bool
-    @keyword unit:          A flag which if True will cause the function to calculate the unit
-                            vectors.
+    @keyword unit:          A flag which if True will cause the function to calculate the unit vectors.
     @type unit:             bool
     """
 
@@ -502,7 +482,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         # The bond vector already exists.
         if hasattr(spin, object_name):
             obj = getattr(spin, object_name)
-            if obj:
+            if obj != None:
                 warn(RelaxWarning("The bond vector for the spin " + repr(id) + " already exists."))
                 continue
 
@@ -576,11 +556,9 @@ def write_pdb(file=None, dir=None, model_num=None, force=False):
 
     @keyword file:          The name of the PDB file to write.
     @type file:             str
-    @keyword dir:           The directory where the PDB file will be placed.  If set to None, then
-                            the file will be placed in the current directory.
+    @keyword dir:           The directory where the PDB file will be placed.  If set to None, then the file will be placed in the current directory.
     @type dir:              str or None
-    @keyword model_num:     The model to place into the PDB file.  If not supplied, then all
-                            models will be placed into the file.
+    @keyword model_num:     The model to place into the PDB file.  If not supplied, then all models will be placed into the file.
     @type model_num:        None or int
     @keyword force:         The force flag which if True will cause the file to be overwritten.
     @type force:            bool

@@ -37,7 +37,7 @@ def str_to_float(string):
     """
 
     # Delete whitespace.
-    string = replace(string, ' ','')
+    string = replace(string, ' ', '')
 
     # Strip string.
     values = split(string, '*')

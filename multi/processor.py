@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
+# Copyright (C) 2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -102,7 +103,7 @@ import time, datetime, math, sys, os
 import traceback, textwrap
 
 # relax module imports.
-from multi.prependStringIO import PrependStringIO, PrependOut
+from multi.processor_io import PrependStringIO, IO_filter
 from relax_errors import RelaxError
 
 
@@ -121,14 +122,10 @@ def import_module(module_path, verbose=False):
 
     result = None
 
-    #try:
+    # Import the module.
     module = __import__(module_path, globals(), locals(), [])
     if verbose:
         print('loaded module %s' % module_path)
-    #except Exception, e:
-    #    if verbose:
-    #        print 'failed to load module_path %s' % module_path
-    #        print 'exception:', e
 
     #FIXME: needs more failure checking
     if module != None:
@@ -192,48 +189,8 @@ def load_multiprocessor(processor_name, callback, processor_size):
     return object
 
 
-#sys.settrace(traceit)
-# FIXME useful debugging code but where to put it
-def print_file_lineno(range=xrange(1, 2)):
-    for level in range:
-        print('<< ', level)
-        try:
-            file_name = sys._getframe(level).f_code.co_filename
-            function_name = sys._getframe(level).f_code.co_name
-            line_number = sys._getframe(level).f_lineno
-            msg = ': %s - %s - %d>>' % (file_name, function_name, line_number)
-            print(msg)
-        except Exception, e:
-            print(e)
-            break
-
-
-#FIXME: useful for debugging but where to put it
-def print_message(processor, message):
-    f = open('error' + repr(processor.rank()) + '.txt', 'a')
-    f.write(message + '\n')
-    f.flush()
-    f.close()
-
-
-#requires 2.4 decorators@abstract
-#def abstract(f):
-#    raise_unimplemented(f)
-
-#    return f
-
-
 def raise_unimplemented(method):
     '''Standard function for raising NotImplementedError for unimplemented abstract methods.
-
-    @todo:  For python versions >= 2.4 it is possible to use annotations and meta classes to provide
-            a very elegant implementation of abstract methods that check on class instantiation that
-            the derived class is a complete implementation of the abstract class. Note some people
-            think abstract classes shouldn't be used with python, however.  They are proposed for
-            python 3k by Guido van Rossum in pep3119 ;-)
-
-    @see:   http://soiland.no/blog/py/abstract
-    @see:   http://www.python.org/dev/peps/pep-3119
 
     @param method:              The method which should be abstract.
     @type method:               class method
@@ -243,19 +200,6 @@ def raise_unimplemented(method):
     msg = "Attempt to invoke unimplemented abstract method %s"
     raise NotImplementedError(msg % method.__name__)
 
-
-#FIXME: move elsewhere
-def traceit(frame, event, arg):
-    import linecache
-    if event == "line":
-        file_name = os.path.split(frame.f_code.co_filename)[-1]
-        function_name = frame.f_code.co_name
-        line_number = frame.f_lineno
-        line = linecache.getline(file_name, line_number)
-        msg = '<< %s - %s - %d>> %s' % (file_name, function_name, line_number, line[:-1])
-        print >> sys.__stdout__, msg
-
-    return traceit
 
 
 class Application_callback(object):
@@ -302,9 +246,10 @@ class Application_callback(object):
         @type exception:    Exception instance
         '''
 
-        #TODO: should use stderr?
-        # note we print to __stdout__ as sys.stdout may be a wrapper we applied
-        traceback.print_exc(file=sys.__stdout__)
+        # Print the traceback.
+        traceback.print_exc(file=sys.stderr)
+
+        # Stop the processor.
         processor.abort()
 
 
@@ -485,15 +430,7 @@ class Processor(object):
         self._processor_size = processor_size
         '''Number of slave processors available in this processor.'''
 
-        # Default STDOUT and STDERR for restoring later on.
-        self.orig_stdout = sys.__stdout__
-        self.orig_stderr = sys.__stderr__
-
-        # CHECKME: integration with with stdo capture on slaves
-        # setup captured std output and error streams used for capturing and modifying proccessor
-        # output on masters and slaves
-        # processor id the replacement stdio file like objects are stored in the modulevariable
-        # global_stdio_capture
+        # Capture the STDIO.
         self.setup_stdio_capture(stdio_capture)
 
 
@@ -539,12 +476,9 @@ class Processor(object):
     def capture_stdio(self, stdio_capture=None):
         '''Enable capture of the STDOUT and STDERR by self.stdio_capture or user supplied streams.
 
-        @note:  On slave processors the replacement STDOUT and STDERR streams should be file like
-                objects which implement the methods truncate and getvalue (see PrependStringIO).
         @note:  Both or neither stream has to be replaced you can't just replace one!
 
-        @keyword stdio_capture: A pair of file like objects used to replace sys.stdout and
-                                sys.stderr respectively.
+        @keyword stdio_capture: A pair of file like objects used to replace sys.stdout and sys.stderr respectively.
         @type stdio_capture:    list of two file-like objects
         '''
 
@@ -741,21 +675,6 @@ class Processor(object):
         return int(math.ceil(math.log10(self.processor_size())))
 
 
-    def restore_stdio(self):
-        '''Restore sys.stdout and sys.stderr to the system defaults.
-
-        @note:  sys.stdout and sys.stderr are replaced with sys.__stdout__ ans sys.__stderr__.
-        '''
-
-        # First flush.
-        sys.stdout.flush()
-        sys.stderr.flush()
-
-        # Then restore the IO streams.
-        sys.stdout = self.orig_stdout
-        sys.stderr = self.orig_stderr
-
-
     def return_object(self, result):
         '''Return a result to the master processor from a slave - an abstract method.
 
@@ -816,7 +735,7 @@ class Processor(object):
                 STDOUT and STDERR are always available in sys.__stdout__ and sys.__stderr__.
         @note:  The sys.stdout and sys.stderr streams are not replaced by this function but by
                 calling capture_stdio all it does is save replacements to self.stdio_capture.
-        @see:   multi.prependStringIO.
+        @see:   multi.processor_io.
         @see:   multi.processor.restore_stdio.
         @see:   multi.processor.capture_stdio.
         @see:   sys.
@@ -837,34 +756,29 @@ class Processor(object):
     def std_stdio_capture(self, pre_strings=('', '')):
         '''Get the default sys.stdout and sys.stderr replacements.
 
-        On the master the replacement prepend output with 'MM S]' or MM E]' for the STDOUT and
-        STDERR channels respectively on slaves the outputs are replaced by StringIO objects that
-        prepend 'NN S]' or NN E]' for STDOUT and STDERR where NN is the rank of the processor. On
-        the slave processors the saved strings are retrieved for return to the master processor by
-        calling getvalue() on sys.stdout and sys.stderr.
+        On the master the replacement prepend output with 'MM S]' or MM E]' for the STDOUT and STDERR channels respectively on slaves the outputs are replaced by StringIO objects that prepend 'NN S]' or NN E]' for STDOUT and STDERR where NN is the rank of the processor.
 
-        @note:  By default STDOUT and STDERR are conjoined as otherwise the context of STDOUT and
-                STDERR messages are lost.
+        @note:  By default STDOUT and STDERR are conjoined as otherwise the context of STDOUT and STDERR messages are lost.
         @todo:  Improve segregation of sys.sdout and sys.stderr.
 
         @keyword pre_strings:   Pre strings for the sys.stdout and sys.stderr channels.
         @type pre_strings:      list of 2 str
-        @return:                File like objects to replace STDOUT and STDERR respectively in
-                                order.
+        @return:                File like objects to replace STDOUT and STDERR respectively in order.
         @rtype:                 tuple of two file-like objects
         '''
 
-        stdout_capture = None
-        stderr_capture = None
-
+        # The master processor.
         if self.rank() == 0:
-            stdout_capture = PrependOut(pre_strings[0], sys.stdout)
+            stdout_capture = IO_filter(pre_strings[0], sys.stdout)
             #FIXME: seems to be that writing to stderr results leads to incorrect serialisation of output
-            stderr_capture = PrependOut(pre_strings[1], sys.stderr)
+            stderr_capture = IO_filter(pre_strings[1], sys.stderr)
+
+        # The slaves.
         else:
             stdout_capture = PrependStringIO(pre_strings[0])
-            stderr_capture = PrependStringIO(pre_strings[1], target_stream=stdout_capture)
+            stderr_capture = PrependStringIO(pre_strings[1], stream=stdout_capture)
 
+        # Return the captured IO streams.
         return (stdout_capture, stderr_capture)
 
 
@@ -889,7 +803,6 @@ class Processor_box(object):
         return self.instance
 
 
-# TODO currently uni_processor doesn't have a process_result should this be integrated
 class Result(object):
     '''A basic result object returned from a slave processor via return_object.
 

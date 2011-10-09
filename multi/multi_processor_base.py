@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
+# Copyright (C) 2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -144,47 +145,18 @@ class Multi_processor(Processor):
 
 
     def post_run(self):
-        self.restore_stdio()
-
-#        if self.processor_size() > 1:
-#           if id(sys.stderr) != id(sys.__stderr__):
-#               sys.stderr.close()
-#               sys.stderr = sys.__stderr__
-#
-#           if id(sys.stdout) != id(sys.__stdout__):
-#               sys.stdout.close()
-#               sys.stdout = sys.__stdout__
 
         super(Multi_processor, self).post_run()
 
 
     def pre_run(self):
+        """Method called before starting the application main loop"""
+
+        # Execute the base class method.
         super(Multi_processor, self).pre_run()
 
+        # Capture the standard IO streams for the master and slaves.
         self.capture_stdio()
-#        self.save_stdout = sys.stdout
-#        self.save_stderr = sys.stderr
-
-#        if self.processor_size() > 1 and self.rank() == 0:
-#
-#            pre_string = 'M'*self.rank_format_string_width()
-#
-#            sys.stdout = PrependOut(pre_string + ' S> ', sys.stdout)
-#            #FIXME: seems to be that writing to stderr results leeds to incorrect serialisation of output
-#            sys.stderr = PrependOut(pre_string + ' E> ', sys.__stdout__)
-#
-#        else:
-#            # add debug flag or extra channels that output immediately
-#            if self.processor_size() > 1:
-#                pre_string = self.rank_format_string() % self.rank()
-#                stderr_string = ' E> '
-#                stdout_string = ' S> '
-#            else:
-#                pre_string = ''
-#                stderr_string = ''
-#                stdout_string = ''
-#            sys.stdout = PrependStringIO(pre_string + stdout_string)
-#            sys.stderr = PrependStringIO(pre_string + stderr_string, target_stream=sys.stdout)
 
 
     #FIXME: fill out generic result processing move to processor
@@ -285,7 +257,7 @@ class Multi_processor(Processor):
             self.assert_on_master()
 
             running_set = set()
-            idle_set = set([i for i in range(1, self.processor_size()+1)])
+            idle_set = {i for i in range(1, self.processor_size()+1)}
 
             if self.threaded_result_processing:
                 result_queue = Threaded_result_queue(self)

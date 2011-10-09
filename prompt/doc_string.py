@@ -28,38 +28,25 @@ __docformat__ = 'plaintext'
 class Regexp:
     """Class containing regular expression docstrings."""
 
-    doc = """
+    doc = ["Regular expression", """
+        The python function 'match', which uses regular expression, is used to determine which data type to set values to, therefore various data_type strings can be used to select the same data type.  Patterns used for matching for specific data types are listed below.
 
-        Regular expression
-        ~~~~~~~~~~~~~~~~~~
+        This is a short description of python regular expression, for more information see the regular expression syntax section of the Python Library Reference.  Some of the regular expression syntax used in this function is:
 
-        The python function 'match', which uses regular expression, is used to determine which data
-        type to set values to, therefore various data_type strings can be used to select the same
-        data type.  Patterns used for matching for specific data types are listed below.
-
-        This is a short description of python regular expression, for more information see the
-        regular expression syntax section of the Python Library Reference.  Some of the regular
-        expression syntax used in this function is:
-
-            '[]':  A sequence or set of characters to match to a single character.  For example,
-            '[Ss]2' will match both 'S2' and 's2'.
+            '[]':  A sequence or set of characters to match to a single character.  For example, '[sS]2' WILL match both 'S2' and 's2'.
 
             '^':  Match the start of the string.
 
-            '$':  Match the end of the string.  For example, '^[Ss]2$' will match 's2' but not 'S2f'
-            or 's2s'.
+            '$':  Match the end of the string.  For example, '^[Ss]2$' will match 's2' but not 'S2f' or 's2s'.
 
             '.':  Match any character.
 
-            'x*':  Match the character 'x' any number of times, for example 'x' will match, as will
-            'xxxxx'
+            'x*':  Match the character 'x' any number of times, for example 'x' will match, as will 'xxxxx'.
 
             '.*':  Match any sequence of characters of any length.
 
-        Importantly, do not supply a string for the data type containing regular expression.  The
-        regular expression is implemented so that various strings can be supplied which all match
-        the same data type.
-    """
+        Importantly, do not supply a string for the data type containing regular expression.  The regular expression is implemented so that various strings can be supplied which all match the same data type.
+    """]
 
 
 class Strings:

@@ -51,12 +51,6 @@ class Unit_vectors(SystemTestCase):
         self.interpreter.pipe.create('mf', 'mf')
 
 
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
-
-
     def test_calc_unit_vectors1(self):
         """Load the PDB file using the Scientific parser and calculate the XH unit vectors."""
 

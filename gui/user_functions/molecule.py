@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,15 +23,12 @@
 # Module docstring.
 """The molecule user function GUI elements."""
 
-# Python module imports.
-import wx
-
 # relax module imports.
 from generic_fns.mol_res_spin import ALLOWED_MOL_TYPES, generate_spin_id, molecule_loop
 from generic_fns.pipes import cdp_name, get_pipe, pipe_names
 
 # GUI module imports.
-from base import UF_base, UF_window
+from base import UF_base, UF_page
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_str, str_to_gui
 
@@ -40,111 +37,49 @@ from gui.misc import gui_to_str, str_to_gui
 class Molecule(UF_base):
     """The container class for holding all GUI elements."""
 
-    def copy(self, event):
-        """The molecule.copy user function.
+    def copy(self):
+        """The molecule.copy user function."""
 
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The dialog.
-        window = Copy_window(self.gui, self.interpreter)
-        window.ShowModal()
-        window.Destroy()
+        # Execute the wizard.
+        wizard = self.create_wizard(size_x=700, size_y=500, name='molecule.copy', uf_page=Copy_page)
+        wizard.run()
 
 
-    def create(self, event):
-        """The molecule.create user function.
+    def create(self):
+        """The molecule.create user function."""
 
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Initialise the dialog.
-        self._create_window = Add_window(self.gui, self.interpreter)
-
-        # Show the dialog.
-        self._create_window.ShowModal()
-
-        # Destroy.
-        self._create_window.Destroy()
+        # Execute the wizard.
+        wizard = self.create_wizard(size_x=700, size_y=400, name='molecule.create', uf_page=Create_page)
+        wizard.run()
 
 
-    def delete(self, event, mol_name=None):
+    def delete(self, mol_name=None):
         """The molecule.delete user function.
 
-        @param event:   The wx event.
-        @type event:    wx event
         @param mol_name:    The starting molecule name.
         @type mol_name:     str
         """
 
-        # Initialise the dialog.
-        self._delete_window = Delete_window(self.gui, self.interpreter)
+        # Create the wizard.
+        wizard, page = self.create_wizard(size_x=700, size_y=400, name='molecule.delete', uf_page=Delete_page, return_page=True)
 
         # Default molecule name.
         if mol_name:
-            self._delete_window.mol.SetValue(mol_name)
+            page.mol.SetValue(str_to_gui(mol_name))
 
-        # Show the dialog.
-        self._delete_window.ShowModal()
-
-        # Destroy.
-        self._delete_window.Destroy()
+        # Execute the wizard.
+        wizard.run()
 
 
 
-class Add_window(UF_window):
-    """The molecule.create() user function window."""
+class Copy_page(UF_page):
+    """The molecule.copy() user function page."""
 
     # Some class variables.
-    size_x = 600
-    size_y = 400
-    frame_title = 'Add a molecule'
     image_path = WIZARD_IMAGE_PATH + 'molecule.png'
-    main_text = 'This dialog allows you to add new molecules to the relax data store.  The molecule will be added to the current data pipe.'
-    title = 'Addition of new molecules'
+    uf_path = ['molecule', 'copy']
 
-
-    def add_uf(self, sizer):
-        """Add the molecule specific GUI elements.
-
-        @param sizer:   A sizer object.
-        @type sizer:    wx.Sizer instance
-        """
-
-        # The molecule name input.
-        self.mol = self.input_field(sizer, "The name of the molecule:")
-
-        # The type selection.
-        self.mol_type = self.combo_box(sizer, "The type of molecule:", ALLOWED_MOL_TYPES)
-
-
-    def execute(self):
-        """Execute the user function."""
-
-        # Get the name and type.
-        mol_name = str(self.mol.GetValue())
-        mol_type = str(self.mol_type.GetValue())
-
-        # Set the name.
-        self.interpreter.molecule.create(mol_name=mol_name, type=mol_type)
-
-
-
-class Copy_window(UF_window):
-    """The molecule.copy() user function window."""
-
-    # Some class variables.
-    size_x = 700
-    size_y = 400
-    frame_title = 'Copy a molecule'
-    image_path = WIZARD_IMAGE_PATH + 'molecule.png'
-    main_text = 'This dialog allows you to copy molecules.'
-    title = 'Molecule copy'
-
-
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
         """Add the molecule specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -152,44 +87,20 @@ class Copy_window(UF_window):
         """
 
         # The source pipe.
-        self.pipe_from = self.combo_box(sizer, "The source data pipe:", [], evt_fn=self.update_mol_list)
+        self.pipe_from = self.combo_box(sizer, "The source data pipe:", [], evt_fn=self.update_mol_list, tooltip=self.uf._doc_args_dict['pipe_from'])
 
         # The molecule selection.
-        self.mol_from = self.combo_box(sizer, "The source molecule:", [])
+        self.mol_from = self.combo_box(sizer, "The source molecule:", [], tooltip=self.uf._doc_args_dict['mol_from'])
 
         # The destination pipe.
-        self.pipe_to = self.combo_box(sizer, "The destination data pipe name:", [])
+        self.pipe_to = self.combo_box(sizer, "The destination data pipe name:", [], tooltip=self.uf._doc_args_dict['pipe_to'])
 
         # The new molecule name.
-        self.mol_to = self.input_field(sizer, "The new molecule name:", tooltip='If left blank, the new molecule will have the same name as the old.')
+        self.mol_to = self.input_field(sizer, "The new molecule name:", tooltip=self.uf._doc_args_dict['mol_to'])
 
 
-    def execute(self):
-        """Execute the user function."""
-
-        # Get the pipe names.
-        pipe_from = gui_to_str(self.pipe_from.GetValue())
-        pipe_to = gui_to_str(self.pipe_to.GetValue())
-
-        # The molecule names.
-        mol_from = "#" + gui_to_str(self.mol_from.GetValue())
-        mol_to = gui_to_str(self.mol_to.GetValue())
-        if mol_to:
-            mol_to = "#" + mol_to
-
-        # Copy the molecule.
-        self.interpreter.molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
-
-        # Update.
-        self.update(None)
-
-
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Update the pipe name lists."""
 
         # Set the default pipe name.
         if not gui_to_str(self.pipe_from.GetValue()):
@@ -197,13 +108,36 @@ class Copy_window(UF_window):
         if not gui_to_str(self.pipe_to.GetValue()):
             self.pipe_to.SetValue(str_to_gui(cdp_name()))
 
+        # Clear the previous data.
+        self.pipe_from.Clear()
+        self.pipe_to.Clear()
+
         # The list of pipe names.
         for name in pipe_names():
-            self.pipe_from.Append(name)
-            self.pipe_to.Append(name)
+            self.pipe_from.Append(str_to_gui(name))
+            self.pipe_to.Append(str_to_gui(name))
 
         # Update the molecule list.
         self.update_mol_list()
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the pipe names.
+        pipe_from = gui_to_str(self.pipe_from.GetValue())
+        pipe_to = gui_to_str(self.pipe_to.GetValue())
+
+        # The molecule names.
+        mol_from = gui_to_str(self.mol_from.GetValue())
+        if mol_from:
+            mol_from = "#" + mol_from
+        mol_to = gui_to_str(self.mol_to.GetValue())
+        if mol_to:
+            mol_to = "#" + mol_to
+
+        # Copy the molecule.
+        self.execute('molecule.copy', pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
 
     def update_mol_list(self, event=None):
@@ -220,24 +154,55 @@ class Copy_window(UF_window):
         self.mol_from.Clear()
 
         # The list of molecule names.
-        for mol in molecule_loop(pipe=pipe_from):
-            self.mol_from.Append(str_to_gui(mol.name))
+        if cdp_name():
+            for mol in molecule_loop(pipe=pipe_from):
+                self.mol_from.Append(str_to_gui(mol.name))
 
 
 
-class Delete_window(UF_window):
-    """The molecule.delete() user function window."""
+class Create_page(UF_page):
+    """The molecule.create() user function page."""
 
     # Some class variables.
-    size_x = 600
-    size_y = 400
-    frame_title = 'Delete a molecule'
     image_path = WIZARD_IMAGE_PATH + 'molecule.png'
-    main_text = 'This dialog allows you to delete molecules from the relax data store.  The molecule will be deleted from the current data pipe.'
-    title = 'Molecule deletion'
+    uf_path = ['molecule', 'create']
 
 
-    def add_uf(self, sizer):
+    def add_contents(self, sizer):
+        """Add the molecule specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The molecule name input.
+        self.mol_name = self.input_field(sizer, "Molecule name:", tooltip=self.uf._doc_args_dict['mol_name'])
+
+        # The type selection.
+        self.mol_type = self.combo_box(sizer, "Molecule type:", ALLOWED_MOL_TYPES, tooltip=self.uf._doc_args_dict['mol_type'])
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the name and type.
+        mol_name = str(self.mol_name.GetValue())
+        mol_type = str(self.mol_type.GetValue())
+
+        # Set the name.
+        self.execute('molecule.create', mol_name=mol_name, mol_type=mol_type)
+
+
+
+class Delete_page(UF_page):
+    """The molecule.delete() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'molecule.png'
+    uf_path = ['molecule', 'delete']
+
+
+    def add_contents(self, sizer):
         """Add the molecule specific GUI elements.
 
         @param sizer:   A sizer object.
@@ -245,36 +210,26 @@ class Delete_window(UF_window):
         """
 
         # The molecule selection.
-        self.mol = self.combo_box(sizer, "The molecule:", [])
+        self.mol_id = self.combo_box(sizer, "Molecule ID:", [], tooltip=self.uf._doc_args_dict['mol_id'])
 
 
-    def execute(self):
-        """Execute the user function."""
-
-        # Get the name.
-        mol_name = str(self.mol.GetValue())
-
-        # The molecule ID.
-        id = generate_spin_id(mol_name=mol_name)
-
-        # Delete the molecule.
-        self.interpreter.molecule.delete(mol_id=id)
-
-        # Update.
-        self.update(None)
-
-
-    def update(self, event):
-        """Update the UI.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def on_display(self):
+        """Clear and update the molecule list."""
 
         # Clear the previous data.
-        self.mol.Clear()
+        self.mol_id.Clear()
 
         # The list of molecule names.
         if cdp_name():
-            for mol in molecule_loop():
-                self.mol.Append(mol.name)
+            for mol, mol_id in molecule_loop(return_id=True):
+                self.mol_id.Append(str_to_gui(mol_id))
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # Get the name.
+        mol_id = gui_to_str(self.mol_id.GetValue())
+
+        # Delete the molecule.
+        self.execute('molecule.delete', mol_id=mol_id)

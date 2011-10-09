@@ -38,8 +38,8 @@ class Test_molmol(TestCase):
     molmol_fns = Molmol()
 
 
-    def test_macro_exec_argfail_data_type(self):
-        """The data_type arg test of the molmol.macro_exec() user function."""
+    def test_macro_apply_argfail_data_type(self):
+        """The data_type arg test of the molmol.macro_apply() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -48,11 +48,11 @@ class Test_molmol(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.molmol_fns.macro_exec, data_type=data[1])
+            self.assertRaises(RelaxStrError, self.molmol_fns.macro_apply, data_type=data[1])
 
 
-    def test_macro_exec_argfail_style(self):
-        """The style arg test of the molmol.macro_exec() user function."""
+    def test_macro_apply_argfail_style(self):
+        """The style arg test of the molmol.macro_apply() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -61,24 +61,11 @@ class Test_molmol(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.molmol_fns.macro_exec, data_type='a', style=data[1])
+            self.assertRaises(RelaxStrError, self.molmol_fns.macro_apply, data_type='a', style=data[1])
 
 
-    def test_macro_exec_argfail_colour_start(self):
-        """The colour_start arg test of the molmol.macro_exec() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the None, str, and num list arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'str' or ((data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list') and len(data[1]) == 3):
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxNoneStrListNumError, self.molmol_fns.macro_exec, data_type='a', style='x', colour_start=data[1])
-
-
-    def test_macro_exec_argfail_colour_end(self):
-        """The colour_end arg test of the molmol.macro_exec() user function."""
+    def test_macro_apply_argfail_colour_start(self):
+        """The colour_start arg test of the molmol.macro_apply() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -87,11 +74,24 @@ class Test_molmol(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrListNumError, self.molmol_fns.macro_exec, data_type='a', style='x', colour_end=data[1])
+            self.assertRaises(RelaxNoneStrListNumError, self.molmol_fns.macro_apply, data_type='a', style='x', colour_start=data[1])
 
 
-    def test_macro_exec_argfail_colour_list(self):
-        """The colour_list arg test of the molmol.macro_exec() user function."""
+    def test_macro_apply_argfail_colour_end(self):
+        """The colour_end arg test of the molmol.macro_apply() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, str, and num list arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str' or ((data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list') and len(data[1]) == 3):
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrListNumError, self.molmol_fns.macro_apply, data_type='a', style='x', colour_end=data[1])
+
+
+    def test_macro_apply_argfail_colour_list(self):
+        """The colour_list arg test of the molmol.macro_apply() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -100,4 +100,4 @@ class Test_molmol(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.molmol_fns.macro_exec, data_type='a', style='x', colour_list=data[1])
+            self.assertRaises(RelaxNoneStrError, self.molmol_fns.macro_apply, data_type='a', style='x', colour_list=data[1])

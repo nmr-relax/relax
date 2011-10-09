@@ -180,6 +180,9 @@ class Relax:
                 sys.stderr.write("Please install the wx Python module to access the relax GUI.\n\n")
                 sys.exit()
 
+            # Set the GUI flag in the status object.
+            status.show_gui = True
+
             # Start the relax GUI wx application.
             app = gui.App(script=self.script_file)
             app.MainLoop()
@@ -210,6 +213,12 @@ class Relax:
             runner = Test_suite_runner(self.tests)
             runner.run_unit_tests()
 
+        # Execute the relax GUI tests.
+        elif self.mode == 'GUI tests':
+            # Run the tests.
+            runner = Test_suite_runner(self.tests)
+            runner.run_gui_tests()
+
         # Test mode.
         elif self.mode == 'test':
             self.test_mode()
@@ -220,7 +229,7 @@ class Relax:
 
         # Unknown mode.
         else:
-            raise relax_errors.RelaxError("The '%s' mode is unknown." % mode)
+            raise relax_errors.RelaxError("The '%s' mode is unknown." % self.mode)
 
 
     def arguments(self):
@@ -240,6 +249,7 @@ class Relax:
         parser.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
         parser.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')
         parser.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the relax unit tests (part of the test suite)')
+        parser.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the relax GUI tests (part of the test suite)')
         parser.add_option('-i', '--info', action='store_true', dest='info', default=0, help='display information about this version of relax')
         parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
         parser.add_option('-m', '--multi', action='store', type='string', dest='multiprocessor', default='uni', help='set multi processor method')
@@ -266,8 +276,8 @@ class Relax:
             self.log_file = options.log
 
             # Fail if the file already exists.
-            if access(log_file, F_OK):
-                parser.error("the log file " + repr(log_file) + " already exists")
+            if access(self.log_file, F_OK):
+                parser.error("the log file " + repr(self.log_file) + " already exists")
         else:
             self.log_file = None
 
@@ -281,13 +291,13 @@ class Relax:
             self.tee_file = options.tee
 
             # Fail if the file already exists.
-            if access(tee_file, F_OK):
-                parser.error("the tee file " + repr(tee_file) + " already exists")
+            if access(self.tee_file, F_OK):
+                parser.error("the tee file " + repr(self.tee_file) + " already exists")
         else:
             self.tee_file = None
 
         # Test suite mode, therefore the args are the tests to run and not a script file.
-        if options.test_suite or options.system_tests or options.unit_tests:
+        if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
             self.tests = args
 
         # The argument is a script.
@@ -326,7 +336,7 @@ class Relax:
             self.mode = 'info'
 
         # Run the relax tests.
-        elif options.test_suite or options.system_tests or options.unit_tests:
+        elif options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
             # Exclusive modes.
             if options.test:
                 parser.error("executing the relax test suite and running relax in test mode are mutually exclusive")
@@ -340,6 +350,11 @@ class Relax:
                 self.mode = 'system tests'
             elif options.unit_tests:
                 self.mode = 'unit tests'
+            elif options.gui_tests:
+                self.mode = 'GUI tests'
+
+            # Set the status flag.
+            status.test_mode = True
 
         # Test mode.
         elif options.test:
@@ -348,7 +363,7 @@ class Relax:
                 parser.error("a script should not be supplied in test mode")
 
             # Exclusive modes.
-            if options.test_suite or options.system_tests or options.unit_tests:
+            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
                 parser.error("the relax test mode and executing the test suite are mutually exclusive")
             elif options.licence:
                 parser.error("the relax modes test and licence are mutually exclusive")
@@ -363,7 +378,7 @@ class Relax:
                 parser.error("a script should not be supplied in test mode")
 
             # Exclusive modes.
-            if options.test_suite or options.system_tests or options.unit_tests:
+            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
                 parser.error("the relax licence mode and executing the test suite are mutually exclusive")
             elif options.test:
                 parser.error("the relax modes licence and test are mutually exclusive")
@@ -374,7 +389,7 @@ class Relax:
         # GUI.
         elif options.gui:
             # Exclusive models.
-            if options.test_suite or options.system_tests or options.unit_tests:
+            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
                 parser.error("the relax GUI mode and testing modes are mutually exclusive")
             elif options.licence:
                 parser.error("the relax GUI mode and licence mode are mutually exclusive")
@@ -384,7 +399,7 @@ class Relax:
                 parser.error("To use the GUI, the wx python module must be installed.")
 
             # Set the mode.
-            mode = 'gui'
+            self.mode = 'gui'
 
         # Script mode.
         elif self.script_file:

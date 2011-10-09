@@ -595,10 +595,6 @@ class API_common:
         # Get the spin container.
         spin = return_spin(data_id)
 
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'ri_data_sim'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
-
         # Initialise the data structure.
         spin.ri_data_sim = {}
 

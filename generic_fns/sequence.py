@@ -23,6 +23,9 @@
 # Module docstring.
 """Module for handling the molecule, residue, and spin sequence."""
 
+# Python module imports
+from types import IntType, NoneType
+
 # relax module imports.
 from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_id_to_data_list, spin_loop
 import pipes
@@ -330,73 +333,61 @@ def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=Non
 
     # Spin ID.
     if spin_id_col:
-        try:
-            data[spin_id_col-1]
-        except IndexError:
-            raise RelaxInvalidSeqError(data)
+        if len(data) < spin_id_col:
+            raise RelaxInvalidSeqError(data, "the Spin ID data is missing")
 
     # Molecule name data.
     if mol_name_col:
-        try:
-            data[mol_name_col-1]
-        except IndexError:
-            raise RelaxInvalidSeqError(data)
+        if len(data) < mol_name_col:
+            raise RelaxInvalidSeqError(data, "the molecule name data is missing")
 
     # Residue number data.
     if res_num_col:
         # No data in column.
-        try:
-            data[res_num_col-1]
-        except IndexError:
-            raise RelaxInvalidSeqError(data)
+        if len(data) < res_num_col:
+            raise RelaxInvalidSeqError(data, "the residue number data is missing")
 
         # Bad data in column.
         try:
-            int(data[res_num_col-1])
-        except ValueError:
-            raise RelaxInvalidSeqError(data)
+            res_num = eval(data[res_num_col-1])
+            if not (isinstance(res_num, NoneType) or isinstance(res_num, IntType)):
+                raise ValueError
+        except:
+            raise RelaxInvalidSeqError(data, "the residue number data '%s' is invalid" % data[res_num_col-1])
 
     # Residue name data.
     if res_name_col:
-        try:
-            data[res_name_col-1]
-        except IndexError:
-            raise RelaxInvalidSeqError(data)
+        if len(data) < res_name_col:
+            raise RelaxInvalidSeqError(data, "the residue name data is missing")
 
     # Spin number data.
     if spin_num_col:
         # No data in column.
-        try:
-            data[spin_num_col-1]
-        except IndexError:
-            raise RelaxInvalidSeqError(data)
+        if len(data) < spin_num_col:
+            raise RelaxInvalidSeqError(data, "the spin number data is missing")
 
         # Bad data in column.
         try:
-            int(data[spin_num_col-1])
-        except ValueError:
-            raise RelaxInvalidSeqError(data)
+            res_num = eval(data[res_num_col-1])
+            if not (isinstance(res_num, NoneType) or isinstance(res_num, IntType)):
+                raise ValueError
+        except:
+            raise RelaxInvalidSeqError(data, "the spin number data '%s' is invalid" % data[res_num_col-1])
 
     # Spin name data.
     if spin_name_col:
-        try:
-            data[spin_name_col-1]
-        except IndexError:
-            raise RelaxInvalidSeqError(data)
+        if len(data) < spin_name_col:
+            raise RelaxInvalidSeqError(data, "the spin name data is missing")
 
     # Data.
     if data_col:
-        try:
-            data[data_col-1]
-        except IndexError:
-            raise RelaxInvalidSeqError(data)
+        if len(data) < data_col:
+            raise RelaxInvalidSeqError(data, "the data is missing")
 
     # Errors
     if error_col:
-        try:
-            data[error_col-1]
-        except IndexError:
-            raise RelaxInvalidSeqError(data)
+        if len(data) < error_col:
+            raise RelaxInvalidSeqError(data, "the error data is missing")
 
 
 def write(file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False, force=False):

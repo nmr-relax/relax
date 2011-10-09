@@ -36,9 +36,6 @@ from sys import stderr
 import time
 from types import ClassType
 
-# relax module imports
-from status import Status; status = Status()
-
 
 # Text variables.
 BIN = 'a binary number (0 or 1)'
@@ -102,6 +99,7 @@ class BaseError(Exception):
         """Modify the behaviour of the error system."""
 
         # Save the state if the pedantic flag is turned on.
+        from status import Status; status = Status()
         if status.pedantic:
             save_state()
 
@@ -193,7 +191,7 @@ class RelaxFault(BaseError):
 # Not implemented yet.
 class RelaxImplementError(BaseError):
     def __init__(self):
-        self.text = "This function has not yet been implemented."
+        self.text = "This has not yet been implemented for the current data pipe."
 
 
 # Program errors.
@@ -275,12 +273,12 @@ class RelaxNucleusError(BaseError):
 # Spin type not set.
 class RelaxSpinTypeError(BaseError):
     def __init__(self):
-        self.text = "The spin type has not yet been set.  Please use the value.set() user function to set the heteronucleus type."
+        self.text = "The spin type has not yet been set.  Please use the value.set user function to set the heteronucleus type."
 
 # Proton type not set.
 class RelaxProtonTypeError(BaseError):
     def __init__(self):
-        self.text = "The type of proton attached to the spin has not yet been set.  Please use the value.set() user function to set the proton type."
+        self.text = "The type of proton attached to the spin has not yet been set.  Please use the value.set user function to set the proton type."
 
 
 # Argument errors.
@@ -574,15 +572,32 @@ class RelaxNoSpinError(BaseError):
 
 # The sequence data is not valid.
 class RelaxInvalidSeqError(BaseError):
-    def __init__(self, line):
-        self.text = "The sequence data in the line %s is invalid." % line
+    def __init__(self, line, problem=None):
+        if problem == None:
+            self.text = "The sequence data in the line %s is invalid." % line
+        else:
+            self.text = "The sequence data in the line %s is invalid, %s." % (line, problem)
 
 # The spins have not been loaded
 class RelaxSpinsNotLoadedError(BaseError):
     def __init__(self, spin_id):
-        self.text = "The spin information for the spin " + repr(spin_id) + " has not yet been loaded, please use the structure.load_spins() user function."
+        self.text = "The spin information for the spin " + repr(spin_id) + " has not yet been loaded, please use the structure.load_spins user function."
 
 
+
+
+# Spectral data errors.
+#######################
+
+# No spectral data.
+class RelaxNoSpectraError(BaseError):
+    def __init__(self, spectrum_id):
+        self.text = "Spectral data corresponding to the ID string '%s' does not exist." % spectrum_id
+
+# Spectral data already exists.
+class RelaxSpectraError(BaseError):
+    def __init__(self, spectrum_id):
+        self.text = "Spectral data corresponding to the ID string '%s' already exists." % spectrum_id
 
 
 # Relaxation data errors.
@@ -698,7 +713,7 @@ class RelaxNoPipeError(BaseError):
         if pipe != None:
             self.text = "The data pipe " + repr(pipe) + " has not been created yet."
         else:
-            self.text = "No data pipes currently exist.  Please use the pipe.create() user function first."
+            self.text = "No data pipes currently exist.  Please use the pipe.create user function first."
 
 
 # Spin-Residue-Molecule errors.

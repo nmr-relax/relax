@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,15 +27,14 @@ from numpy import array
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-
-class Spin_base_class:
+class Spin_base_class(UnitTestCase):
     """Testing base class for 'prompt.spin' and corresponding 'generic_fns.mol_res_spin' fns.
 
     This base class also contains many shared unit tests.
     """
-
 
     def setUp(self):
         """Set up for all the spin unit tests.
@@ -55,9 +54,6 @@ class Spin_base_class:
 
         The IDs correspond to the molecule, residue and spin indices.
         """
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -108,12 +104,6 @@ class Spin_base_class:
         cdp.mol[2].res[0].num = 13
         cdp.mol[2].res[0].name = 'Gly'
         cdp.mol[2].res[0].spin[0].x = 'hello'
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
 
 
     def test_copy_spin(self):

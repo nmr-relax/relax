@@ -26,13 +26,14 @@ import platform
 import numpy
 from os import sep
 from re import search
-from shutil import copytree, rmtree
+from shutil import copytree
 from tempfile import mkdtemp
 
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from generic_fns.mol_res_spin import spin_loop
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_io import DummyFileObject, open_read_file
 from status import Status; status = Status()
@@ -66,17 +67,6 @@ class Mf(SystemTestCase):
 
         # Create the data pipe.
         self.interpreter.pipe.create('mf', 'mf')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Remove temporary directories.
-        if hasattr(ds, 'tmpdir'):
-            rmtree(ds.tmpdir)
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
 
     def mesg_opt_debug(self, spin):
@@ -211,6 +201,13 @@ class Mf(SystemTestCase):
         self.assertNotEqual(cdp.mol[0].res[1].spin[0].s2, 1.0)
 
 
+    def test_bug_18790(self):
+        """Test catching bug #18790, the negative relaxation data RelaxError reported by Vitaly Vostrikov."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_18790_negative_error.py')
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
@@ -222,19 +219,75 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['S2', 'te', 'Rex'])
 
 
-    # FIXME!
-    def xxx_test_dauvergne_protocol(self):
+    def test_dauvergne_protocol(self):
         """Check the execution of auto_analyses.dauvergne_protocol."""
 
         # Create a temporary directory for dumping files.
         ds.tmpdir = mkdtemp()
 
-        # Copy the files into the temporary directory.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data'+sep+'13259_bug_reproducing_data'
-        copytree(path, ds.tmpdir + sep + 'data')
-
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'full_analysis_trunc.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'dauvergne_protocol.py')
+
+        # Check the diffusion tensor.
+        self.assertEqual(cdp.diff_tensor.type, 'sphere')
+        self.assertAlmostEqual(cdp.diff_tensor.tm, 1e-8)
+        self.assertEqual(cdp.diff_tensor.fixed, True)
+
+        # The global minimisation info.
+        self.assertAlmostEqual(cdp.chi2, 4e-19)
+
+        # The spin ID info.
+        mol_names = ["sphere_mol1"] * 9
+        res_names = ["GLY"] * 9
+        res_nums = range(1, 10)
+        spin_names = ["N"] * 9
+        spin_nums = numpy.array(range(9)) * 2 + 1
+
+        # Check the spin data.
+        i = 0
+        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+            # The ID info.
+            self.assertEqual(mol_name, mol_names[i])
+            self.assertEqual(res_name, res_names[i])
+            self.assertEqual(res_num,  res_nums[i])
+            self.assertEqual(spin.name, spin_names[i])
+            self.assertEqual(spin.num,  spin_nums[i])
+
+            # The data.
+            self.assertEqual(spin.select, True)
+            self.assertEqual(spin.fixed, False)
+            self.assertEqual(spin.proton_type, '1H')
+            self.assertEqual(spin.heteronuc_type, '15N')
+            self.assertEqual(spin.attached_proton, None)
+            self.assertEqual(spin.nucleus, None)
+            self.assertAlmostEqual(spin.r, 1.02 * 1e-10)
+            self.assertAlmostEqual(spin.csa, -172e-6)
+
+            # The model-free data.
+            self.assertEqual(spin.model, 'm2')
+            self.assertEqual(spin.equation, 'mf_orig')
+            self.assertEqual(len(spin.params), 2)
+            self.assertEqual(spin.params[0], 'S2')
+            self.assertEqual(spin.params[1], 'te')
+            self.assertAlmostEqual(spin.s2, 0.8)
+            self.assertEqual(spin.s2f, None)
+            self.assertEqual(spin.s2s, None)
+            self.assertEqual(spin.local_tm, None)
+            self.assertAlmostEqual(spin.te, 20e-12)
+            self.assertEqual(spin.tf, None)
+            self.assertEqual(spin.ts, None)
+            self.assertEqual(spin.rex, None)
+
+            # The spin minimisation info.
+            self.assertEqual(spin.chi2, None)
+            self.assertEqual(spin.iter, None)
+            self.assertEqual(spin.f_count, None)
+            self.assertEqual(spin.g_count, None)
+            self.assertEqual(spin.h_count, None)
+            self.assertEqual(spin.warning, None)
+
+            # Increment the index.
+            i += 1
 
 
     def test_generate_ri(self):
@@ -2522,25 +2575,25 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.s2s, None, msg=mesg)
 
         # te correlation time.
-        if type(te) == float:
+        if isinstance(te, float):
             self.assertAlmostEqual(spin.te / 1e-12, te, 5, msg=mesg)
         elif te == None:
             self.assertEqual(spin.te, None, msg=mesg)
 
         # tf correlation time.
-        if type(tf) == float:
+        if isinstance(tf, float):
             self.assertAlmostEqual(spin.tf / 1e-12, tf, 4, msg=mesg)
         elif tf == None:
             self.assertEqual(spin.tf, None, msg=mesg)
 
         # ts correlation time.
-        if type(ts) == float:
+        if isinstance(ts, float):
             self.assertAlmostEqual(spin.ts / 1e-12, ts, 4, msg=mesg)
         elif ts == None:
             self.assertEqual(spin.ts, None, msg=mesg)
 
         # Chemical exchange.
-        if type(rex) == float:
+        if isinstance(rex, float):
             self.assertAlmostEqual(spin.rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, msg=mesg)
         elif rex == None:
             self.assertEqual(spin.rex, None, msg=mesg)

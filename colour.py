@@ -30,6 +30,12 @@ from numpy import float64, array
 from relax_errors import RelaxInvalidColourError
 
 
+_linear_gradient_doc = ["Colour", """
+        The values are coloured based on a linear colour gradient which is specified through the starting and ending colours.  These can either be a string to identify one of the RGB (red, green, blue) colour arrays listed in the tables below, or you can give the RGB vector itself.  For example, 'white' and [1.0, 1.0, 1.0] both select the same colour.  Leaving both colours unset will select the default colour gradient which for each type of analysis is described below.
+
+        When supplying the colours as strings, two lists of colours can be selected from which to match the strings.  These are the default Molmol colour list and the X11 colour list, both of which are described in the tables below.  The default behaviour is to first search the Molmol list and then the X11 colour list, raising an error if neither contain the name.  To explicitly select these lists, set the colour list to either 'molmol' or 'x11'.
+"""]
+
 def linear_gradient(value, start, end, colour_list=None):
     """Return an RGB colour array of the value placed on a linear colour gradient.
 
@@ -155,12 +161,8 @@ def molmol_colours(name):
     return colours[name]
 
 # User function documentation.
-__molmol_colours_prompt_doc__ = """
-        Molmol RGB colour arrays
-        ~~~~~~~~~~~~~~~~~~~~~~~~
-
-        The following table is a list of colours used in Molmol and their corresponding RGB colour
-        values ranging from 0 to 1.
+__molmol_colours_prompt_doc__ = ["Molmol RGB colour arrays", """
+        The following table is a list of colours used in Molmol and their corresponding RGB colour values ranging from 0 to 1.
         _______________________________________________________________
         |                               |         |         |         |
         | Name                          | Red     | Green   | Blue    |
@@ -202,7 +204,7 @@ __molmol_colours_prompt_doc__ = """
         | 'ivory'                       | 1.000   | 1.000   | 0.941   |
         | 'white'                       | 1.000   | 1.000   | 1.000   |
         |_______________________________|_________|_________|_________|
-"""
+"""]
 
 
 def x11_colours(name):
@@ -775,12 +777,8 @@ def x11_colours(name):
     return array(colours[name], float64) / 255.
 
 # User function documentation.
-__x11_colours_prompt_doc__ = """
-        X11 RGB colour arrays
-        ~~~~~~~~~~~~~~~~~~~~~
-
-        The following table is the list of X11 colour names and their corresponding RGB colour
-        values ranging from 0 to 255.
+__x11_colours_prompt_doc__ = ["X11 RGB colour arrays", """
+        The following table is the list of X11 colour names and their corresponding RGB colour values ranging from 0 to 255.
         _______________________________________________________________
         |                               |         |         |         |
         | Name                          | Red     | Green   | Blue    |
@@ -1336,4 +1334,4 @@ __x11_colours_prompt_doc__ = """
         | light green                   |     144 |     238 |     144 |
         |_______________________________|_________|_________|_________|
 
-"""
+"""]

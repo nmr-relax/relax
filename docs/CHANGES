@@ -1,3 +1,18 @@
+Version 1.3.12
+(22 August 2011, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.12
+
+    Features:
+        * The multi-processor capabilities of Gary Thompson's multi package including both uniprocessor and mpi4py modes.
+
+    Changes:
+        N/A
+
+    Bugfixes:
+        N/A
+
+
+
 Version 1.3.11
 (12 August 2011, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.11

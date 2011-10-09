@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@
 __docformat__ = 'plaintext'
 
 # relax module imports.
-from base_class import User_fn_class
+from base_class import User_fn_class, _build_doc
 import arg_check
 from specific_fns.setup import relax_fit_obj
 
@@ -34,25 +34,6 @@ class Relax_fit(User_fn_class):
     """Class for relaxation curve fitting."""
 
     def relax_time(self, time=0.0, spectrum_id=None):
-        """Function for setting the relaxation time period associated with each spectrum.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        time:  The time, in seconds, of the relaxation period.
-
-        spectrum_id:  The spectrum identification string.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        Peak intensities should be loaded before calling this user function via the
-        'spectrum.read_intensities()' user function.  The intensity values will then be associated
-        with a spectrum identifier.  To associate each spectrum identifier with a time point in the
-        relaxation curve prior to optimisation, this user function should be called.
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_fit.relax_time("
@@ -67,29 +48,20 @@ class Relax_fit(User_fn_class):
         # Execute the functional code.
         relax_fit_obj._relax_time(time=time, spectrum_id=spectrum_id)
 
+    # The function doc info.
+    relax_time._doc_title = "Set the relaxation delay time associated with each spectrum."
+    relax_time._doc_title_short = "Relaxation delay time setting."
+    relax_time._doc_args = [
+        ["time", "The time, in seconds, of the relaxation period."],
+        ["spectrum_id", "The spectrum identification string."]
+    ]
+    relax_time._doc_desc = """
+        Peak intensities should be loaded before calling this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum identifier.  To associate each spectrum identifier with a time point in the relaxation curve prior to optimisation, this user function should be called.
+        """
+    _build_doc(relax_time)
+
 
     def select_model(self, model='exp'):
-        """Function for the selection of the relaxation curve type.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        model:  The type of relaxation curve to fit.
-
-
-        The preset models
-        ~~~~~~~~~~~~~~~~~
-
-        The supported relaxation experiments include the default two parameter exponential fit,
-        selected by setting the 'fit_type' argument to 'exp', and the three parameter inversion
-        recovery experiment in which the peak intensity limit is a non-zero value, selected by
-        setting the argument to 'inv'.
-
-        The parameters of these two models are
-            'exp': [Rx, I0],
-            'inv': [Rx, I0, Iinf].
-        """
-
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "relax_fit.select_model("
@@ -101,3 +73,18 @@ class Relax_fit(User_fn_class):
 
         # Execute the functional code.
         relax_fit_obj._select_model(model=model)
+
+    # The function doc info.
+    select_model._doc_title = "Select the relaxation curve type."
+    select_model._doc_title_short = "Relaxation curve type selection."
+    select_model._doc_args = [
+        ["model", "The type of relaxation curve to fit."]
+    ]
+    select_model._doc_desc = """
+        The supported relaxation experiments include the default two parameter exponential fit, selected by setting the 'fit_type' argument to 'exp', and the three parameter inversion recovery experiment in which the peak intensity limit is a non-zero value, selected by setting the argument to 'inv'.
+
+        The parameters of these two models are
+            'exp': [Rx, I0],
+            'inv': [Rx, I0, Iinf].
+        """
+    _build_doc(select_model)

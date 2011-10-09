@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,21 +25,17 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import copy_residue, create_residue
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-
-class Molecule_base_class:
+class Molecule_base_class(UnitTestCase):
     """Testing base class for 'prompt.molecule' and corresponding 'generic_fns.mol_spin_res' fns.
 
     This base class also contains many shared unit tests.
     """
 
-
     def setUp(self):
         """Set up for all the molecule unit tests."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -49,12 +45,6 @@ class Molecule_base_class:
 
         # Set the current data pipe to 'orig'.
         pipes.switch('orig')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
 
 
     def setup_data(self):

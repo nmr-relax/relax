@@ -1049,7 +1049,7 @@ class Mf_minimise:
             # Set the spin index and get the spin, if not already set.
             if data_store.model_type == 'diff' or data_store.model_type == 'all':
                 spin_index = j
-                spin = return_spin_from_index(global_index=spin_index)
+                spin, data_store.spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
             # Skip deselected spins.
             if not spin.select:
@@ -1059,13 +1059,16 @@ class Mf_minimise:
             if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
                 continue
 
-            # The relaxation data.
+            # Make sure that the errors are strictly positive numbers.
             for ri_id in cdp.ri_ids:
-                # Make sure that the errors are strictly positive numbers.
-                if spin.ri_data_err[ri_id] == 0.0:
-                    raise RelaxError("Zero error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
-                elif spin.ri_data_err[ri_id] < 0.0:
-                    raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
+                # Alias.
+                err = spin.ri_data_err[ri_id]
+
+                # Checks.
+                if err != None and err == 0.0:
+                    raise RelaxError("Zero error for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (errid))
+                elif err != None and err < 0.0:
+                    raise RelaxError("Negative error of %s for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (err, data_store.spin_id, ri_id))
 
             # The relaxation data optimisation structures.
             data = self._relax_data_opt_structs(spin, sim_index=sim_index)
@@ -1162,12 +1165,20 @@ class Mf_minimise:
         for ri_id in cdp.ri_ids:
             # The Rx data.
             if sim_index == None:
-                ri_data.append(spin.ri_data[ri_id])
+                data = spin.ri_data[ri_id]
             else:
-                ri_data.append(spin.ri_data_sim[ri_id][sim_index])
+                data = spin.ri_data_sim[ri_id][sim_index]
 
             # The errors.
-            ri_data_err.append(spin.ri_data_err[ri_id])
+            err = spin.ri_data_err[ri_id]
+
+            # Missing data, so don't add it.
+            if data == None or err == None:
+                continue
+
+            # Append the data and error.
+            ri_data.append(data)
+            ri_data_err.append(err)
 
             # The labels.
             ri_labels.append(cdp.ri_type[ri_id])
@@ -1183,7 +1194,7 @@ class Mf_minimise:
             noe_r1_table.append(None)
 
         # The number of data sets.
-        num_ri = len(cdp.ri_ids)
+        num_ri = len(ri_data)
 
         # Fill the NOE to R1 mapping table.
         for i in range(num_ri):
@@ -1250,7 +1261,7 @@ class Mf_minimise:
             raise RelaxNoPdbError
 
         # Loop over the spins.
-        for spin in spin_loop(spin_id):
+        for spin, id in spin_loop(spin_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -1290,10 +1301,14 @@ class Mf_minimise:
 
             # Make sure that the errors are strictly positive numbers.
             for ri_id in cdp.ri_ids:
-                if spin.ri_data_err[ri_id] == 0.0:
-                    raise RelaxError("Zero error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible.")
-                elif spin.ri_data_err[ri_id] < 0.0:
-                    raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible.")
+                # Alias.
+                err = spin.ri_data_err[ri_id]
+
+                # Checks.
+                if err != None and err == 0.0:
+                    raise RelaxError("Zero error for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (id, ri_id))
+                elif err != None and err < 0.0:
+                    raise RelaxError("Negative error of %s for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (err, id, ri_id))
 
             # Create the initial parameter vector.
             param_vector = self._assemble_param_vector(spin=spin, sim_index=sim_index)

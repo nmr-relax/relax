@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,10 +22,10 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-
-class Model_free_base_class:
+class Model_free_base_class(UnitTestCase):
     """Base class for tests of both the 'prompt.model_free' and 'specific_fns.model_free' modules.
 
     This base class also contains many shared unit tests.

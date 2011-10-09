@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,7 +32,10 @@ import wx.stc as stc
 # relax module imports
 from info import Info_box
 from prompt import interpreter
+from status import Status; status = Status()
 
+# relax GUI module imports
+from gui.icons import relax_icons
 
 
 class Prompt(wx.Frame):
@@ -48,6 +51,9 @@ class Prompt(wx.Frame):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
 
+        # Set up the window icon.
+        self.SetIcons(relax_icons)
+
         # Some default values.
         self.size_x = 1000
         self.size_y = 500
@@ -58,6 +64,9 @@ class Prompt(wx.Frame):
 
         # The shell.
         self.add_shell(sizer)
+
+        # Register functions with the observer objects.
+        status.observers.exec_lock.register('GUI prompt', self.enable)
 
 
     def add_shell(self, sizer):
@@ -92,6 +101,18 @@ class Prompt(wx.Frame):
 
         # Add the shell to the sizer.
         sizer.Add(self.prompt, 1, wx.EXPAND|wx.ALL, self.border)
+
+
+    def enable(self):
+        """Enable and disable the prompt with the execution lock."""
+
+        # Flag for enabling or disabling the prompt.
+        enable = False
+        if not status.exec_lock.locked():
+            enable = True
+
+        # Enable/disable.
+        wx.CallAfter(self.prompt.Enable, enable)
 
 
     def handler_close(self, event):

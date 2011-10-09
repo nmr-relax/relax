@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,12 +38,6 @@ class Load_spins(SystemTestCase):
 
         # Create the data pipe.
         self.interpreter.pipe.create('mf', 'mf')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
 
 
     def test_load_spins_from_small_molecule(self):

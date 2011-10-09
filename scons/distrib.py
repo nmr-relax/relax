@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,13 +22,14 @@
 
 
 # Import statements.
-from os import getcwd, path, sep, system, walk
+from os import getcwd, path, sep, system, waitpid, walk
 from re import search
+from subprocess import PIPE, Popen
 import sys
 from tarfile import TarFile
 from zipfile import ZipFile
 
-# relax version file.
+# relax module imports.
 from version import version
 
 
@@ -59,6 +60,8 @@ def gpg_sign(target, source, env):
             file = env['DIST_FILE'] + '.zip'
         elif dist_type == 'tar':
             file = env['DIST_FILE'] + '.tar.bz2'
+        elif dist_type == 'dmg':
+            file = env['DIST_FILE'] + '.dmg'
 
         # Print out.
         print(("\n\nSigning the distribution package " + repr(file) + ".\n"))
@@ -91,9 +94,30 @@ def package(target, source, env):
             file = env['DIST_FILE'] + '.zip'
         elif dist_type == 'tar':
             file = env['DIST_FILE'] + '.tar.bz2'
+        elif dist_type == 'dmg':
+            file = env['DIST_FILE'] + '.dmg'
 
         # Print out.
         print(("\n\nCreating the package distribution " + repr(file) + ".\n"))
+
+        # Create the special Mac OS X DMG file and then stop execution.
+        if dist_type == 'dmg':
+            # Create the Mac OS X universal application.
+            print("\n# Creating the Mac OS X universal application.\n\n")
+            cmd = 'python setup.py py2app'
+            print("%s\n" % cmd)
+            pipe = Popen(cmd, shell=True, stdin=PIPE, close_fds=False)
+            waitpid(pipe.pid, 0)
+
+            # Create the dmg image.
+            print("\n\n# Creating the DMG image.\n\n")
+            cmd = 'hdiutil create -fs HFS+ -volname "relax" -srcfolder dist/relax.app %s' % file
+            print("%s\n" % cmd)
+            pipe = Popen(cmd, shell=True, stdin=PIPE, close_fds=False)
+            waitpid(pipe.pid, 0)
+
+            # Stop executing.
+            return
 
         # Open the Zip distribution file.
         if dist_type == 'zip':

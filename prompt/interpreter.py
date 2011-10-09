@@ -61,6 +61,7 @@ from gpl import GPL
 from reset import Reset
 from minimisation import Minimisation
 from model_selection import Modsel
+from sys_info import Sys_info
 from temperature import Temp
 
 # User classes.
@@ -172,8 +173,9 @@ class Interpreter:
         reset = Reset(self._exec_info)
         minimisation = Minimisation(self._exec_info)
         modsel = Modsel(self._exec_info)
-        temp = Temp(self._exec_info)
         opendx = OpenDX(self._exec_info)
+        sys_info = Sys_info(self._exec_info)
+        temp = Temp(self._exec_info)
 
         # Place the user functions in the local namespace.
         objects['angle_diff_frame'] = angles.angle_diff_frame
@@ -184,6 +186,7 @@ class Interpreter:
         objects['reset'] = reset.reset
         objects['minimise'] = minimisation.minimise
         objects['model_selection'] = modsel.model_selection
+        objects['sys_info'] = sys_info.sys_info
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.

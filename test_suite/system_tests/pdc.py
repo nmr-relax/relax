@@ -40,12 +40,6 @@ class Pdc(SystemTestCase):
         self.interpreter.pipe.create('mf', 'mf')
 
 
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
-
-
     def test_pdc_read_noe(self):
         """Test the reading of a PDC NOE file."""
 

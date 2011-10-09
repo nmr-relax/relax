@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -143,6 +143,10 @@ class Stereochem_analysis:
         # Execution lock.
         status.exec_lock.acquire('auto stereochem analysis', mode='auto-analysis')
 
+        # Set up the analysis status object.
+        status.init_auto_analysis('stereochem', type='stereochem')
+        status.current_analysis = 'auto stereochem analysis'
+
         # Store all the args.
         self.stage = stage
         self.results_dir = results_dir
@@ -190,7 +194,9 @@ class Stereochem_analysis:
         if self.log:
             mkdir_nofail(self.results_dir + sep + "logs")
 
-        # Unlock execution.
+        # Finish and unlock execution.
+        status.auto_analysis['stereochem'].fin = True
+        status.current_analysis = None
         status.exec_lock.release()
 
 

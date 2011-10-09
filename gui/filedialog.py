@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,128 +21,145 @@
 #                                                                             #
 ###############################################################################
 
-# file dialog script
+# Module docstring.
+"""relax specific file and directory dialogs."""
 
 # Python module imports.
 from os import chdir, getcwd
 import wx
 
+# relax module imports.
+from status import Status; status = Status()
+
+# relax GUI module imports.
+from gui.misc import gui_to_str, str_to_gui
 
 
-def multi_openfile(msg=None, directory=None, filetype='', default=None):
-    """Open multiple files.
+class RelaxDirDialog(wx.DirDialog):
+    """relax specific replacement directory dialog for selecting directories."""
 
-    For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*::
+    def __init__(self, parent, message=wx.DirSelectorPromptStr, defaultPath=wx.EmptyString, style=wx.DD_DEFAULT_STYLE|wx.DD_NEW_DIR_BUTTON, pos=wx.DefaultPosition, size=wx.DefaultSize, name=wx.DirDialogNameStr):
+        """Setup the class and store the field.
 
-        multi_openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+        @param parent:          The parent wx window object.
+        @type parent:           Window
+        @keyword message:       The path selector prompt string.
+        @type message:          String
+        @keyword defaultPath:   The default directory to open in.
+        @type defaultPath:      String
+        @keyword style:         The dialog style.
+        @type style:            long
+        @keyword pos:           The window position.
+        @type pos:              Point
+        @keyword size:          The default window size.
+        @type size:             Size
+        @keyword name:          The title for the dialog.
+        @type name:             String
+        """
+
+        # No path supplied, so use the current working directory.
+        if defaultPath == wx.EmptyString:
+            defaultPath = getcwd()
+
+        # Initialise the base class.
+        super(RelaxDirDialog, self).__init__(parent, message=message, defaultPath=defaultPath, style=style, pos=pos, size=size, name=name)
 
 
-    @keyword msg:       The message to display.
-    @type msg:          str
-    @keyword directory: The directory to open in.
-    @type directory:    str
-    @keyword filetype:  The file to default selection to.
-    @type filetype:     str
-    @keyword default:   A list of supported files, indicated as "(Label)|os command|...
-    @type default:      str
+    def get_path(self):
+        """Return the selected path.
+
+        @return:        The name of the selected path.
+        @rtype:         str
+        """
+
+        # The path.
+        path = gui_to_str(self.GetPath())
+
+        # Change the current working directory.
+        chdir(path)
+
+        # Return the path.
+        return path
+
+
+
+class RelaxFileDialog(wx.FileDialog):
+    """relax specific replacement file dialog for opening and closing files.
+
+    This class provides the select() method so that this class can be used with a wx event.
     """
 
-    # The current working directory.
-    dir_switch = False
-    if directory == None:
-        directory = getcwd()
-        dir_switch = True
+    def __init__(self, parent, field=None, message=wx.FileSelectorPromptStr, defaultDir=wx.EmptyString, defaultFile=wx.EmptyString, wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, pos=wx.DefaultPosition):
+        """Setup the class and store the field.
 
-    # Open the dialog.
-    dialog = wx.FileDialog(None, message=msg, style=wx.OPEN | wx.FD_MULTIPLE, defaultDir=directory, defaultFile=filetype, wildcard=default)
+        @param parent:          The parent wx window object.
+        @type parent:           Window
+        @keyword field:         The field to update with the file selection.
+        @type field:            wx object or None
+        @keyword message:       The file selector prompt string.
+        @type message:          String
+        @keyword defaultDir:    The directory to open in.
+        @type defaultDir:       String
+        @keyword defaultFile:   The file to default selection to.
+        @type defaultFile:      String
+        @keyword wildcard:      The file wildcard pattern.  For example for opening PDB files, this could be "PDB files (*.pdb)|*.pdb;*.PDB".
+        @type wildcard:         String
+        @keyword style:         The dialog style.  To open a single file, set to wx.FD_OPEN.  To open multiple files, set to wx.FD_OPEN|wx.FD_MULTIPLE.  To save a single file, set to wx.FD_SAVE.  To save multiple files, set to wx.FD_SAVE|wx.FD_MULTIPLE.
+        @type style:            long
+        @keyword pos:           The window position.
+        @type pos:              Point
+        """
 
-    # A file was selected.
-    if dialog.ShowModal() == wx.ID_OK:
-        # Reset the current working directory if changed.
-        if dir_switch:
-            chdir(dialog.GetDirectory())
+        # Store the args.
+        self.field = field
+        self.style = style
 
-        # Return the full file path.
-        return dialog.GetPaths()
+        # No directory supplied, so use the current working directory.
+        if defaultDir == wx.EmptyString:
+            defaultDir = getcwd()
 
-
-def opendir(msg, default): # select directory, msg is message to display, default is starting directory
-    newdir = None
-    dlg = wx.DirDialog(None, message = msg, style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON, defaultPath = default)
-    if dlg.ShowModal() == wx.ID_OK:
-        newdir = dlg.GetPath()
-        return newdir
-
-
-def openfile(msg=None, directory=None, filetype='*', default='all files (*.*)|*'):
-    """Open a file.
-
-    For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*::
-
-        openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+        # Initialise the base class.
+        super(RelaxFileDialog, self).__init__(parent, message=message, defaultDir=defaultDir, defaultFile=defaultFile, wildcard=wildcard, style=style, pos=pos)
 
 
-    @keyword msg:       The message to display.
-    @type msg:          str
-    @keyword directory: The directory to open in.
-    @type directory:    str
-    @keyword filetype:  The file to default selection to.
-    @type filetype:     str
-    @keyword default:   A list of supported files, indicated as "(Label)|os command|...
-    @type default:      str
-    """
+    def get_file(self):
+        """Return the selected file.
 
-    # The current working directory.
-    dir_switch = False
-    if directory == None:
-        directory = getcwd()
-        dir_switch = True
+        @return:        The name of the selected file(s).
+        @rtype:         str or list of str
+        """
 
-    # Open the dialog.
-    dialog = wx.FileDialog(None, message=msg, style=wx.OPEN, defaultDir=directory, defaultFile=filetype, wildcard=default)
+        # The multiple files.
+        if self.style in [wx.FD_OPEN|wx.FD_MULTIPLE, wx.FD_SAVE|wx.FD_MULTIPLE]:
+            file = self.GetPaths()
 
-    # A file was selected.
-    if dialog.ShowModal() == wx.ID_OK:
-        # Reset the current working directory if changed.
-        if dir_switch:
-            chdir(dialog.GetDirectory())
+        # The single file.
+        else:
+            file = self.GetPath()
 
-        # Return the full file path.
-        return dialog.GetPath()
+        # Change the current working directory.
+        chdir(self.GetDirectory())
+
+        # Return the file.
+        return file
 
 
-def savefile(msg=None, directory=None, filetype='', default=None):
-    """Save a file.
+    def select_event(self, event):
+        """The file selector GUI element.
 
-    For example to save /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*::
+        @param event:   The wx event.
+        @type event:    wx event
+        """
 
-        savefile('select file to save', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+        # Show the dialog, and return if nothing was selected.
+        if status.show_gui and self.ShowModal() != wx.ID_OK:
+            return
 
+        # Get the selected file.
+        file = self.get_file()
 
-    @keyword msg:       The message to display.
-    @type msg:          str
-    @keyword directory: The directory to open in.
-    @type directory:    str
-    @keyword filetype:  The default file name to save to.
-    @type filetype:     str
-    @keyword default:   A list of supported files, indicated as "(Label)|os command|...
-    @type default:      str
-    """
+        # Update the field.
+        self.field.SetValue(str_to_gui(file))
 
-    # The current working directory.
-    dir_switch = False
-    if directory == None:
-        directory = getcwd()
-        dir_switch = True
-
-    # Open the dialog.
-    dialog = wx.FileDialog(None, message=msg, style=wx.SAVE, defaultDir=directory, defaultFile=filetype, wildcard=default)
-
-    # A file was selected.
-    if dialog.ShowModal() == wx.ID_OK:
-        # Reset the current working directory if changed.
-        if dir_switch:
-            chdir(dialog.GetDirectory())
-
-        # Return the full file path.
-        return dialog.GetPath()
+        # Scroll the text to the end.
+        self.field.SetInsertionPoint(len(file))

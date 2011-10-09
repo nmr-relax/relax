@@ -24,18 +24,42 @@
 # Module docstring.
 """Module for the main relax menu bar."""
 
-# relax module imports.
-from status import Status
-
 # Python module imports.
 import wx
 
+# relax module imports.
+from status import Status; status = Status()
+
 # relax GUI module imports.
 from gui import paths
+from gui.components.menu import build_menu_item
+from gui.user_functions import User_functions
 
 
 class Menu:
     """The menu bar GUI class."""
+
+    # Some IDs for the menu entries.
+    MENU_FILE_NEW = wx.NewId()
+    MENU_FILE_CLOSE = wx.NewId()
+    MENU_FILE_CLOSE_ALL = wx.NewId()
+    MENU_FILE_OPEN = wx.NewId()
+    MENU_FILE_SAVE = wx.NewId()
+    MENU_FILE_SAVE_AS = wx.NewId()
+    MENU_FILE_EXIT = wx.NewId()
+    MENU_VIEW_CONTROLLER = wx.NewId()
+    MENU_VIEW_SPIN_VIEW = wx.NewId()
+    MENU_VIEW_RESULTS = wx.NewId()
+    MENU_VIEW_PIPE_EDIT = wx.NewId()
+    MENU_VIEW_PROMPT = wx.NewId()
+    MENU_TOOLS_FORMAT = wx.NewId()
+    MENU_TOOLS_TEST_SUITE = wx.NewId()
+    MENU_HELP_MANUAL = wx.NewId()
+    MENU_HELP_MAIL = wx.NewId()
+    MENU_HELP_REFS = wx.NewId()
+    MENU_HELP_GPL = wx.NewId()
+    MENU_HELP_ABOUT_GUI = wx.NewId()
+    MENU_HELP_ABOUT = wx.NewId()
 
     def __init__(self, gui):
         """Build the menu bar."""
@@ -43,111 +67,87 @@ class Menu:
         # Store the args.
         self.gui = gui
 
-        # Create the menu bar GUI item and add it to the main frame.
+        # Create the menu bar GUI item.
         self.menubar = wx.MenuBar()
-        self.gui.SetMenuBar(self.menubar)
 
         # The 'File' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_item(menu, id=1, text="&Open\tCtrl+O", icon=paths.icon_16x16.open))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_NEW, text="&New analysis\tCtrl+N", icon=paths.icon_16x16.new))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_CLOSE, text="&Close analysis", icon=paths.icon_16x16.document_close))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_CLOSE_ALL, text="&Close all analyses", icon=paths.icon_16x16.dialog_close))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_item(menu, id=2, text="S&ave\tCtrl+S", icon=paths.icon_16x16.save))
-        menu.AppendItem(self.build_menu_item(menu, id=3, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.save_as))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_OPEN, text="&Open relax state\tCtrl+O", icon=paths.icon_16x16.document_open))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_SAVE, text="S&ave relax state\tCtrl+S", icon=paths.icon_16x16.document_save))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_SAVE_AS, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.document_save_as))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_item(menu, id=4, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_EXIT, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
         self.menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.state_load, id=1)
-        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save, id=2)
-        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save_as, id=3)
-        self.gui.Bind(wx.EVT_MENU, self.gui.exit_gui,   id=4)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_new, id=self.MENU_FILE_NEW)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_close, id=self.MENU_FILE_CLOSE)
+        self.gui.Bind(wx.EVT_MENU, self.gui.analysis.menu_close_all, id=self.MENU_FILE_CLOSE_ALL)
+        self.gui.Bind(wx.EVT_MENU, self.gui.state_load, id=self.MENU_FILE_OPEN)
+        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save, id=self.MENU_FILE_SAVE)
+        self.gui.Bind(wx.EVT_MENU, self.gui.action_state_save_as, id=self.MENU_FILE_SAVE_AS)
+        self.gui.Bind(wx.EVT_MENU, self.gui.exit_gui, id=self.MENU_FILE_EXIT)
 
         # The 'View' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_item(menu, id=50, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.controller))
-        menu.AppendItem(self.build_menu_item(menu, id=51, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
-        menu.AppendItem(self.build_menu_item(menu, id=52, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_CONTROLLER, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.preferences_system_performance))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_SPIN_VIEW, text="&Spin view\tCtrl+T", icon=paths.icon_16x16.spin))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_RESULTS, text="&Results viewer\tCtrl+R", icon=paths.icon_16x16.view_statistics))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_PIPE_EDIT, text="&Data pipe editor\tCtrl+D", icon=paths.icon_16x16.pipe))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_PROMPT, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
         self.menubar.Append(menu, "&View")
 
         # The 'View' actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_controller,    id=50)
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_prompt,        id=51)
-        self.gui.Bind(wx.EVT_MENU, self.gui.show_tree,          id=52)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_controller, id=self.MENU_VIEW_CONTROLLER)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_prompt, id=self.MENU_VIEW_PROMPT)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_tree, id=self.MENU_VIEW_SPIN_VIEW)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_results_viewer, id=self.MENU_VIEW_RESULTS)
+        self.gui.Bind(wx.EVT_MENU, self.gui.show_pipe_editor, id=self.MENU_VIEW_PIPE_EDIT)
 
         # The 'User functions' menu entries.
         self._user_functions()
 
-        # The 'Molecule' menu entries.
+        # The 'Tools' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_item(menu, id=10, text="Load &PDB File", icon=paths.icon_16x16.load))
-        menu.AppendItem(self.build_menu_item(menu, id=11, text="Load se&quence file", icon=paths.icon_16x16.load))
-        self.menubar.Append(menu, "&Molecule")
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_FORMAT, text="&Free file format settings", icon=paths.icon_16x16.document_properties))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_TEST_SUITE, text="&Test suite", icon=paths.icon_16x16.uf_script))
+        self.menubar.Append(menu, "&Tools")
 
-        # The 'Molecule' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.structure_pdb,  id=10)
-        self.gui.Bind(wx.EVT_MENU, self.gui.import_seq,     id=11)
-
-        # The 'Settings' menu entries.
-        menu = wx.Menu()
-        menu.AppendItem(self.build_menu_item(menu, id=20, text="&Global relax settings", icon=paths.icon_16x16.settings_global))
-        menu.AppendItem(self.build_menu_item(menu, id=21, text="&Free file format settings", icon=paths.icon_16x16.settings))
-        menu.AppendItem(self.build_menu_item(menu, id=22, text="Reset a&ll settings", icon=paths.icon_16x16.settings_reset))
-        self.menubar.Append(menu, "&Settings")
-
-        # The 'Settings' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.global_parameters,         id=20)
-        self.gui.Bind(wx.EVT_MENU, self.gui.free_file_format_settings, id=21)
-        self.gui.Bind(wx.EVT_MENU, self.gui.reset_setting,             id=22)
+        # The 'Tools' menu actions.
+        self.gui.Bind(wx.EVT_MENU, self.gui.free_file_format_settings, id=self.MENU_TOOLS_FORMAT)
+        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite, id=self.MENU_TOOLS_TEST_SUITE)
 
         # The 'Help' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_item(menu, id=40, text="relax user &manual\tF1", icon=paths.icon_16x16.manual))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_MANUAL, text="relax user &manual\tF1", icon=paths.icon_16x16.manual))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_item(menu, id=41, text="Mailing list &contact (relax-users@gna.org)", icon=paths.icon_16x16.contact))
-        menu.AppendItem(self.build_menu_item(menu, id=42, text="&References", icon=paths.icon_16x16.ref))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_MAIL, text="Mailing list &contact (relax-users@gna.org)", icon=paths.icon_16x16.contact))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_REFS, text="&References", icon=paths.icon_16x16.ref))
         menu.AppendSeparator()
-        menu.AppendItem(self.build_menu_item(menu, id=43, text="About relaxG&UI", icon=paths.icon_16x16.about_relaxgui))
-        menu.AppendItem(self.build_menu_item(menu, id=44, text="About rela&x", icon=paths.icon_16x16.about_relax))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_GPL, text="&Licence", icon=paths.icon_16x16.gnu_head))
+        menu.AppendSeparator()
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_ABOUT_GUI, text="About relaxG&UI", icon=paths.icon_16x16.about_relaxgui))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_ABOUT, text="About rela&x", icon=paths.icon_16x16.about_relax))
         self.menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.
-        self.gui.Bind(wx.EVT_MENU, self.gui.relax_manual,   id=40)
-        self.gui.Bind(wx.EVT_MENU, self.gui.contact_relax,  id=41)
-        self.gui.Bind(wx.EVT_MENU, self.gui.references,     id=42)
-        self.gui.Bind(wx.EVT_MENU, self.gui.about_gui,      id=43)
-        self.gui.Bind(wx.EVT_MENU, self.gui.about_relax,    id=44)
+        self.gui.Bind(wx.EVT_MENU, self.gui.relax_manual, id=self.MENU_HELP_MANUAL)
+        self.gui.Bind(wx.EVT_MENU, self.gui.contact_relax, id=self.MENU_HELP_MAIL)
+        self.gui.Bind(wx.EVT_MENU, self.gui.references, id=self.MENU_HELP_REFS)
+        self.gui.Bind(wx.EVT_MENU, self._licence, id=self.MENU_HELP_GPL)
+        self.gui.Bind(wx.EVT_MENU, self.gui.about_gui, id=self.MENU_HELP_ABOUT_GUI)
+        self.gui.Bind(wx.EVT_MENU, self.gui.about_relax, id=self.MENU_HELP_ABOUT)
+
+        # Add the menu bar GUI item to the main frame.
+        if status.show_gui:
+            self.gui.SetMenuBar(self.menubar)
 
         # Menu update.
         self.gui.Bind(wx.EVT_MENU_OPEN, self.update_menus)
-
-
-    def build_menu_item(self, menu, id=None, text='', tooltip='', icon=None):
-        """Construct and return the menu sub-item.
-
-        @param menu:        The menu object to place this entry in.
-        @type menu:         wx.Menu instance
-        @keyword id:        The element identification number.
-        @type id:           int
-        @keyword text:      The text for the menu entry.
-        @type text:         None or str
-        @keyword tooltip:   A tool tip.
-        @type tooltip:      str
-        @keyword icon:      The bitmap icon path.
-        @type icon:         None or str
-        @return:            The initialised wx.MenuItem() instance.
-        @rtype:             wx.MenuItem() instance
-        """
-
-        # Initialise the GUI element.
-        element = wx.MenuItem(menu, id, text, tooltip)
-
-        # Set the icon.
-        if icon:
-            element.SetBitmap(wx.Bitmap(icon))
-
-        # Return the element.
-        return element
 
 
     def _create_menu(self, menu, entries):
@@ -156,7 +156,7 @@ class Menu:
         # Loop over the menu entries.
         for item in entries:
             # Build the menu entry.
-            menu_item = self.build_menu_item(menu, id=item[0], text=item[1], icon=item[2])
+            menu_item = build_menu_item(menu, id=item[0], text=item[1], icon=item[2])
 
             # A sub-menu.
             if len(item[4]):
@@ -166,7 +166,7 @@ class Menu:
                 # Loop over the sub-menus.
                 for sub_item in item[4]:
                     # Build the menu entry.
-                    sub_menu_item = self.build_menu_item(sub_menu, id=sub_item[0], text=sub_item[1], icon=sub_item[2])
+                    sub_menu_item = build_menu_item(sub_menu, id=sub_item[0], text=sub_item[1], icon=sub_item[2])
                     sub_menu.AppendItem(sub_menu_item)
 
                     # The menu actions.
@@ -184,50 +184,31 @@ class Menu:
             menu.AppendItem(menu_item)
 
 
+    def _licence(self, event):
+        """Show the GPL licence.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The user functions.
+        user_functions = User_functions(self.gui)
+
+        # Launch the user functions.
+        user_functions.gpl.run()
+
+        # Show the relax controller.
+        self.gui.show_controller(event)
+
+
     def _user_functions(self):
         """Build the user function sub-menu."""
 
         # The menu.
         menu = wx.Menu()
 
-        # The list of entries to build.
-        self.entries_uf = [
-            [wx.NewId(), "&molecule", paths.icon_16x16.molecule, None, [
-                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.molecule.copy],
-                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.molecule.create],
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.molecule.delete]
-            ]],
-            [wx.NewId(), "&pipe", paths.icon_16x16.pipe, None, [
-                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.pipes.copy],
-                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.pipes.create],
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.pipes.delete],
-                [wx.NewId(), "&switch", paths.icon_16x16.pipe_switch, self.gui.user_functions.pipes.switch]
-            ]],
-            [wx.NewId(), "&relax_data", paths.icon_16x16.relax_data, None, [
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.relax_data.delete],
-                [wx.NewId(), "&read",   paths.icon_16x16.open, self.gui.user_functions.relax_data.read]
-            ]],
-            [wx.NewId(), "resid&ue", paths.icon_16x16.residue, None, [
-                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.residue.copy],
-                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.residue.create],
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.residue.delete]
-            ]],
-            [wx.NewId(), "s&cript",   paths.icon_16x16.uf_script, self.gui.user_functions.script.run, []],
-            [wx.NewId(), "se&quence", paths.icon_16x16.sequence, None, [
-                [wx.NewId(), "&read", paths.icon_16x16.open, self.gui.user_functions.sequence.read]
-            ]],
-            [wx.NewId(), "&spin", paths.icon_16x16.spin, None, [
-                [wx.NewId(), "&copy",   paths.icon_16x16.copy, self.gui.user_functions.spin.copy],
-                [wx.NewId(), "crea&te", paths.icon_16x16.add, self.gui.user_functions.spin.create],
-                [wx.NewId(), "&delete", paths.icon_16x16.remove, self.gui.user_functions.spin.delete]
-            ]],
-            [wx.NewId(), "&value", paths.icon_16x16.value, None, [
-                [wx.NewId(), "&set",   paths.icon_16x16.add, self.gui.user_functions.value.set]
-            ]]
-        ]
-
-        # Build.
-        self._create_menu(menu, self.entries_uf)
+        # Add the menu.
+        uf_menus = Uf_menus(parent=self.gui, menu=menu)
 
         # Add the sub-menu.
         title = "&User functions"
@@ -245,12 +226,254 @@ class Menu:
         # The status object.
         status = Status()
 
-        # Loop over the user function menu items.
-        for i in range(len(self.entries_uf)):
-            # Enable the menu entries.
-            if not status.exec_lock.locked():
-                self.menubar.Enable(self.entries_uf[i][0], True)
+        # Flag for enabling or disabling the menu entries.
+        enable = False
+        if not status.exec_lock.locked():
+            enable = True
 
-            # Disable the menu entries.
-            else:
-                self.menubar.Enable(self.entries_uf[i][0], False)
+        # The file menu entries.
+        self.menubar.Enable(self.MENU_FILE_NEW, enable)
+        self.menubar.Enable(self.MENU_FILE_CLOSE, enable)
+        self.menubar.Enable(self.MENU_FILE_CLOSE_ALL, enable)
+        self.menubar.Enable(self.MENU_FILE_OPEN, enable)
+        self.menubar.Enable(self.MENU_FILE_SAVE, enable)
+        self.menubar.Enable(self.MENU_FILE_SAVE_AS, enable)
+
+        # The view menu entries.
+        self.menubar.Enable(self.MENU_VIEW_PROMPT, enable)
+
+        # Loop over the user function menu items.
+        menu = self.menubar.GetMenu(self.menu_uf_id)
+        for item in menu.GetMenuItems():
+            # Enable/disable.
+            item.Enable(enable)
+
+            # Sub-menu.
+            submenu = item.GetSubMenu()
+            if submenu:
+                for subitem in submenu.GetMenuItems():
+                    subitem.Enable(enable)
+
+
+
+class Uf_menus:
+    """A class for the creation of specialised menu entries for the user functions."""
+
+    def __init__(self, parent=None, menu=None):
+        """Set up the menu entries.
+
+        @keyword parent:    The parent window.
+        @type parent:       wx.Window instance
+        @keyword menu:      The menu to add to.
+        @type menu:         wx.Menu instance
+        """
+
+        # Store the args.
+        self.parent = parent
+        self.menu = menu
+
+        # The user functions.
+        user_functions = User_functions(self.parent)
+
+        # Initialise some data structures.
+        self.uf_names = {}
+        self.uf = {}
+
+        # Build the user function menus.
+        id = self.add_class(name="deselect", text="&deselect", icon=None)
+        self.add_uf(parent_id=id, name="deselect.all", text="&all", icon=None, fn=user_functions.deselect.all)
+        self.add_uf(parent_id=id, name="deselect.read", text="&read", icon=paths.icon_16x16.open, fn=user_functions.deselect.read)
+        self.add_uf(parent_id=id, name="deselect.reverse", text="re&verse", icon=None, fn=user_functions.deselect.reverse)
+        self.add_uf(parent_id=id, name="deselect.spin", text="&spin", icon=paths.icon_16x16.spin, fn=user_functions.deselect.spin)
+
+        self.add_uf(parent_id=None, name="gpl", text="&gpl", icon=paths.icon_16x16.gnu_head, fn=user_functions.gpl.run)
+
+        id = self.add_class(name="grace", text="gra&ce", icon=paths.icon_16x16.grace)
+        self.add_uf(parent_id=id, name="grace.view", text="&view", icon=paths.icon_16x16.grace, fn=user_functions.grace.view)
+        self.add_uf(parent_id=id, name="grace.write", text="&write", icon=paths.icon_16x16.save, fn=user_functions.grace.write)
+
+        id = self.add_class(name="molecule", text="&molecule", icon=paths.icon_16x16.molecule)
+        self.add_uf(parent_id=id, name="molecule.copy", text="&copy", icon=paths.icon_16x16.copy, fn=user_functions.molecule.copy)
+        self.add_uf(parent_id=id, name="molecule.create", text="crea&te", icon=paths.icon_16x16.add, fn=user_functions.molecule.create)
+        self.add_uf(parent_id=id, name="molecule.delete", text="&delete", icon=paths.icon_16x16.remove, fn=user_functions.molecule.delete)
+
+        id = self.add_class(name="molmol", text="&molmol", icon=paths.icon_16x16.molmol)
+        self.add_uf(parent_id=id, name="molmol.clear_history", text="clear_&history", icon=None, fn=user_functions.molmol.clear_history)
+        self.add_uf(parent_id=id, name="molmol.command", text="&command", icon=None, fn=user_functions.molmol.command)
+        self.add_uf(parent_id=id, name="molmol.macro_apply", text="&macro_apply", icon=paths.icon_16x16.molmol, fn=user_functions.molmol.macro_apply)
+        self.add_uf(parent_id=id, name="molmol.macro_run", text="macro_&run", icon=paths.icon_16x16.open, fn=user_functions.molmol.macro_run)
+        self.add_uf(parent_id=id, name="molmol.macro_write", text="macro_&write", icon=paths.icon_16x16.save, fn=user_functions.molmol.macro_write)
+        self.add_uf(parent_id=id, name="molmol.ribbon", text="ri&bbon", icon=None, fn=user_functions.molmol.ribbon)
+        self.add_uf(parent_id=id, name="molmol.tensor_pdb", text="&tensor_pdb", icon=None, fn=user_functions.molmol.tensor_pdb)
+        self.add_uf(parent_id=id, name="molmol.view", text="&view", icon=None, fn=user_functions.molmol.view)
+
+        id = self.add_class(name="noe", text="&noe", icon=None)
+        self.add_uf(parent_id=id, name="noe.read_restraints", text="&read_restraints", icon=paths.icon_16x16.open, fn=user_functions.noe.read_restraints)
+        self.add_uf(parent_id=id, name="noe.spectrum_type", text="&spectrum_type", icon=None, fn=user_functions.noe.spectrum_type)
+
+        id = self.add_class(name="pipe", text="&pipe", icon=paths.icon_16x16.pipe)
+        self.add_uf(parent_id=id, name="pipe.copy", text="&copy", icon=paths.icon_16x16.copy, fn=user_functions.pipe.copy)
+        self.add_uf(parent_id=id, name="pipe.create", text="crea&te", icon=paths.icon_16x16.add, fn=user_functions.pipe.create)
+        self.add_uf(parent_id=id, name="pipe.delete", text="&delete", icon=paths.icon_16x16.remove, fn=user_functions.pipe.delete)
+        self.add_uf(parent_id=id, name="pipe.hybridise", text="&hybridise", icon=paths.icon_16x16.pipe_hybrid, fn=user_functions.pipe.hybridise)
+        self.add_uf(parent_id=id, name="pipe.switch", text="&switch", icon=paths.icon_16x16.pipe_switch, fn=user_functions.pipe.switch)
+
+        id = self.add_class(name="pymol", text="&pymol", icon=paths.icon_16x16.pymol)
+        self.add_uf(parent_id=id, name="pymol.clear_history", text="clear_&history", icon=None, fn=user_functions.pymol.clear_history)
+        self.add_uf(parent_id=id, name="pymol.command", text="&command", icon=None, fn=user_functions.pymol.command)
+        self.add_uf(parent_id=id, name="pymol.macro_apply", text="&macro_apply", icon=paths.icon_16x16.pymol, fn=user_functions.pymol.macro_apply)
+        self.add_uf(parent_id=id, name="pymol.macro_run", text="&macro_&run", icon=paths.icon_16x16.open, fn=user_functions.pymol.macro_run)
+        self.add_uf(parent_id=id, name="pymol.macro_write", text="macro_&write", icon=paths.icon_16x16.save, fn=user_functions.pymol.macro_write)
+        self.add_uf(parent_id=id, name="pymol.ribbon", text="ri&bbon", icon=None, fn=user_functions.pymol.ribbon)
+        self.add_uf(parent_id=id, name="pymol.tensor_pdb", text="&tensor_pdb", icon=None, fn=user_functions.pymol.tensor_pdb)
+        self.add_uf(parent_id=id, name="pymol.view", text="&view", icon=None, fn=user_functions.pymol.view)
+
+        id = self.add_class(name="relax_data", text="&relax_data", icon=paths.icon_16x16.relax_data)
+        self.add_uf(parent_id=id, name="relax_data.delete", text="&delete", icon=paths.icon_16x16.remove, fn=user_functions.relax_data.delete)
+        self.add_uf(parent_id=id, name="relax_data.read", text="&read", icon=paths.icon_16x16.open, fn=user_functions.relax_data.read)
+
+        id = self.add_class(name="relax_fit", text="relax_&fit", icon=None)
+        self.add_uf(parent_id=id, name="relax_fit.relax_time", text="&relax_time", icon=None, fn=user_functions.relax_fit.relax_time)
+        self.add_uf(parent_id=id, name="relax_fit.select_model", text="&select_model", icon=None, fn=user_functions.relax_fit.select_model)
+
+        id = self.add_class(name="residue", text="resid&ue", icon=paths.icon_16x16.residue)
+        self.add_uf(parent_id=id, name="residue.copy", text="&copy", icon=paths.icon_16x16.copy, fn=user_functions.residue.copy)
+        self.add_uf(parent_id=id, name="residue.create", text="crea&te", icon=paths.icon_16x16.add, fn=user_functions.residue.create)
+        self.add_uf(parent_id=id, name="residue.delete", text="&delete", icon=paths.icon_16x16.remove, fn=user_functions.residue.delete)
+
+        id = self.add_class(name="results", text="&results", icon=paths.icon_16x16.about_relax)
+        self.add_uf(parent_id=id, name="results.display", text="&display", icon=None, fn=user_functions.results.display)
+        self.add_uf(parent_id=id, name="results.read", text="&read", icon=paths.icon_16x16.open, fn=user_functions.results.read)
+        self.add_uf(parent_id=id, name="results.write", text="&write", icon=paths.icon_16x16.save, fn=user_functions.results.write)
+
+        self.add_uf(parent_id=None, name="script", text="s&cript", icon=paths.icon_16x16.uf_script, fn=user_functions.script.run)
+
+        id = self.add_class(name="select", text="se&lect", icon=None)
+        self.add_uf(parent_id=id, name="select.all", text="&all", icon=None, fn=user_functions.select.all)
+        self.add_uf(parent_id=id, name="select.read", text="&read", icon=paths.icon_16x16.open, fn=user_functions.select.read)
+        self.add_uf(parent_id=id, name="select.reverse", text="re&verse", icon=None, fn=user_functions.select.reverse)
+        self.add_uf(parent_id=id, name="select.spin", text="&spin", icon=paths.icon_16x16.spin, fn=user_functions.select.spin)
+
+        id = self.add_class(name="sequence", text="se&quence", icon=paths.icon_16x16.sequence)
+        self.add_uf(parent_id=id, name="sequence.copy", text="&copy", icon=paths.icon_16x16.copy, fn=user_functions.sequence.copy)
+        self.add_uf(parent_id=id, name="sequence.read", text="&read", icon=paths.icon_16x16.open, fn=user_functions.sequence.read)
+        self.add_uf(parent_id=id, name="sequence.write", text="&write", icon=paths.icon_16x16.save, fn=user_functions.sequence.write)
+
+        id = self.add_class(name="spectrum", text="s&pectrum", icon=None)
+        self.add_uf(parent_id=id, name="spectrum.baseplane_rmsd", text="&baseplane_rmsd", icon=None, fn=user_functions.spectrum.baseplane_rmsd)
+        self.add_uf(parent_id=id, name="spectrum.delete", text="&delete", icon=paths.icon_16x16.remove, fn=user_functions.spectrum.delete)
+        self.add_uf(parent_id=id, name="spectrum.error_analysis", text="&error_analysis", icon=None, fn=user_functions.spectrum.error_analysis)
+        self.add_uf(parent_id=id, name="spectrum.integration_points", text="&integration_points", icon=None, fn=user_functions.spectrum.integration_points)
+        self.add_uf(parent_id=id, name="spectrum.read_intensities", text="&read_intensities", icon=paths.icon_16x16.open, fn=user_functions.spectrum.read_intensities)
+        self.add_uf(parent_id=id, name="spectrum.replicated", text="&replicated", icon=None, fn=user_functions.spectrum.replicated)
+
+        id = self.add_class(name="spin", text="&spin", icon=paths.icon_16x16.spin)
+        self.add_uf(parent_id=id, name="spin.copy", text="&copy", icon=paths.icon_16x16.copy, fn=user_functions.spin.copy)
+        self.add_uf(parent_id=id, name="spin.create", text="crea&te", icon=paths.icon_16x16.add, fn=user_functions.spin.create)
+        self.add_uf(parent_id=id, name="spin.create_pseudo", text="create_&pseudo", icon=paths.icon_16x16.add, fn=user_functions.spin.create_pseudo)
+        self.add_uf(parent_id=id, name="spin.delete", text="&delete", icon=paths.icon_16x16.remove, fn=user_functions.spin.delete)
+        self.add_uf(parent_id=id, name="spin.display", text="displa&y", icon=None, fn=user_functions.spin.display)
+        self.add_uf(parent_id=id, name="spin.element", text="&element", icon=None, fn=user_functions.spin.element)
+        self.add_uf(parent_id=id, name="spin.name", text="&name", icon=None, fn=user_functions.spin.name)
+        self.add_uf(parent_id=id, name="spin.number", text="num&ber", icon=None, fn=user_functions.spin.number)
+
+        id = self.add_class(name="structure", text="s&tructure", icon=paths.icon_16x16.structure)
+        self.add_uf(parent_id=id, name="structure.create_diff_tensor_pdb", text="&create_diff_tensor_pdb", icon=None, fn=user_functions.structure.create_diff_tensor_pdb)
+        self.add_uf(parent_id=id, name="structure.create_vector_dist", text="&create_vector_dist", icon=None, fn=user_functions.structure.create_vector_dist)
+        self.add_uf(parent_id=id, name="structure.delete", text="&delete", icon=paths.icon_16x16.remove, fn=user_functions.structure.delete)
+        self.add_uf(parent_id=id, name="structure.get_pos", text="&get_pos", icon=None, fn=user_functions.structure.get_pos)
+        self.add_uf(parent_id=id, name="structure.load_spins", text="&load_spins", icon=paths.icon_16x16.spin, fn=user_functions.structure.load_spins)
+        self.add_uf(parent_id=id, name="structure.read_pdb", text="&read_pdb", icon=paths.icon_16x16.open, fn=user_functions.structure.read_pdb)
+        self.add_uf(parent_id=id, name="structure.vectors", text="&vectors", icon=None, fn=user_functions.structure.vectors)
+        self.add_uf(parent_id=id, name="structure.write_pdb", text="&write_pdb", icon=paths.icon_16x16.save, fn=user_functions.structure.write_pdb)
+
+        self.add_uf(parent_id=None, name="sys_info", text="sys_&info", icon=paths.icon_16x16.help_about, fn=user_functions.sys_info.sys_info)
+
+        id = self.add_class(name="value", text="&value", icon=paths.icon_16x16.value)
+        self.add_uf(parent_id=id, name="value.set", text="&set", icon=paths.icon_16x16.add, fn=user_functions.value.set)
+
+
+    def add_class(self, name=None, text=None, icon=None):
+        """Add the user function.
+
+        @keyword name:      The name of the user function, such as 'residue.delete'.
+        @type name:         str
+        @keyword text:      The menu text string.
+        @type text:         str
+        @keyword icon:      The path to the icon image file for the menu entry.
+        @type icon:         str or None
+        @return:            The menu ID number.
+        @rtype:             long
+        """
+
+        # Generate a unique ID.
+        id = wx.NewId()
+
+        # Build the menu entry.
+        menu_item = build_menu_item(self.menu, id=id, text=text, icon=icon)
+
+        # The sub-menu.
+        sub_menu = wx.Menu()
+        menu_item.SetSubMenu(sub_menu)
+
+        # Append to the main menu item.
+        self.menu.AppendItem(menu_item)
+
+        # Return the ID.
+        return id
+
+
+    def add_uf(self, parent_id=None, name=None, text=None, icon=None, fn=None):
+        """Add the user function.
+
+        @keyword parent_id: The unique ID number of the parent menu entry.
+        @type parent_id:    long
+        @keyword name:      The name of the user function, such as 'residue.delete'.
+        @type name:         str
+        @keyword text:      The menu text string.
+        @type text:         str
+        @keyword icon:      The path to the icon image file for the menu entry.
+        @type icon:         str or None
+        @keyword fn:        The user function to execute.
+        @type fn:           func
+        @return:            The menu ID number.
+        @rtype:             long
+        """
+
+        # Generate a unique ID.
+        id = wx.NewId()
+
+        # Store the data.
+        self.uf_names[id] = name
+        self.uf[id] = fn
+
+        # Build the menu entry.
+        if parent_id != None:
+            sub_menu = self.menu.FindItemById(parent_id).GetSubMenu()
+            item = build_menu_item(sub_menu, id=id, text=text, icon=icon)
+            sub_menu.AppendItem(item)
+
+        # No parent menu.
+        else:
+            item = build_menu_item(self.menu, id=id, text=text, icon=icon)
+            self.menu.AppendItem(item)
+
+        # Menu actions.
+        self.parent.Bind(wx.EVT_MENU, self.call, id=id)
+
+        # Return the ID.
+        return id
+
+
+    def call(self, event):
+        """Execute the given user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Get the ID.
+        id = event.GetId()
+
+        # Call the user function.
+        apply(self.uf[id])

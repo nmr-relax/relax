@@ -951,12 +951,16 @@ class DummyFileObject:
         # Split up the string.
         lines = split(self.data, '\n')
 
+        # Remove the last line if empty.
+        if lines[-1] == '':
+            lines.pop()
+
         # Loop over the lines, re-adding the newline character to match the file object readlines() method.
         for i in xrange(len(lines)):
             lines[i] = lines[i] + '\n'
 
-        # Return the file lines (except the last as it is empty).
-        return lines[:-1]
+        # Return the file lines.
+        return lines
 
 
 
