@@ -412,14 +412,16 @@ class N_state_model(SystemTestCase):
             print(spin)
 
             # Check for simulation data.
-            self.assert_(hasattr(spin, 'rdc_sim'))
+            if spin.name == 'N':
+                self.assert_(hasattr(spin, 'rdc_sim'))
+                self.assert_(spin.rdc_sim.has_key(key))
             self.assert_(hasattr(spin, 'pcs_sim'))
-            self.assert_(spin.rdc_sim.has_key(key))
             self.assert_(spin.pcs_sim.has_key(key))
 
             # Check the values of the simulated data.
             for i in range(cdp.sim_number):
-                self.assertAlmostEqual(spin.rdc[key], spin.rdc_sim[key][i])
+                if spin.name == 'N':
+                    self.assertAlmostEqual(spin.rdc[key], spin.rdc_sim[key][i], 5)
                 self.assertAlmostEqual(spin.pcs[key], spin.pcs_sim[key][i])
 
         # Test the optimised simluation values.
