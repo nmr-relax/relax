@@ -1694,7 +1694,7 @@ class N_state_model(API_base, API_common):
 
 
     def create_mc_data(self, data_id=None):
-        """Create the Monte Carlo Ri data by back-calculation.
+        """Create the Monte Carlo data by back-calculation.
 
         @keyword data_id:   The list of spin ID, data type, and alignment ID, as yielded by the base_data_loop() generator method.
         @type data_id:      str
@@ -1715,7 +1715,7 @@ class N_state_model(API_base, API_common):
                 self.calculate()
 
             # The data.
-            if not hasattr(spin, 'rdc_bc') or spin.rdc_bc.has_key(data_id[2]):
+            if not hasattr(spin, 'rdc_bc') or not spin.rdc_bc.has_key(data_id[2]):
                 data = None
             else:
                 data = spin.rdc_bc[data_id[2]]
@@ -1730,7 +1730,7 @@ class N_state_model(API_base, API_common):
                 self.calculate()
 
             # The data.
-            if not hasattr(spin, 'pcs_bc') or spin.pcs_bc.has_key(data_id[2]):
+            if not hasattr(spin, 'pcs_bc') or not spin.pcs_bc.has_key(data_id[2]):
                 data = None
             else:
                 data = spin.pcs_bc[data_id[2]]
