@@ -126,7 +126,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
         spin_names = []
 
         # Loop over the spins.
-        for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+        for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, selection=spin_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -159,7 +159,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
             if data_list or isinstance(x_val, list):
                 # Append a new set structure and set the name to the spin ID.
                 data[0].append([])
-                set_labels.append("Spin %s" % spin_id)
+                set_labels.append("Spin %s" % id)
 
                 # The set index.
                 index = len(data[0]) - 1
@@ -177,7 +177,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
             if data_dict or isinstance(x_val, dict):
                 # Append a new set structure and set the name to the spin ID.
                 data[0].append([])
-                set_labels.append("Spin %s" % spin_id)
+                set_labels.append("Spin %s" % id)
 
                 # The set index.
                 index = len(data[0]) - 1
