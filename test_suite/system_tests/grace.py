@@ -84,9 +84,9 @@ class Grace(SystemTestCase):
             row = split(lines[i])
 
             # Store the data.
-            spin.append(row[0])
-            value.append(row[1])
-            error.append(row[2])
+            spin.append(float(row[0]))
+            value.append(float(row[1]))
+            error.append(float(row[2]))
 
         # The real data.
         real_data = [
@@ -106,6 +106,6 @@ class Grace(SystemTestCase):
 
         # Check the data.
         for i in range(len(real_data)):
-            self.assertEqual(real_data[i][0], spin[i])
-            self.assertEqual(real_data[i][1], value[i])
-            self.assertEqual(real_data[i][2], error[i])
+            self.assertEqual(float(real_data[i][0]), spin[i])
+            self.assertAlmostEqual(real_data[i][1], value[i])
+            self.assertAlmostEqual(real_data[i][2], error[i])
