@@ -1524,6 +1524,7 @@ class N_state_model(API_base, API_common):
             rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Get the fixed tensors.
+        fixed_tensors = None
         if 'rdc' in data_types or 'pcs' in data_types:
             full_tensors = self._minimise_setup_fixed_tensors(sim_index=sim_index)
 
