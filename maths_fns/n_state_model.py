@@ -215,9 +215,9 @@ class N_state_opt:
             # Set the RDC and PCS flags (indicating the presence of data).
             self.rdc_flag = True
             self.pcs_flag = True
-            if rdcs == None:
+            if rdcs == None or len(rdcs) == 0:
                 self.rdc_flag = False
-            if pcs == None:
+            if pcs == None or len(pcs) == 0:
                 self.pcs_flag = False
 
             # Some checks.
