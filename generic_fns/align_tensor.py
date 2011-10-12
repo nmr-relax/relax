@@ -76,7 +76,7 @@ def all_tensors_fixed():
     # Loop over the tensors.
     for i in range(len(cdp.align_tensors)):
         # Not fixed, so return False.
-        if not cdp.align_tensors[i].fixed
+        if not cdp.align_tensors[i].fixed:
             return False
 
     # All tensors are fixed.
