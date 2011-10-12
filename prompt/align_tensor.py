@@ -178,7 +178,7 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(id, 'tensor ID', can_be_none=True))
+        arg_check.is_str(id, 'tensor ID', can_be_none=True)
         arg_check.is_bool(fixed, 'fixed')
 
         # Execute the functional code.
