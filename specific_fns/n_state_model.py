@@ -760,7 +760,7 @@ class N_state_model(API_base, API_common):
 
         # Loop over each alignment.
         align_index = 0
-        for i in xrange(len(cdp.align_tensors)):
+        for i in xrange(len(cdp.align_ids)):
             # Fixed tensor.
             if cdp.align_tensors[i].fixed:
                 continue
@@ -804,6 +804,9 @@ class N_state_model(API_base, API_common):
                 # Increment the spin index if it contains data.
                 if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
                     data_index = data_index + 1
+
+            # Increment the alignment index.
+            align_index += 1
 
 
     def _minimise_setup_atomic_pos(self):
