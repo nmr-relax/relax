@@ -290,13 +290,13 @@ def q_factors(spin_id=None):
             spin_count += 1
 
             # Data checks.
-            if hasattr(spin, 'rdc'):
+            if hasattr(spin, 'rdc') and spin.rdc.has_key(align_id):
                 rdc_data = True
-            if hasattr(spin, 'rdc_bc'):
+            if hasattr(spin, 'rdc_bc') and spin.rdc_bc.has_key(align_id):
                 rdc_bc_data = True
 
             # Skip spins without RDC data.
-            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or align_id not in spin.rdc.keys() or spin.rdc[align_id] == None:
+            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or not spin.rdc.has_key(align_id) or spin.rdc[align_id] == None or not spin.rdc_bc.has_key(align_id) or spin.rdc_bc[align_id] == None:
                 continue
 
             # Sum of squares.

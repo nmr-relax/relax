@@ -360,13 +360,13 @@ def q_factors(spin_id=None):
             spin_count += 1
 
             # Data checks.
-            if hasattr(spin, 'pcs'):
+            if hasattr(spin, 'pcs') and spin.pcs.has_key(align_id):
                 pcs_data = True
-            if hasattr(spin, 'pcs_bc'):
+            if hasattr(spin, 'pcs_bc') and spin.pcs_bc.has_key(align_id):
                 pcs_bc_data = True
 
             # Skip spins without PCS data.
-            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or align_id not in spin.pcs.keys() or spin.pcs[align_id] == None:
+            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or not spin.pcs.has_key(align_id) or spin.pcs[align_id] == None or not spin.pcs_bc.has_key(align_id) or spin.pcs_bc[align_id] == None:
                 continue
 
             # Sum of squares.
