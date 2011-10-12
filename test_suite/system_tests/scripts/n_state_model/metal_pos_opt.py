@@ -74,8 +74,16 @@ for i in xrange(len(align_list)):
 paramag.centre(fix=False)
 minimise('simplex', constraints=False)
 
+# Optimise each tensor again, one by one.
+paramag.centre(fix=True)
+for i in xrange(len(align_list)):
+    align_tensor.fix(id=align_list[i], fixed=False)
+    minimise('newton', constraints=False)
+    align_tensor.fix(id=align_list[i], fixed=True)
+
 # Optimise everything.
 align_tensor.fix(fixed=False)
+paramag.centre(fix=False)
 minimise('simplex', constraints=False)
 
 # Monte Carlo simulations.
