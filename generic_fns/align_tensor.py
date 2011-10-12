@@ -66,6 +66,23 @@ def align_data_exists(tensor, pipe=None):
         return False
 
 
+def all_fixed():
+    """Determine if all alignment tensors are fixed.
+
+    @return:    True if all tensors are fixed, False otherwise.
+    @rtype:     bool
+    """
+
+    # Loop over the tensors.
+    for i in range(len(cdp.align_tensors)):
+        # Not fixed, so return False.
+        if not cdp.align_tensors[i].fixed
+            return False
+
+    # All tensors are fixed.
+    return True
+
+
 def calc_chi_tensor(A, B0, T):
     """Convert the alignment tensor into the magnetic susceptibility (chi) tensor.
 
