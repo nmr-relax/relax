@@ -759,7 +759,6 @@ class N_state_model(API_base, API_common):
             return
 
         # Loop over each alignment.
-        align_index = 0
         for i in xrange(len(cdp.align_ids)):
             # Fixed tensor.
             if cdp.align_tensors[i].fixed:
@@ -790,7 +789,7 @@ class N_state_model(API_base, API_common):
                         spin.pcs_bc = {}
 
                     # Add the back calculated PCS (in ppm).
-                    spin.pcs_bc[align_id] = model.deltaij_theta[align_index, data_index] * 1e6
+                    spin.pcs_bc[align_id] = model.deltaij_theta[i, data_index] * 1e6
 
                 # Spins with RDC data.
                 if rdc_flag and hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
@@ -799,14 +798,11 @@ class N_state_model(API_base, API_common):
                         spin.rdc_bc = {}
 
                     # Append the back calculated PCS.
-                    spin.rdc_bc[align_id] = model.Dij_theta[align_index, data_index]
+                    spin.rdc_bc[align_id] = model.Dij_theta[i, data_index]
 
                 # Increment the spin index if it contains data.
                 if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
                     data_index = data_index + 1
-
-            # Increment the alignment index.
-            align_index += 1
 
 
     def _minimise_setup_atomic_pos(self):
@@ -2144,6 +2140,9 @@ class N_state_model(API_base, API_common):
         # Catch chi-squared values of NaN.
         if isNaN(func):
             raise RelaxNaNError('chi-squared')
+
+        # Make a last function call to update the back-calculated RDC and PCS structures to the optimal values.
+        chi2 = model.func(param_vector)
 
         # Scaling.
         if scaling:
