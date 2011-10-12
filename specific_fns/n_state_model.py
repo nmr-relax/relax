@@ -38,7 +38,7 @@ from api_common import API_common
 import arg_check
 from float import isNaN, isInf
 import generic_fns
-from generic_fns.align_tensor import all_tensors_fixed
+from generic_fns.align_tensor import all_tensors_fixed, get_tensor_object
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pcs, pipes, rdc
 from generic_fns.structure.cones import Iso_cone
@@ -867,6 +867,10 @@ class N_state_model(API_base, API_common):
 
         # The PCS data.
         for align_id in cdp.align_ids:
+            # Skip deselected tensors.
+            if get_tensor_object(align_id).fixed:
+                continue
+
             # Append empty arrays to the PCS structures.
             pcs.append([])
             pcs_err.append([])
@@ -1060,6 +1064,10 @@ class N_state_model(API_base, API_common):
 
         # The RDC data.
         for align_id in cdp.align_ids:
+            # Skip deselected tensors.
+            if get_tensor_object(align_id).fixed:
+                continue
+
             # Append empty arrays to the RDC structures.
             rdc.append([])
             rdc_err.append([])
