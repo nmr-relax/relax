@@ -38,6 +38,7 @@ from api_common import API_common
 import arg_check
 from float import isNaN, isInf
 import generic_fns
+from generic_fns.align_tensor import all_tensors_fixed
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pcs, pipes, rdc
 from generic_fns.structure.cones import Iso_cone
@@ -89,11 +90,15 @@ class N_state_model(API_base, API_common):
         param_vector = []
 
         # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector (unless the tensors are fixed).
-        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
+        if ('rdc' in data_types or 'pcs' in data_types) and not all_tensors_fixed():
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
                 if cdp.align_tensors[i].name not in cdp.align_ids:
+                    continue
+
+                # Fixed tensor.
+                if cdp.align_tensors[i].fixed:
                     continue
 
                 # Add the parameters.
@@ -176,12 +181,23 @@ class N_state_model(API_base, API_common):
 
         # Starting point of the populations.
         pop_start = 0
-        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
-            pop_start = pop_start + 5*len(cdp.align_ids)
+        if ('rdc' in data_types or 'pcs' in data_types) and not all_tensors_fixed():
+            # Loop over the alignments.
+            tensor_num = 0
+            for i in range(len(cdp.align_tensors)):
+                # Fixed tensor.
+                if cdp.align_tensors[i].fixed:
+                    continue
 
-            # The alignment parameters.
-            for i in range(5*len(cdp.align_ids)):
-                scaling_matrix[i, i] = 1.0
+                # Add the 5 alignment parameters.
+                pop_start = pop_start + 5
+
+                # The alignment parameters.
+                for j in range(5):
+                    scaling_matrix[5*tensor_num + j, 5*tensor_num + j] = 1.0
+
+                # Increase the tensor number.
+                tensor_num += 1
 
         # Loop over the populations, and set the scaling factor.
         if cdp.model in ['2-domain', 'population']:
@@ -476,31 +492,39 @@ class N_state_model(API_base, API_common):
             raise RelaxNoModelError
 
         # Unpack and strip off the alignment tensor parameters.
-        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
+        if ('rdc' in data_types or 'pcs' in data_types) and not all_tensors_fixed():
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
+            tensor_num = 0
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
                 if cdp.align_tensors[i].name not in cdp.align_ids:
                     continue
 
+                # Fixed tensor.
+                if cdp.align_tensors[i].fixed:
+                    continue
+
                 # Normal tensors.
                 if sim_index == None:
-                    cdp.align_tensors[i].Axx = param_vector[5*i]
-                    cdp.align_tensors[i].Ayy = param_vector[5*i+1]
-                    cdp.align_tensors[i].Axy = param_vector[5*i+2]
-                    cdp.align_tensors[i].Axz = param_vector[5*i+3]
-                    cdp.align_tensors[i].Ayz = param_vector[5*i+4]
+                    cdp.align_tensors[i].Axx = param_vector[5*tensor_num]
+                    cdp.align_tensors[i].Ayy = param_vector[5*tensor_num+1]
+                    cdp.align_tensors[i].Axy = param_vector[5*tensor_num+2]
+                    cdp.align_tensors[i].Axz = param_vector[5*tensor_num+3]
+                    cdp.align_tensors[i].Ayz = param_vector[5*tensor_num+4]
 
                 # Monte Carlo simulated tensors.
                 else:
-                    cdp.align_tensors[i].Axx_sim[sim_index] = param_vector[5*i]
-                    cdp.align_tensors[i].Ayy_sim[sim_index] = param_vector[5*i+1]
-                    cdp.align_tensors[i].Axy_sim[sim_index] = param_vector[5*i+2]
-                    cdp.align_tensors[i].Axz_sim[sim_index] = param_vector[5*i+3]
-                    cdp.align_tensors[i].Ayz_sim[sim_index] = param_vector[5*i+4]
+                    cdp.align_tensors[i].Axx_sim[sim_index] = param_vector[5*tensor_num]
+                    cdp.align_tensors[i].Ayy_sim[sim_index] = param_vector[5*tensor_num+1]
+                    cdp.align_tensors[i].Axy_sim[sim_index] = param_vector[5*tensor_num+2]
+                    cdp.align_tensors[i].Axz_sim[sim_index] = param_vector[5*tensor_num+3]
+                    cdp.align_tensors[i].Ayz_sim[sim_index] = param_vector[5*tensor_num+4]
+
+                # Increase the tensor number.
+                tensor_num += 1
 
             # Create a new parameter vector without the tensors.
-            param_vector = param_vector[5*len(cdp.align_ids):]
+            param_vector = param_vector[5*tensor_num:]
 
         # Monte Carlo simulation data structures.
         if sim_index != None:
@@ -673,8 +697,15 @@ class N_state_model(API_base, API_common):
 
         # Starting point of the populations.
         pop_start = 0
-        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
-            pop_start = pop_start + 5*len(cdp.align_ids)
+        if ('rdc' in data_types or 'pcs' in data_types) and not all_tensors_fixed():
+            # Loop over the alignments.
+            for i in range(len(cdp.align_tensors)):
+                # Fixed tensor.
+                if cdp.align_tensors[i].fixed:
+                    continue
+
+                # Add 5 parameters.
+                pop_start += 5
 
         # Initialisation (0..j..m).
         A = []
@@ -1316,15 +1347,19 @@ class N_state_model(API_base, API_common):
         num = 0
 
         # Alignment tensor params.
-        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
+        if ('rdc' in data_types or 'pcs' in data_types) and not all_tensors_fixed():
             # Loop over the alignments.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it is not part of the parameter set.
                 if cdp.align_tensors[i].name not in cdp.align_ids:
                     continue
 
+                # Fixed tensor.
+                if cdp.align_tensors[i].fixed:
+                    continue
+
                 # Add 5 tensor parameters.
-                num = num + 5
+                num += 5
 
         # Populations.
         if cdp.model in ['2-domain', 'population']:
@@ -1462,7 +1497,7 @@ class N_state_model(API_base, API_common):
             rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Get the fixed tensors.
-        if ('rdc' in data_types or 'pcs' in data_types) and (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
+        if ('rdc' in data_types or 'pcs' in data_types) and all_tensors_fixed():
             full_tensors = self._minimise_setup_fixed_tensors(sim_index=sim_index)
 
         # Get the atomic_positions.
