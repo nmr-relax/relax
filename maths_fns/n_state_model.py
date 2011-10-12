@@ -626,6 +626,7 @@ class N_state_opt:
             self.paramag_info()
 
         # Loop over each alignment.
+        index = 0
         for i in xrange(self.num_align):
             # Create tensor i from the parameters.
             if self.fixed_tensors[i]:
@@ -645,6 +646,10 @@ class N_state_opt:
                     if not self.missing_deltaij[i, j]:
                         self.deltaij_theta[i, j] = ave_pcs_tensor(self.pcs_const[i, j], self.paramag_unit_vect[j], self.N, self.A[i], weights=self.probs)
 
+            # Skip the rest if the tensor is fixed.
+            if self.fixed_tensors[i]:
+                continue
+
             # Calculate and sum the single alignment chi-squared value (for the RDC).
             if self.rdc_flag:
                 chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.rdc_sigma_ij[i])
@@ -652,6 +657,9 @@ class N_state_opt:
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             if self.pcs_flag:
                 chi2_sum = chi2_sum + chi2(self.deltaij[i], self.deltaij_theta[i], self.pcs_sigma_ij[i])
+
+            # Increment the index.
+            index += 1
 
         # Return the chi-squared value.
         return chi2_sum
@@ -1041,7 +1049,12 @@ class N_state_opt:
         self.dchi2 = self.dchi2 * 0.0
 
         # Loop over each alignment.
+        index = 0
         for i in xrange(self.num_align):
+            # Fixed tensor, so skip.
+            if self.fixed_tensors[i]:
+                continue
+
             # Construct the Amn partial derivative components.
             for j in xrange(self.num_spins):
                 # RDC.
@@ -1084,6 +1097,9 @@ class N_state_opt:
                 # PCS part of the chi-squared gradient.
                 if self.pcs_flag:
                     self.dchi2[k] = self.dchi2[k] + dchi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[k, i], self.pcs_sigma_ij[i])
+
+            # Increment the index.
+            index += 0
 
         # Diagonal scaling.
         if self.scaling_flag:
@@ -1425,7 +1441,12 @@ class N_state_opt:
         self.d2chi2 = self.d2chi2 * 0.0
 
         # Loop over each alignment.
+        index = 0
         for i in xrange(self.num_align):
+            # Fixed tensor, so skip.
+            if self.fixed_tensors[i]:
+                continue
+
             # Construct the pc-Amn second partial derivative Hessian components.
             for c in xrange(self.N - 1):
                 # Index in the parameter array.
@@ -1448,6 +1469,9 @@ class N_state_opt:
                         self.d2deltaij_theta[pc_index, i*5+2, i, j] = self.d2deltaij_theta[i*5+2, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.paramag_unit_vect[j, c], self.dA[2])
                         self.d2deltaij_theta[pc_index, i*5+3, i, j] = self.d2deltaij_theta[i*5+3, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.paramag_unit_vect[j, c], self.dA[3])
                         self.d2deltaij_theta[pc_index, i*5+4, i, j] = self.d2deltaij_theta[i*5+4, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.paramag_unit_vect[j, c], self.dA[4])
+
+            # Increment the index.
+            index += 0
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
@@ -1568,7 +1592,12 @@ class N_state_opt:
         self.d2chi2 = self.d2chi2 * 0.0
 
         # Loop over each alignment.
+        index = 0
         for i in xrange(self.num_align):
+            # Fixed tensor, so skip.
+            if self.fixed_tensors[i]:
+                continue
+
             # Construct the chi-squared Hessian element for parameters j and k, alignment i.
             for j in xrange(self.total_num_params):
                 for k in xrange(self.total_num_params):
@@ -1579,6 +1608,9 @@ class N_state_opt:
                     # PCS part of the chi-squared gradient.
                     if self.pcs_flag:
                         self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[j, i], self.ddeltaij_theta[k, i], self.zero_hessian, self.pcs_sigma_ij[i])
+
+            # Increment the index.
+            index += 0
 
         # Diagonal scaling.
         if self.scaling_flag:
