@@ -100,7 +100,7 @@ if cdp.chi2 > 1e-15:
 # Shift the metal.
 print("\nShifting the Ln3+ position.")
 print("Original position: [%.3f, %.3f, %.3f]" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
-cdp.paramagnetic_centre[0] = cdp.paramagnetic_centre[0] + 0.2
+cdp.paramagnetic_centre[0] = cdp.paramagnetic_centre[0] + 0.02
 print("Shifted position:  [%.3f, %.3f, %.3f]\n" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
 calc()
 if cdp.chi2 < 1e-15:
@@ -114,7 +114,7 @@ minimise('simplex', constraints=False, max_iter=500)
 # Check that the metal moved.
 print("\nOriginal position: [%.3f, %.3f, %.3f]" % (x, y, z))
 print("New position:      [%.3f, %.3f, %.3f]\n" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
-if "%.3f" % x == "%.3f" % cdp.paramagnetic_centre[0] or "%.3f" % y == "%.3f" % cdp.paramagnetic_centre[1] or "%.3f" % z == "%.3f" % cdp.paramagnetic_centre[2]:
+if "%.3f" % x == "%.3f" % cdp.paramagnetic_centre[0] and "%.3f" % y == "%.3f" % cdp.paramagnetic_centre[1] and "%.3f" % z == "%.3f" % cdp.paramagnetic_centre[2]:
     raise RelaxError("The metal position has not been optimised!")
 
 # Print out.
@@ -139,14 +139,14 @@ print "#######################\n\n\n"
 # Optimise everything.
 align_tensor.fix(fixed=False)
 paramag.centre(fix=False)
-minimise('simplex', constraints=False, max_iter=500)
+minimise('simplex', constraints=False, max_iter=50)
 
-# Monte Carlo simulations.
-monte_carlo.setup(3)
-monte_carlo.create_data()
-monte_carlo.initial_values()
-minimise('simplex', constraints=False, max_iter=500)
-monte_carlo.error_analysis()
+## Monte Carlo simulations.
+#monte_carlo.setup(3)
+#monte_carlo.create_data()
+#monte_carlo.initial_values()
+#minimise('simplex', constraints=False, max_iter=500)
+#monte_carlo.error_analysis()
 
 # Write out a results file.
 results.write('devnull', force=True)

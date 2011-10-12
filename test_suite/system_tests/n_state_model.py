@@ -367,9 +367,9 @@ class N_state_model(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'metal_pos_opt.py')
 
         # Check the metal position.
-        self.assertAlmostEqual(cdp.paramag_centre[0], -14.845)
-        self.assertAlmostEqual(cdp.paramag_centre[1], 0.969)
-        self.assertAlmostEqual(cdp.paramag_centre[2], 0.265)
+        self.assertAlmostEqual(cdp.paramagnetic_centre[0], -14.845)
+        self.assertAlmostEqual(cdp.paramagnetic_centre[1], 0.969)
+        self.assertAlmostEqual(cdp.paramagnetic_centre[2], 0.265)
 
         # The actual tensors.
         A_5D = []
