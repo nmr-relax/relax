@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -629,8 +629,8 @@ class N_state_opt:
         index = 0
         for i in xrange(self.num_align):
             # Create tensor i from the parameters.
-            if self.fixed_tensors[i]:
-                to_tensor(self.A[i], params[5*i:5*i + 5])
+            if not self.fixed_tensors[i]:
+                to_tensor(self.A[i], params[5*index:5*index + 5])
 
             # Loop over the spin systems j.
             for j in xrange(self.num_spins):
