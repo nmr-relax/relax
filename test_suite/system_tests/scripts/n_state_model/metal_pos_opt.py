@@ -11,6 +11,10 @@ from relax_errors import RelaxError
 from status import Status; status = Status()
 
 
+# Set up.
+NUM_STR = 3
+SIMS = False
+
 # Path of the alignment data and structure.
 DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep+'metal_pos_opt'
 STRUCT_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
@@ -19,7 +23,6 @@ STRUCT_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'stru
 pipe.create('Ln3+ opt', 'N-state')
 
 # Load the structures.
-NUM_STR = 3
 for i in range(1, NUM_STR+1):
     structure.read_pdb(file='lactose_MCMM4_S1_%i.pdb' % i, dir=STRUCT_PATH, set_model_num=i, set_mol_name='LE')
 
@@ -141,19 +144,19 @@ align_tensor.fix(fixed=False)
 paramag.centre(fix=False)
 minimise('simplex', constraints=False, max_iter=50)
 
-## Monte Carlo simulations.
-#monte_carlo.setup(3)
-#monte_carlo.create_data()
-#monte_carlo.initial_values()
-#minimise('simplex', constraints=False, max_iter=500)
-#monte_carlo.error_analysis()
+# Monte Carlo simulations.
+if SIMS:
+    monte_carlo.setup(3)
+    monte_carlo.create_data()
+    monte_carlo.initial_values()
+    minimise('simplex', constraints=False, max_iter=500)
+    monte_carlo.error_analysis()
 
 # Write out a results file.
 results.write('devnull', force=True)
 
-# Show the tensors.
-align_tensor.display()
-
 # Print the contents of the current data pipe (for debugging Q-values).
 print(cdp)
-print((cdp.align_tensors[0]))
+rdc.calc_q_factors()
+pcs.calc_q_factors()
+print(cdp)
