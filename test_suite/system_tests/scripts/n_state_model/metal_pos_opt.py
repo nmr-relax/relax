@@ -97,8 +97,17 @@ if cdp.chi2 > 1e-15:
     print "Chi2: %s" % cdp.chi2
     raise RelaxError("The chi2 value must be zero here!")
 
+# Shift the metal.
+print("\nShifting the Ln3+ position.")
+print("Original position: [%.3f, %.3f, %.3f]" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
+cdp.paramagnetic_centre[0] = cdp.paramagnetic_centre[0] + 0.2
+print("Shifted position:  [%.3f, %.3f, %.3f]\n" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
+calc()
+if cdp.chi2 < 1e-15:
+    print "Chi2: %s" % cdp.chi2
+    raise RelaxError("The chi2 value cannot be zero here!")
+
 # Optimise the Ln3+ position.
-cdp.paramagnetic_centre[0] += 0.002
 x, y, z = cdp.paramagnetic_centre
 minimise('simplex', constraints=False, max_iter=500)
 
