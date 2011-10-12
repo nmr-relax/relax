@@ -1099,7 +1099,7 @@ class N_state_opt:
                     self.dchi2[k] = self.dchi2[k] + dchi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[k, i], self.pcs_sigma_ij[i])
 
             # Increment the index.
-            index += 0
+            index += 1
 
         # Diagonal scaling.
         if self.scaling_flag:
@@ -1295,7 +1295,7 @@ class N_state_opt:
                     self.dchi2[k] = self.dchi2[k] + dchi2_element(self.deltaij[index], self.deltaij_theta[index], self.ddeltaij_theta[k, index], self.pcs_sigma_ij[index])
 
             # Increment the index.
-            index += 0
+            index += 1
 
         # Diagonal scaling.
         if self.scaling_flag:
@@ -1471,7 +1471,7 @@ class N_state_opt:
                         self.d2deltaij_theta[pc_index, i*5+4, i, j] = self.d2deltaij_theta[i*5+4, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.paramag_unit_vect[j, c], self.dA[4])
 
             # Increment the index.
-            index += 0
+            index += 1
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
@@ -1610,7 +1610,7 @@ class N_state_opt:
                         self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[j, i], self.ddeltaij_theta[k, i], self.zero_hessian, self.pcs_sigma_ij[i])
 
             # Increment the index.
-            index += 0
+            index += 1
 
         # Diagonal scaling.
         if self.scaling_flag:
