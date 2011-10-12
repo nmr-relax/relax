@@ -42,7 +42,7 @@ value.set('13C', 'heteronucleus', spin_id="@C*")
 value.set('1H', 'proton', spin_id="@C*")
 
 # Set the paramagnetic centre.
-paramag.centre([ -14.843,    0.967,    0.269])
+paramag.centre([ -14.845,    0.969,    0.265])
 
 # File list.
 align_list = ['Dy', 'Tb', 'Tm', 'Er']
@@ -69,6 +69,14 @@ for i in xrange(len(align_list)):
 
     # Set up the model.
     n_state_model.select_model('fixed')
+
+    # Calculate.
+    calc()
+
+    # Check that the chi2 is zero!
+    if cdp.chi2 != 0.0:
+        print "Chi2: %s" % cdp.chi2
+        raise RelaxError("The chi2 value must be zero here!")
 
     # Minimisation.
     minimise('newton', constraints=False, max_iter=500)
