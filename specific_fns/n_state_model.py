@@ -754,6 +754,10 @@ class N_state_model(API_base, API_common):
         @type model:    class instance
         """
 
+        # No alignment tensors, so nothing to do.
+        if not hasattr(cdp, 'align_tensors'):
+            return
+
         # Loop over each alignment.
         align_index = 0
         for i in xrange(len(cdp.align_tensors)):
