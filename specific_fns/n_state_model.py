@@ -879,10 +879,6 @@ class N_state_model(API_base, API_common):
 
         # The PCS data.
         for align_id in cdp.align_ids:
-            # Skip deselected tensors.
-            if get_tensor_object(align_id).fixed:
-                continue
-
             # Append empty arrays to the PCS structures.
             pcs.append([])
             pcs_err.append([])
@@ -1076,10 +1072,6 @@ class N_state_model(API_base, API_common):
 
         # The RDC data.
         for align_id in cdp.align_ids:
-            # Skip deselected tensors.
-            if get_tensor_object(align_id).fixed:
-                continue
-
             # Append empty arrays to the RDC structures.
             rdc.append([])
             rdc_err.append([])
@@ -1237,26 +1229,41 @@ class N_state_model(API_base, API_common):
         """
 
         # Initialise.
-        n = len(cdp.align_tensors)
+        n = 0
+        for i in range(len(cdp.align_tensors)):
+            if cdp.align_tensors[i].fixed:
+                n += 1
         tensors = zeros(n*5, float64)
 
+        # Nothing to do.
+        if n == 0:
+            return None
+
         # Loop over the tensors.
-        for i in range(n):
+        index = 0
+        for i in range(len(cdp.align_tensors)):
+            # Skip unfixed tensors.
+            if not cdp.align_tensors[i].fixed:
+                continue
+
             # The simulation data.
             if sim_index != None:
-                tensors[5*i + 0] = cdp.align_tensors[i].Axx_sim[sim_index]
-                tensors[5*i + 1] = cdp.align_tensors[i].Ayy_sim[sim_index]
-                tensors[5*i + 2] = cdp.align_tensors[i].Axy_sim[sim_index]
-                tensors[5*i + 3] = cdp.align_tensors[i].Axz_sim[sim_index]
-                tensors[5*i + 4] = cdp.align_tensors[i].Ayz_sim[sim_index]
+                tensors[5*index + 0] = cdp.align_tensors[i].Axx_sim[sim_index]
+                tensors[5*index + 1] = cdp.align_tensors[i].Ayy_sim[sim_index]
+                tensors[5*index + 2] = cdp.align_tensors[i].Axy_sim[sim_index]
+                tensors[5*index + 3] = cdp.align_tensors[i].Axz_sim[sim_index]
+                tensors[5*index + 4] = cdp.align_tensors[i].Ayz_sim[sim_index]
 
             # The real tensors.
             else:
-                tensors[5*i + 0] = cdp.align_tensors[i].Axx
-                tensors[5*i + 1] = cdp.align_tensors[i].Ayy
-                tensors[5*i + 2] = cdp.align_tensors[i].Axy
-                tensors[5*i + 3] = cdp.align_tensors[i].Axz
-                tensors[5*i + 4] = cdp.align_tensors[i].Ayz
+                tensors[5*index + 0] = cdp.align_tensors[i].Axx
+                tensors[5*index + 1] = cdp.align_tensors[i].Ayy
+                tensors[5*index + 2] = cdp.align_tensors[i].Axy
+                tensors[5*index + 3] = cdp.align_tensors[i].Axz
+                tensors[5*index + 4] = cdp.align_tensors[i].Ayz
+
+            # Increment the index.
+            index += 1
 
         # Return the data structure.
         return tensors
@@ -1517,8 +1524,17 @@ class N_state_model(API_base, API_common):
             rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Get the fixed tensors.
-        if ('rdc' in data_types or 'pcs' in data_types) and all_tensors_fixed():
+        if 'rdc' in data_types or 'pcs' in data_types:
             full_tensors = self._minimise_setup_fixed_tensors(sim_index=sim_index)
+
+            # The flag list.
+            fixed_tensors = []
+            for i in range(len(cdp.align_tensors)):
+                if cdp.align_tensors[i].fixed:
+                    fixed_tensors.append(True)
+                else:
+                    fixed_tensors.append(False)
+
 
         # Get the atomic_positions.
         atomic_pos, paramag_centre, centre_fixed = None, None, True
@@ -1530,7 +1546,7 @@ class N_state_model(API_base, API_common):
                 centre_fixed = cdp.paramag_centre_fixed
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, xh_vect=xh_vect, temp=temp, frq=frq, dip_const=rdc_dj, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, xh_vect=xh_vect, temp=temp, frq=frq, dip_const=rdc_dj, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
