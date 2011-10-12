@@ -878,17 +878,27 @@ class N_state_model(API_base, API_common):
         frq = []
 
         # The PCS data.
-        for align_id in cdp.pcs_ids:
+        for align_id in cdp.align_ids:
+            # No RDC or PCS data, so jump to the next alignment.
+            if not align_id in cdp.rdc_ids and not align_id in cdp.pcs_ids:
+                continue
+
             # Append empty arrays to the PCS structures.
             pcs.append([])
             pcs_err.append([])
             pcs_weight.append([])
 
             # Get the temperature for the PCS constant.
-            temp.append(cdp.temperature[align_id])
+            if cdp.temperature.has_key(align_id):
+                temp.append(cdp.temperature[align_id])
+            else:
+                temp.append(0.0)
 
             # Get the spectrometer frequency in Tesla units for the PCS constant.
-            frq.append(cdp.frq[align_id] * 2.0 * pi / g1H)
+            if cdp.frq.has_key(align_id):
+                frq.append(cdp.frq[align_id] * 2.0 * pi / g1H)
+            else:
+                frq.append(1e-10)
 
             # Spin loop.
             j = 0
@@ -1071,7 +1081,11 @@ class N_state_model(API_base, API_common):
                 unit_vect[i] = [[None, None, None]]*num
 
         # The RDC data.
-        for align_id in cdp.rdc_ids:
+        for align_id in cdp.align_ids:
+            # No RDC or PCS data, so jump to the next alignment.
+            if not align_id in cdp.rdc_ids and not align_id in cdp.pcs_ids:
+                continue
+
             # Append empty arrays to the RDC structures.
             rdc.append([])
             rdc_err.append([])
