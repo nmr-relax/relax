@@ -254,10 +254,12 @@ class N_state_opt:
 
             # Set up the alignment data.
             self.num_align_params = 0
+            index = 0
             for i in range(self.num_align):
                 # Fill the alignment tensor object with the fixed tensors.
                 if fixed_tensors[i]:
-                    to_tensor(self.A[i], self.full_tensors[5*i:5*i+5])
+                    to_tensor(self.A[i], self.full_tensors[5*index:5*index+5])
+                    index += 1
 
                 # The number of alignment parameters.
                 if not fixed_tensors[i]:
