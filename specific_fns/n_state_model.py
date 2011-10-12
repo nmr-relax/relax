@@ -880,7 +880,7 @@ class N_state_model(API_base, API_common):
         # The PCS data.
         for align_id in cdp.align_ids:
             # No RDC or PCS data, so jump to the next alignment.
-            if not align_id in cdp.rdc_ids and not align_id in cdp.pcs_ids:
+            if (hasattr(cdp, 'rdc_ids') and not align_id in cdp.rdc_ids) and (hasattr(cdp, 'pcs_ids') and not align_id in cdp.pcs_ids):
                 continue
 
             # Append empty arrays to the PCS structures.
@@ -1083,7 +1083,7 @@ class N_state_model(API_base, API_common):
         # The RDC data.
         for align_id in cdp.align_ids:
             # No RDC or PCS data, so jump to the next alignment.
-            if not align_id in cdp.rdc_ids and not align_id in cdp.pcs_ids:
+            if (hasattr(cdp, 'rdc_ids') and not align_id in cdp.rdc_ids) and (hasattr(cdp, 'pcs_ids') and not align_id in cdp.pcs_ids):
                 continue
 
             # Append empty arrays to the RDC structures.
