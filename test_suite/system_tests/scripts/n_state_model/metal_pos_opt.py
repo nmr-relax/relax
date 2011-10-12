@@ -157,6 +157,3 @@ results.write('devnull', force=True)
 
 # Print the contents of the current data pipe (for debugging Q-values).
 print(cdp)
-rdc.calc_q_factors()
-pcs.calc_q_factors()
-print(cdp)
