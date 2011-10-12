@@ -90,9 +90,16 @@ print "##############################"
 print "# Ln3+ position optimisation #"
 print "##############################\n\n\n"
 
-# Optimise the Ln3+ position.
-x, y, z = cdp.paramagnetic_centre
+# Exact position check.
 paramag.centre(fix=False)
+calc()
+if cdp.chi2 > 1e-15:
+    print "Chi2: %s" % cdp.chi2
+    raise RelaxError("The chi2 value must be zero here!")
+
+# Optimise the Ln3+ position.
+cdp.paramagnetic_centre[0] += 0.002
+x, y, z = cdp.paramagnetic_centre
 minimise('simplex', constraints=False, max_iter=500)
 
 # Check that the metal moved.
