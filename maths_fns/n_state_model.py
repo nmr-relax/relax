@@ -633,7 +633,6 @@ class N_state_opt:
             # Create tensor i from the parameters.
             if not self.fixed_tensors[i]:
                 to_tensor(self.A[i], params[5*index:5*index + 5])
-                index += 1
 
             # Loop over the spin systems j.
             for j in xrange(self.num_spins):
@@ -649,6 +648,10 @@ class N_state_opt:
                     if not self.missing_deltaij[i, j]:
                         self.deltaij_theta[i, j] = ave_pcs_tensor(self.pcs_const[i, j], self.paramag_unit_vect[j], self.N, self.A[i], weights=self.probs)
 
+            # Skip the rest if the tensor is fixed.
+            if self.fixed_tensors[i]:
+                continue
+
             # Calculate and sum the single alignment chi-squared value (for the RDC).
             if self.rdc_flag:
                 chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.rdc_sigma_ij[i])
@@ -656,6 +659,9 @@ class N_state_opt:
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             if self.pcs_flag:
                 chi2_sum = chi2_sum + chi2(self.deltaij[i], self.deltaij_theta[i], self.pcs_sigma_ij[i])
+
+            # Increment the index.
+            index += 1
 
         # Return the chi-squared value.
         return chi2_sum
@@ -828,7 +834,6 @@ class N_state_opt:
             # Create tensor i from the parameters.
             if not self.fixed_tensors[i]:
                 to_tensor(self.A[i], params[5*index:5*index + 5])
-                index += 1
 
             # Loop over the spin systems j.
             for j in xrange(self.num_spins):
@@ -844,6 +849,10 @@ class N_state_opt:
                     if not self.missing_deltaij[i, j]:
                         self.deltaij_theta[i, j] = ave_pcs_tensor(self.pcs_const[i, j], self.paramag_unit_vect[j], self.N, self.A[i], weights=self.probs)
 
+            # Skip the rest if the tensor is fixed.
+            if self.fixed_tensors[i]:
+                continue
+
             # Calculate and sum the single alignment chi-squared value (for the RDC).
             if self.rdc_flag:
                 chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.rdc_sigma_ij[i])
@@ -851,6 +860,9 @@ class N_state_opt:
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             if self.pcs_flag:
                 chi2_sum = chi2_sum + chi2(self.deltaij[i], self.deltaij_theta[i], self.pcs_sigma_ij[i])
+
+            # Increment the index.
+            index += 1
 
         # Return the chi-squared value.
         return chi2_sum
