@@ -878,7 +878,7 @@ class N_state_model(API_base, API_common):
         frq = []
 
         # The PCS data.
-        for align_id in cdp.align_ids:
+        for align_id in cdp.pcs_ids:
             # Append empty arrays to the PCS structures.
             pcs.append([])
             pcs_err.append([])
@@ -1071,7 +1071,7 @@ class N_state_model(API_base, API_common):
                 unit_vect[i] = [[None, None, None]]*num
 
         # The RDC data.
-        for align_id in cdp.align_ids:
+        for align_id in cdp.rdc_ids:
             # Append empty arrays to the RDC structures.
             rdc.append([])
             rdc_err.append([])
