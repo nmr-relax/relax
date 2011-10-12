@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -448,18 +448,27 @@ def display(tensor):
         print("\n\n\n")
 
 
-def fix(fixed=True):
+def fix(id=None, fixed=True):
     """Fix the alignment tensor during optimisation.
 
-    @param fixed:   If True, the alignment tensor will be fixed during optimisation.  If False, the alignment tensors will be optimised.
+    @keyword id:    The alignment tensor ID string.  If set to None, then all alignment tensors will be fixed.
+    @type id:       str or None
+    @keyword fixed: If True, the alignment tensor will be fixed during optimisation.  If False, the alignment tensors will be optimised.
     @type fixed:    bool
     """
 
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Set the flag.
-    cdp.align_tensors.fixed = fixed
+    # Loop over the tensors.
+    for i in range(len(cdp.align_tensors)):
+        # ID match.
+        if id and cdp.align_tensors[i].name == id:
+            cdp.align_tensors[i].fixed = fixed
+
+        # Set all tensor flags.
+        if id == None:
+            cdp.align_tensors[i].fixed = fixed
 
 
 def fold_angles(sim_index=None):
