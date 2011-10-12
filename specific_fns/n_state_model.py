@@ -1535,7 +1535,6 @@ class N_state_model(API_base, API_common):
                 else:
                     fixed_tensors.append(False)
 
-
         # Get the atomic_positions.
         atomic_pos, paramag_centre, centre_fixed = None, None, True
         if 'pcs' in data_types or 'pre' in data_types:
