@@ -7,6 +7,7 @@ import sys
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from relax_errors import RelaxError
 from status import Status; status = Status()
 
 
@@ -70,9 +71,28 @@ for i in xrange(len(align_list)):
     # Fix the tensor.
     align_tensor.fix(id=align_list[i])
 
+# Print out.
+print "\n\n"
+print "##############################"
+print "# Ln3+ position optimisation #"
+print "##############################\n\n\n"
+
 # Optimise the Ln3+ position.
+x, y, z = cdp.paramagnetic_centre
 paramag.centre(fix=False)
 minimise('simplex', constraints=False)
+
+# Check that the metal moved.
+print("\nOriginal position: [%.3f, %.3f, %.3f]" % (x, y, z))
+print("New position:      [%.3f, %.3f, %.3f]\n" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
+if "%.3f" % x == "%.3f" % cdp.paramagnetic_centre[0] or "%.3f" % y == "%.3f" % cdp.paramagnetic_centre[1] or "%.3f" % z == "%.3f" % cdp.paramagnetic_centre[2]:
+    raise RelaxError("The metal position has not been optimised!")
+
+# Print out.
+print "\n\n"
+print "#######################"
+print "# Tensor optimisation #"
+print "#######################\n\n\n"
 
 # Optimise each tensor again, one by one.
 paramag.centre(fix=True)
@@ -80,6 +100,12 @@ for i in xrange(len(align_list)):
     align_tensor.fix(id=align_list[i], fixed=False)
     minimise('newton', constraints=False)
     align_tensor.fix(id=align_list[i], fixed=True)
+
+# Print out.
+print "\n\n"
+print "#######################"
+print "# Global optimisation #"
+print "#######################\n\n\n"
 
 # Optimise everything.
 align_tensor.fix(fixed=False)
