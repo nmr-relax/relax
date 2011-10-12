@@ -376,7 +376,10 @@ def q_factors(spin_id=None):
             pcs2_sum = pcs2_sum + spin.pcs[align_id]**2
 
         # The Q-factor for the alignment.
-        Q = sqrt(sse / pcs2_sum)
+        if pcs2_sum:
+            Q = sqrt(sse / pcs2_sum)
+        else:
+            Q = None
         cdp.q_factors_pcs.append(Q)
 
         # Warnings (and then exit).
