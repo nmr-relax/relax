@@ -755,7 +755,12 @@ class N_state_model(API_base, API_common):
         """
 
         # Loop over each alignment.
-        for i in xrange(model.num_align):
+        align_index = 0
+        for i in xrange(len(cdp.align_tensors)):
+            # Fixed tensor.
+            if cdp.align_tensors[i].fixed:
+                continue
+
             # The alignment ID.
             align_id = cdp.align_ids[i]
 
@@ -781,7 +786,7 @@ class N_state_model(API_base, API_common):
                         spin.pcs_bc = {}
 
                     # Add the back calculated PCS (in ppm).
-                    spin.pcs_bc[align_id] = model.deltaij_theta[i, data_index] * 1e6
+                    spin.pcs_bc[align_id] = model.deltaij_theta[align_index, data_index] * 1e6
 
                 # Spins with RDC data.
                 if rdc_flag and hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
@@ -790,7 +795,7 @@ class N_state_model(API_base, API_common):
                         spin.rdc_bc = {}
 
                     # Append the back calculated PCS.
-                    spin.rdc_bc[align_id] = model.Dij_theta[i, data_index]
+                    spin.rdc_bc[align_id] = model.Dij_theta[align_index, data_index]
 
                 # Increment the spin index if it contains data.
                 if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
