@@ -123,7 +123,7 @@ for i in range(len(A)):
             pcs_full += pcs
 
         # Average the PCS.
-        pcs_full = pcs / NUM_STR
+        pcs_full = pcs_full / NUM_STR
 
         # Output the pcs.
         out.write('%-10s %-10s %-10s %-10s %-10s %20s\n' % (mol_name, res_num, res_name, spin.num, spin.name, pcs_full))
@@ -188,7 +188,7 @@ for i in range(len(A)):
             rdc_full += rdc
 
         # Average the RDC.
-        rdc_full = rdc / NUM_STR
+        rdc_full = rdc_full / NUM_STR
 
         # Output the rdc.
         out.write('%-10s %-10s %-10s %-10s %-10s %20s\n' % (mol_name, res_num, res_name, spin.num, spin.name, rdc_full))
