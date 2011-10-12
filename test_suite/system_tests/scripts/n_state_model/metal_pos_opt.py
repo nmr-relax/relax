@@ -74,7 +74,7 @@ for i in xrange(len(align_list)):
     calc()
 
     # Check that the chi2 is zero!
-    if cdp.chi2 != 0.0:
+    if cdp.chi2 > 1e-15:
         print "Chi2: %s" % cdp.chi2
         raise RelaxError("The chi2 value must be zero here!")
 
