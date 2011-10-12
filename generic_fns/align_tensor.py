@@ -66,7 +66,7 @@ def align_data_exists(tensor, pipe=None):
         return False
 
 
-def all_fixed():
+def all_tensors_fixed():
     """Determine if all alignment tensors are fixed.
 
     @return:    True if all tensors are fixed, False otherwise.
