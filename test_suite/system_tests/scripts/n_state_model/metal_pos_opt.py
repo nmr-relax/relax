@@ -11,14 +11,15 @@ from status import Status; status = Status()
 
 
 # Path of the alignment data and structure.
-DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep+'population_model'
+DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep+'metal_pos_opt'
 STRUCT_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
 # Create the data pipe.
 pipe.create('Ln3+ opt', 'N-state')
 
 # Load the structures.
-for i in range(1, 4):
+NUM_STR = 3
+for i in range(1, NUM_STR+1):
     structure.read_pdb(file='lactose_MCMM4_S1_%i.pdb' % i, dir=STRUCT_PATH, set_model_num=i, set_mol_name='LE')
 
 # Load the spins.
