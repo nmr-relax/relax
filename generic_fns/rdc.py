@@ -265,9 +265,9 @@ def q_factors(spin_id=None):
         warn(RelaxWarning("No RDC data exists, Q factors cannot be calculated."))
         return
 
-    # Q-factor list.
-    cdp.q_factors_rdc = []
-    cdp.q_factors_rdc_norm2 = []
+    # Q-factor dictonaries.
+    cdp.q_factors_rdc = {}
+    cdp.q_factors_rdc_norm2 = {}
 
     # Loop over the alignments.
     for align_id in cdp.rdc_ids:
@@ -344,16 +344,16 @@ def q_factors(spin_id=None):
 
         # The Q-factor for the alignment.
         Q = sqrt(sse / N / norm)
-        cdp.q_factors_rdc.append(Q)
-        cdp.q_factors_rdc_norm2.append(sqrt(sse / D2_sum))
+        cdp.q_factors_rdc[align_id] = Q
+        cdp.q_factors_rdc_norm2[align_id] = sqrt(sse / D2_sum)
 
     # The total Q-factor.
     cdp.q_rdc = 0.0
     cdp.q_rdc_norm2 = 0.0
-    for Q in cdp.q_factors_rdc:
-        cdp.q_rdc = cdp.q_rdc + Q**2
-    for Q in cdp.q_factors_rdc_norm2:
-        cdp.q_rdc_norm2 = cdp.q_rdc_norm2 + Q**2
+    for id in cdp.q_factors_rdc:
+        cdp.q_rdc = cdp.q_rdc + cdp.q_factors_rdc[id]**2
+    for id in cdp.q_factors_rdc_norm2:
+        cdp.q_rdc_norm2 = cdp.q_rdc_norm2 + cdp.q_factors_rdc_norm2[id]**2
     cdp.q_rdc = sqrt(cdp.q_rdc / len(cdp.q_factors_rdc))
     cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 

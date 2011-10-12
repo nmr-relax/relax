@@ -338,8 +338,8 @@ def q_factors(spin_id=None):
         warn(RelaxWarning("No PCS data exists, Q factors cannot be calculated."))
         return
 
-    # Q-factor list.
-    cdp.q_factors_pcs = []
+    # Q-factor dictionary.
+    cdp.q_factors_pcs = {}
 
     # Loop over the alignments.
     for align_id in cdp.pcs_ids:
@@ -378,9 +378,7 @@ def q_factors(spin_id=None):
         # The Q-factor for the alignment.
         if pcs2_sum:
             Q = sqrt(sse / pcs2_sum)
-        else:
-            Q = None
-        cdp.q_factors_pcs.append(Q)
+            cdp.q_factors_pcs[align_id] = Q
 
         # Warnings (and then exit).
         if not spin_count:
@@ -395,8 +393,8 @@ def q_factors(spin_id=None):
 
     # The total Q-factor.
     cdp.q_pcs = 0.0
-    for Q in cdp.q_factors_pcs:
-        cdp.q_pcs = cdp.q_pcs + Q**2
+    for id in cdp.q_factors_pcs:
+        cdp.q_pcs = cdp.q_pcs + cdp.q_factors_pcs[id]**2
     cdp.q_pcs = cdp.q_pcs / len(cdp.q_factors_pcs)
     cdp.q_pcs = sqrt(cdp.q_pcs)
 
