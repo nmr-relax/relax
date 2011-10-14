@@ -109,11 +109,9 @@ def start(mode=None, profile_flag=False):
             sys.stderr.write("The profile module is not available, please install the Python development packages for profiling.\n\n")
             sys.exit()
 
-        #FIXME: profiling won't work with multi processors.
-
         # Run relax in profiling mode.
         profile.Profile.print_stats = print_stats
-        profile.run('processor.run()')
+        profile.runctx('processor.run()', globals(), locals())
         
 
 
