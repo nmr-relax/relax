@@ -122,7 +122,7 @@ def convert(value, align_id, to_intern=False):
     @type value:            float or None
     @param align_id:        The alignment tensor ID string.
     @type align_id:         str
-    @keyword to_intern:     A flag which if True will convert to the internal 2D notation if needed, or if False will convert from the internal 2D notation to the external D or 2D format.
+    @keyword to_intern:     A flag which if True will convert to the internal D notation if needed, or if False will convert from the internal D notation to the external D or 2D format.
     @type to_intern:        bool
     @return:                The converted value.
     @rtype:                 float or None
@@ -134,14 +134,14 @@ def convert(value, align_id, to_intern=False):
 
     # The conversion factor.
     factor = 1.0
-    if hasattr(cdp, 'rdc_data_types') and cdp.rdc_data_types.has_key(align_id) and cdp.rdc_data_types[align_id] == 'D':
-        # Convert from D to 2D.
-        if to_intern:
-            factor = 0.5
-
+    if hasattr(cdp, 'rdc_data_types') and cdp.rdc_data_types.has_key(align_id) and cdp.rdc_data_types[align_id] == '2D':
         # Convert from 2D to D.
-        else:
+        if to_intern:
             factor = 2.0
+
+        # Convert from D to 2D.
+        else:
+            factor = 0.5
 
     # Return the converted value.
     return value * factor
@@ -358,7 +358,7 @@ def q_factors(spin_id=None):
     cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
-def read(align_id=None, file=None, dir=None, file_data=None, data_type='2D', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
+def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
     """Read the RDC data from file.
 
     @keyword align_id:      The alignment tensor ID string.
@@ -369,7 +369,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='2D', spi
     @type dir:              str or None
     @keyword file_data:     An alternative to opening a file, if the data already exists in the correct format.  The format is a list of lists where the first index corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @keyword data_type:     A string which is set to '2D' means that the splitting in the aligned sample was assumed to be J + 2D, or if set to 'D' then the splitting was taken as J + D.
+    @keyword data_type:     A string which is set to 'D' means that the splitting in the aligned sample was assumed to be J + D, or if set to '2D' then the splitting was taken as J + 2D.
     @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
     @keyword mol_name_col:  The column containing the molecule name information.  If supplied, spin_id_col must be None.
