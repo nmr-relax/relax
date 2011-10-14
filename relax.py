@@ -77,8 +77,7 @@ def start(mode=None, profile_flag=False):
     """
 
     # Normal relax operation.
-    if not profile_flag:
-        relax = Relax()
+    relax = Relax()
 
     # Process the command line arguments.
     relax.arguments()
