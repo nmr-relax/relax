@@ -315,15 +315,17 @@ def corr_plot(format=None, file=None, dir=None, force=False):
         grace.write_xy_data(data=data, file=file, graph_type=graph_type)
 
 
-def display(align_id=None):
+def display(align_id=None, bc=False):
     """Display the PCS data corresponding to the alignment ID.
 
     @keyword align_id:  The alignment tensor ID string.
     @type align_id:     str
+    @keyword bc:        The back-calculation flag which if True will cause the back-calculated rather than measured data to be displayed.
+    @type bc:           bool
     """
 
     # Call the write method with sys.stdout as the file.
-    write(align_id=align_id, file=sys.stdout)
+    write(align_id=align_id, file=sys.stdout, bc=bc)
 
 
 def q_factors(spin_id=None):
@@ -548,7 +550,7 @@ def weight(align_id=None, spin_id=None, weight=1.0):
         spin.pcs_weight[align_id] = weight
 
 
-def write(align_id=None, file=None, dir=None, force=False):
+def write(align_id=None, file=None, dir=None, bc=False, force=False):
     """Display the PCS data corresponding to the alignment ID.
 
     @keyword align_id:  The alignment tensor ID string.
@@ -557,6 +559,8 @@ def write(align_id=None, file=None, dir=None, force=False):
     @type file:         str or file object
     @keyword dir:       The name of the directory to place the file into (defaults to the current directory).
     @type dir:          str
+    @keyword bc:        The back-calculation flag which if True will cause the back-calculated rather than measured data to be written.
+    @type bc:           bool
     @keyword force:     A flag which if True will cause any pre-existing file to be overwritten.
     @type force:        bool
     """
@@ -581,12 +585,21 @@ def write(align_id=None, file=None, dir=None, force=False):
     errors = []
     for spin, spin_id in spin_loop(return_id=True):
         # Skip spins with no PCSs.
-        if not hasattr(spin, 'pcs') or not align_id in spin.pcs.keys():
+        if not bc and (not hasattr(spin, 'pcs') or not align_id in spin.pcs.keys()):
+            continue
+        elif bc and (not hasattr(spin, 'pcs_bc') or align_id not in spin.pcs_bc.keys()):
             continue
 
-        # Store the data.
+        # Store the spin ID.
         spin_ids.append(spin_id)
-        values.append(spin.pcs[align_id])
+
+        # The value.
+        if bc:
+            values.append(spin.pcs_bc[align_id])
+        else:
+            values.append(spin.pcs[align_id])
+
+        # The error.
         if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
             errors.append(spin.pcs_err[align_id])
         else:
