@@ -50,6 +50,7 @@ from palmer import Palmer
 from pdc import Pdc
 from peak_lists import Peak_lists
 from pipes import Pipes
+from rdc import Rdc
 from relax_data import Relax_data
 from relax_fit import Relax_fit
 from results import Results
@@ -81,6 +82,7 @@ __all__ = ['align_tensor',
            'pdc',
            'peak_lists'
            'pipes',
+           'rdc',
            'relax_data',
            'relax_fit',
            'results',
@@ -149,6 +151,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Pdc))
             suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
             suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Rdc))
             suite_array.append(TestLoader().loadTestsFromTestCase(Relax_data))
             suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
             suite_array.append(TestLoader().loadTestsFromTestCase(Results))
