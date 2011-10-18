@@ -38,7 +38,7 @@ from api_common import API_common
 import arg_check
 from float import isNaN, isInf
 import generic_fns
-from generic_fns.align_tensor import all_tensors_fixed, get_tensor_object
+from generic_fns.align_tensor import all_tensors_fixed, get_tensor_object, num_tensors, return_tensor
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pcs, pipes, rdc
 from generic_fns.structure.cones import Iso_cone
@@ -2419,7 +2419,8 @@ class N_state_model(API_base, API_common):
             tensor_index = (index - index % 5) / 5
 
             # Set the error.
-            return setattr(cdp.align_tensors[tensor_index], names[param_index]+'_err', error)
+            tensor = return_tensor(index=tensor_index, skip_fixed=True)
+            return setattr(tensor, names[param_index]+'_err', error)
 
 
     def set_param_values(self, param=None, value=None, spin_id=None, force=True):
@@ -2493,6 +2494,10 @@ class N_state_model(API_base, API_common):
 
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in xrange(len(cdp.align_tensors)):
+                # Fixed tensor.
+                if cdp.align_tensors[i].fixed:
+                    continue
+
                 # Loop over all the parameter names.
                 for object_name in names:
                     # Name for the simulation object.
@@ -2582,10 +2587,11 @@ class N_state_model(API_base, API_common):
         names = ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz']
 
         # Alignment tensor parameters.
-        if index < len(cdp.align_ids)*5:
+        if index < num_tensors(skip_fixed=True)*5:
             # The tensor and parameter index.
             param_index = index % 5
             tensor_index = (index - index % 5) / 5
 
             # Return the simulation parameter array.
-            return getattr(cdp.align_tensors[tensor_index], names[param_index]+'_sim')
+            tensor = return_tensor(index=tensor_index, skip_fixed=True)
+            return getattr(tensor, names[param_index]+'_sim')
