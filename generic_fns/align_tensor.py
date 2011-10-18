@@ -1301,6 +1301,37 @@ __return_data_name_prompt_doc__ = """
 """
 
 
+def return_tensor(index, skip_fixed=True):
+    """Return the tensor container for the given index, skipping fixed tensors if required.
+
+    @param index:           The index of the tensor (if skip_fixed is True, then fixed tensors are not included in the index count).
+    @type index:            int
+    @keyword skip_fixed:    A flag which if True will exclude fixed tensors from the indexation.
+    @type skip_fixed:       bool
+    @return:                The tensor corresponding to the index.
+    @rtype:                 data.align_tensor.AlignTensorData instance
+    """
+
+    # Init.
+    count = 0
+
+    # Loop over the tensors.
+    for tensor_cont in cdp.align_tensors:
+        # Skip fixed tensors.
+        if skip_fixed and tensor_cont.fixed:
+            continue
+
+        # Index match, so return the container.
+        if index == count:
+            return tensor_cont
+
+        # Increment.
+        count += 1
+
+    # Return False if the container was not found.
+    return False
+
+
 def return_units(param):
     """Function for returning a string representing the parameters units.
 
