@@ -556,22 +556,27 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
     # Open the file for writing.
     file = open_write_file(file, dir, force)
 
-    # The index.
-    index = cdp.rdc_ids.index(align_id)
-
     # Loop over the spins and collect the data.
-    spin_ids = []
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
     values = []
     errors = []
-    for spin, spin_id in spin_loop(return_id=True):
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Skip spins with no RDCs.
         if not bc and (not hasattr(spin, 'rdc') or align_id not in spin.rdc.keys()):
             continue
         elif bc and (not hasattr(spin, 'rdc_bc') or align_id not in spin.rdc_bc.keys()):
             continue
 
-        # Store the spin ID.
-        spin_ids.append(spin_id)
+        # Append the spin data.
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin.num)
+        spin_names.append(spin.name)
 
         # The value.
         if bc:
@@ -586,4 +591,4 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
             errors.append(None)
 
     # Write out.
-    write_spin_data(file=file, spin_ids=spin_ids, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
+    write_spin_data(file=file, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name='RDCs', error=errors, error_name='RDC_error')

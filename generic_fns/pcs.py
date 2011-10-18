@@ -580,18 +580,26 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
     file = open_write_file(file, dir, force)
 
     # Loop over the spins and collect the data.
-    spin_ids = []
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
     values = []
     errors = []
-    for spin, spin_id in spin_loop(return_id=True):
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Skip spins with no PCSs.
         if not bc and (not hasattr(spin, 'pcs') or not align_id in spin.pcs.keys()):
             continue
         elif bc and (not hasattr(spin, 'pcs_bc') or align_id not in spin.pcs_bc.keys()):
             continue
 
-        # Store the spin ID.
-        spin_ids.append(spin_id)
+        # Append the spin data.
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin.num)
+        spin_names.append(spin.name)
 
         # The value.
         if bc:
@@ -606,4 +614,4 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
             errors.append(None)
 
     # Write out.
-    write_spin_data(file=file, spin_ids=spin_ids, data=values, data_name='PCSs', error=errors, error_name='PCS_error')
+    write_spin_data(file=file, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name='PCSs', error=errors, error_name='PCS_error')
