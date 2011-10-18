@@ -1229,20 +1229,15 @@ class N_state_model(API_base, API_common):
         return full_tensors, red_tensors, red_err, full_in_ref_frame
 
 
-    def _minimise_setup_fixed_tensors(self, sim_index=None):
+    def _minimise_setup_fixed_tensors(self):
         """Set up the data structures for the fixed alignment tensors.
 
-        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
-        @type sim_index:    None or int
         @return:            The assembled data structures for the fixed alignment tensors.
         @rtype:             numpy rank-1 array.
         """
 
         # Initialise.
-        n = 0
-        for i in range(len(cdp.align_tensors)):
-            if cdp.align_tensors[i].fixed:
-                n += 1
+        n = num_tensors(skip_fixed=False) - num_tensors(skip_fixed=True)
         tensors = zeros(n*5, float64)
 
         # Nothing to do.
@@ -1256,21 +1251,12 @@ class N_state_model(API_base, API_common):
             if not cdp.align_tensors[i].fixed:
                 continue
 
-            # The simulation data.
-            if sim_index != None:
-                tensors[5*index + 0] = cdp.align_tensors[i].Axx_sim[sim_index]
-                tensors[5*index + 1] = cdp.align_tensors[i].Ayy_sim[sim_index]
-                tensors[5*index + 2] = cdp.align_tensors[i].Axy_sim[sim_index]
-                tensors[5*index + 3] = cdp.align_tensors[i].Axz_sim[sim_index]
-                tensors[5*index + 4] = cdp.align_tensors[i].Ayz_sim[sim_index]
-
             # The real tensors.
-            else:
-                tensors[5*index + 0] = cdp.align_tensors[i].Axx
-                tensors[5*index + 1] = cdp.align_tensors[i].Ayy
-                tensors[5*index + 2] = cdp.align_tensors[i].Axy
-                tensors[5*index + 3] = cdp.align_tensors[i].Axz
-                tensors[5*index + 4] = cdp.align_tensors[i].Ayz
+            tensors[5*index + 0] = cdp.align_tensors[i].Axx
+            tensors[5*index + 1] = cdp.align_tensors[i].Ayy
+            tensors[5*index + 2] = cdp.align_tensors[i].Axy
+            tensors[5*index + 3] = cdp.align_tensors[i].Axz
+            tensors[5*index + 4] = cdp.align_tensors[i].Ayz
 
             # Increment the index.
             index += 1
@@ -1536,7 +1522,7 @@ class N_state_model(API_base, API_common):
         # Get the fixed tensors.
         fixed_tensors = None
         if 'rdc' in data_types or 'pcs' in data_types:
-            full_tensors = self._minimise_setup_fixed_tensors(sim_index=sim_index)
+            full_tensors = self._minimise_setup_fixed_tensors()
 
             # The flag list.
             fixed_tensors = []
