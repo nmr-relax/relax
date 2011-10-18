@@ -1041,6 +1041,31 @@ def matrix_angles(basis_set=0, tensors=None):
         sys.stdout.write("\n")
 
 
+def num_tensors(skip_fixed=True):
+    """Count the number of tensors.
+
+    @keyword skip_fixed:    If set to True, then only the tensors without the fixed flag will be counted.  If set to False, then all tensors will be counted.
+    @type fixed:            bool
+    @return:                The number of tensors (excluding fixed tensors by default).
+    @rtype:                 int
+    """
+
+    # Init.
+    count = 0
+
+    # Loop over the tensors.
+    for tensor_cont in cdp.align_tensors:
+        # Skip fixed tensors.
+        if skip_fixed and tensor_cont.fixed:
+            continue
+
+        # Increment.
+        count += 1
+
+    # Return the count.
+    return count
+
+
 def reduction(full_tensor=None, red_tensor=None):
     """Specify which tensor is a reduction of which other tensor.
 
