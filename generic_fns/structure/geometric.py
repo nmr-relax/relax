@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -394,7 +394,7 @@ def create_cone_pdb(mol=None, cone=None, start_res=1, apex=None, axis=None, R=No
     # Add the file to the results file list.
     if not hasattr(cdp, 'result_files'):
         cdp.result_files = []
-    cdp.result_files.append(['cone_pdb', 'Cone PDB', pdb_path])
+    cdp.result_files.append(['cone_pdb', 'Cone PDB', get_file_path(file, dir)])
     status.observers.result_file.notify()
 
 
