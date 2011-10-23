@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,7 +27,7 @@
 from numpy import ndarray
 
 # relax module imports.
-from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
+from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError,RelaxListFloatError, RelaxMatrixFloatError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListFloatError, RelaxNoneMatrixFloatError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
 from relax_io import DummyFileObject
 from types import FunctionType
 
@@ -80,6 +80,113 @@ def is_float(arg, name, can_be_none=False):
         raise RelaxFloatError(name, arg)
     else:
         raise RelaxNoneFloatError(name, arg)
+
+
+def is_float_array(arg, name, size=None, can_be_none=False):
+    """Test if the argument is an array of floats.
+
+    @param arg:                     The argument.
+    @type arg:                      anything
+    @param name:                    The plain English name of the argument.
+    @type name:                     str
+    @keyword size:                  The dimension of the array.
+    @type size:                     None or int
+    @keyword can_be_none:           A flag specifying if the argument can be none.
+    @type can_be_none:              bool
+    @raise RelaxListFloatError:     If not a matrix of floats.
+    @raise RelaxNoneListFloatError: If not a matrix of floats or not None.
+    """
+
+    # Init.
+    fail = False
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # Fail if not a list.
+    if not isinstance(arg, list) and not isinstance(arg, ndarray):
+        fail = True
+
+    # Fail if not the right dimension.
+    elif size != None and len(arg) != size:
+        fail = True
+
+    # Loop over the array.
+    else:
+        for i in range(len(arg)):
+            # Fail if not a float.
+            if not isinstance(arg[i], float):
+                fail = True
+
+    # Fail.
+    if fail:
+        if can_be_none and size != None:
+            raise RelaxNoneListFloatError(name, arg, size)
+        elif can_be_none:
+            raise RelaxNoneListFloatError(name, arg)
+        elif size != None:
+            raise RelaxListFloatError(name, arg, size)
+        else:
+            raise RelaxListFloatError(name, arg)
+
+
+def is_float_matrix(arg, name, dim=(3,3), can_be_none=False):
+    """Test if the argument is a matrix of floats.
+
+    @param arg:                         The argument.
+    @type arg:                          anything
+    @param name:                        The plain English name of the argument.
+    @type name:                         str
+    @keyword dim:                       The m,n dimensions of the matrix.
+    @type dim:                          tuple of int
+    @keyword can_be_none:               A flag specifying if the argument can be none.
+    @type can_be_none:                  bool
+    @raise RelaxMatrixFloatError:       If not a matrix of floats.
+    @raise RelaxNoneMatrixFloatError:   If not a matrix of floats or not None.
+    """
+
+    # Init.
+    fail = False
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # Fail if not a list.
+    if not isinstance(arg, list) and not isinstance(arg, ndarray):
+        fail = True
+
+    # Fail if not the right dimension.
+    elif dim != None and len(arg) != dim[0]:
+        fail = True
+
+    # Loop over the first dimension.
+    else:
+        for i in range(len(arg)):
+            # Fail if not a list.
+            if not isinstance(arg[i], list) and not isinstance(arg, ndarray):
+                fail = True
+
+            # Fail if not the right dimension.
+            elif len(arg[i]) != dim[1]:
+                fail = True
+
+            # Check for float elements.
+            for j in range(len(arg[i])):
+                if not isinstance(arg[i][j], float):
+                    fail = True
+
+    # Fail.
+    if fail:
+        if can_be_none and dim != None:
+            raise RelaxNoneMatrixFloatError(name, arg, dim)
+        elif can_be_none:
+            raise RelaxNoneMatrixFloatError(name, arg)
+        elif dim != None:
+            raise RelaxMatrixFloatError(name, arg, dim)
+        else:
+            raise RelaxMatrixFloatError(name, arg)
 
 
 def is_func(arg, name, can_be_none=False):
