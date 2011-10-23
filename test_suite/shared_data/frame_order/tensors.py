@@ -1,4 +1,4 @@
-# The full alignment tensors.
+# The full alignment tensors (real RDC tensors from CaM-IQ).
 align_tensor.init(tensor='Dy N-dom', params=(0.000622191953772, 1.35210609663e-05, -0.000133742852942, 0.000756743581636, 0.000550729840729), param_types=2)
 align_tensor.init(tensor='Dy N-dom', params=(2.35766523882e-05, 2.51785772774e-05, 1.99369755031e-05, 1.86674275393e-05, 2.01343581166e-05), param_types=2, errors=True)
 
