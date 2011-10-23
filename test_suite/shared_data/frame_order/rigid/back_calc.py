@@ -1,5 +1,8 @@
 # Script for calculation RDCs and PCSs for the rigid frame order model.
 
+# relax module imports.
+from generic_fns.mol_res_spin import spin_loop
+
 
 # Create a data pipe.
 pipe.create('bc', 'N-state')
@@ -41,6 +44,18 @@ for i in range(len(cdp.align_tensors)):
     # Back-calculate the data.
     rdc.back_calc(tag)
     pcs.back_calc(tag)
+
+    # Set 1 Hz and 0.1 ppm errors on all data.
+    for spin in spin_loop():
+        # Init.
+        if not hasattr(spin, 'rdc_err'):
+            spin.rdc_err = {}
+        if not hasattr(spin, 'pcs_err'):
+            spin.pcs_err = {}
+
+        # Set the errors.
+        spin.rdc_err[tag] = 1.0
+        spin.pcs_err[tag] = 0.1
 
     # Write the data.
     rdc.write(align_id=tag, file='rdc_%s.txt'%tensors[i], bc=True, force=True)
