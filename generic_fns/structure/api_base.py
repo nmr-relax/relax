@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -458,6 +458,18 @@ class Base_struct_API:
                 model.mol[-1].file_mol_num = orig_mol_num[j]
                 model.mol[-1].file_model = orig_model_num[i]
 
+
+    def rotate(self, R=None, origin=None):
+        """Method stub for rotating a structure.
+
+        @keyword R:         The forwards rotation matrix.
+        @type R:            numpy 3D, rank-2 array
+        @keyword origin:    The origin of the rotation.
+        @type origin:       numpy 3D, rank-1 array
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
 
 
     def target_mol_name(self, set=None, target=None, index=None, mol_num=None, file=None):

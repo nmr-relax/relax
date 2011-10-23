@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 """Module containing the internal relax structural object."""
 
 # Python module imports.
-from numpy import array, float64, linalg, zeros
+from numpy import array, dot, float64, linalg, zeros
 import os
 from os import F_OK, access
 from re import search
@@ -1019,6 +1019,34 @@ class Internal(Base_struct_API):
         # Loading worked.
         return True
         
+
+    def rotate(self, R=None, origin=None):
+        """Rotate the structural information about the given origin.
+
+        @keyword R:         The forwards rotation matrix.
+        @type R:            numpy 3D, rank-2 array
+        @keyword origin:    The origin of the rotation.
+        @type origin:       numpy 3D, rank-1 array
+        """
+
+        # Loop over the models.
+        for model in self.model_loop():
+            # Loop over the molecules.
+            for mol in model.mol:
+                # Loop over the atoms.
+                for i in range(len(mol.atom_num)):
+                    # The origin to atom vector.
+                    vect = array([mol.x[i], mol.y[i], mol.z[i]], float64) - origin
+
+                    # Rotation.
+                    rot_vect = dot(R, vect)
+
+                    # The new position.
+                    pos = rot_vect + origin
+                    mol.x[i] = pos[0]
+                    mol.y[i] = pos[1]
+                    mol.z[i] = pos[2]
+
 
     def write_pdb(self, file, model_num=None):
         """Method for the creation of a PDB file from the structural data.

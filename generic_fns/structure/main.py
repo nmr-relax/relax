@@ -387,6 +387,34 @@ def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     cdp.structure.load_xyz(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, verbosity=verbosity)
 
 
+def rotate(R=None, origin=None):
+    """Rotate the structural data about the origin by the specified forwards rotation.
+
+    @keyword R:         The forwards rotation matrix.
+    @type R:            numpy 3D, rank-2 array or a 3x3 list of floats
+    @keyword origin:    The origin of the rotation.  If not supplied, the origin will be set to [0, 0, 0].
+    @type origin:       numpy 3D, rank-1 array or list of len 3 or None
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if the structure exists.
+    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
+        raise RelaxNoPdbError
+
+    # Set the origin if not supplied.
+    if origin == None:
+        origin = [0, 0, 0]
+
+    # Convert the args to numpy float data structures.
+    R = array(R, float64)
+    origin = array(origin, float64)
+
+    # Call the specific code.
+    cdp.structure.rotate(R=R, origin=origin)
+
+
 def set_vector(spin=None, xh_vect=None):
     """Place the XH unit vector into the spin container object.
 
