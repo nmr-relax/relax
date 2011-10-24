@@ -21,9 +21,11 @@
 ###############################################################################
 
 # Python module imports.
-from math import pi
+from math import acos, pi
 import platform
 import numpy
+from numpy import array, dot, float64, zeros
+from numpy.linalg import norm
 from re import search
 from os import sep
 import sys
@@ -32,6 +34,7 @@ import sys
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from maths_fns.coord_transform import spherical_to_cartesian
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_io import DummyFileObject, open_read_file
 from status import Status; status = Status()
@@ -155,6 +158,41 @@ class Frame_order(SystemTestCase):
 
             # Reset.
             setattr(cdp, param, curr)
+
+
+    def test_cam_free_rotor(self):
+        """Test the free rotor frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
+
+        # Check the average structure CoM matches that of the original position (the average structure is not defined along the rotation axis).
+        for i in range(3):
+            self.assertAlmostEqual(ds['ave pos'].CoM[i], ds['orig pos'].CoM[i], 0)
+
+        # The rotation axis.
+        self.interpreter.pipe.switch('frame order')
+        spherical_vect = zeros(3, float64)
+        spherical_vect[0] = 1.0
+        spherical_vect[1] = cdp.axis_theta
+        spherical_vect[2] = cdp.axis_phi
+        cart_vect = zeros(3, float64)
+        spherical_to_cartesian(spherical_vect, cart_vect)
+
+        # The original rotation axis.
+        pivot = array([ 37.254, 0.5, 16.7465])
+        com = array([ 26.83678091, -12.37906417,  28.34154128])
+        axis = pivot - com
+        axis = axis / norm(axis)
+
+        # The dot product.
+        angle = acos(dot(cart_vect, axis))
+
+        # Check the angle.
+        if angle > 3 and angle < 4:
+            self.assertAlmostEqual(angle, pi, 1)
+        else:
+            self.assertAlmostEqual(angle, 0.0, 1)
 
 
     def test_cam_rigid(self):
