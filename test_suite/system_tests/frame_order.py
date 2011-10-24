@@ -157,6 +157,21 @@ class Frame_order(SystemTestCase):
             setattr(cdp, param, curr)
 
 
+    def test_cam_rigid(self):
+        """Test the rigid frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rigid.py')
+
+        # Check the average structure atomic positions (to only one decimal point as the PDB file accuracy isn't great).
+        ave_pos = ds['ave pos'].structure.structural_data[0].mol[0]
+        orig_pos = ds['orig pos'].structure.structural_data[0].mol[0]
+        for i in range(len(ave_pos.atom_name)):
+            self.assertAlmostEqual(ave_pos.x[i], orig_pos.x[i], 1)
+            self.assertAlmostEqual(ave_pos.y[i], orig_pos.y[i], 1)
+            self.assertAlmostEqual(ave_pos.z[i], orig_pos.z[i], 1)
+
+
     def test_model_free_rotor(self):
         """Test the free rotor frame order model."""
 
