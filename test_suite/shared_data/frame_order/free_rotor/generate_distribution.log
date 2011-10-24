@@ -1,0 +1,1519 @@
+
+
+
+                                     relax repository checkout
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2011 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'generate_distribution.py'
+----------------------------------------------------------------------------------------------------
+# Script for generating the distribution of PDB structures.
+
+# Python module imports.
+from numpy import array, float64, zeros
+from numpy.linalg import norm
+
+# relax module imports.
+from maths_fns.rotation_matrix import axis_angle_to_R
+
+
+# The number of structures.
+INC = 5
+N = 360 / INC
+
+# Create a data pipe.
+pipe.create('generate', 'N-state')
+
+# The axis for the rotations (the pivot point to CoM axis).
+pivot = array([ 37.254, 0.5, 16.7465])
+com = array([ 26.83678091, -12.37906417,  28.34154128])
+axis = pivot - com
+axis = axis / norm(axis)
+
+# Init a rotation matrix.
+R = zeros((3, 3), float64)
+
+# Load N copies of the original C-domain, rotating them by 1 degree about the rotation axis.
+for i in range(N):
+    # Load the PDB as a new model.
+    structure.read_pdb('1J7P_1st_NH.pdb', dir='..', set_model_num=i)
+
+    # The rotation angle.
+    angle = i * INC / 360.0 * 2.0 * pi
+    print("Rotation angle: %s" % angle)
+
+    # The rotation matrix.
+    axis_angle_to_R(axis, angle, R)
+    print("Rotation matrix:\n%s\n" % R)
+
+    # Rotate.
+    structure.rotate(R=R, origin=pivot, model=i)
+
+# Save the PDB file.
+structure.write_pdb('distribution.pdb', compress_type=2, force=True)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='generate', pipe_type='N-state')
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=0, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model None (from the original molecule number 1 of model None)
+Rotation angle: 0.0
+Rotation matrix:
+[[ 1.  0.  0.]
+ [ 0.  1. -0.]
+ [-0.  0.  1.]]
+
+
+relax> structure.rotate(R=array([[ 1.,  0.,  0.],
+       [ 0.,  1., -0.],
+       [-0.,  0.,  1.]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=0)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=1, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 1 (from the original molecule number 1 of model None)
+Rotation angle: 0.0872664625997
+Rotation matrix:
+[[ 0.99720476  0.05122861  0.05439031]
+ [-0.04873109  0.99773857 -0.04629286]
+ [-0.05663883  0.04351296  0.99744607]]
+
+
+relax> structure.rotate(R=array([[ 0.99720476,  0.05122861,  0.05439031],
+       [-0.04873109,  0.99773857, -0.04629286],
+       [-0.05663883,  0.04351296,  0.99744607]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=1)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=2, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 2 (from the original molecule number 1 of model None)
+Rotation angle: 0.174532925199
+Rotation matrix:
+[[ 0.98884029  0.10456485  0.10611815]
+ [-0.09459379  0.99097149 -0.09501329]
+ [-0.11509512  0.08391485  0.98980372]]
+
+
+relax> structure.rotate(R=array([[ 0.98884029,  0.10456485,  0.10611815],
+       [-0.09459379,  0.99097149, -0.09501329],
+       [-0.11509512,  0.08391485,  0.98980372]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=2)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=3, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 3 (from the original molecule number 1 of model None)
+Rotation angle: 0.261799387799
+Rotation matrix:
+[[ 0.97497028  0.15960281  0.15478986]
+ [-0.13723906  0.97975026 -0.14579052]
+ [-0.17492398  0.12089821  0.97713112]]
+
+
+relax> structure.rotate(R=array([[ 0.97497028,  0.15960281,  0.15478986],
+       [-0.13723906,  0.97975026, -0.14579052],
+       [-0.17492398,  0.12089821,  0.97713112]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=3)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=4, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 4 (from the original molecule number 1 of model None)
+Rotation angle: 0.349065850399
+Rotation matrix:
+[[ 0.95570026  0.21592362  0.200035  ]
+ [-0.17634234  0.96416028 -0.19823809]
+ [-0.23567009  0.15418156  0.9595247 ]]
+
+
+relax> structure.rotate(R=array([[ 0.95570026,  0.21592362,  0.200035  ],
+       [-0.17634234,  0.96416028, -0.19823809],
+       [-0.23567009,  0.15418156,  0.9595247 ]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=4)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=5, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 5 (from the original molecule number 1 of model None)
+Rotation angle: 0.436332312999
+Rotation matrix:
+[[ 0.9311769   0.27309863  0.24150923]
+ [-0.21160603  0.9443202  -0.25195685]
+ [-0.29687112  0.18351159  0.93711847]]
+
+
+relax> structure.rotate(R=array([[ 0.9311769 ,  0.27309863,  0.24150923],
+       [-0.21160603,  0.9443202 , -0.25195685],
+       [-0.29687112,  0.18351159,  0.93711847]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=5)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=6, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 6 (from the original molecule number 1 of model None)
+Rotation angle: 0.523598775598
+Rotation matrix:
+[[ 0.90158684  0.33069272  0.27889692]
+ [-0.24276175  0.92038101 -0.30653797]
+ [-0.3580613   0.2086651   0.91008295]]
+
+
+relax> structure.rotate(R=array([[ 0.90158684,  0.33069272,  0.27889692],
+       [-0.24276175,  0.92038101, -0.30653797],
+       [-0.3580613 ,  0.2086651 ,  0.91008295]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=6)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=7, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 7 (from the original molecule number 1 of model None)
+Rotation angle: 0.610865238198
+Rotation matrix:
+[[ 0.86715528  0.38826755  0.31191351]
+ [-0.26957239  0.89252491 -0.36156604]
+ [-0.41877494  0.22945063  0.8786239 ]]
+
+
+relax> structure.rotate(R=array([[ 0.86715528,  0.38826755,  0.31191351],
+       [-0.26957239,  0.89252491, -0.36156604],
+       [-0.41877494,  0.22945063,  0.8786239 ]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=7)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=8, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 8 (from the original molecule number 1 of model None)
+Rotation angle: 0.698131700798
+Rotation matrix:
+[[ 0.82814425  0.44538494  0.34030774]
+ [-0.29183391  0.8609639  -0.41662228]
+ [-0.47854997  0.24571001  0.84298073]]
+
+
+relax> structure.rotate(R=array([[ 0.82814425,  0.44538494,  0.34030774],
+       [-0.29183391,  0.8609639 , -0.41662228],
+       [-0.47854997,  0.24571001,  0.84298073]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=8)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=9, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 9 (from the original molecule number 1 of model None)
+Rotation angle: 0.785398163397
+Rotation matrix:
+[[ 0.78485066  0.50161021  0.36386349]
+ [-0.30937687  0.82593818 -0.47128767]
+ [-0.53693146  0.25731949  0.80342472]]
+
+
+relax> structure.rotate(R=array([[ 0.78485066,  0.50161021,  0.36386349],
+       [-0.30937687,  0.82593818, -0.47128767],
+       [-0.53693146,  0.25731949,  0.80342472]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=9)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=10, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 10 (from the original molecule number 1 of model None)
+Rotation angle: 0.872664625997
+Rotation matrix:
+[[ 0.73760399  0.55651544  0.38240151]
+ [-0.32206778  0.78771431 -0.52514618]
+ [-0.5934751   0.26419071  0.76025691]]
+
+
+relax> structure.rotate(R=array([[ 0.73760399,  0.55651544,  0.38240151],
+       [-0.32206778,  0.78771431, -0.52514618],
+       [-0.5934751 ,  0.26419071,  0.76025691]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=10)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=11, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 11 (from the original molecule number 1 of model None)
+Rotation angle: 0.959931088597
+Rotation matrix:
+[[ 0.68676383  0.60968276  0.39578071]
+ [-0.32981004  0.7465832  -0.5777879 ]
+ [-0.64775055  0.26627139  0.71380584]]
+
+
+relax> structure.rotate(R=array([[ 0.68676383,  0.60968276,  0.39578071],
+       [-0.32981004,  0.7465832 , -0.5777879 ],
+       [-0.64775055,  0.26627139,  0.71380584]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=11)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=12, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 12 (from the original molecule number 1 of model None)
+Rotation angle: 1.0471975512
+Rotation matrix:
+[[ 0.6327171   0.66070755  0.40389925]
+ [-0.33254472  0.70285789 -0.62881221]
+ [-0.69934475  0.26354567  0.66442501]]
+
+
+relax> structure.rotate(R=array([[ 0.6327171 ,  0.66070755,  0.40389925],
+       [-0.33254472,  0.70285789, -0.62881221],
+       [-0.69934475,  0.26354567,  0.66442501]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=12)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=13, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 13 (from the original molecule number 1 of model None)
+Rotation angle: 1.1344640138
+Rotation matrix:
+[[ 0.57587512  0.70920147  0.40669536]
+ [-0.33025102  0.65687114 -0.67783078]
+ [-0.74786503  0.25603432  0.61249026]]
+
+
+relax> structure.rotate(R=array([[ 0.57587512,  0.70920147,  0.40669536],
+       [-0.33025102,  0.65687114, -0.67783078],
+       [-0.74786503,  0.25603432,  0.61249026]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=13)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=14, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 14 (from the original molecule number 1 of model None)
+Rotation angle: 1.2217304764
+Rotation matrix:
+[[ 0.5166705   0.75479546  0.40414775]
+ [-0.3229464   0.60897295 -0.72447054]
+ [-0.79294213  0.2437945   0.55839684]]
+
+
+relax> structure.rotate(R=array([[ 0.5166705 ,  0.75479546,  0.40414775],
+       [-0.3229464 ,  0.60897295, -0.72447054],
+       [-0.79294213,  0.2437945 ,  0.55839684]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=14)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=15, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 15 (from the original molecule number 1 of model None)
+Rotation angle: 1.308996939
+Rotation matrix:
+[[ 0.45555382  0.79714252  0.39627582]
+ [-0.31068644  0.55952785 -0.76837655]
+ [-0.83423297  0.22691935  0.50255642]]
+
+
+relax> structure.rotate(R=array([[ 0.45555382,  0.79714252,  0.39627582],
+       [-0.31068644,  0.55952785, -0.76837655],
+       [-0.83423297,  0.22691935,  0.50255642]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=15)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=16, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 16 (from the original molecule number 1 of model None)
+Rotation angle: 1.3962634016
+Rotation matrix:
+[[ 0.39299021  0.83592036  0.38313947]
+ [-0.29356445  0.50891215 -0.80921464]
+ [-0.87142332  0.20553731  0.445394  ]]
+
+
+relax> structure.rotate(R=array([[ 0.39299021,  0.83592036,  0.38313947],
+       [-0.29356445,  0.50891215, -0.80921464],
+       [-0.87142332,  0.20553731,  0.445394  ]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=16)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=17, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 17 (from the original molecule number 1 of model None)
+Rotation angle: 1.4835298642
+Rotation matrix:
+[[ 0.32945583  0.87083385  0.36483868]
+ [-0.27171075  0.45751106 -0.84667402]
+ [-0.90423013  0.1798111   0.3873446 ]]
+
+
+relax> structure.rotate(R=array([[ 0.32945583,  0.87083385,  0.36483868],
+       [-0.27171075,  0.45751106, -0.84667402],
+       [-0.90423013,  0.1798111 ,  0.3873446 ]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=17)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=18, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 18 (from the original molecule number 1 of model None)
+Rotation angle: 1.57079632679
+Rotation matrix:
+[[ 0.2654342   0.90161729  0.34151272]
+ [-0.24529164  0.40571578 -0.8804696 ]
+ [-0.93240372  0.14993653  0.32885003]]
+
+
+relax> structure.rotate(R=array([[ 0.2654342 ,  0.90161729,  0.34151272],
+       [-0.24529164,  0.40571578, -0.8804696 ],
+       [-0.93240372,  0.14993653,  0.32885003]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=18)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=19, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 19 (from the original molecule number 1 of model None)
+Rotation angle: 1.65806278939
+Rotation matrix:
+[[ 0.20141257  0.9280364   0.31333913]
+ [-0.2145082   0.35392049 -0.91034418]
+ [-0.95572967  0.11614095  0.27035545]]
+
+
+relax> structure.rotate(R=array([[ 0.20141257,  0.9280364 ,  0.31333913],
+       [-0.2145082 ,  0.35392049, -0.91034418],
+       [-0.95572967,  0.11614095,  0.27035545]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=19)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=20, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 20 (from the original molecule number 1 of model None)
+Rotation angle: 1.74532925199
+Rotation matrix:
+[[ 0.13787819  0.94989011  0.28053232]
+ [-0.1795947   0.3025194  -0.93607038]
+ [-0.97403047  0.07868157  0.21230606]]
+
+
+relax> structure.rotate(R=array([[ 0.13787819,  0.94989011,  0.28053232],
+       [-0.1795947 ,  0.3025194 , -0.93607038],
+       [-0.97403047,  0.07868157,  0.21230606]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=20)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=21, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 21 (from the original molecule number 1 of model None)
+Rotation angle: 1.83259571459
+Rotation matrix:
+[[ 0.07531458  0.9670121   0.24334198]
+ [-0.14081686  0.2519037  -0.95745242]
+ [-0.98716682  0.03784347  0.15514363]]
+
+
+relax> structure.rotate(R=array([[ 0.07531458,  0.9670121 ,  0.24334198],
+       [-0.14081686,  0.2519037 , -0.95745242],
+       [-0.98716682,  0.03784347,  0.15514363]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=21)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=22, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 22 (from the original molecule number 1 of model None)
+Rotation angle: 1.91986217719
+Rotation matrix:
+[[ 0.0141979   0.97927206  0.20205113]
+ [-0.0984698   0.2024586  -0.97432757]
+ [-0.99503875 -0.00606253  0.09930321]]
+
+
+relax> structure.rotate(R=array([[ 0.0141979 ,  0.97927206,  0.20205113],
+       [-0.0984698 ,  0.2024586 , -0.97432757],
+       [-0.99503875, -0.00606253,  0.09930321]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=22)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=23, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 23 (from the original molecule number 1 of model None)
+Rotation angle: 2.00712863979
+Rotation matrix:
+[[-0.04500672  0.98657668  0.15697403]
+ [-0.05287582  0.15456041 -0.9865674 ]
+ [-0.99758636 -0.0527023   0.04520979]]
+
+
+relax> structure.rotate(R=array([[-0.04500672,  0.98657668,  0.15697403],
+       [-0.05287582,  0.15456041, -0.9865674 ],
+       [-0.99758636, -0.0527023 ,  0.04520979]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=23)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=24, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 24 (from the original molecule number 1 of model None)
+Rotation angle: 2.09439510239
+Rotation matrix:
+[[-0.1018487   0.98887038  0.10845375]
+ [-0.00438189  0.10857366 -0.99407875]
+ [-0.99479025 -0.10172086 -0.00672496]]
+
+
+relax> structure.rotate(R=array([[-0.1018487 ,  0.98887038,  0.10845375],
+       [-0.00438189,  0.10857366, -0.99407875],
+       [-0.99479025, -0.10172086, -0.00672496]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=24)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=25, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 25 (from the original molecule number 1 of model None)
+Rotation angle: 2.18166156499
+Rotation matrix:
+[[-0.15589544  0.98613569  0.05685955]
+ [ 0.0466429   0.06484835 -0.99680446]
+ [-0.98667171 -0.15274517 -0.05610579]]
+
+
+relax> structure.rotate(R=array([[-0.15589544,  0.98613569,  0.05685955],
+       [ 0.0466429 ,  0.06484835, -0.99680446],
+       [-0.98667171, -0.15274517, -0.05610579]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=25)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=26, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 26 (from the original molecule number 1 of model None)
+Rotation angle: 2.26892802759
+Rotation matrix:
+[[-0.2067356   0.97839344  0.0025841 ]
+ [ 0.09981022  0.02371724 -0.99472379]
+ [-0.97329251 -0.2053869  -0.10255686]]
+
+
+relax> structure.rotate(R=array([[-0.2067356 ,  0.97839344,  0.0025841 ],
+       [ 0.09981022,  0.02371724, -0.99472379],
+       [-0.97329251, -0.2053869 , -0.10255686]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=26)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=27, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 27 (from the original molecule number 1 of model None)
+Rotation angle: 2.35619449019
+Rotation matrix:
+[[-0.25398226  0.96570253 -0.05395954]
+ [ 0.15471545 -0.01450663 -0.98785256]
+ [-0.95475449 -0.2592454  -0.14572467]]
+
+
+relax> structure.rotate(R=array([[-0.25398226,  0.96570253, -0.05395954],
+       [ 0.15471545, -0.01450663, -0.98785256],
+       [-0.95475449, -0.2592454 , -0.14572467]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=27)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=28, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 28 (from the original molecule number 1 of model None)
+Rotation angle: 2.44346095279
+Rotation matrix:
+[[-0.29727585  0.94815957 -0.11234103]
+ [ 0.21094071 -0.04953235 -0.97624309]
+ [-0.93119873 -0.31391079 -0.18528068]]
+
+
+relax> structure.rotate(R=array([[-0.29727585,  0.94815957, -0.11234103],
+       [ 0.21094071, -0.04953235, -0.97624309],
+       [-0.93119873, -0.31391079, -0.18528068]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=28)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=29, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 29 (from the original molecule number 1 of model None)
+Rotation angle: 2.53072741539
+Rotation matrix:
+[[-0.33628688  0.92589805 -0.17211606]
+ [ 0.26805811 -0.08109336 -0.95998371]
+ [-0.90280451 -0.36896703 -0.22092385]]
+
+
+relax> structure.rotate(R=array([[-0.33628688,  0.92589805, -0.17211606],
+       [ 0.26805811, -0.08109336, -0.95998371],
+       [-0.90280451, -0.36896703, -0.22092385]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=29)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=30, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 30 (from the original molecule number 1 of model None)
+Rotation angle: 2.61799387799
+Rotation matrix:
+[[-0.37071845  0.89908741 -0.2328297 ]
+ [ 0.32563294 -0.10894946 -0.93919817]
+ [-0.86978792 -0.4239951  -0.2523829 ]]
+
+
+relax> structure.rotate(R=array([[-0.37071845,  0.89908741, -0.2328297 ],
+       [ 0.32563294, -0.10894946, -0.93919817],
+       [-0.86978792, -0.4239951 , -0.2523829 ]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=30)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=31, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 31 (from the original molecule number 1 of model None)
+Rotation angle: 2.70526034059
+Rotation matrix:
+[[-0.40030851  0.86793169 -0.29401988]
+ [ 0.38322703 -0.13288864 -0.91404467]
+ [-0.83240023 -0.47857622 -0.27941842]]
+
+
+relax> structure.rotate(R=array([[-0.40030851,  0.86793169, -0.29401988],
+       [ 0.38322703, -0.13288864, -0.91404467],
+       [-0.83240023, -0.47857622, -0.27941842]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=31)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=32, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 32 (from the original molecule number 1 of model None)
+Rotation angle: 2.79252680319
+Rotation matrix:
+[[-0.42483186  0.832668   -0.35522091]
+ [ 0.44040204 -0.15272872 -0.88471463]
+ [-0.790926   -0.53229498 -0.30182465]]
+
+
+relax> structure.rotate(R=array([[-0.42483186,  0.832668  , -0.35522091],
+       [ 0.44040204, -0.15272872, -0.88471463],
+       [-0.790926  , -0.53229498, -0.30182465]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=32)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=33, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 33 (from the original molecule number 1 of model None)
+Rotation angle: 2.87979326579
+Rotation matrix:
+[[-0.44410188  0.79356472 -0.41596702]
+ [ 0.49672284 -0.1683187  -0.85143128]
+ [-0.74568086 -0.58474255 -0.31943107]]
+
+
+relax> structure.rotate(R=array([[-0.44410188,  0.79356472, -0.41596702],
+       [ 0.49672284, -0.1683187 , -0.85143128],
+       [-0.74568086, -0.58474255, -0.31943107]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=33)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=34, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 34 (from the original molecule number 1 of model None)
+Rotation angle: 2.96705972839
+Rotation matrix:
+[[-0.4579719   0.75091945 -0.47579588]
+ [ 0.5517608  -0.17953994 -0.81444793]
+ [-0.69700915 -0.63551978 -0.33210367]]
+
+
+relax> structure.rotate(R=array([[-0.4579719 ,  0.75091945, -0.47579588],
+       [ 0.5517608 , -0.17953994, -0.81444793],
+       [-0.69700915, -0.63551978, -0.33210367]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=34)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=35, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 35 (from the original molecule number 1 of model None)
+Rotation angle: 3.05432619099
+Rotation matrix:
+[[-0.46633636  0.70505675 -0.53425217]
+ [ 0.60509705 -0.18630702 -0.77404603]
+ [-0.64528131 -0.68424022 -0.33974602]]
+
+
+relax> structure.rotate(R=array([[-0.46633636,  0.70505675, -0.53425217],
+       [ 0.60509705, -0.18630702, -0.77404603],
+       [-0.64528131, -0.68424022, -0.33974602]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=35)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=36, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 36 (from the original molecule number 1 of model None)
+Rotation angle: 3.14159265359
+Rotation matrix:
+[[-0.4691316   0.65632566 -0.590891  ]
+ [ 0.65632566 -0.18856845 -0.73053307]
+ [-0.590891   -0.73053307 -0.34229995]]
+
+
+relax> structure.rotate(R=array([[-0.4691316 ,  0.65632566, -0.590891  ],
+       [ 0.65632566, -0.18856845, -0.73053307],
+       [-0.590891  , -0.73053307, -0.34229995]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=36)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=37, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 37 (from the original molecule number 1 of model None)
+Rotation angle: 3.22885911619
+Rotation matrix:
+[[-0.46633636  0.60509705 -0.64528131]
+ [ 0.70505675 -0.18630702 -0.68424022]
+ [-0.53425217 -0.77404603 -0.33974602]]
+
+
+relax> structure.rotate(R=array([[-0.46633636,  0.60509705, -0.64528131],
+       [ 0.70505675, -0.18630702, -0.68424022],
+       [-0.53425217, -0.77404603, -0.33974602]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=37)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=38, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 38 (from the original molecule number 1 of model None)
+Rotation angle: 3.31612557879
+Rotation matrix:
+[[-0.4579719   0.5517608  -0.69700915]
+ [ 0.75091945 -0.17953994 -0.63551978]
+ [-0.47579588 -0.81444793 -0.33210367]]
+
+
+relax> structure.rotate(R=array([[-0.4579719 ,  0.5517608 , -0.69700915],
+       [ 0.75091945, -0.17953994, -0.63551978],
+       [-0.47579588, -0.81444793, -0.33210367]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=38)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=39, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 39 (from the original molecule number 1 of model None)
+Rotation angle: 3.40339204139
+Rotation matrix:
+[[-0.44410188  0.49672284 -0.74568086]
+ [ 0.79356472 -0.1683187  -0.58474255]
+ [-0.41596702 -0.85143128 -0.31943107]]
+
+
+relax> structure.rotate(R=array([[-0.44410188,  0.49672284, -0.74568086],
+       [ 0.79356472, -0.1683187 , -0.58474255],
+       [-0.41596702, -0.85143128, -0.31943107]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=39)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=40, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 40 (from the original molecule number 1 of model None)
+Rotation angle: 3.49065850399
+Rotation matrix:
+[[-0.42483186  0.44040204 -0.790926  ]
+ [ 0.832668   -0.15272872 -0.53229498]
+ [-0.35522091 -0.88471463 -0.30182465]]
+
+
+relax> structure.rotate(R=array([[-0.42483186,  0.44040204, -0.790926  ],
+       [ 0.832668  , -0.15272872, -0.53229498],
+       [-0.35522091, -0.88471463, -0.30182465]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=40)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=41, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 41 (from the original molecule number 1 of model None)
+Rotation angle: 3.57792496659
+Rotation matrix:
+[[-0.40030851  0.38322703 -0.83240023]
+ [ 0.86793169 -0.13288864 -0.47857622]
+ [-0.29401988 -0.91404467 -0.27941842]]
+
+
+relax> structure.rotate(R=array([[-0.40030851,  0.38322703, -0.83240023],
+       [ 0.86793169, -0.13288864, -0.47857622],
+       [-0.29401988, -0.91404467, -0.27941842]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=41)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=42, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 42 (from the original molecule number 1 of model None)
+Rotation angle: 3.66519142919
+Rotation matrix:
+[[-0.37071845  0.32563294 -0.86978792]
+ [ 0.89908741 -0.10894946 -0.4239951 ]
+ [-0.2328297  -0.93919817 -0.2523829 ]]
+
+
+relax> structure.rotate(R=array([[-0.37071845,  0.32563294, -0.86978792],
+       [ 0.89908741, -0.10894946, -0.4239951 ],
+       [-0.2328297 , -0.93919817, -0.2523829 ]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=42)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=43, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 43 (from the original molecule number 1 of model None)
+Rotation angle: 3.75245789179
+Rotation matrix:
+[[-0.33628688  0.26805811 -0.90280451]
+ [ 0.92589805 -0.08109336 -0.36896703]
+ [-0.17211606 -0.95998371 -0.22092385]]
+
+
+relax> structure.rotate(R=array([[-0.33628688,  0.26805811, -0.90280451],
+       [ 0.92589805, -0.08109336, -0.36896703],
+       [-0.17211606, -0.95998371, -0.22092385]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=43)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=44, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 44 (from the original molecule number 1 of model None)
+Rotation angle: 3.83972435439
+Rotation matrix:
+[[-0.29727585  0.21094071 -0.93119873]
+ [ 0.94815957 -0.04953235 -0.31391079]
+ [-0.11234103 -0.97624309 -0.18528068]]
+
+
+relax> structure.rotate(R=array([[-0.29727585,  0.21094071, -0.93119873],
+       [ 0.94815957, -0.04953235, -0.31391079],
+       [-0.11234103, -0.97624309, -0.18528068]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=44)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=45, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 45 (from the original molecule number 1 of model None)
+Rotation angle: 3.92699081699
+Rotation matrix:
+[[-0.25398226  0.15471545 -0.95475449]
+ [ 0.96570253 -0.01450663 -0.2592454 ]
+ [-0.05395954 -0.98785256 -0.14572467]]
+
+
+relax> structure.rotate(R=array([[-0.25398226,  0.15471545, -0.95475449],
+       [ 0.96570253, -0.01450663, -0.2592454 ],
+       [-0.05395954, -0.98785256, -0.14572467]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=45)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=46, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 46 (from the original molecule number 1 of model None)
+Rotation angle: 4.01425727959
+Rotation matrix:
+[[-0.2067356   0.09981022 -0.97329251]
+ [ 0.97839344  0.02371724 -0.2053869 ]
+ [ 0.0025841  -0.99472379 -0.10255686]]
+
+
+relax> structure.rotate(R=array([[-0.2067356 ,  0.09981022, -0.97329251],
+       [ 0.97839344,  0.02371724, -0.2053869 ],
+       [ 0.0025841 , -0.99472379, -0.10255686]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=46)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=47, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 47 (from the original molecule number 1 of model None)
+Rotation angle: 4.10152374219
+Rotation matrix:
+[[-0.15589544  0.0466429  -0.98667171]
+ [ 0.98613569  0.06484835 -0.15274517]
+ [ 0.05685955 -0.99680446 -0.05610579]]
+
+
+relax> structure.rotate(R=array([[-0.15589544,  0.0466429 , -0.98667171],
+       [ 0.98613569,  0.06484835, -0.15274517],
+       [ 0.05685955, -0.99680446, -0.05610579]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=47)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=48, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 48 (from the original molecule number 1 of model None)
+Rotation angle: 4.18879020479
+Rotation matrix:
+[[-0.1018487  -0.00438189 -0.99479025]
+ [ 0.98887038  0.10857366 -0.10172086]
+ [ 0.10845375 -0.99407875 -0.00672496]]
+
+
+relax> structure.rotate(R=array([[-0.1018487 , -0.00438189, -0.99479025],
+       [ 0.98887038,  0.10857366, -0.10172086],
+       [ 0.10845375, -0.99407875, -0.00672496]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=48)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=49, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 49 (from the original molecule number 1 of model None)
+Rotation angle: 4.27605666739
+Rotation matrix:
+[[-0.04500672 -0.05287582 -0.99758636]
+ [ 0.98657668  0.15456041 -0.0527023 ]
+ [ 0.15697403 -0.9865674   0.04520979]]
+
+
+relax> structure.rotate(R=array([[-0.04500672, -0.05287582, -0.99758636],
+       [ 0.98657668,  0.15456041, -0.0527023 ],
+       [ 0.15697403, -0.9865674 ,  0.04520979]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=49)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=50, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 50 (from the original molecule number 1 of model None)
+Rotation angle: 4.36332312999
+Rotation matrix:
+[[ 0.0141979  -0.0984698  -0.99503875]
+ [ 0.97927206  0.2024586  -0.00606253]
+ [ 0.20205113 -0.97432757  0.09930321]]
+
+
+relax> structure.rotate(R=array([[ 0.0141979 , -0.0984698 , -0.99503875],
+       [ 0.97927206,  0.2024586 , -0.00606253],
+       [ 0.20205113, -0.97432757,  0.09930321]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=50)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=51, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 51 (from the original molecule number 1 of model None)
+Rotation angle: 4.45058959259
+Rotation matrix:
+[[ 0.07531458 -0.14081686 -0.98716682]
+ [ 0.9670121   0.2519037   0.03784347]
+ [ 0.24334198 -0.95745242  0.15514363]]
+
+
+relax> structure.rotate(R=array([[ 0.07531458, -0.14081686, -0.98716682],
+       [ 0.9670121 ,  0.2519037 ,  0.03784347],
+       [ 0.24334198, -0.95745242,  0.15514363]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=51)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=52, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 52 (from the original molecule number 1 of model None)
+Rotation angle: 4.53785605519
+Rotation matrix:
+[[ 0.13787819 -0.1795947  -0.97403047]
+ [ 0.94989011  0.3025194   0.07868157]
+ [ 0.28053232 -0.93607038  0.21230606]]
+
+
+relax> structure.rotate(R=array([[ 0.13787819, -0.1795947 , -0.97403047],
+       [ 0.94989011,  0.3025194 ,  0.07868157],
+       [ 0.28053232, -0.93607038,  0.21230606]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=52)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=53, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 53 (from the original molecule number 1 of model None)
+Rotation angle: 4.62512251778
+Rotation matrix:
+[[ 0.20141257 -0.2145082  -0.95572967]
+ [ 0.9280364   0.35392049  0.11614095]
+ [ 0.31333913 -0.91034418  0.27035545]]
+
+
+relax> structure.rotate(R=array([[ 0.20141257, -0.2145082 , -0.95572967],
+       [ 0.9280364 ,  0.35392049,  0.11614095],
+       [ 0.31333913, -0.91034418,  0.27035545]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=53)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=54, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 54 (from the original molecule number 1 of model None)
+Rotation angle: 4.71238898038
+Rotation matrix:
+[[ 0.2654342  -0.24529164 -0.93240372]
+ [ 0.90161729  0.40571578  0.14993653]
+ [ 0.34151272 -0.8804696   0.32885003]]
+
+
+relax> structure.rotate(R=array([[ 0.2654342 , -0.24529164, -0.93240372],
+       [ 0.90161729,  0.40571578,  0.14993653],
+       [ 0.34151272, -0.8804696 ,  0.32885003]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=54)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=55, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 55 (from the original molecule number 1 of model None)
+Rotation angle: 4.79965544298
+Rotation matrix:
+[[ 0.32945583 -0.27171075 -0.90423013]
+ [ 0.87083385  0.45751106  0.1798111 ]
+ [ 0.36483868 -0.84667402  0.3873446 ]]
+
+
+relax> structure.rotate(R=array([[ 0.32945583, -0.27171075, -0.90423013],
+       [ 0.87083385,  0.45751106,  0.1798111 ],
+       [ 0.36483868, -0.84667402,  0.3873446 ]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=55)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=56, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 56 (from the original molecule number 1 of model None)
+Rotation angle: 4.88692190558
+Rotation matrix:
+[[ 0.39299021 -0.29356445 -0.87142332]
+ [ 0.83592036  0.50891215  0.20553731]
+ [ 0.38313947 -0.80921464  0.445394  ]]
+
+
+relax> structure.rotate(R=array([[ 0.39299021, -0.29356445, -0.87142332],
+       [ 0.83592036,  0.50891215,  0.20553731],
+       [ 0.38313947, -0.80921464,  0.445394  ]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=56)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=57, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 57 (from the original molecule number 1 of model None)
+Rotation angle: 4.97418836818
+Rotation matrix:
+[[ 0.45555382 -0.31068644 -0.83423297]
+ [ 0.79714252  0.55952785  0.22691935]
+ [ 0.39627582 -0.76837655  0.50255642]]
+
+
+relax> structure.rotate(R=array([[ 0.45555382, -0.31068644, -0.83423297],
+       [ 0.79714252,  0.55952785,  0.22691935],
+       [ 0.39627582, -0.76837655,  0.50255642]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=57)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=58, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 58 (from the original molecule number 1 of model None)
+Rotation angle: 5.06145483078
+Rotation matrix:
+[[ 0.5166705  -0.3229464  -0.79294213]
+ [ 0.75479546  0.60897295  0.2437945 ]
+ [ 0.40414775 -0.72447054  0.55839684]]
+
+
+relax> structure.rotate(R=array([[ 0.5166705 , -0.3229464 , -0.79294213],
+       [ 0.75479546,  0.60897295,  0.2437945 ],
+       [ 0.40414775, -0.72447054,  0.55839684]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=58)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=59, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 59 (from the original molecule number 1 of model None)
+Rotation angle: 5.14872129338
+Rotation matrix:
+[[ 0.57587512 -0.33025102 -0.74786503]
+ [ 0.70920147  0.65687114  0.25603432]
+ [ 0.40669536 -0.67783078  0.61249026]]
+
+
+relax> structure.rotate(R=array([[ 0.57587512, -0.33025102, -0.74786503],
+       [ 0.70920147,  0.65687114,  0.25603432],
+       [ 0.40669536, -0.67783078,  0.61249026]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=59)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=60, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 60 (from the original molecule number 1 of model None)
+Rotation angle: 5.23598775598
+Rotation matrix:
+[[ 0.6327171  -0.33254472 -0.69934475]
+ [ 0.66070755  0.70285789  0.26354567]
+ [ 0.40389925 -0.62881221  0.66442501]]
+
+
+relax> structure.rotate(R=array([[ 0.6327171 , -0.33254472, -0.69934475],
+       [ 0.66070755,  0.70285789,  0.26354567],
+       [ 0.40389925, -0.62881221,  0.66442501]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=60)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=61, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 61 (from the original molecule number 1 of model None)
+Rotation angle: 5.32325421858
+Rotation matrix:
+[[ 0.68676383 -0.32981004 -0.64775055]
+ [ 0.60968276  0.7465832   0.26627139]
+ [ 0.39578071 -0.5777879   0.71380584]]
+
+
+relax> structure.rotate(R=array([[ 0.68676383, -0.32981004, -0.64775055],
+       [ 0.60968276,  0.7465832 ,  0.26627139],
+       [ 0.39578071, -0.5777879 ,  0.71380584]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=61)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=62, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 62 (from the original molecule number 1 of model None)
+Rotation angle: 5.41052068118
+Rotation matrix:
+[[ 0.73760399 -0.32206778 -0.5934751 ]
+ [ 0.55651544  0.78771431  0.26419071]
+ [ 0.38240151 -0.52514618  0.76025691]]
+
+
+relax> structure.rotate(R=array([[ 0.73760399, -0.32206778, -0.5934751 ],
+       [ 0.55651544,  0.78771431,  0.26419071],
+       [ 0.38240151, -0.52514618,  0.76025691]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=62)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=63, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 63 (from the original molecule number 1 of model None)
+Rotation angle: 5.49778714378
+Rotation matrix:
+[[ 0.78485066 -0.30937687 -0.53693146]
+ [ 0.50161021  0.82593818  0.25731949]
+ [ 0.36386349 -0.47128767  0.80342472]]
+
+
+relax> structure.rotate(R=array([[ 0.78485066, -0.30937687, -0.53693146],
+       [ 0.50161021,  0.82593818,  0.25731949],
+       [ 0.36386349, -0.47128767,  0.80342472]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=63)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=64, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 64 (from the original molecule number 1 of model None)
+Rotation angle: 5.58505360638
+Rotation matrix:
+[[ 0.82814425 -0.29183391 -0.47854997]
+ [ 0.44538494  0.8609639   0.24571001]
+ [ 0.34030774 -0.41662228  0.84298073]]
+
+
+relax> structure.rotate(R=array([[ 0.82814425, -0.29183391, -0.47854997],
+       [ 0.44538494,  0.8609639 ,  0.24571001],
+       [ 0.34030774, -0.41662228,  0.84298073]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=64)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=65, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 65 (from the original molecule number 1 of model None)
+Rotation angle: 5.67232006898
+Rotation matrix:
+[[ 0.86715528 -0.26957239 -0.41877494]
+ [ 0.38826755  0.89252491  0.22945063]
+ [ 0.31191351 -0.36156604  0.8786239 ]]
+
+
+relax> structure.rotate(R=array([[ 0.86715528, -0.26957239, -0.41877494],
+       [ 0.38826755,  0.89252491,  0.22945063],
+       [ 0.31191351, -0.36156604,  0.8786239 ]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=65)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=66, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 66 (from the original molecule number 1 of model None)
+Rotation angle: 5.75958653158
+Rotation matrix:
+[[ 0.90158684 -0.24276175 -0.3580613 ]
+ [ 0.33069272  0.92038101  0.2086651 ]
+ [ 0.27889692 -0.30653797  0.91008295]]
+
+
+relax> structure.rotate(R=array([[ 0.90158684, -0.24276175, -0.3580613 ],
+       [ 0.33069272,  0.92038101,  0.2086651 ],
+       [ 0.27889692, -0.30653797,  0.91008295]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=66)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=67, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 67 (from the original molecule number 1 of model None)
+Rotation angle: 5.84685299418
+Rotation matrix:
+[[ 0.9311769  -0.21160603 -0.29687112]
+ [ 0.27309863  0.9443202   0.18351159]
+ [ 0.24150923 -0.25195685  0.93711847]]
+
+
+relax> structure.rotate(R=array([[ 0.9311769 , -0.21160603, -0.29687112],
+       [ 0.27309863,  0.9443202 ,  0.18351159],
+       [ 0.24150923, -0.25195685,  0.93711847]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=67)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=68, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 68 (from the original molecule number 1 of model None)
+Rotation angle: 5.93411945678
+Rotation matrix:
+[[ 0.95570026 -0.17634234 -0.23567009]
+ [ 0.21592362  0.96416028  0.15418156]
+ [ 0.200035   -0.19823809  0.9595247 ]]
+
+
+relax> structure.rotate(R=array([[ 0.95570026, -0.17634234, -0.23567009],
+       [ 0.21592362,  0.96416028,  0.15418156],
+       [ 0.200035  , -0.19823809,  0.9595247 ]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=68)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=69, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 69 (from the original molecule number 1 of model None)
+Rotation angle: 6.02138591938
+Rotation matrix:
+[[ 0.97497028 -0.13723906 -0.17492398]
+ [ 0.15960281  0.97975026  0.12089821]
+ [ 0.15478986 -0.14579052  0.97713112]]
+
+
+relax> structure.rotate(R=array([[ 0.97497028, -0.13723906, -0.17492398],
+       [ 0.15960281,  0.97975026,  0.12089821],
+       [ 0.15478986, -0.14579052,  0.97713112]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=69)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=70, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 70 (from the original molecule number 1 of model None)
+Rotation angle: 6.10865238198
+Rotation matrix:
+[[ 0.98884029 -0.09459379 -0.11509512]
+ [ 0.10456485  0.99097149  0.08391485]
+ [ 0.10611815 -0.09501329  0.98980372]]
+
+
+relax> structure.rotate(R=array([[ 0.98884029, -0.09459379, -0.11509512],
+       [ 0.10456485,  0.99097149,  0.08391485],
+       [ 0.10611815, -0.09501329,  0.98980372]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=70)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='..', read_mol=None, set_mol_name=None, read_model=None, set_model_num=71, parser='internal')
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model 71 (from the original molecule number 1 of model None)
+Rotation angle: 6.19591884458
+Rotation matrix:
+[[ 0.99720476 -0.04873109 -0.05663883]
+ [ 0.05122861  0.99773857  0.04351296]
+ [ 0.05439031 -0.04629286  0.99744607]]
+
+
+relax> structure.rotate(R=array([[ 0.99720476, -0.04873109, -0.05663883],
+       [ 0.05122861,  0.99773857,  0.04351296],
+       [ 0.05439031, -0.04629286,  0.99744607]]), origin=array([ 37.254 ,   0.5   ,  16.7465]), model=71)
+
+relax> structure.write_pdb(file='distribution.pdb', dir=None, model_num=None, compress_type=2, force=True)
+Opening the file 'distribution.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+
+MODEL 1
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 2
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 3
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 4
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 5
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 6
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 7
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 8
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 9
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 10
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 11
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 12
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 13
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 14
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 15
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 16
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 17
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 18
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 19
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 20
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 21
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 22
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 23
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 24
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 25
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 26
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 27
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 28
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 29
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 30
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 31
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 32
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 33
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 34
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 35
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 36
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 37
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 38
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 39
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 40
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 41
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 42
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 43
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 44
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 45
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 46
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 47
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 48
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 49
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 50
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 51
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 52
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 53
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 54
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 55
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 56
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 57
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 58
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 59
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 60
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 61
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 62
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 63
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 64
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 65
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 66
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 67
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 68
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 69
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 70
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 71
+ATOM, HETATM, TER
+ENDMDL
+CONECT
+
+MASTER
+END
+
