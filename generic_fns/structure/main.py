@@ -581,7 +581,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         raise RelaxError("No vectors could be extracted.")
 
 
-def write_pdb(file=None, dir=None, model_num=None, force=False):
+def write_pdb(file=None, dir=None, model_num=None, compress_type=0, force=False):
     """The PDB writing function.
 
     @keyword file:          The name of the PDB file to write.
@@ -590,6 +590,8 @@ def write_pdb(file=None, dir=None, model_num=None, force=False):
     @type dir:              str or None
     @keyword model_num:     The model to place into the PDB file.  If not supplied, then all models will be placed into the file.
     @type model_num:        None or int
+    @keyword compress_type: The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
     @keyword force:         The force flag which if True will cause the file to be overwritten.
     @type force:            bool
     """
@@ -613,7 +615,7 @@ def write_pdb(file=None, dir=None, model_num=None, force=False):
         file_path = file_path + '.pdb'
 
     # Open the file for writing.
-    file = open_write_file(file_path, force=force)
+    file = open_write_file(file_path, compress_type=compress_type, force=force)
 
     # Write the structures.
     cdp.structure.write_pdb(file, model_num=model_num)

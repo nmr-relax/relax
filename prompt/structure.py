@@ -547,13 +547,14 @@ class Structure(User_fn_class):
     _build_doc(vectors)
 
 
-    def write_pdb(self, file=None, dir=None, model_num=None, force=False):
+    def write_pdb(self, file=None, dir=None, model_num=None, compress_type=0, force=False):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.write_pdb("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", model_num=" + repr(model_num)
+            text = text + ", compress_type=" + repr(compress_type)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
@@ -561,10 +562,11 @@ class Structure(User_fn_class):
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
         arg_check.is_int(model_num, 'model number', can_be_none=True)
+        arg_check.is_int(compress_type, 'compression type')
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        generic_fns.structure.main.write_pdb(file=file, dir=dir, model_num=model_num, force=force)
+        generic_fns.structure.main.write_pdb(file=file, dir=dir, model_num=model_num, compress_type=compress_type, force=force)
 
     # The function doc info.
     write_pdb._doc_title = "Writing structures to a PDB file."
@@ -572,9 +574,16 @@ class Structure(User_fn_class):
     write_pdb._doc_args = [["file", "The name of the PDB file."],
                            ["dir", "The directory where the file is located."],
                            ["model_num", "Restrict the writing of structural data to a single model in the PDB file."],
+                           ["compress_type", "The type of compression to use when creating the file."],
                            ["force", "A flag which if set to True will cause any pre-existing files to be overwritten."]]
     write_pdb._doc_desc = """
         This will write all of the structural data loaded in the current data pipe to be converted to the PDB format and written to file.  Specifying the model number allows single models to be output.
+
+        The default behaviour of this function is to not compress the file.  The compression can, however, be changed to either bzip2 or gzip compression.  If the '.bz2' or '.gz' extension is not included in the file name, it will be added.  This behaviour is controlled by the compress_type argument which can be set to
+
+            0:  No compression (no file extension).
+            1:  bzip2 compression ('.bz2' file extension).
+            2:  gzip compression ('.gz' file extension).
         """
     write_pdb._doc_examples = """
         To write all models and molecules to the PDB file 'ensemble.pdb' within the directory '~/pdb', type
