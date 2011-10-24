@@ -458,14 +458,14 @@ class N_state_model(API_base, API_common):
         # Generate the cone outer edge.
         print("\nGenerating the cone outer edge.")
         cap_start_atom = mol.atom_num[-1]+1
-        generic_fns.structure.geometric.cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, phi_max_fn=cone.phi_max, length=norm(cdp.pivot_CoM), inc=inc)
+        generic_fns.structure.geometric.cone_edge(mol=mol, cone=cone, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, scale=norm(cdp.pivot_CoM), inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
             print("\nGenerating the cone cap.")
             cone_start_atom = mol.atom_num[-1]+1
-            generic_fns.structure.geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
-            generic_fns.structure.geometric.stitch_cap_to_cone(mol=mol, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=angle, inc=inc)
+            generic_fns.structure.geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, limit_check=cone.limit_check, scale=norm(cdp.pivot_CoM), inc=inc)
+            generic_fns.structure.geometric.stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=cap_start_atom+1, inc=inc)
 
         # Create the PDB file.
         print("\nGenerating the PDB file.")
