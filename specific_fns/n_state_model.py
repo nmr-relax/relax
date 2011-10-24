@@ -836,7 +836,7 @@ class N_state_model(API_base, API_common):
 
         # The paramagnetic centre.
         if hasattr(cdp, 'paramagnetic_centre'):
-            paramag_centre = cdp.paramagnetic_centre
+            paramag_centre = array(cdp.paramagnetic_centre)
         else:
             paramag_centre = zeros(3, float64)
 

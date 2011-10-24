@@ -22,13 +22,13 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import array, dot, float64, ones, transpose, zeros
+from numpy import array, dot, float64, ones, rank, transpose, zeros
 
 # relax module imports.
 from alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
 from chi2 import chi2, dchi2_element, d2chi2_element
 from float import isNaN
-from paramag_centre import paramag_data
+from paramag_centre import vectors_single_centre, vectors_centre_per_state
 from pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, pcs_tensor
 from physical_constants import pcs_constant
 from rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
@@ -141,8 +141,8 @@ class N_state_opt:
         @type dip_const:            numpy rank-1 array
         @keyword atomic_pos:        The atomic positions of all spins.  The first index is the spin systems j and the second is the structure or state c.
         @type atomic_pos:           numpy rank-3 array
-        @keyword paramag_centre:    The paramagnetic centre position.
-        @type paramag_centre:       numpy rank-1 array
+        @keyword paramag_centre:    The paramagnetic centre position (or positions).
+        @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 array
         @keyword centre_fixed:      A flag which if False will cause the paramagnetic centre to be optimised.
@@ -1614,7 +1614,10 @@ class N_state_opt:
         """Calculate the paramagnetic centre to spin vectors, distances and constants."""
 
         # Get the vectors and distances.
-        paramag_data(self.atomic_pos, self.paramag_centre, self.paramag_unit_vect, self.paramag_dist)
+        if rank(self.paramag_centre) == 1:
+            vectors_single_centre(self.atomic_pos, self.paramag_centre, self.paramag_unit_vect, self.paramag_dist)
+        else:
+            vectors_centre_per_state(self.atomic_pos, self.paramag_centre, self.paramag_unit_vect, self.paramag_dist)
 
         # The PCS constants.
         for i in range(self.num_align):
