@@ -304,23 +304,25 @@ def cone_pdb(file=None):
     # Rotate to the average position.
     #################################
 
-    # The average position rotation.
-    ave_pos_R = zeros((3, 3), float64)
-    euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, ave_pos_R)
+    # Check if there is an average position.
+    if hasattr(cdp, 'ave_pos_alpha'):
+        # The average position rotation.
+        ave_pos_R = zeros((3, 3), float64)
+        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, ave_pos_R)
 
-    # The rotation is passive (need to rotated the moving domain back into the average position defined in the non-moving domain PDB frame).
-    R = transpose(ave_pos_R)
+        # The rotation is passive (need to rotated the moving domain back into the average position defined in the non-moving domain PDB frame).
+        R = transpose(ave_pos_R)
 
-    # Convert to axis-angle notation.
-    axis, angle = R_to_axis_angle(R)
+        # Convert to axis-angle notation.
+        axis, angle = R_to_axis_angle(R)
 
-    # The PDB file to rotate.
-    for i in range(len(cdp.domain_to_pdb)):
-        if cdp.domain_to_pdb[i][0] != cdp.ref_domain:
-            pdb = cdp.domain_to_pdb[i][1]
+        # The PDB file to rotate.
+        for i in range(len(cdp.domain_to_pdb)):
+            if cdp.domain_to_pdb[i][0] != cdp.ref_domain:
+                pdb = cdp.domain_to_pdb[i][1]
 
-    # Execute the pymol command to rotate.
-    pymol_obj.exec_cmd("cmd.rotate([%s, %s, %s], %s, '%s', origin=[%s, %s, %s])" % (axis[0], axis[1], axis[2], angle/pi*180.0, pdb, cdp.pivot[0], cdp.pivot[1], cdp.pivot[2]))
+        # Execute the pymol command to rotate.
+        pymol_obj.exec_cmd("cmd.rotate([%s, %s, %s], %s, '%s', origin=[%s, %s, %s])" % (axis[0], axis[1], axis[2], angle/pi*180.0, pdb, cdp.pivot[0], cdp.pivot[1], cdp.pivot[2]))
 
 
 def create_macro(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
