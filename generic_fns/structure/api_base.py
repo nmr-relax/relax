@@ -459,13 +459,15 @@ class Base_struct_API:
                 model.mol[-1].file_model = orig_model_num[i]
 
 
-    def rotate(self, R=None, origin=None):
+    def rotate(self, R=None, origin=None, model=None):
         """Method stub for rotating a structure.
 
         @keyword R:         The forwards rotation matrix.
         @type R:            numpy 3D, rank-2 array
         @keyword origin:    The origin of the rotation.
         @type origin:       numpy 3D, rank-1 array
+        @keyword model:     The model to rotate.  If None, all models will be rotated.
+        @type model:        int
         """
 
         # Raise the error.

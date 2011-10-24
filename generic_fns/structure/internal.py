@@ -1020,19 +1020,21 @@ class Internal(Base_struct_API):
         return True
         
 
-    def rotate(self, R=None, origin=None):
+    def rotate(self, R=None, origin=None, model=None):
         """Rotate the structural information about the given origin.
 
         @keyword R:         The forwards rotation matrix.
         @type R:            numpy 3D, rank-2 array
         @keyword origin:    The origin of the rotation.
         @type origin:       numpy 3D, rank-1 array
+        @keyword model:     The model to rotate.  If None, all models will be rotated.
+        @type model:        int
         """
 
         # Loop over the models.
-        for model in self.model_loop():
+        for model_cont in self.model_loop(model):
             # Loop over the molecules.
-            for mol in model.mol:
+            for mol in model_cont.mol:
                 # Loop over the atoms.
                 for i in range(len(mol.atom_num)):
                     # The origin to atom vector.

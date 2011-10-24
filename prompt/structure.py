@@ -438,30 +438,33 @@ class Structure(User_fn_class):
         generic_fns.structure.main.read_xyz(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num)
 
 
-    def rotate(self, R=None, origin=None):
+    def rotate(self, R=None, origin=None, model=None):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.rotate("
             text = text + "R=" + repr(R)
-            text = text + ", origin=" + repr(origin) + ")"
+            text = text + ", origin=" + repr(origin)
+            text = text + ", model=" + repr(model) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_float_matrix(R, 'rotation matrix', dim=(3,3))
         arg_check.is_float_array(origin, 'origin of rotation', size=3, can_be_none=True)
+        arg_check.is_int(model, 'model', can_be_none=True)
 
         # Execute the functional code.
-        generic_fns.structure.main.rotate(R=R, origin=origin)
+        generic_fns.structure.main.rotate(R=R, origin=origin, model=model)
 
     # The function doc info.
     rotate._doc_title = "Rotate the internal structural object about the given origin by the rotation matrix."
     rotate._doc_title_short = "Structure rotation."
     rotate._doc_args = [
         ["R", "The rotation matrix in forwards rotation notation."],
-        ["origin", "The origin or pivot of the rotation."]
+        ["origin", "The origin or pivot of the rotation."],
+        ["model", "The model to rotate (which if not set will cause all models to be rotated)."]
     ]
     rotate._doc_desc = """
-        This is used to rotate the internal structural data by the given rotation matrix.  If the origin is supplied, then this will act as the pivot of the rotation.  Otherwise, all structural data will be rotated about the point [0, 0, 0].
+        This is used to rotate the internal structural data by the given rotation matrix.  If the origin is supplied, then this will act as the pivot of the rotation.  Otherwise, all structural data will be rotated about the point [0, 0, 0].  The model argument can be used to rotate only specific models.
         """
     _build_doc(rotate)
 
