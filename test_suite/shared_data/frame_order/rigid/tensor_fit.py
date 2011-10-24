@@ -45,7 +45,7 @@ for i in range(len(ln)):
     monte_carlo.error_analysis()
 
     # Alias the tensor.
-    A = cdp.align_tensors[i]
+    A = cdp.align_tensors[0]
 
     # Write out the tensors.
     out.write("align_tensor.init(tensor='%s%s %s-dom', params=(%s, %s, %s, %s, %s), param_types=2)\n" % (upper(ln[i][0]), ln[i][1], 'C', A.Axx, A.Ayy, A.Axy, A.Axz, A.Ayz))
