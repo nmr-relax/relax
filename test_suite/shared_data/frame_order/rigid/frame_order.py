@@ -22,14 +22,17 @@ class Analysis:
         R = transpose(R)
         print("Inverted rotation:\n%s\n" % R)
 
+        # The pivot point.
+        pivot = array([ 37.254, 0.5, 16.7465])
+
         # Load the original structure.
         self.original_structure()
 
         # Domain transformation.
-        self.transform(R, array([ 37.254, 0.5, 16.7465]))
+        self.transform(R, pivot)
 
         # Display in pymol.
-        self.pymol_display()
+        self.pymol_display(pivot)
 
         # Save the state.
         state.save('frame_order', force=True)
@@ -78,23 +81,30 @@ class Analysis:
         structure.read_pdb('1J7P_1st_NH.pdb', dir='..')
 
 
-    def pymol_display(self):
+    def pymol_display(self, pivot):
         """Display the results in PyMOL."""
 
-        # A special data pipe for all the structures.
-        pipe.create('pymol', 'frame order')
+        # Switch back to the main data pipe.
+        pipe.switch('frame order')
 
-        # Load the PDBs.
-        structure.read_pdb('1J7P_1st_NH.pdb', dir='..')
+        # Load the PDBs of the 2 domains.
+        structure.read_pdb('1J7O_1st_NH.pdb', dir='..')
         structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..')
-        structure.read_pdb('ave_pos.pdb', dir='.')
+
+        # Set the pivot point.
+        frame_order.pivot(pivot)
+
+        # Create the cone PDB file.
+        #frame_order.cone_pdb(file='cone.pdb', force=True)
+
+        # Set the domains.
+        frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
+        frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
 
         # PyMOL.
         pymol.view()
         pymol.command('show spheres')
-        pymol.command('zoom')
-        pymol.command('color red, 1J7P_1st_NH_rot')
-        pymol.command('color yellow, ave_pos')
+        pymol.cone_pdb('cone.pdb')
 
 
     def transform(self, R, pivot):
