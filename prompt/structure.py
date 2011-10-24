@@ -300,6 +300,8 @@ class Structure(User_fn_class):
         Setting the molecule name allows the molecule within the PDB (within one model) to have a custom name.  If not set, then the molecules will be named after the file name, with the molecule number appended if more than one exists.
 
         Note that relax will complain if it cannot work out what to do.
+
+        This is able to handle uncompressed, bzip2 compressed files, or gzip compressed files automatically.  The full file name including extension can be supplied, however, if the file cannot be found, this function will search for the file name with '.bz2' appended followed by the file name with '.gz' appended.
         """
     read_pdb._doc_examples = """
         To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', including all

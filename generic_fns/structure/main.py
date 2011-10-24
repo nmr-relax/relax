@@ -295,10 +295,14 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     # The file path.
     file_path = get_file_path(file, dir)
 
-    # Try adding '.pdb' to the end of the file path, if the file can't be found.
+    # Try adding file extensions to the end of the file path, if the file can't be found.
+    file_path_orig = file_path
     if not access(file_path, F_OK):
-        file_path_orig = file_path
-        file_path = file_path + '.pdb'
+        # List of possible extensions.
+        for ext in ['.pdb', '.gz', '.pdb.gz', '.bz2', '.pdb.bz2']:
+            # Add the extension if the file can be found.
+            if access(file_path+ext, F_OK):
+                file_path = file_path + ext
 
     # Test if the file exists.
     if not access(file_path, F_OK):
