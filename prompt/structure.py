@@ -195,30 +195,35 @@ class Structure(User_fn_class):
     _build_doc(delete)
 
 
-    def displacement(self, model_from=None, model_to=None):
+    def displacement(self, model_from=None, model_to=None, atom_id=None):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.displacement("
             text = text + "model_from=" + repr(model_from)
-            text = text + ", model_to=" + repr(model_to) + ")"
+            text = text + ", model_to=" + repr(model_to)
+            text = text + ", atom_id=" + repr(atom_id) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_int(model_from, 'model from', can_be_none=True)
         arg_check.is_int(model_to, 'model to', can_be_none=True)
+        arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)
 
         # Execute the functional code.
-        generic_fns.structure.main.displacement(model_from=model_from, model_to=model_to)
+        generic_fns.structure.main.displacement(model_from=model_from, model_to=model_to, atom_id=atom_id)
 
     # The function doc info.
     displacement._doc_title = "Determine the rotational and translational displacement between a set of models."
     displacement._doc_title_short = "Rotational and translational displacement."
     displacement._doc_args = [
         ["model_from", "The optional model number for the starting position of the displacement."],
-        ["model_to", "The optional model number for the ending position of the displacement."]
+        ["model_to", "The optional model number for the ending position of the displacement."],
+        ["atom_id", "The atom identification string."]
     ]
     displacement._doc_desc = """
         This user function allows the rotational and translational displacement between two models of the same structure to be calculated.  The information will be printed out in various formats and held in the relax data store.  This is directional, so there is a starting and ending position for each displacement.  If the starting and ending models are not specified, then the displacements in all directions between all models will be calculated.
+
+        The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the displacement calculation to certain molecules, residues, or atoms.  This is useful if studying domain motions, secondary structure rearrangements, amino acid side chain rotations, etc.
         """
     displacement._doc_examples = """
         To determine the rotational and translational displacements between all sets of models, type:
