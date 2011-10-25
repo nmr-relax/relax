@@ -21,12 +21,14 @@
 ###############################################################################
 
 # Python module imports.
+from numpy import float64, zeros
 from os import sep
 
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, return_spin
+from maths_fns.rotation_matrix import euler_to_R_zyz
 from status import Status; status = Status()
 
 
@@ -49,6 +51,27 @@ class Structure(SystemTestCase):
 
         # Create the data pipe.
         self.interpreter.pipe.create('mf', 'mf')
+
+
+    def test_displacement(self):
+        """Test of the structure.displacement user function."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file as two models.
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=0)
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=1)
+
+        # A rotation.
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(1.3, 0.4, 4.5, R)
+
+        # Rotate the second model.
+        self.interpreter.structure.rotate(R, model=1)
+
+        # Calculate the displacement.
+        self.interpreter.structure.displacement()
 
 
     def test_load_internal_results(self):
