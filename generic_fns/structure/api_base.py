@@ -38,8 +38,8 @@ from types import MethodType
 from warnings import warn
 
 # relax module import.
-from data.relax_xml import fill_object_contents, xml_to_object
-from float import floatAsByteArray
+from data.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
+from float import floatAsByteArray, packBytesAsPyFloat
 from maths_fns.rotation_matrix import R_to_axis_angle
 from relax_errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError
 from relax_io import file_root
@@ -223,6 +223,15 @@ class Base_struct_API:
         # Recreate the model / molecule data structure.
         model_nodes = str_node.getElementsByTagName('model')
         self.structural_data.from_xml(model_nodes, id=id)
+
+        # The displacement structure.
+        disp_nodes = str_node.getElementsByTagName('displacements')
+        if len(disp_nodes):
+            # Initialise the object.
+            self.displacements = Displacements()
+
+            # Recreate the molecule data structures for the current model.
+            self.displacements.from_xml(disp_nodes[0])
 
 
     def get_model(self, model):
@@ -544,7 +553,7 @@ class Base_struct_API:
         if hasattr(self, 'displacements'):
             # Create an XML element.
             disp_element = doc.createElement('displacements')
-            element.appendChild(disp_element)
+            str_element.appendChild(disp_element)
 
             # Set the attributes.
             disp_element.setAttribute('desc', 'The rotational and translational displacements between models')
@@ -954,6 +963,62 @@ class Displacements:
         self._rotation_angle[model_from][model_to] = angle
 
 
+    def from_xml(self, str_node, dir=None, id=None):
+        """Recreate the structural object from the XML structural object node.
+
+        @param str_node:    The structural object XML node.
+        @type str_node:     xml.dom.minicompat.Element instance
+        @keyword dir:       The name of the directory containing the results file.
+        @type dir:          str
+        @keyword id:        The specific structural object ID string.  This can be 'scientific',
+                            'internal', etc.
+        @type id:           str
+        """
+
+        # Get the pairs of displacements.
+        pair_nodes = str_node.getElementsByTagName('pair')
+
+        # Loop over the pairs.
+        for pair_node in pair_nodes:
+            # Get the two models.
+            model_from = int(pair_node.getAttribute('model_from'))
+            model_to = int(pair_node.getAttribute('model_to'))
+
+            # Initialise structures if necessary.
+            if not self._translation_vector.has_key(model_from):
+                self._translation_vector[model_from] = {}
+            if not self._translation_distance.has_key(model_from):
+                self._translation_distance[model_from] = {}
+            if not self._rotation_matrix.has_key(model_from):
+                self._rotation_matrix[model_from] = {}
+            if not self._rotation_axis.has_key(model_from):
+                self._rotation_axis[model_from] = {}
+            if not self._rotation_angle.has_key(model_from):
+                self._rotation_angle[model_from] = {}
+
+            # Loop over the nodes of the element
+            for node in pair_node.childNodes:
+                # Skip empty nodes.
+                if node.localName == None:
+                    continue
+
+                # The name of the python object to recreate.
+                name = '_%s' % node.localName
+
+                # IEEE-754 floats (for full precision restoration).
+                ieee_array = node.getAttribute('ieee_754_byte_array')
+                if ieee_array:
+                    val = packBytesAsPyFloat(eval(ieee_array))
+
+                # Get the node contents.
+                else:
+                    val = node_value_to_python(node.childNodes[0])
+
+                # Store the value.
+                obj = getattr(self, name)
+                obj[model_from][model_to] = val
+
+
     def to_xml(self, doc, element):
         """Create XML elements for each model.
 
@@ -962,9 +1027,6 @@ class Displacements:
         @param element: The element to add the displacement XML elements to.
         @type element:  XML element object
         """
-
-        # Init a global index.
-        index = 0
 
         # Loop over the starting models.
         start_models = self._translation_vector.keys()
@@ -975,7 +1037,7 @@ class Displacements:
             end_models.sort()
             for model_to in end_models:
                 # Create an XML element for each pair.
-                pair_element = doc.createElement('set_%s' % index)
+                pair_element = doc.createElement('pair')
                 element.appendChild(pair_element)
 
                 # Set the attributes.
@@ -1008,9 +1070,6 @@ class Displacements:
                     # Add the text value to the sub element.
                     text_val = doc.createTextNode(repr(subobj))
                     sub_elem.appendChild(text_val)
-
-                # Increment the index.
-                index += 1
 
 
 
