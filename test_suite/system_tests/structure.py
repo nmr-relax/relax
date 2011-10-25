@@ -78,6 +78,44 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=3)
         self.interpreter.structure.rotate(R, model=3)
 
+        # The data to check.
+        models = [1, 2]
+        trans_vect = [
+            [[0.0, 0.0, 0.0],
+             [   2.270857972754659,   -1.811667138656451,    1.878400649688508]],
+            [[  -2.270857972754659,    1.811667138656451,   -1.878400649688508],
+             [0.0, 0.0, 0.0]]
+        ]
+        dist = [
+            [0.0000000000000000, 3.4593818457148173],
+            [3.4593818457148173, 0.0000000000000000]
+        ]
+        rot_axis = [
+            [None,
+             [   0.646165066909452,    0.018875759848125,   -0.762964227206007]],
+            [[  -0.646165066909452,   -0.018875759848125,    0.762964227206007],
+             None]
+        ]
+        angle = [
+            [0.0000000000000000, 0.6247677290742989],
+            [0.6247677290742989, 0.0000000000000000]
+        ]
+
+        # Test the results.
+        self.assert_(hasattr(cdp.structure, 'displacements'))
+        for i in range(len(models)):
+            for j in range(len(models)):
+                # Check the translation.
+                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[models[i]][models[j]], dist[i][j])
+                for k in range(3):
+                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[models[i]][models[j]][k], trans_vect[i][j][k])
+
+                # Check the rotation.
+                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[models[i]][models[j]], angle[i][j])
+                if rot_axis[i][j] != None:
+                    for k in range(3):
+                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[models[i]][models[j]][k], rot_axis[i][j][k])
+
         # Save the results.
         self.tmpfile = mktemp()
         self.interpreter.state.save(self.tmpfile, dir=None, force=True)
@@ -88,8 +126,20 @@ class Structure(SystemTestCase):
         # Load the results.
         self.interpreter.state.load(self.tmpfile)
 
-        # Test the loading.
+        # Test the re-loaded data.
         self.assert_(hasattr(cdp.structure, 'displacements'))
+        for i in range(len(models)):
+            for j in range(len(models)):
+                # Check the translation.
+                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[models[i]][models[j]], dist[i][j])
+                for k in range(3):
+                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[models[i]][models[j]][k], trans_vect[i][j][k])
+
+                # Check the rotation.
+                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[models[i]][models[j]], angle[i][j])
+                if rot_axis[i][j] != None:
+                    for k in range(3):
+                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[models[i]][models[j]][k], rot_axis[i][j][k])
 
 
     def test_load_internal_results(self):
