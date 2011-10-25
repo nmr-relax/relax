@@ -32,7 +32,7 @@ from string import digits, split, strip, upper
 from warnings import warn
 
 # relax module imports.
-from api_base import Base_struct_API, ModelList
+from api_base import Base_struct_API, ModelList, Displacements
 from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import spin_loop
@@ -584,22 +584,20 @@ class Internal(Base_struct_API):
         return data
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
-        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
-                                    matching this selection will be yielded.
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms matching this selection will be yielded.
         @type atom_id:              str
-        @keyword str_id:            The structure identifier.  This can be the file name, model
-                                    number, or structure number.  If None, then all structures will
-                                    be looped over.
+        @keyword str_id:            The structure identifier.  This can be the file name, model number, or structure number.  If None, then all structures will be looped over.
         @type str_id:               str, int, or None
+        @keyword model_num:         Only loop over a specific model.
+        @type model_num:            int or None
         @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
         @type model_num_flag:       bool
         @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
         @type mol_name_flag:        bool
-        @keyword res_num_flag:      A flag which if True will cause the residue number to be
-                                    yielded.
+        @keyword res_num_flag:      A flag which if True will cause the residue number to be yielded.
         @type res_num_flag:         bool
         @keyword res_name_flag:     A flag which if True will cause the residue name to be yielded.
         @type res_name_flag:        bool
@@ -609,16 +607,12 @@ class Internal(Base_struct_API):
         @type atom_name_flag:       bool
         @keyword element_flag:      A flag which if True will cause the element name to be yielded.
         @type element_flag:         bool
-        @keyword pos_flag:          A flag which if True will cause the atomic position to be
-                                    yielded.
+        @keyword pos_flag:          A flag which if True will cause the atomic position to be yielded.
         @type pos_flag:             bool
-        @keyword ave:               A flag which if True will result in this method returning the
-                                    average atom properties across all loaded structures.
+        @keyword ave:               A flag which if True will result in this method returning the average atom properties across all loaded structures.
         @type ave:                  bool
         @return:                    A tuple of atomic information, as described in the docstring.
-        @rtype:                     tuple consisting of optional molecule name (str), residue number
-                                    (int), residue name (str), atom number (int), atom name(str),
-                                    element name (str), and atomic position (array of len 3).
+        @rtype:                     tuple consisting of optional molecule name (str), residue number (int), residue name (str), atom number (int), atom name(str), element name (str), and atomic position (array of len 3).
         """
 
         # Check that the structure is loaded.
@@ -629,7 +623,7 @@ class Internal(Base_struct_API):
         sel_obj = Selection(atom_id)
 
         # Model loop.
-        for model in self.model_loop():
+        for model in self.model_loop(model_num):
             # Loop over the molecules.
             for mol_index in range(len(model.mol)):
                 mol = model.mol[mol_index]
@@ -785,6 +779,56 @@ class Internal(Base_struct_API):
 
         # Return the data.
         return data
+
+
+    def calc_displacement(self, model_from=None, model_to=None, atom_id=None):
+        """Calculate the rotational and translational displacement between two structural models.
+
+        @keyword model_from:        The optional model number for the starting position of the displacement.
+        @type model_from:           int or None
+        @keyword model_to:          The optional model number for the ending position of the displacement.
+        @type model_to:             int or None
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+        @type atom_id:              str or None
+        """
+
+        # Convert the model_from and model_to args to lists, is supplied.
+        if model_from != None:
+            model_from = [model_from]
+        if model_to != None:
+            model_to = [model_to]
+
+        # Create a list of all models.
+        models = []
+        for model in self.model_loop():
+            models.append(model.num)
+
+        # Set model_from or model_to to all models if None.
+        if model_from == None:
+            model_from = models
+        if model_to == None:
+            model_to = models
+
+        # Initialise the data structure.
+        if not hasattr(self, 'displacements'):
+            self.displacements = Displacements()
+
+        # Loop over the starting models.
+        for i in range(len(model_from)):
+            # Assemble the atomic coordinates.
+            coord_from = []
+            for pos in self.atom_loop(atom_id=atom_id, model_num=model_from[i], pos_flag=True):
+                coord_from.append(pos[0])
+
+            # Loop over the ending models.
+            for j in range(len(model_to)):
+                # Assemble the atomic coordinates.
+                coord_to = []
+                for pos in self.atom_loop(atom_id=atom_id, model_num=model_to[j], pos_flag=True):
+                    coord_to.append(pos[0])
+
+                # Send to the base container for the calculations.
+                self.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to))
 
 
     def delete(self):

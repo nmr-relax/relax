@@ -29,6 +29,9 @@ documented.
 """
 
 # Python module imports.
+from math import pi
+from numpy import array, dot, float64, outer, transpose, zeros
+from numpy.linalg import norm, svd
 from os import sep
 from re import match
 from types import MethodType
@@ -36,6 +39,7 @@ from warnings import warn
 
 # relax module import.
 from data.relax_xml import fill_object_contents, xml_to_object
+from maths_fns.rotation_matrix import R_to_axis_angle
 from relax_errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError
 from relax_io import file_root
 from relax_warnings import RelaxWarning
@@ -175,6 +179,21 @@ class Base_struct_API:
         @type return_warnings:      bool
         @return:                    The list of bond vectors for each model.
         @rtype:                     list of numpy arrays
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
+    def calc_displacement(self, model_from=None, model_to=None, atom_id=None):
+        """Calculate the rotational and translational displacement between two structural models.
+
+        @keyword model_from:        The optional model number for the starting position of the displacement.
+        @type model_from:           int or None
+        @keyword model_to:          The optional model number for the ending position of the displacement.
+        @type model_to:             int or None
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+        @type atom_id:              str or None
         """
 
         # Raise the error.
@@ -794,6 +813,133 @@ class Base_struct_API:
             for j in range(len(model_i.mol)):
                 if model_i.mol[j].mol_name != self.structural_data[0].mol[j].mol_name:
                     raise RelaxError("The molecule name '%s' of model %s does not match the corresponding molecule '%s' of model %s." % (model_i.mol[j].mol_name, model_i.num, self.structural_data[0].mol[j].mol_name, self.structural_data[0].num))
+
+
+
+class Displacements:
+    """A special object for representing rotational and translational displacements between models."""
+
+    def __init__(self):
+        """Initialise the storage objects."""
+
+        # The displacement structures.
+        self._translation_vector = {}
+        self._translation_distance = {}
+        self._rotation_matrix = {}
+        self._rotation_axis = {}
+        self._rotation_angle = {}
+
+
+    def _calc_centriod(self, coords):
+        """Calculate the centroid of the structure. 
+
+        @keyword coord:     The atomic coordinates.
+        @type coord:        numpy rank-2, Nx3 array
+        @return:            The centroid.
+        @rtype:             numpy rank-1, 3D array
+        """
+
+        # The sum.
+        centroid = coords.sum(0) / coords.shape[0]
+
+        # Return.
+        return centroid
+
+
+    def _calc_rotation(self, coord_from=None, coord_to=None, centroid_from=None, centroid_to=None):
+        """Calculate the rotation via SVD.
+
+        @keyword coord_from:    The list of atomic coordinates for the starting structure.
+        @type coord_from:       numpy rank-2, Nx3 array
+        @keyword coord_to:      The list of atomic coordinates for the ending structure.
+        @type coord_to:         numpy rank-2, Nx3 array
+        @keyword centroid_from: The starting centroid.
+        @type centroid_from:    numpy rank-1, 3D array
+        @keyword centroid_to:   The ending centroid.
+        @type centroid_to:      numpy rank-1, 3D array
+        @return:                The rotation matrix.
+        @rtype:                 numpy rank-2, 3D array
+        """
+
+        # Initialise the H matrix.
+        H = zeros((3, 3), float64)
+
+        # Loop over the atoms.
+        for i in range(coord_from.shape[0]):
+            # The positions shifted to the origin.
+            orig_from = coord_from[i] - centroid_from
+            orig_to = coord_to[i] - centroid_to
+
+            # The outer product.
+            H += outer(orig_from, orig_to)
+
+        # SVD.
+        U, S, V = svd(H)
+
+        # The rotation.
+        R = dot(V, transpose(U))
+
+        # Return the rotation.
+        return R
+
+
+    def _calculate(self, model_from=None, model_to=None, coord_from=None, coord_to=None):
+        """Calculate the rotational and translational displacements using the given coordinate sets.
+
+        @keyword model_from:    The model number of the starting structure.
+        @type model_from:       int
+        @keyword model_to:      The model number of the ending structure.
+        @type model_to:         int
+        @keyword coord_from:    The list of atomic coordinates for the starting structure.
+        @type coord_from:       numpy rank-2, Nx3 array
+        @keyword coord_to:      The list of atomic coordinates for the ending structure.
+        @type coord_to:         numpy rank-2, Nx3 array
+        """
+
+        # Calculate the centroids.
+        centroid_from = self._calc_centriod(coord_from)
+        centroid_to = self._calc_centriod(coord_to)
+
+        # The translation.
+        trans_vect = centroid_to - centroid_from
+        trans_dist = norm(trans_vect)
+
+        # Calculate the rotation.
+        R = self._calc_rotation(coord_from=coord_from, coord_to=coord_to, centroid_from=centroid_from, centroid_to=centroid_to)
+        axis, angle = R_to_axis_angle(R)
+
+        # Print out.
+        print("\n\nCalculating the rotational and translational displacements from model %s to model %s.\n" % (model_from, model_to))
+        print("Start centroid:          [%20.15f, %20.15f, %20.15f]" % (centroid_from[0], centroid_from[1], centroid_from[2]))
+        print("End centroid:            [%20.15f, %20.15f, %20.15f]" % (centroid_to[0], centroid_to[1], centroid_to[2]))
+        print("Translation vector:      [%20.15f, %20.15f, %20.15f]" % (trans_vect[0], trans_vect[1], trans_vect[2]))
+        print("Translation distance:    %.15f" % trans_dist)
+        print("Rotation matrix:")
+        print("   [[%20.15f, %20.15f, %20.15f]" % (R[0, 0], R[0, 1], R[0, 2]))
+        print("    [%20.15f, %20.15f, %20.15f]" % (R[1, 0], R[1, 1], R[1, 2]))
+        print("    [%20.15f, %20.15f, %20.15f]]" % (R[2, 0], R[2, 1], R[2, 2]))
+        print("Rotation axis:           [%20.15f, %20.15f, %20.15f]" % (axis[0], axis[1], axis[2]))
+        print("Rotation angle (deg):    %.15f" % (angle / 2.0 / pi * 360.0))
+
+        # Initialise structures if necessary.
+        if not self._translation_vector.has_key(model_from):
+            self._translation_vector[model_from] = {}
+        if not self._translation_distance.has_key(model_from):
+            self._translation_distance[model_from] = {}
+        if not self._rotation_matrix.has_key(model_from):
+            self._rotation_matrix[model_from] = {}
+        if not self._rotation_axis.has_key(model_from):
+            self._rotation_axis[model_from] = {}
+        if not self._rotation_angle.has_key(model_from):
+            self._rotation_angle[model_from] = {}
+
+        # Store the data.
+        self._translation_vector[model_from][model_to] = trans_vect
+        self._translation_distance[model_from][model_to] = trans_dist
+        self._rotation_matrix[model_from][model_to] = R
+        self._rotation_axis[model_from][model_to] = axis
+        self._rotation_angle[model_from][model_to] = angle
+
 
 
 
