@@ -39,6 +39,7 @@ from warnings import warn
 
 # relax module import.
 from data.relax_xml import fill_object_contents, xml_to_object
+from float import floatAsByteArray
 from maths_fns.rotation_matrix import R_to_axis_angle
 from relax_errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError
 from relax_io import file_root
@@ -470,7 +471,7 @@ class Base_struct_API:
                 # Pack the structures.
                 model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
 
-                # Set the molecule name and store the structure file info. 
+                # Set the molecule name and store the structure file info.
                 model.mol[-1].mol_name = set_mol_name[j]
                 model.mol[-1].file_name = file_name
                 model.mol[-1].file_path = file_path
@@ -538,6 +539,18 @@ class Base_struct_API:
         # No contents to store, so pack up the structural containers.
         if not self.structural_data.is_empty():
             self.structural_data.to_xml(doc, str_element)
+
+        # The displacement structure.
+        if hasattr(self, 'displacements'):
+            # Create an XML element.
+            disp_element = doc.createElement('displacements')
+            element.appendChild(disp_element)
+
+            # Set the attributes.
+            disp_element.setAttribute('desc', 'The rotational and translational displacements between models')
+
+            # Add the displacement data.
+            self.displacements.to_xml(doc, disp_element)
 
 
     def write_pdb(self, file, model_num=None):
@@ -831,7 +844,7 @@ class Displacements:
 
 
     def _calc_centriod(self, coords):
-        """Calculate the centroid of the structure. 
+        """Calculate the centroid of the structure.
 
         @keyword coord:     The atomic coordinates.
         @type coord:        numpy rank-2, Nx3 array
@@ -940,6 +953,64 @@ class Displacements:
         self._rotation_axis[model_from][model_to] = axis
         self._rotation_angle[model_from][model_to] = angle
 
+
+    def to_xml(self, doc, element):
+        """Create XML elements for each model.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the displacement XML elements to.
+        @type element:  XML element object
+        """
+
+        # Init a global index.
+        index = 0
+
+        # Loop over the starting models.
+        start_models = self._translation_vector.keys()
+        start_models.sort()
+        for model_from in start_models:
+            # Loop over the ending models.
+            end_models = self._translation_vector[model_from].keys()
+            end_models.sort()
+            for model_to in end_models:
+                # Create an XML element for each pair.
+                pair_element = doc.createElement('set_%s' % index)
+                element.appendChild(pair_element)
+
+                # Set the attributes.
+                pair_element.setAttribute('desc', 'The displacement from model %s to model %s' % (model_from, model_to))
+                pair_element.setAttribute('model_from', str(model_from))
+                pair_element.setAttribute('model_to', str(model_to))
+
+                # The objects to store.
+                obj_names = [
+                    '_translation_vector',
+                    '_translation_distance',
+                    '_rotation_matrix',
+                    '_rotation_axis',
+                    '_rotation_angle'
+                ]
+
+                # Store the objects.
+                for i in range(len(obj_names)):
+                    # Create a new element for this object, and add it to the main element.
+                    sub_elem = doc.createElement(obj_names[i][1:])
+                    pair_element.appendChild(sub_elem)
+
+                    # Get the sub-object.
+                    subobj = getattr(self, obj_names[i])[model_from][model_to]
+
+                    # Store floats as IEEE-754 byte arrays (for full precision storage).
+                    if isinstance(subobj, float) or isinstance(subobj, float64):
+                        sub_elem.setAttribute('ieee_754_byte_array', repr(floatAsByteArray(subobj)))
+
+                    # Add the text value to the sub element.
+                    text_val = doc.createTextNode(repr(subobj))
+                    sub_elem.appendChild(text_val)
+
+                # Increment the index.
+                index += 1
 
 
 
