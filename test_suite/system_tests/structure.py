@@ -23,6 +23,7 @@
 # Python module imports.
 from numpy import float64, zeros
 from os import sep
+from tempfile import mktemp
 
 # relax module imports.
 from base_classes import SystemTestCase
@@ -60,18 +61,35 @@ class Structure(SystemTestCase):
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Load the file as two models.
-        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=0)
         self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=1)
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=2)
 
         # A rotation.
         R = zeros((3, 3), float64)
         euler_to_R_zyz(1.3, 0.4, 4.5, R)
 
         # Rotate the second model.
-        self.interpreter.structure.rotate(R, model=1)
+        self.interpreter.structure.rotate(R, model=2)
 
         # Calculate the displacement.
         self.interpreter.structure.displacement()
+
+        # Shift a third structure back using the calculated displacement.
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=3)
+        self.interpreter.structure.rotate(R, model=3)
+
+        # Save the results.
+        self.tmpfile = mktemp()
+        self.interpreter.state.save(self.tmpfile, dir=None, force=True)
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Load the results.
+        self.interpreter.state.load(self.tmpfile)
+
+        # Test the loading.
+        self.assert_(hasattr(cdp.structure, 'displacements'))
 
 
     def test_load_internal_results(self):
