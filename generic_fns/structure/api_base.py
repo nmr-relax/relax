@@ -30,8 +30,8 @@ documented.
 
 # Python module imports.
 from math import pi
-from numpy import array, dot, float64, outer, transpose, zeros
-from numpy.linalg import norm, svd
+from numpy import array, diag, dot, float64, outer, sign, transpose, zeros
+from numpy.linalg import det, norm, svd
 from os import sep
 from re import match
 from types import MethodType
@@ -883,8 +883,8 @@ class Displacements:
         @rtype:                 numpy rank-2, 3D array
         """
 
-        # Initialise the H matrix.
-        H = zeros((3, 3), float64)
+        # Initialise the covariance matrix A.
+        A = zeros((3, 3), float64)
 
         # Loop over the atoms.
         for i in range(coord_from.shape[0]):
@@ -893,13 +893,17 @@ class Displacements:
             orig_to = coord_to[i] - centroid_to
 
             # The outer product.
-            H += outer(orig_from, orig_to)
+            A += outer(orig_from, orig_to)
 
         # SVD.
-        U, S, V = svd(H)
+        U, S, V = svd(A)
+
+        # The handedness of the covariance matrix.
+        d = sign(det(A))
+        D = diag([1, 1, d])
 
         # The rotation.
-        R = dot(V, transpose(U))
+        R = dot(transpose(V), dot(D, transpose(U)))
 
         # Return the rotation.
         return R
@@ -907,6 +911,9 @@ class Displacements:
 
     def _calculate(self, model_from=None, model_to=None, coord_from=None, coord_to=None):
         """Calculate the rotational and translational displacements using the given coordinate sets.
+
+        This uses the Kabsch algorithm (http://en.wikipedia.org/wiki/Kabsch_algorithm).
+
 
         @keyword model_from:    The model number of the starting structure.
         @type model_from:       int
