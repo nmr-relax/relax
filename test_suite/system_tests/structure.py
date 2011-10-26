@@ -829,3 +829,36 @@ class Structure(SystemTestCase):
             self.assertAlmostEqual(model1.x[i], model2.x[i], 2)
             self.assertAlmostEqual(model1.y[i], model2.y[i], 2)
             self.assertAlmostEqual(model1.z[i], model2.z[i], 2)
+
+
+    def test_superimpose_fit_to_mean2(self):
+        """Second test of the structure.superimpose user function, fitting to the mean structure."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=2, set_mol_name='CaM')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=3, set_mol_name='CaM')
+
+        # Transpose model 3.
+        self.interpreter.structure.traspose([20.0, 0.0, 0.0], model=3)
+
+        # Superimpose the backbone heavy atoms.
+        self.interpreter.structure.superimpose(models=[2, 3], method='fit to mean', atom_id='@N,C,CA,O')
+
+        # Check that the two structures now have the same atomic coordinates as the original, but shifted 10 Angstrom in x.
+        model1 = cdp.structure.structural_data[0].mol[0]
+        model2 = cdp.structure.structural_data[1].mol[0]
+        model3 = cdp.structure.structural_data[2].mol[0]
+        for i in range(len(model1.atom_name)):
+            # Check model 2.
+            self.assertAlmostEqual(model1.x[i] + 10, model2.x[i], 2)
+            self.assertAlmostEqual(model1.y[i], model2.y[i], 2)
+            self.assertAlmostEqual(model1.z[i], model2.z[i], 2)
+
+            # Check model 3.
+            self.assertAlmostEqual(model2.x[i], model3.x[i], 2)
+            self.assertAlmostEqual(model2.y[i], model3.y[i], 2)
+            self.assertAlmostEqual(model2.z[i], model3.z[i], 2)
