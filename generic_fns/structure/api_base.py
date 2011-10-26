@@ -184,21 +184,6 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def calc_displacement(self, model_from=None, model_to=None, atom_id=None):
-        """Calculate the rotational and translational displacement between two structural models.
-
-        @keyword model_from:        The optional model number for the starting position of the displacement.
-        @type model_from:           int or None
-        @keyword model_to:          The optional model number for the ending position of the displacement.
-        @type model_to:             int or None
-        @keyword atom_id:           The molecule, residue, and atom identifier string.  This matches the spin ID string format.
-        @type atom_id:              str or None
-        """
-
-        # Raise the error.
-        raise RelaxImplementError
-
-
     def delete(self):
         """Prototype method stub for deleting all structural data from the current data pipe."""
 

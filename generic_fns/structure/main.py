@@ -34,6 +34,7 @@ from warnings import warn
 from generic_fns import molmol, relax_re
 from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id, linear_ave, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns import pipes
+from generic_fns.structure.api_base import Displacements
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
@@ -64,8 +65,6 @@ def delete():
 def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
     """Calculate the rotational and translational displacement between two structural models.
 
-    This will just redirect straight to the API.
-
     @keyword model_from:        The optional model number for the starting position of the displacement.
     @type model_from:           int or None
     @keyword model_to:          The optional model number for the ending position of the displacement.
@@ -76,7 +75,43 @@ def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
     @type centroid:             list of float or numpy rank-1, 3D array
     """
 
-    cdp.structure.calc_displacement(model_from=model_from, model_to=model_to, atom_id=atom_id, centroid=centroid)
+    # Convert the model_from and model_to args to lists, is supplied.
+    if model_from != None:
+        model_from = [model_from]
+    if model_to != None:
+        model_to = [model_to]
+
+    # Create a list of all models.
+    models = []
+    for model in cdp.structure.model_loop():
+        models.append(model.num)
+
+    # Set model_from or model_to to all models if None.
+    if model_from == None:
+        model_from = models
+    if model_to == None:
+        model_to = models
+
+    # Initialise the data structure.
+    if not hasattr(cdp.structure, 'displacements'):
+        cdp.structure.displacements = Displacements()
+
+    # Loop over the starting models.
+    for i in range(len(model_from)):
+        # Assemble the atomic coordinates.
+        coord_from = []
+        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model_from[i], pos_flag=True):
+            coord_from.append(pos[0])
+
+        # Loop over the ending models.
+        for j in range(len(model_to)):
+            # Assemble the atomic coordinates.
+            coord_to = []
+            for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model_to[j], pos_flag=True):
+                coord_to.append(pos[0])
+
+            # Send to the base container for the calculations.
+            cdp.structure.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
 
 
 def get_pos(spin_id=None, str_id=None, ave_pos=False):
