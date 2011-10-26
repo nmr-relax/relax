@@ -505,6 +505,19 @@ class Base_struct_API:
             target.append(file_root(file) + '_mol' + repr(mol_num))
 
 
+    def translate(self, T=None, model=None):
+        """Method stub for displacing the structural information by the given translation vector.
+
+        @keyword T:         The translation vector.
+        @type T:            numpy 3D, rank-1 array
+        @keyword model:     The model to rotate.  If None, all models will be rotated.
+        @type model:        int
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def to_xml(self, doc, element):
         """Prototype method for converting the structural object to an XML representation.
 
