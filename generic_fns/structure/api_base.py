@@ -873,7 +873,7 @@ class Displacements:
             self._rotation_angle[model_from] = {}
 
         # The Kabsch algorithm.
-        trans_vect, trans_dist, R, axis, angle = kabsch(name_from='model %s'%model_from, name_to='model %s'%model_to, coord_from=coord_from, coord_to=coord_to, centroid=centroid)
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%model_from, name_to='model %s'%model_to, coord_from=coord_from, coord_to=coord_to, centroid=centroid)
 
         # Store the data.
         self._translation_vector[model_from][model_to] = trans_vect
