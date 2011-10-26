@@ -526,7 +526,7 @@ class Structure(User_fn_class):
         ["model", "The model to rotate (which if not set will cause all models to be rotated)."]
     ]
     rotate._doc_desc = """
-        This is used to rotate the internal structural data by the given rotation matrix.  If the origin is supplied, then this will act as the pivot of the rotation.  Otherwise, all structural data will be rotated about the point [0, 0, 0].  The model argument can be used to rotate only specific models.
+        This is used to rotate the internal structural data by the given rotation matrix.  If the origin is supplied, then this will act as the pivot of the rotation.  Otherwise, all structural data will be rotated about the point [0, 0, 0].  The model argument can be used to rotate specific models.
         """
     _build_doc(rotate)
 
@@ -591,6 +591,34 @@ class Structure(User_fn_class):
         relax> structure.superimpose(models=[3, 2], method='fit to first', atom_id='@N,C,CA,O')
          """
     _build_doc(superimpose)
+
+
+    def translate(self, T=None, model=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.translate("
+            text = text + "T=" + repr(T)
+            text = text + ", model=" + repr(model) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_float_matrix(T, 'translation vector', dim=(3,3))
+        arg_check.is_int(model, 'model', can_be_none=True)
+
+        # Execute the functional code.
+        generic_fns.structure.main.translate(T=T, model=model)
+
+    # The function doc info.
+    translate._doc_title = "Laterally displace the internal structural object by the translation vector."
+    translate._doc_title_short = "Structure translation."
+    translate._doc_args = [
+        ["T", "The translation vector."],
+        ["model", "The model to translate (which if not set will cause all models to be translate)."]
+    ]
+    translate._doc_desc = """
+        This is used to translate the internal structural data by the given translation vector.  The model argument can be used to translate specific models.
+        """
+    _build_doc(translate)
 
 
     def vectors(self, attached='H', spin_id=None, model=None, verbosity=1, ave=True, unit=True):
