@@ -64,8 +64,8 @@ def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroi
     @type coord_to:         numpy rank-2, Nx3 array
     @keyword centroid:      An alternative position of the centroid, used for studying pivoted systems.
     @type centroid:         list of float or numpy rank-1, 3D array
-    @return:                The translation vector T, translation distance d, rotation matrix R, rotation axis r, and rotation angle theta.
-    @rtype:                 numpy rank-1 3D array, float, numpy rank-2 3D array, numpy rank-1 3D array, float
+    @return:                The translation vector T, translation distance d, rotation matrix R, rotation axis r, rotation angle theta, and the rotational pivot defined as the centroid of the ending structure.
+    @rtype:                 numpy rank-1 3D array, float, numpy rank-2 3D array, numpy rank-1 3D array, float, numpy rank-1 3D array
     """
 
     # Calculate the centroids.
@@ -86,7 +86,7 @@ def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroi
 
     # Print out.
     if verbosity >= 1:
-        print("\n\nCalculating the rotational and translational displacements from model %s to model %s.\n" % (name_from, name_to))
+        print("\n\nCalculating the rotational and translational displacements from %s to %s using the Kabsch algorithm.\n" % (name_from, name_to))
         print("Start centroid:          [%20.15f, %20.15f, %20.15f]" % (centroid_from[0], centroid_from[1], centroid_from[2]))
         print("End centroid:            [%20.15f, %20.15f, %20.15f]" % (centroid_to[0], centroid_to[1], centroid_to[2]))
         print("Translation vector:      [%20.15f, %20.15f, %20.15f]" % (trans_vect[0], trans_vect[1], trans_vect[2]))
@@ -99,7 +99,7 @@ def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroi
         print("Rotation angle (deg):    %.15f" % (angle / 2.0 / pi * 360.0))
 
     # Return the data.
-    return trans_vect, trans_dist, R, axis, angle
+    return trans_vect, trans_dist, R, axis, angle, centroid_to
 
 
 def kabsch_rotation(coord_from=None, coord_to=None, centroid_from=None, centroid_to=None):

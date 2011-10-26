@@ -1044,6 +1044,27 @@ class Internal(Base_struct_API):
                     mol.z[i] = pos[2]
 
 
+    def translate(self, T=None, model=None):
+        """Displace the structural information by the given translation vector.
+
+        @keyword T:         The translation vector.
+        @type T:            numpy 3D, rank-1 array
+        @keyword model:     The model to rotate.  If None, all models will be rotated.
+        @type model:        int
+        """
+
+        # Loop over the models.
+        for model_cont in self.model_loop(model):
+            # Loop over the molecules.
+            for mol in model_cont.mol:
+                # Loop over the atoms.
+                for i in range(len(mol.atom_num)):
+                    # Translate.
+                    mol.x[i] = mol.x[i] + T[0]
+                    mol.y[i] = mol.y[i] + T[1]
+                    mol.z[i] = mol.z[i] + T[2]
+
+
     def write_pdb(self, file, model_num=None):
         """Method for the creation of a PDB file from the structural data.
 

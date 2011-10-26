@@ -37,6 +37,7 @@ from generic_fns import pipes
 from generic_fns.structure.api_base import Displacements
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
+from generic_fns.structure.superimpose import kabsch
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import get_file_path, open_write_file, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
@@ -485,6 +486,94 @@ def set_vector(spin=None, xh_vect=None):
 
     # Place the XH unit vector into the container.
     spin.xh_vect = xh_vect
+
+
+def superimpose(models=None, method='fit to mean', atom_id=None):
+    """Superimpose a set of structural models.
+
+    @keyword models:    The list of models to superimpose.  If set to None, then all models will be used.
+    @type models:       list of int or None
+    @keyword method:    The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
+    @type method:       str
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    """
+
+    # Check the method.
+    allowed = ['fit to mean', 'fit to first']
+    if method not in allowed:
+        raise RelaxError("The superimposition method '%s' is unknown.  It must be one of %s." % (method, allowed))
+
+    # Create a list of all models.
+    if models == None:
+        models = []
+        for model in cdp.structure.model_loop():
+            models.append(model.num)
+
+    # The different algorithms.
+    if method == 'fit to mean':
+        superimpose_to_mean(models=models, atom_id=atom_id)
+    elif method == 'fit to first':
+        superimpose_to_first(models=models, atom_id=atom_id)
+
+
+def superimpose_to_first(models=None, atom_id=None):
+    """Superimpose a set of structural models using the fit to first algorithm.
+
+    @keyword models:    The list of models to superimpose.
+    @type models:       list of int
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    """
+
+    # Print out.
+    print("\nSuperimposition of structural models %s using the 'fit to first' algorithm." % models)
+
+    # Assemble the atomic coordinates of the first model.
+    coord_to = []
+    for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=models[0], pos_flag=True):
+        coord_to.append(pos[0])
+    coord_to = array(coord_to)
+
+    # Loop over the ending models.
+    for model in models[1:]:
+        # Assemble the atomic coordinates.
+        coord_from = []
+        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
+            coord_from.append(pos[0])
+        coord_from = array(coord_from)
+
+        # Calculate the displacements (Kabsch algorithm).
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='model %s'%model, coord_from=coord_from, coord_to=coord_to)
+
+        # Translate the molecule first (the rotational pivot is defined in the first model).
+        translate(T=trans_vect, model=model)
+
+        # Rotate the molecule.
+        rotate(R=R, origin=pivot, model=model)
+
+
+def translate(T=None, model=None):
+    """Shift the structural data by the specified translation vector.
+
+    @keyword T:         The translation vector.
+    @type T:            numpy rank-1, 3D array or list of float
+    @keyword model:     The model to translate.  If None, all models will be rotated.
+    @type model:        int
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if the structure exists.
+    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
+        raise RelaxNoPdbError
+
+    # Convert the args to numpy float data structures.
+    T = array(T, float64)
+
+    # Call the specific code.
+    cdp.structure.translate(T=T, model=model)
 
 
 def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit=True):
