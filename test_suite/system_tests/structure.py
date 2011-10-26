@@ -777,3 +777,25 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(a.bond_vect[0], -0.4102707)
         self.assertAlmostEqual(a.bond_vect[1], 0.62128879)
         self.assertAlmostEqual(a.bond_vect[2], -0.6675913)
+
+
+    def test_superimpose_fit_to_first(self):
+        """Test of the structure.superimpose user function, fitting to the first structure."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=2, set_mol_name='CaM')
+
+        # Superimpose.
+        self.interpreter.structure.superimpose(models=[1, 2], method='fit to first')
+
+        # Check that the two structures now have the same atomic coordinates.
+        model1 = cdp.structure.structural_data[0].mol[0]
+        model2 = cdp.structure.structural_data[1].mol[0]
+        for i in range(len(model1.atom_name)):
+            self.assertAlmostEqual(model1.x[i], model2.x[i])
+            self.assertAlmostEqual(model1.y[i], model2.y[i])
+            self.assertAlmostEqual(model1.z[i], model2.z[i])
