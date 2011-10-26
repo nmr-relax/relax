@@ -789,8 +789,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM')
         self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=2, set_mol_name='CaM')
 
-        # Superimpose.
-        self.interpreter.structure.superimpose(models=[1, 2], method='fit to first')
+        # Superimpose the backbone heavy atoms.
+        self.interpreter.structure.superimpose(models=[1, 2], method='fit to first', atom_id='@N,C,CA,O')
 
         # Check that the two structures now have the same atomic coordinates.
         model1 = cdp.structure.structural_data[0].mol[0]
