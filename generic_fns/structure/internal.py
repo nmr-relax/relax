@@ -781,7 +781,7 @@ class Internal(Base_struct_API):
         return data
 
 
-    def calc_displacement(self, model_from=None, model_to=None, atom_id=None):
+    def calc_displacement(self, model_from=None, model_to=None, atom_id=None, centroid=None):
         """Calculate the rotational and translational displacement between two structural models.
 
         @keyword model_from:        The optional model number for the starting position of the displacement.
@@ -790,6 +790,8 @@ class Internal(Base_struct_API):
         @type model_to:             int or None
         @keyword atom_id:           The molecule, residue, and atom identifier string.  This matches the spin ID string format.
         @type atom_id:              str or None
+        @keyword centroid:          An alternative position of the centroid, used for studying pivoted systems.
+        @type centroid:             list of float or numpy rank-1, 3D array
         """
 
         # Convert the model_from and model_to args to lists, is supplied.
@@ -828,7 +830,7 @@ class Internal(Base_struct_API):
                     coord_to.append(pos[0])
 
                 # Send to the base container for the calculations.
-                self.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to))
+                self.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
 
 
     def delete(self):

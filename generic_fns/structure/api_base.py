@@ -909,7 +909,7 @@ class Displacements:
         return R
 
 
-    def _calculate(self, model_from=None, model_to=None, coord_from=None, coord_to=None):
+    def _calculate(self, model_from=None, model_to=None, coord_from=None, coord_to=None, centroid=None):
         """Calculate the rotational and translational displacements using the given coordinate sets.
 
         This uses the Kabsch algorithm (http://en.wikipedia.org/wiki/Kabsch_algorithm).
@@ -923,11 +923,17 @@ class Displacements:
         @type coord_from:       numpy rank-2, Nx3 array
         @keyword coord_to:      The list of atomic coordinates for the ending structure.
         @type coord_to:         numpy rank-2, Nx3 array
+        @keyword centroid:      An alternative position of the centroid, used for studying pivoted systems.
+        @type centroid:         list of float or numpy rank-1, 3D array
         """
 
         # Calculate the centroids.
-        centroid_from = self._calc_centriod(coord_from)
-        centroid_to = self._calc_centriod(coord_to)
+        if centroid != None:
+            centroid_from = centroid
+            centroid_to = centroid
+        else:
+            centroid_from = self._calc_centriod(coord_from)
+            centroid_to = self._calc_centriod(coord_to)
 
         # The translation.
         trans_vect = centroid_to - centroid_from

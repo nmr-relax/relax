@@ -61,7 +61,7 @@ def delete():
             del spin.xh_vect
 
 
-def displacement(model_from=None, model_to=None, atom_id=None):
+def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
     """Calculate the rotational and translational displacement between two structural models.
 
     This will just redirect straight to the API.
@@ -72,9 +72,11 @@ def displacement(model_from=None, model_to=None, atom_id=None):
     @type model_to:             int or None
     @keyword atom_id:           The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:              str or None
+    @keyword centroid:          An alternative position of the centroid, used for studying pivoted systems.
+    @type centroid:             list of float or numpy rank-1, 3D array
     """
 
-    cdp.structure.calc_displacement(model_from=model_from, model_to=model_to, atom_id=atom_id)
+    cdp.structure.calc_displacement(model_from=model_from, model_to=model_to, atom_id=atom_id, centroid=centroid)
 
 
 def get_pos(spin_id=None, str_id=None, ave_pos=False):
