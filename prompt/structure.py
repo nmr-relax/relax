@@ -531,6 +531,68 @@ class Structure(User_fn_class):
     _build_doc(rotate)
 
 
+    def superimpose(self, models=None, method='fit to mean', atom_id=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.superimpose("
+            text = text + "models=" + repr(models)
+            text = text + ", method=" + repr(method)
+            text = text + ", atom_id=" + repr(atom_id) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_int_list(models, 'model list', can_be_none=True)
+        arg_check.is_str(method, 'superimposition method')
+        arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)
+
+        # Execute the functional code.
+        generic_fns.structure.main.superimpose(models=models, method=method, atom_id=atom_id)
+
+    # The function doc info.
+    superimpose._doc_title = "Superimpose a set of models of the same structure."
+    superimpose._doc_title_short = "Structural superimposition."
+    superimpose._doc_args = [
+        ["models", "The list of models to superimpose."],
+        ["method", "The superimposition method."],
+        ["atom_id", "The atom identification string."],
+    ]
+    superimpose._doc_desc = """
+        This allows a set of models of the same structure to be superimposed to each other.  Two superimposition methods are currently supported:
+
+            'fit to mean':  All models are fit to the mean structure.  This is the default and most accurate method for an ensemble description.  It is an iterative method which first calculates a mean structure and then fits each model to the mean structure using the Kabsch algorithm.  This is repeated until convergence.
+            'fit to first':  This is quicker but is not as accurate for an ensemble description.  The Kabsch algorithm is used to rotate and translate each model to be superimposed onto the first model.
+
+        If the list of models is not supplied, then all models will be superimposed.
+
+        The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the superimpose calculation to certain molecules, residues, or atoms.  For example to only superimpose backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.
+        """
+    superimpose._doc_examples = """
+        To superimpose all sets of models, type one of:
+
+        relax> structure.superimpose()
+        relax> structure.superimpose(method='fit to mean')
+
+
+        To superimpose the models 1, 2, 3, 5 onto model 4, type:
+
+        relax> structure.superimpose(models=[4, 1, 2, 3, 5], method='fit to first')
+
+
+        To superimpose an ensemble of protein structures using only the backbone heavy atoms, type
+        one of:
+
+        relax> structure.superimpose(atom_id='@N,C,CA,O')
+        relax> structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O')
+
+
+        To superimpose model 2 onto model 3 using backbone heavy atoms, type one of:
+
+        relax> structure.superimpose([3, 2], 'fit to first', '@N,C,CA,O')
+        relax> structure.superimpose(models=[3, 2], method='fit to first', atom_id='@N,C,CA,O')
+         """
+    _build_doc(superimpose)
+
+
     def vectors(self, attached='H', spin_id=None, model=None, verbosity=1, ave=True, unit=True):
         # Function intro text.
         if self._exec_info.intro:
