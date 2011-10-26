@@ -37,7 +37,7 @@ from generic_fns import pipes
 from generic_fns.structure.api_base import Displacements
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
-from generic_fns.structure.superimpose import kabsch
+from generic_fns.structure.superimpose import fit_to_first
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import get_file_path, open_write_file, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
@@ -510,47 +510,28 @@ def superimpose(models=None, method='fit to mean', atom_id=None):
         for model in cdp.structure.model_loop():
             models.append(model.num)
 
+    # Assemble the atomic coordinates of all models.
+    coord = []
+    for model in models:
+        coord.append([])
+        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
+            coord[-1].append(pos[0])
+        coord[-1] = array(coord[-1])
+
     # The different algorithms.
     if method == 'fit to mean':
-        superimpose_to_mean(models=models, atom_id=atom_id)
+        T, R, pivot = fit_to_mean(models=models, coord=coord)
     elif method == 'fit to first':
-        superimpose_to_first(models=models, atom_id=atom_id)
+        T, R, pivot = fit_to_first(models=models, coord=coord)
 
 
-def superimpose_to_first(models=None, atom_id=None):
-    """Superimpose a set of structural models using the fit to first algorithm.
-
-    @keyword models:    The list of models to superimpose.
-    @type models:       list of int
-    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
-    @type atom_id:      str or None
-    """
-
-    # Print out.
-    print("\nSuperimposition of structural models %s using the 'fit to first' algorithm." % models)
-
-    # Assemble the atomic coordinates of the first model.
-    coord_to = []
-    for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=models[0], pos_flag=True):
-        coord_to.append(pos[0])
-    coord_to = array(coord_to)
-
-    # Loop over the ending models.
-    for model in models[1:]:
-        # Assemble the atomic coordinates.
-        coord_from = []
-        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
-            coord_from.append(pos[0])
-        coord_from = array(coord_from)
-
-        # Calculate the displacements (Kabsch algorithm).
-        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='model %s'%model, coord_from=coord_from, coord_to=coord_to)
-
+    # Update to the new coordinates.
+    for i in range(len(models)):
         # Translate the molecule first (the rotational pivot is defined in the first model).
-        translate(T=trans_vect, model=model)
+        translate(T=T[i], model=models[i])
 
         # Rotate the molecule.
-        rotate(R=R, origin=pivot, model=model)
+        rotate(R=R[i], origin=pivot[i], model=models[i])
 
 
 def translate(T=None, model=None):

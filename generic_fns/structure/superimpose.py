@@ -25,7 +25,7 @@
 
 # Python module imports.
 from math import pi
-from numpy import diag, dot, float64, outer, sign, transpose, zeros
+from numpy import diag, dot, eye, float64, outer, sign, transpose, zeros
 from numpy.linalg import det, norm, svd
 
 # relax module import.
@@ -46,6 +46,39 @@ def find_centroid(coords):
 
     # Return.
     return centroid
+
+
+def fit_to_first(models=None, coord=None):
+    """Superimpose a set of structural models using the fit to first algorithm.
+
+    @keyword models:    The list of models to superimpose.
+    @type models:       list of int
+    @keyword coord:     The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
+    @type coord:        list of numpy rank-2, Nx3 arrays
+    @return:            The lists of translation vectors, rotation matrices, and rotation pivots.
+    @rtype:             list of numpy rank-1 3D arrays, list of numpy rank-2 3D arrays, list of numpy rank-1 3D arrays
+    """
+
+    # Print out.
+    print("\nSuperimposition of structural models %s using the 'fit to first' algorithm." % models)
+
+    # Init (there is no transformation for the first model).
+    T_list = [zeros(3, float64)]
+    R_list = [eye(3, dtype=float64)]
+    pivot_list = [zeros(3, float64)]
+
+    # Loop over the ending models.
+    for i in range(1, len(models)):
+        # Calculate the displacements (Kabsch algorithm).
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='model %s'%models[i], coord_from=coord[i], coord_to=coord[0])
+
+        # Store the transforms.
+        T_list.append(trans_vect)
+        R_list.append(R)
+        pivot_list.append(pivot)
+
+    # Return the transform data.
+    return T_list, R_list, pivot_list
 
 
 def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroid=None, verbosity=1):
