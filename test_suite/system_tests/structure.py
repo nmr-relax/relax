@@ -843,7 +843,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=3, set_mol_name='CaM')
 
         # Transpose model 3.
-        self.interpreter.structure.traspose([20.0, 0.0, 0.0], model=3)
+        self.interpreter.structure.translate([20.0, 0.0, 0.0], model=3)
 
         # Superimpose the backbone heavy atoms.
         self.interpreter.structure.superimpose(models=[2, 3], method='fit to mean', atom_id='@N,C,CA,O')
