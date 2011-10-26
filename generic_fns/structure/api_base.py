@@ -29,9 +29,7 @@ documented.
 """
 
 # Python module imports.
-from math import pi
-from numpy import array, diag, dot, float64, outer, sign, transpose, zeros
-from numpy.linalg import det, norm, svd
+from numpy import float64
 from os import sep
 from re import match
 from types import MethodType
@@ -40,7 +38,7 @@ from warnings import warn
 # relax module import.
 from data.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 from float import floatAsByteArray, packBytesAsPyFloat
-from maths_fns.rotation_matrix import R_to_axis_angle
+from generic_fns.structure.superimpose import kabsch
 from relax_errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError
 from relax_io import file_root
 from relax_warnings import RelaxWarning
@@ -852,63 +850,6 @@ class Displacements:
         self._rotation_angle = {}
 
 
-    def _calc_centriod(self, coords):
-        """Calculate the centroid of the structure.
-
-        @keyword coord:     The atomic coordinates.
-        @type coord:        numpy rank-2, Nx3 array
-        @return:            The centroid.
-        @rtype:             numpy rank-1, 3D array
-        """
-
-        # The sum.
-        centroid = coords.sum(0) / coords.shape[0]
-
-        # Return.
-        return centroid
-
-
-    def _calc_rotation(self, coord_from=None, coord_to=None, centroid_from=None, centroid_to=None):
-        """Calculate the rotation via SVD.
-
-        @keyword coord_from:    The list of atomic coordinates for the starting structure.
-        @type coord_from:       numpy rank-2, Nx3 array
-        @keyword coord_to:      The list of atomic coordinates for the ending structure.
-        @type coord_to:         numpy rank-2, Nx3 array
-        @keyword centroid_from: The starting centroid.
-        @type centroid_from:    numpy rank-1, 3D array
-        @keyword centroid_to:   The ending centroid.
-        @type centroid_to:      numpy rank-1, 3D array
-        @return:                The rotation matrix.
-        @rtype:                 numpy rank-2, 3D array
-        """
-
-        # Initialise the covariance matrix A.
-        A = zeros((3, 3), float64)
-
-        # Loop over the atoms.
-        for i in range(coord_from.shape[0]):
-            # The positions shifted to the origin.
-            orig_from = coord_from[i] - centroid_from
-            orig_to = coord_to[i] - centroid_to
-
-            # The outer product.
-            A += outer(orig_from, orig_to)
-
-        # SVD.
-        U, S, V = svd(A)
-
-        # The handedness of the covariance matrix.
-        d = sign(det(A))
-        D = diag([1, 1, d])
-
-        # The rotation.
-        R = dot(transpose(V), dot(D, transpose(U)))
-
-        # Return the rotation.
-        return R
-
-
     def _calculate(self, model_from=None, model_to=None, coord_from=None, coord_to=None, centroid=None):
         """Calculate the rotational and translational displacements using the given coordinate sets.
 
@@ -927,35 +868,6 @@ class Displacements:
         @type centroid:         list of float or numpy rank-1, 3D array
         """
 
-        # Calculate the centroids.
-        if centroid != None:
-            centroid_from = centroid
-            centroid_to = centroid
-        else:
-            centroid_from = self._calc_centriod(coord_from)
-            centroid_to = self._calc_centriod(coord_to)
-
-        # The translation.
-        trans_vect = centroid_to - centroid_from
-        trans_dist = norm(trans_vect)
-
-        # Calculate the rotation.
-        R = self._calc_rotation(coord_from=coord_from, coord_to=coord_to, centroid_from=centroid_from, centroid_to=centroid_to)
-        axis, angle = R_to_axis_angle(R)
-
-        # Print out.
-        print("\n\nCalculating the rotational and translational displacements from model %s to model %s.\n" % (model_from, model_to))
-        print("Start centroid:          [%20.15f, %20.15f, %20.15f]" % (centroid_from[0], centroid_from[1], centroid_from[2]))
-        print("End centroid:            [%20.15f, %20.15f, %20.15f]" % (centroid_to[0], centroid_to[1], centroid_to[2]))
-        print("Translation vector:      [%20.15f, %20.15f, %20.15f]" % (trans_vect[0], trans_vect[1], trans_vect[2]))
-        print("Translation distance:    %.15f" % trans_dist)
-        print("Rotation matrix:")
-        print("   [[%20.15f, %20.15f, %20.15f]" % (R[0, 0], R[0, 1], R[0, 2]))
-        print("    [%20.15f, %20.15f, %20.15f]" % (R[1, 0], R[1, 1], R[1, 2]))
-        print("    [%20.15f, %20.15f, %20.15f]]" % (R[2, 0], R[2, 1], R[2, 2]))
-        print("Rotation axis:           [%20.15f, %20.15f, %20.15f]" % (axis[0], axis[1], axis[2]))
-        print("Rotation angle (deg):    %.15f" % (angle / 2.0 / pi * 360.0))
-
         # Initialise structures if necessary.
         if not self._translation_vector.has_key(model_from):
             self._translation_vector[model_from] = {}
@@ -967,6 +879,9 @@ class Displacements:
             self._rotation_axis[model_from] = {}
         if not self._rotation_angle.has_key(model_from):
             self._rotation_angle[model_from] = {}
+
+        # The Kabsch algorithm.
+        trans_vect, trans_dist, R, axis, angle = kabsch(name_from='model %s'%model_from, name_to='model %s'%model_to, coord_from=coord_from, coord_to=coord_to, centroid=centroid)
 
         # Store the data.
         self._translation_vector[model_from][model_to] = trans_vect
