@@ -24,12 +24,40 @@
 """Module for handling all types of structural superimpositions."""
 
 # Python module imports.
+from copy import deepcopy
 from math import pi
 from numpy import diag, dot, eye, float64, outer, sign, transpose, zeros
 from numpy.linalg import det, norm, svd
 
 # relax module import.
 from maths_fns.rotation_matrix import R_to_axis_angle
+
+
+def calc_mean_structure(coord=None, mean=None):
+    """Average the coordinates.
+
+    @keyword coord:     The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
+    @type coord:        list of numpy rank-2, Nx3 arrays
+    @keyword mean:      The data storage for the mean structure.
+    @type coord:        numpy rank-2, Nx3 array
+    """
+
+    # The number of atoms.
+    N = len(coord[0])
+    M = len(coord)
+
+    # Clear the mean data structure.
+    for i in range(N):
+        mean[i] = [0.0, 0.0, 0.0]
+
+    # Loop over the atoms.
+    for i in range(N):
+        # Loop over the models.
+        for j in range(M):
+            mean[i] += coord[j][i]
+
+        # Average.
+        mean[i] = mean[i] / M
 
 
 def find_centroid(coords):
@@ -71,6 +99,89 @@ def fit_to_first(models=None, coord=None):
     for i in range(1, len(models)):
         # Calculate the displacements (Kabsch algorithm).
         trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='model %s'%models[i], coord_from=coord[i], coord_to=coord[0])
+
+        # Store the transforms.
+        T_list.append(trans_vect)
+        R_list.append(R)
+        pivot_list.append(pivot)
+
+    # Return the transform data.
+    return T_list, R_list, pivot_list
+
+
+def fit_to_mean(models=None, coord=None):
+    """Superimpose a set of structural models using the fit to first algorithm.
+
+    @keyword models:    The list of models to superimpose.
+    @type models:       list of int
+    @keyword coord:     The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
+    @type coord:        list of numpy rank-2, Nx3 arrays
+    @return:            The lists of translation vectors, rotation matrices, and rotation pivots.
+    @rtype:             list of numpy rank-1 3D arrays, list of numpy rank-2 3D arrays, list of numpy rank-1 3D arrays
+    """
+
+    # Print out.
+    print("\nSuperimposition of structural models %s using the 'fit to mean' algorithm." % models)
+
+    # Duplicate the coordinates.
+    orig_coord = deepcopy(coord)
+
+    # Initialise the displacement lists.
+    T_list = []
+    R_list = []
+    pivot_list = []
+
+    # Initialise the mean structure.
+    N = len(coord[0])
+    mean = zeros((N, 3), float64)
+
+    # Iterative fitting to mean.
+    converged = False
+    iter = 0
+    while not converged:
+        # Print out.
+        print("\nIteration %i of the algorithm." % iter)
+        print("%-10s%-25s%-25s" % ("Model", "Translation (Angstrom)", "Rotation (deg)"))
+
+        # Calculate the mean structure.
+        calc_mean_structure(coord, mean)
+
+        # Fit each model to the mean.
+        converged = True
+        for i in range(len(models)):
+            # Calculate the displacements (Kabsch algorithm).
+            trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='mean', coord_from=coord[i], coord_to=mean, verbosity=0)
+
+            # Table print out.
+            print("%-10i%25.3g%25.3g" % (i, trans_dist, angle))
+
+            # Shift the coordinates.
+            print coord[i][0]
+            for j in range(N):
+                # Translate.
+                coord[i][j] += trans_vect
+
+                # The pivot to atom vector.
+                coord[i][j] -= pivot
+
+                # Rotation.
+                coord[i][j] = dot(R, coord[i][j])
+
+                # The new position.
+                coord[i][j] += pivot
+            print coord[i][0]
+
+            # Convergence test.
+            if trans_dist > 1e-10 or angle > 1e-10:
+                converged = False
+
+        # Increment the iteration number.
+        iter += 1
+
+    # Perform the fit once from the original coordinates to obtain the full transforms.
+    for i in range(len(models)):
+        # Calculate the displacements (Kabsch algorithm).
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='model %s'%models[i], coord_from=orig_coord[i], coord_to=mean)
 
         # Store the transforms.
         T_list.append(trans_vect)

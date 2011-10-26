@@ -37,7 +37,7 @@ from generic_fns import pipes
 from generic_fns.structure.api_base import Displacements
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
-from generic_fns.structure.superimpose import fit_to_first
+from generic_fns.structure.superimpose import fit_to_first, fit_to_mean
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import get_file_path, open_write_file, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
