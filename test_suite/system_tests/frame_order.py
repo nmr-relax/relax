@@ -195,6 +195,49 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(angle, 0.0, 1)
 
 
+    def test_cam_free_rotor2(self):
+        """Test the second free rotor frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
+
+        # The base data.
+        pivot = array([ 37.254, 0.5, 16.7465])
+        com = array([ 26.83678091, -12.37906417,  28.34154128])
+        pivot_com_axis = com - pivot
+        rot_axis = array([ 0.59390169,  0.73425527, -0.16105115])
+
+        # The average position CoM.
+        ave_pivot_com_axis = ds['ave pos'].CoM - pivot
+
+        # The projection of the CoMs onto the rotation axis.
+        orig_proj = dot(pivot_com_axis, rot_axis)
+        ave_proj = dot(ave_pivot_com_axis, rot_axis)
+
+        # Check that the projections are equal.
+        self.assertAlmostEqual(orig_proj, ave_proj, 0)
+
+        # The rotation axis.
+        self.interpreter.pipe.switch('frame order')
+        spherical_vect = zeros(3, float64)
+        spherical_vect[0] = 1.0
+        spherical_vect[1] = cdp.axis_theta
+        spherical_vect[2] = cdp.axis_phi
+        cart_vect = zeros(3, float64)
+        spherical_to_cartesian(spherical_vect, cart_vect)
+        print("\nReal rotation axis:   %s" % repr(rot_axis))
+        print("Fitted rotation axis: %s" % repr(cart_vect))
+
+        # The dot product.
+        angle = acos(dot(cart_vect, rot_axis))
+
+        # Check the angle.
+        if angle > 3 and angle < 4:
+            self.assertAlmostEqual(angle, pi, 1)
+        else:
+            self.assertAlmostEqual(angle, 0.0, 1)
+
+
     def test_cam_rigid(self):
         """Test the rigid frame order model of CaM."""
 
