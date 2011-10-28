@@ -341,7 +341,7 @@ class Internal(Base_struct_API):
 
         # Init.
         total_atom = 0
-        model = 0 
+        model = 0
         records = []
 
         # Loop over the data.
@@ -565,23 +565,64 @@ class Internal(Base_struct_API):
             # None values.
             if data == None:
                 data = ''
-    
+
             # Force convert to string.
             if not isinstance(data, str):
                 data = repr(data)
-    
+
         # Conversion to float.
         if format == 'float':
             # None values.
             if data == None:
                 data = 0.0
-    
+
             # Force convert to float.
             if not isinstance(data, float):
                 data = float(data)
 
          # Return the converted data.
         return data
+
+
+    def add_atom(self, mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
+        """Add a new atom to the structural data object.
+
+        @keyword mol_name:      The name of the molecule.
+        @type mol_name:         str
+        @keyword atom_name:     The atom name, e.g. 'H1'.
+        @type atom_name:        str or None
+        @keyword res_name:      The residue name.
+        @type res_name:         str or None
+        @keyword res_num:       The residue number.
+        @type res_num:          int or None
+        @keyword pos:           The position vector of coordinates.
+        @type pos:              list (length = 3)
+        @keyword element:       The element symbol.
+        @type element:          str or None
+        @keyword atom_num:      The atom number.
+        @type atom_num:         int or None
+        @keyword chain_id:      The chain identifier.
+        @type chain_id:         str or None
+        @keyword segment_id:    The segment identifier.
+        @type segment_id:       str or None
+        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
+        @type pdb_record:       str or None
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Add the molecule, if it does not exist.
+        if cdp.structure.get_molecule(mol_name) == None:
+            cdp.structure.add_molecule(name=mol_name)
+
+        # Loop over each model.
+        for model in self.structural_data:
+            # Specific molecule.
+            mol = cdp.structure.get_molecule(mol_name)
+
+            # Add the atom.
+            mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
 
     def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
@@ -755,7 +796,7 @@ class Internal(Base_struct_API):
                 if index != None:
                     # Get the atom bonded to this model/molecule/residue/atom.
                     bonded_num, bonded_name, element, pos, attached_name, warnings = self.__bonded_atom(attached_atom, index, mol)
-                    
+
                     # No bonded atom.
                     if (bonded_num, bonded_name, element) == (None, None, None):
                         continue
@@ -793,6 +834,38 @@ class Internal(Base_struct_API):
 
         # Initialise the empty model list.
         self.structural_data = ModelList()
+
+
+    def get_molecule(self, molecule, model=None):
+        """Return the molecule.
+
+        Only one model can be specified.
+
+
+        @param molecule:    The molecule name.
+        @type molecule:     int or None
+        @keyword model:     The model number.
+        @type model:        int or None
+        @raises RelaxError: If the model is not specified and there is more than one model loaded.
+        @return:            The MolContainer corresponding to the molecule name and model number.
+        @rtype:             MolContainer instance or None
+        """
+
+        # Check if the target is a single molecule.
+        if model == None and self.num_models() > 1:
+            raise RelaxError("The target molecule cannot be determined as there are %s models already present." % self.num_modes())
+
+        # No models.
+        if not len(self.structural_data):
+            return
+
+        # Loop over the models.
+        for model_cont in self.model_loop(model):
+            # Loop over the molecules.
+            for mol in model_cont.mol:
+                # Return the matching molecule.
+                if mol.mol_name == molecule:
+                    return mol
 
 
     def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
@@ -967,7 +1040,7 @@ class Internal(Base_struct_API):
         for model_records in self.__parse_models_xyz(file_path):
             # Increment the xyz_model_increment
             xyz_model_increment = xyz_model_increment +1
-      
+
             # Only load the desired model.
             if read_model and xyz_model_increment not in read_model:
                 continue
@@ -1012,7 +1085,7 @@ class Internal(Base_struct_API):
 
         # Loading worked.
         return True
-        
+
 
     def rotate(self, R=None, origin=None, model=None):
         """Rotate the structural information about the given origin.
@@ -1150,7 +1223,7 @@ class Internal(Base_struct_API):
 
                 # Find if the atom has already a count entry.
                 entry = False
-                for j in xrange(len(het_data[index][-1][4])): 
+                for j in xrange(len(het_data[index][-1][4])):
                     if mol.element[i] == het_data[index][-1][4][j][0]:
                         entry = True
 
@@ -1159,7 +1232,7 @@ class Internal(Base_struct_API):
                     het_data[index][-1][4].append([mol.element[i], 0])
 
                 # Increment the specific atom count.
-                for j in xrange(len(het_data[index][-1][4])): 
+                for j in xrange(len(het_data[index][-1][4])):
                     if mol.element[i] == het_data[index][-1][4][j][0]:
                         het_data[index][-1][4][j][1] = het_data[index][-1][4][j][1] + 1
 
@@ -1716,35 +1789,35 @@ class MolContainer:
                 fields[2] = float(fields[2])
             if fields[3]:
                 fields[3] = float(fields[3])
-        
+
         # Return the atomic info.
         return fields
 
 
-    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None):
+    def atom_add(self, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
         """Method for adding an atom to the structural data object.
 
         This method will create the key-value pair for the given atom.
 
 
-        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
-        @type pdb_record:       str or None
-        @keyword atom_num:      The atom number.
-        @type atom_num:         int or None
         @keyword atom_name:     The atom name, e.g. 'H1'.
         @type atom_name:        str or None
         @keyword res_name:      The residue name.
         @type res_name:         str or None
-        @keyword chain_id:      The chain identifier.
-        @type chain_id:         str or None
         @keyword res_num:       The residue number.
         @type res_num:          int or None
         @keyword pos:           The position vector of coordinates.
         @type pos:              list (length = 3)
-        @keyword segment_id:    The segment identifier.
-        @type segment_id:       str or None
         @keyword element:       The element symbol.
         @type element:          str or None
+        @keyword atom_num:      The atom number.
+        @type atom_num:         int or None
+        @keyword chain_id:      The chain identifier.
+        @type chain_id:         str or None
+        @keyword segment_id:    The segment identifier.
+        @type segment_id:       str or None
+        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
+        @type pdb_record:       str or None
         """
 
         # Append to all the arrays.
@@ -1773,7 +1846,7 @@ class MolContainer:
         @keyword index2:        The index of the second atom.
         @type index2:           int
         """
-        
+
         # Update the bonded array structure, if necessary.
         if index2 not in self.bonded[index1]:
             self.bonded[index1].append(index2)
@@ -1828,7 +1901,7 @@ class MolContainer:
 
         # initialisation for atom number
         atom_number = 1
- 
+
         # Loop over the records.
         for record in records:
             # Parse the record.

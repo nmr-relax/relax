@@ -248,6 +248,21 @@ class Base_struct_API:
                 model_cont = self.structural_data[-1]
 
 
+    def get_molecule(self, molecule, model=None):
+        """Return the molecule.
+
+        @param molecule:    The molecule name.
+        @type molecule:     int or None
+        @keyword model:     The model number.
+        @type model:        int or None
+        @return:            The MolContainer corresponding to the molecule name and model number.
+        @rtype:             MolContainer instance or None
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
         """Prototype method stub for loading structures from a PDB file.
 

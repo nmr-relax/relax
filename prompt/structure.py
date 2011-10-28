@@ -34,6 +34,55 @@ import generic_fns.structure.main
 class Structure(User_fn_class):
     """Class containing the structural related functions."""
 
+    def add_atom(self, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.add_atom("
+            text = text + "atom_name=" + repr(atom_name)
+            text = text + ", res_name=" + repr(res_name)
+            text = text + ", res_num=" + repr(res_num)
+            text = text + ", pos=" + repr(pos)
+            text = text + ", element=" + repr(element)
+            text = text + ", atom_num=" + repr(atom_num)
+            text = text + ", chain_id=" + repr(chain_id)
+            text = text + ", segment_id=" + repr(segment_id)
+            text = text + ", pdb_record=" + repr(pdb_record) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(atom_name, 'atom name')
+        arg_check.is_str(res_name, 'residue name')
+        arg_check.is_int(res_num, 'residue number')
+        arg_check.is_float_array(pos, 'atomic position', size=3)
+        arg_check.is_str(element, 'element', can_be_none=True)
+        arg_check.is_int(atom_num, 'atom number', can_be_none=True)
+        arg_check.is_str(chain_id, 'chain ID', can_be_none=True)
+        arg_check.is_str(segment_id, 'segment_id', can_be_none=True)
+        arg_check.is_str(pdb_record, 'pdb_record', can_be_none=True)
+
+        # Execute the functional code.
+        generic_fns.structure.main.add_atom(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
+
+    # The function doc info.
+    add_atom._doc_title = "Add an atom."
+    add_atom._doc_title_short = "Atom creation."
+    add_atom._doc_args = [
+        ["atom_name", "The atom name."],
+        ["res_name", "The residue name."],
+        ["res_num", "The residue number."],
+        ["pos", "The atomic coordinates."],
+        ["element", "The element name."],
+        ["atom_num", "The optional atom number."],
+        ["chain_id", "The optional chain ID string."],
+        ["segment_id", "The optional segment ID string."],
+        ["pdb_record", "The optional PDB record name, e.g. 'ATOM' or 'HETATM'."]
+    ]
+    add_atom._doc_desc = """
+        This allows 
+        """
+    _build_doc(add_atom)
+
+
     def create_diff_tensor_pdb(self, scale=1.8e-6, file='tensor.pdb', dir=None, force=False):
         # Function intro text.
         if self._exec_info.intro:
