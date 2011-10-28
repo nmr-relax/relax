@@ -1357,7 +1357,7 @@ class Internal(Base_struct_API):
                 atom_record = False
                 for i in xrange(len(mol.atom_name)):
                     # Write the ATOM record.
-                    if mol.pdb_record[i] == 'ATOM':
+                    if mol.pdb_record[i] in [None, 'ATOM']:
                         atom_record = True
                         file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', mol.atom_num[i], self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
                         num_atom = num_atom + 1
