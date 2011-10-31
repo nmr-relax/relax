@@ -26,12 +26,12 @@ R = zeros((3, 3), float64)
 
 # Tilt the rotation axis by 30 degrees.
 rot_axis = cross(axis, array([0, 0, 1]))
-#rot_axis = rot_axis / norm(rot_axis)
+rot_axis = rot_axis / norm(rot_axis)
 axis_angle_to_R(rot_axis, 30.0 * 2.0 * pi / 360.0, R)
-print("Tilt axis: %s" % repr(rot_axis))
-print("CoM-pivot axis: %s" % repr(axis))
+print("Tilt axis: %s, norm = %s" % (repr(rot_axis), norm(rot_axis)))
+print("CoM-pivot axis: %s, norm = %s" % (repr(axis), norm(axis)))
 axis = dot(R, axis)
-print("Rotation axis: %s" % repr(axis))
+print("Rotation axis: %s, norm = %s" % (repr(axis), norm(axis)))
 
 # Load N copies of the original C-domain, rotating them by 1 degree about the rotation axis.
 for i in range(N):

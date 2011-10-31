@@ -9,11 +9,11 @@ FORMUL   1  PIV    C1
 FORMUL   2  ZAX    C2N1                                               
 HETATM    1    R PIV     1      37.254   0.500  16.747  1.00  0.00           C  
 HETATM    2    R ZAX     2      37.254   0.500  16.747  1.00  0.00           C  
-HETATM    3 z-ax ZAX     2      18.141 -22.069  21.777  1.00  0.00           C  
-HETATM    4 z-ax ZAX     2      16.229 -24.326  22.280  1.00  0.00           N  
+HETATM    3 z-ax ZAX     2      56.008  23.771  14.154  1.00  0.00           C  
+HETATM    4 z-ax ZAX     2      57.884  26.098  13.895  1.00  0.00           N  
 HETATM    5    R ZAX     3      37.254   0.500  16.747  1.00  0.00           C  
-HETATM    6 z-ax ZAX     3      56.367  23.069  11.716  1.00  0.00           C  
-HETATM    7 z-ax ZAX     3      58.279  25.326  11.213  1.00  0.00           N  
+HETATM    6 z-ax ZAX     3      18.500 -22.771  19.339  1.00  0.00           C  
+HETATM    7 z-ax ZAX     3      16.624 -25.098  19.598  1.00  0.00           N  
 CONECT    2    3                                             
 CONECT    3    2                                             
 CONECT    5    6                                             
