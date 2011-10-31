@@ -1,0 +1,9 @@
+REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007
+REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)
+ATOM      1    C AXE     1      37.254   0.500  16.747  1.00  0.00           C  
+ATOM      2    N AXE     1      49.262  15.346  13.490  1.00  0.00           N  
+TER       3      AXE     1 
+CONECT    1    2                                             
+CONECT    2    1                                             
+MASTER        0    0    0    0    0    0    0    0    2    1    2    0
+END

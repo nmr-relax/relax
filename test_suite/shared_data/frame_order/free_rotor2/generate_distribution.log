@@ -47,6 +47,7 @@ R = zeros((3, 3), float64)
 
 # Tilt the rotation axis by 30 degrees.
 rot_axis = cross(axis, array([0, 0, 1]))
+#rot_axis = rot_axis / norm(rot_axis)
 axis_angle_to_R(rot_axis, 30.0 * 2.0 * pi / 360.0, R)
 print("Tilt axis: %s" % repr(rot_axis))
 print("CoM-pivot axis: %s" % repr(axis))
@@ -71,6 +72,14 @@ for i in range(N):
 
 # Save the PDB file.
 structure.write_pdb('distribution.pdb', compress_type=2, force=True)
+
+# Create a PDB for the motional axis system.
+end_pt = axis * norm(pivot - com) + pivot
+structure.delete()
+structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=pivot, element='C')
+structure.add_atom(atom_name='N', res_name='AXE', res_num=1, pos=end_pt, element='N')
+structure.connect_atom(index1=0, index2=1)
+structure.write_pdb('axis.pdb', compress_type=0, force=True)
 ----------------------------------------------------------------------------------------------------
 
 relax> pipe.create(pipe_name='generate', pipe_type='N-state')
@@ -1523,6 +1532,108 @@ ENDMDL
 MODEL 71
 ATOM, HETATM, TER
 ENDMDL
+CONECT
+
+MASTER
+END
+
+relax> structure.delete()
+Deleting the following structural data:
+
+Models.
+
+Index   Model number
+0       None    
+1       1       
+2       2       
+3       3       
+4       4       
+5       5       
+6       6       
+7       7       
+8       8       
+9       9       
+10      10      
+11      11      
+12      12      
+13      13      
+14      14      
+15      15      
+16      16      
+17      17      
+18      18      
+19      19      
+20      20      
+21      21      
+22      22      
+23      23      
+24      24      
+25      25      
+26      26      
+27      27      
+28      28      
+29      29      
+30      30      
+31      31      
+32      32      
+33      33      
+34      34      
+35      35      
+36      36      
+37      37      
+38      38      
+39      39      
+40      40      
+41      41      
+42      42      
+43      43      
+44      44      
+45      45      
+46      46      
+47      47      
+48      48      
+49      49      
+50      50      
+51      51      
+52      52      
+53      53      
+54      54      
+55      55      
+56      56      
+57      57      
+58      58      
+59      59      
+60      60      
+61      61      
+62      62      
+63      63      
+64      64      
+65      65      
+66      66      
+67      67      
+68      68      
+69      69      
+70      70      
+71      71      
+
+
+relax> structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=array([ 37.254 ,   0.5   ,  16.7465]), element='C', atom_num=None, chain_id=None, segment_id=None, pdb_record=None)
+Adding molecule 'None' to model None (from the original molecule number None of model None)
+
+relax> structure.add_atom(atom_name='N', res_name='AXE', res_num=1, pos=array([ 49.26247678,  15.34637518,  13.4901042 ]), element='N', atom_num=None, chain_id=None, segment_id=None, pdb_record=None)
+
+relax> structure.connect_atom(index1=0, index2=1)
+
+relax> structure.write_pdb(file='axis.pdb', dir=None, model_num=None, compress_type=0, force=True)
+Opening the file 'axis.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
 CONECT
 
 MASTER

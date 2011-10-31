@@ -26,6 +26,7 @@ R = zeros((3, 3), float64)
 
 # Tilt the rotation axis by 30 degrees.
 rot_axis = cross(axis, array([0, 0, 1]))
+#rot_axis = rot_axis / norm(rot_axis)
 axis_angle_to_R(rot_axis, 30.0 * 2.0 * pi / 360.0, R)
 print("Tilt axis: %s" % repr(rot_axis))
 print("CoM-pivot axis: %s" % repr(axis))
@@ -50,3 +51,11 @@ for i in range(N):
 
 # Save the PDB file.
 structure.write_pdb('distribution.pdb', compress_type=2, force=True)
+
+# Create a PDB for the motional axis system.
+end_pt = axis * norm(pivot - com) + pivot
+structure.delete()
+structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=pivot, element='C')
+structure.add_atom(atom_name='N', res_name='AXE', res_num=1, pos=end_pt, element='N')
+structure.connect_atom(index1=0, index2=1)
+structure.write_pdb('axis.pdb', compress_type=0, force=True)
