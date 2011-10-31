@@ -61,6 +61,35 @@ class Base_struct_API:
         self.structural_data = ModelList()
 
 
+    def add_atom(self, mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
+        """Add a new atom to the structural data object.
+
+        @keyword mol_name:      The name of the molecule.
+        @type mol_name:         str
+        @keyword atom_name:     The atom name, e.g. 'H1'.
+        @type atom_name:        str or None
+        @keyword res_name:      The residue name.
+        @type res_name:         str or None
+        @keyword res_num:       The residue number.
+        @type res_num:          int or None
+        @keyword pos:           The position vector of coordinates.
+        @type pos:              list (length = 3)
+        @keyword element:       The element symbol.
+        @type element:          str or None
+        @keyword atom_num:      The atom number.
+        @type atom_num:         int or None
+        @keyword chain_id:      The chain identifier.
+        @type chain_id:         str or None
+        @keyword segment_id:    The segment identifier.
+        @type segment_id:       str or None
+        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
+        @type pdb_record:       str or None
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def add_molecule(self, name=None, model=None):
         """Prototype method stub for adding the given molecule to the store.
 
@@ -172,6 +201,21 @@ class Base_struct_API:
         @type return_warnings:      bool
         @return:                    The list of bond vectors for each model.
         @rtype:                     list of numpy arrays
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
+    def connect_atom(self, mol_name=None, index1=None, index2=None):
+        """Connect two atoms in the structural data object.
+
+        @keyword mol_name:  The name of the molecule.
+        @type mol_name:     str
+        @keyword index1:    The global index of the first atom.
+        @type index1:       str
+        @keyword index2:    The global index of the first atom.
+        @type index2:       str
         """
 
         # Raise the error.
