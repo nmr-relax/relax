@@ -822,6 +822,33 @@ class Internal(Base_struct_API):
         return data
 
 
+    def connect_atom(self, mol_name=None, index1=None, index2=None):
+        """Connect two atoms in the structural data object.
+
+        @keyword mol_name:  The name of the molecule.
+        @type mol_name:     str
+        @keyword index1:    The global index of the first atom.
+        @type index1:       str
+        @keyword index2:    The global index of the first atom.
+        @type index2:       str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Add the molecule, if it does not exist.
+        if cdp.structure.get_molecule(mol_name) == None:
+            cdp.structure.add_molecule(name=mol_name)
+
+        # Loop over each model.
+        for model in self.structural_data:
+            # Specific molecule.
+            mol = cdp.structure.get_molecule(mol_name)
+
+            # Add the atom.
+            mol.atom_connect(index1=index1, index2=index2)
+
+
     def delete(self):
         """Delete all the structural information."""
 

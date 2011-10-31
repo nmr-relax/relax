@@ -79,6 +79,26 @@ def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[No
     cdp.structure.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
 
+def connect_atom(index1=None, index2=None):
+    """Connect two atoms.
+
+    @keyword index1:    The global index of the first atom.
+    @type index1:       str
+    @keyword index2:    The global index of the first atom.
+    @type index2:       str
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Place the structural object into the relax data store if needed.
+    if not hasattr(cdp, 'structure'):
+        cdp.structure = Internal()
+
+    # Add the atoms.
+    cdp.structure.connect_atom(index1=index1, index2=index2)
+
+
 def delete():
     """Simple function for deleting all structural data."""
 

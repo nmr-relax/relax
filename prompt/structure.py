@@ -78,9 +78,37 @@ class Structure(User_fn_class):
         ["pdb_record", "The optional PDB record name, e.g. 'ATOM' or 'HETATM'."]
     ]
     add_atom._doc_desc = """
-        This allows 
+        This allows atoms to be added to the internal structural object.
         """
     _build_doc(add_atom)
+
+
+    def connect_atom(self, index1=None, index2=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.connect_atom("
+            text = text + "index1=" + repr(index1)
+            text = text + ", index2=" + repr(index2) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_int(index1, 'index 1')
+        arg_check.is_int(index2, 'index 2')
+
+        # Execute the functional code.
+        generic_fns.structure.main.connect_atom(index1=index1, index2=index2)
+
+    # The function doc info.
+    connect_atom._doc_title = "Connect two atoms."
+    connect_atom._doc_title_short = "Atom connection."
+    connect_atom._doc_args = [
+        ["index1", "The global index of the first atom."],
+        ["index2", "The global index of the second atom."]
+    ]
+    connect_atom._doc_desc = """
+        This allows atoms to be connected in the internal structural object.  The global index is normally equal to the PDB atom number minus 1.
+        """
+    _build_doc(connect_atom)
 
 
     def create_diff_tensor_pdb(self, scale=1.8e-6, file='tensor.pdb', dir=None, force=False):
