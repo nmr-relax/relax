@@ -63,8 +63,13 @@ class Analysis:
         # Set the reference domain.
         frame_order.ref_domain('N')
 
+        # Set the parameters to that after a 21 increment grid search (for a massive speed up).
+        value.set(val=2.2143, param='ave_pos_beta')
+        value.set(val=0.897, param='ave_pos_gamma')
+        value.set(val=1.570, param='axis_theta')
+        value.set(val=1.1968, param='axis_phi')
+
         # Optimise.
-        grid_search(inc=11)
         minimise('simplex', constraints=False)
 
         # Write the results.

@@ -205,7 +205,7 @@ class Frame_order(SystemTestCase):
         pivot = array([ 37.254, 0.5, 16.7465])
         com = array([ 26.83678091, -12.37906417,  28.34154128])
         pivot_com_axis = com - pivot
-        rot_axis = array([ 0.59390169,  0.73425527, -0.16105115])
+        rot_axis = array([ 0.62649633,  0.77455282, -0.08700742])
 
         # The average position CoM.
         ave_pivot_com_axis = ds['ave pos'].CoM - pivot
@@ -230,12 +230,11 @@ class Frame_order(SystemTestCase):
 
         # The dot product.
         angle = acos(dot(cart_vect, rot_axis))
+        if angle > pi/2:
+            angle = acos(dot(cart_vect, -rot_axis))
 
         # Check the angle.
-        if angle > 3 and angle < 4:
-            self.assertAlmostEqual(angle, pi, 1)
-        else:
-            self.assertAlmostEqual(angle, 0.0, 1)
+        self.assertAlmostEqual(angle, 0.0, 2)
 
 
     def test_cam_rigid(self):
