@@ -1386,7 +1386,14 @@ class Internal(Base_struct_API):
                     # Write the ATOM record.
                     if mol.pdb_record[i] in [None, 'ATOM']:
                         atom_record = True
-                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', mol.atom_num[i], self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
+
+                        # The atom number, if missing.
+                        atom_num = mol.atom_num[i]
+                        if atom_num == None:
+                            atom_num = i + 1
+
+                        # Write out.
+                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
                         num_atom = num_atom + 1
 
                 # Finish the ATOM section with the TER record.
@@ -1398,7 +1405,13 @@ class Internal(Base_struct_API):
                 for i in xrange(len(mol.atom_name)):
                     # Write the HETATM record.
                     if mol.pdb_record[i] == 'HETATM':
-                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', mol.atom_num[i], self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
+                        # The atom number, if missing.
+                        atom_num = mol.atom_num[i]
+                        if atom_num == None:
+                            atom_num = i + 1
+
+                        # Write out.
+                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
                         num_hetatm = num_hetatm + 1
 
 
@@ -1453,7 +1466,10 @@ class Internal(Base_struct_API):
                         # Convert the atom indices to atom numbers.
                         for k in range(4):
                             if bonded[k] != '':
-                                bonded[k] = mol.atom_num[bonded[k]]
+                                if mol.atom_num[bonded[k]] != None:
+                                    bonded[k] = mol.atom_num[bonded[k]]
+                                else:
+                                    bonded[k] = bonded[k] + 1
 
                         # Write the CONECT record.
                         file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
