@@ -1,0 +1,8 @@
+align_tensor.init(tensor='Dy C-dom', params=(0.000417157463215, 0.000160643508948, -0.000180710030437, -0.000421499308544, 0.000758514031255), param_types=2)
+align_tensor.init(tensor='Dy C-dom', params=(8.62332442063e-06, 8.88028805609e-06, 8.48339305116e-06, 7.06254334239e-06, 9.06819567467e-06), param_types=2, errors=True)
+align_tensor.init(tensor='Tb C-dom', params=(-0.000121372890036, 0.000233923047179, -0.000108486020201, -0.000562368586312, 0.000732062522432), param_types=2)
+align_tensor.init(tensor='Tb C-dom', params=(7.97513358515e-06, 8.4781625535e-06, 8.25315519058e-06, 7.35855357729e-06, 9.3426614789e-06), param_types=2, errors=True)
+align_tensor.init(tensor='Tm C-dom', params=(-1.0868780726e-06, -0.000197576934962, -6.72505986587e-05, 0.000532853935629, -0.000422615021284), param_types=2)
+align_tensor.init(tensor='Tm C-dom', params=(8.36947488568e-06, 8.63165248858e-06, 8.43254332583e-06, 7.51374766863e-06, 9.53644397383e-06), param_types=2, errors=True)
+align_tensor.init(tensor='Er C-dom', params=(-0.000139886348426, -4.64008481496e-05, 2.61633012862e-06, 0.000334628517853, -0.00021059230917), param_types=2)
+align_tensor.init(tensor='Er C-dom', params=(8.31953549067e-06, 8.70337348005e-06, 8.5957014418e-06, 7.26287062665e-06, 9.65663187126e-06), param_types=2, errors=True)
