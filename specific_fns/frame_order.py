@@ -1057,6 +1057,11 @@ class Frame_order(API_base, API_common):
 
             total_pts = total_pts * len(grid[i])
 
+        # Check the number.
+        max_pts = 50e6
+        if total_pts > max_pts:
+            raise RelaxError("The total number of grid points '%s' exceeds the maximum of '%s'." % (total_pts, int(max_pts)))
+
         # Build the points array.
         pts = zeros((total_pts, n), float64)
         indices = zeros(n, int)
