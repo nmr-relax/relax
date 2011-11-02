@@ -75,6 +75,14 @@ class Analysis:
         # Optimise.
         minimise('simplex', constraints=False)
 
+        # Test Monte Carlo simulations.
+        monte_carlo.setup(number=3)
+        monte_carlo.create_data()
+        monte_carlo.initial_values()
+        minimise('simplex', constraints=False)
+        eliminate()
+        monte_carlo.error_analysis()
+
         # Write the results.
         results.write('devnull', dir=None, force=True)
 
