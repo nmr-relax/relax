@@ -736,7 +736,7 @@ class Frame_order(API_base, API_common):
             if cone_theta_y != None:
                 cdp.cone_theta_y[sim_index] = cone_theta_y
             if cone_sigma_max != None:
-                cdp.cone_sigma_max[sim_index] = cone_sigma_max
+                cdp.cone_sigma_max[sim_index] = abs(cone_sigma_max)
 
             # Optimisation stats.
             cdp.chi2_sim[sim_index] = func
@@ -779,7 +779,7 @@ class Frame_order(API_base, API_common):
             if cone_theta_y != None:
                 cdp.cone_theta_y = cone_theta_y
             if cone_sigma_max != None:
-                cdp.cone_sigma_max = cone_sigma_max
+                cdp.cone_sigma_max = abs(cone_sigma_max)
 
             # Optimisation stats.
             cdp.chi2 = func
