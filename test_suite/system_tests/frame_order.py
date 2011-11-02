@@ -278,7 +278,7 @@ class Frame_order(SystemTestCase):
         print("Fitted domain position:\n%s" % repr(ave_pos))
         for i in range(3):
             for j in range(3):
-                self.assertAlmostEqual(ave_pos[i, j], real_pos[i, j], 1)
+                self.assertAlmostEqual(ave_pos[i, j], real_pos[i, j], 3)
 
         # The axis system.
         axis_sys = zeros((3, 3), float64)
@@ -293,7 +293,7 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(angle, 0.0, 2)
 
         # Check the cone angle of 60 deg.
-        self.assertAlmostEqual(cdp.cone_sigma_max * 2.0, 60.0 / 360.0 * 2.0 * pi, 2)
+        self.assertAlmostEqual(cdp.cone_sigma_max * 2.0, 60.0 / 360.0 * 2.0 * pi, 1)
 
 
     def test_cam_rotor2(self):
