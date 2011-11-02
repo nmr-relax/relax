@@ -8,7 +8,7 @@ state.load('frame_order')
 pymol.view()
 
 # The cone representation.
-pymol.cone_pdb('cone.pdb')
+pymol.cone_pdb('cone.pdb.gz')
 
 # View all.
 pymol.command('zoom')

@@ -70,6 +70,14 @@ class Analysis:
         grid_search(inc=3)
         minimise('simplex', constraints=False)
 
+        # Test Monte Carlo simulations.
+        monte_carlo.setup(number=500)
+        monte_carlo.create_data()
+        monte_carlo.initial_values()
+        minimise('simplex', constraints=False)
+        eliminate()
+        monte_carlo.error_analysis()
+
 
     def original_structure(self):
         """Load the original structure into a dedicated data pipe."""
