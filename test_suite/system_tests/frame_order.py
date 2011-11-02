@@ -281,15 +281,15 @@ class Frame_order(SystemTestCase):
                 self.assertAlmostEqual(ave_pos[i, j], real_pos[i, j], 3)
 
         # The axis system.
-        axis_sys = zeros((3, 3), float64)
-        euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, axis_sys)
+        axis = zeros(3, float64)
+        spherical_to_cartesian(array([1, cdp.axis_theta, cdp.axis_phi]), axis)
         print("\nReal rotation axis:   %s" % repr(rot_axis))
-        print("Fitted rotation axis: %s" % repr(axis_sys[:,2]))
+        print("Fitted rotation axis: %s" % repr(axis))
 
         # Check the angle between the real and fitted rotation axes.
-        angle = acos(dot(axis_sys[:,2], rot_axis))
+        angle = acos(dot(axis, rot_axis))
         if angle > pi/2:
-            angle = acos(dot(axis_sys[:,2], -rot_axis))
+            angle = acos(dot(axis, -rot_axis))
         self.assertAlmostEqual(angle, 0.0, 2)
 
         # Check the cone angle of 60 deg.
@@ -324,19 +324,19 @@ class Frame_order(SystemTestCase):
                 self.assertAlmostEqual(ave_pos[i, j], real_pos[i, j], 1)
 
         # The axis system.
-        axis_sys = zeros((3, 3), float64)
-        euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, axis_sys)
+        axis = zeros(3, float64)
+        spherical_to_cartesian(array([1, cdp.axis_theta, cdp.axis_phi]), axis)
         print("\nReal rotation axis:   %s" % repr(rot_axis))
-        print("Fitted rotation axis: %s" % repr(axis_sys[:,2]))
+        print("Fitted rotation axis: %s" % repr(axis))
 
         # Check the angle between the real and fitted rotation axes.
-        angle = acos(dot(axis_sys[:,2], rot_axis))
+        angle = acos(dot(axis, rot_axis))
         if angle > pi/2:
-            angle = acos(dot(axis_sys[:,2], -rot_axis))
+            angle = acos(dot(axis, -rot_axis))
         self.assertAlmostEqual(angle, 0.0, 2)
 
         # Check the cone angle of 60 deg.
-        self.assertAlmostEqual(cdp.cone_sigma_max * 2.0, 60.0 / 360.0 * 2.0 * pi, 2)
+        self.assertAlmostEqual(cdp.cone_sigma_max * 2.0, 60.0 / 360.0 * 2.0 * pi, 1)
 
 
     def test_model_free_rotor(self):

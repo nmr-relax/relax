@@ -9,8 +9,8 @@ from maths_fns.rotation_matrix import axis_angle_to_R
 
 
 # The number of structures.
-INC = 2
-N = 60 / INC
+INC = 0.5
+N = int(60 / INC)
 
 # Create a data pipe.
 pipe.create('generate', 'N-state')
@@ -36,7 +36,7 @@ print("Rotation axis: %s, norm = %s" % (repr(axis), norm(axis)))
 # Load N+1 copies of the original C-domain, rotating them about the rotation axis.
 for i in range(N+1):
     # Load the PDB as a new model.
-    structure.read_pdb('1J7P_1st_NH.pdb', dir='..', set_model_num=i)
+    structure.read_pdb('1J7P_1st_NH.pdb', dir='..', set_model_num=i+1)
 
     # The rotation angle.
     angle = (i - N/2) * INC / 360.0 * 2.0 * pi
@@ -47,7 +47,7 @@ for i in range(N+1):
     print("Rotation matrix:\n%s\n" % R)
 
     # Rotate.
-    structure.rotate(R=R, origin=pivot, model=i)
+    structure.rotate(R=R, origin=pivot, model=i+1)
 
 # Save the PDB file.
 structure.write_pdb('distribution.pdb', compress_type=2, force=True)

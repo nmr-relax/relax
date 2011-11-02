@@ -6,7 +6,7 @@ from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from maths_fns.rotation_matrix import R_to_euler_zyz
+from maths_fns.coord_transform import cartesian_to_spherical
 from status import Status; status = Status()
 
 
@@ -30,10 +30,8 @@ def get_angle(index, incs=None, deg=False):
 INC = 18
 
 # Generate 3 orthogonal vectors.
-EIG_FRAME = array([[ 2, -1,  2],
-                   [ 2,  2, -1],
-                   [-1,  2,  2]], float64) / 3.0
-a, b, g = R_to_euler_zyz(EIG_FRAME)
+vect_z = array([2, -1, 2], float64)
+r, theta, phi = cartesian_to_spherical(vect_z)
 
 # Load the tensors.
 script(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors'+sep+'rotor_out_of_frame_tensors_beta123_75.py')
@@ -50,9 +48,8 @@ for i in range(INC):
 
     # Data init.
     cdp.ave_pos_beta   = cdp.ave_pos_beta2   = 123.75 / 360.0 * 2.0 * pi
-    cdp.eigen_alpha    = cdp.eigen_alpha2    = a
-    cdp.eigen_beta     = cdp.eigen_beta2     = b
-    cdp.eigen_gamma    = cdp.eigen_gamma2    = g
+    cdp.axis_theta    = cdp.axis_theta2    = theta
+    cdp.axis_phi     = cdp.axis_phi2     = phi
     cdp.cone_sigma_max = cdp.cone_sigma_max2 = get_angle(i, incs=INC, deg=False)
 
     # Select the Frame Order model.

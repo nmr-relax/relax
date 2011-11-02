@@ -67,7 +67,7 @@ class Analysis:
         frame_order.ref_domain('N')
 
         # Optimise.
-        grid_search(inc=11)
+        grid_search(inc=3)
         minimise('simplex', constraints=False)
 
 

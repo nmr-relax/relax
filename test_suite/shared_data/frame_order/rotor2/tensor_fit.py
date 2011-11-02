@@ -34,7 +34,7 @@ for i in range(len(ln)):
     n_state_model.select_model(model='fixed')
 
     # Minimisation.
-    grid_search(inc=7)
+    grid_search(inc=5)
     minimise('newton', constraints=True)
 
     # Monte Carlo simulations.

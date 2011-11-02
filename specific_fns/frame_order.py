@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -92,13 +92,13 @@ class Frame_order(API_base, API_common):
             param_vect = [cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma]
 
         # Frame order eigenframe - the full frame.
-        if cdp.model in ['rotor', 'iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+        if cdp.model in ['iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
             param_vect.append(cdp.eigen_alpha)
             param_vect.append(cdp.eigen_beta)
             param_vect.append(cdp.eigen_gamma)
 
         # Frame order eigenframe - the isotropic cone axis.
-        elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+        elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
             param_vect.append(cdp.axis_theta)
             param_vect.append(cdp.axis_phi)
 
@@ -206,7 +206,7 @@ class Frame_order(API_base, API_common):
         print("\nGenerating the central axis.")
 
         # The spherical angles.
-        if cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+        if cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
             theta_name = 'axis_theta'
             phi_name = 'axis_phi'
         else:
@@ -250,7 +250,7 @@ class Frame_order(API_base, API_common):
         ###################
 
         # Skip models missing the full eigenframe.
-        if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+        if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
             # Print out.
             print("\nGenerating the x and y axes.")
 
@@ -298,7 +298,7 @@ class Frame_order(API_base, API_common):
         # Skip models missing a cone.
         if cdp.model not in ['rotor', 'free rotor']:
             # The rotation matrix (rotation from the z-axis to the cone axis).
-            if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+            if cdp.model not in ['iso cone, torsionless', 'iso cone, free rotor']:
                 R = axes
             else:
                 R = zeros((3, 3), float64)
@@ -613,13 +613,13 @@ class Frame_order(API_base, API_common):
             cdp.params.append('ave_pos_gamma')
 
             # Frame order eigenframe - the full frame.
-            if cdp.model in ['rotor', 'iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            if cdp.model in ['iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
                 cdp.params.append('eigen_alpha')
                 cdp.params.append('eigen_beta')
                 cdp.params.append('eigen_gamma')
 
             # Frame order eigenframe - the isotropic cone axis.
-            elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+            elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
                 cdp.params.append('axis_theta')
                 cdp.params.append('axis_phi')
 
@@ -696,7 +696,7 @@ class Frame_order(API_base, API_common):
         elif cdp.model in ['line, torsionless', 'line, free rotor']:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
         elif cdp.model in ['rotor']:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_sigma_max = param_vector
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_sigma_max = param_vector
         elif cdp.model in ['free rotor']:
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = param_vector
             ave_pos_alpha = 0.0
@@ -909,13 +909,13 @@ class Frame_order(API_base, API_common):
             names.append('ave_pos_gamma%s' % suffix)
 
             # Frame order eigenframe - the full frame.
-            if cdp.model in ['rotor', 'iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            if cdp.model in ['iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
                 names.append('eigen_alpha%s' % suffix)
                 names.append('eigen_beta%s' % suffix)
                 names.append('eigen_gamma%s' % suffix)
 
             # Frame order eigenframe - the isotropic cone axis.
-            elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+            elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
                 names.append('axis_theta%s' % suffix)
                 names.append('axis_phi%s' % suffix)
 
