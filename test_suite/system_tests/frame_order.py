@@ -253,6 +253,49 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ave_pos.z[i], orig_pos.z[i], 1)
 
 
+    def test_cam_rotor(self):
+        """Test the rotor frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rotor.py')
+
+        # Switch to the correct data pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # The base data.
+        pivot = array([ 37.254, 0.5, 16.7465])
+        com = array([ 26.83678091, -12.37906417,  28.34154128])
+        pivot_com_axis = com - pivot
+        rot_axis = pivot_com_axis / norm(pivot_com_axis)
+
+        # The average position checks.
+        real_pos = array([[-0.31334613, -0.88922808, -0.33329811],
+                          [ 0.93737972, -0.23341205, -0.2585306 ],
+                          [ 0.15209688, -0.39343645,  0.90668313]], float64)
+        ave_pos = zeros((3, 3), float64)
+        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, ave_pos)
+        print("\nReal domain position:\n%s" % repr(real_pos))
+        print("Fitted domain position:\n%s" % repr(ave_pos))
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(ave_pos[i, j], real_pos[i, j], 1)
+
+        # The axis system.
+        axis_sys = zeros((3, 3), float64)
+        euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, axis_sys)
+        print("\nReal rotation axis:   %s" % repr(rot_axis))
+        print("Fitted rotation axis: %s" % repr(axis_sys[:,2]))
+
+        # Check the angle between the real and fitted rotation axes.
+        angle = acos(dot(axis_sys[:,2], rot_axis))
+        if angle > pi/2:
+            angle = acos(dot(axis_sys[:,2], -rot_axis))
+        self.assertAlmostEqual(angle, 0.0, 2)
+
+        # Check the cone angle of 60 deg.
+        self.assertAlmostEqual(cdp.cone_sigma_max * 2.0, 60.0 / 360.0 * 2.0 * pi, 2)
+
+
     def test_cam_rotor2(self):
         """Test the second rotor frame order model of CaM."""
 
