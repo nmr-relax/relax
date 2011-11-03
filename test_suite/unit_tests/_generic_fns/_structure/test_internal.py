@@ -63,11 +63,11 @@ class Test_internal(UnitTestCase):
         reset()
 
 
-    def test___parse_pdb_record(self):
-        """Test the private MolContainer.__parse_pdb_record() method."""
+    def test__parse_pdb_record(self):
+        """Test the private MolContainer._parse_pdb_record() method."""
 
         # Parse a PDB record.
-        record = self.mol_cont._MolContainer__parse_pdb_record('ATOM    158  CG  GLU    11       9.590  -1.041 -11.596  1.00  0.00           C')
+        record = self.mol_cont._parse_pdb_record('ATOM    158  CG  GLU    11       9.590  -1.041 -11.596  1.00  0.00           C')
 
         # Test the elements.
         self.assertEqual(record[0], 'ATOM')
