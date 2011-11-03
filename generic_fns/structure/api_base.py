@@ -90,6 +90,23 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
+    def add_model(self, model=None, coords_from=None):
+        """Add a new model to the store.
+
+        The new model will be constructured with the structural information from the other models currently present.  The coords_from argument allows the atomic positions to be taken from a certain model.  If this argument is not set, then the atomic positions from the first model will be used.
+
+        @keyword model:         The number of the model to create.
+        @type model:            int or None
+        @keyword coords_from:   The model number to take the coordinates from.
+        @type coords_from:      int or None
+        @return:                The model container.
+        @rtype:                 ModelContainer instance
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def add_molecule(self, name=None, model=None):
         """Prototype method stub for adding the given molecule to the store.
 

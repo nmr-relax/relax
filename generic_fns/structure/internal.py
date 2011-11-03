@@ -612,6 +612,46 @@ class Internal(Base_struct_API):
             mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
 
+    def add_model(self, model=None, coords_from=None):
+        """Add a new model to the store.
+
+        The new model will be constructured with the structural information from the other models currently present.  The coords_from argument allows the atomic positions to be taken from a certain model.  If this argument is not set, then the atomic positions from the first model will be used.
+
+        @keyword model:         The number of the model to create.
+        @type model:            int or None
+        @keyword coords_from:   The model number to take the coordinates from.
+        @type coords_from:      int or None
+        @return:                The model container.
+        @rtype:                 ModelContainer instance
+        """
+
+        # Check if the model currently exists.
+        if model != None:
+            for i in range(len(self.structural_data)):
+                if model == self.structural_data[i].num:
+                    raise RelaxError("The model '%s' already exists." % model)
+
+        # No structural data.
+        new = self.structural_data.is_empty()
+
+        # Add a new model.
+        self.structural_data.add_item(model_num=model)
+
+        # Construct the structural data for the model from the other models.
+        if not new:
+            # The model to duplicate.
+            if coords_from == None:
+                coords_from = self.structural_data[0].num
+
+            # Loop over the atoms.
+            for mol_name, res_num, res_name, atom_num, atom_name, element, pos in self.atom_loop(self, model_num=coords_from, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+                # Add the atom.
+                self.add_atom(self, mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num)
+
+        # Return the model.
+        return self.structural_data[-1]
+
+
     def add_molecule(self, name=None, model=None):
         """Add a new molecule to the store.
 
