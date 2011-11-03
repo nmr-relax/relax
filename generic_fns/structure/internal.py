@@ -656,6 +656,10 @@ class Internal(Base_struct_API):
         @type model:            int or None
         """
 
+        # Add a model if necessary.
+        if len(self.structural_data) == 0:
+            self.add_model()
+
         # Loop over the models.
         for i in range(len(self.structural_data)):
             # Add the molecule.
