@@ -68,7 +68,7 @@ class Internal(Base_struct_API):
         self.pack_structs([[MolContainer()]], orig_model_num=[model], orig_mol_num=[None], set_mol_name=[name])
 
 
-    def __bonded_atom(self, attached_atom, index, mol):
+    def _bonded_atom(self, attached_atom, index, mol):
         """Find the atom named attached_atom directly bonded to the atom located at the index.
 
         @param attached_atom:   The name of the attached atom to return.
@@ -152,7 +152,7 @@ class Internal(Base_struct_API):
         return bonded_num, bonded_name, element, pos, attached_name, None
 
 
-    def __find_bonded_atoms(self, index, mol, radius=1.2):
+    def _find_bonded_atoms(self, index, mol, radius=1.2):
         """Find all atoms within a sphere and say that they are attached to the central atom.
 
         The found atoms will be added to the 'bonded' data structure.
@@ -212,7 +212,7 @@ class Internal(Base_struct_API):
             mol.atom_connect(index, connect_list[dist_list[i]])
 
 
-    def __get_chemical_name(self, hetID):
+    def _get_chemical_name(self, hetID):
         """Return the chemical name corresponding to the given residue ID.
 
         The following names are currently returned::
@@ -267,7 +267,7 @@ class Internal(Base_struct_API):
             return 'Average vector'
 
 
-    def __parse_models_pdb(self, file_path):
+    def _parse_models_pdb(self, file_path):
         """Generator function for looping over the models in the PDB file.
 
         @param file_path:   The full path of the PDB file.
@@ -321,7 +321,7 @@ class Internal(Base_struct_API):
             yield model, records
 
 
-    def __parse_models_xyz(self, file_path):
+    def _parse_models_xyz(self, file_path):
         """Generator function for looping over the models in the XYZ file.
 
         @param file_path:   The full path of the XYZ file.
@@ -376,7 +376,7 @@ class Internal(Base_struct_API):
             yield records
 
 
-    def __parse_mols(self, records):
+    def _parse_mols(self, records):
         """Generator function for looping over the molecules in the PDB records of a model.
 
         @param records:     The list of PDB records for the model, or if no models exist the entire
@@ -438,7 +438,7 @@ class Internal(Base_struct_API):
             yield mol_num, mol_records
 
 
-    def __validate_data_arrays(self, struct):
+    def _validate_data_arrays(self, struct):
         """Check the validity of the data arrays in the given structure object.
 
         @param struct:  The structural object.
@@ -1568,7 +1568,7 @@ class MolContainer:
         self.z = []
 
 
-    def __atom_index(self, atom_num):
+    def _atom_index(self, atom_num):
         """Find the atom index corresponding to the given atom number.
 
         @param atom_num:        The atom number to find the index of.
@@ -1587,7 +1587,7 @@ class MolContainer:
         warn(RelaxWarning("The atom number " + repr(atom_num) + " from the CONECT record cannot be found within the ATOM and HETATM records."))
 
 
-    def __det_pdb_element(self, atom_name):
+    def _det_pdb_element(self, atom_name):
         """Try to determine the element from the PDB atom name.
 
         @param atom_name:   The PDB atom name.
@@ -1627,7 +1627,7 @@ class MolContainer:
         warn(RelaxWarning("Cannot determine the element associated with atom '%s'." % atom_name))
 
 
-    def __parse_pdb_record(self, record):
+    def _parse_pdb_record(self, record):
         """Parse the PDB record string and return an array of the corresponding atomic information.
 
         The format of the ATOM and HETATM records is::
@@ -1782,7 +1782,7 @@ class MolContainer:
         return fields
 
 
-    def __parse_xyz_record(self, record):
+    def _parse_xyz_record(self, record):
         """Parse the XYZ record string and return an array of the corresponding atomic information.
 
         The format of the XYZ records is::
