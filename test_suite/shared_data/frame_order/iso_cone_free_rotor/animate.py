@@ -1,14 +1,19 @@
 # Script for creating an animation of the model and results.
 
+from time import sleep
 
 # Load the frame order results.
 state.load('frame_order')
 
 # Launch PyMOL.
 pymol.view()
+sleep(3)
 
 # The cone representation.
 pymol.cone_pdb('cone.pdb')
+pymol.command('split_states cone')
+pymol.command('hide everything, cone')
+pymol.command('hide everything, cone_0002')
 
 # View all.
 pymol.command('zoom')
