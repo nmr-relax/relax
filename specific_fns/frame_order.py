@@ -213,6 +213,9 @@ class Frame_order(API_base, API_common):
         if not hasattr(cdp, 'pivot'):
             raise RelaxError("The pivot point for the domain motion has not been set.")
 
+        # Negative cone flag.
+        neg_cone = True
+
         # Monte Carlo simulation flag.
         sim = False
         num_sim = 0
@@ -226,16 +229,24 @@ class Frame_order(API_base, API_common):
         # Create the structural object.
         structure = Internal()
 
+        # Create model for the positive and negative images.
+        model = structure.add_model(model=1)
+        if neg_cone:
+            model_neg = structure.add_model(model=2)
+
         # Create the molecule.
         structure.add_molecule(name=cdp.model)
-        mol = structure.structural_data[0].mol[0]
+
+        # Alias the molecules.
+        mol = model.mol[0]
+        mol_neg = model_neg.mol[0]
 
 
         # The pivot point.
         ##################
 
         # Add the pivot point.
-        mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
+        structure.add_atom(mol_name=cdp.model, pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
 
 
         # The central axis.
@@ -284,7 +295,7 @@ class Frame_order(API_base, API_common):
 
         # The negative.
         if cdp.model not in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-            res_num = generate_vector_residues(mol=mol, vector=axis_neg, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_neg, res_num=res_num+1, origin=cdp.pivot, scale=size)
+            res_num = generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
 
 
         # The x and y axes.
@@ -330,7 +341,7 @@ class Frame_order(API_base, API_common):
 
                 # The vectors.
                 res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_pos, res_num=res_num+1, origin=cdp.pivot, scale=size)
-                res_num = generate_vector_residues(mol=mol, vector=axes_neg[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_neg, res_num=res_num+1, origin=cdp.pivot, scale=size)
+                res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_neg, res_num=res_num+1, origin=cdp.pivot, scale=size)
 
 
         # The cone object.
@@ -362,7 +373,7 @@ class Frame_order(API_base, API_common):
 
             # The negative.
             if cdp.model not in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-                create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_neg, inc=inc, distribution='regular')
+                create_cone_pdb(mol=mol_neg, cone=cone, start_res=mol_neg.res_num[-1]+1, apex=cdp.pivot, R=R_neg, inc=inc, distribution='regular')
 
 
         # Create the PDB file.
