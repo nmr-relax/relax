@@ -652,8 +652,6 @@ class Internal(Base_struct_API):
 
         @keyword name:          The molecule identifier string.
         @type name:             str
-        @keyword model:         The number of the model to add the molecule to.
-        @type model:            int or None
         """
 
         # Add a model if necessary.

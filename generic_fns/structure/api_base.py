@@ -107,13 +107,11 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def add_molecule(self, name=None, model=None):
+    def add_molecule(self, name=None):
         """Prototype method stub for adding the given molecule to the store.
 
         @keyword name:          The molecule identification string.
         @type name:             str
-        @keyword model:         The number of the model to add the molecule to.
-        @type model:            int or None
         """
 
         # Raise the error.
