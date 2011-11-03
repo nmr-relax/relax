@@ -84,7 +84,7 @@ class Internal(Base_struct_API):
 
             # Find everything within 2 Angstroms and say they are bonded.
             else:
-                self.__find_bonded_atoms(index, mol, radius=2)
+                self._find_bonded_atoms(index, mol, radius=2)
 
         # Loop over the bonded atoms.
         matching_list = []
@@ -835,7 +835,7 @@ class Internal(Base_struct_API):
                 # Found the atom.
                 if index != None:
                     # Get the atom bonded to this model/molecule/residue/atom.
-                    bonded_num, bonded_name, element, pos, attached_name, warnings = self.__bonded_atom(attached_atom, index, mol)
+                    bonded_num, bonded_name, element, pos, attached_name, warnings = self._bonded_atom(attached_atom, index, mol)
 
                     # No bonded atom.
                     if (bonded_num, bonded_name, element) == (None, None, None):
@@ -987,7 +987,7 @@ class Internal(Base_struct_API):
         model_index = 0
         orig_model_num = []
         mol_conts = []
-        for model_num, model_records in self.__parse_models_pdb(file_path):
+        for model_num, model_records in self._parse_models_pdb(file_path):
             # Only load the desired model.
             if read_model and model_num not in read_model:
                 continue
@@ -1000,7 +1000,7 @@ class Internal(Base_struct_API):
             mol_index = 0
             orig_mol_num = []
             new_mol_name = []
-            for mol_num, mol_records in self.__parse_mols(model_records):
+            for mol_num, mol_records in self._parse_mols(model_records):
                 # Only load the desired model.
                 if read_mol and mol_num not in read_mol:
                     continue
@@ -1104,7 +1104,7 @@ class Internal(Base_struct_API):
         mol_conts = []
         orig_mol_num = []
         new_mol_name = []
-        for model_records in self.__parse_models_xyz(file_path):
+        for model_records in self._parse_models_xyz(file_path):
             # Increment the xyz_model_increment
             xyz_model_increment = xyz_model_increment +1
 
@@ -1265,7 +1265,7 @@ class Internal(Base_struct_API):
         index = 0
         for mol in self.structural_data[0].mol:
             # Check the validity of the data.
-            self.__validate_data_arrays(mol)
+            self._validate_data_arrays(mol)
 
             # Append an empty array for this molecule.
             het_data.append([])
@@ -1361,7 +1361,7 @@ class Internal(Base_struct_API):
                 residues.append(het[1])
 
             # Get the chemical name.
-            chemical_name = self.__get_chemical_name(het[1])
+            chemical_name = self._get_chemical_name(het[1])
             if not chemical_name:
                 chemical_name = 'Unknown'
 
@@ -1947,7 +1947,7 @@ class MolContainer:
         # Loop over the records.
         for record in records:
             # Parse the record.
-            record = self.__parse_pdb_record(record)
+            record = self._parse_pdb_record(record)
 
             # Nothing to do.
             if not record:
@@ -1958,7 +1958,7 @@ class MolContainer:
                 # Attempt at determining the element, if missing.
                 element = record[14]
                 if not element:
-                    element = self.__det_pdb_element(record[2])
+                    element = self._det_pdb_element(record[2])
 
                 # Add.
                 self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=element)
@@ -1972,7 +1972,7 @@ class MolContainer:
                         continue
 
                     # Make the connection.
-                    self.atom_connect(index1=self.__atom_index(record[1]), index2=self.__atom_index(record[i+2]))
+                    self.atom_connect(index1=self._atom_index(record[1]), index2=self._atom_index(record[i+2]))
 
 
     def fill_object_from_xyz(self, records):
@@ -1988,7 +1988,7 @@ class MolContainer:
         # Loop over the records.
         for record in records:
             # Parse the record.
-            record = self.__parse_xyz_record(record)
+            record = self._parse_xyz_record(record)
 
             # Nothing to do.
             if not record:
@@ -1999,7 +1999,7 @@ class MolContainer:
                 # Attempt at determining the element, if missing.
                 element = record[0]
                 if not element:
-                    element = self.__det_pdb_element(record[2])
+                    element = self._det_pdb_element(record[2])
 
                 # Add.
                 self.atom_add(atom_num=atom_number, pos=[record[1], record[2], record[3]], element=element)
