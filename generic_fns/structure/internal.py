@@ -55,19 +55,6 @@ class Internal(Base_struct_API):
     id = 'internal'
 
 
-    def add_molecule(self, name=None, model=None):
-        """Add a new molecule to the store.
-
-        @keyword name:          The molecule identifier string.
-        @type name:             str
-        @keyword model:         The number of the model to add the molecule to.
-        @type model:            int or None
-        """
-
-        # Create the structural data data structures.
-        self.pack_structs([[MolContainer()]], orig_model_num=[model], orig_mol_num=[None], set_mol_name=[name])
-
-
     def _bonded_atom(self, attached_atom, index, mol):
         """Find the atom named attached_atom directly bonded to the atom located at the index.
 
@@ -623,6 +610,19 @@ class Internal(Base_struct_API):
 
             # Add the atom.
             mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
+
+
+    def add_molecule(self, name=None, model=None):
+        """Add a new molecule to the store.
+
+        @keyword name:          The molecule identifier string.
+        @type name:             str
+        @keyword model:         The number of the model to add the molecule to.
+        @type model:            int or None
+        """
+
+        # Create the structural data data structures.
+        self.pack_structs([[MolContainer()]], orig_model_num=[model], orig_mol_num=[None], set_mol_name=[name])
 
 
     def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
