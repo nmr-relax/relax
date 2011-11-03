@@ -431,7 +431,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     structure.add_molecule(name='diff_tensor')
 
     # Alias the single molecule from the single model.
-    mol = structure.structural_data[0].mol[0]
+    mol = structure.get_molecule('diff_tensor')
 
     # Loop over the pipes.
     for pipe_index in xrange(len(pipe_list)):
