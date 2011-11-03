@@ -37,7 +37,7 @@ from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.mol_res_spin import Selection
-from relax_errors import RelaxError, RelaxNoPdbError
+from relax_errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from relax_io import file_root, open_read_file
 from relax_warnings import RelaxWarning
 
@@ -599,14 +599,14 @@ class Internal(Base_struct_API):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Add the molecule, if it does not exist.
-        if cdp.structure.get_molecule(mol_name) == None:
-            cdp.structure.add_molecule(name=mol_name)
-
         # Loop over each model.
         for model in self.structural_data:
             # Specific molecule.
-            mol = cdp.structure.get_molecule(mol_name)
+            mol = self.get_molecule(mol_name, model=model.num)
+
+            # Add the molecule, if it does not exist.
+            if mol == None:
+                self.add_molecule(name=mol_name)
 
             # Add the atom.
             mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
@@ -631,28 +631,23 @@ class Internal(Base_struct_API):
                 if model == self.structural_data[i].num:
                     raise RelaxError("The model '%s' already exists." % model)
 
-        # No structural data.
-        new = self.structural_data.is_empty()
-
         # Add a new model.
         self.structural_data.add_item(model_num=model)
 
-        # Construct the structural data for the model from the other models.
-        if not new:
-            # The model to duplicate.
-            if coords_from == None:
-                coords_from = self.structural_data[0].num
+        # The model to duplicate.
+        if coords_from == None:
+            coords_from = self.structural_data[0].num
 
-            # Loop over the atoms.
-            for mol_name, res_num, res_name, atom_num, atom_name, element, pos in self.atom_loop(self, model_num=coords_from, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
-                # Add the atom.
-                self.add_atom(self, mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num)
+        # Construct the structural data for the model from the other models.
+        for mol_name, res_num, res_name, atom_num, atom_name, element, pos in self.atom_loop(model_num=coords_from, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+            # Add the atom.
+            self.add_atom(self, mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num)
 
         # Return the model.
         return self.structural_data[-1]
 
 
-    def add_molecule(self, name=None, model=None):
+    def add_molecule(self, name=None):
         """Add a new molecule to the store.
 
         @keyword name:          The molecule identifier string.
@@ -661,8 +656,10 @@ class Internal(Base_struct_API):
         @type model:            int or None
         """
 
-        # Create the structural data data structures.
-        self.pack_structs([[MolContainer()]], orig_model_num=[model], orig_mol_num=[None], set_mol_name=[name])
+        # Loop over the models.
+        for i in range(len(self.structural_data)):
+            # Add the molecule.
+            self.structural_data[i].mol.add_item(mol_name=name, mol_cont=MolContainer())
 
 
     def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
@@ -701,7 +698,9 @@ class Internal(Base_struct_API):
             raise RelaxNoPdbError
 
         # Generate the selection object.
-        sel_obj = Selection(atom_id)
+        sel_obj = None
+        if atom_id:
+            sel_obj = Selection(atom_id)
 
         # Model loop.
         for model in self.model_loop(model_num):
@@ -877,13 +876,13 @@ class Internal(Base_struct_API):
         pipes.test()
 
         # Add the molecule, if it does not exist.
-        if cdp.structure.get_molecule(mol_name) == None:
-            cdp.structure.add_molecule(name=mol_name)
+        if self.get_molecule(mol_name) == None:
+            self.add_molecule(name=mol_name)
 
         # Loop over each model.
         for model in self.structural_data:
             # Specific molecule.
-            mol = cdp.structure.get_molecule(mol_name)
+            mol = self.get_molecule(mol_name)
 
             # Add the atom.
             mol.atom_connect(index1=index1, index2=index2)
@@ -920,7 +919,11 @@ class Internal(Base_struct_API):
 
         # Check if the target is a single molecule.
         if model == None and self.num_models() > 1:
-            raise RelaxError("The target molecule cannot be determined as there are %s models already present." % self.num_modes())
+            raise RelaxError("The target molecule cannot be determined as there are %s models already present." % self.num_models())
+
+        # Check the model argument.
+        if not isinstance(model, int) and not model == None:
+            raise RelaxNoneIntError
 
         # No models.
         if not len(self.structural_data):
