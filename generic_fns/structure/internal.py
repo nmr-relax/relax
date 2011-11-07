@@ -599,6 +599,10 @@ class Internal(Base_struct_API):
         # Test if the current data pipe exists.
         pipes.test()
 
+        # Add a model if not present.
+        if len(self.structural_data) == 0:
+            self.add_model()
+
         # Loop over each model.
         for model in self.structural_data:
             # Specific molecule.
@@ -607,6 +611,7 @@ class Internal(Base_struct_API):
             # Add the molecule, if it does not exist.
             if mol == None:
                 self.add_molecule(name=mol_name)
+                mol = self.get_molecule(mol_name, model=model.num)
 
             # Add the atom.
             mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
