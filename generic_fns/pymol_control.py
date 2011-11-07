@@ -305,10 +305,13 @@ def cone_pdb(file=None):
     #################################
 
     # Check if there is an average position.
-    if hasattr(cdp, 'ave_pos_alpha'):
+    if hasattr(cdp, 'ave_pos_beta'):
         # The average position rotation.
         ave_pos_R = zeros((3, 3), float64)
-        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, ave_pos_R)
+        ave_pos_alpha = 0.0
+        if hasattr(cdp, 'ave_pos_alpha') and cdp.ave_pos_alpha != None:
+            ave_pos_alpha = cdp.ave_pos_alpha
+        euler_to_R_zyz(ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, ave_pos_R)
 
         # The rotation is passive (need to rotated the moving domain back into the average position defined in the non-moving domain PDB frame).
         R = transpose(ave_pos_R)
