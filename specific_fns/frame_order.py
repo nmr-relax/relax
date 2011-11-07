@@ -739,10 +739,10 @@ class Frame_order(API_base, API_common):
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, cone_sigma_max = param_vector
         elif cdp.model in ['iso cone, torsionless']:
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = param_vector
-            ave_pos_alpha = 0.0
+            ave_pos_alpha = None
         elif cdp.model in ['iso cone, free rotor']:
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = param_vector
-            ave_pos_alpha = 0.0
+            ave_pos_alpha = None
         elif cdp.model == 'line':
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
         elif cdp.model in ['line, torsionless', 'line, free rotor']:
@@ -751,7 +751,7 @@ class Frame_order(API_base, API_common):
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_sigma_max = param_vector
         elif cdp.model in ['free rotor']:
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = param_vector
-            ave_pos_alpha = 0.0
+            ave_pos_alpha = None
         elif cdp.model == 'rigid':
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma = param_vector
 
@@ -1402,6 +1402,11 @@ class Frame_order(API_base, API_common):
             # Increment.
             inc = inc + 1
 
+        # Add some additional parameters.
+        if cdp.model == 'iso cone, free rotor' and inc == index:
+            setattr(cdp, 'cone_theta_err', error)
+
+
 
     def set_selected_sim(self, model_info, select_sim):
         """Set the simulation selection flag for the spin.
@@ -1421,6 +1426,10 @@ class Frame_order(API_base, API_common):
 
         # Get the parameter object names.
         param_names = self.data_names(set='params')
+
+        # Add some additional parameters.
+        if cdp.model == 'iso cone, free rotor':
+            param_names.append('cone_theta')
 
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
@@ -1509,14 +1518,21 @@ class Frame_order(API_base, API_common):
         # Parameter increment counter.
         inc = 0
 
+        # Get the parameter object names.
+        param_names = self.data_names(set='params')
+
         # Loop over the parameters.
-        for param in self.data_names(set='params'):
+        for param in param_names:
             # Return the parameter array.
             if index == inc:
                 return getattr(cdp, param + "_sim")
 
             # Increment.
             inc = inc + 1
+
+        # Add some additional parameters.
+        if cdp.model == 'iso cone, free rotor' and inc == index:
+            return getattr(cdp, 'cone_theta_sim')
 
 
     def sim_return_selected(self, model_info):
