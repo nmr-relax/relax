@@ -17,7 +17,10 @@ class Analysis:
 
         # The rotation matrix.
         R = zeros((3, 3), float64)
-        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+        ave_pos_alpha = 0.0
+        if hasattr(cdp, 'ave_pos_alpha') and cdp.ave_pos_alpha != None:
+            ave_pos_alpha = cdp.ave_pos_alpha
+        euler_to_R_zyz(ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
         print("Rotation matrix:\n%s\n" % R)
         R = transpose(R)
         print("Inverted rotation:\n%s\n" % R)
@@ -67,8 +70,16 @@ class Analysis:
         frame_order.ref_domain('N')
 
         # Optimise.
-        grid_search(inc=3)
+        grid_search(inc=6)
         minimise('simplex', constraints=False)
+
+        # Test Monte Carlo simulations.
+        monte_carlo.setup(number=500)
+        monte_carlo.create_data()
+        monte_carlo.initial_values()
+        minimise('simplex', constraints=False)
+        eliminate()
+        monte_carlo.error_analysis()
 
 
     def original_structure(self):

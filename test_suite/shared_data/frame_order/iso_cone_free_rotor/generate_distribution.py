@@ -10,7 +10,7 @@ from maths_fns.rotation_matrix import axis_angle_to_R, R_random_hypersphere
 
 
 # The number of structures.
-N = 500
+N = 5000
 
 # Create a data pipe.
 pipe.create('generate', 'N-state')
