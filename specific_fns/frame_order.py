@@ -239,7 +239,8 @@ class Frame_order(API_base, API_common):
 
         # Alias the molecules.
         mol = model.mol[0]
-        mol_neg = model_neg.mol[0]
+        if neg_cone:
+            mol_neg = model_neg.mol[0]
 
 
         # The pivot point.
@@ -294,7 +295,7 @@ class Frame_order(API_base, API_common):
         res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
 
         # The negative.
-        if cdp.model not in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+        if neg_cone:
             res_num = generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
 
 
@@ -341,7 +342,8 @@ class Frame_order(API_base, API_common):
 
                 # The vectors.
                 res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_pos, res_num=res_num+1, origin=cdp.pivot, scale=size)
-                res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_neg, res_num=res_num+1, origin=cdp.pivot, scale=size)
+                if neg_cone:
+                    res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_neg, res_num=res_num+1, origin=cdp.pivot, scale=size)
 
 
         # The cone object.
@@ -372,7 +374,7 @@ class Frame_order(API_base, API_common):
             create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_pos, inc=inc, distribution='regular')
 
             # The negative.
-            if cdp.model not in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            if neg_cone:
                 create_cone_pdb(mol=mol_neg, cone=cone, start_res=mol_neg.res_num[-1]+1, apex=cdp.pivot, R=R_neg, inc=inc, distribution='regular')
 
 
