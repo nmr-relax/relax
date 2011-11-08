@@ -5,6 +5,7 @@ from numpy import array, float64, transpose, zeros
 from os import sep
 
 # relax module imports.
+from generic_fns.structure.mass import centre_of_mass
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from status import Status; status = Status()
 
@@ -66,6 +67,14 @@ class Analysis:
         grid_search(inc=3)
         minimise('simplex', constraints=False)
 
+         # Test Monte Carlo simulations.
+        monte_carlo.setup(number=3)
+        monte_carlo.create_data()
+        monte_carlo.initial_values()
+        minimise('simplex', constraints=False)
+        eliminate()
+        monte_carlo.error_analysis()
+
         # Write the results.
         results.write('devnull', dir=None, force=True)
 
@@ -78,6 +87,9 @@ class Analysis:
 
         # Load the structure.
         structure.read_pdb(DATA_PATH+'1J7P_1st_NH.pdb')
+
+        # Store the centre of mass.
+        cdp.CoM = centre_of_mass()
 
 
     def transform(self, R, pivot):
@@ -94,6 +106,9 @@ class Analysis:
 
         # Write out the new PDB.
         structure.write_pdb('devnull')
+
+        # Store the centre of mass.
+        cdp.CoM = centre_of_mass()
 
 
 # Execute the analysis.
