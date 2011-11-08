@@ -23,7 +23,7 @@ class Analysis:
 
         # The rotation matrix.
         R = zeros((3, 3), float64)
-        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+        euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
         print("Rotation matrix:\n%s\n" % R)
         R = transpose(R)
         print("Inverted rotation:\n%s\n" % R)
