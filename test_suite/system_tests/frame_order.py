@@ -238,6 +238,58 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(angle, 0.0, 2)
 
 
+    def test_cam_iso_cone_free_rotor(self):
+        """Test the isotropic cone, free rotor frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor.py')
+
+        # Check the average structure CoM matches that of the original position (the average structure is not defined along the rotation axis).
+        for i in range(3):
+            self.assertAlmostEqual(ds['ave pos'].CoM[i], ds['orig pos'].CoM[i], 0)
+
+        # Switch to the correct data pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # The base data.
+        pivot = array([ 37.254, 0.5, 16.7465])
+        com = array([ 26.83678091, -12.37906417,  28.34154128])
+        pivot_com_axis = com - pivot
+        rot_axis = pivot_com_axis / norm(pivot_com_axis)
+
+        # The average position checks.
+        ave_pivot_com_axis = ds['ave pos'].CoM - pivot
+
+        # The projection of the CoMs onto the rotation axis.
+        orig_proj = dot(pivot_com_axis, rot_axis)
+        ave_proj = dot(ave_pivot_com_axis, rot_axis)
+        print("\nReal projection of the central axis to the pivot-CoM:   %s" % repr(orig_proj))
+        print("Fitted projection of the central axis to the pivot-CoM: %s" % repr(ave_proj))
+
+        # Check that the projections are equal.
+        self.assertAlmostEqual(orig_proj, ave_proj, 1)
+
+        # The rotation axis.
+        self.interpreter.pipe.switch('frame order')
+        spherical_vect = zeros(3, float64)
+        spherical_vect[0] = 1.0
+        spherical_vect[1] = cdp.axis_theta
+        spherical_vect[2] = cdp.axis_phi
+        axis = zeros(3, float64)
+        spherical_to_cartesian(spherical_vect, axis)
+        print("\nReal rotation axis:   %s" % repr(rot_axis))
+        print("Fitted rotation axis: %s" % repr(axis))
+
+        # Check the angle between the real and fitted rotation axes.
+        angle = acos(dot(axis, rot_axis))
+        if angle > pi/2:
+            angle = acos(dot(axis, -rot_axis))
+        self.assertAlmostEqual(angle, 0.0, 2)
+
+        # Check the cone angle of 40 deg.
+        self.assertAlmostEqual(cdp.cone_theta * 2.0, 40.0 / 360.0 * 2.0 * pi, 1)
+
+
     def test_cam_rigid(self):
         """Test the rigid frame order model of CaM."""
 
