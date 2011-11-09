@@ -500,7 +500,7 @@ def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     cdp.structure.load_xyz(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, verbosity=verbosity)
 
 
-def rotate(R=None, origin=None, model=None):
+def rotate(R=None, origin=None, model=None, atom_id=None):
     """Rotate the structural data about the origin by the specified forwards rotation.
 
     @keyword R:         The forwards rotation matrix.
@@ -509,6 +509,8 @@ def rotate(R=None, origin=None, model=None):
     @type origin:       numpy 3D, rank-1 array or list of len 3 or None
     @keyword model:     The model to rotate.  If None, all models will be rotated.
     @type model:        int
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+    @type atom_id:      str or None
     """
 
     # Test if the current data pipe exists.
@@ -527,7 +529,7 @@ def rotate(R=None, origin=None, model=None):
     origin = array(origin, float64)
 
     # Call the specific code.
-    cdp.structure.rotate(R=R, origin=origin, model=model)
+    cdp.structure.rotate(R=R, origin=origin, model=model, atom_id=atom_id)
 
 
 def set_vector(spin=None, xh_vect=None):
@@ -589,13 +591,15 @@ def superimpose(models=None, method='fit to mean', atom_id=None):
         rotate(R=R[i], origin=pivot[i], model=models[i])
 
 
-def translate(T=None, model=None):
+def translate(T=None, model=None, atom_id=None):
     """Shift the structural data by the specified translation vector.
 
     @keyword T:         The translation vector.
     @type T:            numpy rank-1, 3D array or list of float
     @keyword model:     The model to translate.  If None, all models will be rotated.
-    @type model:        int
+    @type model:        int or None
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+    @type atom_id:      str or None
     """
 
     # Test if the current data pipe exists.
@@ -609,7 +613,7 @@ def translate(T=None, model=None):
     T = array(T, float64)
 
     # Call the specific code.
-    cdp.structure.translate(T=T, model=model)
+    cdp.structure.translate(T=T, model=model, atom_id=atom_id)
 
 
 def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit=True):

@@ -577,22 +577,24 @@ class Structure(User_fn_class):
         generic_fns.structure.main.read_xyz(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num)
 
 
-    def rotate(self, R=None, origin=None, model=None):
+    def rotate(self, R=None, origin=None, model=None, atom_id=None):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.rotate("
             text = text + "R=" + repr(R)
             text = text + ", origin=" + repr(origin)
-            text = text + ", model=" + repr(model) + ")"
+            text = text + ", model=" + repr(model)
+            text = text + ", atom_id=" + repr(atom_id) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_float_matrix(R, 'rotation matrix', dim=(3,3))
         arg_check.is_float_array(origin, 'origin of rotation', size=3, can_be_none=True)
         arg_check.is_int(model, 'model', can_be_none=True)
+        arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)
 
         # Execute the functional code.
-        generic_fns.structure.main.rotate(R=R, origin=origin, model=model)
+        generic_fns.structure.main.rotate(R=R, origin=origin, model=model, atom_id=atom_id)
 
     # The function doc info.
     rotate._doc_title = "Rotate the internal structural object about the given origin by the rotation matrix."
@@ -670,27 +672,30 @@ class Structure(User_fn_class):
     _build_doc(superimpose)
 
 
-    def translate(self, T=None, model=None):
+    def translate(self, T=None, model=None, atom_id=None):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.translate("
             text = text + "T=" + repr(T)
-            text = text + ", model=" + repr(model) + ")"
+            text = text + ", model=" + repr(model)
+            text = text + ", atom_id=" + repr(atom_id) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_float_array(T, 'translation vector', size=3)
         arg_check.is_int(model, 'model', can_be_none=True)
+        arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)
 
         # Execute the functional code.
-        generic_fns.structure.main.translate(T=T, model=model)
+        generic_fns.structure.main.translate(T=T, model=model, atom_id=atom_id)
 
     # The function doc info.
     translate._doc_title = "Laterally displace the internal structural object by the translation vector."
     translate._doc_title_short = "Structure translation."
     translate._doc_args = [
         ["T", "The translation vector."],
-        ["model", "The model to translate (which if not set will cause all models to be translate)."]
+        ["model", "The model to translate (which if not set will cause all models to be translate)."],
+        ["atom_id", "The atom identification string."]
     ]
     translate._doc_desc = """
         This is used to translate the internal structural data by the given translation vector.  The model argument can be used to translate specific models.

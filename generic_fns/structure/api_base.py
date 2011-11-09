@@ -539,7 +539,7 @@ class Base_struct_API:
                 model.mol[-1].file_model = orig_model_num[i]
 
 
-    def rotate(self, R=None, origin=None, model=None):
+    def rotate(self, R=None, origin=None, model=None, atom_id=None):
         """Method stub for rotating a structure.
 
         @keyword R:         The forwards rotation matrix.
@@ -548,6 +548,8 @@ class Base_struct_API:
         @type origin:       numpy 3D, rank-1 array
         @keyword model:     The model to rotate.  If None, all models will be rotated.
         @type model:        int
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+        @type atom_id:      str or None
         """
 
         # Raise the error.
@@ -579,13 +581,15 @@ class Base_struct_API:
             target.append(file_root(file) + '_mol' + repr(mol_num))
 
 
-    def translate(self, T=None, model=None):
+    def translate(self, T=None, model=None, atom_id=None):
         """Method stub for displacing the structural information by the given translation vector.
 
         @keyword T:         The translation vector.
         @type T:            numpy 3D, rank-1 array
         @keyword model:     The model to rotate.  If None, all models will be rotated.
         @type model:        int
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+        @type atom_id:      str or None
         """
 
         # Raise the error.

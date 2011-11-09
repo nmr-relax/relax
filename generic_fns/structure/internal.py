@@ -1164,7 +1164,7 @@ class Internal(Base_struct_API):
         return True
 
 
-    def rotate(self, R=None, origin=None, model=None):
+    def rotate(self, R=None, origin=None, model=None, atom_id=None):
         """Rotate the structural information about the given origin.
 
         @keyword R:         The forwards rotation matrix.
@@ -1173,14 +1173,29 @@ class Internal(Base_struct_API):
         @type origin:       numpy 3D, rank-1 array
         @keyword model:     The model to rotate.  If None, all models will be rotated.
         @type model:        int
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+        @type atom_id:      str or None
         """
+
+        # Generate the selection object.
+        sel_obj = None
+        if atom_id:
+            sel_obj = Selection(atom_id)
 
         # Loop over the models.
         for model_cont in self.model_loop(model):
             # Loop over the molecules.
             for mol in model_cont.mol:
+                # Skip non-matching molecules.
+                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
+                    continue
+
                 # Loop over the atoms.
                 for i in range(len(mol.atom_num)):
+                    # Skip non-matching atoms.
+                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                        continue
+
                     # The origin to atom vector.
                     vect = array([mol.x[i], mol.y[i], mol.z[i]], float64) - origin
 
@@ -1194,21 +1209,36 @@ class Internal(Base_struct_API):
                     mol.z[i] = pos[2]
 
 
-    def translate(self, T=None, model=None):
+    def translate(self, T=None, model=None, atom_id=None):
         """Displace the structural information by the given translation vector.
 
         @keyword T:         The translation vector.
         @type T:            numpy 3D, rank-1 array
         @keyword model:     The model to rotate.  If None, all models will be rotated.
         @type model:        int
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+        @type atom_id:      str or None
         """
+
+        # Generate the selection object.
+        sel_obj = None
+        if atom_id:
+            sel_obj = Selection(atom_id)
 
         # Loop over the models.
         for model_cont in self.model_loop(model):
             # Loop over the molecules.
             for mol in model_cont.mol:
+                # Skip non-matching molecules.
+                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
+                    continue
+
                 # Loop over the atoms.
                 for i in range(len(mol.atom_num)):
+                    # Skip non-matching atoms.
+                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                        continue
+
                     # Translate.
                     mol.x[i] = mol.x[i] + T[0]
                     mol.y[i] = mol.y[i] + T[1]
