@@ -32,11 +32,13 @@ from relax_warnings import RelaxWarning
 
 
 
-def centre_of_mass(atom_id=None, return_mass=False):
+def centre_of_mass(atom_id=None, model_num=None, return_mass=False):
     """Calculate and return the centre of mass of the structure.
 
-    @keyword atom_id:       The molecule, residue, and atom identifier string.  Only atoms matching this selection will be yielded.
+    @keyword atom_id:       The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
     @type atom_id:          str
+    @keyword model_num:     Only use a specific model.
+    @type model_num:        int or None
     @keyword return_mass:   A flag which if False will cause only the centre of mass to be returned, but if True will cause the centre of mass and the mass itself to be returned as a tuple.
     @type return_mass:      bool
     @return:                The centre of mass vector, and additionally the mass.
@@ -57,7 +59,7 @@ def centre_of_mass(atom_id=None, return_mass=False):
     M = 0.0
 
     # Loop over all atoms.
-    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=atom_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model_num, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
         # Initialise the spin id string.
         id = ''
 
