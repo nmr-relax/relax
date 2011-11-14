@@ -29,7 +29,7 @@ from string import split
 from subprocess import PIPE, Popen
 
 
-version = "repository checkout"
+version = "1.3.13"
 
 
 def revision():
