@@ -1,3 +1,583 @@
+Version 1.3.13
+(10 November 2011, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.13
+
+    Features:
+        * The positive and negative cones from the frame order theory are now different PDB models.
+        * Monte Carlo simulations are now implemented for the frame order analysis.
+        * Created the structure.connect_atom user function to expose the back-end functionality.
+        * Created the structure.add_atom user function to expose the back-end functionality.
+        * Created the structure.translate user function to translate structural components.
+        * Created the structure.superimpose user function which uses the Kabsch algorithm to implement the direct fit-to-first algorithm and the iterative fit-to-mean algorithm.
+        * Created the structure.displacement user function to calculate the rotational and translational displacement between two models via the Kabsch algorithm.
+        * Extended the N-state model analysis to allow a separate paramagnetic centre per state.
+        * The structure.read_pdb user function can now handle bzip2 or gzip compressed PDB files.
+        * The structure.write_pdb user function can now create compressed (bzip2 or gzip) PDB files.
+        * Created the structure.rotate user function to allow the application of arbitrary rotations to the structures loaded into relax about a given origin.
+        * Added the bc flag to the RDC and PCS display and write user functions to allow the back-calculated data to be displayed or written rather than the measured values.
+        * Increased the efficiency of the relax data store spin system creation, this becomes noticeable when large numbers of structures are read into relax.
+        * The N-state model can now be optimised with a subset of the alignment tensors fixed.
+        * The alignment_tensor.fix user function is now tensor specific, allowing a subset of tensors to be optimised while the others are kept fixed.
+        * Added the ability to specify J+D verses J+2D measured RDCs.
+        * Addition of many new oxygen icons for the GUI.
+        * Implemented the sys_info user function in all UI modes (prompt/script/GUI).
+        * Implemented the spectrum.delete user function in all UI modes (prompt/script/GUI).
+        * Addition of the pymol.macro_apply, pymol.macro_create, and pymol.macro_run user functions for the visualisation of model-free parameters mapped to a structure.  This matches the equivalent Molmol user functions and styles.
+        * A complete redesign of the GUI where any number of analyses can be created and closed as needed.
+        * The GUI is now fully functional on Mac OS X and MS Windows.
+        * The elimination of many race conditions causing the GUI to crash.
+        * Implementation within the GUI of many of the relax user functions available in the prompt and scripting UI modes.
+        * Creation of the test suite GUI test category to complement the system and unit tests. 
+        * Added a toolbar to the main relax window with some of the most important menu entries as icons.
+        * Most parts of the GUI are now deactivated when execution is in progress (via the execution lock) to prevent fatal race conditions.
+        * Redesigned the dauvergne_protocol, NOE and Rx auto-analyses to use a pre-prepared data pipe for data input.  This allows greater support for the GUI and for analyses of RNA, DNA, and small molecules.
+
+
+    Changes:
+        * Changed the name of the model_num argument to model in the centre_of_mass() function.
+        * The generic_fns.structure.mass.centre_of_mass() function now accepts the model number argument, allowing specific models to be isolated.
+        * The generic_fns.structure.mass.centre_of_mass() function now accepts the atom ID argument, allowing the centre of mass of subsets of the structure to be calculated.
+        * Addition of a number of frame order test data and system tests for the simpler models (Frame_order.test_cam_rigid, Frame_order.test_cam_free_rotor, Frame_order.test_cam_free_rotor2, Frame_order.test_cam_rotor, Frame_order.test_cam_rotor2, Frame_order.test_cam_iso_cone_free_rotor, Frame_order.test_cam_iso_cone_free_rotor2).
+        * More use of the structural API in the create_diff_tensor_pdb() function.
+        * Created the add_model() structural API method.
+        * Eliminated one of the eigenframe parameters from the rotor frame order model.  In the rotor frame order model, the x and y axes of the eigenframe of the motion are not defined.  Therefore the 3 eigenframe Euler angles have been replaced by 2 spherical angles defining the rotation axis removing a lot of optimisation issues with this model.
+        * The frame order torsion angle cone_sigma_max is now forced to be positive.  Optimisation sometimes comes up with the negative of the angle but, as both the negative and positive angles are the same result, the angle is always unpacked after optimisation as the absolute value.
+        * Added a check to prevent the frame order grid search from being too big causing out of memory errors.
+        * The internal structural object no longer requires the 'ATOM' PDB record for creating PDB files.  This affects the structure.write_pdb user function.
+        * Added the translate method to the structural API.
+        * Created the Structure.test_superimpose_fit_to_mean system test to test the 'fit to mean' algorithm of the structure.superimpose user function.
+        * Shifted the structural API calc_displacement() method into the main module.
+        * Created the arg_check.is_int_list() function for checking for lists of integers.
+        * Created the Structure.test_superimpose_fit_to_first system test to test the 'fit to first' algorithm of the structure.superimpose user function.
+        * Added the centroid argument to the structure.displacement user function for pivoted motions.  By specifying the centroid position for all structures, a pivoted motion is assumed.  All displacements will be zero, and the angles will be that of the pivoting motion.
+        * Created the Structure.test_displacement system test for checking the structure.displacement user function.
+        * Added checks for the n_state_model.cone_pdb user function in the N_state_model.test_5_state_xz system test.
+        * Added a few new argument checks for arrays and matrices of floats including arg_check.is_float_array() and arg_check.is_float_matrix().
+        * Added a few new RelaxError classes (RelaxNoneListFloatError, RelaxMatrixFloatError, RelaxNoneMatrixFloatError) and the BaseArgError class was also modified to handle the length argument (now the size arg) being a tuple for matrix sizes.
+        * The N-state model Monte Carlo simulations can now handle fixed alignment tensors.
+        * Created the alignment tensor module return_tensor() function for returning tensors.  This takes fixed tensors into account, skipping them if the skip_fixed flag is set.
+        * Created the alignment tensor module num_tensors() method for counting tensors.  This excludes fixed tensors by default.
+        * The RDC and PCS display and write user functions now output molecule name, residue name, residue number, spin name and spin number columns instead of the spin ID column.  This is better to read back into relax as info such as the spin number can be ignored, allowing different PDB files to be used.
+        * Created a system test for loading RDCs from a file with spin ID strings at the start.
+        * Created the N_state_model.test_metal_pos_opt N-state model system test.
+        * The RDC and PCS Q factors for each alignment is now stored as a dictionary in the relax data store.
+        * Updated the N-state model analysis code to handle the per-alignment tensor fixed flag.
+        * Updated the relax data store alignment tensor objects to allow for the per-tensor fixed flag.
+        * Created the generic_fns.align_tensor.all_fixed() function for determining if all tensors are fixed.
+        * Created the Grace.test_cam_kkalpha_plot1 system test for checking the grace plotting of mixed data.
+        * Created the N_state_model.test_monte_carlo_sims system test for checking MC sims with alignment data.
+        * Updates for Python 3.0 using the Python 2to3 script.
+        * Created the N_state_model.test_rdc_tensor system test for catching a strange RDC back calculation bug.
+        * Created the Mf.test_bug_18790 system test for catching bug #18790.
+        * Created the Relax_fit.test_bug_18789 system test for catching bug #18789.  The Grace file is written out, re-opened, and then the numbers checked.
+        * The GUI test result classes are now being used by the GUI test suite code path.
+        * Implemented some new classes to allow better control of the test suite from the GUI.  The GuiTestResult and GuiTestRunner classes have been added to the relax_test_runner module, and these are used rather than RelaxTestResult and RelaxTestRunner if the from_gui flag is sent to the main Test_suite_runner class.
+        * The test result handling is now performed 100% in test_suite_runner.  Previously each class of test (system, unit, and GUI) were managing a separate instance of RelaxTestRunner.  Now it is all controlled from one spot.  This will allow better management of the tests from the GUI.
+        * The results of the unit tests are now going to the proper sys.stdout stream.  The text was previously sent to the initial stream that sys.stderr is set to.  This is overwritten by relax though to be able to send it to the relax controller.  This allows the results to be captured.
+        * Added the 'Tools->Test suite' menu entry.
+        * The checks in the model-free analyses for correct relaxation data errors now prints out the spin ID string.
+        * The test suite runner 'tests' argument now defaults to [] which is the proper null value.
+        * Renamed the 'Settings' menu to 'Tools'.
+        * The results viewer window now only executes one user function for the diffusion tensor if PyMOL is missing, preventing 3 errors (with windows) from appearing.
+        * Modified the GUI interpreter apply() method to catch RelaxErrors.  Now gui_raise() is used to raise the error and show a dialog, and the method returns the execution status.
+        * The diffusion tensor PDB in the results viewer is now launched by synchronous pymol user function calls.
+        * The C modules are now compiled as universal binaries on Mac OS X.  This includes the targets i386, x86_64 and ppc64 by default.
+        * The relax information print out now includes the version and path info for the mpi4py and wx modules.
+        * The spectrum ID is no longer stored if spectrum.read_intensities fails to load any data.  A call to the delete() function has been added to remove all data loading prior to the error.
+        * Redesigned the gui_raise() function so that it is more user friendly.  The relax controller window with error message is shown first, followed by the modal RelaxError message dialog on top of all other windows.
+        * The spectrum.read_intensities user function now throws a RelaxError if no data was loaded.  This is to tell the user that something went wrong, and makes more sense in the GUI mode.
+        * With debugging turned on, the relax test suite no longer captures the IO streams.  This will allow for better debugging of racing in the GUI tests on MS Windows.
+        * Removed the brackets from the user function names in the RelaxError system as these make no sense in the GUI version of the user functions.
+        * Clicking on 'Execute relax' now raises the relax controller to the front, if already shown.
+        * The GUI prompt window is now also deactivated with the execution lock.  This will prevent race conditions as previously the user was able to execute any user function or manipulate any of the data in the relax data store while execution was in progress
+        * More of the main menu entries have been disabled with the execution lock to prevent racing.
+        * The spin loader toolbar button in the spin viewer window is now properly disabled with the execution lock.
+        * The spin loader button in the spin viewer window is now deactivated with the execution lock.
+        * The wizard page base method on_apply() now does nothing.  This should help eliminate Mac OS X bugs.
+        * The scipy python package is now listed with the relax info (-i flag).
+        * The peak list and relaxation data GUI element pop up menus are now disabled with the execution lock.  This will prevent weird bugs.
+        * The spin viewer window is now properly maximised on MS Windows.
+        * Improvements to the showing of the relax controller on errors and warnings.  The Show() call is no longer made if already shown, and if not shown, the LogCtrl is scrolled to the position of the error message.
+        * The relax controller is now shown on all errors and warning (or raised if below other windows).
+        * The View menu entries now raise the window to the front if already open, this is useful when too many windows are open.
+        * The spin.name page is now added to the front of the Rx peak list wizard.
+        * The spin.name GUI page is now added to the front of the NOE peak list wizard if spins are not named.
+        * Expanded the spin.name user function docstring.
+        * Shifted the spin ID field to the end of the spin.name user function GUI page, this is to make it easier for users as it is often assumed that the first field is the important one.
+        * The proceed_on_error flag is now taken into account by the wizard's finish button.
+        * The Rx peak list wizard now no longer skips to the next page when an error occurs.
+        * All GUI user functions now use the base page execute() method instead of the interpreter directly.
+        * Created the user function base page execute() method for running the user functions.  This will launch the interpreter in either asynchronous or synchronous mode dependent on the sync flag.
+        * The sync flag is now set for all of the pages of the NOE peak list wizard.
+        * The UF_page base class now accepts the 'sync' argument, this will be used to allow for asynchronous or synchronous operation.
+        * The NOE peak list wizard should now stop proceeding on all errors.
+        * Modified all of the gui_to_*() functions to catch a real None input value.
+        * Created the gui.misc.gui_to_str_or_list() conversion function.
+        * Created the gui.misc.gui_to_int_or_list() conversion function.
+        * The relax controller menu now has icons.
+        * The relaxation data list GUI element now has a pop up menu with a 'Delete' entry.
+        * The relax data list delete button now opens with the first selected item in the list.
+        * The relax_data.delete GUI user function can now have a starting ID string value.
+        * The peak list GUI element ListCtrl now has a pop up menu with a 'Delete' entry.
+        * The peak list GUI element now has a delete button which launches the spectrum.delete user function.
+        * The spectrum.delete user function can now be started with an initial ID string.
+        * Created the RelaxSpectraError and RelaxNoSpectraError error classes for spectral data.
+        * Improvements to the wizard _display_page() method.
+        * The user function class is no longer stored in self.gui.
+        * Elimination of the self.gui class object.
+        * Converted the results viewer window to handle the new user function GUI page design.
+        * Better support for running a script and the GUI from the command line, the script is now run at the very end, after all of the GUI is set up, and is run with a wx.CallAfter call.
+        * The spin loading wizard is now accessible from the tree's root menu in the spin viewer window.
+        * Added a toolbar button to the spin viewer window to launch a wizard for loading spins.  A simple wizard has been created for the spin viewer window for loading spins which directs the user to either the sequence.read user function or the structure.read_pdb and structure.load_spins user functions.  The wizard page Load_method_page has been added at the start to allow the user to choose the method, and the last page Finish_page has been added so that the wizard can have a finish button and terminal page.
+        * Converted all of the user function GUI pages to use the new create_wizard() base method.  This significantly simplifies the code.  The functions also no longer expect a wx event.
+        * The deselect user function GUI pages no longer expect the user function page to be returned.
+        * Added the return_page argument to create_wizard() so that the user function page can be selectively returned.
+        * Complete redesign of the user function menu system, this is now more flexible and should be more compatible with window ordering under MS Windows.
+        * Simplified the deselect user functions using the new GUI user function design.
+        * The create_wizard() method now returns the user function page, this will be needed as sometimes the fields have to be changed.
+        * Removed the now useless UF_base.__init__() method.
+        * The User_functions class no longer takes any arguments.
+        * The interpreter singleton is now being used by the user function GUI pages (part of the elimination of self.gui).
+        * The relax GUI no longer starts maximised if debugging is on.
+        * The script GUI user function is now operational again, the interpreter object is now imported and the synchronous apply() rather asynchonous queue() method is now used.  This allows the execution lock to be released by the script at the end.
+        * The script user function GUI element now uses wx.GetApp() to access to the relax controller window.
+        * The GUI Main instance is now stored in the wx.App as self.gui, this will allow access to the GUI class via wx.GetApp() calls, avoiding the need to pass the instance around (part of the elimination of self.gui).
+        * The screen is no longer cleared prior to relax execution on MS Windows preventing the Windows PowerShell history from being wiped out.
+        * Improved the RelaxError messages in validate_sequence(), the invalid data is now printed so that the user can see why it is invalid.
+        * Improved the print outs of the scons 'binary_dist' target for Mac OS X.
+        * Modified the 'clean' scons target to remove the py2app build and dist directories (for Mac OS X).
+        * Created the 'scons binary_dist' target for Mac OS X.  Typing 'scons binary_dist' on a Mac will now create a DMG image of a universal Mac OS X application.
+        * Added the Mac OS X DMG distribution file names to the scons script.
+        * Modified the setup.py file so that the Mac OS X .app creation code is in the mac_setup() function.
+        * Updated the hdiutil command options for the Mac OS X DMG file creation.
+        * Added instructions to the setup.py file for creating a Mac OS X DMG distribution file.
+        * Removed the GUI wait_for_interpreter() method as this is replaced by the interpreter flush() method.
+        * Text files in the results viewer window are now opened with a text editor on Mac OS X and MS Windows.  On a Mac, the text file of NOE values was being opened up in 'Saturn', as the file ending '*.out' is associated with that software.
+        * The gui_error() window caption is now simply 'RelaxError' rather than the specific relax error name, this now matches the prompt/script print outs which only have RelaxError (unless debugging is turned on).
+        * The GUI tests in the test suite no longer have IO redirected to a window in Mac OS X and MS Windows.
+        * Deleted the old gui.filedialog.opendir function and replaced it with a specialised RelaxDirDialog class.  This class is more advanced in that it changes the Python working directory so that the user does not have to always navigate back to the same place if relax is launched from a different directory.
+        * The RelaxFileDialog object now changes the relax working directory as the user changes directories.
+        * The Rx spectra list wizard now uses the on_init() wizard page method for the page updates.  This prevents the values in the pages being reset when the apply button is clicked.
+        * Created the GUI wizard page method on_init(), this is executed each time a wizard page is newly displayed.
+        * Removed the check for Monte Carlo simulations from the monte_carlo.setup user function allowing MC simulations to be run more than once.
+        * The results viewer window no longer shows 1 warning dialog per results file.  At the end of the analysis, one warning dialog per results file was being shown as the execution lock was on.  Now a special method for the 'result_file' observer object has been added which skips this dialog.
+        * The Monte Carlo simulation state is now turned off after the MC analysis is complete.  This allows the user to make slight modifications and rerun the analysis and optimisation.  The monte_carlo.error_analysis user function switches the state at the very end, just as monte_carlo.setup switches the state to on.
+        * The relax execution lock now has debugging print outs.
+        * The status container instance is now private in the Relax_lock objects.
+        * The fake_lock variable in the status module classes is now private.
+        * The spin_id_to_data_list error messages are now more informative.
+        * The RelaxInvalidSeqError now prints out a more detailed message for the validate_sequence() function.
+        * The flush flag is set for the first page of the Rx peak height loading wizard.
+        * Added the ability to flush the GUI interpreter thread in the wizard prior to changing to the next page, this will help in solving races when a series of user functions are strung one after the other.
+        * The notification of observers in status.observers.gui_uf has been modified.  The GUI user function pages no longer perform this as the calls to the interpreter are via the interpreter thread, hence the completion of the page does not signal the completion of the user function.  Instead the interpreter thread (and the synchronous apply() call as well) perform the notification once complete.
+        * The GUI auto-analyses now initialise with a synchronous call to pipe.create(), this uses the GUI interpreter object apply() method to prevent race conditions.  This is important as the pipe creation needs to be completed prior to the setting up of the GUI elements.
+        * Created the GUI interpreter object apply() for synchronous calls to the user functions.
+        * Redesigned the GUI interpreter object so that the thread is a separate object, this is to allow both synchronous and asynchronous calls to the interpreter.
+        * Added the _get_uf() method to the GUI interpreter object for abstracting the code.
+        * All the model-free macro methods are no longer private, the class will not be used as a base class for the model-free specific class.
+        * Abstracted the model-free 'classic' Molmol and PyMOL creation in to a base class.  As most of the code between the specific_fns.model_free.molmol and specific_fns.model_free.pymol modules is identical, significantly simplifying the code base.
+        * The results viewer window can now open Molmol macro files.
+        * The results viewer will now open PyMOL files in PyMOL via pymol.macro_run.
+        * Modified the Molmol macro related user function front end to match those of PyMOL, there are: molmol.macro_exec is now molmol.macro_apply; molmol.write is now molmol.macro_write; molmol.macro.run has been added to execute macros from text files.
+        * The GUI interpreter thread is now flushed prior to execution of the auto-analyses.
+        * Created the GUI interpreter thread flush() method for blocking until the queue is empty.
+        * Added a join() wrapper method for the GUI interpreter thread internal queue.
+        * Added the empty() method to the GUI interpreter thread to determine if the internal queue is empty.
+        * Some cleaning up of the mpi4py processor module.
+        * Removed a pile of unused code from the mpi4py processor module.
+        * Removed the _sys_exit module variable from the mpi4py processor as it is unnecessary.
+        * Eliminated the restore_stdio() method from the multi package, the redirection of IO streams is totally incompatible with an IO redirection performed by the underlying Python program.
+        * Removed the IO redirection from the uni-processor return_object() method.  The IO redirection in the 'multi' package overwrites all IO redirection any Python program is attempting to perform.
+        * The uni-processor call to capture_stdio() has been removed, no IO redirection will be performed in uni-processor mode.
+        * Deleted the STDOUT and STDERR capture in MF_minimise_command multi-processor class as it was breaking both the GUI and the test suite.
+        * Removed the multi_processor module as this is now called multi_processor_base.  This was deleted a long time ago but somehow survived in one of the branches and was merged back in.
+        * Renamed the PrependOut class to IO_filter in multi/processor_io.py.
+        * Renamed the prependStringIO module to processor_io in preparation for a redesign.
+        * Clean up of the multi-processor IO module.  The Multiplex_stdout class has been deleted as this is the wrong way of handling the IO streams and is unused anyway.  The PrependStringIO class has had the getvalue() and truncate() methods removed as these need not be implemented as it is provided by StringIO.
+        * Created Redirect_text.flush() for the relax controller for compatibility with the multi-processor code.
+        * All calls to user functions in self.gui.interpreter now pass through the queue() method.
+        * The 'relax_gui_mode' module is blacklisted from the epydoc documentation generation.  Without this, the relax GUI launches when executing 'scons api_manual_html'.
+        * The dauvergne_protocol auto-analysis now creates the PyMOL macros for the model-free data.
+        * The molmol.write and pymol.write now add the macro files to the result files list.
+        * The dauvergne_protocol auto-analysis now generates MOLMOL macros and text files with the parameters.
+        * The interpreter thread no longer dies when an error occurs.  This has been redesigned so that the error catching occurs within the infinite loop.  Without this the user functions are completely useless after an error and do nothing.
+        * RelaxErrors are handled as in the auto-analyses and prompt/scripting mode in the GUI user functions.  The traceback is now suppressed and a dialog with the error is show.
+        * The print outs for catching exceptions in threads is now going to STDERR rather than STDOUT.
+        * sys.__stdout__ and sys.__stderr__ are no longer being written to.
+        * Saving the relax state from the GUI now shows the busy cursor for user feedback.  After MC sims saving the state can take a few seconds with the GUI frozen, so this feedback is necessary.
+        * Errors are now handled properly in the interpreter thread for GUI user functions.
+        * The GUI analysis execution threads are now daemonic to allow relax to exit.
+        * Redesigned how user functions are executed in the GUI so they are queued and launched in a thread.  This allows the GUI to be responsive while the user functions execute.  This is only at the level of the GUI and not the relax interpreter.  The execution lock is also acquired to lock up the GUI while the user function executes.  A special daemon thread called self.gui.interpreter has a queue object so that a series of user functions can be queued up if needed.  The program now also exists with wx.Exit() call to prevent unhandled exceptions occurring in this daemon thread.
+        * The pipe.create user function page is now using PIPE_DESC to present a list of pipe types for the user.  This gives the descriptive name of the data pipe type rather than the keyword argument values.
+        * Created the PIPE_DESC dictionary to provide descriptions of the data pipes.
+        * The consistency testing and hybrid data pipes are now listed in the pipe.create user function docstring.
+        * The GUI now returns to normal when opening an invalid or incompatible save file.
+        * Molmol is now properly launched from relax to read commands from STDIN.
+        * Synchronised the code for handling Molmol and PyMOL.  The Molmol code is now very similar to that of PyMOL, using subprocess.Popen rather than os.popen.  There is now a Molmol execution object that is used by the molmol user functions.
+        * The GUI tests are now skipped when the wx module is not present (or is broken).  This allows relax to operate without having wx installed.
+        * Modified the dauvergne_protocol auto-analysis to be able to loop over all the global models.  The diff_model argument can now be a list of global model names, allowing the protocol to loop over each diffusion model.
+        * The results viewer window also updates via the result_file observer.
+        * The result_file observer object has been created and is being used throughout relax.
+        * PyMOL is now always launched as an external program as the pymol module loading method was causing huge problems for the GUI.
+        * Diffusion tensor PDB files are now opened in PyMOL from the results viewer window.
+        * The cdp.result_file structure has been modified to include a type, a label, and the file path.
+        * The results viewer window presents the results files in a wx.TextCtrl.
+        * The results viewer window is deactivated with the execution lock.
+        * Modified the results viewer to operate like the spin viewer with respect to pipe changing.
+        * The results viewing code (the viewer window) has now been separated from the analysis GUI code.
+        * A diffusion tensor representation of the final results is created for dauvergne_protocol.
+        * Grace plots of the final model-free results are now produced by the dauvergne_protocol auto-analysis.
+        * Deleted the status_reset() method from the dauvergne_protocol auto-analysis as it served no purpose.
+        * All the data pipes are cleared out in the final stage of the dauvergne_protocol.  This is to remove many of the temporary data pipes from view of the user in the GUI.
+        * Removal of the unused gui.execution.calc_modelfree module.  This was a direct copy of the auto_analyses.dauvergne_protocol module, but is unmaintainable and of no use in the GUI anymore.
+        * Modified the pipe editor window design to be closer to that of the spin viewer.  The observer methods are now unregistered on closing the window, which should speed up relax.
+        * The data pipe and spin viewer window Show() methods are now only called if IsShown() is False.
+        * Warning dialogs are shown if the pipe editor or spin viewer windows are opened during the execution lock.
+        * Improvements to the user warning dialog about closing windows, the dialog is now only shown once at the start and it blocks the auto-analysis.
+        * Added a message dialog to warn the user to close the spin viewer and pipe editor windows to speed up calculations.
+        * Deleted the unused dir_message(), exec_relax() and relax_run_ok() message functions.
+        * The pipe_lock and spin_lock (via Relax_lock) locks are now reentrant locks.  This allows nested locking via one thread, which is necessary as the functions of generic_fns.pipes and generic_fns.mol_res_spin often call functions of the same module in a nested way.
+        * Created an object called Relax_lock to help debug locking issues in relax.  The status.spin_lock lock is now using Relax_lock.
+        * All of the generic_fns.mol_res_spin fns which modify the data structure are now using the new lock.
+        * Created the status.reset() method to resetting the status object.
+        * Created a lock object for the molecule, residue and spin data structures.  This will be used to prevent races when spin data is being accessed and changed at the same time.  This affects the spin viewer window which is very sensitive to races.
+        * The relax controller window is calling Layout() after updating to show all panels properly.  This is needed when showing the model-free or Rx panels.
+        * Clean up of the showing and hiding of spin viewer window, all observers and registered now in the Show() method and unregistered in handler_close().
+        * The R1 and R2 curve-fitting tabs are completely deactivated by the execution lock.
+        * The NOE auto-analysis tab is completely deactivated with the execution lock.
+        * The execute relax button is now turned off by the execution lock in the model-free auto-analysis tab.
+        * The GUI analysis base class add_execute_relax() method now returns the button.
+        * The add_spin_systems() base class method now returns the Text_ctrl instance it creates.
+        * Converted the analysis base class add_text_sel_element() method to the object Text_ctrl.  This has the Enable(), SetValue(), and GetValue() methods implemented as a wx object.
+        * Renamed the 'spin_ctrl' module to 'elements' to store all of the special GUI analysis elements.
+        * More enabling/disabling of the model-free auto-analysis GUI element.
+        * The spectrum list GUI element can also now be enabled/disabled via Enable().
+        * The relaxation data list GUI element can now be enabled/disabled via Enable().
+        * All the model-free auto-analysis activation and deactivation calls now pass through wx.CallAfter.
+        * The model-free model fields are now activated/deactivated with the execution lock.
+        * Created the Spin_control object for the analysis GUI elements from the base add_spin_element() method.  This class implements the Enable(), GetValue(), and SetValue() methods to mimic a wx control.
+        * Tooltips are now given for the relax controller gauges and text fields.
+        * The spin viewer tree pop up menus are now disabled when the execution lock is on.
+        * All the spin viewer tree pop up menus now have IDs as class variables via wx.NewId().
+        * The spin viewer menus and pipe switching elements are now disabled when the execution lock is on.
+        * Many of the 'File' menu entries are now disabled when the execution lock is on.
+        * The main menu IDs are now all class variables called self.MENU_* and are given by wx.NewId().
+        * The pipe editor window is starting inactive if the execution lock is on.
+        * Most of the data pipe functions are now using the data pipe locking object status.pipe_lock.  The functions which acquire the lock object and which modify the pipe state include: copy(), create(), delete(), switch().  The functions which acquire the lock object to prevent changes while they execute include: display(), pipe_loop().
+        * Created a lock object for the relax data pipes.  This will be used to prevent races in the GUI when data pipe info is accessed, but when a thread is changing the data pipes at the same time.
+        * The pipe editor window methods are now deactivated when the execution lock is on.
+        * The original zoom level is available in the relax controller log control pop up menu.
+        * Zooming can now be changed with Ctrl-+, Ctrl-- and Ctrl-0 in the relax controller, enabling zoom in, zoom out, and the original zoom to be accessed by the keyboard.
+        * Created a replacement pop up menu for the relax controller log control.  This has functions for finding text, copying text, selecting all, and zooming in or out.
+        * The relax controller log control can no longer have text inserted.  This was happening with the middle mouse button click on GNU/Linux.
+        * A find dialog is now available for the relax controller log control to find text in the messages, this is available with Ctrl-F.
+        * Deleted the now unused gui.execution.calc_rx module.
+        * The GUI dauvergne_protocol test now uses the same optimisation settings as the system test.
+        * The diff_tensor_grid_inc dauvergne_protocol argument is now available in the auto-analysis GUI tab.  This is not exposed to the user though.
+        * The dauvergne_protocol GUI test is now checking the same data as the equivalent system test.
+        * The solution for the dauvergne_protocol system test is reached after 1 iteration, so the test is shortened.
+        * Better testing of the new diff_tensor_grid_inc argument to the dauvergne_protocol auto-analysis.
+        * The dauvergne_protocol system test script can now run stand-alone.
+        * Re-activated and redesigned the system test of the dauvergne_protocol.
+        * The unit vector loading wizard is now stored in the base model-free auto-analysis class.  This is for access to the GUI element from the test-suite.
+        * Fix for the unit vector check in the model-free auto-analysis GUI tab.
+        * Added a button and created a wizard for loading unit vectors from PDB files.  This has been added to the model-free GUI auto-analysis tab.
+        * Unit vectors are now only checked for in the model-free GUI auto-analysis when needed.
+        * Full errors are raised in the protected_exec() function if in debugging mode.
+        * Improvements to the structure.vector user function docstring.
+        * Created the wizard page spin_control() method for adding a spin control.
+        * The results file viewer is now executing the grace.view user function to display Grace files.
+        * Fix for the protected_exec() method - the error is no longer raised so it can return False.
+        * Implemented the NOE data_names() and return_data_desc() specific API methods.
+        * The gui_raise() method now turns off the busy cursor if needed.
+        * Added the 'Help->Licence' menu entry (this is a simple copy of 'User functions->gpl').
+        * The results viewer window now uses cdp.result_files.  This decouples the files and their creation from the GUI.
+        * The grid search increments default to 21 now in the Rx fitting auto-analysis GUI tab, the MC simulation tooltip now also recommends a min of 500 sims.
+        * In debugging and test mode, the relax controller now writes back to the original IO streams instead of sys.__stdout__ and sys.__stderr__.
+        * The relax controller log control styles are now set to the 'modern_small' fonts.
+        * Expanded and renamed the 'modern' fonts.
+        * RelaxWarnings are now coloured 'orange red' in the log control of the relax controller.
+        * The Monte Carlo simulation number is now stored in the auto-analysis part of the status object.  This is only when an auto-analysis is running.
+        * The relax prompt is now coloured blue in the relax controller log element.
+        * The STDOUT and STDERR streams are segregated in the relax controller LogCtrl and STDERR messages coloured red.
+        * The relax controller log window can now distinguish between STDOUT and STDERR messages.  STDOUT and STDERR are now being sent to separate instances of Redirect_text, and added to the log queue with a flag specifying which is which.
+        * The relax controller and auto-analysis threads are now active in debugging mode.
+        * The relax controller Redirect_text object is now placing all messages onto a log queue and the LogCtrl is reading from this queue.  The log_queue Queue object is now used to store messages so that not every write() event to STDOUT and STDERR results in the relax controller log window updating.  This allows the controller and the GUI to remain responsive as masses of messages are produced.
+        * The new relax controller now appears to be thread safe.
+        * The relax controller window now can move behind the other windows.
+        * Key events are now controlled in the relax controller log element, this prevents text insertion and deletion.
+        * Scrolling now follows the end, if at the end, in the relax controller log window.
+        * Implemented limited scroll back on the LogCtrl relax controller log element.  This will prevent the computer from running out of memory.  The maximum number of lines is now stored in the status singleton.
+        * Created a custom control for the relax controller log element.  This is derived from wx.stc.StyledTextCtrl and will allow much greater control.
+        * Renamed the relax controller IO redirection append_text() method to add_text().
+        * The gui_raise() function now only shows the dialog if the status.show_gui flag is set.
+        * Shifted the exception_queue object into the base of the status object.
+        * The spectrum.error_analysis can now be repetitively performed, this allows changes such as addition of new spectra to occur.
+        * A timer is now being used to update the gauges of the relax controller, the gauges were previously not pulsing correctly.
+        * The Question message dialog answer is now set to 'No' if the window close icon is clicked.
+        * The Missing_data and Question message dialogs are now always on top, this prevents them from being hidden by other windows.
+        * The gui_to_float() and gui_to_int() functions can now handle float or int inputs.
+        * All of the gui_to_*() functions now check for empty unicode strings u'' as well.
+        * Modified the gui_to_float() and gui_to_int() functions to handle expressions, this means that the float '1.23 * 1e-6' or '1.234 * 4 - 0.06' can input by the user.
+        * The font is now set on the text of the Question message box.
+        * Added checks for sequence and spectral data for the Rx curve-fitting and NOE auto-analysis GUI tabs.
+        * All buttons in the GUI now have their fonts set.  This is for GUI consistency between GNU/Linux, Mac OS X and MS Windows.
+        * The about relax dialog is now resized dependent on the extent of the text, fixing the dialog on MS Windows.
+        * The wx.lib.wordwrap module is now used for wrapping the text in the about GUI dialogs.
+        * Shifted the font initialisation to the very start of the GUI launching.
+        * The results files lists are only updated if the files are not already there.
+        * Complete redesign of the relax controller.  The new features include: A dynamically updated analysis specific status update; Analysis specific GUI elements, dynamically hidden or shown; A display of the current analysis and current data pipe; Correct updating of the gauges in all analyses; Separation of the text redirection and the progress updating; Text scroll back limited by default to 100000 lines; Text scroll back cleared as a user would expect with removal of lines from the start; Cleaner layout of all elements.
+        * The dauvergne_protocol auto-analysis now stores the maximum number of iterations value.
+        * Created the GUI analysis current_data() method for returning the data store container.
+        * The auto-analysis status objects are now set up for all auto-analyses.
+        * The auto-analyses status objects now have a completion flag 'fin' to indicate if the analysis is complete.
+        * Added a new analysis method current_analysis_type() for determining the current analysis type.
+        * The opening of the results viewer window after an analysis is now thread safe.
+        * There is now an observer object for the execution lock.
+        * The text redirection to the relax controller is set up in the controller removing repetition.  The redirection was happening in the controller first and then again in each analysis.
+        * Modified how the auto_analysis status object behaves so setting values causes an observer to be notified.
+        * The fonts are now set for all parts of the wizard pages for OS consistency.
+        * The results display window is now shown at the end of the auto-analysis execution.
+        * A busy cursor is now shown while waiting for the new analysis wizard.
+        * The save_state flag has been added to the NOE auto-analysis so that the save state can be turned off.
+        * Removed the no longer used GUI NOE calculation module (gui.execution.calc_noe).
+        * The status bar is properly updated to show nothing if all data pipes have been deleted.
+        * The setting up of a new analysis tab now uses freezing and thawing and the busy cursor.
+        * The new_analysis method now checks that the C modules are compiled, and returns cleanly if not and an R1 or R2 analysis is selected.
+        * The save state dialog now only shows *.bz2 files to save as.
+        * The spin viewer now starts maximised on GNU/Linux and MS Windows, and at a smaller size on Mac OS X.
+        * Polishing of the Question message dialog.  The buttons are now of fixed width and aligned to the right, and the relax-blue version of the dialog-warning oxygen icon is being used.
+        * Created a relax blue version of the dialog-warning oxygen icon.
+        * Layout improvements in a number of user function and other wizard pages, the description heights are now used (the variable had been renamed), and the free file format GUI element containing user function pages now use the space better and have been shortened.
+        * The free file format resetting now properly updates the GUI element.
+        * Polishing of the free file format GUI element.  The internal buttons are now placed to the right hand side rather than below to save large amounts of space.  A lot of unnecessary outside padding has also been removed, and the divider position is now properly calculated.
+        * Updates to the GUI fonts, and the addition of normal_italic.
+        * Improvements to the wildcards for the relax save state file dialogs.  There is now a separation between the compressed *.bz2 *.gz files and the 'All files' entry for selecting an uncompressed version.
+        * The protected_exec() function now uses gui_raise() to handle errors.
+        * The gui_raise() function now prints the error message to STDERR if the raise flag is not set.
+        * Redesign of all the file dialogs in the GUI.  All file dialogs are now instances of gui.filedialog.RelaxFileDialog.  This fixes many inconsistencies throughout the GUI, includes presenting an wx.FD_OPEN style file dialog when a wx.FD_SAVE style should have been shown.
+        * The PDB file selector of the structure.load_pdb GUI user function now only shows *.pdb files.
+        * Removed combine_models from the structure.load_spins GUI user function page as that argument no longer exists.
+        * Improvements to the free file format GUI elements (window and element).  This includes specifying fonts, button sizes, and a fix for the button sizer in the GUI element.
+        * The GUI is now frozen while opening a relax state and then finally thawed, removing visual artifacts on Mac OS X.
+        * Removed the 'Settings->Reset all settings' menu and added a reset button to the free file format settings.
+        * The Question class can now have the parent specified to allow for sub-windows to have the dialog focus.
+        * The missing data and question dialogs are now centred.
+        * Converted the question() dialog launching function into a class derived from wx.Dialog.  This implements a custom yes/no dialog that is consistent between different operating systems.
+        * Layout improvements for the wizard pages on Mac OS X.
+        * Fix for the split/double help menu entry on Mac OS X, the SetMenuBar() call happens after all the menus are created.
+        * Created a script for forcing relax's GUI mode (relax_gui_mode.py).
+        * Added a script for building application packages of relax.  This currently supports the building of a stand alone Mac OS X app (i.e. no python needed).
+        * The exit relax dialog now has a title.
+        * The Mac OS X build and dist app directories have been added to the scons clean_all target.
+        * Created a Mac OS X .icns version of the relax icon.
+        * Created a task bar icon for Mac OS X.
+        * The about windows now have titles (this makes the windows identifiable).
+        * The relax icons are now used for all of relax's windows.
+        * Better icon support in the GUI.  The ulysses.ico file is now being used as it is an bundle of images, and the icon bundle is now set for the main window.
+        * Created transparent background images of the diffusion tensors for the model-free auto-analysis tab.
+        * Added a series of 4 buttons for calling value.set in the model-free auto-analysis tab.  This is to make it obvious that the CSA, bond length, heteronucleus type, and proton type need to be set.
+        * A number of improvements to the value.set GUI user function.  The on_display() method has been renamed to update_parameters() so the parameter list can be updated only when needed.  The set_param() method has been added to set a starting parameter and its default value.
+        * The GUI user functions now show a busy cursor when loading so that the user isn't confused, wondering why relax is not responding.
+        * The value.set GUI user function now sets the value to the default when parameters are selected.
+        * Expressions can now be used in the value.set GUI user function for the number types.
+        * Modified the gui_raise() function to have the raise_flag argument allowing the raising of the error to be skipped.
+        * Created the analysis tab base class variable width_main_separator, this increases the space between the left hand side graphic and the right hand side elements.
+        * relax is now started maximised in GUI mode.
+        * The value.set user function GUI page now properly converts the value to the correct type.
+        * The relax controller is now colouring the status module lock and observer print outs.
+        * Improvements and fixes for the debugging print outs from the status module, and the text now goes to sys.stdout.
+        * The observer objects are now printing out execution information when in debugging mode.
+        * All acquire() and release() calls for the spin_lock and pipe_lock objects now are named, the name argument is now supplied to these methods.
+        * The Relax_lock object now has much better debugging facilities, and responds to the debug flag.
+        * Renamed the Relax_lock debug argument to fake_lock, again this is used to fake the locking mechanism, whereas debugging could be more fine grained.
+        * The Relax_lock object now has a 'name' argument which will be used in debugging.
+        * The pipe_lock locking object is now the special Relax_lock, this will allow for fine grained debugging.
+        * All pages of the Rx peak list wizard now cannot proceed on an error, this will trigger the user function flushing.
+        * A copy of the GUI interpreter singleton is now initialised in the wizard, this is used for the flushing of user functions prior to proceeding.
+        * The GUI interpreter object has been converted into a singleton.
+
+        * Changed the missing spin parameter messages to indicated that the value.set user function is needed.
+        * Converted the missing data dialog into its own wx.Dialog derived class.  The dialog is now completely constructed by relax and will be constant across different operating systems.
+        * Added data checks for the dauvergne_protocol GUI auto-analysis tab.  This allows for a dialog telling the user what is missing.
+        * Redesigned the dauvergne_protocol mode selection in the GUI.  A special GUI element has been added to the analysis tab with a button that launches a new window for mode selection.  Therefore clicking on 'Execute relax' instantly starts the analysis.
+        * Redesigned how the auto-analyses are handled by the status singleton.  The init_auto_analysis() has been created, and each analysis has its own status container within the status.auto_analysis dictionary.
+        * Modified the dauvergne_protocol.py sample script to use the new design of accepting a filled data pipe.
+        * Removed the 'exclude' file name from the model-free data assembly in the GUI.
+        * Changing the model-free model selection in the dauvergne_protocol of the GUI now sets a red flag on the button.
+        * The add_button_open() analysis base class method now returns the button.
+        * Converted the relaxation data list GUI element to a wx.ListCtrl to match the spectra list element.
+        * Converted the spectra list GUI element from a wx.Grid element to a wx.ListCtrl element.  This is visually more appealing, and is easier to control.
+        * The question() dialog now only appears when the status.show_gui flag is set.
+        * The SetValue() call for the model-free model list GUI element now updates the element with the new values.
+        * A strong warning is now given to the user if they try to modify the model-free model list.
+        * Implemented the model-free model selector window.
+        * Created the gui.misc.list_to_gui() function for converting Python lists to GUI strings.
+        * Removed the GUI README file as it is very much out of date.
+        * Shifted all of the font definitions into the new fonts module.
+        * Shifted the model-free model selection GUI element into the new Model_list class.
+        * Expanded the docs for the relax_data.read user function to include the Varian and Bruker frequency parameters.
+        * The spectrum and relaxation data lists now post EVT_SIZE events when modified.  This forces the parent scrolled panel to properly layout out its contents and refresh.
+        * Removed visual artifacts in the wx.grid.Grid elements used in the spectrum and relax data lists.  All cells are now set to the background panel colour, and then individual cells are set back to white.  This removes the visual artifact of white outside of the wx grids.
+        * Spacing improvements in all the auto-analysis GUI elements.
+        * The virtual width of the analysis GUI elements now matches the real width.  The horizontal scrollbar has also been disabled.
+        * Converted all of the GUI analysis objects into instances of wx.lib.scrolledpanel.ScrolledPanel.
+        * The ds.relax_gui data structure is initialised if absent when associating a pipe with a new tab.
+        * The popup menu is not shown if the status.show_gui flag is not set.
+        * The auto-analysis initialisation can now associate with a pre-existing data pipe.
+        * The data pipe editor now has a new 'Associate with a new auto-analysis' menu entry.
+        * Added a hybridise button to the data pipe editor.
+        * The data pipe editor is now registered with the gui_analysis observer.
+        * The observer status.observers.gui_analysis is now notified of all changes to the analysis tabs.
+        * Created an observer object (status.observers.gui_analysis) for changes to the GUI analysis tabs.
+        * The execution of the callback functions in the observer objects is now ordered based on the registration order.
+        * The data pipe editor can now be opened with Ctrl+D.
+        * Changed the pipe_switch observer object to pipe_alteration and all pipe changes are now signalled.
+        * Implemented the data pipe editor window, this will be used to manipulate data pipes including how they interact with the GUI.
+        * Converted the menu build_menu_item() method into a function of gui.components.menu to allow it to be used more easily by other parts of the GUI.
+
+
+    Bugfixes:
+        * Fix for the pymol.cone_pdb user function for frame order models with no alpha average position angle.  This is specifically for the isotropic cone and free rotor model, although other models might also be affected by this fix.
+        * Fixes for the add_molecule() structural API method.
+        * Fix for the internal structural object add_molecule() method for when no models exist, now a model is created if none currently exist.
+        * A lot of fixes for the internal structural object for handling multiple models.
+        * The internal structural reader can now create PDB files if atom numbers are missing, fixing the structure.write_pdb user function in certain edge cases.
+        * Bug fix for the pymol.cone_pdb user function for when there is no average domain position.  This is necessary for the old 2-domain N-state model analysis type.
+        * Bug fixes for the n_state_model.cone_pdb user function, the code was old and not functional any more.
+        * Fix for the frame_order.cone_pdb user function, the create_cone_pdb() function was referencing a non-existent variable.
+        * Fix for the set up of Monte Carlo data for fixed alignment tensors in the N-state model.  The _minimise_setup_fixed_tensors() method has been fixed to return the actual tensor rather than simulation for the fixed tensors, as there is no simulation tensor in that case.
+        * Bug fix for the relax_io.read_spin_data() function for spin IDs - spin IDs can now be handled if they are the first column in the data file.
+        * Bug fix allowing relax to be run in profiling mode.  This has been broken since the merger of the multi-processor branch.
+        * Fix for the paramag.centre user function when a numpy array is used.
+        * Fixes for the N-state model optimisation setup if PCS or RDC data is not loaded.
+        * Bug fix for the setup of the N-state model target function, triggered by missing data.
+        * Fix for a divide by zero error in the PCS Q factor function.
+        * The RDC and PCS Q factor functions are now more robust when data is missing.
+        * Bug fix for the grace.write user function for when the spin ID is specified, the spin ID was previously unused.
+        * Bug fix for the Monte Carlo simulation data generation for the N-state model.  The create_mc_data() method was always skipping RDC and PCS data due to an incorrect check for the presence of that data.
+        * Bug fix for the logging and teeing command line options.
+        * Bug fix for missing RDC back-calculated data (rdc_bc).  If a sequence is read from a PDB file, but the N-H bond vector cannot be extracted due to a missing proton, the alignment tensor fit to RDC data (specifically the Monte Carlo simulations) would fail.
+        * Bug fix for a newly introduced dependency on the wxPython module.  This wx module is now optional, and only required for the GUI mode.  This allows relax to run without this module installed.
+        * Bug fix for IO capture in the test suite with Python 2.6 or below.  The RelaxTestRunner._makeResult() replacement method has been reinstated.  Replacing the class variable resultclass does not work with earlier versions of the unittest site-package.
+        * Fix for bug #18790 - the negative relaxation data errors.
+        * Fix for bug #18789 - the zero errors in Grace files.  The problem was that the errors were being taken as the X-axis error values, which in the case of spin specific data is zero.  Now the Y-axis errors are taken rather than the unused X-axis errors.
+        * The status.test_mode and status.show_gui flags are now initialised only once in the singleton to prevent them from being overwritten when a reset() call is made.
+        * Mac OS X bug fix for changing pipes in the spin viewer window.  The pipe selector element event GetString() method was returning None as this is a read only ComboBox (in wxPython 2.9).
+        * Fixes for Mac OS X with wxPython 2.9 for the spin viewer window activation/deactivation, this is now via wx.CallAfter() calls to prevent memory leaks.
+        * Bug fix for Mac OS X when using wxPython 2.9.2.4 whereby wx.SafeYield() is causing 'Bus errors'.  The wx.SafeYield(None, True) calls have been replaced by wx.GetApp().Yield(True) calls, which should do the same thing but do not cause bus errors on this developmental version of wxPython.  This fix is important as the future Mac OS X relax app will use this version of wxPython for 64-bit and Cocoa support.
+        * Bug fix for the reporting of non-matching lines in the spectrum.read_intensities user function.  The file data printed did not match the actual intensity data currently being processed, hence the wrong data was being printed as non-matching.
+        * Fix for running the test suite in debugging mode.  The self.capt StringIO structure is always necessary for the final print out.
+        * Fix for the results viewer window on MS Windows - it is no longer hidden after switching pipes.  For some reason MS Windows always brings the main GUI window to the front when pipe switches occur (probably the notebook switching).
+        * Bug fixes for racing in the results viewer window on MS Windows, wx.CallAfter() calls are required for this to work.
+        * MS Windows bug fix for pipe switching in the data pipe editor window, the pipe window would be hidden after the switch.
+        * MS Windows bug fix for the pipe editor window, the wx.Yield() call has been removed from the update_grid() method as it causes a wx._core.PyAssertionError on Windows.
+        * Bug fix for racing in the GUI on MS Windows when the relax prompt window is open.  This was caught in the test suite, and only affects MS Windows.  Now a wx.CallAfter() call is used to enable the GUI element.
+        * Bug fix for the GUI interpreter thread flushing on MS Windows.  The Python Queue.empty() method is documented as being unreliable - and that is indeed the case on MS Windows (not on GNU/Linux or Mac OS X though).  It sometimes returns false, continually, when the queue is completely empty.
+        * A lot of bug fixes for MS Windows with the handling of the busy cursor.  All calls to wx.EndBusyCursor() are preceded by a check via wx.IsBusy().  For some reason, in contrast to other operating systems, MS Windows will sometimes turn off the busy cursor by itself.  A subsequence call to wx.EndBusyCursor() results in an error.
+        * Bug fix for the main window status bar on MS Windows, the text is now being set with wx.CallAfter calls.
+        * Fixed a bug on MS Windows for the 'Close all analyses' menu entry and toolbar button.  The sequence of internal events is very different on Windows compared to Mac OS X and GNU/Linux, and not everything had been processed before everything was deleted resulting in updates to dead GUI elements.
+        * Bug fix for the new analysis wizard cancelling on Mac OS X.
+        * Bug fix for the closure of the new analysis wizard window.
+        * Bug fix for MS Windows - the spin viewer window was being hidden by the main window when switching pipes.
+        * Bug fix for racing in the spin viewer window when switching pipes.
+        * Fixes for the peak list wizards for the NOE and Rx auto-analyses for Mac OS X.
+        * Bug fix for many unit tests on MS Windows.  The os.tmpfile() call has been replaced by tempfile.mkstemp() in the data types passed into the unit tests of the prompt interface.  The os.tmpfile() call on Windows results in a "OSError: [Errno 13] Permission denied" error.
+        * Bug fix for the scons clean target on MS Windows.  The build and dist directories from the Mac OS X py2app program are now only deleted by the clean_all target which checks for the paths.
+        * Bug fix for a race condition on MS Windows blocking the test suite.  The analyses update_spin_count() call sets the value of the spin systems GUI element.  This is now via a wx.CallAfter() call to prevent the race in the GUI.
+        * Bug fix for MS Windows - the user function menus are now fully deactivated during execution lock.  The submenus were strangely not all being deactivated, so now all submenu items are also deactivated.
+        * Bug fix for the switching between analysis tabs on MS Windows.  The tab had not been changed when on_page_change() was being called (in contrast to GNU/Linux and Mac OS X).  Now wx.EVT_NOTEBOOK_PAGE_CHANGED is being used to bind the page change event rather than wx.EVT_NOTEBOOK_PAGE_CHANGING.
+        * Bug fix for the structure.vectors user function back end, the check for already existing vector info now should work.
+        * Fix for the results viewer window on MS Windows, the user functions now have the results viewer window set as the parent so that the window is not hidden by the main GUI window coming to the front.
+        * Fix for the pipe editor window on MS Windows, the user functions now have the pipe editor window set as the parent so that the window is not hidden by the main GUI window coming to the front.
+        * Fixes for the residue.create and spin.create user function GUI pages on MS Windows.  The default values are now correctly set.  This affects the pop up menu in the tree part of the spin viewer window.
+        * Fixes for the user functions launched from the tree part of the spin viewer window on MS Windows.  The spin viewer window is now set as the parent, so that the main GUI window does not come to the front.
+        * The user functions in the spin viewer window now have the parent window correctly set.  This is to help with an MS Windows window ordering bug.
+        * Analysis tabs are now removed if the associated data pipe is deleted, avoiding nasty GUI crashing.
+        * Fixes and improvements for the peak list wizards in the NOE and Rx auto-analyses.  The integration points page is now correctly set up.  And the spectrum ID is now only set if the field is blank, preventing a reversion of the user selected value.
+        * The parent of the Question dialog in the pipe editor window is set so the window doesn't disappear.  Without this, the main GUI window comes to the front after the dialog is shown.
+        * Fixes for the main GUI window moving in front of the spin viewer window.  The spin viewer window is now set as the parent for the Question dialogs, so that this window remains at the front.
+        * Fixes for the residue user function GUI pages for when default values are sent to the page.  This fixes the user functions in the spin viewer window.
+        * Fix for the new gui_to_str_or_list() function.
+        * Bug fix for the structure.read_pdb GUI user function, the values from the GUI are now converted to the correct form.
+        * Fix for the Help->Licence menu entry for the new GUI user function design, this additionally opens the relax controller window so the user will see the text.
+        * Fixes for the pipe editor window to handle the new GUI user function design.
+        * Fixes for the relaxation data reading GUI element for the new GUI user function design.
+        * Fixes for some of the GUI user function calls from the tree part of the spin viewer window.
+        * Fixes for the GUI user function launching in the model-free auto-analysis tab.
+        * The spin viewer window now uses the full user function menu of the Uf_menus class, this should now remove the MS Windows bug whereby the spin viewer window would disappear to the back after closing of the user function wizard dialogs.
+        * Fixes for the auto-analysis wizards for the new user function GUI page design.
+        * Fixes for the GUI tests for the new design of the user function GUI pages.
+        * Fix for the script user function GUI element for opening the file dialog.
+        * Fixes for the relax controller, pipe editor and results viewer windows under MS Windows.  These windows were all dark grey, the default frame colour under MS Windows.  Now all elements are packed into a wx.Panel which sits inside the wx.Frame.
+        * Added checks for a current data pipe to a number of GUI user function pages, this prevents relax errors when trying to launch the user functions but when no data pipes exist.
+        * Fix for the MS Windows BAT file so that relax can be launched from the Windows PowerShell.
+        * Fix for the dauvergne_protocol model-free auto-analysis with the deletion of data pipes.  Now only the data pipes created by dauvergne_protocol are deleted.  This fixes the problem whereby data pipes from other analyses are deleted by dauvergne_protocol, breaking the GUI.
+        * Fix for the spin viewer window for MS Windows, the get_info() method now catches if no item is selected in the tree before trying to get the Python data from it.  Asking for Python data from a missing TreeCtrl item ID works on GNU/Linux and Mac OS X, but not on MS Windows.
+        * Bug fix for MS Windows - the main relax window is now maximized upon start up.
+        * Mac OS X fix for the relaxation data list element - the height algorithm is now more robust.  The ListCtrl.GetSize() method appears not to work on Mac OS X.  Therefore a different algorithm has been designed to get around this Mac specific problem.
+        * Fix for the relax_fit.relax_time GUI user function.  The combobox GetValue() call has been replaced by GetStringSelection() for the spectrum ID.
+        * Removed the wx.Yield() call from the spin viewer window refresh() method, this is to prevent recursive wx.Yield calls on Mac OS X from killing relax.
+        * Fix for the Rx peak list wizard for Mac OS X, the combobox SetValue() call has been replaced with SetStringSelection().
+        * Fix for the NOE spectrum loading wizard - the comboboxes need SetStringSelection rather than SetValue calls.  SetValue and GetValue on the read only combo boxes seems to fail on Mac OS X.
+        * Mac OS X bug fix - the busy cursor is only turned off in the gui_raise window code if the busy cursor is on.
+        * Mac OS X bug fix for racing in the GUI interpreter thread.  The flush() method was not working properly on Mac OS X, so hopefully now it is thread-safe.
+        * Bug fix for Mac OS X for the spectrum.replicated GUI user function.  A GetValue() call fails on Mac OS X for a read only wx.ComboBox if no value is set.
+        * Fix for the Rx auto-analysis GUI test for the changes to the spectrum.replicated user function GUI page.
+        * Another Mac OS X test suite fix - the spin viewer window menu bar is now no longer set in the gui tests.
+        * Bug fix for the test suite under Mac OS X - the GUI's SetMenuBar method is only called if status.show_gui is set.  This prevents the menu bar from starting when running the GUI tests.
+        * Bug fix for Mac OS X - the timer in the relax controller is started with a wx.CallAfter() call.  This is to ensure that it will start from the main thread, which is essential.
+        * All wx calls to Show(), ShowModal() and PopupMenu() are now suppressed if the status.show_gui flag is not set.  This is to eliminate problems of GUI elements starting up in the test-suite under Mac OS X.
+        * Fixes for many user function GUI pages for when the apply button is clicked.  The combo box GUI elements were having data appended each time on_display() is called (this happens with a click on the apply button), but the previous values were not cleared out.  This results in very long repetitive lists.
+        * Removed a recursive call to wx.Yield in the spin viewer window as this is fatal on Mac OS X.
+        * Fixes for the spectrum.replicated user function GUI page for when the apply button is hit.  The spectrum IDs were continually appended to the ID boxes, so the lists could get quite long.
+        * Fix for the model-free model changing question dialog in the dauvergne_protocol analysis.  The dialog is now larger to see all text, and the answer is no longer back to front.
+        * Bug fixes for all of the specific analyses for running Monte Carlo simulations multiple times.  Many of the specific analyses were raising RelaxErrors if simulations had previously been run.  Now this no longer occurs, so that the analysis can be re-run which is important in GUI mode.
+        * All of the major GUI and X freeze fixes have been ported to the relax data list.  The fixes for the spectrum list GUI element are now present in the relaxation data list GUI element as well, as the same problems occur in both code paths.
+        * Fix for the size_cols() method of the spectrum list GUI element.  With the asynchronous updating of the element, sometimes the columns are not setup prior to a size_cols() call.
+        * Bug fix for the freezing of X windows!  The spectrum list GUI element is now updated with a CallAfter() call so that the element is updated in a thread safe way.  Without this, the entire X windows system would sometimes freeze!
+        * Bug fix for the freezing of the GUI.  The spectrum list GUI element was trying to update itself during execution lock, causing races if the spectrum data structures in the relax data store are being modified as the GUI element update is occurring.  This would result in a hard lock of the GUI.
+        * Fix for the validate_sequence() function - the eval() calls raise all sorts of errors.
+        * Fix for the reading of the sequence from generic formatted files with None in some of the columns.  This second problem is for the non-integer columns as the text 'None' was being interpreted as the name.
+        * Fix for the reading of the sequence from generic formatted files with None in some of the columns.  The generic_fns.mol_res_spin.generate_spin_id_data_array() function now checks for when the data list contains 'None'.
+        * Fix for the Rx peak height wizard, the user function flush flag was incorrectly named.
+        * Fix for the wizard page _ok() method for the uf_flush flag.
+        * Fix for the results viewer window file opening.
+        * Fix for the results viewer window in testing mode - it is now not shown.
+        * Fix for the pipe editor window - it is now updated when initially created to show all loaded pipes.
+        * Fixes for all the calls to the GUI interpreter instance in the spin viewer window.  This is now a special thread object, and user function calls are now queued.
+        * The auto-analysis GUI pages are now waiting for the data pipe to be created, fixing race conditions.
+        * Some more fixes for the relax 'mode' class variable, these problems were due to the multi-processor code merger.
+        * Fix for the GUI test mode - the mode variable should be a class variable.
+        * Fix for the multi-processor code as the PrependOut class has been renamed to IO_filter.
+        * Fixes for some of the file dialog wildcards.
+        * Fix for the opening of Grace files via the results viewer.  It was being launched in both Grace and a text editor!
+        * The spin viewer tree update() method now acquires both the pipe and spin locks, preventing a major source of race conditions.
+        * The File menu entires for new or closing analyses or opening a state are blocked with the execution lock.  This is needed because the accelerator keys are still active, even if the menu entry is disabled (possibly a GTK bug).
+        * The pipe editor window is now acquiring the pipe lock prior to updating its contents.  This removes a lot of race conditions, as the pipes can often change which the update occurs.
+        * The execution lock is properly locked or released before notifying the observers.  This will remove some race conditions where the locked() method is called before the acquire() or release() methods terminate.
+        * All wx object Append() calls now have their data passed through str_to_gui() first as well, this prevents GUI failures due to the wrong data type being encountered.
+        * All data passed into wxPython SetValue() calls now go through gui.misc.*_to_gui() functions, this ensures that the correct data type is sent into the GUI elements.
+        * Fix for the stereochemistry auto-analysis - the pipe_name argument does not exist in this auto-analysis.
+        * Fix for the dauvergne_protocol - the maximum number of optimisation iterations is now an int.
+        * The observers of pipe alterations should now all be thread safe, pipe changes in relax were causing segfaults in the GUI.
+        * Fix for the dauvergne_protocol auto-analysis 'final' model.  The final stage of the dauvergne_protocol was broken.  The data pipes here need to be created rather than copied from the initial data pipe as results are being read into these pipes.
+        * Fix for the dauvergne_protocol sample script - the mc_num argument is now called mc_sim_num.
+        * Fix for the assemble_data() method of the NOE auto-analysis - the number of spectra can be less than 3.
+        * Fix for the gui_to_float() for when an integer is given, it is now converted to a float.
+        * Fix for the spectral list GUI element on Mac OS X, the ListCtrl.DeleteColumn() method is faulty on Mac OS X.  So instead all columns are deleted in one go, and then the entire thing is created on update.
+        * Fixes for the results viewer window updating on Mac OS X.  The EVT_SHOW event was not being triggered by the frame's Show() method.
+        * Bug fix for the dauvergne_protocol - the pipe.copy() calls are now followed by pipe.switch().  This is needed as previously the pipe.create() user function call automatically switched pipes, but pipe.copy() does not.
+        * The results viewer window no longer fails if relax is still in the initial state.
+        * Bug fix for the value.set user function page - the parameter rather than description is now used.  The description rather than parameter was being sent to the back-end.
+        * Fix for the spin data check in the dauvergne_protocol auto-analysis - deselected spins are skipped.
+        * Fix for the relaxation data check in the dauvergne_protocol auto-analysis.
+        * Fix for Mac OS X - the wizard buttons are now all of the same size.  SetMinSize() rather than SetSize() needs to be used with wx.ADJUST_MINSIZE.
+        * The dialog Close() rather than Destroy() method is being used to terminate the wizard, this is necessary for Mac OS X.
+        * Mac OS X bug fit - removed the Destroy() call after ShowModal() in the wizard.  The Destroy() method was actually being called twice, the first time either by the _ok() or the _cancel() methods, and the second time directly after the ShowModal().  This is fatal on a Mac.
+
+
+
 Version 1.3.12
 (22 August 2011, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.12
