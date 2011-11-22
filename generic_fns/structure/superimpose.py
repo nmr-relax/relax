@@ -181,7 +181,7 @@ def fit_to_mean(models=None, coord=None):
     # Perform the fit once from the original coordinates to obtain the full transforms.
     for i in range(len(models)):
         # Calculate the displacements (Kabsch algorithm).
-        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='model %s'%models[i], coord_from=orig_coord[i], coord_to=mean)
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[i], name_to='the mean structure', coord_from=orig_coord[i], coord_to=mean)
 
         # Store the transforms.
         T_list.append(trans_vect)
