@@ -610,22 +610,24 @@ class Structure(User_fn_class):
     _build_doc(rotate)
 
 
-    def superimpose(self, models=None, method='fit to mean', atom_id=None):
+    def superimpose(self, models=None, method='fit to mean', atom_id=None, centroid=None):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.superimpose("
             text = text + "models=" + repr(models)
             text = text + ", method=" + repr(method)
-            text = text + ", atom_id=" + repr(atom_id) + ")"
+            text = text + ", atom_id=" + repr(atom_id)
+            text = text + ", centroid=" + repr(centroid) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_int_list(models, 'model list', can_be_none=True)
         arg_check.is_str(method, 'superimposition method')
         arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)
+        arg_check.is_float_array(centroid, 'centroid position', can_be_none=True)
 
         # Execute the functional code.
-        generic_fns.structure.main.superimpose(models=models, method=method, atom_id=atom_id)
+        generic_fns.structure.main.superimpose(models=models, method=method, atom_id=atom_id, centroid=centroid)
 
     # The function doc info.
     superimpose._doc_title = "Superimpose a set of models of the same structure."
@@ -634,6 +636,7 @@ class Structure(User_fn_class):
         ["models", "The list of models to superimpose."],
         ["method", "The superimposition method."],
         ["atom_id", "The atom identification string."],
+        ["centroid", "The alternative position of the centroid."]
     ]
     superimpose._doc_desc = """
         This allows a set of models of the same structure to be superimposed to each other.  Two superimposition methods are currently supported:
@@ -644,6 +647,8 @@ class Structure(User_fn_class):
         If the list of models is not supplied, then all models will be superimposed.
 
         The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the superimpose calculation to certain molecules, residues, or atoms.  For example to only superimpose backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.
+
+        By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.
         """
     superimpose._doc_examples = """
         To superimpose all sets of models, type one of:

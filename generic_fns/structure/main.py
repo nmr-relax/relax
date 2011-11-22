@@ -545,7 +545,7 @@ def set_vector(spin=None, xh_vect=None):
     spin.xh_vect = xh_vect
 
 
-def superimpose(models=None, method='fit to mean', atom_id=None):
+def superimpose(models=None, method='fit to mean', atom_id=None, centroid=None):
     """Superimpose a set of structural models.
 
     @keyword models:    The list of models to superimpose.  If set to None, then all models will be used.
@@ -554,6 +554,8 @@ def superimpose(models=None, method='fit to mean', atom_id=None):
     @type method:       str
     @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:      str or None
+    @keyword centroid:  An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
+    @type centroid:     list of float or numpy rank-1, 3D array
     """
 
     # Check the method.
@@ -577,9 +579,9 @@ def superimpose(models=None, method='fit to mean', atom_id=None):
 
     # The different algorithms.
     if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=models, coord=coord)
+        T, R, pivot = fit_to_mean(models=models, coord=coord, centroid=centroid)
     elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=models, coord=coord)
+        T, R, pivot = fit_to_first(models=models, coord=coord, centroid=centroid)
 
 
     # Update to the new coordinates.

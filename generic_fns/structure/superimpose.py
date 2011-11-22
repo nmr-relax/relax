@@ -76,13 +76,15 @@ def find_centroid(coords):
     return centroid
 
 
-def fit_to_first(models=None, coord=None):
+def fit_to_first(models=None, coord=None, centroid=None):
     """Superimpose a set of structural models using the fit to first algorithm.
 
     @keyword models:    The list of models to superimpose.
     @type models:       list of int
     @keyword coord:     The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
     @type coord:        list of numpy rank-2, Nx3 arrays
+    @keyword centroid:  An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
+    @type centroid:     list of float or numpy rank-1, 3D array
     @return:            The lists of translation vectors, rotation matrices, and rotation pivots.
     @rtype:             list of numpy rank-1 3D arrays, list of numpy rank-2 3D arrays, list of numpy rank-1 3D arrays
     """
@@ -98,7 +100,7 @@ def fit_to_first(models=None, coord=None):
     # Loop over the ending models.
     for i in range(1, len(models)):
         # Calculate the displacements (Kabsch algorithm).
-        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='model %s'%models[i], coord_from=coord[i], coord_to=coord[0])
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='model %s'%models[i], coord_from=coord[i], coord_to=coord[0], centroid=centroid)
 
         # Store the transforms.
         T_list.append(trans_vect)
@@ -109,13 +111,15 @@ def fit_to_first(models=None, coord=None):
     return T_list, R_list, pivot_list
 
 
-def fit_to_mean(models=None, coord=None):
+def fit_to_mean(models=None, coord=None, centroid=None):
     """Superimpose a set of structural models using the fit to first algorithm.
 
     @keyword models:    The list of models to superimpose.
     @type models:       list of int
     @keyword coord:     The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
     @type coord:        list of numpy rank-2, Nx3 arrays
+    @keyword centroid:  An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
+    @type centroid:     list of float or numpy rank-1, 3D array
     @return:            The lists of translation vectors, rotation matrices, and rotation pivots.
     @rtype:             list of numpy rank-1 3D arrays, list of numpy rank-2 3D arrays, list of numpy rank-1 3D arrays
     """
@@ -150,7 +154,7 @@ def fit_to_mean(models=None, coord=None):
         converged = True
         for i in range(len(models)):
             # Calculate the displacements (Kabsch algorithm).
-            trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='mean', coord_from=coord[i], coord_to=mean, verbosity=0)
+            trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='mean', coord_from=coord[i], coord_to=mean, centroid=centroid, verbosity=0)
 
             # Table print out.
             print("%-10i%25.3g%25.3g" % (i, trans_dist, (angle / 2.0 / pi * 360.0)))
@@ -181,7 +185,7 @@ def fit_to_mean(models=None, coord=None):
     # Perform the fit once from the original coordinates to obtain the full transforms.
     for i in range(len(models)):
         # Calculate the displacements (Kabsch algorithm).
-        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[i], name_to='the mean structure', coord_from=orig_coord[i], coord_to=mean)
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[i], name_to='the mean structure', coord_from=orig_coord[i], coord_to=mean, centroid=centroid)
 
         # Store the transforms.
         T_list.append(trans_vect)
