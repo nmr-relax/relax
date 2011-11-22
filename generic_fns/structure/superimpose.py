@@ -153,7 +153,7 @@ def fit_to_mean(models=None, coord=None):
             trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='mean', coord_from=coord[i], coord_to=mean, verbosity=0)
 
             # Table print out.
-            print("%-10i%25.3g%25.3g" % (i, trans_dist, angle))
+            print("%-10i%25.3g%25.3g" % (i, trans_dist, (angle / 2.0 / pi * 360.0)))
 
             # Shift the coordinates.
             print coord[i][0]
