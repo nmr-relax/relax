@@ -1245,6 +1245,47 @@ class Internal(Base_struct_API):
                     mol.z[i] = mol.z[i] + T[2]
 
 
+    def validate_models(self):
+        """Check that the models are consistent with each other.
+
+        This checks that the primary structure is identical between the models.
+        """
+
+        # Print out.
+        print("Validating models:")
+
+        # Loop over the models.
+        for i in range(len(self.structural_data)):
+            # Check the molecules.
+            if len(self.structural_data[0].mol) != len(self.structural_data[i].mol):
+                raise RelaxError("The number of molecules, %i, in model %i does not match the %i molecules of the first model." % (len(self.structural_data[i].mol), self.structural_data[i].num, len(self.structural_data[0].mol)))
+
+            # Loop over the molecules.
+            for j in range(len(self.structural_data[i].mol)):
+                # Alias the molecules.
+                mol = self.structural_data[i].mol[j]
+                mol_ref = self.structural_data[0].mol[j]
+
+                # Check the names.
+                if mol.mol_name != mol_ref.mol_name:
+                    raise RelaxError("The molecule name '%s' of model %i does not match the name '%s' of the first model." % (mol.mol_name, self.structural_data[i].num, mol_ref.mol_name))
+
+                # Loop over the atoms.
+                for k in range(len(mol.atom_name)):
+                    # Create pseudo-pdb formatted records (with no atomic coordinates).
+                    atom = "%-6s%5s %4s%1s%3s %1s%4s%1s   %8s%8s%8s%6.2f%6.2f      %4s%2s%2s" % ('ATOM', mol.atom_num[k], self._translate(mol.atom_name[k]), '', self._translate(mol.res_name[k]), self._translate(mol.chain_id[k]), self._translate(mol.res_num[k]), '', '#', '#', '#', 1.0, 0, self._translate(mol.seg_id[k]), self._translate(mol.element[k]), '')
+                    atom_ref = "%-6s%5s %4s%1s%3s %1s%4s%1s   %8s%8s%8s%6.2f%6.2f      %4s%2s%2s" % ('ATOM', mol_ref.atom_num[k], self._translate(mol_ref.atom_name[k]), '', self._translate(mol_ref.res_name[k]), self._translate(mol_ref.chain_id[k]), self._translate(mol_ref.res_num[k]), '', '#', '#', '#', 1.0, 0, self._translate(mol_ref.seg_id[k]), self._translate(mol_ref.element[k]), '')
+
+                    # Check the atom info.
+                    if atom != atom_ref:
+                        print(atom)
+                        print(atom_ref)
+                        raise RelaxError("The atoms of model %i do not match the first model." % self.structural_data[i].num)
+
+        # Final print out.
+        print("\tAll models are consistent")
+
+
     def write_pdb(self, file, model_num=None):
         """Method for the creation of a PDB file from the structural data.
 

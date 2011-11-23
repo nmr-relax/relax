@@ -630,6 +630,16 @@ class Base_struct_API:
             self.displacements.to_xml(doc, disp_element)
 
 
+    def validate_models(self):
+        """Check that the models are consistent with each other.
+
+        This checks that the primary structure is identical between the models.
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def write_pdb(self, file, model_num=None):
         """Prototype method stub for the creation of a PDB file from the structural data.
 

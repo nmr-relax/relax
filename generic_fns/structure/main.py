@@ -563,6 +563,9 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centroid=None):
     if method not in allowed:
         raise RelaxError("The superimposition method '%s' is unknown.  It must be one of %s." % (method, allowed))
 
+    # Validate the models.
+    cdp.structure.validate_models()
+
     # Create a list of all models.
     if models == None:
         models = []
