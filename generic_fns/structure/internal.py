@@ -1517,12 +1517,19 @@ class Internal(Base_struct_API):
                         file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
                         num_atom = num_atom + 1
 
+                        # Info for the TER record.
+                        ter_num = atom_num + 1
+                        ter_name = mol.res_name[i]
+                        ter_chain_id = mol.chain_id[i]
+                        ter_res_num = mol.res_num[i]
+
                 # Finish the ATOM section with the TER record.
                 if atom_record:
-                    file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', num_atom+1, self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), ''))
+                    file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', ter_num, self._translate(ter_name), self._translate(ter_chain_id), self._translate(ter_res_num), ''))
                     num_ter = num_ter + 1
 
                 # Loop over the atomic data.
+                count_shift = False
                 for i in xrange(len(mol.atom_name)):
                     # Write the HETATM record.
                     if mol.pdb_record[i] == 'HETATM':
@@ -1530,6 +1537,12 @@ class Internal(Base_struct_API):
                         atom_num = mol.atom_num[i]
                         if atom_num == None:
                             atom_num = i + 1
+
+                        # Increment the atom number if a TER record was created.
+                        if atom_record and atom_num == ter_num:
+                            count_shift = True
+                        if atom_record and count_shift:
+                            atom_num += 1
 
                         # Write out.
                         file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
