@@ -332,6 +332,41 @@ class Structure(User_fn_class):
     _build_doc(displacement)
 
 
+    def find_pivot(self, models=None, atom_id=None, init_pos=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.find_pivot("
+            text = text + "models=" + repr(models)
+            text = text + ", atom_id=" + repr(atom_id)
+            text = text + ", init_pos=" + repr(init_pos) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_int_list(models, 'model list', can_be_none=True)
+        arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)
+        arg_check.is_float_array(init_pos, 'initial pivot position', can_be_none=True)
+
+        # Execute the functional code.
+        generic_fns.structure.main.find_pivot(models=models, atom_id=atom_id, init_pos=init_pos)
+
+    # The function doc info.
+    find_pivot._doc_title = "Find the pivot point of the motion of a set of structures."
+    find_pivot._doc_title_short = "Pivot search."
+    find_pivot._doc_args = [
+        ["models", "The list of models to use."],
+        ["atom_id", "The atom identification string."],
+        ["init_pos", "The initial position of the pivot."]
+    ]
+    find_pivot._doc_desc = """
+        This is used to find pivot point of motion between a set of structural models.  If the list of models is not supplied, then all models will be used.
+
+        The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the search to certain molecules, residues, or atoms.  For example to only use backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.
+
+        By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.
+        """
+    _build_doc(find_pivot)
+
+
     def load_spins(self, spin_id=None, ave_pos=True):
         # Function intro text.
         if self._exec_info.intro:

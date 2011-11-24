@@ -26,11 +26,90 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import diag, dot, eye, float64, outer, sign, transpose, zeros
+from numpy import diag, dot, eye, float64, outer, sign, sqrt, transpose, zeros
 from numpy.linalg import det, norm, svd
 
 # relax module import.
 from maths_fns.rotation_matrix import R_to_axis_angle
+
+
+class Pivot_finder:
+    """Class for finding the optimal pivot point for motions between the given models."""
+
+    def __init__(self, models, coord):
+        """Set up the class for pivot point optimisation.
+
+        @keyword models:    The list of models to use.  If set to None, then all models will be used.
+        @type models:       list of int or None
+        @keyword coord:     The array of molecular coordinates.  The first dimension corresponds to the model, the second the atom, the third the coordinate.
+        @type coord:        rank-3 numpy array
+        """
+
+        # Store the args.
+        self.models = models
+        self.coord = coord
+
+        # Store a copy of the coordinates for restoration.
+        self.orig_coord = deepcopy(coord)
+
+
+    def func(self, params):
+        """Target function for the optimisation of the motional pivot point.
+
+        @param params:  The parameter vector from the optimisation algorithm.
+        @type params:   list
+        @return:        The target function value defined as the combined RMSD value.
+        @rtype:         float
+        """
+
+        # The fit to mean algorithm.
+        T, R, pivot = fit_to_mean(models=self.models, coord=self.coord, centroid=params, verbosity=0)
+
+        # The RMSD.
+        val = atomic_rmsd(self.coord)
+
+        # Restore the coordinates.
+        self.coord = deepcopy(self.orig_coord)
+
+        # Return the RMSD.
+        return val
+
+
+
+def atomic_rmsd(coord):
+    """Determine the RMSD for the given atomic coordinates.
+
+    This is the per atom RMSD to the mean structure.
+
+
+    @keyword coord:     The array of molecular coordinates.  The first dimension corresponds to the model, the second the atom, the third the coordinate.
+    @type coord:        rank-3 numpy array
+    """
+
+    # Init.
+    M = len(coord)
+    N = len(coord[0])
+    model_rmsd = zeros(M, float64)
+    mean = zeros((N, 3), float64)
+
+    # Calculate the mean structure.
+    calc_mean_structure(coord, mean)
+
+    # Loop over the models.
+    for i in range(M):
+        # Loop over the atoms.
+        for j in range(N):
+            # The vector connecting the mean to model atom.
+            vect = mean[j] - coord[i][j]
+
+            # The atomic RMSD.
+            model_rmsd[i] += norm(vect)**2
+
+        # Normalise, and sqrt.
+        model_rmsd[i] = sqrt(model_rmsd[i] / N)
+
+    # Return the average RMSD.
+    return sum(model_rmsd) / M
 
 
 def calc_mean_structure(coord=None, mean=None):
@@ -111,7 +190,7 @@ def fit_to_first(models=None, coord=None, centroid=None):
     return T_list, R_list, pivot_list
 
 
-def fit_to_mean(models=None, coord=None, centroid=None):
+def fit_to_mean(models=None, coord=None, centroid=None, verbosity=1):
     """Superimpose a set of structural models using the fit to first algorithm.
 
     @keyword models:    The list of models to superimpose.
@@ -120,12 +199,15 @@ def fit_to_mean(models=None, coord=None, centroid=None):
     @type coord:        list of numpy rank-2, Nx3 arrays
     @keyword centroid:  An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
     @type centroid:     list of float or numpy rank-1, 3D array
+    @keyword verbosity: The amount of information to print out.  If 0, nothing will be printed.
+    @type verbosity:    int
     @return:            The lists of translation vectors, rotation matrices, and rotation pivots.
     @rtype:             list of numpy rank-1 3D arrays, list of numpy rank-2 3D arrays, list of numpy rank-1 3D arrays
     """
 
     # Print out.
-    print("\nSuperimposition of structural models %s using the 'fit to mean' algorithm." % models)
+    if verbosity:
+        print("\nSuperimposition of structural models %s using the 'fit to mean' algorithm." % models)
 
     # Duplicate the coordinates.
     orig_coord = deepcopy(coord)
@@ -144,8 +226,9 @@ def fit_to_mean(models=None, coord=None, centroid=None):
     iter = 0
     while not converged:
         # Print out.
-        print("\nIteration %i of the algorithm." % iter)
-        print("%-10s%-25s%-25s" % ("Model", "Translation (Angstrom)", "Rotation (deg)"))
+        if verbosity:
+            print("\nIteration %i of the algorithm." % iter)
+            print("%-10s%-25s%-25s" % ("Model", "Translation (Angstrom)", "Rotation (deg)"))
 
         # Calculate the mean structure.
         calc_mean_structure(coord, mean)
@@ -157,10 +240,10 @@ def fit_to_mean(models=None, coord=None, centroid=None):
             trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='mean', coord_from=coord[i], coord_to=mean, centroid=centroid, verbosity=0)
 
             # Table print out.
-            print("%-10i%25.3g%25.3g" % (i, trans_dist, (angle / 2.0 / pi * 360.0)))
+            if verbosity:
+                print("%-10i%25.3g%25.3g" % (i, trans_dist, (angle / 2.0 / pi * 360.0)))
 
             # Shift the coordinates.
-            print coord[i][0]
             for j in range(N):
                 # Translate.
                 coord[i][j] += trans_vect
@@ -173,7 +256,6 @@ def fit_to_mean(models=None, coord=None, centroid=None):
 
                 # The new position.
                 coord[i][j] += pivot
-            print coord[i][0]
 
             # Convergence test.
             if trans_dist > 1e-10 or angle > 1e-10:
@@ -185,7 +267,7 @@ def fit_to_mean(models=None, coord=None, centroid=None):
     # Perform the fit once from the original coordinates to obtain the full transforms.
     for i in range(len(models)):
         # Calculate the displacements (Kabsch algorithm).
-        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[i], name_to='the mean structure', coord_from=orig_coord[i], coord_to=mean, centroid=centroid)
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[i], name_to='the mean structure', coord_from=orig_coord[i], coord_to=mean, centroid=centroid, verbosity=0)
 
         # Store the transforms.
         T_list.append(trans_vect)

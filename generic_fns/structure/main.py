@@ -22,6 +22,7 @@
 
 # Python module imports.
 from math import sqrt
+from minfx.generic import generic_minimise
 from numpy import array, dot, float64, ndarray, zeros
 from numpy.linalg import norm
 from os import F_OK, access
@@ -37,7 +38,7 @@ from generic_fns import pipes
 from generic_fns.structure.api_base import Displacements
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
-from generic_fns.structure.superimpose import fit_to_first, fit_to_mean
+from generic_fns.structure.superimpose import fit_to_first, fit_to_mean, Pivot_finder
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import get_file_path, open_write_file, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
@@ -168,6 +169,57 @@ def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
 
             # Send to the base container for the calculations.
             cdp.structure.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
+
+
+def find_pivot(models=None, atom_id=None, init_pos=None):
+    """Superimpose a set of structural models.
+
+    @keyword models:    The list of models to use.  If set to None, then all models will be used.
+    @type models:       list of int or None
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    @keyword init_pos:  The starting pivot position for the pivot point optimisation.
+    @type init_pos:     list of float or numpy rank-1, 3D array
+    """
+
+    # Initialised the starting position if needed.
+    if init_pos == None:
+        init_pos = zeros(3, float64)
+    init_pos = array(init_pos)
+
+    # Validate the models.
+    cdp.structure.validate_models()
+
+    # Create a list of all models.
+    if models == None:
+        models = []
+        for model in cdp.structure.model_loop():
+            models.append(model.num)
+
+    # Assemble the atomic coordinates of all models.
+    coord = []
+    for model in models:
+        coord.append([])
+        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
+            coord[-1].append(pos[0])
+        coord[-1] = array(coord[-1])
+    coord = array(coord)
+
+    # The target function.
+    finder = Pivot_finder(models, coord)
+    results = generic_minimise(func=finder.func, x0=init_pos, min_algor='simplex', print_flag=1)
+
+    # No result.
+    if results == None:
+        return
+
+    # Store the data.
+    cdp.structure.pivot = results
+
+    # Print out.
+    print("Motional pivot found at:  %s" % results)
+
+
 
 
 def get_pos(spin_id=None, str_id=None, ave_pos=False):
