@@ -35,6 +35,7 @@ import sys
 from angles import wrap_angles
 from data.align_tensor import AlignTensorList
 from generic_fns import pipes
+from generic_fns.mol_res_spin import spin_loop
 from physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
@@ -1789,13 +1790,15 @@ __set_prompt_doc__ = """
 """
 
 
-def set_domain(tensor=None, domain=None):
+def set_domain(tensor=None, domain=None, spin_id=None):
     """Set the domain label for the given tensor.
 
-    @param tensor:  The alignment tensor label.
-    @type tensor:   str
-    @param domain:  The domain label.
-    @type domain:   str
+    @param tensor:      The alignment tensor label.
+    @type tensor:       str
+    @param domain:      The domain label.
+    @type domain:       str
+    @keyword spin_id:   The spin ID string.
+    @type spin_id:      None or str
     """
 
     # Loop over the tensors.
@@ -1809,6 +1812,16 @@ def set_domain(tensor=None, domain=None):
     # The tensor label doesn't exist.
     if not match:
         raise RelaxNoTensorError('alignment', tensor)
+
+    # Label the spins by domain.
+    if spin_id != None:
+        for spin in spin_loop(spin_id):
+            # Initialise.
+            if not hasattr(spin, 'domain'):
+                spin.domain = {}
+
+            # Set the domain.
+            spin.domain[tensor] = domain
 
 
 def svd(basis_set=0, tensors=None):

@@ -27,7 +27,7 @@ __docformat__ = 'plaintext'
 # Python module imports.
 
 # relax module imports.
-from base_class import User_fn_class
+from base_class import User_fn_class, _build_doc
 import arg_check
 from generic_fns import align_tensor
 
@@ -346,45 +346,40 @@ class Align_tensor(User_fn_class):
         align_tensor.reduction(full_tensor=full_tensor, red_tensor=red_tensor)
 
 
-    def set_domain(self, tensor=None, domain=None):
-        """Set the domain label for the alignment tensor.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        tensor:  The alignment tensor to assign the domain label to.
-
-        domain:  The domain label.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        Prior to optimisation of the N-state model or Frame Order theories, the domain to which each
-        alignment tensor belongs must be specified.
-
-
-        Examples
-        ~~~~~~~~
-
-        To link the alignment tensor loaded as 'chi3 C-dom' to the C-terminal domain 'C', type:
-
-        relax> align_tensor.set_domain(tensor='chi3 C-dom', domain='C')
-        """
-
+    def set_domain(self, tensor=None, domain=None, spin_id=None):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "align_tensor.set_domain("
             text = text + "tensor=" + repr(tensor)
-            text = text + ", domain=" + repr(domain) + ")"
+            text = text + ", domain=" + repr(domain)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_str(tensor, 'tensor')
         arg_check.is_str(domain, 'domain')
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
-        align_tensor.set_domain(tensor=tensor, domain=domain)
+        align_tensor.set_domain(tensor=tensor, domain=domain, spin_id=spin_id)
+
+    # The function doc info.
+    set_domain._doc_title = "Set the domain information for the alignment tensor."
+    set_domain._doc_title_short = "Domain information."
+    set_domain._doc_args = [
+        ["tensor", "The alignment tensor to assign the domain label to."],
+        ["domain", "The domain label."],
+        ["spin_id", "The spin ID string to restrict the loading of data to certain spin subsets."]
+    ]
+    set_domain._doc_desc = """
+        Prior to optimisation of the N-state model or Frame Order theories, the domain to which each alignment tensor belongs must be specified.  Additionally, the spins attached to this rigid frame can also be specified.
+        """
+    set_domain._doc_examples = """
+        To link the alignment tensor loaded as 'chi3 C-dom' to the C-terminal domain 'C', type:
+
+        relax> align_tensor.set_domain(tensor='chi3 C-dom', domain='C')
+        """
+    _build_doc(set_domain)
 
 
     def svd(self, basis_set=0, tensors=None):
