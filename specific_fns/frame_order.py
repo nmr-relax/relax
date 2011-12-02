@@ -61,7 +61,7 @@ class Frame_order(API_base, API_common):
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_data_name = self._return_data_name
-        self.set_param_values = self._set_param_values_global
+        self.set_param_values = self._set_param_values_spin
 
 
     def _assemble_limit_arrays(self):
