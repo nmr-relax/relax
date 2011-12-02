@@ -28,7 +28,8 @@ from copy import deepcopy
 from math import cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
-from numpy import arccos, array, dot, eye, float64, ones, transpose, zeros
+from numpy import arccos, array, dot, eye, float64, identity, ones, transpose, zeros
+from numpy.linalg import inv
 from re import search
 from string import upper
 from warnings import warn
@@ -39,13 +40,15 @@ from api_common import API_common
 from float import isNaN, isInf
 from generic_fns import align_tensor, pipes
 from generic_fns.angles import wrap_angles
+from generic_fns.mol_res_spin import spin_loop
 from generic_fns.structure.cones import Iso_cone, Pseudo_elliptic
 from generic_fns.structure.geometric import create_cone_pdb, generate_vector_dist, generate_vector_residues
 from generic_fns.structure.internal import Internal
 from maths_fns import frame_order, order_parameters
 from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
-from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError
+from physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
+from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning, RelaxDeselectWarning
 
@@ -88,13 +91,24 @@ class Frame_order(API_base, API_common):
         @type sim_index:    int
         """
 
+        # Initialise.
+        param_vect = []
+
+        # Pivot point.
+        if 'pcs' in self._base_data_types():
+            for i in range(3):
+                param_vect.append(cdp.pivot[i])
+
         # Normal values.
         if sim_index == None:
             # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
             if cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
-                param_vect = [cdp.ave_pos_beta, cdp.ave_pos_gamma]
+                param_vect.append(cdp.ave_pos_beta)
+                param_vect.append(cdp.ave_pos_gamma)
             else:
-                param_vect = [cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma]
+                param_vect.append(cdp.ave_pos_alpha)
+                param_vect.append(cdp.ave_pos_beta)
+                param_vect.append(cdp.ave_pos_gamma)
 
             # Frame order eigenframe - the full frame.
             if cdp.model in ['iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
@@ -160,6 +174,33 @@ class Frame_order(API_base, API_common):
         return array(param_vect, float64)
 
 
+    def _assemble_scaling_matrix(self, data_types=None, scaling=True):
+        """Create and return the scaling matrix.
+
+        @keyword data_types:    The base data types used in the optimisation.  This list can contain the elements 'rdc', 'pcs' or 'tensor'.
+        @type data_types:       list of str
+        @keyword scaling:       If False, then the identity matrix will be returned.
+        @type scaling:          bool
+        @return:                The square and diagonal scaling matrix.
+        @rtype:                 numpy rank-2 array
+        """
+
+        # Initialise.
+        scaling_matrix = identity(self._param_num(), float64)
+
+        # Return the identity matrix.
+        if not scaling:
+            return scaling_matrix
+
+        # The pivot point.
+        if 'pcs' in data_types:
+            for i in range(3):
+                scaling_matrix[i, i] = 1e2
+
+        # Return the matrix.
+        return scaling_matrix
+
+
     def _back_calc(self):
         """Back-calculation of the reduced alignment tensor.
 
@@ -184,6 +225,46 @@ class Frame_order(API_base, API_common):
 
         # Return the reduced tensors.
         return target.red_tensors_bc
+
+
+    def _base_data_types(self):
+        """Determine all the base data types.
+
+        The base data types can include::
+            - 'rdc', residual dipolar couplings.
+            - 'pcs', pseudo-contact shifts.
+            - 'noesy', NOE restraints.
+            - 'tensor', alignment tensors.
+
+        @return:    A list of all the base data types.
+        @rtype:     list of str
+        """
+
+        # Array of data types.
+        list = []
+
+        # RDC search.
+        for spin in spin_loop():
+            if hasattr(spin, 'rdc'):
+                list.append('rdc')
+                break
+
+        # PCS search.
+        for spin in spin_loop():
+            if hasattr(spin, 'pcs'):
+                list.append('pcs')
+                break
+
+        # Alignment tensor search.
+        if not ('rdc' in list or 'pcs' in list) and hasattr(cdp, 'align_tensors'):
+            list.append('tensor')
+
+        # No data is present.
+        if not list:
+            raise RelaxError("Neither RDCs, PCSs nor alignment tensor data is present.")
+
+        # Return the list.
+        return list
 
 
     def _cone_pdb(self, size=30.0, file=None, dir=None, inc=40, force=False):
@@ -272,7 +353,6 @@ class Frame_order(API_base, API_common):
         # Rotations and inversions.
         axis_pos = axis
         axis_neg = dot(inv_mat, axis)
-        print inv_mat
 
         # Simulation central axis.
         axis_sim_pos = None
@@ -287,7 +367,6 @@ class Frame_order(API_base, API_common):
 
             # Inversion.
             axis_sim_pos = axis_sim
-            print axis_sim_pos
             axis_sim_neg = transpose(dot(inv_mat, transpose(axis_sim_pos)))
 
         # Generate the axis vectors.
@@ -465,14 +544,261 @@ class Frame_order(API_base, API_common):
         return list(row)
 
 
+    def _minimise_setup_pcs(self, sim_index=None):
+        """Set up the data structures for optimisation using PCSs as base data sets.
+
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for using PCSs as the base data for optimisation.  These include:
+                                - the PCS values.
+                                - the unit vectors connecting the paramagnetic centre (the electron spin) to
+                                - the PCS weight.
+                                - the nuclear spin.
+                                - the pseudocontact shift constants.
+        @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy rank-1 array, numpy rank-1 array)
+        """
+
+        # Data setup tests.
+        if not hasattr(cdp, 'paramagnetic_centre'):
+            raise RelaxError("The paramagnetic centre has not yet been specified.")
+        if not hasattr(cdp, 'temperature'):
+            raise RelaxError("The experimental temperatures have not been set.")
+        if not hasattr(cdp, 'frq'):
+            raise RelaxError("The spectrometer frequencies of the experiments have not been set.")
+
+        # Initialise.
+        pcs = []
+        pcs_err = []
+        pcs_weight = []
+        atomic_pos = []
+        temp = []
+        frq = []
+
+        # The PCS data.
+        for align_id in cdp.align_ids:
+            # No RDC or PCS data, so jump to the next alignment.
+            if (hasattr(cdp, 'rdc_ids') and not align_id in cdp.rdc_ids) and (hasattr(cdp, 'pcs_ids') and not align_id in cdp.pcs_ids):
+                continue
+
+            # Append empty arrays to the PCS structures.
+            pcs.append([])
+            pcs_err.append([])
+            pcs_weight.append([])
+
+            # Get the temperature for the PCS constant.
+            if cdp.temperature.has_key(align_id):
+                temp.append(cdp.temperature[align_id])
+            else:
+                temp.append(0.0)
+
+            # Get the spectrometer frequency in Tesla units for the PCS constant.
+            if cdp.frq.has_key(align_id):
+                frq.append(cdp.frq[align_id] * 2.0 * pi / g1H)
+            else:
+                frq.append(1e-10)
+
+            # Spin loop.
+            j = 0
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Skip spins without PCS data.
+                if not hasattr(spin, 'pcs'):
+                    # Add rows of None if other alignment data exists.
+                    if hasattr(spin, 'rdc'):
+                        pcs[-1].append(None)
+                        pcs_err[-1].append(None)
+                        pcs_weight[-1].append(None)
+                        j = j + 1
+
+                    # Jump to the next spin.
+                    continue
+
+                # Append the PCSs to the list.
+                if align_id in spin.pcs.keys():
+                    if sim_index != None:
+                        pcs[-1].append(spin.pcs_sim[align_id][sim_index])
+                    else:
+                        pcs[-1].append(spin.pcs[align_id])
+                else:
+                    pcs[-1].append(None)
+
+                # Append the PCS errors.
+                if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                    pcs_err[-1].append(spin.pcs_err[align_id])
+                else:
+                    pcs_err[-1].append(None)
+
+                # Append the weight.
+                if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
+                    pcs_weight[-1].append(spin.pcs_weight[align_id])
+                else:
+                    pcs_weight[-1].append(1.0)
+
+                # Spin index.
+                j = j + 1
+
+        # Convert to numpy objects.
+        pcs = array(pcs, float64)
+        pcs_err = array(pcs_err, float64)
+        pcs_weight = array(pcs_weight, float64)
+
+        # Convert the PCS from ppm to no units.
+        pcs = pcs * 1e-6
+        pcs_err = pcs_err * 1e-6
+
+        # Store the atomic positions.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Only use spins with PCS data.
+            if not hasattr(spin, 'pcs'):
+                continue
+
+            # The position list.
+            if type(spin.pos[0]) in [float, float64]:
+                atomic_pos.append(spin.pos)
+            else:
+                raise RelaxError("The spin '%s' contains more than one atomic position %s." % (spin_id, spin.pos))
+
+        # Convert to numpy objects.
+        atomic_pos = array(atomic_pos, float64)
+
+        # Return the data structures.
+        return pcs, pcs_err, pcs_weight, atomic_pos, array(cdp.paramagnetic_centre), temp, frq
+
+
+    def _minimise_setup_rdcs(self, sim_index=None):
+        """Set up the data structures for optimisation using RDCs as base data sets.
+
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for using RDCs as the base data for optimisation.  These include:
+                                - rdc, the RDC values.
+                                - rdc_err, the RDC errors.
+                                - rdc_weight, the RDC weights.
+                                - vectors, the heteronucleus to proton vectors.
+                                - rdc_const, the dipolar constants.
+        @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
+        """
+
+        # Initialise.
+        rdc = []
+        rdc_err = []
+        rdc_weight = []
+        unit_vect = []
+        rdc_const = []
+
+        # The unit vectors and RDC constants.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Only use spins with RDC data.
+            if not hasattr(spin, 'rdc'):
+                continue
+
+            # RDC data exists but the XH bond vectors are missing?
+            if not hasattr(spin, 'xh_vect') and not hasattr(spin, 'bond_vect'):
+                warn(RelaxWarning("RDC data exists but the XH bond vectors are missing, skipping spin %s." % spin_id))
+                continue
+
+            # Append the RDC and XH vectors to the lists.
+            if hasattr(spin, 'xh_vect'):
+                vect = getattr(spin, 'xh_vect')
+            else:
+                vect = getattr(spin, 'bond_vect')
+
+            # Add the bond vectors.
+            if len(vect) == 1:
+                unit_vect.append(vect)
+            else:
+                raise RelaxError("The spin '%s' contains more than one XH bond vector %s." % (spin_id, vect))
+
+            # Checks.
+            if not hasattr(spin, 'heteronucleus'):
+                raise RelaxSpinTypeError
+            if not hasattr(spin, 'proton'):
+                raise RelaxProtonTypeError
+            if not hasattr(spin, 'bond_length'):
+                raise RelaxNoValueError("bond length")
+
+            # Gyromagnetic ratios.
+            gx = return_gyromagnetic_ratio(spin.heteronucleus)
+            gh = return_gyromagnetic_ratio(spin.proton)
+
+            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+            rdc_const.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.bond_length))
+
+        # The RDC data.
+        for align_id in cdp.align_ids:
+            # No RDC data, so jump to the next alignment.
+            if (hasattr(cdp, 'rdc_ids') and not align_id in cdp.rdc_ids):
+                continue
+
+            # Append empty arrays to the RDC structures.
+            rdc.append([])
+            rdc_err.append([])
+            rdc_weight.append([])
+
+            # Spin loop.
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Skip spins without RDC data or XH bond vectors.
+                if not hasattr(spin, 'rdc') or (not hasattr(spin, 'members') and not hasattr(spin, 'xh_vect') and not hasattr(spin, 'bond_vect')):
+                    continue
+
+                # Defaults of None.
+                value = None
+                error = None
+
+                # The RDC.
+                if sim_index != None:
+                    value = spin.rdc_sim[align_id][sim_index]
+                else:
+                    value = spin.rdc[align_id]
+
+                # The error.
+                if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+                    error = spin.rdc_err[align_id]
+
+                # Append the RDCs to the list.
+                rdc[-1].append(value)
+
+                # Append the RDC errors.
+                rdc_err[-1].append(error)
+
+                # Append the weight.
+                if hasattr(spin, 'rdc_weight') and align_id in spin.rdc_weight.keys():
+                    rdc_weight[-1].append(spin.rdc_weight[align_id])
+                else:
+                    rdc_weight[-1].append(1.0)
+
+        # Convert to numpy objects.
+        rdc = array(rdc, float64)
+        rdc_err = array(rdc_err, float64)
+        rdc_weight = array(rdc_weight, float64)
+        unit_vect = array(unit_vect, float64)
+        rdc_const = array(rdc_const, float64)
+
+        # Return the data structures.
+        return rdc, rdc_err, rdc_weight, unit_vect, rdc_const
+
+
     def _minimise_setup_tensors(self, sim_index=None):
         """Set up the data structures for optimisation using alignment tensors as base data sets.
 
-        @keyword sim_index: The simulation index.  This should be None if normal optimisation is
-                            desired.
+        @keyword sim_index: The simulation index.  This should be None if normal optimisation is desired.
         @type sim_index:    None or int
-        @return:            The assembled data structures for using alignment tensors as the base
-                            data for optimisation.  These include:
+        @return:            The assembled data structures for using alignment tensors as the base data for optimisation.  These include:
                                 - full_tensors, the full tensors as concatenated arrays.
                                 - red_tensors, the reduced tensors as concatenated arrays.
                                 - red_err, the reduced tensor errors as concatenated arrays.
@@ -536,6 +862,53 @@ class Frame_order(API_base, API_common):
 
         # Return the data structures.
         return full_tensors, red_tensors, red_err, full_in_ref_frame
+
+
+    def _param_num(self):
+        """Determine the number of parameters in the model.
+
+        @return:    The number of model parameters.
+        @rtype:     int
+        """
+
+        # Init.
+        num = 0
+
+        # Determine the data type.
+        data_types = self._base_data_types()
+
+        # The pivot point.
+        if 'pcs' in data_types:
+            num += 3
+
+        # Average domain position parameters.
+        if cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+            num += 2
+        else:
+            num += 3
+
+        # Frame order eigenframe - the full frame.
+        if cdp.model in ['iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            num += 3
+
+        # Frame order eigenframe - the isotropic cone axis.
+        elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
+            num += 2
+
+        # Cone parameters - pseudo-elliptic cone parameters.
+        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            num += 2
+
+        # Cone parameters - single isotropic angle or order parameter.
+        elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            num += 1
+
+        # Cone parameters - torsion angle.
+        if cdp.model in ['rotor', 'line', 'iso cone', 'pseudo-ellipse']:
+            num += 1
+
+        # Return the number.
+        return num
 
 
     def _pivot(self, pivot=None):
@@ -621,6 +994,50 @@ class Frame_order(API_base, API_common):
 
             # Initialise the new tensor.
             align_tensor.init(tensor=name, params=(target_fn.red_tensors_bc[5*i + 0], target_fn.red_tensors_bc[5*i + 1], target_fn.red_tensors_bc[5*i + 2], target_fn.red_tensors_bc[5*i + 3], target_fn.red_tensors_bc[5*i + 4]), param_types=2)
+
+
+    def _target_fn_setup(self, sim_index=None, scaling=True):
+        """Initialise the target function for optimisation or direct calculation.
+
+        @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:        None or int
+        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
+        @type scaling:          bool
+        """
+
+        # Simulated annealing constraints.
+        #lower, upper = self._assemble_limit_arrays()
+
+        # Assemble the parameter vector.
+        param_vector = self._assemble_param_vector(sim_index=sim_index)
+
+        # Determine if alignment tensors or RDCs are to be used.
+        data_types = self._base_data_types()
+
+        # Diagonal scaling.
+        scaling_matrix = None
+        if len(param_vector):
+            scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
+            param_vector = dot(inv(scaling_matrix), param_vector)
+
+        # Get the data structures for optimisation using the tensors as base data sets.
+        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index)
+
+        # Get the data structures for optimisation using PCSs as base data sets.
+        pcs, pcs_err, pcs_weight, pcs_atoms, paramag_centre, temp, frq = None, None, None, None, None, None, None
+        if 'pcs' in data_types:
+            pcs, pcs_err, pcs_weight, pcs_atoms, paramag_centre, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
+
+        # Get the data structures for optimisation using RDCs as base data sets.
+        rdcs, rdc_err, rdc_weight, rdc_vect, rdc_dj = None, None, None, None, None
+        if 'rdc' in data_types:
+            rdcs, rdc_err, rdc_weight, rdc_vect, rdc_dj = self._minimise_setup_rdcs(sim_index=sim_index)
+
+        # Set up the optimisation function.
+        target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, rdc_dj=rdc_dj, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, pcs_atoms=pcs_atoms, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix)
+
+        # Return the data.
+        return target, param_vector, data_types, scaling_matrix
 
 
     def _tensor_loop(self, red=False):
@@ -724,6 +1141,14 @@ class Frame_order(API_base, API_common):
         # Catch chi-squared values of NaN.
         if isNaN(func):
             raise RelaxNaNError('chi-squared')
+
+        # Pivot point.
+        if 'pcs' in self._base_data_types():
+            # Store the pivot.
+            cdp.pivot = param_vector[:3]
+
+            # Then remove it from the params.
+            param_vector = param_vector[3:]
 
         # Unpack the parameters.
         ave_pos_alpha, ave_pos_beta, ave_pos_gamma = None, None, None
@@ -1247,6 +1672,9 @@ class Frame_order(API_base, API_common):
         @type inc:              array of int
         """
 
+        # Set up the target function for direct calculation.
+        model, param_vector, data_types, scaling_matrix = self._target_fn_setup(sim_index=sim_index, scaling=scaling)
+
         # Constraints not implemented yet.
         if constraints:
             # Turn the constraints off.
@@ -1260,31 +1688,19 @@ class Frame_order(API_base, API_common):
             # Throw a warning.
             warn(RelaxWarning("Constraints are as of yet not implemented - turning this option off."))
 
-        # Simulated annealing constraints.
-        lower, upper = self._assemble_limit_arrays()
-
-        # Assemble the parameter vector.
-        param_vector = self._assemble_param_vector()
-
-        # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index)
-
-        # Set up the optimisation function.
-        target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
-
         # Grid search.
         if search('^[Gg]rid', min_algor):
-            results = grid_point_array(func=target.func, args=(), points=min_options, verbosity=verbosity)
+            results = grid_point_array(func=model.func, args=(), points=min_options, verbosity=verbosity)
 
         # Minimisation.
         else:
-            results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, l=lower, u=upper, full_output=True, print_flag=verbosity)
+            results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, l=lower, u=upper, full_output=True, print_flag=verbosity)
 
         # Unpack the results.
         self._unpack_opt_results(results, sim_index)
 
         # Store the back-calculated tensors.
-        self._store_bc_tensors(target)
+        self._store_bc_tensors(model)
 
 
 
