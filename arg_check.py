@@ -442,7 +442,7 @@ def is_none(arg, name):
         return
 
     # The RelaxError.
-    raise RelaxNoneError(name, arg)
+    raise RelaxNoneError(name)
 
 
 def is_num(arg, name, can_be_none=False):
