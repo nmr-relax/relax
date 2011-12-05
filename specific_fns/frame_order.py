@@ -469,6 +469,31 @@ class Frame_order(API_base, API_common):
         pdb_file.close()
 
 
+    def _domain_moving(self):
+        """Return the domain ID of the moving domain.
+
+        @return:    The domain ID of the moving domain.
+        @rtype:     str
+        """
+
+        # Check that the domain is defined.
+        if not hasattr(cdp, 'domain'):
+            raise RelaxError("No domains have been defined.  Please use the domain user function.")
+
+        # Only support for 2 domains.
+        if len(cdp.domain.keys()) > 2:
+            raise RelaxError("Only two domains are supported in the frame order analysis.")
+
+        # Loop over the domains.
+        for id in cdp.domain.keys():
+            # Reference domain.
+            if id == cdp.ref_domain:
+                continue
+
+            # Return the ID.
+            return id
+
+
     def _domain_to_pdb(self, domain=None, pdb=None):
         """Match domains to PDB files.
 
@@ -597,9 +622,10 @@ class Frame_order(API_base, API_common):
             else:
                 frq.append(1e-10)
 
-            # Spin loop.
+            # Spin loop over the domain.
+            id = cdp.domain[self._domain_moving()]
             j = 0
-            for spin in spin_loop():
+            for spin in spin_loop(id):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -746,8 +772,9 @@ class Frame_order(API_base, API_common):
             rdc_err.append([])
             rdc_weight.append([])
 
-            # Spin loop.
-            for spin in spin_loop():
+            # Spin loop over the domain.
+            id = cdp.domain[self._domain_moving()]
+            for spin in spin_loop(id):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
