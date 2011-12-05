@@ -208,23 +208,17 @@ class Frame_order(API_base, API_common):
         @rtype:     numpy array
         """
 
-        # Get the parameter vector.
-        param_vector = self._assemble_param_vector()
-
-        # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
-
-        # Set up the optimisation function.
-        target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
+        # Set up the target function for direct calculation.
+        model, param_vector, data_types, scaling_matrix = self._target_fn_setup()
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
-        target.func(param_vector)
+        model.func(param_vector)
 
         # Store the back-calculated tensors.
-        self._store_bc_tensors(target)
+        self._store_bc_data(model)
 
         # Return the reduced tensors.
-        return target.red_tensors_bc
+        return model.red_tensors_bc
 
 
     def _base_data_types(self):
@@ -1014,8 +1008,8 @@ class Frame_order(API_base, API_common):
         self._update_model()
 
 
-    def _store_bc_tensors(self, target_fn):
-        """Store the back-calculated reduced alignment tensors.
+    def _store_bc_data(self, target_fn):
+        """Store the back-calculated data.
 
         @param target_fn:   The frame-order target function class.
         @type target_fn:    class instance
@@ -1344,7 +1338,7 @@ class Frame_order(API_base, API_common):
         cdp.chi2 = chi2
 
         # Store the back-calculated tensors.
-        self._store_bc_tensors(model)
+        self._store_bc_data(model)
 
 
     def create_mc_data(self, data_id=None):
@@ -1741,7 +1735,7 @@ class Frame_order(API_base, API_common):
         self._unpack_opt_results(results, sim_index)
 
         # Store the back-calculated tensors.
-        self._store_bc_tensors(model)
+        self._store_bc_data(model)
 
 
 
