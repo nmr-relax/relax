@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2011 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,44 +20,22 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the structural domain related functions."""
 
-__all__ = [ 'align_tensor',
-            'angles',
-            'bmrb',
-            'dasha',
-            'diffusion_tensor',
-            'domain',
-            'eliminate',
-            'exp_info',
-            'fix',
-            'frame_order',
-            'frq',
-            'grace',
-            'minimise',
-            'model_selection',
-            'mol_res_spin',
-            'molmol',
-            'monte_carlo',
-            'noesy',
-            'palmer',
-            'paramag',
-            'pcs',
-            'pdc',
-            'pipes',
-            'pymol_control',
-            'rdc',
-            'relax_data',
-            'relax_re',
-            'reset',
-            'results',
-            'selection',
-            'sequence',
-            'spectrum',
-            'state',
-            'structure',
-            'sys_info',
-            'temperature',
-            'value',
-            'vmd',
-            'xplor'
-]
+
+def define(id=None, spin_id=None):
+    """Define the domain.
+
+    @keyword id:        The domain ID string.
+    @type id:           str
+    @keyword spin_id:   The spin ID string for all atoms of the domain.
+    @type spin_id:      str
+    """
+
+    # Initialise the data structure if needed.
+    if not hasattr(cdp, 'domain'):
+        cdp.domain = {}
+
+    # Store the domain info.
+    cdp.domain[id] = spin_id
