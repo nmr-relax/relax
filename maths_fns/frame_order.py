@@ -109,7 +109,7 @@ class Frame_order:
         self.pivot_opt = pivot_opt
 
         # Tensor setup.
-        self.__init_tensors()
+        self._init_tensors()
 
         # Scaling initialisation.
         self.scaling_matrix = scaling_matrix
@@ -146,14 +146,9 @@ class Frame_order:
         elif self.pcs_flag:
             self.num_align = len(pcs)
 
-        # Alignment tensor function and gradient matrices.
-        self.A = zeros((self.num_align, 3, 3), float64)
-        self.dA = zeros((5, 3, 3), float64)
-
         # Set up the alignment data.
         self.num_align_params = 0
         for i in range(self.num_align):
-            to_tensor(self.A[i], self.full_tensors[5*i:5*i+5])
             self.num_align_params += 5
 
         # PCS errors.
@@ -280,7 +275,7 @@ class Frame_order:
             self.func = self.func_free_rotor
 
 
-    def __init_tensors(self):
+    def _init_tensors(self):
         """Set up isotropic cone optimisation against the alignment tensor data."""
 
         # Some checks.
@@ -291,6 +286,7 @@ class Frame_order:
 
         # Tensor set up.
         self.num_tensors = len(self.full_tensors) / 5
+        self.A = zeros((self.num_tensors, 3, 3), float64)
         self.red_tensors_bc = zeros(self.num_tensors*5, float64)
 
         # The rotation to the Frame Order eigenframe.
@@ -564,7 +560,7 @@ class Frame_order:
             for j in xrange(self.num_spins):
                 # The back calculated RDC.
                 if self.rdc_flag and not self.missing_rdc[i, j]:
-                    self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.red_tensors_bc[i])
+                    self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A[i])
 
                 # The back calculated PCS.
                 if self.pcs_flag and not self.missing_pcs[i, j]:
@@ -619,11 +615,11 @@ class Frame_order:
 
             # Rotate the tensor (normal R.X.RT rotation).
             if self.full_in_ref_frame[i]:
-                tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
+                self.A[i] = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
 
             # Rotate the tensor (inverse RT.X.R rotation).
             else:
-                tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
+                self.A[i] = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
 
             # Convert the tensor back to 5D, rank-1 form, as the back-calculated reduced tensor.
-            to_5D(self.red_tensors_bc[index1:index2], tensor_3D)
+            to_5D(self.red_tensors_bc[index1:index2], self.A[i])
