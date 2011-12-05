@@ -943,6 +943,10 @@ class Frame_order(API_base, API_common):
         # Test if the current data pipe exists.
         pipes.test()
 
+        # Check that the domain is defined.
+        if not hasattr(cdp, 'domain') or domain not in cdp.domain.keys():
+            raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % domain)
+
         # Test if the reference domain exists.
         exists = False
         for tensor_cont in cdp.align_tensors:
