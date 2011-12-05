@@ -54,6 +54,7 @@ from status import Status; status = Status()
 
 # User functions.
 from angles import Angles
+from domain import Domain
 from dx import OpenDX
 from eliminate import Eliminate
 from fix import Fix
@@ -168,6 +169,7 @@ class Interpreter:
 
         # Initialise the user functions (those not in user function classes)
         angles = Angles(self._exec_info)
+        domain = Domain(self._exec_info)
         eliminate = Eliminate(self._exec_info)
         fix = Fix(self._exec_info)
         reset = Reset(self._exec_info)
@@ -180,6 +182,7 @@ class Interpreter:
         # Place the user functions in the local namespace.
         objects['angle_diff_frame'] = angles.angle_diff_frame
         objects['calc'] = minimisation.calc
+        objects['domain'] = domain.domain
         objects['eliminate'] = eliminate.eliminate
         objects['fix'] = fix.fix
         objects['grid_search'] = minimisation.grid_search
