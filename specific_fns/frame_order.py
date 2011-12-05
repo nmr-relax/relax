@@ -944,8 +944,8 @@ class Frame_order(API_base, API_common):
         pipes.test()
 
         # Check that the domain is defined.
-        if not hasattr(cdp, 'domain') or domain not in cdp.domain.keys():
-            raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % domain)
+        if not hasattr(cdp, 'domain') or ref not in cdp.domain.keys():
+            raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % ref)
 
         # Test if the reference domain exists.
         exists = False
