@@ -716,7 +716,7 @@ class Frame_order(API_base, API_common):
 
             # Add the bond vectors.
             if len(vect) == 1:
-                unit_vect.append(vect)
+                unit_vect.append(vect[0])
             else:
                 raise RelaxError("The spin '%s' contains more than one XH bond vector %s." % (spin_id, vect))
 
@@ -874,6 +874,9 @@ class Frame_order(API_base, API_common):
         # Init.
         num = 0
 
+        # Update the model if needed.
+        self._update_model()
+
         # Determine the data type.
         data_types = self._base_data_types()
 
@@ -1029,12 +1032,17 @@ class Frame_order(API_base, API_common):
             pcs, pcs_err, pcs_weight, pcs_atoms, paramag_centre, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
 
         # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, rdc_weight, rdc_vect, rdc_dj = None, None, None, None, None
+        rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const = None, None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, rdc_weight, rdc_vect, rdc_dj = self._minimise_setup_rdcs(sim_index=sim_index)
+            rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const = self._minimise_setup_rdcs(sim_index=sim_index)
+
+        # Pivot optimisation.
+        pivot_opt = False
+        if 'pcs' in data_types:
+            pivot_opt = True
 
         # Set up the optimisation function.
-        target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, rdc_dj=rdc_dj, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, pcs_atoms=pcs_atoms, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix)
+        target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, pcs_atoms=pcs_atoms, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, pivot_opt=pivot_opt)
 
         # Return the data.
         return target, param_vector, data_types, scaling_matrix
@@ -1071,47 +1079,50 @@ class Frame_order(API_base, API_common):
     def _update_model(self):
         """Update the model parameters as necessary."""
 
-        # Initialise the list of model parameters.
-        if not hasattr(cdp, 'params'):
-            cdp.params = []
+        # Re-initialise the list of model parameters.
+        cdp.params = []
 
-        # Build the parameter name list.
-        if not len(cdp.params):
-            # The tensor rotation, or average domain position.
-            if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
-                cdp.params.append('ave_pos_alpha')
-            cdp.params.append('ave_pos_beta')
-            cdp.params.append('ave_pos_gamma')
+        # The pivot parameters.
+        if 'pcs' in self._base_data_types():
+            cdp.params.append('pivot_x')
+            cdp.params.append('pivot_y')
+            cdp.params.append('pivot_z')
 
-            # Frame order eigenframe - the full frame.
-            if cdp.model in ['iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-                cdp.params.append('eigen_alpha')
-                cdp.params.append('eigen_beta')
-                cdp.params.append('eigen_gamma')
+        # The tensor rotation, or average domain position.
+        if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+            cdp.params.append('ave_pos_alpha')
+        cdp.params.append('ave_pos_beta')
+        cdp.params.append('ave_pos_gamma')
 
-            # Frame order eigenframe - the isotropic cone axis.
-            elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
-                cdp.params.append('axis_theta')
-                cdp.params.append('axis_phi')
+        # Frame order eigenframe - the full frame.
+        if cdp.model in ['iso cone', 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            cdp.params.append('eigen_alpha')
+            cdp.params.append('eigen_beta')
+            cdp.params.append('eigen_gamma')
 
-            # Cone parameters - pseudo-elliptic cone parameters.
-            if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-                cdp.params.append('cone_theta_x')
-                cdp.params.append('cone_theta_y')
+        # Frame order eigenframe - the isotropic cone axis.
+        elif cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
+            cdp.params.append('axis_theta')
+            cdp.params.append('axis_phi')
 
-            # Cone parameters - single isotropic angle or order parameter.
-            elif cdp.model in ['iso cone', 'iso cone, torsionless']:
-                cdp.params.append('cone_theta')
-            elif cdp.model in ['iso cone, free rotor']:
-                cdp.params.append('cone_s1')
+        # Cone parameters - pseudo-elliptic cone parameters.
+        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+            cdp.params.append('cone_theta_x')
+            cdp.params.append('cone_theta_y')
 
-            # Cone parameters - torsion angle.
-            if cdp.model in ['rotor', 'line', 'iso cone', 'pseudo-ellipse']:
-                cdp.params.append('cone_sigma_max')
+        # Cone parameters - single isotropic angle or order parameter.
+        elif cdp.model in ['iso cone', 'iso cone, torsionless']:
+            cdp.params.append('cone_theta')
+        elif cdp.model in ['iso cone, free rotor']:
+            cdp.params.append('cone_s1')
+
+        # Cone parameters - torsion angle.
+        if cdp.model in ['rotor', 'line', 'iso cone', 'pseudo-ellipse']:
+            cdp.params.append('cone_sigma_max')
 
         # Initialise the parameters in the current data pipe.
         for param in cdp.params:
-            if not hasattr(cdp, param):
+            if not param in ['pivot_x', 'pivot_y', 'pivot_z'] and not hasattr(cdp, param):
                 setattr(cdp, param, 0.0)
 
 
@@ -1458,21 +1469,15 @@ class Frame_order(API_base, API_common):
     def grid_search(self, lower=None, upper=None, inc=None, constraints=False, verbosity=0, sim_index=None):
         """Perform a grid search.
 
-        @keyword lower:         The lower bounds of the grid search which must be equal to the
-                                number of parameters in the model.
+        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
         @type lower:            list of float
-        @keyword upper:         The upper bounds of the grid search which must be equal to the
-                                number of parameters in the model.
+        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
         @type upper:            list of float
-        @keyword inc:           The increments for each dimension of the space for the grid search.
-                                The number of elements in the array must equal to the number of
-                                parameters in the model.
+        @keyword inc:           The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
         @type inc:              int or list of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating
-                                parts of the grid).  If False, no constraints are used.
+        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
         @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher
-                                the value, the greater the verbosity.
+        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:        int
         @keyword sim_index:     The Monte Carlo simulation index.
         @type sim_index:        None or int
@@ -1483,7 +1488,7 @@ class Frame_order(API_base, API_common):
             raise RelaxNoModelError('Frame Order')
 
         # The number of parameters.
-        n = len(cdp.params)
+        n = self._param_num()
 
         # If inc is an int, convert it into an array of that value.
         if isinstance(inc, int):
@@ -1512,6 +1517,17 @@ class Frame_order(API_base, API_common):
             # Reset.
             dist_type = None
             end_point = True
+
+            # The pivot point.
+            if cdp.params[i] == 'pivot_x':
+                lower = cdp.pivot[0] - 10.0
+                upper = cdp.pivot[0] + 10.0
+            elif cdp.params[i] == 'pivot_y':
+                lower = cdp.pivot[1] - 10.0
+                upper = cdp.pivot[1] + 10.0
+            elif cdp.params[i] == 'pivot_z':
+                lower = cdp.pivot[2] - 10.0
+                upper = cdp.pivot[2] + 10.0
 
             # Linear angle grid from 0 to one inc before 2pi.
             if cdp.params[i] in ['ave_pos_alpha', 'ave_pos_gamma', 'eigen_alpha', 'eigen_gamma', 'axis_phi']:
@@ -1694,7 +1710,7 @@ class Frame_order(API_base, API_common):
 
         # Minimisation.
         else:
-            results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, l=lower, u=upper, full_output=True, print_flag=verbosity)
+            results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
 
         # Unpack the results.
         self._unpack_opt_results(results, sim_index)
