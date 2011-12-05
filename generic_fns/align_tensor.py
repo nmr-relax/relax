@@ -1798,6 +1798,10 @@ def set_domain(tensor=None, domain=None):
     @type domain:   str
     """
 
+    # Check that the domain is defined.
+    if not hasattr(cdp, 'domain') or domain not in cdp.domain.keys():
+        raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % domain)
+
     # Loop over the tensors.
     match = False
     for tensor_cont in cdp.align_tensors:
