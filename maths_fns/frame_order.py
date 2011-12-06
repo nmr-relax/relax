@@ -33,9 +33,9 @@ from float import isNaN
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_rotor
 from maths_fns.rotation_matrix import euler_to_R_zyz as euler_to_R
-from pcs import pcs_tensor
+from physical_constants import pcs_constant
 from rdc import rdc_tensor
 from relax_errors import RelaxError
 
@@ -133,11 +133,10 @@ class Frame_order:
             raise RelaxError("The pcs_atoms argument " + repr(pcs_atoms) + " must be supplied.")
 
         # The total number of spins.
-        self.num_spins = 0
         if self.rdc_flag:
-            self.num_spins = len(rdcs[0])
-        elif self.pcs_flag:
-            self.num_spins = len(pcs[0])
+            self.num_rdc = len(rdcs[0])
+        if self.pcs_flag:
+            self.num_pcs = len(pcs[0])
 
         # The total number of alignments.
         self.num_align = 0
@@ -147,9 +146,8 @@ class Frame_order:
             self.num_align = len(pcs)
 
         # Set up the alignment data.
-        self.num_align_params = 0
         for i in range(self.num_align):
-            self.num_align_params += 5
+            to_tensor(self.A_3D[i], self.full_tensors[5*i:5*i+5])
 
         # PCS errors.
         if self.pcs_flag:
@@ -162,7 +160,7 @@ class Frame_order:
                 self.pcs_error = pcs_errors
             else:
                 # Missing errors (the values need to be small, close to ppm units, so the chi-squared value is comparable to the RDC).
-                self.pcs_error = 0.03 * 1e-6 * ones((self.num_align, self.num_spins), float64)
+                self.pcs_error = 0.03 * 1e-6 * ones((self.num_align, self.num_pcs), float64)
 
         # RDC errors.
         if self.rdc_flag:
@@ -175,20 +173,21 @@ class Frame_order:
                 self.rdc_error = rdc_errors
             else:
                 # Missing errors.
-                self.rdc_error = ones((self.num_align, self.num_spins), float64)
+                self.rdc_error = ones((self.num_align, self.num_rdc), float64)
 
         # Missing data matrices (RDC).
         if self.rdc_flag:
-            self.missing_rdc = zeros((self.num_align, self.num_spins), float64)
+            self.missing_rdc = zeros((self.num_align, self.num_rdc), float64)
 
         # Missing data matrices (PCS).
         if self.pcs_flag:
-            self.missing_pcs = zeros((self.num_align, self.num_spins), float64)
+            self.missing_pcs = zeros((self.num_align, self.num_pcs), float64)
 
         # Clean up problematic data and put the weights into the errors..
         if self.rdc_flag or self.pcs_flag:
             for i in xrange(self.num_align):
-                for j in xrange(self.num_spins):
+                # Loop over the RDCs.
+                for j in xrange(self.num_rdc):
                     if self.rdc_flag:
                         if isNaN(self.rdc[i, j]):
                             # Set the flag.
@@ -203,6 +202,12 @@ class Frame_order:
                             # Change the weight to one.
                             rdc_weights[i, j] = 1.0
 
+                    # The RDC weights.
+                    if self.rdc_flag:
+                        self.rdc_error[i, j] = self.rdc_error[i, j] / sqrt(rdc_weights[i, j])
+
+                # Loop over the PCSs.
+                for j in xrange(self.num_pcs):
                     if self.pcs_flag:
                         if isNaN(self.pcs[i, j]):
                             # Set the flag.
@@ -217,10 +222,6 @@ class Frame_order:
                             # Change the weight to one.
                             pcs_weights[i, j] = 1.0
 
-                    # The RDC weights.
-                    if self.rdc_flag:
-                        self.rdc_error[i, j] = self.rdc_error[i, j] / sqrt(rdc_weights[i, j])
-
                     # The PCS weights.
                     if self.pcs_flag:
                         self.pcs_error[i, j] = self.pcs_error[i, j] / sqrt(pcs_weights[i, j])
@@ -230,23 +231,24 @@ class Frame_order:
         if self.pcs_flag:
             # Initialise the data structures.
             self.paramag_unit_vect = zeros(pcs_atoms.shape, float64)
-            self.paramag_dist = zeros((self.num_spins, self.N), float64)
-            self.pcs_const = zeros((self.num_align, self.num_spins, self.N), float64)
+            self.paramag_dist = zeros(self.num_pcs, float64)
+            self.pcs_const = zeros(self.num_align, float64)
             if self.paramag_centre == None:
                 self.paramag_centre = zeros(3, float64)
 
-            # Set up the paramagnetic info.
-            self.paramag_info()
+            # Set up the paramagnetic constant (without the interatomic distance).
+            for i in range(self.num_align):
+                self.pcs_const[i] = pcs_constant(self.temp[i], self.frq[i], 1.0)
 
         # PCS function, gradient, and Hessian matrices.
-        self.pcs_theta = zeros((self.num_align, self.num_spins), float64)
-        self.dpcs_theta = zeros((self.total_num_params, self.num_align, self.num_spins), float64)
-        self.d2pcs_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins), float64)
+        self.pcs_theta = zeros((self.num_align, self.num_pcs), float64)
+        self.dpcs_theta = zeros((self.total_num_params, self.num_align, self.num_pcs), float64)
+        self.d2pcs_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_pcs), float64)
 
         # RDC function, gradient, and Hessian matrices.
-        self.rdc_theta = zeros((self.num_align, self.num_spins), float64)
-        self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_spins), float64)
-        self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins), float64)
+        self.rdc_theta = zeros((self.num_align, self.num_rdc), float64)
+        self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_rdc), float64)
+        self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_rdc), float64)
 
         # The target function aliases.
         if model == 'pseudo-ellipse':
@@ -286,11 +288,13 @@ class Frame_order:
 
         # Tensor set up.
         self.num_tensors = len(self.full_tensors) / 5
-        self.A = zeros((self.num_tensors, 3, 3), float64)
-        self.red_tensors_bc = zeros(self.num_tensors*5, float64)
+        self.A_3D = zeros((self.num_tensors, 3, 3), float64)
+        self.A_3D_bc = zeros((self.num_tensors, 3, 3), float64)
+        self.A_5D_bc = zeros(self.num_tensors*5, float64)
 
         # The rotation to the Frame Order eigenframe.
         self.rot = zeros((3, 3), float64)
+        self.rot2 = zeros((3, 3), float64)
         self.tensor_3D = zeros((3, 3), float64)
 
         # The cone axis storage and molecular frame z-axis.
@@ -322,7 +326,7 @@ class Frame_order:
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
 
 
     def func_iso_cone_elements(self, params):
@@ -385,7 +389,7 @@ class Frame_order:
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
 
 
     def func_iso_cone_free_rotor(self, params):
@@ -409,7 +413,7 @@ class Frame_order:
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
 
 
     def func_iso_cone_torsionless(self, params):
@@ -433,7 +437,7 @@ class Frame_order:
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
 
 
     def func_pseudo_ellipse(self, params):
@@ -455,7 +459,7 @@ class Frame_order:
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
 
 
     def func_pseudo_ellipse_free_rotor(self, params):
@@ -477,7 +481,7 @@ class Frame_order:
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
 
 
     def func_pseudo_ellipse_torsionless(self, params):
@@ -499,7 +503,7 @@ class Frame_order:
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
 
 
     def func_rigid(self, params):
@@ -520,7 +524,7 @@ class Frame_order:
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma)
 
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
 
 
     def func_rotor(self, params):
@@ -556,15 +560,17 @@ class Frame_order:
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
-            # Loop over the spin systems j.
-            for j in xrange(self.num_spins):
+            # Loop over the RDCs.
+            for j in xrange(self.num_rdc):
                 # The back calculated RDC.
                 if self.rdc_flag and not self.missing_rdc[i, j]:
-                    self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A[i])
+                    self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A_3D_bc[i])
 
+            # Loop over the PCSs.
+            for j in xrange(self.num_pcs):
                 # The back calculated PCS.
                 if self.pcs_flag and not self.missing_pcs[i, j]:
-                    self.pcs_theta[i, j] = pcs_tensor(self.pcs_const[i, j], self.pcs_unit_vect[j], self.red_tensors_bc[i])
+                    self.pcs_theta[i, j] = pcs_numeric_int_rotor(axis_theta=axis_theta, axis_phi=axis_phi, sigma_max=sigma_max, c=self.pcs_const[i], atom_pos=self.pcs_atoms[j], pivot=pivot, ln_pos=self.paramag_centre, A=self.A_3D[i], ave_pos_R=self.rot, R=)
 
             # Calculate and sum the single alignment chi-squared value (for the RDC).
             if self.rdc_flag:
@@ -603,10 +609,10 @@ class Frame_order:
             # Reduction.
             if daeg != None:
                 # Reduce the tensor.
-                reduce_alignment_tensor(daeg, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
+                reduce_alignment_tensor(daeg, self.full_tensors[index1:index2], self.A_5D_bc[index1:index2])
 
                 # Convert the reduced tensor to 3D, rank-2 form.
-                to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
+                to_tensor(self.tensor_3D, self.A_5D_bc[index1:index2])
 
             # No reduction:
             else:
@@ -615,11 +621,11 @@ class Frame_order:
 
             # Rotate the tensor (normal R.X.RT rotation).
             if self.full_in_ref_frame[i]:
-                self.A[i] = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
+                self.A_3D_bc[i] = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
 
             # Rotate the tensor (inverse RT.X.R rotation).
             else:
-                self.A[i] = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
+                self.A_3D_bc[i] = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
 
             # Convert the tensor back to 5D, rank-1 form, as the back-calculated reduced tensor.
-            to_5D(self.red_tensors_bc[index1:index2], self.A[i])
+            to_5D(self.A_5D_bc[index1:index2], self.A_3D_bc[i])

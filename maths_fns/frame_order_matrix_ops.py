@@ -31,7 +31,7 @@ from math import cos, pi, sin, sqrt
 from numpy import cross, dot, sinc, transpose
 from numpy.linalg import norm
 if dep_check.scipy_module:
-    from scipy.integrate import quad
+    from scipy.integrate import quad, tplquad
 
 # relax module imports.
 from float import isNaN
@@ -1310,6 +1310,98 @@ def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
 
     # The theta integral.
     return 2 - 2*cos(tmax)**3
+
+
+def pcs_numeric_int_rotor(axis_theta=None, axis_phi=None, sigma_max=None, c=None, atom_pos=None, pivot=None, ln_pos=None, A=None, ave_pos_R=None, R=None):
+    """Determine the averaged PCS value via numerical integration.
+
+    @keyword axis_theta:    The rotation axis polar angle.
+    @type axis_theta:       float
+    @keyword axis_phi:      The rotation axis azimuthal angle.
+    @type axis_phi:         float
+    @keyword sigma_max:     The maximum rotor angle.
+    @type sigma_max:        float
+    @keyword c:             The PCS constant (without the interatomic distance).
+    @type c:                float
+    @keyword atom_pos:      The Euclidean position of the atom of interest.
+    @type atom_pos:         numpy rank-1, 3D array
+    @keyword pivot:         The Euclidean position of the pivot of the motion.
+    @type pivot:            numpy rank-1, 3D array
+    @keyword ln_pos:        The Euclidean position of the lanthanide.
+    @type ln_pos:           numpy rank-1, 3D array
+    @keyword A:             The full alignment tensor of the non-moving domain.
+    @type A:                numpy rank-2, 3D array
+    @keyword ave_pos_R:     The rotation matrix for rotating from the reference frame to the average position.
+    @type ave_pos_R:        numpy rank-2, 3D array
+    @keyword R:             The empty rotation matrix for the in-frame rotor motion.
+    @type R:                numpy rank-2, 3D array
+    @return:                The averaged PCS value.
+    @rtype:                 float
+    """
+
+    # Preset the rotation matrix elements.
+    R[0, 2] = 0.0
+    R[1, 2] = 0.0
+    R[2, 0] = 0.0
+    R[2, 1] = 0.0
+    R[2, 2] = 1.0
+
+    # Convert the PCS constant to Angstrom units.
+    c = c * 1e30
+
+    # Perform triple numerical integration.
+    result = quad(pcs_pivot_motion_rotor, -sigma_max, sigma_max, args=(c, atom_pos, pivot, ln_pos, A, R), full_output=1)
+
+    # The surface area normalisation factor.
+    SA = 2.0 * sigma_max
+
+    # Return the value.
+    return result[0] / SA
+
+
+def pcs_pivot_motion_rotor(sigma, c, pN, pPiv, pLn, A, R):
+    """Calculate the PCS value after a pivoted motion for the rotor model.
+
+    @param sigma:   The rotor angle.
+    @type sigma:    float
+    @param c:       The PCS constant (without the interatomic distance).
+    @type c:        float
+    @param pN:      The Euclidean position of the atom of interest.
+    @type pN:       numpy rank-1, 3D array
+    @param pPiv:    The Euclidean position of the pivot of the motion.
+    @type pPiv:     numpy rank-1, 3D array
+    @param pLn:     The Euclidean position of the lanthanide.
+    @type pLn:      numpy rank-1, 3D array
+    @param A:       The full alignment tensor of the non-moving domain.
+    @type A:        numpy rank-2, 3D array
+    @param R:       The empty rotation matrix for the in-frame rotor motion.
+    @type R:        numpy rank-2, 3D array
+    @return:        The PCS value for the changed position.
+    @rtype:         float
+    """
+
+    # The rotation matrix.
+    c_sigma = cos(sigma)
+    s_sigma = sin(sigma)
+    R[0, 0] =  c_sigma
+    R[0, 1] = -s_sigma
+    R[1, 0] =  s_sigma
+    R[1, 1] =  c_sigma
+
+    # Calculate the new vector.
+    vect = dot(transpose(R), (pN - pPiv)) - pLn
+
+    # The vector length.
+    length = norm(vect)
+
+    # The projection.
+    proj = dot(vect, dot(A, vect))
+
+    # The PCS.
+    pcs = c / length**5 * proj
+
+    # Return the value.
+    return pcs
 
 
 def populate_1st_eigenframe_iso_cone(matrix, angle):

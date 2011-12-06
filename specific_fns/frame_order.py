@@ -218,7 +218,7 @@ class Frame_order(API_base, API_common):
         self._store_bc_data(model)
 
         # Return the reduced tensors.
-        return model.red_tensors_bc
+        return model.A_5D_bc
 
 
     def _base_data_types(self):
@@ -1021,7 +1021,7 @@ class Frame_order(API_base, API_common):
             name = tensor.name + ' bc'
 
             # Initialise the new tensor.
-            align_tensor.init(tensor=name, params=(target_fn.red_tensors_bc[5*i + 0], target_fn.red_tensors_bc[5*i + 1], target_fn.red_tensors_bc[5*i + 2], target_fn.red_tensors_bc[5*i + 3], target_fn.red_tensors_bc[5*i + 4]), param_types=2)
+            align_tensor.init(tensor=name, params=(target_fn.A_5D_bc[5*i + 0], target_fn.A_5D_bc[5*i + 1], target_fn.A_5D_bc[5*i + 2], target_fn.A_5D_bc[5*i + 3], target_fn.A_5D_bc[5*i + 4]), param_types=2)
 
 
     def _target_fn_setup(self, sim_index=None, scaling=True):
