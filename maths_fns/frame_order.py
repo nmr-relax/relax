@@ -229,13 +229,13 @@ class Frame_order:
                     if self.pcs_flag:
                         self.pcs_error[i, j] = self.pcs_error[i, j] / sqrt(pcs_weights[i, j])
 
-
         # The paramagnetic centre vectors and distances.
         if self.pcs_flag:
             # Initialise the data structures.
             self.paramag_unit_vect = zeros(pcs_atoms.shape, float64)
             self.paramag_dist = zeros(self.num_pcs, float64)
             self.pcs_const = zeros(self.num_align, float64)
+            self.r_pivot_atom = zeros((self.num_pcs, 3), float64)
             if self.paramag_centre == None:
                 self.paramag_centre = zeros(3, float64)
 
@@ -575,6 +575,10 @@ class Frame_order:
         RT_eigen = transpose(self.R_eigen)
         RT_ave = transpose(self.R_ave)
 
+        # Pre-calculate all the necessary vectors.
+        if self.pivot_opt:
+            self.calc_vectors(pivot)
+
         # Loop over each alignment.
         for i in xrange(self.num_align):
             # Loop over the RDCs.
@@ -594,7 +598,7 @@ class Frame_order:
                         R_ave = self.R_ave
 
                     # The numerical integration.
-                    self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=sigma_max, c=self.pcs_const[i], atom_pos=self.pcs_atoms[j], pivot=pivot, ln_pos=self.paramag_centre, A=self.A_3D[i], R_ave=R_ave, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                    self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=self.r_pivot_atom[j], r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_ave=R_ave, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
             # Calculate and sum the single alignment chi-squared value (for the RDC).
             if self.rdc_flag:
@@ -606,6 +610,22 @@ class Frame_order:
 
         # Return the chi-squared value.
         return chi2_sum
+
+
+    def calc_vectors(self, pivot):
+        """Calculate the pivot to atom and lanthanide to pivot vectors for the target functions.
+
+        @param pivot:   The pivot point.
+        @type pivot:    numpy rank-1, 3D array
+        """
+
+        # The lanthanide to pivot vector.
+        self.r_ln_pivot = pivot - self.paramag_centre
+
+        # The pivot to atom vectors.
+        for j in xrange(self.num_pcs):
+            # The vector.
+            self.r_pivot_atom[j] = self.pcs_atoms[j] - pivot
 
 
     def reduce_and_rot(self, ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):
