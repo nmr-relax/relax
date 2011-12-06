@@ -293,8 +293,9 @@ class Frame_order:
         self.A_5D_bc = zeros(self.num_tensors*5, float64)
 
         # The rotation to the Frame Order eigenframe.
-        self.rot = zeros((3, 3), float64)
-        self.rot2 = zeros((3, 3), float64)
+        self.R_eigen = zeros((3, 3), float64)
+        self.R_ave = zeros((3, 3), float64)
+        self.Ri_prime = zeros((3, 3), float64)
         self.tensor_3D = zeros((3, 3), float64)
 
         # The cone axis storage and molecular frame z-axis.
@@ -320,7 +321,7 @@ class Frame_order:
         ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_free_rotor(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, axis_theta, axis_phi)
+        frame_order_2nd = compile_2nd_matrix_free_rotor(self.frame_order_2nd, self.R_eigen, self.z_axis, self.cone_axis, axis_theta, axis_phi)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -346,7 +347,7 @@ class Frame_order:
         theta, phi, theta_cone = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, theta_cone)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, self.R_eigen, self.z_axis, self.cone_axis, theta, phi, theta_cone)
 
         # Make the Frame Order matrix contiguous.
         self.frame_order_2nd = self.frame_order_2nd.copy()
@@ -383,7 +384,7 @@ class Frame_order:
         ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, sigma_max = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, sigma_max)
+        frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.R_eigen, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, sigma_max)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -407,7 +408,7 @@ class Frame_order:
         ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, axis_theta, axis_phi, cone_s1)
+        frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, self.R_eigen, self.z_axis, self.cone_axis, axis_theta, axis_phi, cone_s1)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -431,7 +432,7 @@ class Frame_order:
         ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_iso_cone_torsionless(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, axis_theta, axis_phi, cone_theta)
+        frame_order_2nd = compile_2nd_matrix_iso_cone_torsionless(self.frame_order_2nd, self.R_eigen, self.z_axis, self.cone_axis, axis_theta, axis_phi, cone_theta)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -453,7 +454,7 @@ class Frame_order:
         ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, self.R_eigen, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -475,7 +476,7 @@ class Frame_order:
         ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, self.R_eigen, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -497,7 +498,7 @@ class Frame_order:
         ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_torsionless(self.frame_order_2nd, self.rot, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_torsionless(self.frame_order_2nd, self.R_eigen, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -553,7 +554,7 @@ class Frame_order:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_rotor(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, axis_theta, axis_phi, sigma_max)
+        frame_order_2nd = compile_2nd_matrix_rotor(self.frame_order_2nd, self.R_eigen, self.z_axis, self.cone_axis, axis_theta, axis_phi, sigma_max)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -570,7 +571,10 @@ class Frame_order:
             for j in xrange(self.num_pcs):
                 # The back calculated PCS.
                 if self.pcs_flag and not self.missing_pcs[i, j]:
-                    self.pcs_theta[i, j] = pcs_numeric_int_rotor(axis_theta=axis_theta, axis_phi=axis_phi, sigma_max=sigma_max, c=self.pcs_const[i], atom_pos=self.pcs_atoms[j], pivot=pivot, ln_pos=self.paramag_centre, A=self.A_3D[i], ave_pos_R=self.rot, R=)
+                    if self.full_in_ref_frame[i]:
+                        self.pcs_theta[i, j] = pcs_numeric_int_rotor(axis_theta=axis_theta, axis_phi=axis_phi, sigma_max=sigma_max, c=self.pcs_const[i], atom_pos=self.pcs_atoms[j], pivot=pivot, ln_pos=self.paramag_centre, A=self.A_3D[i], ave_pos_R=self.R_ave, R=self.Ri_prime)
+                    else:
+                        self.pcs_theta[i, j] = pcs_numeric_int_rotor(axis_theta=axis_theta, axis_phi=axis_phi, sigma_max=sigma_max, c=self.pcs_const[i], atom_pos=self.pcs_atoms[j], pivot=pivot, ln_pos=self.paramag_centre, A=self.A_3D[i], ave_pos_R=transpose(self.R_ave), R=self.Ri_prime)
 
             # Calculate and sum the single alignment chi-squared value (for the RDC).
             if self.rdc_flag:
@@ -598,7 +602,7 @@ class Frame_order:
         """
 
         # Alignment tensor rotation.
-        euler_to_R(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, self.rot)
+        euler_to_R(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, self.R_ave)
 
         # Back calculate the rotated tensors.
         for i in range(self.num_tensors):
@@ -621,11 +625,11 @@ class Frame_order:
 
             # Rotate the tensor (normal R.X.RT rotation).
             if self.full_in_ref_frame[i]:
-                self.A_3D_bc[i] = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
+                self.A_3D_bc[i] = dot(self.R_ave, dot(self.tensor_3D, transpose(self.R_ave)))
 
             # Rotate the tensor (inverse RT.X.R rotation).
             else:
-                self.A_3D_bc[i] = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
+                self.A_3D_bc[i] = dot(transpose(self.R_ave), dot(self.tensor_3D, self.R_ave))
 
             # Convert the tensor back to 5D, rank-1 form, as the back-calculated reduced tensor.
             to_5D(self.A_5D_bc[index1:index2], self.A_3D_bc[i])

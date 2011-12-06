@@ -1312,7 +1312,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
     return 2 - 2*cos(tmax)**3
 
 
-def pcs_numeric_int_rotor(axis_theta=None, axis_phi=None, sigma_max=None, c=None, atom_pos=None, pivot=None, ln_pos=None, A=None, ave_pos_R=None, R=None):
+def pcs_numeric_int_rotor(axis_theta=None, axis_phi=None, sigma_max=None, c=None, atom_pos=None, pivot=None, ln_pos=None, A=None, ave_pos_R=None, Ri=None):
     """Determine the averaged PCS value via numerical integration.
 
     @keyword axis_theta:    The rotation axis polar angle.
@@ -1333,23 +1333,23 @@ def pcs_numeric_int_rotor(axis_theta=None, axis_phi=None, sigma_max=None, c=None
     @type A:                numpy rank-2, 3D array
     @keyword ave_pos_R:     The rotation matrix for rotating from the reference frame to the average position.
     @type ave_pos_R:        numpy rank-2, 3D array
-    @keyword R:             The empty rotation matrix for the in-frame rotor motion.
-    @type R:                numpy rank-2, 3D array
+    @keyword Ri:            The empty rotation matrix for the in-frame rotor motion, used to calculate the PCS for each state i in the numerical integration.
+    @type Ri:               numpy rank-2, 3D array
     @return:                The averaged PCS value.
     @rtype:                 float
     """
 
-    # Preset the rotation matrix elements.
-    R[0, 2] = 0.0
-    R[1, 2] = 0.0
-    R[2, 0] = 0.0
-    R[2, 1] = 0.0
-    R[2, 2] = 1.0
+    # Preset the rotation matrix elements for state i.
+    Ri[0, 2] = 0.0
+    Ri[1, 2] = 0.0
+    Ri[2, 0] = 0.0
+    Ri[2, 1] = 0.0
+    Ri[2, 2] = 1.0
 
     # Convert the PCS constant to Angstrom units.
     c = c * 1e30
 
-    # Perform triple numerical integration.
+    # Perform numerical integration.
     result = quad(pcs_pivot_motion_rotor, -sigma_max, sigma_max, args=(c, atom_pos, pivot, ln_pos, A, R), full_output=1)
 
     # The surface area normalisation factor.
@@ -1359,11 +1359,11 @@ def pcs_numeric_int_rotor(axis_theta=None, axis_phi=None, sigma_max=None, c=None
     return result[0] / SA
 
 
-def pcs_pivot_motion_rotor(sigma, c, pN, pPiv, pLn, A, R):
+def pcs_pivot_motion_rotor(sigma_i, c, pN, pPiv, pLn, A, Ri):
     """Calculate the PCS value after a pivoted motion for the rotor model.
 
-    @param sigma:   The rotor angle.
-    @type sigma:    float
+    @param sigma_i: The rotor angle for state i.
+    @type sigma_i:  float
     @param c:       The PCS constant (without the interatomic distance).
     @type c:        float
     @param pN:      The Euclidean position of the atom of interest.
@@ -1374,15 +1374,15 @@ def pcs_pivot_motion_rotor(sigma, c, pN, pPiv, pLn, A, R):
     @type pLn:      numpy rank-1, 3D array
     @param A:       The full alignment tensor of the non-moving domain.
     @type A:        numpy rank-2, 3D array
-    @param R:       The empty rotation matrix for the in-frame rotor motion.
-    @type R:        numpy rank-2, 3D array
+    @param Ri:      The empty rotation matrix for the in-frame rotor motion for state i.
+    @type Ri:       numpy rank-2, 3D array
     @return:        The PCS value for the changed position.
     @rtype:         float
     """
 
     # The rotation matrix.
-    c_sigma = cos(sigma)
-    s_sigma = sin(sigma)
+    c_sigma = cos(sigma_i)
+    s_sigma = sin(sigma_i)
     R[0, 0] =  c_sigma
     R[0, 1] = -s_sigma
     R[1, 0] =  s_sigma
