@@ -406,7 +406,7 @@ def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, R, eigen_alpha, eigen_
     return rotate_daeg(matrix, R)
 
 
-def compile_2nd_matrix_rotor(matrix, R, z_axis, axis, theta_axis, phi_axis, smax):
+def compile_2nd_matrix_rotor(matrix, Rx2_eigen, smax):
     """Generate the rotated 2nd degree Frame Order matrix for the rotor model.
 
     The cone axis is assumed to be parallel to the z-axis in the eigenframe.
@@ -414,16 +414,8 @@ def compile_2nd_matrix_rotor(matrix, R, z_axis, axis, theta_axis, phi_axis, smax
 
     @param matrix:      The Frame Order matrix, 2nd degree to be populated.
     @type matrix:       numpy 9D, rank-2 array
-    @param R:           The rotation matrix to be populated.
-    @type R:            numpy 3D, rank-2 array
-    @param z_axis:      The molecular frame z-axis from which the rotor axis is rotated from.
-    @type z_axis:       numpy 3D, rank-1 array
-    @param axis:        The storage structure for the axis.
-    @type axis:         numpy 3D, rank-1 array
-    @param theta_axis:  The axis polar angle.
-    @type theta_axis:   float
-    @param phi_axis:    The axis azimuthal angle.
-    @type phi_axis:     float
+    @param Rx2_eigen:   The Kronecker product of the eigenframe rotation matrix with itself.
+    @type Rx2_eigen:    numpy 9D, rank-2 array
     @param smax:        The maximum torsion angle.
     @type smax:         float
     """
@@ -454,14 +446,8 @@ def compile_2nd_matrix_rotor(matrix, R, z_axis, axis, theta_axis, phi_axis, smax
     # Off diagonal set 2.
     matrix[1, 3] = matrix[3, 1] = -matrix[0, 4]
 
-    # Generate the cone axis from the spherical angles.
-    spherical_to_cartesian([1.0, theta_axis, phi_axis], axis)
-
-    # Average position rotation.
-    two_vect_to_R(z_axis, axis, R)
-
     # Rotate and return the frame order matrix.
-    return rotate_daeg(matrix, R)
+    return rotate_daeg(matrix, Rx2_eigen)
 
 
 def daeg_to_rotational_superoperator(daeg, Rsuper):
@@ -1312,16 +1298,12 @@ def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
     return 2 - 2*cos(tmax)**3
 
 
-def pcs_numeric_int_rotor(axis_theta=None, axis_phi=None, sigma_max=None, c=None, atom_pos=None, pivot=None, ln_pos=None, A=None, ave_pos_R=None, Ri=None):
+def pcs_numeric_int_rotor(sigma_max=None, c=None, atom_pos=None, pivot=None, ln_pos=None, A=None, R_ave=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
     """Determine the averaged PCS value via numerical integration.
 
-    @keyword axis_theta:    The rotation axis polar angle.
-    @type axis_theta:       float
-    @keyword axis_phi:      The rotation axis azimuthal angle.
-    @type axis_phi:         float
     @keyword sigma_max:     The maximum rotor angle.
     @type sigma_max:        float
-    @keyword c:             The PCS constant (without the interatomic distance).
+    @keyword c:             The PCS constant (without the interatomic distance and in Angstrom units).
     @type c:                float
     @keyword atom_pos:      The Euclidean position of the atom of interest.
     @type atom_pos:         numpy rank-1, 3D array
@@ -1331,26 +1313,27 @@ def pcs_numeric_int_rotor(axis_theta=None, axis_phi=None, sigma_max=None, c=None
     @type ln_pos:           numpy rank-1, 3D array
     @keyword A:             The full alignment tensor of the non-moving domain.
     @type A:                numpy rank-2, 3D array
-    @keyword ave_pos_R:     The rotation matrix for rotating from the reference frame to the average position.
-    @type ave_pos_R:        numpy rank-2, 3D array
-    @keyword Ri:            The empty rotation matrix for the in-frame rotor motion, used to calculate the PCS for each state i in the numerical integration.
-    @type Ri:               numpy rank-2, 3D array
+    @keyword R_ave:         The rotation matrix for rotating from the reference frame to the average position.
+    @type R_ave:            numpy rank-2, 3D array
+    @keyword R_eigen:       The eigenframe rotation matrix.
+    @type R_eigen:          numpy rank-2, 3D array
+    @keyword RT_eigen:      The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:         numpy rank-2, 3D array
+    @keyword Ri_prime:      The empty rotation matrix for the in-frame rotor motion, used to calculate the PCS for each state i in the numerical integration.
+    @type Ri_prime:         numpy rank-2, 3D array
     @return:                The averaged PCS value.
     @rtype:                 float
     """
 
     # Preset the rotation matrix elements for state i.
-    Ri[0, 2] = 0.0
-    Ri[1, 2] = 0.0
-    Ri[2, 0] = 0.0
-    Ri[2, 1] = 0.0
-    Ri[2, 2] = 1.0
-
-    # Convert the PCS constant to Angstrom units.
-    c = c * 1e30
+    Ri_prime[0, 2] = 0.0
+    Ri_prime[1, 2] = 0.0
+    Ri_prime[2, 0] = 0.0
+    Ri_prime[2, 1] = 0.0
+    Ri_prime[2, 2] = 1.0
 
     # Perform numerical integration.
-    result = quad(pcs_pivot_motion_rotor, -sigma_max, sigma_max, args=(c, atom_pos, pivot, ln_pos, A, R), full_output=1)
+    result = quad(pcs_pivot_motion_rotor, -sigma_max, sigma_max, args=(c, atom_pos, pivot, ln_pos, A, R_ave, R_eigen, RT_eigen, Ri_prime), full_output=1)
 
     # The surface area normalisation factor.
     SA = 2.0 * sigma_max
@@ -1359,37 +1342,47 @@ def pcs_numeric_int_rotor(axis_theta=None, axis_phi=None, sigma_max=None, c=None
     return result[0] / SA
 
 
-def pcs_pivot_motion_rotor(sigma_i, c, pN, pPiv, pLn, A, Ri):
+def pcs_pivot_motion_rotor(sigma_i, c, pN, pPiv, pLn, A, R_ave, R_eigen, RT_eigen, Ri_prime):
     """Calculate the PCS value after a pivoted motion for the rotor model.
 
-    @param sigma_i: The rotor angle for state i.
-    @type sigma_i:  float
-    @param c:       The PCS constant (without the interatomic distance).
-    @type c:        float
-    @param pN:      The Euclidean position of the atom of interest.
-    @type pN:       numpy rank-1, 3D array
-    @param pPiv:    The Euclidean position of the pivot of the motion.
-    @type pPiv:     numpy rank-1, 3D array
-    @param pLn:     The Euclidean position of the lanthanide.
-    @type pLn:      numpy rank-1, 3D array
-    @param A:       The full alignment tensor of the non-moving domain.
-    @type A:        numpy rank-2, 3D array
-    @param Ri:      The empty rotation matrix for the in-frame rotor motion for state i.
-    @type Ri:       numpy rank-2, 3D array
-    @return:        The PCS value for the changed position.
-    @rtype:         float
+    @param sigma_i:     The rotor angle for state i.
+    @type sigma_i:      float
+    @param c:           The PCS constant (without the interatomic distance and in Angstrom units).
+    @type c:            float
+    @param pN:          The Euclidean position of the atom of interest.
+    @type pN:           numpy rank-1, 3D array
+    @param pPiv:        The Euclidean position of the pivot of the motion.
+    @type pPiv:         numpy rank-1, 3D array
+    @param pLn:         The Euclidean position of the lanthanide.
+    @type pLn:          numpy rank-1, 3D array
+    @param A:           The full alignment tensor of the non-moving domain.
+    @type A:            numpy rank-2, 3D array
+    @param R_ave:       The rotation matrix for rotating from the reference frame to the average position.
+    @type R_ave:        numpy rank-2, 3D array
+    @param R_eigen:     The eigenframe rotation matrix.
+    @type R_eigen:      numpy rank-2, 3D array
+    @param RT_eigen:    The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:     numpy rank-2, 3D array
+    @param Ri_prime:    The empty rotation matrix for the in-frame rotor motion for state i.
+    @type Ri_prime:     numpy rank-2, 3D array
+    @return:            The PCS value for the changed position.
+    @rtype:             float
     """
 
     # The rotation matrix.
     c_sigma = cos(sigma_i)
     s_sigma = sin(sigma_i)
-    R[0, 0] =  c_sigma
-    R[0, 1] = -s_sigma
-    R[1, 0] =  s_sigma
-    R[1, 1] =  c_sigma
+    Ri_prime[0, 0] =  c_sigma
+    Ri_prime[0, 1] = -s_sigma
+    Ri_prime[1, 0] =  s_sigma
+    Ri_prime[1, 1] =  c_sigma
+
+    # The rotation.
+    #RT_i = dot(R_ave, dot(R_eigen, dot(transpose(Ri_prime), RT_eigen)))
+    R_i = dot(R_eigen, dot(Ri_prime, dot(RT_eigen, R_ave)))
 
     # Calculate the new vector.
-    vect = dot(transpose(R), (pN - pPiv)) - pLn
+    vect = dot(R_i, (pN - pPiv)) - pLn
 
     # The vector length.
     length = norm(vect)
@@ -1589,7 +1582,7 @@ def reduce_alignment_tensor_symmetric(D, A, red_tensor):
     red_tensor[4] = (D[5, 5] + D[5, 7])*A[4]
 
 
-def rotate_daeg(matrix, R):
+def rotate_daeg(matrix, Rx2_eigen):
     """Rotate the given frame order matrix.
 
     It is assumed that the frame order matrix is in the Kronecker product form.
@@ -1597,15 +1590,12 @@ def rotate_daeg(matrix, R):
 
     @param matrix:      The Frame Order matrix, 2nd degree to be populated.
     @type matrix:       numpy 9D, rank-2 array
-    @param R:           The rotation matrix to be populated.
-    @type R:            numpy 3D, rank-2 array
+    @param Rx2_eigen:   The Kronecker product of the eigenframe rotation matrix with itself.
+    @type Rx2_eigen:    numpy 9D, rank-2 array
     """
 
-    # The outer product of R.
-    R_kron = kron_prod(R, R)
-
     # Rotate.
-    matrix_rot = dot(R_kron, dot(matrix, transpose(R_kron)))
+    matrix_rot = dot(Rx2_eigen, dot(matrix, transpose(Rx2_eigen)))
 
     # Return the matrix.
     return matrix_rot

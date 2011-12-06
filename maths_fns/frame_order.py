@@ -33,8 +33,11 @@ from float import isNaN
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
+from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_rotor
+from maths_fns.kronecker_product import kron_prod
 from maths_fns.rotation_matrix import euler_to_R_zyz as euler_to_R
+from maths_fns.rotation_matrix import two_vect_to_R
 from physical_constants import pcs_constant
 from rdc import rdc_tensor
 from relax_errors import RelaxError
@@ -236,9 +239,9 @@ class Frame_order:
             if self.paramag_centre == None:
                 self.paramag_centre = zeros(3, float64)
 
-            # Set up the paramagnetic constant (without the interatomic distance).
+            # Set up the paramagnetic constant (without the interatomic distance and in Angstrom units).
             for i in range(self.num_align):
-                self.pcs_const[i] = pcs_constant(self.temp[i], self.frq[i], 1.0)
+                self.pcs_const[i] = pcs_constant(self.temp[i], self.frq[i], 1.0) * 1e30
 
         # PCS function, gradient, and Hessian matrices.
         self.pcs_theta = zeros((self.num_align, self.num_pcs), float64)
@@ -553,11 +556,24 @@ class Frame_order:
         else:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params
 
-        # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_rotor(self.frame_order_2nd, self.R_eigen, self.z_axis, self.cone_axis, axis_theta, axis_phi, sigma_max)
+        # Generate the cone axis from the spherical angles.
+        spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
 
-        # Reduce and rotate the tensors.
+        # Pre-calculate the eigenframe rotation matrix.
+        two_vect_to_R(self.z_axis, self.cone_axis, self.R_eigen)
+
+        # The Kronecker product of the eigenframe rotation.
+        Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
+
+        # Generate the 2nd degree Frame Order super matrix.
+        frame_order_2nd = compile_2nd_matrix_rotor(self.frame_order_2nd, Rx2_eigen, sigma_max)
+
+        # The average frame rotation matrix (and reduce and rotate the tensors).
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
+
+        # Pre-transpose matrices for faster calculations.
+        RT_eigen = transpose(self.R_eigen)
+        RT_ave = transpose(self.R_ave)
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
@@ -571,10 +587,14 @@ class Frame_order:
             for j in xrange(self.num_pcs):
                 # The back calculated PCS.
                 if self.pcs_flag and not self.missing_pcs[i, j]:
+                    # Forwards and reverse rotations.
                     if self.full_in_ref_frame[i]:
-                        self.pcs_theta[i, j] = pcs_numeric_int_rotor(axis_theta=axis_theta, axis_phi=axis_phi, sigma_max=sigma_max, c=self.pcs_const[i], atom_pos=self.pcs_atoms[j], pivot=pivot, ln_pos=self.paramag_centre, A=self.A_3D[i], ave_pos_R=self.R_ave, R=self.Ri_prime)
+                        R_ave = RT_ave
                     else:
-                        self.pcs_theta[i, j] = pcs_numeric_int_rotor(axis_theta=axis_theta, axis_phi=axis_phi, sigma_max=sigma_max, c=self.pcs_const[i], atom_pos=self.pcs_atoms[j], pivot=pivot, ln_pos=self.paramag_centre, A=self.A_3D[i], ave_pos_R=transpose(self.R_ave), R=self.Ri_prime)
+                        R_ave = self.R_ave
+
+                    # The numerical integration.
+                    self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=sigma_max, c=self.pcs_const[i], atom_pos=self.pcs_atoms[j], pivot=pivot, ln_pos=self.paramag_centre, A=self.A_3D[i], R_ave=R_ave, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
             # Calculate and sum the single alignment chi-squared value (for the RDC).
             if self.rdc_flag:
