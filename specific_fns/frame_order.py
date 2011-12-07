@@ -626,14 +626,6 @@ class Frame_order(API_base, API_common):
 
                 # Skip spins without PCS data.
                 if not hasattr(spin, 'pcs'):
-                    # Add rows of None if other alignment data exists.
-                    if hasattr(spin, 'rdc'):
-                        pcs[-1].append(None)
-                        pcs_err[-1].append(None)
-                        pcs_weight[-1].append(None)
-                        j = j + 1
-
-                    # Jump to the next spin.
                     continue
 
                 # Append the PCSs to the list.
@@ -1041,6 +1033,52 @@ class Frame_order(API_base, API_common):
 
             # Initialise the new tensor.
             align_tensor.init(tensor=name, params=(target_fn.A_5D_bc[5*i + 0], target_fn.A_5D_bc[5*i + 1], target_fn.A_5D_bc[5*i + 2], target_fn.A_5D_bc[5*i + 3], target_fn.A_5D_bc[5*i + 4]), param_types=2)
+
+        # The RDC data.
+        for i in xrange(len(cdp.align_ids)):
+            # The alignment ID.
+            align_id = cdp.align_ids[i]
+
+            # Data flags
+            rdc_flag = False
+            if hasattr(cdp, 'rdc_ids') and align_id in cdp.rdc_ids:
+                rdc_flag = True
+            pcs_flag = False
+            if hasattr(cdp, 'pcs_ids') and align_id in cdp.pcs_ids:
+                pcs_flag = True
+
+            # Spin loop over the domain.
+            id = cdp.domain[self._domain_moving()]
+            pcs_index = 0
+            rdc_index = 0
+            for spin in spin_loop(id):
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Spins with PCS data.
+                if pcs_flag and hasattr(spin, 'pcs'):
+                    # Initialise the data structure.
+                    if not hasattr(spin, 'pcs_bc'):
+                        spin.pcs_bc = {}
+
+                    # Store the back-calculated value.
+                    spin.pcs_bc[align_id] = target_fn.pcs_theta[i, pcs_index]
+
+                    # Increment the index.
+                    pcs_index += 1
+
+                # Spins with RDC data.
+                if rdc_flag and hasattr(spin, 'rdc'):
+                    # Initialise the data structure.
+                    if not hasattr(spin, 'rdc_bc'):
+                        spin.rdc_bc = {}
+
+                    # Store the back-calculated value.
+                    spin.rdc_bc[align_id] = target_fn.rdc_theta[i, rdc_index]
+
+                    # Increment the index.
+                    rdc_index += 1
 
 
     def _target_fn_setup(self, sim_index=None, scaling=True):
