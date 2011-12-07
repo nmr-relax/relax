@@ -95,7 +95,7 @@ class Frame_order(API_base, API_common):
         param_vect = []
 
         # Pivot point.
-        if 'pcs' in self._base_data_types():
+        if not self._pivot_fixed():
             for i in range(3):
                 param_vect.append(cdp.pivot[i])
 
@@ -193,7 +193,7 @@ class Frame_order(API_base, API_common):
             return scaling_matrix
 
         # The pivot point.
-        if 'pcs' in data_types:
+        if not self._pivot_fixed():
             for i in range(3):
                 scaling_matrix[i, i] = 1e2
 
@@ -902,7 +902,7 @@ class Frame_order(API_base, API_common):
         data_types = self._base_data_types()
 
         # The pivot point.
-        if 'pcs' in data_types:
+        if not self._pivot_fixed():
             num += 3
 
         # Average domain position parameters.
@@ -954,6 +954,23 @@ class Frame_order(API_base, API_common):
         # Convert to floats.
         for i in range(3):
             cdp.pivot[i] = float(cdp.pivot[i])
+
+
+    def _pivot_fixed(self):
+        """Determine if the pivot is fixed or not.
+
+        @return:    The answer to the question.
+        @rtype:     bool
+        """
+
+        # The PCS is loaded.
+        if 'pcs' in self._base_data_types():
+            # The fixed flag is not set.
+            if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
+                return False
+
+        # The point is fixed.
+        return True
 
 
     def _ref_domain(self, ref=None):
@@ -1064,9 +1081,9 @@ class Frame_order(API_base, API_common):
             rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Pivot optimisation.
-        pivot_opt = False
-        if 'pcs' in data_types:
-            pivot_opt = True
+        pivot_opt = True
+        if self.pivot_fixed():
+            pivot_opt = False
 
         # Set up the optimisation function.
         target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, pcs_atoms=pcs_atoms, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, pivot_opt=pivot_opt)
@@ -1110,7 +1127,7 @@ class Frame_order(API_base, API_common):
         cdp.params = []
 
         # The pivot parameters.
-        if 'pcs' in self._base_data_types():
+        if not self.pivot_fixed():
             cdp.params.append('pivot_x')
             cdp.params.append('pivot_y')
             cdp.params.append('pivot_z')
@@ -1181,7 +1198,7 @@ class Frame_order(API_base, API_common):
             raise RelaxNaNError('chi-squared')
 
         # Pivot point.
-        if 'pcs' in self._base_data_types():
+        if not self._pivot_fixed():
             # Store the pivot.
             cdp.pivot = param_vector[:3]
 
