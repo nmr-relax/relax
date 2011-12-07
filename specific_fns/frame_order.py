@@ -1082,7 +1082,7 @@ class Frame_order(API_base, API_common):
 
         # Pivot optimisation.
         pivot_opt = True
-        if self.pivot_fixed():
+        if self._pivot_fixed():
             pivot_opt = False
 
         # Set up the optimisation function.
@@ -1127,7 +1127,7 @@ class Frame_order(API_base, API_common):
         cdp.params = []
 
         # The pivot parameters.
-        if not self.pivot_fixed():
+        if not self._pivot_fixed():
             cdp.params.append('pivot_x')
             cdp.params.append('pivot_y')
             cdp.params.append('pivot_z')
