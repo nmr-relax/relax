@@ -185,32 +185,48 @@ class Align_tensor(User_fn_class):
         align_tensor.fix(id=id, fixed=fixed)
 
 
-    def init(self, tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=False):
-        """Function for initialising the alignment tensor.
+    def init(self, tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, align_id=None, domain=None, errors=False):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "align_tensor.init("
+            text = text + "tensor=" + repr(tensor)
+            text = text + ", params=" + repr(params)
+            text = text + ", scale=" + repr(scale)
+            text = text + ", angle_units=" + repr(angle_units)
+            text = text + ", param_types=" + repr(param_types)
+            text = text + ", align_id=" + repr(align_id)
+            text = text + ", domain=" + repr(domain)
+            text = text + ", errors=" + repr(errors) + ")"
+            print(text)
 
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
+        # The argument checks.
+        arg_check.is_str(tensor, 'tensor')
+        arg_check.is_num_tuple(params, 'alignment tensor parameters', size=5)
+        arg_check.is_float(scale, 'scale')
+        arg_check.is_str(angle_units, 'angle units')
+        arg_check.is_int(param_types, 'parameter types')
+        arg_check.is_str(align_id, 'errors flag', can_be_none=True)
+        arg_check.is_str(domain, 'domain', can_be_none=True)
+        arg_check.is_bool(errors, 'errors flag')
 
-        tensor:  The alignment tensor identification string.
+        # Execute the functional code.
+        align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, align_id=align_id, domain=domain, errors=errors)
 
-        params:  The alignment tensor data.
-
-        scale:  The alignment tensor eigenvalue scaling value.
-
-        angle_units:  The units for the angle parameters.
-
-        param_types:  A flag to select different parameter combinations.
-
-        errors:  A flag which determines if the alignment tensor data or its errors are being input.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        Using this function, the alignment tensor data can be set up.  The params argument should be
-        a tuple of floating point numbers (a list surrounded by round brakets).  These correspond to
-        the parameters of the tensor, which can be specified by the param_types argument, where the
-        values correspond to
+    # The function doc info.
+    init._doc_title = "Initialise the alignment tensor."
+    init._doc_title_short = "Alignment tensor initialisation."
+    init._doc_args = [
+        ["tensor", "The alignment tensor identification string."],
+        ["params", "The alignment tensor data."],
+        ["scale", "The alignment tensor eigenvalue scaling value."],
+        ["angle_units", "The units for the angle parameters."],
+        ["param_types", "A flag to select different parameter combinations."],
+        ["align_id", "The alignment ID string."],
+        ["domain", "The domain ID string."],
+        ["errors", "A flag which determines if the alignment tensor data or its errors are being input."]
+    ]
+    init._doc_desc = """
+        This allows an alignment tensor data to be set up.  The params argument should be a tuple of floating point numbers (a list surrounded by round brakets).  These correspond to the parameters of the tensor, which can be specified by the param_types argument, where the values correspond to
 
             0:  {Sxx, Syy, Sxy, Sxz, Syz}  (unitless),
             1:  {Szz, Sxx-yy, Sxy, Sxz, Syz}  (Pales default format),
@@ -221,8 +237,7 @@ class Align_tensor(User_fn_class):
             6:  {Pxx, Pyy, Pxy, Pxz, Pyz}  (unitless),
             7:  {Pzz, Pxx-yy, Pxy, Pxz, Pyz}  (unitless),
 
-        Other formats may be added later.  The relationship between the Saupe order matrix S and the
-        alignment tensor A is
+        Other formats may be added later.  The relationship between the Saupe order matrix S and the alignment tensor A is
 
             S = 3/2 A.
 
@@ -230,13 +245,9 @@ class Align_tensor(User_fn_class):
 
             A = P - 1/3 I,
 
-        where I is the identity matrix.  For the alignment tensor to be supplied in Hertz, the bond
-        vectors must all be of equal length.
-
-
-        Examples
-        ~~~~~~~~
-
+        where I is the identity matrix.  For the alignment tensor to be supplied in Hertz, the bond vectors must all be of equal length.
+        """
+    init._doc_examples = """
         To set a rhombic tensor to the run 'CaM', type one of:
 
         relax> align_tensor.init('super media', (-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05,
@@ -244,28 +255,7 @@ class Align_tensor(User_fn_class):
         relax> align_tensor.init(tensor='super media', params=(-8.6322e-05, -5.5786e-04,
                                  -3.1732e-05, 2.2927e-05, 2.8599e-04), param_types=1)
         """
-
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "align_tensor.init("
-            text = text + "tensor=" + repr(tensor)
-            text = text + ", params=" + repr(params)
-            text = text + ", scale=" + repr(scale)
-            text = text + ", angle_units=" + repr(angle_units)
-            text = text + ", param_types=" + repr(param_types)
-            text = text + ", errors=" + repr(errors) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(tensor, 'tensor')
-        arg_check.is_num_tuple(params, 'alignment tensor parameters', size=5)
-        arg_check.is_float(scale, 'scale')
-        arg_check.is_str(angle_units, 'angle units')
-        arg_check.is_int(param_types, 'parameter types')
-        arg_check.is_bool(errors, 'errors flag')
-
-        # Execute the functional code.
-        align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
+    _build_doc(init)
 
 
     def matrix_angles(self, basis_set=0, tensors=None):

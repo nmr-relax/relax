@@ -631,7 +631,7 @@ def get_tensor_object(tensor, pipe=None):
     return data
 
 
-def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=False):
+def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, align_id=None, domain=None, errors=False):
     """Function for initialising the alignment tensor.
 
     @keyword tensor:        The alignment tensor identification string.
@@ -642,11 +642,13 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     @type scale:            float
     @keyword angle_units:   The units for the angle parameters (either 'deg' or 'rad').
     @type angle_units:      str
-    @keyword param_types:   The type of parameters supplied.  The flag values correspond to, 0:
-                            {Axx, Ayy, Axy, Axz, Ayz}, and 1: {Azz, Axx-yy, Axy, Axz, Ayz}.
+    @keyword param_types:   The type of parameters supplied.  The flag values correspond to, 0: {Axx, Ayy, Axy, Axz, Ayz}, and 1: {Azz, Axx-yy, Axy, Axz, Ayz}.
     @type param_types:      int
-    @keyword errors:        A flag which determines if the alignment tensor data or its errors are
-                            being input.
+    @keyword align_id:      The alignment ID string that the tensor corresponds to.
+    @type align_id:         str or None
+    @keyword domain:        The domain label.
+    @type domain:           str or None
+    @keyword errors:        A flag which determines if the alignment tensor data or its errors are being input.
     @type errors:           bool
     """
 
@@ -661,6 +663,10 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     valid_types = ['deg', 'rad']
     if not angle_units in valid_types:
         raise RelaxError("The alignment tensor 'angle_units' argument " + repr(angle_units) + " should be either 'deg' or 'rad'.")
+
+    # Check that the domain is defined.
+    if domain and (not hasattr(cdp, 'domain') or domain not in cdp.domain.keys()):
+        raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % domain)
 
     # Add the tensor ID to the current data pipe.
     if not hasattr(cdp, 'align_ids'):
@@ -828,6 +834,12 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     # Unknown parameter combination.
     else:
         raise RelaxUnknownParamCombError('param_types', param_types)
+
+    # Set the domain and alignment ID.
+    if domain:
+        set_domain(tensor=tensor, domain=domain)
+    if align_id:
+        set_domain(tensor=tensor, align_id=align_id)
 
 
 def map_bounds(param):
@@ -1787,6 +1799,28 @@ __set_prompt_doc__ = """
         {Pxx, Pyy, Pxy, Pxz, Pyz},
         {Pzz, Pxxyy, Pxy, Pxz, Pyz}.
 """
+
+
+def set_align_id(tensor=None, align_id=None):
+    """Set the align ID string for the given tensor.
+
+    @keyword tensor:    The alignment tensor label.
+    @type tensor:       str
+    @keyword align_id:  The alignment ID string.
+    @type align_id:     str
+    """
+
+    # Loop over the tensors.
+    match = False
+    for tensor_cont in cdp.align_tensors:
+        # Find the matching tensor and then store the ID.
+        if tensor_cont.name == tensor:
+            tensor_cont.align_id = align_id
+            match = True
+
+    # The tensor label doesn't exist.
+    if not match:
+        raise RelaxNoTensorError('alignment', tensor)
 
 
 def set_domain(tensor=None, domain=None):
