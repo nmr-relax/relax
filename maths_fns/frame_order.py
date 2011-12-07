@@ -244,14 +244,16 @@ class Frame_order:
                 self.pcs_const[i] = pcs_constant(self.temp[i], self.frq[i], 1.0) * 1e30
 
         # PCS function, gradient, and Hessian matrices.
-        self.pcs_theta = zeros((self.num_align, self.num_pcs), float64)
-        self.dpcs_theta = zeros((self.total_num_params, self.num_align, self.num_pcs), float64)
-        self.d2pcs_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_pcs), float64)
+        if self.pcs_flag:
+            self.pcs_theta = zeros((self.num_align, self.num_pcs), float64)
+            self.dpcs_theta = zeros((self.total_num_params, self.num_align, self.num_pcs), float64)
+            self.d2pcs_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_pcs), float64)
 
         # RDC function, gradient, and Hessian matrices.
-        self.rdc_theta = zeros((self.num_align, self.num_rdc), float64)
-        self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_rdc), float64)
-        self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_rdc), float64)
+        if self.rdc_flag:
+            self.rdc_theta = zeros((self.num_align, self.num_rdc), float64)
+            self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_rdc), float64)
+            self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_rdc), float64)
 
         # The target function aliases.
         if model == 'pseudo-ellipse':
