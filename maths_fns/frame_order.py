@@ -190,8 +190,8 @@ class Frame_order:
         if self.rdc_flag or self.pcs_flag:
             for i in xrange(self.num_align):
                 # Loop over the RDCs.
-                for j in xrange(self.num_rdc):
-                    if self.rdc_flag:
+                if self.rdc_flag:
+                    for j in xrange(self.num_rdc):
                         if isNaN(self.rdc[i, j]):
                             # Set the flag.
                             self.missing_rdc[i, j] = 1
@@ -210,8 +210,8 @@ class Frame_order:
                         self.rdc_error[i, j] = self.rdc_error[i, j] / sqrt(rdc_weights[i, j])
 
                 # Loop over the PCSs.
-                for j in xrange(self.num_pcs):
-                    if self.pcs_flag:
+                if self.pcs_flag:
+                    for j in xrange(self.num_pcs):
                         if isNaN(self.pcs[i, j]):
                             # Set the flag.
                             self.missing_pcs[i, j] = 1
