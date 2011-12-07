@@ -46,7 +46,7 @@ from relax_errors import RelaxError
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, pivot_opt=False):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, pivot=None, pivot_opt=False):
         """Set up the target functions for the Frame Order theories.
         
         @keyword model:             The name of the Frame Order model.
@@ -83,6 +83,8 @@ class Frame_order:
         @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 array
+        @keyword pivot:             The pivot point for the ball-and-socket joint motion.  This is needed if PCS or PRE values are used.
+        @type pivot:                numpy rank-1, 3D array or None
         @keyword pivot_opt:         A flag which if True will allow the pivot point of the motion to be optimised.
         @type pivot_opt:            bool
         """
@@ -109,6 +111,7 @@ class Frame_order:
         self.frq = frq
         self.paramag_centre = paramag_centre
         self.total_num_params = len(init_params)
+        self._param_pivot = pivot
         self.pivot_opt = pivot_opt
 
         # Tensor setup.
@@ -553,7 +556,7 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            pivot = params[:3]
+            self._param_pivot = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[3:]
         else:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params
@@ -579,7 +582,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pivot_opt:
-            self.calc_vectors(pivot)
+            self.calc_vectors(self._param_pivot)
 
         # Loop over each alignment.
         for i in xrange(self.num_align):

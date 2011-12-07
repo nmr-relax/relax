@@ -1080,13 +1080,18 @@ class Frame_order(API_base, API_common):
         if 'rdc' in data_types:
             rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const = self._minimise_setup_rdcs(sim_index=sim_index)
 
+        # The fixed pivot point.
+        pivot = None
+        if hasattr(cdp, 'pivot'):
+            pivot = cdp.pivot
+
         # Pivot optimisation.
         pivot_opt = True
         if self._pivot_fixed():
             pivot_opt = False
 
         # Set up the optimisation function.
-        target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, pcs_atoms=pcs_atoms, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, pivot_opt=pivot_opt)
+        target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, pcs_atoms=pcs_atoms, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, pivot=pivot, pivot_opt=pivot_opt)
 
         # Return the data.
         return target, param_vector, data_types, scaling_matrix
