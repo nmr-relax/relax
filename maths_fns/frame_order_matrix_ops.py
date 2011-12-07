@@ -1334,7 +1334,7 @@ def pcs_numeric_int_rotor(sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=
     dot_RT_eigen_R_ave = dot(RT_eigen, R_ave)
 
     # Perform numerical integration.
-    result = quad(pcs_pivot_motion_rotor, -sigma_max, sigma_max, args=(c, r_pivot_atom, r_ln_pivot, A, R_ave, R_eigen, RT_eigen, Ri_prime, dot_RT_eigen_R_ave), full_output=1)
+    result = quad(pcs_pivot_motion_rotor, -sigma_max, sigma_max, args=(c, r_pivot_atom, r_ln_pivot, A, R_ave, R_eigen, RT_eigen, Ri_prime, dot_RT_eigen_R_ave))
 
     # The surface area normalisation factor.
     SA = 2.0 * sigma_max
