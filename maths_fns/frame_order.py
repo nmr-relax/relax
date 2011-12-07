@@ -581,8 +581,7 @@ class Frame_order:
         RT_ave = transpose(self.R_ave)
 
         # Pre-calculate all the necessary vectors.
-        if self.pivot_opt:
-            self.calc_vectors(self._param_pivot)
+        self.calc_vectors(self._param_pivot)
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
