@@ -583,31 +583,33 @@ class Frame_order:
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
-            # Loop over the RDCs.
-            for j in xrange(self.num_rdc):
-                # The back calculated RDC.
-                if self.rdc_flag and not self.missing_rdc[i, j]:
-                    self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A_3D_bc[i])
-
-            # Loop over the PCSs.
-            for j in xrange(self.num_pcs):
-                # The back calculated PCS.
-                if self.pcs_flag and not self.missing_pcs[i, j]:
-                    # Forwards and reverse rotations.
-                    if self.full_in_ref_frame[i]:
-                        R_ave = RT_ave
-                    else:
-                        R_ave = self.R_ave
-
-                    # The numerical integration.
-                    self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=self.r_pivot_atom[j], r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_ave=R_ave, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
-
-            # Calculate and sum the single alignment chi-squared value (for the RDC).
+            # RDCs.
             if self.rdc_flag:
+                # Loop over the RDCs.
+                for j in xrange(self.num_rdc):
+                    # The back calculated RDC.
+                    if not self.missing_rdc[i, j]:
+                        self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A_3D_bc[i])
+
+                # Calculate and sum the single alignment chi-squared value (for the RDC).
                 chi2_sum = chi2_sum + chi2(self.rdc[i], self.rdc_theta[i], self.rdc_error[i])
 
-            # Calculate and sum the single alignment chi-squared value (for the PCS).
+            # PCS.
             if self.pcs_flag:
+                # Loop over the PCSs.
+                for j in xrange(self.num_pcs):
+                    # The back calculated PCS.
+                    if not self.missing_pcs[i, j]:
+                        # Forwards and reverse rotations.
+                        if self.full_in_ref_frame[i]:
+                            R_ave = RT_ave
+                        else:
+                            R_ave = self.R_ave
+
+                        # The numerical integration.
+                        self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=self.r_pivot_atom[j], r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_ave=R_ave, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+
+                # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
 
         # Return the chi-squared value.
