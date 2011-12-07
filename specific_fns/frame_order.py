@@ -935,19 +935,21 @@ class Frame_order(API_base, API_common):
         return num
 
 
-    def _pivot(self, pivot=None):
+    def _pivot(self, pivot=None, fix=None):
         """Set the pivot point for the 2 body motion.
 
-        @param pivot:   The pivot point of the two bodies (domains, etc.) in the structural
-                        coordinate system.
+        @keyword pivot: The pivot point of the two bodies (domains, etc.) in the structural coordinate system.
         @type pivot:    list of num
+        @keyword fix:   A flag specifying if the pivot point should be fixed during optimisation.
+        @type fix:      bool
         """
 
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Set the pivot point.
+        # Set the pivot point and fixed flag.
         cdp.pivot = pivot
+        cdp.pivot_fixed = fix
 
         # Convert to floats.
         for i in range(3):

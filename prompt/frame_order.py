@@ -138,7 +138,7 @@ class Frame_order(User_fn_class):
         frame_order_obj._domain_to_pdb(domain=domain, pdb=pdb)
 
 
-    def pivot(self, pivot=None):
+    def pivot(self, pivot=None, fix=False):
         """Set the pivot point for the two body motion in the structural coordinate system.
 
         Keyword Arguments
@@ -146,6 +146,8 @@ class Frame_order(User_fn_class):
 
         pivot:  The pivot point for the motion (e.g. the position between the 2 domains in PDB
             coordinates).
+
+        fix:  A flag specifying if the pivot point should be fixed during optimisation.
 
 
         Examples
@@ -160,14 +162,16 @@ class Frame_order(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "frame_order.pivot("
-            text = text + "pivot=" + repr(pivot) + ")"
+            text = text + "pivot=" + repr(pivot)
+            text = text + ", fix=" + repr(fix) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_num_list(pivot, 'pivot point', size=3)
+        arg_check.is_bool(fix, 'fix flag')
 
         # Execute the functional code.
-        frame_order_obj._pivot(pivot=pivot)
+        frame_order_obj._pivot(pivot=pivot, fix=fix)
 
 
     def ref_domain(self, ref=None):
