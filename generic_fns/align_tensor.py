@@ -235,7 +235,9 @@ def delete(tensor=None):
     if tensor:
         tensors = [tensor]
     else:
-        tensors = cdp.align_ids
+        tensors = []
+        for i in range(len(cdp.align_tensors)):
+            tensors.append(cdp.align_tensors[i].name)
 
     # Loop over the tensors.
     for tensor in tensors:
@@ -668,11 +670,12 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     if domain and (not hasattr(cdp, 'domain') or domain not in cdp.domain.keys()):
         raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % domain)
 
-    # Add the tensor ID to the current data pipe.
-    if not hasattr(cdp, 'align_ids'):
-        cdp.align_ids = []
-    if tensor not in cdp.align_ids:
-        cdp.align_ids.append(tensor)
+    # Add the align ID to the current data pipe if needed.
+    if align_id:
+        if not hasattr(cdp, 'align_ids'):
+            cdp.align_ids = []
+        if align_id not in cdp.align_ids:
+            cdp.align_ids.append(align_id)
 
     # Add the align_tensors object to the data pipe.
     if not errors:
