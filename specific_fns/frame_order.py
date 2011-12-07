@@ -1062,8 +1062,8 @@ class Frame_order(API_base, API_common):
                     if not hasattr(spin, 'pcs_bc'):
                         spin.pcs_bc = {}
 
-                    # Store the back-calculated value.
-                    spin.pcs_bc[align_id] = target_fn.pcs_theta[i, pcs_index]
+                    # Store the back-calculated value (in ppm).
+                    spin.pcs_bc[align_id] = target_fn.pcs_theta[i, pcs_index] * 1e6
 
                     # Increment the index.
                     pcs_index += 1
