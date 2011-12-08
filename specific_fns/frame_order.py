@@ -1575,6 +1575,9 @@ class Frame_order(API_base, API_common):
         if not hasattr(cdp, 'model'):
             raise RelaxNoModelError('Frame Order')
 
+        # Parameter scaling.
+        scaling_matrix = self._assemble_scaling_matrix(data_types=self._base_data_types(), scaling=True)
+
         # The number of parameters.
         n = self._param_num()
 
@@ -1683,11 +1686,11 @@ class Frame_order(API_base, API_common):
                 # Fixed parameter.
                 if grid[j] == None:
                     # Get the current parameter value.
-                    pts[i, j] = getattr(cdp, cdp.params[j])
+                    pts[i, j] = getattr(cdp, cdp.params[j]) / scaling_matrix[j, j]
 
                 # Add the point coordinate.
                 else:
-                    pts[i, j] = grid[j][indices[j]]
+                    pts[i, j] = grid[j][indices[j]] / scaling_matrix[j, j]
 
             # Increment the step positions.
             for j in range(n):
