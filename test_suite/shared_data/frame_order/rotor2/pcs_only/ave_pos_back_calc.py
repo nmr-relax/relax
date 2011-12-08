@@ -76,8 +76,9 @@ for i in range(len(ids)):
     # The spin data.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # The data.
-        if hasattr(spin, 'rdc'):
-            file.write("%s %s\n" % (res_num, spin.rdc[ids[i]])
+        if hasattr(spin, 'pcs'):
+            file.write("%s %s\n" % (res_num, spin.pcs[ids[i]]))
+
     # End.
     file.write("&\n")
 
@@ -89,11 +90,25 @@ for i in range(len(ids)):
     # The spin data.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # The data.
-        if hasattr(spin, 'rdc_bc'):
-            file.write("%s %s\n" % (res_num, spin.rdc_bc[ids[i]])
+        if hasattr(spin, 'pcs_bc'):
+            file.write("%s %s\n" % (res_num, spin.pcs_bc[ids[i]]))
+
     # End.
     file.write("&\n")
 
+# Correlation plot.
+for i in range(len(ids)):
+    # Header.
+    file.write("@target G2.S%i\n@type xy\n" % i)
+
+    # The spin data.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        # The data.
+        if hasattr(spin, 'pcs_bc'):
+            file.write("%s %s\n" % (spin.pcs_bc[ids[i]], spin.pcs_bc[ids[i]]))
+
+    # End.
+    file.write("&\n")
 
 # Store the state.
 state.save('ave_pos_back_calc', force=True)
