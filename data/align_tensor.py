@@ -1023,6 +1023,7 @@ class AlignTensorData(Element):
                     'Axy',  'Axy_sim',  'Axy_err',
                     'Axz',  'Axz_sim',  'Axz_err',
                     'Ayz',  'Ayz_sim',  'Ayz_err',
+                    'align_id',
                     'domain',
                     'red',
                     'fixed']
