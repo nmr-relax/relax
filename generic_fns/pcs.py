@@ -110,7 +110,7 @@ def back_calc(align_id=None):
                 spin.pcs_bc = {}
 
             # Calculate the PCSs (in ppm).
-            spin.pcs_bc[id] = ave_pcs_tensor(dj, vect, cdp.N, cdp.align_tensors[get_tensor_index(id)].A, weights=weights) * 1e6
+            spin.pcs_bc[id] = ave_pcs_tensor(dj, vect, cdp.N, cdp.align_tensors[get_tensor_index(align_id=id)].A, weights=weights) * 1e6
 
 
 def centre(pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=False, force=False):

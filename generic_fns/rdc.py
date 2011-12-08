@@ -112,7 +112,7 @@ def back_calc(align_id=None):
 
         # Calculate the RDCs.
         for id in align_ids:
-            spin.rdc_bc[id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[get_tensor_index(id)].A, weights=weights)
+            spin.rdc_bc[id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[get_tensor_index(align_id=id)].A, weights=weights)
 
 
 def convert(value, align_id, to_intern=False):

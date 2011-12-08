@@ -37,6 +37,7 @@ from data.align_tensor import AlignTensorList
 from generic_fns import pipes
 from physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from relax_warnings import RelaxWarning
 
 
 def align_data_exists(tensor, pipe=None):
@@ -576,15 +577,17 @@ def gdo(A):
     return gdo
 
 
-def get_tensor_index(tensor, pipe=None):
+def get_tensor_index(tensor=None, align_id=None, pipe=None):
     """Function for returning the index corresponding to the 'tensor' argument.
 
-    @param tensor:  The alignment tensor identification string.
-    @type tensor:   str
-    @param pipe:    The data pipe to search for data in.
-    @type pipe:     str
-    @return:        The index corresponding to the 'tensor' arg.
-    @rtype:         int
+    @keyword tensor:    The alignment tensor identification string.
+    @type tensor:       str or None
+    @keyword align_id:  Alternative to the tensor argument, used to return the tensor index for the tensors corresponding to the alignment ID string.  If more than one tensor exists, then this will fail.
+    @type align_id:     str or None
+    @keyword pipe:      The data pipe to search for data in.
+    @type pipe:         str
+    @return:            The index corresponding to the 'tensor' arg.
+    @rtype:             int
     """
 
     # The data pipe to check.
@@ -596,11 +599,29 @@ def get_tensor_index(tensor, pipe=None):
 
     # Init.
     index = None
+    count = 0
 
     # Loop over the tensors.
     for i in xrange(len(dp.align_tensors)):
-        if dp.align_tensors[i].name == tensor:
+        # Tensor name match.
+        if tensor and dp.align_tensors[i].name == tensor:
             index = i
+            count += 1
+
+        # Alignment ID match.
+        if align_id and hasattr(dp.align_tensors[i], 'align_id') and dp.align_tensors[i].align_id == align_id:
+            index = i
+            count += 1
+
+    # No match.
+    if count == 0:
+        warn(RelaxWarning("No alignment tensors match the tensor name '%s' or alignment ID '%s'." % (tensor, align_id)))
+        return None
+
+    # More than one match.
+    if count > 1: 
+        warn(RelaxWarning("More than one alignment tensors matches the tensor name '%s' or alignment ID '%s'." % (tensor, align_id)))
+        return None
 
     # Return the index.
     return index
