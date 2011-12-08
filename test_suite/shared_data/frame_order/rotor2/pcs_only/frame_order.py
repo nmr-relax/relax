@@ -35,8 +35,8 @@ class Analysis:
         pipe.create(pipe_name='frame order', pipe_type='frame order')
 
         # Read the structures.
-        structure.read_pdb('1J7O_1st_NH.pdb', dir='..', set_mol_name='N-dom')
-        structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..', set_mol_name='C-dom')
+        structure.read_pdb('1J7O_1st_NH.pdb', dir='../..', set_mol_name='N-dom')
+        structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='../..', set_mol_name='C-dom')
 
         # Load the spins.
         structure.load_spins('@N')
@@ -54,17 +54,17 @@ class Analysis:
         ln = ['dy', 'tb', 'tm', 'er']
         for i in range(len(ln)):
             ## Load the RDCs.
-            #rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            #rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], dir='..', res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The PCS.
-            pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], dir='..', res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
             temperature(id=ln[i], temp=303)
             frq.set(id=ln[i], frq=900e6)
 
         # Load the N-domain tensors (the full tensors).
-        script('../tensors.py')
+        script('../../tensors.py')
 
         # Define the domains.
         domain(id='N', spin_id=":1-78")
@@ -127,7 +127,7 @@ class Analysis:
         pipe.create(pipe_name='orig pos', pipe_type='frame order')
 
         # Load the structure.
-        structure.read_pdb('1J7P_1st_NH.pdb', dir='..')
+        structure.read_pdb('1J7P_1st_NH.pdb', dir='../..')
 
 
     def pymol_display(self):
@@ -137,8 +137,8 @@ class Analysis:
         pipe.switch('frame order')
 
         # Load the PDBs of the 2 domains.
-        structure.read_pdb('1J7O_1st_NH.pdb', dir='..')
-        structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..')
+        structure.read_pdb('1J7O_1st_NH.pdb', dir='../..')
+        structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='../..')
 
         # Create the cone PDB file.
         frame_order.cone_pdb(file='cone.pdb', force=True)
@@ -171,7 +171,7 @@ class Analysis:
         pipe.create(pipe_name='ave pos', pipe_type='frame order')
 
         # Load the structure.
-        structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..')
+        structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='../..')
 
         # Rotate all atoms.
         structure.rotate(R=R, origin=pivot)
