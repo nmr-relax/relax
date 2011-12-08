@@ -105,7 +105,7 @@ for i in range(len(ids)):
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # The data.
         if hasattr(spin, 'pcs_bc'):
-            file.write("%s %s\n" % (spin.pcs_bc[ids[i]], spin.pcs_bc[ids[i]]))
+            file.write("%s %s\n" % (spin.pcs[ids[i]], spin.pcs_bc[ids[i]]))
 
     # End.
     file.write("&\n")
