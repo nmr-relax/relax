@@ -25,7 +25,7 @@ class Analysis:
         self.pymol_display()
 
         # Save the state.
-        state.save('frame_order_pcs_only', force=True)
+        state.save('frame_order', force=True)
 
 
     def optimisation(self):
@@ -141,7 +141,7 @@ class Analysis:
         structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..')
 
         # Create the cone PDB file.
-        frame_order.cone_pdb(file='cone_pcs_only.pdb', force=True)
+        frame_order.cone_pdb(file='cone.pdb', force=True)
 
         # Set the domains.
         frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
@@ -150,7 +150,7 @@ class Analysis:
         # PyMOL.
         pymol.view()
         pymol.command('show spheres')
-        pymol.cone_pdb('cone_pcs_only.pdb')
+        pymol.cone_pdb('cone.pdb')
 
 
     def transform(self):
@@ -177,7 +177,7 @@ class Analysis:
         structure.rotate(R=R, origin=pivot)
 
         # Write out the new PDB.
-        structure.write_pdb('ave_pos_pcs_only', force=True)
+        structure.write_pdb('ave_pos', force=True)
 
 
 # Execute the analysis.
