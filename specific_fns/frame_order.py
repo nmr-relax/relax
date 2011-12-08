@@ -1213,14 +1213,17 @@ class Frame_order(API_base, API_common):
                 setattr(cdp, param, 0.0)
 
 
-    def _unpack_opt_results(self, results, sim_index=None):
+    def _unpack_opt_results(self, results, scaling=False, scaling_matrix=None, sim_index=None):
         """Unpack and store the Frame Order optimisation results.
 
-        @param results:     The results tuple returned by the minfx generic_minimise() function.
-        @type results:      tuple
-        @param sim_index:   The index of the simulation to optimise.  This should be None for normal
-                            optimisation.
-        @type sim_index:    None or int
+        @param results:             The results tuple returned by the minfx generic_minimise() function.
+        @type results:              tuple
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
+        @type scaling:              bool
+        @keyword scaling_matrix:    The scaling matrix.
+        @type scaling_matrix:       numpy rank-2 array
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None for normal optimisation.
+        @type sim_index:            None or int
          """
 
         # Disassemble the results.
@@ -1239,6 +1242,10 @@ class Frame_order(API_base, API_common):
         # Catch chi-squared values of NaN.
         if isNaN(func):
             raise RelaxNaNError('chi-squared')
+
+        # Scaling.
+        if scaling:
+            param_vector = dot(scaling_matrix, param_vector)
 
         # Pivot point.
         if not self._pivot_fixed():
@@ -1742,24 +1749,19 @@ class Frame_order(API_base, API_common):
         @type min_algor:        str
         @param min_options:     An array of options to be used by the minimisation algorithm.
         @type min_options:      array of str
-        @param func_tol:        The function tolerance which, when reached, terminates optimisation.
-                                Setting this to None turns of the check.
+        @param func_tol:        The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
         @type func_tol:         None or float
-        @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation.
-                                Setting this to None turns of the check.
+        @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
         @type grad_tol:         None or float
         @param max_iterations:  The maximum number of iterations for the algorithm.
         @type max_iterations:   int
         @param constraints:     If True, constraints are used during optimisation.
         @type constraints:      bool
-        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow
-                                the problem to be better conditioned.
+        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
         @type scaling:          bool
-        @param verbosity:       A flag specifying the amount of information to print.  The higher
-                                the value, the greater the verbosity.
+        @param verbosity:       A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:        int
-        @param sim_index:       The index of the simulation to optimise.  This should be None if
-                                normal optimisation is desired.
+        @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:        None or int
         @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type lower:            array of numbers
@@ -1794,7 +1796,7 @@ class Frame_order(API_base, API_common):
             results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
 
         # Unpack the results.
-        self._unpack_opt_results(results, sim_index)
+        self._unpack_opt_results(results, scaling, scaling_matrix, sim_index)
 
         # Store the back-calculated tensors.
         self._store_bc_data(model)
