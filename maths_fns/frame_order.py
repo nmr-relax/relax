@@ -239,6 +239,7 @@ class Frame_order:
             self.paramag_dist = zeros(self.num_pcs, float64)
             self.pcs_const = zeros(self.num_align, float64)
             self.r_pivot_atom = zeros((self.num_pcs, 3), float64)
+            self.r_pivot_atom_rev = zeros((self.num_pcs, 3), float64)
             if self.paramag_centre == None:
                 self.paramag_centre = zeros(3, float64)
 
@@ -581,7 +582,7 @@ class Frame_order:
         RT_ave = transpose(self.R_ave)
 
         # Pre-calculate all the necessary vectors.
-        self.calc_vectors(self._param_pivot)
+        self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
@@ -604,12 +605,12 @@ class Frame_order:
                     if not self.missing_pcs[i, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[i]:
-                            R_ave = RT_ave
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
                         else:
-                            R_ave = self.R_ave
+                            r_pivot_atom = self.r_pivot_atom[j]
 
                         # The numerical integration.
-                        self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=self.r_pivot_atom[j], r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_ave=R_ave, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
@@ -618,11 +619,15 @@ class Frame_order:
         return chi2_sum
 
 
-    def calc_vectors(self, pivot):
+    def calc_vectors(self, pivot, R_ave, RT_ave):
         """Calculate the pivot to atom and lanthanide to pivot vectors for the target functions.
 
         @param pivot:   The pivot point.
         @type pivot:    numpy rank-1, 3D array
+        @param R_ave:   The rotation matrix for rotating from the reference frame to the average position.
+        @type R_ave:    numpy rank-2, 3D array
+        @param RT_ave:  The transpose of R_ave.
+        @type RT_ave:   numpy rank-2, 3D array
         """
 
         # The lanthanide to pivot vector.
@@ -630,8 +635,9 @@ class Frame_order:
 
         # The pivot to atom vectors.
         for j in xrange(self.num_pcs):
-            # The vector.
-            self.r_pivot_atom[j] = self.pcs_atoms[j] - pivot
+            # The rotated vectors.
+            self.r_pivot_atom[j] = dot(R_ave, self.pcs_atoms[j] - pivot)
+            self.r_pivot_atom_rev[j] = dot(RT_ave, self.pcs_atoms[j] - pivot)
 
 
     def reduce_and_rot(self, ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):
