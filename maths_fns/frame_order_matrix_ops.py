@@ -1329,22 +1329,20 @@ def pcs_numeric_int_rotor(sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=
     Ri_prime[2, 2] = 1.0
 
     # Perform numerical integration.
-    result = quad(pcs_pivot_motion_rotor, -sigma_max, sigma_max, args=(c, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime))
+    result = quad(pcs_pivot_motion_rotor, -sigma_max, sigma_max, args=(r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime))
 
     # The surface area normalisation factor.
     SA = 2.0 * sigma_max
 
     # Return the value.
-    return result[0] / SA
+    return c * result[0] / SA
 
 
-def pcs_pivot_motion_rotor(sigma_i, c, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
+def pcs_pivot_motion_rotor(sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
     """Calculate the PCS value after a pivoted motion for the rotor model.
 
     @param sigma_i:             The rotor angle for state i.
     @type sigma_i:              float
-    @param c:                   The PCS constant (without the interatomic distance and in Angstrom units).
-    @type c:                    float
     @param r_pivot_atom:        The pivot point to atom vector.
     @type r_pivot_atom:         numpy rank-1, 3D array
     @param r_ln_pivot:          The lanthanide position to pivot point vector.
@@ -1382,9 +1380,9 @@ def pcs_pivot_motion_rotor(sigma_i, c, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_
     proj = dot(vect, dot(A, vect))
 
     # The PCS.
-    pcs = c / length**5 * proj
+    pcs = proj / length**5
 
-    # Return the value.
+    # Return the PCS value (without the PCS constant).
     return pcs
 
 
