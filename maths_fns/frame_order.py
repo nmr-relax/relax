@@ -27,6 +27,7 @@
 from copy import deepcopy
 from math import sqrt
 from numpy import array, dot, float64, ones, transpose, zeros
+from numpy.linalg import norm
 
 # relax module imports.
 from float import isNaN
@@ -38,6 +39,7 @@ from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, comp
 from maths_fns.kronecker_product import kron_prod
 from maths_fns.rotation_matrix import euler_to_R_zyz as euler_to_R
 from maths_fns.rotation_matrix import two_vect_to_R
+from pcs import pcs_tensor
 from physical_constants import pcs_constant
 from rdc import rdc_tensor
 from relax_errors import RelaxError
@@ -527,14 +529,61 @@ class Frame_order:
         @rtype:         float
         """
 
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
         # Unpack the parameters.
         ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params
 
-        # Reduce and rotate the tensors.
+        # The average frame rotation matrix (and reduce and rotate the tensors).
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma)
 
+        # Pre-transpose matrices for faster calculations.
+        RT_ave = transpose(self.R_ave)
+
+        # Pre-calculate all the necessary vectors.
+        if self.pcs_flag:
+            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+
+        # Initial chi-squared (or SSE) value.
+        chi2_sum = 0.0
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # RDCs.
+            if self.rdc_flag:
+                # Loop over the RDCs.
+                for j in xrange(self.num_rdc):
+                    # The back calculated RDC.
+                    if not self.missing_rdc[i, j]:
+                        self.rdc_theta[i, j] = rdc_tensor(self.rdc_const[j], self.rdc_vect[j], self.A_3D_bc[i])
+
+                # Calculate and sum the single alignment chi-squared value (for the RDC).
+                chi2_sum = chi2_sum + chi2(self.rdc[i], self.rdc_theta[i], self.rdc_error[i])
+
+            # PCS.
+            if self.pcs_flag:
+                # Loop over the PCSs.
+                for j in xrange(self.num_pcs):
+                    # The back calculated PCS.
+                    if not self.missing_pcs[i, j]:
+                        # Forwards and reverse rotations.
+                        if self.full_in_ref_frame[i]:
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom[j]
+
+                        # The PCS calculation.
+                        vect = self.r_ln_pivot + r_pivot_atom
+                        length = norm(vect)
+                        self.pcs_theta[i, j] = pcs_tensor(self.pcs_const[i] / length**5, vect, self.A_3D[i])
+
+                # Calculate and sum the single alignment chi-squared value (for the PCS).
+                chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
+
         # Return the chi-squared value.
-        return chi2(self.red_tensors, self.A_5D_bc, self.red_errors)
+        return chi2_sum
 
 
     def func_rotor(self, params):
@@ -547,9 +596,6 @@ class Frame_order:
         @return:        The chi-squared or SSE value.
         @rtype:         float
         """
-
-        # Initial chi-squared (or SSE) value.
-        chi2_sum = 0.0
 
         # Scaling.
         if self.scaling_flag:
@@ -584,6 +630,9 @@ class Frame_order:
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
             self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+
+        # Initial chi-squared (or SSE) value.
+        chi2_sum = 0.0
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
