@@ -955,6 +955,10 @@ class Frame_order(API_base, API_common):
         @rtype:     bool
         """
 
+        # A pivot point is not supported by the model.
+        if cdp.model in ['rigid']:
+            return True
+
         # The PCS is loaded.
         if 'pcs' in self._base_data_types():
             # The fixed flag is not set.
