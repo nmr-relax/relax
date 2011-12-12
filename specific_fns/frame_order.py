@@ -813,8 +813,8 @@ class Frame_order(API_base, API_common):
         @type sim_index:    None or int
         @return:            The assembled data structures for using alignment tensors as the base data for optimisation.  These include:
                                 - full_tensors, the full tensors as concatenated arrays.
-                                - red_tensors, the reduced tensors as concatenated arrays.
-                                - red_err, the reduced tensor errors as concatenated arrays.
+                                - full_err, the full tensor errors as concatenated arrays.
+                                - full_in_ref_frame, the flags specifying if the tensor is the full or reduced tensor in the non-moving reference domain.
         @rtype:             tuple of 3 numpy nx5D, rank-1 arrays
         """
 
@@ -830,51 +830,41 @@ class Frame_order(API_base, API_common):
         # Initialise.
         n = len(cdp.align_tensors.reduction)
         full_tensors = zeros(n*5, float64)
-        red_tensors  = zeros(n*5, float64)
-        red_err = ones(n*5, float64) * 1e-5
+        full_err = ones(n*5, float64) * 1e-5
         full_in_ref_frame = zeros(n, float64)
 
         # Loop over the full tensors.
         for i, tensor in self._tensor_loop(red=False):
+            # The full tensor (simulation data).
+            if sim_index != None:
+                full_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
+                full_tensors[5*i + 1] = tensor.Ayy_sim[sim_index]
+                full_tensors[5*i + 2] = tensor.Axy_sim[sim_index]
+                full_tensors[5*i + 3] = tensor.Axz_sim[sim_index]
+                full_tensors[5*i + 4] = tensor.Ayz_sim[sim_index]
+
             # The full tensor.
-            full_tensors[5*i + 0] = tensor.Axx
-            full_tensors[5*i + 1] = tensor.Ayy
-            full_tensors[5*i + 2] = tensor.Axy
-            full_tensors[5*i + 3] = tensor.Axz
-            full_tensors[5*i + 4] = tensor.Ayz
+            else:
+                full_tensors[5*i + 0] = tensor.Axx
+                full_tensors[5*i + 1] = tensor.Ayy
+                full_tensors[5*i + 2] = tensor.Axy
+                full_tensors[5*i + 3] = tensor.Axz
+                full_tensors[5*i + 4] = tensor.Ayz
 
             # The full tensor corresponds to the frame of reference.
             if cdp.ref_domain == tensor.domain:
                 full_in_ref_frame[i] = 1
 
-        # Loop over the reduced tensors.
-        for i, tensor in self._tensor_loop(red=True):
-            # The reduced tensor (simulation data).
-            if sim_index != None:
-                red_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
-                red_tensors[5*i + 1] = tensor.Ayy_sim[sim_index]
-                red_tensors[5*i + 2] = tensor.Axy_sim[sim_index]
-                red_tensors[5*i + 3] = tensor.Axz_sim[sim_index]
-                red_tensors[5*i + 4] = tensor.Ayz_sim[sim_index]
-
-            # The reduced tensor.
-            else:
-                red_tensors[5*i + 0] = tensor.Axx
-                red_tensors[5*i + 1] = tensor.Ayy
-                red_tensors[5*i + 2] = tensor.Axy
-                red_tensors[5*i + 3] = tensor.Axz
-                red_tensors[5*i + 4] = tensor.Ayz
-
-            # The reduced tensor errors.
+            # The full tensor errors.
             if hasattr(tensor, 'Axx_err'):
-                red_err[5*i + 0] = tensor.Axx_err
-                red_err[5*i + 1] = tensor.Ayy_err
-                red_err[5*i + 2] = tensor.Axy_err
-                red_err[5*i + 3] = tensor.Axz_err
-                red_err[5*i + 4] = tensor.Ayz_err
+                full_err[5*i + 0] = tensor.Axx_err
+                full_err[5*i + 1] = tensor.Ayy_err
+                full_err[5*i + 2] = tensor.Axy_err
+                full_err[5*i + 3] = tensor.Axz_err
+                full_err[5*i + 4] = tensor.Ayz_err
 
         # Return the data structures.
-        return full_tensors, red_tensors, red_err, full_in_ref_frame
+        return full_tensors, full_err, full_in_ref_frame
 
 
     def _param_num(self):
@@ -1110,7 +1100,7 @@ class Frame_order(API_base, API_common):
             param_vector = dot(inv(scaling_matrix), param_vector)
 
         # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index)
+        full_tensors, full_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
         pcs, pcs_err, pcs_weight, pcs_atoms, paramag_centre, temp, frq = None, None, None, None, None, None, None
@@ -1955,11 +1945,11 @@ class Frame_order(API_base, API_common):
         # Alignment tensor data.
         if data_id == 'A':
             # Get the tensor data structures.
-            full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
+            full_tensors, full_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
 
             # Return the errors.
-            for i in range(len(red_tensor_err)):
-                mc_errors.append(red_tensor_err[i])
+            for i in range(len(full_tensor_err)):
+                mc_errors.append(full_tensor_err[i])
 
         # The spin specific data.
         else:
