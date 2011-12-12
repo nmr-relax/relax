@@ -201,26 +201,6 @@ class Frame_order(API_base, API_common):
         return scaling_matrix
 
 
-    def _back_calc(self):
-        """Back-calculation of the reduced alignment tensor.
-
-        @return:    The reduced alignment tensors.
-        @rtype:     numpy array
-        """
-
-        # Set up the target function for direct calculation.
-        model, param_vector, data_types, scaling_matrix = self._target_fn_setup()
-
-        # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
-        model.func(param_vector)
-
-        # Store the back-calculated tensors.
-        self._store_bc_data(model)
-
-        # Return the reduced tensors.
-        return model.A_5D_bc
-
-
     def _base_data_types(self):
         """Determine all the base data types.
 
@@ -1285,19 +1265,19 @@ class Frame_order(API_base, API_common):
         if sim_index != None:
             # Average position parameters.
             if ave_pos_alpha != None:
-                cdp.ave_pos_alpha_sim[sim_index] = wrap_angles(ave_pos_alpha, 0.0, 2.0*pi)
+                cdp.ave_pos_alpha_sim[sim_index] = wrap_angles(ave_pos_alpha, cdp.ave_pos_alpha-pi, cdp.ave_pos_alpha+pi)
             if ave_pos_beta != None:
-                cdp.ave_pos_beta_sim[sim_index] = wrap_angles(ave_pos_beta, 0.0, 2.0*pi)
+                cdp.ave_pos_beta_sim[sim_index] = wrap_angles(ave_pos_beta, cdp.ave_pos_beta-pi, cdp.ave_pos_beta+pi)
             if ave_pos_gamma != None:
-                cdp.ave_pos_gamma_sim[sim_index] = wrap_angles(ave_pos_gamma, 0.0, 2.0*pi)
+                cdp.ave_pos_gamma_sim[sim_index] = wrap_angles(ave_pos_gamma, cdp.ave_pos_gamma-pi, cdp.ave_pos_gamma+pi)
 
             # Eigenframe parameters.
             if eigen_alpha != None:
-                cdp.eigen_alpha_sim[sim_index] = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
+                cdp.eigen_alpha_sim[sim_index] = wrap_angles(eigen_alpha, cdp.eigen_alpha-pi, cdp.eigen_alpha+pi)
             if eigen_beta != None:
-                cdp.eigen_beta_sim[sim_index] =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
+                cdp.eigen_beta_sim[sim_index] =  wrap_angles(eigen_beta, cdp.eigen_beta-pi, cdp.eigen_beta+pi)
             if eigen_gamma != None:
-                cdp.eigen_gamma_sim[sim_index] = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
+                cdp.eigen_gamma_sim[sim_index] = wrap_angles(eigen_gamma, cdp.eigen_gamma-pi, cdp.eigen_gamma+pi)
             if axis_theta != None:
                 cdp.axis_theta_sim[sim_index] = axis_theta
             if axis_phi != None:
@@ -1453,12 +1433,14 @@ class Frame_order(API_base, API_common):
 
         # Alignment tensor data.
         if data_id == 'A':
-            # Back calculate the tensors.
-            red_tensors_bc = self._back_calc()
-
-            # Append the data.
-            for i in range(len(red_tensors_bc)):
-                mc_data.append(red_tensors_bc[i])
+            # Loop over the full tensors.
+            for i, tensor in self._tensor_loop(red=False):
+                # Append the data.
+                mc_data.append(tensor.Axx)
+                mc_data.append(tensor.Ayy)
+                mc_data.append(tensor.Axy)
+                mc_data.append(tensor.Axz)
+                mc_data.append(tensor.Ayz)
 
         # The spin specific data.
         else:
@@ -1944,12 +1926,14 @@ class Frame_order(API_base, API_common):
 
         # Alignment tensor data.
         if data_id == 'A':
-            # Get the tensor data structures.
-            full_tensors, full_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
-
-            # Return the errors.
-            for i in range(len(full_tensor_err)):
-                mc_errors.append(full_tensor_err[i])
+            # Loop over the full tensors.
+            for i, tensor in self._tensor_loop(red=False):
+                # Append the errors.
+                mc_errors.append(tensor.Axx_err)
+                mc_errors.append(tensor.Ayy_err)
+                mc_errors.append(tensor.Axy_err)
+                mc_errors.append(tensor.Axz_err)
+                mc_errors.append(tensor.Ayz_err)
 
         # The spin specific data.
         else:
