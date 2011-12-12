@@ -1390,8 +1390,9 @@ class Frame_order(API_base, API_common):
         # First the tensors.
         yield 'A'
 
-        # Then the spin IDs.
-        for spin, spin_id in spin_loop(return_id=True):
+        # Then the spin IDs for the moving domain.
+        id = cdp.domain[self._domain_moving()]
+        for spin, spin_id in spin_loop(id, return_id=True):
             # Re-initialise the data structure.
             base_ids = [spin_id, None, None]
 
