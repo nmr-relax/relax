@@ -40,7 +40,7 @@ from api_common import API_common
 from float import isNaN, isInf
 from generic_fns import align_tensor, pipes
 from generic_fns.angles import wrap_angles
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns.structure.cones import Iso_cone, Pseudo_elliptic
 from generic_fns.structure.geometric import create_cone_pdb, generate_vector_dist, generate_vector_residues
 from generic_fns.structure.internal import Internal
@@ -1379,15 +1379,49 @@ class Frame_order(API_base, API_common):
 
 
     def base_data_loop(self):
-        """Generator method for looping nothing.
+        """Generator method for looping over the base data - alignment tensors, RDCs, PCSs.
 
-        The loop essentially consists of a single element.
+        This loop first yields the string 'A' representing the alignment tensors, and then iterates for each data point (RDC, PCS) for each spin, returning the identification information.
 
-        @return:    Nothing.
-        @rtype:     None
+        @return:    The alignment tensor or a list of the spin ID string, the data type ('rdc', 'pcs') and the alignment ID.
+        @rtype:     string or list of str
         """
 
-        yield None
+        # First the tensors.
+        yield 'A'
+
+        # Then the spin IDs.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Re-initialise the data structure.
+            base_ids = [spin_id, None, None]
+
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # RDC data.
+            if hasattr(spin, 'rdc'):
+                base_ids[1] = 'rdc'
+
+                # Loop over the alignment IDs.
+                for id in cdp.rdc_ids:
+                    # Add the ID.
+                    base_ids[2] = id
+
+                    # Yield the set.
+                    yield base_ids
+
+            # PCS data.
+            if hasattr(spin, 'pcs'):
+                base_ids[1] = 'pcs'
+
+                # Loop over the alignment IDs.
+                for id in cdp.pcs_ids:
+                    # Add the ID.
+                    base_ids[2] = id
+
+                    # Yield the set.
+                    yield base_ids
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
@@ -1423,11 +1457,55 @@ class Frame_order(API_base, API_common):
         @rtype:             list of floats
         """
 
-        # Back calculate the tensors.
-        red_tensors_bc = self._back_calc()
+        # Initialise the MC data structure.
+        mc_data = []
+
+        # Alignment tensor data.
+        if data_id == 'A':
+            # Back calculate the tensors.
+            red_tensors_bc = self._back_calc()
+
+            # Append the data.
+            for i in range(len(red_tensors_bc)):
+                mc_data.append(red_tensors_bc[i])
+
+        # The spin specific data.
+        else:
+            # Get the spin container.
+            spin = return_spin(data_id[0])
+
+            # RDC data.
+            if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+                # Does back-calculated data exist?
+                if not hasattr(spin, 'rdc_bc'):
+                    self.calculate()
+
+                # The data.
+                if not hasattr(spin, 'rdc_bc') or not spin.rdc_bc.has_key(data_id[2]):
+                    data = None
+                else:
+                    data = spin.rdc_bc[data_id[2]]
+
+                # Append the data.
+                mc_data.append(data)
+
+            # PCS data.
+            elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+                # Does back-calculated data exist?
+                if not hasattr(spin, 'pcs_bc'):
+                    self.calculate()
+
+                # The data.
+                if not hasattr(spin, 'pcs_bc') or not spin.pcs_bc.has_key(data_id[2]):
+                    data = None
+                else:
+                    data = spin.pcs_bc[data_id[2]]
+
+                # Append the data.
+                mc_data.append(data)
 
         # Return the data.
-        return red_tensors_bc
+        return mc_data
 
 
     def data_names(self, set='all', error_names=False, sim_names=False):
@@ -1870,11 +1948,43 @@ class Frame_order(API_base, API_common):
         @rtype:         list of float
         """
 
-        # Get the tensor data structures.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
+        # Initialise the MC data structure.
+        mc_errors = []
+
+        # Alignment tensor data.
+        if data_id == 'A':
+            # Get the tensor data structures.
+            full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
+
+            # Return the errors.
+            for i in range(len(red_tensor_err)):
+                mc_errors.append(red_tensor_err[i])
+
+        # The spin specific data.
+        else:
+            # Get the spin container.
+            spin = return_spin(data_id[0])
+
+            # RDC data.
+            if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+                # Do errors exist?
+                if not hasattr(spin, 'rdc_err'):
+                    raise RelaxError("The RDC errors are missing for spin '%s'." % data_id[0])
+
+                # Append the data.
+                mc_errors.append(spin.rdc_err[data_id[2]])
+
+            # PCS data.
+            elif data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+                # Do errors exist?
+                if not hasattr(spin, 'pcs_err'):
+                    raise RelaxError("The PCS errors are missing for spin '%s'." % data_id[0])
+
+                # Append the data.
+                mc_errors.append(spin.pcs_err[data_id[2]])
 
         # Return the errors.
-        return red_tensor_err
+        return mc_errors
 
 
     def return_units(self, param, spin=None, spin_id=None):
@@ -2011,30 +2121,65 @@ class Frame_order(API_base, API_common):
     def sim_pack_data(self, data_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param data_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type data_id:      None
+        @param data_id:     The identification data as yielded by the base_data_loop() generator method.
+        @type data_id:      string or list of str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
 
-        # Transpose the data.
-        sim_data = transpose(sim_data)
+        # Alignment tensor data.
+        if data_id == 'A':
+            # Loop over the full tensors.
+            for j, tensor in self._tensor_loop(red=False):
+                # Initialise the data if needed.
+                if not hasattr(tensor, 'Axx_sim'):
+                    tensor.Axx_sim = []
+                    tensor.Ayy_sim = []
+                    tensor.Axy_sim = []
+                    tensor.Axz_sim = []
+                    tensor.Ayz_sim = []
 
-        # Loop over the reduced tensors.
-        for i, tensor in self._tensor_loop(red=True):
-            # Set the reduced tensor simulation data.
-            tensor.Axx_sim = sim_data[5*i + 0]
-            tensor.Ayy_sim = sim_data[5*i + 1]
-            tensor.Axy_sim = sim_data[5*i + 2]
-            tensor.Axz_sim = sim_data[5*i + 3]
-            tensor.Ayz_sim = sim_data[5*i + 4]
+                # Set the full tensor simulation data.
+                for i in range(cdp.sim_number):
+                    tensor.Axx_sim.append(sim_data[i][5*j + 0])
+                    tensor.Ayy_sim.append(sim_data[i][5*j + 1])
+                    tensor.Axy_sim.append(sim_data[i][5*j + 2])
+                    tensor.Axz_sim.append(sim_data[i][5*j + 3])
+                    tensor.Ayz_sim.append(sim_data[i][5*j + 4])
+
+        # The spin specific data.
+        else:
+            # Get the spin container.
+            spin = return_spin(data_id[0])
+
+            # RDC data.
+            if data_id[1] == 'rdc' and hasattr(spin, 'rdc'):
+                # Initialise.
+                if not hasattr(spin, 'rdc_sim'):
+                    spin.rdc_sim = {}
+                    
+                # Store the data structure.
+                spin.rdc_sim[data_id[2]] = []
+                for i in range(cdp.sim_number):
+                    spin.rdc_sim[data_id[2]].append(sim_data[i][0])
+
+            # PCS data.
+            if data_id[1] == 'pcs' and hasattr(spin, 'pcs'):
+                # Initialise.
+                if not hasattr(spin, 'pcs_sim'):
+                    spin.pcs_sim = {}
+                    
+                # Store the data structure.
+                spin.pcs_sim[data_id[2]] = []
+                for i in range(cdp.sim_number):
+                    spin.pcs_sim[data_id[2]].append(sim_data[i][0])
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, data_id, index):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The model information originating from model_loop() (unused).
-        @type model_info:   None
+        @param data_id:     The identification data as yielded by the base_data_loop() generator method.
+        @type data_id:      string or list of str
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
         """
