@@ -1002,11 +1002,12 @@ class Frame_order(API_base, API_common):
 
         # Loop over the reduced tensors.
         for i, tensor in self._tensor_loop(red=True):
-            # New name.
-            name = tensor.name + ' bc'
-
-            # Initialise the new tensor.
-            align_tensor.init(tensor=name, params=(target_fn.A_5D_bc[5*i + 0], target_fn.A_5D_bc[5*i + 1], target_fn.A_5D_bc[5*i + 2], target_fn.A_5D_bc[5*i + 3], target_fn.A_5D_bc[5*i + 4]), param_types=2)
+            # Store the values.
+            tensor.Axx = target_fn.A_5D_bc[5*i + 0]
+            tensor.Ayy = target_fn.A_5D_bc[5*i + 1]
+            tensor.Axy = target_fn.A_5D_bc[5*i + 2]
+            tensor.Axz = target_fn.A_5D_bc[5*i + 3]
+            tensor.Ayz = target_fn.A_5D_bc[5*i + 4]
 
         # The RDC data.
         for i in xrange(len(cdp.align_ids)):
