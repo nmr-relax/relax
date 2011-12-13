@@ -129,7 +129,7 @@ def compile_2nd_matrix_iso_cone(matrix, R, eigen_alpha, eigen_beta, eigen_gamma,
     return rotate_daeg(matrix, R)
 
 
-def compile_2nd_matrix_iso_cone_free_rotor(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, s1):
+def compile_2nd_matrix_iso_cone_free_rotor(matrix, Rx2_eigen, s1):
     """Generate the rotated 2nd degree Frame Order matrix for the free rotor isotropic cone.
 
     The cone axis is assumed to be parallel to the z-axis in the eigenframe.  In this model, the three order parameters are defined as::
@@ -140,31 +140,17 @@ def compile_2nd_matrix_iso_cone_free_rotor(matrix, R, z_axis, cone_axis, theta_a
 
     @param matrix:      The Frame Order matrix, 2nd degree to be populated.
     @type matrix:       numpy 9D, rank-2 array
-    @param R:           The rotation matrix to be populated.
-    @type R:            numpy 3D, rank-2 array
-    @param z_axis:      The molecular frame z-axis from which the cone axis is rotated from.
-    @type z_axis:       numpy 3D, rank-1 array
-    @param cone_axis:   The storage structure for the cone axis.
-    @type cone_axis:    numpy 3D, rank-1 array
-    @param theta_axis:  The cone axis polar angle.
-    @type theta_axis:   float
-    @param phi_axis:    The cone axis azimuthal angle.
-    @type phi_axis:     float
+    @param Rx2_eigen:   The Kronecker product of the eigenframe rotation matrix with itself.
+    @type Rx2_eigen:    numpy 9D, rank-2 array
     @param s1:          The cone order parameter.
     @type s1:           float
     """
 
-    # Generate the cone axis from the spherical angles.
-    spherical_to_cartesian([1.0, theta_axis, phi_axis], cone_axis)
-
     # Populate the Frame Order matrix in the eigenframe.
     populate_2nd_eigenframe_iso_cone_free_rotor(matrix, s1)
 
-    # Average position rotation.
-    two_vect_to_R(z_axis, cone_axis, R)
-
     # Rotate and return the frame order matrix.
-    return rotate_daeg(matrix, R)
+    return rotate_daeg(matrix, Rx2_eigen)
 
 
 def compile_2nd_matrix_iso_cone_torsionless(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, cone_theta):
@@ -1284,6 +1270,41 @@ def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
     return 2 - 2*cos(tmax)**3
 
 
+def pcs_numeric_int_iso_cone(theta_max=None, sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
+    """Determine the averaged PCS value via numerical integration.
+
+    @keyword theta_max:     The half cone angle.
+    @type theta_max:        float
+    @keyword sigma_max:     The maximum torsion angle.
+    @type sigma_max:        float
+    @keyword c:             The PCS constant (without the interatomic distance and in Angstrom units).
+    @type c:                float
+    @keyword r_pivot_atom:  The pivot point to atom vector.
+    @type r_pivot_atom:     numpy rank-1, 3D array
+    @keyword r_ln_pivot:    The lanthanide position to pivot point vector.
+    @type r_ln_pivot:       numpy rank-1, 3D array
+    @keyword A:             The full alignment tensor of the non-moving domain.
+    @type A:                numpy rank-2, 3D array
+    @keyword R_eigen:       The eigenframe rotation matrix.
+    @type R_eigen:          numpy rank-2, 3D array
+    @keyword RT_eigen:      The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:         numpy rank-2, 3D array
+    @keyword Ri_prime:      The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
+    @type Ri_prime:         numpy rank-2, 3D array
+    @return:                The averaged PCS value.
+    @rtype:                 float
+    """
+
+    # Perform numerical integration.
+    result = tplquad(pcs_pivot_motion_full, -sigma_max, sigma_max, lambda phi: -pi, lambda phi: pi, lambda theta, phi: 0.0, lambda theta, phi: theta_max, args=(r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime))
+
+    # The surface area normalisation factor.
+    SA = 4.0 * pi * sigma_max * (1.0 - cos(sigma_max))
+
+    # Return the value.
+    return c * result[0] / SA
+
+
 def pcs_numeric_int_rotor(sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
     """Determine the averaged PCS value via numerical integration.
 
@@ -1322,6 +1343,69 @@ def pcs_numeric_int_rotor(sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=
 
     # Return the value.
     return c * result[0] / SA
+
+
+def pcs_pivot_motion_full(theta_i, phi_i, sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
+    """Calculate the PCS value after a pivoted motion for the isotropic cone model.
+
+    @param theta_i:             The half cone opening angle (polar angle).
+    @type theta_i:              float
+    @param phi_i:               The cone azimuthal angle.
+    @type phi_i:                float
+    @param sigma_i:             The torsion angle for state i.
+    @type sigma_i:              float
+    @param r_pivot_atom:        The pivot point to atom vector.
+    @type r_pivot_atom:         numpy rank-1, 3D array
+    @param r_ln_pivot:          The lanthanide position to pivot point vector.
+    @type r_ln_pivot:           numpy rank-1, 3D array
+    @param A:                   The full alignment tensor of the non-moving domain.
+    @type A:                    numpy rank-2, 3D array
+    @param R_eigen:             The eigenframe rotation matrix.
+    @type R_eigen:              numpy rank-2, 3D array
+    @param RT_eigen:            The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:             numpy rank-2, 3D array
+    @param Ri_prime:            The empty rotation matrix for the in-frame isotropic cone motion for state i.
+    @type Ri_prime:             numpy rank-2, 3D array
+    @return:                    The PCS value for the changed position.
+    @rtype:                     float
+    """
+
+    # The rotation matrix.
+    c_theta = cos(theta_i)
+    s_theta = sin(theta_i)
+    c_phi = cos(phi_i)
+    s_phi = sin(phi_i)
+    c_sigma_phi = cos(sigma_i - phi_i)
+    s_sigma_phi = sin(sigma_i - phi_i)
+    c_phi_c_theta = c_phi * c_theta
+    s_phi_c_theta = s_phi * c_theta
+    Ri_prime[0, 0] =  c_phi_c_theta*c_sigma_phi - s_phi*s_sigma_phi
+    Ri_prime[0, 1] = -c_phi_c_theta*s_sigma_phi - s_phi*c_sigma_phi
+    Ri_prime[0, 2] =  c_phi*s_theta
+    Ri_prime[1, 0] =  s_phi_c_theta*c_sigma_phi + c_phi*s_sigma_phi
+    Ri_prime[1, 1] = -s_phi_c_theta*s_sigma_phi + c_phi*c_sigma_phi
+    Ri_prime[1, 2] =  s_phi*s_theta
+    Ri_prime[2, 0] = -s_theta*c_sigma_phi
+    Ri_prime[2, 1] =  s_theta*s_sigma_phi
+    Ri_prime[2, 2] =  c_theta
+
+    # The rotation.
+    R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
+
+    # Calculate the new vector.
+    vect = dot(R_i, r_pivot_atom) + r_ln_pivot
+
+    # The vector length.
+    length = norm(vect)
+
+    # The projection.
+    proj = dot(vect, dot(A, vect))
+
+    # The PCS.
+    pcs = proj / length**5
+
+    # Return the PCS value (without the PCS constant).
+    return pcs
 
 
 def pcs_pivot_motion_rotor(sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
