@@ -2,21 +2,46 @@ REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007
 REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)
 HET         PIV   1       1                                             
 HET         ZAX   2       3                                             
-HET         ZAX   3       3                                             
+HET         SIM   3       1                                             
+HET         SIM   4       1                                             
+HET         SIM   5       1                                             
+HET         SIM   6       1                                             
+HET         SIM   7       1                                             
 HETNAM     PIV Pivot point                                            
 HETNAM     ZAX Unknown                                                
+HETNAM     SIM Monte Carlo simulation tensor axes                     
 FORMUL   1  PIV    C1                                                 
 FORMUL   2  ZAX    C2N1                                               
+FORMUL   3  SIM    C1                                                 
+MODEL        1
 HETATM    1    R PIV     1      37.254   0.500  16.747  1.00  0.00           C  
 HETATM    2    R ZAX     2      37.254   0.500  16.747  1.00  0.00           C  
-HETATM    3 z-ax ZAX     2      56.008  23.771  14.154  1.00  0.00           C  
-HETATM    4 z-ax ZAX     2      57.884  26.098  13.895  1.00  0.00           N  
-HETATM    5    R ZAX     3      37.254   0.500  16.747  1.00  0.00           C  
-HETATM    6 z-ax ZAX     3      18.500 -22.771  19.339  1.00  0.00           C  
-HETATM    7 z-ax ZAX     3      16.624 -25.098  19.598  1.00  0.00           N  
-CONECT    2    3                                             
+HETATM    3 z-ax ZAX     2      57.562  22.307  13.274  1.00  0.00           C  
+HETATM    4 z-ax ZAX     2      59.593  24.487  12.926  1.00  0.00           N  
+HETATM    5 z-ax SIM     3      57.840  21.965  12.814  1.00  0.00           C  
+HETATM    6 z-ax SIM     4      58.366  21.458  12.871  1.00  0.00           C  
+HETATM    7 z-ax SIM     5      58.602  21.133  12.436  1.00  0.00           C  
+HETATM    8 z-ax SIM     6      56.751  23.102  13.748  1.00  0.00           C  
+HETATM    9 z-ax SIM     7      58.931  20.705  12.072  1.00  0.00           C  
+ENDMDL
+MODEL        2
+HETATM    1    R PIV     1      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    2    R ZAX     2      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    3 z-ax ZAX     2      16.946 -21.307  20.219  1.00  0.00           C  
+HETATM    4 z-ax ZAX     2      14.915 -23.487  20.567  1.00  0.00           N  
+HETATM    5 z-ax SIM     3      16.668 -20.965  20.679  1.00  0.00           C  
+HETATM    6 z-ax SIM     4      16.142 -20.458  20.622  1.00  0.00           C  
+HETATM    7 z-ax SIM     5      15.906 -20.133  21.057  1.00  0.00           C  
+HETATM    8 z-ax SIM     6      17.757 -22.102  19.745  1.00  0.00           C  
+HETATM    9 z-ax SIM     7      15.577 -19.705  21.421  1.00  0.00           C  
+ENDMDL
+CONECT    2    3    5    6    7                              
+CONECT    2    8    9                                        
 CONECT    3    2                                             
-CONECT    5    6                                             
-CONECT    6    5                                             
-MASTER        0    0    3    0    0    0    0    0    7    0    4    0
+CONECT    5    2                                             
+CONECT    6    2                                             
+CONECT    7    2                                             
+CONECT    8    2                                             
+CONECT    9    2                                             
+MASTER        0    0    7    0    0    0    0    0   18    0    8    0
 END
