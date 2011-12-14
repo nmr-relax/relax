@@ -401,45 +401,6 @@ class Frame_order:
         return chi2_sum
 
 
-    def func_iso_cone_elements(self, params):
-        """Target function for isotropic cone model optimisation using the Frame Order matrix.
-
-        This function optimises by directly matching the elements of the 2nd degree Frame Order
-        super matrix.  The cone axis spherical angles theta and phi and the cone angle theta are the
-        3 parameters optimised in this model.
-
-        @param params:  The vector of parameter values {theta, phi, theta_cone} where the first two are the polar and azimuthal angles of the cone axis theta_cone is the isotropic cone angle.
-        @type params:   list of float
-        @return:        The chi-squared or SSE value.
-        @rtype:         float
-        """
-
-        # Break up the parameters.
-        theta, phi, theta_cone = params
-
-        # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, self.R_eigen, self.z_axis, self.cone_axis, theta, phi, theta_cone)
-
-        # Make the Frame Order matrix contiguous.
-        self.frame_order_2nd = self.frame_order_2nd.copy()
-
-        # Reshape the numpy arrays for use in the chi2() function.
-        self.data.shape = (81,)
-        self.frame_order_2nd.shape = (81,)
-        self.errors.shape = (81,)
-
-        # Get the chi-squared value.
-        val = chi2(self.data, self.frame_order_2nd, self.errors)
-
-        # Reshape the arrays back to normal.
-        self.data.shape = (9, 9)
-        self.frame_order_2nd.shape = (9, 9)
-        self.errors.shape = (9, 9)
-
-        # Return the chi2 value.
-        return val
-
-
     def func_iso_cone(self, params):
         """Target function for isotropic cone model optimisation.
 
