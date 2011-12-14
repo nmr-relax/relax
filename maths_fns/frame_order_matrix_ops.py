@@ -98,21 +98,15 @@ def compile_2nd_matrix_free_rotor(matrix, Rx2_eigen):
     return rotate_daeg(matrix, Rx2_eigen)
 
 
-def compile_2nd_matrix_iso_cone(matrix, R, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, sigma_max):
+def compile_2nd_matrix_iso_cone(matrix, Rx2_eigen, cone_theta, sigma_max):
     """Generate the rotated 2nd degree Frame Order matrix for the isotropic cone.
 
     The cone axis is assumed to be parallel to the z-axis in the eigenframe.
 
     @param matrix:      The Frame Order matrix, 2nd degree to be populated.
     @type matrix:       numpy 9D, rank-2 array
-    @param R:           The rotation matrix to be populated.
-    @type R:            numpy 3D, rank-2 array
-    @param eigen_alpha: The eigenframe rotation alpha Euler angle.
-    @type eigen_alpha:  float
-    @param eigen_beta:  The eigenframe rotation beta Euler angle.
-    @type eigen_beta:   float
-    @param eigen_gamma: The eigenframe rotation gamma Euler angle.
-    @type eigen_gamma:  float
+    @param Rx2_eigen:   The Kronecker product of the eigenframe rotation matrix with itself.
+    @type Rx2_eigen:    numpy 9D, rank-2 array
     @param cone_theta:  The cone opening angle.
     @type cone_theta:   float
     @param sigma_max:   The maximum torsion angle.
@@ -122,11 +116,8 @@ def compile_2nd_matrix_iso_cone(matrix, R, eigen_alpha, eigen_beta, eigen_gamma,
     # Populate the Frame Order matrix in the eigenframe.
     populate_2nd_eigenframe_iso_cone(matrix, cone_theta, sigma_max)
 
-    # Average position rotation.
-    euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
-
     # Rotate and return the frame order matrix.
-    return rotate_daeg(matrix, R)
+    return rotate_daeg(matrix, Rx2_eigen)
 
 
 def compile_2nd_matrix_iso_cone_free_rotor(matrix, Rx2_eigen, s1):
