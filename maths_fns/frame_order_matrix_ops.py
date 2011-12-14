@@ -1276,7 +1276,7 @@ def pcs_numeric_int_iso_cone(theta_max=None, sigma_max=None, c=None, r_pivot_ato
     result = tplquad(pcs_pivot_motion_full, -sigma_max, sigma_max, lambda phi: -pi, lambda phi: pi, lambda theta, phi: 0.0, lambda theta, phi: theta_max, args=(r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime))
 
     # The surface area normalisation factor.
-    SA = 4.0 * pi * sigma_max * (1.0 - cos(sigma_max))
+    SA = 4.0 * pi * sigma_max * (1.0 - cos(theta_max))
 
     # Return the value.
     return c * result[0] / SA
