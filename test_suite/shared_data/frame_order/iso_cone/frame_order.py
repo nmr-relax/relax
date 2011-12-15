@@ -1,4 +1,4 @@
-# Script for optimising the free rotor frame order test model of CaM.
+# Script for optimising the isotropic cone frame order test model of CaM.
 
 # Python module imports.
 from numpy import array, float64, transpose, zeros
@@ -85,7 +85,7 @@ class Analysis:
             align_tensor.reduction(full_tensor=full[i], red_tensor=red[i])
 
         # Select the model.
-        frame_order.select_model('iso cone, free rotor')
+        frame_order.select_model('iso cone')
 
         # Set the reference domain.
         frame_order.ref_domain('N')
@@ -98,11 +98,13 @@ class Analysis:
         paramag.centre(pos=[35.934, 12.194, -4.206])
 
         # Check the minimum.
-        cdp.ave_pos_beta = 1.1983544319568078
-        cdp.ave_pos_gamma = 0.333131539777762
-        cdp.axis_theta = 2.1821788938846129
-        cdp.axis_phi = 0.88498745175135329
-        cdp.cone_s1 = 0.91322057310490712
+        cdp.ave_pos_alpha = 4.3434999280669997
+        cdp.ave_pos_beta = 0.43544332764249905
+        cdp.ave_pos_gamma = 3.8013235235956007
+        cdp.axis_theta = 2.1815126749944502
+        cdp.axis_phi = 0.89068285262982982
+        cdp.cone_theta = 10.0 * 2.0 * pi / 360.0
+        cdp.cone_sigma_max = 20.0 * 2.0 * pi / 360.0
         calc()
         print cdp.chi2
 
