@@ -312,7 +312,7 @@ class Frame_order(API_base, API_common):
         print("\nGenerating the central axis.")
 
         # The spherical angles.
-        if cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
+        if cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
             theta_name = 'axis_theta'
             phi_name = 'axis_phi'
         else:
@@ -356,7 +356,7 @@ class Frame_order(API_base, API_common):
         ###################
 
         # Skip models missing the full eigenframe.
-        if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
+        if cdp.model not in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
             # Print out.
             print("\nGenerating the x and y axes.")
 
@@ -374,16 +374,17 @@ class Frame_order(API_base, API_common):
             axes_sim_neg = None
             if sim:
                 # Init.
-                axes_sim = zeros((3, cdp.sim_number, 3), float64)
+                axes_sim_pos = zeros((3, cdp.sim_number, 3), float64)
+                axes_sim_neg = zeros((3, cdp.sim_number, 3), float64)
 
                 # Fill the structure.
                 for i in range(cdp.sim_number):
                     # The positive system.
-                    euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim[:, i])
+                    euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim_pos[:, i])
 
-                # Rotation and inversion.
-                axes_sim_pos = axes_sim
-                axes_sim_neg = dot(inv_mat, axes_sim_pos)
+                    # The negative system.
+                    euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim_neg[:, i])
+                    axes_sim_neg[:, i] = dot(inv_mat, axes_sim_neg[:, i])
 
             # Generate the axis vectors.
             print("\nGenerating the axis vectors.")
@@ -406,7 +407,7 @@ class Frame_order(API_base, API_common):
         # Skip models missing a cone.
         if cdp.model not in ['rotor', 'free rotor']:
             # The rotation matrix (rotation from the z-axis to the cone axis).
-            if cdp.model not in ['iso cone, torsionless', 'iso cone, free rotor']:
+            if cdp.model not in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
                 R = axes
             else:
                 R = zeros((3, 3), float64)
