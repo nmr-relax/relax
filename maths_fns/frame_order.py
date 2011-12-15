@@ -38,7 +38,7 @@ from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_rotor
 from maths_fns.kronecker_product import kron_prod
 from maths_fns import order_parameters
-from maths_fns.rotation_matrix import euler_to_R_zyz as euler_to_R
+from maths_fns.rotation_matrix import euler_to_R_zyz
 from maths_fns.rotation_matrix import two_vect_to_R
 from pcs import pcs_tensor
 from physical_constants import pcs_constant
@@ -1070,7 +1070,7 @@ class Frame_order:
         """
 
         # Alignment tensor rotation.
-        euler_to_R(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, self.R_ave)
+        euler_to_R_zyz(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, self.R_ave)
 
         # Back calculate the rotated tensors.
         for i in range(self.num_tensors):
