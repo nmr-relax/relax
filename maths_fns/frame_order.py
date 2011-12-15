@@ -419,12 +419,15 @@ class Frame_order:
         # Unpack the parameters.
         if self.pivot_opt:
             self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, sigma_max = params[3:]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
         else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta, sigma_max = params
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params
 
-        # Average position rotation.
-        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
+        # Generate the cone axis from the spherical angles.
+        spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
+
+        # Pre-calculate the eigenframe rotation matrix.
+        two_vect_to_R(self.z_axis, self.cone_axis, self.R_eigen)
 
         # The Kronecker product of the eigenframe rotation.
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
