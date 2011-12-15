@@ -1466,8 +1466,8 @@ def pcs_pivot_motion_full(theta_i, phi_i, sigma_i, r_pivot_atom, r_ln_pivot, A, 
     # The projection.
     proj = dot(vect, dot(A, vect))
 
-    # The PCS.
-    pcs = proj / length**5
+    # The PCS (with sine surface normalisation).
+    pcs = proj / length**5 * s_theta
 
     # Return the PCS value (without the PCS constant).
     return pcs
@@ -1573,8 +1573,8 @@ def pcs_pivot_motion_torsionless(theta_i, phi_i, r_pivot_atom, r_ln_pivot, A, R_
     # The projection.
     proj = dot(vect, dot(A, vect))
 
-    # The PCS.
-    pcs = proj / length**5
+    # The PCS (with sine surface normalisation).
+    pcs = proj / length**5 * s_theta
 
     # Return the PCS value (without the PCS constant).
     return pcs
