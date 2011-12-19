@@ -27,9 +27,10 @@
 import dep_check
 
 # Python module imports.
-from math import cos, pi, sin, sqrt
-from numpy import cross, dot, sinc, transpose
+from math import acos, cos, pi, sin, sqrt
+from numpy import cross, dot, inner, sinc, transpose
 from numpy.linalg import norm
+from random import uniform
 if dep_check.scipy_module:
     from scipy.integrate import dblquad, quad, tplquad
 
@@ -1220,39 +1221,77 @@ def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
     return 2 - 2*cos(tmax)**3
 
 
-def pcs_numeric_int_iso_cone(theta_max=None, sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
+def pcs_numeric_int_iso_cone(N=1000, theta_max=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, rot_vect=None, rot_vect_rev=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
     """Determine the averaged PCS value via numerical integration.
 
-    @keyword theta_max:     The half cone angle.
-    @type theta_max:        float
-    @keyword sigma_max:     The maximum torsion angle.
-    @type sigma_max:        float
-    @keyword c:             The PCS constant (without the interatomic distance and in Angstrom units).
-    @type c:                float
-    @keyword r_pivot_atom:  The pivot point to atom vector.
-    @type r_pivot_atom:     numpy rank-1, 3D array
-    @keyword r_ln_pivot:    The lanthanide position to pivot point vector.
-    @type r_ln_pivot:       numpy rank-1, 3D array
-    @keyword A:             The full alignment tensor of the non-moving domain.
-    @type A:                numpy rank-2, 3D array
-    @keyword R_eigen:       The eigenframe rotation matrix.
-    @type R_eigen:          numpy rank-2, 3D array
-    @keyword RT_eigen:      The transpose of the eigenframe rotation matrix (for faster calculations).
-    @type RT_eigen:         numpy rank-2, 3D array
-    @keyword Ri_prime:      The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
-    @type Ri_prime:         numpy rank-2, 3D array
-    @return:                The averaged PCS value.
-    @rtype:                 float
+    @keyword N:                 The number of Monte Carlo samples to use.
+    @type N:                    int
+    @keyword theta_max:         The half cone angle.
+    @type theta_max:            float
+    @keyword sigma_max:         The maximum torsion angle.
+    @type sigma_max:            float
+    @keyword c:                 The PCS constant (without the interatomic distance and in Angstrom units).
+    @type c:                    float
+    @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
+    @type full_in_ref_frame:    numpy rank-1 array
+    @keyword r_pivot_atom:      The pivot point to atom vector.
+    @type r_pivot_atom:         numpy rank-1, 3D array
+    @keyword r_pivot_atom_rev:  The reversed pivot point to atom vector.
+    @type r_pivot_atom_rev:     numpy rank-1, 3D array
+    @keyword r_ln_pivot:        The lanthanide position to pivot point vector.
+    @type r_ln_pivot:           numpy rank-1, 3D array
+    @keyword A:                 The full alignment tensor of the non-moving domain.
+    @type A:                    numpy rank-2, 3D array
+    @keyword R_eigen:           The eigenframe rotation matrix.
+    @type R_eigen:              numpy rank-2, 3D array
+    @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:             numpy rank-2, 3D array
+    @keyword Ri_prime:          The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
+    @type Ri_prime:             numpy rank-2, 3D array
+    @keyword rot_vect:          The storage structure for the rotated vectors.
+    @type rot_vect:             numpy rank-2 array
+    @keyword rot_vect_rev:  The storage structure for the reverse rotated vectors.
+    @type rot_vect_rev:     numpy rank-2 array
+    @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
+    @type pcs_theta:            numpy rank-2 array
+    @keyword pcs_theta_err:     The storage structure for the back-calculated PCS errors.
+    @type pcs_theta_err:        numpy rank-2 array
+    @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
+    @type missing_pcs:          numpy rank-2 array
+    @keyword error_flag:        A flag which if True will cause the PCS errors to be estimated and stored in pcs_theta_err.
+    @type error_flag:           bool
     """
 
-    # Perform numerical integration.
-    result = tplquad(pcs_pivot_motion_full, -sigma_max, sigma_max, lambda phi: -pi, lambda phi: pi, lambda theta, phi: 0.0, lambda theta, phi: theta_max, args=(r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime))
+    # Clear the data structures.
+    for i in range(len(pcs_theta)):
+        for j in range(len(pcs_theta[i])):
+            pcs_theta[i, j] = 0.0
+            pcs_theta_err[i, j] = 0.0
 
-    # The surface area normalisation factor.
-    SA = 4.0 * pi * sigma_max * (1.0 - cos(theta_max))
+    # Loop over the samples.
+    for i in range(N):
+        # Sigma and phi randomisation.
+        sigma_i = uniform(-sigma_max, sigma_max)
+        phi_i = uniform(-pi, pi)
 
-    # Return the value.
-    return c * result[0] / SA
+        # Theta randomisation.
+        v = uniform(cos(theta_max), 1.0)
+        theta_i = acos(v)
+
+        # Calculate the PCSs for this state.
+        pcs_pivot_motion_full(theta_i=theta_i, phi_i=phi_i, sigma_i=sigma_i, c=c, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, rot_vect=rot_vect, rot_vect_rev=rot_vect_rev, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+
+    # Calculate the PCS and error.
+    for i in range(len(pcs_theta)):
+        for j in range(len(pcs_theta[i])):
+            # The average PCS.
+            pcs_theta[i, j] = c[i] * pcs_theta[i, j] / float(N)
+
+            # The error.
+            if error_flag:
+                pcs_theta_err[i, j] = abs(pcs_theta_err[i, j] / float(N)  -  pcs_theta[i, j]**2) / float(N)
+                pcs_theta_err[i, j] = c[i] * sqrt(pcs_theta_err[i, j])
+                print "%8.3f +/- %-8.3f" % (pcs_theta[i, j]*1e6, pcs_theta_err[i, j]*1e6)
 
 
 def pcs_numeric_int_iso_cone_torsionless(theta_max=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
@@ -1410,29 +1449,45 @@ def pcs_numeric_int_rotor(sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=
     return c * result[0] / SA
 
 
-def pcs_pivot_motion_full(theta_i, phi_i, sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
+def pcs_pivot_motion_full(theta_i=None, phi_i=None, sigma_i=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, rot_vect=None, rot_vect_rev=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
-    @param theta_i:             The half cone opening angle (polar angle).
+    @keyword theta_i:           The half cone opening angle (polar angle).
     @type theta_i:              float
-    @param phi_i:               The cone azimuthal angle.
+    @keyword phi_i:             The cone azimuthal angle.
     @type phi_i:                float
-    @param sigma_i:             The torsion angle for state i.
+    @keyword sigma_i:           The torsion angle for state i.
     @type sigma_i:              float
-    @param r_pivot_atom:        The pivot point to atom vector.
+    @keyword c:                 The PCS constant (without the interatomic distance and in Angstrom units).
+    @type c:                    float
+    @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
+    @type full_in_ref_frame:    numpy rank-1 array
+    @keyword r_pivot_atom:      The pivot point to atom vector.
     @type r_pivot_atom:         numpy rank-1, 3D array
-    @param r_ln_pivot:          The lanthanide position to pivot point vector.
+    @keyword r_pivot_atom_rev:  The reversed pivot point to atom vector.
+    @type r_pivot_atom_rev:     numpy rank-1, 3D array
+    @keyword r_ln_pivot:        The lanthanide position to pivot point vector.
     @type r_ln_pivot:           numpy rank-1, 3D array
-    @param A:                   The full alignment tensor of the non-moving domain.
+    @keyword A:                 The full alignment tensor of the non-moving domain.
     @type A:                    numpy rank-2, 3D array
-    @param R_eigen:             The eigenframe rotation matrix.
+    @keyword R_eigen:           The eigenframe rotation matrix.
     @type R_eigen:              numpy rank-2, 3D array
-    @param RT_eigen:            The transpose of the eigenframe rotation matrix (for faster calculations).
+    @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
     @type RT_eigen:             numpy rank-2, 3D array
-    @param Ri_prime:            The empty rotation matrix for the in-frame isotropic cone motion for state i.
+    @keyword Ri_prime:          The empty rotation matrix for the in-frame isotropic cone motion for state i.
     @type Ri_prime:             numpy rank-2, 3D array
-    @return:                    The PCS value for the changed position.
-    @rtype:                     float
+    @keyword rot_vect:          The storage structure for the rotated vectors.
+    @type rot_vect:             numpy rank-2 array
+    @keyword rot_vect_rev:      The storage structure for the reverse rotated vectors.
+    @type rot_vect_rev:         numpy rank-2 array
+    @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
+    @type pcs_theta:            numpy rank-2 array
+    @keyword pcs_theta_err:     The storage structure for the back-calculated PCS errors.
+    @type pcs_theta_err:        numpy rank-2 array
+    @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
+    @type missing_pcs:          numpy rank-2 array
+    @keyword error_flag:        A flag which if True will cause the PCS errors to be estimated and stored in pcs_theta_err.
+    @type error_flag:           bool
     """
 
     # The rotation matrix.
@@ -1457,20 +1512,36 @@ def pcs_pivot_motion_full(theta_i, phi_i, sigma_i, r_pivot_atom, r_ln_pivot, A, 
     # The rotation.
     R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
 
-    # Calculate the new vector.
-    vect = dot(R_i, r_pivot_atom) + r_ln_pivot
+    # Pre-calculate all the new vectors (forwards and reverse).
+    rot_vect_rev = transpose(dot(R_i, r_pivot_atom_rev) + r_ln_pivot)
+    #rot_vect = transpose(dot(R_i, r_pivot_atom) + r_ln_pivot)
 
-    # The vector length.
-    length = norm(vect)
+    # Loop over the atoms.
+    for j in xrange(len(r_pivot_atom[0])):
+        # The vector length (to the 5th power).
+        length_rev = 1.0 / sqrt(inner(rot_vect_rev[j], rot_vect_rev[j]))**5
+        #length = 1.0 / sqrt(inner(rot_vect[j], rot_vect[j]))**5
 
-    # The projection.
-    proj = dot(vect, dot(A, vect))
+        # Loop over the alignments.
+        for i in xrange(len(pcs_theta)):
+            # Skip missing data.
+            if missing_pcs[i, j]:
+                continue
 
-    # The PCS (with sine surface normalisation).
-    pcs = proj / length**5 * s_theta
+            # The projection.
+            if full_in_ref_frame[i]:
+                proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
+                length_i = length_rev
+            else:
+                proj = dot(rot_vect[j], dot(A[i], rot_vect[j]))
+                length_i = length
 
-    # Return the PCS value (without the PCS constant).
-    return pcs
+            # The PCS.
+            pcs_theta[i, j] += proj * length_i
+
+            # The square.
+            if error_flag:
+                pcs_theta_err[i, j] += (proj * length_i)**2
 
 
 def pcs_pivot_motion_rotor(sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):

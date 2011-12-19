@@ -49,7 +49,7 @@ from relax_errors import RelaxError
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, pivot=None, pivot_opt=False):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, mcint_num=500, pivot=None, pivot_opt=False):
         """Set up the target functions for the Frame Order theories.
         
         @keyword model:             The name of the Frame Order model.
@@ -86,6 +86,8 @@ class Frame_order:
         @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 array
+        @keyword mcint_num:         The number of samplings to use for the Monte Carlo integration technique.
+        @type mcint_num:            int
         @keyword pivot:             The pivot point for the ball-and-socket joint motion.  This is needed if PCS or PRE values are used.
         @type pivot:                numpy rank-1, 3D array or None
         @keyword pivot_opt:         A flag which if True will allow the pivot point of the motion to be optimised.
@@ -114,6 +116,7 @@ class Frame_order:
         self.frq = frq
         self.paramag_centre = paramag_centre
         self.total_num_params = len(init_params)
+        self.mcint_num = mcint_num
         self._param_pivot = pivot
         self.pivot_opt = pivot_opt
 
@@ -241,8 +244,11 @@ class Frame_order:
             self.paramag_unit_vect = zeros(pcs_atoms.shape, float64)
             self.paramag_dist = zeros(self.num_pcs, float64)
             self.pcs_const = zeros(self.num_align, float64)
-            self.r_pivot_atom = zeros((self.num_pcs, 3), float64)
-            self.r_pivot_atom_rev = zeros((self.num_pcs, 3), float64)
+            self.r_pivot_atom = zeros((3, self.num_pcs), float64)
+            self.r_pivot_atom_rev = zeros((3, self.num_pcs), float64)
+            self.rot_vect = zeros((self.num_pcs, 3), float64)
+            self.rot_vect_rev = zeros((self.num_pcs, 3), float64)
+            self.r_ln_pivot = zeros((3, self.num_pcs), float64)
             if self.paramag_centre == None:
                 self.paramag_centre = zeros(3, float64)
 
@@ -253,6 +259,7 @@ class Frame_order:
         # PCS function, gradient, and Hessian matrices.
         if self.pcs_flag:
             self.pcs_theta = zeros((self.num_align, self.num_pcs), float64)
+            self.pcs_theta_err = zeros((self.num_align, self.num_pcs), float64)
             self.dpcs_theta = zeros((self.total_num_params, self.num_align, self.num_pcs), float64)
             self.d2pcs_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_pcs), float64)
 
@@ -387,9 +394,9 @@ class Frame_order:
                     if not self.missing_pcs[i, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[i]:
-                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom[j]
+                            r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=pi, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -404,9 +411,9 @@ class Frame_order:
     def func_iso_cone(self, params):
         """Target function for isotropic cone model optimisation.
 
-        This function optimises against alignment tensors.
+        This function optimises the isotropic cone model parameters using the RDC and PCS base data via Monte Carlo integration for the PCS.
 
-        @param params:  The vector of parameter values {beta, gamma, theta, phi, s1} where the first 2 are the tensor rotation Euler angles, the next two are the polar and azimuthal angles of the cone axis, and s1 is the isotropic cone order parameter.
+        @param params:  The vector of parameter values {alpha, beta, gamma, theta, phi, cone_theta, sigma_max} where the first 3 are the tensor rotation Euler angles, the next two are the polar and azimuthal angles of the cone axis, cone_theta is the cone opening half angle, and sigma_max is the torsion angle.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
         @rtype:         float
@@ -462,22 +469,13 @@ class Frame_order:
                 # Calculate and sum the single alignment chi-squared value (for the RDC).
                 chi2_sum = chi2_sum + chi2(self.rdc[i], self.rdc_theta[i], self.rdc_error[i])
 
-            # PCS.
-            if self.pcs_flag:
-                # Loop over the PCSs.
-                for j in xrange(self.num_pcs):
-                    # The back calculated PCS.
-                    if not self.missing_pcs[i, j]:
-                        # Forwards and reverse rotations.
-                        if self.full_in_ref_frame[i]:
-                            r_pivot_atom = self.r_pivot_atom_rev[j]
-                        else:
-                            r_pivot_atom = self.r_pivot_atom[j]
+        # PCS via Monte Carlo integration.
+        if self.pcs_flag:
+            # Numerical integration of the PCSs.
+            pcs_numeric_int_iso_cone(N=self.mcint_num, theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, rot_vect=self.rot_vect, rot_vect_rev=self.rot_vect_rev, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
-                        # The numerical integration.
-                        self.pcs_theta[i, j] = pcs_numeric_int_iso_cone(theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
-
-                # Calculate and sum the single alignment chi-squared value (for the PCS).
+            # Calculate and sum the single alignment chi-squared value (for the PCS).
+            for i in xrange(self.num_align):
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
 
         # Return the chi-squared value.
@@ -556,9 +554,9 @@ class Frame_order:
                     if not self.missing_pcs[i, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[i]:
-                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom[j]
+                            r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[i, j] = pcs_numeric_int_iso_cone(theta_max=theta_max, sigma_max=pi, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -639,9 +637,9 @@ class Frame_order:
                     if not self.missing_pcs[i, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[i]:
-                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom[j]
+                            r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[i, j] = pcs_numeric_int_iso_cone_torsionless(theta_max=cone_theta, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -717,9 +715,9 @@ class Frame_order:
                     if not self.missing_pcs[i, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[i]:
-                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom[j]
+                            r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -795,9 +793,9 @@ class Frame_order:
                     if not self.missing_pcs[i, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[i]:
-                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom[j]
+                            r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -873,9 +871,9 @@ class Frame_order:
                     if not self.missing_pcs[i, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[i]:
-                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom[j]
+                            r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse_torsionless(theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -939,9 +937,9 @@ class Frame_order:
                     if not self.missing_pcs[i, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[i]:
-                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom[j]
+                            r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The PCS calculation.
                         vect = self.r_ln_pivot + r_pivot_atom
@@ -1024,9 +1022,9 @@ class Frame_order:
                     if not self.missing_pcs[i, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[i]:
-                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom[j]
+                            r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
                         self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
@@ -1049,14 +1047,14 @@ class Frame_order:
         @type RT_ave:   numpy rank-2, 3D array
         """
 
-        # The lanthanide to pivot vector.
-        self.r_ln_pivot = pivot - self.paramag_centre
-
         # The pivot to atom vectors.
         for j in xrange(self.num_pcs):
+            # The lanthanide to pivot vector.
+            self.r_ln_pivot[:, j] = pivot - self.paramag_centre
+
             # The rotated vectors.
-            self.r_pivot_atom[j] = dot(R_ave, self.pcs_atoms[j] - pivot)
-            self.r_pivot_atom_rev[j] = dot(RT_ave, self.pcs_atoms[j] - pivot)
+            self.r_pivot_atom[:, j] = dot(R_ave, self.pcs_atoms[j] - pivot)
+            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.pcs_atoms[j] - pivot)
 
 
     def reduce_and_rot(self, ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):
