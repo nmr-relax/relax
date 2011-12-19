@@ -101,6 +101,13 @@ try:
 except ImportError:
     profile_module = False
 
+# profile C module (python development packages required).
+try:
+    import cProfile
+    cprofile_module = True
+except ImportError:
+    cprofile_module = False
+
 # BZ2 compression module.
 try:
     import bz2
