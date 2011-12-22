@@ -870,7 +870,7 @@ class Frame_order:
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_iso_cone_torsionless(self.frame_order_2nd, self.Rx2_eigen, cone_theta)
+        frame_order_2nd = compile_2nd_matrix_iso_cone_torsionless(self.frame_order_2nd, Rx2_eigen, cone_theta)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -954,7 +954,7 @@ class Frame_order:
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_iso_cone_torsionless(self.frame_order_2nd, self.Rx2_eigen, cone_theta)
+        frame_order_2nd = compile_2nd_matrix_iso_cone_torsionless(self.frame_order_2nd, Rx2_eigen, cone_theta)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -1026,7 +1026,7 @@ class Frame_order:
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, self.Rx2_eigen, cone_theta_x, cone_theta_y, cone_sigma_max)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, Rx2_eigen, cone_theta_x, cone_theta_y, cone_sigma_max)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -1107,7 +1107,7 @@ class Frame_order:
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, self.Rx2_eigen, cone_theta_x, cone_theta_y, cone_sigma_max)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse(self.frame_order_2nd, Rx2_eigen, cone_theta_x, cone_theta_y, cone_sigma_max)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -1179,7 +1179,7 @@ class Frame_order:
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, self.Rx2_eigen, cone_theta_x, cone_theta_y)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, Rx2_eigen, cone_theta_x, cone_theta_y)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -1260,7 +1260,7 @@ class Frame_order:
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, self.Rx2_eigen, cone_theta_x, cone_theta_y)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, Rx2_eigen, cone_theta_x, cone_theta_y)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -1332,7 +1332,7 @@ class Frame_order:
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_torsionless(self.frame_order_2nd, self.Rx2_eigen, cone_theta_x, cone_theta_y)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_torsionless(self.frame_order_2nd, Rx2_eigen, cone_theta_x, cone_theta_y)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -1413,7 +1413,7 @@ class Frame_order:
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_torsionless(self.frame_order_2nd, self.Rx2_eigen, cone_theta_x, cone_theta_y)
+        frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_torsionless(self.frame_order_2nd, Rx2_eigen, cone_theta_x, cone_theta_y)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
