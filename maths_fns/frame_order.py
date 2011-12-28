@@ -35,7 +35,7 @@ from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.coord_transform import spherical_to_cartesian
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_mcint, pcs_numeric_int_iso_cone_mcint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_mcint
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_mcint, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_mcint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_mcint
 from maths_fns.kronecker_product import kron_prod
 from maths_fns import order_parameters
 from maths_fns.rotation_matrix import euler_to_R_zyz
@@ -1068,7 +1068,7 @@ class Frame_order:
                             r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
-                        self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
@@ -1139,7 +1139,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_mcint(N=self.mcint_num, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_pseudo_ellipse_mcint(N=self.mcint_num, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
