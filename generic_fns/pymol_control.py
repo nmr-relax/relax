@@ -253,8 +253,8 @@ def cone_pdb(file=None):
     # The cone axes.
     ################
 
-    # Select the AVE, XAX, YAX, ZAX, and SIM residues.
-    pymol_obj.exec_cmd("select (resn AVE,XAX,YAX,ZAX,SIM)")
+    # Select the AVE, AXE, and SIM residues.
+    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM)")
 
     # Show the vector as a stick.
     pymol_obj.exec_cmd("show stick, 'sele'")
@@ -263,7 +263,7 @@ def cone_pdb(file=None):
     pymol_obj.exec_cmd("color cyan, 'sele'")
 
     # Select the atom used for labelling.
-    pymol_obj.exec_cmd("select (resn AVE,XAX,YAX,ZAX,SIM and symbol N)")
+    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM and symbol N)")
 
     # Hide the atom.
     pymol_obj.exec_cmd("hide ('sele')")
