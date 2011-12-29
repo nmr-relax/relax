@@ -305,60 +305,50 @@ class Frame_order(API_base, API_common):
         structure.add_atom(mol_name=cdp.model, pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
 
 
-        # The central axis.
-        ###################
-
-        # Print out.
-        print("\nGenerating the central axis.")
+        # The axes.
+        ###########
 
         # The spherical angles.
         if cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
-            theta_name = 'axis_theta'
-            phi_name = 'axis_phi'
-        else:
-            theta_name = 'eigen_beta'
-            phi_name = 'eigen_gamma'
-
-        # The axis.
-        axis = zeros(3, float64)
-        spherical_to_cartesian([1.0, getattr(cdp, theta_name), getattr(cdp, phi_name)], axis)
-        print(("Central axis: %s." % axis))
-
-        # Rotations and inversions.
-        axis_pos = axis
-        axis_neg = dot(inv_mat, axis)
-
-        # Simulation central axis.
-        axis_sim_pos = None
-        axis_sim_neg = None
-        if sim:
-            # Init.
-            axis_sim = zeros((cdp.sim_number, 3), float64)
-
-            # Fill the structure.
-            for i in range(cdp.sim_number):
-                spherical_to_cartesian([1.0, getattr(cdp, theta_name+'_sim')[i], getattr(cdp, phi_name+'_sim')[i]], axis_sim[i])
-
-            # Inversion.
-            axis_sim_pos = axis_sim
-            axis_sim_neg = transpose(dot(inv_mat, transpose(axis_sim_pos)))
-
-        # Generate the axis vectors.
-        print("\nGenerating the axis vectors.")
-        res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
-
-        # The negative.
-        if neg_cone:
-            res_num = generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
-
-
-        # The x and y axes.
-        ###################
-
-        # Skip models missing the full eigenframe.
-        if cdp.model not in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
             # Print out.
-            print("\nGenerating the x and y axes.")
+            print("\nGenerating the z-axis system.")
+
+            # The axis.
+            axis = zeros(3, float64)
+            spherical_to_cartesian([1.0, getattr(cdp, 'axis_theta'), getattr(cdp, 'axis_phi')], axis)
+            print(("Central axis: %s." % axis))
+
+            # Rotations and inversions.
+            axis_pos = axis
+            axis_neg = dot(inv_mat, axis)
+
+            # Simulation central axis.
+            axis_sim_pos = None
+            axis_sim_neg = None
+            if sim:
+                # Init.
+                axis_sim = zeros((cdp.sim_number, 3), float64)
+
+                # Fill the structure.
+                for i in range(cdp.sim_number):
+                    spherical_to_cartesian([1.0, getattr(cdp, 'axis_theta_sim')[i], getattr(cdp, 'axis_phi_sim')[i]], axis_sim[i])
+
+                # Inversion.
+                axis_sim_pos = axis_sim
+                axis_sim_neg = transpose(dot(inv_mat, transpose(axis_sim_pos)))
+
+            # Generate the axis vectors.
+            print("\nGenerating the axis vectors.")
+            res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
+
+            # The negative.
+            if neg_cone:
+                res_num = generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
+
+        # The full axis system.
+        else:
+            # Print out.
+            print("\nGenerating the full axis system.")
 
             # The axis system.
             axes = zeros((3, 3), float64)
@@ -369,36 +359,45 @@ class Frame_order(API_base, API_common):
             axes_pos = axes
             axes_neg = dot(inv_mat, axes)
 
-            # Simulation central axis.
+            # Simulations
             axes_sim_pos = None
             axes_sim_neg = None
             if sim:
                 # Init.
-                axes_sim_pos = zeros((3, cdp.sim_number, 3), float64)
-                axes_sim_neg = zeros((3, cdp.sim_number, 3), float64)
+                axes_sim_pos = zeros((cdp.sim_number, 3, 3), float64)
+                axes_sim_neg = zeros((cdp.sim_number, 3, 3), float64)
 
                 # Fill the structure.
                 for i in range(cdp.sim_number):
                     # The positive system.
-                    euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim_pos[:, i])
+                    euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim_pos[i])
 
                     # The negative system.
-                    euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim_neg[:, i])
-                    axes_sim_neg[:, i] = dot(inv_mat, axes_sim_neg[:, i])
+                    euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim_neg[i])
+                    axes_sim_neg[i] = dot(inv_mat, axes_sim_neg[i])
 
             # Generate the axis vectors.
             print("\nGenerating the axis vectors.")
-            label = ['x', 'y']
-            for i in range(2):
-                # Simulation structures.
-                if sim:
-                    axis_sim_pos = axes_sim_pos[:, i]
-                    axis_sim_neg = axes_sim_neg[:, i]
-
+            label = ['x', 'y', 'z']
+            for j in range(len(label)):
                 # The vectors.
-                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_pos, res_num=res_num+1, origin=cdp.pivot, scale=size)
+                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=None, res_num=2, origin=cdp.pivot, scale=size)
                 if neg_cone:
-                    res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, i], atom_name='%s-ax'%label[i], res_name_vect='%sAX'%upper(label[i]), sim_vectors=axis_sim_neg, res_num=res_num, origin=cdp.pivot, scale=size)
+                    res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=None, res_num=2, origin=cdp.pivot, scale=size)
+
+
+            # Simulation data.
+            if sim:
+                for i in range(cdp.sim_number):
+                    label = ['x', 'y', 'z']
+                    for j in range(len(label)):
+                        axis_sim_pos = axes_sim_pos[i, :, j]
+                        axis_sim_neg = axes_sim_neg[i, :, j]
+
+                        # The vectors.
+                        res_num = generate_vector_residues(mol=mol, vector=axis_sim_pos, atom_name='%s-ax'%label[j], res_name_vect='SIM', sim_vectors=None, res_num=3+i, origin=cdp.pivot, scale=size)
+                        if neg_cone:
+                            res_num = generate_vector_residues(mol=mol_neg, vector=axis_sim_neg, atom_name='%s-ax'%label[j], res_name_vect='SIM', sim_vectors=None, res_num=3+i, origin=cdp.pivot, scale=size)
 
 
         # The cone object.
