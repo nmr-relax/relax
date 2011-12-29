@@ -85,7 +85,7 @@ class Analysis:
             align_tensor.reduction(full_tensor=full[i], red_tensor=red[i])
 
         # Select the model.
-        frame_order.select_model('iso cone')
+        frame_order.select_model('pseudo-ellipse')
 
         # Set the reference domain.
         frame_order.ref_domain('N')
@@ -101,10 +101,12 @@ class Analysis:
         cdp.ave_pos_alpha = 4.3434999280669997
         cdp.ave_pos_beta = 0.43544332764249905
         cdp.ave_pos_gamma = 3.8013235235956007
-        cdp.axis_theta = 2.1815126749944502
-        cdp.axis_phi = 0.89068285262982982
-        cdp.cone_theta = 10.0 * 2.0 * pi / 360.0
-        cdp.cone_sigma_max = 20.0 * 2.0 * pi / 360.0
+        cdp.eigen_alpha = 3.1415926535897931
+        cdp.eigen_beta = 0.96007997859534311
+        cdp.eigen_gamma = 4.0322755062196229
+        cdp.cone_theta_x = 10.0 * 2.0 * pi / 360.0
+        cdp.cone_theta_y = 30.0 * 2.0 * pi / 360.0
+        cdp.cone_sigma_max = 40.0 * 2.0 * pi / 360.0
         calc()
         print cdp.chi2
 
