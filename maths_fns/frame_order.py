@@ -428,7 +428,7 @@ class Frame_order:
                             r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
-                        self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=pi, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[i, j] = pcs_numeric_int_rotor(sigma_max=pi, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
@@ -588,7 +588,7 @@ class Frame_order:
                             r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
-                        self.pcs_theta[i, j] = pcs_numeric_int_iso_cone(theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[i, j] = pcs_numeric_int_iso_cone(theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
@@ -750,7 +750,7 @@ class Frame_order:
                             r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
-                        self.pcs_theta[i, j] = pcs_numeric_int_iso_cone(theta_max=theta_max, sigma_max=pi, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[i, j] = pcs_numeric_int_iso_cone(theta_max=theta_max, sigma_max=pi, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
@@ -912,7 +912,7 @@ class Frame_order:
                             r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
-                        self.pcs_theta[i, j] = pcs_numeric_int_iso_cone_torsionless(theta_max=cone_theta, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[i, j] = pcs_numeric_int_iso_cone_torsionless(theta_max=cone_theta, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
@@ -1068,7 +1068,7 @@ class Frame_order:
                             r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
-                        self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
@@ -1221,7 +1221,7 @@ class Frame_order:
                             r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
-                        self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
@@ -1374,7 +1374,7 @@ class Frame_order:
                             r_pivot_atom = self.r_pivot_atom[:, j]
 
                         # The numerical integration.
-                        self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse_torsionless(theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot, A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[i, j] = pcs_numeric_int_pseudo_ellipse_torsionless(theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const[i], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[i], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[i], self.pcs_theta[i], self.pcs_error[i])
