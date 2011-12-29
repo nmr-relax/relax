@@ -339,11 +339,11 @@ class Frame_order(API_base, API_common):
 
             # Generate the axis vectors.
             print("\nGenerating the axis vectors.")
-            res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
+            res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
 
             # The negative.
             if neg_cone:
-                res_num = generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='ZAX', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
+                res_num = generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
 
         # The full axis system.
         else:
@@ -380,24 +380,17 @@ class Frame_order(API_base, API_common):
             print("\nGenerating the axis vectors.")
             label = ['x', 'y', 'z']
             for j in range(len(label)):
+                # The simulation data.
+                axis_sim_pos = None
+                axis_sim_neg = None
+                if sim:
+                    axis_sim_pos = axes_sim_pos[:, :, j]
+                    axis_sim_neg = axes_sim_neg[:, :, j]
+
                 # The vectors.
-                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=None, res_num=2, origin=cdp.pivot, scale=size)
+                res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
                 if neg_cone:
-                    res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=None, res_num=2, origin=cdp.pivot, scale=size)
-
-
-            # Simulation data.
-            if sim:
-                for i in range(cdp.sim_number):
-                    label = ['x', 'y', 'z']
-                    for j in range(len(label)):
-                        axis_sim_pos = axes_sim_pos[i, :, j]
-                        axis_sim_neg = axes_sim_neg[i, :, j]
-
-                        # The vectors.
-                        res_num = generate_vector_residues(mol=mol, vector=axis_sim_pos, atom_name='%s-ax'%label[j], res_name_vect='SIM', sim_vectors=None, res_num=3+i, origin=cdp.pivot, scale=size)
-                        if neg_cone:
-                            res_num = generate_vector_residues(mol=mol_neg, vector=axis_sim_neg, atom_name='%s-ax'%label[j], res_name_vect='SIM', sim_vectors=None, res_num=3+i, origin=cdp.pivot, scale=size)
+                    res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
 
 
         # The cone object.
