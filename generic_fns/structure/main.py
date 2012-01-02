@@ -241,14 +241,7 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
         raise RelaxNoPdbError
 
     # Loop over all atoms of the spin_id selection.
-    model_index = -1
-    last_model = None
-    for model_num, mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
-        # Update the model info.
-        if last_model != model_num:
-            model_index = model_index + 1
-            last_model = model_num
-
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
         # Remove the '+' regular expression character from the mol, res, and spin names!
         if mol_name and search('\+', mol_name):
             mol_name = replace(mol_name, '+', '')
