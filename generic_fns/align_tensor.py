@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,6 +30,7 @@ from numpy import arccos, dot, float64, linalg, zeros
 from numpy.linalg import norm
 from re import search
 import sys
+from warnings import warn
 
 # relax module imports.
 from angles import wrap_angles
