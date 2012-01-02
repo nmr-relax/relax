@@ -2153,11 +2153,11 @@ class Frame_order(API_base, API_common):
                     spin.pcs_sim[data_id[2]].append(sim_data[i][0])
 
 
-    def sim_return_param(self, data_id, index):
+    def sim_return_param(self, model_info, index):
         """Return the array of simulation parameter values.
 
-        @param data_id:     The identification data as yielded by the base_data_loop() generator method.
-        @type data_id:      string or list of str
+        @param model_info:  The model information originating from model_loop().
+        @type model_info:   unknown
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
         """
