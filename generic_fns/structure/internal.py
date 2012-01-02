@@ -831,31 +831,38 @@ class Internal(Base_struct_API):
         attached_name = None
         warnings = None
 
-        # Loop over the models.
-        for model in self.model_loop(model_num):
-            # Loop over the molecules.
-            for mol in model.mol:
-                # Skip non-matching molecules.
-                if mol_name and mol_name != mol.mol_name:
+        # Use the first model for the atom matching.
+        model = self.structural_data[0]
+
+        # Loop over the molecules.
+        for mol in model.mol:
+            # Skip non-matching molecules.
+            if mol_name and mol_name != mol.mol_name:
+                continue
+
+            # Find the atomic index of the base atom.
+            index = None
+            for i in range(len(mol.atom_name)):
+                # Residues don't match.
+                if (res_num != None and mol.res_num[i] != res_num) or (res_name != None and mol.res_name[i] != res_name):
                     continue
 
-                # Find the atomic index of the base atom.
-                index = None
-                for i in range(len(mol.atom_name)):
-                    # Residues don't match.
-                    if (res_num != None and mol.res_num[i] != res_num) or (res_name != None and mol.res_name[i] != res_name):
+                # Atoms don't match.
+                if (spin_num != None and mol.atom_num[i] != spin_num) or (spin_name != None and mol.atom_name[i] != spin_name):
+                    continue
+
+                # Update the index and stop searching.
+                index = i
+                break
+
+            # Found the atom.
+            if index != None:
+                # Loop over the models.
+                for j in range(len(self.structural_data)):
+                    # A single model.
+                    if model_num != None and self.structural_data[j].num != model_num:
                         continue
 
-                    # Atoms don't match.
-                    if (spin_num != None and mol.atom_num[i] != spin_num) or (spin_name != None and mol.atom_name[i] != spin_name):
-                        continue
-
-                    # Update the index and stop searching.
-                    index = i
-                    break
-
-                # Found the atom.
-                if index != None:
                     # Get the atom bonded to this model/molecule/residue/atom.
                     bonded_num, bonded_name, element, pos, attached_name, warnings = self._bonded_atom(attached_atom, index, mol)
 
@@ -869,9 +876,9 @@ class Internal(Base_struct_API):
                     # Append the vector to the vectors array.
                     vectors.append(vector)
 
-                # Not found.
-                else:
-                    warnings = "Cannot find the atom in the structure"
+            # Not found.
+            else:
+                warnings = "Cannot find the atom in the structure"
 
         # Build the tuple to be yielded.
         data = (vectors,)
