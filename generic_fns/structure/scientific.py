@@ -154,7 +154,7 @@ class Scientific_data(Base_struct_API):
                 yield res, res.number, res.name, res_index
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Generator function for looping over all atoms in the Scientific Python data objects.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
@@ -166,8 +166,6 @@ class Scientific_data(Base_struct_API):
         @type str_id:               str, int, or None
         @keyword model_num:         Only loop over a specific model.
         @type model_num:            int or None
-        @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
-        @type model_num_flag:       bool
         @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
         @type mol_name_flag:        bool
         @keyword res_num_flag:      A flag which if True will cause the residue number to be
@@ -243,11 +241,6 @@ class Scientific_data(Base_struct_API):
 
                         # Build the tuple to be yielded.
                         atomic_tuple = ()
-                        if model_num_flag:
-                            if ave:
-                                atomic_tuple = atomic_tuple + (None,)
-                            else:
-                                atomic_tuple = atomic_tuple + (model.num,)
                         if mol_name_flag:
                             atomic_tuple = atomic_tuple + (mol_name,)
                         if res_num_flag:

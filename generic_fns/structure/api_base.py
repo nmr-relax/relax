@@ -118,7 +118,7 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Prototype generator method stub for looping over all atoms in the structural data object.
 
         This method should be designed as a generator (http://www.python.org/dev/peps/pep-0255/).
@@ -142,8 +142,6 @@ class Base_struct_API:
         @type str_id:               str, int, or None
         @keyword model_num:         Only loop over a specific model.
         @type model_num:            int or None
-        @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
-        @type model_num_flag:       bool
         @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
         @type mol_name_flag:        bool
         @keyword res_num_flag:      A flag which if True will cause the residue number to be yielded.
