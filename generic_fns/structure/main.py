@@ -346,17 +346,8 @@ def load_spins(spin_id=None, str_id=None, ave_pos=False):
     spin_nums = []
     spin_names = []
 
-    # Initialise data for the atom loop.
-    model_index = -1
-    last_model = 1000000
-
     # Loop over all atoms of the spin_id selection.
-    for model_num, mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
-        # Update the model info.
-        if last_model != model_num:
-            model_index = model_index + 1
-            last_model = model_num
-
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
         # Remove the '+' regular expression character from the mol, res, and spin names!
         if mol_name and search('\+', mol_name):
             mol_name = replace(mol_name, '+', '')
@@ -371,42 +362,23 @@ def load_spins(spin_id=None, str_id=None, ave_pos=False):
         # Create the spin.
         try:
             spin_cont = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=atom_num, spin_name=atom_name)
-        except RelaxError:
-            # Throw a warning if still on the first model.
-            if not model_index:
-                warn(RelaxWarning("The spin '%s' already exists." % id))
-                continue
 
-            # Otherwise, get the spin container.
+        # Otherwise, get the spin container.
+        except RelaxError:
             spin_cont = return_spin(id)
 
-        # Append all the spin ID info for the first model for printing later.
-        if model_index == 0:
-            mol_names.append(mol_name)
-            res_nums.append(res_num)
-            res_names.append(res_name)
-            spin_nums.append(atom_num)
-            spin_names.append(atom_name)
+        # Append all the spin ID info for printing later.
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(atom_num)
+        spin_names.append(atom_name)
 
-        # Convert the position vector to a numpy array.
-        pos = array(pos, float64)
-
-        # Average position vector (already averaged across models in the atom_loop).
-        if ave_pos:
-            spin_cont.pos = pos
-
-        # All positions.
-        else:
-            # Initialise.
-            if not hasattr(spin_cont, 'pos'):
-                spin_cont.pos = []
-
-            # Add the current model's position.
-            spin_cont.pos.append(pos)
+        # Position vector.
+        spin_cont.pos = pos
 
         # Add the element.
-        if not model_index:
-            spin_cont.element = element
+        spin_cont.element = element
 
     # Catch no data.
     if len(mol_names) == 0:
