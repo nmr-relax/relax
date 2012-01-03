@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2009-2011 Edward d'Auvergne                       #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -45,7 +45,7 @@ class Domain(Basic_class):
 
         # The argument checks.
         arg_check.is_str(id, 'domain ID string')
-        arg_check.is_str(spin_id, 'spin ID string')
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
         domain.define(id=id, spin_id=spin_id)
