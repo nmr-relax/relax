@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -62,6 +62,10 @@ class Align_tensor(SystemTestCase):
                 (0.00014574884684542708, -8.3162940224598374e-05, 7.4927100277784987e-05, 0.00010508245294401461, 3.1156238348722986e-05),
                 (-0.00011267453337899962, 6.412308037476237e-05, -5.7897942333203444e-05, -8.1865863377039068e-05, -2.5273427585025123e-05)
         ]
+
+        # Define the domains.
+        self.interpreter.domain(id='full')
+        self.interpreter.domain(id='red')
 
         # Set up the tensors.
         for i in range(5):
