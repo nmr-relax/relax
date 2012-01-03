@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -240,9 +240,10 @@ class Test_scientific(UnitTestCase):
             self.assertEqual(spin_num, 163)
             self.assertEqual(spin_name, 'OE1')
             self.assertEqual(element, 'O')
-            self.assertEqual(pos[0], float('10.055'))
-            self.assertEqual(pos[1], float('-2.74'))
-            self.assertEqual(pos[2], float('-13.193'))
+            self.assertEqual(len(pos), 1)
+            self.assertEqual(pos[0, 0], float('10.055'))
+            self.assertEqual(pos[0, 1], float('-2.74'))
+            self.assertEqual(pos[0, 2], float('-13.193'))
 
             # Increment the atom count.
             atom_count = atom_count + 1
