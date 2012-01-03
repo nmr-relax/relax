@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -1119,6 +1119,15 @@ class ModelList(list):
 
             # Append an empty ModelContainer.
             self.append(ModelContainer(model_num))
+
+        # Store the model indices.
+        if not hasattr(self, 'model_indices'):
+            self.model_indices = {}
+        self.model_indices[model_num] = len(self) - 1
+
+        # The sorted model numbers.
+        self.model_list = self.model_indices.keys()
+        self.model_list.sort()
 
 
     def is_empty(self):

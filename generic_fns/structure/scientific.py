@@ -243,7 +243,8 @@ class Scientific_data(Base_struct_API):
                                     continue
 
                                 # Alias.
-                                mol2 = self.structural_data[j].mol[mol_index]
+                                model_index = self.structural_data.model_indices[self.structural_data.model_list[j]]
+                                mol2 = self.structural_data[model_index].mol[mol_index]
 
                                 # The residue.
                                 if mol2.mol_type != 'other':
