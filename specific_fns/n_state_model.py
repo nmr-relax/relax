@@ -798,7 +798,7 @@ class N_state_model(API_base, API_common):
                         spin.rdc_bc = {}
 
                     # Append the back calculated PCS.
-                    spin.rdc_bc[align_id] = model.Dij_theta[i, data_index]
+                    spin.rdc_bc[align_id] = model.rdc_theta[i, data_index]
 
                 # Increment the spin index if it contains data.
                 if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
