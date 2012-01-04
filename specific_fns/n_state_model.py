@@ -94,7 +94,7 @@ class N_state_model(API_base, API_common):
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
-                if cdp.align_tensors[i].name not in cdp.align_ids:
+                if cdp.align_tensors[i].align_id not in cdp.align_ids:
                     continue
 
                 # Fixed tensor.
@@ -497,7 +497,7 @@ class N_state_model(API_base, API_common):
             tensor_num = 0
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
-                if cdp.align_tensors[i].name not in cdp.align_ids:
+                if cdp.align_tensors[i].align_id not in cdp.align_ids:
                     continue
 
                 # Fixed tensor.
@@ -1374,7 +1374,7 @@ class N_state_model(API_base, API_common):
             # Loop over the alignments.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it is not part of the parameter set.
-                if cdp.align_tensors[i].name not in cdp.align_ids:
+                if cdp.align_tensors[i].align_id not in cdp.align_ids:
                     continue
 
                 # Fixed tensor.
@@ -1627,17 +1627,17 @@ class N_state_model(API_base, API_common):
             for id in cdp.align_ids:
                 # No tensors initialised.
                 if not hasattr(cdp, 'align_tensors'):
-                    generic_fns.align_tensor.init(align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                    generic_fns.align_tensor.init(tensor=id, align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
                 # Find if the tensor corresponding to the id exists.
                 exists = False
                 for tensor in cdp.align_tensors:
-                    if id == tensor.name:
+                    if id == tensor.align_id:
                         exists = True
 
                 # Initialise the tensor.
                 if not exists:
-                    generic_fns.align_tensor.init(align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                    generic_fns.align_tensor.init(tensor=id, align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
     def base_data_loop(self):
