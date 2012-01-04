@@ -16,6 +16,10 @@ from math import cos, pi, sqrt
 pipe.create('test', 'N-state')
 
 
+# Define the two domains.
+domain('C')
+domain('N')
+
 # Load the C-terminal alignment tensors.
 align_tensor.init(tensor='chi1 C-dom', params=(-1/2., -1/2.,  0.,   0.,     0.))
 align_tensor.init(tensor='chi2 C-dom', params=(-1/8., -7/8.,  0.,   0.,     0.))

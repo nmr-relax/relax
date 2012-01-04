@@ -23,13 +23,14 @@ const = 3.0 / (2.0*pi) * dipolar_constant(g15N, g1H, NH_BOND_LENGTH_RDC)
 
 # The tensor.
 tensor = 'A'
-align_tensor.init(tensor, (4.724/const,  11.856/const, 0, 0, 0), param_types=2)
+align_id = tensor
+align_tensor.init(tensor, (4.724/const,  11.856/const, 0, 0, 0), align_id=align_id, param_types=2)
 
 # The temperature.
-temperature(id=tensor, temp=298)
+temperature(id=align_id, temp=298)
 
 # The frequency.
-frq.set(id=tensor, frq=900.0 * 1e6)
+frq.set(id=align_id, frq=900.0 * 1e6)
 
 # One state model.
 n_state_model.select_model('fixed')

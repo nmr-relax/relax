@@ -32,7 +32,7 @@ const = 3.0 / (2.0*pi) * dipolar_constant(g15N, g1H, NH_BOND_LENGTH_RDC)
 
 # The tensor.
 tensor = 'A'
-align_tensor.init(tensor, (4.724/const,  11.856/const, 0, 0, 0), param_types=2)
+align_tensor.init(tensor, (4.724/const,  11.856/const, 0, 0, 0), align_id=tensor, param_types=2)
 
 # The temperature.
 temperature(id=tensor, temp=298)
