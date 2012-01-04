@@ -1627,7 +1627,7 @@ class N_state_model(API_base, API_common):
             for id in cdp.align_ids:
                 # No tensors initialised.
                 if not hasattr(cdp, 'align_tensors'):
-                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                    generic_fns.align_tensor.init(align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
                 # Find if the tensor corresponding to the id exists.
                 exists = False
@@ -1637,7 +1637,7 @@ class N_state_model(API_base, API_common):
 
                 # Initialise the tensor.
                 if not exists:
-                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                    generic_fns.align_tensor.init(align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
     def base_data_loop(self):
