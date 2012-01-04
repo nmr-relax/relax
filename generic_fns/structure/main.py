@@ -261,12 +261,7 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
             continue
 
         # Add the position vector to the spin container.
-        if ave_pos:
-            spin_cont.pos = pos
-        else:
-            if not hasattr(spin_cont, 'pos'):
-                spin_cont.pos = []
-            spin_cont.pos.append(pos)
+        spin_cont.pos = pos
 
     # Update pseudo-atoms.
     for spin in spin_loop():
@@ -282,7 +277,7 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
                     raise RelaxNoSpinError(atom)
 
                 # Test the position.
-                if not hasattr(subspin, 'pos') or not subspin.pos:
+                if not hasattr(subspin, 'pos') or subspin.pos == None or not len(subspin.pos):
                     raise RelaxError("Positional information is not available for the atom '%s'." % atom)
 
                 # Alias the position.
