@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -205,7 +205,7 @@ class Align_tensor(User_fn_class):
         arg_check.is_float(scale, 'scale')
         arg_check.is_str(angle_units, 'angle units')
         arg_check.is_int(param_types, 'parameter types')
-        arg_check.is_str(align_id, 'errors flag', can_be_none=True)
+        arg_check.is_str(align_id, 'alignment ID string', can_be_none=True)
         arg_check.is_str(domain, 'domain', can_be_none=True)
         arg_check.is_bool(errors, 'errors flag')
 
