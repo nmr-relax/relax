@@ -1,0 +1,28 @@
+Steps to create the data:
+
+1.  Modify the 'generate_distribution.py' to create the desired distribution.  Then generate the distribution of structures by typing:
+
+$ ../../../../relax -t generate_distribution.log generate_distribution.py
+$ bzip2 -f generate_distribution.log
+
+
+2.  Generate the RDC and PCS data via the 'back_calc.py'.  This needs no modification.  Just type:
+
+$ ../../../../relax back_calc.py
+
+
+3.  Calculate the reduced C-domain tensors from the new RDC data with the 'tensor_fit.py' script.  This also requires no modifications.  Just type:
+
+$ ../../../../relax -t tensor_fit.log tensor_fit.py
+$ bzip2 -f tensor_fit.log
+
+
+4.  Perform the frame order analysis.  Select the appropriate model in the 'frame_order.py' script.
+
+$ ../../../../relax -t frame_order.log frame_order.py
+$ bzip2 -f frame_order.log
+
+
+5.  For PyMOL visualisation, type:
+
+$ ../../../../relax animate.py
