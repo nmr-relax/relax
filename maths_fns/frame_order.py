@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -35,7 +35,7 @@ from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.coord_transform import spherical_to_cartesian
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_mcint, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_mcint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_mcint
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_mcint, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_mcint, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_mcint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_mcint
 from maths_fns.kronecker_product import kron_prod
 from maths_fns import order_parameters
 from maths_fns.rotation_matrix import euler_to_R_zyz
