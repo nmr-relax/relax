@@ -105,7 +105,7 @@ class Analysis:
         cdp.axis_phi = -2.2509097944247132
         cdp.cone_s1 = iso_cone_theta_to_S(20.0 * 2.0 * pi / 360.0)
         calc()
-        print cdp.chi2
+        print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
         #grid_search(inc=5)

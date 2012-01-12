@@ -107,7 +107,7 @@ class Analysis:
         cdp.cone_theta_x = 0.1
         cdp.cone_theta_y = 0.5
         calc()
-        print cdp.chi2
+        print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
         #grid_search(inc=5)

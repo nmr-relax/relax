@@ -102,7 +102,7 @@ class Analysis:
         cdp.ave_pos_beta = 0.43544332764249905
         cdp.ave_pos_gamma = 3.8013235235956007
         calc()
-        print cdp.chi2
+        print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
         grid_search(inc=3)

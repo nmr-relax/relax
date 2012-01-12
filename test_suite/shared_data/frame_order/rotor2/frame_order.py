@@ -105,7 +105,7 @@ class Analysis:
         cdp.axis_phi = 0.89068285012874959
         cdp.cone_sigma_max = 30.0 / 360.0 * 2.0 * pi
         calc()
-        print cdp.chi2
+        print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
         grid_search(inc=3)
