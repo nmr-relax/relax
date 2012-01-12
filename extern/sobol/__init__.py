@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2012 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,9 @@
 ###############################################################################
 
 # Package docstring.
-"""External Python modules bundled with relax."""
+"""The SOBOL library.
 
-__all__ = [ 'scientific_python',
-            'sobol' ]
+This is the unmodified code of John Burkardt and Corrado Chisari from http://people.sc.fsu.edu/~jburkardt/py_src/sobol/sobol.html.  The code is licenced under the GNU LGPL.
+"""
+
+__all__ = [ 'sobol_lib' ]
