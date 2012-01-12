@@ -1358,7 +1358,7 @@ def pcs_numeric_int_iso_cone_torsionless(theta_max=None, c=None, r_pivot_atom=No
     return c * result[0] / SA
 
 
-def pcs_numeric_int_iso_cone_torsionless_mcint(N=1000, theta_max=None, c=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
+def pcs_numeric_int_iso_cone_torsionless_mcint(N=1000, theta_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
     """Determine the averaged PCS value via numerical integration.
 
     @keyword N:                 The number of Monte Carlo samples to use.
@@ -1367,6 +1367,8 @@ def pcs_numeric_int_iso_cone_torsionless_mcint(N=1000, theta_max=None, c=None, r
     @type theta_max:            float
     @keyword c:                 The PCS constant (without the interatomic distance and in Angstrom units).
     @type c:                    numpy rank-1 array
+    @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
+    @type full_in_ref_frame:    numpy rank-1 array
     @keyword r_pivot_atom:      The pivot point to atom vector.
     @type r_pivot_atom:         numpy rank-2, 3D array
     @keyword r_pivot_atom_rev:  The reversed pivot point to atom vector.
@@ -1407,7 +1409,7 @@ def pcs_numeric_int_iso_cone_torsionless_mcint(N=1000, theta_max=None, c=None, r
         theta_i = acos(v)
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_torsionless(theta_i=theta_i, phi_i=phi_i, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_torsionless_mcint(theta_i=theta_i, phi_i=phi_i, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
     # Calculate the PCS and error.
     for i in range(len(pcs_theta)):
