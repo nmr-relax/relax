@@ -100,8 +100,8 @@ class Analysis:
         # Check the minimum.
         cdp.ave_pos_beta = 1.1838868514111507
         cdp.ave_pos_gamma = 0.35219976958846927
-        cdp.axis_theta = -0.96023810707150448
-        cdp.axis_phi = 0.89625669043576928
+        cdp.axis_theta = 2.1815126749944502
+        cdp.axis_phi = 0.89068285262982982
         calc()
         print cdp.chi2
 

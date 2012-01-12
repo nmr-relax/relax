@@ -98,9 +98,9 @@ class Analysis:
         paramag.centre(pos=[35.934, 12.194, -4.206])
 
         # Check the minimum.
-        cdp.ave_pos_alpha = 1.2017352840543052
-        cdp.ave_pos_beta = 5.8477792871424867
-        cdp.ave_pos_gamma = 0.65969938507054027
+        cdp.ave_pos_alpha = 4.3434999280669997
+        cdp.ave_pos_beta = 0.43544332764249905
+        cdp.ave_pos_gamma = 3.8013235235956007
         calc()
         print cdp.chi2
 

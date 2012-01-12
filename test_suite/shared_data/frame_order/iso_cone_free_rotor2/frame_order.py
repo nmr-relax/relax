@@ -6,6 +6,7 @@ from os import sep
 
 # relax module imports.
 from maths_fns.rotation_matrix import euler_to_R_zyz
+from maths_fns.order_parameters import iso_cone_theta_to_S
 
 
 class Analysis:
@@ -100,9 +101,9 @@ class Analysis:
         # Check the minimum.
         cdp.ave_pos_beta = 1.1321377968123119
         cdp.ave_pos_gamma = 0.029867114268410672
-        cdp.axis_theta = -0.70177072973807042
-        cdp.axis_phi = 0.89129130027034131
-        cdp.cone_s1 = 0.9121076263414718
+        cdp.axis_theta = 0.69828059268540488
+        cdp.axis_phi = -2.2509097944247132
+        cdp.cone_s1 = iso_cone_theta_to_S(20.0 * 2.0 * pi / 360.0)
         calc()
         print cdp.chi2
 
