@@ -278,7 +278,7 @@ class Frame_order:
             elif model == 'pseudo-ellipse, free rotor':
                 self.func = self.func_pseudo_ellipse_free_rotor_mcint
             elif model == 'iso cone':
-                self.func = self.func_iso_cone_mcint_mcint
+                self.func = self.func_iso_cone_mcint
             elif model == 'iso cone, torsionless':
                 self.func = self.func_iso_cone_torsionless_mcint
             elif model == 'iso cone, free rotor':
