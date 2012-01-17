@@ -11,6 +11,7 @@ from maths_fns.rotation_matrix import axis_angle_to_R, R_random_hypersphere
 
 # The number of structures.
 N = 5000
+THETA_MAX = 20.0 * 2.0 * pi / 360.0
 
 # Create a data pipe.
 pipe.create('generate', 'N-state')
@@ -31,9 +32,9 @@ while 1:
     R_random_hypersphere(R)
 
     # Skip the rotation if the angle is violated.
-    new_axis = dot(R, axis)
-    angle = acos(dot(axis, new_axis))
-    if angle > (20.0 * 2.0 * pi / 360.0):
+    rot_z = dot(R, axis)
+    theta = acos(dot(axis, rot_z))
+    if theta > THETA_MAX:
         continue
 
     # Load the PDB as a new model.
