@@ -1,12 +1,12 @@
 # Script for generating the distribution of PDB structures.
 
 # Python module imports.
-from math import acos
-from numpy import array, cross, dot, float64, zeros
+from numpy import array, cross, dot, float64, transpose, zeros
 from numpy.linalg import norm
 
 # relax module imports.
-from maths_fns.rotation_matrix import axis_angle_to_R, R_random_hypersphere
+from generic_fns.angles import wrap_angles
+from maths_fns.rotation_matrix import R_random_hypersphere, R_to_tilt_torsion
 
 
 # Init.
@@ -17,15 +17,20 @@ SIGMA_MAX = 0.1 * 2.0 * pi / 360.0
 # Create a data pipe.
 pipe.create('generate', 'N-state')
 
-# The axis for the rotations (the pivot point to CoM axis).
+# The z-axis for the rotations (the pivot point to CoM axis).
 pivot = array([ 37.254, 0.5, 16.7465])
 com = array([ 26.83678091, -12.37906417,  28.34154128])
-axis = pivot - com
-axis = axis / norm(axis)
+axis_z = pivot - com
+axis_z = axis_z / norm(axis_z)
 
 # A perpendicular axis to check the torsion angle.
-perp_axis = cross(axis, array([0, 0, 1]))
-perp_axis = perp_axis / norm(perp_axis)
+axis_x = cross(axis_z, array([0, 0, 1]))
+axis_x = axis_x / norm(axis_x)
+
+# Complete the frame.
+axis_y = cross(axis_z, axis_x)
+axis_y = axis_y / norm(axis_y)
+eigen_frame = transpose(array([axis_x, axis_y, axis_z]))
 
 # Init a rotation matrix.
 R = zeros((3, 3), float64)
@@ -40,20 +45,19 @@ while 1:
     # The random rotation matrix.
     R_random_hypersphere(R)
 
+    # Rotation in the eigenframe.
+    R_eigen = dot(transpose(eigen_frame), dot(R, eigen_frame))
+
+    # The angles.
+    phi, theta, sigma = R_to_tilt_torsion(R_eigen)
+    sigma = wrap_angles(sigma, -pi, pi)
+
     # Skip the rotation if the cone angle is violated.
-    rot_z = dot(R, axis)
-    theta = acos(dot(axis, rot_z))
     if theta > THETA_MAX:
         continue
 
     # Skip the rotation if the torsion angle is violated.
-    rot_x = dot(R, perp_axis)
-    temp = cross(axis, rot_x)
-    temp = temp / norm(temp)
-    temp2 = cross(temp, axis)
-    temp2 = temp2 / norm(temp2)
-    sigma = acos(dot(perp_axis, temp2))
-    if sigma > SIGMA_MAX:
+    if sigma > SIGMA_MAX or sigma < -SIGMA_MAX:
         continue
 
     # Load the PDB as a new model.

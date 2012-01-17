@@ -102,8 +102,8 @@ class Analysis:
         cdp.ave_pos_beta = 0.43544332764249905
         cdp.ave_pos_gamma = 3.8013235235956007
         cdp.axis_theta = 2.1815126749944502
-        cdp.axis_phi = 0.89068285262982982
-        cdp.cone_theta = 1.0
+        cdp.axis_phi = 4.0322755062196229
+        cdp.cone_theta = 0.5
         calc()
         print("\nchi2: %s" % cdp.chi2)
 
