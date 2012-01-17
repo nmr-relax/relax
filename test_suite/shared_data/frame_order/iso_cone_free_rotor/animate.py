@@ -13,6 +13,9 @@ sleep(3)
 # The cone representation.
 pymol.cone_pdb('cone.pdb')
 
+# Load the distribution of structures.
+pymol.command('load distribution.pdb.gz')
+
 # Structure display.
 pymol.command('hide everything, 1J7O_1st_NH')
 pymol.command('hide everything, 1J7P_1st_NH_rot')
