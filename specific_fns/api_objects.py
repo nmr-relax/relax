@@ -34,11 +34,11 @@ class Param_list:
         """Set up the class."""
 
         # Initialise the lists and dictionaries for the parameter info.
-        self.names = []
-        self.string = {}
-        self.defaults = {}
-        self.units = {}
-        self.grace_string = {}
+        self._names = []
+        self._string = {}
+        self._defaults = {}
+        self._units = {}
+        self._grace_string = {}
 
 
     def add(self, name, string=None, default=None, units=None, grace_string=None):
@@ -57,21 +57,21 @@ class Param_list:
         """
 
         # Append the values.
-        self.names.append(name)
-        self.defaults[name] = default
-        self.units[name] = units
+        self._names.append(name)
+        self._defaults[name] = default
+        self._units[name] = units
 
         # The parameter string.
         if string:
-            self.string[name] = string
+            self._string[name] = string
         else:
-            self.string[name] = name
+            self._string[name] = name
 
         # The Grace string.
         if grace_string:
-            self.grace_string[name] = grace_string
+            self._grace_string[name] = grace_string
         else:
-            self.grace_string[name] = name
+            self._grace_string[name] = name
 
 
     def contains(self, name):
@@ -84,7 +84,7 @@ class Param_list:
         """
 
         # Check.
-        if name in self.names:
+        if name in self._names:
             return True
 
         # No match.
@@ -101,11 +101,11 @@ class Param_list:
         """
 
         # Check.
-        if name not in self.names:
+        if name not in self._names:
             raise RelaxError("The parameter '%s' does not exist." % name)
 
         # Return the value.
-        return self.grace_string[name]
+        return self._grace_string[name]
 
 
     def get_units(self, name):
@@ -118,8 +118,8 @@ class Param_list:
         """
 
         # Check.
-        if name not in self.names:
+        if name not in self._names:
             raise RelaxError("The parameter '%s' does not exist." % name)
 
         # Return the value.
-        return self.units[name]
+        return self._units[name]
