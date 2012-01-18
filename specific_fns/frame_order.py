@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -60,8 +60,28 @@ class Frame_order(API_base, API_common):
         self.eliminate = self._eliminate_false
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
-        self.return_data_name = self._return_data_name_spin
+        self.return_data_name = self._return_data_name
+        self.return_units = self._return_units_global
         self.set_param_values = self._set_param_values_global
+
+        # Set up the global parameters.
+        self.GLOBAL_PARAMS.add('ave_pos_alpha', units='rad')
+        self.GLOBAL_PARAMS.add('ave_pos_beta', units='rad')
+        self.GLOBAL_PARAMS.add('ave_pos_gamma', units='rad')
+        self.GLOBAL_PARAMS.add('eigen_alpha', units='rad')
+        self.GLOBAL_PARAMS.add('eigen_beta', units='rad')
+        self.GLOBAL_PARAMS.add('eigen_gamma', units='rad')
+        self.GLOBAL_PARAMS.add('axis_theta', units='rad')
+        self.GLOBAL_PARAMS.add('axis_phi', units='rad')
+        self.GLOBAL_PARAMS.add('cone_theta_x', units='rad')
+        self.GLOBAL_PARAMS.add('cone_theta_y', units='rad')
+        self.GLOBAL_PARAMS.add('cone_theta', units='rad')
+        self.GLOBAL_PARAMS.add('cone_s1')
+        self.GLOBAL_PARAMS.add('cone_sigma_max', units='rad')
+
+        # Set up the spin parameters.
+        self.SPIN_PARAMS.add('heteronuc_type', default='15N')
+        self.SPIN_PARAMS.add('proton_type', default='1H')
 
 
     def _assemble_limit_arrays(self):
