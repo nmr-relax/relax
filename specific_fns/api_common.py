@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -227,7 +227,7 @@ class API_common:
         return 1.0
 
 
-    def _return_data_name(self, param):
+    def _return_data_name_spin(self, param):
         """Return a unique identifying string for the parameter.
 
         @param param:   The parameter name.
@@ -236,7 +236,11 @@ class API_common:
         @rtype:         str
         """
 
-        # No name mappings.
+        # No parameter.
+        if not self.SPIN_PARAMS.contains(param):
+            return None
+
+        # Return the name.
         return param
 
 
@@ -277,6 +281,36 @@ class API_common:
 
         # Return the list.
         return error
+
+
+    def _return_grace_string_spin(self, param):
+        """Return the Grace string representing the given spin parameter.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
+
+        # The string.
+        return self.SPIN_PARAMS.get_grace_string(param)
+
+
+    def _return_units_spin(self, param):
+        """Return a string representing the spin parameter units.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The string representation of the units.
+        @rtype:         None or str
+        """
+
+        # No parameter.
+        if not self.SPIN_PARAMS.contains(param):
+            return None
+
+        # Return the name.
+        return param
 
 
     def _return_value_general(self, spin, param, sim=None, bc=False):
@@ -454,11 +488,8 @@ class API_common:
 
         # Loop over the parameters.
         for i in range(len(param)):
-            # Get the object's name.
-            obj_name = self.return_data_name(param[i])
-
             # Is the parameter is valid?
-            if not obj_name:
+            if not self.SPIN_PARAMS.contains(param[i]):
                 raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
 
             # Spin loop.
@@ -468,7 +499,7 @@ class API_common:
                     continue
 
                 # Set the parameter.
-                setattr(spin, obj_name, value[i])
+                setattr(spin, param[i], value[i])
 
 
     def _set_selected_sim_global(self, model_info, select_sim):
