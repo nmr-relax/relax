@@ -37,6 +37,7 @@ class API_base:
 
     # Class variables.
     SPIN_PARAMS = Param_list()
+    GLOBAL_PARAMS = Param_list()
 
 
     def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
