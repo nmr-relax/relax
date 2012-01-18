@@ -508,7 +508,6 @@ class API_common:
         # Checks.
         arg_check.is_str_list(param, 'parameter name')
         arg_check.is_list(value, 'parameter value')
-        arg_check.is_none(spin_id, 'spin ID string')
 
         # Loop over the parameters.
         for i in range(len(param)):
