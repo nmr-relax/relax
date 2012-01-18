@@ -106,3 +106,20 @@ class Param_list:
 
         # Return the value.
         return self.grace_string[name]
+
+
+    def get_units(self, name):
+        """Return the units string for the parameter.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The units string.
+        @rtype:         str
+        """
+
+        # Check.
+        if name not in self.names:
+            raise RelaxError("The parameter '%s' does not exist." % name)
+
+        # Return the value.
+        return self.units[name]
