@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -2368,7 +2368,7 @@ class Model_free_main:
             return '\\qCSA\\Q'
 
 
-    def return_units(self, param, spin=None, spin_id=None):
+    def return_units(self, param):
         """Return a string representing the parameters units.
 
         For example, the internal representation of te is in seconds, whereas the external representation is in picoseconds, therefore this function will return the string 'picoseconds' for te.
@@ -2376,26 +2376,12 @@ class Model_free_main:
 
         @param param:   The name of the parameter to return the units string for.
         @type param:    str
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        @param spin_id: The spin identification string (ignored if the spin container is supplied).
-        @type spin_id:  str
         @return:        The parameter units string.
         @rtype:         str
         """
 
         # Get the object name.
         object_name = self.return_data_name(param)
-
-        # Test for objects needing the spin container.
-        if object_name in ['rex']:
-            # The spin must be specified to get frequency units.
-            if spin == None and spin_id == None:
-                raise RelaxNoSpinSpecError
-
-            # Get the spin.
-            if not spin:
-                spin = return_spin(spin_id)
 
         # tm (nanoseconds).
         if object_name == 'tm' or object_name == 'local_tm':
@@ -2406,8 +2392,8 @@ class Model_free_main:
             return 'ps'
 
         # Rex (value at 1st field strength).
-        elif object_name == 'rex' and hasattr(spin, 'frq_labels') and spin.frq_labels != None and len(spin.frq_labels):
-            return spin.frq_labels[0] + ' MHz'
+        elif object_name == 'rex' and hasattr(cdp, 'frq_labels') and cdp.frq_labels != None and len(cdp.frq_labels):
+            return cdp.frq_labels[0] + ' MHz'
 
         # Bond length (Angstrom).
         elif object_name == 'r':

@@ -576,15 +576,11 @@ class API_base:
         raise RelaxImplementError
 
 
-    def return_units(self, param, spin=None, spin_id=None):
+    def return_units(self, param):
         """Return a string representing the parameters units.
 
         @param param:       The name of the parameter to return the units string for.
         @type param:        str
-        @keyword spin:      The spin container.
-        @type spin:         SpinContainer instance
-        @keyword spin_id:   The spin identification string (ignored if the spin container is supplied).
-        @type spin_id:      str
         @return:            The parameter units string.
         @rtype:             str
         """

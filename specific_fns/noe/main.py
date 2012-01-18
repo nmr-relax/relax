@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -322,15 +322,11 @@ class Noe_main:
         return param
 
 
-    def return_units(self, param, spin=None, spin_id=None):
+    def return_units(self, param):
         """Dummy function which returns None as the stats have no units.
 
         @param param:   The name of the parameter to return the units string for.
         @type param:    str
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        @param spin_id: The spin identification string (ignored if the spin container is supplied).
-        @type spin_id:  str
         @return:        Nothing.
         @rtype:         None
         """

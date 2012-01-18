@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -2357,15 +2357,11 @@ class N_state_model(API_base, API_common):
             return "Back-calculated RDC"
 
 
-    def return_units(self, param, spin=None, spin_id=None):
+    def return_units(self, param):
         """Return a string representing the parameters units.
 
         @param param:   The name of the parameter to return the units string for.
         @type param:    str
-        @param spin:    The spin container (unused).
-        @type spin:     None
-        @param spin_id: The spin identification string (unused).
-        @type spin_id:  None
         @return:        The parameter units string.
         @rtype:         str
         """
