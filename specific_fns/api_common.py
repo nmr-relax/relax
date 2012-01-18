@@ -227,8 +227,49 @@ class API_common:
         return 1.0
 
 
+    def _return_data_name(self, param):
+        """Return a unique identifying string for the global or spin parameter.
+
+        This first returns a global parameter if it exists, followed by a spin parameter, and None if neither exist.
+
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
+
+        # Global parameter.
+        if self.GLOBAL_PARAMS.contains(param):
+            return param
+
+        # Spin parameter.
+        if self.SPIN_PARAMS.contains(param):
+            return param
+
+        # No matches.
+        return None
+
+
+    def _return_data_name_global(self, param):
+        """Return a unique identifying string for the global parameter.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
+
+        # No parameter.
+        if not self.GLOBAL_PARAMS.contains(param):
+            return None
+
+        # Return the name.
+        return param
+
+
     def _return_data_name_spin(self, param):
-        """Return a unique identifying string for the parameter.
+        """Return a unique identifying string for the spin parameter.
 
         @param param:   The parameter name.
         @type param:    str
@@ -310,7 +351,24 @@ class API_common:
             return None
 
         # Return the name.
-        return param
+        return self.SPIN_PARAMS.get_units(param)
+
+
+    def _return_units_global(self, param):
+        """Return a string representing the global parameter units.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The string representation of the units.
+        @rtype:         None or str
+        """
+
+        # No parameter.
+        if not self.GLOBAL_PARAMS.contains(param):
+            return None
+
+        # Return the name.
+        return self.GLOBAL_PARAMS.get_units(param)
 
 
     def _return_value_general(self, spin, param, sim=None, bc=False):
