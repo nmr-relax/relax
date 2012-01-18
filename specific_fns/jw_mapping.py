@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -46,11 +46,23 @@ class Jw_mapping(API_base, API_common):
         self.create_mc_data = self._create_mc_relax_data
         self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_data_name = self._return_data_name_spin
         self.return_error = self._return_error_relax_data
+        self.return_grace_string = self._return_grace_string_spin
+        self.return_units = self._return_units_spin
         self.return_value = self._return_value_general
         self.set_param_values = self._set_param_values_spin
         self.set_selected_sim = self._set_selected_sim_spin
         self.sim_pack_data = self._sim_pack_relax_data
+
+        # Set up the spin parameters.
+        self.SPIN_PARAMS.add('j0', string='J(0)', grace_string='\\qJ(0)\\Q')
+        self.SPIN_PARAMS.add('jwx', grace_string='\\qJ(\\xw\\f{}\\sX\\N)\\Q')
+        self.SPIN_PARAMS.add('jwh', grace_string='\\qJ(\\xw\\f{}\\sH\\N)\\Q')
+        self.SPIN_PARAMS.add('r', default=NH_BOND_LENGTH, units='Angstrom', grace_string='Bond length')
+        self.SPIN_PARAMS.add('csa', default=N15_CSA, units='ppm', grace_string='\\qCSA\\Q')
+        self.SPIN_PARAMS.add('heteronuc_type', default='15N')
+        self.SPIN_PARAMS.add('proton_type', default='1H')
 
 
     def _set_frq(self, frq=None):
@@ -278,31 +290,6 @@ class Jw_mapping(API_base, API_common):
 
         """]
 
-    def default_value(self, param):
-        """The default J(w) mapping parameter values.
-
-        @param param:   The J(w) mapping parameter.
-        @type param:    str
-        @return:        The default value.
-        @rtype:         float
-        """
-
-        # Bond length.
-        if param == 'r':
-            return NH_BOND_LENGTH
-
-        # CSA.
-        elif param == 'csa':
-            return N15_CSA
-
-        # Heteronucleus type.
-        elif param == 'heteronuc_type':
-            return '15N'
-
-        # Proton type.
-        elif param == 'proton_type':
-            return '1H'
-
 
     def overfit_deselect(self):
         """Deselect spins which have insufficient data to support calculation."""
@@ -332,128 +319,27 @@ class Jw_mapping(API_base, API_common):
 
 
     return_data_name_doc = ["Reduced spectral density mapping data type string matching patterns", """
-        ____________________________________________________________________________________________
-        |                        |                  |                                              |
-        | Data type              | Object name      | Patterns                                     |
-        |________________________|__________________|______________________________________________|
-        |                        |                  |                                              |
-        | J(0)                   | 'j0'             | '^[Jj]0$' or '[Jj]\(0\)'                     |
-        |                        |                  |                                              |
-        | J(wX)                  | 'jwx'            | '^[Jj]w[Xx]$' or '[Jj]\(w[Xx]\)'             |
-        |                        |                  |                                              |
-        | J(wH)                  | 'jwh'            | '^[Jj]w[Hh]$' or '[Jj]\(w[Hh]\)'             |
-        |                        |                  |                                              |
-        | Bond length            | 'r'              | '^r$' or '[Bb]ond[ -_][Ll]ength'             |
-        |                        |                  |                                              |
-        | CSA                    | 'csa'            | '^[Cc][Ss][Aa]$'                             |
-        |                        |                  |                                              |
-        | Heteronucleus type     | 'heteronuc_type' | '^[Hh]eteronucleus$'                         |
-        |                        |                  |                                              |
-        | Proton type            | 'proton_type'    | '^[Pp]roton$'                                |
-        |________________________|__________________|______________________________________________|
+        _____________________________________________
+        |                        |                  |
+        | Data type              | Object name      |
+        |________________________|__________________|
+        |                        |                  |
+        | J(0)                   | 'j0'             |
+        |                        |                  |
+        | J(wX)                  | 'jwx'            |
+        |                        |                  |
+        | J(wH)                  | 'jwh'            |
+        |                        |                  |
+        | Bond length            | 'r'              |
+        |                        |                  |
+        | CSA                    | 'csa'            |
+        |                        |                  |
+        | Heteronucleus type     | 'heteronuc_type' |
+        |                        |                  |
+        | Proton type            | 'proton_type'    |
+        |________________________|__________________|
 
         """]
-
-    def return_data_name(self, param):
-        """Return a unique identifying string for the J(w) mapping parameter.
-
-        @param param:   The J(w) mapping parameter name.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # J(0).
-        if search('^[Jj]0$', param) or search('[Jj]\(0\)', param):
-            return 'j0'
-
-        # J(wX).
-        if search('^[Jj]w[Xx]$', param) or search('[Jj]\(w[Xx]\)', param):
-            return 'jwx'
-
-        # J(wH).
-        if search('^[Jj]w[Hh]$', param) or search('[Jj]\(w[Hh]\)', param):
-            return 'jwh'
-
-        # Bond length.
-        if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
-            return 'r'
-
-        # CSA.
-        if search('^[Cc][Ss][Aa]$', param):
-            return 'csa'
-
-        # Heteronucleus type.
-        if search('^[Hh]eteronucleus$', param):
-            return 'heteronuc_type'
-
-        # Proton type.
-        if search('^[Pp]roton$', param):
-            return 'proton_type'
-
-
-    def return_grace_string(self, param):
-        """Return the Grace string representing the given parameter.
-
-        This is used for axis labelling.
-
-        @param param:   The specific analysis parameter.
-        @type param:    str
-        @return:        The Grace string representation of the parameter.
-        @rtype:         str
-        """
-
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
-        # J(0).
-        if object_name == 'j0':
-            return '\\qJ(0)\\Q'
-
-        # J(wX).
-        elif object_name == 'jwx':
-            return '\\qJ(\\xw\\f{}\\sX\\N)\\Q'
-
-        # J(wH).
-        elif object_name == 'jwh':
-            return '\\qJ(\\xw\\f{}\\sH\\N)\\Q'
-
-        # Bond length.
-        elif object_name == 'r':
-            return 'Bond length'
-
-        # CSA.
-        elif object_name == 'csa':
-            return '\\qCSA\\Q'
-
-
-    def return_units(self, param, spin=None, spin_id=None):
-        """Function for returning a string representing the parameters units.
-
-        For example, the internal representation of te is in seconds, whereas the external
-        representation is in picoseconds, therefore this function will return the string
-        'picoseconds' for te.
-
-        @param param:   The name of the parameter to return the units string for.
-        @type param:    str
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        @param spin_id: The spin identification string (ignored if the spin container is supplied).
-        @type spin_id:  str
-        @return:        The string representation of the units.
-        @rtype:         str
-        """
-
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
-        # Bond length (Angstrom).
-        if object_name == 'r':
-            return 'Angstrom'
-
-        # CSA (ppm).
-        elif object_name == 'csa':
-            return 'ppm'
 
 
     set_doc = ["Reduced spectral density mapping set details", """
