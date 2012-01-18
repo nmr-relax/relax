@@ -2,7 +2,7 @@
 #                                                                             #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -70,10 +70,10 @@ class Ct(SystemTestCase):
             self.interpreter.relax_data.read(ri_id=ri_ids[i], ri_type=ri_type[i], frq=frq[i], file=data_paths[i], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set r, csa, heteronucleus type, and proton type.
-        self.interpreter.value.set(NH_BOND_LENGTH, 'bond_length')
+        self.interpreter.value.set(NH_BOND_LENGTH, 'r')
         self.interpreter.value.set(N15_CSA, 'csa')
-        self.interpreter.value.set('15N', 'heteronucleus')
-        self.interpreter.value.set('1H', 'proton')
+        self.interpreter.value.set('15N', 'heteronuc_type')
+        self.interpreter.value.set('1H', 'proton_type')
 
         # Set the angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor
         self.interpreter.value.set(15.7, 'orientation')
@@ -112,7 +112,7 @@ class Ct(SystemTestCase):
         # Try to set the values.
         bond_length = NH_BOND_LENGTH
         csa = N15_CSA
-        self.interpreter.value.set(bond_length, 'bond_length')
+        self.interpreter.value.set(bond_length, 'r')
         self.interpreter.value.set(csa, 'csa')
 
         # Loop over residues.
