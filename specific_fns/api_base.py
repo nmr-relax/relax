@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,6 +26,7 @@ from copy import deepcopy
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxImplementError, RelaxLenError, RelaxNoSequenceError
+from specific_fns.api_objects import Param_list
 
 
 class API_base:
@@ -33,6 +34,10 @@ class API_base:
 
     All the methods here are prototype methods.  To identify that the method is not available for certain analysis types, if called a RelaxImplementError is raised if called.
     """
+
+    # Class variables.
+    SPIN_PARAMS = Param_list()
+
 
     def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
         """Back-calculation of relaxation data.
