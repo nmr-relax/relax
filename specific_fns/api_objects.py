@@ -23,6 +23,8 @@
 # Module docstring.
 """A module of special objects used within the specific function API."""
 
+# relax module imports.
+from relax_errors import RelaxError
 
 
 class Param_list:
@@ -87,3 +89,20 @@ class Param_list:
 
         # No match.
         return False
+
+
+    def get_grace_string(self, name):
+        """Return the Grace string for the parameter.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The Grace string.
+        @rtype:         str
+        """
+
+        # Check.
+        if name not in self.names:
+            raise RelaxError("The parameter '%s' does not exist." % name)
+
+        # Return the value.
+        return self.grace_string[name]
