@@ -223,7 +223,7 @@ class API_common:
         """
 
         # Return the factor.
-        return self.SPIN_PARAMS.get_conv_factor(name)
+        return self.SPIN_PARAMS.get_conv_factor(param)
 
 
     def _return_no_conversion_factor(self, param):
