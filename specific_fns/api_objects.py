@@ -23,6 +23,9 @@
 # Module docstring.
 """A module of special objects used within the specific function API."""
 
+# Python module imports.
+from types import FunctionType
+
 # relax module imports.
 from relax_errors import RelaxError
 
@@ -116,8 +119,8 @@ class Param_list:
             return None
 
         # Function.
-        if isinstance(self._conv_factor[name], func):
-            return func()
+        if isinstance(self._conv_factor[name], FunctionType):
+            return self._conv_factor[name]()
 
         # Value.
         return self._conv_factor[name]
