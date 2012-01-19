@@ -227,6 +227,19 @@ class API_common:
         return 1.0
 
 
+    def _return_data_desc_spin(self, name):
+        """Return a description of the spin parameter.
+
+        @param name:    The name of the spin specific object.
+        @type name:     str
+        @return:        The object description, or None.
+        @rtype:         str or None
+        """
+
+        # Return the name.
+        return self.SPIN_PARAMS.get_desc(name)
+
+
     def _return_data_name(self, param):
         """Return a unique identifying string for the global or spin parameter.
 
