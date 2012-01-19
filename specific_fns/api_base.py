@@ -42,6 +42,20 @@ class API_base:
     # Add some spin specific objects.
     SPIN_PARAMS.add('select', desc='The spin selection flag')
     SPIN_PARAMS.add('fixed', desc='The fixed flag')
+    SPIN_PARAMS.add('chi2', desc='Chi-squared value')
+    SPIN_PARAMS.add('iter', desc='Optimisation iterations')
+    SPIN_PARAMS.add('f_count', desc='Number of function calls')
+    SPIN_PARAMS.add('g_count', desc='Number of gradient calls')
+    SPIN_PARAMS.add('h_count', desc='Number of Hessian calls')
+    SPIN_PARAMS.add('warning', desc='Optimisation warning')
+
+    # Add some global objects.
+    GLOBAL_PARAMS.add('chi2', desc='Chi-squared value')
+    GLOBAL_PARAMS.add('iter', desc='Optimisation iterations')
+    GLOBAL_PARAMS.add('f_count', desc='Number of function calls')
+    GLOBAL_PARAMS.add('g_count', desc='Number of gradient calls')
+    GLOBAL_PARAMS.add('h_count', desc='Number of Hessian calls')
+    GLOBAL_PARAMS.add('warning', desc='Optimisation warning')
 
 
     def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
@@ -493,13 +507,11 @@ class API_base:
         raise RelaxImplementError
 
 
-    def return_conversion_factor(self, param, spin=None, spin_id=None):
+    def return_conversion_factor(self, param):
         """Return the conversion factor.
 
         @param param:       The parameter name.
         @type param:        str
-        @param spin:        Spin container.
-        @type spin:         SpinContainer instance
         @return:            A conversion factor of 1.0.
         @rtype:             float
         """
