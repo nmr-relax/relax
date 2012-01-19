@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -106,8 +106,8 @@ grid_search(inc=11)
 #grace.write(y_data_type='chi2', file='chi2.agr', force=True)    # Minimised chi-squared value.
 #grace.write(y_data_type='i0', file='i0.agr', force=True)    # Initial peak intensity.
 #grace.write(y_data_type='rx', file='rx.agr', force=True)    # Relaxation rate.
-#grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', force=True)    # Average peak intensities.
-#grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
+#grace.write(x_data_type='relax_times', y_data_type='intensities', file='intensities.agr', force=True)    # Average peak intensities.
+#grace.write(x_data_type='relax_times', y_data_type='intensities', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
 #
 ## Display the Grace plots.
 #grace.view(file='chi2.agr')
