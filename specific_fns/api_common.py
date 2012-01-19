@@ -429,7 +429,7 @@ class API_common:
         # The data type does not exist.
         else:
             # Is it a spectrum id?
-            if param in cdp.spectrum_ids:
+            if hasattr(cdp, 'spectrum_ids') and param in cdp.spectrum_ids:
                 object_name = 'intensities'
                 object_error = 'intensity_err'
                 object_sim = 'intensity_sim'
