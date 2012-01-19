@@ -42,7 +42,7 @@ class Param_list:
         self._grace_string = {}
 
 
-    def add(self, name, string=None, default=None, units=None, desc=None, grace_string=None):
+    def add(self, name, string=None, default=None, units=None, desc=None, conv_factor=None, grace_string=None):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -55,6 +55,8 @@ class Param_list:
         @type units:            None or str
         @keyword desc:          The text description of the parameter.
         @type desc:             None or str
+        @keyword conv_factor:   The factor of conversion between different parameter units.
+        @type conv_factor:      None, float or func
         @keyword grace_string:  The string used for the axes in Grace plots of the data.
         @type grace_string:     None or str
         """
@@ -64,6 +66,7 @@ class Param_list:
         self._defaults[name] = default
         self._units[name] = units
         self._desc[name] = desc
+        self._conv_factor[name] = conv_factor
 
         # The parameter string.
         if string:
@@ -93,6 +96,31 @@ class Param_list:
 
         # No match.
         return False
+
+
+    def get_conv_factor(self, name):
+        """Return the conversion factor.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The conversion factor.
+        @rtype:         None or float
+        """
+
+        # Check.
+        if name not in self._names:
+            return None
+
+        # No factor.
+        if self._conv_factor[name] == None:
+            return None
+
+        # Function.
+        if isinstance(self._conv_factor[name], func):
+            return func()
+
+        # Value.
+        return self._conv_factor[name]
 
 
     def get_desc(self, name):
