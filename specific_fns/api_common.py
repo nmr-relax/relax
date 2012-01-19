@@ -213,13 +213,24 @@ class API_common:
         """Dummy method, normally for deselecting spins with insufficient data for minimisation."""
 
 
-    def _return_no_conversion_factor(self, param, spin=None, spin_id=None):
+    def _return_conversion_factor_spin(self, param):
+        """Return the spin specific parameter conversion factor.
+
+        @param param:       The parameter name.
+        @type param:        str
+        @return:            The spin specific parameter conversion factor.
+        @rtype:             None or float
+        """
+
+        # Return the factor.
+        return self.SPIN_PARAMS.get_conv_factor(name)
+
+
+    def _return_no_conversion_factor(self, param):
         """Method for returning 1.0.
 
         @param param:       The parameter name.
         @type param:        str
-        @param spin:        Spin container.
-        @type spin:         SpinContainer instance
         @return:            A conversion factor of 1.0.
         @rtype:             float
         """
