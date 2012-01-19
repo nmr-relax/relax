@@ -173,5 +173,9 @@ class Param_list:
         if name not in self._names:
             raise RelaxError("The parameter '%s' does not exist." % name)
 
+        # Function.
+        if isinstance(self._units[name], FunctionType):
+            return self._units[name]()
+
         # Return the value.
         return self._units[name]
