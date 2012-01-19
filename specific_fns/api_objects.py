@@ -38,10 +38,11 @@ class Param_list:
         self._string = {}
         self._defaults = {}
         self._units = {}
+        self._desc = {}
         self._grace_string = {}
 
 
-    def add(self, name, string=None, default=None, units=None, grace_string=None):
+    def add(self, name, string=None, default=None, units=None, desc=None, grace_string=None):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -52,6 +53,8 @@ class Param_list:
         @type default:          anything
         @keyword units:         A string representing the parameters units.
         @type units:            None or str
+        @keyword desc:          The text description of the parameter.
+        @type desc:             None or str
         @keyword grace_string:  The string used for the axes in Grace plots of the data.
         @type grace_string:     None or str
         """
@@ -60,6 +63,7 @@ class Param_list:
         self._names.append(name)
         self._defaults[name] = default
         self._units[name] = units
+        self._desc[name] = desc
 
         # The parameter string.
         if string:
@@ -89,6 +93,23 @@ class Param_list:
 
         # No match.
         return False
+
+
+    def get_desc(self, name):
+        """Return the description of the parameter.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The description.
+        @rtype:         str
+        """
+
+        # Check.
+        if name not in self._names:
+            raise RelaxError("The parameter '%s' does not exist." % name)
+
+        # Return the description.
+        return self._desc[name]
 
 
     def get_grace_string(self, name):
