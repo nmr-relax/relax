@@ -24,7 +24,7 @@
 """A module of special objects used within the specific function API."""
 
 # Python module imports.
-from types import FunctionType
+from types import FunctionType, MethodType
 
 # relax module imports.
 from relax_errors import RelaxError
@@ -108,19 +108,19 @@ class Param_list:
         @param name:    The name of the parameter.
         @type name:     str
         @return:        The conversion factor.
-        @rtype:         None or float
+        @rtype:         float
         """
 
         # Check.
         if name not in self._names:
-            return None
+            return 1.0
 
         # No factor.
         if self._conv_factor[name] == None:
-            return None
+            return 1.0
 
         # Function.
-        if isinstance(self._conv_factor[name], FunctionType):
+        if isinstance(self._conv_factor[name], FunctionType) or isinstance(self._conv_factor[name], MethodType):
             return self._conv_factor[name]()
 
         # Value.
@@ -175,7 +175,7 @@ class Param_list:
             raise RelaxError("The parameter '%s' does not exist." % name)
 
         # Function.
-        if isinstance(self._units[name], FunctionType):
+        if isinstance(self._conv_factor[name], FunctionType) or isinstance(self._conv_factor[name], MethodType):
             return self._units[name]()
 
         # Return the value.
