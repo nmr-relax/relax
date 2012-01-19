@@ -42,6 +42,7 @@ class Param_list:
         self._defaults = {}
         self._units = {}
         self._desc = {}
+        self._conv_factor = {}
         self._grace_string = {}
 
 
