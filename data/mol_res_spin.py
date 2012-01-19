@@ -299,7 +299,7 @@ class SpinList(list):
                 for name in data_names(error_names=True, sim_names=True):
                     # Get the description.
                     if return_data_desc:
-                        desc = return_data_desc(name, spin=self[i])
+                        desc = return_data_desc(name)
                     else:
                         desc = None
 

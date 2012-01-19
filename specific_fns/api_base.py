@@ -517,13 +517,11 @@ class API_base:
         raise RelaxImplementError
 
 
-    def return_data_desc(self, name, spin=None):
+    def return_data_desc(self, name):
         """Return a description of the parameter.
 
         @param name:    The name or description of the parameter.
         @type name:     str
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
         @return:        The object description, or None.
         @rtype:         str or None
         """
