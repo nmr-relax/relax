@@ -39,6 +39,10 @@ class API_base:
     SPIN_PARAMS = Param_list()
     GLOBAL_PARAMS = Param_list()
 
+    # Add some spin specific objects.
+    SPIN_PARAMS.add('select', desc='The spin selection flag')
+    SPIN_PARAMS.add('fixed', desc='The fixed flag')
+
 
     def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
         """Back-calculation of relaxation data.
