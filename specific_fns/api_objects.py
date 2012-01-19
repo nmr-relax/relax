@@ -101,12 +101,12 @@ class Param_list:
         @param name:    The name of the parameter.
         @type name:     str
         @return:        The description.
-        @rtype:         str
+        @rtype:         None or str
         """
 
         # Check.
         if name not in self._names:
-            raise RelaxError("The parameter '%s' does not exist." % name)
+            return None
 
         # Return the description.
         return self._desc[name]
