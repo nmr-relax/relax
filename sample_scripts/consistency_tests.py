@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007-2011 Sebastien Morin                                     #
+# Copyright (C) 2012 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -63,11 +64,11 @@ relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=600.0*1e6, file='r2.600.out'
 relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0*1e6, file='noe.600.out', res_num_col=1, data_col=3, error_col=4)
 
 # Set the nuclei types
-value.set('15N', 'heteronucleus')
-value.set('1H', 'proton')
+value.set('15N', 'heteronuc_type')
+value.set('1H', 'proton_type')
 
 # Set the bond length and CSA values.
-value.set(1.02 * 1e-10, 'bond_length')
+value.set(1.02 * 1e-10, 'r')
 value.set(-172 * 1e-6, 'csa')
 
 # Set the angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor

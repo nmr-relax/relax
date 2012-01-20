@@ -297,13 +297,11 @@ def reset_min_stats(data_pipe=None, spin=None):
             spin.warning = None
 
 
-def return_conversion_factor(stat_type, spin):
+def return_conversion_factor(stat_type):
     """Dummy function for returning 1.0.
 
     @param stat_type:   The name of the statistic.  This is unused!
     @type stat_type:    str
-    @param spin:        Spin container (not used).
-    @type spin:         SpinContainer instance
     @return:            A conversion factor of 1.0.
     @rtype:             float
     """

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -50,17 +50,17 @@ class Macro:
         | Data type      | String      | Description                                               |
         |________________|_____________|___________________________________________________________|
         |                |             |                                                           |
-        | S2.            | 'S2'        | The standard model-free order parameter, equal to S2f.S2s |
+        | S2.            | 's2'        | The standard model-free order parameter, equal to S2f.S2s |
         |                |             | for the two timescale models.  The default colour         |
         |                |             | gradient starts at 'yellow' and ends at 'red'.            |
         |                |             |                                                           |
-        | S2f.           | 'S2f'       | The order parameter of the faster of two internal         |
+        | S2f.           | 's2f'       | The order parameter of the faster of two internal         |
         |                |             | motions.  Residues which are described by model-free      |
         |                |             | models m1 to m4, the single timescale models, are         |
         |                |             | illustrated as white neon bonds.  The default colour      |
         |                |             | gradient is the same as that for the S2 data type.        |
         |                |             |                                                           |
-        | S2s.           | 'S2s'       | The order parameter of the slower of two internal         |
+        | S2s.           | 's2s'       | The order parameter of the slower of two internal         |
         |                |             | motions.  This functions exactly as S2f except that S2s   |
         |                |             | is plotted instead.                                       |
         |                |             |                                                           |
@@ -105,7 +105,7 @@ class Macro:
         |                |             | residues are coloured white.  The default colour gradient |
         |                |             | is the same as that of ts.                                |
         |                |             |                                                           |
-        | Chemical       | 'Rex'       | The chemical exchange, Rex.  Residues which experience no |
+        | Chemical       | 'rex'       | The chemical exchange, Rex.  Residues which experience no |
         | exchange       |             | chemical exchange are coloured white.  The default colour |
         |                |             | gradient starts at 'yellow' and finishes at 'red'.        |
         |________________|_____________|___________________________________________________________|
@@ -152,7 +152,7 @@ class Macro:
         # S2.
         #####
 
-        if data_type == 'S2':
+        if data_type == 's2':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
@@ -170,7 +170,7 @@ class Macro:
         # S2f.
         ######
 
-        elif data_type == 'S2f':
+        elif data_type == 's2f':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
@@ -189,7 +189,7 @@ class Macro:
         # S2s.
         ######
 
-        elif data_type == 'S2s':
+        elif data_type == 's2s':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.
@@ -398,7 +398,7 @@ class Macro:
         # Rex.
         ######
 
-        elif data_type == 'Rex':
+        elif data_type == 'rex':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
                 # Skip deselected spins.

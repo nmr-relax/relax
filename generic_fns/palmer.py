@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -403,7 +403,7 @@ def create_mfmodel(file, spin=None, spin_id=None, steps=None, constraints=None):
 
     # S2f.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'Sf2', 1))
-    if 'S2f' in spin.params:
+    if 's2f' in spin.params:
         file.write('%-4i' % 1)
     else:
         file.write('%-4i' % 0)
@@ -417,7 +417,7 @@ def create_mfmodel(file, spin=None, spin_id=None, steps=None, constraints=None):
 
     # S2s.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'Ss2', 1))
-    if 'S2s' in spin.params or 'S2' in spin.params:
+    if 's2s' in spin.params or 's2' in spin.params:
         file.write('%-4i' % 1)
     else:
         file.write('%-4i' % 0)
@@ -444,8 +444,8 @@ def create_mfmodel(file, spin=None, spin_id=None, steps=None, constraints=None):
     file.write('%11.3f%12.3f %-4s\n' % (0, 10000, steps))
 
     # Rex.
-    file.write('%-3s%-6s%-6.1f' % ('M1', 'Rex', 0))
-    if 'Rex' in spin.params:
+    file.write('%-3s%-6s%-6.1f' % ('M1', 'rex', 0))
+    if 'rex' in spin.params:
         file.write('%-4i' % 1)
     else:
         file.write('%-4i' % 0)
@@ -688,15 +688,15 @@ def extract(dir, spin_id=None):
             raise RelaxNoModelError
 
         # Get the S2 data.
-        if 'S2' in spin.params:
+        if 's2' in spin.params:
             spin.s2, spin.s2_err = get_mf_data(mfout_lines, s2_pos + pos)
 
         # Get the S2f data.
-        if 'S2f' in spin.params or 'S2s' in spin.params:
+        if 's2f' in spin.params or 's2s' in spin.params:
             spin.s2f, spin.s2f_err = get_mf_data(mfout_lines, s2f_pos + pos)
 
         # Get the S2s data.
-        if 'S2f' in spin.params or 'S2s' in spin.params:
+        if 's2f' in spin.params or 's2s' in spin.params:
             spin.s2s, spin.s2s_err = get_mf_data(mfout_lines, s2s_pos + pos)
 
         # Get the te data.
@@ -712,7 +712,7 @@ def extract(dir, spin_id=None):
             spin.ts_err = spin.ts_err / 1e12
 
         # Get the Rex data.
-        if 'Rex' in spin.params:
+        if 'rex' in spin.params:
             spin.rex, spin.rex_err = get_mf_data(mfout_lines, rex_pos + pos)
             spin.rex = spin.rex / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
             spin.rex_err = spin.rex_err / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2

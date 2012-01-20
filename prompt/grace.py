@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -139,18 +139,18 @@ class Grace(User_fn_class):
         relax> grace.write(y_data_type='noe', file='noe.agr', force=True)
 
 
-        To create a Grace file of 'S2' vs. 'te' for all spins, type one of:
+        To create a Grace file of 's2' vs. 'te' for all spins, type one of:
 
-        relax> grace.write('S2', 'te', file='s2_te.agr')
-        relax> grace.write(x_data_type='S2', y_data_type='te', file='s2_te.agr')
-        relax> grace.write(x_data_type='S2', y_data_type='te', file='s2_te.agr', force=True)
+        relax> grace.write('s2', 'te', file='s2_te.agr')
+        relax> grace.write(x_data_type='s2', y_data_type='te', file='s2_te.agr')
+        relax> grace.write(x_data_type='s2', y_data_type='te', file='s2_te.agr', force=True)
 
 
-        To create a Grace file of the Monte Carlo simulation values of 'Rex' vs. 'te' for residue
+        To create a Grace file of the Monte Carlo simulation values of 'rex' vs. 'te' for residue
         123, type one of:
 
-        relax> grace.write('Rex', 'te', spin_id=':123', plot_data='sims', file='s2_te.agr')
-        relax> grace.write(x_data_type='Rex', y_data_type='te', spin_id=':123',
+        relax> grace.write('rex', 'te', spin_id=':123', plot_data='sims', file='s2_te.agr')
+        relax> grace.write(x_data_type='rex', y_data_type='te', spin_id=':123',
                            plot_data='sims', file='s2_te.agr')
 
 

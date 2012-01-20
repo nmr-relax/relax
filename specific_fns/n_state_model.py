@@ -2008,7 +2008,7 @@ class N_state_model(API_base, API_common):
         """
 
         # Spin specific parameters.
-        if name in ['bond_length', 'heteronucleus', 'proton']:
+        if name in ['r', 'heteronuc_type', 'proton_type']:
             return True
 
         # All other parameters are global.
@@ -2267,11 +2267,11 @@ class N_state_model(API_base, API_common):
             return 'r'
 
         # Heteronucleus type.
-        if search('^[Hh]eteronucleus$', param):
+        if param == 'heteronuc_type':
             return 'heteronuc_type'
 
         # Proton type.
-        if search('^[Pp]roton$', param):
+        if param == 'proton_type':
             return 'proton_type'
 
         # Paramagnetic centre.

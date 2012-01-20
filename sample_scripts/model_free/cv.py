@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -65,7 +65,7 @@ for i in xrange(len(pipes)):
         diffusion_tensor.init(1e-8)
 
         # Set the bond length and CSA values.
-        value.set(1.02 * 1e-10, 'bond_length')
+        value.set(1.02 * 1e-10, 'r')
         value.set(-172 * 1e-6, 'csa')
 
         # Select the preset model-free models.

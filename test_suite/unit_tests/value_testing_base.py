@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -3014,7 +3014,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2', val=0.8)
+        self.value_fns.set(param='s2', val=0.8)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2, 0.8)
@@ -3031,7 +3031,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2f', val=0.45)
+        self.value_fns.set(param='s2f', val=0.45)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2f, 0.45)
@@ -3048,7 +3048,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2s', val=0.1)
+        self.value_fns.set(param='s2s', val=0.1)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2s, 0.1)
@@ -3116,7 +3116,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='Rex', val=2.34)
+        self.value_fns.set(param='rex', val=2.34)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].rex, 2.34)
@@ -3150,7 +3150,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='CSA', val=-172e-6)
+        self.value_fns.set(param='csa', val=-172e-6)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
@@ -3184,7 +3184,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'], val=[0.7, 0.9])
+        self.value_fns.set(param=['s2f', 's2s'], val=[0.7, 0.9])
 
         # Test the parameters.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2f, 0.7)
@@ -3203,7 +3203,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'], val=0.7)
+        self.value_fns.set(param=['s2f', 's2s'], val=0.7)
 
         # Test the parameters.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2f, 0.7)
@@ -3239,7 +3239,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2')
+        self.value_fns.set(param='s2')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2, 0.8)
@@ -3256,7 +3256,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2f')
+        self.value_fns.set(param='s2f')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2f, 0.8)
@@ -3273,7 +3273,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2s')
+        self.value_fns.set(param='s2s')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2s, 0.8)
@@ -3341,7 +3341,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='Rex')
+        self.value_fns.set(param='rex')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].rex, 0.0)
@@ -3375,7 +3375,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='CSA')
+        self.value_fns.set(param='csa')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -172 * 1e-6)
@@ -3409,7 +3409,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'])
+        self.value_fns.set(param=['s2f', 's2s'])
 
         # Test the parameters.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2f, 0.8)
@@ -3445,7 +3445,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2', val=0.8, spin_id='@112')
+        self.value_fns.set(param='s2', val=0.8, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2'))
@@ -3462,7 +3462,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2f', val=0.45, spin_id='@112')
+        self.value_fns.set(param='s2f', val=0.45, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
@@ -3479,7 +3479,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2s', val=0.1, spin_id='@112')
+        self.value_fns.set(param='s2s', val=0.1, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
@@ -3547,7 +3547,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='Rex', val=2.34, spin_id='@112')
+        self.value_fns.set(param='rex', val=2.34, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'rex'))
@@ -3581,7 +3581,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='CSA', val=-172e-6, spin_id='@112')
+        self.value_fns.set(param='csa', val=-172e-6, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
@@ -3615,7 +3615,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'], val=[0.7, 0.9], spin_id='@112')
+        self.value_fns.set(param=['s2f', 's2s'], val=[0.7, 0.9], spin_id='@112')
 
         # Test the parameters.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
@@ -3634,7 +3634,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'], val=0.7, spin_id='@112')
+        self.value_fns.set(param=['s2f', 's2s'], val=0.7, spin_id='@112')
 
         # Test the parameters.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))

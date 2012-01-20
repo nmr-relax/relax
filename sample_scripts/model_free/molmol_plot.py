@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -43,9 +43,9 @@ Please read the documentation for the molmol.macro_write() user function before 
 state.load(file='final_state', dir=None)
 
 # Create the Molmol macros.
-molmol.macro_write(data_type='S2', colour_start='red', colour_end='blue', force=True)
-molmol.macro_write(data_type='S2f', force=True)
-molmol.macro_write(data_type='S2s', force=True)
+molmol.macro_write(data_type='s2', colour_start='red', colour_end='blue', force=True)
+molmol.macro_write(data_type='s2f', force=True)
+molmol.macro_write(data_type='s2s', force=True)
 molmol.macro_write(data_type='amp_fast', colour_start='red', colour_end='blue', force=True)
 molmol.macro_write(data_type='amp_slow', colour_start='red', colour_end='blue', force=True)
 molmol.macro_write(data_type='te', force=True)
@@ -53,4 +53,4 @@ molmol.macro_write(data_type='tf', force=True)
 molmol.macro_write(data_type='ts', force=True)
 molmol.macro_write(data_type='time_fast', force=True)
 molmol.macro_write(data_type='time_slow', force=True)
-molmol.macro_write(data_type='Rex', force=True)
+molmol.macro_write(data_type='rex', force=True)

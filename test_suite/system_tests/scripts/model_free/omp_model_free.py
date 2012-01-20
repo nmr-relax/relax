@@ -205,10 +205,10 @@ class Main:
                 fix('diff')
 
             # Set all the necessary values.
-            value.set(BOND_LENGTH, 'bond_length')
+            value.set(BOND_LENGTH, 'r')
             value.set(CSA, 'csa')
-            value.set(HETNUC, 'heteronucleus')
-            value.set(PROTON, 'proton')
+            value.set(HETNUC, 'heteronuc_type')
+            value.set(PROTON, 'proton_type')
 
             # Select the model-free model.
             model_free.select_model(model=name)

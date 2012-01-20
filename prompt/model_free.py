@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -61,28 +61,28 @@ class Model_free(User_fn_class):
 
         The following parameters are accepted for the original model-free equation:
 
-            'S2':   The square of the generalised order parameter.
+            's2':   The square of the generalised order parameter.
             'te':   The effective correlation time.
 
         The following parameters are accepted for the extended model-free equation:
 
-            'S2f':  The square of the generalised order parameter of the faster motion.
+            's2f':  The square of the generalised order parameter of the faster motion.
             'tf':   The effective correlation time of the faster motion.
-            'S2':   The square of the generalised order parameter S2 = S2f * S2s.
+            's2':   The square of the generalised order parameter S2 = S2f * S2s.
             'ts':   The effective correlation time of the slower motion.
 
         The following parameters are accepted for the extended 2 model-free equation:
 
-            'S2f':  The square of the generalised order parameter of the faster motion.
+            's2f':  The square of the generalised order parameter of the faster motion.
             'tf':   The effective correlation time of the faster motion.
-            'S2s':  The square of the generalised order parameter of the slower motion.
+            's2s':  The square of the generalised order parameter of the slower motion.
             'ts':   The effective correlation time of the slower motion.
 
         The following parameters are accepted for all equations:
 
-            'Rex':  The chemical exchange relaxation.
+            'rex':  The chemical exchange relaxation.
             'r':    The average bond length <r>.
-            'CSA':  The chemical shift anisotropy.
+            'csa':  The chemical shift anisotropy.
 
 
         Spin identification string
@@ -96,20 +96,20 @@ class Model_free(User_fn_class):
         ~~~~~~~~
 
         The following commands will create the model-free model 'm1' which is based on the original
-        model-free equation and contains the single parameter 'S2'.
+        model-free equation and contains the single parameter 's2'.
 
-        relax> model_free.create_model('m1', 'mf_orig', ['S2'])
-        relax> model_free.create_model(model='m1', params=['S2'], equation='mf_orig')
+        relax> model_free.create_model('m1', 'mf_orig', ['s2'])
+        relax> model_free.create_model(model='m1', params=['s2'], equation='mf_orig')
 
 
         The following commands will create the model-free model 'large_model' which is based on the
-        extended model-free equation and contains the seven parameters 'S2f', 'tf', 'S2', 'ts',
-        'Rex', 'CSA', 'r'.
+        extended model-free equation and contains the seven parameters 's2f', 'tf', 's2', 'ts',
+        'rex', 'csa', 'r'.
 
-        relax> model_free.create_model('large_model', 'mf_ext', ['S2f', 'tf', 'S2', 'ts', 'Rex',
-                                       'CSA', 'r'])
-        relax> model_free.create_model(model='large_model', params=['S2f', 'tf', 'S2', 'ts', 'Rex',
-                                       'CSA', 'r'], equation='mf_ext')
+        relax> model_free.create_model('large_model', 'mf_ext', ['s2f', 'tf', 's2', 'ts', 'rex',
+                                       'csa', 'r'])
+        relax> model_free.create_model(model='large_model', params=['s2f', 'tf', 's2', 'ts', 'rex',
+                                       'csa', 'r'], equation='mf_ext')
         """
 
         # Function intro text.
@@ -252,7 +252,7 @@ class Model_free(User_fn_class):
 
         Warning:  The models in the thirties range fail when using standard R1, R2, and NOE
         relaxation data.  This is due to the extreme flexibly of these models where a change in the
-        parameter 'r' is compensated by a corresponding change in the parameter 'CSA' and
+        parameter 'r' is compensated by a corresponding change in the parameter 'csa' and
         vice versa.
 
 

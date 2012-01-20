@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -191,9 +191,9 @@ class Pymol(User_fn_class):
     macro_apply._doc_examples = """
         To map the order parameter values, S2, onto the structure using the classic style, type:
 
-        relax> pymol.macro_apply('S2')
-        relax> pymol.macro_apply(data_type='S2')
-        relax> pymol.macro_apply(data_type='S2', style="classic")
+        relax> pymol.macro_apply('s2')
+        relax> pymol.macro_apply(data_type='s2')
+        relax> pymol.macro_apply(data_type='s2', style="classic")
         """
     macro_apply._doc_additional = [
         colour._linear_gradient_doc,
@@ -285,9 +285,9 @@ class Pymol(User_fn_class):
         To create a PyMOL macro mapping the order parameter values, S2, onto the structure using
         the classic style, type:
 
-        relax> pymol.macro_write('S2')
-        relax> pymol.macro_write(data_type='S2')
-        relax> pymol.macro_write(data_type='S2', style="classic", file='s2.pml', dir='pymol')
+        relax> pymol.macro_write('s2')
+        relax> pymol.macro_write(data_type='s2')
+        relax> pymol.macro_write(data_type='s2', style="classic", file='s2.pml', dir='pymol')
         """
     macro_write._doc_additional = [
         colour._linear_gradient_doc,

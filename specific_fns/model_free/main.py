@@ -37,7 +37,6 @@ from generic_fns import diffusion_tensor, pipes, relax_data, sequence
 from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, spin_index_loop, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
-from physical_constants import N15_CSA, NH_BOND_LENGTH
 import specific_fns
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
 from relax_warnings import RelaxDeselectWarning
@@ -69,15 +68,15 @@ class Model_free_main:
                 return spin.params[j]
 
             # S2.
-            elif spin.params[j] == 'S2' and spin.s2 == None:
+            elif spin.params[j] == 's2' and spin.s2 == None:
                 return spin.params[j]
 
             # S2f.
-            elif spin.params[j] == 'S2f' and spin.s2f == None:
+            elif spin.params[j] == 's2f' and spin.s2f == None:
                 return spin.params[j]
 
             # S2s.
-            elif spin.params[j] == 'S2s' and spin.s2s == None:
+            elif spin.params[j] == 's2s' and spin.s2s == None:
                 return spin.params[j]
 
             # te.
@@ -93,7 +92,7 @@ class Model_free_main:
                 return spin.params[j]
 
             # Rex.
-            elif spin.params[j] == 'Rex' and spin.rex == None:
+            elif spin.params[j] == 'rex' and spin.rex == None:
                 return spin.params[j]
 
             # r.
@@ -101,7 +100,7 @@ class Model_free_main:
                 return spin.params[j]
 
             # CSA.
-            elif spin.params[j] == 'CSA' and spin.csa == None:
+            elif spin.params[j] == 'csa' and spin.csa == None:
                 return spin.params[j]
 
 
@@ -251,21 +250,21 @@ class Model_free_main:
                             param_vector.append(spin.local_tm_sim[sim_index])
 
                     # S2.
-                    elif spin.params[i] == 'S2':
+                    elif spin.params[i] == 's2':
                         if sim_index == None:
                             param_vector.append(spin.s2)
                         else:
                             param_vector.append(spin.s2_sim[sim_index])
 
                     # S2f.
-                    elif spin.params[i] == 'S2f':
+                    elif spin.params[i] == 's2f':
                         if sim_index == None:
                             param_vector.append(spin.s2f)
                         else:
                             param_vector.append(spin.s2f_sim[sim_index])
 
                     # S2s.
-                    elif spin.params[i] == 'S2s':
+                    elif spin.params[i] == 's2s':
                         if sim_index == None:
                             param_vector.append(spin.s2s)
                         else:
@@ -293,7 +292,7 @@ class Model_free_main:
                             param_vector.append(spin.ts_sim[sim_index])
 
                     # Rex.
-                    elif spin.params[i] == 'Rex':
+                    elif spin.params[i] == 'rex':
                         if sim_index == None:
                             param_vector.append(spin.rex)
                         else:
@@ -307,7 +306,7 @@ class Model_free_main:
                             param_vector.append(spin.r_sim[sim_index])
 
                     # CSA.
-                    elif spin.params[i] == 'CSA':
+                    elif spin.params[i] == 'csa':
                         if sim_index == None:
                             param_vector.append(spin.csa)
                         else:
@@ -323,6 +322,7 @@ class Model_free_main:
                 param_vector[i] = 0.0
 
         # Return a numpy array.
+        print `param_vector`
         return array(param_vector, float64)
 
 
@@ -412,7 +412,7 @@ class Model_free_main:
                         scaling_matrix[i, i] = ti_scaling
 
                     # Rex.
-                    elif spin.params[k] == 'Rex':
+                    elif spin.params[k] == 'rex':
                         scaling_matrix[i, i] = 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]]) ** 2
 
                     # Bond length.
@@ -420,7 +420,7 @@ class Model_free_main:
                         scaling_matrix[i, i] = 1e-10
 
                     # CSA.
-                    elif spin.params[k] == 'CSA':
+                    elif spin.params[k] == 'csa':
                         scaling_matrix[i, i] = 1e-4
 
                     # Increment i.
@@ -501,20 +501,25 @@ class Model_free_main:
                 raise RelaxError("The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
 
 
+    def _conv_factor_rex(self):
+        """Calculate and return the Rex conversion factor.
+
+        @return:    The Rex conversion factor.
+        @rtype:     float
+        """
+
+        # The factor.
+        return 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
+
+
     def _create_model(self, model=None, equation=None, params=None, spin_id=None):
         """Function for creating a custom model-free model.
 
         @param model:       The name of the model.
         @type model:        str
-        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the
-                            original model-free equations with parameters {S2, te}; 'mf_ext' for the
-                            extended model-free equations with parameters {S2f, tf, S2, ts}; and
-                            'mf_ext2' for the extended model-free equations with parameters {S2f,
-                            tf, S2s, ts}.
+        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the original model-free equations with parameters {s2, te}; 'mf_ext' for the extended model-free equations with parameters {s2f, tf, s2, ts}; and 'mf_ext2' for the extended model-free equations with parameters {s2f, tf, s2s, ts}.
         @type equation:     str
-        @param params:      A list of the parameters to include in the model.  The allowed parameter
-                            names includes those for the equation type as well as chemical exchange
-                            'Rex', the bond length 'r', and the chemical shift anisotropy 'CSA'.
+        @param params:      A list of the parameters to include in the model.  The allowed parameter names includes those for the equation type as well as chemical exchange 'rex', the bond length 'r', and the chemical shift anisotropy 'csa'.
         @type params:       list of str
         @param spin_id:     The spin identification string.
         @type spin_id:      str
@@ -544,7 +549,7 @@ class Model_free_main:
             invalid_param = 0
 
             # S2.
-            if params[i] == 'S2':
+            if params[i] == 's2':
                 # Does the array contain more than one instance of S2.
                 if s2:
                     invalid_param = 1
@@ -553,7 +558,7 @@ class Model_free_main:
                 # Does the array contain S2s.
                 s2s_flag = 0
                 for j in xrange(len(params)):
-                    if params[j] == 'S2s':
+                    if params[j] == 's2s':
                         s2s_flag = 1
                 if s2s_flag:
                     invalid_param = 1
@@ -568,20 +573,20 @@ class Model_free_main:
                 # Does the array contain the parameter S2.
                 s2_flag = 0
                 for j in xrange(len(params)):
-                    if params[j] == 'S2':
+                    if params[j] == 's2':
                         s2_flag = 1
                 if not s2_flag:
                     invalid_param = 1
 
             # S2f.
-            elif params[i] == 'S2f':
+            elif params[i] == 's2f':
                 # Does the array contain more than one instance of S2f and has the original model-free formula been selected.
                 if equation == 'mf_orig' or s2f:
                     invalid_param = 1
                 s2f = 1
 
             # S2s.
-            elif params[i] == 'S2s':
+            elif params[i] == 's2s':
                 # Does the array contain more than one instance of S2s and has the original model-free formula been selected.
                 if equation == 'mf_orig' or s2s:
                     invalid_param = 1
@@ -597,7 +602,7 @@ class Model_free_main:
                 # Does the array contain the parameter S2f.
                 s2f_flag = 0
                 for j in xrange(len(params)):
-                    if params[j] == 'S2f':
+                    if params[j] == 's2f':
                         s2f_flag = 1
                 if not s2f_flag:
                     invalid_param = 1
@@ -612,13 +617,13 @@ class Model_free_main:
                 # Does the array contain the parameter S2 or S2s.
                 flag = 0
                 for j in xrange(len(params)):
-                    if params[j] == 'S2' or params[j] == 'S2f':
+                    if params[j] == 's2' or params[j] == 's2f':
                         flag = 1
                 if not flag:
                     invalid_param = 1
 
             # Rex.
-            elif params[i] == 'Rex':
+            elif params[i] == 'rex':
                 if rex:
                     invalid_param = 1
                 rex = 1
@@ -630,7 +635,7 @@ class Model_free_main:
                 r = 1
 
             # CSA.
-            elif params[i] == 'CSA':
+            elif params[i] == 'csa':
                 if csa:
                     invalid_param = 1
                 csa = 1
@@ -776,63 +781,63 @@ class Model_free_main:
             params = []
         elif model == 'm1':
             equation = 'mf_orig'
-            params = ['S2']
+            params = ['s2']
         elif model == 'm2':
             equation = 'mf_orig'
-            params = ['S2', 'te']
+            params = ['s2', 'te']
         elif model == 'm3':
             equation = 'mf_orig'
-            params = ['S2', 'Rex']
+            params = ['s2', 'rex']
         elif model == 'm4':
             equation = 'mf_orig'
-            params = ['S2', 'te', 'Rex']
+            params = ['s2', 'te', 'rex']
         elif model == 'm5':
             equation = 'mf_ext'
-            params = ['S2f', 'S2', 'ts']
+            params = ['s2f', 's2', 'ts']
         elif model == 'm6':
             equation = 'mf_ext'
-            params = ['S2f', 'tf', 'S2', 'ts']
+            params = ['s2f', 'tf', 's2', 'ts']
         elif model == 'm7':
             equation = 'mf_ext'
-            params = ['S2f', 'S2', 'ts', 'Rex']
+            params = ['s2f', 's2', 'ts', 'rex']
         elif model == 'm8':
             equation = 'mf_ext'
-            params = ['S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['s2f', 'tf', 's2', 'ts', 'rex']
         elif model == 'm9':
             equation = 'mf_orig'
-            params = ['Rex']
+            params = ['rex']
 
         # Block 2.
         elif model == 'm10':
             equation = 'mf_orig'
-            params = ['CSA']
+            params = ['csa']
         elif model == 'm11':
             equation = 'mf_orig'
-            params = ['CSA', 'S2']
+            params = ['csa', 's2']
         elif model == 'm12':
             equation = 'mf_orig'
-            params = ['CSA', 'S2', 'te']
+            params = ['csa', 's2', 'te']
         elif model == 'm13':
             equation = 'mf_orig'
-            params = ['CSA', 'S2', 'Rex']
+            params = ['csa', 's2', 'rex']
         elif model == 'm14':
             equation = 'mf_orig'
-            params = ['CSA', 'S2', 'te', 'Rex']
+            params = ['csa', 's2', 'te', 'rex']
         elif model == 'm15':
             equation = 'mf_ext'
-            params = ['CSA', 'S2f', 'S2', 'ts']
+            params = ['csa', 's2f', 's2', 'ts']
         elif model == 'm16':
             equation = 'mf_ext'
-            params = ['CSA', 'S2f', 'tf', 'S2', 'ts']
+            params = ['csa', 's2f', 'tf', 's2', 'ts']
         elif model == 'm17':
             equation = 'mf_ext'
-            params = ['CSA', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['csa', 's2f', 's2', 'ts', 'rex']
         elif model == 'm18':
             equation = 'mf_ext'
-            params = ['CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['csa', 's2f', 'tf', 's2', 'ts', 'rex']
         elif model == 'm19':
             equation = 'mf_orig'
-            params = ['CSA', 'Rex']
+            params = ['csa', 'rex']
 
         # Block 3.
         elif model == 'm20':
@@ -840,63 +845,63 @@ class Model_free_main:
             params = ['r']
         elif model == 'm21':
             equation = 'mf_orig'
-            params = ['r', 'S2']
+            params = ['r', 's2']
         elif model == 'm22':
             equation = 'mf_orig'
-            params = ['r', 'S2', 'te']
+            params = ['r', 's2', 'te']
         elif model == 'm23':
             equation = 'mf_orig'
-            params = ['r', 'S2', 'Rex']
+            params = ['r', 's2', 'rex']
         elif model == 'm24':
             equation = 'mf_orig'
-            params = ['r', 'S2', 'te', 'Rex']
+            params = ['r', 's2', 'te', 'rex']
         elif model == 'm25':
             equation = 'mf_ext'
-            params = ['r', 'S2f', 'S2', 'ts']
+            params = ['r', 's2f', 's2', 'ts']
         elif model == 'm26':
             equation = 'mf_ext'
-            params = ['r', 'S2f', 'tf', 'S2', 'ts']
+            params = ['r', 's2f', 'tf', 's2', 'ts']
         elif model == 'm27':
             equation = 'mf_ext'
-            params = ['r', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['r', 's2f', 's2', 'ts', 'rex']
         elif model == 'm28':
             equation = 'mf_ext'
-            params = ['r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['r', 's2f', 'tf', 's2', 'ts', 'rex']
         elif model == 'm29':
             equation = 'mf_orig'
-            params = ['r', 'Rex']
+            params = ['r', 'rex']
 
         # Block 4.
         elif model == 'm30':
             equation = 'mf_orig'
-            params = ['r', 'CSA']
+            params = ['r', 'csa']
         elif model == 'm31':
             equation = 'mf_orig'
-            params = ['r', 'CSA', 'S2']
+            params = ['r', 'csa', 's2']
         elif model == 'm32':
             equation = 'mf_orig'
-            params = ['r', 'CSA', 'S2', 'te']
+            params = ['r', 'csa', 's2', 'te']
         elif model == 'm33':
             equation = 'mf_orig'
-            params = ['r', 'CSA', 'S2', 'Rex']
+            params = ['r', 'csa', 's2', 'rex']
         elif model == 'm34':
             equation = 'mf_orig'
-            params = ['r', 'CSA', 'S2', 'te', 'Rex']
+            params = ['r', 'csa', 's2', 'te', 'rex']
         elif model == 'm35':
             equation = 'mf_ext'
-            params = ['r', 'CSA', 'S2f', 'S2', 'ts']
+            params = ['r', 'csa', 's2f', 's2', 'ts']
         elif model == 'm36':
             equation = 'mf_ext'
-            params = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+            params = ['r', 'csa', 's2f', 'tf', 's2', 'ts']
         elif model == 'm37':
             equation = 'mf_ext'
-            params = ['r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['r', 'csa', 's2f', 's2', 'ts', 'rex']
         elif model == 'm38':
             equation = 'mf_ext'
-            params = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['r', 'csa', 's2f', 'tf', 's2', 'ts', 'rex']
         elif model == 'm39':
             equation = 'mf_orig'
-            params = ['r', 'CSA', 'Rex']
+            params = ['r', 'csa', 'rex']
 
 
         # Preset models with local correlation time.
@@ -908,63 +913,63 @@ class Model_free_main:
             params = ['local_tm']
         elif model == 'tm1':
             equation = 'mf_orig'
-            params = ['local_tm', 'S2']
+            params = ['local_tm', 's2']
         elif model == 'tm2':
             equation = 'mf_orig'
-            params = ['local_tm', 'S2', 'te']
+            params = ['local_tm', 's2', 'te']
         elif model == 'tm3':
             equation = 'mf_orig'
-            params = ['local_tm', 'S2', 'Rex']
+            params = ['local_tm', 's2', 'rex']
         elif model == 'tm4':
             equation = 'mf_orig'
-            params = ['local_tm', 'S2', 'te', 'Rex']
+            params = ['local_tm', 's2', 'te', 'rex']
         elif model == 'tm5':
             equation = 'mf_ext'
-            params = ['local_tm', 'S2f', 'S2', 'ts']
+            params = ['local_tm', 's2f', 's2', 'ts']
         elif model == 'tm6':
             equation = 'mf_ext'
-            params = ['local_tm', 'S2f', 'tf', 'S2', 'ts']
+            params = ['local_tm', 's2f', 'tf', 's2', 'ts']
         elif model == 'tm7':
             equation = 'mf_ext'
-            params = ['local_tm', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 's2f', 's2', 'ts', 'rex']
         elif model == 'tm8':
             equation = 'mf_ext'
-            params = ['local_tm', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 's2f', 'tf', 's2', 'ts', 'rex']
         elif model == 'tm9':
             equation = 'mf_orig'
-            params = ['local_tm', 'Rex']
+            params = ['local_tm', 'rex']
 
         # Block 2.
         elif model == 'tm10':
             equation = 'mf_orig'
-            params = ['local_tm', 'CSA']
+            params = ['local_tm', 'csa']
         elif model == 'tm11':
             equation = 'mf_orig'
-            params = ['local_tm', 'CSA', 'S2']
+            params = ['local_tm', 'csa', 's2']
         elif model == 'tm12':
             equation = 'mf_orig'
-            params = ['local_tm', 'CSA', 'S2', 'te']
+            params = ['local_tm', 'csa', 's2', 'te']
         elif model == 'tm13':
             equation = 'mf_orig'
-            params = ['local_tm', 'CSA', 'S2', 'Rex']
+            params = ['local_tm', 'csa', 's2', 'rex']
         elif model == 'tm14':
             equation = 'mf_orig'
-            params = ['local_tm', 'CSA', 'S2', 'te', 'Rex']
+            params = ['local_tm', 'csa', 's2', 'te', 'rex']
         elif model == 'tm15':
             equation = 'mf_ext'
-            params = ['local_tm', 'CSA', 'S2f', 'S2', 'ts']
+            params = ['local_tm', 'csa', 's2f', 's2', 'ts']
         elif model == 'tm16':
             equation = 'mf_ext'
-            params = ['local_tm', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+            params = ['local_tm', 'csa', 's2f', 'tf', 's2', 'ts']
         elif model == 'tm17':
             equation = 'mf_ext'
-            params = ['local_tm', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'csa', 's2f', 's2', 'ts', 'rex']
         elif model == 'tm18':
             equation = 'mf_ext'
-            params = ['local_tm', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'csa', 's2f', 'tf', 's2', 'ts', 'rex']
         elif model == 'tm19':
             equation = 'mf_orig'
-            params = ['local_tm', 'CSA', 'Rex']
+            params = ['local_tm', 'csa', 'rex']
 
         # Block 3.
         elif model == 'tm20':
@@ -972,63 +977,63 @@ class Model_free_main:
             params = ['local_tm', 'r']
         elif model == 'tm21':
             equation = 'mf_orig'
-            params = ['local_tm', 'r', 'S2']
+            params = ['local_tm', 'r', 's2']
         elif model == 'tm22':
             equation = 'mf_orig'
-            params = ['local_tm', 'r', 'S2', 'te']
+            params = ['local_tm', 'r', 's2', 'te']
         elif model == 'tm23':
             equation = 'mf_orig'
-            params = ['local_tm', 'r', 'S2', 'Rex']
+            params = ['local_tm', 'r', 's2', 'rex']
         elif model == 'tm24':
             equation = 'mf_orig'
-            params = ['local_tm', 'r', 'S2', 'te', 'Rex']
+            params = ['local_tm', 'r', 's2', 'te', 'rex']
         elif model == 'tm25':
             equation = 'mf_ext'
-            params = ['local_tm', 'r', 'S2f', 'S2', 'ts']
+            params = ['local_tm', 'r', 's2f', 's2', 'ts']
         elif model == 'tm26':
             equation = 'mf_ext'
-            params = ['local_tm', 'r', 'S2f', 'tf', 'S2', 'ts']
+            params = ['local_tm', 'r', 's2f', 'tf', 's2', 'ts']
         elif model == 'tm27':
             equation = 'mf_ext'
-            params = ['local_tm', 'r', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'r', 's2f', 's2', 'ts', 'rex']
         elif model == 'tm28':
             equation = 'mf_ext'
-            params = ['local_tm', 'r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'r', 's2f', 'tf', 's2', 'ts', 'rex']
         elif model == 'tm29':
             equation = 'mf_orig'
-            params = ['local_tm', 'r', 'Rex']
+            params = ['local_tm', 'r', 'rex']
 
         # Block 4.
         elif model == 'tm30':
             equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA']
+            params = ['local_tm', 'r', 'csa']
         elif model == 'tm31':
             equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA', 'S2']
+            params = ['local_tm', 'r', 'csa', 's2']
         elif model == 'tm32':
             equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA', 'S2', 'te']
+            params = ['local_tm', 'r', 'csa', 's2', 'te']
         elif model == 'tm33':
             equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA', 'S2', 'Rex']
+            params = ['local_tm', 'r', 'csa', 's2', 'rex']
         elif model == 'tm34':
             equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA', 'S2', 'te', 'Rex']
+            params = ['local_tm', 'r', 'csa', 's2', 'te', 'rex']
         elif model == 'tm35':
             equation = 'mf_ext'
-            params = ['local_tm', 'r', 'CSA', 'S2f', 'S2', 'ts']
+            params = ['local_tm', 'r', 'csa', 's2f', 's2', 'ts']
         elif model == 'tm36':
             equation = 'mf_ext'
-            params = ['local_tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+            params = ['local_tm', 'r', 'csa', 's2f', 'tf', 's2', 'ts']
         elif model == 'tm37':
             equation = 'mf_ext'
-            params = ['local_tm', 'r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'r', 'csa', 's2f', 's2', 'ts', 'rex']
         elif model == 'tm38':
             equation = 'mf_ext'
-            params = ['local_tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+            params = ['local_tm', 'r', 'csa', 's2f', 'tf', 's2', 'ts', 'rex']
         elif model == 'tm39':
             equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA', 'Rex']
+            params = ['local_tm', 'r', 'csa', 'rex']
 
         # Invalid model.
         else:
@@ -1043,15 +1048,9 @@ class Model_free_main:
 
         @param model:       The name of the model.
         @type model:        str
-        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the
-                            original model-free equations with parameters {S2, te}; 'mf_ext' for the
-                            extended model-free equations with parameters {S2f, tf, S2, ts}; and
-                            'mf_ext2' for the extended model-free equations with parameters {S2f,
-                            tf, S2s, ts}.
+        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the original model-free equations with parameters {s2, te}; 'mf_ext' for the extended model-free equations with parameters {s2f, tf, s2, ts}; and 'mf_ext2' for the extended model-free equations with parameters {s2f, tf, s2s, ts}.
         @type equation:     str
-        @param params:      A list of the parameters to include in the model.  The allowed parameter
-                            names includes those for the equation type as well as chemical exchange
-                            'Rex', the bond length 'r', and the chemical shift anisotropy 'CSA'.
+        @param params:      A list of the parameters to include in the model.  The allowed parameter names includes those for the equation type as well as chemical exchange 'rex', the bond length 'r', and the chemical shift anisotropy 'csa'.
         @type params:       list of str
         @param spin_id:     The spin identification string.
         @type spin_id:      str
@@ -1156,6 +1155,21 @@ class Model_free_main:
 
         # Set up the model.
         self._model_setup(model, equation, params, spin_id)
+
+
+    def _units_rex(self):
+        """Return the units for the Rex parameter.
+
+        @return:    The field strength dependent Rex units.
+        @rtype:     str
+        """
+
+        # No frequency info.
+        if not hasattr(cdp, 'frq_labels') or len(cdp.frq_labels) == 0:
+            return ''
+
+        # The units.
+        return cdp.frq_labels[0] + ' MHz'
 
 
     def create_mc_data(self, data_id=None):
@@ -1417,60 +1431,6 @@ class Model_free_main:
         |_______________________________________|____________________|________________________|
 
         """]
-
-    def default_value(self, param):
-        """The default model-free parameter values.
-
-        @param param:   The model-free parameter.
-        @type param:    str
-        @return:        The default value.
-        @rtype:         float
-        """
-
-        # Diffusion tensor parameter.
-        diff_val = diffusion_tensor.default_value(param)
-        if diff_val != None:
-            return diff_val
-
-        # Local tm.
-        if param == 'local_tm':
-            return 10.0 * 1e-9
-
-        # {S2, S2f, S2s}.
-        elif search('^s2', param):
-            return 0.8
-
-        # te.
-        elif param == 'te':
-            return 100.0 * 1e-12
-
-        # tf.
-        elif param == 'tf':
-            return 10.0 * 1e-12
-
-        # ts.
-        elif param == 'ts':
-            return 1000.0 * 1e-12
-
-        # Rex.
-        elif param == 'rex':
-            return 0.0
-
-        # Bond length.
-        elif param == 'r':
-            return NH_BOND_LENGTH
-
-        # CSA.
-        elif param == 'csa':
-            return N15_CSA
-
-        # Heteronucleus type.
-        elif param == 'heteronuc_type':
-            return '15N'
-
-        # Proton type.
-        elif param == 'proton_type':
-            return '1H'
 
 
     def deselect(self, model_info, sim_index=None):
@@ -1827,7 +1787,7 @@ class Model_free_main:
         # Get the spin.
         spin = return_spin(spin_id)
 
-        # {S2, S2f, S2s}.
+        # {s2, s2f, s2s}.
         if search('^s2', param):
             return [0.0, 1.0]
 
@@ -2093,160 +2053,53 @@ class Model_free_main:
                 spin.select = False
 
 
-    def return_conversion_factor(self, param, spin=None, spin_id=None):
-        """Return the factor of conversion between different parameter units.
-
-        For example, the internal representation of te is in seconds, whereas the external
-        representation is in picoseconds, therefore this function will return 1e-12 for te.
-
-
-        @param param:   The name of the parameter to return the conversion factor for.
-        @type param:    str
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        @param spin_id: The spin identification string (ignored if the spin container is supplied).
-        @type spin_id:  str
-        @return:        The conversion factor.
-        @rtype:         float
-        """
-
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
-        # Test for objects needing the spin container.
-        if object_name in ['rex']:
-            # The spin must be specified to get frequency to scale the Rex value by.
-            if spin == None and spin_id == None:
-                raise RelaxNoSpinSpecError
-
-            # Get the spin.
-            if not spin:
-                spin = return_spin(spin_id)
-
-        # tm (nanoseconds).
-        if object_name == 'tm' or object_name == 'local_tm':
-            return 1e-9
-
-        # te, tf, and ts (picoseconds).
-        elif object_name in ['te', 'tf', 'ts']:
-            return 1e-12
-
-        # Rex (value at 1st field strength).
-        elif object_name == 'rex':
-            return 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
-
-        # Bond length (Angstrom).
-        elif object_name == 'r':
-            return 1e-10
-
-        # CSA (ppm).
-        elif object_name == 'csa':
-            return 1e-6
-
-        # No conversion factor.
-        else:
-            return 1.0
-
-
-    def return_data_desc(self, name, spin=None):
+    def return_data_desc(self, name):
         """Return a description of the spin specific object.
 
         @param name:    The name of the spin specific object.
         @type name:     str
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
         @return:        The object description, or None.
         @rtype:         str or None
         """
 
-        # Model-free specific objects.
-        if name == 'select':
-            return 'The spin selection flag'
-        if name == 'fixed':
-            return 'The fixed flag'
-        if name == 'proton_type':
-            return 'The proton spin type'
-        if name == 'heteronuc_type':
-            return 'The heteronucleus spin type'
-        if name == 'attached_proton':
-            return None
-        if name == 'nucleus':
-            return None
-        if name == 'model':
-            return 'The model'
-        if name == 'equation':
-            return 'The model equation'
-        if name == 'params':
-            return 'The model parameters'
-        if name == 's2':
-            return 'S2, the model-free generalised order parameter (S2 = S2f.S2s)'
-        if name == 's2f':
-            return 'S2f, the faster motion model-free generalised order parameter'
-        if name == 's2s':
-            return 'S2s, the slower motion model-free generalised order parameter'
-        if name == 'local_tm':
-            return 'The spin specific global correlation time (seconds)'
-        if name == 'te':
-            return 'Single motion effective internal correlation time (seconds)'
-        if name == 'tf':
-            return 'Faster motion effective internal correlation time (seconds)'
-        if name == 'ts':
-            return 'Slower motion effective internal correlation time (seconds)'
-        if name == 'rex':
-            return 'Chemical exchange relaxation (sigma_ex = Rex / omega**2)'
-        if name == 'r':
-            return 'Bond length (meters)'
-        if name == 'csa':
-            return 'Chemical shift anisotropy (unitless)'
-        if name == 'chi2':
-            return 'Chi-squared value'
-        if name == 'iter':
-            return 'Optimisation iterations'
-        if name == 'f_count':
-            return 'Number of function calls'
-        if name == 'g_count':
-            return 'Number of gradient calls'
-        if name == 'h_count':
-            return 'Number of Hessian calls'
-        if name == 'warning':
-            return 'Optimisation warning'
-        if name == 'xh_vect':
-            return 'XH bond vector'
+        # Spin parameter.
+        if self.SPIN_PARAMS.contains(name):
+            return self.SPIN_PARAMS.get_desc(name)
 
-        # Ok, try the relaxation data specific objects.
+        # Otherwise try the relaxation data specific objects.
         return relax_data.return_data_desc(name)
 
 
     return_data_name_doc = ["Model-free data type string matching patterns", """
-        ____________________________________________________________________________________________
-        |                        |                  |                                              |
-        | Data type              | Object name      | Patterns                                     |
-        |________________________|__________________|______________________________________________|
-        |                        |                  |                                              |
-        | Local tm               | 'local_tm'       | '[Ll]ocal[ -_]tm'                            |
-        |                        |                  |                                              |
-        | Order parameter S2     | 's2'             | '^[Ss]2$'                                    |
-        |                        |                  |                                              |
-        | Order parameter S2f    | 's2f'            | '^[Ss]2f$'                                   |
-        |                        |                  |                                              |
-        | Order parameter S2s    | 's2s'            | '^[Ss]2s$'                                   |
-        |                        |                  |                                              |
-        | Correlation time te    | 'te'             | '^te$'                                       |
-        |                        |                  |                                              |
-        | Correlation time tf    | 'tf'             | '^tf$'                                       |
-        |                        |                  |                                              |
-        | Correlation time ts    | 'ts'             | '^ts$'                                       |
-        |                        |                  |                                              |
-        | Chemical exchange      | 'rex'            | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'   |
-        |                        |                  |                                              |
-        | Bond length            | 'r'              | '^r$' or '[Bb]ond[ -_][Ll]ength'             |
-        |                        |                  |                                              |
-        | CSA                    | 'csa'            | '^[Cc][Ss][Aa]$'                             |
-        |                        |                  |                                              |
-        | Heteronucleus type     | 'heteronuc_type' | '^[Hh]eteronucleus$'                         |
-        |                        |                  |                                              |
-        | Proton type            | 'proton_type'    | '^[Pp]roton$'                                |
-        |________________________|__________________|______________________________________________|
+        _____________________________________________
+        |                        |                  |
+        | Data type              | Object name      |
+        |________________________|__________________|
+        |                        |                  |
+        | Local tm               | 'local_tm'       |
+        |                        |                  |
+        | Order parameter S2     | 's2'             |
+        |                        |                  |
+        | Order parameter S2f    | 's2f'            |
+        |                        |                  |
+        | Order parameter S2s    | 's2s'            |
+        |                        |                  |
+        | Correlation time te    | 'te'             |
+        |                        |                  |
+        | Correlation time tf    | 'tf'             |
+        |                        |                  |
+        | Correlation time ts    | 'ts'             |
+        |                        |                  |
+        | Chemical exchange      | 'rex'            |
+        |                        |                  |
+        | Bond length            | 'r'              |
+        |                        |                  |
+        | CSA                    | 'csa'            |
+        |                        |                  |
+        | Heteronucleus type     | 'heteronuc_type' |
+        |                        |                  |
+        | Proton type            | 'proton_type'    |
+        |________________________|__________________|
 
         """]
 
@@ -2262,146 +2115,11 @@ class Model_free_main:
         # Diffusion tensor parameters.
         diff_obj = diffusion_tensor.return_data_name(param)
         if diff_obj:
-            return diff_obj
+            return param
 
-        # Local tm.
-        if search('[Ll]ocal[ -_]tm', param):
-            return 'local_tm'
-
-        # Order parameter S2.
-        if search('^[Ss]2$', param):
-            return 's2'
-
-        # Order parameter S2f.
-        if search('^[Ss]2f$', param):
-            return 's2f'
-
-        # Order parameter S2s.
-        if search('^[Ss]2s$', param):
-            return 's2s'
-
-        # Correlation time te.
-        if search('^te$', param):
-            return 'te'
-
-        # Correlation time tf.
-        if search('^tf$', param):
-            return 'tf'
-
-        # Correlation time ts.
-        if search('^ts$', param):
-            return 'ts'
-
-        # Rex.
-        if search('^[Rr]ex$', param) or search('[Cc]emical[ -_][Ee]xchange', param):
-            return 'rex'
-
-        # Bond length.
-        if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
-            return 'r'
-
-        # CSA.
-        if search('^[Cc][Ss][Aa]$', param):
-            return 'csa'
-
-        # Heteronucleus type.
-        if search('heteronuc_type', param) or search('^[Hh]eteronucleus$', param):
-            return 'heteronuc_type'
-
-        # Proton type.
-        if search('proton_type', param) or  search('^[Pp]roton$', param):
-            return 'proton_type'
-
-
-    def return_grace_string(self, param):
-        """Return the Grace string representing the given parameter.
-
-        This is used for axis labelling.
-
-        @param param:   The specific analysis parameter.
-        @type param:    str
-        @return:        The Grace string representation of the parameter.
-        @rtype:         str
-        """
-
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
-        # Local tm.
-        if object_name == 'tm' or object_name == 'local_tm':
-            return '\\xt\\f{}\\sm'
-
-        # Order parameter S2.
-        elif object_name == 's2':
-            return '\\qS\\v{0.4}\\z{0.71}2\\Q'
-
-        # Order parameter S2f.
-        elif object_name == 's2f':
-            return '\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q'
-
-        # Order parameter S2s.
-        elif object_name == 's2s':
-            return '\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q'
-
-        # Correlation time te.
-        elif object_name == 'te':
-            return '\\xt\\f{}\\se'
-
-        # Correlation time tf.
-        elif object_name == 'tf':
-            return '\\xt\\f{}\\sf'
-
-        # Correlation time ts.
-        elif object_name == 'ts':
-            return '\\xt\\f{}\\ss'
-
-        # Rex.
-        elif object_name == 'rex':
-            return '\\qR\\sex\\Q'
-
-        # Bond length.
-        elif object_name == 'r':
-            return 'Bond length'
-
-        # CSA.
-        elif object_name == 'csa':
-            return '\\qCSA\\Q'
-
-
-    def return_units(self, param):
-        """Return a string representing the parameters units.
-
-        For example, the internal representation of te is in seconds, whereas the external representation is in picoseconds, therefore this function will return the string 'picoseconds' for te.
-
-
-        @param param:   The name of the parameter to return the units string for.
-        @type param:    str
-        @return:        The parameter units string.
-        @rtype:         str
-        """
-
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
-        # tm (nanoseconds).
-        if object_name == 'tm' or object_name == 'local_tm':
-            return 'ns'
-
-        # te, tf, and ts (picoseconds).
-        elif object_name in ['te', 'tf', 'ts']:
-            return 'ps'
-
-        # Rex (value at 1st field strength).
-        elif object_name == 'rex' and hasattr(cdp, 'frq_labels') and cdp.frq_labels != None and len(cdp.frq_labels):
-            return cdp.frq_labels[0] + ' MHz'
-
-        # Bond length (Angstrom).
-        elif object_name == 'r':
-            return 'Angstrom'
-
-        # CSA (ppm).
-        elif object_name == 'csa':
-            return 'ppm'
+        # Spin parameter.
+        if self.SPIN_PARAMS.contains(param):
+            return param
 
 
     set_doc = ["Model-free set details", """
@@ -2409,10 +2127,10 @@ class Model_free_main:
 
         Note that the Rex values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:
 
-            value = Rex / (2.0 * pi * frequency) ** 2
+            value = rex / (2.0 * pi * frequency) ** 2
 
         where:
-            Rex is the chemical exchange value for the current frequency.
+            rex is the chemical exchange value for the current frequency.
             pi is in the namespace of relax, ie just type 'pi'.
             frequency is the proton frequency corresponding to the data.
         """]
@@ -2618,14 +2336,14 @@ class Model_free_main:
         """
 
         # S2f parameter.
-        if param == 'S2f':
+        if param == 's2f':
             # Update S2 if S2s exists.
             if hasattr(spin, 's2s') and spin.s2s != None:
                 spin.s2 = spin.s2f * spin.s2s
 
 
         # S2s parameter.
-        if param == 'S2s':
+        if param == 's2s':
             # Update S2 if S2f exists.
             if hasattr(spin, 's2f') and spin.s2f != None:
                 spin.s2 = spin.s2f * spin.s2s

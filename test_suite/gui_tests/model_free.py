@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -212,7 +212,7 @@ class Mf(GuiTestCase):
             self.assertEqual(spin.model, 'm2')
             self.assertEqual(spin.equation, 'mf_orig')
             self.assertEqual(len(spin.params), 2)
-            self.assertEqual(spin.params[0], 'S2')
+            self.assertEqual(spin.params[0], 's2')
             self.assertEqual(spin.params[1], 'te')
             self.assertAlmostEqual(spin.s2, 0.8)
             self.assertEqual(spin.s2f, None)

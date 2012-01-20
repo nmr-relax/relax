@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,6 +26,7 @@
 # Python module imports.
 import numpy
 from re import match
+from string import lower
 
 # relax module imports.
 from float import floatAsByteArray
@@ -86,8 +87,23 @@ class SpinContainer(Prototype):
         @type file_version:     str
         """
 
+        # Model-free parameters.
+        self._back_compat_hook_mf_data()
+
         # Relaxation data.
         self._back_compat_hook_ri_data()
+
+
+    def _back_compat_hook_mf_data(self):
+        """Converting the old model-free parameter vector to the new one."""
+
+        # Nothing to do.
+        if not hasattr(self, 'params'):
+            return
+
+        # Loop over the parameters, converting them to lowercase.
+        for i in range(len(self.params)):
+            self.params[i] = lower(self.params[i])
 
 
     def _back_compat_hook_ri_data(self):

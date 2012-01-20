@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -67,7 +67,7 @@ class Palmer(SystemTestCase):
 
         # Checks for model m1, m2, and m3 mfout file reading.
         models = ['m1', 'm2', 'm3']
-        params = [['S2'], ['S2', 'te'], ['S2', 'Rex']]
+        params = [['s2'], ['s2', 'te'], ['s2', 'rex']]
         spin_names = [':-2&:Gly', ':-1&:Gly', ':0&:Gly']
         if compiler == 'gcc':
             s2 = [[0.869, 0.732, None], [0.869, 0.730, None], [0.715, 0.643, None]]
@@ -109,7 +109,7 @@ class Palmer(SystemTestCase):
 
         # Checks for the final mfout file reading.
         models = ['m3', 'm3']
-        params = [['S2', 'Rex'], ['S2', 'Rex']]
+        params = [['s2', 'rex'], ['s2', 'rex']]
         s2 = [0.844, 0.760]
         te = [None, None]
         rex = [0.005, 0.404]
@@ -171,7 +171,7 @@ class Palmer(SystemTestCase):
 
         # Model m1, m2, and m3 mfout file data.
         models = ['m1', 'm2', 'm3']
-        params = [['S2'], ['S2', 'te'], ['S2', 'Rex']]
+        params = [['s2'], ['s2', 'te'], ['s2', 'rex']]
         spin_names = [':9', ':10', ':11']
         s2 = [[0.822, 0.799, 0.823], [0.788, 0.777, 0.812], [0.822, 0.799, 0.823]]
         if compiler == 'gcc':
@@ -210,7 +210,7 @@ class Palmer(SystemTestCase):
 
         # Final mfout file data.
         models = ['m2', 'm2', 'm2']
-        params = [['S2', 'te'], ['S2', 'te'], ['S2', 'te']]
+        params = [['s2', 'te'], ['s2', 'te'], ['s2', 'te']]
         if compiler == 'gcc':
             s2 = [0.782, 0.760, 0.785]
             te = [60.009, 29.134, 12.590]

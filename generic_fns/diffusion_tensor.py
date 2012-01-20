@@ -932,7 +932,7 @@ def map_labels(index, params, bounds, swap, inc):
     return labels, tick_locations, tick_values
 
 
-def return_conversion_factor(param, spin_id=None):
+def return_conversion_factor(param):
     """Function for returning the factor of conversion between different parameter units.
 
     For example, the internal representation of tm is in seconds, whereas the external
@@ -941,8 +941,6 @@ def return_conversion_factor(param, spin_id=None):
 
     @param param:       The name of the parameter to return the conversion factor for.
     @type param:        str
-    @keyword spin_id:   The spin identification string.  This arg is unused.
-    @type spin_id:      None or str
     @return:            The conversion factor.
     @rtype:             float
     """

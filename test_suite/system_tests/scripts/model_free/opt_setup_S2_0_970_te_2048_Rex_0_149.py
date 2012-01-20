@@ -30,12 +30,12 @@ relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out
 
 # Setup other values.
 diffusion_tensor.init(10e-9, fixed=True)
-value.set(1.02 * 1e-10, 'bond_length')
+value.set(1.02 * 1e-10, 'r')
 value.set(-160 * 1e-6, 'csa')
-value.set('15N', 'heteronucleus')
-value.set('1H', 'proton')
+value.set('15N', 'heteronuc_type')
+value.set('1H', 'proton_type')
 value.display('csa')
-value.write('proton', file='devnull')
+value.write('proton_type', file='devnull')
 
 # Select the model-free model.
 model_free.select_model(model='m4')
