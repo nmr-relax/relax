@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -59,8 +59,8 @@ calc()
 value.write(param='noe', file='noe.out', force=True)
 
 # Create grace files.
-grace.write(y_data_type='ref_ave', file='ref.agr', force=True)
-grace.write(y_data_type='sat_ave', file='sat.agr', force=True)
+grace.write(y_data_type='ref', file='ref.agr', force=True)
+grace.write(y_data_type='sat', file='sat.agr', force=True)
 grace.write(y_data_type='noe', file='noe.agr', force=True)
 
 # View the grace files.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -297,13 +297,11 @@ def reset_min_stats(data_pipe=None, spin=None):
             spin.warning = None
 
 
-def return_conversion_factor(stat_type, spin):
+def return_conversion_factor(stat_type):
     """Dummy function for returning 1.0.
 
     @param stat_type:   The name of the statistic.  This is unused!
     @type stat_type:    str
-    @param spin:        Spin container (not used).
-    @type spin:         SpinContainer instance
     @return:            A conversion factor of 1.0.
     @rtype:             float
     """
@@ -395,13 +393,11 @@ def return_grace_string(stat_type):
     return grace_string
 
 
-def return_units(stat_type, spin_id=None):
+def return_units(stat_type):
     """Dummy function which returns None as the stats have no units.
 
     @param stat_type:   The name of the statistic.  This is unused!
     @type stat_type:    str
-    @keyword spin_id:   Not used.
-    @type spin_id:      None
     @return:            Nothing.
     @rtype:             None
     """

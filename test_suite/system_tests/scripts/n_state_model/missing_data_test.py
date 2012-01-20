@@ -25,9 +25,9 @@ structure.load_spins(spin_id='@H*', ave_pos=False)
 structure.vectors(spin_id='@C*', attached='H*', ave=False)
 
 # Set the values needed to calculate the dipolar constant.
-value.set(1.10 * 1e-10, 'bond_length', spin_id="@C*")
-value.set('13C', 'heteronucleus', spin_id="@C*")
-value.set('1H', 'proton', spin_id="@C*")
+value.set(1.10 * 1e-10, 'r', spin_id="@C*")
+value.set('13C', 'heteronuc_type', spin_id="@C*")
+value.set('1H', 'proton_type', spin_id="@C*")
 
 # File list.
 align_list = ['Dy', 'Tb', 'Tm', 'Er']

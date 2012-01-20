@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -45,7 +45,7 @@ relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out
 diffusion_tensor.init(10e-9, fixed=True)
 #diffusion_tensor.init((2e-8, 1.3, 60, 290), param_types=0, spheroid_type='prolate', fixed=True)
 #diffusion_tensor.init((9e-8, 0.5, 0.3, 60, 290, 100), fixed=False)
-value.set(1.02 * 1e-10, 'bond_length')
+value.set(1.02 * 1e-10, 'r')
 value.set(-172 * 1e-6, 'csa')
 #value.set(1.0, 's2f')
 #value.set(0.970, 's2')
@@ -53,12 +53,12 @@ value.set(-172 * 1e-6, 'csa')
 #value.set(2048e-12, 'ts')
 #value.set(2048e-12, 'tf')
 #value.set(0.149/(2*pi*600e6)**2, 'rex')
-value.set('15N', 'heteronucleus')
-value.set('1H', 'proton')
+value.set('15N', 'heteronuc_type')
+value.set('1H', 'proton_type')
 
 # Select the model-free model.
 model_free.select_model(model=name)
-#model_free.create_model(model=name, equation='mf_ext2', params=['S2f', 'S2s', 'ts'])
+#model_free.create_model(model=name, equation='mf_ext2', params=['s2f', 's2s', 'ts'])
 
 # Fixed value.
 #fix('all_res')

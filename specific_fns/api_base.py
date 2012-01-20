@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,6 +26,7 @@ from copy import deepcopy
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxImplementError, RelaxLenError, RelaxNoSequenceError
+from specific_fns.api_objects import Param_list
 
 
 class API_base:
@@ -33,6 +34,29 @@ class API_base:
 
     All the methods here are prototype methods.  To identify that the method is not available for certain analysis types, if called a RelaxImplementError is raised if called.
     """
+
+    # Class variables.
+    SPIN_PARAMS = Param_list()
+    GLOBAL_PARAMS = Param_list()
+
+    # Add some spin specific objects.
+    SPIN_PARAMS.add('select', desc='The spin selection flag')
+    SPIN_PARAMS.add('fixed', desc='The fixed flag')
+    SPIN_PARAMS.add('chi2', desc='Chi-squared value')
+    SPIN_PARAMS.add('iter', desc='Optimisation iterations')
+    SPIN_PARAMS.add('f_count', desc='Number of function calls')
+    SPIN_PARAMS.add('g_count', desc='Number of gradient calls')
+    SPIN_PARAMS.add('h_count', desc='Number of Hessian calls')
+    SPIN_PARAMS.add('warning', desc='Optimisation warning')
+
+    # Add some global objects.
+    GLOBAL_PARAMS.add('chi2', desc='Chi-squared value')
+    GLOBAL_PARAMS.add('iter', desc='Optimisation iterations')
+    GLOBAL_PARAMS.add('f_count', desc='Number of function calls')
+    GLOBAL_PARAMS.add('g_count', desc='Number of gradient calls')
+    GLOBAL_PARAMS.add('h_count', desc='Number of Hessian calls')
+    GLOBAL_PARAMS.add('warning', desc='Optimisation warning')
+
 
     def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
         """Back-calculation of relaxation data.
@@ -483,13 +507,11 @@ class API_base:
         raise RelaxImplementError
 
 
-    def return_conversion_factor(self, param, spin=None, spin_id=None):
+    def return_conversion_factor(self, param):
         """Return the conversion factor.
 
         @param param:       The parameter name.
         @type param:        str
-        @param spin:        Spin container.
-        @type spin:         SpinContainer instance
         @return:            A conversion factor of 1.0.
         @rtype:             float
         """
@@ -511,13 +533,11 @@ class API_base:
         raise RelaxImplementError
 
 
-    def return_data_desc(self, name, spin=None):
+    def return_data_desc(self, name):
         """Return a description of the parameter.
 
         @param name:    The name or description of the parameter.
         @type name:     str
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
         @return:        The object description, or None.
         @rtype:         str or None
         """
@@ -570,15 +590,11 @@ class API_base:
         raise RelaxImplementError
 
 
-    def return_units(self, param, spin=None, spin_id=None):
+    def return_units(self, param):
         """Return a string representing the parameters units.
 
         @param param:       The name of the parameter to return the units string for.
         @type param:        str
-        @keyword spin:      The spin container.
-        @type spin:         SpinContainer instance
-        @keyword spin_id:   The spin identification string (ignored if the spin container is supplied).
-        @type spin_id:      str
         @return:            The parameter units string.
         @rtype:             str
         """

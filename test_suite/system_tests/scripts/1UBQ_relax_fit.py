@@ -101,8 +101,8 @@ results.write(file='devnull', force=True)
 grace.write(y_data_type='chi2', file='chi2.agr', dir=ds.tmpdir, force=True)    # Minimised chi-squared value.
 grace.write(y_data_type='i0', file='i0.agr', dir=ds.tmpdir, force=True)    # Initial peak intensity.
 grace.write(y_data_type='rx', file='rx.agr', dir=ds.tmpdir, force=True)    # Relaxation rate.
-grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', dir=ds.tmpdir, force=True)    # Average peak intensities.
-grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', dir=ds.tmpdir, force=True)    # Average peak intensities (normalised).
+grace.write(x_data_type='relax_times', y_data_type='intensities', file='intensities.agr', dir=ds.tmpdir, force=True)    # Average peak intensities.
+grace.write(x_data_type='relax_times', y_data_type='intensities', norm=True, file='intensities_norm.agr', dir=ds.tmpdir, force=True)    # Average peak intensities (normalised).
 
 # Save the program state.
 state.save('rx.save', dir=ds.tmpdir, force=True)

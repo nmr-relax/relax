@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -932,7 +932,7 @@ def map_labels(index, params, bounds, swap, inc):
     return labels, tick_locations, tick_values
 
 
-def return_conversion_factor(param, spin_id=None):
+def return_conversion_factor(param):
     """Function for returning the factor of conversion between different parameter units.
 
     For example, the internal representation of tm is in seconds, whereas the external
@@ -941,8 +941,6 @@ def return_conversion_factor(param, spin_id=None):
 
     @param param:       The name of the parameter to return the conversion factor for.
     @type param:        str
-    @keyword spin_id:   The spin identification string.  This arg is unused.
-    @type spin_id:      None or str
     @return:            The conversion factor.
     @rtype:             float
     """
@@ -1112,7 +1110,7 @@ def return_eigenvalues():
     return Dx, Dy, Dz
 
 
-def return_units(param, spin_id=None):
+def return_units(param):
     """Function for returning a string representing the parameters units.
 
     For example, the internal representation of tm is in seconds, whereas the external
@@ -1122,8 +1120,6 @@ def return_units(param, spin_id=None):
 
     @param param:       The name of the parameter to return the units for.
     @type param:        str
-    @keyword spin_id:   The spin identification string.  This arg is unused.
-    @type spin_id:      None or str
     @return:            The parameter units string.
     @rtype:             str
     """

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -181,7 +181,7 @@ def read(ri_id=None, file=None, dir=None):
         # The labelling.
         elif row[0] == 'Labelling:':
             # Set the heteronucleus value.
-            value.set(row[1], 'heteronucleus')
+            value.set(row[1], 'heteronuc_type')
 
             # Name the spins.
             name = split('([A-Z]+)', row[1])[1]

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -87,6 +87,19 @@ class API_common:
         @keyword sim:       The unused Monte Carlo simulation flag.
         @type sim:          bool
         """
+
+
+    def _default_value_spin(self, param):
+        """The default spin parameter values.
+
+        @param param:   The spin parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
+        """
+
+        # The default value.
+        return self.SPIN_PARAMS.get_default(param)
 
 
     def _eliminate_false(self, name, value, model_info, args, sim=None):
@@ -213,13 +226,24 @@ class API_common:
         """Dummy method, normally for deselecting spins with insufficient data for minimisation."""
 
 
-    def _return_no_conversion_factor(self, param, spin=None, spin_id=None):
+    def _return_conversion_factor_spin(self, param):
+        """Return the spin specific parameter conversion factor.
+
+        @param param:       The parameter name.
+        @type param:        str
+        @return:            The spin specific parameter conversion factor.
+        @rtype:             None or float
+        """
+
+        # Return the factor.
+        return self.SPIN_PARAMS.get_conv_factor(param)
+
+
+    def _return_no_conversion_factor(self, param):
         """Method for returning 1.0.
 
         @param param:       The parameter name.
         @type param:        str
-        @param spin:        Spin container.
-        @type spin:         SpinContainer instance
         @return:            A conversion factor of 1.0.
         @rtype:             float
         """
@@ -227,8 +251,24 @@ class API_common:
         return 1.0
 
 
+    def _return_data_desc_spin(self, name):
+        """Return a description of the spin parameter.
+
+        @param name:    The name of the spin specific object.
+        @type name:     str
+        @return:        The object description, or None.
+        @rtype:         str or None
+        """
+
+        # Return the name.
+        return self.SPIN_PARAMS.get_desc(name)
+
+
     def _return_data_name(self, param):
-        """Return a unique identifying string for the parameter.
+        """Return a unique identifying string for the global or spin parameter.
+
+        This first returns a global parameter if it exists, followed by a spin parameter, and None if neither exist.
+
 
         @param param:   The parameter name.
         @type param:    str
@@ -236,7 +276,49 @@ class API_common:
         @rtype:         str
         """
 
-        # No name mappings.
+        # Global parameter.
+        if self.GLOBAL_PARAMS.contains(param):
+            return param
+
+        # Spin parameter.
+        if self.SPIN_PARAMS.contains(param):
+            return param
+
+        # No matches.
+        return None
+
+
+    def _return_data_name_global(self, param):
+        """Return a unique identifying string for the global parameter.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
+
+        # No parameter.
+        if not self.GLOBAL_PARAMS.contains(param):
+            return None
+
+        # Return the name.
+        return param
+
+
+    def _return_data_name_spin(self, param):
+        """Return a unique identifying string for the spin parameter.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
+
+        # No parameter.
+        if not self.SPIN_PARAMS.contains(param):
+            return None
+
+        # Return the name.
         return param
 
 
@@ -279,6 +361,53 @@ class API_common:
         return error
 
 
+    def _return_grace_string_spin(self, param):
+        """Return the Grace string representing the given spin parameter.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
+
+        # The string.
+        return self.SPIN_PARAMS.get_grace_string(param)
+
+
+    def _return_units_spin(self, param):
+        """Return a string representing the spin parameter units.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The string representation of the units.
+        @rtype:         None or str
+        """
+
+        # No parameter.
+        if not self.SPIN_PARAMS.contains(param):
+            return None
+
+        # Return the name.
+        return self.SPIN_PARAMS.get_units(param)
+
+
+    def _return_units_global(self, param):
+        """Return a string representing the global parameter units.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The string representation of the units.
+        @rtype:         None or str
+        """
+
+        # No parameter.
+        if not self.GLOBAL_PARAMS.contains(param):
+            return None
+
+        # Return the name.
+        return self.GLOBAL_PARAMS.get_units(param)
+
+
     def _return_value_general(self, spin, param, sim=None, bc=False):
         """Return the value and error corresponding to the parameter 'param'.
 
@@ -313,7 +442,7 @@ class API_common:
         # The data type does not exist.
         else:
             # Is it a spectrum id?
-            if param in cdp.spectrum_ids:
+            if hasattr(cdp, 'spectrum_ids') and param in cdp.spectrum_ids:
                 object_name = 'intensities'
                 object_error = 'intensity_err'
                 object_sim = 'intensity_sim'
@@ -416,7 +545,6 @@ class API_common:
         # Checks.
         arg_check.is_str_list(param, 'parameter name')
         arg_check.is_list(value, 'parameter value')
-        arg_check.is_none(spin_id, 'spin ID string')
 
         # Loop over the parameters.
         for i in range(len(param)):
@@ -454,11 +582,8 @@ class API_common:
 
         # Loop over the parameters.
         for i in range(len(param)):
-            # Get the object's name.
-            obj_name = self.return_data_name(param[i])
-
             # Is the parameter is valid?
-            if not obj_name:
+            if not self.SPIN_PARAMS.contains(param[i]):
                 raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
 
             # Spin loop.
@@ -468,7 +593,7 @@ class API_common:
                     continue
 
                 # Set the parameter.
-                setattr(spin, obj_name, value[i])
+                setattr(spin, param[i], value[i])
 
 
     def _set_selected_sim_global(self, model_info, select_sim):

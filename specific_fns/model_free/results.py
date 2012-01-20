@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,7 +28,7 @@ from data.diff_tensor import DiffTensorSimList
 from math import pi
 from numpy import float64, array, transpose
 from re import search
-from string import replace, split
+from string import lower, replace, split
 import sys
 
 # relax module imports.
@@ -236,11 +236,15 @@ class Results:
             # Get the model-free parameters.
             params = eval(spin_line[col['params']])
 
-            # Fix for the 1.2 relax versions whereby the parameter 'tm' was renamed to 'local_tm' (which occurred in version 1.2.5).
+            # Loop over and convert the parameters.
             if params:
                 for i in xrange(len(params)):
+                    # Fix for the 1.2 relax versions whereby the parameter 'tm' was renamed to 'local_tm' (which occurred in version 1.2.5).
                     if params[i] == 'tm':
                         params[i] = 'local_tm'
+
+                    # Lower case conversion.
+                    params[i] = lower(params[i])
 
             # Set up the model-free model.
             self._model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
@@ -294,7 +298,7 @@ class Results:
 
             # Rex.
             try:
-                spin.rex = float(spin_line[col['rex']]) * self.return_conversion_factor('rex', spin=spin)
+                spin.rex = float(spin_line[col['rex']]) * self.return_conversion_factor('rex')
             except ValueError:
                 spin.rex = None
 
@@ -380,7 +384,7 @@ class Results:
 
             # Rex.
             try:
-                spin.rex_err = float(spin_line[col['rex']]) * self.return_conversion_factor('rex', spin=spin)
+                spin.rex_err = float(spin_line[col['rex']]) * self.return_conversion_factor('rex')
             except ValueError:
                 spin.rex_err = None
 
@@ -472,7 +476,7 @@ class Results:
 
             # Rex.
             try:
-                spin.rex_sim.append(float(spin_line[col['rex']]) * self.return_conversion_factor('rex', spin=spin))
+                spin.rex_sim.append(float(spin_line[col['rex']]) * self.return_conversion_factor('rex'))
             except ValueError:
                 spin.rex_sim.append(None)
 
@@ -709,10 +713,10 @@ class Results:
             if data_set == 'value':
                 if file_line[col['nucleus']] != 'None':
                     if search('N', file_line[col['nucleus']]):
-                        generic_fns.value.set(val='15N', param='heteronucleus', spin_id=spin_id, reset=False)
+                        generic_fns.value.set(val='15N', param='heteronuc_type', spin_id=spin_id, reset=False)
                     elif search('C', file_line[col['nucleus']]):
-                        generic_fns.value.set(val='13C', param='heteronucleus', spin_id=spin_id, reset=False)
-                    generic_fns.value.set(val='1H', param='proton', spin_id=spin_id, reset=False)
+                        generic_fns.value.set(val='13C', param='heteronuc_type', spin_id=spin_id, reset=False)
+                    generic_fns.value.set(val='1H', param='proton_type', spin_id=spin_id, reset=False)
 
             # Simulation number.
             if data_set != 'value' and data_set != 'error':
