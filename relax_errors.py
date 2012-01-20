@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -49,6 +49,7 @@ LIST_FLOAT = 'a list of floating point numbers'
 LIST_INT = 'a list of integers'
 LIST_NUM = 'a list of numbers'
 LIST_STR = 'a list of strings'
+MATRIX_FLOAT = 'a matrix of floating point numbers'
 NONE = 'None'
 NUM = 'a number'
 TUPLE = 'a tuple'
@@ -113,20 +114,20 @@ class BaseArgError(BaseError):
     # The allowed simple types.
     simple_types = []
 
-    # The allowed list types (anything with a length).
+    # The allowed list types (anything with a size).
     list_types = []
 
 
-    def __init__(self, name, value, length=None):
+    def __init__(self, name, value, size=None):
         """A default initialisation and error message formatting method."""
 
         # The initial part of the message.
         self.text = "The %s argument '%s' must be " % (name, value)
 
-        # Append the fixed length to the list types.
-        if length != None:
+        # Append the fixed size to the list types.
+        if size != None:
             for i in range(len(self.list_types)):
-                self.list_types[i] = self.list_types[i] + " of length %s" % length
+                self.list_types[i] = self.list_types[i] + " of size %s" % repr(size)
 
         # Combine all elements.
         all_types = self.simple_types + self.list_types
@@ -398,6 +399,9 @@ class RelaxNoneListError(BaseArgError):
 class RelaxListFloatError(BaseArgError):
     list_types = [LIST_FLOAT]
 
+class RelaxNoneListFloatError(BaseArgError):
+    list_types = [LIST_FLOAT]
+
 # List of floating point numbers or strings.
 class RelaxListFloatStrError(BaseArgError):
     list_types = [LIST_FLOAT, LIST_STR]
@@ -515,6 +519,17 @@ class RelaxNumTupleNumError(BaseArgError):
 class RelaxNoneNumTupleNumError(BaseArgError):
     simple_types = [NONE, NUM]
     list_types = [TUPLE_NUM]
+
+
+# Matrix types.
+#~~~~~~~~~~~~~~
+
+# Matrix of floating point numbers.
+class RelaxMatrixFloatError(BaseArgError):
+    list_types = [MATRIX_FLOAT]
+
+class RelaxNoneMatrixFloatError(BaseArgError):
+    list_types = [MATRIX_FLOAT]
 
 
 

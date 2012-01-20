@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -42,4 +42,5 @@ __all__ = [ 'api_base',
             'internal',
             'main',
             'mass',
-            'scientific' ]
+            'scientific',
+            'superimpose' ]

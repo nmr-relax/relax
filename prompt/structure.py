@@ -34,6 +34,83 @@ import generic_fns.structure.main
 class Structure(User_fn_class):
     """Class containing the structural related functions."""
 
+    def add_atom(self, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.add_atom("
+            text = text + "atom_name=" + repr(atom_name)
+            text = text + ", res_name=" + repr(res_name)
+            text = text + ", res_num=" + repr(res_num)
+            text = text + ", pos=" + repr(pos)
+            text = text + ", element=" + repr(element)
+            text = text + ", atom_num=" + repr(atom_num)
+            text = text + ", chain_id=" + repr(chain_id)
+            text = text + ", segment_id=" + repr(segment_id)
+            text = text + ", pdb_record=" + repr(pdb_record) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(atom_name, 'atom name')
+        arg_check.is_str(res_name, 'residue name')
+        arg_check.is_int(res_num, 'residue number')
+        arg_check.is_float_array(pos, 'atomic position', size=3)
+        arg_check.is_str(element, 'element', can_be_none=True)
+        arg_check.is_int(atom_num, 'atom number', can_be_none=True)
+        arg_check.is_str(chain_id, 'chain ID', can_be_none=True)
+        arg_check.is_str(segment_id, 'segment_id', can_be_none=True)
+        arg_check.is_str(pdb_record, 'pdb_record', can_be_none=True)
+
+        # Execute the functional code.
+        generic_fns.structure.main.add_atom(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
+
+    # The function doc info.
+    add_atom._doc_title = "Add an atom."
+    add_atom._doc_title_short = "Atom creation."
+    add_atom._doc_args = [
+        ["atom_name", "The atom name."],
+        ["res_name", "The residue name."],
+        ["res_num", "The residue number."],
+        ["pos", "The atomic coordinates."],
+        ["element", "The element name."],
+        ["atom_num", "The optional atom number."],
+        ["chain_id", "The optional chain ID string."],
+        ["segment_id", "The optional segment ID string."],
+        ["pdb_record", "The optional PDB record name, e.g. 'ATOM' or 'HETATM'."]
+    ]
+    add_atom._doc_desc = """
+        This allows atoms to be added to the internal structural object.
+        """
+    _build_doc(add_atom)
+
+
+    def connect_atom(self, index1=None, index2=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.connect_atom("
+            text = text + "index1=" + repr(index1)
+            text = text + ", index2=" + repr(index2) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_int(index1, 'index 1')
+        arg_check.is_int(index2, 'index 2')
+
+        # Execute the functional code.
+        generic_fns.structure.main.connect_atom(index1=index1, index2=index2)
+
+    # The function doc info.
+    connect_atom._doc_title = "Connect two atoms."
+    connect_atom._doc_title_short = "Atom connection."
+    connect_atom._doc_args = [
+        ["index1", "The global index of the first atom."],
+        ["index2", "The global index of the second atom."]
+    ]
+    connect_atom._doc_desc = """
+        This allows atoms to be connected in the internal structural object.  The global index is normally equal to the PDB atom number minus 1.
+        """
+    _build_doc(connect_atom)
+
+
     def create_diff_tensor_pdb(self, scale=1.8e-6, file='tensor.pdb', dir=None, force=False):
         # Function intro text.
         if self._exec_info.intro:
@@ -195,6 +272,101 @@ class Structure(User_fn_class):
     _build_doc(delete)
 
 
+    def displacement(self, model_from=None, model_to=None, atom_id=None, centroid=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.displacement("
+            text = text + "model_from=" + repr(model_from)
+            text = text + ", model_to=" + repr(model_to)
+            text = text + ", atom_id=" + repr(atom_id)
+            text = text + ", centroid=" + repr(centroid) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_int(model_from, 'model from', can_be_none=True)
+        arg_check.is_int(model_to, 'model to', can_be_none=True)
+        arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)
+        arg_check.is_float_array(centroid, 'centroid position', can_be_none=True)
+
+        # Execute the functional code.
+        generic_fns.structure.main.displacement(model_from=model_from, model_to=model_to, atom_id=atom_id, centroid=centroid)
+
+    # The function doc info.
+    displacement._doc_title = "Determine the rotational and translational displacement between a set of models."
+    displacement._doc_title_short = "Rotational and translational displacement."
+    displacement._doc_args = [
+        ["model_from", "The optional model number for the starting position of the displacement."],
+        ["model_to", "The optional model number for the ending position of the displacement."],
+        ["atom_id", "The atom identification string."],
+        ["centroid", "The alternative position of the centroid."]
+    ]
+    displacement._doc_desc = """
+        This user function allows the rotational and translational displacement between two models of the same structure to be calculated.  The information will be printed out in various formats and held in the relax data store.  This is directional, so there is a starting and ending position for each displacement.  If the starting and ending models are not specified, then the displacements in all directions between all models will be calculated.
+
+        The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the displacement calculation to certain molecules, residues, or atoms.  This is useful if studying domain motions, secondary structure rearrangements, amino acid side chain rotations, etc.
+
+        By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the motion.  The allows, for example, a pivot of a rotational domain motion to be specified.  This is not a formally correct algorithm, all translations will be zero, but does give an indication to the amplitude of the pivoting angle.
+        """
+    displacement._doc_examples = """
+        To determine the rotational and translational displacements between all sets of models, type:
+
+        relax> structure.displacement()
+
+
+        To determine the displacement from model 5 to all other models, type:
+
+        relax> structure.displacement(model_from=5)
+
+
+        To determine the displacement of all models to model 5, type:
+
+        relax> structure.displacement(model_to=5)
+
+
+
+        To determine the displacement of model 2 to model 3, type one of:
+
+        relax> structure.displacement(2, 3)
+        relax> structure.displacement(model_from=2, model_to=3)
+         """
+    _build_doc(displacement)
+
+
+    def find_pivot(self, models=None, atom_id=None, init_pos=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.find_pivot("
+            text = text + "models=" + repr(models)
+            text = text + ", atom_id=" + repr(atom_id)
+            text = text + ", init_pos=" + repr(init_pos) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_int_list(models, 'model list', can_be_none=True)
+        arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)
+        arg_check.is_float_array(init_pos, 'initial pivot position', can_be_none=True)
+
+        # Execute the functional code.
+        generic_fns.structure.main.find_pivot(models=models, atom_id=atom_id, init_pos=init_pos)
+
+    # The function doc info.
+    find_pivot._doc_title = "Find the pivot point of the motion of a set of structures."
+    find_pivot._doc_title_short = "Pivot search."
+    find_pivot._doc_args = [
+        ["models", "The list of models to use."],
+        ["atom_id", "The atom identification string."],
+        ["init_pos", "The initial position of the pivot."]
+    ]
+    find_pivot._doc_desc = """
+        This is used to find pivot point of motion between a set of structural models.  If the list of models is not supplied, then all models will be used.
+
+        The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the search to certain molecules, residues, or atoms.  For example to only use backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.
+
+        By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.
+        """
+    _build_doc(find_pivot)
+
+
     def load_spins(self, spin_id=None, ave_pos=True):
         # Function intro text.
         if self._exec_info.intro:
@@ -300,6 +472,8 @@ class Structure(User_fn_class):
         Setting the molecule name allows the molecule within the PDB (within one model) to have a custom name.  If not set, then the molecules will be named after the file name, with the molecule number appended if more than one exists.
 
         Note that relax will complain if it cannot work out what to do.
+
+        This is able to handle uncompressed, bzip2 compressed files, or gzip compressed files automatically.  The full file name including extension can be supplied, however, if the file cannot be found, this function will search for the file name with '.bz2' appended followed by the file name with '.gz' appended.
         """
     read_pdb._doc_examples = """
         To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', including all
@@ -438,6 +612,137 @@ class Structure(User_fn_class):
         generic_fns.structure.main.read_xyz(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num)
 
 
+    def rotate(self, R=None, origin=None, model=None, atom_id=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.rotate("
+            text = text + "R=" + repr(R)
+            text = text + ", origin=" + repr(origin)
+            text = text + ", model=" + repr(model)
+            text = text + ", atom_id=" + repr(atom_id) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_float_matrix(R, 'rotation matrix', dim=(3,3))
+        arg_check.is_float_array(origin, 'origin of rotation', size=3, can_be_none=True)
+        arg_check.is_int(model, 'model', can_be_none=True)
+        arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)
+
+        # Execute the functional code.
+        generic_fns.structure.main.rotate(R=R, origin=origin, model=model, atom_id=atom_id)
+
+    # The function doc info.
+    rotate._doc_title = "Rotate the internal structural object about the given origin by the rotation matrix."
+    rotate._doc_title_short = "Structure rotation."
+    rotate._doc_args = [
+        ["R", "The rotation matrix in forwards rotation notation."],
+        ["origin", "The origin or pivot of the rotation."],
+        ["model", "The model to rotate (which if not set will cause all models to be rotated)."]
+    ]
+    rotate._doc_desc = """
+        This is used to rotate the internal structural data by the given rotation matrix.  If the origin is supplied, then this will act as the pivot of the rotation.  Otherwise, all structural data will be rotated about the point [0, 0, 0].  The model argument can be used to rotate specific models.
+        """
+    _build_doc(rotate)
+
+
+    def superimpose(self, models=None, method='fit to mean', atom_id=None, centroid=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.superimpose("
+            text = text + "models=" + repr(models)
+            text = text + ", method=" + repr(method)
+            text = text + ", atom_id=" + repr(atom_id)
+            text = text + ", centroid=" + repr(centroid) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_int_list(models, 'model list', can_be_none=True)
+        arg_check.is_str(method, 'superimposition method')
+        arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)
+        arg_check.is_float_array(centroid, 'centroid position', can_be_none=True)
+
+        # Execute the functional code.
+        generic_fns.structure.main.superimpose(models=models, method=method, atom_id=atom_id, centroid=centroid)
+
+    # The function doc info.
+    superimpose._doc_title = "Superimpose a set of models of the same structure."
+    superimpose._doc_title_short = "Structural superimposition."
+    superimpose._doc_args = [
+        ["models", "The list of models to superimpose."],
+        ["method", "The superimposition method."],
+        ["atom_id", "The atom identification string."],
+        ["centroid", "The alternative position of the centroid."]
+    ]
+    superimpose._doc_desc = """
+        This allows a set of models of the same structure to be superimposed to each other.  Two superimposition methods are currently supported:
+
+            'fit to mean':  All models are fit to the mean structure.  This is the default and most accurate method for an ensemble description.  It is an iterative method which first calculates a mean structure and then fits each model to the mean structure using the Kabsch algorithm.  This is repeated until convergence.
+            'fit to first':  This is quicker but is not as accurate for an ensemble description.  The Kabsch algorithm is used to rotate and translate each model to be superimposed onto the first model.
+
+        If the list of models is not supplied, then all models will be superimposed.
+
+        The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the superimpose calculation to certain molecules, residues, or atoms.  For example to only superimpose backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.
+
+        By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.
+        """
+    superimpose._doc_examples = """
+        To superimpose all sets of models, type one of:
+
+        relax> structure.superimpose()
+        relax> structure.superimpose(method='fit to mean')
+
+
+        To superimpose the models 1, 2, 3, 5 onto model 4, type:
+
+        relax> structure.superimpose(models=[4, 1, 2, 3, 5], method='fit to first')
+
+
+        To superimpose an ensemble of protein structures using only the backbone heavy atoms, type
+        one of:
+
+        relax> structure.superimpose(atom_id='@N,C,CA,O')
+        relax> structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O')
+
+
+        To superimpose model 2 onto model 3 using backbone heavy atoms, type one of:
+
+        relax> structure.superimpose([3, 2], 'fit to first', '@N,C,CA,O')
+        relax> structure.superimpose(models=[3, 2], method='fit to first', atom_id='@N,C,CA,O')
+         """
+    _build_doc(superimpose)
+
+
+    def translate(self, T=None, model=None, atom_id=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "structure.translate("
+            text = text + "T=" + repr(T)
+            text = text + ", model=" + repr(model)
+            text = text + ", atom_id=" + repr(atom_id) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_float_array(T, 'translation vector', size=3)
+        arg_check.is_int(model, 'model', can_be_none=True)
+        arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)
+
+        # Execute the functional code.
+        generic_fns.structure.main.translate(T=T, model=model, atom_id=atom_id)
+
+    # The function doc info.
+    translate._doc_title = "Laterally displace the internal structural object by the translation vector."
+    translate._doc_title_short = "Structure translation."
+    translate._doc_args = [
+        ["T", "The translation vector."],
+        ["model", "The model to translate (which if not set will cause all models to be translate)."],
+        ["atom_id", "The atom identification string."]
+    ]
+    translate._doc_desc = """
+        This is used to translate the internal structural data by the given translation vector.  The model argument can be used to translate specific models.
+        """
+    _build_doc(translate)
+
+
     def vectors(self, attached='H', spin_id=None, model=None, verbosity=1, ave=True, unit=True):
         # Function intro text.
         if self._exec_info.intro:
@@ -516,13 +821,14 @@ class Structure(User_fn_class):
     _build_doc(vectors)
 
 
-    def write_pdb(self, file=None, dir=None, model_num=None, force=False):
+    def write_pdb(self, file=None, dir=None, model_num=None, compress_type=0, force=False):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "structure.write_pdb("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", model_num=" + repr(model_num)
+            text = text + ", compress_type=" + repr(compress_type)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
@@ -530,10 +836,11 @@ class Structure(User_fn_class):
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
         arg_check.is_int(model_num, 'model number', can_be_none=True)
+        arg_check.is_int(compress_type, 'compression type')
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        generic_fns.structure.main.write_pdb(file=file, dir=dir, model_num=model_num, force=force)
+        generic_fns.structure.main.write_pdb(file=file, dir=dir, model_num=model_num, compress_type=compress_type, force=force)
 
     # The function doc info.
     write_pdb._doc_title = "Writing structures to a PDB file."
@@ -541,9 +848,16 @@ class Structure(User_fn_class):
     write_pdb._doc_args = [["file", "The name of the PDB file."],
                            ["dir", "The directory where the file is located."],
                            ["model_num", "Restrict the writing of structural data to a single model in the PDB file."],
+                           ["compress_type", "The type of compression to use when creating the file."],
                            ["force", "A flag which if set to True will cause any pre-existing files to be overwritten."]]
     write_pdb._doc_desc = """
         This will write all of the structural data loaded in the current data pipe to be converted to the PDB format and written to file.  Specifying the model number allows single models to be output.
+
+        The default behaviour of this function is to not compress the file.  The compression can, however, be changed to either bzip2 or gzip compression.  If the '.bz2' or '.gz' extension is not included in the file name, it will be added.  This behaviour is controlled by the compress_type argument which can be set to
+
+            0:  No compression (no file extension).
+            1:  bzip2 compression ('.bz2' file extension).
+            2:  gzip compression ('.gz' file extension).
         """
     write_pdb._doc_examples = """
         To write all models and molecules to the PDB file 'ensemble.pdb' within the directory '~/pdb', type

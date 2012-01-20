@@ -21,12 +21,15 @@
 ###############################################################################
 
 # Python module imports.
+from numpy import float64, zeros
 from os import sep
+from tempfile import mktemp
 
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, return_spin
+from maths_fns.rotation_matrix import euler_to_R_zyz
 from status import Status; status = Status()
 
 
@@ -49,6 +52,94 @@ class Structure(SystemTestCase):
 
         # Create the data pipe.
         self.interpreter.pipe.create('mf', 'mf')
+
+
+    def test_displacement(self):
+        """Test of the structure.displacement user function."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file as two models.
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=1)
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=2)
+
+        # A rotation.
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(1.3, 0.4, 4.5, R)
+
+        # Rotate the second model.
+        self.interpreter.structure.rotate(R, model=2)
+
+        # Calculate the displacement.
+        self.interpreter.structure.displacement()
+
+        # Shift a third structure back using the calculated displacement.
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=3)
+        self.interpreter.structure.rotate(R, model=3)
+
+        # The data to check.
+        models = [1, 2]
+        trans_vect = [
+            [[0.0, 0.0, 0.0],
+             [   2.270857972754659,   -1.811667138656451,    1.878400649688508]],
+            [[  -2.270857972754659,    1.811667138656451,   -1.878400649688508],
+             [0.0, 0.0, 0.0]]
+        ]
+        dist = [
+            [0.0000000000000000, 3.4593818457148173],
+            [3.4593818457148173, 0.0000000000000000]
+        ]
+        rot_axis = [
+            [None,
+             [   0.646165066909452,    0.018875759848125,   -0.762964227206007]],
+            [[  -0.646165066909452,   -0.018875759848125,    0.762964227206007],
+             None]
+        ]
+        angle = [
+            [0.0000000000000000, 0.6247677290742989],
+            [0.6247677290742989, 0.0000000000000000]
+        ]
+
+        # Test the results.
+        self.assert_(hasattr(cdp.structure, 'displacements'))
+        for i in range(len(models)):
+            for j in range(len(models)):
+                # Check the translation.
+                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[models[i]][models[j]], dist[i][j])
+                for k in range(3):
+                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[models[i]][models[j]][k], trans_vect[i][j][k])
+
+                # Check the rotation.
+                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[models[i]][models[j]], angle[i][j])
+                if rot_axis[i][j] != None:
+                    for k in range(3):
+                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[models[i]][models[j]][k], rot_axis[i][j][k])
+
+        # Save the results.
+        self.tmpfile = mktemp()
+        self.interpreter.state.save(self.tmpfile, dir=None, force=True)
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Load the results.
+        self.interpreter.state.load(self.tmpfile)
+
+        # Test the re-loaded data.
+        self.assert_(hasattr(cdp.structure, 'displacements'))
+        for i in range(len(models)):
+            for j in range(len(models)):
+                # Check the translation.
+                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[models[i]][models[j]], dist[i][j])
+                for k in range(3):
+                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[models[i]][models[j]][k], trans_vect[i][j][k])
+
+                # Check the rotation.
+                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[models[i]][models[j]], angle[i][j])
+                if rot_axis[i][j] != None:
+                    for k in range(3):
+                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[models[i]][models[j]][k], rot_axis[i][j][k])
 
 
     def test_load_internal_results(self):
@@ -686,3 +777,88 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(a.bond_vect[0], -0.4102707)
         self.assertAlmostEqual(a.bond_vect[1], 0.62128879)
         self.assertAlmostEqual(a.bond_vect[2], -0.6675913)
+
+
+    def test_superimpose_fit_to_first(self):
+        """Test of the structure.superimpose user function, fitting to the first structure."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=2, set_mol_name='CaM')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=3, set_mol_name='CaM')
+
+        # Superimpose the backbone heavy atoms.
+        self.interpreter.structure.superimpose(method='fit to first', atom_id='@N,C,CA,O')
+
+        # Check that the two structures now have the same atomic coordinates.
+        model1 = cdp.structure.structural_data[0].mol[0]
+        model2 = cdp.structure.structural_data[1].mol[0]
+        model3 = cdp.structure.structural_data[2].mol[0]
+        for i in range(len(model1.atom_name)):
+            # Check model 2.
+            self.assertAlmostEqual(model1.x[i], model2.x[i], 2)
+            self.assertAlmostEqual(model1.y[i], model2.y[i], 2)
+            self.assertAlmostEqual(model1.z[i], model2.z[i], 2)
+
+            # Check model 3.
+            self.assertAlmostEqual(model1.x[i], model3.x[i], 2)
+            self.assertAlmostEqual(model1.y[i], model3.y[i], 2)
+            self.assertAlmostEqual(model1.z[i], model3.z[i], 2)
+
+
+    def test_superimpose_fit_to_mean(self):
+        """Test of the structure.superimpose user function, fitting to the mean structure."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=2, set_mol_name='CaM')
+
+        # Superimpose the backbone heavy atoms.
+        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O')
+
+        # Check that the two structures now have the same atomic coordinates.
+        model1 = cdp.structure.structural_data[0].mol[0]
+        model2 = cdp.structure.structural_data[1].mol[0]
+        for i in range(len(model1.atom_name)):
+            self.assertAlmostEqual(model1.x[i], model2.x[i], 2)
+            self.assertAlmostEqual(model1.y[i], model2.y[i], 2)
+            self.assertAlmostEqual(model1.z[i], model2.z[i], 2)
+
+
+    def test_superimpose_fit_to_mean2(self):
+        """Second test of the structure.superimpose user function, fitting to the mean structure."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=2, set_mol_name='CaM')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=3, set_mol_name='CaM')
+
+        # Transpose model 3.
+        self.interpreter.structure.translate([20.0, 0.0, 0.0], model=3)
+
+        # Superimpose the backbone heavy atoms.
+        self.interpreter.structure.superimpose(models=[2, 3], method='fit to mean', atom_id='@N,C,CA,O')
+
+        # Check that the two structures now have the same atomic coordinates as the original, but shifted 10 Angstrom in x.
+        model1 = cdp.structure.structural_data[0].mol[0]
+        model2 = cdp.structure.structural_data[1].mol[0]
+        model3 = cdp.structure.structural_data[2].mol[0]
+        for i in range(len(model1.atom_name)):
+            # Check model 2.
+            self.assertAlmostEqual(model1.x[i] + 10, model2.x[i], 2)
+            self.assertAlmostEqual(model1.y[i], model2.y[i], 2)
+            self.assertAlmostEqual(model1.z[i], model2.z[i], 2)
+
+            # Check model 3.
+            self.assertAlmostEqual(model2.x[i], model3.x[i], 2)
+            self.assertAlmostEqual(model2.y[i], model3.y[i], 2)
+            self.assertAlmostEqual(model2.z[i], model3.z[i], 2)

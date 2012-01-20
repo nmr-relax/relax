@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -180,7 +180,7 @@ class Macro_apply_page(UF_page):
         """
 
         # The data type.
-        self.data_type = self.combo_box(sizer, "The data type:", choices=['S2', 'S2f', 'S2s', 'amp_fast', 'amp_slow', 'te', 'tf', 'ts', 'time_fast', 'time_slow', 'Rex'], tooltip=self.uf._doc_args_dict['data_type'])
+        self.data_type = self.combo_box(sizer, "The data type:", choices=['s2', 's2f', 's2s', 'amp_fast', 'amp_slow', 'te', 'tf', 'ts', 'time_fast', 'time_slow', 'rex'], tooltip=self.uf._doc_args_dict['data_type'])
 
         # The style.
         self.style = self.input_field(sizer, "The style:", tooltip=self.uf._doc_args_dict['style'])
@@ -264,7 +264,7 @@ class Macro_write_page(UF_page):
         self.force = self.boolean_selector(sizer, "Force flag:", tooltip=self.uf._doc_args_dict['force'], default=True)
 
         # The data type.
-        self.data_type = self.combo_box(sizer, "The data type:", choices=['S2', 'S2f', 'S2s', 'amp_fast', 'amp_slow', 'te', 'tf', 'ts', ' time_fast', 'time_slow', 'Rex'], tooltip=self.uf._doc_args_dict['data_type'])
+        self.data_type = self.combo_box(sizer, "The data type:", choices=['s2', 's2f', 's2s', 'amp_fast', 'amp_slow', 'te', 'tf', 'ts', ' time_fast', 'time_slow', 'rex'], tooltip=self.uf._doc_args_dict['data_type'])
 
         # The style.
         self.style = self.input_field(sizer, "The style:", tooltip=self.uf._doc_args_dict['style'])

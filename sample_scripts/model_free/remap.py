@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -64,16 +64,16 @@ relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out
 
 # Setup other values.
 diffusion_tensor.init(1e-8)
-value.set(1.02*1e-10, 'bond_length')
+value.set(1.02*1e-10, 'r')
 value.set(-172*1e-6, 'csa')
-value.set('15N', 'heteronucleus')
+value.set('15N', 'heteronuc_type')
 
 # Select the model-free model.
 model_free.select_model(model=name)
 
 # Map data.
 inc = 100
-params = ['S2f', 'ts', 'S2s']
+params = ['s2f', 'ts', 's2s']
 lower = [0.5, 0, 0.5]
 upper = [1.0, 300e-12, 1.0]
 point = [0.952, 32.0e-12, 0.582]

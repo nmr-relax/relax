@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -163,7 +163,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('ct')
 
         # Set the parameter.
-        self.value_fns.set(param='Bond_length', val=1.04e-10)
+        self.value_fns.set(param='r', val=1.04e-10)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.04e-10)
@@ -197,7 +197,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('ct')
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus', val='13C')
+        self.value_fns.set(param='heteronuc_type', val='13C')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '13C')
@@ -329,7 +329,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('ct')
 
         # Set the parameter.
-        self.value_fns.set(param='bond-Length')
+        self.value_fns.set(param='r')
 
         # Test the parameter.
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
@@ -363,7 +363,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('ct')
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus')
+        self.value_fns.set(param='heteronuc_type')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '15N')
@@ -478,7 +478,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('ct')
 
         # Set the parameter.
-        self.value_fns.set(param='Bond_length', val=1.04e-10, spin_id='@112')
+        self.value_fns.set(param='r', val=1.04e-10, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r'))
@@ -512,7 +512,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('ct')
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
+        self.value_fns.set(param='heteronuc_type', val='13C', spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'heteronuc_type'))
@@ -2634,7 +2634,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param='J(wH)', val=1.7e-12)
+        self.value_fns.set(param='jwh', val=1.7e-12)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].jwh, 1.7e-12)
@@ -2651,7 +2651,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param='Bond_length', val=1.04e-10)
+        self.value_fns.set(param='r', val=1.04e-10)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.04e-10)
@@ -2685,7 +2685,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus', val='13C')
+        self.value_fns.set(param='heteronuc_type', val='13C')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '13C')
@@ -2702,7 +2702,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=[6.4e-9, 3.5e-10, 2.3e-12])
+        self.value_fns.set(param=['j0', 'jwx', 'jwh'], val=[6.4e-9, 3.5e-10, 2.3e-12])
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 6.4e-9)
@@ -2723,7 +2723,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=1.9e-10)
+        self.value_fns.set(param=['j0', 'jwx', 'jwh'], val=1.9e-10)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 1.9e-10)
@@ -2770,7 +2770,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='J(wH)')
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='jwh')
 
 
     def test_set_jw_defaults_r(self):
@@ -2783,7 +2783,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param='bond-Length')
+        self.value_fns.set(param='r')
 
         # Test the parameter.
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
@@ -2817,7 +2817,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus')
+        self.value_fns.set(param='heteronuc_type')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '15N')
@@ -2834,7 +2834,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.assertRaises(RelaxParamSetError, self.value_fns.set, param=['J(0)', 'jwx', 'J(wH)'])
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param=['j0', 'jwx', 'jwh'])
 
 
     def test_set_jw_single_spin_j0(self):
@@ -2881,7 +2881,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param='J(wH)', val=1.7e-12, spin_id='@112')
+        self.value_fns.set(param='jwh', val=1.7e-12, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwh'))
@@ -2898,7 +2898,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param='Bond_length', val=1.04e-10, spin_id='@112')
+        self.value_fns.set(param='r', val=1.04e-10, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r'))
@@ -2932,7 +2932,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
+        self.value_fns.set(param='heteronuc_type', val='13C', spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'heteronuc_type'))
@@ -2949,7 +2949,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id='@112')
+        self.value_fns.set(param=['j0', 'jwx', 'jwh'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
@@ -2970,7 +2970,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('jw')
 
         # Set the parameter.
-        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=1.9e-10, spin_id='@112')
+        self.value_fns.set(param=['j0', 'jwx', 'jwh'], val=1.9e-10, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
@@ -2997,7 +2997,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='local tm', val=1e-8)
+        self.value_fns.set(param='local_tm', val=1e-8)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].local_tm, 1e-8)
@@ -3014,7 +3014,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2', val=0.8)
+        self.value_fns.set(param='s2', val=0.8)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2, 0.8)
@@ -3031,7 +3031,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2f', val=0.45)
+        self.value_fns.set(param='s2f', val=0.45)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2f, 0.45)
@@ -3048,7 +3048,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2s', val=0.1)
+        self.value_fns.set(param='s2s', val=0.1)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2s, 0.1)
@@ -3116,7 +3116,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='Rex', val=2.34)
+        self.value_fns.set(param='rex', val=2.34)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].rex, 2.34)
@@ -3133,7 +3133,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='Bond length', val=1.02e-10)
+        self.value_fns.set(param='r', val=1.02e-10)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
@@ -3150,7 +3150,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='CSA', val=-172e-6)
+        self.value_fns.set(param='csa', val=-172e-6)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
@@ -3167,7 +3167,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus', val='13C')
+        self.value_fns.set(param='heteronuc_type', val='13C')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '13C')
@@ -3184,7 +3184,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'], val=[0.7, 0.9])
+        self.value_fns.set(param=['s2f', 's2s'], val=[0.7, 0.9])
 
         # Test the parameters.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2f, 0.7)
@@ -3203,7 +3203,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'], val=0.7)
+        self.value_fns.set(param=['s2f', 's2s'], val=0.7)
 
         # Test the parameters.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2f, 0.7)
@@ -3222,7 +3222,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='local tm')
+        self.value_fns.set(param='local_tm')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].local_tm, 10 * 1e-9)
@@ -3239,7 +3239,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2')
+        self.value_fns.set(param='s2')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2, 0.8)
@@ -3256,7 +3256,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2f')
+        self.value_fns.set(param='s2f')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2f, 0.8)
@@ -3273,7 +3273,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2s')
+        self.value_fns.set(param='s2s')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2s, 0.8)
@@ -3341,7 +3341,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='Rex')
+        self.value_fns.set(param='rex')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].rex, 0.0)
@@ -3358,7 +3358,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='Bond length')
+        self.value_fns.set(param='r')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.02 * 1e-10)
@@ -3375,7 +3375,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='CSA')
+        self.value_fns.set(param='csa')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -172 * 1e-6)
@@ -3392,7 +3392,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus')
+        self.value_fns.set(param='heteronuc_type')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '15N')
@@ -3409,7 +3409,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'])
+        self.value_fns.set(param=['s2f', 's2s'])
 
         # Test the parameters.
         self.assertEqual(cdp.mol[0].res[0].spin[0].s2f, 0.8)
@@ -3428,7 +3428,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='local tm', val=1e-8, spin_id='@112')
+        self.value_fns.set(param='local_tm', val=1e-8, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'local_tm'))
@@ -3445,7 +3445,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2', val=0.8, spin_id='@112')
+        self.value_fns.set(param='s2', val=0.8, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2'))
@@ -3462,7 +3462,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2f', val=0.45, spin_id='@112')
+        self.value_fns.set(param='s2f', val=0.45, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
@@ -3479,7 +3479,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='S2s', val=0.1, spin_id='@112')
+        self.value_fns.set(param='s2s', val=0.1, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
@@ -3547,7 +3547,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='Rex', val=2.34, spin_id='@112')
+        self.value_fns.set(param='rex', val=2.34, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'rex'))
@@ -3564,7 +3564,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='Bond length', val=1.02e-10, spin_id='@112')
+        self.value_fns.set(param='r', val=1.02e-10, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r'))
@@ -3581,7 +3581,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='CSA', val=-172e-6, spin_id='@112')
+        self.value_fns.set(param='csa', val=-172e-6, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
@@ -3598,7 +3598,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
+        self.value_fns.set(param='heteronuc_type', val='13C', spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'heteronuc_type'))
@@ -3615,7 +3615,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'], val=[0.7, 0.9], spin_id='@112')
+        self.value_fns.set(param=['s2f', 's2s'], val=[0.7, 0.9], spin_id='@112')
 
         # Test the parameters.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
@@ -3634,7 +3634,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('mf')
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'], val=0.7, spin_id='@112')
+        self.value_fns.set(param=['s2f', 's2s'], val=0.7, spin_id='@112')
 
         # Test the parameters.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
@@ -3718,7 +3718,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('relax_fit')
 
         # Set the parameter.
-        self.value_fns.set(param='Iinf', val=-1.7)
+        self.value_fns.set(param='iinf', val=-1.7)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].iinf, -1.7)
@@ -3735,7 +3735,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('relax_fit')
 
         # Set the parameter.
-        self.value_fns.set(param=['I0', 'iinf'], val=[123456, -1.7])
+        self.value_fns.set(param=['i0', 'iinf'], val=[123456, -1.7])
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].i0, 123456)
@@ -3754,7 +3754,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('relax_fit')
 
         # Set the parameter.
-        self.value_fns.set(param=['I0', 'iinf'], val=0.0)
+        self.value_fns.set(param=['i0', 'iinf'], val=0.0)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].i0, 0.0)
@@ -3807,7 +3807,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('relax_fit')
 
         # Set the parameter.
-        self.value_fns.set(param='Iinf')
+        self.value_fns.set(param='iinf')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].iinf, 0.0)
@@ -3824,7 +3824,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('relax_fit')
 
         # Set the parameter.
-        self.value_fns.set(param=['I0', 'iinf'])
+        self.value_fns.set(param=['i0', 'iinf'])
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].i0, 10000.0)
@@ -3877,7 +3877,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('relax_fit')
 
         # Set the parameter.
-        self.value_fns.set(param='Iinf', val=-1.7, spin_id='@112')
+        self.value_fns.set(param='iinf', val=-1.7, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'iinf'))
@@ -3894,7 +3894,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('relax_fit')
 
         # Set the parameter.
-        self.value_fns.set(param=['I0', 'iinf'], val=[123456, -1.7], spin_id='@112')
+        self.value_fns.set(param=['i0', 'iinf'], val=[123456, -1.7], spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'i0'))
@@ -3913,7 +3913,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('relax_fit')
 
         # Set the parameter.
-        self.value_fns.set(param=['I0', 'iinf'], val=0.0, spin_id='@112')
+        self.value_fns.set(param=['i0', 'iinf'], val=0.0, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'i0'))

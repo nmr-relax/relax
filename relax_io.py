@@ -524,7 +524,10 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         file_data = extract_data(file, dir)
 
         # Strip the data of all comments and empty lines.
-        file_data = strip(file_data)
+        if spin_id_col != None:
+            file_data = strip(file_data, comments=False)
+        else:
+            file_data = strip(file_data)
 
     # No data!
     if not file_data:
@@ -553,13 +556,44 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         else:
             id = generate_spin_id_data_array(data=line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
 
+        # Invalid spin ID.
+        if id == '#':
+            warn(RelaxWarning("Invalid spin ID, skipping the line %s" % line))
+            continue
+
         # Convert the data.
         value = None
         if data_col:
-            value = eval(line[data_col-1])
+            try:
+                # None.
+                if line[data_col-1] == 'None':
+                    value = None
+
+                # A float.
+                else:
+                    value = float(line[data_col-1])
+
+            # Bad data.
+            except ValueError:
+                warn(RelaxWarning("Invalid data, skipping the line %s" % line))
+                continue
+
+        # Convert the errors.
         error = None
         if error_col:
-            error = eval(line[error_col-1])
+            try:
+                # None.
+                if line[error_col-1] == 'None':
+                    error = None
+
+                # A float.
+                else:
+                    error = float(line[error_col-1])
+
+            # Bad data.
+            except ValueError:
+                warn(RelaxWarning("Invalid errors, skipping the line %s" % line))
+                continue
 
         # Right, data is OK and exists.
         missing_data = False
@@ -579,13 +613,16 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         raise RelaxError("No corresponding data could be found within the file.")
 
 
-def strip(data):
-    """Function to remove all comment and empty lines from the file data structure.
+def strip(data, comments=True):
+    """Remove all comment and empty lines from the file data structure.
 
-    @param data:    The file data.
-    @type data:     list of lists of str
-    @return:        The file data with comment and empty lines removed.
-    @rtype:         list of lists of str
+    @param data:        The file data to clean up.
+    @type data:         list of lists of str
+    @keyword comments:  A flag which if True will cause comments to be deleted.
+    @type comments:     bool
+    @return:            The input data with the empty and comment lines removed.
+    @return:            The file data with comment and empty lines removed.
+    @rtype:             list of lists of str
     """
 
     # Initialise the new data array.
@@ -598,12 +635,11 @@ def strip(data):
             continue
 
         # Comment lines.
-        elif match("#", data[i][0]):
+        if comments and search("^#", data[i][0]):
             continue
 
         # Data lines.
-        else:
-            new.append(data[i])
+        new.append(data[i])
 
     # Return the new data structure.
     return new

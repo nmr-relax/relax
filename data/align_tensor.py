@@ -1024,12 +1024,21 @@ class AlignTensorData(Element):
                     'Axz',  'Axz_sim',  'Axz_err',
                     'Ayz',  'Ayz_sim',  'Ayz_err',
                     'domain',
-                    'red']
+                    'red',
+                    'fixed']
 
-    def __init__(self, name):
-        """Function for placing the tensor name in the class namespace."""
+    def __init__(self, name, fixed=False):
+        """Set up the tensor data.
 
+        @param name:    The tensor ID string.
+        @type name:     str
+        @keyword fixed: The optimisation flag.
+        @type fixed:    bool
+        """
+
+        # Store the values.
         self.name = name
+        self.fixed = fixed
 
 
     def __setattr__(self, name, value):

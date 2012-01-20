@@ -1,0 +1,73 @@
+Frame order test models
+=======================
+
+
+The PDB files
+-------------
+
+The frame order test models herein are constructed from the original reference structures:
+
+    N-domain:  1J7O_1st_NH.pdb
+    C-domain:  1J7P_1st_NH.pdb
+
+The C-domain structure is used to create distributions of structures matching the various frame order models.  These, together with a set of alignment tensors, are used to create lists of RDCs and PCSs representing the various motional models.  Then reduced tensors are calculated for the out-of-frame rotated C-domain structure:
+
+    C-domain rotated:  1J7P_1st_NH_rot.pdb
+
+This rotation is to simulate the experimental experience whereby the starting structures are not located at the rigid body average position (which in this case is the original C-domain position).
+
+
+The numbers
+-----------
+
+The pivot point is defined as being between C_alpha of residue Met 76 of model 1 of 1J7O:
+    pos1 = array([40.325, 1.549, 13.359])
+and the backbone N of residue Glu 82 of model 1 of 1J7P:
+    pos2 = array([34.183, -0.549, 20.134]).
+The pivot is therefore located at:
+    pivot = array([ 37.254, 0.5, 16.7465])
+
+The mass and CoM positions for the 3 structures are:
+
+1J7O_1st_NH.pdb:
+    Total mass:      M = 1219.2527599999992
+    Centre of mass:  R = array([ 41.73908729,   6.02977539,  -0.76356475])
+
+1J7P_1st_NH.pdb:
+    Total mass:      M = 1085.12894
+    Centre of mass:  R = array([ 26.83678091, -12.37906417,  28.34154128])
+
+1J7P_1st_NH_rot.pdb:
+    Total mass:      M = 1085.12894
+    Centre of mass:  R = array([ 48.10599831,  -9.25645351,  30.74219371])
+
+The rotations used were:
+    The pivot rotation matrix is:
+    [[ 0.94362558 -0.32261441 -0.07409926]
+     [ 0.07417985  0.42425993 -0.90249701]
+     [ 0.32259589  0.8461226   0.42427402]]
+    Or:
+    [[50, 144, 193, 70, 46, 50, 238, 63], [20, 226, 242, 237, 182, 165, 212, 191], [186, 246, 92, 83, 43, 248, 178, 191]]
+    [[58, 194, 151, 108, 115, 253, 178, 63], [172, 96, 219, 34, 19, 39, 219, 63], [196, 113, 90, 106, 65, 225, 236, 191]]
+    [[242, 101, 13, 63, 105, 165, 212, 63], [50, 198, 13, 178, 111, 19, 235, 63], [205, 235, 128, 52, 78, 39, 219, 63]]
+
+    The torsion rotation matrix is:
+    [[ 0.01589352 -0.09970727 -0.99488987]
+     [ 0.9789945   0.20383041 -0.00478817]
+     [ 0.20326622 -0.97391562  0.10085245]]
+    Or:
+    [[128, 201, 194, 7, 100, 70, 144, 63], [160, 250, 209, 98, 106, 134, 185, 191], [24, 152, 178, 72, 35, 214, 239, 191]]
+    [[220, 59, 87, 72, 236, 83, 239, 63], [140, 208, 234, 93, 29, 23, 202, 63], [192, 18, 211, 106, 195, 156, 115, 191]]
+    [[26, 230, 62, 166, 160, 4, 202, 63], [96, 107, 207, 20, 81, 42, 239, 191], [168, 128, 140, 89, 119, 209, 185, 63]]
+
+    The full rotation matrix is:
+    [[-0.31334613 -0.88922808 -0.33329811]
+     [ 0.93737972 -0.23341205 -0.2585306 ]
+     [ 0.15209688 -0.39343645  0.90668313]]
+    Or:
+    [[141, 60, 4, 233, 220, 13, 212, 191], [103, 126, 203, 113, 142, 116, 236, 191], [62, 176, 27, 150, 193, 84, 213, 191]]
+    [[1, 19, 253, 194, 3, 255, 237, 63], [170, 54, 95, 40, 114, 224, 205, 191], [15, 10, 120, 237, 195, 139, 208, 191]]
+    [[3, 166, 36, 16, 233, 119, 195, 63], [89, 32, 75, 19, 16, 46, 217, 191], [21, 155, 147, 87, 140, 3, 237, 63]]
+
+The paramagnetic centre will be assumed to be the second calcium in the 1J7O_1st_NH PDB file (A1001).  This position is:
+    centre = array([35.934, 12.194, -4.206])

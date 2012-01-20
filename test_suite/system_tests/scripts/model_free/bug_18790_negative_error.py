@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -47,10 +47,10 @@ relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=600.484*1e6, file='data.r2.6
 relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.484*1e6, file='data.noe.600', dir=path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_name_col=5, data_col=6, error_col=7)
 
 # Setup other values.
-value.set(1.02 * 1e-10, 'bond_length')
+value.set(1.02 * 1e-10, 'r')
 value.set(-172 * 1e-6, 'csa')
-value.set('15N', 'heteronucleus')
-value.set('1H', 'proton')
+value.set('15N', 'heteronuc_type')
+value.set('1H', 'proton_type')
 
 # Select the model-free model.
 model_free.select_model(model=name)

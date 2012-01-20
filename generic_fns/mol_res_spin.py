@@ -979,17 +979,13 @@ def create_residue(res_num=None, res_name=None, mol_name=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Create the molecule if it does not exist.
-    if not return_molecule(generate_spin_id(mol_name=mol_name)):
-        create_molecule(mol_name=mol_name)
-
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
-        # Get the molecule container to add the residue to.
+        # Create the molecule if it does not exist.
         mol_cont = return_molecule(generate_spin_id(mol_name=mol_name))
-        if not mol_cont:
-            mol_cont = cdp.mol[0]
+        if mol_cont == None:
+            mol_cont = create_molecule(mol_name=mol_name)
 
         # Add the residue.
         mol_cont.res.add_item(res_num=res_num, res_name=res_name)
@@ -1123,19 +1119,15 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Create the molecule and residue if they do not exist.
-    if not return_molecule(generate_spin_id(mol_name=mol_name)):
-        create_molecule(mol_name=mol_name)
-    if not return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name)):
-        create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name)
-
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
-        # Get the residue container to add the spin to.
+        # Create the molecule and residue if they do not exist.
+        if not return_molecule(generate_spin_id(mol_name=mol_name)):
+            create_molecule(mol_name=mol_name)
         res_cont = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name))
-        if not res_cont:
-            res_cont = cdp.mol[0].res[0]
+        if res_cont == None:
+            res_cont = create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name)
 
         # Rename the spin, if only a single one exists and it is empty.
         if len(res_cont.spin) == 1 and res_cont.spin[0].is_empty():

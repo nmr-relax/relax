@@ -15,4 +15,4 @@ path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'
 sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
 # Select the model.
-model_free.create_model(model='m4', equation='mf_orig', params=['S2', 'te', 'Rex'], spin_id=None)
+model_free.create_model(model='m4', equation='mf_orig', params=['s2', 'te', 'rex'], spin_id=None)

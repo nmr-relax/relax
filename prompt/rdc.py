@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2010 Edward d'Auvergne                         #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -237,13 +237,15 @@ class RDC(User_fn_class):
         rdc.delete(align_id=align_id)
 
 
-    def display(self, align_id=None):
+    def display(self, align_id=None, bc=False):
         """Display the RDC data corresponding to the alignment ID.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         align_id:  The alignment ID string.
+
+        bc:  A flag which if set will display the back-calculated rather than measured RDCs.
 
 
         Examples
@@ -257,17 +259,19 @@ class RDC(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "rdc.display("
-            text = text + "align_id=" + repr(align_id) + ")"
+            text = text + "align_id=" + repr(align_id)
+            text = text + ", bc=" + repr(bc) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_str(align_id, 'alignment ID string')
+        arg_check.is_bool(bc, 'back-calculation flag')
 
         # Execute the functional code.
-        rdc.display(align_id=align_id)
+        rdc.display(align_id=align_id, bc=bc)
 
 
-    def read(self, align_id=None, file=None, dir=None, data_type='2D', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
+    def read(self, align_id=None, file=None, dir=None, data_type='D', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
         """Read the RDC data from file.
 
         Keyword Arguments
@@ -279,7 +283,7 @@ class RDC(User_fn_class):
 
         dir:  The directory where the file is located.
 
-        data_type:  Whether the RDC data is in the 2D or D format.
+        data_type:  Whether the RDC data is in the D or 2D format.
 
         spin_id_col:  The spin ID string column (an alternative to the mol, res, and spin name and
             number columns).
@@ -311,10 +315,10 @@ class RDC(User_fn_class):
         The data_type argument is used to specify how the RDC is defined.  It is a string which can
         be set to two values:
         
-            - '2D' means that the splitting in the aligned sample was assumed to be J + 2D.
             - 'D' means that the splitting in the aligned sample was taken as J + D.
+            - '2D' means that the splitting in the aligned sample was assumed to be J + 2D.
 
-        Internally, relax uses the 2D notation.  Therefore if set to 'D', the values will be halved
+        Internally, relax uses the D notation.  Therefore if set to '2D', the values will be doubled
         when read in.
 
         If neg_g_corr is set to True, a sign inversion will be applied to all RDC values to be
@@ -430,7 +434,7 @@ class RDC(User_fn_class):
         rdc.weight(align_id=align_id, spin_id=spin_id, weight=weight)
 
 
-    def write(self, align_id=None, file=None, dir=None, force=False):
+    def write(self, align_id=None, file=None, dir=None, bc=False, force=False):
         """Write the RDC data to file.
 
         Keyword Arguments
@@ -441,6 +445,8 @@ class RDC(User_fn_class):
         file:  The name of the file.
 
         dir:  The directory name.
+
+        bc:  A flag which if set will write out the back-calculated rather than measured RDCs.
 
         force:  A flag which if True will cause the file to be overwritten.
 
@@ -458,6 +464,7 @@ class RDC(User_fn_class):
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
+            text = text + ", bc=" + repr(bc)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
@@ -465,7 +472,8 @@ class RDC(User_fn_class):
         arg_check.is_str(align_id, 'alignment ID string')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(bc, 'back-calculation flag')
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        rdc.write(align_id=align_id, file=file, dir=dir, force=force)
+        rdc.write(align_id=align_id, file=file, dir=dir, bc=bc, force=force)
