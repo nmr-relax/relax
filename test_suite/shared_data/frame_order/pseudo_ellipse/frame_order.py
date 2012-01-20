@@ -109,6 +109,7 @@ class Analysis:
         cdp.cone_sigma_max = 40.0 * 2.0 * pi / 360.0
         calc()
         print("\nchi2: %s" % cdp.chi2)
+        print("real chi2: %s" % 3.90846472844)
 
         # Optimise.
         #grid_search(inc=5)
