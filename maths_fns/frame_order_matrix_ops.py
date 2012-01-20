@@ -1466,11 +1466,11 @@ def pcs_numeric_int_pseudo_ellipse(theta_x=None, theta_y=None, sigma_max=None, c
     return c * result[0] / SA
 
 
-def pcs_numeric_int_pseudo_ellipse_mcint(N=1000, theta_x=None, theta_y=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
+def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
     """Determine the averaged PCS value via numerical integration.
 
-    @keyword N:                 The number of Monte Carlo samples to use.
-    @type N:                    int
+    @keyword points:            The Sobol points in the torsion-tilt angle space.
+    @type points:               numpy rank-2, 3D array
     @keyword theta_x:           The x-axis half cone angle.
     @type theta_x:              float
     @keyword theta_y:           The y-axis half cone angle.
@@ -1512,30 +1512,38 @@ def pcs_numeric_int_pseudo_ellipse_mcint(N=1000, theta_x=None, theta_y=None, sig
             pcs_theta_err[i, j] = 0.0
 
     # Loop over the samples.
-    for i in range(N):
-        # Sigma and phi randomisation.
-        sigma_i = uniform(-sigma_max, sigma_max)
-        phi_i = uniform(-pi, pi)
+    num = 0
+    for i in range(len(points)):
+        # Unpack the point.
+        phi, theta, sigma = points[i]
+        #print phi, theta, sigma
 
         # Calculate theta_max.
-        theta_max = tmax_pseudo_ellipse(phi_i, theta_x, theta_y)
+        theta_max = tmax_pseudo_ellipse(phi, theta_x, theta_y)
 
-        # Theta randomisation.
-        v = uniform(cos(theta_max), 1.0)
-        theta_i = acos(v)
+        # Outside of the distribution, so skip the point.
+        if theta > theta_max:
+            #print "theta max lim"
+            continue
+        if sigma > sigma_max or sigma < -sigma_max:
+            #print "sigma max lim"
+            continue
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_full_mcint(theta_i=theta_i, phi_i=phi_i, sigma_i=sigma_i, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_full_mcint(theta_i=theta, phi_i=phi, sigma_i=sigma, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+
+        # Increment the number of points.
+        num += 1
 
     # Calculate the PCS and error.
     for i in range(len(pcs_theta)):
         for j in range(len(pcs_theta[i])):
             # The average PCS.
-            pcs_theta[i, j] = c[i] * pcs_theta[i, j] / float(N)
+            pcs_theta[i, j] = c[i] * pcs_theta[i, j] / float(num)
 
             # The error.
             if error_flag:
-                pcs_theta_err[i, j] = abs(pcs_theta_err[i, j] / float(N)  -  pcs_theta[i, j]**2) / float(N)
+                pcs_theta_err[i, j] = abs(pcs_theta_err[i, j] / float(num)  -  pcs_theta[i, j]**2) / float(num)
                 pcs_theta_err[i, j] = c[i] * sqrt(pcs_theta_err[i, j])
                 print "%8.3f +/- %-8.3f" % (pcs_theta[i, j]*1e6, pcs_theta_err[i, j]*1e6)
 

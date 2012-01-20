@@ -25,17 +25,18 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi, sqrt
+from math import acos, pi, sqrt
 from numpy import array, dot, float64, ones, transpose, zeros
 from numpy.linalg import norm
 
 # relax module imports.
 from float import isNaN
 from generic_fns.frame_order import print_frame_order_2nd_degree
+from extern.sobol.sobol_lib import i4_sobol
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.coord_transform import spherical_to_cartesian
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_mcint, pcs_numeric_int_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless_mcint, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_mcint, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_mcint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_mcint
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_mcint, pcs_numeric_int_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless_mcint, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_qrint, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_mcint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_mcint
 from maths_fns.kronecker_product import kron_prod
 from maths_fns import order_parameters
 from maths_fns.rotation_matrix import euler_to_R_zyz
@@ -269,10 +270,14 @@ class Frame_order:
             self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_rdc), float64)
             self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_rdc), float64)
 
+        # The Sobol' sequence data.
+        if mcint:
+            self.create_sobol_data(m=3, n=200000)
+
         # The target function aliases (Monte Carlo integration).
         if mcint:
             if model == 'pseudo-ellipse':
-                self.func = self.func_pseudo_ellipse_mcint
+                self.func = self.func_pseudo_ellipse_qrint
             elif model == 'pseudo-ellipse, torsionless':
                 self.func = self.func_pseudo_ellipse_torsionless_mcint
             elif model == 'pseudo-ellipse, free rotor':
@@ -1077,10 +1082,10 @@ class Frame_order:
         return chi2_sum
 
 
-    def func_pseudo_ellipse_mcint(self, params):
+    def func_pseudo_ellipse_qrint(self, params):
         """Target function for pseudo-elliptic cone model optimisation.
 
-        This function optimises the isotropic cone model parameters using the RDC and PCS base data.  Simple Monte Carlo integration is used for the PCS.
+        This function optimises the model parameters using the RDC and PCS base data.  Quasi-random, Sobol' sequence based, numerical integration is used for the PCS.
 
 
         @param params:  The vector of parameter values {alpha, beta, gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max} where the first 3 are the average position rotation Euler angles, the next 3 are the Euler angles defining the eigenframe, and the last 3 are the pseudo-elliptic cone geometric parameters.
@@ -1139,7 +1144,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_mcint(N=self.mcint_num, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_pseudo_ellipse_qrint(points=self.sobol_angles, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -1702,6 +1707,33 @@ class Frame_order:
             # The rotated vectors.
             self.r_pivot_atom[:, j] = dot(R_ave, self.pcs_atoms[j] - pivot)
             self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.pcs_atoms[j] - pivot)
+
+
+    def create_sobol_data(self, m=3, n=10000):
+        """Create the Sobol' quasi-random data for numerical integration.
+
+        This uses the external sobol_lib module to create the data.  The algorithm is that modified by Antonov and Saleev.
+
+
+        @keyword m:     The number of dimensions to generate.
+        @type m:        int
+        @keyword n:     The number of points to generate.
+        @type n:        int
+        """
+
+        # Initialise.
+        self.sobol_raw = zeros((n, m), float64)
+        self.sobol_angles = zeros((n, m), float64)
+
+        # Loop over the points.
+        for i in range(n):
+            # The raw point.
+            self.sobol_raw[i], seed = i4_sobol(m, i)
+
+            # Convert to angles.
+            self.sobol_angles[i, 0] = 2.0 * pi * self.sobol_raw[i, 0]
+            self.sobol_angles[i, 1] = acos(2.0*self.sobol_raw[i, 1] - 1.0)
+            self.sobol_angles[i, 2] = 2.0 * pi * (self.sobol_raw[i, 2] - 0.5)
 
 
     def reduce_and_rot(self, ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):
