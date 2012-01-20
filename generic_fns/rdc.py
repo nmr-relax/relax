@@ -122,7 +122,7 @@ def convert(value, align_id, to_intern=False):
     @type value:            float or None
     @param align_id:        The alignment tensor ID string.
     @type align_id:         str
-    @keyword to_intern:     A flag which if True will convert to the internal 2D notation if needed, or if False will convert from the internal 2D notation to the external D or 2D format.
+    @keyword to_intern:     A flag which if True will convert to the internal D notation if needed, or if False will convert from the internal D notation to the external D or 2D format.
     @type to_intern:        bool
     @return:                The converted value.
     @rtype:                 float or None
@@ -134,14 +134,14 @@ def convert(value, align_id, to_intern=False):
 
     # The conversion factor.
     factor = 1.0
-    if hasattr(cdp, 'rdc_data_types') and cdp.rdc_data_types.has_key(align_id) and cdp.rdc_data_types[align_id] == 'D':
-        # Convert from D to 2D.
-        if to_intern:
-            factor = 0.5
-
+    if hasattr(cdp, 'rdc_data_types') and cdp.rdc_data_types.has_key(align_id) and cdp.rdc_data_types[align_id] == '2D':
         # Convert from 2D to D.
-        else:
+        if to_intern:
             factor = 2.0
+
+        # Convert from D to 2D.
+        else:
+            factor = 0.5
 
     # Return the converted value.
     return value * factor
@@ -242,15 +242,17 @@ def corr_plot(format=None, file=None, dir=None, force=False):
         grace.write_xy_data(data=data, file=file, graph_type=graph_type)
 
 
-def display(align_id=None):
+def display(align_id=None, bc=False):
     """Display the RDC data corresponding to the alignment ID.
 
     @keyword align_id:  The alignment tensor ID string.
     @type align_id:     str
+    @keyword bc:        The back-calculation flag which if True will cause the back-calculated rather than measured data to be displayed.
+    @type bc:           bool
     """
 
     # Call the write method with sys.stdout as the file.
-    write(align_id=align_id, file=sys.stdout)
+    write(align_id=align_id, file=sys.stdout, bc=bc)
 
 
 def q_factors(spin_id=None):
@@ -265,9 +267,9 @@ def q_factors(spin_id=None):
         warn(RelaxWarning("No RDC data exists, Q factors cannot be calculated."))
         return
 
-    # Q-factor list.
-    cdp.q_factors_rdc = []
-    cdp.q_factors_rdc_norm2 = []
+    # Q-factor dictonaries.
+    cdp.q_factors_rdc = {}
+    cdp.q_factors_rdc_norm2 = {}
 
     # Loop over the alignments.
     for align_id in cdp.rdc_ids:
@@ -290,13 +292,13 @@ def q_factors(spin_id=None):
             spin_count += 1
 
             # Data checks.
-            if hasattr(spin, 'rdc'):
+            if hasattr(spin, 'rdc') and spin.rdc.has_key(align_id):
                 rdc_data = True
-            if hasattr(spin, 'rdc_bc'):
+            if hasattr(spin, 'rdc_bc') and spin.rdc_bc.has_key(align_id):
                 rdc_bc_data = True
 
             # Skip spins without RDC data.
-            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or align_id not in spin.rdc.keys() or spin.rdc[align_id] == None:
+            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or not spin.rdc.has_key(align_id) or spin.rdc[align_id] == None or not spin.rdc_bc.has_key(align_id) or spin.rdc_bc[align_id] == None:
                 continue
 
             # Sum of squares.
@@ -344,21 +346,21 @@ def q_factors(spin_id=None):
 
         # The Q-factor for the alignment.
         Q = sqrt(sse / N / norm)
-        cdp.q_factors_rdc.append(Q)
-        cdp.q_factors_rdc_norm2.append(sqrt(sse / D2_sum))
+        cdp.q_factors_rdc[align_id] = Q
+        cdp.q_factors_rdc_norm2[align_id] = sqrt(sse / D2_sum)
 
     # The total Q-factor.
     cdp.q_rdc = 0.0
     cdp.q_rdc_norm2 = 0.0
-    for Q in cdp.q_factors_rdc:
-        cdp.q_rdc = cdp.q_rdc + Q**2
-    for Q in cdp.q_factors_rdc_norm2:
-        cdp.q_rdc_norm2 = cdp.q_rdc_norm2 + Q**2
+    for id in cdp.q_factors_rdc:
+        cdp.q_rdc = cdp.q_rdc + cdp.q_factors_rdc[id]**2
+    for id in cdp.q_factors_rdc_norm2:
+        cdp.q_rdc_norm2 = cdp.q_rdc_norm2 + cdp.q_factors_rdc_norm2[id]**2
     cdp.q_rdc = sqrt(cdp.q_rdc / len(cdp.q_factors_rdc))
     cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
-def read(align_id=None, file=None, dir=None, file_data=None, data_type='2D', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
+def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, neg_g_corr=False):
     """Read the RDC data from file.
 
     @keyword align_id:      The alignment tensor ID string.
@@ -369,7 +371,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='2D', spi
     @type dir:              str or None
     @keyword file_data:     An alternative to opening a file, if the data already exists in the correct format.  The format is a list of lists where the first index corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @keyword data_type:     A string which is set to '2D' means that the splitting in the aligned sample was assumed to be J + 2D, or if set to 'D' then the splitting was taken as J + D.
+    @keyword data_type:     A string which is set to 'D' means that the splitting in the aligned sample was assumed to be J + D, or if set to '2D' then the splitting was taken as J + 2D.
     @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
     @keyword mol_name_col:  The column containing the molecule name information.  If supplied, spin_id_col must be None.
@@ -525,7 +527,7 @@ def weight(align_id=None, spin_id=None, weight=1.0):
         spin.rdc_weight[align_id] = weight
 
 
-def write(align_id=None, file=None, dir=None, force=False):
+def write(align_id=None, file=None, dir=None, bc=False, force=False):
     """Display the RDC data corresponding to the alignment ID.
 
     @keyword align_id:  The alignment tensor ID string.
@@ -534,6 +536,8 @@ def write(align_id=None, file=None, dir=None, force=False):
     @type file:         str or file object
     @keyword dir:       The name of the directory to place the file into (defaults to the current directory).
     @type dir:          str
+    @keyword bc:        The back-calculation flag which if True will cause the back-calculated rather than measured data to be written.
+    @type bc:           bool
     @keyword force:     A flag which if True will cause any pre-existing file to be overwritten.
     @type force:        bool
     """
@@ -552,23 +556,33 @@ def write(align_id=None, file=None, dir=None, force=False):
     # Open the file for writing.
     file = open_write_file(file, dir, force)
 
-    # The index.
-    index = cdp.rdc_ids.index(align_id)
-
     # Loop over the spins and collect the data.
-    spin_ids = []
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
     values = []
     errors = []
-    for spin, spin_id in spin_loop(return_id=True):
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Skip spins with no RDCs.
-        if not hasattr(spin, 'rdc') or align_id not in spin.rdc.keys():
+        if not bc and (not hasattr(spin, 'rdc') or align_id not in spin.rdc.keys()):
+            continue
+        elif bc and (not hasattr(spin, 'rdc_bc') or align_id not in spin.rdc_bc.keys()):
             continue
 
-        # Store the spin ID.
-        spin_ids.append(spin_id)
+        # Append the spin data.
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin.num)
+        spin_names.append(spin.name)
 
         # The value.
-        values.append(convert(spin.rdc[align_id], align_id))
+        if bc:
+            values.append(convert(spin.rdc_bc[align_id], align_id))
+        else:
+            values.append(convert(spin.rdc[align_id], align_id))
 
         # The error.
         if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
@@ -577,4 +591,4 @@ def write(align_id=None, file=None, dir=None, force=False):
             errors.append(None)
 
     # Write out.
-    write_spin_data(file=file, spin_ids=spin_ids, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
+    write_spin_data(file=file, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name='RDCs', error=errors, error_name='RDC_error')

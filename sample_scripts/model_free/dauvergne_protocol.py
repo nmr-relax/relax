@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -202,10 +202,10 @@ deselect.read(file='unresolved', dir=None, spin_id_col=None, mol_name_col=None, 
 deselect.read(file='exclude', spin_id_col=1)
 
 # Set the bond length, CSA values, heteronucleus type, and proton type.
-value.set(1.02 * 1e-10, 'bond_length')
+value.set(1.02 * 1e-10, 'r')
 value.set(-172 * 1e-6, 'csa')
-value.set('15N', 'heteronucleus')
-value.set('1H', 'proton')
+value.set('15N', 'heteronuc_type')
+value.set('1H', 'proton_type')
 
 
 

@@ -1,0 +1,22 @@
+REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007
+REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)
+HET         PIV   1       1                                             
+HET         ZAX   2       3                                             
+HET         ZAX   3       3                                             
+HETNAM     PIV Pivot point                                            
+HETNAM     ZAX Unknown                                                
+FORMUL   1  PIV    C1                                                 
+FORMUL   2  ZAX    C2N1                                               
+HETATM    1    R PIV     1      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    2    R ZAX     2      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    3 z-ax ZAX     2      21.850 -18.621  33.984  1.00  0.00           C  
+HETATM    4 z-ax ZAX     2      20.310 -20.533  35.708  1.00  0.00           N  
+HETATM    5    R ZAX     3      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    6 z-ax ZAX     3      52.658  19.621  -0.491  1.00  0.00           C  
+HETATM    7 z-ax ZAX     3      54.198  21.533  -2.215  1.00  0.00           N  
+CONECT    2    3                                             
+CONECT    3    2                                             
+CONECT    5    6                                             
+CONECT    6    5                                             
+MASTER        0    0    3    0    0    0    0    0    7    0    4    0
+END

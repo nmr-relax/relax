@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,6 +30,7 @@ from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxNoSequenceError
 from relax_warnings import RelaxDeselectWarning
+from specific_fns.api_common import API_common
 
 
 class Noe_main:
@@ -231,106 +232,27 @@ class Noe_main:
                 spin.select = False
 
 
-    def return_data_desc(self, name, spin=None):
-        """Return a description of the spin specific object.
-
-        @param name:    The name of the spin specific object.
-        @type name:     str
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        @return:        The object description, or None.
-        @rtype:         str or None
-        """
-
-        # Model-free specific objects.
-        if name == 'select':
-            return 'The spin selection flag'
-        if name == 'fixed':
-            return 'The fixed flag'
-        if name == 'ref':
-            return 'The reference peak intensity'
-        if name == 'sat':
-            return 'The saturated peak intensity'
-        if name == 'noe':
-            return 'The NOE'
-            
-
     return_data_name_doc = ["NOE calculation data type string matching patterns", """
-        ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Reference intensity    | 'ref'        | '^[Rr]ef$' or '[Rr]ef[ -_][Ii]nt'                |
-        |                        |              |                                                  |
-        | Saturated intensity    | 'sat'        | '^[Ss]at$' or '[Ss]at[ -_][Ii]nt'                |
-        |                        |              |                                                  |
-        | NOE                    | 'noe'        | '^[Nn][Oo][Ee]$'                                 |
-        |________________________|______________|__________________________________________________|
+        _________________________________________
+        |                        |              |
+        | Data type              | Object name  |
+        |________________________|______________|
+        |                        |              |
+        | Reference intensity    | 'ref'        |
+        |                        |              |
+        | Saturated intensity    | 'sat'        |
+        |                        |              |
+        | NOE                    | 'noe'        |
+        |________________________|______________|
 
         """]
 
-    def return_data_name(self, param):
-        """Return a unique identifying string for the steady-state NOE parameter.
 
-        @param param:   The steady-state NOE parameter.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # Reference intensity.
-        if match('^[Rr]ef$', param) or match('[Rr]ef[ -_][Ii]nt', param):
-            return 'ref'
-
-        # Saturated intensity.
-        if match('^[Ss]at$', param) or match('[Ss]at[ -_][Ii]nt', param):
-            return 'sat'
-
-        # NOE.
-        if match('^[Nn][Oo][Ee]$', param):
-            return 'noe'
-
-
-    def return_grace_string(self, param):
-        """Return the Grace string representation of the parameter.
-
-        This is used for axis labelling.
-
-        @param param:   The specific analysis parameter.
-        @type param:    str
-        @return:        The Grace string representation of the parameter.
-        @rtype:         str
-        """
-
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
-        # Reference intensity.
-        if object_name == 'ref':
-            return 'Reference intensity'
-
-        # Saturated intensity.
-        if object_name == 'sat':
-            return 'Saturated intensity'
-
-        # NOE.
-        if object_name == 'noe':
-            return '\\qNOE\\Q'
-
-        # Return the parameter as the Grace string.
-        return param
-
-
-    def return_units(self, param, spin=None, spin_id=None):
+    def return_units(self, param):
         """Dummy function which returns None as the stats have no units.
 
         @param param:   The name of the parameter to return the units string for.
         @type param:    str
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        @param spin_id: The spin identification string (ignored if the spin container is supplied).
-        @type spin_id:  str
         @return:        Nothing.
         @rtype:         None
         """

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -657,12 +657,12 @@ class Stereochem_analysis:
             self.interpreter.rdc.read(align_id=self.rdc_file, file=self.rdc_file, spin_id_col=self.rdc_spin_id_col, mol_name_col=self.rdc_mol_name_col, res_num_col=self.rdc_res_num_col, res_name_col=self.rdc_res_name_col, spin_num_col=self.rdc_spin_num_col, spin_name_col=self.rdc_spin_name_col, data_col=self.rdc_data_col, error_col=self.rdc_error_col)
 
             # Set the values needed to calculate the dipolar constant.
-            self.interpreter.value.set(self.bond_length, "bond_length", spin_id="@H*")
-            self.interpreter.value.set(self.bond_length, "bond_length", spin_id="@Q*")
-            self.interpreter.value.set("13C", "heteronucleus", spin_id="@H*")
-            self.interpreter.value.set("13C", "heteronucleus", spin_id="@Q*")
-            self.interpreter.value.set("1H", "proton", spin_id="@H*")
-            self.interpreter.value.set("1H", "proton", spin_id="@Q*")
+            self.interpreter.value.set(self.bond_length, "r", spin_id="@H*")
+            self.interpreter.value.set(self.bond_length, "r", spin_id="@Q*")
+            self.interpreter.value.set("13C", "heteronuc_type", spin_id="@H*")
+            self.interpreter.value.set("13C", "heteronuc_type", spin_id="@Q*")
+            self.interpreter.value.set("1H", "proton_type", spin_id="@H*")
+            self.interpreter.value.set("1H", "proton_type", spin_id="@Q*")
 
             # Set up the model.
             self.interpreter.n_state_model.select_model(model="fixed")

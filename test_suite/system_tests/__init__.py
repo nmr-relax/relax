@@ -37,6 +37,7 @@ from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
 from frame_order import Frame_order
 from generic import Generic
+from grace import Grace
 from jw_mapping import Jw
 from load_spins import Load_spins
 from model_elimination import Modelim
@@ -49,6 +50,7 @@ from palmer import Palmer
 from pdc import Pdc
 from peak_lists import Peak_lists
 from pipes import Pipes
+from rdc import Rdc
 from relax_data import Relax_data
 from relax_fit import Relax_fit
 from results import Results
@@ -67,6 +69,7 @@ __all__ = ['align_tensor',
            'diffusion_tensor',
            'frame_order',
            'generic',
+           'grace',
            'jw_mapping',
            'load_spins',
            'model_elimination',
@@ -79,6 +82,7 @@ __all__ = ['align_tensor',
            'pdc',
            'peak_lists'
            'pipes',
+           'rdc',
            'relax_data',
            'relax_fit',
            'results',
@@ -134,6 +138,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
             suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
             suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Grace))
             suite_array.append(TestLoader().loadTestsFromTestCase(Jw))
             suite_array.append(TestLoader().loadTestsFromTestCase(Load_spins))
             suite_array.append(TestLoader().loadTestsFromTestCase(Modelim))
@@ -146,6 +151,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Pdc))
             suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
             suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Rdc))
             suite_array.append(TestLoader().loadTestsFromTestCase(Relax_data))
             suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
             suite_array.append(TestLoader().loadTestsFromTestCase(Results))

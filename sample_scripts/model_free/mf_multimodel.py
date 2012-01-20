@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -53,10 +53,10 @@ for name in pipes:
     # Setup other values.
     diffusion_tensor.init(1e-8, fixed=True)
     #diffusion_tensor.init((1e-8, 1.0, 60, 290), param_types=0, spheroid_type='oblate', fixed=True)
-    value.set(1.02 * 1e-10, 'bond_length')
+    value.set(1.02 * 1e-10, 'r')
     value.set(-172 * 1e-6, 'csa')
-    value.set('15N', 'heteronucleus')
-    value.set('1H', 'proton')
+    value.set('15N', 'heteronuc_type')
+    value.set('1H', 'proton_type')
 
     # Select the model-free model.
     model_free.select_model(model=name)

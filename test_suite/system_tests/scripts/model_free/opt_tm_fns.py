@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -69,19 +69,19 @@ def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=N
         tm_scaled = tm * 1e9
 
     # Default S2 value.
-    if 'S2' in spin.params and s2 == None:
+    if 's2' in spin.params and s2 == None:
         s2 = 1.0
 
     # Default S2f value.
-    if 'S2f' in spin.params and s2f == None:
+    if 's2f' in spin.params and s2f == None:
         s2f = 1.0
 
     # Default S2s value.
-    if 'S2s' in spin.params:
+    if 's2s' in spin.params:
         if s2s == None:
             s2s = 1.0
     else:
-        if 'S2f' in spin.params:
+        if 's2f' in spin.params:
             s2s = s2 / s2f
 
     # Default te value.
@@ -124,11 +124,11 @@ def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=N
     # Set up the initial model-free parameter values (bypass the grid search for speed).
     if search('^t', cdp._model):
         spin.local_tm = tm
-    if 'S2' in spin.params:
+    if 's2' in spin.params:
         spin.s2 = s2
-    if 'S2f' in spin.params:
+    if 's2f' in spin.params:
         spin.s2f = s2f
-    if 'S2s' in spin.params:
+    if 's2s' in spin.params:
         spin.s2s = s2s
     if 'te' in spin.params:
         spin.te = te
@@ -137,7 +137,7 @@ def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=N
     if 'ts' in spin.params:
         spin.ts = ts
     if 'rex' in spin.params:
-        spin.rex = rex
+        spin.rex = rex / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2
 
     # Minimise.
     interpreter.minimise('newton', 'gmw', 'back', constraints=False)
@@ -165,10 +165,10 @@ def setup_data(dir=None):
         interpreter.relax_data.read(ri_id='R2_%s'%frq[i],  ri_type='R2',  frq=float(frq[i])*1e6, file='r2.%s.out'%frq[i],  dir=path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
     # Setup other values.
-    interpreter.value.set(1.20 * 1e-10, 'bond_length')
+    interpreter.value.set(1.20 * 1e-10, 'r')
     interpreter.value.set(200 * 1e-6, 'csa')
-    interpreter.value.set('13C', 'heteronucleus')
-    interpreter.value.set('1H', 'proton')
+    interpreter.value.set('13C', 'heteronuc_type')
+    interpreter.value.set('1H', 'proton_type')
 
     # Select the model-free model.
     interpreter.model_free.select_model(model=cdp._model)

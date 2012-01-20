@@ -315,15 +315,17 @@ def corr_plot(format=None, file=None, dir=None, force=False):
         grace.write_xy_data(data=data, file=file, graph_type=graph_type)
 
 
-def display(align_id=None):
+def display(align_id=None, bc=False):
     """Display the PCS data corresponding to the alignment ID.
 
     @keyword align_id:  The alignment tensor ID string.
     @type align_id:     str
+    @keyword bc:        The back-calculation flag which if True will cause the back-calculated rather than measured data to be displayed.
+    @type bc:           bool
     """
 
     # Call the write method with sys.stdout as the file.
-    write(align_id=align_id, file=sys.stdout)
+    write(align_id=align_id, file=sys.stdout, bc=bc)
 
 
 def q_factors(spin_id=None):
@@ -338,8 +340,8 @@ def q_factors(spin_id=None):
         warn(RelaxWarning("No PCS data exists, Q factors cannot be calculated."))
         return
 
-    # Q-factor list.
-    cdp.q_factors_pcs = []
+    # Q-factor dictionary.
+    cdp.q_factors_pcs = {}
 
     # Loop over the alignments.
     for align_id in cdp.pcs_ids:
@@ -360,13 +362,13 @@ def q_factors(spin_id=None):
             spin_count += 1
 
             # Data checks.
-            if hasattr(spin, 'pcs'):
+            if hasattr(spin, 'pcs') and spin.pcs.has_key(align_id):
                 pcs_data = True
-            if hasattr(spin, 'pcs_bc'):
+            if hasattr(spin, 'pcs_bc') and spin.pcs_bc.has_key(align_id):
                 pcs_bc_data = True
 
             # Skip spins without PCS data.
-            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or align_id not in spin.pcs.keys() or spin.pcs[align_id] == None:
+            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or not spin.pcs.has_key(align_id) or spin.pcs[align_id] == None or not spin.pcs_bc.has_key(align_id) or spin.pcs_bc[align_id] == None:
                 continue
 
             # Sum of squares.
@@ -376,8 +378,9 @@ def q_factors(spin_id=None):
             pcs2_sum = pcs2_sum + spin.pcs[align_id]**2
 
         # The Q-factor for the alignment.
-        Q = sqrt(sse / pcs2_sum)
-        cdp.q_factors_pcs.append(Q)
+        if pcs2_sum:
+            Q = sqrt(sse / pcs2_sum)
+            cdp.q_factors_pcs[align_id] = Q
 
         # Warnings (and then exit).
         if not spin_count:
@@ -392,8 +395,8 @@ def q_factors(spin_id=None):
 
     # The total Q-factor.
     cdp.q_pcs = 0.0
-    for Q in cdp.q_factors_pcs:
-        cdp.q_pcs = cdp.q_pcs + Q**2
+    for id in cdp.q_factors_pcs:
+        cdp.q_pcs = cdp.q_pcs + cdp.q_factors_pcs[id]**2
     cdp.q_pcs = cdp.q_pcs / len(cdp.q_factors_pcs)
     cdp.q_pcs = sqrt(cdp.q_pcs)
 
@@ -547,7 +550,7 @@ def weight(align_id=None, spin_id=None, weight=1.0):
         spin.pcs_weight[align_id] = weight
 
 
-def write(align_id=None, file=None, dir=None, force=False):
+def write(align_id=None, file=None, dir=None, bc=False, force=False):
     """Display the PCS data corresponding to the alignment ID.
 
     @keyword align_id:  The alignment tensor ID string.
@@ -556,6 +559,8 @@ def write(align_id=None, file=None, dir=None, force=False):
     @type file:         str or file object
     @keyword dir:       The name of the directory to place the file into (defaults to the current directory).
     @type dir:          str
+    @keyword bc:        The back-calculation flag which if True will cause the back-calculated rather than measured data to be written.
+    @type bc:           bool
     @keyword force:     A flag which if True will cause any pre-existing file to be overwritten.
     @type force:        bool
     """
@@ -575,21 +580,38 @@ def write(align_id=None, file=None, dir=None, force=False):
     file = open_write_file(file, dir, force)
 
     # Loop over the spins and collect the data.
-    spin_ids = []
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
     values = []
     errors = []
-    for spin, spin_id in spin_loop(return_id=True):
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Skip spins with no PCSs.
-        if not hasattr(spin, 'pcs') or not align_id in spin.pcs.keys():
+        if not bc and (not hasattr(spin, 'pcs') or not align_id in spin.pcs.keys()):
+            continue
+        elif bc and (not hasattr(spin, 'pcs_bc') or align_id not in spin.pcs_bc.keys()):
             continue
 
-        # Store the data.
-        spin_ids.append(spin_id)
-        values.append(spin.pcs[align_id])
+        # Append the spin data.
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin.num)
+        spin_names.append(spin.name)
+
+        # The value.
+        if bc:
+            values.append(spin.pcs_bc[align_id])
+        else:
+            values.append(spin.pcs[align_id])
+
+        # The error.
         if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
             errors.append(spin.pcs_err[align_id])
         else:
             errors.append(None)
 
     # Write out.
-    write_spin_data(file=file, spin_ids=spin_ids, data=values, data_name='PCSs', error=errors, error_name='PCS_error')
+    write_spin_data(file=file, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name='PCSs', error=errors, error_name='PCS_error')

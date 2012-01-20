@@ -912,7 +912,7 @@ class Test_frame_order_matrix_ops(TestCase):
         sigma_max = 60.0 / 180.0 * pi
 
         # Calculate the matrix.
-        f2 = compile_2nd_matrix_rotor(self.f2_temp, self.R_temp, 0.0, 0.0, 0.0, sigma_max)
+        f2 = compile_2nd_matrix_rotor(self.f2_temp, self.R_temp, self.z_axis, self.cone_axis, 0.0, 0.0, sigma_max)
 
         # Print out.
         print_frame_order_2nd_degree(real, "real")

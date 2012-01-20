@@ -22,6 +22,7 @@
 
 # Python module imports.
 from math import sqrt
+from minfx.generic import generic_minimise
 from numpy import array, dot, float64, ndarray, zeros
 from numpy.linalg import norm
 from os import F_OK, access
@@ -34,12 +35,69 @@ from warnings import warn
 from generic_fns import molmol, relax_re
 from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id, linear_ave, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns import pipes
+from generic_fns.structure.api_base import Displacements
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
+from generic_fns.structure.superimpose import fit_to_first, fit_to_mean, Pivot_finder
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import get_file_path, open_write_file, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
+
+def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
+    """Add a new atom to the structural data object.
+
+    @keyword mol_name:      The name of the molecule.
+    @type mol_name:         str
+    @keyword atom_name:     The atom name, e.g. 'H1'.
+    @type atom_name:        str or None
+    @keyword res_name:      The residue name.
+    @type res_name:         str or None
+    @keyword res_num:       The residue number.
+    @type res_num:          int or None
+    @keyword pos:           The position vector of coordinates.
+    @type pos:              list (length = 3)
+    @keyword element:       The element symbol.
+    @type element:          str or None
+    @keyword atom_num:      The atom number.
+    @type atom_num:         int or None
+    @keyword chain_id:      The chain identifier.
+    @type chain_id:         str or None
+    @keyword segment_id:    The segment identifier.
+    @type segment_id:       str or None
+    @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
+    @type pdb_record:       str or None
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Place the structural object into the relax data store if needed.
+    if not hasattr(cdp, 'structure'):
+        cdp.structure = Internal()
+
+    # Add the atoms.
+    cdp.structure.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
+
+
+def connect_atom(index1=None, index2=None):
+    """Connect two atoms.
+
+    @keyword index1:    The global index of the first atom.
+    @type index1:       str
+    @keyword index2:    The global index of the first atom.
+    @type index2:       str
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Place the structural object into the relax data store if needed.
+    if not hasattr(cdp, 'structure'):
+        cdp.structure = Internal()
+
+    # Add the atoms.
+    cdp.structure.connect_atom(index1=index1, index2=index2)
 
 
 def delete():
@@ -59,6 +117,109 @@ def delete():
             del spin.bond_vect
         if hasattr(spin, 'xh_vect'):
             del spin.xh_vect
+
+
+def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
+    """Calculate the rotational and translational displacement between two structural models.
+
+    @keyword model_from:        The optional model number for the starting position of the displacement.
+    @type model_from:           int or None
+    @keyword model_to:          The optional model number for the ending position of the displacement.
+    @type model_to:             int or None
+    @keyword atom_id:           The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:              str or None
+    @keyword centroid:          An alternative position of the centroid, used for studying pivoted systems.
+    @type centroid:             list of float or numpy rank-1, 3D array
+    """
+
+    # Convert the model_from and model_to args to lists, is supplied.
+    if model_from != None:
+        model_from = [model_from]
+    if model_to != None:
+        model_to = [model_to]
+
+    # Create a list of all models.
+    models = []
+    for model in cdp.structure.model_loop():
+        models.append(model.num)
+
+    # Set model_from or model_to to all models if None.
+    if model_from == None:
+        model_from = models
+    if model_to == None:
+        model_to = models
+
+    # Initialise the data structure.
+    if not hasattr(cdp.structure, 'displacements'):
+        cdp.structure.displacements = Displacements()
+
+    # Loop over the starting models.
+    for i in range(len(model_from)):
+        # Assemble the atomic coordinates.
+        coord_from = []
+        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model_from[i], pos_flag=True):
+            coord_from.append(pos[0])
+
+        # Loop over the ending models.
+        for j in range(len(model_to)):
+            # Assemble the atomic coordinates.
+            coord_to = []
+            for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model_to[j], pos_flag=True):
+                coord_to.append(pos[0])
+
+            # Send to the base container for the calculations.
+            cdp.structure.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
+
+
+def find_pivot(models=None, atom_id=None, init_pos=None):
+    """Superimpose a set of structural models.
+
+    @keyword models:    The list of models to use.  If set to None, then all models will be used.
+    @type models:       list of int or None
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    @keyword init_pos:  The starting pivot position for the pivot point optimisation.
+    @type init_pos:     list of float or numpy rank-1, 3D array
+    """
+
+    # Initialised the starting position if needed.
+    if init_pos == None:
+        init_pos = zeros(3, float64)
+    init_pos = array(init_pos)
+
+    # Validate the models.
+    cdp.structure.validate_models()
+
+    # Create a list of all models.
+    if models == None:
+        models = []
+        for model in cdp.structure.model_loop():
+            models.append(model.num)
+
+    # Assemble the atomic coordinates of all models.
+    coord = []
+    for model in models:
+        coord.append([])
+        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
+            coord[-1].append(pos[0])
+        coord[-1] = array(coord[-1])
+    coord = array(coord)
+
+    # The target function.
+    finder = Pivot_finder(models, coord)
+    results = generic_minimise(func=finder.func, x0=init_pos, min_algor='simplex', print_flag=1)
+
+    # No result.
+    if results == None:
+        return
+
+    # Store the data.
+    cdp.structure.pivot = results
+
+    # Print out.
+    print("Motional pivot found at:  %s" % results)
+
+
 
 
 def get_pos(spin_id=None, str_id=None, ave_pos=False):
@@ -295,10 +456,14 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     # The file path.
     file_path = get_file_path(file, dir)
 
-    # Try adding '.pdb' to the end of the file path, if the file can't be found.
+    # Try adding file extensions to the end of the file path, if the file can't be found.
+    file_path_orig = file_path
     if not access(file_path, F_OK):
-        file_path_orig = file_path
-        file_path = file_path + '.pdb'
+        # List of possible extensions.
+        for ext in ['.pdb', '.gz', '.pdb.gz', '.bz2', '.pdb.bz2']:
+            # Add the extension if the file can be found.
+            if access(file_path+ext, F_OK):
+                file_path = file_path + ext
 
     # Test if the file exists.
     if not access(file_path, F_OK):
@@ -387,6 +552,38 @@ def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     cdp.structure.load_xyz(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, verbosity=verbosity)
 
 
+def rotate(R=None, origin=None, model=None, atom_id=None):
+    """Rotate the structural data about the origin by the specified forwards rotation.
+
+    @keyword R:         The forwards rotation matrix.
+    @type R:            numpy 3D, rank-2 array or a 3x3 list of floats
+    @keyword origin:    The origin of the rotation.  If not supplied, the origin will be set to [0, 0, 0].
+    @type origin:       numpy 3D, rank-1 array or list of len 3 or None
+    @keyword model:     The model to rotate.  If None, all models will be rotated.
+    @type model:        int
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+    @type atom_id:      str or None
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if the structure exists.
+    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
+        raise RelaxNoPdbError
+
+    # Set the origin if not supplied.
+    if origin == None:
+        origin = [0, 0, 0]
+
+    # Convert the args to numpy float data structures.
+    R = array(R, float64)
+    origin = array(origin, float64)
+
+    # Call the specific code.
+    cdp.structure.rotate(R=R, origin=origin, model=model, atom_id=atom_id)
+
+
 def set_vector(spin=None, xh_vect=None):
     """Place the XH unit vector into the spin container object.
 
@@ -398,6 +595,82 @@ def set_vector(spin=None, xh_vect=None):
 
     # Place the XH unit vector into the container.
     spin.xh_vect = xh_vect
+
+
+def superimpose(models=None, method='fit to mean', atom_id=None, centroid=None):
+    """Superimpose a set of structural models.
+
+    @keyword models:    The list of models to superimpose.  If set to None, then all models will be used.
+    @type models:       list of int or None
+    @keyword method:    The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
+    @type method:       str
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    @keyword centroid:  An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
+    @type centroid:     list of float or numpy rank-1, 3D array
+    """
+
+    # Check the method.
+    allowed = ['fit to mean', 'fit to first']
+    if method not in allowed:
+        raise RelaxError("The superimposition method '%s' is unknown.  It must be one of %s." % (method, allowed))
+
+    # Validate the models.
+    cdp.structure.validate_models()
+
+    # Create a list of all models.
+    if models == None:
+        models = []
+        for model in cdp.structure.model_loop():
+            models.append(model.num)
+
+    # Assemble the atomic coordinates of all models.
+    coord = []
+    for model in models:
+        coord.append([])
+        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
+            coord[-1].append(pos[0])
+        coord[-1] = array(coord[-1])
+
+    # The different algorithms.
+    if method == 'fit to mean':
+        T, R, pivot = fit_to_mean(models=models, coord=coord, centroid=centroid)
+    elif method == 'fit to first':
+        T, R, pivot = fit_to_first(models=models, coord=coord, centroid=centroid)
+
+
+    # Update to the new coordinates.
+    for i in range(len(models)):
+        # Translate the molecule first (the rotational pivot is defined in the first model).
+        translate(T=T[i], model=models[i])
+
+        # Rotate the molecule.
+        rotate(R=R[i], origin=pivot[i], model=models[i])
+
+
+def translate(T=None, model=None, atom_id=None):
+    """Shift the structural data by the specified translation vector.
+
+    @keyword T:         The translation vector.
+    @type T:            numpy rank-1, 3D array or list of float
+    @keyword model:     The model to translate.  If None, all models will be rotated.
+    @type model:        int or None
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+    @type atom_id:      str or None
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if the structure exists.
+    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
+        raise RelaxNoPdbError
+
+    # Convert the args to numpy float data structures.
+    T = array(T, float64)
+
+    # Call the specific code.
+    cdp.structure.translate(T=T, model=model, atom_id=atom_id)
 
 
 def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit=True):
@@ -551,7 +824,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         raise RelaxError("No vectors could be extracted.")
 
 
-def write_pdb(file=None, dir=None, model_num=None, force=False):
+def write_pdb(file=None, dir=None, model_num=None, compress_type=0, force=False):
     """The PDB writing function.
 
     @keyword file:          The name of the PDB file to write.
@@ -560,6 +833,8 @@ def write_pdb(file=None, dir=None, model_num=None, force=False):
     @type dir:              str or None
     @keyword model_num:     The model to place into the PDB file.  If not supplied, then all models will be placed into the file.
     @type model_num:        None or int
+    @keyword compress_type: The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
     @keyword force:         The force flag which if True will cause the file to be overwritten.
     @type force:            bool
     """
@@ -583,7 +858,7 @@ def write_pdb(file=None, dir=None, model_num=None, force=False):
         file_path = file_path + '.pdb'
 
     # Open the file for writing.
-    file = open_write_file(file_path, force=force)
+    file = open_write_file(file_path, compress_type=compress_type, force=force)
 
     # Write the structures.
     cdp.structure.write_pdb(file, model_num=model_num)

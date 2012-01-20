@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 # Copyright (C) 2010 Pavel Kaderavek                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -1640,19 +1640,19 @@ class Mf:
         if data.equations == 'mf_orig':
             # Find the indices of the model-free parameters.
             for i in xrange(data.num_params):
-                if data.param_types[i] == 'S2':
+                if data.param_types[i] == 's2':
                     data.s2_li = num_diff_params + i
                     data.s2_i = self.param_index + i
                 elif data.param_types[i] == 'te':
                     data.te_li = num_diff_params + i
                     data.te_i = self.param_index + i
-                elif data.param_types[i] == 'Rex':
+                elif data.param_types[i] == 'rex':
                     data.rex_li = num_diff_params + i
                     data.rex_i = self.param_index + i
                 elif data.param_types[i] == 'r':
                     data.r_li = num_diff_params + i
                     data.r_i = self.param_index + i
-                elif data.param_types[i] == 'CSA':
+                elif data.param_types[i] == 'csa':
                     data.csa_li = num_diff_params + i
                     data.csa_i = self.param_index + i
                 elif data.param_types[i] == 'local_tm':
@@ -1983,25 +1983,25 @@ class Mf:
         elif data.equations == 'mf_ext':
             # Find the indices of the model-free parameters.
             for i in xrange(data.num_params):
-                if data.param_types[i] == 'S2f':
+                if data.param_types[i] == 's2f':
                     data.s2f_li = num_diff_params + i
                     data.s2f_i = self.param_index + i
                 elif data.param_types[i] == 'tf':
                     data.tf_li = num_diff_params + i
                     data.tf_i = self.param_index + i
-                elif data.param_types[i] == 'S2':
+                elif data.param_types[i] == 's2':
                     data.s2_li = num_diff_params + i
                     data.s2_i = self.param_index + i
                 elif data.param_types[i] == 'ts':
                     data.ts_li = num_diff_params + i
                     data.ts_i = self.param_index + i
-                elif data.param_types[i] == 'Rex':
+                elif data.param_types[i] == 'rex':
                     data.rex_li = num_diff_params + i
                     data.rex_i = self.param_index + i
                 elif data.param_types[i] == 'r':
                     data.r_li = num_diff_params + i
                     data.r_i = self.param_index + i
-                elif data.param_types[i] == 'CSA':
+                elif data.param_types[i] == 'csa':
                     data.csa_li = num_diff_params + i
                     data.csa_i = self.param_index + i
                 elif data.param_types[i] == 'local_tm':
@@ -2330,25 +2330,25 @@ class Mf:
         elif data.equations == 'mf_ext2':
             # Find the indices of the model-free parameters.
             for i in xrange(data.num_params):
-                if data.param_types[i] == 'S2f':
+                if data.param_types[i] == 's2f':
                     data.s2f_li = num_diff_params + i
                     data.s2f_i = self.param_index + i
                 elif data.param_types[i] == 'tf':
                     data.tf_li = num_diff_params + i
                     data.tf_i = self.param_index + i
-                elif data.param_types[i] == 'S2s':
+                elif data.param_types[i] == 's2s':
                     data.s2s_li = num_diff_params + i
                     data.s2s_i = self.param_index + i
                 elif data.param_types[i] == 'ts':
                     data.ts_li = num_diff_params + i
                     data.ts_i = self.param_index + i
-                elif data.param_types[i] == 'Rex':
+                elif data.param_types[i] == 'rex':
                     data.rex_li = num_diff_params + i
                     data.rex_i = self.param_index + i
                 elif data.param_types[i] == 'r':
                     data.r_li = num_diff_params + i
                     data.r_i = self.param_index + i
-                elif data.param_types[i] == 'CSA':
+                elif data.param_types[i] == 'csa':
                     data.csa_li = num_diff_params + i
                     data.csa_i = self.param_index + i
                 elif data.param_types[i] == 'local_tm':
@@ -2836,7 +2836,7 @@ class Mf:
                 index = None
 
             # Rex.
-            if index != None and data.param_types[index] == 'Rex':
+            if index != None and data.param_types[index] == 'rex':
                 # Gradient.
                 data.create_dri_prime.append(func_dri_drex_prime)
 
@@ -2849,7 +2849,7 @@ class Mf:
                         index2 = None
 
                     # Rex.
-                    if index2 != None and data.param_types[index2] == 'Rex':
+                    if index2 != None and data.param_types[index2] == 'rex':
                         data.create_d2ri_prime[i].append(None)
 
                     # Bond length.
@@ -2857,7 +2857,7 @@ class Mf:
                         data.create_d2ri_prime[i].append(None)
 
                     # CSA.
-                    elif index2 != None and data.param_types[index2] == 'CSA':
+                    elif index2 != None and data.param_types[index2] == 'csa':
                         data.create_d2ri_prime[i].append(None)
 
                     # Any other parameter.
@@ -2878,7 +2878,7 @@ class Mf:
                         index2 = None
 
                     # Rex.
-                    if index2 != None and data.param_types[index2] == 'Rex':
+                    if index2 != None and data.param_types[index2] == 'rex':
                         data.create_d2ri_prime[i].append(None)
 
                     # Bond length.
@@ -2886,7 +2886,7 @@ class Mf:
                         data.create_d2ri_prime[i].append(func_d2ri_dr2_prime)
 
                     # CSA.
-                    elif index2 != None and data.param_types[index2] == 'CSA':
+                    elif index2 != None and data.param_types[index2] == 'csa':
                         data.create_d2ri_prime[i].append(None)
 
                     # Any other parameter.
@@ -2894,7 +2894,7 @@ class Mf:
                         data.create_d2ri_prime[i].append(func_d2ri_djwdr_prime)
 
             # CSA.
-            elif index != None and data.param_types[index] == 'CSA':
+            elif index != None and data.param_types[index] == 'csa':
                 # Gradient.
                 data.create_dri_prime.append(func_dri_dcsa_prime)
 
@@ -2907,7 +2907,7 @@ class Mf:
                         index2 = None
 
                     # Rex.
-                    if index2 != None and data.param_types[index2] == 'Rex':
+                    if index2 != None and data.param_types[index2] == 'rex':
                         data.create_d2ri_prime[i].append(None)
 
                     # Bond length.
@@ -2915,7 +2915,7 @@ class Mf:
                         data.create_d2ri_prime[i].append(None)
 
                     # CSA.
-                    elif index2 != None and data.param_types[index2] == 'CSA':
+                    elif index2 != None and data.param_types[index2] == 'csa':
                         data.create_d2ri_prime[i].append(func_d2ri_dcsa2_prime)
 
                     # Any other parameter.
@@ -2936,7 +2936,7 @@ class Mf:
                         index2 = None
 
                     # Rex.
-                    if index2 != None and data.param_types[index2] == 'Rex':
+                    if index2 != None and data.param_types[index2] == 'rex':
                         data.create_d2ri_prime[i].append(None)
 
                     # Bond length.
@@ -2944,7 +2944,7 @@ class Mf:
                         data.create_d2ri_prime[i].append(func_d2ri_djwdr_prime)
 
                     # CSA.
-                    elif index2 != None and data.param_types[index2] == 'CSA':
+                    elif index2 != None and data.param_types[index2] == 'csa':
                         data.create_d2ri_prime[i].append(func_d2ri_djwdcsa_prime)
 
                     # Any other parameter.

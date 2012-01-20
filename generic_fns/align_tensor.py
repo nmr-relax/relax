@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -64,6 +64,23 @@ def align_data_exists(tensor, pipe=None):
                 return True
     else:
         return False
+
+
+def all_tensors_fixed():
+    """Determine if all alignment tensors are fixed.
+
+    @return:    True if all tensors are fixed, False otherwise.
+    @rtype:     bool
+    """
+
+    # Loop over the tensors.
+    for i in range(len(cdp.align_tensors)):
+        # Not fixed, so return False.
+        if not cdp.align_tensors[i].fixed:
+            return False
+
+    # All tensors are fixed.
+    return True
 
 
 def calc_chi_tensor(A, B0, T):
@@ -448,18 +465,27 @@ def display(tensor):
         print("\n\n\n")
 
 
-def fix(fixed=True):
+def fix(id=None, fixed=True):
     """Fix the alignment tensor during optimisation.
 
-    @param fixed:   If True, the alignment tensor will be fixed during optimisation.  If False, the alignment tensors will be optimised.
+    @keyword id:    The alignment tensor ID string.  If set to None, then all alignment tensors will be fixed.
+    @type id:       str or None
+    @keyword fixed: If True, the alignment tensor will be fixed during optimisation.  If False, the alignment tensors will be optimised.
     @type fixed:    bool
     """
 
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Set the flag.
-    cdp.align_tensors.fixed = fixed
+    # Loop over the tensors.
+    for i in range(len(cdp.align_tensors)):
+        # ID match.
+        if id and cdp.align_tensors[i].name == id:
+            cdp.align_tensors[i].fixed = fixed
+
+        # Set all tensor flags.
+        if id == None:
+            cdp.align_tensors[i].fixed = fixed
 
 
 def fold_angles(sim_index=None):
@@ -1015,6 +1041,31 @@ def matrix_angles(basis_set=0, tensors=None):
         sys.stdout.write("\n")
 
 
+def num_tensors(skip_fixed=True):
+    """Count the number of tensors.
+
+    @keyword skip_fixed:    If set to True, then only the tensors without the fixed flag will be counted.  If set to False, then all tensors will be counted.
+    @type fixed:            bool
+    @return:                The number of tensors (excluding fixed tensors by default).
+    @rtype:                 int
+    """
+
+    # Init.
+    count = 0
+
+    # Loop over the tensors.
+    for tensor_cont in cdp.align_tensors:
+        # Skip fixed tensors.
+        if skip_fixed and tensor_cont.fixed:
+            continue
+
+        # Increment.
+        count += 1
+
+    # Return the count.
+    return count
+
+
 def reduction(full_tensor=None, red_tensor=None):
     """Specify which tensor is a reduction of which other tensor.
 
@@ -1248,6 +1299,37 @@ __return_data_name_prompt_doc__ = """
     | The third Euler angle of the alignment tensor - gamma  | 'gamma'      | '^g$' or 'gamma' |
     |________________________________________________________|______________|__________________|
 """
+
+
+def return_tensor(index, skip_fixed=True):
+    """Return the tensor container for the given index, skipping fixed tensors if required.
+
+    @param index:           The index of the tensor (if skip_fixed is True, then fixed tensors are not included in the index count).
+    @type index:            int
+    @keyword skip_fixed:    A flag which if True will exclude fixed tensors from the indexation.
+    @type skip_fixed:       bool
+    @return:                The tensor corresponding to the index.
+    @rtype:                 data.align_tensor.AlignTensorData instance
+    """
+
+    # Init.
+    count = 0
+
+    # Loop over the tensors.
+    for tensor_cont in cdp.align_tensors:
+        # Skip fixed tensors.
+        if skip_fixed and tensor_cont.fixed:
+            continue
+
+        # Index match, so return the container.
+        if index == count:
+            return tensor_cont
+
+        # Increment.
+        count += 1
+
+    # Return False if the container was not found.
+    return False
 
 
 def return_units(param):

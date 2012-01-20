@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -153,26 +153,36 @@ class Align_tensor(User_fn_class):
         align_tensor.display(tensor=tensor)
 
 
-    def fix(self, fixed=True):
+    def fix(self, id=None, fixed=True):
         """Fix all alignment tensors so that they do not change during optimisation.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
+        id:  The alignment tensor identification string.
+
         fixed:  The flag specifying if the tensors should be fixed or variable.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If the ID string is left unset, then all alignment tensors will be fixed.
         """
 
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "align_tensor.fix("
-            text = text + "fixed=" + repr(fixed) + ")"
+            text = text + "id=" + repr(id)
+            text = text + ", fixed=" + repr(fixed) + ")"
             print(text)
 
         # The argument checks.
+        arg_check.is_str(id, 'tensor ID', can_be_none=True)
         arg_check.is_bool(fixed, 'fixed')
 
         # Execute the functional code.
-        align_tensor.fix(fixed=fixed)
+        align_tensor.fix(id=id, fixed=fixed)
 
 
     def init(self, tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=False):

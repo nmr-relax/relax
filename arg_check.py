@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,9 +27,9 @@
 from numpy import ndarray
 
 # relax module imports.
-from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
+from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError,RelaxListFloatError, RelaxListIntError, RelaxMatrixFloatError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListFloatError, RelaxNoneListIntError, RelaxNoneMatrixFloatError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
 from relax_io import DummyFileObject
-from types import FunctionType
+from types import FunctionType, MethodType
 
 
 def is_bool(arg, name):
@@ -82,6 +82,113 @@ def is_float(arg, name, can_be_none=False):
         raise RelaxNoneFloatError(name, arg)
 
 
+def is_float_array(arg, name, size=None, can_be_none=False):
+    """Test if the argument is an array of floats.
+
+    @param arg:                     The argument.
+    @type arg:                      anything
+    @param name:                    The plain English name of the argument.
+    @type name:                     str
+    @keyword size:                  The dimension of the array.
+    @type size:                     None or int
+    @keyword can_be_none:           A flag specifying if the argument can be none.
+    @type can_be_none:              bool
+    @raise RelaxListFloatError:     If not a matrix of floats.
+    @raise RelaxNoneListFloatError: If not a matrix of floats or not None.
+    """
+
+    # Init.
+    fail = False
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # Fail if not a list.
+    if not isinstance(arg, list) and not isinstance(arg, ndarray):
+        fail = True
+
+    # Fail if not the right dimension.
+    elif size != None and len(arg) != size:
+        fail = True
+
+    # Loop over the array.
+    else:
+        for i in range(len(arg)):
+            # Fail if not a float.
+            if not isinstance(arg[i], float):
+                fail = True
+
+    # Fail.
+    if fail:
+        if can_be_none and size != None:
+            raise RelaxNoneListFloatError(name, arg, size)
+        elif can_be_none:
+            raise RelaxNoneListFloatError(name, arg)
+        elif size != None:
+            raise RelaxListFloatError(name, arg, size)
+        else:
+            raise RelaxListFloatError(name, arg)
+
+
+def is_float_matrix(arg, name, dim=(3,3), can_be_none=False):
+    """Test if the argument is a matrix of floats.
+
+    @param arg:                         The argument.
+    @type arg:                          anything
+    @param name:                        The plain English name of the argument.
+    @type name:                         str
+    @keyword dim:                       The m,n dimensions of the matrix.
+    @type dim:                          tuple of int
+    @keyword can_be_none:               A flag specifying if the argument can be none.
+    @type can_be_none:                  bool
+    @raise RelaxMatrixFloatError:       If not a matrix of floats.
+    @raise RelaxNoneMatrixFloatError:   If not a matrix of floats or not None.
+    """
+
+    # Init.
+    fail = False
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # Fail if not a list.
+    if not isinstance(arg, list) and not isinstance(arg, ndarray):
+        fail = True
+
+    # Fail if not the right dimension.
+    elif dim != None and len(arg) != dim[0]:
+        fail = True
+
+    # Loop over the first dimension.
+    else:
+        for i in range(len(arg)):
+            # Fail if not a list.
+            if not isinstance(arg[i], list) and not isinstance(arg, ndarray):
+                fail = True
+
+            # Fail if not the right dimension.
+            elif len(arg[i]) != dim[1]:
+                fail = True
+
+            # Check for float elements.
+            for j in range(len(arg[i])):
+                if not isinstance(arg[i][j], float):
+                    fail = True
+
+    # Fail.
+    if fail:
+        if can_be_none and dim != None:
+            raise RelaxNoneMatrixFloatError(name, arg, dim)
+        elif can_be_none:
+            raise RelaxNoneMatrixFloatError(name, arg)
+        elif dim != None:
+            raise RelaxMatrixFloatError(name, arg, dim)
+        else:
+            raise RelaxMatrixFloatError(name, arg)
+
+
 def is_func(arg, name, can_be_none=False):
     """Test if the argument is a function.
 
@@ -100,7 +207,7 @@ def is_func(arg, name, can_be_none=False):
         return
 
     # Check for a function.
-    if isinstance(arg, FunctionType):
+    if isinstance(arg, FunctionType) or isinstance(arg, MethodType):
         return
 
     # Fail.
@@ -136,6 +243,68 @@ def is_int(arg, name, can_be_none=False):
         raise RelaxIntError(name, arg)
     else:
         raise RelaxNoneIntError(name, arg)
+
+
+def is_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False, none_elements=False):
+    """Test if the argument is a list of integers.
+
+    @param arg:                         The argument.
+    @type arg:                          anything
+    @param name:                        The plain English name of the argument.
+    @type name:                         str
+    @keyword size:                      The number of elements required.
+    @type size:                         None or int
+    @keyword can_be_none:               A flag specifying if the argument can be none.
+    @type can_be_none:                  bool
+    @keyword can_be_empty:              A flag which if True allows the list to be empty.
+    @type can_be_empty:                 bool
+    @keyword none_elements:             A flag which if True allows the list to contain None.
+    @type none_elements:                bool
+    @raise RelaxIntListIntError:        If not an integer or a list of integers.
+    @raise RelaxNoneIntListIntError:    If not an integer, a list of integers, or None.
+    """
+
+    # Init.
+    fail = False
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # Not a list.
+    if not isinstance(arg, list):
+        fail = True
+
+    # A list.
+    else:
+        # Fail size is wrong.
+        if size != None and len(arg) != size:
+            fail = True
+
+        # Fail if empty.
+        if not can_be_empty and arg == []:
+            fail = True
+
+        # Check the arguments.
+        for i in range(len(arg)):
+            # None.
+            if arg[i] == None and none_elements:
+                continue
+
+            # Check if it is an integer.
+            if not isinstance(arg[i], int):
+                fail = True
+
+    # Fail.
+    if fail:
+        if can_be_none and size != None:
+            raise RelaxNoneListIntError(name, arg, size)
+        elif can_be_none:
+            raise RelaxNoneListIntError(name, arg)
+        elif size != None:
+            raise RelaxListIntError(name, arg, size)
+        else:
+            raise RelaxListIntError(name, arg)
 
 
 def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False, none_elements=False):
@@ -273,7 +442,7 @@ def is_none(arg, name):
         return
 
     # The RelaxError.
-    raise RelaxNoneError(name, arg)
+    raise RelaxNoneError(name)
 
 
 def is_num(arg, name, can_be_none=False):

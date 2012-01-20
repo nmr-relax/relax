@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -120,9 +120,9 @@ class Molmol(User_fn_class):
     macro_apply._doc_examples = """
         To map the order parameter values, S2, onto the structure using the classic style, type:
 
-        relax> molmol.macro_apply('S2')
-        relax> molmol.macro_apply(data_type='S2')
-        relax> molmol.macro_apply(data_type='S2', style="classic")
+        relax> molmol.macro_apply('s2')
+        relax> molmol.macro_apply(data_type='s2')
+        relax> molmol.macro_apply(data_type='s2', style="classic")
         """
     macro_apply._doc_additional = [
         colour._linear_gradient_doc,
@@ -214,9 +214,9 @@ class Molmol(User_fn_class):
         To create a Molmol macro mapping the order parameter values, S2, onto the structure using
         the classic style, type:
 
-        relax> molmol.macro_write('S2')
-        relax> molmol.macro_write(data_type='S2')
-        relax> molmol.macro_write(data_type='S2', style="classic", file='s2.mac', dir='molmol')
+        relax> molmol.macro_write('s2')
+        relax> molmol.macro_write(data_type='s2')
+        relax> molmol.macro_write(data_type='s2', style="classic", file='s2.mac', dir='molmol')
         """
     macro_write._doc_additional = [
         colour._linear_gradient_doc,

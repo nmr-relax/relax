@@ -13,7 +13,7 @@
 # relax, a program for relaxation data analysis.                              #
 #                                                                             #
 # Copyright (C) 2001-2006  Edward d'Auvergne                                  #
-# Copyright (C) 2006-2011  the relax development team                         #
+# Copyright (C) 2006-2012  the relax development team                         #
 #                                                                             #
 # This program is free software; you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -77,8 +77,7 @@ def start(mode=None, profile_flag=False):
     """
 
     # Normal relax operation.
-    if not profile_flag:
-        relax = Relax()
+    relax = Relax()
 
     # Process the command line arguments.
     relax.arguments()
@@ -110,11 +109,9 @@ def start(mode=None, profile_flag=False):
             sys.stderr.write("The profile module is not available, please install the Python development packages for profiling.\n\n")
             sys.exit()
 
-        #FIXME: profiling won't work with multi processors.
-
         # Run relax in profiling mode.
         profile.Profile.print_stats = print_stats
-        profile.run('processor.run()')
+        profile.runctx('processor.run()', globals(), locals())
         
 
 

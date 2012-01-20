@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,7 +38,7 @@ for name in pipes:
     pipe.create(name, 'mf')
 
     # Nuclei type
-    value.set('15N', 'heteronucleus')
+    value.set('15N', 'heteronuc_type')
 
     # Load the sequence.
     sequence.read('noe.500.out', res_num_col=1)
@@ -56,7 +56,7 @@ for name in pipes:
 
     # Setup other values.
     diffusion_tensor.init((1e-8, 1.0, 60, 290), param_types=1, spheroid_type='oblate', fixed=1)
-    value.set(1.02 * 1e-10, 'bond_length')
+    value.set(1.02 * 1e-10, 'r')
     value.set(-172 * 1e-6, 'csa')
 
     # Select the model-free model.

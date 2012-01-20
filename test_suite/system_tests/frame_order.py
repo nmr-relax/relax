@@ -21,9 +21,11 @@
 ###############################################################################
 
 # Python module imports.
-from math import pi
+from math import acos, pi
 import platform
 import numpy
+from numpy import array, dot, float64, zeros
+from numpy.linalg import norm
 from re import search
 from os import sep
 import sys
@@ -32,6 +34,8 @@ import sys
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from maths_fns.coord_transform import spherical_to_cartesian
+from maths_fns.rotation_matrix import euler_to_R_zyz
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_io import DummyFileObject, open_read_file
 from status import Status; status = Status()
@@ -155,6 +159,272 @@ class Frame_order(SystemTestCase):
 
             # Reset.
             setattr(cdp, param, curr)
+
+
+    def test_cam_free_rotor(self):
+        """Test the free rotor frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
+
+        # Check the average structure CoM matches that of the original position (the average structure is not defined along the rotation axis).
+        for i in range(3):
+            self.assertAlmostEqual(ds['ave pos'].CoM[i], ds['orig pos'].CoM[i], 0)
+
+        # The rotation axis.
+        self.interpreter.pipe.switch('frame order')
+        spherical_vect = zeros(3, float64)
+        spherical_vect[0] = 1.0
+        spherical_vect[1] = cdp.axis_theta
+        spherical_vect[2] = cdp.axis_phi
+        cart_vect = zeros(3, float64)
+        spherical_to_cartesian(spherical_vect, cart_vect)
+
+        # The original rotation axis.
+        pivot = array([ 37.254, 0.5, 16.7465])
+        com = array([ 26.83678091, -12.37906417,  28.34154128])
+        axis = pivot - com
+        axis = axis / norm(axis)
+
+        # The dot product.
+        angle = acos(dot(cart_vect, axis))
+
+        # Check the angle.
+        if angle > 3 and angle < 4:
+            self.assertAlmostEqual(angle, pi, 1)
+        else:
+            self.assertAlmostEqual(angle, 0.0, 1)
+
+
+    def test_cam_free_rotor2(self):
+        """Test the second free rotor frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
+
+        # The base data.
+        pivot = array([ 37.254, 0.5, 16.7465])
+        com = array([ 26.83678091, -12.37906417,  28.34154128])
+        pivot_com_axis = com - pivot
+        rot_axis = array([ 0.62649633,  0.77455282, -0.08700742])
+
+        # The average position CoM.
+        ave_pivot_com_axis = ds['ave pos'].CoM - pivot
+
+        # The projection of the CoMs onto the rotation axis.
+        orig_proj = dot(pivot_com_axis, rot_axis)
+        ave_proj = dot(ave_pivot_com_axis, rot_axis)
+
+        # Check that the projections are equal.
+        self.assertAlmostEqual(orig_proj, ave_proj, 0)
+
+        # The rotation axis.
+        self.interpreter.pipe.switch('frame order')
+        spherical_vect = zeros(3, float64)
+        spherical_vect[0] = 1.0
+        spherical_vect[1] = cdp.axis_theta
+        spherical_vect[2] = cdp.axis_phi
+        cart_vect = zeros(3, float64)
+        spherical_to_cartesian(spherical_vect, cart_vect)
+        print("\nReal rotation axis:   %s" % repr(rot_axis))
+        print("Fitted rotation axis: %s" % repr(cart_vect))
+
+        # The dot product.
+        angle = acos(dot(cart_vect, rot_axis))
+        if angle > pi/2:
+            angle = acos(dot(cart_vect, -rot_axis))
+
+        # Check the angle.
+        self.assertAlmostEqual(angle, 0.0, 2)
+
+
+    def test_cam_iso_cone_free_rotor(self):
+        """Test the isotropic cone, free rotor frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor.py')
+
+        # Check the average structure CoM matches that of the original position (the average structure is not defined along the rotation axis).
+        for i in range(3):
+            self.assertAlmostEqual(ds['ave pos'].CoM[i], ds['orig pos'].CoM[i], 0)
+
+        # Switch to the correct data pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # The base data.
+        pivot = array([ 37.254, 0.5, 16.7465])
+        com = array([ 26.83678091, -12.37906417,  28.34154128])
+        pivot_com_axis = com - pivot
+        rot_axis = pivot_com_axis / norm(pivot_com_axis)
+
+        # The average position checks.
+        ave_pivot_com_axis = ds['ave pos'].CoM - pivot
+
+        # The projection of the CoMs onto the rotation axis.
+        orig_proj = dot(pivot_com_axis, rot_axis)
+        ave_proj = dot(ave_pivot_com_axis, rot_axis)
+        print("\nReal projection of the central axis to the pivot-CoM:   %s" % repr(orig_proj))
+        print("Fitted projection of the central axis to the pivot-CoM: %s" % repr(ave_proj))
+
+        # Check that the projections are equal.
+        self.assertAlmostEqual(orig_proj, ave_proj, 1)
+
+        # The rotation axis.
+        self.interpreter.pipe.switch('frame order')
+        spherical_vect = zeros(3, float64)
+        spherical_vect[0] = 1.0
+        spherical_vect[1] = cdp.axis_theta
+        spherical_vect[2] = cdp.axis_phi
+        axis = zeros(3, float64)
+        spherical_to_cartesian(spherical_vect, axis)
+        print("\nReal rotation axis:   %s" % repr(rot_axis))
+        print("Fitted rotation axis: %s" % repr(axis))
+
+        # Check the angle between the real and fitted rotation axes.
+        angle = acos(dot(axis, rot_axis))
+        if angle > pi/2:
+            angle = acos(dot(axis, -rot_axis))
+        self.assertAlmostEqual(angle, 0.0, 2)
+
+        # Check the cone angle of 40 deg.
+        self.assertAlmostEqual(cdp.cone_theta * 2.0, 40.0 / 360.0 * 2.0 * pi, 1)
+
+
+    def test_cam_iso_cone_free_rotor2(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor2.py')
+
+        # Switch to the correct data pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # The base data.
+        pivot = array([ 37.254, 0.5, 16.7465])
+        com = array([ 26.83678091, -12.37906417,  28.34154128])
+        pivot_com_axis = com - pivot
+        rot_axis = array([-0.4043088 , -0.49985692,  0.76594873])
+
+        # The rotation axis.
+        self.interpreter.pipe.switch('frame order')
+        spherical_vect = zeros(3, float64)
+        spherical_vect[0] = 1.0
+        spherical_vect[1] = cdp.axis_theta
+        spherical_vect[2] = cdp.axis_phi
+        axis = zeros(3, float64)
+        spherical_to_cartesian(spherical_vect, axis)
+        print("\nReal rotation axis:   %s" % repr(rot_axis))
+        print("Fitted rotation axis: %s" % repr(axis))
+
+        # Check the angle between the real and fitted rotation axes.
+        angle = acos(dot(axis, rot_axis))
+        if angle > pi/2:
+            angle = acos(dot(axis, -rot_axis))
+        self.assertAlmostEqual(angle, 0.0, 2)
+
+        # Check the cone angle of 40 deg.
+        self.assertAlmostEqual(cdp.cone_theta * 2.0, 40.0 / 360.0 * 2.0 * pi, 2)
+
+
+    def test_cam_rigid(self):
+        """Test the rigid frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rigid.py')
+
+        # Check the average structure atomic positions (to only one decimal point as the PDB file accuracy isn't great).
+        ave_pos = ds['ave pos'].structure.structural_data[0].mol[0]
+        orig_pos = ds['orig pos'].structure.structural_data[0].mol[0]
+        for i in range(len(ave_pos.atom_name)):
+            self.assertAlmostEqual(ave_pos.x[i], orig_pos.x[i], 1)
+            self.assertAlmostEqual(ave_pos.y[i], orig_pos.y[i], 1)
+            self.assertAlmostEqual(ave_pos.z[i], orig_pos.z[i], 1)
+
+
+    def test_cam_rotor(self):
+        """Test the rotor frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rotor.py')
+
+        # Switch to the correct data pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # The base data.
+        pivot = array([ 37.254, 0.5, 16.7465])
+        com = array([ 26.83678091, -12.37906417,  28.34154128])
+        pivot_com_axis = com - pivot
+        rot_axis = pivot_com_axis / norm(pivot_com_axis)
+
+        # The average position checks.
+        real_pos = array([[-0.31334613, -0.88922808, -0.33329811],
+                          [ 0.93737972, -0.23341205, -0.2585306 ],
+                          [ 0.15209688, -0.39343645,  0.90668313]], float64)
+        ave_pos = zeros((3, 3), float64)
+        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, ave_pos)
+        print("\nReal domain position:\n%s" % repr(real_pos))
+        print("Fitted domain position:\n%s" % repr(ave_pos))
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(ave_pos[i, j], real_pos[i, j], 3)
+
+        # The axis system.
+        axis = zeros(3, float64)
+        spherical_to_cartesian(array([1, cdp.axis_theta, cdp.axis_phi]), axis)
+        print("\nReal rotation axis:   %s" % repr(rot_axis))
+        print("Fitted rotation axis: %s" % repr(axis))
+
+        # Check the angle between the real and fitted rotation axes.
+        angle = acos(dot(axis, rot_axis))
+        if angle > pi/2:
+            angle = acos(dot(axis, -rot_axis))
+        self.assertAlmostEqual(angle, 0.0, 2)
+
+        # Check the cone angle of 60 deg.
+        self.assertAlmostEqual(cdp.cone_sigma_max * 2.0, 60.0 / 360.0 * 2.0 * pi, 1)
+
+
+    def test_cam_rotor2(self):
+        """Test the second rotor frame order model of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rotor2.py')
+
+        # Switch to the correct data pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # The base data.
+        pivot = array([ 37.254, 0.5, 16.7465])
+        com = array([ 26.83678091, -12.37906417,  28.34154128])
+        pivot_com_axis = com - pivot
+        rot_axis = array([ 0.40416535,  0.49967956,  0.76614014])
+
+        # The average position checks.
+        real_pos = array([[-0.31334613, -0.88922808, -0.33329811],
+                          [ 0.93737972, -0.23341205, -0.2585306 ],
+                          [ 0.15209688, -0.39343645,  0.90668313]], float64)
+        ave_pos = zeros((3, 3), float64)
+        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, ave_pos)
+        print("\nReal domain position:\n%s" % repr(real_pos))
+        print("Fitted domain position:\n%s" % repr(ave_pos))
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(ave_pos[i, j], real_pos[i, j], 1)
+
+        # The axis system.
+        axis = zeros(3, float64)
+        spherical_to_cartesian(array([1, cdp.axis_theta, cdp.axis_phi]), axis)
+        print("\nReal rotation axis:   %s" % repr(rot_axis))
+        print("Fitted rotation axis: %s" % repr(axis))
+
+        # Check the angle between the real and fitted rotation axes.
+        angle = acos(dot(axis, rot_axis))
+        if angle > pi/2:
+            angle = acos(dot(axis, -rot_axis))
+        self.assertAlmostEqual(angle, 0.0, 2)
+
+        # Check the cone angle of 60 deg.
+        self.assertAlmostEqual(cdp.cone_sigma_max * 2.0, 60.0 / 360.0 * 2.0 * pi, 1)
 
 
     def test_model_free_rotor(self):
