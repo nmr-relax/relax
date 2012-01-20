@@ -50,6 +50,8 @@ class Status(object):
             # Initialise some variables.
             self._instance.debug = False
             self._instance.pedantic = False
+            self._instance.test_mode = False
+            self._instance.show_gui = False
             self._instance.install_path = sys.path[0]
 
             # Set up the singleton.
@@ -66,10 +68,10 @@ class Status(object):
         self.exec_lock = Exec_lock()
 
         # The data pipe lock object.
-        self.pipe_lock = RLock()
+        self.pipe_lock = Relax_lock(name='pipe_lock')
 
         # The molecule, residue, spin structure lock object.
-        self.spin_lock = Relax_lock()
+        self.spin_lock = Relax_lock(name='spin_lock')
 
         # The exception queue for handling exceptions in threads.
         self.exception_queue = Queue()
@@ -78,11 +80,7 @@ class Status(object):
         self.auto_analysis = {}
         self.current_analysis = None
 
-        # Testing mode flag.
-        self.test_mode = False
-
         # GUI structures.
-        self.show_gui = False    # The GUI flag.
         self.controller_max_entries = 100000    # Scroll back limit in the relax controller.
 
         # A structure for skipped system and unit tests.
@@ -100,25 +98,25 @@ class Status(object):
         self.observers = Status_container()
 
         # The observer object for status changes in the auto-analyses.
-        self.observers.auto_analyses = Observer()
+        self.observers.auto_analyses = Observer('auto_analyses')
 
         # The observer object for pipe switches.
-        self.observers.pipe_alteration = Observer()
+        self.observers.pipe_alteration = Observer('pipe_alteration')
 
         # The observer object for GUI user function completion.
-        self.observers.gui_uf = Observer()
+        self.observers.gui_uf = Observer('gui_uf')
 
         # The observer object for changes to the GUI analysis tabs.
-        self.observers.gui_analysis = Observer()
+        self.observers.gui_analysis = Observer('gui_analysis')
 
         # The observer object for relax resets.
-        self.observers.reset = Observer()
+        self.observers.reset = Observer('reset')
 
         # The observer object for the execution lock.
-        self.observers.exec_lock = Observer()
+        self.observers.exec_lock = Observer('exec_lock')
 
         # The observer object for the creation of results files.
-        self.observers.result_file = Observer()
+        self.observers.result_file = Observer('result_file')
 
 
     def init_auto_analysis(self, name, type):
@@ -187,18 +185,21 @@ class Auto_analysis:
 class Exec_lock:
     """A type of locking object for locking execution of relax."""
 
-    def __init__(self, debug=False):
+    def __init__(self, fake_lock=False):
         """Set up the lock-like object.
 
-        @keyword debug: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
-        @type debug:    bool
+        @keyword fake_lock: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
+        @type fake_lock:    bool
         """
 
         # Store the arg.
-        self.debug = debug
+        self._fake_lock = fake_lock
 
         # Init a threading.Lock object.
         self._lock = Lock()
+
+        # The status container.
+        self._status = Status()
 
         # The name and mode of the locker.
         self._name = None
@@ -211,7 +212,7 @@ class Exec_lock:
         self._auto_from_script = False
 
         # Debugging.
-        if self.debug:
+        if self._fake_lock:
             self.log = open('lock.log', 'w')
 
 
@@ -224,13 +225,17 @@ class Exec_lock:
         @type mode:     str
         """
 
+        # Debugging.
+        if self._status.debug:
+            sys.stdout.write("debug> Execution lock:  Acquisition by '%s' ('%s' mode).\n" % (name, mode))
+
         # Do not acquire if lunching a script from a script.
         if mode == 'script' and self._mode == 'script' and self.locked():
             # Increment the nesting counter.
             self._script_nest += 1
 
             # Debugging.
-            if self.debug:
+            if self._fake_lock:
                 self.log.write("Nested by %s (to level %s)\n" % (name, self._script_nest))
                 self.log.flush()
 
@@ -240,7 +245,7 @@ class Exec_lock:
         # Skip locking if an auto-analysis is called from a script.
         if self.locked() and self._mode == 'script' and mode == 'auto-analysis':
             # Debugging.
-            if self.debug:
+            if self._fake_lock:
                 self.log.write("Skipped unlocking of '%s' lock by '%s'\n" % (self._name, name))
                 self.log.flush()
 
@@ -255,7 +260,7 @@ class Exec_lock:
         self._mode = mode
 
         # Debugging.
-        if self.debug:
+        if self._fake_lock:
             self.log.write("Acquired by %s\n" % self._name)
             self.log.flush()
             return
@@ -275,7 +280,7 @@ class Exec_lock:
         """Simulate the Lock.locked() mechanism."""
 
         # Debugging (pseudo-locking based on _name).
-        if self.debug:
+        if self._fake_lock:
             if self._name:
                 return True
             else:
@@ -288,10 +293,14 @@ class Exec_lock:
     def release(self):
         """Simulate the Lock.release() mechanism."""
 
+        # Debugging.
+        if self._status.debug:
+            sys.stdout.write("debug> Execution lock:  Release by '%s' ('%s' mode).\n" % (self._name, self._mode))
+
         # Nested scripting.
         if self._script_nest:
             # Debugging.
-            if self.debug:
+            if self._fake_lock:
                 self.log.write("Script termination, nest decrement (%s -> %s)\n" % (self._script_nest, self._script_nest-1))
                 self.log.flush()
 
@@ -304,7 +313,7 @@ class Exec_lock:
         # Auto-analysis launched from script.
         if self._auto_from_script:
             # Debugging.
-            if self.debug:
+            if self._fake_lock:
                 self.log.write("Auto-analysis launched from script, skipping release.\n")
                 self.log.flush()
 
@@ -319,7 +328,7 @@ class Exec_lock:
         self._mode = None
 
         # Debugging.
-        if self.debug:
+        if self._fake_lock:
             # Main text.
             text = 'Release'
 
@@ -347,8 +356,15 @@ class Exec_lock:
 class Observer(object):
     """The observer design pattern base class."""
 
-    def __init__(self):
-        """Set up the object."""
+    def __init__(self, name='unknown'):
+        """Set up the object.
+
+        @keyword name:      The special name for the observer object, used in debugging.
+        @type name:         str
+        """
+
+        # Store the args.
+        self._name = name
 
         # The dictionary of callback methods.
         self._callback = {}
@@ -356,12 +372,20 @@ class Observer(object):
         # The list of keys, for ordered execution.
         self._keys = []
 
+        # The status container.
+        self._status = Status()
+
 
     def notify(self):
         """Notify all observers of the state change."""
 
         # Loop over the callback methods and execute them.
         for key in self._keys:
+            # Debugging.
+            if self._status.debug:
+                sys.stdout.write("debug> Observer: '%s' notifying '%s'.\n" % (self._name, key))
+
+            # Call the method.
             self._callback[key]()
 
 
@@ -378,6 +402,10 @@ class Observer(object):
         if key in self._keys:
             raise RelaxError("The observer '%s' already exists." % key)
 
+        # Debugging.
+        if self._status.debug:
+            sys.stdout.write("debug> Observer: '%s' registering '%s'.\n" % (self._name, key))
+
         # Add the method to the dictionary of callbacks.
         self._callback[key] = method
 
@@ -387,6 +415,10 @@ class Observer(object):
 
     def reset(self):
         """Reset the object."""
+
+        # Debugging.
+        if self._status.debug:
+            sys.stdout.write("debug> Resetting observer '%s'.\n" % self._name)
 
         # Reinitialise the dictionary of callback methods.
         self._callback = {}
@@ -406,6 +438,10 @@ class Observer(object):
         if key not in self._keys:
             raise RelaxError("The key '%s' does not exist." % key)
 
+        # Debugging.
+        if self._status.debug:
+            sys.stdout.write("debug> Observer: '%s' unregistering '%s'.\n" % (self._name, key))
+
         # Remove the method from the dictionary of callbacks.
         self._callback.pop(key)
 
@@ -417,31 +453,44 @@ class Observer(object):
 class Relax_lock:
     """A type of locking object for relax."""
 
-    def __init__(self, debug=False):
+    def __init__(self, name='unknown', fake_lock=False):
         """Set up the lock-like object.
 
-        @keyword debug: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
-        @type debug:    bool
+        @keyword name:      The special name for the lock, used in debugging.
+        @type name:         str
+        @keyword fake_lock: A flag which is True will allow this object to be debugged as the locking mechanism is turned off.
+        @type fake_lock:    bool
         """
+
+        # Store the args.
+        self.name = name
+        self._fake_lock = fake_lock
 
         # Init a reentrant lock object.
         self._lock = RLock()
 
-        # Debugging.
-        self.debug = debug
-        if self.debug:
+        # The status container.
+        self._status = Status()
+
+        # Fake lock.
+        if self._fake_lock:
             # Track the number of acquires.
             self._lock_level = 0
 
 
-    def acquire(self):
-        """Simulate the RLock.acquire() mechanism."""
+    def acquire(self, acquirer='unknown'):
+        """Simulate the RLock.acquire() mechanism.
+
+        @keyword acquirer:  The optional name of the acquirer.
+        @type acquirer:     str
+        """
 
         # Debugging.
-        if self.debug:
-            # Write out.
-            sys.stderr.write('Acquire')
+        if self._status.debug:
+            sys.stdout.write("debug> Lock '%s':  Acquisition by '%s'.\n" % (self.name, acquirer))
 
+        # Fake lock.
+        if self._fake_lock:
             # Increment the lock level.
             self._lock_level += 1
 
@@ -466,15 +515,20 @@ class Relax_lock:
         return self._lock.locked()
 
 
-    def release(self):
-        """Simulate the RLock.release() mechanism."""
+    def release(self, acquirer='unknown'):
+        """Simulate the RLock.release() mechanism.
+
+        @keyword acquirer:  The optional name of the acquirer.
+        @type acquirer:     str
+        """
 
         # Debugging.
-        if self.debug:
-            # Write out.
-            sys.stderr.write('Release')
+        if self._status.debug:
+            sys.stdout.write("debug> Lock '%s':  Release by '%s'.\n" % (self.name, acquirer))
 
-            # Increment the lock level.
+        # Fake lock.
+        if self._fake_lock:
+            # Decrement the lock level.
             self._lock_level -= 1
 
             # Return to prevent real lock release.

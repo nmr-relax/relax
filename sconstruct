@@ -133,6 +133,11 @@ if SYSTEM == 'Windows':
     BIN_FILE = 'relax-' + version + '.' + SYS
     SRC_FILE = 'relax-' + version + '.src'
     DIST_TYPE = 'zip'
+elif SYSTEM == 'Darwin':
+    BIN_FILE = 'relax-' + version + '.' + SYS
+    SRC_FILE = 'relax-' + version + '.src'
+    DIST_TYPE = 'dmg'
+
 else:
     BIN_FILE = 'relax-' + version + '.' + SYS + '.' + MACH
     SRC_FILE = 'relax-' + version + '.src'
@@ -502,14 +507,17 @@ class Main:
         # Get the numpy include path (for numpy/arrayobject.h).
         numpy_path = get_include()
 
+        # Relaxation curve fitting build environment.
+        env = Environment()
+
         # C flags.
         if SYSTEM == 'Windows':
             cflags = '/nologo /I\"' + py_include_minpath + '\" /I\"' + numpy_path + '\"'
         else:
             cflags = '-I' + py_include_fullpath + ' -I' + numpy_path
-
-        # Relaxation curve fitting build environment.
-        env = Environment()
+        if env['PLATFORM'] == 'darwin':
+            for arch in ['i386', 'x86_64', 'ppc', 'ppc64']:
+                cflags = '%s -arch %s' % (cflags, arch)
 
         # Python library path.
         libpath = ''

@@ -360,7 +360,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Convert the bitmap names to a list.
-        if type(self.bitmap) != list:
+        if not isinstance(self.bitmap, list):
             bitmaps = [self.bitmap]
         else:
             bitmaps = self.bitmap
@@ -444,7 +444,7 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         """Update the spin count."""
 
         # Set the new value.
-        self.spin_systems.SetValue(str_to_gui(self.spin_count()))
+        wx.CallAfter(self.spin_systems.SetValue, str_to_gui(self.spin_count()))
 
 
 

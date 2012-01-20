@@ -33,7 +33,7 @@ from time import sleep
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError
-from relax_io import get_file_path, open_write_file, test_binary
+from relax_io import get_file_path, open_read_file, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
 from status import Status; status = Status()
 
@@ -204,7 +204,7 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     return commands
 
 
-def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
+def macro_apply(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
     """Execute a Molmol macro.
 
     @keyword data_type:     The data type to map to the structure.
@@ -232,6 +232,77 @@ def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=No
     # Loop over the commands and execute them.
     for command in commands:
         molmol_obj.exec_cmd(command)
+
+
+def macro_run(file=None, dir=None):
+    """Execute the Molmol macro from the given text file.
+
+    @keyword file:          The name of the macro file to execute.
+    @type file:             str
+    @keyword dir:           The name of the directory where the macro file is located.
+    @type dir:              str
+    """
+
+    # Open the file for reading.
+    file_path = get_file_path(file, dir)
+    file = open_read_file(file, dir)
+
+    # Loop over the commands and apply them.
+    for command in file.readlines():
+        molmol_obj.exec_cmd(command)
+
+
+def macro_write(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=False):
+    """Create a Molmol macro.
+
+    @keyword data_type:     The data type to map to the structure.
+    @type data_type:        str
+    @keyword style:         The style of the macro.
+    @type style:            str
+    @keyword colour_start:  The starting colour of the linear gradient.
+    @type colour_start:     str or RBG colour array (len 3 with vals from 0 to 1)
+    @keyword colour_end:    The ending colour of the linear gradient.
+    @type colour_end:       str or RBG colour array (len 3 with vals from 0 to 1)
+    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol' or 'x11'.
+    @type colour_list:      str or None
+    @keyword file:          The name of the macro file to create.
+    @type file:             str
+    @keyword dir:           The name of the directory to place the macro file into.
+    @type dir:              str
+    @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
+    @type force:            bool
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Create the macro.
+    commands = create_macro(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+
+    # File name.
+    if file == None:
+        file = data_type + '.mac'
+
+    # Open the file for writing.
+    file_path = get_file_path(file, dir)
+    file = open_write_file(file, dir, force)
+
+    # Loop over the commands and write them.
+    for command in commands:
+        file.write(command + "\n")
+
+    # Close the file.
+    file.close()
+
+    # Add the file to the results file list.
+    if not hasattr(cdp, 'result_files'):
+        cdp.result_files = []
+    cdp.result_files.append(['molmol', 'Molmol', file_path])
+    status.observers.result_file.notify()
 
 
 def ribbon():
@@ -294,56 +365,3 @@ def view():
         raise RelaxError("The Molmol pipe already exists.")
     else:
         molmol_obj.open_gui()
-
-
-def write(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=False):
-    """Create a Molmol macro.
-
-    @keyword data_type:     The data type to map to the structure.
-    @type data_type:        str
-    @keyword style:         The style of the macro.
-    @type style:            str
-    @keyword colour_start:  The starting colour of the linear gradient.
-    @type colour_start:     str or RBG colour array (len 3 with vals from 0 to 1)
-    @keyword colour_end:    The ending colour of the linear gradient.
-    @type colour_end:       str or RBG colour array (len 3 with vals from 0 to 1)
-    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol' or 'x11'.
-    @type colour_list:      str or None
-    @keyword file:          The name of the macro file to create.
-    @type file:             str
-    @keyword dir:           The name of the directory to place the macro file into.
-    @type dir:              str
-    @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
-    @type force:            bool
-    """
-
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Test if sequence data exists.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Create the macro.
-    commands = create_macro(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
-
-    # File name.
-    if file == None:
-        file = data_type + '.mac'
-
-    # Open the file for writing.
-    file_path = get_file_path(file, dir)
-    file = open_write_file(file, dir, force)
-
-    # Loop over the commands and write them.
-    for command in commands:
-        file.write(command + "\n")
-
-    # Close the file.
-    file.close()
-
-    # Add the file to the results file list.
-    if not hasattr(cdp, 'result_files'):
-        cdp.result_files = []
-    cdp.result_files.append(['grace', 'Grace', file_path])
-    status.observers.result_file.notify()

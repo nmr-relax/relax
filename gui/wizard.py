@@ -34,6 +34,7 @@ from relax_errors import RelaxImplementError
 from status import Status; status = Status()
 
 # relax GUI module imports.
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import relax_icons
@@ -196,13 +197,15 @@ class Wiz_page(wx.Panel):
         @type event:    wx event
         """
 
-        # Reset.
-        if Question('Would you really like to reset the free file format settings?', parent=self).ShowModal() == wx.ID_YES:
-            # First reset.
-            ds.relax_gui.free_file_format.reset()
+        # Ask a question.
+        if status.show_gui and Question('Would you really like to reset the free file format settings?', parent=self).ShowModal() == wx.ID_NO:
+            return
 
-            # Then update the values.
-            self._free_file_format_set_vals()
+        # First reset.
+        ds.relax_gui.free_file_format.reset()
+
+        # Then update the values.
+        self._free_file_format_set_vals()
 
 
     def _free_file_format_save(self, event):
@@ -771,12 +774,8 @@ class Wiz_page(wx.Panel):
     def on_apply(self):
         """To be over-ridden if an action is to be performed on hitting the apply button.
 
-        This method will be called when clicking on the apply button.  The default behaviour is to call the on_display() and on_display_post() method.
+        This method will be called when clicking on the apply button.
         """
-
-        # Call the on_display method by default.
-        self.on_display()
-        self.on_display_post()
 
 
     def on_completion(self):
@@ -804,6 +803,13 @@ class Wiz_page(wx.Panel):
         """To be over-ridden if an action is to be performed just before exiting the page.
 
         This method is called when terminating the wizard or hitting the apply button. 
+        """
+
+
+    def on_init(self):
+        """To be over-ridden if an action is to be performed when a page is newly displayed.
+
+        This method will be called by the wizard class method _display_page() at the very end.
         """
 
 
@@ -1024,9 +1030,19 @@ class Wiz_window(wx.Dialog):
     # Some class variables.
     _size_button = (100, 33)
 
-    def __init__(self, size_x=400, size_y=400, title='', border=10, style=wx.DEFAULT_DIALOG_STYLE):
+    def __init__(self, parent=None, size_x=400, size_y=400, title='', border=10, style=wx.DEFAULT_DIALOG_STYLE):
         """Set up the window.
 
+        @keyword parent:    The parent window.
+        @type parent:       wx.Window instance
+        @keyword size_x:    The width of the wizard.
+        @type size_x:       int
+        @keyword size_y:    The height of the wizard.
+        @type size_y:       int
+        @keyword title:     The title of the wizard dialog.
+        @type title:        str
+        @keyword border:    The size of the border inside the wizard.
+        @type border:       int
         @keyword style:     The dialog style.
         @type style:        wx style
         """
@@ -1037,7 +1053,7 @@ class Wiz_window(wx.Dialog):
         self._border = border
 
         # Execute the base class method.
-        wx.Dialog.__init__(self, None, id=-1, title=title, style=style)
+        wx.Dialog.__init__(self, parent, id=-1, title=title, style=style)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
@@ -1055,9 +1071,6 @@ class Wiz_window(wx.Dialog):
         # Centre the dialog.
         self.Centre()
 
-        # Initialise the wizard status.
-        self._status = True
-
         # Initialise the page storage.
         self._current_page = 0
         self._num_pages = 0
@@ -1071,6 +1084,7 @@ class Wiz_window(wx.Dialog):
         self._exec_on_next = []
         self._exec_count = []
         self._proceed_on_error = []
+        self._uf_flush = []
         self._seq_fn_list = []
         self._seq_next = []
         self._seq_prev = []
@@ -1115,6 +1129,9 @@ class Wiz_window(wx.Dialog):
 
             # Proceed to next page on errors by default.
             self._proceed_on_error.append(True)
+
+            # No user function flushing of the GUI interpreter thread prior to proceeding.
+            self._uf_flush.append(False)
 
             # Page sequence initialisation.
             self._seq_fn_list.append(self._next_fn)
@@ -1230,9 +1247,6 @@ class Wiz_window(wx.Dialog):
         @type event:    wx event
         """
 
-        # Change the status.
-        self._status = False
-
         # Close the window.
         self.Close()
 
@@ -1246,19 +1260,23 @@ class Wiz_window(wx.Dialog):
 
         # Hide all of the original contents.
         for j in range(self._num_pages):
-            self._main_sizer.Hide(self._page_sizers[j])
-
-        # Execute the page's on_display() method.
-        self._pages[i].on_display()
-        self._pages[i].on_display_post()
+            if self._main_sizer.IsShown(self._page_sizers[j]):
+                self._main_sizer.Hide(self._page_sizers[j])
 
         # Show the desired page.
         if status.show_gui:
             self._main_sizer.Show(self._page_sizers[i])
 
+        # Execute the page's on_display() method.
+        self._pages[i].on_display()
+        self._pages[i].on_display_post()
+
         # Re-perform the window layout.
         self.Layout()
         self.Refresh()
+
+        # Execute the page's on_init() method.
+        self._pages[i].on_init()
 
 
     def _go_back(self, event):
@@ -1290,6 +1308,10 @@ class Wiz_window(wx.Dialog):
             # Execute the page's on_execute() method (via the _apply() method).
             if self._exec_on_next[self._current_page]:
                 self._pages[self._current_page]._apply(event)
+
+                # UF flush.
+                if self._uf_flush[self._current_page]:
+                    interpreter.flush()
 
                 # Check for execution errors.
                 if not self._pages[self._current_page].exec_status:
@@ -1343,11 +1365,24 @@ class Wiz_window(wx.Dialog):
                 # Execute the _apply method.
                 self._pages[i]._apply(event)
 
+                # UF flush.
+                if self._uf_flush[i]:
+                    interpreter.flush()
+
+                # Check for execution errors.
+                if not self._pages[self._current_page].exec_status:
+                    # Do not proceed.
+                    if not self._proceed_on_error[self._current_page]:
+                        return
+
                 # Increment the execution counter.
                 self._exec_count[i] += 1
 
         # Then close the dialog.
-        self.Close()
+        if self.IsModal():
+            self.EndModal(wx.ID_OK)
+        else:
+            self.Close()
 
 
     def _seq_loop(self):
@@ -1360,7 +1395,7 @@ class Wiz_window(wx.Dialog):
         yield current
 
         # Loop over the sequence.
-        while 1:
+        while True:
             # Update.
             next = self._seq_next[current]
             current = next
@@ -1387,7 +1422,7 @@ class Wiz_window(wx.Dialog):
         self._go_next(None)
 
 
-    def add_page(self, panel, apply_button=True, skip_button=False, exec_on_next=True, proceed_on_error=True):
+    def add_page(self, panel, apply_button=True, skip_button=False, exec_on_next=True, proceed_on_error=True, uf_flush=False):
         """Add a new page to the wizard.
 
         @param panel:               The page to add to the wizard.
@@ -1398,8 +1433,10 @@ class Wiz_window(wx.Dialog):
         @type skip_button:          bool
         @keyword exec_on_next:      A flag which if true will run the on_execute() method when clicking on the next button.
         @type exec_on_next:         bool
-        @keyword proceed_on_error:  A flag which if True will proceed to the next page (or quit if there are no more pages) despite the occurrence of an error in execution.  If False, the page will remain open.
+        @keyword proceed_on_error:  A flag which if True will proceed to the next page (or quit if there are no more pages) despite the occurrence of an error in execution.  If False, the page will remain open (the GUI interpreter thread will be flushed first to synchronise).
         @type proceed_on_error:     bool
+        @keyword uf_flush:          A flag which if True will cause the GUI interpreter thread to be flushed to clear out all user function call prior to proceeding.
+        @type uf_flush:             bool
         @return:                    The index of the page in the wizard.
         @rtype:                     int
         """
@@ -1427,6 +1464,8 @@ class Wiz_window(wx.Dialog):
         self._button_skip_flag[index] = skip_button
         self._exec_on_next[index] = exec_on_next
         self._proceed_on_error[index] = proceed_on_error
+        if not proceed_on_error or uf_flush:
+            self._uf_flush[index] = True
 
         # Store the index of the page.
         panel.page_index = self._num_pages - 1
@@ -1501,10 +1540,10 @@ class Wiz_window(wx.Dialog):
         # Modal operation.
         if modal:
             # Show the wizard (it should be closed by the _cancel() or _ok() methods).
-            self.ShowModal()
+            wiz_status = self.ShowModal()
 
             # Return the status.
-            return self._status
+            return wiz_status
 
         # Modeless operation.
         else:

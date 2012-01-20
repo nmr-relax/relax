@@ -35,32 +35,23 @@ from base import UF_base, UF_page
 from gui.misc import gui_to_bool, gui_to_int, gui_to_list, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Spin(UF_base):
     """The container class for holding all GUI elements."""
 
-    def copy(self, event):
-        """The spin.copy user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def copy(self):
+        """The spin.copy user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=600, title=self.get_title('spin', 'copy'))
-        page = Copy_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=700, size_y=600, name='spin.copy', uf_page=Copy_page)
         wizard.run()
 
 
-    def create(self, event, mol_name=None, res_num=None, res_name=None):
+    def create(self, mol_name=None, res_num=None, res_name=None):
         """The spin.create user function.
 
-        @param event:       The wx event.
-        @type event:        wx event
         @param mol_name:    The starting molecule name.
         @type mol_name:     str
         @param res_num:     The starting residue number.
@@ -70,41 +61,27 @@ class Spin(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('spin', 'create'))
-        page = Create_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=600, size_y=400, name='spin.create', uf_page=Create_page, return_page=True)
 
-        # Default molecule name.
-        if mol_name:
-            page.mol.SetValue(str_to_gui(mol_name))
-
-        # Default residue.
-        if res_num or res_name:
-            page.res.SetValue(str_to_gui("%s %s" % (res_num, res_name)))
+        # Store the defaults.
+        page.defaults['mol'] = str_to_gui(mol_name)
+        page.defaults['res'] = str_to_gui("%s %s" % (res_num, res_name))
 
         # Execute the wizard.
         wizard.run()
 
 
-    def create_pseudo(self, event):
-        """The spin.create_pseudo user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def create_pseudo(self):
+        """The spin.create_pseudo user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'create_pseudo'))
-        page = Create_pseudo_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spin.create_pseudo', uf_page=Create_pseudo_page)
         wizard.run()
 
 
-    def delete(self, event, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+    def delete(self, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
         """The spin.delete user function.
 
-        @param event:       The wx event.
-        @type event:        wx event
         @param mol_name:    The starting molecule name.
         @type mol_name:     str
         @param res_num:     The starting residue number.
@@ -118,9 +95,7 @@ class Spin(UF_base):
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('spin', 'delete'))
-        page = Delete_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=600, size_y=400, name='spin.delete', uf_page=Delete_page, return_page=True)
 
         # Default molecule name.
         if mol_name:
@@ -138,59 +113,35 @@ class Spin(UF_base):
         wizard.run()
 
 
-    def display(self, event):
-        """The spin.display user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def display(self):
+        """The spin.display user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'display'))
-        page = Display_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spin.display', uf_page=Display_page)
         wizard.run()
 
 
-    def element(self, event):
-        """The spin.element user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def element(self):
+        """The spin.element user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'element'))
-        page = Element_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spin.element', uf_page=Element_page)
         wizard.run()
 
 
-    def name(self, event):
-        """The spin.name user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def name(self):
+        """The spin.name user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'name'))
-        page = Name_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spin.name', uf_page=Name_page)
         wizard.run()
 
 
-    def number(self, event):
-        """The spin.number user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def number(self):
+        """The spin.number user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spin', 'number'))
-        page = Number_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spin.number', uf_page=Number_page)
         wizard.run()
 
 
@@ -245,6 +196,10 @@ class Copy_page(UF_page, Mol_res_spin):
         if not gui_to_str(self.pipe_to.GetValue()):
             self.pipe_to.SetValue(str_to_gui(cdp_name()))
 
+        # Clear the previous data.
+        self.pipe_from.Clear()
+        self.pipe_to.Clear()
+
         # The list of pipe names.
         for name in pipe_names():
             self.pipe_from.Append(str_to_gui(name))
@@ -268,7 +223,7 @@ class Copy_page(UF_page, Mol_res_spin):
             spin_to = None
 
         # Copy the spin.
-        self.gui.interpreter.queue('spin.copy', pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
+        self.execute('spin.copy', pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
 
 
     def update_mol_list(self, event=None):
@@ -287,10 +242,11 @@ class Copy_page(UF_page, Mol_res_spin):
         self.mol_to.Clear()
 
         # The list of molecule names.
-        for mol in molecule_loop(pipe=pipe_from):
-            self.mol_from.Append(str_to_gui(mol.name))
-        for mol in molecule_loop(pipe=pipe_to):
-            self.mol_to.Append(str_to_gui(mol.name))
+        if cdp_name():
+            for mol in molecule_loop(pipe=pipe_from):
+                self.mol_from.Append(str_to_gui(mol.name))
+            for mol in molecule_loop(pipe=pipe_to):
+                self.mol_to.Append(str_to_gui(mol.name))
 
         # Update the residues too.
         self.update_res_list()
@@ -315,8 +271,9 @@ class Copy_page(UF_page, Mol_res_spin):
             return
 
         # The list of molecule names.
-        for res in residue_loop(mol_from, pipe=pipe_from):
-            self.res_from.Append(str_to_gui("%s %s" % (res.num, res.name)))
+        if cdp_name():
+            for res in residue_loop(mol_from, pipe=pipe_from):
+                self.res_from.Append(str_to_gui("%s %s" % (res.num, res.name)))
 
         # Update the spins too.
         self.update_spin_list()
@@ -341,8 +298,9 @@ class Copy_page(UF_page, Mol_res_spin):
             return
 
         # The list of molecule names.
-        for spin in spin_loop(res_from, pipe=pipe_from):
-            self.spin_from.Append(str_to_gui("%s %s" % (spin.num, spin.name)))
+        if cdp_name():
+            for spin in spin_loop(res_from, pipe=pipe_from):
+                self.spin_from.Append(str_to_gui("%s %s" % (spin.num, spin.name)))
 
 
 
@@ -383,6 +341,17 @@ class Create_page(UF_page, Mol_res_spin):
             for mol in molecule_loop():
                 self.mol.Append(str_to_gui(mol.name))
 
+        # The default molecule.
+        if self.defaults.has_key('mol') and self.defaults['mol']:
+            self.mol.SetStringSelection(self.defaults['mol'])
+
+        # Update the residue list.
+        self._update_residues(None)
+
+        # The default residue.
+        if self.defaults.has_key('res') and self.defaults['res']:
+            self.res.SetStringSelection(self.defaults['res'])
+
 
     def on_execute(self):
         """Execute the user function."""
@@ -408,7 +377,7 @@ class Create_page(UF_page, Mol_res_spin):
             spin_num = None
 
         # Set the name.
-        self.gui.interpreter.queue('spin.create', spin_name=spin_name, spin_num=spin_num, res_name=res_name, res_num=res_num, mol_name=mol_name)
+        self.execute('spin.create', spin_name=spin_name, spin_num=spin_num, res_name=res_name, res_num=res_num, mol_name=mol_name)
 
 
 
@@ -452,7 +421,7 @@ class Create_pseudo_page(UF_page, Mol_res_spin):
         averaging = gui_to_str(self.averaging.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spin.create_pseudo', spin_name=spin_name, spin_num=spin_num, res_id=res_id, members=members, averaging=averaging)
+        self.execute('spin.create_pseudo', spin_name=spin_name, spin_num=spin_num, res_id=res_id, members=members, averaging=averaging)
 
 
 
@@ -501,7 +470,7 @@ class Delete_page(UF_page, Mol_res_spin):
             return
 
         # Delete the spin.
-        self.gui.interpreter.queue('spin.delete', spin_id=id)
+        self.execute('spin.delete', spin_id=id)
 
         # Update the spin list.
         self._update_spins(None)
@@ -533,7 +502,7 @@ class Display_page(UF_page, Mol_res_spin):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spin.display', spin_id=spin_id)
+        self.execute('spin.display', spin_id=spin_id)
 
 
 
@@ -555,7 +524,7 @@ class Element_page(UF_page, Mol_res_spin):
         self.spin_id = self.spin_id_element(sizer, desc="Restrict the element setting to the spins:")
 
         # The element.
-        self.element = self.combo_box(sizer, "The element:", tooltip=self.uf._doc_args_dict['element'], choices=['H', 'N', 'C','O', 'P'], read_only=False)
+        self.element = self.combo_box(sizer, "The element:", tooltip=self.uf._doc_args_dict['element'], choices=['H', 'N', 'C', 'O', 'P'], read_only=False)
 
         # The force flag.
         self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'], default=False)
@@ -570,7 +539,7 @@ class Element_page(UF_page, Mol_res_spin):
         force = gui_to_bool(self.force.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spin.element', spin_id=spin_id, element=element, force=force)
+        self.execute('spin.element', spin_id=spin_id, element=element, force=force)
 
 
 
@@ -588,14 +557,14 @@ class Name_page(UF_page, Mol_res_spin):
         @type sizer:    wx.Sizer instance
         """
 
-        # The spin ID.
-        self.spin_id = self.spin_id_element(sizer, desc="Restrict the naming to the spins:")
-
         # The name.
         self.name = self.input_field(sizer, "The name:", tooltip=self.uf._doc_args_dict['name'])
 
         # The force flag.
         self.force = self.boolean_selector(sizer, "The force flag:", tooltip=self.uf._doc_args_dict['force'], default=False)
+
+        # The spin ID.
+        self.spin_id = self.spin_id_element(sizer, desc="Restrict the naming to the spins:")
 
 
     def on_execute(self):
@@ -607,7 +576,7 @@ class Name_page(UF_page, Mol_res_spin):
         force = gui_to_bool(self.force.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spin.name', spin_id=spin_id, name=name, force=force)
+        self.execute('spin.name', spin_id=spin_id, name=name, force=force)
 
 
 
@@ -644,4 +613,4 @@ class Number_page(UF_page, Mol_res_spin):
         force = gui_to_bool(self.force.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spin.number', spin_id=spin_id, number=number, force=force)
+        self.execute('spin.number', spin_id=spin_id, number=number, force=force)

@@ -256,6 +256,9 @@ def error_analysis(prune=0.0):
             # Increment the parameter index.
             index = index + 1
 
+    # Turn off the Monte Carlo simulation state, as the MC analysis is now finished.
+    cdp.sim_state = False
+
 
 def initial_values():
     """Set the initial simulation parameter values."""
@@ -348,10 +351,6 @@ def setup(number=None, all_select_sim=None):
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Test if Monte Carlo simulations have already been set up.
-    if hasattr(cdp, 'sim_number'):
-        raise RelaxError("Monte Carlo simulations have already been set up.")
 
     # Create a number of MC sim data structures.
     cdp.sim_number = number

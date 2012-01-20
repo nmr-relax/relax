@@ -30,48 +30,21 @@ import wx
 # relax module imports.
 from generic_fns.pipes import cdp_name, pipe_names
 from status import Status; status = Status()
+from relax_errors import RelaxNoPipeError
 
 # relax GUI module imports.
-from gui import paths
+from gui.paths import icon_32x32, WIZARD_IMAGE_PATH
 from gui.components.menu import build_menu_item
 from gui.icons import relax_icons
-from gui.misc import gui_to_str, str_to_gui
+from gui.menu import Uf_menus
+from gui.misc import gui_raise, gui_to_str, str_to_gui
 from gui.spin_viewer.splitter import Tree_splitter
+from gui.user_functions import User_functions, sequence, structure; user_functions = User_functions()
+from gui.wizard import Wiz_page, Wiz_window
 
 
 class Spin_view_window(wx.Frame):
     """A window element for the tree view."""
-
-    # Some IDs for the menu entries.
-    MENU_SEQUENCE_COPY = wx.NewId()
-    MENU_SEQUENCE_READ = wx.NewId()
-    MENU_SEQUENCE_WRITE = wx.NewId()
-    MENU_STRUCTURE_DELETE = wx.NewId()
-    MENU_STRUCTURE_LOAD_SPINS = wx.NewId()
-    MENU_STRUCTURE_READ_PDB = wx.NewId()
-    MENU_STRUCTURE_WRITE_PDB = wx.NewId()
-    MENU_MOLECULE_COPY = wx.NewId()
-    MENU_MOLECULE_CREATE = wx.NewId()
-    MENU_MOLECULE_DELETE = wx.NewId()
-    MENU_RESIDUE_COPY = wx.NewId()
-    MENU_RESIDUE_CREATE = wx.NewId()
-    MENU_RESIDUE_DELETE = wx.NewId()
-    MENU_SPIN_COPY = wx.NewId()
-    MENU_SPIN_CREATE = wx.NewId()
-    MENU_SPIN_CREATE_PSEUDO = wx.NewId()
-    MENU_SPIN_DELETE = wx.NewId()
-    MENU_SPIN_DISPLAY = wx.NewId()
-    MENU_SPIN_ELEMENT = wx.NewId()
-    MENU_SPIN_NAME = wx.NewId()
-    MENU_SPIN_NUMBER = wx.NewId()
-    MENU_SELECT_ALL = wx.NewId()
-    MENU_SELECT_READ = wx.NewId()
-    MENU_SELECT_REVERSE = wx.NewId()
-    MENU_SELECT_SPIN = wx.NewId()
-    MENU_DESELECT_ALL = wx.NewId()
-    MENU_DESELECT_READ = wx.NewId()
-    MENU_DESELECT_REVERSE = wx.NewId()
-    MENU_DESELECT_SPIN = wx.NewId()
 
     def __init__(self, *args, **kwds):
         """Set up the relax prompt."""
@@ -82,6 +55,10 @@ class Spin_view_window(wx.Frame):
         # Create GUI elements
         kwds["style"] = wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE
         wx.Frame.__init__(self, *args, **kwds)
+
+        # Force the main window to start maximised (needed for MS Windows).
+        if not status.debug:
+            self.Maximize()
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
@@ -115,39 +92,17 @@ class Spin_view_window(wx.Frame):
         if not status.exec_lock.locked():
             enable = True
 
-        # The menu bar.
-        self.menubar.Enable(self.MENU_SEQUENCE_COPY, enable)
-        self.menubar.Enable(self.MENU_SEQUENCE_READ, enable)
-        self.menubar.Enable(self.MENU_SEQUENCE_WRITE, enable)
-        self.menubar.Enable(self.MENU_STRUCTURE_DELETE, enable)
-        self.menubar.Enable(self.MENU_STRUCTURE_LOAD_SPINS, enable)
-        self.menubar.Enable(self.MENU_STRUCTURE_READ_PDB, enable)
-        self.menubar.Enable(self.MENU_STRUCTURE_WRITE_PDB, enable)
-        self.menubar.Enable(self.MENU_MOLECULE_COPY, enable)
-        self.menubar.Enable(self.MENU_MOLECULE_CREATE, enable)
-        self.menubar.Enable(self.MENU_MOLECULE_DELETE, enable)
-        self.menubar.Enable(self.MENU_RESIDUE_COPY, enable)
-        self.menubar.Enable(self.MENU_RESIDUE_CREATE, enable)
-        self.menubar.Enable(self.MENU_RESIDUE_DELETE, enable)
-        self.menubar.Enable(self.MENU_SPIN_COPY, enable)
-        self.menubar.Enable(self.MENU_SPIN_CREATE, enable)
-        self.menubar.Enable(self.MENU_SPIN_CREATE_PSEUDO, enable)
-        self.menubar.Enable(self.MENU_SPIN_DELETE, enable)
-        self.menubar.Enable(self.MENU_SPIN_DISPLAY, enable)
-        self.menubar.Enable(self.MENU_SPIN_ELEMENT, enable)
-        self.menubar.Enable(self.MENU_SPIN_NAME, enable)
-        self.menubar.Enable(self.MENU_SPIN_NUMBER, enable)
-        self.menubar.Enable(self.MENU_SELECT_ALL, enable)
-        self.menubar.Enable(self.MENU_SELECT_READ, enable)
-        self.menubar.Enable(self.MENU_SELECT_REVERSE, enable)
-        self.menubar.Enable(self.MENU_SELECT_SPIN, enable)
-        self.menubar.Enable(self.MENU_DESELECT_ALL, enable)
-        self.menubar.Enable(self.MENU_DESELECT_READ, enable)
-        self.menubar.Enable(self.MENU_DESELECT_REVERSE, enable)
-        self.menubar.Enable(self.MENU_DESELECT_SPIN, enable)
+        # Loop over the menus.
+        for menu, label in self.menubar.GetMenus():
+            # Loop over the menu items.
+            for item in menu.GetMenuItems():
+                wx.CallAfter(item.Enable, enable)
+
+        # The spin loader.
+        wx.CallAfter(self.bar.EnableTool, self.spin_loader_id, enable)
 
         # The pipe selector.
-        self.pipe_name.Enable(enable)
+        wx.CallAfter(self.pipe_name.Enable, enable)
 
 
     def _create_menu(self):
@@ -155,64 +110,14 @@ class Spin_view_window(wx.Frame):
 
         # Create the menu bar GUI item and add it to the main frame.
         self.menubar = wx.MenuBar()
-        self.SetMenuBar(self.menubar)
+        if status.show_gui:
+            self.SetMenuBar(self.menubar)
 
-        # The sequence menu entry.
+        # The user function menu entry.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SEQUENCE_COPY, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.sequence.copy))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SEQUENCE_READ, text="&read", icon=paths.icon_16x16.open, fn=self.gui.user_functions.sequence.read))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SEQUENCE_WRITE, text="&write", icon=paths.icon_16x16.save, fn=self.gui.user_functions.sequence.write))
-        self.menubar.Append(menu, "se&quence")
-
-        # The structure menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_STRUCTURE_DELETE, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.structure.delete))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_STRUCTURE_LOAD_SPINS, text="&load_spins", icon=paths.icon_16x16.spin, fn=self.gui.user_functions.structure.load_spins))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_STRUCTURE_READ_PDB, text="&read_pdb", icon=paths.icon_16x16.open, fn=self.gui.user_functions.structure.read_pdb))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_STRUCTURE_WRITE_PDB, text="&write_pdb", icon=paths.icon_16x16.save, fn=self.gui.user_functions.structure.write_pdb))
-        self.menubar.Append(menu, "st&ructure")
-
-        # The molecule menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_MOLECULE_COPY, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.molecule.copy))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_MOLECULE_CREATE, text="crea&te", icon=paths.icon_16x16.add, fn=self.gui.user_functions.molecule.create))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_MOLECULE_DELETE, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.molecule.delete))
-        self.menubar.Append(menu, "&molecule")
-
-        # The residue menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_RESIDUE_COPY, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.residue.copy))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_RESIDUE_CREATE, text="crea&te", icon=paths.icon_16x16.add, fn=self.gui.user_functions.residue.create))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_RESIDUE_DELETE, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.residue.delete))
-        self.menubar.Append(menu, "&residue")
-
-        # The spin menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_COPY, text="&copy", icon=paths.icon_16x16.copy, fn=self.gui.user_functions.spin.copy))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_CREATE, text="crea&te", icon=paths.icon_16x16.add, fn=self.gui.user_functions.spin.create))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_CREATE_PSEUDO, text="create_&pseudo", icon=paths.icon_16x16.add, fn=self.gui.user_functions.spin.create_pseudo))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_DELETE, text="&delete", icon=paths.icon_16x16.remove, fn=self.gui.user_functions.spin.delete))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_DISPLAY, text="displa&y", icon=None, fn=self.gui.user_functions.spin.display))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_ELEMENT, text="&element", icon=None, fn=self.gui.user_functions.spin.element))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_NAME, text="&name", icon=None, fn=self.gui.user_functions.spin.name))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SPIN_NUMBER, text="num&ber", icon=None, fn=self.gui.user_functions.spin.number))
-        self.menubar.Append(menu, "&spin")
-
-        # The select menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SELECT_ALL, text="&all", icon=None, fn=self.gui.user_functions.select.all))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SELECT_READ, text="&read", icon=paths.icon_16x16.open, fn=self.gui.user_functions.select.read))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SELECT_REVERSE, text="re&verse", icon=None, fn=self.gui.user_functions.select.reverse))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_SELECT_SPIN, text="&spin", icon=paths.icon_16x16.spin, fn=self.gui.user_functions.select.spin))
-        self.menubar.Append(menu, "se&lect")
-
-        # The deselect menu entry.
-        menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_DESELECT_ALL, text="&all", icon=None, fn=self.gui.user_functions.deselect.all))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_DESELECT_READ, text="&read", icon=paths.icon_16x16.open, fn=self.gui.user_functions.deselect.read))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_DESELECT_REVERSE, text="re&verse", icon=None, fn=self.gui.user_functions.deselect.reverse))
-        menu.AppendItem(build_menu_item(menu, parent=self, id=self.MENU_DESELECT_SPIN, text="&spin", icon=paths.icon_16x16.spin, fn=self.gui.user_functions.deselect.spin))
-        self.menubar.Append(menu, "&deselect")
+        uf_menus = Uf_menus(parent=self, menu=menu)
+        title = "&User functions"
+        self.menubar.Append(menu, title)
 
 
     def Show(self, show=True):
@@ -248,9 +153,6 @@ class Spin_view_window(wx.Frame):
         # Thread safe.
         wx.CallAfter(self.refresh_safe)
 
-        # Flush the events.
-        wx.Yield()
-
 
     def refresh_safe(self):
         """Refresh the spin viewer window."""
@@ -268,7 +170,8 @@ class Spin_view_window(wx.Frame):
         self.container.display(self.tree_panel.get_info())
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
 
     def handler_close(self, event):
@@ -285,6 +188,55 @@ class Spin_view_window(wx.Frame):
 
         # Close the window.
         self.Hide()
+
+
+    def load_spins_wizard(self, event):
+        """The spin loading wizard.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # No current data pipe.
+        if not cdp_name():
+            gui_raise(RelaxNoPipeError())
+            return
+
+        # Change the cursor to busy.
+        wx.BeginBusyCursor()
+
+        # Initialise a wizard.
+        self.wizard = Wiz_window(parent=self, size_x=800, size_y=700, title="Load spins")
+        self.page_indices = {}
+
+        # The loading method page.
+        self.page_method = Load_method_page(self.wizard)
+        self.page_indices['method'] = self.wizard.add_page(self.page_method, apply_button=True, skip_button=False)
+        self.wizard.set_seq_next_fn(self.page_indices['method'], self.wizard_page_after_load_method)
+
+        # The sequence.read page.
+        page = sequence.Read_page(self.wizard)
+        self.page_indices['sequence.read'] = self.wizard.add_page(page, skip_button=True)
+        self.wizard.set_seq_next_fn(self.page_indices['sequence.read'], self.wizard_page_after_sequence_read)
+
+        # The structure.read_pdb page.
+        page = structure.Read_pdb_page(self.wizard)
+        self.page_indices['structure.read_pdb'] = self.wizard.add_page(page, skip_button=True)
+
+        # The structure.load_spins page.
+        page = structure.Load_spins_page(self.wizard)
+        self.page_indices['structure.load_spins'] = self.wizard.add_page(page)
+
+        # The termination page.
+        page = Finish_page(self.wizard)
+        self.page_indices['fin'] = self.wizard.add_page(page, apply_button=False, skip_button=False)
+
+        # Reset the cursor.
+        if wx.IsBusy():
+            wx.EndBusyCursor()
+
+        # Run the wizard.
+        self.wizard.run()
 
 
     def setup_window(self):
@@ -317,9 +269,17 @@ class Spin_view_window(wx.Frame):
         # Init.
         self.bar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT)
 
+        # The spin loading button.
+        self.spin_loader_id = wx.NewId()
+        self.bar.AddLabelTool(self.spin_loader_id, "Load spins", wx.Bitmap(icon_32x32.spin, wx.BITMAP_TYPE_ANY), bmpDisabled=wx.Bitmap(icon_32x32.spin_grey, wx.BITMAP_TYPE_ANY), shortHelp="Load spins", longHelp="Load spins from either a sequence file or from a 3D structure file")
+        self.Bind(wx.EVT_TOOL, self.load_spins_wizard, id=self.spin_loader_id)
+
+        # A separator.
+        self.bar.AddSeparator()
+
         # The refresh button.
         id = wx.NewId()
-        self.bar.AddLabelTool(id, "Refresh", wx.Bitmap(paths.icon_32x32.view_refresh, wx.BITMAP_TYPE_ANY), shortHelp="Refresh", longHelp="Refresh the spin view")
+        self.bar.AddLabelTool(id, "Refresh", wx.Bitmap(icon_32x32.view_refresh, wx.BITMAP_TYPE_ANY), shortHelp="Refresh", longHelp="Refresh the spin view")
         self.Bind(wx.EVT_TOOL, self.refresh, id=id)
 
         # A separator.
@@ -346,7 +306,6 @@ class Spin_view_window(wx.Frame):
         """
 
         # Change the cursor to busy.
-        wx.Yield()
         wx.BeginBusyCursor()
 
         # Init.
@@ -355,7 +314,7 @@ class Spin_view_window(wx.Frame):
         # The selected pipe.
         if event:
             # The name of the selected pipe.
-            pipe = gui_to_str(event.GetString())
+            pipe = gui_to_str(self.pipe_name.GetString(event.GetSelection()))
 
             # A pipe change.
             if pipe != cdp_name():
@@ -375,7 +334,7 @@ class Spin_view_window(wx.Frame):
         # Switch.
         if pipe_switch:
             # Switch data pipes.
-            self.gui.interpreter.pipe.switch(pipe)
+            self.gui.interpreter.apply('pipe.switch', pipe)
 
             # Update the tree view.
             self.tree_panel.update()
@@ -384,4 +343,131 @@ class Spin_view_window(wx.Frame):
         self.pipe_name.SetValue(str_to_gui(pipe))
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
+
+
+    def wizard_page_after_load_method(self):
+        """Set the page after the load method choice.
+
+        @return:    The index of the next page.
+        @rtype:     int
+        """
+
+        # Go to the spectrum.baseplane_rmsd page.
+        if self.page_method.selection == 'sequence':
+            return self.page_indices['sequence.read']
+
+        # Go to the spectrum.replicated page.
+        elif self.page_method.selection == 'structure':
+            return self.page_indices['structure.read_pdb']
+
+
+    def wizard_page_after_sequence_read(self):
+        """Set the page after the sequence.read user function page.
+
+        @return:    The index of the last page.
+        @rtype:     int
+        """
+
+        # Return the index of the terminal page.
+        return  self.page_indices['fin']
+
+
+
+class Finish_page(Wiz_page):
+    """The terminating wizard page."""
+
+    # Class variables.
+    image_path = WIZARD_IMAGE_PATH + 'spin.png'
+    main_text = 'The spin systems should now have been loaded into the relax data store.'
+    title = 'Spin loading complete'
+
+    def add_contents(self, sizer):
+        """This blank method is needed so that the page shows and does nothing.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+
+
+class Load_method_page(Wiz_page):
+    """The wizard page for specifying how to load spins."""
+
+    # Class variables.
+    image_path = WIZARD_IMAGE_PATH + 'spin.png'
+    main_text = 'Select the method for loading spins into relax.  Two options are possible: the first is to read sequence information out of a text file via the sequence.read user function; the second is to read in a 3D structure file via the structure.read_pdb user function and then to load the spins from this structure using the structure.load_spins user function.'
+    title = 'Spin loading'
+
+
+    def add_contents(self, sizer):
+        """Add the specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # Intro text.
+        msg = "Please specify which method should be used."
+        text = wx.StaticText(self, -1, msg)
+        text.Wrap(self._main_size)
+        sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        sizer.AddStretchSpacer()
+
+        # A box sizer for placing the box sizer in.
+        sizer2 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(sizer2, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Bottom spacing.
+        sizer.AddStretchSpacer()
+
+        # A bit of indentation.
+        sizer2.AddStretchSpacer()
+
+        # A vertical sizer for the radio buttons.
+        sizer_radio = wx.BoxSizer(wx.VERTICAL)
+        sizer2.Add(sizer_radio, 1, wx.ALL|wx.EXPAND, 0)
+
+        # The sequence radio button.
+        self.radio_seq = wx.RadioButton(self, -1, "Sequence file.")
+        sizer_radio.Add(self.radio_seq, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Spacing.
+        sizer_radio.AddSpacer(20)
+
+        # The PDB radio button.
+        self.radio_structure = wx.RadioButton(self, -1, "3D structure file.")
+        sizer_radio.Add(self.radio_structure, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+        # Bind the buttons.
+        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_seq)
+        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_structure)
+
+        # Right side spacing.
+        sizer2.AddStretchSpacer(3)
+
+        # Bottom spacing.
+        sizer.AddStretchSpacer()
+
+        # Set the default selection.
+        self.selection = 'sequence'
+
+
+    def _on_select(self, event):
+        """Handle the radio button switching.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The button.
+        button = event.GetEventObject()
+
+        # RMSD.
+        if button == self.radio_seq:
+            self.selection = 'sequence'
+        elif button == self.radio_structure:
+            self.selection = 'structure'

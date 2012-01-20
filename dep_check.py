@@ -69,7 +69,6 @@ except ImportError:
 # wx module.
 try:
     import wx
-    del wx
     wx_module = True
 except ImportError:
     wx_module = False
@@ -153,7 +152,6 @@ except ImportError:
 # mpi4py.
 try:
     import mpi4py
-    del mpi4py
     mpi4py_module = True
 except ImportError, message:
     mpi4py_module = False

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -64,7 +64,7 @@ class Generic(SystemTestCase):
 
             # Set the order parameter value.
             if s2[i]:
-                self.interpreter.value.set(s2[i], 'S2', spin_id=':8')
+                self.interpreter.value.set(s2[i], 's2', spin_id=':8')
 
         # Get the data pipes.
         dp_orig1 = pipes.get_pipe('orig1')
@@ -73,7 +73,7 @@ class Generic(SystemTestCase):
 
         # Calculate the difference and assign it to residue 8 (located in position 7).
         diff = dp_orig1.mol[0].res[7].spin[0].s2 - dp_orig2.mol[0].res[7].spin[0].s2
-        self.interpreter.value.set(diff, 'S2', spin_id=':8')
+        self.interpreter.value.set(diff, 's2', spin_id=':8')
 
         # Test if the difference is 0.2!
         self.assertAlmostEqual(dp_new.mol[0].res[7].spin[0].s2, 0.2)

@@ -28,6 +28,7 @@ import wx
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
 
 # relax GUI module imports.
 from gui.filedialog import RelaxFileDialog
@@ -46,7 +47,7 @@ def load_sequence():
     dialog = RelaxFileDialog(parent=self, message='Select a sequence file', style=wx.FD_OPEN)
 
     # Show the dialog and catch if no file has been selected.
-    if dialog.ShowModal() != wx.ID_OK:
+    if status.show_gui and dialog.ShowModal() != wx.ID_OK:
         # Don't do anything.
         return
 

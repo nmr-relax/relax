@@ -35,54 +35,40 @@ from base import UF_base, UF_page
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.user_functions.mol_res_spin import Mol_res_spin
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Residue(UF_base):
     """The container class for holding all GUI elements."""
 
-    def copy(self, event):
-        """The residue.copy user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def copy(self):
+        """The residue.copy user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=600, title=self.get_title('residue', 'copy'))
-        page = Copy_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=700, size_y=600, name='residue.copy', uf_page=Copy_page)
         wizard.run()
 
 
-    def create(self, event, mol_name=None):
+    def create(self, mol_name=None):
         """The residue.create user function.
 
-        @param event:       The wx event.
-        @type event:        wx event
         @param mol_name:    The starting molecule name.
         @type mol_name:     str
         """
 
         # Initialise the wizard.
-        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('residue', 'create'))
-        page = Create_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=700, size_y=500, name='residue.create', uf_page=Create_page, return_page=True)
 
-        # Default molecule name.
-        if mol_name:
-            page.mol.SetValue(str_to_gui(mol_name))
+        # Store the defaults.
+        page.defaults['mol_name'] = str_to_gui(mol_name)
 
         # Execute the wizard.
         wizard.run()
 
 
-    def delete(self, event, mol_name=None, res_num=None, res_name=None):
+    def delete(self, mol_name=None, res_num=None, res_name=None):
         """The residue.delete user function.
 
-        @param event:       The wx event.
-        @type event:        wx event
         @param mol_name:    The starting molecule name.
         @type mol_name:     str
         @param res_num:     The starting residue number.
@@ -92,17 +78,17 @@ class Residue(UF_base):
         """
 
         # Initialise the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('residue', 'delete'))
-        page = Delete_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=600, size_y=400, name='residue.delete', uf_page=Delete_page, return_page=True)
 
         # Default molecule name.
         if mol_name:
-            page.mol.SetValue(str_to_gui(mol_name))
+            page.mol_name.SetValue(str_to_gui(mol_name))
 
         # Default residue.
-        if res_num or res_name:
-            page.res.SetValue(str_to_gui("%s %s" % (res_num, res_name)))
+        if res_name:
+            page.res_name.SetValue(str_to_gui(res_name))
+        if res_num:
+            page.res_num.SetValue(str_to_gui(res_num))
 
         # Execute the wizard.
         wizard.run()
@@ -154,6 +140,10 @@ class Copy_page(UF_page, Mol_res_spin):
         if not gui_to_str(self.pipe_to.GetValue()):
             self.pipe_to.SetValue(str_to_gui(cdp_name()))
 
+        # Clear the previous data.
+        self.pipe_from.Clear()
+        self.pipe_to.Clear()
+
         # The list of pipe names.
         for name in pipe_names():
             self.pipe_from.Append(str_to_gui(name))
@@ -177,7 +167,7 @@ class Copy_page(UF_page, Mol_res_spin):
             res_to = None
 
         # Copy the molecule.
-        self.gui.interpreter.queue('residue.copy', pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
+        self.execute('residue.copy', pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
 
 
     def update_mol_list(self, event=None):
@@ -196,10 +186,11 @@ class Copy_page(UF_page, Mol_res_spin):
         self.mol_to.Clear()
 
         # The list of molecule names.
-        for mol in molecule_loop(pipe=pipe_from):
-            self.mol_from.Append(str_to_gui(mol.name))
-        for mol in molecule_loop(pipe=pipe_to):
-            self.mol_to.Append(str_to_gui(mol.name))
+        if cdp_name():
+            for mol in molecule_loop(pipe=pipe_from):
+                self.mol_from.Append(str_to_gui(mol.name))
+            for mol in molecule_loop(pipe=pipe_to):
+                self.mol_to.Append(str_to_gui(mol.name))
 
         # Update the residues too.
         self.update_res_list()
@@ -224,8 +215,9 @@ class Copy_page(UF_page, Mol_res_spin):
             return
 
         # The list of molecule names.
-        for res in residue_loop(mol_from, pipe=pipe_from):
-            self.res_from.Append(str_to_gui("%s %s" % (res.num, res.name)))
+        if cdp_name():
+            for res in residue_loop(mol_from, pipe=pipe_from):
+                self.res_from.Append(str_to_gui("%s %s" % (res.num, res.name)))
 
 
 
@@ -264,6 +256,10 @@ class Create_page(UF_page, Mol_res_spin):
             for mol in molecule_loop():
                 self.mol_name.Append(str_to_gui(mol.name))
 
+        # The default molecule.
+        if self.defaults.has_key('mol_name') and self.defaults['mol_name']:
+            self.mol_name.SetStringSelection(self.defaults['mol_name'])
+
 
     def on_execute(self):
         """Execute the user function."""
@@ -286,7 +282,7 @@ class Create_page(UF_page, Mol_res_spin):
             res_num = None
 
         # Set the name.
-        self.gui.interpreter.queue('residue.create', res_name=res_name, res_num=res_num, mol_name=mol_name)
+        self.execute('residue.create', res_name=res_name, res_num=res_num, mol_name=mol_name)
 
 
 
@@ -333,7 +329,7 @@ class Delete_page(UF_page, Mol_res_spin):
             return
 
         # Delete the residue.
-        self.gui.interpreter.queue('residue.delete', res_id=id)
+        self.execute('residue.delete', res_id=id)
 
         # Update.
         self._update_residues(None)

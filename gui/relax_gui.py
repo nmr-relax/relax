@@ -30,6 +30,7 @@ from os import F_OK, access, getcwd, mkdir, sep
 import platform
 import sys
 from textwrap import wrap
+from thread import start_new_thread
 from time import sleep
 import webbrowser
 import wx
@@ -53,7 +54,7 @@ from gui.analyses import Analysis_controller
 from gui.base_classes import Container
 from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
-from gui.filedialog import RelaxFileDialog, opendir
+from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import Relax_task_bar_icon, relax_icons
 from gui.interpreter import Interpreter
@@ -66,7 +67,8 @@ from gui.references import References
 from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
 from gui.settings import Free_file_format, load_sequence
-from gui.user_functions import User_functions
+from gui.user_functions import User_functions; user_functions = User_functions()
+import test_suite
 
 
 class Main(wx.Frame):
@@ -75,14 +77,21 @@ class Main(wx.Frame):
     # Hard coded variables.
     min_width = 1000
     min_height = 600
-    sequence_file_msg = "please insert sequence file"
-    structure_file_pdb_msg = "please insert .pdb file"
 
     def __init__(self, parent=None, id=-1, title="", script=None):
         """Initialise the main relax GUI frame."""
 
+        # The main window style.
+        style = wx.DEFAULT_FRAME_STYLE
+        if not status.debug:
+            style = style | wx.MAXIMIZE
+
         # Execute the base class __init__ method.
-        super(Main, self).__init__(parent=parent, id=id, title=title, style=wx.DEFAULT_FRAME_STYLE|wx.MAXIMIZE)
+        super(Main, self).__init__(parent=parent, id=id, title=title, style=style)
+
+        # Force the main window to start maximised (needed for MS Windows).
+        if not status.debug:
+            self.Maximize()
 
         # Set up some standard interface-wide fonts.
         font.setup()
@@ -113,11 +122,11 @@ class Main(wx.Frame):
         # Initialise the GUI data.
         self.init_data()
 
-        # The user function GUI elements.
-        self.user_functions = User_functions(self)
-
         # Build the menu bar.
         self.menu = Menu(self)
+
+        # Build the toolbar.
+        self.toolbar()
 
         # Build the controller, but don't show it.
         self.controller = Controller(self)
@@ -126,10 +135,8 @@ class Main(wx.Frame):
         self.SetTitle("relax " + version)
 
         # Set up the status bar.
-        self.bar = self.CreateStatusBar(3, 0)
-        self.bar.SetStatusWidths([-4, -1, -2])
-        self.bar.SetStatusText("(C) 2001-2011 the relax development team", 0)
-        self.bar.SetStatusText("Current data pipe:", 1)
+        self.status_bar = self.CreateStatusBar(3, 0)
+        self.status_bar.SetStatusWidths([-4, -1, -2])
         self.update_status_bar()
 
         # Add the start screen.
@@ -140,15 +147,15 @@ class Main(wx.Frame):
 
         # Initialise the special interpreter thread object.
         self.interpreter = Interpreter()
-        self.interpreter.start()
-
-        # Run a script.
-        if script:
-            self.user_functions.script.script_exec(script)
 
         # Register functions with the observer objects.
         status.observers.pipe_alteration.register('status bar', self.update_status_bar)
-        status.observers.result_file.register('gui', self.show_results_viewer)
+        status.observers.result_file.register('gui', self.show_results_viewer_no_warn)
+        status.observers.exec_lock.register('gui', self.enable)
+
+        # Run a script.
+        if script:
+            wx.CallAfter(user_functions.script.script_exec, script)
 
 
     def about_gui(self, event):
@@ -208,7 +215,7 @@ class Main(wx.Frame):
         dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save file (*.bz2)|*.bz2', style=wx.FD_SAVE)
 
         # Show the dialog and catch if no file has been selected.
-        if dialog.ShowModal() != wx.ID_OK:
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
             # Don't do anything.
             return
 
@@ -274,8 +281,8 @@ class Main(wx.Frame):
         text = text + "\nClosing these will significantly speed up the calculations."
 
         # Display the error message dialog.
+        dlg = wx.MessageDialog(self, text, caption="Close windows", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
         if status.show_gui:
-            dlg = wx.MessageDialog(self, text, caption="Close windows", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
             dlg.ShowModal()
 
         # Otherwise output to stderr.
@@ -288,6 +295,23 @@ class Main(wx.Frame):
         webbrowser.open_new('mailto:relax-users@gna.org')
 
 
+    def enable(self):
+        """Enable and disable certain parts of the main window with the execution lock."""
+
+        # Flag for enabling or disabling the elements.
+        enable = False
+        if not status.exec_lock.locked():
+            enable = True
+
+        # The toolbar.
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_NEW, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_CLOSE, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_CLOSE_ALL, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_OPEN, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_SAVE, enable)
+        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_SAVE_AS, enable)
+
+
     def exit_gui(self, event=None):
         """Catch the main window closure and perform the exit procedure.
 
@@ -296,7 +320,9 @@ class Main(wx.Frame):
         """
 
         # Ask if the user is sure they would like to exit.
-        doexit = Question('Are you sure you would like to quit relax?  All unsaved data will be lost.', title='Exit relax', default=True).ShowModal()
+        doexit = wx.ID_YES
+        if status.show_gui:
+            doexit = Question('Are you sure you would like to quit relax?  All unsaved data will be lost.', title='Exit relax', default=True).ShowModal()
 
         # Exit.
         if doexit == wx.ID_YES:
@@ -391,12 +417,56 @@ class Main(wx.Frame):
         open_file(file)
 
 
+    def run_test_suite(self, event):
+        """Execute the full test suite.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if this should be done.
+        msg = "In running the test suite, relax will be reset and all data lost.  Are you sure you would like to run the test suite?"
+        if Question(msg, parent=self, default=False).ShowModal() == wx.ID_NO:
+            return
+
+        # Change the cursor to waiting.
+        wx.BeginBusyCursor()
+
+        # Reset relax.
+        reset()
+
+        # Show the relax controller.
+        self.show_controller(event)
+
+        # Yield
+        wx.GetApp().Yield(True)
+
+        # Prevent all new GUI elements from being shown.
+        status.show_gui = False
+
+        # Run the tests.
+        runner = test_suite.test_suite_runner.Test_suite_runner([], from_gui=True)
+        runner.run_all_tests()
+
+        # Reactive the GUI.
+        status.show_gui = True
+
+        # Turn off the busy cursor.
+        if wx.IsBusy():
+            wx.EndBusyCursor()
+
+
     def show_controller(self, event):
         """Display the relax controller window.
 
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Bring the window to the front.
+        if self.controller.IsShown():
+            self.controller.Raise()
+            return
 
         # Open the window.
         if status.show_gui:
@@ -413,11 +483,17 @@ class Main(wx.Frame):
         # Throw a warning if the execution lock is on.
         if status.exec_lock.locked():
             dlg = wx.MessageDialog(self, "Leaving the pipe editor window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
-            dlg.ShowModal()
+            if status.show_gui:
+                dlg.ShowModal()
 
         # Build the pipe editor if needed.
         if not hasattr(self, 'pipe_editor'):
             self.pipe_editor = Pipe_editor(gui=self)
+
+        # Bring the window to the front.
+        if self.pipe_editor.IsShown():
+            self.pipe_editor.Raise()
+            return
 
         # Open the window.
         if status.show_gui and not self.pipe_editor.IsShown():
@@ -435,6 +511,11 @@ class Main(wx.Frame):
         if not hasattr(self, 'relax_prompt'):
             self.relax_prompt = Prompt(None, -1, "", parent=self)
 
+        # Bring the window to the front.
+        if self.relax_prompt.IsShown():
+            self.relax_prompt.Raise()
+            return
+
         # Open the window.
         if status.show_gui:
             self.relax_prompt.Show()
@@ -448,24 +529,41 @@ class Main(wx.Frame):
         """
 
         # Show the results viewer in a thread safe way.
-        wx.CallAfter(self.show_results_viewer_safe)
+        wx.CallAfter(self.show_results_viewer_safe, warn=True)
 
 
-    def show_results_viewer_safe(self):
-        """Display the analysis results in a thread safe wx.CallAfter call."""
+    def show_results_viewer_safe(self, warn=False):
+        """Display the analysis results in a thread safe wx.CallAfter call.
+
+        @keyword warn:  A flag which if True will cause a message dialog to appear warning about keeping the window open with the execution lock.
+        @type warn:     bool
+        """
 
         # Throw a warning if the execution lock is on.
-        if status.exec_lock.locked():
+        if warn and status.exec_lock.locked():
             dlg = wx.MessageDialog(self, "Leaving the results viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
-            wx.CallAfter(dlg.ShowModal)
+            if status.show_gui:
+                wx.CallAfter(dlg.ShowModal)
 
         # Create the results viewer window if needed.
         if not hasattr(self, 'results_viewer'):
-            self.results_viewer = Results_viewer(gui=self)
+            self.results_viewer = Results_viewer(self)
+
+        # Bring the window to the front.
+        if self.results_viewer.IsShown():
+            self.results_viewer.Raise()
+            return
 
         # Open the window.
-        if not self.results_viewer.IsShown():
+        if status.show_gui and not self.results_viewer.IsShown():
             self.results_viewer.Show()
+
+
+    def show_results_viewer_no_warn(self):
+        """Display the analysis results."""
+
+        # Show the results viewer in a thread safe way with no warning dialog.
+        wx.CallAfter(self.show_results_viewer_safe, warn=False)
 
 
     def show_tree(self, event):
@@ -478,14 +576,20 @@ class Main(wx.Frame):
         # Throw a warning if the execution lock is on.
         if status.exec_lock.locked():
             dlg = wx.MessageDialog(self, "Leaving the spin viewer window open will slow down the calculations.", caption="Warning", style=wx.OK|wx.ICON_EXCLAMATION|wx.STAY_ON_TOP)
-            dlg.ShowModal()
+            if status.show_gui:
+                dlg.ShowModal()
 
         # Build the spin view window.
         if not hasattr(self, 'spin_viewer'):
             self.spin_viewer = Spin_view_window(None, -1, "", parent=self)
 
+        # Bring the window to the front.
+        if self.spin_viewer.IsShown():
+            self.spin_viewer.Raise()
+            return
+
         # Open the window (the GUI flag check is inside the Show method).
-        if not self.spin_viewer.IsShown():
+        if status.show_gui and not self.spin_viewer.IsShown():
             self.spin_viewer.Show()
 
 
@@ -508,7 +612,7 @@ class Main(wx.Frame):
             msg = "Loading a saved relax state file will cause all unsaved data to be lost.  Are you sure you would to open a save file?"
 
             # The dialog.
-            if Question(msg, default=True).ShowModal() == wx.ID_NO:
+            if status.show_gui and Question(msg, default=True).ShowModal() == wx.ID_NO:
                 return
 
         # Open the dialog.
@@ -516,7 +620,7 @@ class Main(wx.Frame):
             dialog = RelaxFileDialog(parent=self, message='Select the relax save state file', defaultFile='state.bz2', wildcard='relax save files (*.bz2;*.gz)|*.bz2;*.gz|All files (*)|*', style=wx.FD_OPEN)
 
             # Show the dialog and catch if no file has been selected.
-            if dialog.ShowModal() != wx.ID_OK:
+            if status.show_gui and dialog.ShowModal() != wx.ID_OK:
                 # Don't do anything.
                 return
 
@@ -542,18 +646,25 @@ class Main(wx.Frame):
             self.save_file = file_name
 
             # Load the relax state.
-            protected_exec(state.load_state, file_name, verbosity=0)
+            if protected_exec(state.load_state, file_name, verbosity=0):
+                # Reconstruct the analyses.
+                self.analysis.load_from_store()
 
-            # Reconstruct the analyses.
-            self.analysis.load_from_store()
+                # Update the core of the GUI to match the new data store.
+                self.sync_ds(upload=False)
 
-            # Update the core of the GUI to match the new data store.
-            self.sync_ds(upload=False)
+            # File loading failure.
+            else:
+                # Reinitialise the GUI data store structure.
+                self.init_data()
 
         # Reset the cursor, and thaw the GUI.
         finally:
             self.Thaw()
-            wx.EndBusyCursor()
+
+            # Turn off the busy cursor.
+            if wx.IsBusy():
+                wx.EndBusyCursor()
 
 
     def state_save(self):
@@ -567,7 +678,8 @@ class Main(wx.Frame):
             wx.BeginBusyCursor()
             state.save_state(self.save_file, verbosity=0, force=True)
         finally:
-            wx.EndBusyCursor()
+            if wx.IsBusy():
+                wx.EndBusyCursor()
 
 
     def sync_ds(self, upload=False):
@@ -586,6 +698,72 @@ class Main(wx.Frame):
                 page.sync_ds(upload)
 
 
+    def toolbar(self):
+        """Create the toolbar."""
+
+        # Init.
+        self.toolbar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT)
+
+        # The new analysis button.
+        self.TB_FILE_NEW = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_FILE_NEW, "New analysis", wx.Bitmap(paths.icon_22x22.new, wx.BITMAP_TYPE_ANY), shortHelp="New analysis")
+        self.Bind(wx.EVT_TOOL, self.analysis.menu_new, id=self.TB_FILE_NEW)
+
+        # The close analysis button.
+        self.TB_FILE_CLOSE = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_FILE_CLOSE, "Close analysis", wx.Bitmap(paths.icon_22x22.document_close, wx.BITMAP_TYPE_ANY), shortHelp="Close analysis")
+        self.Bind(wx.EVT_TOOL, self.analysis.menu_close, id=self.TB_FILE_CLOSE)
+
+        # The close all analyses button.
+        self.TB_FILE_CLOSE_ALL = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_FILE_CLOSE_ALL, "Close all analyses", wx.Bitmap(paths.icon_22x22.dialog_close, wx.BITMAP_TYPE_ANY), shortHelp="Close all analyses")
+        self.Bind(wx.EVT_TOOL, self.analysis.menu_close_all, id=self.TB_FILE_CLOSE_ALL)
+
+        # A separator.
+        self.toolbar.AddSeparator()
+
+        # The open state button.
+        self.TB_FILE_OPEN = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_FILE_OPEN, "Open relax state", wx.Bitmap(paths.icon_22x22.document_open, wx.BITMAP_TYPE_ANY), shortHelp="Open relax state")
+        self.Bind(wx.EVT_TOOL, self.state_load, id=self.TB_FILE_OPEN)
+
+        # The save state button.
+        self.TB_FILE_SAVE = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_FILE_SAVE, "Save relax state", wx.Bitmap(paths.icon_22x22.document_save, wx.BITMAP_TYPE_ANY), shortHelp="Save relax state")
+        self.Bind(wx.EVT_TOOL, self.action_state_save, id=self.TB_FILE_SAVE)
+
+        # The save as button.
+        self.TB_FILE_SAVE_AS = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_FILE_SAVE_AS, "Save as", wx.Bitmap(paths.icon_22x22.document_save_as, wx.BITMAP_TYPE_ANY), shortHelp="Save as")
+        self.Bind(wx.EVT_TOOL, self.action_state_save_as, id=self.TB_FILE_SAVE_AS)
+
+        # A separator.
+        self.toolbar.AddSeparator()
+
+        # The relax controller button.
+        self.TB_VIEW_CONTROLLER = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_VIEW_CONTROLLER, "Controller", wx.Bitmap(paths.icon_22x22.preferences_system_performance, wx.BITMAP_TYPE_ANY), shortHelp="relax controller")
+        self.Bind(wx.EVT_TOOL, self.show_controller, id=self.TB_VIEW_CONTROLLER)
+
+        # The spin viewer button.
+        self.TB_VIEW_SPIN_VIEW = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_VIEW_SPIN_VIEW, "Spin viewer", wx.Bitmap(paths.icon_22x22.spin, wx.BITMAP_TYPE_ANY), shortHelp="Spin viewer window")
+        self.Bind(wx.EVT_TOOL, self.show_tree, id=self.TB_VIEW_SPIN_VIEW)
+
+        # The results viewer button.
+        self.TB_VIEW_RESULTS = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_VIEW_RESULTS, "Results viewer", wx.Bitmap(paths.icon_22x22.view_statistics, wx.BITMAP_TYPE_ANY), shortHelp="Results viewer window")
+        self.Bind(wx.EVT_TOOL, self.show_results_viewer, id=self.TB_VIEW_RESULTS)
+
+        # The data pipe editor button.
+        self.TB_VIEW_PIPE_EDIT = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_VIEW_PIPE_EDIT, "Data pipe editor", wx.Bitmap(paths.icon_22x22.pipe, wx.BITMAP_TYPE_ANY), shortHelp="Data pipe editor")
+        self.Bind(wx.EVT_TOOL, self.show_pipe_editor, id=self.TB_VIEW_PIPE_EDIT)
+
+        # Build the toolbar.
+        self.toolbar.Realize()
+
+
     def update_status_bar(self):
         """Update the status bar info."""
 
@@ -597,19 +775,6 @@ class Main(wx.Frame):
             pipe = ''
 
         # Set the status.
-        wx.CallAfter(self.bar.SetStatusText, pipe, 2)
-
-
-    def wait_for_interpreter(self, wait_period=0.1):
-        """Return only once the interpreter thread has cleared all its queued calls.
-        @keyword wait_period:   The time in seconds to wait for the.
-        """
-
-        # Loop until finished.
-        while 1:
-            # Check that the queue has been cleared and that the global execution lock has been released.
-            if self.interpreter._queue.empty() and not status.exec_lock.locked():
-                break
-
-            # Otherwise sleep a little.
-            sleep(wait_period)
+        wx.CallAfter(self.status_bar.SetStatusText, "(C) 2001-2011 the relax development team", 0)
+        wx.CallAfter(self.status_bar.SetStatusText, "Current data pipe:", 1)
+        wx.CallAfter(self.status_bar.SetStatusText, pipe, 2)

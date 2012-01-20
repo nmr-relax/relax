@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -49,6 +49,7 @@ LIST_FLOAT = 'a list of floating point numbers'
 LIST_INT = 'a list of integers'
 LIST_NUM = 'a list of numbers'
 LIST_STR = 'a list of strings'
+MATRIX_FLOAT = 'a matrix of floating point numbers'
 NONE = 'None'
 NUM = 'a number'
 TUPLE = 'a tuple'
@@ -113,20 +114,20 @@ class BaseArgError(BaseError):
     # The allowed simple types.
     simple_types = []
 
-    # The allowed list types (anything with a length).
+    # The allowed list types (anything with a size).
     list_types = []
 
 
-    def __init__(self, name, value, length=None):
+    def __init__(self, name, value, size=None):
         """A default initialisation and error message formatting method."""
 
         # The initial part of the message.
         self.text = "The %s argument '%s' must be " % (name, value)
 
-        # Append the fixed length to the list types.
-        if length != None:
+        # Append the fixed size to the list types.
+        if size != None:
             for i in range(len(self.list_types)):
-                self.list_types[i] = self.list_types[i] + " of length %s" % length
+                self.list_types[i] = self.list_types[i] + " of size %s" % repr(size)
 
         # Combine all elements.
         all_types = self.simple_types + self.list_types
@@ -273,12 +274,12 @@ class RelaxNucleusError(BaseError):
 # Spin type not set.
 class RelaxSpinTypeError(BaseError):
     def __init__(self):
-        self.text = "The spin type has not yet been set.  Please use the value.set() user function to set the heteronucleus type."
+        self.text = "The spin type has not yet been set.  Please use the value.set user function to set the heteronucleus type."
 
 # Proton type not set.
 class RelaxProtonTypeError(BaseError):
     def __init__(self):
-        self.text = "The type of proton attached to the spin has not yet been set.  Please use the value.set() user function to set the proton type."
+        self.text = "The type of proton attached to the spin has not yet been set.  Please use the value.set user function to set the proton type."
 
 
 # Argument errors.
@@ -396,6 +397,9 @@ class RelaxNoneListError(BaseArgError):
 
 # List of floating point numbers.
 class RelaxListFloatError(BaseArgError):
+    list_types = [LIST_FLOAT]
+
+class RelaxNoneListFloatError(BaseArgError):
     list_types = [LIST_FLOAT]
 
 # List of floating point numbers or strings.
@@ -517,6 +521,17 @@ class RelaxNoneNumTupleNumError(BaseArgError):
     list_types = [TUPLE_NUM]
 
 
+# Matrix types.
+#~~~~~~~~~~~~~~
+
+# Matrix of floating point numbers.
+class RelaxMatrixFloatError(BaseArgError):
+    list_types = [MATRIX_FLOAT]
+
+class RelaxNoneMatrixFloatError(BaseArgError):
+    list_types = [MATRIX_FLOAT]
+
+
 
 # Sequence errors.
 ##################
@@ -572,15 +587,32 @@ class RelaxNoSpinError(BaseError):
 
 # The sequence data is not valid.
 class RelaxInvalidSeqError(BaseError):
-    def __init__(self, line):
-        self.text = "The sequence data in the line %s is invalid." % line
+    def __init__(self, line, problem=None):
+        if problem == None:
+            self.text = "The sequence data in the line %s is invalid." % line
+        else:
+            self.text = "The sequence data in the line %s is invalid, %s." % (line, problem)
 
 # The spins have not been loaded
 class RelaxSpinsNotLoadedError(BaseError):
     def __init__(self, spin_id):
-        self.text = "The spin information for the spin " + repr(spin_id) + " has not yet been loaded, please use the structure.load_spins() user function."
+        self.text = "The spin information for the spin " + repr(spin_id) + " has not yet been loaded, please use the structure.load_spins user function."
 
 
+
+
+# Spectral data errors.
+#######################
+
+# No spectral data.
+class RelaxNoSpectraError(BaseError):
+    def __init__(self, spectrum_id):
+        self.text = "Spectral data corresponding to the ID string '%s' does not exist." % spectrum_id
+
+# Spectral data already exists.
+class RelaxSpectraError(BaseError):
+    def __init__(self, spectrum_id):
+        self.text = "Spectral data corresponding to the ID string '%s' already exists." % spectrum_id
 
 
 # Relaxation data errors.
@@ -696,7 +728,7 @@ class RelaxNoPipeError(BaseError):
         if pipe != None:
             self.text = "The data pipe " + repr(pipe) + " has not been created yet."
         else:
-            self.text = "No data pipes currently exist.  Please use the pipe.create() user function first."
+            self.text = "No data pipes currently exist.  Please use the pipe.create user function first."
 
 
 # Spin-Residue-Molecule errors.

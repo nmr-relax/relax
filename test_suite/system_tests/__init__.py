@@ -28,9 +28,6 @@ from relax_errors import RelaxError
 from string import split
 from unittest import TestSuite
 
-# relax module imports.
-from test_suite.relax_test_runner import RelaxTestRunner
-
 # relax system/functional test module imports.
 from align_tensor import Align_tensor
 from angles import Angles
@@ -40,6 +37,7 @@ from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
 from frame_order import Frame_order
 from generic import Generic
+from grace import Grace
 from jw_mapping import Jw
 from load_spins import Load_spins
 from model_elimination import Modelim
@@ -52,6 +50,7 @@ from palmer import Palmer
 from pdc import Pdc
 from peak_lists import Peak_lists
 from pipes import Pipes
+from rdc import Rdc
 from relax_data import Relax_data
 from relax_fit import Relax_fit
 from results import Results
@@ -70,6 +69,7 @@ __all__ = ['align_tensor',
            'diffusion_tensor',
            'frame_order',
            'generic',
+           'grace',
            'jw_mapping',
            'load_spins',
            'model_elimination',
@@ -82,6 +82,7 @@ __all__ = ['align_tensor',
            'pdc',
            'peak_lists'
            'pipes',
+           'rdc',
            'relax_data',
            'relax_fit',
            'results',
@@ -94,14 +95,16 @@ __all__ = ['align_tensor',
 class System_test_runner:
     """Class for executing all of the system/functional tests."""
 
-    def run(self, tests=None):
+    def run(self, tests=None, runner=None):
         """Run the system/functional tests.
 
         The system test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
 
 
-        @keyword tests: The list of system tests to preform.
-        @type tests:    list of str
+        @keyword tests:     The list of system tests to preform.
+        @type tests:        list of str
+        @keyword runner:    A test runner such as TextTestRunner.  For an example of how to write a test runner see the python documentation for TextTestRunner in the python source.
+        @type runner:       Test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
         """
 
         # Create an array of test suites (add your new TestCase classes here).
@@ -135,6 +138,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
             suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
             suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Grace))
             suite_array.append(TestLoader().loadTestsFromTestCase(Jw))
             suite_array.append(TestLoader().loadTestsFromTestCase(Load_spins))
             suite_array.append(TestLoader().loadTestsFromTestCase(Modelim))
@@ -147,6 +151,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Pdc))
             suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
             suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Rdc))
             suite_array.append(TestLoader().loadTestsFromTestCase(Relax_data))
             suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
             suite_array.append(TestLoader().loadTestsFromTestCase(Results))
@@ -159,7 +164,7 @@ class System_test_runner:
         full_suite = TestSuite(suite_array)
 
         # Run the test suite.
-        results = RelaxTestRunner().run(full_suite)
+        results = runner.run(full_suite)
 
         # Return the status of the tests.
         return results.wasSuccessful()

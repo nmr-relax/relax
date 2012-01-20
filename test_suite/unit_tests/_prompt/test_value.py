@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008, 2010 Edward d'Auvergne                             #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -49,7 +49,7 @@ class Test_value(Value_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneNumStrListNumStrError, self.value_fns.set, val=data[1], param='CSA')
+            self.assertRaises(RelaxNoneNumStrListNumStrError, self.value_fns.set, val=data[1], param='csa')
 
 
     def test_set_argfail_param(self):

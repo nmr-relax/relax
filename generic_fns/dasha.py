@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -300,11 +300,11 @@ def create_script(file, model_type, algor):
                 jmode = 3
             elif 'te' in spin.params:
                 jmode = 2
-            elif 'S2' in spin.params:
+            elif 's2' in spin.params:
                 jmode = 1
 
             # Chemical exchange.
-            if 'Rex' in spin.params:
+            if 'rex' in spin.params:
                 exch = True
             else:
                 exch = False
@@ -363,13 +363,13 @@ def create_script(file, model_type, algor):
 
         # Write the results.
         file.write("\n# Write the results.\n")
-        file.write("write S2.out S\n")
-        file.write("write S2f.out Sf\n")
-        file.write("write S2s.out Ss\n")
+        file.write("write s2.out S\n")
+        file.write("write s2f.out Sf\n")
+        file.write("write s2s.out Ss\n")
         file.write("write te.out te\n")
         file.write("write tf.out tf\n")
         file.write("write ts.out ts\n")
-        file.write("write Rex.out rex\n")
+        file.write("write rex.out rex\n")
         file.write("write chi2.out F\n")
 
     else:
@@ -460,7 +460,7 @@ def extract(dir):
         raise RelaxDirError('Dasha', dir)
 
     # Loop over the parameters.
-    for param in ['S2', 'S2f', 'S2s', 'te', 'tf', 'ts', 'Rex']:
+    for param in ['s2', 's2f', 's2s', 'te', 'tf', 'ts', 'rex']:
         # The file name.
         file_name = dir + sep + param + '.out'
 
@@ -471,7 +471,7 @@ def extract(dir):
         # Scaling.
         if param in ['te', 'tf', 'ts']:
             scaling = 1e-9
-        elif param == 'Rex':
+        elif param == 'rex':
             scaling = 1.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]]) ** 2
         else:
             scaling = 1.0

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2010 Edward d'Auvergne                         #
+# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -237,13 +237,15 @@ class PCS(User_fn_class):
         pcs.delete(align_id=align_id)
 
 
-    def display(self, align_id=None):
+    def display(self, align_id=None, bc=False):
         """Display the PCS data corresponding to the alignment ID.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         align_id:  The alignment ID string.
+
+        bc:  A flag which if set will display the back-calculated rather than measured RDCs.
 
 
         Examples
@@ -257,14 +259,16 @@ class PCS(User_fn_class):
         # Function intro text.
         if self._exec_info.intro:
             text = self._exec_info.ps3 + "pcs.display("
-            text = text + "align_id=" + repr(align_id) + ")"
+            text = text + "align_id=" + repr(align_id)
+            text = text + ", bc=" + repr(bc) + ")"
             print(text)
 
         # The argument checks.
         arg_check.is_str(align_id, 'alignment ID string')
+        arg_check.is_bool(bc, 'back-calculation flag')
 
         # Execute the functional code.
-        pcs.display(align_id=align_id)
+        pcs.display(align_id=align_id, bc=bc)
 
 
     def read(self, align_id=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
@@ -403,7 +407,7 @@ class PCS(User_fn_class):
         pcs.weight(align_id=align_id, spin_id=spin_id, weight=weight)
 
 
-    def write(self, align_id=None, file=None, dir=None, force=False):
+    def write(self, align_id=None, file=None, dir=None, bc=False, force=False):
         """Write the PCS data to file.
 
         Keyword Arguments
@@ -414,6 +418,8 @@ class PCS(User_fn_class):
         file:  The name of the file.
 
         dir:  The directory name.
+
+        bc:  A flag which if set will write out the back-calculated rather than measured RDCs.
 
         force:  A flag which if True will cause the file to be overwritten.
 
@@ -431,6 +437,7 @@ class PCS(User_fn_class):
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
+            text = text + ", bc=" + repr(bc)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
@@ -438,7 +445,8 @@ class PCS(User_fn_class):
         arg_check.is_str(align_id, 'alignment ID string')
         arg_check.is_str(file, 'file name')
         arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(bc, 'back-calculation flag')
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        pcs.write(align_id=align_id, file=file, dir=dir, force=force)
+        pcs.write(align_id=align_id, file=file, dir=dir, bc=bc, force=force)

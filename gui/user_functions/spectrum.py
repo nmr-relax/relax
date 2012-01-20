@@ -31,80 +31,67 @@ import wx
 from base import UF_base, UF_page
 from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Spectrum(UF_base):
     """The container class for holding all GUI elements."""
 
-    def baseplane_rmsd(self, event):
-        """The spectrum.baseplane_rmsd user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def baseplane_rmsd(self):
+        """The spectrum.baseplane_rmsd user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=500, title=self.get_title('spectrum', 'baseplane_rmsd'))
-        page = Baseplane_rmsd_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=500, name='spectrum.baseplane_rmsd', uf_page=Baseplane_rmsd_page)
         wizard.run()
 
 
-    def error_analysis(self, event):
-        """The spectrum.error_analysis user function.
+    def delete(self, spectrum_id=None):
+        """The spectrum.delete user function.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @keyword spectrum_id:   The starting spectrum ID string.
+        @type spectrum_id:      str
         """
 
+        # Create the wizard.
+        wizard, page = self.create_wizard(size_x=700, size_y=400, name='spectrum.delete', uf_page=Delete_page, return_page=True)
+
+        # Default ID.
+        if spectrum_id:
+            page.spectrum_id.SetValue(str_to_gui(spectrum_id))
+
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('spectrum', 'error_analysis'))
-        page = Error_analysis_page(wizard, self.gui)
-        wizard.add_page(page, apply_button=False)
         wizard.run()
 
 
-    def integration_points(self, event):
-        """The spectrum.integration_points user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def error_analysis(self):
+        """The spectrum.error_analysis user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spectrum', 'integration_points'))
-        page = Integration_points_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=1000, size_y=700, name='spectrum.error_analysis', uf_page=Error_analysis_page, apply_button=False)
         wizard.run()
 
 
-    def read_intensities(self, event):
-        """The spectrum.read_intensities user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def integration_points(self):
+        """The spectrum.integration_points user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=800, title=self.get_title('spectrum', 'read_intensities'))
-        page = Read_intensities_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spectrum.integration_points', uf_page=Integration_points_page)
         wizard.run()
 
 
-    def replicated(self, event):
-        """The spectrum.replicated user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def read_intensities(self):
+        """The spectrum.read_intensities user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('spectrum', 'replicated'))
-        page = Replicated_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=1000, size_y=800, name='spectrum.read_intensities', uf_page=Read_intensities_page)
+        wizard.run()
+
+
+    def replicated(self):
+        """The spectrum.replicated user function."""
+
+        # Execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='spectrum.replicated', uf_page=Replicated_page)
         wizard.run()
 
 
@@ -136,6 +123,9 @@ class Baseplane_rmsd_page(UF_page):
     def on_display(self):
         """Update the UI."""
 
+        # Clear the previous data.
+        self.spectrum_id.Clear()
+
         # Set the spectrum ID names.
         if hasattr(cdp, 'spectrum_ids'):
             for id in cdp.spectrum_ids:
@@ -151,7 +141,51 @@ class Baseplane_rmsd_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spectrum.baseplane_rmsd', error=error, spectrum_id=spectrum_id, spin_id=spin_id)
+        self.execute('spectrum.baseplane_rmsd', error=error, spectrum_id=spectrum_id, spin_id=spin_id)
+
+
+
+class Delete_page(UF_page):
+    """The spectrum.read() user function page."""
+
+    # Some class variables.
+    image_path = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
+    uf_path = ['spectrum', 'delete']
+
+    def add_contents(self, sizer):
+        """Add the spectral data deletion specific GUI elements.
+
+        @param sizer:   A sizer object.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The ID.
+        self.spectrum_id = self.combo_box(sizer, "The spectrum ID:", tooltip=self.uf._doc_args_dict['spectrum_id'])
+
+
+    def on_execute(self):
+        """Execute the user function."""
+
+        # The ID.
+        spectrum_id = gui_to_str(self.spectrum_id.GetValue())
+
+        # Delete the spectral data.
+        self.execute('spectrum.delete', spectrum_id=spectrum_id)
+
+
+    def on_display(self):
+        """Clear previous data and update the label lists."""
+
+        # Clear the previous data.
+        self.spectrum_id.Clear()
+
+        # No data, so don't try to fill the combo boxes.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return
+
+        # The spectrum IDs.
+        for i in range(len(cdp.spectrum_ids)):
+            self.spectrum_id.Append(str_to_gui(cdp.spectrum_ids[i]))
 
 
 
@@ -174,7 +208,7 @@ class Error_analysis_page(UF_page):
         """Execute the user function."""
 
         # Execute.
-        self.gui.interpreter.queue('spectrum.error_analysis')
+        self.execute('spectrum.error_analysis')
 
 
 
@@ -205,6 +239,9 @@ class Integration_points_page(UF_page):
     def on_display(self):
         """Update the UI."""
 
+        # Clear the previous data.
+        self.spectrum_id.Clear()
+
         # Set the spectrum ID names.
         if hasattr(cdp, 'spectrum_ids'):
             for id in cdp.spectrum_ids:
@@ -220,7 +257,7 @@ class Integration_points_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Execute.
-        self.gui.interpreter.queue('spectrum.integration_points', N=N, spectrum_id=spectrum_id, spin_id=spin_id)
+        self.execute('spectrum.integration_points', N=N, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
 
@@ -299,7 +336,7 @@ class Read_intensities_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the peak intensities.
-        self.gui.interpreter.queue('spectrum.read_intensities', file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_method=int_method, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
+        self.execute('spectrum.read_intensities', file=file, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_method=int_method, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
 
 
 
@@ -318,43 +355,45 @@ class Replicated_page(UF_page):
         """
 
         # The spectrum IDs.
-        self.spectrum_id1 = self.combo_box(sizer, "The 1st spectrum ID:", tooltip="The ID string of the first of the replicated spectra.")
-        self.spectrum_id2 = self.combo_box(sizer, "The 2nd spectrum ID:", tooltip="The ID string of the second spectrum which is a replicate of the first spectrum.")
-        self.spectrum_id3 = self.combo_box(sizer, "The 3rd spectrum ID:", tooltip="The ID string of the third spectrum which is a replicate of the first spectrum.")
-        self.spectrum_id4 = self.combo_box(sizer, "The 4th spectrum ID:", tooltip="The ID string of the fourth spectrum which is a replicate of the first spectrum.")
-        self.spectrum_id5 = self.combo_box(sizer, "The 5th spectrum ID:", tooltip="The ID string of the fifth spectrum which is a replicate of the first spectrum.")
+        self.spectrum_id_boxes = []
+        self.spectrum_id_boxes.append(self.combo_box(sizer, "The 1st spectrum ID:", tooltip="The ID string of the first of the replicated spectra."))
+        self.spectrum_id_boxes.append(self.combo_box(sizer, "The 2nd spectrum ID:", tooltip="The ID string of the second spectrum which is a replicate of the first spectrum."))
+        self.spectrum_id_boxes.append(self.combo_box(sizer, "The 3rd spectrum ID:", tooltip="The ID string of the third spectrum which is a replicate of the first spectrum."))
+        self.spectrum_id_boxes.append(self.combo_box(sizer, "The 4th spectrum ID:", tooltip="The ID string of the fourth spectrum which is a replicate of the first spectrum."))
+        self.spectrum_id_boxes.append(self.combo_box(sizer, "The 5th spectrum ID:", tooltip="The ID string of the fifth spectrum which is a replicate of the first spectrum."))
 
 
     def on_display(self):
         """Update the UI."""
 
-        # Set the spectrum ID names.
-        if hasattr(cdp, 'spectrum_ids'):
-            for id in cdp.spectrum_ids:
-                self.spectrum_id1.Append(str_to_gui(id))
-                self.spectrum_id2.Append(str_to_gui(id))
-                self.spectrum_id3.Append(str_to_gui(id))
-                self.spectrum_id4.Append(str_to_gui(id))
-                self.spectrum_id5.Append(str_to_gui(id))
+        # Loop over each box.
+        for i in range(len(self.spectrum_id_boxes)):
+            # First clear all data.
+            self.spectrum_id_boxes[i].Clear()
+
+            # Set the spectrum ID names.
+            if hasattr(cdp, 'spectrum_ids'):
+                for id in cdp.spectrum_ids:
+                    self.spectrum_id_boxes[i].Append(str_to_gui(id))
 
 
     def on_execute(self):
         """Execute the user function."""
 
-        # Get the values.
-        val = []
-        val.append(gui_to_str(self.spectrum_id1.GetValue()))
-        val.append(gui_to_str(self.spectrum_id2.GetValue()))
-        val.append(gui_to_str(self.spectrum_id3.GetValue()))
-        val.append(gui_to_str(self.spectrum_id4.GetValue()))
-        val.append(gui_to_str(self.spectrum_id5.GetValue()))
-
-        # The ID list.
+        # Loop over each box.
         spectrum_ids = []
-        for i in range(len(val)):
-            if val[i] != None:
-                spectrum_ids.append(val[i])
+        for i in range(len(self.spectrum_id_boxes)):
+            # No selection (fix for Mac OS X).
+            if self.spectrum_id_boxes[i].GetSelection() == -1:
+                continue
+
+            # Get the value.
+            val = gui_to_str(self.spectrum_id_boxes[i].GetValue())
+
+            # Add the value to the list if not None.
+            if val != None:
+                spectrum_ids.append(val)
 
         # Execute (only if more than one ID is given).
         if len(spectrum_ids) > 1:
-            self.gui.interpreter.queue('spectrum.replicated', spectrum_ids=spectrum_ids)
+            self.execute('spectrum.replicated', spectrum_ids=spectrum_ids)

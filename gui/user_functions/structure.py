@@ -33,140 +33,75 @@ from generic_fns.pipes import cdp_name, pipe_names
 
 # GUI module imports.
 from base import UF_base, UF_page
-from gui.misc import float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_str, str_to_gui
+from gui.misc import float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_int_or_list, gui_to_str, gui_to_str_or_list, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Structure(UF_base):
     """The container class for holding all GUI elements."""
 
-    def create_diff_tensor_pdb(self, event):
-        """The structure.create_diff_tensor_pdb user function.
+    def create_diff_tensor_pdb(self):
+        """The structure.create_diff_tensor_pdb user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=900, size_y=800, title=self.get_title('structure', 'create_diff_tensor_pdb'))
-        page = Create_diff_tensor_pdb_page(wizard, self.gui)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=900, size_y=800, name='structure.create_diff_tensor_pdb', uf_page=Create_diff_tensor_pdb_page)
         wizard.run()
 
 
-    def create_vector_dist(self, event):
-        """The structure.create_vector_dist user function.
+    def create_vector_dist(self):
+        """The structure.create_vector_dist user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=700, title=self.get_title('structure', 'create_vector_dist'))
-        page = Create_vector_dist_page(wizard, self.gui)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=700, name='structure.create_vector_dist', uf_page=Create_vector_dist_page)
         wizard.run()
 
 
-    def delete(self, event):
-        """The structure.delete user function.
+    def delete(self):
+        """The structure.delete user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('structure', 'delete'))
-        page = Delete_page(wizard, self.gui)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=600, size_y=400, name='structure.delete', uf_page=Delete_page)
         wizard.run()
 
 
-    def get_pos(self, event):
-        """The structure.get_pos user function.
+    def get_pos(self):
+        """The structure.get_pos user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'get_pos'))
-        page = Get_pos_page(wizard, self.gui)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='structure.get_pos', uf_page=Get_pos_page)
         wizard.run()
 
 
-    def load_spins(self, event):
-        """The structure.load_spins user function.
+    def load_spins(self):
+        """The structure.load_spins user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'load_spins'))
-        page = Load_spins_page(wizard, self.gui)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='structure.load_spins', uf_page=Load_spins_page)
         wizard.run()
 
 
-    def read_pdb(self, event):
-        """The structure.read_pdb user function.
+    def read_pdb(self):
+        """The structure.read_pdb user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'read_pdb'))
-        page = Read_pdb_page(wizard, self.gui)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='structure.read_pdb', uf_page=Read_pdb_page)
         wizard.run()
 
 
-    def write_pdb(self, event):
-        """The structure.write_pdb user function.
+    def write_pdb(self):
+        """The structure.write_pdb user function."""
 
-        @param event:       The wx event.
-        @type event:        wx event
-        """
-
-        # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'write_pdb'))
-        page = Write_pdb_page(wizard, self.gui)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        # Create and execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='structure.write_pdb', uf_page=Write_pdb_page)
         wizard.run()
 
 
-    def vectors(self, event):
-        """The structure.vectors user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def vectors(self):
+        """The structure.vectors user function."""
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('structure', 'vectors'))
-        page = Vectors_page(wizard, self.gui)
-        wizard.add_page(page)
-
-        # Execute the wizard.
+        wizard = self.create_wizard(size_x=800, size_y=600, name='structure.vectors', uf_page=Vectors_page)
         wizard.run()
 
 
@@ -212,7 +147,7 @@ class Create_diff_tensor_pdb_page(UF_page):
         scale = gui_to_float(self.scale.GetValue())
 
         # Delete all structures.
-        self.gui.interpreter.queue('structure.create_diff_tensor_pdb', scale=scale, file=file, force=force)
+        self.execute('structure.create_diff_tensor_pdb', scale=scale, file=file, force=force)
 
 
 
@@ -259,7 +194,7 @@ class Create_vector_dist_page(UF_page):
         length = gui_to_float(self.length.GetValue())
 
         # Delete all structures.
-        self.gui.interpreter.queue('structure.create_vector_dist', length=length, file=file, symmetry=symmetry, force=force)
+        self.execute('structure.create_vector_dist', length=length, file=file, symmetry=symmetry, force=force)
 
 
 
@@ -281,7 +216,7 @@ class Delete_page(UF_page):
         """Execute the user function."""
 
         # Delete all structures.
-        self.gui.interpreter.queue('structure.delete')
+        self.execute('structure.delete')
 
 
 
@@ -314,7 +249,7 @@ class Get_pos_page(UF_page):
         ave_pos = gui_to_bool(self.ave_pos.GetValue())
 
         # Delete all structures.
-        self.gui.interpreter.queue('structure.get_pos', spin_id=spin_id, ave_pos=ave_pos)
+        self.execute('structure.get_pos', spin_id=spin_id, ave_pos=ave_pos)
 
 
 
@@ -347,7 +282,7 @@ class Load_spins_page(UF_page):
         ave_pos = gui_to_bool(self.ave_pos.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('structure.load_spins', spin_id=spin_id, ave_pos=ave_pos)
+        self.execute('structure.load_spins', spin_id=spin_id, ave_pos=ave_pos)
 
 
 
@@ -390,14 +325,14 @@ class Read_pdb_page(UF_page):
 
         # The args.
         file = gui_to_str(self.file.GetValue())
-        read_mol = gui_to_str(self.read_mol.GetValue())
-        set_mol_name = gui_to_str(self.set_mol_name.GetValue())
-        read_model = gui_to_str(self.read_model.GetValue())
-        set_model_num = gui_to_str(self.set_model_num.GetValue())
+        read_mol = gui_to_int_or_list(self.read_mol.GetValue())
+        set_mol_name = gui_to_str_or_list(self.set_mol_name.GetValue())
+        read_model = gui_to_int_or_list(self.read_model.GetValue())
+        set_model_num = gui_to_int_or_list(self.set_model_num.GetValue())
         parser = gui_to_str(self.parser.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('structure.read_pdb', file=file, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
+        self.execute('structure.read_pdb', file=file, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
 
 
 
@@ -430,7 +365,7 @@ class Write_pdb_page(UF_page):
         model_num = gui_to_str(self.model_num.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('structure.write_pdb', file=file, model_num=model_num)
+        self.execute('structure.write_pdb', file=file, model_num=model_num)
 
 
 
@@ -479,4 +414,4 @@ class Vectors_page(UF_page):
         unit =      gui_to_bool(self.unit.GetValue())
 
         # Execute the user function.
-        self.gui.interpreter.queue('structure.vectors', attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
+        self.execute('structure.vectors', attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)

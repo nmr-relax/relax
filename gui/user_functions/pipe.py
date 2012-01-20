@@ -34,80 +34,49 @@ from base import UF_base, UF_page
 from gui.misc import gui_to_list, gui_to_str, str_to_gui
 from gui.components.combo_list import Combo_list
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Pipe(UF_base):
     """The container class for holding all GUI elements."""
 
-    def copy(self, event):
-        """The pipe.copy user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def copy(self):
+        """The pipe.copy user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('pipe', 'copy'))
-        page = Copy_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=600, size_y=400, name='pipe.copy', uf_page=Copy_page)
         wizard.run()
 
 
-    def create(self, event):
-        """The pipe.create user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def create(self):
+        """The pipe.create user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=500, title=self.get_title('pipe', 'create'))
-        page = Create_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=700, size_y=500, name='pipe.create', uf_page=Create_page)
         wizard.run()
 
 
-    def delete(self, event):
-        """The pipe.delete user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def delete(self):
+        """The pipe.delete user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=600, size_y=400, title=self.get_title('pipe', 'delete'))
-        page = Delete_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=600, size_y=400, name='pipe.delete', uf_page=Delete_page)
         wizard.run()
 
 
-    def hybridise(self, event):
-        """The pipe.hybridise user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def hybridise(self):
+        """The pipe.hybridise user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=800, title=self.get_title('pipe', 'hybridise'))
-        page = Hybridise_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=800, name='pipe.hybridise', uf_page=Hybridise_page)
         wizard.run()
 
 
-    def switch(self, event):
-        """The pipe.switch user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def switch(self):
+        """The pipe.switch user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=650, size_y=450, title=self.get_title('pipe', 'switch'))
-        page = Switch_page(wizard, self.gui)
-        wizard.add_page(page, apply_button=False)
+        wizard = self.create_wizard(size_x=650, size_y=450, name='pipe.switch', uf_page=Switch_page, apply_button=False)
         wizard.run()
 
 
@@ -155,7 +124,7 @@ class Copy_page(UF_page):
         pipe_to = gui_to_str(self.pipe_to.GetValue())
 
         # Copy the data pipe.
-        self.gui.interpreter.queue('pipe.copy', pipe_from, pipe_to)
+        self.execute('pipe.copy', pipe_from, pipe_to)
 
 
 
@@ -191,7 +160,7 @@ class Create_page(UF_page):
         pipe_type = self.pipe_type.GetClientData(self.pipe_type.GetSelection())
 
         # Set the name.
-        self.gui.interpreter.queue('pipe.create', pipe_name=pipe_name, pipe_type=pipe_type)
+        self.execute('pipe.create', pipe_name=pipe_name, pipe_type=pipe_type)
 
 
 
@@ -235,7 +204,7 @@ class Delete_page(UF_page):
         pipe_name = str(self.pipe_name.GetValue())
 
         # Delete the data pipe.
-        self.gui.interpreter.queue('pipe.delete', pipe_name)
+        self.execute('pipe.delete', pipe_name)
 
 
 
@@ -269,7 +238,7 @@ class Hybridise_page(UF_page):
         pipes = gui_to_list(self.pipes.GetValue())
 
         # Delete the data pipe.
-        self.gui.interpreter.queue('pipe.hybridise', hybrid=hybrid, pipes=pipes)
+        self.execute('pipe.hybridise', hybrid=hybrid, pipes=pipes)
 
 
 
@@ -317,4 +286,4 @@ class Switch_page(UF_page):
         pipe_name = str(self.pipe_name.GetValue())
 
         # Switch the data pipe.
-        self.gui.interpreter.queue('pipe.switch', pipe_name)
+        self.execute('pipe.switch', pipe_name)

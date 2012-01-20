@@ -33,12 +33,8 @@ from base import UF_base
 class Gpl(UF_base):
     """The gpl user function GUI class."""
 
-    def run(self, event):
-        """The gpl user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
+    def run(self):
+        """The gpl user function."""
 
         # Send the GPL text to STDOUT.
         print gpl.__doc__

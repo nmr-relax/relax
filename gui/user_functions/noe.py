@@ -35,38 +35,25 @@ from generic_fns import pipes
 from base import UF_base, UF_page
 from gui.paths import ANALYSIS_IMAGE_PATH
 from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Noe(UF_base):
     """The container class for holding all GUI elements."""
 
-    def read_restraints(self, event):
-        """The noe.read_restraints user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def read_restraints(self):
+        """The noe.read_restraints user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('noe', 'read_restraints'))
-        page = Read_restraints_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='noe.read_restraints', uf_page=Read_restraints_page)
         wizard.run()
 
 
-    def spectrum_type(self, event):
-        """The noe.spectrum_type user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def spectrum_type(self):
+        """The noe.spectrum_type user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=800, size_y=600, title=self.get_title('noe', 'spectrum_type'))
-        page = Spectrum_type_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=800, size_y=600, name='noe.spectrum_type', uf_page=Spectrum_type_page)
         wizard.run()
 
 
@@ -123,7 +110,7 @@ class Read_restraints_page(UF_page):
             sep = None
 
         # Read the NOESY data.
-        self.gui.interpreter.queue('noe.read_restraints', file=file, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
+        self.execute('noe.read_restraints', file=file, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
 
 
 
@@ -163,7 +150,7 @@ class Spectrum_type_page(UF_page):
         spectrum_id = gui_to_str(self.spectrum_id.GetValue())
 
         # Read the relaxation data.
-        self.gui.interpreter.queue('noe.spectrum_type', spectrum_type=spectrum_type, spectrum_id=spectrum_id)
+        self.execute('noe.spectrum_type', spectrum_type=spectrum_type, spectrum_id=spectrum_id)
 
 
     def on_display(self):

@@ -33,26 +33,25 @@ from status import Status; status = Status()
 # GUI module imports.
 from base import UF_base
 from gui.filedialog import RelaxFileDialog
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 
 
 class Script(UF_base):
     """The script user function GUI class."""
 
-    def run(self, event, file=None):
+    def run(self, file=None):
         """The script user function GUI element.
 
-        @param event:   The wx event.
-        @type event:    wx event
         @param file:    The path of the script to execute, if already known.  If not given, a file selection dialog will appear.
         @type file:     str
         """
 
         # User selection of the file.
         if not file:
-            dialog = RelaxFileDialog(parent=self, message='Select the relax script to execute', wildcard='relax scripts (*.py)|*.py', style=wx.FD_OPEN)
+            dialog = RelaxFileDialog(parent=None, message='Select the relax script to execute', wildcard='relax scripts (*.py)|*.py', style=wx.FD_OPEN)
 
             # Show the dialog and catch if no file has been selected.
-            if dialog.ShowModal() != wx.ID_OK:
+            if status.show_gui and dialog.ShowModal() != wx.ID_OK:
                 # Don't do anything.
                 return
 
@@ -61,7 +60,8 @@ class Script(UF_base):
 
         # Show the relax controller.
         if status.show_gui:
-            self.gui.controller.Show()
+            app = wx.GetApp()
+            app.gui.controller.Show()
 
         # Execute the script in a thread.
         id = thread.start_new_thread(self.script_exec, (file,))
@@ -75,4 +75,4 @@ class Script(UF_base):
         """
 
         # Execute the user function.
-        self.gui.interpreter.queue('script', str(file))
+        interpreter.apply('script', str(file))

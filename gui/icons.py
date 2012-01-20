@@ -111,7 +111,7 @@ class Relax_task_bar_icon(wx.TaskBarIcon):
         """
 
         # Show relax.
-        if not self.gui.IsShown():
+        if status.show_gui and not self.gui.IsShown():
             self.gui.Show(True)
 
         # De-iconise relax.

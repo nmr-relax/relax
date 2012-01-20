@@ -82,6 +82,9 @@ class Analysis_controller:
         self.name = 'notebook page switcher'
         status.observers.pipe_alteration.register(self.name, self.pipe_switch)
 
+        # Register a method for removing analyses if the associated pipe is deleted.
+        status.observers.pipe_alteration.register('notebook pipe deletion', self.pipe_deletion)
+
         # Register the deletion of all analyses for the reset status observer.
         status.observers.reset.register('gui analyses', self.post_reset)
 
@@ -160,6 +163,9 @@ class Analysis_controller:
 
         # Delete the current tabs.
         while self._num_analyses:
+            # Flush all pending events (bug fix for MS Windows).
+            wx.Yield()
+
             # Remove the last analysis, until there is nothing left.
             self.delete_analysis(self._num_analyses-1)
 
@@ -174,12 +180,20 @@ class Analysis_controller:
         @type index:    int
         """
 
+        # Decrement the number of analyses.
+        self._num_analyses -= 1
+
+        # Shift the current page back one if necessary.
+        if self._current > index:
+            self._current -= 1
+
         # Execute the analysis delete method, if it exists.
         if hasattr(self._analyses[index], 'delete'):
             self._analyses[index].delete()
 
         # Delete all data pipes associated with the analysis.
-        pipes.delete(ds.relax_gui.analyses[index].pipe_name)
+        if pipes.has_pipe(ds.relax_gui.analyses[index].pipe_name):
+            pipes.delete(ds.relax_gui.analyses[index].pipe_name)
 
         # Delete the data store object.
         ds.relax_gui.analyses.pop(index)
@@ -189,9 +203,6 @@ class Analysis_controller:
 
         # Delete the tab object.
         self._analyses.pop(index)
-
-        # Decrement the number of analyses.
-        self._num_analyses -= 1
 
         # The current page has been deleted, so switch one back (if possible).
         if index == self._current and self._current != 0:
@@ -285,7 +296,7 @@ class Analysis_controller:
 
         # Ask if this should be done.
         msg = "Are you sure you would like to close the current %s analysis tab?" % ds.relax_gui.analyses[index].analysis_type
-        if Question(msg, title="Close current analysis", size=(350, 140), default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, title="Close current analysis", size=(350, 140), default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete.
@@ -305,7 +316,7 @@ class Analysis_controller:
 
         # Ask if this should be done.
         msg = "Are you sure you would like to close all analyses?  All data will be erased and the relax data store reset."
-        if Question(msg, title="Close all analyses", size=(350, 150), default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, title="Close all analyses", size=(350, 150), default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete.
@@ -372,7 +383,8 @@ class Analysis_controller:
             sizer.Add(self.notebook, 1, wx.ALL|wx.EXPAND, 0)
 
             # Bind changing events.
-            self.gui.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.on_page_change)
+            self.gui.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.on_page_changing)
+            self.gui.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.on_page_changed)
 
             # Delete the previous sizer.
             old_sizer = self.gui.GetSizer()
@@ -425,14 +437,15 @@ class Analysis_controller:
 
         # Thaw the GUI.
         self.gui.Thaw()
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
         # Notify the observers of the change.
         status.observers.gui_analysis.notify()
 
 
-    def on_page_change(self, event):
-        """Handle page changes.
+    def on_page_changing(self, event):
+        """Block page changing if needed.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -443,16 +456,23 @@ class Analysis_controller:
             # Show an error message.
             error_message("Cannot change analyses, relax is currently executing.", "relax execution lock")
 
-            # Veto the event, and return.
+            # Veto the event.
             event.Veto()
-            return
+
+
+    def on_page_changed(self, event):
+        """Handle page changes.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
 
         # The index.
         self._current = event.GetSelection()
 
         # Switch to the major data pipe of that page if not the current one.
         if self._switch_flag and pipes.cdp_name() != ds.relax_gui.analyses[self._current].pipe_name:
-            self.gui.interpreter.pipe.switch(ds.relax_gui.analyses[self._current].pipe_name)
+            self.gui.interpreter.queue('pipe.switch', ds.relax_gui.analyses[self._current].pipe_name)
 
         # Normal operation.
         event.Skip()
@@ -500,6 +520,23 @@ class Analysis_controller:
 
         # Return the page name.
         return ds.relax_gui.analyses[index].analysis_name
+
+
+    def pipe_deletion(self):
+        """Remove analysis tabs for which the associated data pipe has been deleted."""
+
+        # Loop over the analyses, noting which no longer have a data pipe.
+        del_list = []
+        for i in range(self._num_analyses):
+            if not pipes.has_pipe(ds.relax_gui.analyses[i].pipe_name):
+                del_list.append(i)
+
+        # Reverse the order of the list so the removal works correctly.
+        del_list.reverse()
+
+        # Delete the analyses.
+        for index in del_list:
+            self.delete_analysis(index)
 
 
     def pipe_switch(self, pipe=None):

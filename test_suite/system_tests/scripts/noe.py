@@ -44,8 +44,8 @@ calc()
 value.write(param='noe', file='devnull', force=True)
 
 # Create grace files.
-grace.write(y_data_type='ref_ave', file='devnull', force=True)
-grace.write(y_data_type='sat_ave', file='devnull', force=True)
+grace.write(y_data_type='ref', file='devnull', force=True)
+grace.write(y_data_type='sat', file='devnull', force=True)
 grace.write(y_data_type='noe', file='devnull', force=True)
 
 # Write the results.

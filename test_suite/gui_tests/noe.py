@@ -32,6 +32,7 @@ from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import int_to_gui, str_to_gui
 from gui.user_functions import deselect, sequence, spin
 from gui.wizard import Wiz_window
@@ -43,22 +44,27 @@ class Noe(GuiTestCase):
     def test_noe_analysis(self):
         """Test the NOE analysis."""
 
+        # Initialise all the special windows (to sometimes catch rare race conditions).
+        self.app.gui.show_prompt(None)
+        self.app.gui.show_tree(None)
+        self.app.gui.show_pipe_editor(None)
+
         # Simulate the new analysis wizard.
-        self.gui.analysis.menu_new(None)
-        page = self.gui.analysis.new_wizard.wizard.get_page(0)
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
         page.select_noe(None)
-        self.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.gui.analysis.new_wizard.wizard.get_page(1)
-        self.gui.analysis.new_wizard.wizard._go_next(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
         # Get the data.
-        analysis_type, analysis_name, pipe_name = self.gui.analysis.new_wizard.get_data()
+        analysis_type, analysis_name, pipe_name = self.app.gui.analysis.new_wizard.get_data()
 
         # Set up the analysis.
-        self.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
 
         # Alias the analysis.
-        analysis = self.gui.analysis.get_page_from_name("Steady-state NOE")
+        analysis = self.app.gui.analysis.get_page_from_name("Steady-state NOE")
 
         # The frequency label.
         analysis.field_nmr_frq.SetValue(str_to_gui('500'))
@@ -67,8 +73,8 @@ class Noe(GuiTestCase):
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Load the sequence.
-        wizard = Wiz_window()
-        seq_read = sequence.Read_page(wizard, self.gui)
+        wizard = Wiz_window(self.app.gui)
+        seq_read = sequence.Read_page(wizard)
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
         seq_read.file.SetValue(str_to_gui(file))
         seq_read.mol_name_col.SetValue(int_to_gui(None))
@@ -79,14 +85,17 @@ class Noe(GuiTestCase):
         seq_read.on_execute()
 
         # Unresolved spins.
-        deselect_spin = deselect.Spin_page(wizard, self.gui)
+        deselect_spin = deselect.Spin_page(wizard)
         deselect_spin.spin_id.SetValue(str_to_gui(":3"))
         deselect_spin.on_execute()
 
         # Name the spins.
-        page = spin.Name_page(wizard, self.gui)
+        page = spin.Name_page(wizard)
         page.name.SetValue(str_to_gui('N'))
         page.on_execute()
+
+        # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
+        interpreter.flush()
 
         # The intensity data.
         ids = ['ref', 'sat']
@@ -139,7 +148,7 @@ class Noe(GuiTestCase):
         self.check_exceptions()
 
         # Check the relax controller.
-        self.assertEqual(self.gui.controller.main_gauge.GetValue(), 100)
+        self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
         # The real data.
         res_nums = [4, 5, 6]

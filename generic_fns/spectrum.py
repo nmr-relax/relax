@@ -34,7 +34,7 @@ from warnings import warn
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxArgNotNoneError, RelaxError, RelaxImplementError, RelaxNoSequenceError
+from relax_errors import RelaxArgNotNoneError, RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
 from relax_io import extract_data, read_spin_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
@@ -535,6 +535,61 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
         spin.baseplane_rmsd[spectrum_id] = float(error) * scale
 
 
+def delete(spectrum_id=None):
+    """Delete spectral data corresponding to the spectrum ID.
+
+    @keyword spectrum_id:   The spectrum ID string.
+    @type spectrum_id:      str
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data exists.
+    if not hasattr(cdp, 'spectrum_ids') or spectrum_id not in cdp.spectrum_ids:
+        raise RelaxNoSpectraError(spectrum_id)
+
+    # Remove the ID.
+    cdp.spectrum_ids.pop(cdp.spectrum_ids.index(spectrum_id))
+
+    # The ncproc parameter.
+    if hasattr(cdp, 'ncproc') and cdp.ncproc.has_key(spectrum_id):
+        del cdp.ncproc[spectrum_id]
+
+    # Replicates.
+    if hasattr(cdp, 'replicates'):
+        # Loop over the replicates.
+        for i in range(len(cdp.replicates)):
+            # The spectrum is replicated.
+            if spectrum_id in cdp.replicates[i]:
+                # Duplicate.
+                if len(cdp.replicates[i]) == 2:
+                    cdp.replicates.pop(i)
+
+                # More than two spectra:
+                else:
+                    cdp.replicates[i].pop(cdp.replicates[i].index(spectrum_id))
+
+                # No need to check further.
+                break
+
+    # Errors.
+    if hasattr(cdp, 'sigma_I') and cdp.sigma_I.has_key(spectrum_id):
+        del cdp.sigma_I[spectrum_id]
+    if hasattr(cdp, 'var_I') and cdp.var_I.has_key(spectrum_id):
+        del cdp.var_I[spectrum_id]
+
+    # Loop over the spins.
+    for spin in spin_loop():
+        # Intensity data.
+        if hasattr(spin, 'intensities') and spin.intensities.has_key(spectrum_id):
+            del spin.intensities[spectrum_id]
+
+
 def error_analysis():
     """Determine the peak intensity standard deviation."""
 
@@ -639,7 +694,7 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
     # Loop over the data.
     data = []
     for id, value in read_spin_data(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, sep=sep, spin_id=spin_id):
-        data.append([None, None, id, value])
+        data.append([None, None, id, value, id])
 
     # Return the data.
     return data
@@ -653,15 +708,11 @@ def intensity_nmrview(file_data=None, int_col=None):
 
     @keyword file_data: The data extracted from the file converted into a list of lists.
     @type file_data:    list of lists of str
-    @keyword int_col:   The column containing the peak intensity data. The default is 16 for
-                        intensities. Setting the int_col argument to 15 will use the volumes (or
-                        evolumes). For a non-standard formatted file, use a different value.
+    @keyword int_col:   The column containing the peak intensity data. The default is 16 for intensities. Setting the int_col argument to 15 will use the volumes (or evolumes). For a non-standard formatted file, use a different value.
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to
-                        the spin.  The second dimension consists of the proton name, heteronucleus
-                        name, spin ID string, and the intensity value.
-    @rtype:             list of lists of str, str, str, float
+    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, spin ID string, the intensity value, and the original line of text
+    @rtype:             list of lists of str, str, str, float, str
     """
 
     # Assume the NMRView file has six header lines!
@@ -724,7 +775,7 @@ def intensity_nmrview(file_data=None, int_col=None):
         spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
 
         # Append the data.
-        data.append([h_name, x_name, spin_id, intensity])
+        data.append([h_name, x_name, spin_id, intensity, line])
 
     # Return the data.
     return data
@@ -738,14 +789,11 @@ def intensity_sparky(file_data=None, int_col=None):
 
     @keyword file_data: The data extracted from the file converted into a list of lists.
     @type file_data:    list of lists of str
-    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
-                        file).
+    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted file).
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to
-                        the spin.  The second dimension consists of the proton name, heteronucleus
-                        name, spin ID string, and the intensity value.
-    @rtype:             list of lists of str, str, str, float
+    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, spin ID string, the intensity value, and the original line of text.
+    @rtype:             list of lists of str, str, str, float, str
     """
 
     # The number of header lines.
@@ -806,7 +854,7 @@ def intensity_sparky(file_data=None, int_col=None):
         spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
 
         # Append the data.
-        data.append([h_name, x_name, spin_id, intensity])
+        data.append([h_name, x_name, spin_id, intensity, line])
 
     # Return the data.
     return data
@@ -824,14 +872,11 @@ def intensity_xeasy(file_data=None, heteronuc=None, proton=None, int_col=None):
     @type heteronuc:    str
     @keyword proton:    The name of the proton as specified in the peak intensity file.
     @type proton:       str
-    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
-                        file).
+    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted file).
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to
-                        the spin.  The second dimension consists of the proton name, heteronucleus
-                        name, spin ID string, and the intensity value.
-    @rtype:             list of lists of str, str, str, float
+    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, spin ID string, the intensity value, and the original line of text.
+    @rtype:             list of lists of str, str, str, float, str
     """
 
     # The columns.
@@ -918,7 +963,7 @@ def intensity_xeasy(file_data=None, heteronuc=None, proton=None, int_col=None):
         spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
 
         # Append the data.
-        data.append([h_name, x_name, spin_id, intensity])
+        data.append([h_name, x_name, spin_id, intensity, line])
 
     # Return the data.
     return data
@@ -1030,13 +1075,14 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             cdp.ncproc[spectrum_id] = ncproc
 
     # Loop over the peak intensity data.
+    data_flag = False
     for i in xrange(len(intensity_data)):
         # Extract the data.
-        H_name, X_name, spin_id, intensity = intensity_data[i]
+        H_name, X_name, spin_id, intensity, line = intensity_data[i]
 
         # Skip data.
         if (X_name and X_name != heteronuc) or (H_name and H_name != proton):
-            warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % repr(file_data[i])))
+            warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % line))
             continue
 
         # Get the spin container.
@@ -1059,6 +1105,17 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Add the data.
         spin.intensities[spectrum_id] = intensity
+
+        # Switch the flag.
+        data_flag = True
+
+    # No data.
+    if not data_flag:
+        # Delete all the data.
+        delete(spectrum_id)
+
+        # Raise the error.
+        raise RelaxError("No data could be loaded from the peak list")
 
 
 def replicated(spectrum_ids=None):

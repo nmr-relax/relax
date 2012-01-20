@@ -1,0 +1,2665 @@
+REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007
+REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)
+HET         PIV   1       1                                             
+HET         ZAX   2       3                                             
+HET         SIM   3       1                                             
+HET         SIM   4       1                                             
+HET         SIM   5       1                                             
+HET         SIM   6       1                                             
+HET         SIM   7       1                                             
+HET         SIM   8       1                                             
+HET         SIM   9       1                                             
+HET         SIM  10       1                                             
+HET         SIM  11       1                                             
+HET         SIM  12       1                                             
+HET         SIM  13       1                                             
+HET         SIM  14       1                                             
+HET         SIM  15       1                                             
+HET         SIM  16       1                                             
+HET         SIM  17       1                                             
+HET         SIM  18       1                                             
+HET         SIM  19       1                                             
+HET         SIM  20       1                                             
+HET         SIM  21       1                                             
+HET         SIM  22       1                                             
+HET         SIM  23       1                                             
+HET         SIM  24       1                                             
+HET         SIM  25       1                                             
+HET         SIM  26       1                                             
+HET         SIM  27       1                                             
+HET         SIM  28       1                                             
+HET         SIM  29       1                                             
+HET         SIM  30       1                                             
+HET         SIM  31       1                                             
+HET         SIM  32       1                                             
+HET         SIM  33       1                                             
+HET         SIM  34       1                                             
+HET         SIM  35       1                                             
+HET         SIM  36       1                                             
+HET         SIM  37       1                                             
+HET         SIM  38       1                                             
+HET         SIM  39       1                                             
+HET         SIM  40       1                                             
+HET         SIM  41       1                                             
+HET         SIM  42       1                                             
+HET         SIM  43       1                                             
+HET         SIM  44       1                                             
+HET         SIM  45       1                                             
+HET         SIM  46       1                                             
+HET         SIM  47       1                                             
+HET         SIM  48       1                                             
+HET         SIM  49       1                                             
+HET         SIM  50       1                                             
+HET         SIM  51       1                                             
+HET         SIM  52       1                                             
+HET         SIM  53       1                                             
+HET         SIM  54       1                                             
+HET         SIM  55       1                                             
+HET         SIM  56       1                                             
+HET         SIM  57       1                                             
+HET         SIM  58       1                                             
+HET         SIM  59       1                                             
+HET         SIM  60       1                                             
+HET         SIM  61       1                                             
+HET         SIM  62       1                                             
+HET         SIM  63       1                                             
+HET         SIM  64       1                                             
+HET         SIM  65       1                                             
+HET         SIM  66       1                                             
+HET         SIM  67       1                                             
+HET         SIM  68       1                                             
+HET         SIM  69       1                                             
+HET         SIM  70       1                                             
+HET         SIM  71       1                                             
+HET         SIM  72       1                                             
+HET         SIM  73       1                                             
+HET         SIM  74       1                                             
+HET         SIM  75       1                                             
+HET         SIM  76       1                                             
+HET         SIM  77       1                                             
+HET         SIM  78       1                                             
+HET         SIM  79       1                                             
+HET         SIM  80       1                                             
+HET         SIM  81       1                                             
+HET         SIM  82       1                                             
+HET         SIM  83       1                                             
+HET         SIM  84       1                                             
+HET         SIM  85       1                                             
+HET         SIM  86       1                                             
+HET         SIM  87       1                                             
+HET         SIM  88       1                                             
+HET         SIM  89       1                                             
+HET         SIM  90       1                                             
+HET         SIM  91       1                                             
+HET         SIM  92       1                                             
+HET         SIM  93       1                                             
+HET         SIM  94       1                                             
+HET         SIM  95       1                                             
+HET         SIM  96       1                                             
+HET         SIM  97       1                                             
+HET         SIM  98       1                                             
+HET         SIM  99       1                                             
+HET         SIM 100       1                                             
+HET         SIM 101       1                                             
+HET         SIM 102       1                                             
+HET         SIM 103       1                                             
+HET         SIM 104       1                                             
+HET         SIM 105       1                                             
+HET         SIM 106       1                                             
+HET         SIM 107       1                                             
+HET         SIM 108       1                                             
+HET         SIM 109       1                                             
+HET         SIM 110       1                                             
+HET         SIM 111       1                                             
+HET         SIM 112       1                                             
+HET         SIM 113       1                                             
+HET         SIM 114       1                                             
+HET         SIM 115       1                                             
+HET         SIM 116       1                                             
+HET         SIM 117       1                                             
+HET         SIM 118       1                                             
+HET         SIM 119       1                                             
+HET         SIM 120       1                                             
+HET         SIM 121       1                                             
+HET         SIM 122       1                                             
+HET         SIM 123       1                                             
+HET         SIM 124       1                                             
+HET         SIM 125       1                                             
+HET         SIM 126       1                                             
+HET         SIM 127       1                                             
+HET         SIM 128       1                                             
+HET         SIM 129       1                                             
+HET         SIM 130       1                                             
+HET         SIM 131       1                                             
+HET         SIM 132       1                                             
+HET         SIM 133       1                                             
+HET         SIM 134       1                                             
+HET         SIM 135       1                                             
+HET         SIM 136       1                                             
+HET         SIM 137       1                                             
+HET         SIM 138       1                                             
+HET         SIM 139       1                                             
+HET         SIM 140       1                                             
+HET         SIM 141       1                                             
+HET         SIM 142       1                                             
+HET         SIM 143       1                                             
+HET         SIM 144       1                                             
+HET         SIM 145       1                                             
+HET         SIM 146       1                                             
+HET         SIM 147       1                                             
+HET         SIM 148       1                                             
+HET         SIM 149       1                                             
+HET         SIM 150       1                                             
+HET         SIM 151       1                                             
+HET         SIM 152       1                                             
+HET         SIM 153       1                                             
+HET         SIM 154       1                                             
+HET         SIM 155       1                                             
+HET         SIM 156       1                                             
+HET         SIM 157       1                                             
+HET         SIM 158       1                                             
+HET         SIM 159       1                                             
+HET         SIM 160       1                                             
+HET         SIM 161       1                                             
+HET         SIM 162       1                                             
+HET         SIM 163       1                                             
+HET         SIM 164       1                                             
+HET         SIM 165       1                                             
+HET         SIM 166       1                                             
+HET         SIM 167       1                                             
+HET         SIM 168       1                                             
+HET         SIM 169       1                                             
+HET         SIM 170       1                                             
+HET         SIM 171       1                                             
+HET         SIM 172       1                                             
+HET         SIM 173       1                                             
+HET         SIM 174       1                                             
+HET         SIM 175       1                                             
+HET         SIM 176       1                                             
+HET         SIM 177       1                                             
+HET         SIM 178       1                                             
+HET         SIM 179       1                                             
+HET         SIM 180       1                                             
+HET         SIM 181       1                                             
+HET         SIM 182       1                                             
+HET         SIM 183       1                                             
+HET         SIM 184       1                                             
+HET         SIM 185       1                                             
+HET         SIM 186       1                                             
+HET         SIM 187       1                                             
+HET         SIM 188       1                                             
+HET         SIM 189       1                                             
+HET         SIM 190       1                                             
+HET         SIM 191       1                                             
+HET         SIM 192       1                                             
+HET         SIM 193       1                                             
+HET         SIM 194       1                                             
+HET         SIM 195       1                                             
+HET         SIM 196       1                                             
+HET         SIM 197       1                                             
+HET         SIM 198       1                                             
+HET         SIM 199       1                                             
+HET         SIM 200       1                                             
+HET         SIM 201       1                                             
+HET         SIM 202       1                                             
+HET         SIM 203       1                                             
+HET         SIM 204       1                                             
+HET         SIM 205       1                                             
+HET         SIM 206       1                                             
+HET         SIM 207       1                                             
+HET         SIM 208       1                                             
+HET         SIM 209       1                                             
+HET         SIM 210       1                                             
+HET         SIM 211       1                                             
+HET         SIM 212       1                                             
+HET         SIM 213       1                                             
+HET         SIM 214       1                                             
+HET         SIM 215       1                                             
+HET         SIM 216       1                                             
+HET         SIM 217       1                                             
+HET         SIM 218       1                                             
+HET         SIM 219       1                                             
+HET         SIM 220       1                                             
+HET         SIM 221       1                                             
+HET         SIM 222       1                                             
+HET         SIM 223       1                                             
+HET         SIM 224       1                                             
+HET         SIM 225       1                                             
+HET         SIM 226       1                                             
+HET         SIM 227       1                                             
+HET         SIM 228       1                                             
+HET         SIM 229       1                                             
+HET         SIM 230       1                                             
+HET         SIM 231       1                                             
+HET         SIM 232       1                                             
+HET         SIM 233       1                                             
+HET         SIM 234       1                                             
+HET         SIM 235       1                                             
+HET         SIM 236       1                                             
+HET         SIM 237       1                                             
+HET         SIM 238       1                                             
+HET         SIM 239       1                                             
+HET         SIM 240       1                                             
+HET         SIM 241       1                                             
+HET         SIM 242       1                                             
+HET         SIM 243       1                                             
+HET         SIM 244       1                                             
+HET         SIM 245       1                                             
+HET         SIM 246       1                                             
+HET         SIM 247       1                                             
+HET         SIM 248       1                                             
+HET         SIM 249       1                                             
+HET         SIM 250       1                                             
+HET         SIM 251       1                                             
+HET         SIM 252       1                                             
+HET         SIM 253       1                                             
+HET         SIM 254       1                                             
+HET         SIM 255       1                                             
+HET         SIM 256       1                                             
+HET         SIM 257       1                                             
+HET         SIM 258       1                                             
+HET         SIM 259       1                                             
+HET         SIM 260       1                                             
+HET         SIM 261       1                                             
+HET         SIM 262       1                                             
+HET         SIM 263       1                                             
+HET         SIM 264       1                                             
+HET         SIM 265       1                                             
+HET         SIM 266       1                                             
+HET         SIM 267       1                                             
+HET         SIM 268       1                                             
+HET         SIM 269       1                                             
+HET         SIM 270       1                                             
+HET         SIM 271       1                                             
+HET         SIM 272       1                                             
+HET         SIM 273       1                                             
+HET         SIM 274       1                                             
+HET         SIM 275       1                                             
+HET         SIM 276       1                                             
+HET         SIM 277       1                                             
+HET         SIM 278       1                                             
+HET         SIM 279       1                                             
+HET         SIM 280       1                                             
+HET         SIM 281       1                                             
+HET         SIM 282       1                                             
+HET         SIM 283       1                                             
+HET         SIM 284       1                                             
+HET         SIM 285       1                                             
+HET         SIM 286       1                                             
+HET         SIM 287       1                                             
+HET         SIM 288       1                                             
+HET         SIM 289       1                                             
+HET         SIM 290       1                                             
+HET         SIM 291       1                                             
+HET         SIM 292       1                                             
+HET         SIM 293       1                                             
+HET         SIM 294       1                                             
+HET         SIM 295       1                                             
+HET         SIM 296       1                                             
+HET         SIM 297       1                                             
+HET         SIM 298       1                                             
+HET         SIM 299       1                                             
+HET         SIM 300       1                                             
+HET         SIM 301       1                                             
+HET         SIM 302       1                                             
+HET         SIM 303       1                                             
+HET         SIM 304       1                                             
+HET         SIM 305       1                                             
+HET         SIM 306       1                                             
+HET         SIM 307       1                                             
+HET         SIM 308       1                                             
+HET         SIM 309       1                                             
+HET         SIM 310       1                                             
+HET         SIM 311       1                                             
+HET         SIM 312       1                                             
+HET         SIM 313       1                                             
+HET         SIM 314       1                                             
+HET         SIM 315       1                                             
+HET         SIM 316       1                                             
+HET         SIM 317       1                                             
+HET         SIM 318       1                                             
+HET         SIM 319       1                                             
+HET         SIM 320       1                                             
+HET         SIM 321       1                                             
+HET         SIM 322       1                                             
+HET         SIM 323       1                                             
+HET         SIM 324       1                                             
+HET         SIM 325       1                                             
+HET         SIM 326       1                                             
+HET         SIM 327       1                                             
+HET         SIM 328       1                                             
+HET         SIM 329       1                                             
+HET         SIM 330       1                                             
+HET         SIM 331       1                                             
+HET         SIM 332       1                                             
+HET         SIM 333       1                                             
+HET         SIM 334       1                                             
+HET         SIM 335       1                                             
+HET         SIM 336       1                                             
+HET         SIM 337       1                                             
+HET         SIM 338       1                                             
+HET         SIM 339       1                                             
+HET         SIM 340       1                                             
+HET         SIM 341       1                                             
+HET         SIM 342       1                                             
+HET         SIM 343       1                                             
+HET         SIM 344       1                                             
+HET         SIM 345       1                                             
+HET         SIM 346       1                                             
+HET         SIM 347       1                                             
+HET         SIM 348       1                                             
+HET         SIM 349       1                                             
+HET         SIM 350       1                                             
+HET         SIM 351       1                                             
+HET         SIM 352       1                                             
+HET         SIM 353       1                                             
+HET         SIM 354       1                                             
+HET         SIM 355       1                                             
+HET         SIM 356       1                                             
+HET         SIM 357       1                                             
+HET         SIM 358       1                                             
+HET         SIM 359       1                                             
+HET         SIM 360       1                                             
+HET         SIM 361       1                                             
+HET         SIM 362       1                                             
+HET         SIM 363       1                                             
+HET         SIM 364       1                                             
+HET         SIM 365       1                                             
+HET         SIM 366       1                                             
+HET         SIM 367       1                                             
+HET         SIM 368       1                                             
+HET         SIM 369       1                                             
+HET         SIM 370       1                                             
+HET         SIM 371       1                                             
+HET         SIM 372       1                                             
+HET         SIM 373       1                                             
+HET         SIM 374       1                                             
+HET         SIM 375       1                                             
+HET         SIM 376       1                                             
+HET         SIM 377       1                                             
+HET         SIM 378       1                                             
+HET         SIM 379       1                                             
+HET         SIM 380       1                                             
+HET         SIM 381       1                                             
+HET         SIM 382       1                                             
+HET         SIM 383       1                                             
+HET         SIM 384       1                                             
+HET         SIM 385       1                                             
+HET         SIM 386       1                                             
+HET         SIM 387       1                                             
+HET         SIM 388       1                                             
+HET         SIM 389       1                                             
+HET         SIM 390       1                                             
+HET         SIM 391       1                                             
+HET         SIM 392       1                                             
+HET         SIM 393       1                                             
+HET         SIM 394       1                                             
+HET         SIM 395       1                                             
+HET         SIM 396       1                                             
+HET         SIM 397       1                                             
+HET         SIM 398       1                                             
+HET         SIM 399       1                                             
+HET         SIM 400       1                                             
+HET         SIM 401       1                                             
+HET         SIM 402       1                                             
+HET         SIM 403       1                                             
+HET         SIM 404       1                                             
+HET         SIM 405       1                                             
+HET         SIM 406       1                                             
+HET         SIM 407       1                                             
+HET         SIM 408       1                                             
+HET         SIM 409       1                                             
+HET         SIM 410       1                                             
+HET         SIM 411       1                                             
+HET         SIM 412       1                                             
+HET         SIM 413       1                                             
+HET         SIM 414       1                                             
+HET         SIM 415       1                                             
+HET         SIM 416       1                                             
+HET         SIM 417       1                                             
+HET         SIM 418       1                                             
+HET         SIM 419       1                                             
+HET         SIM 420       1                                             
+HET         SIM 421       1                                             
+HET         SIM 422       1                                             
+HET         SIM 423       1                                             
+HET         SIM 424       1                                             
+HET         SIM 425       1                                             
+HET         SIM 426       1                                             
+HET         SIM 427       1                                             
+HET         SIM 428       1                                             
+HET         SIM 429       1                                             
+HET         SIM 430       1                                             
+HET         SIM 431       1                                             
+HET         SIM 432       1                                             
+HET         SIM 433       1                                             
+HET         SIM 434       1                                             
+HET         SIM 435       1                                             
+HET         SIM 436       1                                             
+HET         SIM 437       1                                             
+HET         SIM 438       1                                             
+HET         SIM 439       1                                             
+HET         SIM 440       1                                             
+HET         SIM 441       1                                             
+HET         SIM 442       1                                             
+HET         SIM 443       1                                             
+HET         SIM 444       1                                             
+HET         SIM 445       1                                             
+HET         SIM 446       1                                             
+HET         SIM 447       1                                             
+HET         SIM 448       1                                             
+HET         SIM 449       1                                             
+HET         SIM 450       1                                             
+HET         SIM 451       1                                             
+HET         SIM 452       1                                             
+HET         SIM 453       1                                             
+HET         SIM 454       1                                             
+HET         SIM 455       1                                             
+HET         SIM 456       1                                             
+HET         SIM 457       1                                             
+HET         SIM 458       1                                             
+HET         SIM 459       1                                             
+HET         SIM 460       1                                             
+HET         SIM 461       1                                             
+HET         SIM 462       1                                             
+HET         SIM 463       1                                             
+HET         SIM 464       1                                             
+HET         SIM 465       1                                             
+HET         SIM 466       1                                             
+HET         SIM 467       1                                             
+HET         SIM 468       1                                             
+HET         SIM 469       1                                             
+HET         SIM 470       1                                             
+HET         SIM 471       1                                             
+HET         SIM 472       1                                             
+HET         SIM 473       1                                             
+HET         SIM 474       1                                             
+HET         SIM 475       1                                             
+HET         SIM 476       1                                             
+HET         SIM 477       1                                             
+HET         SIM 478       1                                             
+HET         SIM 479       1                                             
+HET         SIM 480       1                                             
+HET         SIM 481       1                                             
+HET         SIM 482       1                                             
+HET         SIM 483       1                                             
+HET         SIM 484       1                                             
+HET         SIM 485       1                                             
+HET         SIM 486       1                                             
+HET         SIM 487       1                                             
+HET         SIM 488       1                                             
+HET         SIM 489       1                                             
+HET         SIM 490       1                                             
+HET         SIM 491       1                                             
+HET         SIM 492       1                                             
+HET         SIM 493       1                                             
+HET         SIM 494       1                                             
+HET         SIM 495       1                                             
+HET         SIM 496       1                                             
+HET         SIM 497       1                                             
+HET         SIM 498       1                                             
+HET         SIM 499       1                                             
+HET         SIM 500       1                                             
+HET         SIM 501       1                                             
+HET         SIM 502       1                                             
+HET         APX 503       1                                             
+HET         AXE 504       3                                             
+HET         EDG 505      41                                             
+HET         CON 506     120                                             
+HETNAM     PIV Pivot point                                            
+HETNAM     ZAX Unknown                                                
+HETNAM     SIM Monte Carlo simulation tensor axes                     
+HETNAM     APX Unknown                                                
+HETNAM     AXE Unknown                                                
+HETNAM     EDG Unknown                                                
+HETNAM     CON Cone                                                   
+FORMUL   1  PIV    C1                                                 
+FORMUL   2  ZAX    C2N1                                               
+FORMUL   3  SIM    C1                                                 
+FORMUL  503  APX    C1                                                 
+FORMUL  504  AXE    C2N1                                               
+FORMUL  505  EDG    H41                                                
+FORMUL  506  CON    H120                                               
+MODEL        1
+HETATM    1    R PIV     1      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    2    R ZAX     2      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    3 z-ax ZAX     2      25.084 -14.565  39.658  1.00  0.00           C  
+HETATM    4 z-ax ZAX     2      23.866 -16.072  41.949  1.00  0.00           N  
+HETATM    5 z-ax SIM     3      24.088 -13.615  39.713  1.00  0.00           C  
+HETATM    6 z-ax SIM     4      23.936 -13.661  39.596  1.00  0.00           C  
+HETATM    7 z-ax SIM     5      25.537 -14.646  39.840  1.00  0.00           C  
+HETATM    8 z-ax SIM     6      25.387 -14.402  39.922  1.00  0.00           C  
+HETATM    9 z-ax SIM     7      27.177 -15.145  40.277  1.00  0.00           C  
+HETATM   10 z-ax SIM     8      24.997 -14.418  39.707  1.00  0.00           C  
+HETATM   11 z-ax SIM     9      24.852 -14.153  39.800  1.00  0.00           C  
+HETATM   12 z-ax SIM    10      26.387 -15.442  39.720  1.00  0.00           C  
+HETATM   13 z-ax SIM    11      23.465 -13.628  39.335  1.00  0.00           C  
+HETATM   14 z-ax SIM    12      24.399 -14.147  39.555  1.00  0.00           C  
+HETATM   15 z-ax SIM    13      23.791 -13.949  39.329  1.00  0.00           C  
+HETATM   16 z-ax SIM    14      26.854 -15.847  39.651  1.00  0.00           C  
+HETATM   17 z-ax SIM    15      25.684 -15.806  39.113  1.00  0.00           C  
+HETATM   18 z-ax SIM    16      23.444 -13.421  39.451  1.00  0.00           C  
+HETATM   19 z-ax SIM    17      25.142 -14.461  39.757  1.00  0.00           C  
+HETATM   20 z-ax SIM    18      23.704 -13.907  39.304  1.00  0.00           C  
+HETATM   21 z-ax SIM    19      25.560 -14.779  39.764  1.00  0.00           C  
+HETATM   22 z-ax SIM    20      26.079 -15.412  39.592  1.00  0.00           C  
+HETATM   23 z-ax SIM    21      24.511 -14.915  39.107  1.00  0.00           C  
+HETATM   24 z-ax SIM    22      23.998 -13.688  39.615  1.00  0.00           C  
+HETATM   25 z-ax SIM    23      26.176 -14.982  39.933  1.00  0.00           C  
+HETATM   26 z-ax SIM    24      25.728 -14.799  39.835  1.00  0.00           C  
+HETATM   27 z-ax SIM    25      23.716 -13.285  39.696  1.00  0.00           C  
+HETATM   28 z-ax SIM    26      26.891 -15.206  40.112  1.00  0.00           C  
+HETATM   29 z-ax SIM    27      24.545 -14.409  39.466  1.00  0.00           C  
+HETATM   30 z-ax SIM    28      26.680 -15.429  39.865  1.00  0.00           C  
+HETATM   31 z-ax SIM    29      24.775 -14.111  39.785  1.00  0.00           C  
+HETATM   32 z-ax SIM    30      23.222 -13.855  39.040  1.00  0.00           C  
+HETATM   33 z-ax SIM    31      24.568 -14.486  39.429  1.00  0.00           C  
+HETATM   34 z-ax SIM    32      24.838 -14.540  39.542  1.00  0.00           C  
+HETATM   35 z-ax SIM    33      24.636 -13.870  39.861  1.00  0.00           C  
+HETATM   36 z-ax SIM    34      23.750 -13.410  39.641  1.00  0.00           C  
+HETATM   37 z-ax SIM    35      26.329 -15.164  39.882  1.00  0.00           C  
+HETATM   38 z-ax SIM    36      25.821 -14.958  39.776  1.00  0.00           C  
+HETATM   39 z-ax SIM    37      27.768 -16.419  39.633  1.00  0.00           C  
+HETATM   40 z-ax SIM    38      25.478 -14.642  39.813  1.00  0.00           C  
+HETATM   41 z-ax SIM    39      24.479 -14.364  39.459  1.00  0.00           C  
+HETATM   42 z-ax SIM    40      26.734 -15.488  39.849  1.00  0.00           C  
+HETATM   43 z-ax SIM    41      24.963 -15.071  39.252  1.00  0.00           C  
+HETATM   44 z-ax SIM    42      25.404 -14.808  39.665  1.00  0.00           C  
+HETATM   45 z-ax SIM    43      24.968 -14.293  39.773  1.00  0.00           C  
+HETATM   46 z-ax SIM    44      25.920 -14.956  39.826  1.00  0.00           C  
+HETATM   47 z-ax SIM    45      25.924 -14.447  40.161  1.00  0.00           C  
+HETATM   48 z-ax SIM    46      24.636 -14.572  39.409  1.00  0.00           C  
+HETATM   49 z-ax SIM    47      24.772 -14.775  39.349  1.00  0.00           C  
+HETATM   50 z-ax SIM    48      25.321 -15.141  39.395  1.00  0.00           C  
+HETATM   51 z-ax SIM    49      24.788 -14.848  39.308  1.00  0.00           C  
+HETATM   52 z-ax SIM    50      24.934 -14.638  39.530  1.00  0.00           C  
+HETATM   53 z-ax SIM    51      24.812 -14.611  39.481  1.00  0.00           C  
+HETATM   54 z-ax SIM    52      24.379 -14.471  39.332  1.00  0.00           C  
+HETATM   55 z-ax SIM    53      26.222 -14.981  39.955  1.00  0.00           C  
+HETATM   56 z-ax SIM    54      23.745 -13.737  39.436  1.00  0.00           C  
+HETATM   57 z-ax SIM    55      26.932 -15.938  39.621  1.00  0.00           C  
+HETATM   58 z-ax SIM    56      24.824 -14.263  39.715  1.00  0.00           C  
+HETATM   59 z-ax SIM    57      26.913 -15.396  39.993  1.00  0.00           C  
+HETATM   60 z-ax SIM    58      23.997 -13.746  39.579  1.00  0.00           C  
+HETATM   61 z-ax SIM    59      24.257 -14.255  39.405  1.00  0.00           C  
+HETATM   62 z-ax SIM    60      26.413 -15.161  39.924  1.00  0.00           C  
+HETATM   63 z-ax SIM    61      24.707 -14.901  39.227  1.00  0.00           C  
+HETATM   64 z-ax SIM    62      24.542 -14.098  39.666  1.00  0.00           C  
+HETATM   65 z-ax SIM    63      24.911 -14.338  39.713  1.00  0.00           C  
+HETATM   66 z-ax SIM    64      24.426 -14.007  39.660  1.00  0.00           C  
+HETATM   67 z-ax SIM    65      26.073 -14.767  40.025  1.00  0.00           C  
+HETATM   68 z-ax SIM    66      23.119 -13.095  39.448  1.00  0.00           C  
+HETATM   69 z-ax SIM    67      23.514 -13.770  39.276  1.00  0.00           C  
+HETATM   70 z-ax SIM    68      24.910 -14.969  39.292  1.00  0.00           C  
+HETATM   71 z-ax SIM    69      27.652 -15.550  40.203  1.00  0.00           C  
+HETATM   72 z-ax SIM    70      23.780 -13.920  39.341  1.00  0.00           C  
+HETATM   73 z-ax SIM    71      24.318 -14.322  39.395  1.00  0.00           C  
+HETATM   74 z-ax SIM    72      26.449 -15.208  39.909  1.00  0.00           C  
+HETATM   75 z-ax SIM    73      25.528 -14.365  40.017  1.00  0.00           C  
+HETATM   76 z-ax SIM    74      24.008 -14.201  39.294  1.00  0.00           C  
+HETATM   77 z-ax SIM    75      24.069 -13.638  39.687  1.00  0.00           C  
+HETATM   78 z-ax SIM    76      25.368 -14.773  39.669  1.00  0.00           C  
+HETATM   79 z-ax SIM    77      24.755 -14.253  39.684  1.00  0.00           C  
+HETATM   80 z-ax SIM    78      23.210 -13.677  39.147  1.00  0.00           C  
+HETATM   81 z-ax SIM    79      24.993 -14.513  39.643  1.00  0.00           C  
+HETATM   82 z-ax SIM    80      26.480 -15.055  40.027  1.00  0.00           C  
+HETATM   83 z-ax SIM    81      23.102 -12.892  39.559  1.00  0.00           C  
+HETATM   84 z-ax SIM    82      25.868 -14.359  40.190  1.00  0.00           C  
+HETATM   85 z-ax SIM    83      25.443 -14.793  39.694  1.00  0.00           C  
+HETATM   86 z-ax SIM    84      25.066 -14.784  39.503  1.00  0.00           C  
+HETATM   87 z-ax SIM    85      25.893 -14.661  40.007  1.00  0.00           C  
+HETATM   88 z-ax SIM    86      25.464 -14.944  39.605  1.00  0.00           C  
+HETATM   89 z-ax SIM    87      25.582 -14.918  39.682  1.00  0.00           C  
+HETATM   90 z-ax SIM    88      26.109 -15.266  39.708  1.00  0.00           C  
+HETATM   91 z-ax SIM    89      25.374 -14.962  39.545  1.00  0.00           C  
+HETATM   92 z-ax SIM    90      25.413 -14.742  39.713  1.00  0.00           C  
+HETATM   93 z-ax SIM    91      24.107 -13.982  39.494  1.00  0.00           C  
+HETATM   94 z-ax SIM    92      25.674 -14.985  39.683  1.00  0.00           C  
+HETATM   95 z-ax SIM    93      24.768 -14.771  39.349  1.00  0.00           C  
+HETATM   96 z-ax SIM    94      24.011 -14.586  39.041  1.00  0.00           C  
+HETATM   97 z-ax SIM    95      23.983 -13.698  39.601  1.00  0.00           C  
+HETATM   98 z-ax SIM    96      25.134 -14.683  39.606  1.00  0.00           C  
+HETATM   99 z-ax SIM    97      23.929 -14.202  39.247  1.00  0.00           C  
+HETATM  100 z-ax SIM    98      23.546 -14.398  38.885  1.00  0.00           C  
+HETATM  101 z-ax SIM    99      24.525 -14.184  39.601  1.00  0.00           C  
+HETATM  102 z-ax SIM   100      24.144 -14.873  38.923  1.00  0.00           C  
+HETATM  103 z-ax SIM   101      25.457 -14.692  39.769  1.00  0.00           C  
+HETATM  104 z-ax SIM   102      25.640 -15.025  39.639  1.00  0.00           C  
+HETATM  105 z-ax SIM   103      23.137 -13.844  38.994  1.00  0.00           C  
+HETATM  106 z-ax SIM   104      25.795 -15.158  39.627  1.00  0.00           C  
+HETATM  107 z-ax SIM   105      23.780 -13.774  39.434  1.00  0.00           C  
+HETATM  108 z-ax SIM   106      24.325 -14.780  39.093  1.00  0.00           C  
+HETATM  109 z-ax SIM   107      23.622 -13.246  39.664  1.00  0.00           C  
+HETATM  110 z-ax SIM   108      25.971 -14.995  39.825  1.00  0.00           C  
+HETATM  111 z-ax SIM   109      26.385 -15.424  39.731  1.00  0.00           C  
+HETATM  112 z-ax SIM   110      27.024 -16.451  39.286  1.00  0.00           C  
+HETATM  113 z-ax SIM   111      25.208 -14.736  39.611  1.00  0.00           C  
+HETATM  114 z-ax SIM   112      26.463 -15.731  39.552  1.00  0.00           C  
+HETATM  115 z-ax SIM   113      23.881 -14.222  39.206  1.00  0.00           C  
+HETATM  116 z-ax SIM   114      23.921 -14.168  39.265  1.00  0.00           C  
+HETATM  117 z-ax SIM   115      26.733 -16.000  39.485  1.00  0.00           C  
+HETATM  118 z-ax SIM   116      25.716 -14.226  40.199  1.00  0.00           C  
+HETATM  119 z-ax SIM   117      25.242 -14.593  39.722  1.00  0.00           C  
+HETATM  120 z-ax SIM   118      25.040 -15.185  39.215  1.00  0.00           C  
+HETATM  121 z-ax SIM   119      25.334 -14.487  39.840  1.00  0.00           C  
+HETATM  122 z-ax SIM   120      24.584 -14.475  39.445  1.00  0.00           C  
+HETATM  123 z-ax SIM   121      26.212 -15.206  39.798  1.00  0.00           C  
+HETATM  124 z-ax SIM   122      23.152 -13.289  39.352  1.00  0.00           C  
+HETATM  125 z-ax SIM   123      25.333 -14.582  39.778  1.00  0.00           C  
+HETATM  126 z-ax SIM   124      25.642 -14.999  39.658  1.00  0.00           C  
+HETATM  127 z-ax SIM   125      23.804 -13.673  39.511  1.00  0.00           C  
+HETATM  128 z-ax SIM   126      25.578 -15.217  39.476  1.00  0.00           C  
+HETATM  129 z-ax SIM   127      22.944 -13.844  38.870  1.00  0.00           C  
+HETATM  130 z-ax SIM   128      24.665 -14.138  39.709  1.00  0.00           C  
+HETATM  131 z-ax SIM   129      23.780 -13.925  39.337  1.00  0.00           C  
+HETATM  132 z-ax SIM   130      24.353 -14.184  39.505  1.00  0.00           C  
+HETATM  133 z-ax SIM   131      26.593 -15.837  39.538  1.00  0.00           C  
+HETATM  134 z-ax SIM   132      25.577 -15.064  39.581  1.00  0.00           C  
+HETATM  135 z-ax SIM   133      25.059 -15.015  39.342  1.00  0.00           C  
+HETATM  136 z-ax SIM   134      25.607 -15.034  39.617  1.00  0.00           C  
+HETATM  137 z-ax SIM   135      24.953 -14.593  39.570  1.00  0.00           C  
+HETATM  138 z-ax SIM   136      25.468 -15.132  39.478  1.00  0.00           C  
+HETATM  139 z-ax SIM   137      23.572 -13.504  39.478  1.00  0.00           C  
+HETATM  140 z-ax SIM   138      25.916 -15.708  39.302  1.00  0.00           C  
+HETATM  141 z-ax SIM   139      24.308 -14.133  39.513  1.00  0.00           C  
+HETATM  142 z-ax SIM   140      23.979 -14.012  39.400  1.00  0.00           C  
+HETATM  143 z-ax SIM   141      26.033 -14.535  40.157  1.00  0.00           C  
+HETATM  144 z-ax SIM   142      23.583 -13.834  39.277  1.00  0.00           C  
+HETATM  145 z-ax SIM   143      24.457 -14.221  39.539  1.00  0.00           C  
+HETATM  146 z-ax SIM   144      27.399 -15.931  39.831  1.00  0.00           C  
+HETATM  147 z-ax SIM   145      23.288 -13.581  39.256  1.00  0.00           C  
+HETATM  148 z-ax SIM   146      26.450 -15.375  39.796  1.00  0.00           C  
+HETATM  149 z-ax SIM   147      24.788 -14.745  39.378  1.00  0.00           C  
+HETATM  150 z-ax SIM   148      25.673 -14.702  39.872  1.00  0.00           C  
+HETATM  151 z-ax SIM   149      24.117 -14.362  39.253  1.00  0.00           C  
+HETATM  152 z-ax SIM   150      25.910 -14.899  39.859  1.00  0.00           C  
+HETATM  153 z-ax SIM   151      25.904 -14.621  40.039  1.00  0.00           C  
+HETATM  154 z-ax SIM   152      26.788 -15.215  40.060  1.00  0.00           C  
+HETATM  155 z-ax SIM   153      26.935 -15.463  39.956  1.00  0.00           C  
+HETATM  156 z-ax SIM   154      25.624 -14.915  39.705  1.00  0.00           C  
+HETATM  157 z-ax SIM   155      24.418 -14.049  39.628  1.00  0.00           C  
+HETATM  158 z-ax SIM   156      26.189 -14.637  40.166  1.00  0.00           C  
+HETATM  159 z-ax SIM   157      24.208 -14.211  39.405  1.00  0.00           C  
+HETATM  160 z-ax SIM   158      23.127 -13.363  39.290  1.00  0.00           C  
+HETATM  161 z-ax SIM   159      24.936 -14.082  39.890  1.00  0.00           C  
+HETATM  162 z-ax SIM   160      26.036 -14.984  39.864  1.00  0.00           C  
+HETATM  163 z-ax SIM   161      26.777 -16.001  39.505  1.00  0.00           C  
+HETATM  164 z-ax SIM   162      25.143 -14.889  39.473  1.00  0.00           C  
+HETATM  165 z-ax SIM   163      24.313 -13.919  39.651  1.00  0.00           C  
+HETATM  166 z-ax SIM   164      24.546 -14.515  39.397  1.00  0.00           C  
+HETATM  167 z-ax SIM   165      25.682 -14.651  39.909  1.00  0.00           C  
+HETATM  168 z-ax SIM   166      24.521 -13.860  39.804  1.00  0.00           C  
+HETATM  169 z-ax SIM   167      25.164 -14.551  39.710  1.00  0.00           C  
+HETATM  170 z-ax SIM   168      24.850 -14.457  39.603  1.00  0.00           C  
+HETATM  171 z-ax SIM   169      25.428 -15.294  39.345  1.00  0.00           C  
+HETATM  172 z-ax SIM   170      24.577 -13.789  39.879  1.00  0.00           C  
+HETATM  173 z-ax SIM   171      27.967 -15.572  40.314  1.00  0.00           C  
+HETATM  174 z-ax SIM   172      24.304 -14.140  39.505  1.00  0.00           C  
+HETATM  175 z-ax SIM   173      24.798 -14.143  39.778  1.00  0.00           C  
+HETATM  176 z-ax SIM   174      25.725 -15.607  39.278  1.00  0.00           C  
+HETATM  177 z-ax SIM   175      24.493 -14.428  39.425  1.00  0.00           C  
+HETATM  178 z-ax SIM   176      24.832 -14.500  39.565  1.00  0.00           C  
+HETATM  179 z-ax SIM   177      25.843 -15.149  39.657  1.00  0.00           C  
+HETATM  180 z-ax SIM   178      23.698 -14.010  39.234  1.00  0.00           C  
+HETATM  181 z-ax SIM   179      26.167 -14.510  40.236  1.00  0.00           C  
+HETATM  182 z-ax SIM   180      24.790 -14.860  39.301  1.00  0.00           C  
+HETATM  183 z-ax SIM   181      25.845 -14.767  39.914  1.00  0.00           C  
+HETATM  184 z-ax SIM   182      25.735 -15.300  39.499  1.00  0.00           C  
+HETATM  185 z-ax SIM   183      23.241 -14.286  38.769  1.00  0.00           C  
+HETATM  186 z-ax SIM   184      25.090 -14.266  39.855  1.00  0.00           C  
+HETATM  187 z-ax SIM   185      25.220 -14.502  39.771  1.00  0.00           C  
+HETATM  188 z-ax SIM   186      25.233 -15.145  39.346  1.00  0.00           C  
+HETATM  189 z-ax SIM   187      24.690 -14.839  39.260  1.00  0.00           C  
+HETATM  190 z-ax SIM   188      23.933 -13.908  39.439  1.00  0.00           C  
+HETATM  191 z-ax SIM   189      23.993 -14.024  39.401  1.00  0.00           C  
+HETATM  192 z-ax SIM   190      25.393 -14.927  39.579  1.00  0.00           C  
+HETATM  193 z-ax SIM   191      26.568 -15.554  39.726  1.00  0.00           C  
+HETATM  194 z-ax SIM   192      24.555 -14.416  39.468  1.00  0.00           C  
+HETATM  195 z-ax SIM   193      25.778 -14.428  40.101  1.00  0.00           C  
+HETATM  196 z-ax SIM   194      25.584 -15.059  39.588  1.00  0.00           C  
+HETATM  197 z-ax SIM   195      25.033 -14.272  39.821  1.00  0.00           C  
+HETATM  198 z-ax SIM   196      25.238 -14.897  39.518  1.00  0.00           C  
+HETATM  199 z-ax SIM   197      24.152 -14.224  39.364  1.00  0.00           C  
+HETATM  200 z-ax SIM   198      24.282 -14.695  39.126  1.00  0.00           C  
+HETATM  201 z-ax SIM   199      24.296 -14.332  39.376  1.00  0.00           C  
+HETATM  202 z-ax SIM   200      25.262 -14.655  39.693  1.00  0.00           C  
+HETATM  203 z-ax SIM   201      23.091 -13.090  39.434  1.00  0.00           C  
+HETATM  204 z-ax SIM   202      24.917 -14.426  39.660  1.00  0.00           C  
+HETATM  205 z-ax SIM   203      24.551 -14.100  39.670  1.00  0.00           C  
+HETATM  206 z-ax SIM   204      24.885 -14.496  39.597  1.00  0.00           C  
+HETATM  207 z-ax SIM   205      26.002 -15.328  39.613  1.00  0.00           C  
+HETATM  208 z-ax SIM   206      25.635 -15.458  39.337  1.00  0.00           C  
+HETATM  209 z-ax SIM   207      23.179 -13.126  39.467  1.00  0.00           C  
+HETATM  210 z-ax SIM   208      25.321 -14.840  39.600  1.00  0.00           C  
+HETATM  211 z-ax SIM   209      22.840 -13.452  39.053  1.00  0.00           C  
+HETATM  212 z-ax SIM   210      24.652 -14.285  39.607  1.00  0.00           C  
+HETATM  213 z-ax SIM   211      25.500 -14.808  39.714  1.00  0.00           C  
+HETATM  214 z-ax SIM   212      24.149 -13.986  39.515  1.00  0.00           C  
+HETATM  215 z-ax SIM   213      23.846 -13.594  39.585  1.00  0.00           C  
+HETATM  216 z-ax SIM   214      26.135 -14.926  39.950  1.00  0.00           C  
+HETATM  217 z-ax SIM   215      24.660 -14.269  39.621  1.00  0.00           C  
+HETATM  218 z-ax SIM   216      24.499 -14.321  39.498  1.00  0.00           C  
+HETATM  219 z-ax SIM   217      25.460 -15.035  39.540  1.00  0.00           C  
+HETATM  220 z-ax SIM   218      24.288 -14.327  39.375  1.00  0.00           C  
+HETATM  221 z-ax SIM   219      23.697 -14.017  39.229  1.00  0.00           C  
+HETATM  222 z-ax SIM   220      24.487 -13.920  39.748  1.00  0.00           C  
+HETATM  223 z-ax SIM   221      24.039 -13.837  39.546  1.00  0.00           C  
+HETATM  224 z-ax SIM   222      24.985 -13.667  40.172  1.00  0.00           C  
+HETATM  225 z-ax SIM   223      26.394 -14.783  40.166  1.00  0.00           C  
+HETATM  226 z-ax SIM   224      23.425 -14.087  39.017  1.00  0.00           C  
+HETATM  227 z-ax SIM   225      24.912 -14.855  39.372  1.00  0.00           C  
+HETATM  228 z-ax SIM   226      25.895 -15.255  39.610  1.00  0.00           C  
+HETATM  229 z-ax SIM   227      26.539 -15.373  39.838  1.00  0.00           C  
+HETATM  230 z-ax SIM   228      25.170 -14.755  39.578  1.00  0.00           C  
+HETATM  231 z-ax SIM   229      24.799 -13.878  39.944  1.00  0.00           C  
+HETATM  232 z-ax SIM   230      24.359 -14.069  39.582  1.00  0.00           C  
+HETATM  233 z-ax SIM   231      25.334 -14.448  39.865  1.00  0.00           C  
+HETATM  234 z-ax SIM   232      24.486 -13.508  40.001  1.00  0.00           C  
+HETATM  235 z-ax SIM   233      23.034 -13.845  38.928  1.00  0.00           C  
+HETATM  236 z-ax SIM   234      25.614 -15.119  39.562  1.00  0.00           C  
+HETATM  237 z-ax SIM   235      24.521 -14.245  39.560  1.00  0.00           C  
+HETATM  238 z-ax SIM   236      23.657 -13.409  39.586  1.00  0.00           C  
+HETATM  239 z-ax SIM   237      25.582 -14.889  39.702  1.00  0.00           C  
+HETATM  240 z-ax SIM   238      24.503 -14.121  39.629  1.00  0.00           C  
+HETATM  241 z-ax SIM   239      26.554 -15.468  39.779  1.00  0.00           C  
+HETATM  242 z-ax SIM   240      26.202 -14.792  40.070  1.00  0.00           C  
+HETATM  243 z-ax SIM   241      25.154 -14.873  39.489  1.00  0.00           C  
+HETATM  244 z-ax SIM   242      27.457 -15.544  40.126  1.00  0.00           C  
+HETATM  245 z-ax SIM   243      24.952 -14.473  39.648  1.00  0.00           C  
+HETATM  246 z-ax SIM   244      25.329 -13.937  40.185  1.00  0.00           C  
+HETATM  247 z-ax SIM   245      25.679 -14.560  39.968  1.00  0.00           C  
+HETATM  248 z-ax SIM   246      26.082 -15.380  39.616  1.00  0.00           C  
+HETATM  249 z-ax SIM   247      28.158 -16.107  40.016  1.00  0.00           C  
+HETATM  250 z-ax SIM   248      25.469 -14.473  39.918  1.00  0.00           C  
+HETATM  251 z-ax SIM   249      25.069 -14.932  39.404  1.00  0.00           C  
+HETATM  252 z-ax SIM   250      25.585 -14.407  40.019  1.00  0.00           C  
+HETATM  253 z-ax SIM   251      25.711 -15.576  39.292  1.00  0.00           C  
+HETATM  254 z-ax SIM   252      26.333 -15.663  39.539  1.00  0.00           C  
+HETATM  255 z-ax SIM   253      25.831 -14.997  39.754  1.00  0.00           C  
+HETATM  256 z-ax SIM   254      25.077 -14.890  39.437  1.00  0.00           C  
+HETATM  257 z-ax SIM   255      25.017 -14.615  39.589  1.00  0.00           C  
+HETATM  258 z-ax SIM   256      25.154 -14.865  39.496  1.00  0.00           C  
+HETATM  259 z-ax SIM   257      25.012 -14.505  39.659  1.00  0.00           C  
+HETATM  260 z-ax SIM   258      25.141 -15.023  39.381  1.00  0.00           C  
+HETATM  261 z-ax SIM   259      25.518 -15.273  39.407  1.00  0.00           C  
+HETATM  262 z-ax SIM   260      26.445 -15.303  39.842  1.00  0.00           C  
+HETATM  263 z-ax SIM   261      24.742 -14.274  39.663  1.00  0.00           C  
+HETATM  264 z-ax SIM   262      26.141 -15.355  39.662  1.00  0.00           C  
+HETATM  265 z-ax SIM   263      24.478 -13.868  39.775  1.00  0.00           C  
+HETATM  266 z-ax SIM   264      26.894 -15.825  39.685  1.00  0.00           C  
+HETATM  267 z-ax SIM   265      25.952 -15.290  39.614  1.00  0.00           C  
+HETATM  268 z-ax SIM   266      25.810 -15.186  39.616  1.00  0.00           C  
+HETATM  269 z-ax SIM   267      24.443 -14.399  39.416  1.00  0.00           C  
+HETATM  270 z-ax SIM   268      23.383 -13.968  39.069  1.00  0.00           C  
+HETATM  271 z-ax SIM   269      25.760 -15.242  39.552  1.00  0.00           C  
+HETATM  272 z-ax SIM   270      22.594 -13.422  38.911  1.00  0.00           C  
+HETATM  273 z-ax SIM   271      26.608 -15.247  39.956  1.00  0.00           C  
+HETATM  274 z-ax SIM   272      24.598 -14.777  39.251  1.00  0.00           C  
+HETATM  275 z-ax SIM   273      24.044 -13.711  39.627  1.00  0.00           C  
+HETATM  276 z-ax SIM   274      25.655 -15.091  39.602  1.00  0.00           C  
+HETATM  277 z-ax SIM   275      25.505 -14.890  39.662  1.00  0.00           C  
+HETATM  278 z-ax SIM   276      27.586 -16.553  39.456  1.00  0.00           C  
+HETATM  279 z-ax SIM   277      26.020 -14.480  40.186  1.00  0.00           C  
+HETATM  280 z-ax SIM   278      24.957 -14.232  39.806  1.00  0.00           C  
+HETATM  281 z-ax SIM   279      24.832 -14.255  39.724  1.00  0.00           C  
+HETATM  282 z-ax SIM   280      24.011 -13.860  39.515  1.00  0.00           C  
+HETATM  283 z-ax SIM   281      24.251 -14.382  39.318  1.00  0.00           C  
+HETATM  284 z-ax SIM   282      26.021 -15.404  39.569  1.00  0.00           C  
+HETATM  285 z-ax SIM   283      25.526 -14.627  39.847  1.00  0.00           C  
+HETATM  286 z-ax SIM   284      24.446 -14.684  39.227  1.00  0.00           C  
+HETATM  287 z-ax SIM   285      26.698 -15.591  39.761  1.00  0.00           C  
+HETATM  288 z-ax SIM   286      25.348 -14.772  39.660  1.00  0.00           C  
+HETATM  289 z-ax SIM   287      23.891 -13.694  39.549  1.00  0.00           C  
+HETATM  290 z-ax SIM   288      24.376 -14.030  39.617  1.00  0.00           C  
+HETATM  291 z-ax SIM   289      24.218 -13.777  39.686  1.00  0.00           C  
+HETATM  292 z-ax SIM   290      25.325 -14.723  39.681  1.00  0.00           C  
+HETATM  293 z-ax SIM   291      24.751 -14.852  39.285  1.00  0.00           C  
+HETATM  294 z-ax SIM   292      26.692 -14.999  40.161  1.00  0.00           C  
+HETATM  295 z-ax SIM   293      25.561 -14.857  39.713  1.00  0.00           C  
+HETATM  296 z-ax SIM   294      26.194 -14.894  40.000  1.00  0.00           C  
+HETATM  297 z-ax SIM   295      24.815 -14.400  39.622  1.00  0.00           C  
+HETATM  298 z-ax SIM   296      26.339 -15.203  39.860  1.00  0.00           C  
+HETATM  299 z-ax SIM   297      26.490 -15.312  39.857  1.00  0.00           C  
+HETATM  300 z-ax SIM   298      24.606 -13.777  39.902  1.00  0.00           C  
+HETATM  301 z-ax SIM   299      26.334 -14.921  40.048  1.00  0.00           C  
+HETATM  302 z-ax SIM   300      25.470 -15.172  39.451  1.00  0.00           C  
+HETATM  303 z-ax SIM   301      22.825 -12.826  39.423  1.00  0.00           C  
+HETATM  304 z-ax SIM   302      26.826 -15.959  39.558  1.00  0.00           C  
+HETATM  305 z-ax SIM   303      24.624 -14.178  39.660  1.00  0.00           C  
+HETATM  306 z-ax SIM   304      22.998 -13.558  39.088  1.00  0.00           C  
+HETATM  307 z-ax SIM   305      22.659 -13.591  38.847  1.00  0.00           C  
+HETATM  308 z-ax SIM   306      24.467 -14.792  39.167  1.00  0.00           C  
+HETATM  309 z-ax SIM   307      25.310 -14.776  39.637  1.00  0.00           C  
+HETATM  310 z-ax SIM   308      24.940 -14.671  39.510  1.00  0.00           C  
+HETATM  311 z-ax SIM   309      25.512 -15.219  39.441  1.00  0.00           C  
+HETATM  312 z-ax SIM   310      26.110 -15.602  39.474  1.00  0.00           C  
+HETATM  313 z-ax SIM   311      25.051 -14.627  39.599  1.00  0.00           C  
+HETATM  314 z-ax SIM   312      26.007 -15.142  39.743  1.00  0.00           C  
+HETATM  315 z-ax SIM   313      24.899 -14.637  39.511  1.00  0.00           C  
+HETATM  316 z-ax SIM   314      25.971 -14.977  39.837  1.00  0.00           C  
+HETATM  317 z-ax SIM   315      26.341 -14.766  40.153  1.00  0.00           C  
+HETATM  318 z-ax SIM   316      24.459 -13.644  39.903  1.00  0.00           C  
+HETATM  319 z-ax SIM   317      24.672 -14.204  39.670  1.00  0.00           C  
+HETATM  320 z-ax SIM   318      24.129 -14.454  39.199  1.00  0.00           C  
+HETATM  321 z-ax SIM   319      25.624 -14.716  39.838  1.00  0.00           C  
+HETATM  322 z-ax SIM   320      24.833 -14.320  39.683  1.00  0.00           C  
+HETATM  323 z-ax SIM   321      25.928 -15.326  39.578  1.00  0.00           C  
+HETATM  324 z-ax SIM   322      26.589 -15.299  39.912  1.00  0.00           C  
+HETATM  325 z-ax SIM   323      23.900 -14.179  39.246  1.00  0.00           C  
+HETATM  326 z-ax SIM   324      24.858 -14.314  39.701  1.00  0.00           C  
+HETATM  327 z-ax SIM   325      23.805 -14.544  38.946  1.00  0.00           C  
+HETATM  328 z-ax SIM   326      23.876 -14.396  39.088  1.00  0.00           C  
+HETATM  329 z-ax SIM   327      25.351 -14.195  40.035  1.00  0.00           C  
+HETATM  330 z-ax SIM   328      24.764 -14.763  39.352  1.00  0.00           C  
+HETATM  331 z-ax SIM   329      26.550 -14.890  40.168  1.00  0.00           C  
+HETATM  332 z-ax SIM   330      26.025 -15.389  39.582  1.00  0.00           C  
+HETATM  333 z-ax SIM   331      24.809 -14.159  39.773  1.00  0.00           C  
+HETATM  334 z-ax SIM   332      25.779 -14.560  40.017  1.00  0.00           C  
+HETATM  335 z-ax SIM   333      23.620 -13.832  39.301  1.00  0.00           C  
+HETATM  336 z-ax SIM   334      24.211 -14.055  39.507  1.00  0.00           C  
+HETATM  337 z-ax SIM   335      24.009 -14.725  38.945  1.00  0.00           C  
+HETATM  338 z-ax SIM   336      24.622 -14.407  39.511  1.00  0.00           C  
+HETATM  339 z-ax SIM   337      25.268 -14.988  39.472  1.00  0.00           C  
+HETATM  340 z-ax SIM   338      24.856 -14.366  39.666  1.00  0.00           C  
+HETATM  341 z-ax SIM   339      24.916 -14.736  39.455  1.00  0.00           C  
+HETATM  342 z-ax SIM   340      26.832 -15.006  40.219  1.00  0.00           C  
+HETATM  343 z-ax SIM   341      23.095 -13.296  39.312  1.00  0.00           C  
+HETATM  344 z-ax SIM   342      24.877 -14.956  39.283  1.00  0.00           C  
+HETATM  345 z-ax SIM   343      26.746 -15.009  40.178  1.00  0.00           C  
+HETATM  346 z-ax SIM   344      24.429 -13.543  39.948  1.00  0.00           C  
+HETATM  347 z-ax SIM   345      25.725 -14.626  39.947  1.00  0.00           C  
+HETATM  348 z-ax SIM   346      25.670 -15.032  39.650  1.00  0.00           C  
+HETATM  349 z-ax SIM   347      24.463 -13.972  39.702  1.00  0.00           C  
+HETATM  350 z-ax SIM   348      25.339 -14.899  39.569  1.00  0.00           C  
+HETATM  351 z-ax SIM   349      26.798 -16.073  39.462  1.00  0.00           C  
+HETATM  352 z-ax SIM   350      24.039 -14.169  39.333  1.00  0.00           C  
+HETATM  353 z-ax SIM   351      24.630 -14.085  39.723  1.00  0.00           C  
+HETATM  354 z-ax SIM   352      26.239 -15.275  39.765  1.00  0.00           C  
+HETATM  355 z-ax SIM   353      23.570 -13.359  39.564  1.00  0.00           C  
+HETATM  356 z-ax SIM   354      23.645 -14.000  39.208  1.00  0.00           C  
+HETATM  357 z-ax SIM   355      26.905 -15.193  40.127  1.00  0.00           C  
+HETATM  358 z-ax SIM   356      25.497 -14.792  39.723  1.00  0.00           C  
+HETATM  359 z-ax SIM   357      24.335 -13.777  39.752  1.00  0.00           C  
+HETATM  360 z-ax SIM   358      25.098 -14.487  39.717  1.00  0.00           C  
+HETATM  361 z-ax SIM   359      24.616 -14.757  39.275  1.00  0.00           C  
+HETATM  362 z-ax SIM   360      22.188 -12.273  39.327  1.00  0.00           C  
+HETATM  363 z-ax SIM   361      25.918 -15.731  39.286  1.00  0.00           C  
+HETATM  364 z-ax SIM   362      27.335 -15.784  39.908  1.00  0.00           C  
+HETATM  365 z-ax SIM   363      25.363 -14.763  39.674  1.00  0.00           C  
+HETATM  366 z-ax SIM   364      25.853 -14.873  39.848  1.00  0.00           C  
+HETATM  367 z-ax SIM   365      25.835 -15.463  39.436  1.00  0.00           C  
+HETATM  368 z-ax SIM   366      25.165 -14.790  39.552  1.00  0.00           C  
+HETATM  369 z-ax SIM   367      24.990 -14.278  39.794  1.00  0.00           C  
+HETATM  370 z-ax SIM   368      25.870 -15.018  39.759  1.00  0.00           C  
+HETATM  371 z-ax SIM   369      24.928 -14.834  39.395  1.00  0.00           C  
+HETATM  372 z-ax SIM   370      24.779 -13.880  39.932  1.00  0.00           C  
+HETATM  373 z-ax SIM   371      26.206 -15.242  39.771  1.00  0.00           C  
+HETATM  374 z-ax SIM   372      26.649 -14.897  40.208  1.00  0.00           C  
+HETATM  375 z-ax SIM   373      23.049 -13.543  39.130  1.00  0.00           C  
+HETATM  376 z-ax SIM   374      24.665 -14.080  39.745  1.00  0.00           C  
+HETATM  377 z-ax SIM   375      25.207 -14.077  40.035  1.00  0.00           C  
+HETATM  378 z-ax SIM   376      24.772 -14.272  39.681  1.00  0.00           C  
+HETATM  379 z-ax SIM   377      24.123 -14.692  39.035  1.00  0.00           C  
+HETATM  380 z-ax SIM   378      23.473 -13.436  39.459  1.00  0.00           C  
+HETATM  381 z-ax SIM   379      25.729 -14.537  40.007  1.00  0.00           C  
+HETATM  382 z-ax SIM   380      23.989 -14.027  39.396  1.00  0.00           C  
+HETATM  383 z-ax SIM   381      24.988 -15.102  39.243  1.00  0.00           C  
+HETATM  384 z-ax SIM   382      25.091 -14.359  39.796  1.00  0.00           C  
+HETATM  385 z-ax SIM   383      24.661 -14.820  39.257  1.00  0.00           C  
+HETATM  386 z-ax SIM   384      25.715 -15.259  39.517  1.00  0.00           C  
+HETATM  387 z-ax SIM   385      25.465 -14.293  40.031  1.00  0.00           C  
+HETATM  388 z-ax SIM   386      25.340 -14.960  39.529  1.00  0.00           C  
+HETATM  389 z-ax SIM   387      25.488 -15.074  39.528  1.00  0.00           C  
+HETATM  390 z-ax SIM   388      24.237 -13.929  39.602  1.00  0.00           C  
+HETATM  391 z-ax SIM   389      23.527 -13.816  39.255  1.00  0.00           C  
+HETATM  392 z-ax SIM   390      25.675 -15.344  39.438  1.00  0.00           C  
+HETATM  393 z-ax SIM   391      21.806 -12.874  38.712  1.00  0.00           C  
+HETATM  394 z-ax SIM   392      25.787 -14.820  39.850  1.00  0.00           C  
+HETATM  395 z-ax SIM   393      25.849 -14.748  39.929  1.00  0.00           C  
+HETATM  396 z-ax SIM   394      23.217 -13.539  39.238  1.00  0.00           C  
+HETATM  397 z-ax SIM   395      24.033 -14.053  39.405  1.00  0.00           C  
+HETATM  398 z-ax SIM   396      23.019 -13.258  39.287  1.00  0.00           C  
+HETATM  399 z-ax SIM   397      24.584 -14.210  39.618  1.00  0.00           C  
+HETATM  400 z-ax SIM   398      27.342 -15.358  40.204  1.00  0.00           C  
+HETATM  401 z-ax SIM   399      23.918 -14.351  39.143  1.00  0.00           C  
+HETATM  402 z-ax SIM   400      25.252 -14.639  39.697  1.00  0.00           C  
+HETATM  403 z-ax SIM   401      24.753 -14.460  39.548  1.00  0.00           C  
+HETATM  404 z-ax SIM   402      26.647 -15.518  39.788  1.00  0.00           C  
+HETATM  405 z-ax SIM   403      24.650 -14.558  39.427  1.00  0.00           C  
+HETATM  406 z-ax SIM   404      24.940 -15.139  39.191  1.00  0.00           C  
+HETATM  407 z-ax SIM   405      26.281 -15.110  39.896  1.00  0.00           C  
+HETATM  408 z-ax SIM   406      26.790 -15.052  40.169  1.00  0.00           C  
+HETATM  409 z-ax SIM   407      23.106 -13.243  39.351  1.00  0.00           C  
+HETATM  410 z-ax SIM   408      23.874 -14.026  39.329  1.00  0.00           C  
+HETATM  411 z-ax SIM   409      26.029 -15.400  39.576  1.00  0.00           C  
+HETATM  412 z-ax SIM   410      23.238 -13.328  39.382  1.00  0.00           C  
+HETATM  413 z-ax SIM   411      25.541 -14.384  40.012  1.00  0.00           C  
+HETATM  414 z-ax SIM   412      25.757 -15.375  39.458  1.00  0.00           C  
+HETATM  415 z-ax SIM   413      24.184 -14.424  39.251  1.00  0.00           C  
+HETATM  416 z-ax SIM   414      23.955 -13.890  39.464  1.00  0.00           C  
+HETATM  417 z-ax SIM   415      24.827 -14.358  39.656  1.00  0.00           C  
+HETATM  418 z-ax SIM   416      24.305 -13.293  40.029  1.00  0.00           C  
+HETATM  419 z-ax SIM   417      23.247 -13.599  39.219  1.00  0.00           C  
+HETATM  420 z-ax SIM   418      23.758 -14.303  39.078  1.00  0.00           C  
+HETATM  421 z-ax SIM   419      24.250 -14.557  39.201  1.00  0.00           C  
+HETATM  422 z-ax SIM   420      24.070 -14.203  39.330  1.00  0.00           C  
+HETATM  423 z-ax SIM   421      25.630 -14.679  39.866  1.00  0.00           C  
+HETATM  424 z-ax SIM   422      24.282 -13.572  39.849  1.00  0.00           C  
+HETATM  425 z-ax SIM   423      25.322 -14.730  39.674  1.00  0.00           C  
+HETATM  426 z-ax SIM   424      27.056 -15.892  39.709  1.00  0.00           C  
+HETATM  427 z-ax SIM   425      26.196 -15.011  39.923  1.00  0.00           C  
+HETATM  428 z-ax SIM   426      25.207 -14.629  39.681  1.00  0.00           C  
+HETATM  429 z-ax SIM   427      23.869 -13.348  39.748  1.00  0.00           C  
+HETATM  430 z-ax SIM   428      24.786 -14.135  39.776  1.00  0.00           C  
+HETATM  431 z-ax SIM   429      25.618 -14.947  39.681  1.00  0.00           C  
+HETATM  432 z-ax SIM   430      26.094 -14.904  39.946  1.00  0.00           C  
+HETATM  433 z-ax SIM   431      24.770 -14.289  39.669  1.00  0.00           C  
+HETATM  434 z-ax SIM   432      25.131 -14.492  39.730  1.00  0.00           C  
+HETATM  435 z-ax SIM   433      27.078 -15.430  40.042  1.00  0.00           C  
+HETATM  436 z-ax SIM   434      26.796 -15.646  39.767  1.00  0.00           C  
+HETATM  437 z-ax SIM   435      24.360 -14.261  39.459  1.00  0.00           C  
+HETATM  438 z-ax SIM   436      24.354 -13.545  39.905  1.00  0.00           C  
+HETATM  439 z-ax SIM   437      24.171 -14.843  38.960  1.00  0.00           C  
+HETATM  440 z-ax SIM   438      24.705 -14.501  39.495  1.00  0.00           C  
+HETATM  441 z-ax SIM   439      24.273 -14.130  39.494  1.00  0.00           C  
+HETATM  442 z-ax SIM   440      25.436 -15.087  39.493  1.00  0.00           C  
+HETATM  443 z-ax SIM   441      25.203 -15.216  39.280  1.00  0.00           C  
+HETATM  444 z-ax SIM   442      22.924 -13.891  38.826  1.00  0.00           C  
+HETATM  445 z-ax SIM   443      25.034 -14.398  39.740  1.00  0.00           C  
+HETATM  446 z-ax SIM   444      26.469 -15.045  40.029  1.00  0.00           C  
+HETATM  447 z-ax SIM   445      23.618 -13.531  39.489  1.00  0.00           C  
+HETATM  448 z-ax SIM   446      25.363 -15.130  39.424  1.00  0.00           C  
+HETATM  449 z-ax SIM   447      26.618 -15.788  39.585  1.00  0.00           C  
+HETATM  450 z-ax SIM   448      24.868 -14.909  39.311  1.00  0.00           C  
+HETATM  451 z-ax SIM   449      26.249 -15.499  39.614  1.00  0.00           C  
+HETATM  452 z-ax SIM   450      24.370 -14.040  39.607  1.00  0.00           C  
+HETATM  453 z-ax SIM   451      25.350 -14.283  39.979  1.00  0.00           C  
+HETATM  454 z-ax SIM   452      25.934 -14.932  39.849  1.00  0.00           C  
+HETATM  455 z-ax SIM   453      24.682 -14.598  39.418  1.00  0.00           C  
+HETATM  456 z-ax SIM   454      26.820 -15.581  39.824  1.00  0.00           C  
+HETATM  457 z-ax SIM   455      24.954 -14.977  39.311  1.00  0.00           C  
+HETATM  458 z-ax SIM   456      25.631 -15.433  39.353  1.00  0.00           C  
+HETATM  459 z-ax SIM   457      27.246 -15.802  39.857  1.00  0.00           C  
+HETATM  460 z-ax SIM   458      25.796 -14.541  40.038  1.00  0.00           C  
+HETATM  461 z-ax SIM   459      25.711 -14.552  39.988  1.00  0.00           C  
+HETATM  462 z-ax SIM   460      23.666 -13.971  39.240  1.00  0.00           C  
+HETATM  463 z-ax SIM   461      24.620 -14.868  39.201  1.00  0.00           C  
+HETATM  464 z-ax SIM   462      23.655 -13.361  39.614  1.00  0.00           C  
+HETATM  465 z-ax SIM   463      24.959 -14.067  39.912  1.00  0.00           C  
+HETATM  466 z-ax SIM   464      25.036 -14.421  39.727  1.00  0.00           C  
+HETATM  467 z-ax SIM   465      24.685 -14.342  39.588  1.00  0.00           C  
+HETATM  468 z-ax SIM   466      25.806 -14.835  39.850  1.00  0.00           C  
+HETATM  469 z-ax SIM   467      24.144 -13.954  39.532  1.00  0.00           C  
+HETATM  470 z-ax SIM   468      24.867 -13.781  40.040  1.00  0.00           C  
+HETATM  471 z-ax SIM   469      25.663 -15.297  39.465  1.00  0.00           C  
+HETATM  472 z-ax SIM   470      25.778 -15.050  39.692  1.00  0.00           C  
+HETATM  473 z-ax SIM   471      24.813 -13.843  39.974  1.00  0.00           C  
+HETATM  474 z-ax SIM   472      23.811 -13.947  39.342  1.00  0.00           C  
+HETATM  475 z-ax SIM   473      26.557 -15.648  39.655  1.00  0.00           C  
+HETATM  476 z-ax SIM   474      26.347 -14.431  40.371  1.00  0.00           C  
+HETATM  477 z-ax SIM   475      24.676 -14.812  39.270  1.00  0.00           C  
+HETATM  478 z-ax SIM   476      24.045 -13.432  39.799  1.00  0.00           C  
+HETATM  479 z-ax SIM   477      24.913 -14.257  39.767  1.00  0.00           C  
+HETATM  480 z-ax SIM   478      26.323 -15.148  39.891  1.00  0.00           C  
+HETATM  481 z-ax SIM   479      25.470 -15.204  39.429  1.00  0.00           C  
+HETATM  482 z-ax SIM   480      25.036 -14.464  39.698  1.00  0.00           C  
+HETATM  483 z-ax SIM   481      25.454 -14.803  39.694  1.00  0.00           C  
+HETATM  484 z-ax SIM   482      26.351 -15.070  39.956  1.00  0.00           C  
+HETATM  485 z-ax SIM   483      24.852 -13.891  39.965  1.00  0.00           C  
+HETATM  486 z-ax SIM   484      25.847 -15.054  39.723  1.00  0.00           C  
+HETATM  487 z-ax SIM   485      24.478 -13.940  39.730  1.00  0.00           C  
+HETATM  488 z-ax SIM   486      26.767 -15.683  39.727  1.00  0.00           C  
+HETATM  489 z-ax SIM   487      25.089 -14.017  40.012  1.00  0.00           C  
+HETATM  490 z-ax SIM   488      25.596 -14.173  40.172  1.00  0.00           C  
+HETATM  491 z-ax SIM   489      22.019 -12.666  38.985  1.00  0.00           C  
+HETATM  492 z-ax SIM   490      24.332 -14.442  39.325  1.00  0.00           C  
+HETATM  493 z-ax SIM   491      24.950 -13.992  39.954  1.00  0.00           C  
+HETATM  494 z-ax SIM   492      26.717 -15.308  39.965  1.00  0.00           C  
+HETATM  495 z-ax SIM   493      26.639 -16.130  39.347  1.00  0.00           C  
+HETATM  496 z-ax SIM   494      24.405 -14.671  39.213  1.00  0.00           C  
+HETATM  497 z-ax SIM   495      25.024 -14.446  39.704  1.00  0.00           C  
+HETATM  498 z-ax SIM   496      25.780 -14.908  39.789  1.00  0.00           C  
+HETATM  499 z-ax SIM   497      24.304 -14.081  39.543  1.00  0.00           C  
+HETATM  500 z-ax SIM   498      24.201 -14.085  39.482  1.00  0.00           C  
+HETATM  501 z-ax SIM   499      23.034 -14.041  38.800  1.00  0.00           C  
+HETATM  502 z-ax SIM   500      23.082 -13.416  39.230  1.00  0.00           C  
+HETATM  503 z-ax SIM   501      23.679 -13.698  39.421  1.00  0.00           C  
+HETATM  504 z-ax SIM   502      24.895 -14.486  39.609  1.00  0.00           C  
+HETATM  505    R APX   503      37.254   0.500  16.747  1.00  0.00           C  
+HETATM  506    R AXE   504      37.254   0.500  16.747  1.00  0.00           C  
+HETATM  507 Axis AXE   504      25.084 -14.565  39.658  1.00  0.00           C  
+HETATM  508 Axis AXE   504      23.866 -16.072  41.949  1.00  0.00           N  
+HETATM  509  APX EDG   505      37.254   0.500  16.747  1.00  0.00           H  
+HETATM  510 H510 EDG   505      35.075 -14.845  42.433  1.00  0.00           H  
+HETATM  511 H511 EDG   505      34.777 -13.461  43.184  1.00  0.00           H  
+HETATM  512 H512 EDG   505      34.257 -12.081  43.816  1.00  0.00           H  
+HETATM  513 H513 EDG   505      33.530 -10.741  44.310  1.00  0.00           H  
+HETATM  514 H514 EDG   505      32.612  -9.473  44.657  1.00  0.00           H  
+HETATM  515 H515 EDG   505      31.527  -8.307  44.847  1.00  0.00           H  
+HETATM  516 H516 EDG   505      30.302  -7.274  44.875  1.00  0.00           H  
+HETATM  517 H517 EDG   505      28.965  -6.398  44.741  1.00  0.00           H  
+HETATM  518 H518 EDG   505      27.551  -5.701  44.449  1.00  0.00           H  
+HETATM  519 H519 EDG   505      26.095  -5.201  44.004  1.00  0.00           H  
+HETATM  520 H520 EDG   505      24.631  -4.908  43.419  1.00  0.00           H  
+HETATM  521 H521 EDG   505      23.196  -4.831  42.707  1.00  0.00           H  
+HETATM  522 H522 EDG   505      21.826  -4.972  41.887  1.00  0.00           H  
+HETATM  523 H523 EDG   505      20.554  -5.327  40.978  1.00  0.00           H  
+HETATM  524 H524 EDG   505      19.411  -5.887  40.002  1.00  0.00           H  
+HETATM  525 H525 EDG   505      18.426  -6.638  38.985  1.00  0.00           H  
+HETATM  526 H526 EDG   505      17.623  -7.563  37.950  1.00  0.00           H  
+HETATM  527 H527 EDG   505      17.021  -8.638  36.924  1.00  0.00           H  
+HETATM  528 H528 EDG   505      16.636  -9.836  35.931  1.00  0.00           H  
+HETATM  529 H529 EDG   505      16.476 -11.129  34.996  1.00  0.00           H  
+HETATM  530 H530 EDG   505      16.547 -12.484  34.143  1.00  0.00           H  
+HETATM  531 H531 EDG   505      16.846 -13.869  33.391  1.00  0.00           H  
+HETATM  532 H532 EDG   505      17.365 -15.248  32.760  1.00  0.00           H  
+HETATM  533 H533 EDG   505      18.093 -16.588  32.265  1.00  0.00           H  
+HETATM  534 H534 EDG   505      19.010 -17.857  31.918  1.00  0.00           H  
+HETATM  535 H535 EDG   505      20.095 -19.022  31.729  1.00  0.00           H  
+HETATM  536 H536 EDG   505      21.321 -20.055  31.700  1.00  0.00           H  
+HETATM  537 H537 EDG   505      22.657 -20.931  31.834  1.00  0.00           H  
+HETATM  538 H538 EDG   505      24.071 -21.628  32.127  1.00  0.00           H  
+HETATM  539 H539 EDG   505      25.528 -22.129  32.571  1.00  0.00           H  
+HETATM  540 H540 EDG   505      26.991 -22.421  33.157  1.00  0.00           H  
+HETATM  541 H541 EDG   505      28.426 -22.498  33.868  1.00  0.00           H  
+HETATM  542 H542 EDG   505      29.796 -22.357  34.689  1.00  0.00           H  
+HETATM  543 H543 EDG   505      31.069 -22.003  35.598  1.00  0.00           H  
+HETATM  544 H544 EDG   505      32.211 -21.443  36.573  1.00  0.00           H  
+HETATM  545 H545 EDG   505      33.196 -20.691  37.591  1.00  0.00           H  
+HETATM  546 H546 EDG   505      34.000 -19.766  38.625  1.00  0.00           H  
+HETATM  547 H547 EDG   505      34.601 -18.692  39.652  1.00  0.00           H  
+HETATM  548 H548 EDG   505      34.987 -17.493  40.644  1.00  0.00           H  
+HETATM  549 H549 EDG   505      35.146 -16.200  41.579  1.00  0.00           H  
+HETATM  550 H550 CON   506      34.085 -14.899  42.297  1.00  0.00           H  
+HETATM  551 H551 CON   506      29.488 -14.922  41.279  1.00  0.00           H  
+HETATM  552 H552 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  553 H553 CON   506      33.814 -13.643  42.979  1.00  0.00           H  
+HETATM  554 H554 CON   506      29.351 -14.286  41.625  1.00  0.00           H  
+HETATM  555 H555 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  556 H556 CON   506      33.342 -12.391  43.552  1.00  0.00           H  
+HETATM  557 H557 CON   506      29.113 -13.653  41.914  1.00  0.00           H  
+HETATM  558 H558 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  559 H559 CON   506      32.682 -11.175  44.001  1.00  0.00           H  
+HETATM  560 H560 CON   506      28.779 -13.037  42.142  1.00  0.00           H  
+HETATM  561 H561 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  562 H562 CON   506      31.850 -10.024  44.315  1.00  0.00           H  
+HETATM  563 H563 CON   506      28.357 -12.454  42.301  1.00  0.00           H  
+HETATM  564 H564 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  565 H565 CON   506      30.866  -8.967  44.487  1.00  0.00           H  
+HETATM  566 H566 CON   506      27.859 -11.919  42.388  1.00  0.00           H  
+HETATM  567 H567 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  568 H568 CON   506      29.753  -8.030  44.513  1.00  0.00           H  
+HETATM  569 H569 CON   506      27.296 -11.445  42.401  1.00  0.00           H  
+HETATM  570 H570 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  571 H571 CON   506      28.541  -7.235  44.392  1.00  0.00           H  
+HETATM  572 H572 CON   506      26.682 -11.042  42.340  1.00  0.00           H  
+HETATM  573 H573 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  574 H574 CON   506      27.258  -6.603  44.126  1.00  0.00           H  
+HETATM  575 H575 CON   506      26.033 -10.722  42.205  1.00  0.00           H  
+HETATM  576 H576 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  577 H577 CON   506      25.936  -6.148  43.723  1.00  0.00           H  
+HETATM  578 H578 CON   506      25.364 -10.492  42.001  1.00  0.00           H  
+HETATM  579 H579 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  580 H580 CON   506      24.608  -5.883  43.192  1.00  0.00           H  
+HETATM  581 H581 CON   506      24.691 -10.358  41.732  1.00  0.00           H  
+HETATM  582 H582 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  583 H583 CON   506      23.307  -5.813  42.546  1.00  0.00           H  
+HETATM  584 H584 CON   506      24.032 -10.323  41.405  1.00  0.00           H  
+HETATM  585 H585 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  586 H586 CON   506      22.063  -5.941  41.802  1.00  0.00           H  
+HETATM  587 H587 CON   506      23.403 -10.387  41.029  1.00  0.00           H  
+HETATM  588 H588 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  589 H589 CON   506      20.909  -6.263  40.977  1.00  0.00           H  
+HETATM  590 H590 CON   506      22.819 -10.550  40.611  1.00  0.00           H  
+HETATM  591 H591 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  592 H592 CON   506      19.872  -6.771  40.092  1.00  0.00           H  
+HETATM  593 H593 CON   506      22.294 -10.807  40.163  1.00  0.00           H  
+HETATM  594 H594 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  595 H595 CON   506      18.978  -7.453  39.169  1.00  0.00           H  
+HETATM  596 H596 CON   506      21.841 -11.153  39.696  1.00  0.00           H  
+HETATM  597 H597 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  598 H598 CON   506      18.250  -8.292  38.230  1.00  0.00           H  
+HETATM  599 H599 CON   506      21.472 -11.577  39.220  1.00  0.00           H  
+HETATM  600 H600 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  601 H601 CON   506      17.704  -9.267  37.299  1.00  0.00           H  
+HETATM  602 H602 CON   506      21.196 -12.071  38.749  1.00  0.00           H  
+HETATM  603 H603 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  604 H604 CON   506      17.354 -10.354  36.398  1.00  0.00           H  
+HETATM  605 H605 CON   506      21.019 -12.621  38.293  1.00  0.00           H  
+HETATM  606 H606 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  607 H607 CON   506      17.210 -11.528  35.550  1.00  0.00           H  
+HETATM  608 H608 CON   506      20.946 -13.215  37.864  1.00  0.00           H  
+HETATM  609 H609 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  610 H610 CON   506      17.274 -12.757  34.775  1.00  0.00           H  
+HETATM  611 H611 CON   506      20.978 -13.838  37.472  1.00  0.00           H  
+HETATM  612 H612 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  613 H613 CON   506      17.545 -14.013  34.093  1.00  0.00           H  
+HETATM  614 H614 CON   506      21.115 -14.474  37.126  1.00  0.00           H  
+HETATM  615 H615 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  616 H616 CON   506      18.016 -15.265  33.521  1.00  0.00           H  
+HETATM  617 H617 CON   506      21.354 -15.107  36.836  1.00  0.00           H  
+HETATM  618 H618 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  619 H619 CON   506      18.676 -16.481  33.072  1.00  0.00           H  
+HETATM  620 H620 CON   506      21.688 -15.723  36.609  1.00  0.00           H  
+HETATM  621 H621 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  622 H622 CON   506      19.508 -17.632  32.757  1.00  0.00           H  
+HETATM  623 H623 CON   506      22.110 -16.305  36.450  1.00  0.00           H  
+HETATM  624 H624 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  625 H625 CON   506      20.493 -18.689  32.585  1.00  0.00           H  
+HETATM  626 H626 CON   506      22.608 -16.841  36.363  1.00  0.00           H  
+HETATM  627 H627 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  628 H628 CON   506      21.605 -19.626  32.559  1.00  0.00           H  
+HETATM  629 H629 CON   506      23.171 -17.315  36.350  1.00  0.00           H  
+HETATM  630 H630 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  631 H631 CON   506      22.817 -20.421  32.681  1.00  0.00           H  
+HETATM  632 H632 CON   506      23.785 -17.717  36.411  1.00  0.00           H  
+HETATM  633 H633 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  634 H634 CON   506      24.100 -21.053  32.946  1.00  0.00           H  
+HETATM  635 H635 CON   506      24.434 -18.038  36.546  1.00  0.00           H  
+HETATM  636 H636 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  637 H637 CON   506      25.422 -21.508  33.350  1.00  0.00           H  
+HETATM  638 H638 CON   506      25.103 -18.268  36.750  1.00  0.00           H  
+HETATM  639 H639 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  640 H640 CON   506      26.750 -21.773  33.881  1.00  0.00           H  
+HETATM  641 H641 CON   506      25.775 -18.402  37.019  1.00  0.00           H  
+HETATM  642 H642 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  643 H643 CON   506      28.052 -21.843  34.526  1.00  0.00           H  
+HETATM  644 H644 CON   506      26.434 -18.437  37.346  1.00  0.00           H  
+HETATM  645 H645 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  646 H646 CON   506      29.295 -21.715  35.271  1.00  0.00           H  
+HETATM  647 H647 CON   506      27.064 -18.373  37.722  1.00  0.00           H  
+HETATM  648 H648 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  649 H649 CON   506      30.449 -21.393  36.096  1.00  0.00           H  
+HETATM  650 H650 CON   506      27.648 -18.210  38.140  1.00  0.00           H  
+HETATM  651 H651 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  652 H652 CON   506      31.486 -20.885  36.980  1.00  0.00           H  
+HETATM  653 H653 CON   506      28.173 -17.952  38.588  1.00  0.00           H  
+HETATM  654 H654 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  655 H655 CON   506      32.380 -20.203  37.904  1.00  0.00           H  
+HETATM  656 H656 CON   506      28.626 -17.607  39.055  1.00  0.00           H  
+HETATM  657 H657 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  658 H658 CON   506      33.109 -19.364  38.842  1.00  0.00           H  
+HETATM  659 H659 CON   506      28.994 -17.183  39.530  1.00  0.00           H  
+HETATM  660 H660 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  661 H661 CON   506      33.655 -18.389  39.774  1.00  0.00           H  
+HETATM  662 H662 CON   506      29.271 -16.689  40.002  1.00  0.00           H  
+HETATM  663 H663 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  664 H664 CON   506      34.004 -17.302  40.674  1.00  0.00           H  
+HETATM  665 H665 CON   506      29.448 -16.138  40.458  1.00  0.00           H  
+HETATM  666 H666 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+HETATM  667 H667 CON   506      34.149 -16.129  41.522  1.00  0.00           H  
+HETATM  668 H668 CON   506      29.521 -15.544  40.887  1.00  0.00           H  
+HETATM  669 H669 CON   506      25.084 -14.565  39.658  1.00  0.00           H  
+ENDMDL
+MODEL        2
+HETATM    1    R PIV     1      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    2    R ZAX     2      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    3 z-ax ZAX     2      49.424  15.565  -6.165  1.00  0.00           C  
+HETATM    4 z-ax ZAX     2      50.642  17.072  -8.456  1.00  0.00           N  
+HETATM    5 z-ax SIM     3      50.420  14.615  -6.220  1.00  0.00           C  
+HETATM    6 z-ax SIM     4      50.572  14.661  -6.103  1.00  0.00           C  
+HETATM    7 z-ax SIM     5      48.971  15.646  -6.347  1.00  0.00           C  
+HETATM    8 z-ax SIM     6      49.121  15.402  -6.429  1.00  0.00           C  
+HETATM    9 z-ax SIM     7      47.331  16.145  -6.784  1.00  0.00           C  
+HETATM   10 z-ax SIM     8      49.511  15.418  -6.214  1.00  0.00           C  
+HETATM   11 z-ax SIM     9      49.656  15.153  -6.307  1.00  0.00           C  
+HETATM   12 z-ax SIM    10      48.121  16.442  -6.227  1.00  0.00           C  
+HETATM   13 z-ax SIM    11      51.043  14.628  -5.842  1.00  0.00           C  
+HETATM   14 z-ax SIM    12      50.109  15.147  -6.062  1.00  0.00           C  
+HETATM   15 z-ax SIM    13      50.717  14.949  -5.836  1.00  0.00           C  
+HETATM   16 z-ax SIM    14      47.654  16.847  -6.158  1.00  0.00           C  
+HETATM   17 z-ax SIM    15      48.824  16.806  -5.620  1.00  0.00           C  
+HETATM   18 z-ax SIM    16      51.064  14.421  -5.958  1.00  0.00           C  
+HETATM   19 z-ax SIM    17      49.366  15.461  -6.264  1.00  0.00           C  
+HETATM   20 z-ax SIM    18      50.804  14.907  -5.811  1.00  0.00           C  
+HETATM   21 z-ax SIM    19      48.948  15.779  -6.271  1.00  0.00           C  
+HETATM   22 z-ax SIM    20      48.429  16.412  -6.099  1.00  0.00           C  
+HETATM   23 z-ax SIM    21      49.997  15.915  -5.614  1.00  0.00           C  
+HETATM   24 z-ax SIM    22      50.510  14.688  -6.122  1.00  0.00           C  
+HETATM   25 z-ax SIM    23      48.332  15.982  -6.440  1.00  0.00           C  
+HETATM   26 z-ax SIM    24      48.780  15.799  -6.342  1.00  0.00           C  
+HETATM   27 z-ax SIM    25      50.792  14.285  -6.203  1.00  0.00           C  
+HETATM   28 z-ax SIM    26      47.617  16.206  -6.619  1.00  0.00           C  
+HETATM   29 z-ax SIM    27      49.963  15.409  -5.973  1.00  0.00           C  
+HETATM   30 z-ax SIM    28      47.828  16.429  -6.372  1.00  0.00           C  
+HETATM   31 z-ax SIM    29      49.733  15.111  -6.292  1.00  0.00           C  
+HETATM   32 z-ax SIM    30      51.286  14.855  -5.547  1.00  0.00           C  
+HETATM   33 z-ax SIM    31      49.940  15.486  -5.936  1.00  0.00           C  
+HETATM   34 z-ax SIM    32      49.670  15.540  -6.049  1.00  0.00           C  
+HETATM   35 z-ax SIM    33      49.872  14.870  -6.368  1.00  0.00           C  
+HETATM   36 z-ax SIM    34      50.758  14.410  -6.148  1.00  0.00           C  
+HETATM   37 z-ax SIM    35      48.179  16.164  -6.389  1.00  0.00           C  
+HETATM   38 z-ax SIM    36      48.687  15.958  -6.283  1.00  0.00           C  
+HETATM   39 z-ax SIM    37      46.740  17.419  -6.140  1.00  0.00           C  
+HETATM   40 z-ax SIM    38      49.030  15.642  -6.320  1.00  0.00           C  
+HETATM   41 z-ax SIM    39      50.029  15.364  -5.966  1.00  0.00           C  
+HETATM   42 z-ax SIM    40      47.774  16.488  -6.356  1.00  0.00           C  
+HETATM   43 z-ax SIM    41      49.545  16.071  -5.759  1.00  0.00           C  
+HETATM   44 z-ax SIM    42      49.104  15.808  -6.172  1.00  0.00           C  
+HETATM   45 z-ax SIM    43      49.540  15.293  -6.280  1.00  0.00           C  
+HETATM   46 z-ax SIM    44      48.588  15.956  -6.333  1.00  0.00           C  
+HETATM   47 z-ax SIM    45      48.584  15.447  -6.668  1.00  0.00           C  
+HETATM   48 z-ax SIM    46      49.872  15.572  -5.916  1.00  0.00           C  
+HETATM   49 z-ax SIM    47      49.736  15.775  -5.856  1.00  0.00           C  
+HETATM   50 z-ax SIM    48      49.187  16.141  -5.902  1.00  0.00           C  
+HETATM   51 z-ax SIM    49      49.720  15.848  -5.815  1.00  0.00           C  
+HETATM   52 z-ax SIM    50      49.574  15.638  -6.037  1.00  0.00           C  
+HETATM   53 z-ax SIM    51      49.696  15.611  -5.988  1.00  0.00           C  
+HETATM   54 z-ax SIM    52      50.129  15.471  -5.839  1.00  0.00           C  
+HETATM   55 z-ax SIM    53      48.286  15.981  -6.462  1.00  0.00           C  
+HETATM   56 z-ax SIM    54      50.763  14.737  -5.943  1.00  0.00           C  
+HETATM   57 z-ax SIM    55      47.576  16.938  -6.128  1.00  0.00           C  
+HETATM   58 z-ax SIM    56      49.684  15.263  -6.222  1.00  0.00           C  
+HETATM   59 z-ax SIM    57      47.595  16.396  -6.500  1.00  0.00           C  
+HETATM   60 z-ax SIM    58      50.511  14.746  -6.086  1.00  0.00           C  
+HETATM   61 z-ax SIM    59      50.251  15.255  -5.912  1.00  0.00           C  
+HETATM   62 z-ax SIM    60      48.095  16.161  -6.431  1.00  0.00           C  
+HETATM   63 z-ax SIM    61      49.801  15.901  -5.734  1.00  0.00           C  
+HETATM   64 z-ax SIM    62      49.966  15.098  -6.173  1.00  0.00           C  
+HETATM   65 z-ax SIM    63      49.597  15.338  -6.220  1.00  0.00           C  
+HETATM   66 z-ax SIM    64      50.082  15.007  -6.167  1.00  0.00           C  
+HETATM   67 z-ax SIM    65      48.435  15.767  -6.532  1.00  0.00           C  
+HETATM   68 z-ax SIM    66      51.389  14.095  -5.955  1.00  0.00           C  
+HETATM   69 z-ax SIM    67      50.994  14.770  -5.783  1.00  0.00           C  
+HETATM   70 z-ax SIM    68      49.598  15.969  -5.799  1.00  0.00           C  
+HETATM   71 z-ax SIM    69      46.856  16.550  -6.710  1.00  0.00           C  
+HETATM   72 z-ax SIM    70      50.728  14.920  -5.848  1.00  0.00           C  
+HETATM   73 z-ax SIM    71      50.190  15.322  -5.902  1.00  0.00           C  
+HETATM   74 z-ax SIM    72      48.059  16.208  -6.416  1.00  0.00           C  
+HETATM   75 z-ax SIM    73      48.980  15.365  -6.524  1.00  0.00           C  
+HETATM   76 z-ax SIM    74      50.500  15.201  -5.801  1.00  0.00           C  
+HETATM   77 z-ax SIM    75      50.439  14.638  -6.194  1.00  0.00           C  
+HETATM   78 z-ax SIM    76      49.140  15.773  -6.176  1.00  0.00           C  
+HETATM   79 z-ax SIM    77      49.753  15.253  -6.191  1.00  0.00           C  
+HETATM   80 z-ax SIM    78      51.298  14.677  -5.654  1.00  0.00           C  
+HETATM   81 z-ax SIM    79      49.515  15.513  -6.150  1.00  0.00           C  
+HETATM   82 z-ax SIM    80      48.028  16.055  -6.534  1.00  0.00           C  
+HETATM   83 z-ax SIM    81      51.406  13.892  -6.066  1.00  0.00           C  
+HETATM   84 z-ax SIM    82      48.640  15.359  -6.697  1.00  0.00           C  
+HETATM   85 z-ax SIM    83      49.065  15.793  -6.201  1.00  0.00           C  
+HETATM   86 z-ax SIM    84      49.442  15.784  -6.010  1.00  0.00           C  
+HETATM   87 z-ax SIM    85      48.615  15.661  -6.514  1.00  0.00           C  
+HETATM   88 z-ax SIM    86      49.044  15.944  -6.112  1.00  0.00           C  
+HETATM   89 z-ax SIM    87      48.926  15.918  -6.189  1.00  0.00           C  
+HETATM   90 z-ax SIM    88      48.399  16.266  -6.215  1.00  0.00           C  
+HETATM   91 z-ax SIM    89      49.134  15.962  -6.052  1.00  0.00           C  
+HETATM   92 z-ax SIM    90      49.095  15.742  -6.220  1.00  0.00           C  
+HETATM   93 z-ax SIM    91      50.401  14.982  -6.001  1.00  0.00           C  
+HETATM   94 z-ax SIM    92      48.834  15.985  -6.190  1.00  0.00           C  
+HETATM   95 z-ax SIM    93      49.740  15.771  -5.856  1.00  0.00           C  
+HETATM   96 z-ax SIM    94      50.497  15.586  -5.548  1.00  0.00           C  
+HETATM   97 z-ax SIM    95      50.525  14.698  -6.108  1.00  0.00           C  
+HETATM   98 z-ax SIM    96      49.374  15.683  -6.113  1.00  0.00           C  
+HETATM   99 z-ax SIM    97      50.579  15.202  -5.754  1.00  0.00           C  
+HETATM  100 z-ax SIM    98      50.962  15.398  -5.392  1.00  0.00           C  
+HETATM  101 z-ax SIM    99      49.983  15.184  -6.108  1.00  0.00           C  
+HETATM  102 z-ax SIM   100      50.364  15.873  -5.430  1.00  0.00           C  
+HETATM  103 z-ax SIM   101      49.051  15.692  -6.276  1.00  0.00           C  
+HETATM  104 z-ax SIM   102      48.868  16.025  -6.146  1.00  0.00           C  
+HETATM  105 z-ax SIM   103      51.371  14.844  -5.501  1.00  0.00           C  
+HETATM  106 z-ax SIM   104      48.713  16.158  -6.134  1.00  0.00           C  
+HETATM  107 z-ax SIM   105      50.728  14.774  -5.941  1.00  0.00           C  
+HETATM  108 z-ax SIM   106      50.183  15.780  -5.600  1.00  0.00           C  
+HETATM  109 z-ax SIM   107      50.886  14.246  -6.171  1.00  0.00           C  
+HETATM  110 z-ax SIM   108      48.537  15.995  -6.332  1.00  0.00           C  
+HETATM  111 z-ax SIM   109      48.123  16.424  -6.238  1.00  0.00           C  
+HETATM  112 z-ax SIM   110      47.484  17.451  -5.793  1.00  0.00           C  
+HETATM  113 z-ax SIM   111      49.300  15.736  -6.118  1.00  0.00           C  
+HETATM  114 z-ax SIM   112      48.045  16.731  -6.059  1.00  0.00           C  
+HETATM  115 z-ax SIM   113      50.627  15.222  -5.713  1.00  0.00           C  
+HETATM  116 z-ax SIM   114      50.587  15.168  -5.772  1.00  0.00           C  
+HETATM  117 z-ax SIM   115      47.775  17.000  -5.992  1.00  0.00           C  
+HETATM  118 z-ax SIM   116      48.792  15.226  -6.706  1.00  0.00           C  
+HETATM  119 z-ax SIM   117      49.266  15.593  -6.229  1.00  0.00           C  
+HETATM  120 z-ax SIM   118      49.468  16.185  -5.722  1.00  0.00           C  
+HETATM  121 z-ax SIM   119      49.174  15.487  -6.347  1.00  0.00           C  
+HETATM  122 z-ax SIM   120      49.924  15.475  -5.952  1.00  0.00           C  
+HETATM  123 z-ax SIM   121      48.296  16.206  -6.305  1.00  0.00           C  
+HETATM  124 z-ax SIM   122      51.356  14.289  -5.859  1.00  0.00           C  
+HETATM  125 z-ax SIM   123      49.175  15.582  -6.285  1.00  0.00           C  
+HETATM  126 z-ax SIM   124      48.866  15.999  -6.165  1.00  0.00           C  
+HETATM  127 z-ax SIM   125      50.704  14.673  -6.018  1.00  0.00           C  
+HETATM  128 z-ax SIM   126      48.930  16.217  -5.983  1.00  0.00           C  
+HETATM  129 z-ax SIM   127      51.564  14.844  -5.377  1.00  0.00           C  
+HETATM  130 z-ax SIM   128      49.843  15.138  -6.216  1.00  0.00           C  
+HETATM  131 z-ax SIM   129      50.728  14.925  -5.844  1.00  0.00           C  
+HETATM  132 z-ax SIM   130      50.155  15.184  -6.012  1.00  0.00           C  
+HETATM  133 z-ax SIM   131      47.915  16.837  -6.045  1.00  0.00           C  
+HETATM  134 z-ax SIM   132      48.931  16.064  -6.088  1.00  0.00           C  
+HETATM  135 z-ax SIM   133      49.449  16.015  -5.849  1.00  0.00           C  
+HETATM  136 z-ax SIM   134      48.901  16.034  -6.124  1.00  0.00           C  
+HETATM  137 z-ax SIM   135      49.555  15.593  -6.077  1.00  0.00           C  
+HETATM  138 z-ax SIM   136      49.040  16.132  -5.985  1.00  0.00           C  
+HETATM  139 z-ax SIM   137      50.936  14.504  -5.985  1.00  0.00           C  
+HETATM  140 z-ax SIM   138      48.592  16.708  -5.809  1.00  0.00           C  
+HETATM  141 z-ax SIM   139      50.200  15.133  -6.020  1.00  0.00           C  
+HETATM  142 z-ax SIM   140      50.529  15.012  -5.907  1.00  0.00           C  
+HETATM  143 z-ax SIM   141      48.475  15.535  -6.664  1.00  0.00           C  
+HETATM  144 z-ax SIM   142      50.925  14.834  -5.784  1.00  0.00           C  
+HETATM  145 z-ax SIM   143      50.051  15.221  -6.046  1.00  0.00           C  
+HETATM  146 z-ax SIM   144      47.109  16.931  -6.338  1.00  0.00           C  
+HETATM  147 z-ax SIM   145      51.220  14.581  -5.763  1.00  0.00           C  
+HETATM  148 z-ax SIM   146      48.058  16.375  -6.303  1.00  0.00           C  
+HETATM  149 z-ax SIM   147      49.720  15.745  -5.885  1.00  0.00           C  
+HETATM  150 z-ax SIM   148      48.835  15.702  -6.379  1.00  0.00           C  
+HETATM  151 z-ax SIM   149      50.391  15.362  -5.760  1.00  0.00           C  
+HETATM  152 z-ax SIM   150      48.598  15.899  -6.366  1.00  0.00           C  
+HETATM  153 z-ax SIM   151      48.604  15.621  -6.546  1.00  0.00           C  
+HETATM  154 z-ax SIM   152      47.720  16.215  -6.567  1.00  0.00           C  
+HETATM  155 z-ax SIM   153      47.573  16.463  -6.463  1.00  0.00           C  
+HETATM  156 z-ax SIM   154      48.884  15.915  -6.212  1.00  0.00           C  
+HETATM  157 z-ax SIM   155      50.090  15.049  -6.135  1.00  0.00           C  
+HETATM  158 z-ax SIM   156      48.319  15.637  -6.673  1.00  0.00           C  
+HETATM  159 z-ax SIM   157      50.300  15.211  -5.912  1.00  0.00           C  
+HETATM  160 z-ax SIM   158      51.381  14.363  -5.797  1.00  0.00           C  
+HETATM  161 z-ax SIM   159      49.572  15.082  -6.397  1.00  0.00           C  
+HETATM  162 z-ax SIM   160      48.472  15.984  -6.371  1.00  0.00           C  
+HETATM  163 z-ax SIM   161      47.731  17.001  -6.012  1.00  0.00           C  
+HETATM  164 z-ax SIM   162      49.365  15.889  -5.980  1.00  0.00           C  
+HETATM  165 z-ax SIM   163      50.195  14.919  -6.158  1.00  0.00           C  
+HETATM  166 z-ax SIM   164      49.962  15.515  -5.904  1.00  0.00           C  
+HETATM  167 z-ax SIM   165      48.826  15.651  -6.416  1.00  0.00           C  
+HETATM  168 z-ax SIM   166      49.987  14.860  -6.311  1.00  0.00           C  
+HETATM  169 z-ax SIM   167      49.344  15.551  -6.217  1.00  0.00           C  
+HETATM  170 z-ax SIM   168      49.658  15.457  -6.110  1.00  0.00           C  
+HETATM  171 z-ax SIM   169      49.080  16.294  -5.852  1.00  0.00           C  
+HETATM  172 z-ax SIM   170      49.931  14.789  -6.386  1.00  0.00           C  
+HETATM  173 z-ax SIM   171      46.541  16.572  -6.821  1.00  0.00           C  
+HETATM  174 z-ax SIM   172      50.204  15.140  -6.012  1.00  0.00           C  
+HETATM  175 z-ax SIM   173      49.710  15.143  -6.285  1.00  0.00           C  
+HETATM  176 z-ax SIM   174      48.783  16.607  -5.785  1.00  0.00           C  
+HETATM  177 z-ax SIM   175      50.015  15.428  -5.932  1.00  0.00           C  
+HETATM  178 z-ax SIM   176      49.676  15.500  -6.072  1.00  0.00           C  
+HETATM  179 z-ax SIM   177      48.665  16.149  -6.164  1.00  0.00           C  
+HETATM  180 z-ax SIM   178      50.810  15.010  -5.741  1.00  0.00           C  
+HETATM  181 z-ax SIM   179      48.341  15.510  -6.743  1.00  0.00           C  
+HETATM  182 z-ax SIM   180      49.718  15.860  -5.808  1.00  0.00           C  
+HETATM  183 z-ax SIM   181      48.663  15.767  -6.421  1.00  0.00           C  
+HETATM  184 z-ax SIM   182      48.773  16.300  -6.006  1.00  0.00           C  
+HETATM  185 z-ax SIM   183      51.267  15.286  -5.276  1.00  0.00           C  
+HETATM  186 z-ax SIM   184      49.418  15.266  -6.362  1.00  0.00           C  
+HETATM  187 z-ax SIM   185      49.288  15.502  -6.278  1.00  0.00           C  
+HETATM  188 z-ax SIM   186      49.275  16.145  -5.853  1.00  0.00           C  
+HETATM  189 z-ax SIM   187      49.818  15.839  -5.767  1.00  0.00           C  
+HETATM  190 z-ax SIM   188      50.575  14.908  -5.946  1.00  0.00           C  
+HETATM  191 z-ax SIM   189      50.515  15.024  -5.908  1.00  0.00           C  
+HETATM  192 z-ax SIM   190      49.115  15.927  -6.086  1.00  0.00           C  
+HETATM  193 z-ax SIM   191      47.940  16.554  -6.233  1.00  0.00           C  
+HETATM  194 z-ax SIM   192      49.953  15.416  -5.975  1.00  0.00           C  
+HETATM  195 z-ax SIM   193      48.730  15.428  -6.608  1.00  0.00           C  
+HETATM  196 z-ax SIM   194      48.924  16.059  -6.095  1.00  0.00           C  
+HETATM  197 z-ax SIM   195      49.475  15.272  -6.328  1.00  0.00           C  
+HETATM  198 z-ax SIM   196      49.270  15.897  -6.025  1.00  0.00           C  
+HETATM  199 z-ax SIM   197      50.356  15.224  -5.871  1.00  0.00           C  
+HETATM  200 z-ax SIM   198      50.226  15.695  -5.633  1.00  0.00           C  
+HETATM  201 z-ax SIM   199      50.212  15.332  -5.883  1.00  0.00           C  
+HETATM  202 z-ax SIM   200      49.246  15.655  -6.200  1.00  0.00           C  
+HETATM  203 z-ax SIM   201      51.417  14.090  -5.941  1.00  0.00           C  
+HETATM  204 z-ax SIM   202      49.591  15.426  -6.167  1.00  0.00           C  
+HETATM  205 z-ax SIM   203      49.957  15.100  -6.177  1.00  0.00           C  
+HETATM  206 z-ax SIM   204      49.623  15.496  -6.104  1.00  0.00           C  
+HETATM  207 z-ax SIM   205      48.506  16.328  -6.120  1.00  0.00           C  
+HETATM  208 z-ax SIM   206      48.873  16.458  -5.844  1.00  0.00           C  
+HETATM  209 z-ax SIM   207      51.329  14.126  -5.974  1.00  0.00           C  
+HETATM  210 z-ax SIM   208      49.187  15.840  -6.107  1.00  0.00           C  
+HETATM  211 z-ax SIM   209      51.668  14.452  -5.560  1.00  0.00           C  
+HETATM  212 z-ax SIM   210      49.856  15.285  -6.114  1.00  0.00           C  
+HETATM  213 z-ax SIM   211      49.008  15.808  -6.221  1.00  0.00           C  
+HETATM  214 z-ax SIM   212      50.359  14.986  -6.022  1.00  0.00           C  
+HETATM  215 z-ax SIM   213      50.662  14.594  -6.092  1.00  0.00           C  
+HETATM  216 z-ax SIM   214      48.373  15.926  -6.457  1.00  0.00           C  
+HETATM  217 z-ax SIM   215      49.848  15.269  -6.128  1.00  0.00           C  
+HETATM  218 z-ax SIM   216      50.009  15.321  -6.005  1.00  0.00           C  
+HETATM  219 z-ax SIM   217      49.048  16.035  -6.047  1.00  0.00           C  
+HETATM  220 z-ax SIM   218      50.220  15.327  -5.882  1.00  0.00           C  
+HETATM  221 z-ax SIM   219      50.811  15.017  -5.736  1.00  0.00           C  
+HETATM  222 z-ax SIM   220      50.021  14.920  -6.255  1.00  0.00           C  
+HETATM  223 z-ax SIM   221      50.469  14.837  -6.053  1.00  0.00           C  
+HETATM  224 z-ax SIM   222      49.523  14.667  -6.679  1.00  0.00           C  
+HETATM  225 z-ax SIM   223      48.114  15.783  -6.673  1.00  0.00           C  
+HETATM  226 z-ax SIM   224      51.083  15.087  -5.524  1.00  0.00           C  
+HETATM  227 z-ax SIM   225      49.596  15.855  -5.879  1.00  0.00           C  
+HETATM  228 z-ax SIM   226      48.613  16.255  -6.117  1.00  0.00           C  
+HETATM  229 z-ax SIM   227      47.969  16.373  -6.345  1.00  0.00           C  
+HETATM  230 z-ax SIM   228      49.338  15.755  -6.085  1.00  0.00           C  
+HETATM  231 z-ax SIM   229      49.709  14.878  -6.451  1.00  0.00           C  
+HETATM  232 z-ax SIM   230      50.149  15.069  -6.089  1.00  0.00           C  
+HETATM  233 z-ax SIM   231      49.174  15.448  -6.372  1.00  0.00           C  
+HETATM  234 z-ax SIM   232      50.022  14.508  -6.508  1.00  0.00           C  
+HETATM  235 z-ax SIM   233      51.474  14.845  -5.435  1.00  0.00           C  
+HETATM  236 z-ax SIM   234      48.894  16.119  -6.069  1.00  0.00           C  
+HETATM  237 z-ax SIM   235      49.987  15.245  -6.067  1.00  0.00           C  
+HETATM  238 z-ax SIM   236      50.851  14.409  -6.093  1.00  0.00           C  
+HETATM  239 z-ax SIM   237      48.926  15.889  -6.209  1.00  0.00           C  
+HETATM  240 z-ax SIM   238      50.005  15.121  -6.136  1.00  0.00           C  
+HETATM  241 z-ax SIM   239      47.954  16.468  -6.286  1.00  0.00           C  
+HETATM  242 z-ax SIM   240      48.306  15.792  -6.577  1.00  0.00           C  
+HETATM  243 z-ax SIM   241      49.354  15.873  -5.996  1.00  0.00           C  
+HETATM  244 z-ax SIM   242      47.051  16.544  -6.633  1.00  0.00           C  
+HETATM  245 z-ax SIM   243      49.556  15.473  -6.155  1.00  0.00           C  
+HETATM  246 z-ax SIM   244      49.179  14.937  -6.692  1.00  0.00           C  
+HETATM  247 z-ax SIM   245      48.829  15.560  -6.475  1.00  0.00           C  
+HETATM  248 z-ax SIM   246      48.426  16.380  -6.123  1.00  0.00           C  
+HETATM  249 z-ax SIM   247      46.350  17.107  -6.523  1.00  0.00           C  
+HETATM  250 z-ax SIM   248      49.039  15.473  -6.425  1.00  0.00           C  
+HETATM  251 z-ax SIM   249      49.439  15.932  -5.911  1.00  0.00           C  
+HETATM  252 z-ax SIM   250      48.923  15.407  -6.526  1.00  0.00           C  
+HETATM  253 z-ax SIM   251      48.797  16.576  -5.799  1.00  0.00           C  
+HETATM  254 z-ax SIM   252      48.175  16.663  -6.046  1.00  0.00           C  
+HETATM  255 z-ax SIM   253      48.677  15.997  -6.261  1.00  0.00           C  
+HETATM  256 z-ax SIM   254      49.431  15.890  -5.944  1.00  0.00           C  
+HETATM  257 z-ax SIM   255      49.491  15.615  -6.096  1.00  0.00           C  
+HETATM  258 z-ax SIM   256      49.354  15.865  -6.003  1.00  0.00           C  
+HETATM  259 z-ax SIM   257      49.496  15.505  -6.166  1.00  0.00           C  
+HETATM  260 z-ax SIM   258      49.367  16.023  -5.888  1.00  0.00           C  
+HETATM  261 z-ax SIM   259      48.990  16.273  -5.914  1.00  0.00           C  
+HETATM  262 z-ax SIM   260      48.063  16.303  -6.349  1.00  0.00           C  
+HETATM  263 z-ax SIM   261      49.766  15.274  -6.170  1.00  0.00           C  
+HETATM  264 z-ax SIM   262      48.367  16.355  -6.169  1.00  0.00           C  
+HETATM  265 z-ax SIM   263      50.030  14.868  -6.282  1.00  0.00           C  
+HETATM  266 z-ax SIM   264      47.614  16.825  -6.192  1.00  0.00           C  
+HETATM  267 z-ax SIM   265      48.556  16.290  -6.121  1.00  0.00           C  
+HETATM  268 z-ax SIM   266      48.698  16.186  -6.123  1.00  0.00           C  
+HETATM  269 z-ax SIM   267      50.065  15.399  -5.923  1.00  0.00           C  
+HETATM  270 z-ax SIM   268      51.125  14.968  -5.576  1.00  0.00           C  
+HETATM  271 z-ax SIM   269      48.748  16.242  -6.059  1.00  0.00           C  
+HETATM  272 z-ax SIM   270      51.914  14.422  -5.418  1.00  0.00           C  
+HETATM  273 z-ax SIM   271      47.900  16.247  -6.463  1.00  0.00           C  
+HETATM  274 z-ax SIM   272      49.910  15.777  -5.758  1.00  0.00           C  
+HETATM  275 z-ax SIM   273      50.464  14.711  -6.134  1.00  0.00           C  
+HETATM  276 z-ax SIM   274      48.853  16.091  -6.109  1.00  0.00           C  
+HETATM  277 z-ax SIM   275      49.003  15.890  -6.169  1.00  0.00           C  
+HETATM  278 z-ax SIM   276      46.922  17.553  -5.963  1.00  0.00           C  
+HETATM  279 z-ax SIM   277      48.488  15.480  -6.693  1.00  0.00           C  
+HETATM  280 z-ax SIM   278      49.551  15.232  -6.313  1.00  0.00           C  
+HETATM  281 z-ax SIM   279      49.676  15.255  -6.231  1.00  0.00           C  
+HETATM  282 z-ax SIM   280      50.497  14.860  -6.022  1.00  0.00           C  
+HETATM  283 z-ax SIM   281      50.257  15.382  -5.825  1.00  0.00           C  
+HETATM  284 z-ax SIM   282      48.487  16.404  -6.076  1.00  0.00           C  
+HETATM  285 z-ax SIM   283      48.982  15.627  -6.354  1.00  0.00           C  
+HETATM  286 z-ax SIM   284      50.062  15.684  -5.734  1.00  0.00           C  
+HETATM  287 z-ax SIM   285      47.810  16.591  -6.268  1.00  0.00           C  
+HETATM  288 z-ax SIM   286      49.160  15.772  -6.167  1.00  0.00           C  
+HETATM  289 z-ax SIM   287      50.617  14.694  -6.056  1.00  0.00           C  
+HETATM  290 z-ax SIM   288      50.132  15.030  -6.124  1.00  0.00           C  
+HETATM  291 z-ax SIM   289      50.290  14.777  -6.193  1.00  0.00           C  
+HETATM  292 z-ax SIM   290      49.183  15.723  -6.188  1.00  0.00           C  
+HETATM  293 z-ax SIM   291      49.757  15.852  -5.792  1.00  0.00           C  
+HETATM  294 z-ax SIM   292      47.816  15.999  -6.668  1.00  0.00           C  
+HETATM  295 z-ax SIM   293      48.947  15.857  -6.220  1.00  0.00           C  
+HETATM  296 z-ax SIM   294      48.314  15.894  -6.507  1.00  0.00           C  
+HETATM  297 z-ax SIM   295      49.693  15.400  -6.129  1.00  0.00           C  
+HETATM  298 z-ax SIM   296      48.169  16.203  -6.367  1.00  0.00           C  
+HETATM  299 z-ax SIM   297      48.018  16.312  -6.364  1.00  0.00           C  
+HETATM  300 z-ax SIM   298      49.902  14.777  -6.409  1.00  0.00           C  
+HETATM  301 z-ax SIM   299      48.174  15.921  -6.555  1.00  0.00           C  
+HETATM  302 z-ax SIM   300      49.038  16.172  -5.958  1.00  0.00           C  
+HETATM  303 z-ax SIM   301      51.683  13.826  -5.930  1.00  0.00           C  
+HETATM  304 z-ax SIM   302      47.682  16.959  -6.065  1.00  0.00           C  
+HETATM  305 z-ax SIM   303      49.884  15.178  -6.167  1.00  0.00           C  
+HETATM  306 z-ax SIM   304      51.510  14.558  -5.595  1.00  0.00           C  
+HETATM  307 z-ax SIM   305      51.849  14.591  -5.354  1.00  0.00           C  
+HETATM  308 z-ax SIM   306      50.041  15.792  -5.674  1.00  0.00           C  
+HETATM  309 z-ax SIM   307      49.198  15.776  -6.144  1.00  0.00           C  
+HETATM  310 z-ax SIM   308      49.568  15.671  -6.017  1.00  0.00           C  
+HETATM  311 z-ax SIM   309      48.996  16.219  -5.948  1.00  0.00           C  
+HETATM  312 z-ax SIM   310      48.398  16.602  -5.981  1.00  0.00           C  
+HETATM  313 z-ax SIM   311      49.457  15.627  -6.106  1.00  0.00           C  
+HETATM  314 z-ax SIM   312      48.501  16.142  -6.250  1.00  0.00           C  
+HETATM  315 z-ax SIM   313      49.609  15.637  -6.018  1.00  0.00           C  
+HETATM  316 z-ax SIM   314      48.537  15.977  -6.344  1.00  0.00           C  
+HETATM  317 z-ax SIM   315      48.167  15.766  -6.660  1.00  0.00           C  
+HETATM  318 z-ax SIM   316      50.049  14.644  -6.410  1.00  0.00           C  
+HETATM  319 z-ax SIM   317      49.836  15.204  -6.177  1.00  0.00           C  
+HETATM  320 z-ax SIM   318      50.379  15.454  -5.706  1.00  0.00           C  
+HETATM  321 z-ax SIM   319      48.884  15.716  -6.345  1.00  0.00           C  
+HETATM  322 z-ax SIM   320      49.675  15.320  -6.190  1.00  0.00           C  
+HETATM  323 z-ax SIM   321      48.580  16.326  -6.085  1.00  0.00           C  
+HETATM  324 z-ax SIM   322      47.919  16.299  -6.419  1.00  0.00           C  
+HETATM  325 z-ax SIM   323      50.608  15.179  -5.753  1.00  0.00           C  
+HETATM  326 z-ax SIM   324      49.650  15.314  -6.208  1.00  0.00           C  
+HETATM  327 z-ax SIM   325      50.703  15.544  -5.453  1.00  0.00           C  
+HETATM  328 z-ax SIM   326      50.632  15.396  -5.595  1.00  0.00           C  
+HETATM  329 z-ax SIM   327      49.157  15.195  -6.542  1.00  0.00           C  
+HETATM  330 z-ax SIM   328      49.744  15.763  -5.859  1.00  0.00           C  
+HETATM  331 z-ax SIM   329      47.958  15.890  -6.675  1.00  0.00           C  
+HETATM  332 z-ax SIM   330      48.483  16.389  -6.089  1.00  0.00           C  
+HETATM  333 z-ax SIM   331      49.699  15.159  -6.280  1.00  0.00           C  
+HETATM  334 z-ax SIM   332      48.729  15.560  -6.524  1.00  0.00           C  
+HETATM  335 z-ax SIM   333      50.888  14.832  -5.808  1.00  0.00           C  
+HETATM  336 z-ax SIM   334      50.297  15.055  -6.014  1.00  0.00           C  
+HETATM  337 z-ax SIM   335      50.499  15.725  -5.452  1.00  0.00           C  
+HETATM  338 z-ax SIM   336      49.886  15.407  -6.018  1.00  0.00           C  
+HETATM  339 z-ax SIM   337      49.240  15.988  -5.979  1.00  0.00           C  
+HETATM  340 z-ax SIM   338      49.652  15.366  -6.173  1.00  0.00           C  
+HETATM  341 z-ax SIM   339      49.592  15.736  -5.962  1.00  0.00           C  
+HETATM  342 z-ax SIM   340      47.676  16.006  -6.726  1.00  0.00           C  
+HETATM  343 z-ax SIM   341      51.413  14.296  -5.819  1.00  0.00           C  
+HETATM  344 z-ax SIM   342      49.631  15.956  -5.790  1.00  0.00           C  
+HETATM  345 z-ax SIM   343      47.762  16.009  -6.685  1.00  0.00           C  
+HETATM  346 z-ax SIM   344      50.079  14.543  -6.455  1.00  0.00           C  
+HETATM  347 z-ax SIM   345      48.783  15.626  -6.454  1.00  0.00           C  
+HETATM  348 z-ax SIM   346      48.838  16.032  -6.157  1.00  0.00           C  
+HETATM  349 z-ax SIM   347      50.045  14.972  -6.209  1.00  0.00           C  
+HETATM  350 z-ax SIM   348      49.169  15.899  -6.076  1.00  0.00           C  
+HETATM  351 z-ax SIM   349      47.710  17.073  -5.969  1.00  0.00           C  
+HETATM  352 z-ax SIM   350      50.469  15.169  -5.840  1.00  0.00           C  
+HETATM  353 z-ax SIM   351      49.878  15.085  -6.230  1.00  0.00           C  
+HETATM  354 z-ax SIM   352      48.269  16.275  -6.272  1.00  0.00           C  
+HETATM  355 z-ax SIM   353      50.938  14.359  -6.071  1.00  0.00           C  
+HETATM  356 z-ax SIM   354      50.863  15.000  -5.715  1.00  0.00           C  
+HETATM  357 z-ax SIM   355      47.603  16.193  -6.634  1.00  0.00           C  
+HETATM  358 z-ax SIM   356      49.011  15.792  -6.230  1.00  0.00           C  
+HETATM  359 z-ax SIM   357      50.173  14.777  -6.259  1.00  0.00           C  
+HETATM  360 z-ax SIM   358      49.410  15.487  -6.224  1.00  0.00           C  
+HETATM  361 z-ax SIM   359      49.892  15.757  -5.782  1.00  0.00           C  
+HETATM  362 z-ax SIM   360      52.320  13.273  -5.834  1.00  0.00           C  
+HETATM  363 z-ax SIM   361      48.590  16.731  -5.793  1.00  0.00           C  
+HETATM  364 z-ax SIM   362      47.173  16.784  -6.415  1.00  0.00           C  
+HETATM  365 z-ax SIM   363      49.145  15.763  -6.181  1.00  0.00           C  
+HETATM  366 z-ax SIM   364      48.655  15.873  -6.355  1.00  0.00           C  
+HETATM  367 z-ax SIM   365      48.673  16.463  -5.943  1.00  0.00           C  
+HETATM  368 z-ax SIM   366      49.343  15.790  -6.059  1.00  0.00           C  
+HETATM  369 z-ax SIM   367      49.518  15.278  -6.301  1.00  0.00           C  
+HETATM  370 z-ax SIM   368      48.638  16.018  -6.266  1.00  0.00           C  
+HETATM  371 z-ax SIM   369      49.580  15.834  -5.902  1.00  0.00           C  
+HETATM  372 z-ax SIM   370      49.729  14.880  -6.439  1.00  0.00           C  
+HETATM  373 z-ax SIM   371      48.302  16.242  -6.278  1.00  0.00           C  
+HETATM  374 z-ax SIM   372      47.859  15.897  -6.715  1.00  0.00           C  
+HETATM  375 z-ax SIM   373      51.459  14.543  -5.637  1.00  0.00           C  
+HETATM  376 z-ax SIM   374      49.843  15.080  -6.252  1.00  0.00           C  
+HETATM  377 z-ax SIM   375      49.301  15.077  -6.542  1.00  0.00           C  
+HETATM  378 z-ax SIM   376      49.736  15.272  -6.188  1.00  0.00           C  
+HETATM  379 z-ax SIM   377      50.385  15.692  -5.542  1.00  0.00           C  
+HETATM  380 z-ax SIM   378      51.035  14.436  -5.966  1.00  0.00           C  
+HETATM  381 z-ax SIM   379      48.779  15.537  -6.514  1.00  0.00           C  
+HETATM  382 z-ax SIM   380      50.519  15.027  -5.903  1.00  0.00           C  
+HETATM  383 z-ax SIM   381      49.520  16.102  -5.750  1.00  0.00           C  
+HETATM  384 z-ax SIM   382      49.417  15.359  -6.303  1.00  0.00           C  
+HETATM  385 z-ax SIM   383      49.847  15.820  -5.764  1.00  0.00           C  
+HETATM  386 z-ax SIM   384      48.793  16.259  -6.024  1.00  0.00           C  
+HETATM  387 z-ax SIM   385      49.043  15.293  -6.538  1.00  0.00           C  
+HETATM  388 z-ax SIM   386      49.168  15.960  -6.036  1.00  0.00           C  
+HETATM  389 z-ax SIM   387      49.020  16.074  -6.035  1.00  0.00           C  
+HETATM  390 z-ax SIM   388      50.271  14.929  -6.109  1.00  0.00           C  
+HETATM  391 z-ax SIM   389      50.981  14.816  -5.762  1.00  0.00           C  
+HETATM  392 z-ax SIM   390      48.833  16.344  -5.945  1.00  0.00           C  
+HETATM  393 z-ax SIM   391      52.702  13.874  -5.219  1.00  0.00           C  
+HETATM  394 z-ax SIM   392      48.721  15.820  -6.357  1.00  0.00           C  
+HETATM  395 z-ax SIM   393      48.659  15.748  -6.436  1.00  0.00           C  
+HETATM  396 z-ax SIM   394      51.291  14.539  -5.745  1.00  0.00           C  
+HETATM  397 z-ax SIM   395      50.475  15.053  -5.912  1.00  0.00           C  
+HETATM  398 z-ax SIM   396      51.489  14.258  -5.794  1.00  0.00           C  
+HETATM  399 z-ax SIM   397      49.924  15.210  -6.125  1.00  0.00           C  
+HETATM  400 z-ax SIM   398      47.166  16.358  -6.711  1.00  0.00           C  
+HETATM  401 z-ax SIM   399      50.590  15.351  -5.650  1.00  0.00           C  
+HETATM  402 z-ax SIM   400      49.256  15.639  -6.204  1.00  0.00           C  
+HETATM  403 z-ax SIM   401      49.755  15.460  -6.055  1.00  0.00           C  
+HETATM  404 z-ax SIM   402      47.861  16.518  -6.295  1.00  0.00           C  
+HETATM  405 z-ax SIM   403      49.858  15.558  -5.934  1.00  0.00           C  
+HETATM  406 z-ax SIM   404      49.568  16.139  -5.698  1.00  0.00           C  
+HETATM  407 z-ax SIM   405      48.227  16.110  -6.403  1.00  0.00           C  
+HETATM  408 z-ax SIM   406      47.718  16.052  -6.676  1.00  0.00           C  
+HETATM  409 z-ax SIM   407      51.402  14.243  -5.858  1.00  0.00           C  
+HETATM  410 z-ax SIM   408      50.634  15.026  -5.836  1.00  0.00           C  
+HETATM  411 z-ax SIM   409      48.479  16.400  -6.083  1.00  0.00           C  
+HETATM  412 z-ax SIM   410      51.270  14.328  -5.889  1.00  0.00           C  
+HETATM  413 z-ax SIM   411      48.967  15.384  -6.519  1.00  0.00           C  
+HETATM  414 z-ax SIM   412      48.751  16.375  -5.965  1.00  0.00           C  
+HETATM  415 z-ax SIM   413      50.324  15.424  -5.758  1.00  0.00           C  
+HETATM  416 z-ax SIM   414      50.553  14.890  -5.971  1.00  0.00           C  
+HETATM  417 z-ax SIM   415      49.681  15.358  -6.163  1.00  0.00           C  
+HETATM  418 z-ax SIM   416      50.203  14.293  -6.536  1.00  0.00           C  
+HETATM  419 z-ax SIM   417      51.261  14.599  -5.726  1.00  0.00           C  
+HETATM  420 z-ax SIM   418      50.750  15.303  -5.585  1.00  0.00           C  
+HETATM  421 z-ax SIM   419      50.258  15.557  -5.708  1.00  0.00           C  
+HETATM  422 z-ax SIM   420      50.438  15.203  -5.837  1.00  0.00           C  
+HETATM  423 z-ax SIM   421      48.878  15.679  -6.373  1.00  0.00           C  
+HETATM  424 z-ax SIM   422      50.226  14.572  -6.356  1.00  0.00           C  
+HETATM  425 z-ax SIM   423      49.186  15.730  -6.181  1.00  0.00           C  
+HETATM  426 z-ax SIM   424      47.452  16.892  -6.216  1.00  0.00           C  
+HETATM  427 z-ax SIM   425      48.312  16.011  -6.430  1.00  0.00           C  
+HETATM  428 z-ax SIM   426      49.301  15.629  -6.188  1.00  0.00           C  
+HETATM  429 z-ax SIM   427      50.639  14.348  -6.255  1.00  0.00           C  
+HETATM  430 z-ax SIM   428      49.722  15.135  -6.283  1.00  0.00           C  
+HETATM  431 z-ax SIM   429      48.890  15.947  -6.188  1.00  0.00           C  
+HETATM  432 z-ax SIM   430      48.414  15.904  -6.453  1.00  0.00           C  
+HETATM  433 z-ax SIM   431      49.738  15.289  -6.176  1.00  0.00           C  
+HETATM  434 z-ax SIM   432      49.377  15.492  -6.237  1.00  0.00           C  
+HETATM  435 z-ax SIM   433      47.430  16.430  -6.549  1.00  0.00           C  
+HETATM  436 z-ax SIM   434      47.712  16.646  -6.274  1.00  0.00           C  
+HETATM  437 z-ax SIM   435      50.148  15.261  -5.966  1.00  0.00           C  
+HETATM  438 z-ax SIM   436      50.154  14.545  -6.412  1.00  0.00           C  
+HETATM  439 z-ax SIM   437      50.337  15.843  -5.467  1.00  0.00           C  
+HETATM  440 z-ax SIM   438      49.803  15.501  -6.002  1.00  0.00           C  
+HETATM  441 z-ax SIM   439      50.235  15.130  -6.001  1.00  0.00           C  
+HETATM  442 z-ax SIM   440      49.072  16.087  -6.000  1.00  0.00           C  
+HETATM  443 z-ax SIM   441      49.305  16.216  -5.787  1.00  0.00           C  
+HETATM  444 z-ax SIM   442      51.584  14.891  -5.333  1.00  0.00           C  
+HETATM  445 z-ax SIM   443      49.474  15.398  -6.247  1.00  0.00           C  
+HETATM  446 z-ax SIM   444      48.039  16.045  -6.536  1.00  0.00           C  
+HETATM  447 z-ax SIM   445      50.890  14.531  -5.996  1.00  0.00           C  
+HETATM  448 z-ax SIM   446      49.145  16.130  -5.931  1.00  0.00           C  
+HETATM  449 z-ax SIM   447      47.890  16.788  -6.092  1.00  0.00           C  
+HETATM  450 z-ax SIM   448      49.640  15.909  -5.818  1.00  0.00           C  
+HETATM  451 z-ax SIM   449      48.259  16.499  -6.121  1.00  0.00           C  
+HETATM  452 z-ax SIM   450      50.138  15.040  -6.114  1.00  0.00           C  
+HETATM  453 z-ax SIM   451      49.158  15.283  -6.486  1.00  0.00           C  
+HETATM  454 z-ax SIM   452      48.574  15.932  -6.356  1.00  0.00           C  
+HETATM  455 z-ax SIM   453      49.826  15.598  -5.925  1.00  0.00           C  
+HETATM  456 z-ax SIM   454      47.688  16.581  -6.331  1.00  0.00           C  
+HETATM  457 z-ax SIM   455      49.554  15.977  -5.818  1.00  0.00           C  
+HETATM  458 z-ax SIM   456      48.877  16.433  -5.860  1.00  0.00           C  
+HETATM  459 z-ax SIM   457      47.262  16.802  -6.364  1.00  0.00           C  
+HETATM  460 z-ax SIM   458      48.712  15.541  -6.545  1.00  0.00           C  
+HETATM  461 z-ax SIM   459      48.797  15.552  -6.495  1.00  0.00           C  
+HETATM  462 z-ax SIM   460      50.842  14.971  -5.747  1.00  0.00           C  
+HETATM  463 z-ax SIM   461      49.888  15.868  -5.708  1.00  0.00           C  
+HETATM  464 z-ax SIM   462      50.853  14.361  -6.121  1.00  0.00           C  
+HETATM  465 z-ax SIM   463      49.549  15.067  -6.419  1.00  0.00           C  
+HETATM  466 z-ax SIM   464      49.472  15.421  -6.234  1.00  0.00           C  
+HETATM  467 z-ax SIM   465      49.823  15.342  -6.095  1.00  0.00           C  
+HETATM  468 z-ax SIM   466      48.702  15.835  -6.357  1.00  0.00           C  
+HETATM  469 z-ax SIM   467      50.364  14.954  -6.039  1.00  0.00           C  
+HETATM  470 z-ax SIM   468      49.641  14.781  -6.547  1.00  0.00           C  
+HETATM  471 z-ax SIM   469      48.845  16.297  -5.972  1.00  0.00           C  
+HETATM  472 z-ax SIM   470      48.730  16.050  -6.199  1.00  0.00           C  
+HETATM  473 z-ax SIM   471      49.695  14.843  -6.481  1.00  0.00           C  
+HETATM  474 z-ax SIM   472      50.697  14.947  -5.849  1.00  0.00           C  
+HETATM  475 z-ax SIM   473      47.951  16.648  -6.162  1.00  0.00           C  
+HETATM  476 z-ax SIM   474      48.161  15.431  -6.878  1.00  0.00           C  
+HETATM  477 z-ax SIM   475      49.832  15.812  -5.777  1.00  0.00           C  
+HETATM  478 z-ax SIM   476      50.463  14.432  -6.306  1.00  0.00           C  
+HETATM  479 z-ax SIM   477      49.595  15.257  -6.274  1.00  0.00           C  
+HETATM  480 z-ax SIM   478      48.185  16.148  -6.398  1.00  0.00           C  
+HETATM  481 z-ax SIM   479      49.038  16.204  -5.936  1.00  0.00           C  
+HETATM  482 z-ax SIM   480      49.472  15.464  -6.205  1.00  0.00           C  
+HETATM  483 z-ax SIM   481      49.054  15.803  -6.201  1.00  0.00           C  
+HETATM  484 z-ax SIM   482      48.157  16.070  -6.463  1.00  0.00           C  
+HETATM  485 z-ax SIM   483      49.656  14.891  -6.472  1.00  0.00           C  
+HETATM  486 z-ax SIM   484      48.661  16.054  -6.230  1.00  0.00           C  
+HETATM  487 z-ax SIM   485      50.030  14.940  -6.237  1.00  0.00           C  
+HETATM  488 z-ax SIM   486      47.741  16.683  -6.234  1.00  0.00           C  
+HETATM  489 z-ax SIM   487      49.419  15.017  -6.519  1.00  0.00           C  
+HETATM  490 z-ax SIM   488      48.912  15.173  -6.679  1.00  0.00           C  
+HETATM  491 z-ax SIM   489      52.489  13.666  -5.492  1.00  0.00           C  
+HETATM  492 z-ax SIM   490      50.176  15.442  -5.832  1.00  0.00           C  
+HETATM  493 z-ax SIM   491      49.558  14.992  -6.461  1.00  0.00           C  
+HETATM  494 z-ax SIM   492      47.791  16.308  -6.472  1.00  0.00           C  
+HETATM  495 z-ax SIM   493      47.869  17.130  -5.854  1.00  0.00           C  
+HETATM  496 z-ax SIM   494      50.103  15.671  -5.720  1.00  0.00           C  
+HETATM  497 z-ax SIM   495      49.484  15.446  -6.211  1.00  0.00           C  
+HETATM  498 z-ax SIM   496      48.728  15.908  -6.296  1.00  0.00           C  
+HETATM  499 z-ax SIM   497      50.204  15.081  -6.050  1.00  0.00           C  
+HETATM  500 z-ax SIM   498      50.307  15.085  -5.989  1.00  0.00           C  
+HETATM  501 z-ax SIM   499      51.474  15.041  -5.307  1.00  0.00           C  
+HETATM  502 z-ax SIM   500      51.426  14.416  -5.737  1.00  0.00           C  
+HETATM  503 z-ax SIM   501      50.829  14.698  -5.928  1.00  0.00           C  
+HETATM  504 z-ax SIM   502      49.613  15.486  -6.116  1.00  0.00           C  
+HETATM  505    R APX   503      37.254   0.500  16.747  1.00  0.00           C  
+HETATM  506    R AXE   504      37.254   0.500  16.747  1.00  0.00           C  
+HETATM  507 Axis AXE   504      49.424  15.565  -6.165  1.00  0.00           C  
+HETATM  508 Axis AXE   504      50.642  17.072  -8.456  1.00  0.00           N  
+HETATM  509  APX EDG   505      37.254   0.500  16.747  1.00  0.00           H  
+HETATM  510 H510 EDG   505      39.433  15.845  -8.940  1.00  0.00           H  
+HETATM  511 H511 EDG   505      39.731  14.461  -9.691  1.00  0.00           H  
+HETATM  512 H512 EDG   505      40.251  13.081 -10.323  1.00  0.00           H  
+HETATM  513 H513 EDG   505      40.978  11.741 -10.817  1.00  0.00           H  
+HETATM  514 H514 EDG   505      41.896  10.473 -11.164  1.00  0.00           H  
+HETATM  515 H515 EDG   505      42.981   9.307 -11.354  1.00  0.00           H  
+HETATM  516 H516 EDG   505      44.206   8.274 -11.382  1.00  0.00           H  
+HETATM  517 H517 EDG   505      45.543   7.398 -11.248  1.00  0.00           H  
+HETATM  518 H518 EDG   505      46.957   6.701 -10.956  1.00  0.00           H  
+HETATM  519 H519 EDG   505      48.413   6.201 -10.511  1.00  0.00           H  
+HETATM  520 H520 EDG   505      49.877   5.908  -9.926  1.00  0.00           H  
+HETATM  521 H521 EDG   505      51.312   5.831  -9.214  1.00  0.00           H  
+HETATM  522 H522 EDG   505      52.682   5.972  -8.394  1.00  0.00           H  
+HETATM  523 H523 EDG   505      53.954   6.327  -7.485  1.00  0.00           H  
+HETATM  524 H524 EDG   505      55.097   6.887  -6.509  1.00  0.00           H  
+HETATM  525 H525 EDG   505      56.082   7.638  -5.492  1.00  0.00           H  
+HETATM  526 H526 EDG   505      56.885   8.563  -4.457  1.00  0.00           H  
+HETATM  527 H527 EDG   505      57.487   9.638  -3.431  1.00  0.00           H  
+HETATM  528 H528 EDG   505      57.872  10.836  -2.438  1.00  0.00           H  
+HETATM  529 H529 EDG   505      58.032  12.129  -1.503  1.00  0.00           H  
+HETATM  530 H530 EDG   505      57.961  13.484  -0.650  1.00  0.00           H  
+HETATM  531 H531 EDG   505      57.662  14.869   0.102  1.00  0.00           H  
+HETATM  532 H532 EDG   505      57.143  16.248   0.733  1.00  0.00           H  
+HETATM  533 H533 EDG   505      56.415  17.588   1.228  1.00  0.00           H  
+HETATM  534 H534 EDG   505      55.498  18.857   1.575  1.00  0.00           H  
+HETATM  535 H535 EDG   505      54.413  20.022   1.764  1.00  0.00           H  
+HETATM  536 H536 EDG   505      53.187  21.055   1.793  1.00  0.00           H  
+HETATM  537 H537 EDG   505      51.851  21.931   1.659  1.00  0.00           H  
+HETATM  538 H538 EDG   505      50.437  22.628   1.366  1.00  0.00           H  
+HETATM  539 H539 EDG   505      48.980  23.129   0.922  1.00  0.00           H  
+HETATM  540 H540 EDG   505      47.517  23.421   0.336  1.00  0.00           H  
+HETATM  541 H541 EDG   505      46.082  23.498  -0.375  1.00  0.00           H  
+HETATM  542 H542 EDG   505      44.712  23.357  -1.196  1.00  0.00           H  
+HETATM  543 H543 EDG   505      43.439  23.003  -2.105  1.00  0.00           H  
+HETATM  544 H544 EDG   505      42.297  22.443  -3.080  1.00  0.00           H  
+HETATM  545 H545 EDG   505      41.312  21.691  -4.098  1.00  0.00           H  
+HETATM  546 H546 EDG   505      40.508  20.766  -5.132  1.00  0.00           H  
+HETATM  547 H547 EDG   505      39.907  19.692  -6.159  1.00  0.00           H  
+HETATM  548 H548 EDG   505      39.521  18.493  -7.151  1.00  0.00           H  
+HETATM  549 H549 EDG   505      39.362  17.200  -8.086  1.00  0.00           H  
+HETATM  550 H550 CON   506      40.423  15.899  -8.804  1.00  0.00           H  
+HETATM  551 H551 CON   506      45.020  15.922  -7.786  1.00  0.00           H  
+HETATM  552 H552 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  553 H553 CON   506      40.694  14.643  -9.486  1.00  0.00           H  
+HETATM  554 H554 CON   506      45.157  15.286  -8.132  1.00  0.00           H  
+HETATM  555 H555 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  556 H556 CON   506      41.166  13.391 -10.059  1.00  0.00           H  
+HETATM  557 H557 CON   506      45.395  14.653  -8.421  1.00  0.00           H  
+HETATM  558 H558 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  559 H559 CON   506      41.826  12.175 -10.508  1.00  0.00           H  
+HETATM  560 H560 CON   506      45.729  14.037  -8.649  1.00  0.00           H  
+HETATM  561 H561 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  562 H562 CON   506      42.658  11.024 -10.822  1.00  0.00           H  
+HETATM  563 H563 CON   506      46.151  13.454  -8.808  1.00  0.00           H  
+HETATM  564 H564 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  565 H565 CON   506      43.642   9.967 -10.994  1.00  0.00           H  
+HETATM  566 H566 CON   506      46.649  12.919  -8.895  1.00  0.00           H  
+HETATM  567 H567 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  568 H568 CON   506      44.755   9.030 -11.020  1.00  0.00           H  
+HETATM  569 H569 CON   506      47.212  12.445  -8.908  1.00  0.00           H  
+HETATM  570 H570 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  571 H571 CON   506      45.967   8.235 -10.899  1.00  0.00           H  
+HETATM  572 H572 CON   506      47.826  12.042  -8.847  1.00  0.00           H  
+HETATM  573 H573 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  574 H574 CON   506      47.250   7.603 -10.633  1.00  0.00           H  
+HETATM  575 H575 CON   506      48.475  11.722  -8.712  1.00  0.00           H  
+HETATM  576 H576 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  577 H577 CON   506      48.572   7.148 -10.230  1.00  0.00           H  
+HETATM  578 H578 CON   506      49.144  11.492  -8.508  1.00  0.00           H  
+HETATM  579 H579 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  580 H580 CON   506      49.900   6.883  -9.699  1.00  0.00           H  
+HETATM  581 H581 CON   506      49.817  11.358  -8.239  1.00  0.00           H  
+HETATM  582 H582 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  583 H583 CON   506      51.201   6.813  -9.053  1.00  0.00           H  
+HETATM  584 H584 CON   506      50.476  11.323  -7.912  1.00  0.00           H  
+HETATM  585 H585 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  586 H586 CON   506      52.445   6.941  -8.309  1.00  0.00           H  
+HETATM  587 H587 CON   506      51.105  11.387  -7.536  1.00  0.00           H  
+HETATM  588 H588 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  589 H589 CON   506      53.599   7.263  -7.484  1.00  0.00           H  
+HETATM  590 H590 CON   506      51.689  11.550  -7.118  1.00  0.00           H  
+HETATM  591 H591 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  592 H592 CON   506      54.636   7.771  -6.599  1.00  0.00           H  
+HETATM  593 H593 CON   506      52.214  11.807  -6.670  1.00  0.00           H  
+HETATM  594 H594 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  595 H595 CON   506      55.530   8.453  -5.676  1.00  0.00           H  
+HETATM  596 H596 CON   506      52.667  12.153  -6.203  1.00  0.00           H  
+HETATM  597 H597 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  598 H598 CON   506      56.258   9.292  -4.737  1.00  0.00           H  
+HETATM  599 H599 CON   506      53.036  12.577  -5.727  1.00  0.00           H  
+HETATM  600 H600 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  601 H601 CON   506      56.804  10.267  -3.806  1.00  0.00           H  
+HETATM  602 H602 CON   506      53.312  13.071  -5.256  1.00  0.00           H  
+HETATM  603 H603 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  604 H604 CON   506      57.154  11.354  -2.905  1.00  0.00           H  
+HETATM  605 H605 CON   506      53.489  13.621  -4.800  1.00  0.00           H  
+HETATM  606 H606 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  607 H607 CON   506      57.298  12.528  -2.057  1.00  0.00           H  
+HETATM  608 H608 CON   506      53.562  14.215  -4.371  1.00  0.00           H  
+HETATM  609 H609 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  610 H610 CON   506      57.234  13.757  -1.282  1.00  0.00           H  
+HETATM  611 H611 CON   506      53.530  14.838  -3.979  1.00  0.00           H  
+HETATM  612 H612 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  613 H613 CON   506      56.963  15.013  -0.600  1.00  0.00           H  
+HETATM  614 H614 CON   506      53.393  15.474  -3.633  1.00  0.00           H  
+HETATM  615 H615 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  616 H616 CON   506      56.492  16.265  -0.028  1.00  0.00           H  
+HETATM  617 H617 CON   506      53.154  16.107  -3.343  1.00  0.00           H  
+HETATM  618 H618 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  619 H619 CON   506      55.832  17.481   0.421  1.00  0.00           H  
+HETATM  620 H620 CON   506      52.820  16.723  -3.116  1.00  0.00           H  
+HETATM  621 H621 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  622 H622 CON   506      55.000  18.632   0.736  1.00  0.00           H  
+HETATM  623 H623 CON   506      52.398  17.305  -2.957  1.00  0.00           H  
+HETATM  624 H624 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  625 H625 CON   506      54.015  19.689   0.908  1.00  0.00           H  
+HETATM  626 H626 CON   506      51.900  17.841  -2.870  1.00  0.00           H  
+HETATM  627 H627 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  628 H628 CON   506      52.903  20.626   0.934  1.00  0.00           H  
+HETATM  629 H629 CON   506      51.337  18.315  -2.857  1.00  0.00           H  
+HETATM  630 H630 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  631 H631 CON   506      51.691  21.421   0.812  1.00  0.00           H  
+HETATM  632 H632 CON   506      50.723  18.717  -2.918  1.00  0.00           H  
+HETATM  633 H633 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  634 H634 CON   506      50.408  22.053   0.547  1.00  0.00           H  
+HETATM  635 H635 CON   506      50.074  19.038  -3.053  1.00  0.00           H  
+HETATM  636 H636 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  637 H637 CON   506      49.086  22.508   0.143  1.00  0.00           H  
+HETATM  638 H638 CON   506      49.405  19.268  -3.257  1.00  0.00           H  
+HETATM  639 H639 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  640 H640 CON   506      47.758  22.773  -0.388  1.00  0.00           H  
+HETATM  641 H641 CON   506      48.733  19.402  -3.526  1.00  0.00           H  
+HETATM  642 H642 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  643 H643 CON   506      46.456  22.843  -1.033  1.00  0.00           H  
+HETATM  644 H644 CON   506      48.074  19.437  -3.853  1.00  0.00           H  
+HETATM  645 H645 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  646 H646 CON   506      45.213  22.715  -1.778  1.00  0.00           H  
+HETATM  647 H647 CON   506      47.444  19.373  -4.229  1.00  0.00           H  
+HETATM  648 H648 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  649 H649 CON   506      44.059  22.393  -2.603  1.00  0.00           H  
+HETATM  650 H650 CON   506      46.860  19.210  -4.647  1.00  0.00           H  
+HETATM  651 H651 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  652 H652 CON   506      43.022  21.885  -3.487  1.00  0.00           H  
+HETATM  653 H653 CON   506      46.335  18.952  -5.095  1.00  0.00           H  
+HETATM  654 H654 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  655 H655 CON   506      42.128  21.203  -4.411  1.00  0.00           H  
+HETATM  656 H656 CON   506      45.882  18.607  -5.562  1.00  0.00           H  
+HETATM  657 H657 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  658 H658 CON   506      41.399  20.364  -5.349  1.00  0.00           H  
+HETATM  659 H659 CON   506      45.514  18.183  -6.037  1.00  0.00           H  
+HETATM  660 H660 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  661 H661 CON   506      40.853  19.389  -6.281  1.00  0.00           H  
+HETATM  662 H662 CON   506      45.237  17.689  -6.509  1.00  0.00           H  
+HETATM  663 H663 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  664 H664 CON   506      40.504  18.302  -7.181  1.00  0.00           H  
+HETATM  665 H665 CON   506      45.060  17.138  -6.965  1.00  0.00           H  
+HETATM  666 H666 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+HETATM  667 H667 CON   506      40.359  17.129  -8.029  1.00  0.00           H  
+HETATM  668 H668 CON   506      44.987  16.544  -7.394  1.00  0.00           H  
+HETATM  669 H669 CON   506      49.424  15.565  -6.165  1.00  0.00           H  
+ENDMDL
+CONECT    2    3    5    6    7                              
+CONECT    2    8    9   10   11                              
+CONECT    2   12   13   14   15                              
+CONECT    2   16   17   18   19                              
+CONECT    2   20   21   22   23                              
+CONECT    2   24   25   26   27                              
+CONECT    2   28   29   30   31                              
+CONECT    2   32   33   34   35                              
+CONECT    2   36   37   38   39                              
+CONECT    2   40   41   42   43                              
+CONECT    2   44   45   46   47                              
+CONECT    2   48   49   50   51                              
+CONECT    2   52   53   54   55                              
+CONECT    2   56   57   58   59                              
+CONECT    2   60   61   62   63                              
+CONECT    2   64   65   66   67                              
+CONECT    2   68   69   70   71                              
+CONECT    2   72   73   74   75                              
+CONECT    2   76   77   78   79                              
+CONECT    2   80   81   82   83                              
+CONECT    2   84   85   86   87                              
+CONECT    2   88   89   90   91                              
+CONECT    2   92   93   94   95                              
+CONECT    2   96   97   98   99                              
+CONECT    2  100  101  102  103                              
+CONECT    2  104  105  106  107                              
+CONECT    2  108  109  110  111                              
+CONECT    2  112  113  114  115                              
+CONECT    2  116  117  118  119                              
+CONECT    2  120  121  122  123                              
+CONECT    2  124  125  126  127                              
+CONECT    2  128  129  130  131                              
+CONECT    2  132  133  134  135                              
+CONECT    2  136  137  138  139                              
+CONECT    2  140  141  142  143                              
+CONECT    2  144  145  146  147                              
+CONECT    2  148  149  150  151                              
+CONECT    2  152  153  154  155                              
+CONECT    2  156  157  158  159                              
+CONECT    2  160  161  162  163                              
+CONECT    2  164  165  166  167                              
+CONECT    2  168  169  170  171                              
+CONECT    2  172  173  174  175                              
+CONECT    2  176  177  178  179                              
+CONECT    2  180  181  182  183                              
+CONECT    2  184  185  186  187                              
+CONECT    2  188  189  190  191                              
+CONECT    2  192  193  194  195                              
+CONECT    2  196  197  198  199                              
+CONECT    2  200  201  202  203                              
+CONECT    2  204  205  206  207                              
+CONECT    2  208  209  210  211                              
+CONECT    2  212  213  214  215                              
+CONECT    2  216  217  218  219                              
+CONECT    2  220  221  222  223                              
+CONECT    2  224  225  226  227                              
+CONECT    2  228  229  230  231                              
+CONECT    2  232  233  234  235                              
+CONECT    2  236  237  238  239                              
+CONECT    2  240  241  242  243                              
+CONECT    2  244  245  246  247                              
+CONECT    2  248  249  250  251                              
+CONECT    2  252  253  254  255                              
+CONECT    2  256  257  258  259                              
+CONECT    2  260  261  262  263                              
+CONECT    2  264  265  266  267                              
+CONECT    2  268  269  270  271                              
+CONECT    2  272  273  274  275                              
+CONECT    2  276  277  278  279                              
+CONECT    2  280  281  282  283                              
+CONECT    2  284  285  286  287                              
+CONECT    2  288  289  290  291                              
+CONECT    2  292  293  294  295                              
+CONECT    2  296  297  298  299                              
+CONECT    2  300  301  302  303                              
+CONECT    2  304  305  306  307                              
+CONECT    2  308  309  310  311                              
+CONECT    2  312  313  314  315                              
+CONECT    2  316  317  318  319                              
+CONECT    2  320  321  322  323                              
+CONECT    2  324  325  326  327                              
+CONECT    2  328  329  330  331                              
+CONECT    2  332  333  334  335                              
+CONECT    2  336  337  338  339                              
+CONECT    2  340  341  342  343                              
+CONECT    2  344  345  346  347                              
+CONECT    2  348  349  350  351                              
+CONECT    2  352  353  354  355                              
+CONECT    2  356  357  358  359                              
+CONECT    2  360  361  362  363                              
+CONECT    2  364  365  366  367                              
+CONECT    2  368  369  370  371                              
+CONECT    2  372  373  374  375                              
+CONECT    2  376  377  378  379                              
+CONECT    2  380  381  382  383                              
+CONECT    2  384  385  386  387                              
+CONECT    2  388  389  390  391                              
+CONECT    2  392  393  394  395                              
+CONECT    2  396  397  398  399                              
+CONECT    2  400  401  402  403                              
+CONECT    2  404  405  406  407                              
+CONECT    2  408  409  410  411                              
+CONECT    2  412  413  414  415                              
+CONECT    2  416  417  418  419                              
+CONECT    2  420  421  422  423                              
+CONECT    2  424  425  426  427                              
+CONECT    2  428  429  430  431                              
+CONECT    2  432  433  434  435                              
+CONECT    2  436  437  438  439                              
+CONECT    2  440  441  442  443                              
+CONECT    2  444  445  446  447                              
+CONECT    2  448  449  450  451                              
+CONECT    2  452  453  454  455                              
+CONECT    2  456  457  458  459                              
+CONECT    2  460  461  462  463                              
+CONECT    2  464  465  466  467                              
+CONECT    2  468  469  470  471                              
+CONECT    2  472  473  474  475                              
+CONECT    2  476  477  478  479                              
+CONECT    2  480  481  482  483                              
+CONECT    2  484  485  486  487                              
+CONECT    2  488  489  490  491                              
+CONECT    2  492  493  494  495                              
+CONECT    2  496  497  498  499                              
+CONECT    2  500  501  502  503                              
+CONECT    2  504                                             
+CONECT    3    2                                             
+CONECT    5    2                                             
+CONECT    6    2                                             
+CONECT    7    2                                             
+CONECT    8    2                                             
+CONECT    9    2                                             
+CONECT   10    2                                             
+CONECT   11    2                                             
+CONECT   12    2                                             
+CONECT   13    2                                             
+CONECT   14    2                                             
+CONECT   15    2                                             
+CONECT   16    2                                             
+CONECT   17    2                                             
+CONECT   18    2                                             
+CONECT   19    2                                             
+CONECT   20    2                                             
+CONECT   21    2                                             
+CONECT   22    2                                             
+CONECT   23    2                                             
+CONECT   24    2                                             
+CONECT   25    2                                             
+CONECT   26    2                                             
+CONECT   27    2                                             
+CONECT   28    2                                             
+CONECT   29    2                                             
+CONECT   30    2                                             
+CONECT   31    2                                             
+CONECT   32    2                                             
+CONECT   33    2                                             
+CONECT   34    2                                             
+CONECT   35    2                                             
+CONECT   36    2                                             
+CONECT   37    2                                             
+CONECT   38    2                                             
+CONECT   39    2                                             
+CONECT   40    2                                             
+CONECT   41    2                                             
+CONECT   42    2                                             
+CONECT   43    2                                             
+CONECT   44    2                                             
+CONECT   45    2                                             
+CONECT   46    2                                             
+CONECT   47    2                                             
+CONECT   48    2                                             
+CONECT   49    2                                             
+CONECT   50    2                                             
+CONECT   51    2                                             
+CONECT   52    2                                             
+CONECT   53    2                                             
+CONECT   54    2                                             
+CONECT   55    2                                             
+CONECT   56    2                                             
+CONECT   57    2                                             
+CONECT   58    2                                             
+CONECT   59    2                                             
+CONECT   60    2                                             
+CONECT   61    2                                             
+CONECT   62    2                                             
+CONECT   63    2                                             
+CONECT   64    2                                             
+CONECT   65    2                                             
+CONECT   66    2                                             
+CONECT   67    2                                             
+CONECT   68    2                                             
+CONECT   69    2                                             
+CONECT   70    2                                             
+CONECT   71    2                                             
+CONECT   72    2                                             
+CONECT   73    2                                             
+CONECT   74    2                                             
+CONECT   75    2                                             
+CONECT   76    2                                             
+CONECT   77    2                                             
+CONECT   78    2                                             
+CONECT   79    2                                             
+CONECT   80    2                                             
+CONECT   81    2                                             
+CONECT   82    2                                             
+CONECT   83    2                                             
+CONECT   84    2                                             
+CONECT   85    2                                             
+CONECT   86    2                                             
+CONECT   87    2                                             
+CONECT   88    2                                             
+CONECT   89    2                                             
+CONECT   90    2                                             
+CONECT   91    2                                             
+CONECT   92    2                                             
+CONECT   93    2                                             
+CONECT   94    2                                             
+CONECT   95    2                                             
+CONECT   96    2                                             
+CONECT   97    2                                             
+CONECT   98    2                                             
+CONECT   99    2                                             
+CONECT  100    2                                             
+CONECT  101    2                                             
+CONECT  102    2                                             
+CONECT  103    2                                             
+CONECT  104    2                                             
+CONECT  105    2                                             
+CONECT  106    2                                             
+CONECT  107    2                                             
+CONECT  108    2                                             
+CONECT  109    2                                             
+CONECT  110    2                                             
+CONECT  111    2                                             
+CONECT  112    2                                             
+CONECT  113    2                                             
+CONECT  114    2                                             
+CONECT  115    2                                             
+CONECT  116    2                                             
+CONECT  117    2                                             
+CONECT  118    2                                             
+CONECT  119    2                                             
+CONECT  120    2                                             
+CONECT  121    2                                             
+CONECT  122    2                                             
+CONECT  123    2                                             
+CONECT  124    2                                             
+CONECT  125    2                                             
+CONECT  126    2                                             
+CONECT  127    2                                             
+CONECT  128    2                                             
+CONECT  129    2                                             
+CONECT  130    2                                             
+CONECT  131    2                                             
+CONECT  132    2                                             
+CONECT  133    2                                             
+CONECT  134    2                                             
+CONECT  135    2                                             
+CONECT  136    2                                             
+CONECT  137    2                                             
+CONECT  138    2                                             
+CONECT  139    2                                             
+CONECT  140    2                                             
+CONECT  141    2                                             
+CONECT  142    2                                             
+CONECT  143    2                                             
+CONECT  144    2                                             
+CONECT  145    2                                             
+CONECT  146    2                                             
+CONECT  147    2                                             
+CONECT  148    2                                             
+CONECT  149    2                                             
+CONECT  150    2                                             
+CONECT  151    2                                             
+CONECT  152    2                                             
+CONECT  153    2                                             
+CONECT  154    2                                             
+CONECT  155    2                                             
+CONECT  156    2                                             
+CONECT  157    2                                             
+CONECT  158    2                                             
+CONECT  159    2                                             
+CONECT  160    2                                             
+CONECT  161    2                                             
+CONECT  162    2                                             
+CONECT  163    2                                             
+CONECT  164    2                                             
+CONECT  165    2                                             
+CONECT  166    2                                             
+CONECT  167    2                                             
+CONECT  168    2                                             
+CONECT  169    2                                             
+CONECT  170    2                                             
+CONECT  171    2                                             
+CONECT  172    2                                             
+CONECT  173    2                                             
+CONECT  174    2                                             
+CONECT  175    2                                             
+CONECT  176    2                                             
+CONECT  177    2                                             
+CONECT  178    2                                             
+CONECT  179    2                                             
+CONECT  180    2                                             
+CONECT  181    2                                             
+CONECT  182    2                                             
+CONECT  183    2                                             
+CONECT  184    2                                             
+CONECT  185    2                                             
+CONECT  186    2                                             
+CONECT  187    2                                             
+CONECT  188    2                                             
+CONECT  189    2                                             
+CONECT  190    2                                             
+CONECT  191    2                                             
+CONECT  192    2                                             
+CONECT  193    2                                             
+CONECT  194    2                                             
+CONECT  195    2                                             
+CONECT  196    2                                             
+CONECT  197    2                                             
+CONECT  198    2                                             
+CONECT  199    2                                             
+CONECT  200    2                                             
+CONECT  201    2                                             
+CONECT  202    2                                             
+CONECT  203    2                                             
+CONECT  204    2                                             
+CONECT  205    2                                             
+CONECT  206    2                                             
+CONECT  207    2                                             
+CONECT  208    2                                             
+CONECT  209    2                                             
+CONECT  210    2                                             
+CONECT  211    2                                             
+CONECT  212    2                                             
+CONECT  213    2                                             
+CONECT  214    2                                             
+CONECT  215    2                                             
+CONECT  216    2                                             
+CONECT  217    2                                             
+CONECT  218    2                                             
+CONECT  219    2                                             
+CONECT  220    2                                             
+CONECT  221    2                                             
+CONECT  222    2                                             
+CONECT  223    2                                             
+CONECT  224    2                                             
+CONECT  225    2                                             
+CONECT  226    2                                             
+CONECT  227    2                                             
+CONECT  228    2                                             
+CONECT  229    2                                             
+CONECT  230    2                                             
+CONECT  231    2                                             
+CONECT  232    2                                             
+CONECT  233    2                                             
+CONECT  234    2                                             
+CONECT  235    2                                             
+CONECT  236    2                                             
+CONECT  237    2                                             
+CONECT  238    2                                             
+CONECT  239    2                                             
+CONECT  240    2                                             
+CONECT  241    2                                             
+CONECT  242    2                                             
+CONECT  243    2                                             
+CONECT  244    2                                             
+CONECT  245    2                                             
+CONECT  246    2                                             
+CONECT  247    2                                             
+CONECT  248    2                                             
+CONECT  249    2                                             
+CONECT  250    2                                             
+CONECT  251    2                                             
+CONECT  252    2                                             
+CONECT  253    2                                             
+CONECT  254    2                                             
+CONECT  255    2                                             
+CONECT  256    2                                             
+CONECT  257    2                                             
+CONECT  258    2                                             
+CONECT  259    2                                             
+CONECT  260    2                                             
+CONECT  261    2                                             
+CONECT  262    2                                             
+CONECT  263    2                                             
+CONECT  264    2                                             
+CONECT  265    2                                             
+CONECT  266    2                                             
+CONECT  267    2                                             
+CONECT  268    2                                             
+CONECT  269    2                                             
+CONECT  270    2                                             
+CONECT  271    2                                             
+CONECT  272    2                                             
+CONECT  273    2                                             
+CONECT  274    2                                             
+CONECT  275    2                                             
+CONECT  276    2                                             
+CONECT  277    2                                             
+CONECT  278    2                                             
+CONECT  279    2                                             
+CONECT  280    2                                             
+CONECT  281    2                                             
+CONECT  282    2                                             
+CONECT  283    2                                             
+CONECT  284    2                                             
+CONECT  285    2                                             
+CONECT  286    2                                             
+CONECT  287    2                                             
+CONECT  288    2                                             
+CONECT  289    2                                             
+CONECT  290    2                                             
+CONECT  291    2                                             
+CONECT  292    2                                             
+CONECT  293    2                                             
+CONECT  294    2                                             
+CONECT  295    2                                             
+CONECT  296    2                                             
+CONECT  297    2                                             
+CONECT  298    2                                             
+CONECT  299    2                                             
+CONECT  300    2                                             
+CONECT  301    2                                             
+CONECT  302    2                                             
+CONECT  303    2                                             
+CONECT  304    2                                             
+CONECT  305    2                                             
+CONECT  306    2                                             
+CONECT  307    2                                             
+CONECT  308    2                                             
+CONECT  309    2                                             
+CONECT  310    2                                             
+CONECT  311    2                                             
+CONECT  312    2                                             
+CONECT  313    2                                             
+CONECT  314    2                                             
+CONECT  315    2                                             
+CONECT  316    2                                             
+CONECT  317    2                                             
+CONECT  318    2                                             
+CONECT  319    2                                             
+CONECT  320    2                                             
+CONECT  321    2                                             
+CONECT  322    2                                             
+CONECT  323    2                                             
+CONECT  324    2                                             
+CONECT  325    2                                             
+CONECT  326    2                                             
+CONECT  327    2                                             
+CONECT  328    2                                             
+CONECT  329    2                                             
+CONECT  330    2                                             
+CONECT  331    2                                             
+CONECT  332    2                                             
+CONECT  333    2                                             
+CONECT  334    2                                             
+CONECT  335    2                                             
+CONECT  336    2                                             
+CONECT  337    2                                             
+CONECT  338    2                                             
+CONECT  339    2                                             
+CONECT  340    2                                             
+CONECT  341    2                                             
+CONECT  342    2                                             
+CONECT  343    2                                             
+CONECT  344    2                                             
+CONECT  345    2                                             
+CONECT  346    2                                             
+CONECT  347    2                                             
+CONECT  348    2                                             
+CONECT  349    2                                             
+CONECT  350    2                                             
+CONECT  351    2                                             
+CONECT  352    2                                             
+CONECT  353    2                                             
+CONECT  354    2                                             
+CONECT  355    2                                             
+CONECT  356    2                                             
+CONECT  357    2                                             
+CONECT  358    2                                             
+CONECT  359    2                                             
+CONECT  360    2                                             
+CONECT  361    2                                             
+CONECT  362    2                                             
+CONECT  363    2                                             
+CONECT  364    2                                             
+CONECT  365    2                                             
+CONECT  366    2                                             
+CONECT  367    2                                             
+CONECT  368    2                                             
+CONECT  369    2                                             
+CONECT  370    2                                             
+CONECT  371    2                                             
+CONECT  372    2                                             
+CONECT  373    2                                             
+CONECT  374    2                                             
+CONECT  375    2                                             
+CONECT  376    2                                             
+CONECT  377    2                                             
+CONECT  378    2                                             
+CONECT  379    2                                             
+CONECT  380    2                                             
+CONECT  381    2                                             
+CONECT  382    2                                             
+CONECT  383    2                                             
+CONECT  384    2                                             
+CONECT  385    2                                             
+CONECT  386    2                                             
+CONECT  387    2                                             
+CONECT  388    2                                             
+CONECT  389    2                                             
+CONECT  390    2                                             
+CONECT  391    2                                             
+CONECT  392    2                                             
+CONECT  393    2                                             
+CONECT  394    2                                             
+CONECT  395    2                                             
+CONECT  396    2                                             
+CONECT  397    2                                             
+CONECT  398    2                                             
+CONECT  399    2                                             
+CONECT  400    2                                             
+CONECT  401    2                                             
+CONECT  402    2                                             
+CONECT  403    2                                             
+CONECT  404    2                                             
+CONECT  405    2                                             
+CONECT  406    2                                             
+CONECT  407    2                                             
+CONECT  408    2                                             
+CONECT  409    2                                             
+CONECT  410    2                                             
+CONECT  411    2                                             
+CONECT  412    2                                             
+CONECT  413    2                                             
+CONECT  414    2                                             
+CONECT  415    2                                             
+CONECT  416    2                                             
+CONECT  417    2                                             
+CONECT  418    2                                             
+CONECT  419    2                                             
+CONECT  420    2                                             
+CONECT  421    2                                             
+CONECT  422    2                                             
+CONECT  423    2                                             
+CONECT  424    2                                             
+CONECT  425    2                                             
+CONECT  426    2                                             
+CONECT  427    2                                             
+CONECT  428    2                                             
+CONECT  429    2                                             
+CONECT  430    2                                             
+CONECT  431    2                                             
+CONECT  432    2                                             
+CONECT  433    2                                             
+CONECT  434    2                                             
+CONECT  435    2                                             
+CONECT  436    2                                             
+CONECT  437    2                                             
+CONECT  438    2                                             
+CONECT  439    2                                             
+CONECT  440    2                                             
+CONECT  441    2                                             
+CONECT  442    2                                             
+CONECT  443    2                                             
+CONECT  444    2                                             
+CONECT  445    2                                             
+CONECT  446    2                                             
+CONECT  447    2                                             
+CONECT  448    2                                             
+CONECT  449    2                                             
+CONECT  450    2                                             
+CONECT  451    2                                             
+CONECT  452    2                                             
+CONECT  453    2                                             
+CONECT  454    2                                             
+CONECT  455    2                                             
+CONECT  456    2                                             
+CONECT  457    2                                             
+CONECT  458    2                                             
+CONECT  459    2                                             
+CONECT  460    2                                             
+CONECT  461    2                                             
+CONECT  462    2                                             
+CONECT  463    2                                             
+CONECT  464    2                                             
+CONECT  465    2                                             
+CONECT  466    2                                             
+CONECT  467    2                                             
+CONECT  468    2                                             
+CONECT  469    2                                             
+CONECT  470    2                                             
+CONECT  471    2                                             
+CONECT  472    2                                             
+CONECT  473    2                                             
+CONECT  474    2                                             
+CONECT  475    2                                             
+CONECT  476    2                                             
+CONECT  477    2                                             
+CONECT  478    2                                             
+CONECT  479    2                                             
+CONECT  480    2                                             
+CONECT  481    2                                             
+CONECT  482    2                                             
+CONECT  483    2                                             
+CONECT  484    2                                             
+CONECT  485    2                                             
+CONECT  486    2                                             
+CONECT  487    2                                             
+CONECT  488    2                                             
+CONECT  489    2                                             
+CONECT  490    2                                             
+CONECT  491    2                                             
+CONECT  492    2                                             
+CONECT  493    2                                             
+CONECT  494    2                                             
+CONECT  495    2                                             
+CONECT  496    2                                             
+CONECT  497    2                                             
+CONECT  498    2                                             
+CONECT  499    2                                             
+CONECT  500    2                                             
+CONECT  501    2                                             
+CONECT  502    2                                             
+CONECT  503    2                                             
+CONECT  504    2                                             
+CONECT  506  507                                             
+CONECT  507  506                                             
+CONECT  509  510  511  512  513                              
+CONECT  509  514  515  516  517                              
+CONECT  509  518  519  520  521                              
+CONECT  509  522  523  524  525                              
+CONECT  509  526  527  528  529                              
+CONECT  509  530  531  532  533                              
+CONECT  509  534  535  536  537                              
+CONECT  509  538  539  540  541                              
+CONECT  509  542  543  544  545                              
+CONECT  509  546  547  548  549                              
+CONECT  510  509  511  549  550                              
+CONECT  511  509  510  512  553                              
+CONECT  512  509  511  513  556                              
+CONECT  513  509  512  514  559                              
+CONECT  514  509  513  515  562                              
+CONECT  515  509  514  516  565                              
+CONECT  516  509  515  517  568                              
+CONECT  517  509  516  518  571                              
+CONECT  518  509  517  519  574                              
+CONECT  519  509  518  520  577                              
+CONECT  520  509  519  521  580                              
+CONECT  521  509  520  522  583                              
+CONECT  522  509  521  523  586                              
+CONECT  523  509  522  524  589                              
+CONECT  524  509  523  525  592                              
+CONECT  525  509  524  526  595                              
+CONECT  526  509  525  527  598                              
+CONECT  527  509  526  528  601                              
+CONECT  528  509  527  529  604                              
+CONECT  529  509  528  530  607                              
+CONECT  530  509  529  531  610                              
+CONECT  531  509  530  532  613                              
+CONECT  532  509  531  533  616                              
+CONECT  533  509  532  534  619                              
+CONECT  534  509  533  535  622                              
+CONECT  535  509  534  536  625                              
+CONECT  536  509  535  537  628                              
+CONECT  537  509  536  538  631                              
+CONECT  538  509  537  539  634                              
+CONECT  539  509  538  540  637                              
+CONECT  540  509  539  541  640                              
+CONECT  541  509  540  542  643                              
+CONECT  542  509  541  543  646                              
+CONECT  543  509  542  544  649                              
+CONECT  544  509  543  545  652                              
+CONECT  545  509  544  546  655                              
+CONECT  546  509  545  547  658                              
+CONECT  547  509  546  548  661                              
+CONECT  548  509  547  549  664                              
+CONECT  549  509  548  510  667                              
+CONECT  550  551  553  667  510                              
+CONECT  551  550  552  554  668                              
+CONECT  552  551  555  669                                   
+CONECT  553  550  554  556  511                              
+CONECT  554  553  551  555  557                              
+CONECT  555  554  552  558                                   
+CONECT  556  553  557  559  512                              
+CONECT  557  556  554  558  560                              
+CONECT  558  557  555  561                                   
+CONECT  559  556  560  562  513                              
+CONECT  560  559  557  561  563                              
+CONECT  561  560  558  564                                   
+CONECT  562  559  563  565  514                              
+CONECT  563  562  560  564  566                              
+CONECT  564  563  561  567                                   
+CONECT  565  562  566  568  515                              
+CONECT  566  565  563  567  569                              
+CONECT  567  566  564  570                                   
+CONECT  568  565  569  571  516                              
+CONECT  569  568  566  570  572                              
+CONECT  570  569  567  573                                   
+CONECT  571  568  572  574  517                              
+CONECT  572  571  569  573  575                              
+CONECT  573  572  570  576                                   
+CONECT  574  571  575  577  518                              
+CONECT  575  574  572  576  578                              
+CONECT  576  575  573  579                                   
+CONECT  577  574  578  580  519                              
+CONECT  578  577  575  579  581                              
+CONECT  579  578  576  582                                   
+CONECT  580  577  581  583  520                              
+CONECT  581  580  578  582  584                              
+CONECT  582  581  579  585                                   
+CONECT  583  580  584  586  521                              
+CONECT  584  583  581  585  587                              
+CONECT  585  584  582  588                                   
+CONECT  586  583  587  589  522                              
+CONECT  587  586  584  588  590                              
+CONECT  588  587  585  591                                   
+CONECT  589  586  590  592  523                              
+CONECT  590  589  587  591  593                              
+CONECT  591  590  588  594                                   
+CONECT  592  589  593  595  524                              
+CONECT  593  592  590  594  596                              
+CONECT  594  593  591  597                                   
+CONECT  595  592  596  598  525                              
+CONECT  596  595  593  597  599                              
+CONECT  597  596  594  600                                   
+CONECT  598  595  599  601  526                              
+CONECT  599  598  596  600  602                              
+CONECT  600  599  597  603                                   
+CONECT  601  598  602  604  527                              
+CONECT  602  601  599  603  605                              
+CONECT  603  602  600  606                                   
+CONECT  604  601  605  607  528                              
+CONECT  605  604  602  606  608                              
+CONECT  606  605  603  609                                   
+CONECT  607  604  608  610  529                              
+CONECT  608  607  605  609  611                              
+CONECT  609  608  606  612                                   
+CONECT  610  607  611  613  530                              
+CONECT  611  610  608  612  614                              
+CONECT  612  611  609  615                                   
+CONECT  613  610  614  616  531                              
+CONECT  614  613  611  615  617                              
+CONECT  615  614  612  618                                   
+CONECT  616  613  617  619  532                              
+CONECT  617  616  614  618  620                              
+CONECT  618  617  615  621                                   
+CONECT  619  616  620  622  533                              
+CONECT  620  619  617  621  623                              
+CONECT  621  620  618  624                                   
+CONECT  622  619  623  625  534                              
+CONECT  623  622  620  624  626                              
+CONECT  624  623  621  627                                   
+CONECT  625  622  626  628  535                              
+CONECT  626  625  623  627  629                              
+CONECT  627  626  624  630                                   
+CONECT  628  625  629  631  536                              
+CONECT  629  628  626  630  632                              
+CONECT  630  629  627  633                                   
+CONECT  631  628  632  634  537                              
+CONECT  632  631  629  633  635                              
+CONECT  633  632  630  636                                   
+CONECT  634  631  635  637  538                              
+CONECT  635  634  632  636  638                              
+CONECT  636  635  633  639                                   
+CONECT  637  634  638  640  539                              
+CONECT  638  637  635  639  641                              
+CONECT  639  638  636  642                                   
+CONECT  640  637  641  643  540                              
+CONECT  641  640  638  642  644                              
+CONECT  642  641  639  645                                   
+CONECT  643  640  644  646  541                              
+CONECT  644  643  641  645  647                              
+CONECT  645  644  642  648                                   
+CONECT  646  643  647  649  542                              
+CONECT  647  646  644  648  650                              
+CONECT  648  647  645  651                                   
+CONECT  649  646  650  652  543                              
+CONECT  650  649  647  651  653                              
+CONECT  651  650  648  654                                   
+CONECT  652  649  653  655  544                              
+CONECT  653  652  650  654  656                              
+CONECT  654  653  651  657                                   
+CONECT  655  652  656  658  545                              
+CONECT  656  655  653  657  659                              
+CONECT  657  656  654  660                                   
+CONECT  658  655  659  661  546                              
+CONECT  659  658  656  660  662                              
+CONECT  660  659  657  663                                   
+CONECT  661  658  662  664  547                              
+CONECT  662  661  659  663  665                              
+CONECT  663  662  660  666                                   
+CONECT  664  661  665  667  548                              
+CONECT  665  664  662  666  668                              
+CONECT  666  665  663  669                                   
+CONECT  667  664  550  668  549                              
+CONECT  668  667  665  551  669                              
+CONECT  669  668  666  552                                   
+MASTER        0    0  506    0    0    0    0    0 1338    0  799    0
+END

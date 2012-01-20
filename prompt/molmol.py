@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -83,10 +83,10 @@ class Molmol(User_fn_class):
     _build_doc(command)
 
 
-    def macro_exec(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
+    def macro_apply(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
         # Function intro text.
         if self._exec_info.intro:
-            text = self._exec_info.ps3 + "molmol.macro_exec("
+            text = self._exec_info.ps3 + "molmol.macro_apply("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)
@@ -102,35 +102,129 @@ class Molmol(User_fn_class):
         arg_check.is_str(colour_list, 'colour list', can_be_none=True)
 
         # Execute the functional code.
-        molmol.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        molmol.macro_apply(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
     # The function doc info.
-    macro_exec._doc_title = "Execute Molmol macros."
-    macro_exec._doc_title_short = "Molmol macro execution."
-    macro_exec._doc_args = [
+    macro_apply._doc_title = "Execute Molmol macros."
+    macro_apply._doc_title_short = "Molmol macro execution."
+    macro_apply._doc_args = [
         ["data_type", "The data type to map to the structure."],
         ["style", "The style of the macro."],
         ["colour_start", "The starting colour, either an array or string, of the linear colour gradient."],
         ["colour_end", "The ending colour, either an array or string, of the linear colour gradient."],
         ["colour_list", "The list of colours to match the start and end strings."]
     ]
-    macro_exec._doc_desc = """
+    macro_apply._doc_desc = """
         This allows spin specific values to be mapped to a structure through Molmol macros.  Currently only the 'classic' style, which is described below, is available.
         """
-    macro_exec._doc_examples = """
+    macro_apply._doc_examples = """
         To map the order parameter values, S2, onto the structure using the classic style, type:
 
-        relax> molmol.macro_exec('S2')
-        relax> molmol.macro_exec(data_type='S2')
-        relax> molmol.macro_exec(data_type='S2', style="classic")
+        relax> molmol.macro_apply('s2')
+        relax> molmol.macro_apply(data_type='s2')
+        relax> molmol.macro_apply(data_type='s2', style="classic")
         """
-    macro_exec._doc_additional = [
+    macro_apply._doc_additional = [
         colour._linear_gradient_doc,
-        Molmol._molmol_classic_style_doc,
+        Molmol.classic_style_doc,
         colour.__molmol_colours_prompt_doc__,
         colour.__x11_colours_prompt_doc__
     ]
-    _build_doc(macro_exec)
+    _build_doc(macro_apply)
+
+
+    def macro_run(self, file=None, dir='molmol'):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.macro_run("
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+
+        # Execute the functional code.
+        molmol.macro_run(file=file, dir=dir)
+
+    # The function doc info.
+    macro_run._doc_title = "Open and execute the Molmol macro file."
+    macro_run._doc_title_short = "Molmol macro file execution."
+    macro_run._doc_args = [
+        ["file", "The name of the Molmol macro file."],
+        ["dir", "The directory name."],
+    ]
+    macro_run._doc_desc = """
+        This user function is for opening and running a Molmol macro located within a text file.
+        """
+    macro_run._doc_examples = """
+        To execute the macro file 's2.mac' located in the directory 'molmol', type:
+
+        relax> molmol.macro_run(file='s2.mac')
+        relax> molmol.macro_run(file='s2.mac', dir='molmol')
+        """
+    _build_doc(macro_run)
+
+
+    def macro_write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='molmol', force=False):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.macro_write("
+            text = text + "data_type=" + repr(data_type)
+            text = text + ", style=" + repr(style)
+            text = text + ", colour_start=" + repr(colour_start)
+            text = text + ", colour_end=" + repr(colour_end)
+            text = text + ", colour_list=" + repr(colour_list)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(data_type, 'data type')
+        arg_check.is_str(style, 'style')
+        arg_check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str(colour_list, 'colour list', can_be_none=True)
+        arg_check.is_str_or_inst(file, 'file name', can_be_none=True)
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+
+        # Execute the functional code.
+        molmol.macro_write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
+
+    # The function doc info.
+    macro_write._doc_title = "Create Molmol macros."
+    macro_write._doc_title_short = "Molmol macro creation."
+    macro_write._doc_args = [
+        ["data_type", "The data type to map to the structure."],
+        ["style", "The style of the macro."],
+        ["colour_start", "The starting colour, either an array or string, of the linear colour gradient."],
+        ["colour_end", "The ending colour, either an array or string, of the linear colour gradient."],
+        ["colour_list", "The list of colours to match the start and end strings."],
+        ["file", "The name of the file."],
+        ["dir", "The directory name."],
+        ["force", "A flag which, if set to True, will cause the file to be overwritten."]
+    ]
+    macro_write._doc_desc = """
+        This allows residues specific values to be mapped to a structure through the creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File, Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is available.
+        """
+    macro_write._doc_examples = """
+        To create a Molmol macro mapping the order parameter values, S2, onto the structure using
+        the classic style, type:
+
+        relax> molmol.macro_write('s2')
+        relax> molmol.macro_write(data_type='s2')
+        relax> molmol.macro_write(data_type='s2', style="classic", file='s2.mac', dir='molmol')
+        """
+    macro_write._doc_additional = [
+        colour._linear_gradient_doc,
+        Molmol.classic_style_doc,
+        colour.__molmol_colours_prompt_doc__,
+        colour.__x11_colours_prompt_doc__
+    ]
+    _build_doc(macro_write)
 
 
     def ribbon(self):
@@ -235,63 +329,3 @@ class Molmol(User_fn_class):
         relax> molmol.view()
         """
     _build_doc(view)
-
-
-    def write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='molmol', force=False):
-        # Function intro text.
-        if self._exec_info.intro:
-            text = self._exec_info.ps3 + "molmol.write("
-            text = text + "data_type=" + repr(data_type)
-            text = text + ", style=" + repr(style)
-            text = text + ", colour_start=" + repr(colour_start)
-            text = text + ", colour_end=" + repr(colour_end)
-            text = text + ", colour_list=" + repr(colour_list)
-            text = text + ", file=" + repr(file)
-            text = text + ", dir=" + repr(dir)
-            text = text + ", force=" + repr(force) + ")"
-            print(text)
-
-        # The argument checks.
-        arg_check.is_str(data_type, 'data type')
-        arg_check.is_str(style, 'style')
-        arg_check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
-        arg_check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
-        arg_check.is_str(colour_list, 'colour list', can_be_none=True)
-        arg_check.is_str_or_inst(file, 'file name', can_be_none=True)
-        arg_check.is_str(dir, 'directory name', can_be_none=True)
-        arg_check.is_bool(force, 'force flag')
-
-        # Execute the functional code.
-        molmol.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
-
-    # The function doc info.
-    write._doc_title = "Create Molmol macros."
-    write._doc_title_short = "Molmol macro creation."
-    write._doc_args = [
-        ["data_type", "The data type to map to the structure."],
-        ["style", "The style of the macro."],
-        ["colour_start", "The starting colour, either an array or string, of the linear colour gradient."],
-        ["colour_end", "The ending colour, either an array or string, of the linear colour gradient."],
-        ["colour_list", "The list of colours to match the start and end strings."],
-        ["file", "The name of the file."],
-        ["dir", "The directory name."],
-        ["force", "A flag which, if set to True, will cause the file to be overwritten."]
-    ]
-    write._doc_desc = """
-        This allows residues specific values to be mapped to a structure through the creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File, Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is available.
-        """
-    write._doc_examples = """
-        To create a Molmol macro mapping the order parameter values, S2, onto the structure using
-        the classic style, type:
-
-        relax> molmol.write('S2')
-        relax> molmol.write(data_type='S2')
-        relax> molmol.write(data_type='S2', style="classic", file='s2.mac', dir='molmol')
-        """
-    write._doc_additional = [
-        colour._linear_gradient_doc,
-        Molmol._molmol_classic_style_doc,
-        colour.__molmol_colours_prompt_doc__,
-        colour.__x11_colours_prompt_doc__
-    ]
-    _build_doc(write)

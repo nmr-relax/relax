@@ -46,12 +46,13 @@ from gui.analyses.elements import Spin_ctrl, Text_ctrl
 from gui.analyses.execute import Execute
 from gui.base_classes import Container
 from gui.components.relax_data import Relax_data_list
-from gui.filedialog import opendir
+from gui.filedialog import RelaxDirDialog
 from gui.fonts import font
 from gui.message import error_message, Question, Missing_data
 from gui.misc import add_border, gui_to_int, gui_to_str, list_to_gui, protected_exec, str_to_gui
 from gui import paths
 from gui.user_functions.structure import Read_pdb_page, Vectors_page
+from gui.user_functions import User_functions; user_functions = User_functions()
 from gui.wizard import Wiz_window
 
 
@@ -168,10 +169,9 @@ class Auto_model_free(Base_analysis):
 
         # New data container.
         if data_index == None:
-            # First create the data pipe if not already in existence (if this fails, then no data is set up).
-            if not has_pipe(pipe_name) and not protected_exec(self.gui.interpreter.queue, 'pipe.create', pipe_name, 'mf'):
-                self.init_flag = False
-                return
+            # First create the data pipe if not already in existence.
+            if not has_pipe(pipe_name):
+                self.gui.interpreter.apply('pipe.create', pipe_name, 'mf')
 
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add('model-free')
@@ -187,7 +187,7 @@ class Auto_model_free(Base_analysis):
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
             ds.relax_gui.analyses[data_index].local_tm_models = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
             ds.relax_gui.analyses[data_index].mf_models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
-            ds.relax_gui.analyses[data_index].max_iter = "30"
+            ds.relax_gui.analyses[data_index].max_iter = 30
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
@@ -504,7 +504,7 @@ class Auto_model_free(Base_analysis):
         self.mc_sim_num = Spin_ctrl(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add maximum iteration selector.
-        self.max_iter = Spin_ctrl(box, self, text="Maximum interations", default=str(self.data.max_iter), min=25, max=100, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.max_iter = Spin_ctrl(box, self, text="Maximum interations", default=self.data.max_iter, min=25, max=100, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The calculation mode.
         self.mode = Text_ctrl(box, self, text="Protocol mode:", default='Fully automated', tooltip="Select if the dauvergne_protocol analysis will be fully automated or whether the individual global models will be optimised one by one.", icon=paths.icon_16x16.system_run, fn=self.mode_dialog, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
@@ -538,6 +538,9 @@ class Auto_model_free(Base_analysis):
         @type event:    wx event
         """
 
+        # Flush the GUI interpreter internal queue to make sure all user functions are complete.
+        self.gui.interpreter.flush()
+
         # relax execution lock.
         if status.exec_lock.locked():
             error_message("relax is currently executing.", "relax execution lock")
@@ -558,9 +561,9 @@ class Auto_model_free(Base_analysis):
             Missing_data(missing)
             return
 
-        # Display the relax controller.
-        if status.show_gui:
-            self.gui.controller.Show()
+        # Display the relax controller, and go to the end of the log window.
+        self.gui.show_controller(None)
+        self.gui.controller.log_panel.on_goto_end(None)
 
         # Start the thread.
         self.thread = Execute_mf(self.gui, data, self.data_index)
@@ -581,18 +584,19 @@ class Auto_model_free(Base_analysis):
         wx.BeginBusyCursor()
 
         # Create the wizard.
-        self.vect_wizard = Wiz_window(size_x=800, size_y=600, title="Load unit vectors from file")
+        self.vect_wizard = Wiz_window(parent=self.gui, size_x=800, size_y=600, title="Load unit vectors from file")
 
         # Create the PDB reading page.
-        page = Read_pdb_page(self.vect_wizard, self.gui)
+        page = Read_pdb_page(self.vect_wizard)
         self.vect_wizard.add_page(page, skip_button=True)
 
         # Create the vector loading page.
-        page = Vectors_page(self.vect_wizard, self.gui)
+        page = Vectors_page(self.vect_wizard)
         self.vect_wizard.add_page(page)
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
         # Execute the wizard.
         self.vect_wizard.run()
@@ -620,18 +624,24 @@ class Auto_model_free(Base_analysis):
         @type event:    wx event
         """
 
-        # Store the original directory.
-        backup = self.field_results_dir.GetValue()
+        # The dialog.
+        dialog = RelaxDirDialog(parent=self, message='Select the results directory', defaultPath=self.field_results_dir.GetValue())
 
-        # Select the file.
-        self.data.save_dir = opendir('Select results directory', default=self.field_results_dir.GetValue())
+        # Show the dialog and catch if no file has been selected.
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
+            # Don't do anything.
+            return
 
-        # Restore the backup file if no file was chosen.
-        if not self.data.save_dir:
-            self.data.save_dir = backup
+        # The path (don't do anything if not set).
+        path = gui_to_str(dialog.get_path())
+        if not path:
+            return
+
+        # Store the path.
+        self.data.save_dir = path
 
         # Place the path in the text box.
-        self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
+        self.field_results_dir.SetValue(str_to_gui(path))
 
 
     def sync_ds(self, upload=False):
@@ -688,7 +698,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        self.gui.user_functions.value.set(None, param='csa')
+        user_functions.value.set(param='csa')
 
 
     def value_set_heteronuc_type(self, event):
@@ -699,7 +709,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        self.gui.user_functions.value.set(None, param='heteronuc_type')
+        user_functions.value.set(param='heteronuc_type')
 
 
     def value_set_proton_type(self, event):
@@ -710,7 +720,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        self.gui.user_functions.value.set(None, param='proton_type')
+        user_functions.value.set(param='proton_type')
 
 
     def value_set_r(self, event):
@@ -721,7 +731,7 @@ class Auto_model_free(Base_analysis):
         """
 
         # Call the user function.
-        self.gui.user_functions.value.set(None, param='r')
+        user_functions.value.set(param='r')
 
 
 
@@ -874,7 +884,7 @@ class Local_tm_list:
 
         # First state that this should not be done.
         msg = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
-        if Question(msg, title="Warning - do not change!", default=False).ShowModal() == wx.ID_YES:
+        if status.show_gui and not Question(msg, title="Warning - do not change!", size=(400, 180), default=False).ShowModal() == wx.ID_YES:
             return
 
         # Set the model selector window selections.
@@ -997,9 +1007,6 @@ class Model_sel_window(wx.Dialog):
         # Add the table to the sizer.
         sizer.Add(self.model_list, 1, wx.ALL|wx.EXPAND, 0)
 
-        # Bind some events.
-        self.Bind(wx.EVT_CLOSE, self.handler_close)
-
 
     def get_selection(self):
         """Return the selection as a list of booleans.
@@ -1017,17 +1024,6 @@ class Model_sel_window(wx.Dialog):
 
         # Return the list.
         return select
-
-
-    def handler_close(self, event):
-        """Event handler for the close window action.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Close the window.
-        self.Hide()
 
 
     def set_selection(self, select):

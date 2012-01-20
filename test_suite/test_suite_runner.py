@@ -37,7 +37,7 @@ from system_tests import System_test_runner
 from unit_tests.unit_test_runner import Unit_test_runner
 
 # relax module imports.
-from relax_test_runner import RelaxTestRunner
+from relax_test_runner import GuiTestRunner, RelaxTestRunner
 from status import Status; status = Status()
 
 
@@ -50,14 +50,16 @@ class Test_suite_runner:
         - GUI tests.
     """
 
-    def __init__(self, tests=None):
+    def __init__(self, tests=[], from_gui=False):
         """Store the list of tests to preform.
 
         The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
 
 
-        @keyword tests: The list of tests to preform.
-        @type tests:    list of str
+        @keyword tests:     The list of tests to preform.  If left at [], then all tests will be run.
+        @type tests:        list of str
+        @keyword from_gui:  A flag which indicates if the tests are being run from the GUI or not.
+        @type from_gui:     bool
         """
 
         # Store the args.
@@ -65,6 +67,12 @@ class Test_suite_runner:
 
         # A list for skipped tests.
         status.skip = []
+
+        # Set up the test runner.
+        if from_gui:
+            self.runner = GuiTestRunner(stream=sys.stdout)
+        else:
+            self.runner = RelaxTestRunner(stream=sys.stdout)
 
 
     def run_all_tests(self):
@@ -97,7 +105,7 @@ class Test_suite_runner:
         # Run the tests.
         if dep_check.wx_module:
             gui_runner = GUI_test_runner()
-            self.gui_result = gui_runner.run(self.tests)
+            self.gui_result = gui_runner.run(self.tests, runner=self.runner)
 
         # No wx module installed.
         else:
@@ -121,7 +129,7 @@ class Test_suite_runner:
 
         # Run the tests.
         system_runner = System_test_runner()
-        self.system_result = system_runner.run(self.tests)
+        self.system_result = system_runner.run(self.tests, runner=self.runner)
 
         # Print out a summary of the test suite.
         if summary:
@@ -140,7 +148,7 @@ class Test_suite_runner:
 
         # Run the tests.
         unit_runner = Unit_test_runner(root_path=status.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
-        self.unit_result = unit_runner.run(runner=RelaxTestRunner())
+        self.unit_result = unit_runner.run(runner=self.runner)
 
         # Print out a summary of the test suite.
         if summary:

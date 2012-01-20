@@ -35,7 +35,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 # relax GUI module imports.
-from gui.filedialog import RelaxFileDialog, opendir
+from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.message import error_message
 from gui.misc import add_border, str_to_gui
@@ -198,7 +198,7 @@ class Delay_num_cell_editor(wx.grid.PyGridCellEditor):
             self.cell.SetValue(str_to_gui(num))
 
             # Set the insertion point to the end.
-            self.cell.SetSelection(1,1)
+            self.cell.SetSelection(1, 1)
 
         # Skip everything else.
         else:
@@ -333,7 +333,7 @@ class Grid_base:
             self.vc_time.SetToolTipString("Time of counter loop in seconds.")
             self.vc_time.SetMinSize((50, 20))
             self.vc_time.SetFont(wx.Font(7, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-            button_sizer.Add(self.vc_time, 0, 0 ,0)
+            button_sizer.Add(self.vc_time, 0, 0, 0)
 
             # Action of Button
             self.gui.Bind(wx.EVT_BUTTON, lambda event, vc=True: self.load_delay(event, vc), add_vc)
@@ -450,7 +450,7 @@ class Grid_base:
             dialog = RelaxFileDialog(parent=self, style=wx.FD_OPEN)
 
             # Show the dialog and catch if no file has been selected.
-            if dialog.ShowModal() != wx.ID_OK:
+            if status.show_gui and dialog.ShowModal() != wx.ID_OK:
                 # Don't do anything.
                 return
 
@@ -661,7 +661,7 @@ class Grid_base:
         dialog = RelaxFileDialog(parent=self, style=wx.FD_OPEN)
 
         # Show the dialog and catch if no file has been selected.
-        if dialog.ShowModal() != wx.ID_OK:
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
             # Don't do anything.
             return
 
@@ -703,7 +703,7 @@ class Grid_base:
         dialog = RelaxFileDialog(parent=self, message='Select the %s peak list file'%self.label, style=wx.FD_OPEN|wx.FD_MULTIPLE)
 
         # Show the dialog and catch if no file has been selected.
-        if dialog.ShowModal() != wx.ID_OK:
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
             # Don't do anything.
             return
 

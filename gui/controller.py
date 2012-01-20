@@ -35,10 +35,11 @@ from generic_fns.pipes import cdp_name
 from status import Status; status = Status()
 
 # relax GUI module imports.
+from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import add_border, str_to_gui
-from gui.paths import IMAGE_PATH
+from gui.paths import IMAGE_PATH, icon_16x16
 
 
 class Controller(wx.Frame):
@@ -73,10 +74,10 @@ class Controller(wx.Frame):
         sizer.AddSpacer(20)
 
         # Add the current analysis info.
-        self.name = self.add_text(self, sizer, "Current GUI analysis:")
+        self.name = self.add_text(self.main_panel, sizer, "Current GUI analysis:")
 
         # Add the current data pipe info.
-        self.cdp = self.add_text(self, sizer, "Current data pipe:")
+        self.cdp = self.add_text(self.main_panel, sizer, "Current data pipe:")
 
         # Create the relaxation curve-fitting specific panel.
         self.create_rx(sizer)
@@ -85,13 +86,13 @@ class Controller(wx.Frame):
         self.create_mf(sizer)
 
         # Add the main execution gauge.
-        self.main_gauge = self.add_gauge(self, sizer, "Execution progress:", tooltip="This gauge will pulse while relax is executing an auto-analysis (when the execution lock is turned on) and will be set to 100% once the analysis is complete.")
+        self.main_gauge = self.add_gauge(self.main_panel, sizer, "Execution progress:", tooltip="This gauge will pulse while relax is executing an auto-analysis (when the execution lock is turned on) and will be set to 100% once the analysis is complete.")
 
         # Initialise a queue for log messages.
         self.log_queue = Queue()
 
         # Add the log panel.
-        self.log_panel = LogCtrl(self, log_queue=self.log_queue, id=-1)
+        self.log_panel = LogCtrl(self.main_panel, self, log_queue=self.log_queue, id=-1)
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
 
         # IO redirection.
@@ -163,7 +164,7 @@ class Controller(wx.Frame):
         """
 
         # The logo.
-        logo = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+        logo = wx.StaticBitmap(self.main_panel, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
 
         # Add the relax logo.
         sizer.Add(logo, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
@@ -199,7 +200,7 @@ class Controller(wx.Frame):
         field = wx.TextCtrl(parent, -1, '', style=wx.ALIGN_LEFT)
         field.SetEditable(False)
         field.SetFont(font.normal)
-        colour = self.GetBackgroundColour()
+        colour = self.main_panel.GetBackgroundColour()
         field.SetOwnBackgroundColour(colour)
         sub_sizer.Add(field, 3, wx.ALIGN_CENTER_VERTICAL, 0)
 
@@ -243,7 +244,7 @@ class Controller(wx.Frame):
         """
 
         # Create a panel.
-        self.panel_mf = wx.Panel(self, -1)
+        self.panel_mf = wx.Panel(self.main_panel, -1)
         sizer.Add(self.panel_mf, 0, wx.ALL|wx.EXPAND, 0)
 
         # The panel sizer.
@@ -268,7 +269,7 @@ class Controller(wx.Frame):
         """
 
         # Create a panel.
-        self.panel_rx = wx.Panel(self, -1)
+        self.panel_rx = wx.Panel(self.main_panel, -1)
         sizer.Add(self.panel_rx, 0, wx.ALL|wx.EXPAND, 0)
 
         # The panel sizer.
@@ -318,11 +319,12 @@ class Controller(wx.Frame):
         # Set up the window icon.
         self.SetIcons(relax_icons)
 
+       # Place all elements within a panel (to remove the dark grey in MS Windows).
+        self.main_panel = wx.Panel(self, -1)
+
         # Use a grid sizer for packing the elements.
         main_sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Pack the sizer into the frame.
-        self.SetSizer(main_sizer)
+        self.main_panel.SetSizer(main_sizer)
 
         # Build the central sizer, with borders.
         sizer = add_border(main_sizer, border=self.border, packing=wx.VERTICAL)
@@ -360,23 +362,27 @@ class Controller(wx.Frame):
 
         # Rx fitting auto-analysis.
         if type in ['R1', 'R2']:
-            wx.CallAfter(self.panel_rx.Show)
+            if status.show_gui:
+                wx.CallAfter(self.panel_rx.Show)
             wx.CallAfter(self.update_rx)
         else:
-            wx.CallAfter(self.panel_rx.Hide)
+            if status.show_gui:
+                wx.CallAfter(self.panel_rx.Hide)
 
         # Model-free auto-analysis.
         if type == 'model-free':
-            wx.CallAfter(self.panel_mf.Show)
+            if status.show_gui:
+                wx.CallAfter(self.panel_mf.Show)
             wx.CallAfter(self.update_mf)
         else:
-            wx.CallAfter(self.panel_mf.Hide)
+            if status.show_gui:
+                wx.CallAfter(self.panel_mf.Hide)
 
         # Update the main gauge.
         wx.CallAfter(self.update_gauge)
 
         # Re-layout the window.
-        wx.CallAfter(self.Layout)
+        wx.CallAfter(self.main_panel.Layout)
 
 
     def update_gauge(self):
@@ -386,7 +392,7 @@ class Controller(wx.Frame):
         if status.exec_lock.locked():
             # Start the timer.
             if not self.timer.IsRunning():
-                self.timer.Start(100)
+                wx.CallAfter(self.timer.Start, 100)
 
             # Finish.
             return
@@ -521,11 +527,13 @@ class Controller(wx.Frame):
 class LogCtrl(wx.stc.StyledTextCtrl):
     """A special control designed to display relax output messages."""
 
-    def __init__(self, parent, log_queue=None, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.BORDER_SUNKEN, name=wx.stc.STCNameStr):
+    def __init__(self, parent, controller, log_queue=None, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.BORDER_SUNKEN, name=wx.stc.STCNameStr):
         """Set up the log control.
 
         @param parent:          The parent wx window object.
         @type parent:           Window
+        @param controller:      The controller window.
+        @type controller:       wx.Frame instance
         @keyword log_queue:     The queue of log messages.
         @type log_queue:        Queue.Queue instance
         @keyword id:            The wx ID.
@@ -541,7 +549,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         """
 
         # Store the args.
-        self.controller = parent
+        self.controller = controller
         self.log_queue = log_queue
 
         # Initialise the base class.
@@ -562,6 +570,10 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.StyleSetForeground(3, wx.NamedColour('orange red'))
         self.StyleSetFont(3, font.modern_small)
 
+        # Create the relax debugging style (style num 4).
+        self.StyleSetForeground(4, wx.NamedColour('dark green'))
+        self.StyleSetFont(4, font.modern_small)
+
         # Initilise the find dialog.
         self.find_dlg = None
 
@@ -579,6 +591,8 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.menu_id_zoom_in = wx.NewId()
         self.menu_id_zoom_out = wx.NewId()
         self.menu_id_zoom_orig = wx.NewId()
+        self.menu_id_goto_start = wx.NewId()
+        self.menu_id_goto_end = wx.NewId()
 
         # Make the control read only.
         self.SetReadOnly(True)
@@ -598,6 +612,8 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.Bind(wx.EVT_MENU, self.on_zoom_in, id=self.menu_id_zoom_in)
         self.Bind(wx.EVT_MENU, self.on_zoom_out, id=self.menu_id_zoom_out)
         self.Bind(wx.EVT_MENU, self.on_zoom_orig, id=self.menu_id_zoom_orig)
+        self.Bind(wx.EVT_MENU, self.on_goto_start, id=self.menu_id_goto_start)
+        self.Bind(wx.EVT_MENU, self.on_goto_end, id=self.menu_id_goto_end)
 
 
     def capture_keys(self, event):
@@ -636,6 +652,12 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             self.on_zoom_out(event)
         if event.ControlDown() and event.GetKeyCode() == 61:
             self.on_zoom_in(event)
+
+        # Jump to start or end (Ctrl-Home and Ctrl-End).
+        if event.ControlDown() and event.GetKeyCode() == 316:
+            self.on_goto_start(event)
+        elif event.ControlDown() and event.GetKeyCode() == 317:
+            self.on_goto_end(event)
 
 
     def find(self, event):
@@ -680,8 +702,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             text = "The string '%s' could not be found." % sel
             nothing = wx.MessageDialog(self, text, caption="Not found", style=wx.ICON_INFORMATION|wx.OK)
             nothing.SetSize((300, 200))
-            nothing.ShowModal()
-            nothing.Destroy()
+            if status.show_gui:
+                nothing.ShowModal()
+                nothing.Destroy()
 
         # Found text.
         else:
@@ -713,7 +736,8 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Initialise the dialog if it doesn't exist.
         if self.find_dlg == None:
             self.find_dlg = wx.FindReplaceDialog(self, self.find_data, "Find")
-            self.find_dlg.Show(True)
+            if status.show_gui:
+                self.find_dlg.Show(True)
 
 
     def find_next(self, event):
@@ -744,7 +768,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         stream_list = [0]
 
         # Loop until the queue is empty.
-        while 1:
+        while True:
             # End condition.
             if self.log_queue.empty():
                 break
@@ -769,10 +793,17 @@ class LogCtrl(wx.stc.StyledTextCtrl):
                 stream_list.append(stream)
 
             # The relax warnings on STDERR.
-            if msg[0:13] == 'RelaxWarning:':
+            elif msg[0:13] == 'RelaxWarning:':
                 # Add the warning.
                 string_list.append(msg)
                 stream_list.append(3)
+                continue
+
+            # Debugging - the relax lock.
+            elif msg[0:6] == 'debug>':
+                # Add the debugging text.
+                string_list.append(msg)
+                stream_list.append(4)
                 continue
 
             # A different stream.
@@ -830,6 +861,28 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.Copy()
 
 
+    def on_goto_end(self, event):
+        """Move to the end of the text.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Go to the end.
+        self.GotoPos(self.GetLength())
+
+
+    def on_goto_start(self, event):
+        """Move to the start of the text.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Go to the start.
+        self.GotoPos(-1)
+
+
     def on_select_all(self, event):
         """Select all text in the control.
 
@@ -885,18 +938,22 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         menu = wx.Menu()
 
         # Add the entries.
-        menu.Append(self.menu_id_find, "Find")
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_find, text="&Find", icon=icon_16x16.edit_find))
         menu.AppendSeparator()
-        menu.Append(self.menu_id_copy, "Copy")
-        menu.Append(self.menu_id_select_all, "Select all")
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_copy, text="&Copy", icon=icon_16x16.edit_copy))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_select_all, text="&Select all", icon=icon_16x16.edit_select_all))
         menu.AppendSeparator()
-        menu.Append(self.menu_id_zoom_in, "Zoom in")
-        menu.Append(self.menu_id_zoom_out, "Zoom out")
-        menu.Append(self.menu_id_zoom_orig, "Original zoom")
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_in, text="Zoom &in", icon=icon_16x16.zoom_in))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_out, text="Zoom &out", icon=icon_16x16.zoom_out))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_orig, text="Original &zoom", icon=icon_16x16.zoom_original))
+        menu.AppendSeparator()
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_goto_start, text="&Go to start", icon=icon_16x16.go_top))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_goto_end, text="&Go to end", icon=icon_16x16.go_bottom))
 
         # Pop up the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def write(self):
@@ -932,6 +989,18 @@ class LogCtrl(wx.stc.StyledTextCtrl):
                 self.StartStyling(end - len_string, 31)
                 self.SetStyling(len_string, stream_list[i])
 
+            # Show the controller when there are errors or warnings.
+            if stream_list[i] in [1, 3] and status.show_gui:
+                # Bring the window to the front.
+                if self.controller.IsShown():
+                    self.controller.Raise()
+
+                # Open the window.
+                else:
+                    # Show the window, then go to the message.
+                    self.controller.Show()
+                    self.GotoPos(self.GetLength())
+
         # Limit the scroll back.
         self.limit_scrollback()
 
@@ -942,9 +1011,6 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Make the control read only again.
         self.SetReadOnly(True)
 
-        # Show the relax controller when text is added.
-        if status.show_gui and not self.controller.IsShown():
-            self.controller.Show()
 
 
 class Redirect_text(object):

@@ -87,6 +87,7 @@ class Spin_ctrl:
         self.control.SetMinSize((-1, size_horizontal))
         self.control.SetFont(font.normal)
         sizer.Add(self.control, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.control.SetValue(default)
 
         # Spacer.
         sizer.AddSpacer((spacer, -1))
@@ -209,7 +210,7 @@ class Text_ctrl:
         # The button.
         if button:
             # Function is in the control class.
-            if type(fn) == str:
+            if isinstance(fn, str):
                 # The function.
                 fn = getattr(field, fn)
 

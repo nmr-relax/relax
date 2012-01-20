@@ -32,6 +32,7 @@ from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import bool_to_gui, float_to_gui, int_to_gui, float_to_gui, str_to_gui
 from gui.user_functions import deselect, sequence, spin
 from gui.wizard import Wiz_window
@@ -88,21 +89,21 @@ class Rx(GuiTestCase):
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'curve_fitting' + sep
 
         # Simulate the new analysis wizard.
-        self.gui.analysis.menu_new(None)
-        page = self.gui.analysis.new_wizard.wizard.get_page(0)
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
         page.select_r1(None)
-        self.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.gui.analysis.new_wizard.wizard.get_page(1)
-        self.gui.analysis.new_wizard.wizard._go_next(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
         # Get the data.
-        analysis_type, analysis_name, pipe_name = self.gui.analysis.new_wizard.get_data()
+        analysis_type, analysis_name, pipe_name = self.app.gui.analysis.new_wizard.get_data()
 
         # Set up the analysis.
-        self.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
 
         # Alias the analysis.
-        analysis = self.gui.analysis.get_page_from_name("R1 relaxation")
+        analysis = self.app.gui.analysis.get_page_from_name("R1 relaxation")
 
         # The frequency label.
         analysis.field_nmr_frq.SetValue(str_to_gui('600'))
@@ -111,8 +112,8 @@ class Rx(GuiTestCase):
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Load the sequence.
-        wizard = Wiz_window()
-        seq_read = sequence.Read_page(wizard, self.gui)
+        wizard = Wiz_window(self.app.gui)
+        seq_read = sequence.Read_page(wizard)
         file = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'Ap4Aase.seq'
         seq_read.file.SetValue(str_to_gui(file))
         seq_read.mol_name_col.SetValue(int_to_gui(None))
@@ -123,7 +124,7 @@ class Rx(GuiTestCase):
         seq_read.on_execute()
 
         # Unresolved spins.
-        deselect_read = deselect.Read_page(wizard, self.gui)
+        deselect_read = deselect.Read_page(wizard)
         deselect_read.file.SetValue(str_to_gui(data_path + 'unresolved'))
         deselect_read.mol_name_col.SetValue(int_to_gui(None))
         deselect_read.res_name_col.SetValue(int_to_gui(None))
@@ -134,9 +135,12 @@ class Rx(GuiTestCase):
         deselect_read.on_execute()
 
         # Name the spins.
-        page = spin.Name_page(wizard, self.gui)
+        page = spin.Name_page(wizard)
         page.name.SetValue(str_to_gui('N'))
         page.on_execute()
+
+        # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
+        interpreter.flush()
 
         # Spectrum names.
         names = [
@@ -200,7 +204,7 @@ class Rx(GuiTestCase):
             # Replicated spectra:
             if names[i] in replicated.keys():
                 page = analysis.wizard.get_page(analysis.page_indices['repl'])
-                page.spectrum_id2.SetValue(str_to_gui(replicated[names[i]]))
+                page.spectrum_id_boxes[1].SetStringSelection(str_to_gui(replicated[names[i]]))
 
             # Go to the next page.
             analysis.wizard._go_next(None)
@@ -228,8 +232,8 @@ class Rx(GuiTestCase):
         self.check_exceptions()
 
         # Check the relax controller.
-        self.assertEqual(self.gui.controller.mc_gauge_rx.GetValue(), 100)
-        self.assertEqual(self.gui.controller.main_gauge.GetValue(), 100)
+        self.assertEqual(self.app.gui.controller.mc_gauge_rx.GetValue(), 100)
+        self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
         # Check the data pipe.
         self.assertEqual(cdp_name(), ds.relax_gui.analyses[0].pipe_name)

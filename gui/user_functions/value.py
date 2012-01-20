@@ -36,26 +36,21 @@ from base import UF_base, UF_page
 from gui.errors import gui_raise
 from gui.misc import gui_to_str, str_to_gui
 from gui.paths import WIZARD_IMAGE_PATH
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Value(UF_base):
     """The container class for holding all GUI elements."""
 
-    def set(self, event, param=None):
+    def set(self, param=None):
         """The value.set user function.
 
-        @param event:   The wx event.
-        @type event:    wx event
         @keyword param: The starting parameter.
         @type param:    str
         """
 
         # Create the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=800, title=self.get_title('value', 'set'))
-        page = Set_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard, page = self.create_wizard(size_x=1000, size_y=800, name='value.set', uf_page=Set_page, return_page=True)
 
         # Default parameter.
         page.set_param(param)
@@ -118,7 +113,7 @@ class Set_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Set the value.
-        self.gui.interpreter.queue('value.set', val=val, param=param, spin_id=spin_id)
+        self.execute('value.set', val=val, param=param, spin_id=spin_id)
 
 
     def set_default_value(self, event=None):
@@ -188,6 +183,9 @@ class Set_page(UF_page):
             gui_raise(RelaxImplementError())
             self.setup_fail = True
             return
+
+        # Clear the previous data.
+        self.param.Clear()
 
         # Loop over the parameters.
         for name in (data_names(set='params') + data_names(set='generic')):

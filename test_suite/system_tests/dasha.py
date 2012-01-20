@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -77,7 +77,7 @@ class Dasha(SystemTestCase):
         nucleus = [None, None, None]
         model = ['m3', 'm3', 'm3']
         equation = ['mf_orig', 'mf_orig', 'mf_orig']
-        params = [['S2', 'Rex'], ['S2', 'Rex'], ['S2', 'Rex']]
+        params = [['s2', 'rex'], ['s2', 'rex'], ['s2', 'rex']]
         xh_vect = [None, None, None]
         s2 = [0.64359, 0.64359, 0.64359]
         s2f = [None, None, 0.8]

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -201,6 +201,13 @@ class Mf(SystemTestCase):
         self.assertNotEqual(cdp.mol[0].res[1].spin[0].s2, 1.0)
 
 
+    def test_bug_18790(self):
+        """Test catching bug #18790, the negative relaxation data RelaxError reported by Vitaly Vostrikov."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_18790_negative_error.py')
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
@@ -209,7 +216,7 @@ class Mf(SystemTestCase):
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['S2', 'te', 'Rex'])
+        self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['s2', 'te', 'rex'])
 
 
     def test_dauvergne_protocol(self):
@@ -260,7 +267,7 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.model, 'm2')
             self.assertEqual(spin.equation, 'mf_orig')
             self.assertEqual(len(spin.params), 2)
-            self.assertEqual(spin.params[0], 'S2')
+            self.assertEqual(spin.params[0], 's2')
             self.assertEqual(spin.params[1], 'te')
             self.assertAlmostEqual(spin.s2, 0.8)
             self.assertEqual(spin.s2f, None)
@@ -313,7 +320,7 @@ class Mf(SystemTestCase):
             self.interpreter.relax_data.read('R2_%s'%frq[i],  'R2',  float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 'S2', 'te'])
+        self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 's2', 'te'])
 
         # Minimise.
         self.interpreter.minimise('newton', 'gmw', 'back')
@@ -341,7 +348,7 @@ class Mf(SystemTestCase):
             self.interpreter.relax_data.read('R2_%s'%frq[i],  'R2',  float(frq[i])*1e6, 'r2.%s.out' % frq[i],  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 'S2', 'te'])
+        self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 's2', 'te'])
 
         # Minimise.
         self.interpreter.minimise('newton', 'gmw', 'back')
@@ -371,7 +378,7 @@ class Mf(SystemTestCase):
         self.interpreter.relax_data.read('R2_500',  'R2',  500*1e6, 'r2.500.out',  dir=cdp.path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 'S2', 'te'])
+        self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 's2', 'te'])
 
         # Minimise.
         self.interpreter.minimise('newton', 'gmw', 'back')
@@ -592,10 +599,10 @@ class Mf(SystemTestCase):
 
         # Setup other values.
         self.interpreter.diffusion_tensor.init((1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
-        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
-        self.interpreter.value.set([0.8, 50 * 1e-12, 0.0], ['S2', 'te', 'Rex'])
-        self.interpreter.value.set('15N', 'heteronucleus')
-        self.interpreter.value.set('1H', 'proton')
+        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'r'])
+        self.interpreter.value.set([0.8, 50 * 1e-12, 0.0], ['s2', 'te', 'rex'])
+        self.interpreter.value.set('15N', 'heteronuc_type')
+        self.interpreter.value.set('1H', 'proton_type')
 
         # Select the model.
         self.interpreter.model_free.select_model(model='m4')
@@ -622,15 +629,15 @@ class Mf(SystemTestCase):
         self.interpreter.relax_data.read('NOE_500', 'NOE', 500.0*1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
-        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
-        self.interpreter.value.set('15N', 'heteronucleus')
-        self.interpreter.value.set('1H', 'proton')
+        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'r'])
+        self.interpreter.value.set('15N', 'heteronuc_type')
+        self.interpreter.value.set('1H', 'proton_type')
 
         # Select the model.
         self.interpreter.model_free.select_model(model='tm2')
 
         # Map the space.
-        self.interpreter.dx.map(params=['local_tm', 'S2', 'te'], spin_id=':2', inc=2, lower=[5e-9, 0.0, 0.0], file_prefix='devnull')
+        self.interpreter.dx.map(params=['local_tm', 's2', 'te'], spin_id=':2', inc=2, lower=[5e-9, 0.0, 0.0], file_prefix='devnull')
 
 
     def test_opt_constr_bfgs_back_S2_0_970_te_2048_Rex_0_149(self):
@@ -651,7 +658,7 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
         self.interpreter.minimise('bfgs', 'back')
@@ -887,7 +894,7 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
         self.interpreter.minimise('bfgs', 'mt')
@@ -1072,7 +1079,7 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
         self.interpreter.minimise('cd', 'back', max_iter=50)
@@ -1141,7 +1148,7 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
         self.interpreter.minimise('cd', 'mt')
@@ -1283,7 +1290,7 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
         self.interpreter.minimise('newton', 'gmw', 'back')
@@ -1425,7 +1432,7 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
         self.interpreter.minimise('newton', 'gmw', 'mt')
@@ -1599,7 +1606,7 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
         self.interpreter.minimise('sd', 'back', max_iter=50)
@@ -1668,7 +1675,7 @@ class Mf(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.interpreter.value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
         self.interpreter.minimise('sd', 'mt', max_iter=50)
@@ -1813,7 +1820,7 @@ class Mf(SystemTestCase):
         num = [3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 35]
         select = [False, False, False, False, False, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, False, False, False]
         model = ['m6', 'm8', 'm6', 'm6', 'm5', 'm5', 'm6', 'm5', 'm5', 'm5', 'm5', 'm5', 'm5', 'm5', 'm5', 'm5', 'm5', 'm5', 'm5', 'm5', 'm5', 'm8']
-        params = [['S2f', 'tf', 'S2', 'ts'], ['S2f', 'tf', 'S2', 'ts', 'Rex'], ['S2f', 'tf', 'S2', 'ts'], ['S2f', 'tf', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'tf', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'S2', 'ts'], ['S2f', 'tf', 'S2', 'ts', 'Rex']]
+        params = [['s2f', 'tf', 's2', 'ts'], ['s2f', 'tf', 's2', 'ts', 'rex'], ['s2f', 'tf', 's2', 'ts'], ['s2f', 'tf', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 'tf', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 's2', 'ts'], ['s2f', 'tf', 's2', 'ts', 'rex']]
         s2 = [0.36670427146403667, 0.29007016882193892, 0.32969827132809559, 0.32795333510352148, 0.48713005133752196, 0.40269538236298569, 0.40700811448591556, 0.4283551026406261, 0.51176783207279875, 0.40593664887508263, 0.39437732735324443, 0.51457448574034614, 0.3946900969237977, 0.44740698217286901, 0.48527716982891644, 0.40845486062540021, 0.45839900995265137, 0.52650140958170921, 0.4293599736020427, 0.4057313062564018, 0.49877862202992485, 0.2592017578673716]
         s2f = [0.74487419686217116, 0.75358958979175727, 0.77751085082436211, 0.79095600331751026, 0.81059857999556584, 0.83190224667917501, 0.80119109731193627, 0.83083248649122576, 0.86030420847112021, 0.84853537580616367, 0.82378413185968968, 0.82419108009774422, 0.85121172821954216, 0.8736616181472916, 0.84117641395909415, 0.82881488883235521, 0.82697284935760407, 0.85172375147802715, 0.81366357660551614, 0.80525752789388483, 0.87016608774434312, 0.72732036363757913]
         s2s = [0.49230363061145249, 0.38491796164819009, 0.4240433056059994, 0.41462904855388333, 0.60095102971952741, 0.48406574687168274, 0.50800379067049317, 0.51557336720143987, 0.59486845122178478, 0.47839684761453399, 0.47873867934666214, 0.62433881919629686, 0.46368028522041266, 0.51210557140148982, 0.57690296800513374, 0.49281795745831319, 0.55430962492751434, 0.61815983018913379, 0.5276873464009153, 0.50385285725620466, 0.57319933407525203, 0.35637907423767778]
@@ -1956,7 +1963,7 @@ class Mf(SystemTestCase):
         eqi = [None, 'mf_ext']
         select = [False, True]
         model = [None, 'm5']
-        params = [[], ['S2f', 'S2', 'ts']]
+        params = [[], ['s2f', 's2', 'ts']]
         s2 = [None, 0.86578779694713515]
         s2f = [None, 0.88618694421409949]
         s2s = [None, 0.97698098871784322]
@@ -2103,7 +2110,7 @@ class Mf(SystemTestCase):
         eqi = [None, None, None, 'mf_ext', 'mf_orig', 'mf_orig', None, 'mf_orig']
         select = [False, False, False, True, True, True, False, True]
         model = [None, None, None, 'm5', 'm2', 'm1', None, 'm1']
-        params = [None, None, None, ['S2f', 'S2', 'ts'], ['S2', 'te'], ['S2'], None, ['S2']]
+        params = [None, None, None, ['s2f', 's2', 'ts'], ['s2', 'te'], ['s2'], None, ['s2']]
         s2 = [None, None, None, 0.85674161305142216, 0.89462664243726608, 0.90201790111143165, None, 0.92099297347361675]
         s2f = [None, None, None, 0.88220054271390302, None, None, None, None]
         s2s = [None, None, None, 0.97114156200339452, None, None, None, None]
@@ -2305,7 +2312,7 @@ class Mf(SystemTestCase):
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['S2', 'te', 'Rex'])
+        self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['s2', 'te', 'rex'])
 
 
     def test_set_bond_length(self):
@@ -2318,7 +2325,7 @@ class Mf(SystemTestCase):
         self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Set the CSA value.
-        self.interpreter.value.set(NH_BOND_LENGTH, 'bond_length')
+        self.interpreter.value.set(NH_BOND_LENGTH, 'r')
 
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
@@ -2350,7 +2357,7 @@ class Mf(SystemTestCase):
         self.interpreter.sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Set the CSA value and bond length simultaneously.
-        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
+        self.interpreter.value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'r'])
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
@@ -2568,25 +2575,25 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.s2s, None, msg=mesg)
 
         # te correlation time.
-        if type(te) == float:
+        if isinstance(te, float):
             self.assertAlmostEqual(spin.te / 1e-12, te, 5, msg=mesg)
         elif te == None:
             self.assertEqual(spin.te, None, msg=mesg)
 
         # tf correlation time.
-        if type(tf) == float:
+        if isinstance(tf, float):
             self.assertAlmostEqual(spin.tf / 1e-12, tf, 4, msg=mesg)
         elif tf == None:
             self.assertEqual(spin.tf, None, msg=mesg)
 
         # ts correlation time.
-        if type(ts) == float:
+        if isinstance(ts, float):
             self.assertAlmostEqual(spin.ts / 1e-12, ts, 4, msg=mesg)
         elif ts == None:
             self.assertEqual(spin.ts, None, msg=mesg)
 
         # Chemical exchange.
-        if type(rex) == float:
+        if isinstance(rex, float):
             self.assertAlmostEqual(spin.rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, rex * (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2, msg=mesg)
         elif rex == None:
             self.assertEqual(spin.rex, None, msg=mesg)

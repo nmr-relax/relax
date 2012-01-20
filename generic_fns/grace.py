@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -126,7 +126,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
         spin_names = []
 
         # Loop over the spins.
-        for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+        for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, selection=spin_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -159,7 +159,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
             if data_list or isinstance(x_val, list):
                 # Append a new set structure and set the name to the spin ID.
                 data[0].append([])
-                set_labels.append("Spin %s" % spin_id)
+                set_labels.append("Spin %s" % id)
 
                 # The set index.
                 index = len(data[0]) - 1
@@ -177,7 +177,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
             if data_dict or isinstance(x_val, dict):
                 # Append a new set structure and set the name to the spin ID.
                 data[0].append([])
-                set_labels.append("Spin %s" % spin_id)
+                set_labels.append("Spin %s" % id)
 
                 # The set index.
                 index = len(data[0]) - 1
@@ -232,12 +232,12 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 point = data[0][index][-1]
 
                 # Conversion factors.
-                x_val[j] = x_val[j] / x_return_conversion_factor(x_data_type, spin)
+                x_val[j] = x_val[j] / x_return_conversion_factor(x_data_type)
                 if x_err[j]:
-                    x_err[j] = x_err[j] / x_return_conversion_factor(x_data_type, spin)
-                y_val[j] = y_val[j] / y_return_conversion_factor(y_data_type, spin)
+                    x_err[j] = x_err[j] / x_return_conversion_factor(x_data_type)
+                y_val[j] = y_val[j] / y_return_conversion_factor(y_data_type)
                 if y_err[j]:
-                    y_err[j] = y_err[j] / y_return_conversion_factor(y_data_type, spin)
+                    y_err[j] = y_err[j] / y_return_conversion_factor(y_data_type)
 
                 # Append the data.
                 point.append(x_val[j])
@@ -271,11 +271,11 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 new_data[i][j][k].append(data[i][j][k][1])
 
                 # First error set.
-                if graph_type in ['xydx', 'xydy', 'xydxdy']:
+                if graph_type in ['xydx', 'xydxdy']:
                     new_data[i][j][k].append(data[i][j][k][2])
 
                 # Second error set.
-                if graph_type == 'xydxdy':
+                if graph_type in ['xydy', 'xydxdy']:
                     new_data[i][j][k].append(data[i][j][k][3])
 
     # Return the data.

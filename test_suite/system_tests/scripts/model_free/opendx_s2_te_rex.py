@@ -25,12 +25,12 @@ relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out
 
 # Setup other values.
 diffusion_tensor.init(1e-8, fixed=True)
-value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
-value.set('15N', 'heteronucleus')
-value.set('1H', 'proton')
+value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'r'])
+value.set('15N', 'heteronuc_type')
+value.set('1H', 'proton_type')
 
 # Select the model.
 model_free.select_model(model='m4')
 
 # Map the space.
-dx.map(params=['S2', 'te', 'Rex'], spin_id=':2', inc=2, lower=[0.0, 0, 0], upper=[1.0, 10000e-12, 3.0 / (2.0 * pi * 600000000.0)**2], point=[0.970, 2048.0e-12, 0.149 / (2.0 * pi * 600000000.0)**2], file_prefix='devnull', point_file='devnull')
+dx.map(params=['s2', 'te', 'rex'], spin_id=':2', inc=2, lower=[0.0, 0, 0], upper=[1.0, 10000e-12, 3.0 / (2.0 * pi * 600000000.0)**2], point=[0.970, 2048.0e-12, 0.149 / (2.0 * pi * 600000000.0)**2], file_prefix='devnull', point_file='devnull')

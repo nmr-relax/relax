@@ -150,7 +150,7 @@ print("value.set([%12.8f, %12.8f, %12.8f, %12.8f, %12.8f], ['gamma0', 'gamma1', 
 print("# fk: %s" % cdp.chi2)
 
 # Pivot point.
-piv = [ 12.067 ,  14.313 ,  -3.2675]    # Ave between 1J70 AND 1J7P (model 2).
+piv = [ 12.067,  14.313,  -3.2675]    # Ave between 1J70 AND 1J7P (model 2).
 
 # Centre of mass analysis.
 n_state_model.CoM(pivot_point=piv)

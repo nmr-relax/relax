@@ -540,8 +540,7 @@ class Spin(Container_base):
             # Dictionary types.
             elif obj_type == 'dict':
                 # The keys.
-                keys = obj.keys()
-                keys.sort()
+                keys = sorted(obj.keys())
 
                 # Single entry (or None).
                 if len(keys) < 2:

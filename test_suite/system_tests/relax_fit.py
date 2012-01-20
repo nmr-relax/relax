@@ -158,6 +158,32 @@ class Relax_fit(SystemTestCase):
         self.assertEqual(lines[index][1], '487178.0')
 
 
+    def test_bug_18789(self):
+        """Test for zero errors in Grace plots, replicating bug #18789."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'curve_fitting'+sep+'bug_18789_no_grace_errors.py')
+
+        # Open the Grace file.
+        file = open(ds.tmpdir + sep + 'rx.agr')
+        lines = file.readlines()
+        file.close()
+
+        # Loop over all lines.
+        for i in xrange(len(lines)):
+            # Find the "@target G0.S0" line.
+            if search('@target', lines[i]):
+                index = i + 2
+
+            # Split up the lines.
+            lines[i] = split(lines[i])
+
+        # Check for zero errors.
+        self.assertEqual(len(lines[index]), 3)
+        self.assertNotEqual(float(lines[index][2]), 0.0)
+        self.assertNotEqual(float(lines[index+1][2]), 0.0)
+
+
     def test_curve_fitting_height_exp_2param_neg(self):
         """Test the relaxation curve fitting C modules."""
 

@@ -26,6 +26,7 @@
 
 # Python module imports
 import __builtin__
+import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -65,7 +66,7 @@ def copy(pipe_from=None, pipe_to=None):
         raise RelaxPipeError(pipe_to)
 
     # Acquire the pipe lock (data modifying function), and make sure it is finally released.
-    status.pipe_lock.acquire()
+    status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # The current data pipe.
         if pipe_from == None:
@@ -76,7 +77,7 @@ def copy(pipe_from=None, pipe_to=None):
 
     # Release the lock.
     finally:
-        status.pipe_lock.release()
+        status.pipe_lock.release(sys._getframe().f_code.co_name)
 
     # Notify observers that a pipe change has occurred.
     status.observers.pipe_alteration.notify()
@@ -118,14 +119,14 @@ def create(pipe_name=None, pipe_type=None, switch=True):
         raise RelaxError("The frame order analysis is not available.  Please install the scipy Python package.")
 
     # Acquire the pipe lock (data modifying function), and make sure it is finally released.
-    status.pipe_lock.acquire()
+    status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Add the data pipe.
         ds.add(pipe_name=pipe_name, pipe_type=pipe_type, switch=switch)
 
     # Release the lock.
     finally:
-        status.pipe_lock.release()
+        status.pipe_lock.release(sys._getframe().f_code.co_name)
 
 
 def cdp_name():
@@ -146,7 +147,7 @@ def delete(pipe_name=None):
     """
 
     # Acquire the pipe lock (data modifying function), and make sure it is finally released.
-    status.pipe_lock.acquire()
+    status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Pipe name is supplied.
         if pipe_name != None:
@@ -172,7 +173,7 @@ def delete(pipe_name=None):
 
     # Release the lock.
     finally:
-        status.pipe_lock.release()
+        status.pipe_lock.release(sys._getframe().f_code.co_name)
 
     # Notify observers that the switch has occurred.
     status.observers.pipe_alteration.notify()
@@ -182,7 +183,7 @@ def display():
     """Print the details of all the data pipes."""
 
     # Acquire the pipe lock, and make sure it is finally released.
-    status.pipe_lock.acquire()
+    status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Heading.
         print(("%-20s%-20s%-20s" % ("Data pipe name", "Data pipe type", "Current")))
@@ -199,7 +200,7 @@ def display():
 
     # Release the lock.
     finally:
-        status.pipe_lock.release()
+        status.pipe_lock.release(sys._getframe().f_code.co_name)
 
 
 def get_pipe(name=None):
@@ -267,7 +268,7 @@ def pipe_loop(name=False):
     """
 
     # Acquire the pipe lock, and make sure it is finally released.
-    status.pipe_lock.acquire()
+    status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Loop over the keys.
         for key in list(ds.keys()):
@@ -281,7 +282,7 @@ def pipe_loop(name=False):
 
     # Release the lock.
     finally:
-        status.pipe_lock.release()
+        status.pipe_lock.release(sys._getframe().f_code.co_name)
 
 
 def pipe_names():
@@ -302,7 +303,7 @@ def switch(pipe_name=None):
     """
 
     # Acquire the pipe lock (data modifying function), and make sure it is finally released.
-    status.pipe_lock.acquire()
+    status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Test if the data pipe exists.
         test(pipe_name)
@@ -313,7 +314,7 @@ def switch(pipe_name=None):
 
     # Release the lock.
     finally:
-        status.pipe_lock.release()
+        status.pipe_lock.release(sys._getframe().f_code.co_name)
 
     # Notify observers that the switch has occurred.
     status.observers.pipe_alteration.notify()

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -167,21 +167,21 @@ class Mf_minimise:
                             spin.local_tm_sim[sim_index] = param_vector[param_index]
 
                     # S2.
-                    elif spin.params[j] == 'S2':
+                    elif spin.params[j] == 's2':
                         if sim_index == None:
                             spin.s2 = param_vector[param_index]
                         else:
                             spin.s2_sim[sim_index] = param_vector[param_index]
 
                     # S2f.
-                    elif spin.params[j] == 'S2f':
+                    elif spin.params[j] == 's2f':
                         if sim_index == None:
                             spin.s2f = param_vector[param_index]
                         else:
                             spin.s2f_sim[sim_index] = param_vector[param_index]
 
                     # S2s.
-                    elif spin.params[j] == 'S2s':
+                    elif spin.params[j] == 's2s':
                         if sim_index == None:
                             spin.s2s = param_vector[param_index]
                         else:
@@ -209,7 +209,7 @@ class Mf_minimise:
                             spin.ts_sim[sim_index] = param_vector[param_index]
 
                     # Rex.
-                    elif spin.params[j] == 'Rex':
+                    elif spin.params[j] == 'rex':
                         if sim_index == None:
                             spin.rex = param_vector[param_index]
                         else:
@@ -223,7 +223,7 @@ class Mf_minimise:
                             spin.r_sim[sim_index] = param_vector[param_index]
 
                     # CSA.
-                    elif spin.params[j] == 'CSA':
+                    elif spin.params[j] == 'csa':
                         if sim_index == None:
                             spin.csa = param_vector[param_index]
                         else:
@@ -253,18 +253,18 @@ class Mf_minimise:
                 # Normal values.
                 if sim_index == None:
                     # S2.
-                    if 'S2' not in spin.params and 'S2f' in spin.params and 'S2s' in spin.params:
+                    if 's2' not in spin.params and 's2f' in spin.params and 's2s' in spin.params:
                         spin.s2 = spin.s2f * spin.s2s
 
                     # S2f.
-                    if 'S2f' not in spin.params and 'S2' in spin.params and 'S2s' in spin.params:
+                    if 's2f' not in spin.params and 's2' in spin.params and 's2s' in spin.params:
                         if spin.s2s == 0.0:
                             spin.s2f = 1e99
                         else:
                             spin.s2f = spin.s2 / spin.s2s
 
                     # S2s.
-                    if 'S2s' not in spin.params and 'S2' in spin.params and 'S2f' in spin.params:
+                    if 's2s' not in spin.params and 's2' in spin.params and 's2f' in spin.params:
                         if spin.s2f == 0.0:
                             spin.s2s = 1e99
                         else:
@@ -273,18 +273,18 @@ class Mf_minimise:
                 # Simulation values.
                 else:
                     # S2.
-                    if 'S2' not in spin.params and 'S2f' in spin.params and 'S2s' in spin.params:
+                    if 's2' not in spin.params and 's2f' in spin.params and 's2s' in spin.params:
                         spin.s2_sim[sim_index] = spin.s2f_sim[sim_index] * spin.s2s_sim[sim_index]
 
                     # S2f.
-                    if 'S2f' not in spin.params and 'S2' in spin.params and 'S2s' in spin.params:
+                    if 's2f' not in spin.params and 's2' in spin.params and 's2s' in spin.params:
                         if spin.s2s_sim[sim_index] == 0.0:
                             spin.s2f_sim[sim_index] = 1e99
                         else:
                             spin.s2f_sim[sim_index] = spin.s2_sim[sim_index] / spin.s2s_sim[sim_index]
 
                     # S2s.
-                    if 'S2s' not in spin.params and 'S2' in spin.params and 'S2f' in spin.params:
+                    if 's2s' not in spin.params and 's2' in spin.params and 's2f' in spin.params:
                         if spin.s2f_sim[sim_index] == 0.0:
                             spin.s2s_sim[sim_index] = 1e99
                         else:
@@ -611,7 +611,7 @@ class Mf_minimise:
                 upper.append(12.0 * 1e-9)
 
             # {S2, S2f, S2s}.
-            elif match('S2', spin.params[i]):
+            elif match('s2', spin.params[i]):
                 lower.append(0.0)
                 upper.append(1.0)
 
@@ -621,7 +621,7 @@ class Mf_minimise:
                 upper.append(500.0 * 1e-12)
 
             # Rex.
-            elif spin.params[i] == 'Rex':
+            elif spin.params[i] == 'rex':
                 lower.append(0.0)
                 upper.append(5.0 / (2.0 * pi * cdp.frq[cdp.ri_ids[0]])**2)
 
@@ -631,7 +631,7 @@ class Mf_minimise:
                 upper.append(1.05 * 1e-10)
 
             # CSA.
-            elif spin.params[i] == 'CSA':
+            elif spin.params[i] == 'csa':
                 lower.append(-120 * 1e-6)
                 upper.append(-200 * 1e-6)
 
@@ -885,7 +885,7 @@ class Mf_minimise:
                             j = j + 1
 
                     # Order parameters {S2, S2f, S2s}.
-                    elif match('S2', spin.params[l]):
+                    elif match('s2', spin.params[l]):
                         # 0 <= S2 <= 1.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
@@ -896,9 +896,9 @@ class Mf_minimise:
                         j = j + 2
 
                         # S2 <= S2f and S2 <= S2s.
-                        if spin.params[l] == 'S2':
+                        if spin.params[l] == 's2':
                             for m in xrange(len(spin.params)):
-                                if spin.params[m] == 'S2f' or spin.params[m] == 'S2s':
+                                if spin.params[m] == 's2f' or spin.params[m] == 's2s':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = -1.0
                                     A[j][old_i+m] = 1.0
@@ -939,7 +939,7 @@ class Mf_minimise:
                                 j = j + 1
 
                     # Rex.
-                    elif spin.params[l] == 'Rex':
+                    elif spin.params[l] == 'rex':
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
                         b.append(0.0 / scaling_matrix[i, i])
@@ -957,7 +957,7 @@ class Mf_minimise:
                         j = j + 2
 
                     # CSA.
-                    elif spin.params[l] == 'CSA':
+                    elif spin.params[l] == 'csa':
                         # -300e-6 <= CSA <= 0.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
@@ -1049,7 +1049,7 @@ class Mf_minimise:
             # Set the spin index and get the spin, if not already set.
             if data_store.model_type == 'diff' or data_store.model_type == 'all':
                 spin_index = j
-                spin = return_spin_from_index(global_index=spin_index)
+                spin, data_store.spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
             # Skip deselected spins.
             if not spin.select:
@@ -1059,13 +1059,16 @@ class Mf_minimise:
             if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
                 continue
 
-            # The relaxation data.
+            # Make sure that the errors are strictly positive numbers.
             for ri_id in cdp.ri_ids:
-                # Make sure that the errors are strictly positive numbers.
-                if spin.ri_data_err[ri_id] == 0.0:
-                    raise RelaxError("Zero error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
-                elif spin.ri_data_err[ri_id] < 0.0:
-                    raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
+                # Alias.
+                err = spin.ri_data_err[ri_id]
+
+                # Checks.
+                if err != None and err == 0.0:
+                    raise RelaxError("Zero error for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (errid))
+                elif err != None and err < 0.0:
+                    raise RelaxError("Negative error of %s for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (err, data_store.spin_id, ri_id))
 
             # The relaxation data optimisation structures.
             data = self._relax_data_opt_structs(spin, sim_index=sim_index)
@@ -1162,12 +1165,20 @@ class Mf_minimise:
         for ri_id in cdp.ri_ids:
             # The Rx data.
             if sim_index == None:
-                ri_data.append(spin.ri_data[ri_id])
+                data = spin.ri_data[ri_id]
             else:
-                ri_data.append(spin.ri_data_sim[ri_id][sim_index])
+                data = spin.ri_data_sim[ri_id][sim_index]
 
             # The errors.
-            ri_data_err.append(spin.ri_data_err[ri_id])
+            err = spin.ri_data_err[ri_id]
+
+            # Missing data, so don't add it.
+            if data == None or err == None:
+                continue
+
+            # Append the data and error.
+            ri_data.append(data)
+            ri_data_err.append(err)
 
             # The labels.
             ri_labels.append(cdp.ri_type[ri_id])
@@ -1183,7 +1194,7 @@ class Mf_minimise:
             noe_r1_table.append(None)
 
         # The number of data sets.
-        num_ri = len(cdp.ri_ids)
+        num_ri = len(ri_data)
 
         # Fill the NOE to R1 mapping table.
         for i in range(num_ri):
@@ -1250,7 +1261,7 @@ class Mf_minimise:
             raise RelaxNoPdbError
 
         # Loop over the spins.
-        for spin in spin_loop(spin_id):
+        for spin, id in spin_loop(spin_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -1290,10 +1301,14 @@ class Mf_minimise:
 
             # Make sure that the errors are strictly positive numbers.
             for ri_id in cdp.ri_ids:
-                if spin.ri_data_err[ri_id] == 0.0:
-                    raise RelaxError("Zero error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible.")
-                elif spin.ri_data_err[ri_id] < 0.0:
-                    raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible.")
+                # Alias.
+                err = spin.ri_data_err[ri_id]
+
+                # Checks.
+                if err != None and err == 0.0:
+                    raise RelaxError("Zero error for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (id, ri_id))
+                elif err != None and err < 0.0:
+                    raise RelaxError("Negative error of %s for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (err, id, ri_id))
 
             # Create the initial parameter vector.
             param_vector = self._assemble_param_vector(spin=spin, sim_index=sim_index)

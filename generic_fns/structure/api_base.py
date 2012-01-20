@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,13 +29,16 @@ documented.
 """
 
 # Python module imports.
+from numpy import float64
 from os import sep
 from re import match
 from types import MethodType
 from warnings import warn
 
 # relax module import.
-from data.relax_xml import fill_object_contents, xml_to_object
+from data.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
+from float import floatAsByteArray, packBytesAsPyFloat
+from generic_fns.structure.superimpose import kabsch
 from relax_errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError
 from relax_io import file_root
 from relax_warnings import RelaxWarning
@@ -58,20 +61,64 @@ class Base_struct_API:
         self.structural_data = ModelList()
 
 
-    def add_molecule(self, name=None, model=None):
-        """Prototype method stub for adding the given molecule to the store.
+    def add_atom(self, mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
+        """Add a new atom to the structural data object.
 
-        @keyword name:          The molecule identification string.
-        @type name:             str
-        @keyword model:         The number of the model to add the molecule to.
-        @type model:            int or None
+        @keyword mol_name:      The name of the molecule.
+        @type mol_name:         str
+        @keyword atom_name:     The atom name, e.g. 'H1'.
+        @type atom_name:        str or None
+        @keyword res_name:      The residue name.
+        @type res_name:         str or None
+        @keyword res_num:       The residue number.
+        @type res_num:          int or None
+        @keyword pos:           The position vector of coordinates.
+        @type pos:              list (length = 3)
+        @keyword element:       The element symbol.
+        @type element:          str or None
+        @keyword atom_num:      The atom number.
+        @type atom_num:         int or None
+        @keyword chain_id:      The chain identifier.
+        @type chain_id:         str or None
+        @keyword segment_id:    The segment identifier.
+        @type segment_id:       str or None
+        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
+        @type pdb_record:       str or None
         """
 
         # Raise the error.
         raise RelaxImplementError
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
+    def add_model(self, model=None, coords_from=None):
+        """Add a new model to the store.
+
+        The new model will be constructured with the structural information from the other models currently present.  The coords_from argument allows the atomic positions to be taken from a certain model.  If this argument is not set, then the atomic positions from the first model will be used.
+
+        @keyword model:         The number of the model to create.
+        @type model:            int or None
+        @keyword coords_from:   The model number to take the coordinates from.
+        @type coords_from:      int or None
+        @return:                The model container.
+        @rtype:                 ModelContainer instance
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
+    def add_molecule(self, name=None):
+        """Prototype method stub for adding the given molecule to the store.
+
+        @keyword name:          The molecule identification string.
+        @type name:             str
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
+    def atom_loop(self, atom_id=None, str_id=None, model_num=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Prototype generator method stub for looping over all atoms in the structural data object.
 
         This method should be designed as a generator (http://www.python.org/dev/peps/pep-0255/).
@@ -89,19 +136,17 @@ class Base_struct_API:
             8.  The position of the atom in Euclidean space.
 
 
-        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
-                                    matching this selection will be yielded.
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms matching this selection will be yielded.
         @type atom_id:              str
-        @keyword str_id:            The structure identifier.  This can be the file name, model
-                                    number, or structure number.  If None, then all structures will
-                                    be looped over.
+        @keyword str_id:            The structure identifier.  This can be the file name, model number, or structure number.  If None, then all structures will be looped over.
         @type str_id:               str, int, or None
+        @keyword model_num:         Only loop over a specific model.
+        @type model_num:            int or None
         @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
         @type model_num_flag:       bool
         @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
         @type mol_name_flag:        bool
-        @keyword res_num_flag:      A flag which if True will cause the residue number to be
-                                    yielded.
+        @keyword res_num_flag:      A flag which if True will cause the residue number to be yielded.
         @type res_num_flag:         bool
         @keyword res_name_flag:     A flag which if True will cause the residue name to be yielded.
         @type res_name_flag:        bool
@@ -111,16 +156,12 @@ class Base_struct_API:
         @type atom_name_flag:       bool
         @keyword element_flag:      A flag which if True will cause the element name to be yielded.
         @type element_flag:         bool
-        @keyword pos_flag:          A flag which if True will cause the atomic position to be
-                                    yielded.
+        @keyword pos_flag:          A flag which if True will cause the atomic position to be yielded.
         @type pos_flag:             bool
-        @keyword ave:               A flag which if True will result in this method returning the
-                                    average atom properties across all loaded structures.
+        @keyword ave:               A flag which if True will result in this method returning the average atom properties across all loaded structures.
         @type ave:                  bool
         @return:                    A tuple of atomic information, as described in the docstring.
-        @rtype:                     tuple consisting of optional molecule name (str), residue number
-                                    (int), residue name (str), atom number (int), atom name(str),
-                                    element name (str), and atomic position (array of len 3).
+        @rtype:                     tuple consisting of optional molecule name (str), residue number (int), residue name (str), atom number (int), atom name(str), element name (str), and atomic position (array of len 3).
         """
 
         # Raise the error.
@@ -181,6 +222,21 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
+    def connect_atom(self, mol_name=None, index1=None, index2=None):
+        """Connect two atoms in the structural data object.
+
+        @keyword mol_name:  The name of the molecule.
+        @type mol_name:     str
+        @keyword index1:    The global index of the first atom.
+        @type index1:       str
+        @keyword index2:    The global index of the first atom.
+        @type index2:       str
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def delete(self):
         """Prototype method stub for deleting all structural data from the current data pipe."""
 
@@ -203,6 +259,15 @@ class Base_struct_API:
         # Recreate the model / molecule data structure.
         model_nodes = str_node.getElementsByTagName('model')
         self.structural_data.from_xml(model_nodes, id=id)
+
+        # The displacement structure.
+        disp_nodes = str_node.getElementsByTagName('displacements')
+        if len(disp_nodes):
+            # Initialise the object.
+            self.displacements = Displacements()
+
+            # Recreate the molecule data structures for the current model.
+            self.displacements.from_xml(disp_nodes[0])
 
 
     def get_model(self, model):
@@ -240,6 +305,21 @@ class Base_struct_API:
             if not found:
                 self.structural_data.add_item(model)
                 model_cont = self.structural_data[-1]
+
+
+    def get_molecule(self, molecule, model=None):
+        """Return the molecule.
+
+        @param molecule:    The molecule name.
+        @type molecule:     int or None
+        @keyword model:     The model number.
+        @type model:        int or None
+        @return:            The MolContainer corresponding to the molecule name and model number.
+        @rtype:             MolContainer instance or None
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
 
 
     def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
@@ -451,13 +531,29 @@ class Base_struct_API:
                 # Pack the structures.
                 model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
 
-                # Set the molecule name and store the structure file info. 
+                # Set the molecule name and store the structure file info.
                 model.mol[-1].mol_name = set_mol_name[j]
                 model.mol[-1].file_name = file_name
                 model.mol[-1].file_path = file_path
                 model.mol[-1].file_mol_num = orig_mol_num[j]
                 model.mol[-1].file_model = orig_model_num[i]
 
+
+    def rotate(self, R=None, origin=None, model=None, atom_id=None):
+        """Method stub for rotating a structure.
+
+        @keyword R:         The forwards rotation matrix.
+        @type R:            numpy 3D, rank-2 array
+        @keyword origin:    The origin of the rotation.
+        @type origin:       numpy 3D, rank-1 array
+        @keyword model:     The model to rotate.  If None, all models will be rotated.
+        @type model:        int
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+        @type atom_id:      str or None
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
 
 
     def target_mol_name(self, set=None, target=None, index=None, mol_num=None, file=None):
@@ -485,6 +581,21 @@ class Base_struct_API:
             target.append(file_root(file) + '_mol' + repr(mol_num))
 
 
+    def translate(self, T=None, model=None, atom_id=None):
+        """Method stub for displacing the structural information by the given translation vector.
+
+        @keyword T:         The translation vector.
+        @type T:            numpy 3D, rank-1 array
+        @keyword model:     The model to rotate.  If None, all models will be rotated.
+        @type model:        int
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+        @type atom_id:      str or None
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def to_xml(self, doc, element):
         """Prototype method for converting the structural object to an XML representation.
 
@@ -505,6 +616,28 @@ class Base_struct_API:
         # No contents to store, so pack up the structural containers.
         if not self.structural_data.is_empty():
             self.structural_data.to_xml(doc, str_element)
+
+        # The displacement structure.
+        if hasattr(self, 'displacements'):
+            # Create an XML element.
+            disp_element = doc.createElement('displacements')
+            str_element.appendChild(disp_element)
+
+            # Set the attributes.
+            disp_element.setAttribute('desc', 'The rotational and translational displacements between models')
+
+            # Add the displacement data.
+            self.displacements.to_xml(doc, disp_element)
+
+
+    def validate_models(self):
+        """Check that the models are consistent with each other.
+
+        This checks that the primary structure is identical between the models.
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
 
 
     def write_pdb(self, file, model_num=None):
@@ -783,6 +916,171 @@ class Base_struct_API:
 
 
 
+class Displacements:
+    """A special object for representing rotational and translational displacements between models."""
+
+    def __init__(self):
+        """Initialise the storage objects."""
+
+        # The displacement structures.
+        self._translation_vector = {}
+        self._translation_distance = {}
+        self._rotation_matrix = {}
+        self._rotation_axis = {}
+        self._rotation_angle = {}
+
+
+    def _calculate(self, model_from=None, model_to=None, coord_from=None, coord_to=None, centroid=None):
+        """Calculate the rotational and translational displacements using the given coordinate sets.
+
+        This uses the Kabsch algorithm (http://en.wikipedia.org/wiki/Kabsch_algorithm).
+
+
+        @keyword model_from:    The model number of the starting structure.
+        @type model_from:       int
+        @keyword model_to:      The model number of the ending structure.
+        @type model_to:         int
+        @keyword coord_from:    The list of atomic coordinates for the starting structure.
+        @type coord_from:       numpy rank-2, Nx3 array
+        @keyword coord_to:      The list of atomic coordinates for the ending structure.
+        @type coord_to:         numpy rank-2, Nx3 array
+        @keyword centroid:      An alternative position of the centroid, used for studying pivoted systems.
+        @type centroid:         list of float or numpy rank-1, 3D array
+        """
+
+        # Initialise structures if necessary.
+        if not self._translation_vector.has_key(model_from):
+            self._translation_vector[model_from] = {}
+        if not self._translation_distance.has_key(model_from):
+            self._translation_distance[model_from] = {}
+        if not self._rotation_matrix.has_key(model_from):
+            self._rotation_matrix[model_from] = {}
+        if not self._rotation_axis.has_key(model_from):
+            self._rotation_axis[model_from] = {}
+        if not self._rotation_angle.has_key(model_from):
+            self._rotation_angle[model_from] = {}
+
+        # The Kabsch algorithm.
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%model_from, name_to='model %s'%model_to, coord_from=coord_from, coord_to=coord_to, centroid=centroid)
+
+        # Store the data.
+        self._translation_vector[model_from][model_to] = trans_vect
+        self._translation_distance[model_from][model_to] = trans_dist
+        self._rotation_matrix[model_from][model_to] = R
+        self._rotation_axis[model_from][model_to] = axis
+        self._rotation_angle[model_from][model_to] = angle
+
+
+    def from_xml(self, str_node, dir=None, id=None):
+        """Recreate the structural object from the XML structural object node.
+
+        @param str_node:    The structural object XML node.
+        @type str_node:     xml.dom.minicompat.Element instance
+        @keyword dir:       The name of the directory containing the results file.
+        @type dir:          str
+        @keyword id:        The specific structural object ID string.  This can be 'scientific',
+                            'internal', etc.
+        @type id:           str
+        """
+
+        # Get the pairs of displacements.
+        pair_nodes = str_node.getElementsByTagName('pair')
+
+        # Loop over the pairs.
+        for pair_node in pair_nodes:
+            # Get the two models.
+            model_from = int(pair_node.getAttribute('model_from'))
+            model_to = int(pair_node.getAttribute('model_to'))
+
+            # Initialise structures if necessary.
+            if not self._translation_vector.has_key(model_from):
+                self._translation_vector[model_from] = {}
+            if not self._translation_distance.has_key(model_from):
+                self._translation_distance[model_from] = {}
+            if not self._rotation_matrix.has_key(model_from):
+                self._rotation_matrix[model_from] = {}
+            if not self._rotation_axis.has_key(model_from):
+                self._rotation_axis[model_from] = {}
+            if not self._rotation_angle.has_key(model_from):
+                self._rotation_angle[model_from] = {}
+
+            # Loop over the nodes of the element
+            for node in pair_node.childNodes:
+                # Skip empty nodes.
+                if node.localName == None:
+                    continue
+
+                # The name of the python object to recreate.
+                name = '_%s' % node.localName
+
+                # IEEE-754 floats (for full precision restoration).
+                ieee_array = node.getAttribute('ieee_754_byte_array')
+                if ieee_array:
+                    val = packBytesAsPyFloat(eval(ieee_array))
+
+                # Get the node contents.
+                else:
+                    val = node_value_to_python(node.childNodes[0])
+
+                # Store the value.
+                obj = getattr(self, name)
+                obj[model_from][model_to] = val
+
+
+    def to_xml(self, doc, element):
+        """Create XML elements for each model.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the displacement XML elements to.
+        @type element:  XML element object
+        """
+
+        # Loop over the starting models.
+        start_models = self._translation_vector.keys()
+        start_models.sort()
+        for model_from in start_models:
+            # Loop over the ending models.
+            end_models = self._translation_vector[model_from].keys()
+            end_models.sort()
+            for model_to in end_models:
+                # Create an XML element for each pair.
+                pair_element = doc.createElement('pair')
+                element.appendChild(pair_element)
+
+                # Set the attributes.
+                pair_element.setAttribute('desc', 'The displacement from model %s to model %s' % (model_from, model_to))
+                pair_element.setAttribute('model_from', str(model_from))
+                pair_element.setAttribute('model_to', str(model_to))
+
+                # The objects to store.
+                obj_names = [
+                    '_translation_vector',
+                    '_translation_distance',
+                    '_rotation_matrix',
+                    '_rotation_axis',
+                    '_rotation_angle'
+                ]
+
+                # Store the objects.
+                for i in range(len(obj_names)):
+                    # Create a new element for this object, and add it to the main element.
+                    sub_elem = doc.createElement(obj_names[i][1:])
+                    pair_element.appendChild(sub_elem)
+
+                    # Get the sub-object.
+                    subobj = getattr(self, obj_names[i])[model_from][model_to]
+
+                    # Store floats as IEEE-754 byte arrays (for full precision storage).
+                    if isinstance(subobj, float) or isinstance(subobj, float64):
+                        sub_elem.setAttribute('ieee_754_byte_array', repr(floatAsByteArray(subobj)))
+
+                    # Add the text value to the sub element.
+                    text_val = doc.createTextNode(repr(subobj))
+                    sub_elem.appendChild(text_val)
+
+
+
 class ModelList(list):
     """List type data container for the different structural models.
 
@@ -1020,7 +1318,7 @@ class MolList(list):
             # Test if the molecule already exists.
             for i in xrange(len(self)):
                 if self[i].mol_name == mol_name:
-                    raise RelaxError("The molecule '" + repr(mol_name) + "' already exists.")
+                    raise RelaxError("The molecule '%s' already exists." % mol_name)
 
             # Append an empty MolContainer.
             self.append(mol_cont)

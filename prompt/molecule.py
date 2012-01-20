@@ -102,8 +102,8 @@ class Molecule(User_fn_class):
         ["mol_type", "The type of molecule."]]
     create._doc_desc = """
         This adds a new molecule data container to the relax data storage object.  The same molecule name cannot be used more than once.  The molecule type need not be specified.  However, if given, it should be one of"""
-    for i in range(len(ALLOWED_MOL_TYPES)):
-        create._doc_desc = "%s '%s'," % (create._doc_desc, ALLOWED_MOL_TYPES[i]) 
+    for _i in range(len(ALLOWED_MOL_TYPES)):
+        create._doc_desc = "%s '%s'," % (create._doc_desc, ALLOWED_MOL_TYPES[_i]) 
     create._doc_desc = "%s or '%s'." % (create._doc_desc, ALLOWED_MOL_TYPES[-1]) 
     create._doc_examples = """
         To create the molecules 'Ap4Aase', 'ATP', and 'MgF4', type:
@@ -228,8 +228,8 @@ class Molecule(User_fn_class):
         This allows the type of the molecule to be specified.  It can be one of:
 
         """
-    for i in range(len(ALLOWED_MOL_TYPES)):
-        type._doc_desc = "%s            '%s',\n" % (type._doc_desc, ALLOWED_MOL_TYPES[i]) 
+    for _i in range(len(ALLOWED_MOL_TYPES)):
+        type._doc_desc = "%s            '%s',\n" % (type._doc_desc, ALLOWED_MOL_TYPES[_i]) 
     type._doc_desc = "%s            '%s'.\n" % (type._doc_desc, ALLOWED_MOL_TYPES[-1]) 
     type._doc_examples = """
         To set the molecule 'Ap4Aase' to the 'protein' type, type one of:

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -72,7 +72,7 @@ class Value(User_fn_class):
     copy._doc_examples = """
         To copy the CSA values from the data pipe 'm1' to 'm2', type:
 
-        relax> value.copy('m1', 'm2', 'CSA')
+        relax> value.copy('m1', 'm2', 'csa')
         """
     copy._doc_additional = [
         docs.regexp.doc,
@@ -110,7 +110,7 @@ class Value(User_fn_class):
     display._doc_examples = """
         To show all CSA values, type:
 
-        relax> value.display('CSA')
+        relax> value.display('csa')
         """
     display._doc_additional = [
         docs.regexp.doc,
@@ -190,9 +190,9 @@ class Value(User_fn_class):
         To load 15N CSA values from the file 'csa_values' in the directory 'data', where spins are
         only identified by residue name and number, type one of the following:
 
-        relax> value.read('CSA', 'data/csa_value', spin_id='@N')
-        relax> value.read('CSA', 'csa_value', dir='data', spin_id='@N')
-        relax> value.read(param='CSA', file='csa_value', dir='data', res_num_col=1, res_name_col=2,
+        relax> value.read('csa', 'data/csa_value', spin_id='@N')
+        relax> value.read('csa', 'csa_value', dir='data', spin_id='@N')
+        relax> value.read(param='csa', file='csa_value', dir='data', res_num_col=1, res_name_col=2,
                           data_col=3, error_col=4, spin_id='@N')
         """
     read._doc_additional = [
@@ -310,13 +310,13 @@ class Value(User_fn_class):
 
         To set the NH bond length of all spins to 1.02 Angstroms, type:
 
-        relax> value.set(1.02 * 1e-10, 'bond_length')
+        relax> value.set(1.02 * 1e-10, 'r')
         relax> value.set(val=1.02 * 1e-10, param='r')
 
 
         To set both the bond length and the CSA value to the default values, type:
 
-        relax> value.set(param=['bond length', 'csa'])
+        relax> value.set(param=['r', 'csa'])
 
 
         To set both tf and ts to 100 ps, type:
@@ -327,9 +327,9 @@ class Value(User_fn_class):
 
         To set the S2 and te parameter values of residue 126, Ca spins to 0.56 and 13 ps, type:
 
-        relax> value.set([0.56, 13e-12], ['S2', 'te'], ':126@Ca')
-        relax> value.set(val=[0.56, 13e-12], param=['S2', 'te'], spin_id=':126@Ca')
-        relax> value.set(val=[0.56, 13e-12], param=['S2', 'te'], spin_id=':126@Ca')
+        relax> value.set([0.56, 13e-12], ['s2', 'te'], ':126@Ca')
+        relax> value.set(val=[0.56, 13e-12], param=['s2', 'te'], spin_id=':126@Ca')
+        relax> value.set(val=[0.56, 13e-12], param=['s2', 'te'], spin_id=':126@Ca')
         """
     set._doc_additional = [
         ["Spin identification", """
@@ -392,8 +392,8 @@ class Value(User_fn_class):
     write._doc_examples = """
         To write the CSA values to the file 'csa.txt', type one of:
 
-        relax> value.write('CSA', 'csa.txt')
-        relax> value.write(param='CSA', file='csa.txt')
+        relax> value.write('csa', 'csa.txt')
+        relax> value.write(param='csa', file='csa.txt')
 
 
         To write the NOE values to the file 'noe', type one of:

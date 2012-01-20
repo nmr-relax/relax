@@ -278,7 +278,7 @@ class Spin(User_fn_class):
         ["name", "The new name."],
         ["force", "A flag which if True will cause the spin to be renamed."]]
     name._doc_desc = """
-        This simply allows spins to be named (or renamed).
+        This simply allows spins to be named (or renamed).  Spin naming often essential.  For example when reading Sparky peak list files, then the spin name must match that in the file.
         """
     name._doc_examples = """
         The following sequence of commands will rename the sequence {1 C1, 2 C2, 3 C3} to {1 C11,

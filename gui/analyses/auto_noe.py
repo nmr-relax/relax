@@ -43,12 +43,13 @@ from gui.analyses.execute import Execute
 from gui.analyses.results_analysis import color_code_noe
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
-from gui.filedialog import opendir
-from gui.message import error_message, Missing_data
+from gui.filedialog import RelaxDirDialog
+from gui.message import error_message, Missing_data, Question
 from gui.misc import gui_to_str, protected_exec, str_to_gui
 from gui import paths
 from gui.user_functions.noe import Spectrum_type_page
 from gui.user_functions.spectrum import Baseplane_rmsd_page, Integration_points_page, Read_intensities_page, Replicated_page
+from gui.user_functions.spin import Name_page
 from gui.wizard import Wiz_window
 
 
@@ -95,10 +96,9 @@ class Auto_noe(Base_analysis):
 
         # New data container.
         if data_index == None:
-            # First create the data pipe if not already in existence (if this fails, then no data is set up).
-            if not has_pipe(pipe_name) and not protected_exec(self.gui.interpreter.queue, 'pipe.create', pipe_name, 'noe'):
-                self.init_flag = False
-                return
+            # First create the data pipe if not already in existence.
+            if not has_pipe(pipe_name):
+                self.gui.interpreter.apply('pipe.create', pipe_name, 'noe')
 
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add('NOE')
@@ -224,6 +224,7 @@ class Auto_noe(Base_analysis):
 
         # Remove.
         status.observers.gui_uf.unregister(self.data.pipe_name)
+        status.observers.exec_lock.unregister(self.data.pipe_name)
 
 
     def execute(self, event):
@@ -232,6 +233,9 @@ class Auto_noe(Base_analysis):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Flush the GUI interpreter internal queue to make sure all user functions are complete.
+        self.gui.interpreter.flush()
 
         # relax execution lock.
         if status.exec_lock.locked():
@@ -253,9 +257,9 @@ class Auto_noe(Base_analysis):
             Missing_data(missing)
             return
 
-        # Display the relax controller.
-        if status.show_gui:
-            self.gui.controller.Show()
+        # Display the relax controller, and go to the end of the log window.
+        self.gui.show_controller(None)
+        self.gui.controller.log_panel.on_goto_end(None)
 
         # Start the thread.
         self.thread = Execute_noe(self.gui, data, self.data_index)
@@ -275,47 +279,55 @@ class Auto_noe(Base_analysis):
         # Change the cursor to busy.
         wx.BeginBusyCursor()
 
-        # First check that at least a single spin is named!
-        if not are_spins_named():
-            error_message("No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.", caption='Incomplete setup')
-
         # Initialise a wizard.
-        self.wizard = Wiz_window(size_x=1000, size_y=800, title="Set up the NOE peak intensities")
+        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=800, title="Set up the NOE peak intensities")
         self.page_indices = {}
 
+        # First check that at least a single spin is named!
+        if not are_spins_named():
+            # The message.
+            msg = "No spins have been named.  Please use the spin.name user function first, otherwise it is unlikely that any data will be loaded from the peak intensity file.\n\nThis message can be ignored if the generic file format is used and spin names have not been specified.  Would you like to name the spins already loaded into the relax data store?"
+
+            # Ask about naming spins, and add the spin.name user function page.
+            if status.show_gui and Question(msg, title="Incomplete setup", size=(450, 220), default=True).ShowModal() == wx.ID_YES:
+                page = Name_page(self.wizard, sync=True)
+                self.page_indices['read'] = self.wizard.add_page(page, proceed_on_error=False)
+
+
         # The spectrum.read_intensities page.
-        self.page_intensity = Read_intensities_page(self.wizard, self.gui)
+        self.page_intensity = Read_intensities_page(self.wizard, sync=True)
         self.page_indices['read'] = self.wizard.add_page(self.page_intensity, skip_button=True, proceed_on_error=False)
 
         # Error type selection page.
-        self.page_error_type = Spectral_error_type_page(self.wizard, self.gui)
+        self.page_error_type = Spectral_error_type_page(self.wizard)
         self.page_indices['err_type'] = self.wizard.add_page(self.page_error_type, apply_button=False)
         self.wizard.set_seq_next_fn(self.page_indices['err_type'], self.wizard_page_after_error_type)
 
         # The spectrum.replicated page.
-        page = Replicated_page(self.wizard, self.gui)
-        self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True)
+        page = Replicated_page(self.wizard, sync=True)
+        self.page_indices['repl'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         self.wizard.set_seq_next_fn(self.page_indices['repl'], self.wizard_page_after_repl)
         page.on_display_post = self.wizard_update_repl
 
         # The spectrum.baseplane_rmsd page.
-        page = Baseplane_rmsd_page(self.wizard, self.gui)
-        self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True)
+        page = Baseplane_rmsd_page(self.wizard, sync=True)
+        self.page_indices['rmsd'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         self.wizard.set_seq_next_fn(self.page_indices['rmsd'], self.wizard_page_after_rmsd)
         page.on_display_post = self.wizard_update_rmsd
 
         # The spectrum.integration_points page.
-        page = Integration_points_page(self.wizard, self.gui)
-        self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True)
+        page = Integration_points_page(self.wizard, sync=True)
+        self.page_indices['pts'] = self.wizard.add_page(page, skip_button=True, proceed_on_error=False)
         page.on_display_post = self.wizard_update_pts
 
         # The noe.spectrum_type page.
-        page = Spectrum_type_page(self.wizard, self.gui)
-        self.page_indices['spectrum_type'] = self.wizard.add_page(page, skip_button=False)
+        page = Spectrum_type_page(self.wizard, sync=True)
+        self.page_indices['spectrum_type'] = self.wizard.add_page(page, skip_button=False, proceed_on_error=False)
         page.on_display_post = self.wizard_update_spectrum_type
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
         # Run the wizard.
         self.wizard.run()
@@ -328,18 +340,24 @@ class Auto_noe(Base_analysis):
         @type event:    wx event
         """
 
-        # Store the original directory.
-        backup = self.field_results_dir.GetValue()
+        # The dialog.
+        dialog = RelaxDirDialog(parent=self, message='Select the results directory', defaultPath=self.field_results_dir.GetValue())
 
-        # Select the file.
-        self.data.save_dir = opendir('Select results directory', default=self.field_results_dir.GetValue())
+        # Show the dialog and catch if no file has been selected.
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
+            # Don't do anything.
+            return
 
-        # Restore the backup file if no file was chosen.
-        if not self.data.save_dir:
-            self.data.save_dir = backup
+        # The path (don't do anything if not set).
+        path = gui_to_str(dialog.get_path())
+        if not path:
+            return
+
+        # Store the path.
+        self.data.save_dir = path
 
         # Place the path in the text box.
-        self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
+        self.field_results_dir.SetValue(str_to_gui(path))
 
 
     def sync_ds(self, upload=False):
@@ -425,7 +443,7 @@ class Auto_noe(Base_analysis):
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['pts'])
-        page.spectrum_id1.SetValue(str_to_gui(id))
+        page.spectrum_id.SetStringSelection(str_to_gui(id))
 
 
     def wizard_update_repl(self):
@@ -439,7 +457,7 @@ class Auto_noe(Base_analysis):
 
         # Set the ID in the spectrum.replicated page.
         page = self.wizard.get_page(self.page_indices['repl'])
-        page.spectrum_id1.SetValue(str_to_gui(id))
+        page.spectrum_id_boxes[0].SetStringSelection(str_to_gui(id))
 
 
     def wizard_update_rmsd(self):
@@ -453,7 +471,7 @@ class Auto_noe(Base_analysis):
 
         # Set the ID in the spectrum.baseplane_rmsd page.
         page = self.wizard.get_page(self.page_indices['rmsd'])
-        page.spectrum_id.SetValue(str_to_gui(id))
+        page.spectrum_id.SetStringSelection(str_to_gui(id))
 
 
     def wizard_update_spectrum_type(self):
@@ -467,7 +485,7 @@ class Auto_noe(Base_analysis):
 
         # Set the ID in the noe.spectrum_type page.
         page = self.wizard.get_page(self.page_indices['spectrum_type'])
-        page.spectrum_id.SetValue(str_to_gui(id))
+        page.spectrum_id.SetStringSelection(str_to_gui(id))
 
 
 

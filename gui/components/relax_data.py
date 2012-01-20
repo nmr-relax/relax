@@ -32,9 +32,11 @@ import wx.lib.buttons
 from status import Status; status = Status()
 
 # relax GUI module imports.
+from gui.components.menu import build_menu_item
 from gui.fonts import font
-from gui.misc import add_border, float_to_gui, str_to_gui
+from gui.misc import add_border, float_to_gui, gui_to_str, str_to_gui
 from gui import paths
+from gui.user_functions import User_functions; user_functions = User_functions()
 
 
 class Relax_data_list:
@@ -132,7 +134,7 @@ class Relax_data_list:
         self.button_add.SetFont(font.normal)
         self.button_add.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_add, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.read, self.button_add)
+        self.gui.Bind(wx.EVT_BUTTON, self.relax_data_read, self.button_add)
         self.button_add.SetToolTipString("Read relaxation data from file.")
 
         # Delete button.
@@ -141,12 +143,23 @@ class Relax_data_list:
         self.button_delete.SetFont(font.normal)
         self.button_delete.SetSize((80, self.height_buttons))
         button_sizer.Add(self.button_delete, 0, 0, 0)
-        self.gui.Bind(wx.EVT_BUTTON, self.gui.user_functions.relax_data.delete, self.button_delete)
+        self.gui.Bind(wx.EVT_BUTTON, self.relax_data_delete, self.button_delete)
         self.button_delete.SetToolTipString("Delete loaded relaxation data from the relax data store.")
 
 
     def build_element(self):
         """Build the relaxation data listing grid."""
+
+        # Execution lock, so do nothing.
+        if status.exec_lock.locked():
+            return
+
+        # Build the GUI element in a thread safe way.
+        wx.CallAfter(self.build_element_safe)
+
+
+    def build_element_safe(self):
+        """Build the spectra listing GUI element in a thread safe wx.CallAfter call."""
 
         # First freeze the element, so that the GUI element doesn't update until the end.
         self.element.Freeze()
@@ -180,7 +193,10 @@ class Relax_data_list:
         wx.PostEvent(self.parent.GetEventHandler(), event)
 
         # Set the minimum height.
-        height = self.height_base + self.height_char * n
+        head = self.height_char + 10
+        centre = (self.height_char + 6) * n
+        foot = wx.SystemSettings_GetMetric(wx.SYS_HSCROLL_Y)
+        height = head + centre + foot
         self.element.SetMinSize((-1, height))
         self.element.Layout()
 
@@ -214,14 +230,79 @@ class Relax_data_list:
         self.element.SetFont(font.normal)
 
         # Store the base heights.
-        self.height_base = self.element.GetSize()[1]
         self.height_char = self.element.GetCharHeight()
 
         # Bind some events.
         self.element.Bind(wx.EVT_SIZE, self.resize)
+        self.element.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.on_right_click)  # For wxMSW!
+        self.element.Bind(wx.EVT_RIGHT_UP, self.on_right_click)   # For wxGTK!
 
         # Add list to sizer.
         sizer.Add(self.element, 0, wx.ALL|wx.EXPAND, 0)
+
+
+    def on_right_click(self, event):
+        """Pop up menu for the right click.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Execution lock, so do nothing.
+        if status.exec_lock.locked():
+            return
+
+        # New menu entry.
+        if not hasattr(self, 'popup_id_del'):
+            # ID number.
+            self.popup_id_del = wx.NewId()
+
+            # Bind clicks.
+            self.element.Bind(wx.EVT_MENU, self.relax_data_delete, id=self.popup_id_del)
+
+        # Initialise the menu.
+        menu = wx.Menu()
+
+        # Add the delete entry.
+        menu.AppendItem(build_menu_item(menu, id=self.popup_id_del, text="&Delete", icon=paths.icon_16x16.remove))
+
+        # Pop up the menu.
+        self.element.PopupMenu(menu)
+        menu.Destroy()
+
+
+    def relax_data_delete(self, event):
+        """Launch the relax_data.delete user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # No selection.
+        if item == -1:
+            id = None
+
+        # Selected item.
+        else:
+            # The spectrum ID.
+            id = gui_to_str(self.element.GetItemText(item))
+
+        # Launch the dialog.
+        user_functions.relax_data.delete(ri_id=id)
+
+
+    def relax_data_read(self, event):
+        """Launch the relax_data.read user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the dialog.
+        user_functions.relax_data.read()
 
 
     def resize(self, event):
@@ -248,7 +329,10 @@ class Relax_data_list:
         n = self.element.GetColumnCount()
 
         # Set to equal sizes.
-        width = int(x / n)
+        if n == 0:
+            width = x
+        else:
+            width = int(x / n)
 
         # Set the column sizes.
         for i in range(n):

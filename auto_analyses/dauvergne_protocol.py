@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -645,14 +645,10 @@ class dAuvergne_protocol:
             # All the global diffusion models to be used in the model selection.
             self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
 
-            # Remove all pipes.
+            # Remove all temporary pipes used in this auto-analysis.
             for name in pipe_names():
-                # Skip the original pipe.
-                if name == self.pipe_name:
-                    continue
-
-                # Delete the pipe.
-                self.interpreter.pipe.delete(name)
+                if name in self.pipes + self.mf_models + self.local_tm_models + ['aic', 'previous']:
+                    self.interpreter.pipe.delete(name)
 
             # Missing optimised model.
             dir_list = listdir(self.results_dir)
@@ -856,31 +852,31 @@ class dAuvergne_protocol:
 
         # Create the PyMOL macros.
         dir = self.results_dir + 'final' + sep + 'pymol'
-        self.interpreter.pymol.write(data_type='S2',        dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='S2f',       dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='S2s',       dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='amp_fast',  dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='amp_slow',  dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='te',        dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='tf',        dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='ts',        dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='time_fast', dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='time_slow', dir=dir, force=True)
-        self.interpreter.pymol.write(data_type='Rex',       dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='s2',        dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='s2f',       dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='s2s',       dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='amp_fast',  dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='amp_slow',  dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='te',        dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='tf',        dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='ts',        dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='time_fast', dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='time_slow', dir=dir, force=True)
+        self.interpreter.pymol.macro_write(data_type='rex',       dir=dir, force=True)
 
         # Create the Molmol macros.
         dir = self.results_dir + 'final' + sep + 'molmol'
-        self.interpreter.molmol.write(data_type='S2',        dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='S2f',       dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='S2s',       dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='amp_fast',  dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='amp_slow',  dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='te',        dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='tf',        dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='ts',        dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='time_fast', dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='time_slow', dir=dir, force=True)
-        self.interpreter.molmol.write(data_type='Rex',       dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='s2',        dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='s2f',       dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='s2s',       dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='amp_fast',  dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='amp_slow',  dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='te',        dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='tf',        dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='ts',        dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='time_fast', dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='time_slow', dir=dir, force=True)
+        self.interpreter.molmol.macro_write(data_type='rex',       dir=dir, force=True)
 
         # Create a diffusion tensor representation of the tensor.
         dir = self.results_dir + 'final'

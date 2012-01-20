@@ -45,6 +45,7 @@ from sequence import Sequence
 from spectrum import Spectrum
 from spin import Spin
 from structure import Structure
+from sys_info import Sys_info
 from value import Value
 
 
@@ -68,6 +69,7 @@ __all__ = ['base',
            'spectrum',
            'spin',
            'structure',
+           'sys_info',
            'value']
 
 
@@ -77,53 +79,31 @@ class User_functions:
     This uses the observer design pattern to allow for GUI updates upon completion of a user function.
     """
 
-    def __init__(self, gui):
-        """Set up the container."""
+    def __init__(self, parent=None):
+        """Set up the container.
 
-        # Store the args.
-        self.gui = gui
+        @keyword parent:    The parent window.
+        @type parent:       wx.Window instance
+        """
 
         # The user functions.
-        self.deselect = Deselect(self.gui)
-        self.gpl = Gpl(self.gui)
-        self.grace = Grace(self.gui)
-        self.molecule = Molecule(self.gui)
-        self.molmol = Molmol(self.gui)
-        self.noe = Noe(self.gui)
-        self.pipe = Pipe(self.gui)
-        self.pymol = Pymol(self.gui)
-        self.residue = Residue(self.gui)
-        self.results = Results(self.gui)
-        self.relax_data = Relax_data(self.gui)
-        self.relax_fit = Relax_fit(self.gui)
-        self.script = Script(self.gui)
-        self.select = Select(self.gui)
-        self.sequence = Sequence(self.gui)
-        self.spectrum = Spectrum(self.gui)
-        self.spin = Spin(self.gui)
-        self.structure = Structure(self.gui)
-        self.value = Value(self.gui)
-
-
-    def destroy(self):
-        """Close all windows."""
-
-        # Send the commands onwards to the user function classes.
-        self.deselect.destroy()
-        self.gpl.destroy()
-        self.grace.destroy()
-        self.molecule.destroy()
-        self.molmol.destroy()
-        self.noe.destroy()
-        self.pipe.destroy()
-        self.pymol.destroy()
-        self.residue.destroy()
-        self.results.destroy()
-        self.relax_data.destroy()
-        self.relax_fit.destroy()
-        self.select.destroy()
-        self.sequence.destroy()
-        self.spectrum.destroy()
-        self.spin.destroy()
-        self.structure.destroy()
-        self.value.destroy()
+        self.deselect = Deselect(parent)
+        self.gpl = Gpl(parent)
+        self.grace = Grace(parent)
+        self.molecule = Molecule(parent)
+        self.molmol = Molmol(parent)
+        self.noe = Noe(parent)
+        self.pipe = Pipe(parent)
+        self.pymol = Pymol(parent)
+        self.residue = Residue(parent)
+        self.results = Results(parent)
+        self.relax_data = Relax_data(parent)
+        self.relax_fit = Relax_fit(parent)
+        self.script = Script(parent)
+        self.select = Select(parent)
+        self.sequence = Sequence(parent)
+        self.spectrum = Spectrum(parent)
+        self.spin = Spin(parent)
+        self.structure = Structure(parent)
+        self.sys_info = Sys_info(parent)
+        self.value = Value(parent)

@@ -64,6 +64,36 @@ class Spectrum(User_fn_class):
     _build_doc(baseplane_rmsd)
 
 
+    def delete(self, spectrum_id=None):
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spectrum.delete("
+            text = text + "spectrum_id=" + repr(spectrum_id) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(spectrum_id, 'spectrum ID string')
+
+        # Execute the functional code.
+        spectrum.delete(spectrum_id=spectrum_id)
+
+    # The function doc info.
+    delete._doc_title = "Delete the spectral data corresponding to the spectrum ID string."
+    delete._doc_title_short = "Spectral data deletion."
+    delete._doc_args = [
+        ["spectrum_id", "The unique spectrum ID string."]
+    ]
+    delete._doc_desc = """
+        The spectral data corresponding to the given spectrum ID string will be removed from the current data pipe.
+        """
+    delete._doc_examples = """
+        To delete the peak height data corresponding to the ID 'R1 ncyc5', type:
+
+        relax> spectrum.delete('R1 ncyc5')
+        """
+    _build_doc(delete)
+
+
     def error_analysis(self):
         # Function intro text.
         if self._exec_info.intro:

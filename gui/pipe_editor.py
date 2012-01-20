@@ -38,6 +38,7 @@ from gui.icons import relax_icons
 from gui.message import Question
 from gui.misc import add_border, gui_to_str, str_to_gui
 from gui.paths import icon_16x16, icon_22x22, WIZARD_IMAGE_PATH
+from gui.user_functions import User_functions
 
 
 class Pipe_editor(wx.Frame):
@@ -63,6 +64,9 @@ class Pipe_editor(wx.Frame):
         # Create GUI elements
         wx.Frame.__init__(self, None, id=-1, title="Data pipe editor")
 
+        # Initialise the user functions.
+        self.user_functions = User_functions(self)
+
         # Set up the window icon.
         self.SetIcons(relax_icons)
 
@@ -73,11 +77,12 @@ class Pipe_editor(wx.Frame):
         self.SetMinSize((size_x, size_y))
         self.SetSize((size_x, size_y))
 
-        # The main box sizer.
-        main_sizer = wx.BoxSizer(wx.VERTICAL)
+        # Place all elements within a panel (to remove the dark grey in MS Windows).
+        self.main_panel = wx.Panel(self, -1)
 
-        # Pack the sizer into the frame.
-        self.SetSizer(main_sizer)
+        # Pack a sizer into the panel.
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.main_panel.SetSizer(main_sizer)
 
         # Build the central sizer, with borders.
         sizer = add_border(main_sizer, border=border, packing=wx.VERTICAL)
@@ -100,6 +105,9 @@ class Pipe_editor(wx.Frame):
 
         # Initialise the observer name.
         self.name = 'pipe editor'
+
+        # Update the grid.
+        self.update_grid()
 
 
     def Show(self, show=True):
@@ -205,44 +213,64 @@ class Pipe_editor(wx.Frame):
         sizer.Add(button_sizer, 0, wx.ALL|wx.EXPAND, 0)
 
         # The create button.
-        self.button_create = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Create")
+        self.button_create = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Create")
         self.button_create.SetBitmapLabel(wx.Bitmap(icon_22x22.add, wx.BITMAP_TYPE_ANY))
         self.button_create.SetFont(font.normal)
         self.button_create.SetToolTipString("Create a new data pipe.")
         button_sizer.Add(self.button_create, 1, wx.ALL|wx.EXPAND, 0)
-        self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.create, self.button_create)
+        self.Bind(wx.EVT_BUTTON, self.uf_launch, self.button_create)
 
         # The copy button.
-        self.button_copy = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Copy")
+        self.button_copy = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Copy")
         self.button_copy.SetBitmapLabel(wx.Bitmap(icon_22x22.copy, wx.BITMAP_TYPE_ANY))
         self.button_copy.SetFont(font.normal)
         self.button_copy.SetToolTipString("Copy a data pipe.")
         button_sizer.Add(self.button_copy, 1, wx.ALL|wx.EXPAND, 0)
-        self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.copy, self.button_copy)
+        self.Bind(wx.EVT_BUTTON, self.uf_launch, self.button_copy)
 
         # The delete button.
-        self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Delete")
+        self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Delete")
         self.button_delete.SetBitmapLabel(wx.Bitmap(icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
         self.button_delete.SetFont(font.normal)
         self.button_delete.SetToolTipString("Delete a data pipe.")
         button_sizer.Add(self.button_delete, 1, wx.ALL|wx.EXPAND, 0)
-        self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.delete, self.button_delete)
+        self.Bind(wx.EVT_BUTTON, self.uf_launch, self.button_delete)
 
         # The hybridise button.
-        self.button_hybrid = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Hybridise")
+        self.button_hybrid = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Hybridise")
         self.button_hybrid.SetBitmapLabel(wx.Bitmap(icon_22x22.pipe_hybrid, wx.BITMAP_TYPE_ANY))
         self.button_hybrid.SetFont(font.normal)
         self.button_hybrid.SetToolTipString("Hybridise data pipes.")
         button_sizer.Add(self.button_hybrid, 1, wx.ALL|wx.EXPAND, 0)
-        self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.hybridise, self.button_hybrid)
+        self.Bind(wx.EVT_BUTTON, self.uf_launch, self.button_hybrid)
 
         # The switch button.
-        self.button_switch = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Switch")
+        self.button_switch = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Switch")
         self.button_switch.SetBitmapLabel(wx.Bitmap(icon_22x22.pipe_switch, wx.BITMAP_TYPE_ANY))
         self.button_switch.SetFont(font.normal)
         self.button_switch.SetToolTipString("Switch data pipes.")
         button_sizer.Add(self.button_switch, 1, wx.ALL|wx.EXPAND, 0)
-        self.Bind(wx.EVT_BUTTON, self.gui.user_functions.pipe.switch, self.button_switch)
+        self.Bind(wx.EVT_BUTTON, self.uf_launch, self.button_switch)
+
+
+    def uf_launch(self, event):
+        """Launch the user function GUI wizards.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Launch the respective user functions.
+        if event.GetEventObject() == self.button_create:
+            self.user_functions.pipe.create()
+        elif event.GetEventObject() == self.button_copy:
+            self.user_functions.pipe.copy()
+        elif event.GetEventObject() == self.button_delete:
+            self.user_functions.pipe.delete()
+        elif event.GetEventObject() == self.button_hybrid:
+            self.user_functions.pipe.hybrid()
+        elif event.GetEventObject() == self.button_switch:
+            self.user_functions.pipe.switch()
 
 
     def add_logo(self, box):
@@ -253,7 +281,7 @@ class Pipe_editor(wx.Frame):
         """
 
         # The pipe logo.
-        logo = wx.StaticBitmap(self, -1, wx.Bitmap(WIZARD_IMAGE_PATH+'pipe_200x90.png', wx.BITMAP_TYPE_ANY))
+        logo = wx.StaticBitmap(self.main_panel, -1, wx.Bitmap(WIZARD_IMAGE_PATH+'pipe_200x90.png', wx.BITMAP_TYPE_ANY))
 
         # Pack the logo.
         box.Add(logo, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
@@ -267,7 +295,7 @@ class Pipe_editor(wx.Frame):
         """
 
         # Grid of all data pipes.
-        self.grid = wx.grid.Grid(self, -1)
+        self.grid = wx.grid.Grid(self.main_panel, -1)
 
         # Initialise to a single row and 4 columns.
         self.grid.CreateGrid(1, 4)
@@ -295,7 +323,6 @@ class Pipe_editor(wx.Frame):
 
     def associate_auto(self, event):
         """Associate the selected data pipe with a new auto-analysis.
-
 
         @param event:   The wx event.
         @type event:    wx event
@@ -345,7 +372,7 @@ class Pipe_editor(wx.Frame):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete the '%s' data pipe?  This operation cannot be undone." % self.selected_pipe
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the data pipe.
@@ -361,6 +388,9 @@ class Pipe_editor(wx.Frame):
 
         # Switch to the selected data pipe.
         switch(self.selected_pipe)
+
+        # Bug fix for MS Windows.
+        wx.CallAfter(self.Raise)
 
 
     def resize(self, event):
@@ -410,7 +440,7 @@ class Pipe_editor(wx.Frame):
         wx.CallAfter(self.update_grid_safe)
 
         # Flush the events.
-        wx.Yield()
+        wx.GetApp().Yield(True)
 
 
     def update_grid_safe(self):
@@ -420,7 +450,7 @@ class Pipe_editor(wx.Frame):
         self.grid.Freeze()
 
         # Acquire the pipe lock.
-        status.pipe_lock.acquire()
+        status.pipe_lock.acquire('pipe editor window')
 
         # Delete the rows, leaving a single row.
         self.grid.DeleteRows(numRows=self.grid.GetNumberRows()-1)
@@ -463,7 +493,7 @@ class Pipe_editor(wx.Frame):
                 self.grid.SetReadOnly(i, j)
 
         # Release the lock.
-        status.pipe_lock.release()
+        status.pipe_lock.release('pipe editor window')
 
         # Unfreeze.
         self.grid.Thaw()

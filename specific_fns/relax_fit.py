@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 # Copyright (C) 2011 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -54,8 +54,11 @@ class Relax_fit(API_base, API_common):
 
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
+        self.default_value = self._default_value_spin
         self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_data_name = self._return_data_name_spin
+        self.return_grace_string = self._return_grace_string_spin
         self.return_value = self._return_value_general
         self.set_error = self._set_error_spin
         self.set_param_values = self._set_param_values_spin
@@ -63,6 +66,13 @@ class Relax_fit(API_base, API_common):
         self.sim_init_values = self._sim_init_values_spin
         self.sim_return_param = self._sim_return_param_spin
         self.sim_return_selected = self._sim_return_selected_spin
+
+        # Set up the spin parameters.
+        self.SPIN_PARAMS.add('rx', default=8.0, grace_string='\\qR\\sx\\Q')
+        self.SPIN_PARAMS.add('intensities', grace_string='\\qPeak intensities\\Q')
+        self.SPIN_PARAMS.add('i0', default=10000.0, grace_string='\\qI\\s0\\Q')
+        self.SPIN_PARAMS.add('iinf', default=0.0, grace_string='\\qI\\sinf\\Q')
+        self.SPIN_PARAMS.add('relax_times', grace_string='\\qRelaxation time period (s)\\Q')
 
 
     def _assemble_param_vector(self, spin=None, sim_index=None):
@@ -650,27 +660,6 @@ class Relax_fit(API_base, API_common):
 
         """]
 
-    def default_value(self, param):
-        """Return the default relaxation curve-fitting parameter values.
-
-        @param param:   The relaxation curve-fitting parameter.
-        @type param:    str
-        @return:        The default value.
-        @rtype:         float
-        """
-
-        # Relaxation rate.
-        if param == 'rx':
-            return 8.0
-
-        # Initial intensity.
-        if param == 'i0':
-            return 10000.0
-
-        # Intensity at infinity.
-        if param == 'iinf':
-            return 0.0
-
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
         """The exponential curve fitting grid search method.
@@ -928,52 +917,23 @@ class Relax_fit(API_base, API_common):
 
 
     return_data_name_doc = ["Relaxation curve fitting data type string matching patterns", """
-        __________________________________________________________________________________________
-        |                                   |                      |                             |
-        | Data type                         | Object name          | Patterns                    |
-        |___________________________________|______________________|_____________________________|
-        |                                   |                      |                             |
-        | Relaxation rate                   | 'rx'                 | '^[Rr]x$'                   |
-        |                                   |                      |                             |
-        | Peak intensities (series)         | 'intensities'        | '^[Ii]nt$'                  |
-        |                                   |                      |                             |
-        | Initial intensity                 | 'i0'                 | '^[Ii]0$'                   |
-        |                                   |                      |                             |
-        | Intensity at infinity             | 'iinf'               | '^[Ii]inf$'                 |
-        |                                   |                      |                             |
-        | Relaxation period times (series)  | 'relax_times'        | '^[Rr]elax[ -_][Tt]imes$'   |
-        |___________________________________|______________________|_____________________________|
+        ____________________________________________________________
+        |                                   |                      |
+        | Data type                         | Object name          |
+        |___________________________________|______________________|
+        |                                   |                      |
+        | Relaxation rate                   | 'rx'                 |
+        |                                   |                      |
+        | Peak intensities (series)         | 'intensities'        |
+        |                                   |                      |
+        | Initial intensity                 | 'i0'                 |
+        |                                   |                      |
+        | Intensity at infinity             | 'iinf'               |
+        |                                   |                      |
+        | Relaxation period times (series)  | 'relax_times'        |
+        |___________________________________|______________________|
 
         """]
-
-    def return_data_name(self, param):
-        """Return a unique identifying string for the relaxation curve-fitting parameter.
-
-        @param param:   The relaxation curve-fitting parameter.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # Relaxation rate.
-        if match('^[Rr]x$', param):
-            return 'rx'
-
-        # Peak intensities (series)
-        if match('^[Ii]nt$', param):
-            return 'intensities'
-
-        # Initial intensity.
-        if match('^[Ii]0$', param):
-            return 'i0'
-
-        # Intensity at infinity.
-        if match('^[Ii]inf$', param):
-            return 'iinf'
-
-        # Relaxation period times (series).
-        if match('^[Rr]elax[ -_][Tt]imes$', param):
-            return 'relax_times'
 
 
     def return_error(self, data_id):
@@ -993,53 +953,11 @@ class Relax_fit(API_base, API_common):
         return spin.intensity_err
 
 
-    def return_grace_string(self, param):
-        """Return the Grace string representation of the parameter.
-
-        This is used for axis labelling.
-
-        @param param:   The relaxation curve-fitting parameter.
-        @type param:    str
-        @return:        The Grace string representation of the parameter.
-        @rtype:         str
-        """
-
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
-        # Relaxation rate.
-        if object_name == 'rx':
-            grace_string = '\\qR\\sx\\Q'
-
-        # Peak intensities.
-        elif object_name == 'intensities':
-            grace_string = '\\qPeak intensities\\Q'
-
-        # Initial intensity.
-        elif object_name == 'i0':
-            grace_string = '\\qI\\s0\\Q'
-
-        # Intensity at infinity.
-        elif object_name == 'iinf':
-            grace_string = '\\qI\\sinf\\Q'
-
-        # Relaxation period times (series).
-        elif object_name == 'relax_times':
-            grace_string = '\\qRelaxation time period (s)\\Q'
-
-        # Return the Grace string.
-        return grace_string
-
-
-    def return_units(self, param, spin=None, spin_id=None):
+    def return_units(self, param):
         """Dummy method which returns None as the stats have no units.
 
         @param param:   The name of the parameter to return the units string for.
         @type param:    str
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        @param spin_id: The spin identification string (ignored if the spin container is supplied).
-        @type spin_id:  str
         @return:        Nothing.
         @rtype:         None
         """
@@ -1064,10 +982,6 @@ class Relax_fit(API_base, API_common):
 
         # Get the spin container.
         spin = return_spin(data_id)
-
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'sim_intensities'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
 
         # Create the data structure.
         spin.sim_intensities = sim_data

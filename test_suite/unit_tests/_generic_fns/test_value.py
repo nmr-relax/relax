@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -43,14 +43,14 @@ class Test_value(Value_base_class, TestCase):
         pipes.switch('mf')
 
         # The parameters and values.
-        param = ['S2']
+        param = ['s2']
         val = [0.8]
 
         # Partition.
         spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
-        self.assertEqual(spin_params, ['S2'])
+        self.assertEqual(spin_params, ['s2'])
         self.assertEqual(spin_values, [0.8])
         self.assertEqual(other_params, [])
         self.assertEqual(other_values, [])
@@ -83,14 +83,14 @@ class Test_value(Value_base_class, TestCase):
         pipes.switch('mf')
 
         # The parameters and values.
-        param = ['Dx', 'S2']
+        param = ['Dx', 's2']
         val = [1e7, 0.8]
 
         # Partition.
         spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
-        self.assertEqual(spin_params, ['S2'])
+        self.assertEqual(spin_params, ['s2'])
         self.assertEqual(spin_values, [0.8])
         self.assertEqual(other_params, ['Dx'])
         self.assertEqual(other_values, [1e7])
@@ -103,14 +103,14 @@ class Test_value(Value_base_class, TestCase):
         pipes.switch('mf')
 
         # The parameters and values.
-        param = ['Dx', 'S2', 'CSA']
+        param = ['Dx', 's2', 'csa']
         val = [1e7, 0.8, -160e-6]
 
         # Partition.
         spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
-        self.assertEqual(spin_params, ['S2', 'CSA'])
+        self.assertEqual(spin_params, ['s2', 'csa'])
         self.assertEqual(spin_values, [0.8, -160e-6])
         self.assertEqual(other_params, ['Dx'])
         self.assertEqual(other_values, [1e7])
@@ -123,14 +123,14 @@ class Test_value(Value_base_class, TestCase):
         pipes.switch('mf')
 
         # The parameters and values.
-        param = ['Dpar', 'S2', 'Dper', 'CSA', 'theta']
+        param = ['Dpar', 's2', 'Dper', 'csa', 'theta']
         val = [1e7, 0.8, 2e7, -160e-6, 0.13]
 
         # Partition.
         spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
-        self.assertEqual(spin_params, ['S2', 'CSA'])
+        self.assertEqual(spin_params, ['s2', 'csa'])
         self.assertEqual(spin_values, [0.8, -160e-6])
         self.assertEqual(other_params, ['Dpar', 'Dper', 'theta'])
         self.assertEqual(other_values, [1e7, 2e7, 0.13])

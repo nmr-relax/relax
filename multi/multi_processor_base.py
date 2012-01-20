@@ -257,7 +257,7 @@ class Multi_processor(Processor):
             self.assert_on_master()
 
             running_set = set()
-            idle_set = set([i for i in range(1, self.processor_size()+1)])
+            idle_set = {i for i in range(1, self.processor_size()+1)}
 
             if self.threaded_result_processing:
                 result_queue = Threaded_result_queue(self)

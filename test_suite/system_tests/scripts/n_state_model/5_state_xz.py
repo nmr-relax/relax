@@ -87,5 +87,9 @@ minimise('simplex', constraints=False)
 # Centre of mass analysis.
 n_state_model.CoM(pivot_point=[0.0, 0.0, 0.0], centre=[0.0, 0.0, 1.0])
 
+# Cone PDBs.
+n_state_model.cone_pdb(cone_type='diff on cone', file='devnull', force=True)
+n_state_model.cone_pdb(cone_type='diff in cone', file='devnull', force=True)
+
 # Write the results.
 results.write(file='devnull')

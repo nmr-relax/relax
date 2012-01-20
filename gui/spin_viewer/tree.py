@@ -38,6 +38,7 @@ from gui import paths
 from gui.components.menu import build_menu_item
 from gui.message import Question
 from gui.misc import gui_to_str
+from gui.user_functions import User_functions
 
 
 class Mol_res_spin_tree(wx.Window):
@@ -45,6 +46,7 @@ class Mol_res_spin_tree(wx.Window):
 
     # Some IDs for the menu entries.
     MENU_ROOT_MOLECULE_CREATE = wx.NewId()
+    MENU_ROOT_LOAD_SPINS = wx.NewId()
     MENU_SPIN_SPIN_DELETE = wx.NewId()
     MENU_SPIN_SPIN_SELECT = wx.NewId()
     MENU_SPIN_SPIN_DESELECT = wx.NewId()
@@ -70,6 +72,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Store the args.
         self.gui = gui
+        self.parent = parent
 
         # Execute the base class method.
         wx.Window.__init__(self, parent, id, style=wx.WANTS_CHARS)
@@ -183,6 +186,20 @@ class Mol_res_spin_tree(wx.Window):
         self.gui.spin_viewer.container.display(info)
 
 
+    def create_molecule(self, event):
+        """Wrapper method.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Set up the user functions.
+        user_functions = User_functions(self.gui.spin_viewer)
+
+        # Call the dialog.
+        user_functions.molecule.create()
+
+
     def create_residue(self, event):
         """Wrapper method.
 
@@ -190,8 +207,11 @@ class Mol_res_spin_tree(wx.Window):
         @type event:    wx event
         """
 
+        # Set up the user functions.
+        user_functions = User_functions(self.gui.spin_viewer)
+
         # Call the dialog.
-        self.gui.user_functions.residue.create(event, mol_name=self.info['mol_name'])
+        user_functions.residue.create(mol_name=self.info['mol_name'])
 
 
     def create_spin(self, event):
@@ -201,8 +221,11 @@ class Mol_res_spin_tree(wx.Window):
         @type event:    wx event
         """
 
+        # Set up the user functions.
+        user_functions = User_functions(self.gui.spin_viewer)
+
         # Call the dialog.
-        self.gui.user_functions.spin.create(event, mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
+        user_functions.spin.create(mol_name=self.info['mol_name'], res_num=self.info['res_num'], res_name=self.info['res_name'])
 
 
     def delete_molecule(self, event):
@@ -214,11 +237,11 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete this molecule?  This operation cannot be undone."
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the molecule.
-        self.gui.interpreter.molecule.delete(gui_to_str(self.info['id']))
+        self.gui.interpreter.queue('molecule.delete', gui_to_str(self.info['id']))
 
         # Notify all observers that a user function has completed.
         status.observers.gui_uf.notify()
@@ -233,11 +256,11 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete this residue?  This operation cannot be undone."
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the residue.
-        self.gui.interpreter.residue.delete(gui_to_str(self.info['id']))
+        self.gui.interpreter.queue('residue.delete', gui_to_str(self.info['id']))
 
         # Notify all observers that a user function has completed.
         status.observers.gui_uf.notify()
@@ -252,11 +275,11 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete this spin?  This operation cannot be undone."
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the spin.
-        self.gui.interpreter.spin.delete(gui_to_str(self.info['id']))
+        self.gui.interpreter.queue('spin.delete', gui_to_str(self.info['id']))
 
         # Notify all observers that a user function has completed.
         status.observers.gui_uf.notify()
@@ -271,11 +294,11 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to deselect all spins of this molecule?"
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Deselect the molecule.
-        self.gui.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.queue('deselect.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         status.observers.gui_uf.notify()
@@ -290,11 +313,11 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to deselect all spins of this residue?"
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Deselect the residue.
-        self.gui.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.queue('deselect.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         status.observers.gui_uf.notify()
@@ -308,7 +331,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Deselect the spin.
-        self.gui.interpreter.deselect.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.queue('deselect.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         status.observers.gui_uf.notify()
@@ -323,6 +346,10 @@ class Mol_res_spin_tree(wx.Window):
 
         # The current item.
         item = self.tree.GetSelection()
+
+        # No data.
+        if not item.IsOk():
+            return
 
         # Return the associated python data.
         return self.tree.GetItemPyData(item)
@@ -363,8 +390,9 @@ class Mol_res_spin_tree(wx.Window):
             self.Bind(wx.EVT_MENU, self.select_molecule, id=self.MENU_MOLECULE_MOLECULE_SELECT)
 
         # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def menu_residue(self):
@@ -402,8 +430,9 @@ class Mol_res_spin_tree(wx.Window):
             self.Bind(wx.EVT_MENU, self.select_residue, id=self.MENU_RESIDUE_RESIDUE_SELECT)
 
         # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def menu_root(self):
@@ -411,17 +440,27 @@ class Mol_res_spin_tree(wx.Window):
 
         # The menu.
         menu = wx.Menu()
+
+        # The add molecule entry.
         item = build_menu_item(menu, id=self.MENU_ROOT_MOLECULE_CREATE, text="Add molecule", icon=paths.icon_16x16.add)
         menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
 
+        # The add molecule entry.
+        item = build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="Load spins", icon=paths.icon_16x16.spin)
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
+
         # The menu actions.
-        self.Bind(wx.EVT_MENU, self.gui.user_functions.molecule.create, id=self.MENU_ROOT_MOLECULE_CREATE)
+        self.Bind(wx.EVT_MENU, self.create_molecule, id=self.MENU_ROOT_MOLECULE_CREATE)
+        self.Bind(wx.EVT_MENU, self.gui.spin_viewer.load_spins_wizard, id=self.MENU_ROOT_LOAD_SPINS)
 
         # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def menu_spin(self):
@@ -454,8 +493,9 @@ class Mol_res_spin_tree(wx.Window):
             self.Bind(wx.EVT_MENU, self.select_spin, id=self.MENU_SPIN_SPIN_SELECT)
 
         # Show the menu.
-        self.PopupMenu(menu)
-        menu.Destroy()
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def prune_mol(self):
@@ -535,11 +575,11 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to select all spins of this molecule?"
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Select the molecule.
-        self.gui.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.queue('select.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         status.observers.gui_uf.notify()
@@ -554,11 +594,11 @@ class Mol_res_spin_tree(wx.Window):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to select all spins of this residue?"
-        if Question(msg, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False).ShowModal() == wx.ID_NO:
             return
 
         # Select the residue.
-        self.gui.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.queue('select.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         status.observers.gui_uf.notify()
@@ -572,7 +612,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Select the spin.
-        self.gui.interpreter.select.spin(spin_id=gui_to_str(self.info['id']), change_all=False)
+        self.gui.interpreter.queue('select.spin', spin_id=gui_to_str(self.info['id']), change_all=False)
 
         # Notify all observers that a user function has completed.
         status.observers.gui_uf.notify()
@@ -648,8 +688,8 @@ class Mol_res_spin_tree(wx.Window):
         """Update the tree view using the given data pipe."""
 
         # Acquire the pipe and spin locks.
-        status.pipe_lock.acquire()
-        status.spin_lock.acquire()
+        status.pipe_lock.acquire('spin viewer window')
+        status.spin_lock.acquire('spin viewer window')
         try:
             # The data pipe.
             if not pipe_name:
@@ -671,8 +711,8 @@ class Mol_res_spin_tree(wx.Window):
 
         # Release the locks.
         finally:
-            status.pipe_lock.release()
-            status.spin_lock.release()
+            status.pipe_lock.release('spin viewer window')
+            status.spin_lock.release('spin viewer window')
 
 
     def update_mol(self, mol, mol_id):

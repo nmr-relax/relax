@@ -37,8 +37,10 @@ from status import Status; status = Status()
 # relax GUI module imports.
 from gui.fonts import font
 from gui.icons import relax_icons
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import add_border, gui_to_str, open_file, str_to_gui
 from gui.paths import icon_22x22
+from gui.user_functions import User_functions
 
 
 class Results_viewer(wx.Frame):
@@ -48,18 +50,18 @@ class Results_viewer(wx.Frame):
     border = 10
     size = (800, 400)
 
-    def __init__(self, gui):
+    def __init__(self, parent):
         """Build the results frame.
 
-        @param gui:                 The main GUI class.
-        @type gui:                  gui.relax_gui.Main instance
+        @param parent:  The parent wx object.
+        @type parent:   wx object
         """
 
-        # Store the main class.
-        self.gui = gui
-
         # Initialise the base frame.
-        wx.Frame.__init__(self, parent=gui, style=wx.DEFAULT_FRAME_STYLE)
+        wx.Frame.__init__(self, parent=parent, style=wx.DEFAULT_FRAME_STYLE)
+
+        # Initialise the user functions.
+        self.user_functions = User_functions(self)
 
         # Set up the window icon.
         self.SetIcons(relax_icons)
@@ -68,9 +70,12 @@ class Results_viewer(wx.Frame):
         self.SetTitle("Results viewer")
         self.SetSize(self.size)
 
+       # Place all elements within a panel (to remove the dark grey in MS Windows).
+        self.main_panel = wx.Panel(self, -1)
+
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
-        self.SetSizer(box_main)
+        self.main_panel.SetSizer(box_main)
 
         # Build the central sizer, with borders.
         box_centre = add_border(box_main, border=self.border, packing=wx.VERTICAL)
@@ -88,12 +93,16 @@ class Results_viewer(wx.Frame):
         box_centre.AddSpacer(self.border)
 
         # Add the open button.
-        self.button_open = buttons.ThemedGenBitmapTextButton(self, -1, None, " Open")
+        self.button_open = buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Open")
         self.button_open.SetBitmapLabel(wx.Bitmap(icon_22x22.document_open, wx.BITMAP_TYPE_ANY))
         self.button_open.SetFont(font.normal)
         self.button_open.SetMinSize((103, 33))
-        self.gui.Bind(wx.EVT_BUTTON, self.open_result_file, self.button_open)
+        self.Bind(wx.EVT_BUTTON, self.open_result_file, self.button_open)
         box_centre.Add(self.button_open, 0, wx.ALIGN_RIGHT|wx.ADJUST_MINSIZE, 5)
+
+        # Relayout the main panel.
+        self.main_panel.Layout()
+        self.main_panel.Refresh()
 
         # Bind some events.
         self.Bind(wx.EVT_COMBOBOX, self.switch_pipes, self.pipe_name)
@@ -136,10 +145,10 @@ class Results_viewer(wx.Frame):
             enable = True
 
         # The pipe selector.
-        self.pipe_name.Enable(enable)
+        wx.CallAfter(self.pipe_name.Enable, enable)
 
         # The open button.
-        self.button_open.Enable(enable)
+        wx.CallAfter(self.button_open.Enable, enable)
 
 
     def add_files(self, box, fn=None):
@@ -154,7 +163,7 @@ class Results_viewer(wx.Frame):
         """
 
         # Initialise the list box.
-        self.file_list = wx.ListCtrl(self, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
+        self.file_list = wx.ListCtrl(self.main_panel, -1, style=wx.BORDER_SUNKEN|wx.LC_REPORT)
 
         # Properties.
         self.file_list.SetFont(font.normal)
@@ -172,7 +181,7 @@ class Results_viewer(wx.Frame):
         # Bind events.
         self.file_list.Bind(wx.EVT_SIZE, self.resize)
         if fn:
-            self.gui.Bind(wx.EVT_LISTBOX_DCLICK, fn, self.file_list)
+            self.Bind(wx.EVT_LISTBOX_DCLICK, fn, self.file_list)
 
 
     def build_pipe_sel(self, box):
@@ -186,7 +195,7 @@ class Results_viewer(wx.Frame):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # The text.
-        label = wx.StaticText(self, -1, "Data pipe selection")
+        label = wx.StaticText(self.main_panel, -1, "Data pipe selection")
 
         # The font and label properties.
         label.SetFont(font.subtitle)
@@ -198,7 +207,7 @@ class Results_viewer(wx.Frame):
         sizer.AddSpacer(self.border)
 
         # A combo box.
-        self.pipe_name = wx.ComboBox(self, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=[])
+        self.pipe_name = wx.ComboBox(self.main_panel, -1, value='', style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=[])
         self.pipe_name.SetMinSize((50, 27))
         sizer.Add(self.pipe_name, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
@@ -242,18 +251,34 @@ class Results_viewer(wx.Frame):
 
             # Grace files.
             if type == 'grace':
-                self.gui.user_functions.grace.view(None, file=file)
+                self.user_functions.grace.view(file=file)
+
+            # PyMOL macro files.
+            elif type == 'pymol':
+                self.user_functions.pymol.macro_run(file=file)
+
+            # Molmol macro files.
+            elif type == 'molmol':
+                self.user_functions.molmol.macro_run(file=file)
 
             # Diffusion tensor PDB.
             elif type == 'diff_tensor_pdb':
-                self.gui.interpreter.queue('pymol.view')
-                self.gui.interpreter.queue('pymol.cartoon')
-                self.gui.interpreter.queue('pymol.tensor_pdb', file=file)
+                # Try and see if PyMOL is installed.
+                if not interpreter.apply('pymol.view'):
+                    return
+
+                # Display the tensor.
+                interpreter.apply('pymol.cartoon')
+                interpreter.apply('pymol.tensor_pdb', file=file)
 
             # A special table.
             elif type == 'Table_of_Results':
                 # The data.
                 model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te]
+
+            # Text files.
+            elif type == 'text':
+                open_file(file, force_text=True)
 
             # Open all other files in which ever editor the platform decides on.
             else:
@@ -271,7 +296,7 @@ class Results_viewer(wx.Frame):
         """Update the list of result files (thread safe)."""
 
         # Acquire the pipe lock.
-        status.pipe_lock.acquire()
+        status.pipe_lock.acquire('results viewer window')
         try:
             # Update the data pipe selector.
             self.update_pipes()
@@ -291,7 +316,7 @@ class Results_viewer(wx.Frame):
 
         # Release the locks.
         finally:
-            status.pipe_lock.release()
+            status.pipe_lock.release('results viewer window')
 
 
     def resize(self, event):
@@ -316,18 +341,21 @@ class Results_viewer(wx.Frame):
         """
 
         # The name of the selected pipe.
-        pipe = gui_to_str(event.GetString())
+        pipe = gui_to_str(self.pipe_name.GetString(event.GetSelection()))
 
         # No pipe change.
         if pipe == cdp_name():
             return
 
         # Switch data pipes.
-        self.gui.interpreter.queue('pipe.switch', pipe)
-        self.gui.wait_for_interpreter(0.01)
+        interpreter.queue('pipe.switch', pipe)
+        interpreter.flush()
 
         # Update the window.
         self.refresh()
+
+        # Bug fix for MS Windows (bring the window back).
+        wx.CallAfter(self.Raise)
 
 
     def update_pipes(self):

@@ -56,7 +56,15 @@ class GuiTestCase(TestCase):
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
         self.interpreter.populate_self()
         self.interpreter.on(verbose=False)
-        
+
+        # Get the wx app, if the test suite is launched from the gui.
+        self.app = wx.GetApp()
+
+        # Flag for the GUI.
+        self._gui_launch = False
+        if self.app != None:
+            self._gui_launch = True
+
 
     def check_exceptions(self):
         """Check that no exception has occurred."""
@@ -80,11 +88,12 @@ class GuiTestCase(TestCase):
         # Create a temporary directory for the results.
         ds.tmpdir = mkdtemp()
 
-        # Start the GUI.
-        self.app = wx.App()
+        # Start the GUI if not launched from the GUI.
+        if not self._gui_launch:
+            self.app = wx.App(redirect=False)
 
-        # Build the GUI.
-        self.gui = Main(parent=None, id=-1, title="")
+            # Build the GUI.
+            self.app.gui = Main(parent=None, id=-1, title="")
 
 
     def tearDown(self):
@@ -129,5 +138,5 @@ class GuiTestCase(TestCase):
         status._setup_observers()
 
         # Destroy the GUI.
-        if hasattr(self, 'gui'):
-            self.gui.Destroy()
+        if not self._gui_launch and hasattr(self.app, 'gui'):
+            self.app.gui.Destroy()

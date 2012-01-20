@@ -31,23 +31,69 @@ from wx.lib import scrolledpanel
 
 # relax module imports.
 from prompt.base_class import _strip_lead
-from prompt.interpreter import Interpreter
 from status import Status; status = Status()
 
 # relax GUI imports.
 from gui.fonts import font
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import str_to_gui
-from gui.wizard import Wiz_page
+from gui.wizard import Wiz_page, Wiz_window
 
 
 class UF_base:
     """User function GUI element base class."""
 
-    def __init__(self, gui):
-        """Set up the user function class."""
+    def __init__(self, parent):
+        """Set up the window.
 
-        # Store the args.
-        self.gui = gui
+        @param parent:      The parent window.
+        @type parent:       wx.Window instance
+        """
+
+        # Store the arg.
+        self.parent = parent
+
+
+    def create_wizard(self, size_x=600, size_y=400, name=None, uf_page=None, apply_button=True, return_page=False):
+        """Create and return the wizard window.
+
+        @keyword size_x:        The width of the wizard.
+        @type size_x:           int
+        @keyword size_y:        The height of the wizard.
+        @type size_y:           int
+        @keyword name:          The name of the user function, such as 'deselect.all'.
+        @type name:             str
+        @keyword uf_page:       The user function page class.
+        @type uf_page:          class
+        @keyword apply_button:  A flag which if true will show the apply button for that page.  This will be passed to the wizard's add_page() method.
+        @type apply_button:     bool
+        @keyword return_page:   A flag which if True will cause the user function page to be returned.
+        @type return_page:      bool
+        @return:                The wizard dialog (and wizard page if the return flag is given).
+        @rtype:                 gui.wizard.Wiz_window instance, wizard page instance
+        """
+
+        # Split the name.
+        comps = split(name, '.')
+        if len(comps) == 2:
+            base = comps[0]
+            fn = comps[1]
+        else:
+            base = None
+            fn = comps[0]
+
+        # Create the wizard dialog.
+        wizard = Wiz_window(parent=self.parent, size_x=size_x, size_y=size_y, title=self.get_title(base=base, fn=fn))
+
+        # Creat the page and add it to the wizard.
+        page = uf_page(wizard)
+        wizard.add_page(page, apply_button=apply_button)
+
+        # Return the wizard and the page.
+        if return_page:
+            return wizard, page
+        else:
+            return wizard
 
 
     def get_title(self, base=None, fn=None):
@@ -81,14 +127,20 @@ class UF_page(Wiz_page):
     # The path to the user function.
     uf_path = None
 
-    def __init__(self, parent, gui):
+    def __init__(self, parent, sync=False):
         """Set up the window.
 
         @param parent:      The parent class containing the GUI.
         @type parent:       class instance
-        @param gui:         The GUI base object.
-        @type gui:          wx.Frame instance
+        @keyword sync:      A flag which if True will call user functions via interpreter.apply and if False via interpreter.queue.
+        @type sync:         bool
         """
+
+        # Store the args.
+        self.sync = sync
+
+        # Default value data structure.
+        self.defaults = {}
 
         # Yield to allow the cursor to be changed.
         wx.Yield()
@@ -96,11 +148,8 @@ class UF_page(Wiz_page):
         # Change the cursor to waiting.
         wx.BeginBusyCursor()
 
-        # Store the args.
-        self.gui = gui
-
         # Get the user function class (or function).
-        uf_class = getattr(interpreter, self.uf_path[0])
+        uf_class = getattr(interpreter._instance._interpreter, self.uf_path[0])
 
         # Get the user function.
         if len(self.uf_path) == 1:
@@ -118,7 +167,8 @@ class UF_page(Wiz_page):
         super(UF_page, self).__init__(parent)
 
         # Reset the cursor.
-        wx.EndBusyCursor()
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
 
     def _format_text(self, text):
@@ -134,14 +184,14 @@ class UF_page(Wiz_page):
         stripped_text = _strip_lead(text)
 
         # Remove the first characters if newlines.
-        while 1:
+        while True:
             if stripped_text[0] == "\n":
                 stripped_text = stripped_text[1:]
             else:
                 break
 
         # Remove the last character if a newline.
-        while 1:
+        while True:
             if stripped_text[-1] == "\n":
                 stripped_text = stripped_text[:-1]
             else:
@@ -260,11 +310,24 @@ class UF_page(Wiz_page):
         sizer.AddSpacer(5)
 
 
-    def on_completion(self):
-        """Notify that the user function has completed."""
+    def execute(self, uf, *args, **kwds):
+        """Execute the user function, either asynchronously or synchronously.
 
-        # Notify.
-        status.observers.gui_uf.notify()
+        @param uf:      The user function as a string.
+        @type uf:       str
+        @param args:    The user function arguments.
+        @type args:     any arguments
+        @param kwds:    The user function keyword arguments.
+        @type kwds:     any keyword arguments
+        """
+
+        # Synchronous execution.
+        if self.sync:
+            interpreter.apply(uf, *args, **kwds)
+
+        # Asynchronous execution.
+        else:
+            interpreter.queue(uf, *args, **kwds)
 
 
     def process_doc(self, doc):
@@ -305,10 +368,3 @@ class UF_page(Wiz_page):
         # Yield the bits.
         for i in range(len(text)):
             yield text[i], type[i]
-
-
-
-# Load a copy of the relax interpreter.
-interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
-interpreter.populate_self()
-interpreter.on(verbose=False)

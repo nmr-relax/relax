@@ -34,38 +34,35 @@ from generic_fns import pipes
 from base import UF_base, UF_page
 from gui.paths import WIZARD_IMAGE_PATH
 from gui.misc import gui_to_float, gui_to_int, gui_to_str, str_to_gui
-from gui.wizard import Wiz_window
 
 
 # The container class.
 class Relax_data(UF_base):
     """The container class for holding all GUI elements."""
 
-    def delete(self, event):
+    def delete(self, ri_id=None):
         """The relax_data.delete user function.
 
-        @param event:       The wx event.
-        @type event:        wx event
+        @keyword ri_id: The starting relaxation data ID string.
+        @type ri_id:    str
         """
 
+        # Create the wizard.
+        wizard, page = self.create_wizard(size_x=700, size_y=400, name='relax_data.delete', uf_page=Delete_page, return_page=True)
+
+        # Default ID.
+        if ri_id:
+            page.ri_id.SetValue(str_to_gui(ri_id))
+
         # Execute the wizard.
-        wizard = Wiz_window(size_x=700, size_y=400, title=self.get_title('relax_data', 'delete'))
-        page = Delete_page(wizard, self.gui)
-        wizard.add_page(page)
         wizard.run()
 
 
-    def read(self, event):
-        """The relax_data.read user function.
-
-        @param event:       The wx event.
-        @type event:        wx event
-        """
+    def read(self):
+        """The relax_data.read user function."""
 
         # Execute the wizard.
-        wizard = Wiz_window(size_x=1000, size_y=700, title=self.get_title('relax_data', 'read'))
-        page = Read_page(wizard, self.gui)
-        wizard.add_page(page)
+        wizard = self.create_wizard(size_x=1000, size_y=700, name='relax_data.read', uf_page=Read_page)
         wizard.run()
 
 
@@ -95,7 +92,7 @@ class Delete_page(UF_page):
         ri_id = gui_to_str(self.ri_id.GetValue())
 
         # Read the relaxation data.
-        self.gui.interpreter.queue('relax_data.delete', ri_id=ri_id)
+        self.execute('relax_data.delete', ri_id=ri_id)
 
 
     def on_display(self):
@@ -180,4 +177,4 @@ class Read_page(UF_page):
         spin_id = gui_to_str(self.spin_id.GetValue())
 
         # Read the relaxation data.
-        self.gui.interpreter.queue('relax_data.read', ri_id=ri_id, ri_type=ri_type, frq=frq, file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=err_col, sep=sep, spin_id=spin_id)
+        self.execute('relax_data.read', ri_id=ri_id, ri_type=ri_type, frq=frq, file=file, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=err_col, sep=sep, spin_id=spin_id)

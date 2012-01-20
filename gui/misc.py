@@ -155,88 +155,11 @@ def convert_to_float(string):
     return result
 
 
-def gui_to_float(string):
-    """Convert the GUI obtained string to an float.
-
-    @param string:  The number in string form.
-    @type string:   str or unicode
-    @return:        The float
-    @rtype:         float or None
-    """
-
-    # No input.
-    if string in ['', u'']:
-        return None
-
-    # Already a float.
-    if type(string) == float:
-        return string
-
-    # Convert.
-    val = eval(string)
-
-    # An int.
-    if type(val) == int:
-        val = float(val)
-
-    # Not a float!
-    if type(val) != float:
-        return string
-
-    # A float.
-    return val
-
-
-def gui_to_int(string):
-    """Convert the GUI obtained string to an int.
-
-    @param string:  The number in string form.
-    @type string:   str or unicode
-    @return:        The integer
-    @rtype:         int or None
-    """
-
-    # No input.
-    if string in ['', u'']:
-        return None
-
-    # Already an int.
-    if type(string) == int:
-        return string
-
-    # Convert.
-    val = eval(string)
-
-    # Not an int!
-    if type(val) != int:
-        return string
-
-    # An int.
-    return val
-
-
 def float_to_gui(num):
     """Convert the float into the GUI string.
 
     @param num:     The number in float or None form.
     @type num:      float or None
-    @return:        The GUI string.
-    @rtype:         unicode
-    """
-
-    # No input.
-    if num == None:
-        num = ''
-
-    # Convert.
-    return unicode(num)
-
-
-def int_to_gui(num):
-    """Convert the int into the GUI string.
-
-    @param num:     The number in int or None form.
-    @type num:      int or None
     @return:        The GUI string.
     @rtype:         unicode
     """
@@ -259,11 +182,101 @@ def gui_to_bool(string):
     """
 
     # No value.
-    if string in ['', u'']:
+    if string in ['', u'', None]:
         return None
 
     # Convert.
     return eval(string)
+
+
+def gui_to_float(string):
+    """Convert the GUI obtained string to an float.
+
+    @param string:  The number in string form.
+    @type string:   str or unicode
+    @return:        The float
+    @rtype:         float or None
+    """
+
+    # No input.
+    if string in ['', u'', None]:
+        return None
+
+    # Already a float.
+    if isinstance(string, float):
+        return string
+
+    # Convert.
+    val = eval(string)
+
+    # An int.
+    if isinstance(val, int):
+        val = float(val)
+
+    # Not a float!
+    if not isinstance(val, float):
+        return string
+
+    # A float.
+    return val
+
+
+def gui_to_int(string):
+    """Convert the GUI obtained string to an int.
+
+    @param string:  The number in string form.
+    @type string:   str or unicode
+    @return:        The integer
+    @rtype:         int or None
+    """
+
+    # No input.
+    if string in ['', u'', None]:
+        return None
+
+    # Already an int.
+    if isinstance(string, int):
+        return string
+
+    # Convert.
+    val = eval(string)
+
+    # Not an int!
+    if not isinstance(val, int):
+        return string
+
+    # An int.
+    return val
+
+
+def gui_to_int_or_list(string):
+    """Convert the GUI obtained string to a list.
+
+    @param string:  The list in string form.
+    @type string:   str or unicode
+    @return:        The integer or list of integers.
+    @rtype:         int or int list
+    """
+
+    # No value.
+    if string in ['', u'', None]:
+        return None
+
+    # Already an int or list.
+    if isinstance(string, int) or isinstance(string, list):
+        return string
+
+    # Convert.
+    try:
+        val = eval(string)
+
+    # Failure, so return the original value.
+    except NameError:
+        return string
+
+
+    # Return the list.
+    return val
 
 
 def gui_to_list(string):
@@ -276,12 +289,12 @@ def gui_to_list(string):
     """
 
     # No value.
-    if string in ['', u'']:
+    if string in ['', u'', None]:
         return []
 
     # Convert.
     val = eval(string)
-    if type(val) != list:
+    if not isinstance(val, list):
         val = [val]
 
     # Return the list.
@@ -298,11 +311,53 @@ def gui_to_str(string):
     """
 
     # No value.
-    if string in ['', u'']:
+    if string in ['', u'', None]:
         return None
 
     # Convert.
     return str(string)
+
+
+def gui_to_str_or_list(string):
+    """Convert the GUI obtained string to a list.
+
+    @param string:  The list in string form.
+    @type string:   str or unicode
+    @return:        The integer or list of integers.
+    @rtype:         int or int list
+    """
+
+    # No value.
+    if string in ['', u'', None]:
+        return None
+
+    # Try converting to a list.
+    try:
+        val = eval(string)
+
+    # Catch failures, and try as a string.
+    except NameError:
+        return str(string)
+
+    # Return the list.
+    return val
+
+
+def int_to_gui(num):
+    """Convert the int into the GUI string.
+
+    @param num:     The number in int or None form.
+    @type num:      int or None
+    @return:        The GUI string.
+    @rtype:         unicode
+    """
+
+    # No input.
+    if num == None:
+        num = ''
+
+    # Convert.
+    return unicode(num)
 
 
 def list_to_gui(list):
@@ -322,20 +377,34 @@ def list_to_gui(list):
     return unicode(list)
 
 
-def open_file(file):
+def open_file(file, force_text=False):
     """Open the file in the platform's native editor/viewer.
 
-    @param file:    The path of the file to open.
-    @type file:     str
+    @param file:            The path of the file to open.
+    @type file:             str
+    @keyword force_text:    A flag which if True will cause a text editor to be launched.
+    @type force_text:       bool
     """
 
     # Windows.
     if platform.uname()[0] in ['Windows', 'Microsoft']:
-        os.startfile(file)
+        # Text file.
+        if force_text:
+            os.system('notepad %s' % os.path.normpath(file))
+
+        # All other files.
+        else:
+            os.startfile(os.path.normpath(file))
 
     # Mac OS X.
     elif platform.uname()[0] == 'Darwin':
-        os.system('open %s' % file)
+        # Text file.
+        if force_text:
+            os.system('open -t %s' % file)
+
+        # All other files.
+        else:
+            os.system('open %s' % file)
 
     # POSIX Systems with xdg-open.
     else:

@@ -1,0 +1,50 @@
+REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007
+REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)
+HET         PIV   1       1                                             
+HET         ZAX   2       3                                             
+HET         ZAX   3       3                                             
+HET         XAX   4       3                                             
+HET         XAX   5       3                                             
+HET         YAX   6       3                                             
+HET         YAX   7       3                                             
+HETNAM     PIV Pivot point                                            
+HETNAM     ZAX Unknown                                                
+HETNAM     XAX Unknown                                                
+HETNAM     YAX Unknown                                                
+FORMUL   1  PIV    C1                                                 
+FORMUL   2  ZAX    C2N1                                               
+FORMUL   4  XAX    C2N1                                               
+FORMUL   6  YAX    C2N1                                               
+HETATM    1    R PIV     1      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    2    R ZAX     2      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    3 z-ax ZAX     2      49.500  15.723  39.512  1.00  0.00           C  
+HETATM    4 z-ax ZAX     2      50.725  17.246  41.789  1.00  0.00           N  
+HETATM    5    R ZAX     3      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    6 z-ax ZAX     3      25.008 -14.723  -6.019  1.00  0.00           C  
+HETATM    7 z-ax ZAX     3      23.783 -16.246  -8.296  1.00  0.00           N  
+HETATM    8    R XAX     4      37.254   0.500  16.747  1.00  0.00           C  
+HETATM    9 x-ax XAX     4       9.871   6.906  27.192  1.00  0.00           C  
+HETATM   10 x-ax XAX     4       7.132   7.547  28.237  1.00  0.00           N  
+HETATM   11    R XAX     5      37.254   0.500  16.747  1.00  0.00           C  
+HETATM   12 x-ax XAX     5      64.637  -5.906   6.301  1.00  0.00           C  
+HETATM   13 x-ax XAX     5      67.376  -6.547   5.256  1.00  0.00           N  
+HETATM   14    R YAX     6      37.254   0.500  16.747  1.00  0.00           C  
+HETATM   15 y-ax YAX     6      37.693 -24.544  33.257  1.00  0.00           C  
+HETATM   16 y-ax YAX     6      37.737 -27.048  34.908  1.00  0.00           N  
+HETATM   17    R YAX     7      37.254   0.500  16.747  1.00  0.00           C  
+HETATM   18 y-ax YAX     7      36.815  25.544   0.236  1.00  0.00           C  
+HETATM   19 y-ax YAX     7      36.771  28.048  -1.415  1.00  0.00           N  
+CONECT    2    3                                             
+CONECT    3    2                                             
+CONECT    5    6                                             
+CONECT    6    5                                             
+CONECT    8    9                                             
+CONECT    9    8                                             
+CONECT   11   12                                             
+CONECT   12   11                                             
+CONECT   14   15                                             
+CONECT   15   14                                             
+CONECT   17   18                                             
+CONECT   18   17                                             
+MASTER        0    0    7    0    0    0    0    0   19    0   12    0
+END

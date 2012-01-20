@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -45,40 +45,35 @@ class Mf(GuiTestCase):
     def test_mf_auto_analysis(self):
         """Test the model-free auto-analysis."""
 
-        # Initialise all the special windows (to sometimes catch rare race conditions).
-        self.gui.show_prompt(None)
-        self.gui.show_tree(None)
-        self.gui.show_pipe_editor(None)
-
         # Simulate the new analysis wizard.
-        self.gui.analysis.menu_new(None)
-        page = self.gui.analysis.new_wizard.wizard.get_page(0)
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
         page.select_mf(None)
         page.analysis_name.SetValue(str_to_gui("Model-free test"))
-        self.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.gui.analysis.new_wizard.wizard.get_page(1)
-        self.gui.analysis.new_wizard.wizard._go_next(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
         # Get the data.
-        analysis_type, analysis_name, pipe_name = self.gui.analysis.new_wizard.get_data()
+        analysis_type, analysis_name, pipe_name = self.app.gui.analysis.new_wizard.get_data()
 
         # Set up the analysis.
-        self.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name)
 
         # Alias the analysis.
-        analysis = self.gui.analysis.get_page_from_name("Model-free test")
+        analysis = self.app.gui.analysis.get_page_from_name("Model-free test")
 
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Set up a wizard window instance for all of the user function pages.
-        wizard = Wiz_window()
+        wizard = Wiz_window(self.app.gui)
 
         # The data path.
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'sphere' + sep
 
         # Load the sequence.
-        seq_read = sequence.Read_page(wizard, self.gui)
+        seq_read = sequence.Read_page(wizard)
         seq_read.file.SetValue(str_to_gui(data_path + 'noe.500.out'))
         seq_read.on_execute()
 
@@ -92,7 +87,7 @@ class Mf(GuiTestCase):
             ['r2.900.out',  'r2_900',  'R2',  900e6]
         ]
         for i in range(len(data)):
-            relax_data_read = relax_data.Read_page(wizard, self.gui)
+            relax_data_read = relax_data.Read_page(wizard)
             relax_data_read.file.SetValue(str_to_gui(data_path + data[i][0]))
             relax_data_read.ri_id.SetValue(str_to_gui(data[i][1]))
             relax_data_read.ri_type.SetValue(str_to_gui(data[i][2]))
@@ -100,7 +95,7 @@ class Mf(GuiTestCase):
             relax_data_read.on_execute()
 
         # Set the values.
-        value_set = value.Set_page(wizard, self.gui)
+        value_set = value.Set_page(wizard)
         value_set.set_param('csa')
         value_set.on_execute()
         value_set.set_param('r')
@@ -136,6 +131,10 @@ class Mf(GuiTestCase):
         # Set the number of Monte Carlo simulations.
         analysis.mc_sim_num.SetValue(2)
 
+        # Set the maximum number of iterations (changing the allowed values).
+        analysis.max_iter.control.SetRange(0, 100)
+        analysis.max_iter.SetValue(1)
+
         # Set the protocol mode to automatic.
         analysis.mode_win.select_full_analysis(None)
         analysis.mode_dialog(None)
@@ -147,6 +146,11 @@ class Mf(GuiTestCase):
         self.assertEqual(analysis.data.mf_models, ['m1', 'm2'])
         self.assertEqual(analysis.data.grid_inc, 3)
         self.assertEqual(analysis.data.mc_sim_num, 2)
+        self.assertEqual(analysis.data.max_iter, 1)
+        self.assertEqual(analysis.data.diff_tensor_grid_inc['sphere'], 5)
+        self.assertEqual(analysis.data.diff_tensor_grid_inc['prolate'], 5)
+        self.assertEqual(analysis.data.diff_tensor_grid_inc['oblate'], 5)
+        self.assertEqual(analysis.data.diff_tensor_grid_inc['ellipsoid'], 3)
 
         # Modify some of the class variables to speed up optimisation.
         auto_model_free.dauvergne_protocol.dAuvergne_protocol.opt_func_tol = 1e-5
@@ -165,9 +169,9 @@ class Mf(GuiTestCase):
         self.check_exceptions()
 
         # Check the relax controller.
-        self.assertEqual(self.gui.controller.mc_gauge_mf.GetValue(), 100)
-        self.assertEqual(self.gui.controller.progress_gauge_mf.GetValue(), 100)
-        self.assertEqual(self.gui.controller.main_gauge.GetValue(), 100)
+        self.assertEqual(self.app.gui.controller.mc_gauge_mf.GetValue(), 100)
+        self.assertEqual(self.app.gui.controller.progress_gauge_mf.GetValue(), 100)
+        self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
         # Check the diffusion tensor.
         self.assertEqual(cdp.diff_tensor.type, 'sphere')
@@ -208,7 +212,7 @@ class Mf(GuiTestCase):
             self.assertEqual(spin.model, 'm2')
             self.assertEqual(spin.equation, 'mf_orig')
             self.assertEqual(len(spin.params), 2)
-            self.assertEqual(spin.params[0], 'S2')
+            self.assertEqual(spin.params[0], 's2')
             self.assertEqual(spin.params[1], 'te')
             self.assertAlmostEqual(spin.s2, 0.8)
             self.assertEqual(spin.s2f, None)
