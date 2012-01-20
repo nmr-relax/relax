@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 # Copyright (C) 2007-2009 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -45,13 +45,28 @@ class Consistency_tests(API_base, API_common):
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
         self.create_mc_data = self._create_mc_relax_data
+        self.default_value = self._default_value_spin
         self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_data_name = self._return_data_name_spin
         self.return_error = self._return_error_relax_data
+        self.return_grace_string = self._return_grace_string_spin
+        self.return_units = self._return_units_spin
         self.return_value = self._return_value_general
         self.set_param_values = self._set_param_values_spin
         self.set_selected_sim = self._set_selected_sim_spin
         self.sim_pack_data = self._sim_pack_relax_data
+
+        # Set up the spin parameters.
+        self.SPIN_PARAMS.add('j0', grace_string='\\qJ(0)\\Q')
+        self.SPIN_PARAMS.add('f_eta', grace_string='\\qF\\s\\xh\\Q')
+        self.SPIN_PARAMS.add('f_r2', grace_string='\\qF\\sR2\\Q')
+        self.SPIN_PARAMS.add('r', default=NH_BOND_LENGTH, units='Angstrom', grace_string='Bond length')
+        self.SPIN_PARAMS.add('csa', default=N15_CSA, units='ppm', grace_string='\\qCSA\\Q')
+        self.SPIN_PARAMS.add('heteronuc_type', default='15N')
+        self.SPIN_PARAMS.add('proton_type', default='1H')
+        self.SPIN_PARAMS.add('orientation', default=15.7, units='degrees', grace_string='\\q\\xq\\Q')
+        self.SPIN_PARAMS.add('tc', default=13 * 1e-9, units='ns', grace_string='\\q\\xt\\f{}c\\Q')
 
 
     def _set_frq(self, frq=None):
@@ -298,39 +313,6 @@ class Consistency_tests(API_base, API_common):
 
         """
 
-    def default_value(self, param):
-        """The default consistency test parameter values.
-
-        @param param:   The consistency test parameter.
-        @type param:    str
-        @return:        The default value.
-        @rtype:         float
-        """
-
-        # Bond length.
-        if param == 'r':
-            return NH_BOND_LENGTH
-
-        # CSA.
-        elif param == 'csa':
-            return N15_CSA
-
-        # Heteronucleus type.
-        elif param == 'heteronuc_type':
-            return '15N'
-
-        # Proton type.
-        elif param == 'proton_type':
-            return '1H'
-
-        # Angle Theta (default value)
-        elif param == 'orientation':
-            return 15.7
-
-        # Correlation time (default value)
-        elif param == 'tc':
-            return 13 * 1e-9
-
 
     def overfit_deselect(self):
         """Deselect spins which have insufficient data to support calculation."""
@@ -363,152 +345,30 @@ class Consistency_tests(API_base, API_common):
         Consistency testing data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-         __________________________________________________________________________________________
-        |                       |                  |                                               |
-        | Data type             | Object name      | Patterns                                      |
-        |_______________________|__________________|_______________________________________________|
-        |                       |                  |                                               |
-        | J(0)                  | 'j0'             | '^[Jj]0$' or '[Jj]\(0\)'                      |
-        |                       |                  |                                               |
-        | F_eta                 | 'f_eta'          | '^[Ff]_[Ee][Tt][Aa]$'                         |
-        |                       |                  |                                               |
-        | F_R2                  | 'f_r2'           | '^[Ff]_[Rr]2$'                                |
-        |                       |                  |                                               |
-        | Bond length           | 'r'              | '^r$' or '[Bb]ond[ -_][Ll]ength'              |
-        |                       |                  |                                               |
-        | CSA                   | 'csa'            | '^[Cc][Ss][Aa]$'                              |
-        |                       |                  |                                               |
-        | Heteronucleus type    | 'heteronuc_type' | '^[Hh]eteronucleus$'                          |
-        |                       |                  |                                               |
-        | Proton type           | 'proton_type'    | '^[Pp]roton$'                                 |
-        |                       |                  |                                               |
-        | Angle Theta           | 'orientation'    | '^[Oo]rientation$'                            |
-        |                       |                  |                                               |
-        | Correlation time      | 'tc'             | '^[Tt]c$'                                     |
-        |_______________________|__________________|_______________________________________________|
+         ___________________________________________
+        |                       |                  |
+        | Data type             | Object name      |
+        |_______________________|__________________|
+        |                       |                  |
+        | J(0)                  | 'j0'             |
+        |                       |                  |
+        | F_eta                 | 'f_eta'          |
+        |                       |                  |
+        | F_R2                  | 'f_r2'           |
+        |                       |                  |
+        | Bond length           | 'r'              |
+        |                       |                  |
+        | CSA                   | 'csa'            |
+        |                       |                  |
+        | Heteronucleus type    | 'heteronuc_type' |
+        |                       |                  |
+        | Proton type           | 'proton_type'    |
+        |                       |                  |
+        | Angle Theta           | 'orientation'    |
+        |                       |                  |
+        | Correlation time      | 'tc'             |
+        |_______________________|__________________|
         """
-
-    def return_data_name(self, param):
-        """Return a unique identifying string for the consistency test parameter.
-
-        @param param:   The consistency test parameter name.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # J(0).
-        if search('^[Jj]0$', param) or search('[Jj]\(0\)', param):
-            return 'j0'
-
-        # F_eta.
-        if search('^[Ff]_[Ee][Tt][Aa]$', param):
-            return 'f_eta'
-
-        # F_R2.
-        if search('^^[Ff]_[Rr]2$', param):
-            return 'f_r2'
-
-        # Bond length.
-        if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
-            return 'r'
-
-        # CSA.
-        if search('^[Cc][Ss][Aa]$', param):
-            return 'csa'
-
-        # Heteronucleus type.
-        if search('^[Hh]eteronucleus$', param):
-            return 'heteronuc_type'
-
-        # Proton type.
-        if search('^[Pp]roton$', param):
-            return 'proton_type'
-
-        # Angle Theta
-        if search('^[Oo]rientation$', param):
-            return 'orientation'
-
-        # Correlation time
-        if search('^[Tt]c$', param):
-            return 'tc'
-
-
-    def return_grace_string(self, param):
-        """Return the Grace string representing the parameter.
-
-        This is used for axis labelling.
-
-
-        @param param:   The specific analysis parameter.
-        @type param:    str
-        @return:        The Grace string representation of the parameter.
-        @rtype:         str
-        """
-
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
-        # J(0).
-        if object_name == 'j0':
-            return '\\qJ(0)\\Q'
-
-        # J(wX).
-        elif object_name == 'f_eta':
-            return '\\qF\\s\\xh\\Q'
-
-        # J(wH).
-        elif object_name == 'f_r2':
-            return '\\qF\\sR2\\Q'
-
-        # Bond length.
-        elif object_name == 'r':
-            return 'Bond length'
-
-        # CSA.
-        elif object_name == 'csa':
-            return '\\qCSA\\Q'
-
-        # Angle Theta
-        elif object_name == 'orientation':
-            return '\\q\\xq\\Q'
-
-        # Correlation time
-        elif object_name == 'tc':
-            return '\\q\\xt\\f{}c\\Q'
-
-
-    def return_units(self, param, spin=None, spin_id=None):
-        """Return a string representing the parameters units.
-
-        @param param:       The name of the parameter to return the units string for.
-        @type param:        str
-        @keyword spin:      The spin container.
-        @type spin:         SpinContainer instance
-        @keyword spin_id:   The spin identification string (ignored if the spin container is supplied).
-        @type spin_id:      str
-        @return:            The parameter units string.
-        @rtype:             str
-        """
-
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
-        # Bond length (Angstrom).
-        if object_name == 'r':
-            return 'Angstrom'
-
-        # CSA (ppm).
-        elif object_name == 'csa':
-            return 'ppm'
-
-        # Angle Theta
-        elif object_name == 'orientation':
-            return 'degrees'
-
-        # Correlation time
-        elif object_name == 'tc':
-            return 'ns'
 
 
     set_doc = """

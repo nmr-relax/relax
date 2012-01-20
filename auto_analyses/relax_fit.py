@@ -131,8 +131,8 @@ class Relax_fit:
         self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=self.grace_dir, force=True)    # Minimised chi-squared value.
         self.interpreter.grace.write(y_data_type='i0', file='i0.agr', dir=self.grace_dir, force=True)    # Initial peak intensity.
         self.interpreter.grace.write(y_data_type='rx', file=self.file_root+'.agr', dir=self.grace_dir, force=True)    # Relaxation rate.
-        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', dir=self.grace_dir, force=True)    # Average peak intensities.
-        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', dir=self.grace_dir, force=True)    # Average peak intensities (normalised).
+        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='intensities', file='intensities.agr', dir=self.grace_dir, force=True)    # Average peak intensities.
+        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='intensities', norm=True, file='intensities_norm.agr', dir=self.grace_dir, force=True)    # Average peak intensities (normalised).
 
         # Display the Grace plots if selected.
         if self.view_plots:

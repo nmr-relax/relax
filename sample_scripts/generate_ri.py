@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -92,11 +92,11 @@ structure.vectors(spin_id='@N', attached='H*', ave=False)
 diffusion_tensor.init((1.340e7, 1.516e7, 1.691e7, 0.000e7, 0.000e7, 0.000e7), param_types=3)
 
 # Set the required values.
-value.set(val=-172e-6, param='CSA')
+value.set(val=-172e-6, param='csa')
 value.set(val=1.02e-10, param='r')
-value.set('15N', 'heteronucleus')
-value.set('1H', 'proton')
-value.set(val=0.8, param='S2')
+value.set('15N', 'heteronuc_type')
+value.set('1H', 'proton_type')
+value.set(val=0.8, param='s2')
 value.set(val=20e-12, param='te')
 
 # Select model-free model m2.

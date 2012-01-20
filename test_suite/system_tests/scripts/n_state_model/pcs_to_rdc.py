@@ -20,8 +20,8 @@ structure.read_pdb('trunc_ubi_pcs.pdb', dir=str_path)
 structure.load_spins('@N')
 
 # Set the heteronucleus type.
-value.set('15N', 'heteronucleus')
-value.set('1H', 'proton')
+value.set('15N', 'heteronuc_type')
+value.set('1H', 'proton_type')
 value.set(NH_BOND_LENGTH_RDC, 'r')
 
 # Load the bond vectors.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -232,12 +232,12 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 point = data[0][index][-1]
 
                 # Conversion factors.
-                x_val[j] = x_val[j] / x_return_conversion_factor(x_data_type, spin)
+                x_val[j] = x_val[j] / x_return_conversion_factor(x_data_type)
                 if x_err[j]:
-                    x_err[j] = x_err[j] / x_return_conversion_factor(x_data_type, spin)
-                y_val[j] = y_val[j] / y_return_conversion_factor(y_data_type, spin)
+                    x_err[j] = x_err[j] / x_return_conversion_factor(x_data_type)
+                y_val[j] = y_val[j] / y_return_conversion_factor(y_data_type)
                 if y_err[j]:
-                    y_err[j] = y_err[j] / y_return_conversion_factor(y_data_type, spin)
+                    y_err[j] = y_err[j] / y_return_conversion_factor(y_data_type)
 
                 # Append the data.
                 point.append(x_val[j])

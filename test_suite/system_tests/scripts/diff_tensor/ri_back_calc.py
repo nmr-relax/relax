@@ -51,10 +51,10 @@ else:
     raise RelaxError, "The diffusion type '%s' is unknown." % ds.diff_type
 
 # Setup other values.
-value.set(1.02 * 1e-10, 'bond_length')
+value.set(1.02 * 1e-10, 'r')
 value.set(-172 * 1e-6, 'csa')
-value.set('15N', 'heteronucleus')
-value.set('1H', 'proton')
+value.set('15N', 'heteronuc_type')
+value.set('1H', 'proton_type')
 
 # Select the model-free model.
 model_free.select_model(model='m0')

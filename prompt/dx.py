@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -141,10 +141,10 @@ class OpenDX(User_fn_class):
         directory 'dx' and will be prefixed by 'map'.  In this case, the system is a protein and
         residue number 6 will be mapped.
 
-        relax> dx.map(['S2', 'S2f', 'ts'], spin_id=':6')
-        relax> dx.map(['S2', 'S2f', 'ts'], spin_id=':6', file_prefix='map', dir='dx')
-        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', inc=20, file_prefix='map', dir='dx')
-        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', map_type='Iso3D', inc=20,
+        relax> dx.map(['s2', 's2f', 'ts'], spin_id=':6')
+        relax> dx.map(['s2', 's2f', 'ts'], spin_id=':6', file_prefix='map', dir='dx')
+        relax> dx.map(params=['s2', 's2f', 'ts'], spin_id=':6', inc=20, file_prefix='map', dir='dx')
+        relax> dx.map(params=['s2', 's2f', 'ts'], spin_id=':6', map_type='Iso3D', inc=20,
                       file_prefix='map', dir='dx')
 
 
@@ -152,8 +152,8 @@ class OpenDX(User_fn_class):
         Rex}, name the results 'test', and to place the files in the current directory, use one of
         the following commands:
 
-        relax> dx.map(['S2', 'te', 'Rex'], spin_id=':2@N6', file_prefix='test', dir=None)
-        relax> dx.map(params=['S2', 'te', 'Rex'], spin_id=':2@N6', inc=100, file_prefix='test', dir=None)
+        relax> dx.map(['s2', 'te', 'rex'], spin_id=':2@N6', file_prefix='test', dir=None)
+        relax> dx.map(params=['s2', 'te', 'rex'], spin_id=':2@N6', inc=100, file_prefix='test', dir=None)
         """
     map._doc_additional = [
         docs.regexp.doc,

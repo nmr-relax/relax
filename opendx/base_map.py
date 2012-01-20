@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -318,10 +318,10 @@ class Base_Map:
         # Loop over the parameters
         for i in xrange(self.n):
             # Parameter conversion factors.
-            factor = self.return_conversion_factor[i](self.param_names[i], spin_id=self.spin_id)
+            factor = self.return_conversion_factor[i](self.param_names[i])
 
             # Parameter units.
-            units = self.return_units[i](self.param_names[i], spin_id=self.spin_id)
+            units = self.return_units[i](self.param_names[i])
 
             # Labels.
             if units:

@@ -20,11 +20,11 @@ relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=600.0*1e6, file=status.insta
 relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0*1e6, file=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
 # Set the nuclei types
-value.set('15N', 'heteronucleus')
-value.set('1H', 'proton')
+value.set('15N', 'heteronuc_type')
+value.set('1H', 'proton_type')
 
 # Set the bond length and CSA values.
-value.set(1.02 * 1e-10, 'bond_length')
+value.set(1.02 * 1e-10, 'r')
 value.set(-172 * 1e-6, 'csa')
 
 # Set the angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor

@@ -46,9 +46,9 @@ def exec_stage_1(pipes):
 
         # Setup other values.
         diffusion_tensor.init((1e-8, 0, 0, 0))
-        value.set('15N', 'heteronucleus')
-        value.set('1H', 'proton')
-        value.set(1.02 * 1e-10, 'bond_length')
+        value.set('15N', 'heteronuc_type')
+        value.set('1H', 'proton_type')
+        value.set(1.02 * 1e-10, 'r')
         value.set(-172 * 1e-6, 'csa')
 
         # Select the model-free model.

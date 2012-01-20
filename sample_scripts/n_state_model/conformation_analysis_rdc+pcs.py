@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -64,9 +64,9 @@ deselect.spin(spin_id=':900@H18')
 structure.vectors(spin_id='@C*', attached='H*', ave=False)
 
 # Set the values needed to calculate the dipolar constant.
-value.set(1.10 * 1e-10, 'bond_length', spin_id="@C*")
-value.set('13C', 'heteronucleus', spin_id="@C*")
-value.set('1H', 'proton', spin_id="@C*")
+value.set(1.10 * 1e-10, 'r', spin_id="@C*")
+value.set('13C', 'heteronuc_type', spin_id="@C*")
+value.set('1H', 'proton_type', spin_id="@C*")
 
 # File list.
 align_list = ['Dy', 'Tb', 'Tm', 'Er', 'Yb', 'Eu']
