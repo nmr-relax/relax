@@ -1447,7 +1447,7 @@ class Model_free_main:
             return diff_val
 
         # Model-free parameter.
-        self.SPIN_PARAMS.get_default(param)
+        return self.SPIN_PARAMS.get_default(param)
 
 
     def deselect(self, model_info, sim_index=None):
