@@ -127,6 +127,23 @@ class Param_list:
         return self._conv_factor[name]
 
 
+    def get_default(self, name):
+        """Return the default value of the parameter.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The default value.
+        @rtype:         None or str
+        """
+
+        # Check.
+        if name not in self._names:
+            return None
+
+        # Return the default value.
+        return self._defaults[name]
+
+
     def get_desc(self, name):
         """Return the description of the parameter.
 

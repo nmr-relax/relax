@@ -89,6 +89,19 @@ class API_common:
         """
 
 
+    def _default_value_spin(self, param):
+        """The default spin parameter values.
+
+        @param param:   The spin parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
+        """
+
+        # The default value.
+        self.SPIN_PARAMS.get_default(param)
+
+
     def _eliminate_false(self, name, value, model_info, args, sim=None):
         """Dummy method for model elimination.
 

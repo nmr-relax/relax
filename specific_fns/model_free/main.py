@@ -1432,6 +1432,23 @@ class Model_free_main:
 
         """]
 
+    def default_value(self, param):
+        """The default model-free parameter values.
+
+        @param param:   The model-free parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
+        """
+
+        # Diffusion tensor parameter.
+        diff_val = diffusion_tensor.default_value(param)
+        if diff_val != None:
+            return diff_val
+
+        # Model-free parameter.
+        self.SPIN_PARAMS.get_default(param)
+
 
     def deselect(self, model_info, sim_index=None):
         """Deselect models or simulations.
