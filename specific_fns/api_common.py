@@ -99,7 +99,7 @@ class API_common:
         """
 
         # The default value.
-        self.SPIN_PARAMS.get_default(param)
+        return self.SPIN_PARAMS.get_default(param)
 
 
     def _eliminate_false(self, name, value, model_info, args, sim=None):
