@@ -55,20 +55,27 @@ times = [
     2.45
 ]
 
-# Loop over the spectra.
-for i in xrange(len(names)):
-    # Load the peak intensities.
-    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method=ds.int_type)
+# Load the data twice to test data deletion.
+for iter in range(2):
+    # Loop over the spectra.
+    for i in xrange(len(names)):
+        # Load the peak intensities.
+        spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method=ds.int_type)
 
-    # Set the relaxation times.
-    relax_fit.relax_time(time=times[i], spectrum_id=names[i])
+        # Set the relaxation times.
+        relax_fit.relax_time(time=times[i], spectrum_id=names[i])
 
-# Specify the duplicated spectra.
-spectrum.replicated(spectrum_ids=['T1_inv-recov_750_ms', 'T1_inv-recov_750_ms_bis'])
-spectrum.replicated(spectrum_ids=['T1_inv-recov_1950_ms', 'T1_inv-recov_1950_ms_bis'])
+    # Specify the duplicated spectra.
+    spectrum.replicated(spectrum_ids=['T1_inv-recov_750_ms', 'T1_inv-recov_750_ms_bis'])
+    spectrum.replicated(spectrum_ids=['T1_inv-recov_1950_ms', 'T1_inv-recov_1950_ms_bis'])
 
-# Peak intensity error analysis.
-spectrum.error_analysis()
+    # Peak intensity error analysis.
+    spectrum.error_analysis()
+
+    # Delete the data.
+    if iter == 0:
+        for i in range(len(names)):
+            spectrum.delete(names[i])
 
 # Set the relaxation curve type.
 relax_fit.select_model('exp_3param_inv_neg')
@@ -96,8 +103,8 @@ results.write(file='devnull', force=True)
 grace.write(y_data_type='chi2', file='devnull', force=True)    # Minimised chi-squared value.
 grace.write(y_data_type='i0', file='devnull', force=True)    # Initial peak intensity.
 grace.write(y_data_type='rx', file='devnull', force=True)    # Relaxation rate.
-grace.write(x_data_type='relax_times', y_data_type='int', file='devnull', force=True)    # Average peak intensities.
-grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='devnull', force=True)    # Average peak intensities (normalised).
+grace.write(x_data_type='relax_times', y_data_type='intensities', file='devnull', force=True)    # Average peak intensities.
+grace.write(x_data_type='relax_times', y_data_type='intensities', norm=True, file='devnull', force=True)    # Average peak intensities (normalised).
 
 # Save the program state.
 state.save('devnull', force=True)
