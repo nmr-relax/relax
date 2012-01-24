@@ -1037,12 +1037,10 @@ class Displacements:
         """
 
         # Loop over the starting models.
-        start_models = self._translation_vector.keys()
-        start_models.sort()
+        start_models = sorted(self._translation_vector.keys())
         for model_from in start_models:
             # Loop over the ending models.
-            end_models = self._translation_vector[model_from].keys()
-            end_models.sort()
+            end_models = sorted(self._translation_vector[model_from].keys())
             for model_to in end_models:
                 # Create an XML element for each pair.
                 pair_element = doc.createElement('pair')

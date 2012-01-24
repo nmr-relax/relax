@@ -623,7 +623,7 @@ class Structure(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_float_matrix(R, 'rotation matrix', dim=(3,3))
+        arg_check.is_float_matrix(R, 'rotation matrix', dim=(3, 3))
         arg_check.is_float_array(origin, 'origin of rotation', size=3, can_be_none=True)
         arg_check.is_int(model, 'model', can_be_none=True)
         arg_check.is_str(atom_id, 'atom identification string', can_be_none=True)

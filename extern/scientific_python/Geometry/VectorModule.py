@@ -44,11 +44,11 @@ class Vector:
             (from any sequence containing three coordinates)
         """
         if x is None:
-            self.array = [0.,0.,0.]
+            self.array = [0., 0., 0.]
         elif y is None and z is None:
             self.array = x
         else:
-            self.array = [x,y,z]
+            self.array = [x, y, z]
         self.array = Numeric.array(self.array)
 
     def __getstate__(self):
@@ -63,7 +63,7 @@ class Vector:
 
     def __repr__(self):
         return 'Vector(%s,%s,%s)' % (`self.array[0]`,\
-                                     `self.array[1]`,`self.array[2]`)
+                                     `self.array[1]`, `self.array[2]`)
 
     def __str__(self):
         return `list(self.array)`
@@ -111,7 +111,7 @@ class Vector:
         if isVector(other):
             raise TypeError("Can't divide by a vector")
         else:
-            return Vector(Numeric.divide(self.array,1.*other))
+            return Vector(Numeric.divide(self.array, 1.*other))
             
     def __rdiv__(self, other):
         raise TypeError("Can't divide by a vector")
@@ -199,7 +199,7 @@ class Vector:
         from extern.scientific_python import Geometry
         if isVector(other):
             return Geometry.Tensor(self.array[:, N.NewAxis]
-                                   * other.array[N.NewAxis, :], 1)
+                                   * other.array[N.NewAxis,:], 1)
         elif Geometry.isTensor(other):
             return Geometry.Tensor(self.array, 1)*other
         else:
@@ -218,7 +218,7 @@ class Vector:
         cosa = Numeric.add.reduce(self.array*other.array) / \
                Numeric.sqrt(Numeric.add.reduce(self.array*self.array) * \
                             Numeric.add.reduce(other.array*other.array))
-        cosa = max(-1.,min(1.,cosa))
+        cosa = max(-1., min(1., cosa))
         return Numeric.arccos(cosa)
 
 
@@ -228,4 +228,4 @@ def isVector(x):
     """
     @returns: C{True} if x is a L{Vector}
     """
-    return hasattr(x,'is_vector')
+    return hasattr(x, 'is_vector')

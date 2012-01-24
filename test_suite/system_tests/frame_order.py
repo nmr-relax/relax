@@ -303,7 +303,7 @@ class Frame_order(SystemTestCase):
         pivot = array([ 37.254, 0.5, 16.7465])
         com = array([ 26.83678091, -12.37906417,  28.34154128])
         pivot_com_axis = com - pivot
-        rot_axis = array([-0.4043088 , -0.49985692,  0.76594873])
+        rot_axis = array([-0.4043088, -0.49985692,  0.76594873])
 
         # The rotation axis.
         self.interpreter.pipe.switch('frame order')

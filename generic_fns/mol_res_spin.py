@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2011 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -230,7 +230,7 @@ class Selection(object):
                 select_res = True
 
             # A true match.
-            elif relax_re.search(self.residues, res.name) or res.num in self.residues:
+            elif res.num in self.residues or relax_re.search(self.residues, res.name):
                 select_res = True
         else:
             # No residue container sent in, therefore the residue is assumed to match.
@@ -243,7 +243,7 @@ class Selection(object):
                 select_spin = True
 
             # A true match.
-            elif relax_re.search(self.spins, spin.name) or spin.num in self.spins:
+            elif spin.num in self.spins or relax_re.search(self.spins, spin.name):
                 select_spin = True
         else:
             # No spin container sent in, therefore the spin is assumed to match.
@@ -1577,7 +1577,6 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, 
         id = id + "@" + data[spin_name_col-1]
 
     # Return the spin id string.
-    print `id`
     return id
 
 
@@ -2233,10 +2232,14 @@ def return_residue(selection=None, pipe=None):
     res_num = 0
     res_container = None
     for mol in dp.mol:
+        # Skip the molecule if there is no match to the selection.
+        if mol not in select_obj:
+            continue
+
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
-            if (mol, res) not in select_obj:
+            if res not in select_obj:
                 continue
 
             # Store the residue container.
@@ -2256,21 +2259,16 @@ def return_residue(selection=None, pipe=None):
 def return_spin(selection=None, pipe=None, full_info=False):
     """Function for returning the spin data container of the given selection.
 
-    If more than one selection is given, then the boolean AND operation will be used to pull out the
-    spin.
+    If more than one selection is given, then the boolean AND operation will be used to pull out the spin.
 
-    @param selection:   The spin selection identifier(s).
-    @type selection:    str or list of str
+    @param selection:   The spin selection identifier.
+    @type selection:    str
     @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
-    @param full_info:   A flag specifying if the amount of information to be returned.  If false,
-                        only the data container is returned.  If true, the molecule name, residue
-                        number, and residue name is additionally returned.
+    @param full_info:   A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
     @type full_info:    boolean
-    @return:            The spin system specific data container and, if full_info=True, the molecule
-                        name, residue number, and residue name.
-    @rtype:             instance of the SpinContainer class.  If full_info=True, the type is the
-                        tuple (SpinContainer, str, int, str).
+    @return:            The spin system specific data container and, if full_info=True, the molecule name, residue number, and residue name.
+    @rtype:             instance of the SpinContainer class.  If full_info=True, the type is the tuple (SpinContainer, str, int, str).
     """
 
     # Handle Unicode.
@@ -2281,34 +2279,31 @@ def return_spin(selection=None, pipe=None, full_info=False):
     if pipe == None:
         pipe = pipes.cdp_name()
 
-    # Test the data pipe.
-    pipes.test(pipe)
-
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
     # Parse the selection string.
-    if isinstance(selection, str):
-        selection = [selection]
-    select_obj = []
-    for i in range(len(selection)):
-        select_obj.append(Selection(selection[i]))
+    select_obj = Selection(selection)
 
     # Loop over the molecules.
     spin = None
     spin_num = 0
     spin_container = None
     for mol in dp.mol:
+        # Skip the molecule if there is no match to the selection.
+        if mol not in select_obj:
+            continue
+
         # Loop over the residues.
         for res in mol.res:
+            # Skip the residue if there is no match to the selection.
+            if res not in select_obj:
+                continue
+
             # Loop over the spins.
             for spin in res.spin:
                 # Skip the spin if there is no match to the selection.
-                skip = False
-                for i in range(len(selection)):
-                    if (mol, res, spin) not in select_obj[i]:
-                        skip = True
-                if skip:
+                if spin not in select_obj:
                     continue
 
                 # Store all containers.

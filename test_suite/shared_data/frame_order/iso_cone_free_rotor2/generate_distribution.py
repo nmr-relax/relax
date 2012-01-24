@@ -35,7 +35,7 @@ print("Rotation axis: %s, norm = %s" % (repr(rot_axis), norm(rot_axis)))
 
 # Generate N random rotations within the cone.
 i = 0
-while 1:
+while True:
     # The random rotation matrix.
     R_random_hypersphere(R)
 

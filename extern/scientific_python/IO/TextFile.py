@@ -72,7 +72,7 @@ class TextFile:
                     try:
                         self.file = open(filename, mode)
                     except IOError, details:
-                        if type(details) == type(()):
+                        if isinstance(details, type(())):
                             details = details + (filename,)
                         raise IOError(details)
             elif mode == 'w':
@@ -89,7 +89,7 @@ class TextFile:
                     try:
                         self.file = open(filename, mode)
                     except IOError, details:
-                        if type(details) == type(()):
+                        if isinstance(details, type(())):
                             details = details + (filename,)
                         raise IOError(details)
             elif mode == 'a':
