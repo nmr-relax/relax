@@ -599,6 +599,7 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
 
     # Convert the angles to radians.
     if angle_units == 'deg':
+        print("Converting the angles from degrees to radian units.")
         alpha = (alpha / 360.0) * 2.0 * pi
         beta = (beta / 360.0) * 2.0 * pi
         gamma = (gamma / 360.0) * 2.0 * pi
@@ -1709,6 +1710,7 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
 
     # Convert the angles to radians.
     if angle_units == 'deg':
+        print("Converting the angles from degrees to radian units.")
         theta = (theta / 360.0) * 2.0 * pi
         phi = (phi / 360.0) * 2.0 * pi
 

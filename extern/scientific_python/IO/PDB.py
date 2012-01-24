@@ -196,9 +196,9 @@ class PDBFile:
         @returns: the contents of one PDB record
         @rtype: C{tuple}
         """
-        while 1:
+        while True:
             line = self.file.readline()
-            if not line: return ('END','')
+            if not line: return ('END', '')
             if line[-1] == '\n': line = line[:-1]
             line = string.strip(line)
             if line: break
@@ -230,7 +230,7 @@ class PDBFile:
                     'residue_number': line[6],
                     'insertion_code': string.strip(line[7]),
                     'u': 1.e-4*Tensor([[line[8], line[11], line[12]],
-                                       [line[11], line[9] , line[13]],
+                                       [line[11], line[9], line[13]],
                                        [line[12], line[13], line[10]]]),
                     'segment_id': string.strip(line[14]),
                     'element': string.strip(line[15]),
@@ -327,8 +327,8 @@ class PDBFile:
         elif type == 'ANISOU':
             format = anisou_format
             u = 1.e4*data['u']
-            u = [int(u[0,0]), int(u[1,1]), int(u[2,2]),
-                 int(u[0,1]), int(u[0,2]), int(u[1,2])]
+            u = [int(u[0, 0]), int(u[1, 1]), int(u[2, 2]),
+                 int(u[0, 1]), int(u[0, 2]), int(u[1, 2])]
             line = line + [data.get('serial_number', 1),
                            data.get('name'),
                            data.get('alternate', ''),
@@ -391,7 +391,7 @@ class PDBFile:
         @type text: C{str}
         """
         while text:
-            eol = string.find(text,'\n')
+            eol = string.find(text, '\n')
             if eol == -1:
                 eol = len(text)
             self.file.write('REMARK %s \n' % text[:eol])
@@ -591,7 +591,7 @@ class Atom:
         @type file: L{PDBFile} or C{str}
         """
         close = 0
-        if type(file) == type(''):
+        if isinstance(file, type('')):
             file = PDBFile(file, 'w')
             close = 1
         file.writeAtom(self.name, self.position,
@@ -723,7 +723,7 @@ class Group:
         @type file: L{PDBFile} or C{str}
         """
         close = 0
-        if type(file) == type(''):
+        if isinstance(file, type('')):
             file = PDBFile(file, 'w')
             close = 1
         file.nextResidue(self.name, self.number, None)
@@ -785,7 +785,7 @@ class AminoAcidResidue(Residue):
 
     def writeToFile(self, file):
         close = 0
-        if type(file) == type(''):
+        if isinstance(file, type('')):
             file = PDBFile(file, 'w')
             close = 1
         terminus = None
@@ -856,7 +856,7 @@ class NucleotideResidue(Residue):
 
     def writeToFile(self, file):
         close = 0
-        if type(file) == type(''):
+        if isinstance(file, type('')):
             file = PDBFile(file, 'w')
             close = 1
         terminus = None
@@ -969,7 +969,7 @@ class Chain:
         @type file: L{PDBFile} or C{str}
         """
         close = 0
-        if type(file) == type(''):
+        if isinstance(file, type('')):
             file = PDBFile(file, 'w')
             close = 1
         file.nextChain(self.chain_id, self.segment_id)
@@ -1364,7 +1364,7 @@ class Structure:
         residue = None
         chain = None
         read = self.model == 0
-        while 1:
+        while True:
             type, data = file.readLine()
             if type == 'END': break
             elif type == 'HEADER':
@@ -1505,7 +1505,7 @@ class Structure:
         @type file: L{PDBFile} or C{str}
         """
         close = 0
-        if type(file) == type(''):
+        if isinstance(file, type('')):
             file = PDBFile(file, 'w')
             close = 1
         for o in self.objects:
@@ -1519,7 +1519,7 @@ if __name__ == '__main__':
 
         file = PDBFile('~/3lzt.pdb')
         copy = PDBFile('test.pdb', 'w', 'xplor')
-        while 1:
+        while True:
             type, data = file.readLine()
             if type == 'END':
                 break

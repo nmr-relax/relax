@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,13 +38,10 @@ def search(pattern, id):
         1.  All '*' to '.*'.
         2.  The identifier is bracketed, '^' is added to the start and '$' to the end.
 
-    After conversion of both the string and patterns, the comparison is then performed both ways
-    from the converted string matching the original string (using re.search()).
+    After conversion of both the string and patterns, the comparison is then performed both ways from the converted string matching the original string (using re.search()).
 
 
-    @param pattern:     The pattern to match the string to.  This can be a list of patterns.  All
-                        elements will be converted to strings, so the pattern or list can consist of
-                        anything.
+    @param pattern:     The pattern to match the string to.  This can be a list of patterns.  All elements will be converted to strings, so the pattern or list can consist of anything.
     @type pattern:      anything
     @param id:          The identification object.
     @type id:           None, str, or number
@@ -56,9 +53,8 @@ def search(pattern, id):
     if id == None:
         return False
 
-    # If a number, convert to a string.
-    if isinstance(id, int) or isinstance(id, float):
-        id = str(id)
+    # Convert to a string.
+    id = str(id)
 
     # If pattern is not a list, convert it to one.
     if not isinstance(pattern, list):
@@ -76,8 +72,8 @@ def search(pattern, id):
         id_re =      replace(id,      '*', '.*')
 
         # Bracket the pattern.
-        pattern_re = '^' + pattern_re + '$'
-        id_re = '^' + id_re + '$'
+        pattern_re = '^%s$' % pattern_re
+        id_re = '^%s$' % id_re
 
         # String matches (both ways).
         if re.search(pattern_re, id):

@@ -97,13 +97,13 @@ class FortranLine:
                        extended by spaces to have the indicated length.
                        The default value of 80 is almost always correct.
         """
-        if type(line) == type(''):
+        if isinstance(line, type('')):
             self.text = line
             self.data = None
         else:
             self.text = None
             self.data = line
-        if type(format) == type(''):
+        if isinstance(format, type('')):
             self.format = FortranFormat(format)
         else:
             self.format = format
