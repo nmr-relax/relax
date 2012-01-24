@@ -1577,7 +1577,6 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, 
         id = id + "@" + data[spin_name_col-1]
 
     # Return the spin id string.
-    print `id`
     return id
 
 
