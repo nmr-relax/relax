@@ -1734,7 +1734,7 @@ class Test_mol_res_spin(UnitTestCase):
     ######################################################
     # Test disabled until this functionality is enabled. #
     ######################################################
-    def xxx_test_boolean_parenthesis_selection(self):
+    def fixme_test_boolean_parenthesis_selection(self):
         """Test complex boolean mol-res-spin selections with parenthesis."""
 
         # The selection loop:

@@ -887,7 +887,7 @@ class Test_frame_order_matrix_ops(TestCase):
                 self.assertAlmostEqual(f2[i, j], self.f2_half_cone_90_y[i, j])
 
 
-    def xxx_test_compile_2nd_matrix_pseudo_ellipse_free_rotor_order(self):
+    def fixme_test_compile_2nd_matrix_pseudo_ellipse_free_rotor_order(self):
         """Check if compile_2nd_matrix_pseudo_ellipse_free_rotor() can return the identity matrix for order."""
 
         # The Kronecker product of the eigenframe rotation.
