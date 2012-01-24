@@ -223,6 +223,10 @@ class Selection(object):
             # No molecule container sent in, therefore the molecule is assumed to match.
             select_mol = True
 
+        # Quick exit.
+        if not select_mol:
+            return False
+
         # Residue container.
         if res:
             # No residues in selection object, therefore default to a match.
@@ -230,11 +234,15 @@ class Selection(object):
                 select_res = True
 
             # A true match.
-            elif relax_re.search(self.residues, res.name) or res.num in self.residues:
+            elif res.num in self.residues or relax_re.search(self.residues, res.name):
                 select_res = True
         else:
             # No residue container sent in, therefore the residue is assumed to match.
             select_res = True
+
+        # Quick exit.
+        if not select_res:
+            return False
 
         # Spin container.
         if spin:
@@ -243,7 +251,7 @@ class Selection(object):
                 select_spin = True
 
             # A true match.
-            elif relax_re.search(self.spins, spin.name) or spin.num in self.spins:
+            elif spin.num in self.spins or relax_re.search(self.spins, spin.name):
                 select_spin = True
         else:
             # No spin container sent in, therefore the spin is assumed to match.
