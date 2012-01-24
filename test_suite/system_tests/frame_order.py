@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -161,7 +161,7 @@ class Frame_order(SystemTestCase):
             setattr(cdp, param, curr)
 
 
-    def test_cam_free_rotor(self):
+    def fixme_test_cam_free_rotor(self):
         """Test the free rotor frame order model of CaM."""
 
         # Execute the script.
@@ -196,7 +196,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(angle, 0.0, 1)
 
 
-    def test_cam_free_rotor2(self):
+    def fixme_test_cam_free_rotor2(self):
         """Test the second free rotor frame order model of CaM."""
 
         # Execute the script.
@@ -238,7 +238,7 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(angle, 0.0, 2)
 
 
-    def test_cam_iso_cone_free_rotor(self):
+    def fixme_test_cam_iso_cone_free_rotor(self):
         """Test the isotropic cone, free rotor frame order model of CaM."""
 
         # Execute the script.
@@ -290,7 +290,7 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.cone_theta * 2.0, 40.0 / 360.0 * 2.0 * pi, 1)
 
 
-    def test_cam_iso_cone_free_rotor2(self):
+    def fixme_test_cam_iso_cone_free_rotor2(self):
         """Test the second isotropic cone, free rotor frame order model of CaM."""
 
         # Execute the script.
@@ -326,7 +326,7 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.cone_theta * 2.0, 40.0 / 360.0 * 2.0 * pi, 2)
 
 
-    def test_cam_rigid(self):
+    def fixme_test_cam_rigid(self):
         """Test the rigid frame order model of CaM."""
 
         # Execute the script.
@@ -341,7 +341,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ave_pos.z[i], orig_pos.z[i], 1)
 
 
-    def test_cam_rotor(self):
+    def fixme_test_cam_rotor(self):
         """Test the rotor frame order model of CaM."""
 
         # Execute the script.
@@ -384,7 +384,7 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.cone_sigma_max * 2.0, 60.0 / 360.0 * 2.0 * pi, 1)
 
 
-    def test_cam_rotor2(self):
+    def fixme_test_cam_rotor2(self):
         """Test the second rotor frame order model of CaM."""
 
         # Execute the script.
@@ -427,7 +427,7 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.cone_sigma_max * 2.0, 60.0 / 360.0 * 2.0 * pi, 1)
 
 
-    def test_model_free_rotor(self):
+    def fixme_test_model_free_rotor(self):
         """Test the free rotor frame order model."""
 
         # Execute the script.
@@ -437,7 +437,7 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(ds.chi2, 0.0216067401326)
 
 
-    def test_model_free_rotor_eigenframe(self):
+    def fixme_test_model_free_rotor_eigenframe(self):
         """Test the free rotor frame order model in the eigenframe."""
 
         # Execute the script.
@@ -447,7 +447,7 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(ds.chi2, 0.00673210578744)
 
 
-    def test_model_iso_cone(self):
+    def fixme_test_model_iso_cone(self):
         """Test the isotropic cone frame order model."""
 
         # Execute the script.
@@ -479,7 +479,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_model_iso_cone_free_rotor(self):
+    def fixme_test_model_iso_cone_free_rotor(self):
         """Test the free rotor isotropic cone frame order model."""
 
         # Execute the script.
@@ -511,7 +511,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_model_iso_cone_free_rotor_eigenframe(self):
+    def fixme_test_model_iso_cone_free_rotor_eigenframe(self):
         """Test the free rotor isotropic cone frame order model in the eigenframe."""
 
         # Execute the script.
@@ -543,7 +543,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_model_pseudo_ellipse(self):
+    def fixme_test_model_pseudo_ellipse(self):
         """Test the pseudo-ellipse frame order model."""
 
         # Execute the script.
@@ -575,7 +575,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_model_pseudo_ellipse_free_rotor(self):
+    def fixme_test_model_pseudo_ellipse_free_rotor(self):
         """Test the free rotor pseudo-elliptic cone frame order model."""
 
         # Execute the script.
@@ -627,7 +627,7 @@ class Frame_order(SystemTestCase):
                 self.assertAlmostEqual(ds.chi2[j][i], chi2_ref[j][i])
 
 
-    def test_model_pseudo_ellipse_torsionless(self):
+    def fixme_test_model_pseudo_ellipse_torsionless(self):
         """Test the pseudo-ellipse frame order model."""
 
         # Execute the script.
@@ -659,7 +659,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_model_rotor(self):
+    def fixme_test_model_rotor(self):
         """Test the rotor frame order model."""
 
         # Execute the script.
@@ -691,7 +691,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_model_rotor_eigenframe(self):
+    def fixme_test_model_rotor_eigenframe(self):
         """Test the rotor frame order model in the eigenframe."""
 
         # Execute the script.
@@ -723,14 +723,14 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_opendx_map(self):
+    def fixme_test_opendx_map(self):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
 
 
-    def test_opt_rigid_no_rot(self):
+    def fixme_test_opt_rigid_no_rot(self):
         """Test the 'rigid' model for unrotated tensors with no motion."""
 
         # Execute the script.
@@ -747,7 +747,7 @@ class Frame_order(SystemTestCase):
         self.assertEqual(cdp.ave_pos_gamma, 0.0, msg=self.mesg)
 
 
-    def test_opt_rigid_rand_rot(self):
+    def fixme_test_opt_rigid_rand_rot(self):
         """Test the 'rigid' model for randomly rotated tensors with no motion."""
 
         # Execute the script.
@@ -763,7 +763,7 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.ave_pos_gamma, 0.64895449611163691, msg=self.mesg)
 
 
-    def test_parametric_restriction_iso_cone_to_iso_cone_free_rotor(self):
+    def fixme_test_parametric_restriction_iso_cone_to_iso_cone_free_rotor(self):
         """Parametric restriction of the isotropic cone to the free rotor isotropic cone frame order model."""
 
         # Execute the script.
@@ -795,7 +795,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_parametric_restriction_pseudo_ellipse_to_iso_cone(self):
+    def fixme_test_parametric_restriction_pseudo_ellipse_to_iso_cone(self):
         """Parametric restriction of the pseudo-ellipse to the isotropic cone frame order model."""
 
         # Execute the script.
@@ -827,7 +827,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_parametric_restriction_pseudo_ellipse_to_iso_cone_free_rotor(self):
+    def fixme_test_parametric_restriction_pseudo_ellipse_to_iso_cone_free_rotor(self):
         """Parametric restriction of the pseudo-ellipse to the free rotor isotropic cone frame order model."""
 
         # Execute the script.
@@ -859,7 +859,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_parametric_restriction_pseudo_ellipse_free_rotor_to_iso_cone(self):
+    def fixme_test_parametric_restriction_pseudo_ellipse_free_rotor_to_iso_cone(self):
         """Parametric restriction of the pseudo-ellipse to the isotropic cone frame order model."""
 
         # Execute the script.
@@ -891,7 +891,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_parametric_restriction_pseudo_ellipse_free_rotor_to_iso_cone_free_rotor(self):
+    def fixme_test_parametric_restriction_pseudo_ellipse_free_rotor_to_iso_cone_free_rotor(self):
         """Parametric restriction of the free rotor pseudo-ellipse to the free rotor isotropic cone frame order model."""
 
         # Execute the script.
@@ -923,7 +923,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_pseudo_ellipse(self):
+    def fixme_test_pseudo_ellipse(self):
         """Test the pseudo-ellipse target function."""
 
         # Execute the script.
@@ -936,7 +936,7 @@ class Frame_order(SystemTestCase):
         self.space_probe(ref_chi2=chi2, params=['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'cone_theta_x', 'cone_theta_y', 'cone_sigma_max'])
 
 
-    def test_pseudo_ellipse_torsionless(self):
+    def fixme_test_pseudo_ellipse_torsionless(self):
         """Test the torsionless pseudo-ellipse target function."""
 
         # Execute the script.
