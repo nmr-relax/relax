@@ -102,7 +102,7 @@ class Tensor:
 
     def __getitem__(self, index):
         elements = self.array[index]
-        if type(elements) == type(self.array):
+        if isinstance(elements, type(self.array)):
             return Tensor(elements)
         else:
             return elements
@@ -133,7 +133,7 @@ class Tensor:
 
     def diagonal(self, axis1=0, axis2=1):
         if self.rank == 2:
-            return Tensor([self.array[0,0], self.array[1,1], self.array[2,2]])
+            return Tensor([self.array[0, 0], self.array[1, 1], self.array[2, 2]])
         else:
             if axis2 < axis1: axis1, axis2 = axis2, axis1
             raise ValueError('Not yet implemented')
@@ -145,7 +145,7 @@ class Tensor:
         @raises ValueError: if rank !=2 
         """
         if self.rank == 2:
-            return self.array[0,0]+self.array[1,1]+self.array[2,2]
+            return self.array[0, 0]+self.array[1, 1]+self.array[2, 2]
         else:
             raise ValueError('Not yet implemented')
 
@@ -165,7 +165,7 @@ class Tensor:
         if self.rank == 2:
             return Tensor(0.5*(self.array + \
                                N.transpose(self.array,
-                                           N.array([1,0]))),
+                                           N.array([1, 0]))),
                           1)
         else:
             raise ValueError('Not yet implemented')
@@ -179,7 +179,7 @@ class Tensor:
         if self.rank == 2:
             return Tensor(0.5*(self.array - \
                                N.transpose(self.array,
-                                           N.array([1,0]))),
+                                           N.array([1, 0]))),
                           1)
         else:
             raise ValueError('Not yet implemented')
@@ -228,4 +228,4 @@ def isTensor(x):
     """
     @returns: C{True} if x is a L{Tensor}
     """
-    return hasattr(x,'is_tensor')
+    return hasattr(x, 'is_tensor')

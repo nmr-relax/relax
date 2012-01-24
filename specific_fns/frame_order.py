@@ -292,7 +292,6 @@ class Frame_order(API_base, API_common):
         # Rotations and inversions.
         axis_pos = axis
         axis_neg = dot(inv_mat, axis)
-        print inv_mat
 
         # Simulation central axis.
         axis_sim_pos = None
@@ -307,7 +306,6 @@ class Frame_order(API_base, API_common):
 
             # Inversion.
             axis_sim_pos = axis_sim
-            print axis_sim_pos
             axis_sim_neg = transpose(dot(inv_mat, transpose(axis_sim_pos)))
 
         # Generate the axis vectors.

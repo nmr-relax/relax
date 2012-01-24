@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -436,7 +436,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             raise RelaxError("An invalid error value of zero has been encountered.")
 
         # Get the corresponding spin container.
-        spin = return_spin([id, spin_id])
+        spin = return_spin(id)
         if spin == None:
             warn(RelaxNoSpinWarning(id))
             continue
