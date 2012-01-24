@@ -322,7 +322,6 @@ class Model_free_main:
                 param_vector[i] = 0.0
 
         # Return a numpy array.
-        print `param_vector`
         return array(param_vector, float64)
 
 
