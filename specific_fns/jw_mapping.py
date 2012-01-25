@@ -314,9 +314,17 @@ class Jw_mapping(API_base, API_common):
                 spin.select = False
 
             # Require 3 or more data points.
-            elif len(spin.ri_data) < 3:
-                warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
-                spin.select = False
+            else:
+                # Count the points.
+                data_points = 0
+                for id in cdp.ri_ids:
+                    if spin.ri_data.has_key(id) and spin.ri_data[id] != None:
+                        data_points += 1
+
+                # Not enough.
+                if data_points < 3:
+                    warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
+                    spin.select = False
 
 
     return_data_name_doc = ["Reduced spectral density mapping data type string matching patterns", """
@@ -391,7 +399,7 @@ class Jw_mapping(API_base, API_common):
 
         # Skip deselected spins.
         if not spin.select:
-                return
+            return
 
         # Return J(0) sim data.
         if index == 0:

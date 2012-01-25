@@ -223,6 +223,10 @@ class Selection(object):
             # No molecule container sent in, therefore the molecule is assumed to match.
             select_mol = True
 
+        # Quick exit.
+        if not select_mol:
+            return False
+
         # Residue container.
         if res:
             # No residues in selection object, therefore default to a match.
@@ -235,6 +239,10 @@ class Selection(object):
         else:
             # No residue container sent in, therefore the residue is assumed to match.
             select_res = True
+
+        # Quick exit.
+        if not select_res:
+            return False
 
         # Spin container.
         if spin:
