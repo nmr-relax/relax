@@ -23,9 +23,9 @@ for i in range(len(ln)):
     structure.vectors(spin_id='@N', attached='H', ave=False)
 
     # Set the values needed to calculate the dipolar constant.
-    value.set(1.041 * 1e-10, 'bond_length', spin_id="@N")
-    value.set('15N', 'heteronucleus', spin_id="@N")
-    value.set('1H', 'proton', spin_id="@N")
+    value.set(1.041 * 1e-10, 'r', spin_id="@N")
+    value.set('15N', 'heteronuc_type', spin_id="@N")
+    value.set('1H', 'proton_type', spin_id="@N")
 
     # Load the RDCs.
     rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
