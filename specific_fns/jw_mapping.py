@@ -391,7 +391,7 @@ class Jw_mapping(API_base, API_common):
 
         # Skip deselected spins.
         if not spin.select:
-                return
+            return
 
         # Return J(0) sim data.
         if index == 0:
