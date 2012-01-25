@@ -735,11 +735,11 @@ class Frame_order(API_base, API_common):
                 raise RelaxNoValueError("bond length")
 
             # Gyromagnetic ratios.
-            gx = return_gyromagnetic_ratio(spin.heteronucleus)
-            gh = return_gyromagnetic_ratio(spin.proton)
+            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+            gh = return_gyromagnetic_ratio(spin.proton_type)
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            rdc_const.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.bond_length))
+            rdc_const.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r))
 
         # The RDC data.
         for align_id in cdp.align_ids:
