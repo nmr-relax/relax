@@ -45,6 +45,11 @@ grace.write(y_data_type='j0', file='devnull', force=True)
 grace.write(y_data_type='jwx', file='devnull', force=True)
 grace.write(y_data_type='jwh', file='devnull', force=True)
 
+# Value writing.
+value.write(param='j0', file='devnull', force=True)
+value.write(param='jwx', file='devnull', force=True)
+value.write(param='jwh', file='devnull', force=True)
+
 # Finish.
 results.write(file='devnull', force=True)
 state.save('devnull', force=True)
