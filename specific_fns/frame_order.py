@@ -727,11 +727,11 @@ class Frame_order(API_base, API_common):
                 raise RelaxError("The spin '%s' contains more than one XH bond vector %s." % (spin_id, vect))
 
             # Checks.
-            if not hasattr(spin, 'heteronucleus'):
+            if not hasattr(spin, 'heteronuc_type'):
                 raise RelaxSpinTypeError
-            if not hasattr(spin, 'proton'):
+            if not hasattr(spin, 'proton_type'):
                 raise RelaxProtonTypeError
-            if not hasattr(spin, 'bond_length'):
+            if not hasattr(spin, 'r'):
                 raise RelaxNoValueError("bond length")
 
             # Gyromagnetic ratios.
