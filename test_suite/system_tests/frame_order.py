@@ -112,15 +112,22 @@ class Frame_order(SystemTestCase):
 
 
         # Minimisation info.
-        string = string + "\n%-15s %30.17g\n" % ('ave_pos_alpha:',   cdp.ave_pos_alpha)
+        string = string + "\n"
+        if hasattr(cdp, 'ave_pos_alpha'):
+            string = string + "%-15s %30.17g\n" % ('ave_pos_alpha:',   cdp.ave_pos_alpha)
         string = string +   "%-15s %30.17g\n" % ('ave_pos_beta:',    cdp.ave_pos_beta)
         string = string +   "%-15s %30.17g\n" % ('ave_pos_gamma:',   cdp.ave_pos_gamma)
         string = string +   "%-15s %30.17g\n" % ('chi2:',    cdp.chi2)
-        string = string +   "%-15s %30i\n" % ('iter:',    cdp.iter)
-        string = string +   "%-15s %30i\n" % ('f_count:', cdp.f_count)
-        string = string +   "%-15s %30i\n" % ('g_count:', cdp.g_count)
-        string = string +   "%-15s %30i\n" % ('h_count:', cdp.h_count)
-        string = string +   "%-15s %30s\n" % ('warning:', cdp.warning)
+        if hasattr(cdp, 'iter'):
+            string = string +   "%-15s %30i\n" % ('iter:',    cdp.iter)
+        if hasattr(cdp, 'f_count'):
+            string = string +   "%-15s %30i\n" % ('f_count:', cdp.f_count)
+        if hasattr(cdp, 'g_count'):
+            string = string +   "%-15s %30i\n" % ('g_count:', cdp.g_count)
+        if hasattr(cdp, 'h_count'):
+            string = string +   "%-15s %30i\n" % ('h_count:', cdp.h_count)
+        if hasattr(cdp, 'warning'):
+            string = string +   "%-15s %30s\n" % ('warning:', cdp.warning)
 
         # Return the string.
         return string
@@ -164,36 +171,22 @@ class Frame_order(SystemTestCase):
     def test_cam_free_rotor(self):
         """Test the free rotor frame order model of CaM."""
 
+        # Setup.
+        ds.flag_rdc = True
+        ds.flag_pcs = True
+        ds.flag_opt = False
+
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
 
-        # Check the average structure CoM matches that of the original position (the average structure is not defined along the rotation axis).
-        for i in range(3):
-            self.assertAlmostEqual(ds['ave pos'].CoM[i], ds['orig pos'].CoM[i], 0)
-
-        # The rotation axis.
+        # Switch back to the original pipe.
         self.interpreter.pipe.switch('frame order')
-        spherical_vect = zeros(3, float64)
-        spherical_vect[0] = 1.0
-        spherical_vect[1] = cdp.axis_theta
-        spherical_vect[2] = cdp.axis_phi
-        cart_vect = zeros(3, float64)
-        spherical_to_cartesian(spherical_vect, cart_vect)
 
-        # The original rotation axis.
-        pivot = array([ 37.254, 0.5, 16.7465])
-        com = array([ 26.83678091, -12.37906417,  28.34154128])
-        axis = pivot - com
-        axis = axis / norm(axis)
+        # Get the debugging message.
+        self.mesg = self.mesg_opt_debug()
 
-        # The dot product.
-        angle = acos(dot(cart_vect, axis))
-
-        # Check the angle.
-        if angle > 3 and angle < 4:
-            self.assertAlmostEqual(angle, pi, 1)
-        else:
-            self.assertAlmostEqual(angle, 0.0, 1)
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 13.8, 1, msg=self.mesg)
 
 
     def fixme_test_cam_free_rotor2(self):

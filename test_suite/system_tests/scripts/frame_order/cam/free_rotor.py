@@ -5,6 +5,7 @@ from numpy import array, float64, transpose, zeros
 from os import sep
 
 # relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.structure.mass import centre_of_mass
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from status import Status; status = Status()
@@ -62,10 +63,12 @@ class Analysis:
         ln = ['dy', 'tb', 'tm', 'er']
         for i in range(len(ln)):
             # Load the RDCs.
-            rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=DATA_PATH, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            if ds.flag_rdc:
+                rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=DATA_PATH, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The PCS.
-            pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], dir=DATA_PATH, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            if ds.flag_pcs:
+                pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], dir=DATA_PATH, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
             temperature(id=ln[i], temp=303)
@@ -82,7 +85,7 @@ class Analysis:
         full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
         red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
         for i in range(len(full)):
-            # Initalise the reduced tensor.
+            # Initialise the reduced tensor.
             align_tensor.init(tensor=red[i], params=(0,0,0,0,0))
 
             # Set the domain info.
@@ -114,16 +117,17 @@ class Analysis:
         print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
-        #grid_search(inc=11)
-        #minimise('simplex', constraints=False)
+        if ds.flag_opt:
+            grid_search(inc=11)
+            minimise('simplex', constraints=False)
 
-        ## Test Monte Carlo simulations.
-        #monte_carlo.setup(number=3)
-        #monte_carlo.create_data()
-        #monte_carlo.initial_values()
-        #minimise('simplex', constraints=False)
-        #eliminate()
-        #monte_carlo.error_analysis()
+            # Test Monte Carlo simulations.
+            monte_carlo.setup(number=3)
+            monte_carlo.create_data()
+            monte_carlo.initial_values()
+            minimise('simplex', constraints=False)
+            eliminate()
+            monte_carlo.error_analysis()
 
         # Write the results.
         results.write('devnull', dir=None, force=True)
