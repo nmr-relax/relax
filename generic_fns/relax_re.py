@@ -67,6 +67,10 @@ def search(pattern, id):
         # Force a conversion to str.
         pattern = str(pattern)
 
+        # Quick string check.
+        if id == pattern:
+            return True
+
         # First replace any '*' with '.*' (relax to re conversion).
         pattern_re = replace(pattern, '*', '.*')
         id_re =      replace(id,      '*', '.*')
