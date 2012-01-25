@@ -161,7 +161,7 @@ class Frame_order(SystemTestCase):
             setattr(cdp, param, curr)
 
 
-    def fixme_test_cam_free_rotor(self):
+    def test_cam_free_rotor(self):
         """Test the free rotor frame order model of CaM."""
 
         # Execute the script.
