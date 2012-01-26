@@ -64,6 +64,11 @@ grace.view(file='j0.agr')
 grace.view(file='jwx.agr')
 grace.view(file='jwh.agr')
 
+# Write out the values.
+value.write(param='j0', file='j0.txt', force=True)
+value.write(param='jwx', file='jwx.txt', force=True)
+value.write(param='jwh', file='jwh.txt', force=True)
+
 # Finish.
 results.write(file='results', force=True)
 state.save('save', force=True)
