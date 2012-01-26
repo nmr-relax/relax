@@ -200,31 +200,21 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
     @type scaling:          float
     @keyword file:          The name of the file to open.
     @type file:             str
-    @keyword dir:           The directory containing the file (defaults to the current directory if
-                            None).
+    @keyword dir:           The directory containing the file (defaults to the current directory if None).
     @type dir:              str or None
-    @keyword file_data:     An alternative to opening a file, if the data already exists in the
-                            correct format.  The format is a list of lists where the first index
-                            corresponds to the row and the second the column.
+    @keyword file_data:     An alternative to opening a file, if the data already exists in the correct format.  The format is a list of lists where the first index corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
-                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
-                            arguments must be none.
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
-    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied, spin_id_col must be None.
     @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword res_name_col:  The column containing the residue name information.  If supplied, spin_id_col must be None.
     @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information.  If supplied,
-                            spin_id_col must be None.
+    @keyword res_num_col:   The column containing the residue number information.  If supplied, spin_id_col must be None.
     @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information.  If supplied,
-                            spin_id_col must be None.
+    @keyword spin_name_col: The column containing the spin name information.  If supplied, spin_id_col must be None.
     @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
-                            spin_id_col must be None.
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied, spin_id_col must be None.
     @type spin_num_col:     int or None
     @keyword data_col:      The column containing the RDC data in Hz.
     @type data_col:         int or None
@@ -289,7 +279,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
             id, error = data
 
         # Set the value.
-        set_fn(val=value, error=error, param=param, spin_id=spin_id)
+        set_fn(val=value, error=error, param=param, spin_id=id)
 
     # Reset the minimisation statistics.
     if not min_stat:
