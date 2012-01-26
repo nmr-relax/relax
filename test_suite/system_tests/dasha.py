@@ -60,7 +60,6 @@ class Dasha(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')
 
         # Check the global data.
-        self.assertEqual(cdp.chi2, 0.63673000000000002)
         self.assertEqual(len(cdp.ri_ids), 3)
         for ri_id in cdp.ri_ids:
             self.assertEqual(cdp.frq[ri_id], 600000000.0)
@@ -69,33 +68,35 @@ class Dasha(SystemTestCase):
         self.assertEqual(cdp.ri_type['NOE_600'], 'NOE')
 
         # The spin data.
-        select = [True, True, False]
-        fixed = [None, None, None]
-        proton_type = [None, None, None]
-        heteronuc_type = ['15N', '15N', '15N']
-        attached_proton = [None, None, None]
-        nucleus = [None, None, None]
-        model = ['m3', 'm3', 'm3']
-        equation = ['mf_orig', 'mf_orig', 'mf_orig']
-        params = [['s2', 'rex'], ['s2', 'rex'], ['s2', 'rex']]
-        xh_vect = [None, None, None]
-        s2 = [0.64359, 0.64359, 0.64359]
-        s2f = [None, None, 0.8]
-        s2s = [None, None, 0.8]
-        local_tm = [None, None, None]
-        te = [None, None, 0.01]
-        tf = [None, None, 0.001]
-        ts = [None, None, 0.1]
-        rex = [4.29432, 4.29432, 4.29432]
-        r = [1.02e-10, 1.02e-10, 1.02e-10]
-        csa = [-172e-6, -172e-6, -172e-6]
-        chi2 = [None, None, None]
+        select = [True, True, False, False]
+        fixed = [None, None, None, None]
+        proton_type = [None, None, None, None]
+        heteronuc_type = ['15N', '15N', '15N', '15N']
+        attached_proton = [None, None, None, None]
+        nucleus = [None, None, None, None]
+        model = ['m3', 'm3', 'm3', 'm3']
+        equation = ['mf_orig', 'mf_orig', 'mf_orig', 'mf_orig']
+        params = [['s2', 'rex'], ['s2', 'rex'], ['s2', 'rex'], ['s2', 'rex']]
+        xh_vect = [None, None, None, None]
+        s2 = [0.71510, 0.64359, None, None]
+        s2f = [None, None, None, None]
+        s2s = [None, None, None, None]
+        local_tm = [None, None, None, None]
+        te = [None, None, None, None]
+        tf = [None, None, None, None]
+        ts = [None, None, None, None]
+        rex = [4.32701, 4.29432, None, None]
+        r = [1.02e-10, 1.02e-10, 1.02e-10, 1.02e-10]
+        csa = [-172e-6, -172e-6, -172e-6, -172e-6]
+        chi2 = [1.9657, 0.63673, None, None]
         ri_data = [{'R1_600': 1.0, 'R2_600': 15.0, 'NOE_600': 0.9},
                    {'R1_600': 0.9, 'R2_600': 13.9, 'NOE_600': 0.79},
-                   {'R2_600': 12.0, 'NOE_600': 0.6}]
+                   {'R2_600': 12.0, 'NOE_600': 0.6},
+                   {'R1_600': None, 'R2_600': None, 'NOE_600': None}]
         ri_data_err = [{'R1_600': 0.05, 'R2_600': 0.5, 'NOE_600': 0.05},
                        {'R1_600': 0.05, 'R2_600': 0.8, 'NOE_600': 0.05},
-                       {'R2_600': 0.5, 'NOE_600': 0.05}]
+                       {'R2_600': 0.5, 'NOE_600': 0.05},
+                       {'R1_600': None, 'R2_600': None, 'NOE_600': None}]
 
         # Check the spin data.
         i = 0

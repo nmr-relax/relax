@@ -254,7 +254,7 @@ def create_script(file, model_type, algor):
                 continue
 
             # Skip and deselect spins for which relaxation data is missing.
-            if len(spin.ri_data) != len(cdp.ri_ids):
+            if len(spin.ri_data) != len(cdp.ri_ids) or spin.ri_data[ri_id] == None:
                 spin.select = False
                 continue
 
@@ -479,12 +479,8 @@ def extract(dir):
         # Set the values.
         value.read(param=param, scaling=scaling, file=file_name, res_num_col=1, res_name_col=None, data_col=2, error_col=3)
 
-        # Clean up of non-existant parameters (set the parameter to None!).
+        # Clean up of non-existent parameters (set the parameter to None!).
         for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
             # Skip the spin (don't set the parameter to None) if the parameter exists in the model.
             if param in spin.params:
                 continue

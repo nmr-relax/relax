@@ -336,9 +336,17 @@ class Consistency_tests(API_base, API_common):
                 spin.select = False
 
             # Require 3 or more data points.
-            elif len(spin.ri_data) < 3:
-                warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
-                spin.select = False
+            else:
+                # Count the points.
+                data_points = 0
+                for id in cdp.ri_ids:
+                    if spin.ri_data.has_key(id) and spin.ri_data[id] != None:
+                        data_points += 1
+
+                # Not enough.
+                if data_points < 3:
+                    warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
+                    spin.select = False
 
 
     return_data_name_doc = """
