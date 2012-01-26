@@ -529,6 +529,52 @@ class API_common:
             inc = inc + 1
 
 
+    def _set_param_values(self, param=None, value=None, spin_id=None, force=True):
+        """Set the global and spin parameter values in the top layer of the data pipe.
+
+        @keyword param:     The parameter name list.
+        @type param:        list of str
+        @keyword value:     The parameter value list.
+        @type value:        list
+        @keyword spin_id:   The spin identification string (unused).
+        @type spin_id:      None
+        @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
+        @type force:        bool
+        """
+
+        # Checks.
+        arg_check.is_str_list(param, 'parameter name')
+        arg_check.is_list(value, 'parameter value')
+
+        # Loop over the parameters.
+        for i in range(len(param)):
+            # Get the object's name.
+            obj_name = self.return_data_name(param[i])
+
+            # Is the parameter is valid?
+            if not obj_name:
+                raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
+
+            # Global parameter.
+            if self.GLOBAL_PARAMS.contains(param[i]):
+                # Is the parameter already set.
+                if not force and hasattr(cdp, obj_name) and getattr(cdp, obj_name) != None:
+                    raise RelaxError("The parameter '%s' already exists, set the force flag to True to overwrite." % param[i])
+
+                # Set the parameter.
+                setattr(cdp, obj_name, value[i])
+
+            # Spin parameter.
+            elif self.SPIN_PARAMS.contains(param[i]):
+                for spin in spin_loop(spin_id):
+                    # Skip deselected spins.
+                    if not spin.select:
+                        continue
+
+                    # Set the parameter.
+                    setattr(spin, param[i], value[i])
+
+
     def _set_param_values_global(self, param=None, value=None, spin_id=None, force=True):
         """Set the global parameter values in the top layer of the data pipe.
 
