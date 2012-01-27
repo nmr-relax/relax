@@ -705,7 +705,7 @@ if __name__ == '__main__':
     # Parse the args.
     (options, args) = parser.parse_args()
 
-    # Initalise some flags.
+    # Initialise some flags.
     search_system = True
     search_unit = True
 
