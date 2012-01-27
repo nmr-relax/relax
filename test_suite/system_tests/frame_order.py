@@ -86,6 +86,11 @@ class Frame_order(SystemTestCase):
         # Create the data pipe.
         self.interpreter.pipe.create('test', 'frame order')
 
+        # Set a number of flags for the scripts.
+        ds.flag_rdc = True
+        ds.flag_pcs = True
+        ds.flag_opt = False
+
 
     def mesg_opt_debug(self):
         """Method for returning a string to help debug the minimisation.
@@ -171,11 +176,6 @@ class Frame_order(SystemTestCase):
     def test_cam_free_rotor(self):
         """Test the free rotor frame order model of CaM."""
 
-        # Setup.
-        ds.flag_rdc = True
-        ds.flag_pcs = True
-        ds.flag_opt = False
-
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
 
@@ -192,12 +192,8 @@ class Frame_order(SystemTestCase):
     def test_cam_free_rotor_no_rdc(self):
         """Test the free rotor frame order model of CaM."""
 
-        # Setup.
-        ds.flag_rdc = False
-        ds.flag_pcs = True
-        ds.flag_opt = False
-
         # Execute the script.
+        ds.flag_rdc = False
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
 
         # Switch back to the original pipe.
@@ -213,12 +209,8 @@ class Frame_order(SystemTestCase):
     def test_cam_free_rotor_no_pcs(self):
         """Test the free rotor frame order model of CaM."""
 
-        # Setup.
-        ds.flag_rdc = True
-        ds.flag_pcs = False
-        ds.flag_opt = False
-
         # Execute the script.
+        ds.flag_pcs = False
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
 
         # Switch back to the original pipe.
@@ -233,11 +225,6 @@ class Frame_order(SystemTestCase):
 
     def test_cam_free_rotor2(self):
         """Test the second free rotor frame order model of CaM."""
-
-        # Setup.
-        ds.flag_rdc = True
-        ds.flag_pcs = True
-        ds.flag_opt = False
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
@@ -255,12 +242,8 @@ class Frame_order(SystemTestCase):
     def test_cam_free_rotor2_no_rdc(self):
         """Test the second free rotor frame order model of CaM."""
 
-        # Setup.
-        ds.flag_rdc = False
-        ds.flag_pcs = True
-        ds.flag_opt = False
-
         # Execute the script.
+        ds.flag_rdc = False
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
 
         # Switch back to the original pipe.
@@ -276,12 +259,8 @@ class Frame_order(SystemTestCase):
     def test_cam_free_rotor2_no_pcs(self):
         """Test the second free rotor frame order model of CaM."""
 
-        # Setup.
-        ds.flag_rdc = True
-        ds.flag_pcs = False
-        ds.flag_opt = False
-
         # Execute the script.
+        ds.flag_pcs = False
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
 
         # Switch back to the original pipe.
