@@ -1,123 +1,45 @@
-# Script for optimising the rotor frame order test model of CaM.
+###############################################################################
+#                                                                             #
+# Copyright (C) 2012 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax.                                     #
+#                                                                             #
+# relax is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# relax is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with relax; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+#                                                                             #
+###############################################################################
 
-# Python module imports.
-from numpy import array, float64, transpose, zeros
-from os import sep
+# Module docstring.
+"""Script for optimising the rotor frame order test model of CaM."""
 
 # relax module imports.
-from generic_fns.structure.mass import centre_of_mass
-from maths_fns.rotation_matrix import euler_to_R_zyz
-from status import Status; status = Status()
+from base_script import Base_script
 
 
-# Some variables.
-DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep
+class Analysis(Base_script):
 
-
-class Analysis:
-    def __init__(self):
-        """Execute the frame order analysis."""
-
-        # Optimise.
-        self.optimisation()
-
-        # The rotation matrix.
-        R = zeros((3, 3), float64)
-        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-        print("Rotation matrix:\n%s\n" % R)
-        R = transpose(R)
-        print("Inverted rotation:\n%s\n" % R)
-
-        # Load the original structure.
-        self.original_structure()
-
-        # Domain transformation.
-        self.transform(R, array([ 37.254, 0.5, 16.7465]))
-
-
-    def optimisation(self):
-        """Optimise the frame order model."""
-
-        # The file paths.
-        PATH_N_DOM = DATA_PATH
-        PATH_C_DOM = PATH_N_DOM+sep+'rotor'+sep
-
-        # Create the data pipe.
-        pipe.create(pipe_name='frame order', pipe_type='frame order')
-
-        # Load the tensors.
-        script(PATH_N_DOM + 'tensors.py')
-        script(PATH_C_DOM + 'tensors.py')
-
-        # The tensor domains and reductions.
-        full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
-        red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
-        for i in range(len(full)):
-            align_tensor.set_domain(tensor=full[i], domain='N')
-            align_tensor.set_domain(tensor=red[i], domain='C')
-            align_tensor.reduction(full_tensor=full[i], red_tensor=red[i])
-
-        # Select the model.
-        frame_order.select_model('rotor')
-
-        # Set the reference domain.
-        frame_order.ref_domain('N')
-
-        # Set the parameters to that after a 11 increment grid search (for a massive speed up).
-        value.set(val=2.0944, param='ave_pos_alpha')
-        value.set(val=0.0, param='ave_pos_beta')
-        value.set(val=0.0, param='ave_pos_gamma')
-        value.set(val=0.0, param='eigen_alpha')
-        value.set(val=0.0, param='eigen_beta')
-        value.set(val=0.0, param='eigen_gamma')
-        value.set(val=1.0472, param='cone_sigma_max')
-
-        # Optimise.
-        minimise('simplex', constraints=False)
-
-        # Test Monte Carlo simulations.
-        monte_carlo.setup(number=3)
-        monte_carlo.create_data()
-        monte_carlo.initial_values()
-        minimise('simplex', constraints=False)
-        eliminate()
-        monte_carlo.error_analysis()
-
-        # Write the results.
-        results.write('devnull', dir=None, force=True)
-
-
-    def original_structure(self):
-        """Load the original structure into a dedicated data pipe."""
-
-        # Create a special data pipe for the original rigid body position.
-        pipe.create(pipe_name='orig pos', pipe_type='frame order')
-
-        # Load the structure.
-        structure.read_pdb(DATA_PATH+'1J7P_1st_NH.pdb')
-
-        # Store the centre of mass.
-        cdp.CoM = centre_of_mass()
-
-
-    def transform(self, R, pivot):
-        """Transform the domain to the average position."""
-
-        # Create a special data pipe for the average rigid body position.
-        pipe.create(pipe_name='ave pos', pipe_type='frame order')
-
-        # Load the structure.
-        structure.read_pdb(DATA_PATH+'1J7P_1st_NH_rot.pdb')
-
-        # Rotate all atoms.
-        structure.rotate(R=R, origin=pivot)
-
-        # Write out the new PDB.
-        structure.write_pdb('devnull')
-
-        # Store the centre of mass.
-        cdp.CoM = centre_of_mass()
+    # Set up some class variables.
+    directory = 'rotor'
+    model = 'rotor'
+    ave_pos_alpha = 4.3434999280669997
+    ave_pos_beta = 0.43544332764249905
+    ave_pos_gamma = 3.8013235235956007
+    axis_theta = 2.1815126749944502
+    axis_phi = 0.89068285262982982
+    cone_sigma_max = 30.0 / 360.0 * 2.0 * pi
+    cone = True
 
 
 # Execute the analysis.
-Analysis()
+Analysis(self)

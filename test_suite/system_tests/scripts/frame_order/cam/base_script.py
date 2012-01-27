@@ -38,6 +38,9 @@ BASE_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_
 
 
 class Base_script:
+    # Class variables.
+    cone = True
+
     def __init__(self, interpreter):
         """Execute the frame order analysis."""
 
@@ -211,7 +214,6 @@ class Base_script:
         self.interpreter.frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
 
 
-
     def transform(self):
         """Transform the domain to the average position."""
 
@@ -220,7 +222,10 @@ class Base_script:
 
         # The rotation matrix.
         R = zeros((3, 3), float64)
-        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+        if hasattr(cdp, 'ave_pos_alpha'):
+            euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+        else:
+            euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
         print("Rotation matrix:\n%s\n" % R)
         R = transpose(R)
         print("Inverted rotation:\n%s\n" % R)
