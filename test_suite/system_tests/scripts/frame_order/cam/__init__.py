@@ -24,7 +24,8 @@
 """The CaM frame order system test scripts."""
 
 
-__all__ = ['free_rotor',
+__all__ = ['base_script',
+           'free_rotor',
            'free_rotor2',
            'iso_cone_free_rotor',
            'iso_cone_free_rotor2',
