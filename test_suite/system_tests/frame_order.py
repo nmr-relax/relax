@@ -244,6 +244,33 @@ class Frame_order(SystemTestCase):
         self.check_chi2(5.1)
 
 
+    def test_cam_iso_cone(self):
+        """Test the isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags()
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_iso_cone_no_rdc(self):
+        """Test the isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(rdc=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_iso_cone_no_pcs(self):
+        """Test the isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(pcs=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone.py')
+        self.check_chi2(0.0)
+
+
     def test_cam_iso_cone_free_rotor(self):
         """Test the isotropic cone, free rotor frame order model of CaM."""
 
@@ -295,6 +322,114 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor2.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_iso_cone_torsionless(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags()
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_torsionless.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_iso_cone_torsionless_no_rdc(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(rdc=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_torsionless.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_iso_cone_torsionless_no_pcs(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(pcs=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_torsionless.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_pseudo_ellipse(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags()
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_pseudo_ellipse_no_rdc(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(rdc=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_pseudo_ellipse_no_pcs(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(pcs=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_pseudo_ellipse_free_rotor(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags()
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_free_rotor.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_pseudo_ellipse_free_rotor_no_rdc(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(rdc=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_free_rotor.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_pseudo_ellipse_free_rotor_no_pcs(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(pcs=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_free_rotor.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_pseudo_ellipse_torsionless(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags()
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_torsionless.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_pseudo_ellipse_torsionless_no_rdc(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(rdc=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_torsionless.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_pseudo_ellipse_torsionless_no_pcs(self):
+        """Test the second isotropic cone, free rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(pcs=False)
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_torsionless.py')
         self.check_chi2(0.0)
 
 
