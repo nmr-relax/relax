@@ -6,7 +6,6 @@ from os import sep
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.structure.mass import centre_of_mass
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from status import Status; status = Status()
 
@@ -23,18 +22,17 @@ class Analysis:
         # Optimise.
         self.optimisation()
 
-        # The rotation matrix.
-        R = zeros((3, 3), float64)
-        euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-        print("Rotation matrix:\n%s\n" % R)
-        R = transpose(R)
-        print("Inverted rotation:\n%s\n" % R)
-
         # Load the original structure.
         self.original_structure()
 
         # Domain transformation.
-        self.transform(R, array([ 37.254, 0.5, 16.7465]))
+        self.transform()
+
+        # Display in pymol.
+        self.pymol_display()
+
+        # Save the state.
+        state.save('devnull', force=True)
 
 
     def optimisation(self):
@@ -79,7 +77,7 @@ class Analysis:
 
         # Define the domains.
         domain(id='N', spin_id=":1-78")
-        domain(id='C', spin_id=":80-144")
+        domain(id='C', spin_id=":80-148")
 
         # The tensor domains and reductions.
         full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
@@ -101,7 +99,7 @@ class Analysis:
         # Set the reference domain.
         frame_order.ref_domain('N')
 
-        # The pivot point.
+        # Set the initial pivot point.
         pivot = array([ 37.254, 0.5, 16.7465])
         frame_order.pivot(pivot, fix=True)
 
@@ -140,29 +138,53 @@ class Analysis:
         pipe.create(pipe_name='orig pos', pipe_type='frame order')
 
         # Load the structure.
-        structure.read_pdb(BASE_PATH+'1J7P_1st_NH.pdb')
-
-        # Store the centre of mass.
-        cdp.CoM = centre_of_mass()
+        structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
 
 
-    def transform(self, R, pivot):
+    def pymol_display(self):
+        """Display the results in PyMOL."""
+
+        # Switch back to the main data pipe.
+        pipe.switch('frame order')
+
+        # Load the PDBs of the 2 domains.
+        structure.read_pdb('1J7O_1st_NH.pdb', dir='..')
+        structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..')
+
+        # Create the cone PDB file.
+        #frame_order.cone_pdb(file='cone.pdb', force=True)
+
+        # Set the domains.
+        frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
+        frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
+
+
+
+    def transform(self):
         """Transform the domain to the average position."""
+
+        # Switch back to the main data pipe.
+        pipe.switch('frame order')
+
+        # The rotation matrix.
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+        print("Rotation matrix:\n%s\n" % R)
+        R = transpose(R)
+        print("Inverted rotation:\n%s\n" % R)
+        pivot = cdp.pivot
 
         # Create a special data pipe for the average rigid body position.
         pipe.create(pipe_name='ave pos', pipe_type='frame order')
 
         # Load the structure.
-        structure.read_pdb(BASE_PATH+'1J7P_1st_NH_rot.pdb')
+        structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
 
         # Rotate all atoms.
         structure.rotate(R=R, origin=pivot)
 
         # Write out the new PDB.
         structure.write_pdb('devnull')
-
-        # Store the centre of mass.
-        cdp.CoM = centre_of_mass()
 
 
 # Execute the analysis.
