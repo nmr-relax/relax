@@ -189,12 +189,96 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 13.8, 1, msg=self.mesg)
 
 
+    def test_cam_free_rotor_no_rdc(self):
+        """Test the free rotor frame order model of CaM."""
+
+        # Setup.
+        ds.flag_rdc = False
+        ds.flag_pcs = True
+        ds.flag_opt = False
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
+
+        # Switch back to the original pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # Get the debugging message.
+        self.mesg = self.mesg_opt_debug()
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 13.8, 1, msg=self.mesg)
+
+
+    def test_cam_free_rotor_no_pcs(self):
+        """Test the free rotor frame order model of CaM."""
+
+        # Setup.
+        ds.flag_rdc = True
+        ds.flag_pcs = False
+        ds.flag_opt = False
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
+
+        # Switch back to the original pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # Get the debugging message.
+        self.mesg = self.mesg_opt_debug()
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 13.8, 1, msg=self.mesg)
+
+
     def test_cam_free_rotor2(self):
         """Test the second free rotor frame order model of CaM."""
 
         # Setup.
         ds.flag_rdc = True
         ds.flag_pcs = True
+        ds.flag_opt = False
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
+
+        # Switch back to the original pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # Get the debugging message.
+        self.mesg = self.mesg_opt_debug()
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 0.0, 1, msg=self.mesg)
+
+
+    def test_cam_free_rotor2_no_rdc(self):
+        """Test the second free rotor frame order model of CaM."""
+
+        # Setup.
+        ds.flag_rdc = False
+        ds.flag_pcs = True
+        ds.flag_opt = False
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
+
+        # Switch back to the original pipe.
+        self.interpreter.pipe.switch('frame order')
+
+        # Get the debugging message.
+        self.mesg = self.mesg_opt_debug()
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 0.0, 1, msg=self.mesg)
+
+
+    def test_cam_free_rotor2_no_pcs(self):
+        """Test the second free rotor frame order model of CaM."""
+
+        # Setup.
+        ds.flag_rdc = True
+        ds.flag_pcs = False
         ds.flag_opt = False
 
         # Execute the script.
