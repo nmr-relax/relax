@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,36 +29,36 @@ from string import split
 from unittest import TestSuite
 
 # relax system/functional test module imports.
-from align_tensor import Align_tensor
-from angles import Angles
-from bmrb import Bmrb
-from consistency_tests import Ct
-from dasha import Dasha
-from diffusion_tensor import Diffusion_tensor
-from frame_order import Frame_order
-from generic import Generic
-from grace import Grace
-from jw_mapping import Jw
-from load_spins import Load_spins
-from model_elimination import Modelim
-from model_free import Mf
-from model_selection import Modsel
-from n_state_model import N_state_model
-from noe import Noe
-from noe_restraints import Noe_restraints
-from palmer import Palmer
-from pdc import Pdc
-from peak_lists import Peak_lists
-from pipes import Pipes
-from rdc import Rdc
-from relax_data import Relax_data
-from relax_fit import Relax_fit
-from results import Results
-from sequence import Sequence
-from state import State
-from structure import Structure
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
-from unit_vectors import Unit_vectors
+from test_suite.system_tests.align_tensor import Align_tensor
+from test_suite.system_tests.angles import Angles
+from test_suite.system_tests.bmrb import Bmrb
+from test_suite.system_tests.consistency_tests import Ct
+from test_suite.system_tests.dasha import Dasha
+from test_suite.system_tests.diffusion_tensor import Diffusion_tensor
+from test_suite.system_tests.frame_order import Frame_order
+from test_suite.system_tests.generic import Generic
+from test_suite.system_tests.grace import Grace
+from test_suite.system_tests.jw_mapping import Jw
+from test_suite.system_tests.load_spins import Load_spins
+from test_suite.system_tests.model_elimination import Modelim
+from test_suite.system_tests.model_free import Mf
+from test_suite.system_tests.model_selection import Modsel
+from test_suite.system_tests.n_state_model import N_state_model
+from test_suite.system_tests.noe import Noe
+from test_suite.system_tests.noe_restraints import Noe_restraints
+from test_suite.system_tests.palmer import Palmer
+from test_suite.system_tests.pdc import Pdc
+from test_suite.system_tests.peak_lists import Peak_lists
+from test_suite.system_tests.pipes import Pipes
+from test_suite.system_tests.rdc import Rdc
+from test_suite.system_tests.relax_data import Relax_data
+from test_suite.system_tests.relax_fit import Relax_fit
+from test_suite.system_tests.results import Results
+from test_suite.system_tests.sequence import Sequence
+from test_suite.system_tests.state import State
+from test_suite.system_tests.structure import Structure
+from test_suite.system_tests.unit_vectors import Unit_vectors
 
 
 __all__ = ['align_tensor',
@@ -86,6 +86,7 @@ __all__ = ['align_tensor',
            'relax_data',
            'relax_fit',
            'results',
+           'scripts',
            'sequence',
            'state',
            'structure',
