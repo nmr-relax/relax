@@ -86,6 +86,9 @@ class Frame_order(SystemTestCase):
         # Create the data pipe.
         self.interpreter.pipe.create('test', 'frame order')
 
+        # The path to the CaM scripts.
+        self.cam_path = status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep
+
 
     def check_chi2(self, chi2=None, places=1):
         """Check the function evaluation."""
@@ -195,7 +198,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'free_rotor.py')
         self.check_chi2(13.8)
 
 
@@ -204,7 +207,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'free_rotor.py')
         self.check_chi2(9.8)
 
 
@@ -213,7 +216,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'free_rotor.py')
         self.check_chi2(4.8)
 
 
@@ -222,7 +225,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
+        self.interpreter.run(script_file=self.cam_path+'free_rotor2.py')
         self.check_chi2(396.8)
 
 
@@ -231,7 +234,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
+        self.interpreter.run(script_file=self.cam_path+'free_rotor2.py')
         self.check_chi2(378.7)
 
 
@@ -240,7 +243,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'free_rotor2.py')
+        self.interpreter.run(script_file=self.cam_path+'free_rotor2.py')
         self.check_chi2(5.1)
 
 
@@ -249,7 +252,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
         self.check_chi2(0.0)
 
 
@@ -258,7 +261,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
         self.check_chi2(0.0)
 
 
@@ -267,7 +270,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
         self.check_chi2(0.0)
 
 
@@ -276,7 +279,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor.py')
         self.check_chi2(0.0)
 
 
@@ -285,7 +288,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor.py')
         self.check_chi2(0.0)
 
 
@@ -294,7 +297,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor.py')
         self.check_chi2(0.0)
 
 
@@ -303,7 +306,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor2.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor2.py')
         self.check_chi2(0.0)
 
 
@@ -312,7 +315,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor2.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor2.py')
         self.check_chi2(0.0)
 
 
@@ -321,7 +324,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor2.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor2.py')
         self.check_chi2(0.0)
 
 
@@ -330,7 +333,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_torsionless.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone_torsionless.py')
         self.check_chi2(0.0)
 
 
@@ -339,7 +342,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_torsionless.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone_torsionless.py')
         self.check_chi2(0.0)
 
 
@@ -348,7 +351,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_torsionless.py')
+        self.interpreter.run(script_file=self.cam_path+'iso_cone_torsionless.py')
         self.check_chi2(0.0)
 
 
@@ -357,7 +360,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse.py')
+        self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
         self.check_chi2(0.0)
 
 
@@ -366,7 +369,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse.py')
+        self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
         self.check_chi2(0.0)
 
 
@@ -375,7 +378,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse.py')
+        self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
         self.check_chi2(0.0)
 
 
@@ -384,7 +387,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_free_rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_free_rotor.py')
         self.check_chi2(0.0)
 
 
@@ -393,7 +396,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_free_rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_free_rotor.py')
         self.check_chi2(0.0)
 
 
@@ -402,7 +405,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_free_rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_free_rotor.py')
         self.check_chi2(0.0)
 
 
@@ -411,7 +414,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_torsionless.py')
+        self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
         self.check_chi2(0.0)
 
 
@@ -420,7 +423,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_torsionless.py')
+        self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
         self.check_chi2(0.0)
 
 
@@ -429,7 +432,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'pseudo_ellipse_torsionless.py')
+        self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
         self.check_chi2(0.0)
 
 
@@ -438,7 +441,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rigid.py')
+        self.interpreter.run(script_file=self.cam_path+'rigid.py')
         self.check_chi2(0.0)
 
 
@@ -447,7 +450,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rigid.py')
+        self.interpreter.run(script_file=self.cam_path+'rigid.py')
         self.check_chi2(0.0)
 
 
@@ -456,7 +459,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rigid.py')
+        self.interpreter.run(script_file=self.cam_path+'rigid.py')
         self.check_chi2(0.0)
 
 
@@ -465,7 +468,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'rotor.py')
         self.check_chi2(0.0)
 
 
@@ -474,7 +477,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'rotor.py')
         self.check_chi2(0.0)
 
 
@@ -483,7 +486,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rotor.py')
+        self.interpreter.run(script_file=self.cam_path+'rotor.py')
         self.check_chi2(0.0)
 
 
@@ -492,7 +495,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rotor2.py')
+        self.interpreter.run(script_file=self.cam_path+'rotor2.py')
         self.check_chi2(0.0)
 
 
@@ -501,7 +504,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rotor2.py')
+        self.interpreter.run(script_file=self.cam_path+'rotor2.py')
         self.check_chi2(0.0)
 
 
@@ -510,7 +513,7 @@ class Frame_order(SystemTestCase):
 
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep+'rotor2.py')
+        self.interpreter.run(script_file=self.cam_path+'rotor2.py')
         self.check_chi2(0.0)
 
 
