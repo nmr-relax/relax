@@ -50,7 +50,7 @@ from relax_errors import RelaxError
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, mcint_num=500, pivot=None, pivot_opt=False, mcint=True):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, num_int_pts=500, pivot=None, pivot_opt=False, mcint=True):
         """Set up the target functions for the Frame Order theories.
         
         @keyword model:             The name of the Frame Order model.
@@ -87,8 +87,8 @@ class Frame_order:
         @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 array
-        @keyword mcint_num:         The number of samplings to use for the Monte Carlo integration technique.
-        @type mcint_num:            int
+        @keyword num_int_pts:       The number of points to use for the numerical integration technique.
+        @type num_int_pts:          int
         @keyword pivot:             The pivot point for the ball-and-socket joint motion.  This is needed if PCS or PRE values are used.
         @type pivot:                numpy rank-1, 3D array or None
         @keyword pivot_opt:         A flag which if True will allow the pivot point of the motion to be optimised.
@@ -119,7 +119,7 @@ class Frame_order:
         self.frq = frq
         self.paramag_centre = paramag_centre
         self.total_num_params = len(init_params)
-        self.mcint_num = mcint_num
+        self.num_int_pts = num_int_pts
         self._param_pivot = pivot
         self.pivot_opt = pivot_opt
 
@@ -507,7 +507,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_rotor_mcint(N=self.mcint_num, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_rotor_mcint(N=self.num_int_pts, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -667,7 +667,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_iso_cone_mcint(N=self.mcint_num, theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_iso_cone_mcint(N=self.num_int_pts, theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -832,7 +832,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_iso_cone_mcint(N=self.mcint_num, theta_max=theta_max, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_iso_cone_mcint(N=self.num_int_pts, theta_max=theta_max, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -991,7 +991,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_iso_cone_torsionless_mcint(N=self.mcint_num, theta_max=cone_theta, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_iso_cone_torsionless_mcint(N=self.num_int_pts, theta_max=cone_theta, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -1297,7 +1297,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_mcint(N=self.mcint_num, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_pseudo_ellipse_mcint(N=self.num_int_pts, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -1450,7 +1450,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_torsionless_mcint(N=self.mcint_num, theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_pseudo_ellipse_torsionless_mcint(N=self.num_int_pts, theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -1678,7 +1678,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_rotor_mcint(N=self.mcint_num, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_rotor_mcint(N=self.num_int_pts, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
