@@ -273,7 +273,7 @@ class Frame_order:
         # The Sobol' sequence data and target function aliases (quasi-random integration).
         if mcint:
             if model == 'pseudo-ellipse':
-                self.create_sobol_data(m=3, n=self.num_int_pts)
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
                 self.func = self.func_pseudo_ellipse_qrint
             elif model == 'pseudo-ellipse, torsionless':
                 self.func = self.func_pseudo_ellipse_torsionless_mcint
@@ -292,7 +292,7 @@ class Frame_order:
             elif model == 'line, free rotor':
                 self.func = self.func_line_free_rotor_mcint
             elif model == 'rotor':
-                self.create_sobol_data(m=1, n=self.num_int_pts)
+                self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
                 self.func = self.func_rotor_qrint
             elif model == 'rigid':
                 self.func = self.func_rigid
@@ -1707,17 +1707,20 @@ class Frame_order:
             self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.pcs_atoms[j] - pivot)
 
 
-    def create_sobol_data(self, m=3, n=10000):
+    def create_sobol_data(self, n=10000, dims=None):
         """Create the Sobol' quasi-random data for numerical integration.
 
         This uses the external sobol_lib module to create the data.  The algorithm is that modified by Antonov and Saleev.
 
 
-        @keyword m:     The number of dimensions to generate.
-        @type m:        int
-        @keyword n:     The number of points to generate.
-        @type n:        int
+        @keyword n:         The number of points to generate.
+        @type n:            int
+        @keyword dims:      The list of parameters.
+        @type dims:         list of str
         """
+
+        # The number of dimensions.
+        m = len(dims)
 
         # Initialise.
         self.sobol_raw = zeros((n, m), float64)
@@ -1728,10 +1731,14 @@ class Frame_order:
             # The raw point.
             self.sobol_raw[i], seed = i4_sobol(m, i)
 
-            # Convert to angles.
-            self.sobol_angles[i, 0] = 2.0 * pi * self.sobol_raw[i, 0]
-            self.sobol_angles[i, 1] = acos(2.0*self.sobol_raw[i, 1] - 1.0)
-            self.sobol_angles[i, 2] = 2.0 * pi * (self.sobol_raw[i, 2] - 0.5)
+            # Loop over the dimensions, converting the points to angles.
+            for j in range(m):
+                if dims[j] in ['theta']:
+                    self.sobol_angles[i, j] = 2.0 * pi * self.sobol_raw[i, j]
+                if dims[j] in ['phi']:
+                    self.sobol_angles[i, j] = acos(2.0*self.sobol_raw[i, j] - 1.0)
+                if dims[j] in ['sigma']:
+                    self.sobol_angles[i, j] = 2.0 * pi * (self.sobol_raw[i, j] - 0.5)
 
 
     def reduce_and_rot(self, ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):
