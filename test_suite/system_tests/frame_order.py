@@ -90,7 +90,7 @@ class Frame_order(SystemTestCase):
         self.cam_path = status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep
 
 
-    def check_chi2(self, chi2=None, places=1):
+    def check_chi2(self, chi2=None, places=8):
         """Check the function evaluation."""
 
         # Switch back to the original pipe.
@@ -469,7 +469,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'rotor.py')
-        self.check_chi2(0.0)
+        self.check_chi2(0.38773723555777778+0.1460413756923267)
 
 
     def test_cam_rotor_no_rdc(self):
@@ -478,7 +478,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'rotor.py')
-        self.check_chi2(0.0)
+        self.check_chi2(0.38773723555777778)
 
 
     def test_cam_rotor_no_pcs(self):
@@ -487,7 +487,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'rotor.py')
-        self.check_chi2(0.0)
+        self.check_chi2(0.1460413756923267)
 
 
     def test_cam_rotor2(self):
