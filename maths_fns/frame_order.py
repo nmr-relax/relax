@@ -50,7 +50,7 @@ from relax_errors import RelaxError
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, num_int_pts=500, pivot=None, pivot_opt=False, mcint=True):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, num_int_pts=500, pivot=None, pivot_opt=False, quad_int=True):
         """Set up the target functions for the Frame Order theories.
         
         @keyword model:             The name of the Frame Order model.
@@ -93,8 +93,8 @@ class Frame_order:
         @type pivot:                numpy rank-1, 3D array or None
         @keyword pivot_opt:         A flag which if True will allow the pivot point of the motion to be optimised.
         @type pivot_opt:            bool
-        @keyword mcint:             A flag which if True will activate the rough Monte Carlo numerical integration rather than the scipy.integrate quad(), dblquad() and tplquad() integration methods.
-        @type mcint:                bool
+        @keyword quad_int:          A flag which if True will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration.
+        @type quad_int:             bool
         """
 
         # Model test.
@@ -271,7 +271,7 @@ class Frame_order:
             self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_rdc), float64)
 
         # The Sobol' sequence data and target function aliases (quasi-random integration).
-        if mcint:
+        if not quad_int:
             if model == 'pseudo-ellipse':
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
                 self.func = self.func_pseudo_ellipse_qrint
