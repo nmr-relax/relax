@@ -26,7 +26,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import acos, pi, sqrt
-from numpy import array, dot, float64, ones, transpose, zeros
+from numpy import array, dot, float16, float64, ones, transpose, zeros
 from numpy.linalg import norm
 
 # relax module imports.
@@ -1723,22 +1723,21 @@ class Frame_order:
         m = len(dims)
 
         # Initialise.
-        self.sobol_raw = zeros((n, m), float64)
-        self.sobol_angles = zeros((n, m), float64)
+        self.sobol_angles = zeros((n, m), float16)
 
         # Loop over the points.
         for i in range(n):
             # The raw point.
-            self.sobol_raw[i], seed = i4_sobol(m, i)
+            point, seed = i4_sobol(m, i)
 
             # Loop over the dimensions, converting the points to angles.
             for j in range(m):
                 if dims[j] in ['theta']:
-                    self.sobol_angles[i, j] = 2.0 * pi * self.sobol_raw[i, j]
+                    self.sobol_angles[i, j] = 2.0 * pi * point[j]
                 if dims[j] in ['phi']:
-                    self.sobol_angles[i, j] = acos(2.0*self.sobol_raw[i, j] - 1.0)
+                    self.sobol_angles[i, j] = acos(2.0*point[j] - 1.0)
                 if dims[j] in ['sigma']:
-                    self.sobol_angles[i, j] = 2.0 * pi * (self.sobol_raw[i, j] - 0.5)
+                    self.sobol_angles[i, j] = 2.0 * pi * (point[j] - 0.5)
 
 
     def reduce_and_rot(self, ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):
