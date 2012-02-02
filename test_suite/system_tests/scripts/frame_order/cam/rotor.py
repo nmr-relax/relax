@@ -39,6 +39,7 @@ class Analysis(Base_script):
     axis_phi = 0.89068285262982982
     cone_sigma_max = 30.0 / 360.0 * 2.0 * pi
     cone = True
+    num_int_pts = 50
 
 
 # Execute the analysis.

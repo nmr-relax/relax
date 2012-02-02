@@ -138,6 +138,10 @@ class Base_script:
         # Set the paramagnetic centre.
         self.interpreter.paramag.centre(pos=[35.934, 12.194, -4.206])
 
+        # Set the number of numerical integration points.
+        if hasattr(self, 'num_int_pts'):
+            cdp.num_int_pts = self.num_int_pts
+
         # Check the minimum.
         if hasattr(self, 'ave_pos_alpha'):
             self.interpreter.value.set(val=self.ave_pos_alpha, param='ave_pos_alpha')
