@@ -1516,17 +1516,14 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
     for i in range(len(points)):
         # Unpack the point.
         phi, theta, sigma = points[i]
-        #print phi, theta, sigma
 
         # Calculate theta_max.
         theta_max = tmax_pseudo_ellipse(phi, theta_x, theta_y)
 
         # Outside of the distribution, so skip the point.
         if theta > theta_max:
-            #print "theta max lim"
             continue
         if sigma > sigma_max or sigma < -sigma_max:
-            #print "sigma max lim"
             continue
 
         # Calculate the PCSs for this state.
@@ -1699,11 +1696,11 @@ def pcs_numeric_int_rotor(sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=
     return c * result[0] / SA
 
 
-def pcs_numeric_int_rotor_mcint(N=1000, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
+def pcs_numeric_int_rotor_qrint(points=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
     """Determine the averaged PCS value via numerical integration.
 
-    @keyword N:                 The number of Monte Carlo samples to use.
-    @type N:                    int
+    @keyword points:            The Sobol points in the torsion-tilt angle space.
+    @type points:               numpy rank-2, 3D array
     @keyword sigma_max:         The maximum rotor angle.
     @type sigma_max:            float
     @keyword c:                 The PCS constant (without the interatomic distance and in Angstrom units).
@@ -1741,22 +1738,30 @@ def pcs_numeric_int_rotor_mcint(N=1000, sigma_max=None, c=None, full_in_ref_fram
             pcs_theta_err[i, j] = 0.0
 
     # Loop over the samples.
-    for i in range(N):
-        # Sigma randomisation.
-        sigma_i = uniform(-sigma_max, sigma_max)
+    num = 0
+    for i in range(len(points)):
+        # Unpack the point.
+        sigma = points[i]
+
+        # Outside of the distribution, so skip the point.
+        if sigma > sigma_max or sigma < -sigma_max:
+            continue
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_rotor_mcint(sigma_i=sigma_i, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_rotor_qrint(sigma_i=sigma, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+
+        # Increment the number of points.
+        num += 1
 
     # Calculate the PCS and error.
     for i in range(len(pcs_theta)):
         for j in range(len(pcs_theta[i])):
             # The average PCS.
-            pcs_theta[i, j] = c[i] * pcs_theta[i, j] / float(N)
+            pcs_theta[i, j] = c[i] * pcs_theta[i, j] / float(num)
 
             # The error.
             if error_flag:
-                pcs_theta_err[i, j] = abs(pcs_theta_err[i, j] / float(N)  -  pcs_theta[i, j]**2) / float(N)
+                pcs_theta_err[i, j] = abs(pcs_theta_err[i, j] / float(num)  -  pcs_theta[i, j]**2) / float(num)
                 pcs_theta_err[i, j] = c[i] * sqrt(pcs_theta_err[i, j])
                 print "%8.3f +/- %-8.3f" % (pcs_theta[i, j]*1e6, pcs_theta_err[i, j]*1e6)
 
@@ -1961,7 +1966,7 @@ def pcs_pivot_motion_rotor(sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eig
     return pcs
 
 
-def pcs_pivot_motion_rotor_mcint(sigma_i=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
+def pcs_pivot_motion_rotor_qrint(sigma_i=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
     """Calculate the PCS value after a pivoted motion for the rotor model.
 
     @keyword sigma_i:           The rotor angle for state i.
