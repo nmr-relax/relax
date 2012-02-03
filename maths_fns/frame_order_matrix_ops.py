@@ -1644,7 +1644,7 @@ def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, 
         theta, phi = points[i]
 
         # Calculate theta_max.
-        theta_max = tmax_pseudo_ellipse(phi_i, theta_x, theta_y)
+        theta_max = tmax_pseudo_ellipse(phi, theta_x, theta_y)
 
         # Outside of the distribution, so skip the point.
         if theta > theta_max:
