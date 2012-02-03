@@ -36,6 +36,7 @@ class Analysis(Base_script):
     ave_pos_beta = 0.43544332764249905
     ave_pos_gamma = 3.8013235235956007
     cone = False
+    num_int_pts = 50
 
 
 # Execute the analysis.

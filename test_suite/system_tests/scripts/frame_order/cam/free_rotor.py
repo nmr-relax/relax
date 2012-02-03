@@ -36,6 +36,8 @@ class Analysis(Base_script):
     ave_pos_gamma = 0.35219976958846927
     axis_theta = 2.1815126749944502
     axis_phi = 0.89068285262982982
+    cone = True
+    num_int_pts = 50
 
 
 # Execute the analysis.
