@@ -276,28 +276,36 @@ class Frame_order:
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
                 self.func = self.func_pseudo_ellipse_qrint
             elif model == 'pseudo-ellipse, torsionless':
-                self.func = self.func_pseudo_ellipse_torsionless_mcint
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi'])
+                self.func = self.func_pseudo_ellipse_torsionless_qrint
             elif model == 'pseudo-ellipse, free rotor':
-                self.func = self.func_pseudo_ellipse_free_rotor_mcint
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi'])
+                self.func = self.func_pseudo_ellipse_free_rotor_qrint
             elif model == 'iso cone':
-                self.func = self.func_iso_cone_mcint
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'sigma'])
+                self.func = self.func_iso_cone_qrint
             elif model == 'iso cone, torsionless':
-                self.func = self.func_iso_cone_torsionless_mcint
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta'])
+                self.func = self.func_iso_cone_torsionless_qrint
             elif model == 'iso cone, free rotor':
-                self.func = self.func_iso_cone_free_rotor_mcint
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta'])
+                self.func = self.func_iso_cone_free_rotor_qrint
             elif model == 'line':
-                self.func = self.func_line_mcint
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'sigma'])
+                self.func = self.func_line_qrint
             elif model == 'line, torsionless':
-                self.func = self.func_line_torsionless_mcint
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta'])
+                self.func = self.func_line_torsionless_qrint
             elif model == 'line, free rotor':
-                self.func = self.func_line_free_rotor_mcint
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta'])
+                self.func = self.func_line_free_rotor_qrint
             elif model == 'rotor':
                 self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
                 self.func = self.func_rotor_qrint
             elif model == 'rigid':
                 self.func = self.func_rigid
             elif model == 'free rotor':
-                self.func = self.func_free_rotor_mcint
+                self.func = self.func_free_rotor_qrint
 
         # The target function aliases (Scipy numerical integration).
         else:
@@ -440,7 +448,7 @@ class Frame_order:
         return chi2_sum
 
 
-    def func_free_rotor_mcint(self, params):
+    def func_free_rotor_qrint(self, params):
         """Target function for free rotor model optimisation.
 
         This function optimises the isotropic cone model parameters using the RDC and PCS base data.  Simple Monte Carlo integration is used for the PCS.
@@ -505,7 +513,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_rotor_qrint(N=self.num_int_pts, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_rotor_qrint(points=self.sobol_angles, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -600,7 +608,7 @@ class Frame_order:
         return chi2_sum
 
 
-    def func_iso_cone_mcint(self, params):
+    def func_iso_cone_qrint(self, params):
         """Target function for isotropic cone model optimisation.
 
         This function optimises the isotropic cone model parameters using the RDC and PCS base data.  Simple Monte Carlo integration is used for the PCS.
@@ -665,7 +673,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_iso_cone_mcint(N=self.num_int_pts, theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_iso_cone_qrint(points=self.sobol_angles, theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -762,7 +770,7 @@ class Frame_order:
         return chi2_sum
 
 
-    def func_iso_cone_free_rotor_mcint(self, params):
+    def func_iso_cone_free_rotor_qrint(self, params):
         """Target function for free rotor isotropic cone model optimisation.
 
         This function optimises the isotropic cone model parameters using the RDC and PCS base data.  Simple Monte Carlo integration is used for the PCS.
@@ -830,7 +838,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_iso_cone_mcint(N=self.num_int_pts, theta_max=theta_max, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_iso_cone_qrint(points=self.sobol_angles, theta_max=theta_max, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -924,7 +932,7 @@ class Frame_order:
         return chi2_sum
 
 
-    def func_iso_cone_torsionless_mcint(self, params):
+    def func_iso_cone_torsionless_qrint(self, params):
         """Target function for torsionless isotropic cone model optimisation.
 
         This function optimises the isotropic cone model parameters using the RDC and PCS base data.  Simple Monte Carlo integration is used for the PCS.
@@ -989,7 +997,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_iso_cone_torsionless_mcint(N=self.num_int_pts, theta_max=cone_theta, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_iso_cone_torsionless_qrint(points=self.sobol_angles, theta_max=cone_theta, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -1233,7 +1241,7 @@ class Frame_order:
         return chi2_sum
 
 
-    def func_pseudo_ellipse_free_rotor_mcint(self, params):
+    def func_pseudo_ellipse_free_rotor_qrint(self, params):
         """Target function for free_rotor pseudo-elliptic cone model optimisation.
 
         This function optimises the isotropic cone model parameters using the RDC and PCS base data.  Simple Monte Carlo integration is used for the PCS.
@@ -1295,7 +1303,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_mcint(N=self.num_int_pts, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_pseudo_ellipse_qrint(points=self.sobol_angles, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
@@ -1386,7 +1394,7 @@ class Frame_order:
         return chi2_sum
 
 
-    def func_pseudo_ellipse_torsionless_mcint(self, params):
+    def func_pseudo_ellipse_torsionless_qrint(self, params):
         """Target function for torsionless pseudo-elliptic cone model optimisation.
 
         This function optimises the isotropic cone model parameters using the RDC and PCS base data.  Simple Monte Carlo integration is used for the PCS.
@@ -1448,7 +1456,7 @@ class Frame_order:
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_torsionless_mcint(N=self.num_int_pts, theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=self.sobol_angles, theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):
