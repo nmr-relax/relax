@@ -282,13 +282,13 @@ class Frame_order:
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
                 self.func = self.func_pseudo_ellipse_free_rotor_qrint
             elif model == 'iso cone':
-                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'sigma'])
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
                 self.func = self.func_iso_cone_qrint
             elif model == 'iso cone, torsionless':
-                self.create_sobol_data(n=self.num_int_pts, dims=['theta'])
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi'])
                 self.func = self.func_iso_cone_torsionless_qrint
             elif model == 'iso cone, free rotor':
-                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'sigma'])
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
                 self.func = self.func_iso_cone_free_rotor_qrint
             elif model == 'line':
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'sigma'])
