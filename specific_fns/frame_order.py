@@ -435,7 +435,14 @@ class Frame_order(API_base, API_common):
 
             # The isotropic cone object.
             else:
-                cone = Iso_cone(cdp.cone_theta)
+                # The angle.
+                if hasattr(cdp, 'cone_theta'):
+                    cone_theta = cdp.cone_theta
+                elif hasattr(cdp, 'cone_s1'):
+                    cone_theta = order_parameters.iso_cone_S_to_theta(cdp.cone_s1)
+
+                # The object.
+                cone = Iso_cone(cone_theta)
 
             # Create the positive and negative cones.
             create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_pos, inc=inc, distribution='regular')
