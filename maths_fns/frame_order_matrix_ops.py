@@ -1303,7 +1303,7 @@ def pcs_numeric_int_iso_cone_qrint(points=None, theta_max=None, sigma_max=None, 
     num = 0
     for i in range(len(points)):
         # Unpack the point.
-        phi, theta, sigma = points[i]
+        theta, phi, sigma = points[i]
 
         # Outside of the distribution, so skip the point.
         if theta > theta_max:
@@ -1408,7 +1408,7 @@ def pcs_numeric_int_iso_cone_torsionless_qrint(points=None, theta_max=None, c=No
     num = 0
     for i in range(len(points)):
         # Unpack the point.
-        phi, theta = points[i]
+        theta, phi = points[i]
 
         # Outside of the distribution, so skip the point.
         if theta > theta_max:
@@ -1524,7 +1524,7 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
     num = 0
     for i in range(len(points)):
         # Unpack the point.
-        phi, theta, sigma = points[i]
+        theta, phi, sigma = points[i]
 
         # Calculate theta_max.
         theta_max = tmax_pseudo_ellipse(phi, theta_x, theta_y)
@@ -1641,7 +1641,7 @@ def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, 
     num = 0
     for i in range(len(points)):
         # Unpack the point.
-        phi, theta = points[i]
+        theta, phi = points[i]
 
         # Calculate theta_max.
         theta_max = tmax_pseudo_ellipse(phi_i, theta_x, theta_y)
