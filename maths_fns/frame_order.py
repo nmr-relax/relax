@@ -279,7 +279,7 @@ class Frame_order:
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi'])
                 self.func = self.func_pseudo_ellipse_torsionless_qrint
             elif model == 'pseudo-ellipse, free rotor':
-                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi'])
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
                 self.func = self.func_pseudo_ellipse_free_rotor_qrint
             elif model == 'iso cone':
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'sigma'])
@@ -288,7 +288,7 @@ class Frame_order:
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta'])
                 self.func = self.func_iso_cone_torsionless_qrint
             elif model == 'iso cone, free rotor':
-                self.create_sobol_data(n=self.num_int_pts, dims=['theta'])
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'sigma'])
                 self.func = self.func_iso_cone_free_rotor_qrint
             elif model == 'line':
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'sigma'])
@@ -297,7 +297,7 @@ class Frame_order:
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta'])
                 self.func = self.func_line_torsionless_qrint
             elif model == 'line, free rotor':
-                self.create_sobol_data(n=self.num_int_pts, dims=['theta'])
+                self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'sigma'])
                 self.func = self.func_line_free_rotor_qrint
             elif model == 'rotor':
                 self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
@@ -305,6 +305,7 @@ class Frame_order:
             elif model == 'rigid':
                 self.func = self.func_rigid
             elif model == 'free rotor':
+                self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
                 self.func = self.func_free_rotor_qrint
 
         # The target function aliases (Scipy numerical integration).
