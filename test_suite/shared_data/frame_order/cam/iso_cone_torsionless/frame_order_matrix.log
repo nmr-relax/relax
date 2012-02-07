@@ -1,0 +1,58 @@
+
+
+
+                                     relax repository checkout
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2012 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'frame_order_matrix.py'
+----------------------------------------------------------------------------------------------------
+# Script for calculating the frame order matrix from the rotation matrices.
+
+# Python module imports.
+from numpy import array, float64, kron, zeros
+
+# relax module imports.
+from maths_fns.kronecker_product import kron_prod
+from generic_fns.frame_order import print_frame_order_2nd_degree
+
+
+# Load the matrices.
+execfile('rotation_matrices.py')
+
+# Init the matrix.
+matrix = zeros((9, 9), float64)
+
+# Loop over the structures.
+for i in range(len(R)):
+    matrix += kron_prod(R[i], R[i])
+
+# Average.
+matrix = matrix / len(R)
+
+print_frame_order_2nd_degree(matrix)
+----------------------------------------------------------------------------------------------------
+
+Frame Order matrix, 2nd degree:
+[[    0.7412,   -0.0326,    0.0283,   -0.0326,    0.1374,   -0.0704,    0.0283,   -0.0704,    0.1214],
+ [   -0.0321,    0.7219,    0.0286,   -0.1255,   -0.0316,    0.0575,    0.0722,    0.0224,    0.0637],
+ [    0.0302,    0.0315,    0.7284,    0.0725,   -0.0584,   -0.0260,   -0.1100,   -0.0636,    0.0283],
+ [   -0.0321,   -0.1255,    0.0722,    0.7219,   -0.0316,    0.0224,    0.0286,    0.0575,    0.0637],
+ [    0.1367,   -0.0306,   -0.0577,   -0.0306,    0.7146,    0.0338,   -0.0577,    0.0338,    0.1487],
+ [   -0.0716,    0.0564,   -0.0260,    0.0236,    0.0364,    0.7175,   -0.0633,   -0.1366,    0.0352],
+ [    0.0302,    0.0725,   -0.1100,    0.0315,   -0.0584,   -0.0636,    0.7284,   -0.0260,    0.0283],
+ [   -0.0716,    0.0236,   -0.0633,    0.0564,    0.0364,   -0.1366,   -0.0260,    0.7175,    0.0352],
+ [    0.1221,    0.0632,    0.0294,    0.0632,    0.1480,    0.0366,    0.0294,    0.0366,    0.7300]]
+
