@@ -122,7 +122,7 @@ class Frame_order(API_base, API_common):
         # Normal values.
         if sim_index == None:
             # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
-            if cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+            if cdp.model in ['free rotor', 'iso cone, free rotor']:
                 param_vect.append(cdp.ave_pos_beta)
                 param_vect.append(cdp.ave_pos_gamma)
             else:
@@ -159,7 +159,7 @@ class Frame_order(API_base, API_common):
         # Simulation values.
         else:
             # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
-            if cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+            if cdp.model in ['free rotor', 'iso cone, free rotor']:
                 param_vect = [cdp.ave_pos_beta_sim[sim_index], cdp.ave_pos_gamma_sim[sim_index]]
             else:
                 param_vect = [cdp.ave_pos_alpha_sim[sim_index], cdp.ave_pos_beta_sim[sim_index], cdp.ave_pos_gamma_sim[sim_index]]
@@ -419,7 +419,7 @@ class Frame_order(API_base, API_common):
         # Skip models missing a cone.
         if cdp.model not in ['rotor', 'free rotor']:
             # The rotation matrix (rotation from the z-axis to the cone axis).
-            if cdp.model not in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            if cdp.model not in ['iso cone', 'iso cone, free rotor']:
                 R = axes
             else:
                 R = zeros((3, 3), float64)
@@ -889,7 +889,7 @@ class Frame_order(API_base, API_common):
             num += 3
 
         # Average domain position parameters.
-        if cdp.model in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+        if cdp.model in ['free rotor', 'iso cone, free rotor']:
             num += 2
         else:
             num += 3
@@ -1184,7 +1184,7 @@ class Frame_order(API_base, API_common):
             cdp.params.append('pivot_z')
 
         # The tensor rotation, or average domain position.
-        if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+        if cdp.model not in ['free rotor', 'iso cone, free rotor']:
             cdp.params.append('ave_pos_alpha')
         cdp.params.append('ave_pos_beta')
         cdp.params.append('ave_pos_gamma')
@@ -1278,8 +1278,7 @@ class Frame_order(API_base, API_common):
         elif cdp.model == 'iso cone':
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, cone_sigma_max = param_vector
         elif cdp.model in ['iso cone, torsionless']:
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = param_vector
-            ave_pos_alpha = None
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = param_vector
         elif cdp.model in ['iso cone, free rotor']:
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = param_vector
             ave_pos_alpha = None
@@ -1570,7 +1569,7 @@ class Frame_order(API_base, API_common):
         # Parameters.
         if (set == 'all' or set == 'params') and hasattr(cdp, 'model'):
             # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
-            if cdp.model not in ['free rotor', 'iso cone, torsionless', 'iso cone, free rotor']:
+            if cdp.model not in ['free rotor', 'iso cone, free rotor']:
                 names.append('ave_pos_alpha%s' % suffix)
             names.append('ave_pos_beta%s' % suffix)
             names.append('ave_pos_gamma%s' % suffix)
