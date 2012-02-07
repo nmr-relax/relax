@@ -1,0 +1,58 @@
+Chi-squared values
+==================
+
+Quadratic integration (from numpy)
+----------------------------------
+
+Data set                    RDC + PCS           RDC                 PCS
+rigid                       0.0784083092318     ?                   ?
+rotor                       ?                   ?                   ?
+rotor2                      ?                   ?                   ?
+rotor_2_state               ?                   ?                   ?
+free_rotor                  ?                   ?                   ?
+free_rotor2                 ?                   ?                   ?
+iso_cone                    ?                   ?                   ?
+iso_cone_free_rotor         ?                   ?                   ?
+iso_cone_free_rotor2        ?                   ?                   ?
+iso_cone_torsionless        ?                   ?                   ?
+pseudo_ellipse              ?                   ?                   ?
+pseudo_ellipse_free_rotor   ?                   ?                   ?
+pseudo_ellipse_torsionless  ?                   ?                   ?
+
+
+Monte Carlo integration (old relax code)
+----------------------------------------
+
+Data set                    RDC + PCS           RDC                 PCS
+rigid                       0.0784083092318     ?                   ?
+rotor                       0.159097903383      ?                   ?
+rotor2                      ?                   ?                   ?
+rotor_2_state               ?                   ?                   ?
+free_rotor                  11.970932909        ?                   ?
+free_rotor2                 389.389222372       ?                   ?
+iso_cone                    6.31501550972       ?                   ?
+iso_cone_free_rotor         ?                   ?                   ?
+iso_cone_free_rotor2        ?                   ?                   ?
+iso_cone_torsionless        79161.8338624       ?                   ?
+pseudo_ellipse              3.73003376255       ?                   ?
+pseudo_ellipse_free_rotor   16.6432491662       ?                   ?
+pseudo_ellipse_torsionless  2.00525072929       ?                   ?
+
+
+Quasi-random integration (from relax, 50-100 Sobol' points)
+-----------------------------------------------------------
+
+Data set                    RDC + PCS           RDC                 PCS
+rigid                       0.0784083092318     ?                   ?
+rotor                       ?                   ?                   ?
+rotor2                      ?                   ?                   ?
+rotor_2_state               ?                   ?                   ?
+free_rotor                  ?                   ?                   ?
+free_rotor2                 ?                   ?                   ?
+iso_cone                    ?                   ?                   ?
+iso_cone_free_rotor         ?                   ?                   ?
+iso_cone_free_rotor2        ?                   ?                   ?
+iso_cone_torsionless        ?                   ?                   ?
+pseudo_ellipse              ?                   ?                   ?
+pseudo_ellipse_free_rotor   ?                   ?                   ?
+pseudo_ellipse_torsionless  ?                   ?                   ?
