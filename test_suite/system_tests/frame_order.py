@@ -83,11 +83,21 @@ class Frame_order(SystemTestCase):
     def setUp(self):
         """Set up for all the functional tests."""
 
-        # Create the data pipe.
-        self.interpreter.pipe.create('test', 'frame order')
-
         # The path to the CaM scripts.
         self.cam_path = status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep
+
+
+    def tearDown(self):
+        """Clean up after the tests."""
+
+        # Reset the relax data store.
+        self.interpreter.reset()
+
+        # Remove flags from the status object.
+        if hasattr(status, 'flag_rdc'):
+            del status.flag_rdc
+        if hasattr(status, 'flag_pcs'):
+            del status.flag_pcs
 
 
     def check_chi2(self, chi2=None, places=8):
@@ -107,9 +117,9 @@ class Frame_order(SystemTestCase):
         """Set a number of flags for the scripts."""
 
         # Store the flags.
-        ds.flag_rdc = rdc
-        ds.flag_pcs = pcs
-        ds.flag_opt = opt
+        status.flag_rdc = rdc
+        status.flag_pcs = pcs
+        status.flag_opt = opt
 
 
     def mesg_opt_debug(self):
