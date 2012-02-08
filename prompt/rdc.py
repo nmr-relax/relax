@@ -231,7 +231,7 @@ class RDC(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_str(align_id, 'alignment ID string')
+        arg_check.is_str(align_id, 'alignment ID string', can_be_none=True)
 
         # Execute the functional code.
         rdc.delete(align_id=align_id)
