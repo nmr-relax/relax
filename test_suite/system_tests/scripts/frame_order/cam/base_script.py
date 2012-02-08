@@ -137,6 +137,10 @@ class Base_script:
     def original_structure(self):
         """Load the original structure into a dedicated data pipe."""
 
+        # Delete the data pipe (if a loaded state has been used).
+        if self.load_state:
+            self.interpreter.pipe.delete('orig pos')
+
         # Create a special data pipe for the original rigid body position.
         self.interpreter.pipe.create(pipe_name='orig pos', pipe_type='frame order')
 
@@ -251,6 +255,10 @@ class Base_script:
         R = transpose(R)
         print("Inverted rotation:\n%s\n" % R)
         pivot = cdp.pivot
+
+        # Delete the data pipe (if a loaded state has been used).
+        if self.load_state:
+            self.interpreter.pipe.delete('ave pos')
 
         # Create a special data pipe for the average rigid body position.
         self.interpreter.pipe.create(pipe_name='ave pos', pipe_type='frame order')
