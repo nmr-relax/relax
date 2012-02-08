@@ -99,11 +99,11 @@ class Analysis:
         paramag.centre(pos=[35.934, 12.194, -4.206])
 
         # Check the minimum.
-        cdp.ave_pos_beta = 1.1321377968123119
-        cdp.ave_pos_gamma = 0.029867114268410672
-        cdp.axis_theta = 0.69828059268540488
-        cdp.axis_phi = -2.2509097944247132
-        cdp.cone_s1 = iso_cone_theta_to_S(20.0 * 2.0 * pi / 360.0)
+        value.set(param='ave_pos_beta', val=1.1321377968123119)
+        value.set(param='ave_pos_gamma', val=0.029867114268410672)
+        value.set(param='axis_theta', val=0.69828059268540488)
+        value.set(param='axis_phi', val=-2.2509097944247132)
+        value.set(param='cone_s1', val=iso_cone_theta_to_S(20.0 * 2.0 * pi / 360.0))
         calc()
         print("\nchi2: %s" % cdp.chi2)
 
