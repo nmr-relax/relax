@@ -263,7 +263,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
-        self.check_chi2(6.99143252681+35.790499755741962)
+        self.check_chi2(6.1160690302975809+34.254550856474211)
 
 
     def test_cam_iso_cone_no_rdc(self):
@@ -272,7 +272,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
-        self.check_chi2(35.790499755741962)
+        self.check_chi2(34.254550856474211)
 
 
     def test_cam_iso_cone_no_pcs(self):
@@ -281,7 +281,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
-        self.check_chi2(6.99143252681)
+        self.check_chi2(6.1160690302975809)
 
 
     def test_cam_iso_cone_free_rotor(self):
