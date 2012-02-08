@@ -40,6 +40,7 @@ BASE_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_
 class Base_script:
     # Class variables.
     cone = True
+    load_state = False
 
     def __init__(self, interpreter):
         """Execute the frame order analysis."""
@@ -50,6 +51,18 @@ class Base_script:
 
         # The data path.
         self.data_path = BASE_PATH + self.directory
+
+        # Pre-created set up.
+        if self.load_state:
+            # Reset the data store.
+            self.interpreter.reset()
+
+            # Load the save file.
+            self.interpreter.state.load('frame_order', dir=self.data_path)
+
+        # New set up.
+        else:
+            self.setup()
 
         # Optimise.
         self.optimisation()
@@ -69,74 +82,6 @@ class Base_script:
 
     def optimisation(self):
         """Optimise the frame order model."""
-
-        # Create the data pipe.
-        self.interpreter.pipe.create(pipe_name='frame order', pipe_type='frame order')
-
-        # Read the structures.
-        self.interpreter.structure.read_pdb('1J7O_1st_NH.pdb', dir=BASE_PATH, set_mol_name='N-dom')
-        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH, set_mol_name='C-dom')
-
-        # Load the spins.
-        self.interpreter.structure.load_spins('@N')
-        self.interpreter.structure.load_spins('@H')
-
-        # Load the NH vectors.
-        self.interpreter.structure.vectors(spin_id='@N', attached='H', ave=False)
-
-        # Set the values needed to calculate the dipolar constant.
-        self.interpreter.value.set(1.041 * 1e-10, 'r', spin_id="@N")
-        self.interpreter.value.set('15N', 'heteronuc_type', spin_id="@N")
-        self.interpreter.value.set('1H', 'proton_type', spin_id="@N")
-
-        # Loop over the alignments.
-        ln = ['dy', 'tb', 'tm', 'er']
-        for i in range(len(ln)):
-            # Load the RDCs.
-            if not hasattr(ds, 'flag_rdc') or ds.flag_rdc:
-                self.interpreter.rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
-
-            # The PCS.
-            if not hasattr(ds, 'flag_pcs') or ds.flag_pcs:
-                self.interpreter.pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
-
-            # The temperature and field strength.
-            self.interpreter.temperature(id=ln[i], temp=303)
-            self.interpreter.frq.set(id=ln[i], frq=900e6)
-
-        # Load the N-domain tensors (the full tensors).
-        self.interpreter.script(BASE_PATH + 'tensors.py')
-
-        # Define the domains.
-        self.interpreter.domain(id='N', spin_id=":1-78")
-        self.interpreter.domain(id='C', spin_id=":80-148")
-
-        # The tensor domains and reductions.
-        full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
-        red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
-        for i in range(len(full)):
-            # Initialise the reduced tensor.
-            self.interpreter.align_tensor.init(tensor=red[i], params=(0,0,0,0,0))
-
-            # Set the domain info.
-            self.interpreter.align_tensor.set_domain(tensor=full[i], domain='N')
-            self.interpreter.align_tensor.set_domain(tensor=red[i], domain='C')
-
-            # Specify which tensor is reduced.
-            self.interpreter.align_tensor.reduction(full_tensor=full[i], red_tensor=red[i])
-
-        # Select the model.
-        self.interpreter.frame_order.select_model(self.model)
-
-        # Set the reference domain.
-        self.interpreter.frame_order.ref_domain('N')
-
-        # Set the initial pivot point.
-        pivot = array([ 37.254, 0.5, 16.7465])
-        self.interpreter.frame_order.pivot(pivot, fix=True)
-
-        # Set the paramagnetic centre.
-        self.interpreter.paramag.centre(pos=[35.934, 12.194, -4.206])
 
         # Set the number of numerical integration points.
         if hasattr(self, 'num_int_pts'):
@@ -216,6 +161,78 @@ class Base_script:
         # Set the domains.
         self.interpreter.frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
         self.interpreter.frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
+
+
+    def setup(self):
+        """Optimise the frame order model."""
+
+        # Create the data pipe.
+        self.interpreter.pipe.create(pipe_name='frame order', pipe_type='frame order')
+
+        # Read the structures.
+        self.interpreter.structure.read_pdb('1J7O_1st_NH.pdb', dir=BASE_PATH, set_mol_name='N-dom')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=BASE_PATH, set_mol_name='C-dom')
+
+        # Load the spins.
+        self.interpreter.structure.load_spins('@N')
+        self.interpreter.structure.load_spins('@H')
+
+        # Load the NH vectors.
+        self.interpreter.structure.vectors(spin_id='@N', attached='H', ave=False)
+
+        # Set the values needed to calculate the dipolar constant.
+        self.interpreter.value.set(1.041 * 1e-10, 'r', spin_id="@N")
+        self.interpreter.value.set('15N', 'heteronuc_type', spin_id="@N")
+        self.interpreter.value.set('1H', 'proton_type', spin_id="@N")
+
+        # Loop over the alignments.
+        ln = ['dy', 'tb', 'tm', 'er']
+        for i in range(len(ln)):
+            # Load the RDCs.
+            if not hasattr(ds, 'flag_rdc') or ds.flag_rdc:
+                self.interpreter.rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+
+            # The PCS.
+            if not hasattr(ds, 'flag_pcs') or ds.flag_pcs:
+                self.interpreter.pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], dir=self.data_path, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+
+            # The temperature and field strength.
+            self.interpreter.temperature(id=ln[i], temp=303)
+            self.interpreter.frq.set(id=ln[i], frq=900e6)
+
+        # Load the N-domain tensors (the full tensors).
+        self.interpreter.script(BASE_PATH + 'tensors.py')
+
+        # Define the domains.
+        self.interpreter.domain(id='N', spin_id=":1-78")
+        self.interpreter.domain(id='C', spin_id=":80-148")
+
+        # The tensor domains and reductions.
+        full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
+        red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
+        for i in range(len(full)):
+            # Initialise the reduced tensor.
+            self.interpreter.align_tensor.init(tensor=red[i], params=(0,0,0,0,0))
+
+            # Set the domain info.
+            self.interpreter.align_tensor.set_domain(tensor=full[i], domain='N')
+            self.interpreter.align_tensor.set_domain(tensor=red[i], domain='C')
+
+            # Specify which tensor is reduced.
+            self.interpreter.align_tensor.reduction(full_tensor=full[i], red_tensor=red[i])
+
+        # Select the model.
+        self.interpreter.frame_order.select_model(self.model)
+
+        # Set the reference domain.
+        self.interpreter.frame_order.ref_domain('N')
+
+        # Set the initial pivot point.
+        pivot = array([ 37.254, 0.5, 16.7465])
+        self.interpreter.frame_order.pivot(pivot, fix=True)
+
+        # Set the paramagnetic centre.
+        self.interpreter.paramag.centre(pos=[35.934, 12.194, -4.206])
 
 
     def transform(self):
