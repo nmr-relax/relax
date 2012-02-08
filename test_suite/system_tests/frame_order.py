@@ -143,13 +143,13 @@ class Frame_order(SystemTestCase):
         string = string +   "%-15s %30.17g\n" % ('ave_pos_beta:',    cdp.ave_pos_beta)
         string = string +   "%-15s %30.17g\n" % ('ave_pos_gamma:',   cdp.ave_pos_gamma)
         string = string +   "%-15s %30.17g\n" % ('chi2:',    cdp.chi2)
-        if hasattr(cdp, 'iter'):
+        if hasattr(cdp, 'iter') and cdp.iter != None:
             string = string +   "%-15s %30i\n" % ('iter:',    cdp.iter)
-        if hasattr(cdp, 'f_count'):
+        if hasattr(cdp, 'f_count') and cdp.f_count != None:
             string = string +   "%-15s %30i\n" % ('f_count:', cdp.f_count)
-        if hasattr(cdp, 'g_count'):
+        if hasattr(cdp, 'g_count') and cdp.g_count != None:
             string = string +   "%-15s %30i\n" % ('g_count:', cdp.g_count)
-        if hasattr(cdp, 'h_count'):
+        if hasattr(cdp, 'h_count') and cdp.h_count != None:
             string = string +   "%-15s %30i\n" % ('h_count:', cdp.h_count)
         if hasattr(cdp, 'warning'):
             string = string +   "%-15s %30s\n" % ('warning:', cdp.warning)
