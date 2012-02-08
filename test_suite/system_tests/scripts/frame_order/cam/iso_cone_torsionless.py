@@ -39,6 +39,7 @@ class Analysis(Base_script):
     axis_phi = 0.89068285262982982
     cone_theta = 1.0
     cone = True
+    load_state = False
     num_int_pts = 50
 
 
