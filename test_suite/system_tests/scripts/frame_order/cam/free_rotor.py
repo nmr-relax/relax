@@ -34,8 +34,8 @@ class Analysis(Base_script):
     model = 'free rotor'
     ave_pos_beta = 1.1838868514111507
     ave_pos_gamma = 0.35219976958846927
-    axis_theta = 2.1815126749944502
-    axis_phi = 0.89068285262982982
+    axis_theta = 0.9600799785953431
+    axis_phi = 4.0322755062196229
     cone = True
     num_int_pts = 50
 

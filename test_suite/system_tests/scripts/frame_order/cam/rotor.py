@@ -35,8 +35,8 @@ class Analysis(Base_script):
     ave_pos_alpha = 4.3434999280669997
     ave_pos_beta = 0.43544332764249905
     ave_pos_gamma = 3.8013235235956007
-    axis_theta = 2.1815126749944502
-    axis_phi = 0.89068285262982982
+    axis_theta = 0.9600799785953431
+    axis_phi = 4.0322755062196229
     cone_sigma_max = 30.0 / 360.0 * 2.0 * pi
     cone = True
     num_int_pts = 50

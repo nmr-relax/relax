@@ -34,8 +34,8 @@ class Analysis(Base_script):
     model = 'iso cone, free rotor'
     ave_pos_beta = 1.1983544319568078
     ave_pos_gamma = 0.333131539777762
-    axis_theta = 2.1821788938846129
-    axis_phi = 0.88498745175135329
+    axis_theta = 0.9600799785953431
+    axis_phi = 4.0322755062196229
     cone_s1 = 0.91322057310490712
     cone = True
     num_int_pts = 50
