@@ -4,55 +4,74 @@ Chi-squared values
 Quadratic integration (from numpy)
 ----------------------------------
 
-Data set                    RDC + PCS           RDC                 PCS
-rigid                       0.0784083092318     ?                   ?
-rotor                       ?                   ?                   ?
-rotor2                      ?                   ?                   ?
-rotor_2_state               ?                   ?                   ?
-free_rotor                  ?                   ?                   ?
-free_rotor2                 ?                   ?                   ?
-iso_cone                    ?                   ?                   ?
-iso_cone_free_rotor         ?                   ?                   ?
-iso_cone_free_rotor2        ?                   ?                   ?
-iso_cone_torsionless        ?                   ?                   ?
-pseudo_ellipse              ?                   ?                   ?
-pseudo_ellipse_free_rotor   ?                   ?                   ?
-pseudo_ellipse_torsionless  ?                   ?                   ?
+Data set                    RDC + PCS               RDC                     PCS
+rigid                       0.0784083092318         ?                       ?
+rotor                       ?                       ?                       ?
+rotor2                      ?                       ?                       ?
+rotor_2_state               ?                       ?                       ?
+free_rotor                  ?                       ?                       ?
+free_rotor2                 ?                       ?                       ?
+iso_cone                    ?                       ?                       ?
+iso_cone_free_rotor         ?                       ?                       ?
+iso_cone_free_rotor2        ?                       ?                       ?
+iso_cone_torsionless        ?                       ?                       ?
+pseudo_ellipse              ?                       ?                       ?
+pseudo_ellipse_free_rotor   ?                       ?                       ?
+pseudo_ellipse_torsionless  ?                       ?                       ?
 
 
 Monte Carlo integration (old relax code)
 ----------------------------------------
 
-Data set                    RDC + PCS           RDC                 PCS
-rigid                       0.0784083092318     ?                   ?
-rotor                       0.159097903383      ?                   ?
-rotor2                      ?                   ?                   ?
-rotor_2_state               ?                   ?                   ?
-free_rotor                  11.970932909        ?                   ?
-free_rotor2                 389.389222372       ?                   ?
-iso_cone                    6.31501550972       ?                   ?
-iso_cone_free_rotor         ?                   ?                   ?
-iso_cone_free_rotor2        ?                   ?                   ?
-iso_cone_torsionless        79161.8338624       ?                   ?
-pseudo_ellipse              3.73003376255       ?                   ?
-pseudo_ellipse_free_rotor   16.6432491662       ?                   ?
-pseudo_ellipse_torsionless  2.00525072929       ?                   ?
+Data set                    RDC + PCS               RDC                     PCS
+rigid                       0.0784083092318         ?                       ?
+rotor                       0.159097903383          ?                       ?
+rotor2                      ?                       ?                       ?
+rotor_2_state               ?                       ?                       ?
+free_rotor                  11.970932909            ?                       ?
+free_rotor2                 389.389222372           ?                       ?
+iso_cone                    6.31501550972           ?                       ?
+iso_cone_free_rotor         ?                       ?                       ?
+iso_cone_free_rotor2        ?                       ?                       ?
+iso_cone_torsionless        79161.8338624           ?                       ?
+pseudo_ellipse              3.73003376255           ?                       ?
+pseudo_ellipse_free_rotor   16.6432491662           ?                       ?
+pseudo_ellipse_torsionless  2.00525072929           ?                       ?
 
 
 Quasi-random integration (from relax, 50 Sobol' pts)
 ----------------------------------------------------
 
-Data set                    RDC + PCS           RDC                 PCS
-rigid                       0.08117725043308886 1.62132398885e-06   0.0811756291091
-rotor                       0.5337786112501045  0.1460413756923267  0.38773723555777778
-rotor2                      4.505100269246      0.260243918876      4.24485635037
-rotor_2_state               ?                   ?                   ?
-free_rotor                  18.19765307215      5.17902126915       13.018631803
-free_rotor2                 394.1767902138      5.2780738618        388.898716352
-iso_cone (100 pts)          40.370619886771799  6.1160690302975809  34.254550856474211
-iso_cone_free_rotor         91.81929629487      2.55339343957       89.2659028553
-iso_cone_free_rotor2        27.04106736869      1.95519413809       25.0858732306
-iso_cone_torsionless        89142.72228781572   86901.935712935723  2240.78657488
-pseudo_ellipse              42.27471263314      0.593794695247      41.6809179379
-pseudo_ellipse_free_rotor   215.155595458372    0.248965094372      214.906630364
-pseudo_ellipse_torsionless  2.231703479693      0.484168123653      1.74753535604
+Data set                    RDC + PCS               RDC                     PCS
+rigid                       0.08117725043308886     1.62132398885e-06       0.0811756291091
+rotor                       0.37635143856354297     0.1460413756923267      0.23031006287118444
+rotor2                      4.505100269246          0.260243918876          4.24485635037
+rotor_2_state               ?                       ?                       ?
+free_rotor                  18.214149909640394      5.17902126915           13.035128640494337
+free_rotor2                 394.1767902138          5.2780738618            388.898716352
+iso_cone (100 pts)          13.624047293184548      6.1160690302975809      7.5079782628867333
+iso_cone_free_rotor         37.360496622266673      5.8864210784754025      31.474075543791272
+iso_cone_free_rotor2        27.04106736869          1.95519413809           25.0858732306
+iso_cone_torsionless        166.93408738938717      0.419922373339          166.51416501604808
+pseudo_ellipse              42.27471263314          0.593794695247          41.6809179379
+pseudo_ellipse_free_rotor   215.155595458372        0.248965094372          214.906630364
+pseudo_ellipse_torsionless  2.231703479693          0.484168123653          1.74753535604
+
+
+Quasi-random integration (from relax, 1e6 Sobol' pts)
+--------------------------------------------------------
+
+Data set                    RDC + PCS               RDC                     PCS
+rigid                       ?                       ?                       ?
+rotor                       ?                       ?                       0.19818574794847829
+rotor2                      ?                       ?                       ?
+rotor_2_state               ?                       ?                       ?
+free_rotor                  ?                       ?                       ?
+free_rotor2                 ?                       ?                       ?
+iso_cone                    ?                       6.1160690302975809      6.919712859834366
+iso_cone_free_rotor         ?                       ?                       ?
+iso_cone_free_rotor2        ?                       ?                       ?
+iso_cone_torsionless        ?                       ?                       612.?
+pseudo_ellipse              ?                       ?                       ?
+pseudo_ellipse_free_rotor   ?                       ?                       ?
+pseudo_ellipse_torsionless  ?                       ?                       ?
