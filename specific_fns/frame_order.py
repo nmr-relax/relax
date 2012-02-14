@@ -419,7 +419,7 @@ class Frame_order(API_base, API_common):
         # Skip models missing a cone.
         if cdp.model not in ['rotor', 'free rotor']:
             # The rotation matrix (rotation from the z-axis to the cone axis).
-            if cdp.model not in ['iso cone', 'iso cone, free rotor']:
+            if cdp.model not in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
                 R = axes
             else:
                 R = zeros((3, 3), float64)
