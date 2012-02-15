@@ -148,13 +148,14 @@ class Frame_order(SystemTestCase):
 
         # Minimisation info.
         string = string + "\n"
-        if hasattr(cdp, 'ave_pos_alpha'):
-            string = string + "%-15s %30.17g\n" % ('ave_pos_alpha:',   cdp.ave_pos_alpha)
-        string = string +   "%-15s %30.17g\n" % ('ave_pos_beta:',    cdp.ave_pos_beta)
-        string = string +   "%-15s %30.17g\n" % ('ave_pos_gamma:',   cdp.ave_pos_gamma)
-        string = string +   "%-15s %30.17g\n" % ('chi2:',    cdp.chi2)
+        for param in ['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'axis_theta', 'axis_phi', 'cone_theta_x', 'cone_theta_y', 'cone_theta', 'cone_s1', 'cone_sigma_max']:
+            if hasattr(cdp, param):
+                obj = getattr(cdp, param)
+                string = string + "%-15s %30.17g\n" % (param, obj)
+
+        string = string +   "%-15s %30.17g\n" % ('chi2:', cdp.chi2)
         if hasattr(cdp, 'iter') and cdp.iter != None:
-            string = string +   "%-15s %30i\n" % ('iter:',    cdp.iter)
+            string = string +   "%-15s %30i\n" % ('iter:', cdp.iter)
         if hasattr(cdp, 'f_count') and cdp.f_count != None:
             string = string +   "%-15s %30i\n" % ('f_count:', cdp.f_count)
         if hasattr(cdp, 'g_count') and cdp.g_count != None:
