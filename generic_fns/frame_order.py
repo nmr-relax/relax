@@ -31,7 +31,7 @@ import sys
 from float import isNaN
 
 
-def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, dot=False, comma=True):
+def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, dot=False, comma=True, file=sys.stdout):
     """Nicely print out the Frame Order matrix of the 2nd degree.
 
     @param daeg:        The 3D, rank-4 Frame Order matrix.
@@ -46,6 +46,8 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
     @type dot:          bool
     @keyword comma:     A flag which if true causes commas to be printed between the elements.
     @type comma:        bool
+    @keyword file:      The file object to write to.
+    @type file:         file object
     """
 
     # Default name.
@@ -53,8 +55,8 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
         name = 'Frame Order matrix, 2nd degree'
 
     # Header and first row start.
-    sys.stdout.write("\n%s:\n" % name)
-    sys.stdout.write('[[')
+    file.write("\n%s:\n" % name)
+    file.write('[[')
 
     # Convert to an array, if necessary.
     if isinstance(daeg, matrix):
@@ -64,7 +66,7 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
     for i in range(len(daeg)):
         # 2nd to last row start.
         if i != 0:
-            sys.stdout.write(' [')
+            file.write(' [')
 
         # Row end character.
         char2 = ''
@@ -119,4 +121,4 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
                     val = '0'
 
             # Write.
-            sys.stdout.write(format % (val, char1))
+            file.write(format % (val, char1))
