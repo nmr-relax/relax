@@ -1005,6 +1005,14 @@ class SplitIO:
         """Class for splitting an IO stream to two outputs."""
 
 
+    def flush(self):
+        """Flush all streams."""
+
+        # Call the streams' methods.
+        self.stream1.flush()
+        self.stream2.flush()
+
+
     def split(self, stream1, stream2):
         """Function for setting the streams."""
 
