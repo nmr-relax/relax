@@ -1,62 +1,53 @@
 # Script for generating the distribution of PDB structures.
 
+# Modify the system path to load the base module.
+import sys
+sys.path.append('..')
+
 # Python module imports.
 from math import acos
-from numpy import array, cross, dot, float64, zeros
-from numpy.linalg import norm
+from numpy import dot
 
 # relax module imports.
-from maths_fns.rotation_matrix import axis_angle_to_R, R_random_hypersphere
+from maths_fns.rotation_matrix import R_random_hypersphere
+
+# Base module import.
+from generate_base import Main
 
 
-# The number of structures.
-N = 5000
-THETA_MAX = 20.0 * 2.0 * pi / 360.0
+class Generate(Main):
+    # The number of structures.
+    N = 100
 
-# Create a data pipe.
-pipe.create('generate', 'N-state')
+    # Cone parameters.
+    THETA_MAX = 1.0
 
-# The axis for the rotations (the pivot point to CoM axis).
-pivot = array([ 37.254, 0.5, 16.7465])
-com = array([ 26.83678091, -12.37906417,  28.34154128])
-axis = pivot - com
-axis = axis / norm(axis)
+    def __init__(self):
+        """Model specific setup."""
 
-# Init a rotation matrix.
-R = zeros((3, 3), float64)
+        # Alias the required methods.
+        self.axes_to_pdb = self.axes_to_pdb_main_axis
+        self.build_axes = self.build_axes_pivot_com
 
-# Generate N random rotations within the cone.
-i = 0
-while True:
-    # The random rotation matrix.
-    R_random_hypersphere(R)
 
-    # Skip the rotation if the angle is violated.
-    rot_z = dot(R, axis)
-    theta = acos(dot(axis, rot_z))
-    if theta > THETA_MAX:
-        continue
+    def rotation(self, i):
+        """Set up the rotation for state i."""
 
-    # Load the PDB as a new model.
-    structure.read_pdb('1J7P_1st_NH.pdb', dir='..', set_model_num=i+1)
+        # Loop until a valid rotation matrix is found.
+        while 1:
+            # The random rotation matrix.
+            R_random_hypersphere(self.R)
 
-    # Rotate.
-    structure.rotate(R=R, origin=pivot, model=i+1)
+            # Skip the rotation if the angle is violated.
+            axis = dot(self.R, self.axes[:,2])
+            theta = acos(dot(self.axes[:,2], axis))
+            if theta > self.THETA_MAX:
+                continue
 
-    # Increment the index.
-    i += 1
+            # Rotation is ok, so stop looping.
+            break
 
-    # Termination.
-    if i > N:
-        break
 
-# Save the PDB file.
-structure.write_pdb('distribution.pdb', compress_type=2, force=True)
-
-# Create a PDB for the motional axis system.
-end_pt = axis * norm(pivot - com) + pivot
-structure.delete()
-structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=pivot, element='C')
-structure.add_atom(atom_name='N', res_name='AXE', res_num=1, pos=end_pt, element='N')
-structure.connect_atom(index1=0, index2=1)
-structure.write_pdb('axis.pdb', compress_type=0, force=True)
+# Execute the code.
+generate = Generate()
+generate.run()

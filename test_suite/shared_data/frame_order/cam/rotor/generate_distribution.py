@@ -18,7 +18,7 @@ pipe.create('generate', 'N-state')
 # The axis for the rotations (the pivot point to CoM axis).
 pivot = array([ 37.254, 0.5, 16.7465])
 com = array([ 26.83678091, -12.37906417,  28.34154128])
-axis = pivot - com
+axis = com - pivot
 axis = axis / norm(axis)
 
 # Init a rotation matrix.
@@ -44,7 +44,7 @@ for i in range(N+1):
 structure.write_pdb('distribution.pdb', compress_type=2, force=True)
 
 # Create a PDB for the motional axis system.
-end_pt = axis * norm(pivot - com) + pivot
+end_pt = axis * norm(com - pivot) + pivot
 structure.delete()
 structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=pivot, element='C')
 structure.add_atom(atom_name='N', res_name='AXE', res_num=1, pos=end_pt, element='N')

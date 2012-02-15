@@ -1,70 +1,64 @@
 # Script for generating the distribution of PDB structures.
 
+# Modify the system path to load the base module.
+import sys
+sys.path.append('..')
+
 # Python module imports.
 from math import acos
-from numpy import array, cross, dot, float64, zeros
-from numpy.linalg import norm
+from numpy import dot
 
 # relax module imports.
-from maths_fns.rotation_matrix import axis_angle_to_R, R_random_hypersphere
+from maths_fns.rotation_matrix import R_random_hypersphere
+
+# Base module import.
+from generate_base import Main
 
 
-# The number of structures.
-N = 5000
+class Generate(Main):
+    # The number of structures.
+    N = 10000
 
-# Create a data pipe.
-pipe.create('generate', 'N-state')
+    # Cone parameters.
+    THETA_MAX = 1.2
 
-# The axis for the rotations (the pivot point to CoM axis).
-pivot = array([ 37.254, 0.5, 16.7465])
-com = array([ 26.83678091, -12.37906417,  28.34154128])
-axis = com - pivot
-axis = axis / norm(axis)
+    def __init__(self):
+        """Model specific setup."""
 
-# Init a rotation matrix.
-R = zeros((3, 3), float64)
+        # Alias the required methods.
+        self.axes_to_pdb = self.axes_to_pdb_main_axis
+        self.build_axes = self.build_axes_alt
 
-# Tilt the rotation axis by x degrees.
-tilt_axis = cross(axis, array([0, 0, 1]))
-tilt_axis = tilt_axis / norm(tilt_axis)
-axis_angle_to_R(tilt_axis, 15.0 * 2.0 * pi / 360.0, R)
-print("Tilt axis: %s, norm = %s" % (repr(tilt_axis), norm(tilt_axis)))
-print("CoM-pivot axis: %s, norm = %s" % (repr(axis), norm(axis)))
-rot_axis = dot(R, axis)
-print("Rotation axis: %s, norm = %s" % (repr(rot_axis), norm(rot_axis)))
 
-# Generate N random rotations within the cone.
-i = 0
-while True:
-    # The random rotation matrix.
-    R_random_hypersphere(R)
+    def rotation(self, i):
+        """Set up the rotation for state i."""
 
-    # Skip the rotation if the angle is violated.
-    new_axis = dot(R, axis)
-    angle = acos(dot(rot_axis, new_axis))
-    if angle > (20.0 * 2.0 * pi / 360.0):
-        continue
+        # Loop until a valid rotation matrix is found.
+        while 1:
+            # The random rotation matrix.
+            R_random_hypersphere(self.R)
 
-    # Load the PDB as a new model.
-    structure.read_pdb('1J7P_1st_NH.pdb', dir='..', set_model_num=i+1)
+            # Rotate the Z-axis.
+            rot_axis = dot(self.R, self.axes[:,2])
 
-    # Rotate.
-    structure.rotate(R=R, origin=pivot, model=i+1)
+            # Calculate the projection and angle.
+            proj = dot(self.axes[:,2], rot_axis)
 
-    # Increment the index.
-    i += 1
+            # Calculate the angle, taking float16 truncation errors into account.
+            if proj > 1.0:
+                proj = 1.0
+            elif proj < -1.0:
+                proj = -1.0
+            theta = acos(proj)
 
-    # Termination.
-    if i > N:
-        break
+            # Skip the rotation if the angle is violated.
+            if theta > self.THETA_MAX:
+                continue
 
-# Save the PDB file.
-structure.write_pdb('distribution.pdb', compress_type=2, force=True)
+            # Rotation is ok, so stop looping.
+            break
 
-# Create a PDB for the motional axis system.
-end_pt = rot_axis * norm(pivot - com) + pivot
-structure.delete()
-structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=pivot, element='C')
-structure.add_atom(atom_name='N', res_name='AXE', res_num=1, pos=end_pt, element='N')
-structure.connect_atom(index1=0, index2=1)
-structure.write_pdb('axis.pdb', compress_type=0, force=True)
+
+# Execute the code.
+generate = Generate()
+generate.run()

@@ -14,7 +14,7 @@ pymol.cone_pdb('cone.pdb')
 pymol.command('zoom')
 
 # Load the distribution of structures.
-pymol.command('load distribution.pdb.gz')
+pymol.command('load distribution.pdb')
 
 # Structure display.
 pymol.command('hide everything, 1J7O_1st_NH')
