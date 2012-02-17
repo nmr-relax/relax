@@ -35,13 +35,13 @@ class Analysis(Base_script):
     ave_pos_alpha = 4.3434999280669997
     ave_pos_beta = 0.43544332764249905
     ave_pos_gamma = 3.8013235235956007
-    axis_theta = 0.9600799785953431
-    axis_phi = 4.0322755062196229
-    cone_theta = 10.0 * 2.0 * pi / 360.0
-    cone_sigma_max = 20.0 * 2.0 * pi / 360.0
+    axis_theta = 0.96007997859534299767
+    axis_phi = 4.03227550621962294031
+    cone_theta = 0.6
+    cone_sigma_max = 0.9
     cone = True
-    load_state = True
-    num_int_pts = 100
+    #load_state = True
+    num_int_pts = 50
 
 
 # Execute the analysis.
