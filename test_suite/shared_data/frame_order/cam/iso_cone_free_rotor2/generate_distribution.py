@@ -17,7 +17,7 @@ from generate_base import Main
 
 class Generate(Main):
     # The number of structures.
-    N = 10000
+    N = 1000000
 
     # Cone parameters.
     THETA_MAX = 1.2
