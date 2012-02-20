@@ -13,14 +13,14 @@ from generate_base import Main
 
 class Generate(Main):
     # The number of structures.
-    #INC = 0.0018
-    INC = 60
-    N = int(360 / INC)
+    INC = 0.00036
+    N = int(360 / INC) + 1
 
     def __init__(self):
         """Model specific setup."""
 
         # Alias the required methods.
+        self.axes_to_pdb = self.axes_to_pdb_main_axis
         self.build_axes = self.build_axes_pivot_com
 
 
