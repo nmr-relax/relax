@@ -1,6 +1,7 @@
 # Script for generating the distribution of PDB structures.
 
 # Python module imports.
+from math import pi
 from numpy import array, cross, dot, float64, zeros
 from numpy.linalg import norm
 
