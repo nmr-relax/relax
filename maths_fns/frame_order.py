@@ -1741,10 +1741,15 @@ class Frame_order:
 
             # Loop over the dimensions, converting the points to angles.
             for j in range(m):
+                # The tilt angle - the angle of rotation about the x-y plane rotation axis.
                 if dims[j] in ['theta']:
-                    self.sobol_angles[i, j] = 2.0 * pi * point[j]
-                if dims[j] in ['phi']:
                     self.sobol_angles[i, j] = acos(2.0*point[j] - 1.0)
+
+                # The angle defining the x-y plane rotation axis.
+                if dims[j] in ['phi']:
+                    self.sobol_angles[i, j] = 2.0 * pi * point[j]
+
+                # The torsion angle - the angle of rotation about the z' axis.
                 if dims[j] in ['sigma']:
                     self.sobol_angles[i, j] = 2.0 * pi * (point[j] - 0.5)
 
