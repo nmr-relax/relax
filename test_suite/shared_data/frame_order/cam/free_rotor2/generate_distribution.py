@@ -16,7 +16,6 @@ class Generate(Main):
     INC = 0.00036
     N = int(360 / INC)
 
-
     def __init__(self):
         """Model specific setup."""
 
@@ -33,7 +32,6 @@ class Generate(Main):
 
         # The rotation matrix.
         axis_angle_to_R(self.axes[:,2], angle, self.R)
-
 
 
 # Execute the code.
