@@ -1,17 +1,13 @@
 # Script for generating the distribution of PDB structures.
 
+# Modify the system path to load the base module.
+import sys
+sys.path.append('..')
+
 # Python module imports.
 from math import pi
 from numpy import array, cross, dot, float64, zeros
 from numpy.linalg import norm
-
-# relax module imports.
-from maths_fns.rotation_matrix import axis_angle_to_R
-
-
-# Modify the system path to load the base module.
-import sys
-sys.path.append('..')
 
 # relax module imports.
 from maths_fns.rotation_matrix import axis_angle_to_R
