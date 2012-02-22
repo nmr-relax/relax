@@ -38,8 +38,8 @@ class Analysis(Base_script):
     eigen_alpha = 3.1415926535897931
     eigen_beta = 0.96007997859534311
     eigen_gamma = 4.0322755062196229
-    cone_theta_x = 0.1
-    cone_theta_y = 0.5
+    cone_theta_x = 1.3
+    cone_theta_y = 1.1
     cone = True
     num_int_pts = 50
 
