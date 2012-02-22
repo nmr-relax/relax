@@ -1,57 +1,44 @@
 # Script for generating the distribution of PDB structures.
 
+# Modify the system path to load the base module.
+import sys
+sys.path.append('..')
+
 # Python module imports.
-from numpy import array, cross, dot, float64, zeros
-from numpy.linalg import norm
+from math import pi
 
 # relax module imports.
 from maths_fns.rotation_matrix import axis_angle_to_R
 
+# Base module import.
+from generate_base import Main
 
-# Create a data pipe.
-pipe.create('generate', 'N-state')
 
-# The axis for the rotations (the pivot point to CoM axis).
-pivot = array([ 37.254, 0.5, 16.7465])
-com = array([ 26.83678091, -12.37906417,  28.34154128])
-axis = com - pivot
-axis = axis / norm(axis)
+class Generate(Main):
+    # The number of structures.
+    N = 2
+    TILT_ANGLE = 85.0
 
-# Init a rotation matrix.
-R = zeros((3, 3), float64)
+    def __init__(self):
+        """Model specific setup."""
 
-# Tilt the rotation axis by 85 degrees.
-rot_axis = cross(axis, array([0, 0, 1]))
-rot_axis = rot_axis / norm(rot_axis)
-axis_angle_to_R(rot_axis, 85.0 * 2.0 * pi / 360.0, R)
-print("Tilt axis: %s, norm = %s" % (repr(rot_axis), norm(rot_axis)))
-print("CoM-pivot axis: %s, norm = %s" % (repr(axis), norm(axis)))
-axis = dot(R, axis)
-print("Rotation axis: %s, norm = %s" % (repr(axis), norm(axis)))
+        # Alias the required methods.
+        self.axes_to_pdb = self.axes_to_pdb_main_axis
+        self.build_axes = self.build_axes_alt
 
-# Load 2 copies of the original C-domain, rotating them 5 deg both ways about the rotation axis.
-for i in range(2):
-    # Load the PDB as a new model.
-    structure.read_pdb('1J7P_1st_NH.pdb', dir='..', set_model_num=i+1)
 
-    # The rotation angle.
-    angle = (i - 0.5) * 10.0 / 360.0 * 2.0 * pi
-    print("Rotation angle: %s" % angle)
+    def rotation(self, i):
+        """Set up the rotation for state i."""
 
-    # The rotation matrix.
-    axis_angle_to_R(axis, angle, R)
-    print("Rotation matrix:\n%s\n" % R)
+        # The rotation angle.
+        angle = (i - 0.5) * 10.0 / 360.0 * 2.0 * pi
+        print("Rotation angle: %s" % angle)
 
-    # Rotate.
-    structure.rotate(R=R, origin=pivot, model=i+1)
+        # The rotation matrix.
+        axis_angle_to_R(self.axes[:,2], angle, self.R)
+        print("Rotation matrix:\n%s\n" % self.R)
 
-# Save the PDB file.
-structure.write_pdb('distribution.pdb', compress_type=2, force=True)
 
-# Create a PDB for the motional axis system.
-end_pt = axis * norm(com - pivot) + pivot
-structure.delete()
-structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=pivot, element='C')
-structure.add_atom(atom_name='N', res_name='AXE', res_num=1, pos=end_pt, element='N')
-structure.connect_atom(index1=0, index2=1)
-structure.write_pdb('axis.pdb', compress_type=0, force=True)
+# Execute the code.
+generate = Generate()
+generate.run()
