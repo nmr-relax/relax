@@ -501,6 +501,33 @@ class Frame_order(SystemTestCase):
         self.check_chi2(0.1460413756923267)
 
 
+    def test_cam_rotor_2_state(self):
+        """Test the 2-state rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags()
+        self.interpreter.run(script_file=self.cam_path+'rotor_2_state.py')
+        self.check_chi2(0.0+0.0)
+
+
+    def test_cam_rotor_2_state_pcs(self):
+        """Test the 2-state rotor frame order model of CaM (with only PCS data)."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(rdc=False)
+        self.interpreter.run(script_file=self.cam_path+'rotor_2_state.py')
+        self.check_chi2(0.0)
+
+
+    def test_cam_rotor_2_state_rdc(self):
+        """Test the 2-state rotor frame order model of CaM (with only RDC data)."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(pcs=False)
+        self.interpreter.run(script_file=self.cam_path+'rotor_2_state.py')
+        self.check_chi2(0.0)
+
+
     def test_cam_rotor2(self):
         """Test the second rotor frame order model of CaM."""
 
