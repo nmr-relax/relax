@@ -16,6 +16,9 @@ class Generate(Main):
     INC = 0.00036
     N = int(360 / INC)
 
+    # Cone parameters.
+    TILT_ANGLE = 15.0
+
     def __init__(self):
         """Model specific setup."""
 

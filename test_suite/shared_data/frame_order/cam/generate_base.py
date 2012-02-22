@@ -323,7 +323,7 @@ class Main:
         # Tilt the axes system by x degrees.
         tilt_axis = cross(axis_z, array([0, 0, 1]))
         tilt_axis = tilt_axis / norm(tilt_axis)
-        axis_angle_to_R(tilt_axis, 15.0 * 2.0 * pi / 360.0, R)
+        axis_angle_to_R(tilt_axis, self.TILT_ANGLE * 2.0 * pi / 360.0, R)
 
         # Rotate the eigenframe.
         self.axes = dot(R, axes)
