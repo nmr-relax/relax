@@ -24,6 +24,7 @@
 """Module for the manipulation of RDC data."""
 
 # Python module imports.
+from copy import deepcopy
 from math import pi, sqrt
 from numpy import float64, ones, zeros
 from numpy.linalg import norm
@@ -240,6 +241,54 @@ def corr_plot(format=None, file=None, dir=None, force=False):
 
         # The main data.
         grace.write_xy_data(data=data, file=file, graph_type=graph_type)
+
+
+def delete(align_id=None):
+    """Delete the RDC data corresponding to the alignment ID.
+
+    @keyword align_id:  The alignment tensor ID string.  If not specified, all data will be deleted.
+    @type align_id:     str or None
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Check that the ID exists.
+    if align_id and not align_id in cdp.rdc_ids:
+        raise RelaxError("The RDC alignment id '%s' does not exist" % align_id)
+
+    # The IDs.
+    if not align_id:
+        ids = deepcopy(cdp.rdc_ids)
+    else:
+        ids = [align_id]
+
+    # Loop over the alignments, removing all the corresponding data.
+    for id in ids:
+        # The RDC ID.
+        cdp.rdc_ids.pop(cdp.rdc_ids.index(id))
+
+        # The data type.
+        if hasattr(cdp, 'rdc_data_types') and cdp.rdc_data_types.has_key(id):
+            cdp.rdc_data_types.pop(id)
+
+        # The spin data.
+        for spin in spin_loop():
+            # The data.
+            if hasattr(spin, 'rdc') and spin.rdc.has_key(id):
+                spin.rdc.pop(id)
+
+            # The error.
+            if hasattr(spin, 'rdc_err') and spin.rdc_err.has_key(id):
+                spin.rdc_err.pop(id)
+
+        # Clean the global data.
+        if not hasattr(cdp, 'pcs_ids') or id not in cdp.pcs_ids:
+            cdp.align_ids.pop(id)
 
 
 def display(align_id=None, bc=False):

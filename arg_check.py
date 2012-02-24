@@ -24,12 +24,39 @@
 """Argument checking functions for the relax user functions."""
 
 # Python module imports.
-from numpy import ndarray
+from numpy import float16, float32, float64, float128, ndarray
 
 # relax module imports.
 from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxListFloatError, RelaxListIntError, RelaxMatrixFloatError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListFloatError, RelaxNoneListIntError, RelaxNoneMatrixFloatError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
 from relax_io import DummyFileObject
 from types import FunctionType, MethodType
+
+
+def check_float(num):
+    """Check if the given number is a Python or numpy float.
+
+    @param num: The number to check.
+    @type num:  anything.
+    @return:    True if the number is a float, False otherwise.
+    @rtype:     bool
+    """
+
+    # Standard float.
+    if isinstance(num, float):
+        return True
+
+    # Numpy floats.
+    if isinstance(num, float16):
+        return True
+    if isinstance(num, float32):
+        return True
+    if isinstance(num, float64):
+        return True
+    if isinstance(num, float128):
+        return True
+
+    # Not a float.
+    return False
 
 
 def is_bool(arg, name):
@@ -72,7 +99,7 @@ def is_float(arg, name, can_be_none=False):
         return
 
     # Check for a float.
-    if isinstance(arg, float):
+    if check_float(arg):
         return
 
     # Fail.
@@ -116,7 +143,7 @@ def is_float_array(arg, name, size=None, can_be_none=False):
     else:
         for i in range(len(arg)):
             # Fail if not a float.
-            if not isinstance(arg[i], float):
+            if not check_float(arg[i]):
                 fail = True
 
     # Fail.
@@ -174,7 +201,7 @@ def is_float_matrix(arg, name, dim=(3, 3), can_be_none=False):
 
             # Check for float elements.
             for j in range(len(arg[i])):
-                if not isinstance(arg[i][j], float):
+                if not check_float(arg[i][j]):
                     fail = True
 
     # Fail.
@@ -463,7 +490,7 @@ def is_num(arg, name, can_be_none=False):
         return
 
     # Check for floats and integers (avoiding Booleans).
-    if (isinstance(arg, float) or isinstance(arg, int)) and not isinstance(arg, bool):
+    if (check_float(arg) or isinstance(arg, int)) and not isinstance(arg, bool):
         return
 
     # Fail.
@@ -513,7 +540,7 @@ def is_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
 
         # Fail if not numbers.
         for i in range(len(arg)):
-            if (not isinstance(arg[i], float) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+            if (not check_float(arg[i]) and not isinstance(arg[i], int)) or isinstance(arg, bool):
                 fail = True
 
     # Fail.
@@ -574,7 +601,7 @@ def is_num_or_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=Fa
 
         # Fail if not numbers.
         for i in range(len(arg)):
-            if (not isinstance(arg[i], float) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+            if (not check_float(arg[i]) and not isinstance(arg[i], int)) or isinstance(arg, bool):
                 fail = True
 
     # Fail.
@@ -629,7 +656,7 @@ def is_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
 
         # Fail if not numbers.
         for i in range(len(arg)):
-            if (not isinstance(arg[i], float) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+            if (not check_float(arg[i]) and not isinstance(arg[i], int)) or isinstance(arg, bool):
                 fail = True
 
     # Fail.
