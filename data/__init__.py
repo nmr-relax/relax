@@ -127,6 +127,28 @@ class Relax_data_store(dict):
             # The text.
             text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])
 
+        # All other objects.
+        text = text + "\n"
+        text = text + "All other objects:\n"
+        for name in dir(self):
+            # Skip special methods.
+            if search("^_", name):
+                continue
+
+            # Skip overwritten methods.
+            if name in list(self.__class__.__dict__.keys()):
+                continue
+
+            # Skip dictionary methods.
+            if name in dir(dict):
+                continue
+
+            # The object.
+            obj = getattr(self, name)
+
+            # The text.
+            text = text + "  %s %s: %s\n" % (name, type(obj), obj)
+
         # Return the text.
         return text
 
