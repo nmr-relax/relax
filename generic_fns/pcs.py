@@ -24,6 +24,7 @@
 """Module for the manipulation of pseudocontact shift data."""
 
 # Python module imports.
+from copy import deepcopy
 from math import pi, sqrt
 from numpy import array, float64, ones, zeros
 from numpy.linalg import norm
@@ -313,6 +314,54 @@ def corr_plot(format=None, file=None, dir=None, force=False):
 
         # The main data.
         grace.write_xy_data(data=data, file=file, graph_type=graph_type)
+
+
+def delete(align_id=None):
+    """Delete the PCS data corresponding to the alignment ID.
+
+    @keyword align_id:  The alignment tensor ID string.  If not specified, all data will be deleted.
+    @type align_id:     str or None
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Check that the ID exists.
+    if align_id and not align_id in cdp.pcs_ids:
+        raise RelaxError("The PCS alignment id '%s' does not exist" % align_id)
+
+    # The IDs.
+    if not align_id:
+        ids = deepcopy(cdp.pcs_ids)
+    else:
+        ids = [align_id]
+
+    # Loop over the alignments, removing all the corresponding data.
+    for id in ids:
+        # The PCS ID.
+        cdp.pcs_ids.pop(cdp.pcs_ids.index(id))
+
+        # The data type.
+        if hasattr(cdp, 'pcs_data_types') and cdp.pcs_data_types.has_key(id):
+            cdp.pcs_data_types.pop(id)
+
+        # The spin data.
+        for spin in spin_loop():
+            # The data.
+            if hasattr(spin, 'pcs') and spin.pcs.has_key(id):
+                spin.pcs.pop(id)
+
+            # The error.
+            if hasattr(spin, 'pcs_err') and spin.pcs_err.has_key(id):
+                spin.pcs_err.pop(id)
+
+        # Clean the global data.
+        if not hasattr(cdp, 'rdc_ids') or id not in cdp.rdc_ids:
+            cdp.align_ids.pop(id)
 
 
 def display(align_id=None, bc=False):
