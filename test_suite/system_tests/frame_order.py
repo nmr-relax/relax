@@ -399,7 +399,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse2.py')
-        self.check_chi2(0.0+0.0)
+        self.check_chi2(215.39090011690368+0.030991308327923742)
 
 
     def test_cam_pseudo_ellipse2_pcs(self):
@@ -408,7 +408,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse2.py')
-        self.check_chi2(0.0)
+        self.check_chi2(215.39090011690368)
 
 
     def test_cam_pseudo_ellipse2_rdc(self):
@@ -417,7 +417,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse2.py')
-        self.check_chi2(0.0)
+        self.check_chi2(0.030991308327923742)
 
 
     def test_cam_pseudo_ellipse_free_rotor(self):
