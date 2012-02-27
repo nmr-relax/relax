@@ -25,6 +25,7 @@
 
 # relax module imports.
 from base_script import Base_script
+from status import Status; status = Status()
 
 
 class Analysis(Base_script):
@@ -32,12 +33,12 @@ class Analysis(Base_script):
     # Set up some class variables.
     directory = 'free_rotor2'
     model = 'free rotor'
-    ave_pos_beta = 2.5534876110153948
-    ave_pos_gamma = 0.47194843111649976
-    axis_theta = 1.6573281536701425
-    axis_phi = 0.89246262623423234
+    ave_pos_beta = 0.77485244603476433
+    ave_pos_gamma = 0.1420704587263735
+    axis_theta = 0.69828059079619353433
+    axis_phi = 4.03227550621962294031
     cone = True
-    num_int_pts = 50
+    num_int_pts = 1000000
 
 
 # Execute the analysis.
