@@ -25,7 +25,6 @@
 
 # relax module imports.
 from base_script import Base_script
-from status import Status; status = Status()
 
 
 class Analysis(Base_script):
