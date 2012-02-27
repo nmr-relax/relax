@@ -100,7 +100,7 @@ class Frame_order(SystemTestCase):
             del status.flag_pcs
 
 
-    def check_chi2(self, chi2=None, places=8):
+    def check_chi2(self, chi2=0.0, places=8):
         """Check the function evaluation."""
 
         # Switch back to the original pipe.
