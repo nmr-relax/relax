@@ -37,7 +37,7 @@ class Analysis(Base_script):
     axis_theta = 0.69828059079619353433
     axis_phi = 4.03227550621962294031
     cone = True
-    num_int_pts = 1000000
+    num_int_pts = 50
 
 
 # Execute the analysis.
