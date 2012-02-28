@@ -46,10 +46,6 @@ class IO_filter:
     def flush(self):
         """Implement the flush() file method."""
 
-        # Flush both STDOUT and STDERR.
-        sys.stdout.flush()
-        sys.stderr.flush()
-
 
     def write(self, string):
         """Replacement write() method for prepending the token to each line of STDOUT and STDERR.
@@ -100,10 +96,6 @@ class PrependStringIO(StringIO):
 
     def flush(self):
         """Implement the flush() file method."""
-
-        # Flush both STDOUT and STDERR.
-        sys.stdout.flush()
-        sys.stderr.flush()
 
 
     def write(self, string):
