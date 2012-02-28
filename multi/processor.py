@@ -379,7 +379,7 @@ class Processor(object):
     load_multiprocessor = staticmethod(load_multiprocessor)
 
 
-    def __init__(self, processor_size, callback, stdio_capture=None):
+    def __init__(self, processor_size, callback):
         '''Initialise the processor.
 
         @param processor_size:  The requested number of __slave__processors, if the number of
@@ -394,17 +394,6 @@ class Processor(object):
         @param callback:        The application callback which allows the host application to start
                                 its main loop and handle exceptions from the processor.
         @type callback:         multi.processor.Application_callback instance
-        @keyword stdio_capture: An array of streams used for writing to STDOUT and STDERR while
-                                using the processor. STDOUT and STDERR should be in slots 0 and 1 of
-                                the array. This facility is provided for subclasses to use so that
-                                they can install there on file like classes for manipulation STDOUT
-                                and STDERR including decorating them merging them and storing them.
-                                Subclasses should replace sys.stdout and sys.stderr as needed but
-                                not touch sys.__stdout__ and sys.__stderr__.  If a value of None is
-                                provided a default implementation that decorates STDERR and STDOUT
-                                if more than one slave processor is available is used otherwise
-                                STDOUT and STDERR are used.
-        @type stdio_capture:    list of 2 file-like objects
         '''
 
         self.callback = callback
@@ -431,7 +420,7 @@ class Processor(object):
         '''Number of slave processors available in this processor.'''
 
         # Capture the STDIO.
-        self.setup_stdio_capture(stdio_capture)
+        self.setup_stdio_capture()
 
 
     def abort(self):
@@ -725,7 +714,7 @@ class Processor(object):
 
 
     # fixme: is an argument of the form stio_capture needed
-    def setup_stdio_capture(self, stdio_capture=None):
+    def setup_stdio_capture(self):
         '''Default fn to setup capturing and manipulating of stdio on slaves and master processors.
 
         This is designed for overriding.
@@ -739,17 +728,13 @@ class Processor(object):
         @see:   multi.processor.restore_stdio.
         @see:   multi.processor.capture_stdio.
         @see:   sys.
-        @todo:  Remove useless stdio_capture parameter.
         '''
 
         rank = self.rank()
         pre_strings = ('', '')
 
-        if stdio_capture == None:
-            pre_strings = self.get_stdio_pre_strings()
-            stdio_capture = self.std_stdio_capture(pre_strings=pre_strings)
-
-        self.stdio_capture = stdio_capture
+        pre_strings = self.get_stdio_pre_strings()
+        self.stdio_capture = self.std_stdio_capture(pre_strings=pre_strings)
 
 
     #TODO check if pre_strings are used anyhere if not delete

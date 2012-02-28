@@ -71,8 +71,8 @@ RESULT_QUEUE_EXIT_COMMAND = Exit_queue_result_command()
 class Multi_processor(Processor):
     """The multi-processor base class."""
 
-    def __init__(self, processor_size, callback, stdio_capture=None):
-        super(Multi_processor, self).__init__(processor_size=processor_size, callback=callback, stdio_capture=stdio_capture)
+    def __init__(self, processor_size, callback):
+        super(Multi_processor, self).__init__(processor_size=processor_size, callback=callback)
 
         self.do_quit = False
 
