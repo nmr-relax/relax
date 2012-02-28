@@ -43,6 +43,14 @@ class IO_filter:
         self.stream = stream
 
 
+    def flush(self):
+        """Implement the flush() file method."""
+
+        # Flush both STDOUT and STDERR.
+        sys.stdout.flush()
+        sys.stderr.flush()
+
+
     def write(self, string):
         """Replacement write() method for prepending the token to each line of STDOUT and STDERR.
 
@@ -88,6 +96,14 @@ class PrependStringIO(StringIO):
         # Initialise.
         self.token_length = len(token)
         self.first_time = True
+
+
+    def flush(self):
+        """Implement the flush() file method."""
+
+        # Flush both STDOUT and STDERR.
+        sys.stdout.flush()
+        sys.stderr.flush()
 
 
     def write(self, string):
