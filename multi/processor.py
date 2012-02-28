@@ -420,7 +420,7 @@ class Processor(object):
         '''Number of slave processors available in this processor.'''
 
         # Capture the STDIO.
-        self.setup_stdio_capture()
+        self.std_stdio_capture()
 
 
     def abort(self):
@@ -713,32 +713,7 @@ class Processor(object):
         raise_unimplemented(self.run_queue)
 
 
-    # fixme: is an argument of the form stio_capture needed
-    def setup_stdio_capture(self):
-        '''Default fn to setup capturing and manipulating of stdio on slaves and master processors.
-
-        This is designed for overriding.
-
-        @note:  These function will replace sys.stdout and sys.stderr with custom functions
-                restore_stdio should be called to return the system to a pristine state the original
-                STDOUT and STDERR are always available in sys.__stdout__ and sys.__stderr__.
-        @note:  The sys.stdout and sys.stderr streams are not replaced by this function but by
-                calling capture_stdio all it does is save replacements to self.stdio_capture.
-        @see:   multi.processor_io.
-        @see:   multi.processor.restore_stdio.
-        @see:   multi.processor.capture_stdio.
-        @see:   sys.
-        '''
-
-        rank = self.rank()
-        pre_strings = ('', '')
-
-        pre_strings = self.get_stdio_pre_strings()
-        self.stdio_capture = self.std_stdio_capture(pre_strings=pre_strings)
-
-
-    #TODO check if pre_strings are used anyhere if not delete
-    def std_stdio_capture(self, pre_strings=('', '')):
+    def std_stdio_capture(self, pre_strings=None):
         '''Get the default sys.stdout and sys.stderr replacements.
 
         On the master the replacement prepend output with 'MM S]' or MM E]' for the STDOUT and STDERR channels respectively on slaves the outputs are replaced by StringIO objects that prepend 'NN S]' or NN E]' for STDOUT and STDERR where NN is the rank of the processor.
@@ -752,6 +727,10 @@ class Processor(object):
         @rtype:                 tuple of two file-like objects
         '''
 
+        # Get the strings to prepend to the IO streams.
+        if pre_strings == None:
+            pre_strings = self.get_stdio_pre_strings()
+
         # The master processor.
         if self.rank() == 0:
             stdout_capture = IO_filter(pre_strings[0], sys.stdout)
@@ -763,8 +742,8 @@ class Processor(object):
             stdout_capture = PrependStringIO(pre_strings[0])
             stderr_capture = PrependStringIO(pre_strings[1], stream=stdout_capture)
 
-        # Return the captured IO streams.
-        return (stdout_capture, stderr_capture)
+        # Store the captured IO streams.
+        self.stdio_capture = (stdout_capture, stderr_capture)
 
 
 class Processor_box(object):
