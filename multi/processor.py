@@ -734,7 +734,6 @@ class Processor(object):
         # The master processor.
         if self.rank() == 0:
             stdout_capture = IO_filter(pre_strings[0], sys.stdout)
-            #FIXME: seems to be that writing to stderr results leads to incorrect serialisation of output
             stderr_capture = IO_filter(pre_strings[1], sys.stderr)
 
         # The slaves.
