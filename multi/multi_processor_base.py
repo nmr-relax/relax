@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -46,13 +46,36 @@ from multi.processor import raise_unimplemented, Capturing_exception, Processor,
 
 
 class Batched_result_command(Result_command):
-    def __init__(self, processor, result_commands, completed=True):
+    def __init__(self, processor, result_commands, io_data=None, completed=True):
         super(Batched_result_command, self).__init__(processor=processor, completed=completed)
         self.result_commands = result_commands
 
+        # Store the IO data to print out via the run() method called by the master.
+        self.io_data = io_data
+
 
     def run(self, processor, batched_memo):
+        """The results command to be run by the master.
+
+        @param processor:       The processor instance.
+        @type processor:        Processor instance
+        @param batched_memo:    The batched memo object.
+        @type batched_memo:     Memo instance
+        """
+
+        # First check that we are on the master.
         processor.assert_on_master()
+
+        # Unravel the IO stream data on the master in the correct order.
+        for line, stream in self.io_data:
+            if stream == 0:
+                sys.stdout.write(line)
+            else:
+                sys.stderr.write(line)
+
+        if batched_memo != None:
+            msg = "batched result commands shouldn't have memo values, memo: " + repr(batched_memo)
+
         if batched_memo != None:
             msg = "batched result commands shouldn't have memo values, memo: " + repr(batched_memo)
             raise ValueError(msg)
@@ -155,9 +178,6 @@ class Multi_processor(Processor):
         # Execute the base class method.
         super(Multi_processor, self).pre_run()
 
-        # Capture the standard IO streams for the master and slaves.
-        self.capture_stdio()
-
 
     #FIXME: fill out generic result processing move to processor
     def process_result(self, result):
@@ -230,13 +250,18 @@ class Multi_processor(Processor):
                         self.result_list = None
 
                     for i, command in enumerate(commands):
+                        # Capture the standard IO streams for the slaves.
+                        self.stdio_capture()
 
-                        #raise Exception('dummy')
+                        # Execute the calculation.
                         completed = (i == last_command)
                         command.run(self, completed)
 
+                        # Restore the IO.
+                        self.stdio_restore()
+
                     if self.batched_returns:
-                        self.return_object(Batched_result_command(processor=self, result_commands=self.result_list))
+                        self.return_object(Batched_result_command(processor=self, result_commands=self.result_list, io_data=self.io_data))
                         self.result_list = None
 
                 except:
