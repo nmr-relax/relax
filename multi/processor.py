@@ -103,6 +103,7 @@ import time, datetime, math, sys
 
 # relax module imports.
 from multi.api import Null_result_command
+from multi.misc import raise_unimplemented
 from multi.processor_io import Redirect_text
 
 

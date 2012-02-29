@@ -35,19 +35,6 @@ import traceback, textwrap
 from multi.processor_io import Redirect_text
 
 
-def raise_unimplemented(method):
-    '''Standard function for raising NotImplementedError for unimplemented abstract methods.
-
-    @param method:              The method which should be abstract.
-    @type method:               class method
-    @raise NotImplementedError: A not implemented exception with the method name as a parameter.
-    '''
-
-    msg = "Attempt to invoke unimplemented abstract method %s"
-    raise NotImplementedError(msg % method.__name__)
-
-
-
 class Capturing_exception(Exception):
     '''A wrapper exception for an exception captured on a slave processor.
 

@@ -36,38 +36,9 @@ __doc__ = \
 import sys as _sys
 import traceback as _traceback
 
-# API import.
+# Multi-processor module imports.
 from api import Memo, Result_command, Slave_command
-
-
-def _import_module(module_path, verbose=False):
-    '''Import the python module named by module_path.
-
-    @param module_path: A module path in python dot separated format.  Note: this currently doesn't
-                        support relative module paths as defined by pep328 and python 2.5.
-    @type module_path:  str
-    @keyword verbose:   Whether to report successes and failures for debugging.
-    @type verbose:      bool
-    @return:            The module path as a list of module instances or None if the module path
-                        cannot be found in the python path.
-    @rtype:             list of class module instances or None
-    '''
-
-    result = None
-
-    # Import the module.
-    module = __import__(module_path, globals(), locals(), [])
-    if verbose:
-        print('loaded module %s' % module_path)
-
-    #FIXME: needs more failure checking
-    if module != None:
-        result = [module]
-        components = module_path.split('.')
-        for component in components[1:]:
-            module = getattr(module, component)
-            result.append(module)
-    return result
+from misc import import_module as _import_module
 
 
 #FIXME error checking for if module required not found.

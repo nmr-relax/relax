@@ -42,7 +42,8 @@ import threading
 import traceback
 
 # relax module imports.
-from multi.api import raise_unimplemented, Batched_result_command, Capturing_exception, Result, Result_command, Result_string, Result_exception
+from multi.api import Batched_result_command, Capturing_exception, Result, Result_command, Result_string, Result_exception
+from multi.misc import raise_unimplemented
 from multi.processor import Processor
 
 
