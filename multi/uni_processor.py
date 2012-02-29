@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,11 +25,9 @@
 """Module containing the uni-processor class."""
 
 # Python module imports.
-import threading, Queue
 import sys, os
 
 # relax module imports.
-import multi
 from multi.api import Result_command, Result_string
 from multi.processor import Processor
 
