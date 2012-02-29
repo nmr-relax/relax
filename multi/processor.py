@@ -103,7 +103,7 @@ import time, datetime, math, sys, os
 import traceback, textwrap
 
 # relax module imports.
-from multi.processor_io import IO_filter, Redirect_text
+from multi.processor_io import Redirect_text
 from relax_errors import RelaxError
 
 
