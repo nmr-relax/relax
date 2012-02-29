@@ -120,6 +120,68 @@ def load_multiprocessor(processor_name, callback, processor_size):
 
 
 
+class Application_callback(object):
+    '''Call backs provided to the host application by the multi processor framework.
+
+    This class allows for independence from the host class/application.
+
+    @note:  B{The logic behind the design} the callbacks are defined as two attributes
+            self.init_master and self.handle_exception as handle_exception can be null (which is
+            used to request the use of the processors default error handling code). Note, however,
+            that a class with the equivalent methods would also works as python effectively handles
+            methods as attributes of a class. The signatures for the callback methods are documented
+            by the default methods default_init_master & default_handle_exception.
+    '''
+
+    def __init__(self, master):
+        '''Initialise the callback interface.
+
+        @param master:  The data for the host application. In the default implementation this is an
+                        object we call methods on but it could be anything...
+        @type master:   object
+        '''
+
+        self.master = master
+        '''The host application.'''
+
+        self.init_master = self.default_init_master
+        self.handle_exception = self.default_handle_exception
+
+
+    def default_handle_exception(self, processor, exception):
+        '''Handle an exception raised in the processor framework.
+
+        The function is responsible for aborting the processor by calling processor.abort() as its
+        final act.
+
+        @param processor:   The processor instance.
+        @type processor:    multi.processor.Processor instance
+        @param exception:   The exception raised by the processor or slave processor. In the case of
+                            a slave processor exception this may well be a wrapped exception of type
+                            multi.processor.Capturing_exception which was raised at the point the
+                            exception was received on the master processor but contains an enclosed
+                            exception from a slave.
+        @type exception:    Exception instance
+        '''
+
+        # Print the traceback.
+        traceback.print_exc(file=sys.stderr)
+
+        # Stop the processor.
+        processor.abort()
+
+
+    def default_init_master(self, processor):
+        '''Start the main loop of the host application.
+
+        @param processor:   The processor instance.
+        @type processor:    multi.processor.Processor instance
+        '''
+
+        self.master.run()
+
+
+
 class Processor_box(object):
     """A storage class for the Processor instance and its attributes.
 

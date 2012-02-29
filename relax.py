@@ -54,8 +54,7 @@ from info import Info_box
 import generic_fns
 if dep_check.wx_module:
     import gui
-from multi import load_multiprocessor
-from multi.processor import Application_callback
+from multi import Application_callback, load_multiprocessor
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
