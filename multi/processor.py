@@ -851,7 +851,7 @@ class Result_exception(Result_command):
 class Result_string(Result):
     '''A simple result from a slave containing a result.
 
-    The processor will print this string via sys.__stdout__.
+    The processor will print this string via sys.stdout.
 
     @note:  This may become a result_command so as to simplify things in the end.
     '''

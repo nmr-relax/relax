@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -70,13 +70,13 @@ def exit(status=None):
         if in_main_loop:
             raise Exception('sys.exit unexpectedley called on slave!')
         else:
-            sys.__stderr__.write('\n')
-            sys.__stderr__.write('***********************************************\n')
-            sys.__stderr__.write('\n')
-            sys.__stderr__.write('warning sys.exit called before mpi4py main loop\n')
-            sys.__stderr__.write('\n')
-            sys.__stderr__.write('***********************************************\n')
-            sys.__stderr__.write('\n')
+            sys.stderr.write('\n')
+            sys.stderr.write('***********************************************\n')
+            sys.stderr.write('\n')
+            sys.stderr.write('warning sys.exit called before mpi4py main loop\n')
+            sys.stderr.write('\n')
+            sys.stderr.write('***********************************************\n')
+            sys.stderr.write('\n')
             MPI.COMM_WORLD.Abort()
 
     # Execution on the master.

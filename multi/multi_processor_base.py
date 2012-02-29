@@ -192,7 +192,7 @@ class Multi_processor(Processor):
 
             elif isinstance(result, Result_string):
                 #FIXME can't cope with multiple lines
-                sys.__stdout__.write(result.string)
+                sys.stdout.write(result.string)
         else:
             message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__, result)
             raise Exception(message)
