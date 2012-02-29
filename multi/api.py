@@ -109,26 +109,6 @@ class Capturing_exception(Exception):
 
 
 
-class Memo(object):
-    '''A memo of objects and data.
-
-    This is for a slave_command to provide to its results-commands upon return to the master
-    processor - designed for overriding by users.
-    '''
-
-    def memo_id(self):
-        '''Get the unique id for the memo.
-
-        Currently this is the objects unique python id (note these ids can be recycled once the memo
-        has been garbage collected it cannot be used as a unique longterm hash).
-
-        @return:    A unique id for this memo.
-        @rtype:     int
-        '''
-        return id(self)
-
-
-
 class Result(object):
     '''A basic result object returned from a slave processor via return_object.
 
@@ -207,7 +187,7 @@ class Result_command(Result):
 
         @see:   multi.processor.Processor.
         @see:   multi.processor.Slave_command.
-        @see:   multi.processor.Memo.
+        @see:   multi.memo.Memo.
 
         @param processor:   The master processor that queued the original Slave_command.
         @type processor:    Processor instance

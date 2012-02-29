@@ -37,7 +37,8 @@ import sys as _sys
 import traceback as _traceback
 
 # Multi-processor module imports.
-from api import Memo, Result_command, Slave_command
+from api import Result_command, Slave_command
+from memo import Memo
 from misc import import_module as _import_module
 
 
