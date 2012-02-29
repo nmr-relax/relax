@@ -414,7 +414,7 @@ def interact_prompt(self, intro=None, local={}):
 
     # Print the program introduction.
     if intro:
-        self.write("%s\n" % intro)
+        sys.stdout.write("%s\n" % intro)
 
     # Ignore SIGINT.
     #signal.signal(2, 1)
