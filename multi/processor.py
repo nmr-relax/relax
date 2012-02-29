@@ -377,10 +377,6 @@ class Processor(object):
             current command line.
     '''
 
-    # Register load multi_processor as a static function of the class.
-    # FIXME: cleanup move function into class
-    load_multiprocessor = staticmethod(load_multiprocessor)
-
 
     def __init__(self, processor_size, callback):
         '''Initialise the processor.
