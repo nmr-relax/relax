@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -103,7 +103,7 @@ import time, datetime, math, sys, os
 import traceback, textwrap
 
 # relax module imports.
-from multi.processor_io import PrependStringIO, IO_filter
+from multi.processor_io import IO_filter, Redirect_text
 from relax_errors import RelaxError
 
 
@@ -379,7 +379,7 @@ class Processor(object):
     load_multiprocessor = staticmethod(load_multiprocessor)
 
 
-    def __init__(self, processor_size, callback, stdio_capture=None):
+    def __init__(self, processor_size, callback):
         '''Initialise the processor.
 
         @param processor_size:  The requested number of __slave__processors, if the number of
@@ -394,17 +394,6 @@ class Processor(object):
         @param callback:        The application callback which allows the host application to start
                                 its main loop and handle exceptions from the processor.
         @type callback:         multi.processor.Application_callback instance
-        @keyword stdio_capture: An array of streams used for writing to STDOUT and STDERR while
-                                using the processor. STDOUT and STDERR should be in slots 0 and 1 of
-                                the array. This facility is provided for subclasses to use so that
-                                they can install there on file like classes for manipulation STDOUT
-                                and STDERR including decorating them merging them and storing them.
-                                Subclasses should replace sys.stdout and sys.stderr as needed but
-                                not touch sys.__stdout__ and sys.__stderr__.  If a value of None is
-                                provided a default implementation that decorates STDERR and STDOUT
-                                if more than one slave processor is available is used otherwise
-                                STDOUT and STDERR are used.
-        @type stdio_capture:    list of 2 file-like objects
         '''
 
         self.callback = callback
@@ -429,9 +418,6 @@ class Processor(object):
 
         self._processor_size = processor_size
         '''Number of slave processors available in this processor.'''
-
-        # Capture the STDIO.
-        self.setup_stdio_capture(stdio_capture)
 
 
     def abort(self):
@@ -473,32 +459,6 @@ class Processor(object):
         raise_unimplemented(self.add_to_queue)
 
 
-    def capture_stdio(self, stdio_capture=None):
-        '''Enable capture of the STDOUT and STDERR by self.stdio_capture or user supplied streams.
-
-        @note:  Both or neither stream has to be replaced you can't just replace one!
-
-        @keyword stdio_capture: A pair of file like objects used to replace sys.stdout and sys.stderr respectively.
-        @type stdio_capture:    list of two file-like objects
-        '''
-
-        # Store the original STDOUT and STDERR for restoring later on.
-        self.orig_stdout = sys.stdout
-        self.orig_stderr = sys.stderr
-
-        # Default to self.stdio_capture if stdio_capture is not supplied.
-        if stdio_capture == None:
-            stdio_capture = self.stdio_capture
-
-        # First flush.
-        sys.stdout.flush()
-        sys.stderr.flush()
-
-        # Then redirect IO.
-        sys.stdout = stdio_capture[0]
-        sys.stderr = stdio_capture[1]
-
-
     # FIXME is this used?
 #    def exit(self):
 #        raise_unimplemented(self.exit)
@@ -534,16 +494,6 @@ class Processor(object):
         '''
 
         raise_unimplemented(self.get_name)
-
-
-    def get_stdio_capture(self):
-        '''Get the file like objects currently replacing sys.stdout and sys.stderr.
-
-        @return:    The file like objects currently replacing sys.stdout and sys.stderr.
-        @rtype:     tuple of two file-like objects
-        '''
-
-        return self.stdio_capture
 
 
     def get_stdio_pre_strings(self):
@@ -724,62 +674,34 @@ class Processor(object):
         raise_unimplemented(self.run_queue)
 
 
-    # fixme: is an argument of the form stio_capture needed
-    def setup_stdio_capture(self, stdio_capture=None):
-        '''Default fn to setup capturing and manipulating of stdio on slaves and master processors.
+    def stdio_capture(self):
+        """Enable capture of the STDOUT and STDERR.
+        
+        This is currently used to capture the IO streams of the slaves to return back to the master.
+        """
 
-        This is designed for overriding.
+        # Store the original STDOUT and STDERR for restoring later on.
+        self.orig_stdout = sys.stdout
+        self.orig_stderr = sys.stderr
 
-        @note:  These function will replace sys.stdout and sys.stderr with custom functions
-                restore_stdio should be called to return the system to a pristine state the original
-                STDOUT and STDERR are always available in sys.__stdout__ and sys.__stderr__.
-        @note:  The sys.stdout and sys.stderr streams are not replaced by this function but by
-                calling capture_stdio all it does is save replacements to self.stdio_capture.
-        @see:   multi.processor_io.
-        @see:   multi.processor.restore_stdio.
-        @see:   multi.processor.capture_stdio.
-        @see:   sys.
-        @todo:  Remove useless stdio_capture parameter.
-        '''
+        # The data object.
+        self.io_data = []
 
-        rank = self.rank()
-        pre_strings = ('', '')
+        # Get the strings to prepend to the IO streams.
+        pre_strings = self.get_stdio_pre_strings()
 
-        if stdio_capture == None:
-            pre_strings = self.get_stdio_pre_strings()
-            stdio_capture = self.std_stdio_capture(pre_strings=pre_strings)
-
-        self.stdio_capture = stdio_capture
+        # Then redirect IO.
+        sys.stdout = Redirect_text(self.io_data, token=pre_strings[0], stream=0)
+        sys.stderr = Redirect_text(self.io_data, token=pre_strings[1], stream=1)
 
 
-    #TODO check if pre_strings are used anyhere if not delete
-    def std_stdio_capture(self, pre_strings=('', '')):
-        '''Get the default sys.stdout and sys.stderr replacements.
+    def stdio_restore(self):
+        """Restore the original STDOUT and STDERR streams."""
 
-        On the master the replacement prepend output with 'MM S]' or MM E]' for the STDOUT and STDERR channels respectively on slaves the outputs are replaced by StringIO objects that prepend 'NN S]' or NN E]' for STDOUT and STDERR where NN is the rank of the processor.
+        # Restore the original streams.
+        sys.stdout = self.orig_stdout
+        sys.stderr = self.orig_stderr
 
-        @note:  By default STDOUT and STDERR are conjoined as otherwise the context of STDOUT and STDERR messages are lost.
-        @todo:  Improve segregation of sys.sdout and sys.stderr.
-
-        @keyword pre_strings:   Pre strings for the sys.stdout and sys.stderr channels.
-        @type pre_strings:      list of 2 str
-        @return:                File like objects to replace STDOUT and STDERR respectively in order.
-        @rtype:                 tuple of two file-like objects
-        '''
-
-        # The master processor.
-        if self.rank() == 0:
-            stdout_capture = IO_filter(pre_strings[0], sys.stdout)
-            #FIXME: seems to be that writing to stderr results leads to incorrect serialisation of output
-            stderr_capture = IO_filter(pre_strings[1], sys.stderr)
-
-        # The slaves.
-        else:
-            stdout_capture = PrependStringIO(pre_strings[0])
-            stderr_capture = PrependStringIO(pre_strings[1], stream=stdout_capture)
-
-        # Return the captured IO streams.
-        return (stdout_capture, stderr_capture)
 
 
 class Processor_box(object):
@@ -938,7 +860,6 @@ class Result_string(Result):
     def __init__(self, processor, string, completed):
         '''Initialiser.
 
-        @see:   multi.processor.Processor.std_stdio_capture.
         @todo:  Check inherited parameters are documented.
 
         @param string:  A string to return the master processor for output to STDOUT (note the
