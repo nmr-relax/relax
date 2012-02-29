@@ -263,6 +263,7 @@ class Application_callback(object):
         self.master.run()
 
 
+
 class Capturing_exception(Exception):
     '''A wrapper exception for an exception captured on a slave processor.
 
@@ -335,6 +336,7 @@ class Capturing_exception(Exception):
         return result
 
 
+
 class Memo(object):
     '''A memo of objects and data.
 
@@ -352,6 +354,7 @@ class Memo(object):
         @rtype:     int
         '''
         return id(self)
+
 
 
 class Processor(object):
@@ -725,6 +728,7 @@ class Processor_box(object):
         return self.instance
 
 
+
 class Result(object):
     '''A basic result object returned from a slave processor via return_object.
 
@@ -778,6 +782,7 @@ class Result(object):
         '''The rank of the current processor, used in command scheduling on the master processor.'''
 
 
+
 class Result_command(Result):
     '''A general result command - designed to be subclassed by users.
 
@@ -814,6 +819,7 @@ class Result_command(Result):
         pass
 
 
+
 class Null_result_command(Result_command):
     '''An empty result command.
 
@@ -824,6 +830,7 @@ class Null_result_command(Result_command):
 
     def __init__(self, processor, completed=True):
         super(Null_result_command, self).__init__(processor=processor, completed=completed)
+
 
 
 class Result_exception(Result_command):
@@ -845,6 +852,7 @@ class Result_exception(Result_command):
         '''Raise the exception from the Slave_processor.'''
 
         raise self.exception
+
 
 
 # TODO: make this a result_command
@@ -870,6 +878,7 @@ class Result_string(Result):
 
         super(Result_string, self).__init__(processor=processor, completed=completed)
         self.string = string
+
 
 
 class Slave_command(object):
