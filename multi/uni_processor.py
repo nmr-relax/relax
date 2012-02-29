@@ -143,9 +143,9 @@ class Uni_processor(Processor):
 
         last_command = len(self.command_queue)-1
         for i, command  in enumerate(self.command_queue):
+            # Execute the calculation on the slave.
             completed = (i == last_command)
-
-            command.run(self, completed)
+            command._run(self, completed)
 
         #self.run_command_queue()
         #TODO: add cheques for empty queues and maps if now warn
