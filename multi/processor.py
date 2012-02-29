@@ -104,7 +104,6 @@ import traceback, textwrap
 
 # relax module imports.
 from multi.processor_io import Redirect_text
-from relax_errors import RelaxError
 
 
 def raise_unimplemented(method):

@@ -32,6 +32,9 @@ __all__ = ['commands',
 __doc__ = \
 """Package for multi-processor code execution."""
 
+# Python module imports.
+import sys
+
 
 def _import_module(module_path, verbose=False):
     '''Import the python module named by module_path.
@@ -86,7 +89,8 @@ def load_multiprocessor(processor_name, callback, processor_size):
 
     # Check that the processor type is supported.
     if processor_name not in ['uni', 'mpi4py']:
-        raise RelaxError("The processor type '%s' is not supported." % processor_name)
+        sys.stderr.write("The processor type '%s' is not supported.\n" % processor_name)
+        sys.exit()
 
     # The Processor details.
     processor_name = processor_name + '_processor'
