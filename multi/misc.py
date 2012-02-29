@@ -68,3 +68,76 @@ def raise_unimplemented(method):
 
     msg = "Attempt to invoke unimplemented abstract method %s"
     raise NotImplementedError(msg % method.__name__)
+
+
+
+class Capturing_exception(Exception):
+    '''A wrapper exception for an exception captured on a slave processor.
+
+    The wrapper will remember the stack trace on the remote machine and when raised and caught has a
+    string that includes the remote stack trace, which will be displayed along with the stack trace
+    on the master.
+    '''
+
+    def __init__(self, exc_info=None, rank='unknown', name='unknown'):
+        '''Initialise the wrapping exception.
+
+        @todo:   Would it be easier to pass a processor here.
+
+        @keyword exc_info:  Exception information as produced by sys.exc_info().
+        @type exc_info:     tuple
+        @keyword rank:      The rank of the processor on which the exception was raised.  The value
+                            is always greater than 1.
+        @type rank:         int
+        @keyword name:      The name of the processor on which the exception was raised as returned
+                            by processor.get_name().
+        @type name:         str
+        '''
+
+        Exception.__init__(self)
+        self.rank = rank
+        self.name = name
+        if exc_info == None:
+            (exception_type, exception_instance, exception_traceback) = sys.exc_info()
+        else:
+            (exception_type, exception_instance, exception_traceback) = exc_info
+
+        # This is not an exception!
+        if not exception_type:
+            return
+
+        #PY3K: this check can be removed once string based exceptions are no longer used
+        if isinstance(exception_type, str):
+                self.exception_name = exception_type + ' (legacy string exception)'
+                self.exception_string = exception_type
+        else:
+            self.exception_name = exception_type.__name__
+            self.exception_string = exception_instance.__str__()
+
+        self.traceback = traceback.format_tb(exception_traceback)
+
+
+    def __str__(self):
+        '''Get the string describing this exception.
+
+        @return:    The string describing this exception.
+        @rtype:     str
+        '''
+        message = '''
+
+                     %s
+
+                     %s
+
+                     Nested Exception from sub processor
+                     Rank: %s Name: %s
+                     Exception type: %s
+                     Message: %s
+
+                     %s
+
+
+                  '''
+        message = textwrap.dedent(message)
+        result =  message % ('-'*120, ''.join(self.traceback), self.rank, self.name, self.exception_name, self.exception_string, '-'*120)
+        return result
