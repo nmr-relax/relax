@@ -30,7 +30,8 @@ import sys, os
 
 # relax module imports.
 import multi
-from multi.processor import Processor, Result_command, Result_string
+from multi.api import Result_command, Result_string
+from multi.processor import Processor
 
 
 class Uni_processor(Processor):

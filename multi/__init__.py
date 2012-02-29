@@ -33,7 +33,11 @@ __doc__ = \
 """Package for multi-processor code execution."""
 
 # Python module imports.
-import sys
+import sys as _sys
+import traceback as _traceback
+
+# API import.
+from api import Memo, Result_command, Slave_command
 
 
 def _import_module(module_path, verbose=False):
@@ -89,8 +93,8 @@ def load_multiprocessor(processor_name, callback, processor_size):
 
     # Check that the processor type is supported.
     if processor_name not in ['uni', 'mpi4py']:
-        sys.stderr.write("The processor type '%s' is not supported.\n" % processor_name)
-        sys.exit()
+        _sys.stderr.write("The processor type '%s' is not supported.\n" % processor_name)
+        _sys.exit()
 
     # The Processor details.
     processor_name = processor_name + '_processor'
@@ -165,7 +169,7 @@ class Application_callback(object):
         '''
 
         # Print the traceback.
-        traceback.print_exc(file=sys.stderr)
+        _traceback.print_exc(file=_sys.stderr)
 
         # Stop the processor.
         processor.abort()

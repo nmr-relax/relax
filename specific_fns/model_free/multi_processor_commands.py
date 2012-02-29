@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,7 +32,8 @@ from re import match
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from minfx.grid import grid, grid_point_array
-from multi.processor import Capturing_exception, Memo, Result_command, Result_string, Slave_command
+from multi import Memo, Result_command, Slave_command
+from multi.api import Capturing_exception
 
 
 

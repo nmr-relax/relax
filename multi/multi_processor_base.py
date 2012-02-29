@@ -42,47 +42,8 @@ import threading
 import traceback
 
 # relax module imports.
-from multi.processor import raise_unimplemented, Capturing_exception, Processor, Result, Result_command, Result_string, Result_exception
-
-
-class Batched_result_command(Result_command):
-    def __init__(self, processor, result_commands, io_data=None, completed=True):
-        super(Batched_result_command, self).__init__(processor=processor, completed=completed)
-        self.result_commands = result_commands
-
-        # Store the IO data to print out via the run() method called by the master.
-        self.io_data = io_data
-
-
-    def run(self, processor, batched_memo):
-        """The results command to be run by the master.
-
-        @param processor:       The processor instance.
-        @type processor:        Processor instance
-        @param batched_memo:    The batched memo object.
-        @type batched_memo:     Memo instance
-        """
-
-        # First check that we are on the master.
-        processor.assert_on_master()
-
-        # Unravel the IO stream data on the master in the correct order.
-        for line, stream in self.io_data:
-            if stream == 0:
-                sys.stdout.write(line)
-            else:
-                sys.stderr.write(line)
-
-        if batched_memo != None:
-            msg = "batched result commands shouldn't have memo values, memo: " + repr(batched_memo)
-
-        if batched_memo != None:
-            msg = "batched result commands shouldn't have memo values, memo: " + repr(batched_memo)
-            raise ValueError(msg)
-
-        for result_command in self.result_commands:
-            processor.process_result(result_command)
-
+from multi.api import raise_unimplemented, Batched_result_command, Capturing_exception, Result, Result_command, Result_string, Result_exception
+from multi.processor import Processor
 
 
 class Exit_queue_result_command(Result_command):
