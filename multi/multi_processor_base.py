@@ -84,11 +84,13 @@ class Batched_result_command(Result_command):
             processor.process_result(result_command)
 
 
+
 class Exit_queue_result_command(Result_command):
     def __init__(self, completed=True):
         pass
 
 RESULT_QUEUE_EXIT_COMMAND = Exit_queue_result_command()
+
 
 
 class Multi_processor(Processor):
@@ -336,6 +338,7 @@ class Multi_processor(Processor):
         raise_unimplemented(self.slave_recieve_commands)
 
 
+
 #FIXME: move up a level or more
 class Result_queue(object):
     def __init__(self, processor):
@@ -351,12 +354,9 @@ class Result_queue(object):
         raise_unimplemented(self.run_all)
 
 
+
 #FIXME: move up a level or more
 class Immediate_result_queue(Result_queue):
-    def __init(self, processor):
-        super(Threaded_result_queue, self).__init__(processor)
-
-
     def put(self, job):
         super(Immediate_result_queue, self).put(job)
         try:
@@ -369,6 +369,7 @@ class Immediate_result_queue(Result_queue):
 
     def run_all(self):
         pass
+
 
 
 class Threaded_result_queue(Result_queue):
@@ -405,6 +406,7 @@ class Threaded_result_queue(Result_queue):
                 traceback.print_exc(file=sys.stdout)
                 # FIXME: this doesn't work because this isn't the main thread so sys.exit fails...
                 self.processor.abort()
+
 
 
 class Too_few_slaves_exception(Exception):
