@@ -24,9 +24,12 @@
 """Module containing generic fns for creation and parsing of XML representations of python objects."""
 
 # Python module imports.
-from numpy import array, float64
+from numpy import set_printoptions, array, float16, float32, float64, float128, inf, nan
 from re import search
 from string import strip
+
+# Modify numpy for better output of numbers and structures.
+set_printoptions(precision=15, threshold=nan)
 
 # relax module imports.
 from float import floatAsByteArray, packBytesAsPyFloat
@@ -67,7 +70,7 @@ def fill_object_contents(doc, elem, object=None, blacklist=[]):
         subobj = getattr(object, name)
 
         # Store floats as IEEE-754 byte arrays (for full precision storage).
-        if isinstance(subobj, float) or isinstance(subobj, float64):
+        if isinstance(subobj, float) or isinstance(subobj, float16) or isinstance(subobj, float32) or isinstance(subobj, float64) or isinstance(subobj, float128):
             sub_elem.setAttribute('ieee_754_byte_array', repr(floatAsByteArray(subobj)))
 
         # Add the text value to the sub element.

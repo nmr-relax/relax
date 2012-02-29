@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
+# Copyright (C) 2012 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -41,6 +42,10 @@ class IO_filter:
         # Store the args.
         self.token = token
         self.stream = stream
+
+
+    def flush(self):
+        """Implement the flush() file method."""
 
 
     def write(self, string):
@@ -90,6 +95,10 @@ class PrependStringIO(StringIO):
         self.first_time = True
 
 
+    def flush(self):
+        """Implement the flush() file method."""
+
+
     def write(self, string):
         """Replacement write() method for prepending the token to each line of STDOUT and STDERR.
 
@@ -113,3 +122,44 @@ class PrependStringIO(StringIO):
         # Flush both STDOUT and STDERR.
         sys.stdout.flush()
         sys.stderr.flush()
+
+
+
+class Redirect_text(object):
+    """Store the data of the IO streams, prepending a token to each line of written text."""
+
+    def __init__(self, data, token='', stream=0):
+        """Set up the text redirection object.
+
+        @param data:        The data object to store all IO in.
+        @type data:         list of lists
+        @param token:       The string to add to the end of all newlines.
+        @type token:        str
+        @keyword stream:    The type of steam (0 for STDOUT and 1 for STDERR).
+        @type stream:       int
+        """
+
+        # Store the args.
+        self.data = data
+        self.token = token
+        self.stream = stream
+
+
+    def flush(self):
+        """Dummy flush method."""
+
+
+    def write(self, string):
+        """Replacement write() method.
+        
+        This prepends the token to each line of STDOUT and STDERR and stores the result together with the stream number.
+
+        @param string:  The text to write.
+        @type string:   str
+        """
+
+        # Append the token to all newline chars.
+        string = string.replace('\n', '\n' + self.token)
+
+        # Store the text.
+        self.data.append([string, self.stream])
