@@ -33,7 +33,6 @@ import traceback, textwrap
 
 # relax module imports.
 from multi.processor_io import Redirect_text
-from multi.misc import Capturing_exception, raise_unimplemented
 
 
 class Result(object):
@@ -247,36 +246,26 @@ class Slave_command(object):
         self.memo_id = None
 
 
-    def _run(self, processor, completed):
-        """
-        @param processor:   The slave processor the command is running on.  Results from the command are returned via calls to processor.return_object.
-        @type processor:    Processor instance
-        @param completed:   The flag used in batching result returns to indicate that the sequence of batched result commands has completed. This value should be returned via the last result object retuned by this method or methods it calls. All other Result_commands should be initialised with completed=False. This is an optimisation to prevent the sending an extra batched result queue completion result command being sent, it may be an over early optimisation.
-        @type completed:    bool
-        """
-
-        # Execute the user supplied run() method, catching all errors.
-        try:
-            self.run(processor)
-
-        # An error occurred.
-        except Exception, e :
-            if isinstance(e, Capturing_exception):
-                raise e
-            else:
-                raise Capturing_exception(rank=processor.rank(), name=processor.get_name())
-
-
     def run(self, processor, completed):
         '''Run the slave command on the slave processor
         
         This is a base method which must be overridden.
 
         The run command B{must} return at least one Result_command even if it is a processor.NULL_RESULT.  Results are returned from the Slave_command to the master processor using the return_object method of the processor passed to the command. Any exceptions raised will be caught wrapped and returned to the master processor by the slave processor.
+        @param processor:   The slave processor the command is running on.  Results from the command
+                            are returned via calls to processor.return_object.
+        @type processor:    Processor instance
+        @param completed:   The flag used in batching result returns to indicate that the sequence
+                            of batched result commands has completed. This value should be returned
+                            via the last result object retuned by this method or methods it calls.
+                            All other Result_commands should be initialised with completed=False.
+                            This is an optimisation to prevent the sending an extra batched result
+                            queue completion result command being sent, it may be an over early
+                            optimisation.
+        @type completed:    bool
         '''
 
-        # This must be overridden!
-        raise_unimplemented(self.run)
+        pass
 
 
     def set_memo_id(self, memo):

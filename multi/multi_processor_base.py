@@ -217,9 +217,9 @@ class Multi_processor(Processor):
                         # Capture the standard IO streams for the slaves.
                         self.stdio_capture()
 
-                        # Execute the calculation on the slave.
+                        # Execute the calculation.
                         completed = (i == last_command)
-                        command._run(self, completed)
+                        command.run(self, completed)
 
                         # Restore the IO.
                         self.stdio_restore()
