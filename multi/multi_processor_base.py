@@ -42,46 +42,9 @@ import threading
 import traceback
 
 # relax module imports.
-from multi.processor import raise_unimplemented, Capturing_exception, Processor, Result, Result_command, Result_string, Result_exception
-
-
-class Batched_result_command(Result_command):
-    def __init__(self, processor, result_commands, io_data=None, completed=True):
-        super(Batched_result_command, self).__init__(processor=processor, completed=completed)
-        self.result_commands = result_commands
-
-        # Store the IO data to print out via the run() method called by the master.
-        self.io_data = io_data
-
-
-    def run(self, processor, batched_memo):
-        """The results command to be run by the master.
-
-        @param processor:       The processor instance.
-        @type processor:        Processor instance
-        @param batched_memo:    The batched memo object.
-        @type batched_memo:     Memo instance
-        """
-
-        # First check that we are on the master.
-        processor.assert_on_master()
-
-        # Unravel the IO stream data on the master in the correct order.
-        for line, stream in self.io_data:
-            if stream == 0:
-                sys.stdout.write(line)
-            else:
-                sys.stderr.write(line)
-
-        if batched_memo != None:
-            msg = "batched result commands shouldn't have memo values, memo: " + repr(batched_memo)
-
-        if batched_memo != None:
-            msg = "batched result commands shouldn't have memo values, memo: " + repr(batched_memo)
-            raise ValueError(msg)
-
-        for result_command in self.result_commands:
-            processor.process_result(result_command)
+from multi.api import Batched_result_command, Result, Result_command, Result_string, Result_exception
+from multi.misc import Capturing_exception, raise_unimplemented, Verbosity; verbosity = Verbosity()
+from multi.processor import Processor
 
 
 class Exit_queue_result_command(Result_command):
@@ -89,6 +52,7 @@ class Exit_queue_result_command(Result_command):
         pass
 
 RESULT_QUEUE_EXIT_COMMAND = Exit_queue_result_command()
+
 
 
 class Multi_processor(Processor):
@@ -192,7 +156,7 @@ class Multi_processor(Processor):
 
             elif isinstance(result, Result_string):
                 #FIXME can't cope with multiple lines
-                sys.__stdout__.write(result.string)
+                sys.stdout.write(result.string)
         else:
             message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__, result)
             raise Exception(message)
@@ -305,9 +269,10 @@ class Multi_processor(Processor):
                     # Get the result.
                     result = self.master_recieve_result()
 
-                    # Print out.
-                    print('\nIdle set:    %s' % idle_set)
-                    print('Running set: %s' % running_set)
+                    # Debugging print out.
+                    if verbosity.level():
+                        print('\nIdle set:    %s' % idle_set)
+                        print('Running set: %s' % running_set)
 
                     # Shift the processor rank to the idle set.
                     if result.completed:
@@ -336,6 +301,7 @@ class Multi_processor(Processor):
         raise_unimplemented(self.slave_recieve_commands)
 
 
+
 #FIXME: move up a level or more
 class Result_queue(object):
     def __init__(self, processor):
@@ -351,12 +317,9 @@ class Result_queue(object):
         raise_unimplemented(self.run_all)
 
 
+
 #FIXME: move up a level or more
 class Immediate_result_queue(Result_queue):
-    def __init(self, processor):
-        super(Threaded_result_queue, self).__init__(processor)
-
-
     def put(self, job):
         super(Immediate_result_queue, self).put(job)
         try:
@@ -369,6 +332,7 @@ class Immediate_result_queue(Result_queue):
 
     def run_all(self):
         pass
+
 
 
 class Threaded_result_queue(Result_queue):
@@ -405,6 +369,7 @@ class Threaded_result_queue(Result_queue):
                 traceback.print_exc(file=sys.stdout)
                 # FIXME: this doesn't work because this isn't the main thread so sys.exit fails...
                 self.processor.abort()
+
 
 
 class Too_few_slaves_exception(Exception):

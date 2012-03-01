@@ -56,7 +56,7 @@ from info import Info_box
 import generic_fns
 if dep_check.wx_module:
     import gui
-from multi.processor import Application_callback, Processor
+from multi import Application_callback, load_multiprocessor
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
@@ -90,7 +90,10 @@ def start(mode=None, profile_flag=False):
 
     # Set up the multi-processor elements.
     callbacks = Application_callback(master=relax)
-    processor = Processor.load_multiprocessor(relax.multiprocessor_type, callbacks, processor_size=relax.n_processors)
+    verbosity = 0
+    if status.debug:
+        verbosity = 1
+    processor = load_multiprocessor(relax.multiprocessor_type, callbacks, processor_size=relax.n_processors, verbosity=verbosity)
 
     # Place the processor fabric intro string into the info box.
     info = Info_box()
