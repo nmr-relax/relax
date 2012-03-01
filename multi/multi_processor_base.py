@@ -42,8 +42,8 @@ import threading
 import traceback
 
 # relax module imports.
-from multi.api import Batched_result_command, Capturing_exception, Result, Result_command, Result_string, Result_exception
-from multi.misc import raise_unimplemented
+from multi.api import Batched_result_command, Result, Result_command, Result_string, Result_exception
+from multi.misc import Capturing_exception, raise_unimplemented, Verbosity; verbosity = Verbosity()
 from multi.processor import Processor
 
 
@@ -269,9 +269,10 @@ class Multi_processor(Processor):
                     # Get the result.
                     result = self.master_recieve_result()
 
-                    # Print out.
-                    print('\nIdle set:    %s' % idle_set)
-                    print('Running set: %s' % running_set)
+                    # Debugging print out.
+                    if verbosity.level():
+                        print('\nIdle set:    %s' % idle_set)
+                        print('Running set: %s' % running_set)
 
                     # Shift the processor rank to the idle set.
                     if result.completed:

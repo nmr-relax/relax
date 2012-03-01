@@ -88,7 +88,7 @@ def start(mode=None, profile_flag=False):
 
     # Set up the multi-processor elements.
     callbacks = Application_callback(master=relax)
-    processor = load_multiprocessor(relax.multiprocessor_type, callbacks, processor_size=relax.n_processors)
+    processor = load_multiprocessor(relax.multiprocessor_type, callbacks, processor_size=relax.n_processors, verbosity=0)
 
     # Place the processor fabric intro string into the info box.
     info = Info_box()

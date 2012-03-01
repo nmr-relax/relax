@@ -103,7 +103,7 @@ import time, datetime, math, sys
 
 # relax module imports.
 from multi.api import Null_result_command
-from multi.misc import raise_unimplemented
+from multi.misc import raise_unimplemented, Verbosity; verbosity = Verbosity()
 from multi.processor_io import Redirect_text
 
 
@@ -257,6 +257,10 @@ class Processor(object):
         @rtype:     list of 2 str
         """
 
+        # Only prepend test if the verbosity level is set.
+        if not verbosity.level():
+            return '', ''
+
         # Initialise.
         pre_string = ''
         stdout_string = ''
@@ -311,7 +315,10 @@ class Processor(object):
         if self.rank() == 0:
             end_time = time.time()
             time_delta_str = self.get_time_delta(self.start_time, end_time)
-            print('\nOverall runtime: ' + time_delta_str + '\n')
+
+            # Print out of the total run time.
+            if verbosity.level():
+                print('\nOverall runtime: ' + time_delta_str + '\n')
 
 
     def pre_run(self):

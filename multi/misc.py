@@ -28,14 +28,12 @@ This is for internal use only.  To access the multi-processor API, see the __ini
 """
 
 
-def import_module(module_path, verbose=False):
+def import_module(module_path):
     """Import the python module named by module_path.
 
     @param module_path: A module path in python dot separated format.  Note: this currently doesn't
                         support relative module paths as defined by pep328 and python 2.5.
     @type module_path:  str
-    @keyword verbose:   Whether to report successes and failures for debugging.
-    @type verbose:      bool
     @return:            The module path as a list of module instances or None if the module path
                         cannot be found in the python path.
     @rtype:             list of class module instances or None
@@ -45,7 +43,10 @@ def import_module(module_path, verbose=False):
 
     # Import the module.
     module = __import__(module_path, globals(), locals(), [])
-    if verbose:
+
+    # Debugging.
+    verbosity = Verbosity()
+    if verbosity.level() > 2:
         print('loaded module %s' % module_path)
 
     #FIXME: needs more failure checking
@@ -141,3 +142,48 @@ class Capturing_exception(Exception):
         message = textwrap.dedent(message)
         result =  message % ('-'*120, ''.join(self.traceback), self.rank, self.name, self.exception_name, self.exception_string, '-'*120)
         return result
+
+
+
+class Verbosity(object):
+    """A special singleton structure for changing the verbosity level on the fly."""
+
+    # Class variable for storing the class instance.
+    instance = None
+
+    def __new__(self, *args, **kargs): 
+        """Replacement function for implementing the singleton design pattern."""
+
+        # First initialisation.
+        if self.instance is None:
+            # Create a new object.
+            self.instance = object.__new__(self, *args, **kargs)
+
+            # Set the initial verbosity level to nothing.
+            self._value = 0
+
+        # Already initialised, so return the instance.
+        return self.instance
+
+
+    def level(self):
+        """Return the current verbosity level.
+
+        @return:            The current verbosity level.
+        @rtype:             int
+        """
+
+        # Return the level.
+        return self._value
+
+
+    def set(self, value=0):
+        """Set the verbosity level.
+
+        @keyword value:     If given, then the verbosity level will be set.  A value of 0 suppresses all output.  A value of 1 causes the minimal amount of information to be printed.  A value of 2 will switch on a number of debugging print outs.  Values greater than 2 currently do nothing, though this might change in the future.
+        @type value:        int
+        """
+
+        # Set the value if given.
+        if value != None:
+            self._value = value

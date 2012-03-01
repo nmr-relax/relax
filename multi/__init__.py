@@ -40,25 +40,27 @@ import traceback as _traceback
 from api import Result_command, Slave_command
 from memo import Memo
 from misc import import_module as _import_module
+from misc import Verbosity as _Verbosity; _verbosity = _Verbosity()
 
 
 #FIXME error checking for if module required not found.
 #FIXME module loading code needs to be in a util module.
 #FIXME: remove parameters that are not required to load the module (processor_size).
-def load_multiprocessor(processor_name, callback, processor_size):
+def load_multiprocessor(processor_name, callback, processor_size, verbosity=1):
     """Load a multi processor given its name.
 
     Dynamically load a multi processor, the current algorithm is to search in module multi for a
     module called <processor_name>.<Processor_name> (note capitalisation).
 
 
-    @todo:  This algorithm needs to be improved to allow users to load processors without altering
-            the relax source code.
+    @todo:  This algorithm needs to be improved to allow users to load processors without altering the relax source code.
 
     @todo:  Remove non-essential parameters.
 
     @param processor_name:  Name of the processor module/class to load.
     @type processor_name:   str
+    @keyword verbosity:     The verbosity level at initialisation.  This can be changed during program execution.  A value of 0 suppresses all output.  A value of 1 causes the basic multi-processor information to be printed.  A value of 2 will switch on a number of debugging print outs.  Values greater than 2 currently do nothing, though this might change in the future.
+    @type keyword:          int
     @return:                A loaded processor object or None to indicate failure.
     @rtype:                 multi.processor.Processor instance
     """
@@ -67,6 +69,9 @@ def load_multiprocessor(processor_name, callback, processor_size):
     if processor_name not in ['uni', 'mpi4py']:
         _sys.stderr.write("The processor type '%s' is not supported.\n" % processor_name)
         _sys.exit()
+
+    # Store the verbosity level.
+    _verbosity.set(verbosity)
 
     # The Processor details.
     processor_name = processor_name + '_processor'
