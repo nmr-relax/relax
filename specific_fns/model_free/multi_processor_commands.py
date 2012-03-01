@@ -33,7 +33,6 @@ from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from minfx.grid import grid, grid_point_array
 from multi import Memo, Result_command, Slave_command
-from multi.api import Capturing_exception
 
 
 
@@ -120,29 +119,20 @@ class MF_minimise_command(Slave_command):
     def run(self, processor, completed):
         """Setup and perform the model-free optimisation."""
 
-        # Run catching all errors.
-        try:
-            # Initialise the function to minimise.
-            self.mf = Mf(init_params=self.opt_params.param_vector, model_type=self.data.model_type, diff_type=self.data.diff_type, diff_params=self.data.diff_params, scaling_matrix=self.data.scaling_matrix, num_spins=self.data.num_spins, equations=self.data.equations, param_types=self.data.param_types, param_values=self.data.param_values, relax_data=self.data.ri_data, errors=self.data.ri_data_err, bond_length=self.data.r, csa=self.data.csa, num_frq=self.data.num_frq, frq=self.data.frq, num_ri=self.data.num_ri, remap_table=self.data.remap_table, noe_r1_table=self.data.noe_r1_table, ri_labels=self.data.ri_types, gx=self.data.gx, gh=self.data.gh, h_bar=self.data.h_bar, mu0=self.data.mu0, num_params=self.data.num_params, vectors=self.data.xh_unit_vectors)
+        # Initialise the function to minimise.
+        self.mf = Mf(init_params=self.opt_params.param_vector, model_type=self.data.model_type, diff_type=self.data.diff_type, diff_params=self.data.diff_params, scaling_matrix=self.data.scaling_matrix, num_spins=self.data.num_spins, equations=self.data.equations, param_types=self.data.param_types, param_values=self.data.param_values, relax_data=self.data.ri_data, errors=self.data.ri_data_err, bond_length=self.data.r, csa=self.data.csa, num_frq=self.data.num_frq, frq=self.data.frq, num_ri=self.data.num_ri, remap_table=self.data.remap_table, noe_r1_table=self.data.noe_r1_table, ri_labels=self.data.ri_types, gx=self.data.gx, gh=self.data.gh, h_bar=self.data.h_bar, mu0=self.data.mu0, num_params=self.data.num_params, vectors=self.data.xh_unit_vectors)
 
-            # Print out.
-            if self.opt_params.verbosity >= 1 and (self.data.model_type == 'mf' or self.data.model_type == 'local_tm'):
-                spin_print(self.data.spin_id, self.opt_params.verbosity)
+        # Print out.
+        if self.opt_params.verbosity >= 1 and (self.data.model_type == 'mf' or self.data.model_type == 'local_tm'):
+            spin_print(self.data.spin_id, self.opt_params.verbosity)
 
-            # Preform optimisation.
-            results = self.optimise()
+        # Preform optimisation.
+        results = self.optimise()
 
-            # Disassemble the results list.
-            param_vector, func, iter, fc, gc, hc, warning = results
+        # Disassemble the results list.
+        param_vector, func, iter, fc, gc, hc, warning = results
 
-            processor.return_object(MF_result_command(processor, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=False))
-
-        # An error occurred.
-        except Exception, e :
-            if isinstance(e, Capturing_exception):
-                raise e
-            else:
-                raise Capturing_exception(rank=processor.rank(), name=processor.get_name())
+        processor.return_object(MF_result_command(processor, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=False))
 
 
     def store_data(self, data, opt_params):
