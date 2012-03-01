@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,44 +22,23 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing classes for IO stream capture on slave processors."""
+"""The module containing the Memo classes."""
 
 
-class Redirect_text(object):
-    """Store the data of the IO streams, prepending a token to each line of written text."""
+class Memo(object):
+    """The multi-processor base class Memo of objects and data.
 
-    def __init__(self, data, token='', stream=0):
-        """Set up the text redirection object.
+    This object is used by the slave processor (via a Slave_command) to transfer the calculation results back to the master processor.  This is to be subclassed by the user.
+    """
 
-        @param data:        The data object to store all IO in.
-        @type data:         list of lists
-        @param token:       The string to add to the end of all newlines.
-        @type token:        str
-        @keyword stream:    The type of steam (0 for STDOUT and 1 for STDERR).
-        @type stream:       int
+    def memo_id(self):
+        """Get the unique ID for the memo.
+
+        Currently this is the objects unique python ID (note these ids can be recycled once the memo
+        has been garbage collected it cannot be used as a unique longterm hash).
+
+        @return:    A unique ID for this memo.
+        @rtype:     int
         """
 
-        # Store the args.
-        self.data = data
-        self.token = token
-        self.stream = stream
-
-
-    def flush(self):
-        """Dummy flush method."""
-
-
-    def write(self, string):
-        """Replacement write() method.
-        
-        This prepends the token to each line of STDOUT and STDERR and stores the result together with the stream number.
-
-        @param string:  The text to write.
-        @type string:   str
-        """
-
-        # Append the token to all newline chars.
-        string = string.replace('\n', '\n' + self.token)
-
-        # Store the text.
-        self.data.append([string, self.stream])
+        return id(self)

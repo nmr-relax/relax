@@ -24,7 +24,8 @@
 """Module containing classes for the multi-processor commands."""
 
 # relax module imports.
-from multi.processor import Result_string, Slave_command
+from multi import Slave_command
+from multi.api import Result_string
 
 
 class Exit_command(Slave_command):

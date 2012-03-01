@@ -27,7 +27,7 @@
 ################################################################################
 
 # Module docstring.
-'''Utilities for unit test running from the command line or within the relax testing frame work.
+"""Utilities for unit test running from the command line or within the relax testing frame work.
 
 Unit tests in the relax frame work are stored in a directory structure
 rooted at <relax-root-directory>/test_suite/unit_tests. The directory
@@ -52,7 +52,7 @@ hierarchy.
 TODO: Examine PEP 338 and runpy.run_module(modulename): Executing Modules as Scripts for a later
 version of relax that is dependant on python 2.5.
 TODO: Split out runner part from search part.
-'''
+"""
 
 from copy import copy
 import os, re, string, sys, unittest, traceback
@@ -77,14 +77,14 @@ PY_FILE_EXTENSION='.py'
 
 
 def get_startup_path():
-    '''Get the path of the directory the program started from.
+    """Get the path of the directory the program started from.
 
     The startup path is the first path in sys.path (the internal PYTHONPATH) by convention. If the
     first element of sys.path is an empty trying the current working directory is used instead.
 
     @return:    A file system path for the current operating system.
     @rtype:     str
-    '''
+    """
 
     startup_path = sys.path[0]
     if startup_path == '':
@@ -93,7 +93,7 @@ def get_startup_path():
 
 
 def import_module(module_path):
-    '''Import the python module named by module_path.
+    """Import the python module named by module_path.
 
     @param module_path: A module path in python dot separated format.  Note: this currently doesn't
                         support relative module paths as defined by pep328 and python 2.5.
@@ -101,7 +101,7 @@ def import_module(module_path):
     @return:            The module path as a list of module instances or None if the module path
                         cannot be found in the python path.
     @rtype:             list of class module instances or None
-    '''
+    """
 
     module = None
     result = None
@@ -122,7 +122,7 @@ def import_module(module_path):
 
 
 def get_module_relative_path(package_path, module_name, root_paths=None):
-    '''Find the relative path of a module to one of a set of root paths using a list of package paths and a module name.
+    """Find the relative path of a module to one of a set of root paths using a list of package paths and a module name.
 
     As the module may match more than one path the first path that can contain it is chosen.
 
@@ -139,7 +139,7 @@ def get_module_relative_path(package_path, module_name, root_paths=None):
                             '.'s if the modulePath is a subpath of one of the root paths, otherwise
                             None.
     @rtype:                 str or None
-    '''
+    """
 
     relative_path = None
     if root_paths == None:
@@ -170,7 +170,7 @@ def get_module_relative_path(package_path, module_name, root_paths=None):
 
 
 def get_common_prefix(path1, path2):
-    '''Get the common prefix between two paths.
+    """Get the common prefix between two paths.
 
     @param path1:   The first path to be compared.
     @type path1:    list of str
@@ -179,7 +179,7 @@ def get_common_prefix(path1, path2):
     @return:        The common path shared between the two paths starting from the root directory as
                     a list of segments.  If there is no common path an empty list is returned.
     @rtype:         list of str
-    '''
+    """
 
     result_path = []
     for elem1, elem2 in map(None, path1, path2):
@@ -192,7 +192,7 @@ def get_common_prefix(path1, path2):
 
 
 def segment_path(path, normalise=True):
-    '''Segment a path into a list of components (drives, files, directories etc).
+    """Segment a path into a list of components (drives, files, directories etc).
 
     @param path:        The path to segment.
     @type path:         str
@@ -200,7 +200,7 @@ def segment_path(path, normalise=True):
     @type normalise:    bool
     @return:            A list of path segments.
     @rtype:             list of str
-    '''
+    """
 
     if normalise:
         path = os.path.normpath(path)
@@ -219,13 +219,13 @@ def segment_path(path, normalise=True):
 
 
 def join_path_segments(segments):
-    '''Join a list of path segments (drives, files, directories etc) into a path.
+    """Join a list of path segments (drives, files, directories etc) into a path.
 
     @param segments:    The path segments to join into a path.
     @type segments:     a list of path segments
     @return:            The path containing the joined path segments.
     @rtype:             str
-    '''
+    """
 
     if len(segments) == 0:
         result = ''
@@ -318,19 +318,19 @@ def load_test_case(package_path, module_name, class_name):
 
 
 class Test_finder:
-    '''Find and load unit test classes as a hierarchy of TestSuites and TestCases.
+    """Find and load unit test classes as a hierarchy of TestSuites and TestCases.
 
     The class provides functions for running or returning the resulting TestSuite and requires a
     root directory to start searching from.
 
     TestCases are identified by the class name matching a pattern (pattern_string).
-    '''
+    """
 
     suite = unittest.TestSuite()
-    '''The root test suite to which testSuites and cases are added.'''
+    """The root test suite to which testSuites and cases are added."""
 
     def __init__(self, root_path=None, pattern_list=[]):
-        '''Initialise the unit test finder.
+        """Initialise the unit test finder.
 
         @keyword root_path:     The path to starts searching for unit tests from, all sub
                                 directories and files are searched.
@@ -338,7 +338,7 @@ class Test_finder:
         @keyword pattern_list:  A list of regular expression patterns which identify a file as one
                                 containing a unit test TestCase.
         @type pattern_list:     list of str
-        '''
+        """
 
         self.root_path = root_path
         if self.root_path == None:
@@ -382,7 +382,7 @@ class Test_finder:
 
 
 class Unit_test_runner(object):
-    '''Class to run a particular unit test or a directory of unit tests.'''
+    """Class to run a particular unit test or a directory of unit tests."""
 
     #constants
     system_path_pattern = ['test_suite' + os.sep + 'unit_tests', os.pardir + os.sep + os.pardir]
