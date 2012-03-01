@@ -268,13 +268,11 @@ class Slave_command(object):
 
 
     def run(self, processor, completed):
-        '''Run the slave command on the slave processor.
+        '''Run the slave command on the slave processor
+        
+        This is a base method which must be overridden.
 
-        The run command B{must} return at least one Result_command even if it is a
-        processor.NULL_RESULT.  Results are returned from the Slave_command to the master processor
-        using the return_object method of the processor passed to the command. Any exceptions raised
-        will be caught wrapped and returned to the master processor by the slave processor.
-
+        The run command B{must} return at least one Result_command even if it is a processor.NULL_RESULT.  Results are returned from the Slave_command to the master processor using the return_object method of the processor passed to the command. Any exceptions raised will be caught wrapped and returned to the master processor by the slave processor.
         '''
 
         # This must be overridden!
