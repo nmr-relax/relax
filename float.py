@@ -23,7 +23,7 @@
 ###############################################################################
 
 # Module docstring.
-'''ieeefloat a set of functions for dealing with IEEE-754 float objects.
+"""ieeefloat a set of functions for dealing with IEEE-754 float objects.
 
 On most platforms Python uses IEEE-754 double objects of length 64 bits to represent floats (some
 architectures such as older Crays and Vaxes don't).  Thus an IEEE-754 double is the implementation
@@ -87,38 +87,38 @@ Todo:
     - Test under a Solaris Sparc box (big endian).
     - Add example IEEE double.
     - Check byte/nibble attributions.
-'''
+"""
 from struct import pack, unpack
 import sys
 
 
 SIGNBIT = 0x80
-'''Bit pattern for the sign bit in byte 8 0b00000001 of a IEEE-754 double.'''
+"""Bit pattern for the sign bit in byte 8 0b00000001 of a IEEE-754 double."""
 
 
 EXPONENT_ALL_ONES_BYTE_1 = 0x7F
-'''Value of the first byte (byte 8) in the mantissa of a IEEE-754 double that is all ones
-(0b11111110).'''
+"""Value of the first byte (byte 8) in the mantissa of a IEEE-754 double that is all ones
+(0b11111110)."""
 
 EXPONENT_ALL_ONES_BYTE_0 = 0xF << 4
-'''Value of the second byte (byte 7) in the mantissa of a IEEE-754 double that is all ones
-(0b00001111).'''
+"""Value of the second byte (byte 7) in the mantissa of a IEEE-754 double that is all ones
+(0b00001111)."""
 
 
 MANTISSA_NIBBLE_MASK=0x0F
-'''Mask to select the bits from the first nibble of  byte 7 of an IEEE-754 which is part of the
-mantissa (0b00001111).'''
+"""Mask to select the bits from the first nibble of  byte 7 of an IEEE-754 which is part of the
+mantissa (0b00001111)."""
 
 EXPONENT_NIBBLE_MASK=0xF0
-'''Mask to select the bits from the second nibble of  byte 7 of an IEEE-754 which is part of the
-exponent (0b11110000).'''
+"""Mask to select the bits from the second nibble of  byte 7 of an IEEE-754 which is part of the
+exponent (0b11110000)."""
 
 
 EXPONENT_SIGN_MASK= 0x7F
-'''Mask to select only bits from byte 8 of an IEEE-754 double that are not part of the sign bit
-(0b11111110).'''
+"""Mask to select only bits from byte 8 of an IEEE-754 double that are not part of the sign bit
+(0b11111110)."""
 
-'''Classes of floating point numbers.'''
+"""Classes of floating point numbers."""
 CLASS_POS_INF = 1
 CLASS_NEG_INF = 2
 CLASS_POS_NORMAL = 4
@@ -136,14 +136,14 @@ def isZero(float):
 
 
 def getFloatClass(float):
-    '''Get the IEEE-class (NaN, inf etc) of a python float.
+    """Get the IEEE-class (NaN, inf etc) of a python float.
 
     @param float:       Python float object.
     @type float:        float
     @return:            An IEEE class value.
     @rtype:             int
     @raise TypeError:   If float is not a python float object.
-    '''
+    """
 
     result = None
 
@@ -179,7 +179,7 @@ def getFloatClass(float):
 
 
 def packBytesAsPyFloat(bytes):
-    '''Pack 8 bytes into a python float.
+    """Pack 8 bytes into a python float.
 
     The function is endian aware and the data should be input in little endian format. Thus byte 8
     contains the most significant bit of the exponent and the sign bit.
@@ -189,7 +189,7 @@ def packBytesAsPyFloat(bytes):
     @return:            A python float
     @rtype:             float
     @raise TypeError:   If bytes contains < 8 bytes type of exception not determined.
-    '''
+    """
 
     # pack bytes into binary string
     doubleString=pack('8B',*bytes)
@@ -203,31 +203,31 @@ def packBytesAsPyFloat(bytes):
 
 
 NAN_BYTES = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF8, 0x7F]
-'''Bytes for an arbitary IEEE-754 not a number (NaN) in little endian format
-0b00000000 00000000 00000000 00000000 00000000 00000000 00011111 11111110.'''
+"""Bytes for an arbitary IEEE-754 not a number (NaN) in little endian format
+0b00000000 00000000 00000000 00000000 00000000 00000000 00011111 11111110."""
 
 
 INF_BYTES = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x7F]
-'''Bytes for IEEE-754 positive infinity (inf) in little endian format
-0b00000000 00000000 00000000 00000000 00000000 00000000 00001111 11111110.'''
+"""Bytes for IEEE-754 positive infinity (inf) in little endian format
+0b00000000 00000000 00000000 00000000 00000000 00000000 00001111 11111110."""
 
 
 nan = packBytesAsPyFloat(NAN_BYTES)
-'''One of a number of possible bit patterns used to represent an IEEE-754 double as a python float.
+"""One of a number of possible bit patterns used to represent an IEEE-754 double as a python float.
 Do not use this value for comparisons of the form x==NaN as it will fail on some platforms use
-function isNaN instead.'''
+function isNaN instead."""
 
 
 pos_inf = packBytesAsPyFloat(INF_BYTES)
-'''The value of a positive IEEE-754 double infinity as a python float.'''
+"""The value of a positive IEEE-754 double infinity as a python float."""
 
 
 neg_inf = -1 * pos_inf
-'''The value of a negative IEEE-754 double infinity as a python float.'''
+"""The value of a negative IEEE-754 double infinity as a python float."""
 
 
 def floatToBinaryString(obj):
-    '''Pack a python float into a binary string.
+    """Pack a python float into a binary string.
 
     This function assumes that the python type float it represents a 64bit double of 8 bytes. This
     function reverses the resulting string if the current architecture is big endian.
@@ -237,7 +237,7 @@ def floatToBinaryString(obj):
     @return:            A string of 8 bytes.
     @rtype:             str
     @raise TypeError:   If the input object isn't a python float.
-    '''
+    """
 
     if not isinstance(obj, float):
         raise TypeError('the object recieved wasn\'t a float, type was: %s' % type(obj))
@@ -253,7 +253,7 @@ def floatToBinaryString(obj):
 
 
 def floatAsByteArray(obj):
-    '''Unpack a python float as a list of 8 bytes.
+    """Unpack a python float as a list of 8 bytes.
 
     This function assumes that the python type float it represents a 64bit double of 8 bytes.
 
@@ -262,7 +262,7 @@ def floatAsByteArray(obj):
     @return:            A list of 7 bytes.
     @rtype:             list of str
     @raise TypeError:   If obj is not composed of 8 bytes.
-    '''
+    """
 
     # unpack bytes to a binary string (takes care of byte order)
     binaryString = floatToBinaryString(obj)
@@ -275,7 +275,7 @@ def floatAsByteArray(obj):
 
 
 def getSignBit(obj):
-    '''Get the sign bit from a python float.
+    """Get the sign bit from a python float.
 
     @param obj:         A python float object.
     @type obj:          float
@@ -283,7 +283,7 @@ def getSignBit(obj):
                         otherwise 0 (positive).
     @rtype:             bit
     @raise TypeError:   If the input object isn't a python float.
-    '''
+    """
 
     # unpack float to bytes
     unpacked = floatAsByteArray(obj)
@@ -293,14 +293,14 @@ def getSignBit(obj):
 
 
 def isPositive(obj):
-    '''Test if a python float is positive.
+    """Test if a python float is positive.
 
     @param obj:         A python float object.
     @type obj:          float
     @return:            True if the float is positive otherwise False.
     @rtype:             bool
     @raise TypeError:   If the input object isn't a python float.
-    '''
+    """
 
     if getSignBit(obj):
         return False
@@ -309,20 +309,20 @@ def isPositive(obj):
 
 
 def isNegative(obj):
-    '''Test if a python float 64 bit IEEE-74 double is negative.
+    """Test if a python float 64 bit IEEE-74 double is negative.
 
     @param obj:         A python float object.
     @type obj:          float
     @return:            True if the float is negative.
     @rtype:             bool
     @raise TypeError:   If the input object isn't a python float.
-    '''
+    """
 
     return not isPositive(obj)
 
 
 def areUnordered(obj1, obj2):
-    '''Test to see if two python float are unordered.
+    """Test to see if two python float are unordered.
 
     Float comparison is unordered if either or both of the objects is 'not a number' (NaN).
 
@@ -333,7 +333,7 @@ def areUnordered(obj1, obj2):
     @return:            True if one of the args is a NaN.
     @rtype:             bool
     @raise TypeError:   If the input objects aren't python floats.
-    '''
+    """
 
     # check to see if objects are NaNs
     nanTest1 = isNaN(obj1)
@@ -347,7 +347,7 @@ def areUnordered(obj1, obj2):
 
 
 def isFinite(obj):
-    '''Test to see if a python float is finite.
+    """Test to see if a python float is finite.
 
     To be finite a number mustn't be a NaN or +/- inf.  A result of True guarantees that the number
     is bounded by +/- inf, -inf < x < inf.
@@ -357,7 +357,7 @@ def isFinite(obj):
     @return:            True if the float is finite.
     @rtype:             bool
     @raise TypeError:   If the input object isn't a python float.
-    '''
+    """
 
     result = True
     if isNaN(obj):
@@ -370,7 +370,7 @@ def isFinite(obj):
 
 
 def copySign(fromNumber, toDouble):
-    '''Copy the sign bit from one python float to another.
+    """Copy the sign bit from one python float to another.
 
     This function is class agnostic the sign bit can be copied freely between ordinary floats, NaNs
     and +/- inf.
@@ -381,7 +381,7 @@ def copySign(fromNumber, toDouble):
     @type toDouble:     float
     @raise TypeError:   If toDouble isn't a python float or if fromNumber can't be converted to a
                         float.
-    '''
+    """
 
     #convert first number to a float so as to use facilities
     fromNumber = float(fromNumber)
@@ -406,7 +406,7 @@ def copySign(fromNumber, toDouble):
 
 
 def isDenormalised(obj):
-    '''Check to see if a python float is denormalised.
+    """Check to see if a python float is denormalised.
 
     Denormalisation indicates that the number has no exponent set and all the precision is in the
     mantissa, this is an indication that the number is tending to towards underflow.
@@ -416,7 +416,7 @@ def isDenormalised(obj):
     @return:            True if the number is denormalised.
     @rtype:             bool
     @raise TypeError:   If toDouble isn't a python float or if obj isn't a float.
-    '''
+    """
 
     result = True
     # check to see if the exponent is all zeros (a denorm doesn't have a
@@ -434,7 +434,7 @@ def isDenormalised(obj):
 
 
 def getMantissaBytes(obj):
-    '''Get the 7 bytes that makeup the mantissa of float.
+    """Get the 7 bytes that makeup the mantissa of float.
 
     The mantissa is returned as the 7 bytes in the mantissa in little endian order in the 7th byte
     the 2nd nibble of the byte is masked off as it contains part of the exponent. The second nibble
@@ -445,7 +445,7 @@ def getMantissaBytes(obj):
     @return:            A list of 7 bytes in little endian order.
     @rtype:             list of 7 bytes
     @raise TypeError:   If obj isn't a python float.
-    '''
+    """
 
     # unpack float to bytes
     bytes = floatAsByteArray(obj)
@@ -458,7 +458,7 @@ def getMantissaBytes(obj):
 
 
 def getExponentBytes(obj):
-    '''Get the 2 bytes that makeup the exponent of a float.
+    """Get the 2 bytes that makeup the exponent of a float.
 
     The exponent is returned as the 2 bytes in the exponent in little endian order in the 2nd byte
     the last bit is masked off as this is the sign bit. Therefore all values have the last bit set
@@ -470,7 +470,7 @@ def getExponentBytes(obj):
     @return:            A list of 2 bytes in little endian order.
     @rtype:             list of 2 bytes
     @raise TypeError:   If obj isn't a python float.
-    '''
+    """
 
     # unpack float to bytes
     bytes = floatAsByteArray(obj)
@@ -486,14 +486,14 @@ def getExponentBytes(obj):
 
 
 def isExpAllZeros(obj):
-    '''Check if the bits of the exponent of a float is zero.
+    """Check if the bits of the exponent of a float is zero.
 
     @param obj:         Float object to check exponent for zero value.
     @type obj:          float
     @return:            True if the exponent is zero.
     @rtype:             bool
     @raise TypeError:   If obj isn't a python float.
-    '''
+    """
 
     result = True
 
@@ -508,14 +508,14 @@ def isExpAllZeros(obj):
 
 
 def isMantissaAllZeros(obj):
-    '''Check if the bits of the mantissa of a float is zero.
+    """Check if the bits of the mantissa of a float is zero.
 
     @param obj:         Float object to check mantissa for zero value.
     @type obj:          float
     @return:            True if the mantissa is zero.
     @rtype:             bool
     @raise TypeError:   If obj isn't a python float.
-    '''
+    """
 
     result = True
 
@@ -532,14 +532,14 @@ def isMantissaAllZeros(obj):
 
 
 def isExpAllOnes(obj):
-    '''Check if the bits of the exponent of a float is all 1 bits.
+    """Check if the bits of the exponent of a float is all 1 bits.
 
     @param obj:         Float object to check exponent for 1 bits.
     @type obj:          float
     @return:            True if all the bits in the exponent are one.
     @rtype:             bool
     @raise TypeError:   If obj isn't a python float.
-    '''
+    """
 
     result = False
 
@@ -554,14 +554,14 @@ def isExpAllOnes(obj):
 
 
 def isNaN(obj):
-    '''Check to see if a python float is an IEEE-754 double not a number (NaN).
+    """Check to see if a python float is an IEEE-754 double not a number (NaN).
 
     @param obj:         Float object to check for not a number.
     @type obj:          float
     @return:            True if object is not a number.
     @rtype:             bool
     @raise TypeError:   If obj isn't a python float.
-    '''
+    """
 
     # bad result for code checking
     result = None
@@ -588,7 +588,7 @@ def isNaN(obj):
 
 
 def isInf(obj):
-    '''Check to see if a python float is an infinity.
+    """Check to see if a python float is an infinity.
 
     The check returns true for either positive or negative infinities.
 
@@ -597,7 +597,7 @@ def isInf(obj):
     @return:            True if object is an infinity.
     @rtype:             bool
     @raise TypeError:   If obj isn't a python float.
-    '''
+    """
 
     # bad result for code checking
     result = None
@@ -622,27 +622,27 @@ def isInf(obj):
 
 
 def isPosInf(obj):
-    '''Check to see if a python float is positive infinity.
+    """Check to see if a python float is positive infinity.
 
     @param obj:         Float object to check for positive infinity.
     @type obj:          float
     @return:            True if object is a positive infinity.
     @rtype:             bool
     @raise TypeError:   If obj isn't a python float.
-    '''
+    """
 
     return isInf(obj) and isPositive(obj)
 
 
 def isNegInf(obj):
-    '''Check to see if a python float is negative infinity.
+    """Check to see if a python float is negative infinity.
 
     @param obj:         Float object to check for negative infinity.
     @type obj:          float
     @return:            True if object is a negative infinity.
     @rtype:             bool
     @raise TypeError:   If obj isn't a python float.
-    '''
+    """
 
     return isInf(obj) and not isPositive(obj)
 

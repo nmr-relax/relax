@@ -46,7 +46,7 @@ from misc import import_module as _import_module
 #FIXME module loading code needs to be in a util module.
 #FIXME: remove parameters that are not required to load the module (processor_size).
 def load_multiprocessor(processor_name, callback, processor_size):
-    '''Load a multi processor given its name.
+    """Load a multi processor given its name.
 
     Dynamically load a multi processor, the current algorithm is to search in module multi for a
     module called <processor_name>.<Processor_name> (note capitalisation).
@@ -61,7 +61,7 @@ def load_multiprocessor(processor_name, callback, processor_size):
     @type processor_name:   str
     @return:                A loaded processor object or None to indicate failure.
     @rtype:                 multi.processor.Processor instance
-    '''
+    """
 
     # Check that the processor type is supported.
     if processor_name not in ['uni', 'mpi4py']:
@@ -97,7 +97,7 @@ def load_multiprocessor(processor_name, callback, processor_size):
 
 
 class Application_callback(object):
-    '''Call backs provided to the host application by the multi processor framework.
+    """Call backs provided to the host application by the multi processor framework.
 
     This class allows for independence from the host class/application.
 
@@ -107,25 +107,25 @@ class Application_callback(object):
             that a class with the equivalent methods would also works as python effectively handles
             methods as attributes of a class. The signatures for the callback methods are documented
             by the default methods default_init_master & default_handle_exception.
-    '''
+    """
 
     def __init__(self, master):
-        '''Initialise the callback interface.
+        """Initialise the callback interface.
 
         @param master:  The data for the host application. In the default implementation this is an
                         object we call methods on but it could be anything...
         @type master:   object
-        '''
+        """
 
         self.master = master
-        '''The host application.'''
+        """The host application."""
 
         self.init_master = self.default_init_master
         self.handle_exception = self.default_handle_exception
 
 
     def default_handle_exception(self, processor, exception):
-        '''Handle an exception raised in the processor framework.
+        """Handle an exception raised in the processor framework.
 
         The function is responsible for aborting the processor by calling processor.abort() as its
         final act.
@@ -138,7 +138,7 @@ class Application_callback(object):
                             exception was received on the master processor but contains an enclosed
                             exception from a slave.
         @type exception:    Exception instance
-        '''
+        """
 
         # Print the traceback.
         _traceback.print_exc(file=_sys.stderr)
@@ -148,11 +148,11 @@ class Application_callback(object):
 
 
     def default_init_master(self, processor):
-        '''Start the main loop of the host application.
+        """Start the main loop of the host application.
 
         @param processor:   The processor instance.
         @type processor:    multi.processor.Processor instance
-        '''
+        """
 
         self.master.run()
 

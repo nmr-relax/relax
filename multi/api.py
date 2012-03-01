@@ -32,11 +32,12 @@ import sys
 import traceback, textwrap
 
 # relax module imports.
+from multi.misc import raise_unimplemented
 from multi.processor_io import Redirect_text
 
 
 class Result(object):
-    '''A basic result object returned from a slave processor via return_object.
+    """A basic result object returned from a slave processor via return_object.
 
     This a very basic result and shouldn't be overridden unless you are also modifying the
     process_result method in all the processors in the framework (i.e. currently for implementors
@@ -50,10 +51,10 @@ class Result(object):
     @see:   multi.processor.return_object.
     @see:   multi.processor.process_result.
     @see:   multi.processor.Result_command.
-    '''
+    """
 
     def __init__(self, processor, completed):
-        '''Initialise a result.
+        """Initialise a result.
 
         This object is designed for subclassing and __init__ should be called via the super()
         function.
@@ -71,32 +72,32 @@ class Result(object):
                             run method if it is the final result being returned otherwise it should
                             be False.
         @type completed:    bool
-        '''
+        """
 
         #TODO: assert on slave if processor_size > 1
         #TODO: check if a completed command will add a noticeable overhead (I doubt it will)
         self.completed = completed
-        '''A flag used in batching result returns to indicate that the sequence has completed.
+        """A flag used in batching result returns to indicate that the sequence has completed.
 
         This is an optimisation to prevent the sending an extra batched result queue completion
-        result being sent, it may be an over early optimisation.'''
+        result being sent, it may be an over early optimisation."""
         self.memo_id = None
-        '''The memo_id of the Slave_command currently being processed on this processor.
+        """The memo_id of the Slave_command currently being processed on this processor.
 
-        This value is set by the return_object method to the current Slave_commands memo_id.'''
+        This value is set by the return_object method to the current Slave_commands memo_id."""
         self.rank = processor.rank()
-        '''The rank of the current processor, used in command scheduling on the master processor.'''
+        """The rank of the current processor, used in command scheduling on the master processor."""
 
 
 
 class Result_command(Result):
-    '''A general result command - designed to be subclassed by users.
+    """A general result command - designed to be subclassed by users.
 
     This is a general result command from a Slave command that will have its run() method called on
     return to the master processor.
 
     @see:   multi.processor.Slave_command.
-    '''
+    """
 
     def __init__(self, processor, completed, memo_id=None):
         #TODO: check this method is documnted by its parent
@@ -105,7 +106,7 @@ class Result_command(Result):
 
 
     def run(self, processor, memo):
-        '''The run method of the result command.
+        """The run method of the result command.
 
         This method will be called when the result command is processed by the master and should
         carry out any actions the slave command needs carried out on the master (e.g. save or
@@ -120,7 +121,7 @@ class Result_command(Result):
         @param memo:        A memo that was registered when the original slave command was placed on
                             the queue. This provides local storage on the master.
         @type memo:         Memo instance or None
-        '''
+        """
 
         pass
 
@@ -167,12 +168,12 @@ class Batched_result_command(Result_command):
 
 
 class Null_result_command(Result_command):
-    '''An empty result command.
+    """An empty result command.
 
     This command should be returned from slave_command if no other Result_command is returned. This
     allows the queue processor to register that the slave processor has completed its processing and
     schedule new Slave-commands to it.
-    '''
+    """
 
     def __init__(self, processor, completed=True):
         super(Null_result_command, self).__init__(processor=processor, completed=completed)
@@ -180,22 +181,22 @@ class Null_result_command(Result_command):
 
 
 class Result_exception(Result_command):
-    '''Return and raise an exception from the salve processor.'''
+    """Return and raise an exception from the salve processor."""
 
     def __init__(self, processor, exception, completed=True):
-        '''Initialise the result command with an exception.
+        """Initialise the result command with an exception.
 
         @param exception:   An exception that was raised on the slave processor (note the real
                             exception will be wrapped in a Capturing_exception.
         @type exception:    Exception instance
-        '''
+        """
 
         super(Result_exception, self).__init__(processor=processor, completed=completed)
         self.exception = exception
 
 
     def run(self, processor, memo):
-        '''Raise the exception from the Slave_processor.'''
+        """Raise the exception from the Slave_processor."""
 
         raise self.exception
 
@@ -203,16 +204,16 @@ class Result_exception(Result_command):
 
 # TODO: make this a result_command
 class Result_string(Result):
-    '''A simple result from a slave containing a result.
+    """A simple result from a slave containing a result.
 
     The processor will print this string via sys.stdout.
 
     @note:  This may become a result_command so as to simplify things in the end.
-    '''
+    """
 
     #TODO: correct order of parameters should be string, processor, completed
     def __init__(self, processor, string, completed):
-        '''Initialiser.
+        """Initialiser.
 
         @todo:  Check inherited parameters are documented.
 
@@ -220,7 +221,7 @@ class Result_string(Result):
                         master may split the string into components for STDOUT and STDERR depending
                         on the prefix string. This class is not really designed for subclassing.
         @type string:   str
-        '''
+        """
 
         super(Result_string, self).__init__(processor=processor, completed=completed)
         self.string = string
@@ -228,7 +229,7 @@ class Result_string(Result):
 
 
 class Slave_command(object):
-    '''A command to executed remotely on the slave processor - designed to be subclassed by users.
+    """A command to executed remotely on the slave processor - designed to be subclassed by users.
 
     The command should be queued with the command queue using the add_to_queue command of the master
     and B{must} return at least one Result_command even if it is a processor.NULL_RESULT. Results
@@ -240,40 +241,36 @@ class Slave_command(object):
             and multi.commands.Get_name_command.
     @see:   multi.commands.MF_minimise_command.
     @see:   multi.commands.Get_name_command.
-    '''
+    """
 
     def __init__(self):
         self.memo_id = None
 
 
     def run(self, processor, completed):
-        '''Run the slave command on the slave processor
+        """Run the slave command on the slave processor
         
         This is a base method which must be overridden.
 
         The run command B{must} return at least one Result_command even if it is a processor.NULL_RESULT.  Results are returned from the Slave_command to the master processor using the return_object method of the processor passed to the command. Any exceptions raised will be caught wrapped and returned to the master processor by the slave processor.
-        @param processor:   The slave processor the command is running on.  Results from the command
-                            are returned via calls to processor.return_object.
-        @type processor:    Processor instance
-        @param completed:   The flag used in batching result returns to indicate that the sequence
-                            of batched result commands has completed. This value should be returned
-                            via the last result object retuned by this method or methods it calls.
-                            All other Result_commands should be initialised with completed=False.
-                            This is an optimisation to prevent the sending an extra batched result
-                            queue completion result command being sent, it may be an over early
-                            optimisation.
-        @type completed:    bool
-        '''
 
-        pass
+
+        @param processor:   The slave processor the command is running on.  Results from the command are returned via calls to processor.return_object.
+        @type processor:    Processor instance
+        @param completed:   The flag used in batching result returns to indicate that the sequence of batched result commands has completed. This value should be returned via the last result object retuned by this method or methods it calls. All other Result_commands should be initialised with completed=False. This is an optimisation to prevent the sending an extra batched result queue completion result command being sent, it may be an over early optimisation.
+        @type completed:    bool
+        """
+
+        # This must be overridden!
+        raise_unimplemented(self.run)
 
 
     def set_memo_id(self, memo):
-        '''Called by the master processor to remember this Slave_commands memo.
+        """Called by the master processor to remember this Slave_commands memo.
 
         @param memo:    The memo to remember, memos are remembered by getting the memo_id of the
                         memo.
-        '''
+        """
 
         if memo != None:
             self.memo_id = memo.memo_id()

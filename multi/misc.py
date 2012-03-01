@@ -29,7 +29,7 @@ This is for internal use only.  To access the multi-processor API, see the __ini
 
 
 def import_module(module_path, verbose=False):
-    '''Import the python module named by module_path.
+    """Import the python module named by module_path.
 
     @param module_path: A module path in python dot separated format.  Note: this currently doesn't
                         support relative module paths as defined by pep328 and python 2.5.
@@ -39,7 +39,7 @@ def import_module(module_path, verbose=False):
     @return:            The module path as a list of module instances or None if the module path
                         cannot be found in the python path.
     @rtype:             list of class module instances or None
-    '''
+    """
 
     result = None
 
@@ -59,12 +59,12 @@ def import_module(module_path, verbose=False):
 
 
 def raise_unimplemented(method):
-    '''Standard function for raising NotImplementedError for unimplemented abstract methods.
+    """Standard function for raising NotImplementedError for unimplemented abstract methods.
 
     @param method:              The method which should be abstract.
     @type method:               class method
     @raise NotImplementedError: A not implemented exception with the method name as a parameter.
-    '''
+    """
 
     msg = "Attempt to invoke unimplemented abstract method %s"
     raise NotImplementedError(msg % method.__name__)
@@ -72,15 +72,15 @@ def raise_unimplemented(method):
 
 
 class Capturing_exception(Exception):
-    '''A wrapper exception for an exception captured on a slave processor.
+    """A wrapper exception for an exception captured on a slave processor.
 
     The wrapper will remember the stack trace on the remote machine and when raised and caught has a
     string that includes the remote stack trace, which will be displayed along with the stack trace
     on the master.
-    '''
+    """
 
     def __init__(self, exc_info=None, rank='unknown', name='unknown'):
-        '''Initialise the wrapping exception.
+        """Initialise the wrapping exception.
 
         @todo:   Would it be easier to pass a processor here.
 
@@ -92,7 +92,7 @@ class Capturing_exception(Exception):
         @keyword name:      The name of the processor on which the exception was raised as returned
                             by processor.get_name().
         @type name:         str
-        '''
+        """
 
         Exception.__init__(self)
         self.rank = rank
@@ -118,12 +118,12 @@ class Capturing_exception(Exception):
 
 
     def __str__(self):
-        '''Get the string describing this exception.
+        """Get the string describing this exception.
 
         @return:    The string describing this exception.
         @rtype:     str
-        '''
-        message = '''
+        """
+        message = """
 
                      %s
 
@@ -137,7 +137,7 @@ class Capturing_exception(Exception):
                      %s
 
 
-                  '''
+                  """
         message = textwrap.dedent(message)
         result =  message % ('-'*120, ''.join(self.traceback), self.rank, self.name, self.exception_name, self.exception_string, '-'*120)
         return result

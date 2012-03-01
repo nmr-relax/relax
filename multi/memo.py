@@ -32,13 +32,13 @@ class Memo(object):
     """
 
     def memo_id(self):
-        '''Get the unique ID for the memo.
+        """Get the unique ID for the memo.
 
         Currently this is the objects unique python ID (note these ids can be recycled once the memo
         has been garbage collected it cannot be used as a unique longterm hash).
 
         @return:    A unique ID for this memo.
         @rtype:     int
-        '''
+        """
 
         return id(self)
