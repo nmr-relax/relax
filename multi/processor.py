@@ -148,7 +148,7 @@ class Processor(object):
         self.callback = callback
         """Callback to interface to the host application
 
-        @see Application_callback."""
+        @see:  Application_callback."""
 
         self.grainyness = 1
         """The number of sub jobs to queue for each processor if we have more jobs than processors."""
