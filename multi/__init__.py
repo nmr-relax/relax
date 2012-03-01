@@ -21,6 +21,29 @@
 #                                                                             #
 ###############################################################################
 
+# Package docstring.
+"""The multi-processor package.
+
+Introduction
+============
+
+This package is an abstraction of specific multi-processor implementations or fabrics such as MPI via mpi4py.  It is designed to be extended for use on other fabrics such as grid computing via SSH tunnelling, threading, etc.  It also has a uni-processor mode as the default fabric.
+
+
+API
+===
+
+The public API is available via the __init__ module.  It consists of the following functions and classes:
+
+    - multi.load_multiprocessor:  The interface for how a program can load and set up a specific processor fabric.  This function returns the set up processor, which itself provides a run() method which is used to execute your application.
+    - multi.Processor_box:  A special singleton object which provides access to the processors and their data.  This is useful if you would like to access the data on a processor.
+    - multi.Memo:  A special base class to be inherited.  This is used by the master processor to access the results from the slave processors.
+    - multi.Slave_command:  A special base class to be inherited.  The run() function should be overridden, and this provides the code to execute on the slave processors.
+    - multi.Result_command:  A special base class to be inherited.  The run() function should be overridden, and this provides the code to process the results from the slaves.
+
+Using this basic interface, code can be parallelised and executed via an MPI implementation, or default back to a single CPU when needed.  The choice of processor fabric is up to the calling program (via multi.load_multiprocessor).
+"""
+
 
 __all__ = ['commands',
            'mpi4py_processor',
@@ -28,9 +51,6 @@ __all__ = ['commands',
            'processor_io',
            'processor',
            'uni_processor']
-
-__doc__ = \
-"""Package for multi-processor code execution."""
 
 # Python module imports.
 import sys as _sys
