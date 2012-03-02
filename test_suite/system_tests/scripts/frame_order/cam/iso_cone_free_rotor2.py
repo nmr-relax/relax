@@ -33,7 +33,6 @@ class Analysis(Base_script):
     # Set up some class variables.
     directory = 'iso_cone_free_rotor2'
     model = 'iso cone, free rotor'
-    ave_pos_alpha = 4.3434999280669997
     ave_pos_beta = 0.77485244603476433
     ave_pos_gamma = 0.1420704587263735
     axis_theta = 0.69828059079619353433
