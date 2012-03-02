@@ -21,6 +21,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The MPI processor fabric via the mpi4py Python implementation."""
+
+
 # TODO: clone communicators & resize
 # TODO: check exceptions on master
 

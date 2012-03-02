@@ -22,7 +22,8 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the uni-processor class."""
+"""The uni-processor fabric for running on a single CPU."""
+
 
 # Python module imports.
 import sys, os

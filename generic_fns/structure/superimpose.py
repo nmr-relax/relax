@@ -118,7 +118,7 @@ def calc_mean_structure(coord=None, mean=None):
     @keyword coord:     The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
     @type coord:        list of numpy rank-2, Nx3 arrays
     @keyword mean:      The data storage for the mean structure.
-    @type coord:        numpy rank-2, Nx3 array
+    @type mean:         numpy rank-2, Nx3 array
     """
 
     # The number of atoms.

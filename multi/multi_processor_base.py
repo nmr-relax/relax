@@ -22,7 +22,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing a Processor base class to be used by any multi-processor methodology.
+"""Module containing a Processor base class to be used by any multi-processor fabric.
 
 This is used by the mpi4py clustering code.  It can also be used by any new implementation
 including, for example:
