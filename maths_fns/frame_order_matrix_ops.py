@@ -41,6 +41,7 @@ from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.kronecker_product import kron_prod, transpose_23
 from maths_fns.pseudo_ellipse import pec
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
+from multi import Processor_box
 
 
 def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
@@ -1519,6 +1520,10 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
         for j in range(len(pcs_theta[i])):
             pcs_theta[i, j] = 0.0
             pcs_theta_err[i, j] = 0.0
+
+    # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+    processor_box = Processor_box() 
+    processor = processor_box.processor
 
     # Loop over the samples.
     num = 0
