@@ -36,12 +36,40 @@ API
 The public API is available via the __init__ module.  It consists of the following functions and classes:
 
     - multi.load_multiprocessor:  The interface for how a program can load and set up a specific processor fabric.  This function returns the set up processor, which itself provides a run() method which is used to execute your application.
-    - multi.Processor_box:  A special singleton object which provides access to the processors and their data.  This is useful if you would like to access the data on a processor.
-    - multi.Memo:  A special base class to be inherited.  This is used by the master processor to access the results from the slave processors.
-    - multi.Slave_command:  A special base class to be inherited.  The run() function should be overridden, and this provides the code to execute on the slave processors.
-    - multi.Result_command:  A special base class to be inherited.  The run() function should be overridden, and this provides the code to process the results from the slaves.
+    - multi.Processor_box:  A special singleton object which provides access to the processor object.  This is required for the queuing of slave commands and memos.
+    - multi.Slave_command:  A special base class to be subclassed.  The run() function should be overridden, this provides the code to execute on the slave processors.
+    - multi.Result_command:  A special base class to be subclassed.  The run() function should be overridden, this provides the code for the master to process the results from the slaves.
+    - multi.Memo:  A special base class to be subclassed.  This is a data store used by the Results_command to help process the results from the slave on the master processor.
 
 Using this basic interface, code can be parallelised and executed via an MPI implementation, or default back to a single CPU when needed.  The choice of processor fabric is up to the calling program (via multi.load_multiprocessor).
+
+
+Parallelisation
+===============
+
+The following are the steps required to parallelise a calculation via the multi-processor package API.  It is assumed that the multi.load_multiprocessor() function has been set up at the highest level so that the entire program will be executed by the returned processor's run() method.
+
+
+Subclassing command and memo objects
+------------------------------------
+
+The first step is that the Slave_command, Result_command, and Memo classes need to be subclassed.  The Slave_command.run() method must be provided and is used for running the calculations on the slave processors.  The Result_command is used to unpack the results from the slave.  It is initialised by the Slave_command itself with the results from the calculation as arguments of __init__().  Its run() method processes the results on the master processor.  The Memo object holds data other than the calculation results required by the Result_command.run() method to process the results.
+
+
+Initialisation and queuing
+--------------------------
+
+The second step is to initialise the Slave_command and Memo and add these to the processor queue.  But first access to the processor is required.  The singleton multi.Processor_box should be imported, and the processor accessed with code such as::
+
+    # Initialise the Processor box singleton.
+    processor_box = Processor_box() 
+
+The slave command is then initialised and all required data by the slave for the calculation (via its run() method) is stored within the class instance.  The memo is also initialised with its data required for the result command for processing on the master of the results from the slave.  These are then queued on the processor::
+
+    # Queue the slave command and memo.
+    processor_box.processor.add_to_queue(command, memo)
+
+
 """
 
 
