@@ -24,6 +24,9 @@
 """Module containing the introductory text container."""
 
 # Python module imports.
+import ctypes
+if hasattr(ctypes, 'windll'):
+    import ctypes.wintypes
 import numpy
 from os import popen3
 import platform
@@ -333,6 +336,17 @@ class Info_box(object):
                 if row[0] == 'Swap:':
                     text += format % ("Total swap size: ", row[1], "Mb")
 
+        # Windows systems (supported by ctypes.windll).
+        if not text and hasattr(ctypes, 'windll'):
+            # Initialise the memory info class.
+            mem = MemoryStatusEx()
+
+            # The RAM size.
+            text += format % ("Total RAM size: ", mem.ullTotalPhys / 1024.**2, "Mb")
+
+            # The swap size.
+            text += format % ("Total swap size: ", mem.ullTotalVirtual / 1024.**2, "Mb")
+
         # Unknown.
         if not text:
             text += format % ("Total RAM size: ", "?", "Mb")
@@ -420,6 +434,32 @@ class Info_box(object):
 
         # Return the text.
         return text
+
+
+
+class MemoryStatusEx(ctypes.Structure):
+    """Special object for obtaining hardware info in MS Windows."""
+
+    if hasattr(ctypes, 'windll'):
+        _fields_ = [
+            ('dwLength', ctypes.wintypes.DWORD),
+            ('dwMemoryLoad', ctypes.wintypes.DWORD),
+            ('ullTotalPhys', ctypes.c_ulonglong),
+            ('ullAvailPhys', ctypes.c_ulonglong),
+            ('ullTotalPageFile', ctypes.c_ulonglong),
+            ('ullAvailPageFile', ctypes.c_ulonglong),
+            ('ullTotalVirtual', ctypes.c_ulonglong),
+            ('ullAvailVirtual', ctypes.c_ulonglong),
+            ('ullExtendedVirtual', ctypes.c_ulonglong),
+        ]
+
+    def __init__(self):
+        """Set up the information and handle non MS Windows systems."""
+
+        # Get the required info (for MS Windows only).
+        if hasattr(ctypes, 'windll'):
+            self.dwLength = ctypes.sizeof(self)
+            ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(self))
 
 
 
