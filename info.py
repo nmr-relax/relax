@@ -25,6 +25,7 @@
 
 # Python module imports.
 import numpy
+from os import popen3
 import platform
 from string import split
 import sys
@@ -303,6 +304,44 @@ class Info_box(object):
         return text
 
 
+    def ram_info(self, format="    %-25s%s\n"):
+        """Return a string for printing to STDOUT with info from the Python packages used by relax.
+
+        @keyword format:    The formatting string.
+        @type format:       str
+        @return:            The info string.
+        @rtype:             str
+        """
+
+        # Init.
+        text = ''
+
+        # Unix and GNU/Linux systems.
+        stdin, stdout, stderr = popen3('free -m')
+        free_lines = stdout.readlines()
+        if free_lines:
+            # Extract the info.
+            for line in free_lines:
+                # Split up the line.
+                row = split(line)
+
+                # The RAM size.
+                if row[0] == 'Mem:':
+                    text += format % ("Total RAM size: ", row[1], "Mb")
+
+                # The swap size.
+                if row[0] == 'Swap:':
+                    text += format % ("Total swap size: ", row[1], "Mb")
+
+        # Unknown.
+        if not text:
+            text += format % ("Total RAM size: ", "?", "Mb")
+            text += format % ("Total swap size: ", "?", "Mb")
+
+        # Return the info string.
+        return text
+
+
     def sys_info(self):
         """Return a string for printing to STDOUT with info about the current relax instance.
 
@@ -314,7 +353,8 @@ class Info_box(object):
         text = self.intro_text()
 
         # Formatting string.
-        format = "    %-25s%s\n"
+        format  = "    %-25s%s\n"
+        format2 = "    %-25s%s %s\n"
 
         # Hardware info.
         text = text + ("\nHardware information:\n")
@@ -323,6 +363,7 @@ class Info_box(object):
         if hasattr(platform, 'processor'):
             text = text + (format % ("Processor: ", platform.processor()))
         text = text + (format % ("Endianness: ", sys.byteorder))
+        text = text + self.ram_info(format=format2)
 
         # OS info.
         text = text + ("\nOperating system information:\n")
