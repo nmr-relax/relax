@@ -27,6 +27,7 @@
 import dep_check
 
 # Python module imports.
+from copy import deepcopy
 from math import acos, ceil, cos, pi, sin, sqrt
 from numpy import cross, dot, inner, sinc, transpose
 from numpy.linalg import norm
@@ -1525,11 +1526,18 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
     processor_box = Processor_box() 
     processor = processor_box.processor
 
+    # Initialise the data object for the slave results to be stored in.
+    data = Data()
+    data.num_pts = 0
+    data.pcs_theta = pcs_theta
+
     # Subdivide the points.
     for block in subdivide(points, processor.processor_size()):
         # Initialise the slave command and memo.
-        command = Slave_command_pcs_pseudo_ellipse_qrint(points=block, theta_x=theta_x, theta_y=theta_x, sigma_max=sigma_max, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
-        memo = Memo_pcs_pseudo_ellipse_qrint()
+        command = Slave_command_pcs_pseudo_ellipse_qrint(points=block, theta_x=theta_x, theta_y=theta_x, sigma_max=sigma_max, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=deepcopy(pcs_theta), pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+
+        # Initialise the memo.
+        memo = Memo_pcs_pseudo_ellipse_qrint(data)
 
         # Queue the block.
         processor.add_to_queue(command, memo)
@@ -1538,7 +1546,7 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
     processor.run_queue()
 
     # Calculate the PCS and error.
-    num = memo.num_pts
+    num = data.num_pts
     for i in range(len(pcs_theta)):
         for j in range(len(pcs_theta[i])):
             # The average PCS.
@@ -2458,18 +2466,37 @@ def tmax_pseudo_ellipse(phi, theta_x, theta_y):
 
 
 
+class Data:
+    """A data container stored in the memo objects for use by the Result_command class."""
+
+
+
 class Memo_pcs_pseudo_ellipse_qrint(Memo):
     """The memo object for the quasi-random pseudo-ellipse PCS numerical integration."""
+
+    def __init__(self, data):
+        """Initalise the memo, storing the data container for the result_command.
+
+        @param data:    The data container for use by the result_command.
+        @type data:     class instance
+        """
+
+        # Execute the base class __init__() method.
+        super(Memo_pcs_pseudo_ellipse_qrint, self).__init__()
+
+        # Store the arguments.
+        self.data = data
 
 
 
 class Result_command_pcs_pseudo_ellipse_qrint(Result_command):
     """The result command for the quasi-random pseudo-ellipse PCS numerical integration."""
 
-    def __init__(self, processor, memo_id=None, num_pts=None, completed=True):
+    def __init__(self, processor, memo_id=None, num_pts=None, pcs_theta=None, completed=True):
         """Store all the slave results for processing on the master.
 
-        @param processor:   The 
+        @param processor:   The processor instance.
+        @type processor:    Processor instance
         """
 
         # Execute the base class __init__() method.
@@ -2478,6 +2505,7 @@ class Result_command_pcs_pseudo_ellipse_qrint(Result_command):
         # Store the arguments.
         self.memo_id = memo_id
         self.num_pts = num_pts
+        self.pcs_theta = pcs_theta
 
 
     def run(self, processor, memo):
@@ -2489,8 +2517,12 @@ class Result_command_pcs_pseudo_ellipse_qrint(Result_command):
         @type memo:         Memo instance
         """
 
-        # Store the number of points in the memo.
-        memo.num_pts = self.num_pts
+        # Store the number of points in the data container.
+        memo.data.num_pts += self.num_pts
+
+        # Sum the PCS values.
+        memo.data.pcs_theta += self.pcs_theta
+
 
 
 
@@ -2581,4 +2613,4 @@ class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
             num += 1
 
         # Process the results on the master.
-        processor.return_object(Result_command_pcs_pseudo_ellipse_qrint(processor, memo_id=self.memo_id, num_pts=num))
+        processor.return_object(Result_command_pcs_pseudo_ellipse_qrint(processor, memo_id=self.memo_id, num_pts=num, pcs_theta=self.pcs_theta))
