@@ -27,7 +27,7 @@
 import dep_check
 
 # Python module imports.
-from math import acos, cos, pi, sin, sqrt
+from math import acos, ceil, cos, pi, sin, sqrt
 from numpy import cross, dot, inner, sinc, transpose
 from numpy.linalg import norm
 from random import uniform
@@ -41,7 +41,7 @@ from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.kronecker_product import kron_prod, transpose_23
 from maths_fns.pseudo_ellipse import pec
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
-from multi import Processor_box
+from multi import Memo, Processor_box, Result_command, Slave_command
 
 
 def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
@@ -1525,28 +1525,20 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
     processor_box = Processor_box() 
     processor = processor_box.processor
 
-    # Loop over the samples.
-    num = 0
-    for i in range(len(points)):
-        # Unpack the point.
-        theta, phi, sigma = points[i]
+    # Subdivide the points.
+    for block in subdivide(points, processor.processor_size()):
+        # Initialise the slave command and memo.
+        command = Slave_command_pcs_pseudo_ellipse_qrint(points=block, theta_x=theta_x, theta_y=theta_x, sigma_max=sigma_max, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        memo = Memo_pcs_pseudo_ellipse_qrint()
 
-        # Calculate theta_max.
-        theta_max = tmax_pseudo_ellipse(phi, theta_x, theta_y)
+        # Queue the block.
+        processor.add_to_queue(command, memo)
 
-        # Outside of the distribution, so skip the point.
-        if theta > theta_max:
-            continue
-        if sigma > sigma_max or sigma < -sigma_max:
-            continue
-
-        # Calculate the PCSs for this state.
-        pcs_pivot_motion_full_qrint(theta_i=theta, phi_i=phi, sigma_i=sigma, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
-
-        # Increment the number of points.
-        num += 1
+    # Wait for completion.
+    processor.run_queue()
 
     # Calculate the PCS and error.
+    num = memo.num_pts
     for i in range(len(pcs_theta)):
         for j in range(len(pcs_theta[i])):
             # The average PCS.
@@ -2411,6 +2403,37 @@ def rotate_daeg(matrix, Rx2_eigen):
     return matrix_rot
 
 
+def subdivide(points, processors):
+    """Split the points up into a number of blocks based on the number of processors.
+
+    @param points:      The integration points to split up.
+    @type points:       numpy rank-2, 3D array
+    @param processors:  The number of slave processors.
+    @type processors:   int
+    """
+
+    # Uni-processor mode, so no need to split.
+    if processors == 1:
+        yield points
+
+    # Multi-processor mode.
+    else:
+        # The number of points.
+        N = len(points)
+
+        # The number of points per block (rounding up when needed so that there are no accidentally left out points).
+        block_size = int(ceil(N / float(processors)))
+
+        # Loop over the blocks.
+        for i in range(processors):
+            # The indices.
+            index1 = i*block_size
+            index2 = (i+1)*block_size
+
+            # Yield the next block.
+            yield points[index1:index2]
+
+
 def tmax_pseudo_ellipse(phi, theta_x, theta_y):
     """The pseudo-ellipse tilt-torsion polar angle.
 
@@ -2432,3 +2455,130 @@ def tmax_pseudo_ellipse(phi, theta_x, theta_y):
 
     # Return the maximum angle.
     return theta_x * theta_y / sqrt((cos(phi)*theta_y)**2 + (sin(phi)*theta_x)**2)
+
+
+
+class Memo_pcs_pseudo_ellipse_qrint(Memo):
+    """The memo object for the quasi-random pseudo-ellipse PCS numerical integration."""
+
+
+
+class Result_command_pcs_pseudo_ellipse_qrint(Result_command):
+    """The result command for the quasi-random pseudo-ellipse PCS numerical integration."""
+
+    def __init__(self, processor, memo_id=None, num_pts=None, completed=True):
+        """Store all the slave results for processing on the master.
+
+        @param processor:   The 
+        """
+
+        # Execute the base class __init__() method.
+        super(Result_command_pcs_pseudo_ellipse_qrint, self).__init__(processor=processor, completed=completed)
+
+        # Store the arguments.
+        self.memo_id = memo_id
+        self.num_pts = num_pts
+
+
+    def run(self, processor, memo):
+        """The process the partial PCS calculation.
+
+        @param processor:   The master slave instance.
+        @type processor:    Processor instance
+        @param memo:        The specific memo object.
+        @type memo:         Memo instance
+        """
+
+        # Store the number of points in the memo.
+        memo.num_pts = self.num_pts
+
+
+
+class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
+    """The slave command for the quasi-random pseudo-ellipse PCS numerical integration."""
+
+    def __init__(self, points=None, theta_x=None, theta_y=None, sigma_max=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+        """Set up the slave command, storing the integration points.
+
+        @keyword points:            The subdivision of points to process on the slave processor.
+        @type points:               numpy rank-2, 3D array
+        @keyword theta_x:           The x-axis half cone angle.
+        @type theta_x:              float
+        @keyword theta_y:           The y-axis half cone angle.
+        @type theta_y:              float
+        @keyword sigma_max:         The maximum torsion angle.
+        @type sigma_max:            float
+        @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
+        @type full_in_ref_frame:    numpy rank-1 array
+        @keyword r_pivot_atom:      The pivot point to atom vector.
+        @type r_pivot_atom:         numpy rank-2, 3D array
+        @keyword r_pivot_atom_rev:  The reversed pivot point to atom vector.
+        @type r_pivot_atom_rev:     numpy rank-2, 3D array
+        @keyword r_ln_pivot:        The lanthanide position to pivot point vector.
+        @type r_ln_pivot:           numpy rank-2, 3D array
+        @keyword A:                 The full alignment tensor of the non-moving domain.
+        @type A:                    numpy rank-2, 3D array
+        @keyword R_eigen:           The eigenframe rotation matrix.
+        @type R_eigen:              numpy rank-2, 3D array
+        @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
+        @type RT_eigen:             numpy rank-2, 3D array
+        @keyword Ri_prime:          The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
+        @type Ri_prime:             numpy rank-2, 3D array
+        @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
+        @type pcs_theta:            numpy rank-2 array
+        @keyword pcs_theta_err:     The storage structure for the back-calculated PCS errors.
+        @type pcs_theta_err:        numpy rank-2 array
+        @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
+        @type missing_pcs:          numpy rank-2 array
+         """
+
+        # Store the arguments.
+        self.points = points
+        self.theta_x = theta_x
+        self.theta_y = theta_y
+        self.sigma_max = sigma_max
+        self.full_in_ref_frame = full_in_ref_frame
+        self.r_pivot_atom = r_pivot_atom
+        self.r_pivot_atom_rev = r_pivot_atom_rev
+        self.r_ln_pivot = r_ln_pivot
+        self.A = A
+        self.R_eigen = R_eigen
+        self.RT_eigen = RT_eigen
+        self.Ri_prime = Ri_prime
+        self.pcs_theta = pcs_theta
+        self.pcs_theta_err = pcs_theta_err
+        self.missing_pcs = missing_pcs
+
+
+    def run(self, processor, completed):
+        """The PCS calculation.
+
+        @param processor:   The master slave instance.
+        @type processor:    Processor instance
+        @param completed:   A flag specifying if execution is completed.
+        @type completed:    bool
+        """
+
+        # Loop over the samples.
+        num = 0
+        for i in range(len(self.points)):
+            # Unpack the point.
+            theta, phi, sigma = self.points[i]
+
+            # Calculate theta_max.
+            theta_max = tmax_pseudo_ellipse(phi, self.theta_x, self.theta_y)
+
+            # Outside of the distribution, so skip the point.
+            if theta > theta_max:
+                continue
+            if sigma > self.sigma_max or sigma < -self.sigma_max:
+                continue
+
+            # Calculate the PCSs for this state.
+            pcs_pivot_motion_full_qrint(theta_i=theta, phi_i=phi, sigma_i=sigma, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A, R_eigen=self.R_eigen, RT_eigen=self.RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+
+            # Increment the number of points.
+            num += 1
+
+        # Process the results on the master.
+        processor.return_object(Result_command_pcs_pseudo_ellipse_qrint(processor, memo_id=self.memo_id, num_pts=num))
