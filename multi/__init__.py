@@ -24,40 +24,64 @@
 # Package docstring.
 """The multi-processor package.
 
-Introduction
-============
+1 Introduction
+==============
 
 This package is an abstraction of specific multi-processor implementations or fabrics such as MPI via mpi4py.  It is designed to be extended for use on other fabrics such as grid computing via SSH tunnelling, threading, etc.  It also has a uni-processor mode as the default fabric.
 
 
-API
-===
+2 API
+=====
 
-The public API is available via the __init__ module.  It consists of the following functions and classes:
-
-    - multi.load_multiprocessor:  The interface for how a program can load and set up a specific processor fabric.  This function returns the set up processor, which itself provides a run() method which is used to execute your application.
-    - multi.Processor_box:  A special singleton object which provides access to the processor object.  This is required for the queuing of slave commands and memos.
-    - multi.Slave_command:  A special base class to be subclassed.  The run() function should be overridden, this provides the code to execute on the slave processors.
-    - multi.Result_command:  A special base class to be subclassed.  The run() function should be overridden, this provides the code for the master to process the results from the slaves.
-    - multi.Memo:  A special base class to be subclassed.  This is a data store used by the Results_command to help process the results from the slave on the master processor.
-
-Using this basic interface, code can be parallelised and executed via an MPI implementation, or default back to a single CPU when needed.  The choice of processor fabric is up to the calling program (via multi.load_multiprocessor).
+The public API is available via the __init__ module.  It consists of a number of functions and classes.  Using this basic interface, code can be parallelised and executed via an MPI implementation, or default back to a single CPU when needed.  The choice of processor fabric is up to the calling program (via multi.load_multiprocessor).
 
 
-Parallelisation
-===============
+2.1 Program initialisation
+--------------------------
+
+The function multi.load_multiprocessor() is the interface for how a program can load and set up a specific processor fabric.  This function returns the set up processor, which itself provides a run() method which is used to execute your application.
+
+
+2.2 Access to the processor instance
+------------------------------------
+
+The multi.Processor_box class is a special singleton object which provides access to the processor object.  This is required for a number of actions:
+
+    - Queuing of slave commands and memos via Processor_box().processor.add_to_queue().
+    - Returning results (as a Results_command) from the slave processor to the master via Processor_box().processor.return_object().
+    - Determining the number of processes via Processor_box().processor.processor_size().
+    - Waiting for completion of the queued slave processors via Processor_box().processor.run_queue().
+
+
+2.3 Slaves
+----------
+
+Slave processors are created via the multi.Slave_command class.  This is special base class which must be subclassed.  The run() function should be overridden, this provides the code to execute on the slave processors.
+
+
+2.4 Results handling
+--------------------
+
+The multi.Result_command class is a special base class which must be subclassed.  The run() function should be overridden, this provides the code for the master to process the results from the slaves.
+
+In addition, the multi.Memo should also be used.  This is a special base class which must be subclassed.  This is a data store used by the Results_command to help process the results from the slave on the master processor.
+
+
+
+3 Parallelisation
+=================
 
 The following are the steps required to parallelise a calculation via the multi-processor package API.  It is assumed that the multi.load_multiprocessor() function has been set up at the highest level so that the entire program will be executed by the returned processor's run() method.
 
 
-Subclassing command and memo objects
-------------------------------------
+3.1 Subclassing command and memo objects
+----------------------------------------
 
 The first step is that the Slave_command, Result_command, and Memo classes need to be subclassed.  The Slave_command.run() method must be provided and is used for running the calculations on the slave processors.  The Result_command is used to unpack the results from the slave.  It is initialised by the Slave_command itself with the results from the calculation as arguments of __init__().  Its run() method processes the results on the master processor.  The Memo object holds data other than the calculation results required by the Result_command.run() method to process the results.
 
 
-Initialisation and queuing
---------------------------
+3.2 Initialisation and queuing
+------------------------------
 
 The second step is to initialise the Slave_command and Memo and add these to the processor queue.  But first access to the processor is required.  The singleton multi.Processor_box should be imported, and the processor accessed with code such as::
 
@@ -70,6 +94,12 @@ The slave command is then initialised and all required data by the slave for the
     processor_box.processor.add_to_queue(command, memo)
 
 
+3.3 Calculation
+---------------
+
+To execute the calculations, the final part of the calculation code on the master must feature a call to::
+
+    processor_box.processor.run_queue().
 """
 
 
