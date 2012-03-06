@@ -41,6 +41,26 @@ pseudo_ellipse_free_rotor   313.28990168799919      0.042919565975988075    313.
 pseudo_ellipse_torsionless  4.0391147051941987      0.038420846934775092    4.0006938582594236
 
 
+Quasi-random integration (from relax, 1e3 Sobol' pts)
+----------------------------------------------------
+
+Data set                    RDC + PCS               RDC                     PCS
+rigid                       ?                       0.081175629109096842    ?                     
+rotor                       ?                       0.080805860707837754    ?                   
+rotor2                      ?                       0.080669539157379247    ?                   
+rotor_2_state               ?                       0.98514936500256733     ?                
+free_rotor                  ?                       0.49726258158951819     ?                    
+free_rotor2                 ?                       0.15789122044584425     ?                    
+iso_cone                    ?                       0.047304044109578447    ?                 
+iso_cone_free_rotor         ?                       0.1984082397486189      ?                 
+iso_cone_free_rotor2        ?                       0.034276292191227402    ?                 
+iso_cone_torsionless        ?                       0.04891814690969206     ?                 
+pseudo_ellipse              1.5736922773780864      0.095461523976414595    1.4782307534016719
+pseudo_ellipse2             ?                       0.030991308327923742    ?                 
+pseudo_ellipse_free_rotor   ?                       0.042919565975988075    ?                 
+pseudo_ellipse_torsionless  ?                       0.038420846934775092    ?                 
+
+
 Quasi-random integration (from relax, 1e6 Sobol' pts)
 --------------------------------------------------------
 

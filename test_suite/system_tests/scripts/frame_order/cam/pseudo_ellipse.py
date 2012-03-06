@@ -42,7 +42,7 @@ class Analysis(Base_script):
     cone_theta_y = 50.0 * 2.0 * pi / 360.0
     cone_sigma_max = 60.0 * 2.0 * pi / 360.0
     cone = True
-    num_int_pts = 50
+    num_int_pts = 1000
 
 
 # Execute the analysis.
