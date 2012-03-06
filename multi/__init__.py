@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -103,7 +103,10 @@ To execute the calculations, the final part of the calculation code on the maste
 """
 
 
-__all__ = ['commands',
+__all__ = ['api',
+           'commands',
+           'memo',
+           'misc',
            'mpi4py_processor',
            'multi_processor_base',
            'processor_io',
