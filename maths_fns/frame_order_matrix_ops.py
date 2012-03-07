@@ -2416,11 +2416,20 @@ class Result_command_pcs_pseudo_ellipse_qrint(Result_command):
 class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
     """The slave command for the quasi-random pseudo-ellipse PCS numerical integration."""
 
-    def load_data(self, points=None, theta_x=None, theta_y=None, sigma_max=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
-        """Set up the slave command, storing the integration points.
+    def __init__(self, points=None):
+        """Store the pre-target function invariable data.
 
         @keyword points:            The subdivision of points to process on the slave processor.
         @type points:               numpy rank-2, 3D array
+        """
+
+        # Store the arguments.
+        self.points = points
+
+
+    def load_data(self, theta_x=None, theta_y=None, sigma_max=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+        """Store the target function level variable data.
+
         @keyword theta_x:           The x-axis half cone angle.
         @type theta_x:              float
         @keyword theta_y:           The y-axis half cone angle.
@@ -2449,10 +2458,9 @@ class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
         @type pcs_theta_err:        numpy rank-2 array
         @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
         @type missing_pcs:          numpy rank-2 array
-         """
+        """
 
         # Store the arguments.
-        self.points = points
         self.theta_x = theta_x
         self.theta_y = theta_y
         self.sigma_max = sigma_max
