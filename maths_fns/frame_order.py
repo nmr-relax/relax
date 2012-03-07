@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import acos, pi, sqrt
+from math import acos, ceil, pi, sqrt
 from numpy import array, dot, float16, float64, ones, transpose, zeros
 from numpy.linalg import norm
 
@@ -36,7 +36,7 @@ from extern.sobol.sobol_lib import i4_sobol
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.coord_transform import spherical_to_cartesian
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, Data, Memo_pcs_pseudo_ellipse_qrint, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_qrint, pcs_numeric_int_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless_qrint, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint, Slave_command_pcs_pseudo_ellipse_qrint, subdivide
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, Data, Memo_pcs_pseudo_ellipse_qrint, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_qrint, pcs_numeric_int_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless_qrint, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint, Slave_command_pcs_pseudo_ellipse_qrint
 from maths_fns.kronecker_product import kron_prod
 from maths_fns import order_parameters
 from maths_fns.rotation_matrix import euler_to_R_zyz
@@ -1174,7 +1174,7 @@ class Frame_order:
 
             # Subdivide the points.
             i = 0
-            for block in subdivide(self.sobol_angles, self.processor.processor_size()):
+            for block in self.subdivide(self.sobol_angles, self.processor.processor_size()):
                 # Initialise the slave command and memo.
                 self.slaves[i].load_data(points=block, theta_x=cone_theta_x, theta_y=cone_theta_x, sigma_max=cone_sigma_max, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=deepcopy(self.pcs_theta), pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
@@ -1850,3 +1850,34 @@ class Frame_order:
 
             # Convert the tensor back to 5D, rank-1 form, as the back-calculated reduced tensor.
             to_5D(self.A_5D_bc[index1:index2], self.A_3D_bc[i])
+
+
+    def subdivide(self, points, processors):
+        """Split the points up into a number of blocks based on the number of processors.
+
+        @param points:      The integration points to split up.
+        @type points:       numpy rank-2, 3D array
+        @param processors:  The number of slave processors.
+        @type processors:   int
+        """
+
+        # Uni-processor mode, so no need to split.
+        if processors == 1:
+            yield points
+
+        # Multi-processor mode.
+        else:
+            # The number of points.
+            N = len(points)
+
+            # The number of points per block (rounding up when needed so that there are no accidentally left out points).
+            block_size = int(ceil(N / float(processors)))
+
+            # Loop over the blocks.
+            for i in range(processors):
+                # The indices.
+                index1 = i*block_size
+                index2 = (i+1)*block_size
+
+                # Yield the next block.
+                yield points[index1:index2]

@@ -28,7 +28,7 @@ import dep_check
 
 # Python module imports.
 from copy import deepcopy
-from math import acos, ceil, cos, pi, sin, sqrt
+from math import acos, cos, pi, sin, sqrt
 from numpy import cross, dot, inner, sinc, transpose
 from numpy.linalg import norm
 from random import uniform
@@ -2327,37 +2327,6 @@ def rotate_daeg(matrix, Rx2_eigen):
 
     # Return the matrix.
     return matrix_rot
-
-
-def subdivide(points, processors):
-    """Split the points up into a number of blocks based on the number of processors.
-
-    @param points:      The integration points to split up.
-    @type points:       numpy rank-2, 3D array
-    @param processors:  The number of slave processors.
-    @type processors:   int
-    """
-
-    # Uni-processor mode, so no need to split.
-    if processors == 1:
-        yield points
-
-    # Multi-processor mode.
-    else:
-        # The number of points.
-        N = len(points)
-
-        # The number of points per block (rounding up when needed so that there are no accidentally left out points).
-        block_size = int(ceil(N / float(processors)))
-
-        # Loop over the blocks.
-        for i in range(processors):
-            # The indices.
-            index1 = i*block_size
-            index2 = (i+1)*block_size
-
-            # Yield the next block.
-            yield points[index1:index2]
 
 
 def tmax_pseudo_ellipse(phi, theta_x, theta_y):
