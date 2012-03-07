@@ -36,11 +36,12 @@ from extern.sobol.sobol_lib import i4_sobol
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.coord_transform import spherical_to_cartesian
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_qrint, pcs_numeric_int_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless_qrint, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_qrint, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_free_rotor, compile_2nd_matrix_iso_cone, compile_2nd_matrix_iso_cone_free_rotor, compile_2nd_matrix_iso_cone_torsionless, compile_2nd_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse_free_rotor, compile_2nd_matrix_pseudo_ellipse_torsionless, compile_2nd_matrix_rotor, Data, Memo_pcs_pseudo_ellipse_qrint, reduce_alignment_tensor, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_qrint, pcs_numeric_int_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless_qrint, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint, Slave_command_pcs_pseudo_ellipse_qrint, subdivide
 from maths_fns.kronecker_product import kron_prod
 from maths_fns import order_parameters
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from maths_fns.rotation_matrix import two_vect_to_R
+from multi import Processor_box
 from pcs import pcs_tensor
 from physical_constants import pcs_constant
 from rdc import rdc_tensor
@@ -1150,8 +1151,48 @@ class Frame_order:
 
         # PCS via Monte Carlo integration.
         if self.pcs_flag:
-            # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_qrint(points=self.sobol_angles, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+            # Clear the data structures.
+            for i in range(len(self.pcs_theta)):
+                for j in range(len(self.pcs_theta[i])):
+                    self.pcs_theta[i, j] = 0.0
+                    self.pcs_theta_err[i, j] = 0.0
+
+            # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+            processor_box = Processor_box() 
+            processor = processor_box.processor
+
+            # Initialise the data object for the slave results to be stored in.
+            data = Data()
+            data.num_pts = 0
+            data.pcs_theta = self.pcs_theta
+
+            # Subdivide the points.
+            for block in subdivide(self.sobol_angles, processor.processor_size()):
+                # Initialise the slave command and memo.
+                command = Slave_command_pcs_pseudo_ellipse_qrint(points=block, theta_x=cone_theta_x, theta_y=cone_theta_x, sigma_max=cone_sigma_max, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=deepcopy(self.pcs_theta), pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+
+                # Initialise the memo.
+                memo = Memo_pcs_pseudo_ellipse_qrint(data)
+
+                # Queue the block.
+                processor.add_to_queue(command, memo)
+
+            # Wait for completion.
+            processor.run_queue()
+
+            # Calculate the PCS and error.
+            num = data.num_pts
+            for i in range(len(self.pcs_theta)):
+                for j in range(len(self.pcs_theta[i])):
+                    # The average PCS.
+                    self.pcs_theta[i, j] = self.pcs_const[i] * self.pcs_theta[i, j] / float(num)
+
+                    # The error.
+                    error_flag = False
+                    if error_flag:
+                        self.pcs_theta_err[i, j] = abs(self.pcs_theta_err[i, j] / float(num)  -  self.pcs_theta[i, j]**2) / float(num)
+                        self.pcs_theta_err[i, j] = c[i] * sqrt(self.pcs_theta_err[i, j])
+                        print "%8.3f +/- %-8.3f" % (self.pcs_theta[i, j]*1e6, self.pcs_theta_err[i, j]*1e6)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for i in xrange(self.num_align):

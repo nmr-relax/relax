@@ -42,7 +42,7 @@ from maths_fns.coord_transform import spherical_to_cartesian
 from maths_fns.kronecker_product import kron_prod, transpose_23
 from maths_fns.pseudo_ellipse import pec
 from maths_fns.rotation_matrix import euler_to_R_zyz, two_vect_to_R
-from multi import Memo, Processor_box, Result_command, Slave_command
+from multi import Memo, Result_command, Slave_command
 
 
 def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
@@ -1475,88 +1475,6 @@ def pcs_numeric_int_pseudo_ellipse(theta_x=None, theta_y=None, sigma_max=None, c
 
     # Return the value.
     return c * result[0] / SA
-
-
-def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
-    """Determine the averaged PCS value via numerical integration.
-
-    @keyword points:            The Sobol points in the torsion-tilt angle space.
-    @type points:               numpy rank-2, 3D array
-    @keyword theta_x:           The x-axis half cone angle.
-    @type theta_x:              float
-    @keyword theta_y:           The y-axis half cone angle.
-    @type theta_y:              float
-    @keyword sigma_max:         The maximum torsion angle.
-    @type sigma_max:            float
-    @keyword c:                 The PCS constant (without the interatomic distance and in Angstrom units).
-    @type c:                    numpy rank-1 array
-    @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
-    @type full_in_ref_frame:    numpy rank-1 array
-    @keyword r_pivot_atom:      The pivot point to atom vector.
-    @type r_pivot_atom:         numpy rank-2, 3D array
-    @keyword r_pivot_atom_rev:  The reversed pivot point to atom vector.
-    @type r_pivot_atom_rev:     numpy rank-2, 3D array
-    @keyword r_ln_pivot:        The lanthanide position to pivot point vector.
-    @type r_ln_pivot:           numpy rank-2, 3D array
-    @keyword A:                 The full alignment tensor of the non-moving domain.
-    @type A:                    numpy rank-2, 3D array
-    @keyword R_eigen:           The eigenframe rotation matrix.
-    @type R_eigen:              numpy rank-2, 3D array
-    @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
-    @type RT_eigen:             numpy rank-2, 3D array
-    @keyword Ri_prime:          The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
-    @type Ri_prime:             numpy rank-2, 3D array
-    @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
-    @type pcs_theta:            numpy rank-2 array
-    @keyword pcs_theta_err:     The storage structure for the back-calculated PCS errors.
-    @type pcs_theta_err:        numpy rank-2 array
-    @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
-    @type missing_pcs:          numpy rank-2 array
-    @keyword error_flag:        A flag which if True will cause the PCS errors to be estimated and stored in pcs_theta_err.
-    @type error_flag:           bool
-    """
-
-    # Clear the data structures.
-    for i in range(len(pcs_theta)):
-        for j in range(len(pcs_theta[i])):
-            pcs_theta[i, j] = 0.0
-            pcs_theta_err[i, j] = 0.0
-
-    # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
-    processor_box = Processor_box() 
-    processor = processor_box.processor
-
-    # Initialise the data object for the slave results to be stored in.
-    data = Data()
-    data.num_pts = 0
-    data.pcs_theta = pcs_theta
-
-    # Subdivide the points.
-    for block in subdivide(points, processor.processor_size()):
-        # Initialise the slave command and memo.
-        command = Slave_command_pcs_pseudo_ellipse_qrint(points=block, theta_x=theta_x, theta_y=theta_x, sigma_max=sigma_max, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=deepcopy(pcs_theta), pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
-
-        # Initialise the memo.
-        memo = Memo_pcs_pseudo_ellipse_qrint(data)
-
-        # Queue the block.
-        processor.add_to_queue(command, memo)
-
-    # Wait for completion.
-    processor.run_queue()
-
-    # Calculate the PCS and error.
-    num = data.num_pts
-    for i in range(len(pcs_theta)):
-        for j in range(len(pcs_theta[i])):
-            # The average PCS.
-            pcs_theta[i, j] = c[i] * pcs_theta[i, j] / float(num)
-
-            # The error.
-            if error_flag:
-                pcs_theta_err[i, j] = abs(pcs_theta_err[i, j] / float(num)  -  pcs_theta[i, j]**2) / float(num)
-                pcs_theta_err[i, j] = c[i] * sqrt(pcs_theta_err[i, j])
-                print "%8.3f +/- %-8.3f" % (pcs_theta[i, j]*1e6, pcs_theta_err[i, j]*1e6)
 
 
 def pcs_numeric_int_pseudo_ellipse_torsionless(theta_x=None, theta_y=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
