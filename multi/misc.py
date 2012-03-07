@@ -27,6 +27,9 @@
 This is for internal use only.  To access the multi-processor API, see the __init__ module.
 """
 
+# Python module imports.
+import sys
+
 
 def import_module(module_path):
     """Import the python module named by module_path.
