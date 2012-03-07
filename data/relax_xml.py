@@ -24,11 +24,15 @@
 """Module containing generic fns for creation and parsing of XML representations of python objects."""
 
 # Python module imports.
-from numpy import set_printoptions, array, float32, float64, float128, inf, nan
+from numpy import set_printoptions, array, float32, float64, inf, nan
 try:
     from numpy import float16
-except:
-    float16 = float32
+except ImportError:
+    float16 = float32    # Support for old numpy versions.
+try:
+    from numpy import float128
+except ImportError:
+    float128 = float64    # Support for 32-bit numpy versions.
 from re import search
 from string import strip
 

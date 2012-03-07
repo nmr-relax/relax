@@ -24,11 +24,15 @@
 """Argument checking functions for the relax user functions."""
 
 # Python module imports.
-from numpy import float32, float64, float128, ndarray
+from numpy import float32, float64, ndarray
 try:
     from numpy import float16
-except:
-    float16 = float32
+except ImportError:
+    float16 = float32    # Support for old numpy versions.
+try:
+    from numpy import float128
+except ImportError:
+    float128 = float64    # Support for 32-bit numpy versions.
 
 # relax module imports.
 from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxListFloatError, RelaxListIntError, RelaxMatrixFloatError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListFloatError, RelaxNoneListIntError, RelaxNoneMatrixFloatError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
