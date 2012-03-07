@@ -29,6 +29,7 @@ This is for internal use only.  To access the multi-processor API, see the __ini
 
 # Python module imports.
 import sys
+import traceback, textwrap
 
 
 def import_module(module_path):
