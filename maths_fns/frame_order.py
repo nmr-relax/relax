@@ -51,7 +51,7 @@ from relax_errors import RelaxError
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=None, scaling_matrix=None, num_int_pts=500, pivot=None, pivot_opt=False, quad_int=True):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_errors=None, pcs_weights=None, pcs_atoms=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, pivot=zeros(3), pivot_opt=False, quad_int=True):
         """Set up the target functions for the Frame Order theories.
         
         @keyword model:             The name of the Frame Order model.
@@ -250,7 +250,10 @@ class Frame_order:
             self.pcs_const = zeros(self.num_align, float64)
             self.r_pivot_atom = zeros((3, self.num_pcs), float64)
             self.r_pivot_atom_rev = zeros((3, self.num_pcs), float64)
+            self.r_pivot_atom_rev = zeros((3, self.num_pcs), float64)
             self.r_ln_pivot = zeros((3, self.num_pcs), float64)
+            for j in xrange(self.num_pcs):
+                self.r_ln_pivot[:, j] = pivot - self.paramag_centre
             if self.paramag_centre == None:
                 self.paramag_centre = zeros(3, float64)
 
@@ -322,7 +325,7 @@ class Frame_order:
             # Set up the slave processors.
             self.slaves = []
             for i in range(self.processor.processor_size()):
-                self.slaves.append(Slave_command_pcs_pseudo_ellipse_qrint(blocks[i]))
+                self.slaves.append(Slave_command_pcs_pseudo_ellipse_qrint(blocks[i], full_in_ref_frame=self.full_in_ref_frame, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, Ri_prime=self.Ri_prime, pcs_theta=deepcopy(self.pcs_theta), pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs))
 
         # The target function aliases (Scipy numerical integration).
         else:
@@ -1180,7 +1183,11 @@ class Frame_order:
             # Subdivide the points.
             for i in range(self.processor.processor_size()):
                 # Initialise the slave command and memo.
-                self.slaves[i].load_data(theta_x=cone_theta_x, theta_y=cone_theta_x, sigma_max=cone_sigma_max, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=deepcopy(self.pcs_theta), pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+                self.slaves[i].load_data(theta_x=cone_theta_x, theta_y=cone_theta_x, sigma_max=cone_sigma_max, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, R_eigen=self.R_eigen, RT_eigen=RT_eigen)
+
+                # Update certain data structures.
+                if self.pivot_opt:
+                    self.slaves[i].r_ln_pivot = self.r_ln_pivot
 
                 # Initialise the memo.
                 memo = Memo_pcs_pseudo_ellipse_qrint(data)
@@ -1761,7 +1768,8 @@ class Frame_order:
         # The pivot to atom vectors.
         for j in xrange(self.num_pcs):
             # The lanthanide to pivot vector.
-            self.r_ln_pivot[:, j] = pivot - self.paramag_centre
+            if self.pivot_opt:
+                self.r_ln_pivot[:, j] = pivot - self.paramag_centre
 
             # The rotated vectors.
             self.r_pivot_atom[:, j] = dot(R_ave, self.pcs_atoms[j] - pivot)

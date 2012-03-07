@@ -2416,40 +2416,17 @@ class Result_command_pcs_pseudo_ellipse_qrint(Result_command):
 class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
     """The slave command for the quasi-random pseudo-ellipse PCS numerical integration."""
 
-    def __init__(self, points=None):
+    def __init__(self, points=None, full_in_ref_frame=None, r_ln_pivot=None, A=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
         """Store the pre-target function invariable data.
 
         @keyword points:            The subdivision of points to process on the slave processor.
         @type points:               numpy rank-2, 3D array
-        """
-
-        # Store the arguments.
-        self.points = points
-
-
-    def load_data(self, theta_x=None, theta_y=None, sigma_max=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
-        """Store the target function level variable data.
-
-        @keyword theta_x:           The x-axis half cone angle.
-        @type theta_x:              float
-        @keyword theta_y:           The y-axis half cone angle.
-        @type theta_y:              float
-        @keyword sigma_max:         The maximum torsion angle.
-        @type sigma_max:            float
         @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
         @type full_in_ref_frame:    numpy rank-1 array
-        @keyword r_pivot_atom:      The pivot point to atom vector.
-        @type r_pivot_atom:         numpy rank-2, 3D array
-        @keyword r_pivot_atom_rev:  The reversed pivot point to atom vector.
-        @type r_pivot_atom_rev:     numpy rank-2, 3D array
         @keyword r_ln_pivot:        The lanthanide position to pivot point vector.
         @type r_ln_pivot:           numpy rank-2, 3D array
         @keyword A:                 The full alignment tensor of the non-moving domain.
         @type A:                    numpy rank-2, 3D array
-        @keyword R_eigen:           The eigenframe rotation matrix.
-        @type R_eigen:              numpy rank-2, 3D array
-        @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
-        @type RT_eigen:             numpy rank-2, 3D array
         @keyword Ri_prime:          The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
         @type Ri_prime:             numpy rank-2, 3D array
         @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
@@ -2461,20 +2438,43 @@ class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
         """
 
         # Store the arguments.
-        self.theta_x = theta_x
-        self.theta_y = theta_y
-        self.sigma_max = sigma_max
+        self.points = points
         self.full_in_ref_frame = full_in_ref_frame
-        self.r_pivot_atom = r_pivot_atom
-        self.r_pivot_atom_rev = r_pivot_atom_rev
         self.r_ln_pivot = r_ln_pivot
         self.A = A
-        self.R_eigen = R_eigen
-        self.RT_eigen = RT_eigen
         self.Ri_prime = Ri_prime
         self.pcs_theta = pcs_theta
         self.pcs_theta_err = pcs_theta_err
         self.missing_pcs = missing_pcs
+
+
+    def load_data(self, theta_x=None, theta_y=None, sigma_max=None, r_pivot_atom=None, r_pivot_atom_rev=None, R_eigen=None, RT_eigen=None):
+        """Store the target function level variable data.
+
+        @keyword theta_x:           The x-axis half cone angle.
+        @type theta_x:              float
+        @keyword theta_y:           The y-axis half cone angle.
+        @type theta_y:              float
+        @keyword sigma_max:         The maximum torsion angle.
+        @type sigma_max:            float
+        @keyword r_pivot_atom:      The pivot point to atom vector.
+        @type r_pivot_atom:         numpy rank-2, 3D array
+        @keyword r_pivot_atom_rev:  The reversed pivot point to atom vector.
+        @type r_pivot_atom_rev:     numpy rank-2, 3D array
+        @keyword R_eigen:           The eigenframe rotation matrix.
+        @type R_eigen:              numpy rank-2, 3D array
+        @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
+        @type RT_eigen:             numpy rank-2, 3D array
+        """
+
+        # Store the arguments.
+        self.theta_x = theta_x
+        self.theta_y = theta_y
+        self.sigma_max = sigma_max
+        self.r_pivot_atom = r_pivot_atom
+        self.r_pivot_atom_rev = r_pivot_atom_rev
+        self.R_eigen = R_eigen
+        self.RT_eigen = RT_eigen
 
 
     def run(self, processor, completed):
