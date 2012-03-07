@@ -271,6 +271,10 @@ class Frame_order:
             self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_rdc), float64)
             self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_rdc), float64)
 
+        # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+        processor_box = Processor_box() 
+        self.processor = processor_box.processor
+
         # The Sobol' sequence data and target function aliases (quasi-random integration).
         if not quad_int:
             if model == 'pseudo-ellipse':
@@ -1157,17 +1161,13 @@ class Frame_order:
                     self.pcs_theta[i, j] = 0.0
                     self.pcs_theta_err[i, j] = 0.0
 
-            # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
-            processor_box = Processor_box() 
-            processor = processor_box.processor
-
             # Initialise the data object for the slave results to be stored in.
             data = Data()
             data.num_pts = 0
             data.pcs_theta = self.pcs_theta
 
             # Subdivide the points.
-            for block in subdivide(self.sobol_angles, processor.processor_size()):
+            for block in subdivide(self.sobol_angles, self.processor.processor_size()):
                 # Initialise the slave command and memo.
                 command = Slave_command_pcs_pseudo_ellipse_qrint(points=block, theta_x=cone_theta_x, theta_y=cone_theta_x, sigma_max=cone_sigma_max, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=deepcopy(self.pcs_theta), pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
@@ -1175,10 +1175,10 @@ class Frame_order:
                 memo = Memo_pcs_pseudo_ellipse_qrint(data)
 
                 # Queue the block.
-                processor.add_to_queue(command, memo)
+                self.processor.add_to_queue(command, memo)
 
             # Wait for completion.
-            processor.run_queue()
+            self.processor.run_queue()
 
             # Calculate the PCS and error.
             num = data.num_pts
