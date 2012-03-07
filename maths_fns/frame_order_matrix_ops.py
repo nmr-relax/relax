@@ -2447,7 +2447,7 @@ class Result_command_pcs_pseudo_ellipse_qrint(Result_command):
 class Slave_command_pcs_pseudo_ellipse_qrint(Slave_command):
     """The slave command for the quasi-random pseudo-ellipse PCS numerical integration."""
 
-    def __init__(self, points=None, theta_x=None, theta_y=None, sigma_max=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+    def load_data(self, points=None, theta_x=None, theta_y=None, sigma_max=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
         """Set up the slave command, storing the integration points.
 
         @keyword points:            The subdivision of points to process on the slave processor.

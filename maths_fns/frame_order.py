@@ -271,12 +271,13 @@ class Frame_order:
             self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_rdc), float64)
             self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_rdc), float64)
 
-        # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
-        processor_box = Processor_box() 
-        self.processor = processor_box.processor
-
-        # The Sobol' sequence data and target function aliases (quasi-random integration).
+        # The quasi-random integration via the multi-processor.
         if not quad_int:
+            # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+            processor_box = Processor_box() 
+            self.processor = processor_box.processor
+
+            # The Sobol' sequence data and target function aliases (quasi-random integration).
             if model == 'pseudo-ellipse':
                 self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
                 self.func = self.func_pseudo_ellipse_qrint
@@ -312,6 +313,11 @@ class Frame_order:
             elif model == 'free rotor':
                 self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
                 self.func = self.func_free_rotor_qrint
+
+            # Set up the slave processors.
+            self.slaves = []
+            for i in range(self.processor.processor_size()):
+                self.slaves.append(Slave_command_pcs_pseudo_ellipse_qrint())
 
         # The target function aliases (Scipy numerical integration).
         else:
@@ -1167,15 +1173,19 @@ class Frame_order:
             data.pcs_theta = self.pcs_theta
 
             # Subdivide the points.
+            i = 0
             for block in subdivide(self.sobol_angles, self.processor.processor_size()):
                 # Initialise the slave command and memo.
-                command = Slave_command_pcs_pseudo_ellipse_qrint(points=block, theta_x=cone_theta_x, theta_y=cone_theta_x, sigma_max=cone_sigma_max, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=deepcopy(self.pcs_theta), pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+                self.slaves[i].load_data(points=block, theta_x=cone_theta_x, theta_y=cone_theta_x, sigma_max=cone_sigma_max, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=deepcopy(self.pcs_theta), pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
                 # Initialise the memo.
                 memo = Memo_pcs_pseudo_ellipse_qrint(data)
 
                 # Queue the block.
-                self.processor.add_to_queue(command, memo)
+                self.processor.add_to_queue(self.slaves[i], memo)
+
+                # Increment the slave count.
+                i += 1
 
             # Wait for completion.
             self.processor.run_queue()
