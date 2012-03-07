@@ -28,12 +28,11 @@
 # TODO: clone communicators & resize
 # TODO: check exceptions on master
 
-# Dependency check module.
-import dep_check
-
 # Python module imports.
-if dep_check.mpi4py_module:
+try:
     from mpi4py import MPI
+except ImportError:
+    MPI = None
 import os
 import sys
 import textwrap
