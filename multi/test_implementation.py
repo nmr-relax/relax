@@ -20,8 +20,8 @@ $ mpiexec -n 3 python test_implementation.py
 
 For a single dual core CPU (Intel Core 2 Duo E8400 at 3.00GHz), the total times averaged over 5 runs are:
     - Uni-processor:        51.548 seconds (51.054+52.224+51.257+51.112+52.093)
-    - Mpi4py-processor:     43.185 seconds (43.867+41.478+46.209+39.941+44.429)
-    - Scaling efficiency:   1.194
+    - Mpi4py-processor:     28.008 seconds (30.719+27.218+27.799+26.343+27.961)
+    - Scaling efficiency:   1.840
 
 
 Linux
