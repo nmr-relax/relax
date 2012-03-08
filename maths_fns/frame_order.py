@@ -26,7 +26,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import acos, ceil, pi, sqrt
-from numpy import array, dot, float32, float64, ones, transpose, zeros
+from numpy import array, dot, float32, float64, ones, transpose, uint8, zeros
 try:
     from numpy import float16
 except ImportError:
@@ -197,11 +197,11 @@ class Frame_order:
 
         # Missing data matrices (RDC).
         if self.rdc_flag:
-            self.missing_rdc = zeros((self.num_align, self.num_rdc), float64)
+            self.missing_rdc = zeros((self.num_align, self.num_rdc), uint8)
 
         # Missing data matrices (PCS).
         if self.pcs_flag:
-            self.missing_pcs = zeros((self.num_align, self.num_pcs), float64)
+            self.missing_pcs = zeros((self.num_align, self.num_pcs), uint8)
 
         # Clean up problematic data and put the weights into the errors..
         if self.rdc_flag or self.pcs_flag:
