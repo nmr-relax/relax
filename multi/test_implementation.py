@@ -22,6 +22,14 @@ For a single dual core CPU (Intel Core 2 Duo E8400 at 3.00GHz), the total times 
     - Uni-processor:        51.548 seconds (51.054+52.224+51.257+51.112+52.093)
     - Mpi4py-processor:     43.185 seconds (43.867+41.478+46.209+39.941+44.429)
     - Scaling efficiency:   1.194
+
+
+Linux
+-----
+
+For multi-core systems and late 2.6 Linux kernels, the following as root might be required to prevent the master processor from taking 100% of one CPU core while waiting for the slaves.
+
+# echo "1" > /proc/sys/kernel/sched_compat_yield
 """
 
 # Python module imports.
@@ -43,7 +51,7 @@ from multi import Application_callback, load_multiprocessor, Memo, Processor_box
 
 # Module variables.
 PROFILE = True
-MULTI = False
+MULTI = True
 if MULTI:
     FABRIC = 'mpi4py'
     PROCESSOR_NUM = 2
