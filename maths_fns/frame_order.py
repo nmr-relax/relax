@@ -26,7 +26,11 @@
 # Python module imports.
 from copy import deepcopy
 from math import acos, ceil, pi, sqrt
-from numpy import array, dot, float16, float64, ones, transpose, zeros
+from numpy import array, dot, float32, float64, ones, transpose, zeros
+try:
+    from numpy import float16
+except ImportError:
+    float16 = float32
 from numpy.linalg import norm
 
 # relax module imports.
