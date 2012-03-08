@@ -24,9 +24,14 @@
 """Module containing the introductory text container."""
 
 # Python module imports.
+import ctypes
+if hasattr(ctypes, 'windll'):
+    import ctypes.wintypes
 import numpy
+from os import popen3
 import platform
 from string import split
+import sys
 from textwrap import wrap
 
 # relax module imports.
@@ -302,6 +307,55 @@ class Info_box(object):
         return text
 
 
+    def ram_info(self, format="    %-25s%s\n"):
+        """Return a string for printing to STDOUT with info from the Python packages used by relax.
+
+        @keyword format:    The formatting string.
+        @type format:       str
+        @return:            The info string.
+        @rtype:             str
+        """
+
+        # Init.
+        text = ''
+
+        # Unix and GNU/Linux systems.
+        stdin, stdout, stderr = popen3('free -m')
+        free_lines = stdout.readlines()
+        if free_lines:
+            # Extract the info.
+            for line in free_lines:
+                # Split up the line.
+                row = split(line)
+
+                # The RAM size.
+                if row[0] == 'Mem:':
+                    text += format % ("Total RAM size: ", row[1], "Mb")
+
+                # The swap size.
+                if row[0] == 'Swap:':
+                    text += format % ("Total swap size: ", row[1], "Mb")
+
+        # Windows systems (supported by ctypes.windll).
+        if not text and hasattr(ctypes, 'windll'):
+            # Initialise the memory info class.
+            mem = MemoryStatusEx()
+
+            # The RAM size.
+            text += format % ("Total RAM size: ", mem.ullTotalPhys / 1024.**2, "Mb")
+
+            # The swap size.
+            text += format % ("Total swap size: ", mem.ullTotalVirtual / 1024.**2, "Mb")
+
+        # Unknown.
+        if not text:
+            text += format % ("Total RAM size: ", "?", "Mb")
+            text += format % ("Total swap size: ", "?", "Mb")
+
+        # Return the info string.
+        return text
+
+
     def sys_info(self):
         """Return a string for printing to STDOUT with info about the current relax instance.
 
@@ -313,7 +367,8 @@ class Info_box(object):
         text = self.intro_text()
 
         # Formatting string.
-        format = "    %-25s%s\n"
+        format  = "    %-25s%s\n"
+        format2 = "    %-25s%s %s\n"
 
         # Hardware info.
         text = text + ("\nHardware information:\n")
@@ -321,9 +376,11 @@ class Info_box(object):
             text = text + (format % ("Machine: ", platform.machine()))
         if hasattr(platform, 'processor'):
             text = text + (format % ("Processor: ", platform.processor()))
+        text = text + (format % ("Endianness: ", sys.byteorder))
+        text = text + self.ram_info(format=format2)
 
-        # System info.
-        text = text + ("\nSystem information:\n")
+        # OS info.
+        text = text + ("\nOperating system information:\n")
         if hasattr(platform, 'system'):
             text = text + (format % ("System: ", platform.system()))
         if hasattr(platform, 'release'):
@@ -341,8 +398,8 @@ class Info_box(object):
         if hasattr(platform, 'platform'):
             text = text + (format % ("Full platform string: ", (platform.platform())))
 
-        # Software info.
-        text = text + ("\nSoftware information:\n")
+        # Python info.
+        text = text + ("\nPython information:\n")
         if hasattr(platform, 'architecture'):
             text = text + (format % ("Architecture: ", (platform.architecture()[0] + " " + platform.architecture()[1])))
         if hasattr(platform, 'python_version'):
@@ -353,14 +410,17 @@ class Info_box(object):
             text = text + ((format[:-1]+', %s\n') % ("Python build: ", platform.python_build()[0], platform.python_build()[1]))
         if hasattr(platform, 'python_compiler'):
             text = text + (format % ("Python compiler: ", platform.python_compiler()))
+        if hasattr(platform, 'libc_ver'):
+            text = text + (format % ("Libc version: ", (platform.libc_ver()[0] + " " + platform.libc_ver()[1])))
         if hasattr(platform, 'python_implementation'):
             text = text + (format % ("Python implementation: ", platform.python_implementation()))
         if hasattr(platform, 'python_revision'):
             text = text + (format % ("Python revision: ", platform.python_revision()))
-        if hasattr(numpy, '__version__'):
-            text = text + (format % ("Numpy version: ", numpy.__version__))
-        if hasattr(platform, 'libc_ver'):
-            text = text + (format % ("Libc version: ", (platform.libc_ver()[0] + " " + platform.libc_ver()[1])))
+        if sys.executable:
+            text = text + (format % ("Python executable: ", sys.executable))
+        text = text + (format % ("Python flags: ", sys.flags))
+        text = text + (format % ("Python float info: ", sys.float_info))
+        text = text + (format % ("Python module path: ", sys.path))
 
         # Python packages.
         text = text + self.package_info(format=format)
@@ -374,6 +434,32 @@ class Info_box(object):
 
         # Return the text.
         return text
+
+
+
+class MemoryStatusEx(ctypes.Structure):
+    """Special object for obtaining hardware info in MS Windows."""
+
+    if hasattr(ctypes, 'windll'):
+        _fields_ = [
+            ('dwLength', ctypes.wintypes.DWORD),
+            ('dwMemoryLoad', ctypes.wintypes.DWORD),
+            ('ullTotalPhys', ctypes.c_ulonglong),
+            ('ullAvailPhys', ctypes.c_ulonglong),
+            ('ullTotalPageFile', ctypes.c_ulonglong),
+            ('ullAvailPageFile', ctypes.c_ulonglong),
+            ('ullTotalVirtual', ctypes.c_ulonglong),
+            ('ullAvailVirtual', ctypes.c_ulonglong),
+            ('ullExtendedVirtual', ctypes.c_ulonglong),
+        ]
+
+    def __init__(self):
+        """Set up the information and handle non MS Windows systems."""
+
+        # Get the required info (for MS Windows only).
+        if hasattr(ctypes, 'windll'):
+            self.dwLength = ctypes.sizeof(self)
+            ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(self))
 
 
 

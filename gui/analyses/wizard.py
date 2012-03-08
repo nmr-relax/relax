@@ -53,6 +53,9 @@ class Analysis_wizard:
         # Set up the wizard.
         self.wizard = Wiz_window(size_x=850, size_y=700, title='Set parameter values')
 
+        # Change the finish button.
+        self.wizard.TEXT_FINISH = " Start"
+
         # Add the new analysis panel.
         self.new_page = New_analysis_page(self.wizard)
         self.wizard.add_page(self.new_page, apply_button=False)

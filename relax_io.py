@@ -621,7 +621,6 @@ def strip(data, comments=True):
     @keyword comments:  A flag which if True will cause comments to be deleted.
     @type comments:     bool
     @return:            The input data with the empty and comment lines removed.
-    @return:            The file data with comment and empty lines removed.
     @rtype:             list of lists of str
     """
 
