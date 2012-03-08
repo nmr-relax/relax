@@ -27,9 +27,11 @@ For a single dual core CPU (Intel Core 2 Duo E8400 at 3.00GHz), the total times 
 Linux
 -----
 
-For multi-core systems and late 2.6 Linux kernels, the following as root might be required to prevent the master processor from taking 100% of one CPU core while waiting for the slaves.
+For multi-core systems and Linux 2.6, the following might be required to prevent the master processor from taking 100% of one CPU core while waiting for the slaves:
 
 # echo "1" > /proc/sys/kernel/sched_compat_yield
+
+This appears to be an OpenMPI problem with late 2.6 Linux kernels.
 """
 
 # Python module imports.

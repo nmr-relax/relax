@@ -106,6 +106,16 @@ To execute the calculations, the final part of the calculation code on the maste
 =========
 
 See the script 'test_implementation.py' for a basic example of a reference, and full, implementation of the multi-processor package.
+
+
+5 Issues
+========
+
+For multi-core systems and Linux 2.6, the following might be required to prevent the master processor from taking 100% of one CPU core while waiting for the slaves:
+
+# echo "1" > /proc/sys/kernel/sched_compat_yield
+
+This appears to be an OpenMPI problem with late 2.6 Linux kernels.
 """
 
 
