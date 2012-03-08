@@ -61,10 +61,10 @@ else:
 
 
 def print_stats(stats, status=0):
-    """Profiling print out function, sorting first by total time then by name."""
+    """Profiling print out function, sorting first by cumulative time."""
 
     # Sorted print out.
-    pstats.Stats(stats).sort_stats('time', 'name').print_stats()
+    pstats.Stats(stats).sort_stats('cumulative').print_stats()
 
 
 
