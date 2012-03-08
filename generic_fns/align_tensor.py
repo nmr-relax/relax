@@ -1045,7 +1045,7 @@ def num_tensors(skip_fixed=True):
     """Count the number of tensors.
 
     @keyword skip_fixed:    If set to True, then only the tensors without the fixed flag will be counted.  If set to False, then all tensors will be counted.
-    @type fixed:            bool
+    @type skip_fixed:       bool
     @return:                The number of tensors (excluding fixed tensors by default).
     @rtype:                 int
     """

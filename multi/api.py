@@ -29,11 +29,9 @@ This is for internal use only.  To access the multi-processor API, see the __ini
 
 # Python module imports.
 import sys
-import traceback, textwrap
 
 # relax module imports.
 from multi.misc import raise_unimplemented
-from multi.processor_io import Redirect_text
 
 
 class Result(object):

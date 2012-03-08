@@ -2313,7 +2313,7 @@ class Model_free_main:
 
             # Check if it is a model-free parameter.
             if obj_name not in self.data_names(set='params') and obj_name not in self.data_names(set='generic'):
-                raise RelaxError("The parameter '%s' is unknown." % mf_params[i])
+                raise RelaxError("The parameter '%s' is unknown.  It should be one of %s or %s" % (mf_params[i], self.data_names(set='params'), self.data_names(set='generic')))
 
             # Set the parameter.
             for spin in spin_loop(spin_id):
