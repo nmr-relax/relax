@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,16 +21,113 @@
 #                                                                             #
 ###############################################################################
 
+# Package docstring.
+"""The multi-processor package.
 
-__all__ = ['commands',
+1 Introduction
+==============
+
+This package is an abstraction of specific multi-processor implementations or fabrics such as MPI via mpi4py.  It is designed to be extended for use on other fabrics such as grid computing via SSH tunnelling, threading, etc.  It also has a uni-processor mode as the default fabric.
+
+
+2 API
+=====
+
+The public API is available via the __init__ module.  It consists of a number of functions and classes.  Using this basic interface, code can be parallelised and executed via an MPI implementation, or default back to a single CPU when needed.  The choice of processor fabric is up to the calling program (via multi.load_multiprocessor).
+
+
+2.1 Program initialisation
+--------------------------
+
+The function multi.load_multiprocessor() is the interface for how a program can load and set up a specific processor fabric.  This function returns the set up processor, which itself provides a run() method which is used to execute your application.
+
+
+2.2 Access to the processor instance
+------------------------------------
+
+The multi.Processor_box class is a special singleton object which provides access to the processor object.  This is required for a number of actions:
+
+    - Queuing of slave commands and memos via Processor_box().processor.add_to_queue().
+    - Returning results (as a Results_command) from the slave processor to the master via Processor_box().processor.return_object().
+    - Determining the number of processes via Processor_box().processor.processor_size().
+    - Waiting for completion of the queued slave processors via Processor_box().processor.run_queue().
+
+
+2.3 Slaves
+----------
+
+Slave processors are created via the multi.Slave_command class.  This is special base class which must be subclassed.  The run() function should be overridden, this provides the code to execute on the slave processors.
+
+
+2.4 Results handling
+--------------------
+
+The multi.Result_command class is a special base class which must be subclassed.  The run() function should be overridden, this provides the code for the master to process the results from the slaves.
+
+In addition, the multi.Memo should also be used.  This is a special base class which must be subclassed.  This is a data store used by the Results_command to help process the results from the slave on the master processor.
+
+
+
+3 Parallelisation
+=================
+
+The following are the steps required to parallelise a calculation via the multi-processor package API.  It is assumed that the multi.load_multiprocessor() function has been set up at the highest level so that the entire program will be executed by the returned processor's run() method.
+
+
+3.1 Subclassing command and memo objects
+----------------------------------------
+
+The first step is that the Slave_command, Result_command, and Memo classes need to be subclassed.  The Slave_command.run() method must be provided and is used for running the calculations on the slave processors.  The Result_command is used to unpack the results from the slave.  It is initialised by the Slave_command itself with the results from the calculation as arguments of __init__().  Its run() method processes the results on the master processor.  The Memo object holds data other than the calculation results required by the Result_command.run() method to process the results.
+
+
+3.2 Initialisation and queuing
+------------------------------
+
+The second step is to initialise the Slave_command and Memo and add these to the processor queue.  But first access to the processor is required.  The singleton multi.Processor_box should be imported, and the processor accessed with code such as::
+
+    # Initialise the Processor box singleton.
+    processor_box = Processor_box() 
+
+The slave command is then initialised and all required data by the slave for the calculation (via its run() method) is stored within the class instance.  The memo is also initialised with its data required for the result command for processing on the master of the results from the slave.  These are then queued on the processor::
+
+    # Queue the slave command and memo.
+    processor_box.processor.add_to_queue(command, memo)
+
+
+3.3 Calculation
+---------------
+
+To execute the calculations, the final part of the calculation code on the master must feature a call to::
+
+    processor_box.processor.run_queue().
+
+
+4 Example
+=========
+
+See the script 'test_implementation.py' for a basic example of a reference, and full, implementation of the multi-processor package.
+
+
+5 Issues
+========
+
+For multi-core systems and Linux 2.6, the following might be required to prevent the master processor from taking 100% of one CPU core while waiting for the slaves:
+
+# echo "1" > /proc/sys/kernel/sched_compat_yield
+
+This appears to be an OpenMPI problem with late 2.6 Linux kernels.
+"""
+
+
+__all__ = ['api',
+           'commands',
+           'memo',
+           'misc',
            'mpi4py_processor',
            'multi_processor_base',
            'processor_io',
            'processor',
            'uni_processor']
-
-__doc__ = \
-"""Package for multi-processor code execution."""
 
 # Python module imports.
 import sys as _sys

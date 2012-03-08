@@ -273,8 +273,8 @@ class Interpreter_thread(Thread):
     def queue(self, fn, *args, **kwds):
         """Queue up a user function for asynchronous execution.
 
-        @param uf:      The user function as a string.
-        @type uf:       str
+        @param fn:      The user function as a string.
+        @type fn:       str
         @param args:    The user function arguments.
         @type args:     any arguments
         @param kwds:    The user function keyword arguments.

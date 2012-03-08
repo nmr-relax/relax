@@ -1029,6 +1029,21 @@ class Wiz_window(wx.Dialog):
 
     # Some class variables.
     _size_button = (100, 33)
+    ICON_APPLY = paths.icon_22x22.dialog_ok_apply
+    ICON_BACK = paths.icon_22x22.go_previous_view
+    ICON_CANCEL = paths.icon_22x22.dialog_cancel
+    ICON_FINISH = paths.icon_22x22.dialog_ok
+    ICON_NEXT = paths.icon_22x22.go_next_view
+    ICON_OK = paths.icon_22x22.dialog_ok
+    ICON_SKIP = paths.icon_22x22.skip
+    TEXT_APPLY = " Apply"
+    TEXT_BACK = " Back"
+    TEXT_CANCEL = " Cancel"
+    TEXT_FINISH = " Apply"
+    TEXT_NEXT = " Next"
+    TEXT_OK = " OK"
+    TEXT_SKIP = " Skip"
+
 
     def __init__(self, parent=None, size_x=400, size_y=400, title='', border=10, style=wx.DEFAULT_DIALOG_STYLE):
         """Set up the window.
@@ -1150,8 +1165,8 @@ class Wiz_window(wx.Dialog):
             # The back button (only for multi-pages, after the first).
             if self._num_pages > 1 and i > 0:
                 # Create the button.
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Back")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_previous_view, wx.BITMAP_TYPE_ANY))
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_BACK)
+                button.SetBitmapLabel(wx.Bitmap(self.ICON_BACK, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
                 button.SetToolTipString("Return to the previous page")
                 button.SetMinSize(self._size_button)
@@ -1165,8 +1180,8 @@ class Wiz_window(wx.Dialog):
             # The apply button.
             if self._button_apply_flag[i]:
                 # Create the button.
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Apply")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_ok_apply, wx.BITMAP_TYPE_ANY))
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_APPLY)
+                button.SetBitmapLabel(wx.Bitmap(self.ICON_APPLY, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
                 button.SetToolTipString("Apply the operation")
                 button.SetMinSize(self._size_button)
@@ -1180,8 +1195,8 @@ class Wiz_window(wx.Dialog):
             # The skip button.
             if self._button_skip_flag[i]:
                 # Create the button.
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Skip")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.skip, wx.BITMAP_TYPE_ANY))
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_SKIP)
+                button.SetBitmapLabel(wx.Bitmap(self.ICON_SKIP, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
                 button.SetToolTipString("Skip the operation")
                 button.SetMinSize(self._size_button)
@@ -1195,8 +1210,8 @@ class Wiz_window(wx.Dialog):
             # The next button (only for multi-pages, excluding the last).
             if self._num_pages > 1 and i < self._num_pages - 1:
                 # Create the button.
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Next")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.go_next_view, wx.BITMAP_TYPE_ANY))
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_NEXT)
+                button.SetBitmapLabel(wx.Bitmap(self.ICON_NEXT, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
                 button.SetToolTipString("Move to the next page")
                 button.SetMinSize(self._size_button)
@@ -1206,8 +1221,8 @@ class Wiz_window(wx.Dialog):
 
             # The OK button (only for single pages).
             if self._num_pages == 1:
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " OK")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_ok, wx.BITMAP_TYPE_ANY))
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_OK)
+                button.SetBitmapLabel(wx.Bitmap(self.ICON_OK, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
                 button.SetToolTipString("Accept the operation")
                 button.SetMinSize(self._size_button)
@@ -1217,8 +1232,8 @@ class Wiz_window(wx.Dialog):
 
             # The finish button (only for the last page with multi-pages).
             if self._num_pages > 1 and i == self._num_pages - 1:
-                button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Finish")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_ok, wx.BITMAP_TYPE_ANY))
+                button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_FINISH)
+                button.SetBitmapLabel(wx.Bitmap(self.ICON_FINISH, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
                 button.SetToolTipString("Accept the operation")
                 button.SetMinSize(self._size_button)
@@ -1230,8 +1245,8 @@ class Wiz_window(wx.Dialog):
             self._button_sizers[i].AddSpacer(15)
 
             # The cancel button.
-            button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Cancel")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_cancel, wx.BITMAP_TYPE_ANY))
+            button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_CANCEL)
+            button.SetBitmapLabel(wx.Bitmap(self.ICON_CANCEL, wx.BITMAP_TYPE_ANY))
             button.SetFont(font.normal)
             button.SetToolTipString("Abort the operation")
             button.SetMinSize(self._size_button)
