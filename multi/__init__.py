@@ -100,6 +100,12 @@ The slave command is then initialised and all required data by the slave for the
 To execute the calculations, the final part of the calculation code on the master must feature a call to::
 
     processor_box.processor.run_queue().
+
+
+4 Example
+=========
+
+See the script 'test_implementation.py' for a basic example of a reference, and full, implementation of the multi-processor package.
 """
 
 
