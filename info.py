@@ -28,7 +28,7 @@ import ctypes
 if hasattr(ctypes, 'windll'):
     import ctypes.wintypes
 import numpy
-from os import popen3
+from os import environ, popen3
 import platform
 from string import split
 import sys
@@ -397,6 +397,8 @@ class Info_box(object):
             text = text + (format % ("Distribution: ", (platform.dist()[0] + " " + platform.dist()[1] + " " + platform.dist()[2])))
         if hasattr(platform, 'platform'):
             text = text + (format % ("Full platform string: ", (platform.platform())))
+        if hasattr(ctypes, 'windll'):
+            text = text + (format % ("Windows architecture: ", (self.win_arch())))
 
         # Python info.
         text = text + ("\nPython information:\n")
@@ -434,6 +436,25 @@ class Info_box(object):
 
         # Return the text.
         return text
+
+
+    def win_arch(self):
+        """Determine the MS Windows architecture.
+
+        @return:    The architecture string.
+        @rtype:     str
+        """
+
+        # 64-bit versions.
+        if environ.has_key('PROCESSOR_ARCHITEW6432'):
+            arch = environ['PROCESSOR_ARCHITEW6432']
+
+        # Default 32-bit.
+        else:
+            arch = environ['PROCESSOR_ARCHITECTURE']
+
+        # Return the architecture.
+        return arch
 
 
 
