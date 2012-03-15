@@ -128,13 +128,13 @@ def compile_api_manual_html(target, source, env):
 
     # url
     #   The documented project's URL.
-    url = 'http://nmr-relax.com'
+    url = 'http://www.nmr-relax.com'
 
     # link
     #   HTML code for the project link in the navigation bar.  If left
     #   unspecified, the project link will be generated based on the
     #   project's name and URL.
-    #link = '<a href="http://nmr-relax.com">relax</a>'
+    #link = '<a href="http://www.nmr-relax.com">relax</a>'
 
     # top
     #   The "top" page for the documentation.  Can be a URL, the name

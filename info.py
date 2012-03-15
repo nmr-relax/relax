@@ -62,7 +62,7 @@ class Info_box(object):
         self.version = version
 
         # The relax website.
-        self.website = "http://nmr-relax.com"
+        self.website = "http://www.nmr-relax.com"
 
         # Program description.
         self.desc = "Molecular dynamics by NMR data analysis"
