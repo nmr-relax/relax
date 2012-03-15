@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -93,7 +93,7 @@ def compile_api_manual_html(target, source, env):
 
     # exclude
     #   The list of objects to exclude.
-    exclude = ['graphics', 'sample_scripts', 'scripts']
+    exclude = ['extern', 'graphics', 'minfx.scipy_subset', 'sample_scripts', 'scripts']
 
     # output
     #   The type of output that should be generated.  Should be one
