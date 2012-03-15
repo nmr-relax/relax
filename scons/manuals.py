@@ -93,7 +93,7 @@ def compile_api_manual_html(target, source, env):
 
     # exclude
     #   The list of objects to exclude.
-    exclude = ['extern', 'graphics', 'minfx.scipy_subset', 'sample_scripts', 'scripts']
+    exclude = ['extern', 'graphics', 'minfx.scipy_subset', 'multi.test_implementation', 'multi.test_implementation2', 'sample_scripts', 'scripts']
 
     # output
     #   The type of output that should be generated.  Should be one
