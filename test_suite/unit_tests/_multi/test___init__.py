@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,3 +38,6 @@ class Test___init__(PackageTestCase):
         self.package = multi
         self.package_name = 'multi'
         self.package_path = sys.path[0] + sep + 'multi'
+
+        # Blacklisted scripts.
+        self.blacklist = ['test_implementation.py']
