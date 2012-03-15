@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -45,6 +45,10 @@ class PackageTestCase(UnitTestCase):
 
             # Skip the __init__.py file.
             if file == '__init__.py':
+                continue
+
+            # Skip blacklisted files.
+            if hasattr(self, 'blacklist') and file in self.blacklist:
                 continue
 
             # Remove the '.py' part.
