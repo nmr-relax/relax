@@ -157,7 +157,7 @@ def load_multiprocessor(processor_name, callback, processor_size, verbosity=1):
     @param processor_name:  Name of the processor module/class to load.
     @type processor_name:   str
     @keyword verbosity:     The verbosity level at initialisation.  This can be changed during program execution.  A value of 0 suppresses all output.  A value of 1 causes the basic multi-processor information to be printed.  A value of 2 will switch on a number of debugging print outs.  Values greater than 2 currently do nothing, though this might change in the future.
-    @type keyword:          int
+    @type verbosity:        int
     @return:                A loaded processor object or None to indicate failure.
     @rtype:                 multi.processor.Processor instance
     """
