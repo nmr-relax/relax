@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,7 +38,10 @@ hdiutil create -fs HFS+ -volname "relax" -srcfolder dist/relax.app relax.dmg
 # Python module import.
 from os import getcwd, listdir, sep
 from re import search
-from setuptools import setup
+try:
+    from setuptools import setup
+except ImportError:
+    setup = None
 import sys
 
 # relax module imports.

@@ -1589,6 +1589,9 @@ class Mf_minimise:
             num_data_sets = 0
             data_store.num_spins = 1
 
+        # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+        processor_box = Processor_box() 
+        processor = processor_box.processor
 
         # Loop over the minimisation instances.
         #######################################
@@ -1683,10 +1686,6 @@ class Mf_minimise:
             if min_algor == 'back_calc':
                 return self.mf.calc_ri()
 
-            # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
-            processor_box = Processor_box() 
-            processor = processor_box.processor
-
             # Parallelised grid search for the diffusion parameter space.
             if match('^[Gg]rid', min_algor) and data_store.model_type == 'diff':
                 # Print out.
@@ -1707,6 +1706,9 @@ class Mf_minimise:
                     memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
                     processor.add_to_queue(command, memo)
 
+                # Execute the queued elements.
+                processor.run_queue()
+
                 # Exit this method.
                 return
 
@@ -1724,3 +1726,6 @@ class Mf_minimise:
             # Set up the model-free memo and add it to the processor queue.
             memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
             processor.add_to_queue(command, memo)
+
+        # Execute the queued elements.
+        processor.run_queue()
