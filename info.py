@@ -36,6 +36,7 @@ from textwrap import wrap
 
 # relax module imports.
 import dep_check
+from status import Status; status = Status()
 from version import version
 
 
@@ -150,34 +151,28 @@ class Info_box(object):
         @rtype:     str
         """
 
-        # The width of the printout.
-        if platform.uname()[0] in ['Windows', 'Microsoft']:
-            width = 80
-        else:
-            width = 100
-
         # Some new lines.
         intro_string = '\n\n\n'
 
         # Program name and version.
-        intro_string = intro_string + self.centre(self.title + ' ' + self.version, width) + '\n\n'
+        intro_string = intro_string + self.centre(self.title + ' ' + self.version, status.text_width) + '\n\n'
 
         # Program description.
-        intro_string = intro_string + self.centre(self.desc, width) + '\n\n'
+        intro_string = intro_string + self.centre(self.desc, status.text_width) + '\n\n'
 
         # Copyright printout.
         for i in range(len(self.copyright)):
-            intro_string = intro_string + self.centre(self.copyright[i], width) + '\n'
+            intro_string = intro_string + self.centre(self.copyright[i], status.text_width) + '\n'
         intro_string = intro_string + '\n'
 
         # Program licence and help (wrapped).
-        for line in wrap(self.licence, width):
+        for line in wrap(self.licence, status.text_width):
             intro_string = intro_string + line + '\n'
         intro_string = intro_string + '\n'
  
         # Help message.
         help = "Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within the prompt."
-        for line in wrap(help, width):
+        for line in wrap(help, status.text_width):
             intro_string = intro_string + line + '\n'
 
         # ImportErrors, if any.
@@ -187,7 +182,7 @@ class Info_box(object):
 
         # The multi-processor message, if it exists.
         if hasattr(self, 'multi_processor_string'):
-            for line in wrap('Processor fabric:  %s\n' % self.multi_processor_string, width):
+            for line in wrap('Processor fabric:  %s\n' % self.multi_processor_string, status.text_width):
                 intro_string = intro_string + line + '\n'
 
         # Return the formatted text.
