@@ -93,7 +93,7 @@ class Status(object):
 
         # Text wrapping on different operating systems.
         if platform.uname()[0] in ['Windows', 'Microsoft']:
-            self.text_width = 80
+            self.text_width = 79
         else:
             self.text_width = 100
 
