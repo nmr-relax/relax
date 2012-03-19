@@ -415,8 +415,10 @@ class Info_box(object):
             text = text + (format % ("Python revision: ", platform.python_revision()))
         if sys.executable:
             text = text + (format % ("Python executable: ", sys.executable))
-        text = text + (format % ("Python flags: ", sys.flags))
-        text = text + (format % ("Python float info: ", sys.float_info))
+        if hasattr(sys, 'flags'):
+            text = text + (format % ("Python flags: ", sys.flags))
+        if hasattr(sys, 'float_info'):
+            text = text + (format % ("Python float info: ", sys.float_info))
         text = text + (format % ("Python module path: ", sys.path))
 
         # Python packages.
