@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,6 +24,7 @@
 """Module containing the status singleton object."""
 
 # Python module imports.
+import platform
 from Queue import Queue
 from re import search
 import sys
@@ -89,6 +90,12 @@ class Status(object):
 
         # Set up the observer objects.
         self._setup_observers()
+
+        # Text wrapping on different operating systems.
+        if platform.uname()[0] in ['Windows', 'Microsoft']:
+            self.text_width = 80
+        else:
+            self.text_width = 100
 
 
     def _setup_observers(self):
