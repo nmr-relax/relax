@@ -99,15 +99,15 @@ $ rsync --delete -av --progress --no-perms --rsh="ssh" . bugman@download.gna.org
 
 $ scons user_manual_html
 
-Replace the old manual with the new in the http://www.nmr-relax.com SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new manual.
+Replace the old manual with the new in the http://www.nmr-relax.com/manual SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new manual.
 
 
 
-* Modifiy http://www.nmr-relax.com/api/index.html for the new version number and create the API documentation for the current version with the command:
+* Create the API documentation for the current version with the command:
 
 $ scons api_manual_html
 
-Replace the old API documentation in the http://www.nmr-relax.com SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new files.
+Replace the old API documentation in the http://www.nmr-relax.com/api SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new files.
 
 
 
