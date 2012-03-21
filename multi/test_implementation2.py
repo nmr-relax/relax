@@ -29,7 +29,7 @@ import sys
 sys.path.append('..')
 
 # relax module imports.
-from multi import Application_callback, load_multiprocessor, Memo, Processor_box, Result_command, Slave_command
+from multi import data_upload, Application_callback, load_multiprocessor, Memo, Processor_box, Result_command, Slave_command
 
 
 # Module variables.
@@ -124,18 +124,19 @@ class Main:
         self.num = 0
 
         # The invariant data to pass to the slaves once.
-        self.real_length = 2.0
+        real_length = 2.0
         self.vect = array([1, 2, 3], float64)
-        self.vect = self.vect / norm(self.vect) * self.real_length
+        self.vect = self.vect / norm(self.vect) * real_length
 
 
     def run(self):
         """This required method executes the entire program."""
 
+        # Send the invariant data to the slaves' data stores.
+        data_upload('vect', self.vect)
+
         # Initialise the Processor box singleton.
         processor_box = Processor_box()
-
-        print "\n\nHELLO: ", processor_box.processor.rank(), self.vect
 
         # Loop over the slaves.
         num = processor_box.processor.processor_size()
