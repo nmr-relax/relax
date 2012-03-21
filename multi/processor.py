@@ -213,6 +213,23 @@ class Processor(object):
 #        raise_unimplemented(self.exit)
 
 
+    def data_upload(self, name=None, value=None, rank=None):
+        """API function for sending data to be stored on the Processor of the given rank.
+
+        This can be used for transferring data from Processor instance i to the data store of Processor instance j.
+
+
+        @keyword name:  The name of the data structure to store.
+        @type name:     str
+        @keyword value: The data structure.
+        @type value:    anything
+        @keyword rank:  An optional argument to send data only to the Processor of the given rank.  If None, then the data will be sent to all Processor instances.
+        @type rank:     None or int
+        """
+
+        raise_unimplemented(self.data_upload)
+
+
     def get_intro_string(self):
         """Get a string describing the multi processor - designed for overriding.
 

@@ -230,6 +230,9 @@ def data_upload(name=None, value=None, rank=None):
     # Load the Processor_box.
     processor_box = Processor_box()
 
+    # Forward the call to the processor instance.
+    processor_box.processor.data_upload(name=name, value=value, rank=rank)
+
 
 
 class Application_callback(object):
