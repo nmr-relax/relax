@@ -42,8 +42,8 @@ import threading
 import traceback
 
 # relax module imports.
-from multi.api import Batched_result_command, Result, Result_command, Result_string, Result_exception
-from multi.misc import Capturing_exception, raise_unimplemented, Verbosity; verbosity = Verbosity()
+from multi.api import Batched_result_command, Result, Result_command, Result_exception, Result_string
+from multi.misc import raise_unimplemented, Verbosity; verbosity = Verbosity()
 from multi.processor import Processor
 
 
@@ -183,57 +183,6 @@ class Multi_processor(Processor):
 
     def return_result_command(self, result_object):
         raise_unimplemented(self.slave_queue_result)
-
-
-    #TODO: move up a level and add virtual send and recieve
-    def run(self):
-        self.pre_run()
-        if self.on_master():
-            try:
-                self.callback.init_master(self)
-
-            except Exception, e:
-                self.callback.handle_exception(self, e)
-
-        else:
-            while not self.do_quit:
-                try:
-                    commands = self.slave_recieve_commands()
-                    if not isinstance(commands, list):
-                        commands = [commands]
-                    last_command = len(commands)-1
-
-                    if self.batched_returns:
-                        self.result_list = []
-                    else:
-                        self.result_list = None
-
-                    for i, command in enumerate(commands):
-                        # Capture the standard IO streams for the slaves.
-                        self.stdio_capture()
-
-                        # Execute the calculation.
-                        completed = (i == last_command)
-                        command.run(self, completed)
-
-                        # Restore the IO.
-                        self.stdio_restore()
-
-                    if self.batched_returns:
-                        self.return_object(Batched_result_command(processor=self, result_commands=self.result_list, io_data=self.io_data))
-                        self.result_list = None
-
-                except:
-                    capturing_exception = Capturing_exception(rank=self.rank(), name=self.get_name())
-                    exception_result = Result_exception(exception=capturing_exception, processor=self, completed=True)
-
-                    self.return_object(exception_result)
-                    self.result_list = None
-
-        self.post_run()
-        if self.on_master():
-            # note this a modified exit that kills all MPI processors
-            sys.exit()
 
 
     #TODO: move up a level add virtaul send and revieve functions

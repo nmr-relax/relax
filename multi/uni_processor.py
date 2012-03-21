@@ -81,8 +81,15 @@ class Uni_processor(Processor):
         return '%s-%s' % (os.getenv('HOSTNAME'), os.getpid())
 
 
-#    def on_master(self):
-#        return True
+    def on_master(self):
+        """For the uni-processor fabric, we are always on the master.
+
+        @return:    The flag specifying if we are on the master or slave processors.
+        @rtype:     bool
+        """
+
+        # Always master.
+        return True
 
 
     def post_run(self):
@@ -128,15 +135,6 @@ class Uni_processor(Processor):
         else:
             message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__, result)
             raise Exception(message)
-
-
-    def run(self):
-        try:
-            self.pre_run()
-            self.callback.init_master(self)
-            self.post_run()
-        except Exception, e:
-            self.callback.handle_exception(self, e)
 
 
     def run_queue(self):
