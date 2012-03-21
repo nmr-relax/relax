@@ -197,6 +197,40 @@ def load_multiprocessor(processor_name, callback, processor_size, verbosity=1):
     return object
 
 
+def data_fetch(name=None):
+    """API function for obtaining data from the Processor instance's data store.
+
+    This is for fetching data from the data store of the Processor instance.  
+
+
+    @keyword name:  The name of the data structure to fetch.
+    @type name:     str
+    @return:        The value of the associated data structure.
+    @rtype:         anything
+    """
+
+    # Load the Processor_box.
+    processor_box = Processor_box()
+
+
+def data_upload(name=None, value=None, rank=None):
+    """API function for sending data to be stored on the Processor of the given rank.
+
+    This can be used for transferring data from Processor instance i to the data store of Processor instance j.
+
+
+    @keyword name:  The name of the data structure to store.
+    @type name:     str
+    @keyword value: The data structure.
+    @type value:    anything
+    @keyword rank:  An optional argument to send data only to the Processor of the given rank.  If None, then the data will be sent to all Processor instances.
+    @type rank:     None or int
+    """
+
+    # Load the Processor_box.
+    processor_box = Processor_box()
+
+
 
 class Application_callback(object):
     """Call backs provided to the host application by the multi processor framework.
