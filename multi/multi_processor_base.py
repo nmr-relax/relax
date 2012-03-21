@@ -243,48 +243,55 @@ class Multi_processor(Processor):
 
     #TODO: move up a level add virtaul send and revieve functions
     def run_command_queue(self, queue):
-            self.assert_on_master()
+        """Process all commands on the queue and wait for completion.
 
-            running_set = set()
-            idle_set = set([i for i in range(1, self.processor_size()+1)])
+        @param queue:   The command queue.
+        @type queue:    list of Command instances
+        """
 
-            if self.threaded_result_processing:
-                result_queue = Threaded_result_queue(self)
-            else:
-                result_queue = Immediate_result_queue(self)
+        # This must only be run on the master processor.
+        self.assert_on_master()
 
-            while len(queue) != 0:
+        running_set = set()
+        idle_set = set([i for i in range(1, self.processor_size()+1)])
 
-                while len(idle_set) != 0:
-                    if len(queue) != 0:
-                        command = queue.pop()
-                        dest = idle_set.pop()
-                        self.master_queue_command(command=command, dest=dest)
-                        running_set.add(dest)
-                    else:
-                        break
+        if self.threaded_result_processing:
+            result_queue = Threaded_result_queue(self)
+        else:
+            result_queue = Immediate_result_queue(self)
 
-                # Loop until the queue of calculations is depleted.
-                while len(running_set) != 0:
-                    # Get the result.
-                    result = self.master_recieve_result()
+        while len(queue) != 0:
 
-                    # Debugging print out.
-                    if verbosity.level():
-                        print('\nIdle set:    %s' % idle_set)
-                        print('Running set: %s' % running_set)
+            while len(idle_set) != 0:
+                if len(queue) != 0:
+                    command = queue.pop()
+                    dest = idle_set.pop()
+                    self.master_queue_command(command=command, dest=dest)
+                    running_set.add(dest)
+                else:
+                    break
 
-                    # Shift the processor rank to the idle set.
-                    if result.completed:
-                        idle_set.add(result.rank)
-                        running_set.remove(result.rank)
+            # Loop until the queue of calculations is depleted.
+            while len(running_set) != 0:
+                # Get the result.
+                result = self.master_recieve_result()
 
-                    # Add to the result queue for instant or threaded processing.
-                    result_queue.put(result)
+                # Debugging print out.
+                if verbosity.level():
+                    print('\nIdle set:    %s' % idle_set)
+                    print('Running set: %s' % running_set)
 
-            # Process the threaded results.
-            if self.threaded_result_processing:
-                result_queue.run_all()
+                # Shift the processor rank to the idle set.
+                if result.completed:
+                    idle_set.add(result.rank)
+                    running_set.remove(result.rank)
+
+                # Add to the result queue for instant or threaded processing.
+                result_queue.put(result)
+
+        # Process the threaded results.
+        if self.threaded_result_processing:
+            result_queue.run_all()
 
 
     #TODO: move up a level
