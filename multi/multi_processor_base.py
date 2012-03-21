@@ -108,10 +108,6 @@ class Multi_processor(Processor):
         return result
 
 
-    def create_slaves(self, processor_size):
-        pass
-
-
     def master_queue_command(self, command, dest):
         raise_unimplemented(self.master_queue_command)
 
@@ -194,7 +190,6 @@ class Multi_processor(Processor):
         self.pre_run()
         if self.on_master():
             try:
-                self.create_slaves(self.processor_size())
                 self.callback.init_master(self)
 
             except Exception, e:
