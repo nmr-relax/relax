@@ -107,6 +107,10 @@ from multi.misc import raise_unimplemented, Verbosity; verbosity = Verbosity()
 from multi.processor_io import Redirect_text
 
 
+class Data_store:
+    """A special Processor specific data storage container."""
+
+
 class Processor(object):
     """The central class of the multi processor framework.
 
@@ -163,6 +167,10 @@ class Processor(object):
         #CHECKME: should I be a singleton
         self.NULL_RESULT = Null_result_command(processor=self)
         """Empty result command used by commands which do not return a result (a singleton?)."""
+
+        # Initialise the processor specific data store.
+        self.data_store = Data_store()
+        """The processor data store."""
 
 
         self._processor_size = processor_size
