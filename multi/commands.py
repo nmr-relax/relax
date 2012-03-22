@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,20 +24,31 @@
 # Module docstring.
 """Module containing classes for the multi-processor commands."""
 
-# relax module imports.
-from multi import Slave_command
-from multi.api import Result_string
+# multi module imports.
+from multi.api import Result_string, Slave_command
 
 
 class Exit_command(Slave_command):
-    def __init__(self):
-        # Execute the base class __init__() method.
-        super(Exit_command, self).__init__()
+    """Special command for terminating slave processors.
 
+    This sets the processor's do_quit flag, terminating the Processor.run() loop for the slaves.
+    """
 
     def run(self, processor, completed):
+        """Set the slave processor's do_quit flag to terminate.
+
+        @param processor:   The slave processor the command is running on.  Results from the command are returned via calls to processor.return_object.
+        @type processor:    Processor instance
+        @param completed:   The flag used in batching result returns to indicate that the sequence of batched result commands has completed.  This value should be returned via the last result object retuned by this method or methods it calls. All other Result_commands should be initialised with completed=False.  This is an optimisation to prevent the sending an extra batched result queue completion result command being sent, it may be an over early optimisation.
+        @type completed:    bool
+        """
+
+        # First return no result.
         processor.return_object(processor.NULL_RESULT)
+
+        # Then set the flag.
         processor.do_quit = True
+
 
 
 class Get_name_command(Slave_command):
@@ -49,6 +61,7 @@ class Get_name_command(Slave_command):
         msg = processor.get_name()
         result = Result_string(msg, completed)
         processor.return_object(result)
+
 
 
 class Set_processor_property_command(Slave_command):
