@@ -61,10 +61,6 @@ class Uni_processor(Processor):
             self.memo_map[memo.memo_id()] = memo
 
 
-    def exit(self):
-        sys.exit()
-
-
     def get_intro_string(self):
         """Return the string to append to the end of the relax introduction string.
 

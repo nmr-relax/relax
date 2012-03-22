@@ -180,22 +180,18 @@ class Processor(object):
     def abort(self):
         """Shutdown the multi processor in exceptional conditions - designed for overriding.
 
-        This method is called after an exception from the master or slave has been raised and
-        processed and is responsible for the shutdown of the multi processor fabric and terminating
-        the application. The functions should be called as the last thing that
-        Application_callback.handle_exception does.
+        This method is called after an exception from the master or slave has been raised and processed and is responsible for the shutdown of the multi processor fabric and terminating the application. The functions should be called as the last thing that Application_callback.handle_exception does.
 
-        As an example of the methods use see Mpi4py_processor.abort which calls
-        MPI.COMM_WORLD.Abort() to cleanly shutdown the mpi framework and remove dangling processes.
+        As an example of the methods use see Mpi4py_processor.abort which calls MPI.COMM_WORLD.Abort() to cleanly shutdown the mpi framework and remove dangling processes.
 
-        The default action is to call sys.exit()
+        The default action is to call the special self.exit() method.
 
         @see:   multi.processor.Application_callback.
         @see:   multi.mpi4py_processor.Mpi4py_processor.abort().
         @see:   mpi4py.MPI.COMM_WORLD.Abort().
         """
 
-        sys.exit()
+        self.exit()
 
 
     def add_to_queue(self, command, memo=None):
@@ -216,9 +212,14 @@ class Processor(object):
         raise_unimplemented(self.add_to_queue)
 
 
-    # FIXME is this used?
-#    def exit(self):
-#        raise_unimplemented(self.exit)
+    def exit(self, status=0):
+        """Exit the processor with the given status.
+
+        This default method allows the program to drop off the end and terminate as it normally would - i.e. this method does nothing.
+
+        @keyword status:    The program exit status.
+        @type status:       int
+        """
 
 
     def data_upload(self, name=None, value=None, rank=None):
@@ -489,10 +490,9 @@ class Processor(object):
         # Execute any tear down code needed for the specific processor fabrics.
         self.post_run()
 
-        # End of execution on the master, so kill the slaves.
+        # End of execution, so perform any exiting actions needed by the specific processor fabrics.
         if self.on_master():
-            # note this a modified exit that kills all MPI processors
-            sys.exit()
+            self.exit()
 
 
     def run_command_globally(self, command):

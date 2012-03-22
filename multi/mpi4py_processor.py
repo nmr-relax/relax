@@ -42,11 +42,6 @@ from multi.commands import Exit_command
 from multi.multi_processor_base import Multi_processor, Too_few_slaves_exception
 
 
-# save original sys.exit to call after wrapper
-_sys_exit = sys.exit
-
-in_main_loop = False
-
 
 def broadcast_command(command):
     for i in range(1, MPI.COMM_WORLD.size):
@@ -61,38 +56,6 @@ def ditch_all_results():
                 result = MPI.COMM_WORLD.recv(source=i)
                 if result.completed:
                     break
-
-
-def exit(status=None):
-    """Wrapper for the sys.exit function."""
-
-    # CHECKME is status ok
-
-    # Execution on the slave.
-    if MPI.COMM_WORLD.rank != 0:
-        if in_main_loop:
-            raise Exception('sys.exit unexpectedley called on slave!')
-        else:
-            sys.stderr.write('\n')
-            sys.stderr.write('***********************************************\n')
-            sys.stderr.write('\n')
-            sys.stderr.write('warning sys.exit called before mpi4py main loop\n')
-            sys.stderr.write('\n')
-            sys.stderr.write('***********************************************\n')
-            sys.stderr.write('\n')
-            MPI.COMM_WORLD.Abort()
-
-    # Execution on the master.
-    else:
-        exit_mpi()
-        _sys_exit(status)
-
-
-def exit_mpi():
-    if MPI.Is_initialized() and not MPI.Is_finalized() and MPI.COMM_WORLD.rank == 0:
-        broadcast_command(Exit_command())
-        ditch_all_results()
-
 
 
 class Mpi4py_processor(Multi_processor):
@@ -116,8 +79,8 @@ class Mpi4py_processor(Multi_processor):
 
         super(Mpi4py_processor, self).__init__(processor_size=mpi_processor_size, callback=callback)
 
-        # wrap sys.exit to close down mpi before exiting
-        sys.exit = exit
+        # Initialise a flag for determining if we are in the run() method or not.
+        self.in_main_loop = False
 
 
     def abort(self):
@@ -146,6 +109,44 @@ class Mpi4py_processor(Multi_processor):
 
             # Send the data to the given slave (using a special tag for the data store).
             MPI.COMM_WORLD.send([name, value], dest=i, tag=10)
+
+
+    def exit(self, status=0):
+        """Exit the mpi4py processor with the given status.
+
+        @keyword status:    The program exit status.
+        @type status:       int
+        """
+
+        # Execution on the slave.
+        if MPI.COMM_WORLD.rank != 0:
+            # Catch sys.exit being called on an executing slave.
+            if self.in_main_loop:
+                raise Exception('sys.exit unexpectedly called on slave!')
+
+            # Catch sys.exit
+            else:
+                sys.stderr.write('\n')
+                sys.stderr.write('***********************************************\n')
+                sys.stderr.write('\n')
+                sys.stderr.write('warning sys.exit called before mpi4py main loop\n')
+                sys.stderr.write('\n')
+                sys.stderr.write('***********************************************\n')
+                sys.stderr.write('\n')
+                MPI.COMM_WORLD.Abort()
+
+        # Execution on the master.
+        else:
+            # Slave clean up.
+            if MPI.Is_initialized() and not MPI.Is_finalized() and MPI.COMM_WORLD.rank == 0:
+                # Send the exit command to all slaves.
+                broadcast_command(Exit_command())
+
+                # Dump all results.
+                ditch_all_results()
+
+            # Exit the program with the given status.
+            sys.exit(status)
 
 
     def get_intro_string(self):
@@ -190,10 +191,9 @@ class Mpi4py_processor(Multi_processor):
 
 
     def run(self):
-        global in_main_loop
-        in_main_loop = True
+        self.in_main_loop = True
         super(Mpi4py_processor, self).run()
-        in_main_loop = False
+        self.in_main_loop = False
 
 
     def slave_receive_commands(self):
