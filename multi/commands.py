@@ -51,19 +51,6 @@ class Exit_command(Slave_command):
 
 
 
-class Get_name_command(Slave_command):
-    def __init__(self):
-        # Execute the base class __init__() method.
-        super(Exit_command, self).__init__()
-
-
-    def run(self, processor, completed):
-        msg = processor.get_name()
-        result = Result_string(msg, completed)
-        processor.return_object(result)
-
-
-
 class Set_processor_property_command(Slave_command):
     def __init__(self, property_map):
         # Execute the base class __init__() method.
