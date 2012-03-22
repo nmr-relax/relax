@@ -447,7 +447,7 @@ class Processor(object):
                 # Execute the slave by catching commands, catching all exceptions.
                 try:
                     # Fetch any commands on the queue.
-                    commands = self.slave_recieve_commands()
+                    commands = self.slave_receive_commands()
 
                     # Convert to a list, if needed.
                     if not isinstance(commands, list):

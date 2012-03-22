@@ -112,8 +112,8 @@ class Multi_processor(Processor):
         raise_unimplemented(self.master_queue_command)
 
 
-    def master_recieve_result(self):
-        raise_unimplemented(self.master_recieve_result)
+    def master_receive_result(self):
+        raise_unimplemented(self.master_receive_result)
 
 
     # FIXME move to lower level
@@ -218,7 +218,7 @@ class Multi_processor(Processor):
             # Loop until the queue of calculations is depleted.
             while len(running_set) != 0:
                 # Get the result.
-                result = self.master_recieve_result()
+                result = self.master_receive_result()
 
                 # Debugging print out.
                 if verbosity.level():
@@ -248,8 +248,8 @@ class Multi_processor(Processor):
          self.memo_map.clear()
 
 
-    def slave_recieve_commands(self):
-        raise_unimplemented(self.slave_recieve_commands)
+    def slave_receive_commands(self):
+        raise_unimplemented(self.slave_receive_commands)
 
 
 

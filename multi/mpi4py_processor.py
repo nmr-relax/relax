@@ -177,7 +177,7 @@ class Mpi4py_processor(Multi_processor):
         MPI.COMM_WORLD.send(obj=command, dest=dest)
 
 
-    def master_recieve_result(self):
+    def master_receive_result(self):
         return MPI.COMM_WORLD.recv(source=MPI.ANY_SOURCE)
 
 
@@ -196,5 +196,5 @@ class Mpi4py_processor(Multi_processor):
         in_main_loop = False
 
 
-    def slave_recieve_commands(self):
+    def slave_receive_commands(self):
         return MPI.COMM_WORLD.recv(source=0)
