@@ -437,6 +437,14 @@ class Processor(object):
             try:
                 self.callback.init_master(self)
 
+            # Allow sys.exit() calls.
+            except SystemExit:
+                # Allow the processor fabric to clean up.
+                self.exit()
+
+                # Continue with the sys.exit().
+                raise
+
             # Handle all errors nicely.
             except Exception, e:
                 self.callback.handle_exception(self, e)
