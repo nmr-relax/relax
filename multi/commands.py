@@ -48,21 +48,3 @@ class Exit_command(Slave_command):
 
         # Then set the flag.
         processor.do_quit = True
-
-
-
-class Set_processor_property_command(Slave_command):
-    def __init__(self, property_map):
-        # Execute the base class __init__() method.
-        super(Set_processor_property_command, self).__init__()
-
-        self.property_map = property_map
-
-
-    def run(self, processor, completed):
-        for property, value in list(self.property_map.items()):
-            try:
-                setattr(processor, property, value)
-                processor.return_object(processor.NULL_RESULT)
-            except Exception, e:
-                processor.return_object(e)
