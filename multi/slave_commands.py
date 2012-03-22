@@ -102,3 +102,60 @@ class Exit_command(Slave_command):
 
         # Then set the flag.
         processor.do_quit = True
+
+
+
+class Slave_storage_command(Slave_command):
+    """Special command for sending data for storage on the slaves."""
+
+    def __init__(self):
+        """Set up the command."""
+
+        # Initialise the base class.
+        super(Slave_command, self).__init__()
+
+        # Initialise variables for holding data in transit.
+        self.names = []
+        self.values = []
+
+
+    def add(self, name, value):
+        """Pump in data to be held and transfered to the slave by the command.
+
+        @keyword name:  The name of the data structure to store.
+        @type name:     str
+        @keyword value: The data structure.
+        @type value:    anything
+        """
+
+        # Store the data.
+        self.names.append(name)
+        self.values.append(value)
+
+
+    def clear(self):
+        """Remove all data from the slave."""
+
+        # Reinitialise the structures.
+        self.names = []
+        self.values = []
+
+
+    def run(self, processor, completed):
+        """Set the slave processor's do_quit flag to terminate.
+
+        @param processor:   The slave processor the command is running on.  Results from the command are returned via calls to processor.return_object.
+        @type processor:    Processor instance
+        @param completed:   The flag used in batching result returns to indicate that the sequence of batched result commands has completed.  This value should be returned via the last result object retuned by this method or methods it calls. All other Result_commands should be initialised with completed=False.  This is an optimisation to prevent the sending an extra batched result queue completion result command being sent, it may be an over early optimisation.
+        @type completed:    bool
+        """
+
+        # First return no result.
+        processor.return_object(processor.NULL_RESULT)
+
+        # Loop over and store the data.
+        for i in range(len(self.names)):
+            setattr(processor.data_store, self.names[i], self.values[i])
+
+        # Clear the data.
+        self.clear()
