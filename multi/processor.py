@@ -102,9 +102,9 @@ The following are yet to be implemented:
 import time, datetime, math, sys
 
 # multi module imports.
-from multi.commands import Batched_result_command, Null_result_command, Result_exception
 from multi.misc import Capturing_exception, raise_unimplemented, Verbosity; verbosity = Verbosity()
 from multi.processor_io import Redirect_text
+from multi.result_commands import Batched_result_command, Null_result_command, Result_exception
 
 
 class Data_store:

@@ -29,9 +29,9 @@
 import sys, os
 
 # multi module imports.
-from multi.commands import Result_command
 from multi.misc import Result_string
 from multi.processor import Processor
+from multi.result_commands import Result_command
 
 
 class Uni_processor(Processor):

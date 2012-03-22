@@ -134,10 +134,11 @@ import sys as _sys
 import traceback as _traceback
 
 # Multi-processor module imports.
-from multi.commands import Result_command, Slave_command
 from multi.memo import Memo
 from multi.misc import import_module as _import_module
 from multi.misc import Verbosity as _Verbosity; _verbosity = _Verbosity()
+from multi.result_commands import Result_command
+from multi.slave_commands import Slave_command
 
 
 #FIXME error checking for if module required not found.

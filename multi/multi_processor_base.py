@@ -42,9 +42,9 @@ import threading
 import traceback
 
 # multi module imports.
-from multi.commands import Batched_result_command, Result_command, Result_exception
 from multi.misc import raise_unimplemented, Result, Result_string, Verbosity; verbosity = Verbosity()
 from multi.processor import Processor
+from multi.result_commands import Batched_result_command, Result_command, Result_exception
 
 
 class Exit_queue_result_command(Result_command):

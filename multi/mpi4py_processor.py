@@ -38,7 +38,7 @@ import sys
 import textwrap
 
 # relax module imports.
-from multi.commands import Exit_command
+from multi.slave_commands import Exit_command
 from multi.multi_processor_base import Multi_processor, Too_few_slaves_exception
 
 
