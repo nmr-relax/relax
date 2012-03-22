@@ -42,22 +42,6 @@ from multi.commands import Exit_command
 from multi.multi_processor_base import Multi_processor, Too_few_slaves_exception
 
 
-
-def broadcast_command(command):
-    for i in range(1, MPI.COMM_WORLD.size):
-        if i != 0:
-            MPI.COMM_WORLD.send(obj=command, dest=i)
-
-
-def ditch_all_results():
-    for i in range(1, MPI.COMM_WORLD.size):
-        if i != 0:
-            while True:
-                result = MPI.COMM_WORLD.recv(source=i)
-                if result.completed:
-                    break
-
-
 class Mpi4py_processor(Multi_processor):
     """The mpi4py multi-processor class."""
 
@@ -81,6 +65,22 @@ class Mpi4py_processor(Multi_processor):
 
         # Initialise a flag for determining if we are in the run() method or not.
         self.in_main_loop = False
+
+
+    def _broadcast_command(self, command):
+        for i in range(1, MPI.COMM_WORLD.size):
+            if i != 0:
+                MPI.COMM_WORLD.send(obj=command, dest=i)
+
+
+    def _ditch_all_results(self):
+        for i in range(1, MPI.COMM_WORLD.size):
+            if i != 0:
+                while True:
+                    result = MPI.COMM_WORLD.recv(source=i)
+                    if result.completed:
+                        break
+
 
 
     def abort(self):
@@ -140,10 +140,10 @@ class Mpi4py_processor(Multi_processor):
             # Slave clean up.
             if MPI.Is_initialized() and not MPI.Is_finalized() and MPI.COMM_WORLD.rank == 0:
                 # Send the exit command to all slaves.
-                broadcast_command(Exit_command())
+                self._broadcast_command(Exit_command())
 
                 # Dump all results.
-                ditch_all_results()
+                self._ditch_all_results()
 
             # Exit the program with the given status.
             sys.exit(status)
