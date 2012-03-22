@@ -422,47 +422,63 @@ class Processor(object):
     def run(self):
         """Run the processor - an abstract method.
 
-        This function runs the processor main loop and is called after all processor setup has been completed.  It does remote execution setup and teardown round either side of a call to Application_callback.init_master.
+        This function runs the processor main loop and is called after all processor setup has been completed.  It does remote execution setup and teardown (via self.pre_run() and self.post_run()) round either side of a call to Application_callback.init_master.
 
         @see:   multi.processor.Application_callback.
         """
 
+        # Execute any setup code needed for the specific processor fabrics.
         self.pre_run()
+
+        # Execution of the master processor.
         if self.on_master():
+            # Execute the program's run() method, as specified by the Application_callback.
             try:
                 self.callback.init_master(self)
 
+            # Handle all errors nicely.
             except Exception, e:
                 self.callback.handle_exception(self, e)
 
+        # Execution of the slave processor.
         else:
+            # Loop until the slave is asked to die via an Exit_command setting the do_quit flag.
             while not self.do_quit:
+                # Execute the slave by catching commands, catching all exceptions.
                 try:
+                    # Fetch any commands on the queue.
                     commands = self.slave_recieve_commands()
+
+                    # Convert to a list, if needed.
                     if not isinstance(commands, list):
                         commands = [commands]
-                    last_command = len(commands)-1
 
+                    # Initialise the results list.
                     if self.batched_returns:
                         self.result_list = []
                     else:
                         self.result_list = None
 
+                    # Execute each command, one by one.
                     for i, command in enumerate(commands):
                         # Capture the standard IO streams for the slaves.
                         self.stdio_capture()
 
+                        # Set the completed flag if this is the last command.
+                        completed = (i == len(commands)-1)
+
                         # Execute the calculation.
-                        completed = (i == last_command)
                         command.run(self, completed)
 
                         # Restore the IO.
                         self.stdio_restore()
 
+                    # Process the batched results.
                     if self.batched_returns:
                         self.return_object(Batched_result_command(processor=self, result_commands=self.result_list, io_data=self.io_data))
                         self.result_list = None
 
+                # Capture and process all slave exceptions.
                 except:
                     capturing_exception = Capturing_exception(rank=self.rank(), name=self.get_name())
                     exception_result = Result_exception(exception=capturing_exception, processor=self, completed=True)
@@ -470,7 +486,10 @@ class Processor(object):
                     self.return_object(exception_result)
                     self.result_list = None
 
+        # Execute any tear down code needed for the specific processor fabrics.
         self.post_run()
+
+        # End of execution on the master, so kill the slaves.
         if self.on_master():
             # note this a modified exit that kills all MPI processors
             sys.exit()
