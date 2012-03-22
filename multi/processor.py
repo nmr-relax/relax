@@ -101,8 +101,8 @@ The following are yet to be implemented:
 # Python module imports.
 import time, datetime, math, sys
 
-# relax module imports.
-from multi.api import Batched_result_command, Null_result_command, Result_exception
+# multi module imports.
+from multi.commands import Batched_result_command, Null_result_command, Result_exception
 from multi.misc import Capturing_exception, raise_unimplemented, Verbosity; verbosity = Verbosity()
 from multi.processor_io import Redirect_text
 

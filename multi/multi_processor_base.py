@@ -41,9 +41,9 @@ import sys
 import threading
 import traceback
 
-# relax module imports.
-from multi.api import Batched_result_command, Result, Result_command, Result_exception, Result_string
-from multi.misc import raise_unimplemented, Verbosity; verbosity = Verbosity()
+# multi module imports.
+from multi.commands import Batched_result_command, Result_command, Result_exception
+from multi.misc import raise_unimplemented, Result, Result_string, Verbosity; verbosity = Verbosity()
 from multi.processor import Processor
 
 

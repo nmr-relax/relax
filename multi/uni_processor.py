@@ -28,8 +28,9 @@
 # Python module imports.
 import sys, os
 
-# relax module imports.
-from multi.api import Result_command, Result_string
+# multi module imports.
+from multi.commands import Result_command
+from multi.misc import Result_string
 from multi.processor import Processor
 
 
