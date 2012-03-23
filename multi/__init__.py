@@ -198,10 +198,10 @@ def load_multiprocessor(processor_name, callback, processor_size, verbosity=1):
     return object
 
 
-def data_fetch(name=None):
+def fetch_data(name=None):
     """API function for obtaining data from the Processor instance's data store.
 
-    This is for fetching data from the data store of the Processor instance.  
+    This is for fetching data from the data store of the Processor instance.  If run on the master, then the master's data store will be accessed.  If run on the slave, then the slave's data store will be accessed.
 
 
     @keyword name:  The name of the data structure to fetch.
@@ -212,6 +212,9 @@ def data_fetch(name=None):
 
     # Load the Processor_box.
     processor_box = Processor_box()
+
+    # Forward the call to the processor instance.
+    return processor_box.processor.fetch_data(name=name)
 
 
 def send_data_to_slaves(name=None, value=None):

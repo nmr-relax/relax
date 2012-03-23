@@ -235,6 +235,25 @@ class Processor(object):
         """
 
 
+    def fetch_data(self, name=None):
+        """Fetch the data structure of the given name from the data store.
+
+        This can be run on the master or slave processors.
+
+
+        @keyword name:  The name of the data structure to fetch.
+        @type name:     str
+        @return:        The value of the associated data structure.
+        @rtype:         anything
+        """
+
+        # Get the object.
+        obj = getattr(self.data_store, name)
+
+        # Return the value.
+        return obj
+
+
     def send_data_to_slaves(self, name=None, value=None):
         """Transfer the given data from the master to all slaves.
 
