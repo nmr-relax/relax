@@ -9,7 +9,12 @@ This implementation of the multi-processor package is used to demonstrate how to
 Testing
 =======
 
-To run in mpi4py multi-processor mode with one master and two slave processors, type::
+To run in uni-processor mode on a dual core system, change the MULTI variable to False and type::
+
+$ python test_implementation2.py
+
+
+To run in mpi4py multi-processor mode with one master and two slave processors, change the MULTI variable to True and type::
 
 $ mpiexec -n 3 python test_implementation2.py
 """
@@ -33,8 +38,14 @@ from multi import data_upload, Application_callback, load_multiprocessor, Memo, 
 
 
 # Module variables.
-FABRIC = 'mpi4py'
-PROCESSOR_NUM = 2
+PROFILE = False
+MULTI = True
+if MULTI:
+    FABRIC = 'mpi4py'
+    PROCESSOR_NUM = 2
+else:
+    FABRIC = 'uni'
+    PROCESSOR_NUM = 1
 
 
 def print_stats(stats, status=0):
@@ -297,10 +308,14 @@ class Test_slave_command(Slave_command):
 # Set up the processor.
 processor = load_multiprocessor(FABRIC, Application_callback(master=Main()), processor_size=PROCESSOR_NUM, verbosity=1)
 
-processor.run()
+# Run without profiling.
+if not PROFILE:
+    processor.run()
 
-# Replace the default profiling print out function.
-profile.Profile.print_stats = print_stats
+# Run with profiling.
+else:
+    # Replace the default profiling print out function.
+    profile.Profile.print_stats = print_stats
 
-# Execute with profiling.
-#profile.runctx('processor.run()', globals(), locals())
+    # Execute with profiling.
+    profile.runctx('processor.run()', globals(), locals())
