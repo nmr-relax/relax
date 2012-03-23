@@ -63,8 +63,6 @@ class Multi_processor(Processor):
         self.batched_returns = True
         self.result_list = None
 
-        self.threaded_result_processing = True
-
 
     #TODO: move up a level
     def add_to_queue(self, command, memo=None):

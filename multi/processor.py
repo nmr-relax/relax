@@ -174,9 +174,11 @@ class Processor(object):
         self.data_store = Data_store()
         """The processor data store."""
 
-
         self._processor_size = processor_size
         """Number of slave processors available in this processor."""
+
+        self.threaded_result_processing = True
+        """Flag for the handling of result processing via self.run_command_queue()."""
 
 
     def abort(self):
