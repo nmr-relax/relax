@@ -185,69 +185,6 @@ class Multi_processor(Processor):
         raise_unimplemented(self.slave_queue_result)
 
 
-    #TODO: move up a level add virtaul send and revieve functions
-    def run_command_queue(self, queue):
-        """Process all commands on the queue and wait for completion.
-
-        @param queue:   The command queue.
-        @type queue:    list of Command instances
-        """
-
-        # This must only be run on the master processor.
-        self.assert_on_master()
-
-        running_set = set()
-        idle_set = set([i for i in range(1, self.processor_size()+1)])
-
-        if self.threaded_result_processing:
-            result_queue = Threaded_result_queue(self)
-        else:
-            result_queue = Immediate_result_queue(self)
-
-        while len(queue) != 0:
-
-            while len(idle_set) != 0:
-                if len(queue) != 0:
-                    command = queue.pop()
-                    dest = idle_set.pop()
-                    self.master_queue_command(command=command, dest=dest)
-                    running_set.add(dest)
-                else:
-                    break
-
-            # Loop until the queue of calculations is depleted.
-            while len(running_set) != 0:
-                # Get the result.
-                result = self.master_receive_result()
-
-                # Debugging print out.
-                if verbosity.level():
-                    print('\nIdle set:    %s' % idle_set)
-                    print('Running set: %s' % running_set)
-
-                # Shift the processor rank to the idle set.
-                if result.completed:
-                    idle_set.add(result.rank)
-                    running_set.remove(result.rank)
-
-                # Add to the result queue for instant or threaded processing.
-                result_queue.put(result)
-
-        # Process the threaded results.
-        if self.threaded_result_processing:
-            result_queue.run_all()
-
-
-    #TODO: move up a level
-    def run_queue(self):
-        #FIXME: need a finally here to cleanup exceptions states
-         lqueue = self.chunk_queue(self.command_queue)
-         self.run_command_queue(lqueue)
-
-         del self.command_queue[:]
-         self.memo_map.clear()
-
-
     def slave_receive_commands(self):
         raise_unimplemented(self.slave_receive_commands)
 
