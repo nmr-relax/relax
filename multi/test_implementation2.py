@@ -285,6 +285,9 @@ class Test_slave_command(Slave_command):
         @type completed:    bool
         """
 
+        # Get the invariant data from this slave's data store.
+        vect = fetch_data('vect')
+
         # Perform some random useless time-consuming stuff.
         num_calcs = 0
         for i in range(self.N):
@@ -292,7 +295,7 @@ class Test_slave_command(Slave_command):
             R_random_hypersphere(self.R)
 
             # Rotate the vector.
-            new_vect = dot(self.R, processor.data_store.vect)
+            new_vect = dot(self.R, vect)
 
             # The length sum.
             self.length += norm(new_vect)
