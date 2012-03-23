@@ -124,9 +124,9 @@ class Main:
         self.num = 0
 
         # The invariant data to pass to the slaves once.
-        real_length = 2.0
+        self.real_length = 2.0
         self.vect = array([1, 2, 3], float64)
-        self.vect = self.vect / norm(self.vect) * real_length
+        self.vect = self.vect / norm(self.vect) * self.real_length
 
 
     def run(self):
@@ -153,8 +153,13 @@ class Main:
         # Execute the calculations, waiting for completion.
         processor_box.processor.run_queue()
 
+        # Calculate the average length.
+        ave_len = processor_box.processor.data_store.total_length / self.N
+
         # Final program print out.
         print("\n\nTotal number of calculations: %s" % self.num)
+        print("Real length: %s" % self.real_length)
+        print("Averaged vector length: %s" % ave_len)
 
 
     def sum_fn(self, num):
@@ -192,7 +197,7 @@ class Test_memo(Memo):
 class Test_result_command(Result_command):
     """The result command for processing the results from the slaves on the master."""
 
-    def __init__(self, processor, memo_id=None, num=None, completed=True):
+    def __init__(self, processor, memo_id=None, num=None, length=None, completed=True):
         """Store all the slave results for processing on the master.
 
         @param processor:   The slave processor object.
@@ -201,6 +206,8 @@ class Test_result_command(Result_command):
         @type memo_id:      int
         @keyword num:       The number of calculations performed by the slave.  This is an example of data transfer from the slave to master processor.
         @type num:          int
+        @keyword length:    The sum of vector lengths.
+        @type length:       float
         @keyword completed: A flag saying if the calculation on the slave processor completed correctly.
         @type completed:    bool
         """
@@ -211,6 +218,7 @@ class Test_result_command(Result_command):
         # Store the arguments.
         self.memo_id = memo_id
         self.num = num
+        self.length = length
 
 
     def run(self, processor, memo):
@@ -227,6 +235,13 @@ class Test_result_command(Result_command):
 
         # Calling a method on the master.
         memo.sum_fn(self.num)
+
+        # Initialise the total length variable if the other slaves have not created it.
+        if not hasattr(processor.data_store, 'total_length'):
+            processor.data_store.total_length = 0.0
+
+        # Sum the lengths.
+        processor.data_store.total_length += self.length
 
 
 
@@ -246,6 +261,9 @@ class Test_slave_command(Slave_command):
         # Initialise the rotation matrix.
         self.R = zeros((3, 3), float64)
 
+        # Initialise some variables for the calculation.
+        self.length = 0.0
+
 
     def run(self, processor, completed=False):
         """Essential method for performing calculations on the slave processors.
@@ -262,9 +280,8 @@ class Test_slave_command(Slave_command):
             # Random rotation matrix.
             R_random_hypersphere(self.R)
 
-            continue
             # Rotate the vector.
-            new_vect = dot(self.R, self.vect)
+            new_vect = dot(self.R, processor.data_store.vect)
 
             # The length sum.
             self.length += norm(new_vect)
@@ -273,7 +290,7 @@ class Test_slave_command(Slave_command):
             num_calcs += 1
 
         # Process the results on the master.
-        processor.return_object(Test_result_command(processor, memo_id=self.memo_id, num=num_calcs))
+        processor.return_object(Test_result_command(processor, memo_id=self.memo_id, num=num_calcs, length=self.length))
 
 
 
