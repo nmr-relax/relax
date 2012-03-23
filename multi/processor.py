@@ -256,7 +256,6 @@ class Processor(object):
             rank_list = range(1, self.processor_size()+1)
 
         # Create the command list.
-        queue = []
         for i in rank_list:
             # Create and append the command.
             command = Slave_storage_command()
@@ -265,10 +264,10 @@ class Processor(object):
             command.add(name, value)
 
             # Add the command to the queue.
-            queue.append(command)
+            self.add_to_queue(command)
 
-        # Run the queue of data transfer commands.
-        self.run_command_queue(queue)
+        # Flush the queue.
+        self.run_queue()
 
 
     def get_intro_string(self):
