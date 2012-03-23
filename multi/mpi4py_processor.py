@@ -86,6 +86,18 @@ class Mpi4py_processor(Multi_processor):
         MPI.COMM_WORLD.Abort()
 
 
+    def assert_on_master(self):
+        """Make sure that this is the master processor and not a slave.
+
+        @raises Exception:  If not on the master processor.
+        """
+
+        # Check if this processor is a slave, and if so throw an exception.
+        if self.on_slave():
+            msg = 'running on slave when expected master with MPI.rank == 0, rank was %d'% self.rank()
+            raise Exception(msg)
+
+
     def exit(self, status=0):
         """Exit the mpi4py processor with the given status.
 

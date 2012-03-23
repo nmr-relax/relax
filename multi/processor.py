@@ -214,6 +214,15 @@ class Processor(object):
         raise_unimplemented(self.add_to_queue)
 
 
+    def assert_on_master(self):
+        """Make sure that this is the master processor and not a slave.
+
+        @raises Exception:  If not on the master processor.
+        """
+
+        raise_unimplemented(self.assert_on_master)
+
+
     def exit(self, status=0):
         """Exit the processor with the given status.
 

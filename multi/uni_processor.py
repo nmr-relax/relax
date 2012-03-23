@@ -62,6 +62,13 @@ class Uni_processor(Processor):
             self.memo_map[memo.memo_id()] = memo
 
 
+    def assert_on_master(self):
+        """Make sure that this is the master processor and not a slave.
+
+        As this is the Uni-processor, the processor is always the master.  Hence this method does nothing.
+        """
+
+
     def get_intro_string(self):
         """Return the string to append to the end of the relax introduction string.
 

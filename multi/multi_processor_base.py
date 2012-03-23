@@ -75,13 +75,6 @@ class Multi_processor(Processor):
 
 
     #TODO: move up a level
-    def assert_on_master(self):
-        if self.on_slave():
-            msg = 'running on slave when expected master with MPI.rank == 0, rank was %d'% self.rank()
-            raise Exception(msg)
-
-
-    #TODO: move up a level
     def chunk_queue(self, queue):
         lqueue = copy(queue)
         result = []
