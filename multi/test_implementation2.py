@@ -230,31 +230,6 @@ class Test_result_command(Result_command):
 
 
 
-class Test_slave_command_presend(Slave_command):
-    """The slave command used to pre-send data to the slave processors."""
-
-    def __init__(self, vect=None):
-        """Set up the slave command object for the slave processor.
-
-        @keyword vect:  The invariant vector used in all the slave calculations.
-        @type vect:     int
-        """
-
-        # Store the argument.
-        self.vect = vect
-
-
-    def run(self, processor, completed=False):
-        """Do nothing.
-
-        @param processor:   The slave processor object.
-        @type processor:    Processor instance
-        @keyword completed: A flag specifying if the slave calculation is completed.  This is currently meaningless, but will be passed to this run() method anyway so it needs to be present.
-        @type completed:    bool
-        """
-
-
-
 class Test_slave_command(Slave_command):
     """The slave command for use by the slave processor."""
 
