@@ -204,6 +204,8 @@ def fetch_data(name=None):
     This is for fetching data from the data store of the Processor instance.  If run on the master, then the master's data store will be accessed.  If run on the slave, then the slave's data store will be accessed.
 
 
+    @attention:     No inter-processor communications are performed.
+
     @keyword name:  The name of the data structure to fetch.
     @type name:     str
     @return:        The value of the associated data structure.
@@ -222,6 +224,7 @@ def fetch_data_store():
 
     If run on the master, then the master's data store will be returned.  If run on the slave, then the slave's data store will be returned.
 
+
     @attention:     No inter-processor communications are performed.
 
     @return:        The data store of the processor (of the same rank as the calling code).
@@ -237,6 +240,8 @@ def fetch_data_store():
 
 def send_data_to_slaves(name=None, value=None):
     """API function for sending data from the master to all slaves processors.
+
+    @attention:     Inter-processor communications are performed.
 
     @keyword name:  The name of the data structure to store.
     @type name:     str
