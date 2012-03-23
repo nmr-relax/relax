@@ -34,7 +34,7 @@ import sys
 sys.path.append('..')
 
 # relax module imports.
-from multi import fetch_data, send_data_to_slaves, Application_callback, load_multiprocessor, Memo, Processor_box, Result_command, Slave_command
+from multi import fetch_data, fetch_data_store, send_data_to_slaves, Application_callback, load_multiprocessor, Memo, Processor_box, Result_command, Slave_command
 
 
 # Module variables.
@@ -235,6 +235,9 @@ class Test_result_command(Result_command):
     def run(self, processor, memo):
         """Essential method for doing something with the results from the slave processors.
 
+        This code will run on the master processor.
+
+
         @param processor:   The slave processor object.
         @type processor:    Processor instance
         @param memo:        The slave's corresponding memo object.
@@ -247,12 +250,15 @@ class Test_result_command(Result_command):
         # Calling a method on the master.
         memo.sum_fn(self.num)
 
+        # Get the master processor data store (this is running on the master!).
+        data_store = fetch_data_store()
+
         # Initialise the total length variable if the other slaves have not created it.
-        if not hasattr(processor.data_store, 'total_length'):
-            processor.data_store.total_length = 0.0
+        if not hasattr(data_store, 'total_length'):
+            data_store.total_length = 0.0
 
         # Sum the lengths.
-        processor.data_store.total_length += self.length
+        data_store.total_length += self.length
 
 
 
