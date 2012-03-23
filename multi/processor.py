@@ -254,33 +254,6 @@ class Processor(object):
         return obj
 
 
-    def send_data_to_slaves(self, name=None, value=None):
-        """Transfer the given data from the master to all slaves.
-
-        @keyword name:  The name of the data structure to store.
-        @type name:     str
-        @keyword value: The data structure.
-        @type value:    anything
-        """
-
-        # This must be the master processor!
-        self.assert_on_master()
-
-        # Create the command list.
-        for i in range(self.processor_size()):
-            # Create and append the command.
-            command = Slave_storage_command()
-
-            # Add the data to the command.
-            command.add(name, value)
-
-            # Add the command to the queue.
-            self.add_to_queue(command)
-
-        # Flush the queue.
-        self.run_queue()
-
-
     def get_intro_string(self):
         """Get a string describing the multi processor - designed for overriding.
 
@@ -650,6 +623,33 @@ class Processor(object):
 
         del self.command_queue[:]
         self.memo_map.clear()
+
+
+    def send_data_to_slaves(self, name=None, value=None):
+        """Transfer the given data from the master to all slaves.
+
+        @keyword name:  The name of the data structure to store.
+        @type name:     str
+        @keyword value: The data structure.
+        @type value:    anything
+        """
+
+        # This must be the master processor!
+        self.assert_on_master()
+
+        # Create the command list.
+        for i in range(self.processor_size()):
+            # Create and append the command.
+            command = Slave_storage_command()
+
+            # Add the data to the command.
+            command.add(name, value)
+
+            # Add the command to the queue.
+            self.add_to_queue(command)
+
+        # Flush the queue.
+        self.run_queue()
 
 
     def stdio_capture(self):
