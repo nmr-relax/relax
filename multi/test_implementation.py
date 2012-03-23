@@ -231,11 +231,11 @@ class Test_slave_command(Slave_command):
 # Set up the processor.
 processor = load_multiprocessor(FABRIC, Application_callback(master=Main()), processor_size=PROCESSOR_NUM, verbosity=1)
 
-# Run in multi-processor mode.
+# Run without profiling.
 if not PROFILE:
     processor.run()
 
-# Run in multi-processor mode with profiling.
+# Run with profiling.
 else:
     # Replace the default profiling print out function.
     profile.Profile.print_stats = print_stats
