@@ -34,7 +34,7 @@ import sys
 sys.path.append('..')
 
 # relax module imports.
-from multi import data_upload, Application_callback, load_multiprocessor, Memo, Processor_box, Result_command, Slave_command
+from multi import data_fetch, data_upload, Application_callback, load_multiprocessor, Memo, Processor_box, Result_command, Slave_command
 
 
 # Module variables.
@@ -165,7 +165,7 @@ class Main:
         processor_box.processor.run_queue()
 
         # Calculate the average length.
-        ave_len = processor_box.processor.data_store.total_length / self.N
+        ave_len = data_fetch('total_length') / self.N
 
         # Final program print out.
         print("\n\nTotal number of calculations: %s" % self.num)
