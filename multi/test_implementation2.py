@@ -34,7 +34,7 @@ import sys
 sys.path.append('..')
 
 # relax module imports.
-from multi import data_fetch, data_upload, Application_callback, load_multiprocessor, Memo, Processor_box, Result_command, Slave_command
+from multi import data_fetch, send_data_to_slaves, Application_callback, load_multiprocessor, Memo, Processor_box, Result_command, Slave_command
 
 
 # Module variables.
@@ -144,7 +144,7 @@ class Main:
         """This required method executes the entire program."""
 
         # Send the invariant data to the slaves' data stores.
-        data_upload('vect', self.vect)
+        send_data_to_slaves('vect', self.vect)
 
         # Initialise the Processor box singleton.
         processor_box = Processor_box()

@@ -214,25 +214,20 @@ def data_fetch(name=None):
     processor_box = Processor_box()
 
 
-def data_upload(name=None, value=None, rank=None):
-    """API function for sending data to be stored on the Processor of the given rank.
-
-    This can be used for transferring data from Processor instance i to the data store of Processor instance j.
-
+def send_data_to_slaves(name=None, value=None):
+    """API function for sending data from the master to all slaves processors.
 
     @keyword name:  The name of the data structure to store.
     @type name:     str
     @keyword value: The data structure.
     @type value:    anything
-    @keyword rank:  An optional argument to send data only to the Processor of the given rank.  If None, then the data will be sent to all Processor instances.
-    @type rank:     None or int
     """
 
     # Load the Processor_box.
     processor_box = Processor_box()
 
     # Forward the call to the processor instance.
-    processor_box.processor.data_upload(name=name, value=value, rank=rank)
+    processor_box.processor.send_data_to_slaves(name=name, value=value)
 
 
 
