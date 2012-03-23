@@ -47,14 +47,6 @@ from multi.processor import Processor
 from multi.result_commands import Batched_result_command, Result_command, Result_exception
 
 
-class Exit_queue_result_command(Result_command):
-    def __init__(self, completed=True):
-        pass
-
-RESULT_QUEUE_EXIT_COMMAND = Exit_queue_result_command()
-
-
-
 class Multi_processor(Processor):
     """The multi-processor base class."""
 
@@ -187,76 +179,6 @@ class Multi_processor(Processor):
 
     def slave_receive_commands(self):
         raise_unimplemented(self.slave_receive_commands)
-
-
-
-#FIXME: move up a level or more
-class Result_queue(object):
-    def __init__(self, processor):
-        self.processor = processor
-
-
-    def put(self, job):
-        if isinstance(job, Result_exception) :
-            self.processor.process_result(job)
-
-
-    def run_all(self):
-        raise_unimplemented(self.run_all)
-
-
-
-#FIXME: move up a level or more
-class Immediate_result_queue(Result_queue):
-    def put(self, job):
-        super(Immediate_result_queue, self).put(job)
-        try:
-            self.processor.process_result(job)
-        except:
-            traceback.print_exc(file=sys.stdout)
-            # FIXME: this doesn't work because this isn't the main thread so sys.exit fails...
-            self.processor.abort()
-
-
-    def run_all(self):
-        pass
-
-
-
-class Threaded_result_queue(Result_queue):
-    def __init__(self, processor):
-        super(Threaded_result_queue, self).__init__(processor)
-        self.queue = Queue.Queue()
-        self.sleep_time = 0.05
-        self.processor = processor
-        self.running = 1
-        # FIXME: syntax error here produces exception but no quit
-        self.thread1 = threading.Thread(target=self.workerThread)
-        self.thread1.setDaemon(1)
-        self.thread1.start()
-
-
-    def put(self, job):
-        super(Threaded_result_queue, self).put(job)
-        self.queue.put_nowait(job)
-
-
-    def run_all(self):
-        self.queue.put_nowait(RESULT_QUEUE_EXIT_COMMAND)
-        self.thread1.join()
-
-
-    def workerThread(self):
-            try:
-                while True:
-                    job = self.queue.get()
-                    if job == RESULT_QUEUE_EXIT_COMMAND:
-                        break
-                    self.processor.process_result(job)
-            except:
-                traceback.print_exc(file=sys.stdout)
-                # FIXME: this doesn't work because this isn't the main thread so sys.exit fails...
-                self.processor.abort()
 
 
 

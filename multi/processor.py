@@ -103,7 +103,7 @@ import time, datetime, math, sys
 
 # multi module imports.
 from multi.misc import Capturing_exception, raise_unimplemented, Verbosity; verbosity = Verbosity()
-from multi.multi_processor_base import Threaded_result_queue
+from multi.result_queue import Threaded_result_queue
 from multi.processor_io import Redirect_text
 from multi.result_commands import Batched_result_command, Null_result_command, Result_exception
 from multi.slave_commands import Slave_storage_command
