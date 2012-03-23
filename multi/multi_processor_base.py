@@ -91,14 +91,6 @@ class Multi_processor(Processor):
         return result
 
 
-    def master_queue_command(self, command, dest):
-        raise_unimplemented(self.master_queue_command)
-
-
-    def master_receive_result(self):
-        raise_unimplemented(self.master_receive_result)
-
-
     # FIXME move to lower level
     def on_master(self):
         if self.rank() == 0:

@@ -362,6 +362,33 @@ class Processor(object):
         return time_delta_str
 
 
+    def master_queue_command(self, command, dest):
+        """Slave to master processor data transfer - send the result command from the slave.
+
+        This is invoked by the slave processor.
+
+
+        @param command: The results command to send to the master.
+        @type command:  Results_command instance
+        @param dest:    The destination processor's rank.
+        @type dest:     int
+        """
+
+        raise_unimplemented(self.master_queue_command)
+
+
+    def master_receive_result(self):
+        """Slave to master processor data transfer - receive the result command from the slave.
+
+        This is invoked by the master processor.
+
+        @return:        The result command sent by the slave.
+        @rtype:         Result_command instance
+        """
+
+        raise_unimplemented(self.master_receive_result)
+
+
     def post_run(self):
         """Method called after the application main loop has finished - designed for overriding.
 

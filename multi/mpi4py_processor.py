@@ -162,10 +162,28 @@ class Mpi4py_processor(Multi_processor):
 
 
     def master_queue_command(self, command, dest):
+        """Slave to master processor data transfer - send the result command from the slave.
+
+        @param command: The results command to send to the master.
+        @type command:  Results_command instance
+        @param dest:    The destination processor's rank.
+        @type dest:     int
+        """
+
+        # Use a basic MPI send call to transfer the result command.
         MPI.COMM_WORLD.send(obj=command, dest=dest)
 
 
     def master_receive_result(self):
+        """Slave to master processor data transfer - receive the result command from the slave.
+
+        This is invoked by the master processor.
+
+        @return:        The result command sent by the slave.
+        @rtype:         Result_command instance
+        """
+
+        # Catch and return the result command.
         return MPI.COMM_WORLD.recv(source=MPI.ANY_SOURCE)
 
 

@@ -96,6 +96,40 @@ class Uni_processor(Processor):
         return True
 
 
+    def master_queue_command(self, command, dest):
+        """Slave to master processor data transfer - send the result command from the slave.
+
+        This mimics a slave to master data transfer initiated by a slave by holding the result command so that the matching self.master_receive_result(), which is called by the master processor, can return it.  As the master and slave processors are one and the same, the command is just held as a private class variable.
+
+
+        @param command: The results command to send to the master.
+        @type command:  Results_command instance
+        @param dest:    The destination processor's rank.
+        @type dest:     int
+        """
+
+        # Hold the result command so that the matching self.master_receive_result() can return it.
+        self._result_command_queue = command
+
+
+    def master_receive_result(self):
+        """Slave to master processor data transfer - receive the result command from the slave.
+
+        This mimics a slave to master data transfer initiated by a slave by holding the result command so that the matching self.master_receive_result(), which is called by the master processor, can return it.  As the master and slave processors are one and the same, the command is just held as a private class variable.
+
+
+        @return:        The result command sent by the slave.
+        @rtype:         Result_command instance
+        """
+
+        # Remove the command from the class namespace.
+        command = self._result_command_queue
+        del self._result_command_queue
+
+        # Return the command
+        return command
+
+
     def post_run(self):
         """Dummy function for preventing the printing of the run time."""
 
