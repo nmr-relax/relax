@@ -105,6 +105,7 @@ import time, datetime, math, sys
 from multi.misc import Capturing_exception, raise_unimplemented, Verbosity; verbosity = Verbosity()
 from multi.processor_io import Redirect_text
 from multi.result_commands import Batched_result_command, Null_result_command, Result_exception
+from multi.slave_commands import Slave_storage_command
 
 
 class Data_store:
@@ -236,7 +237,26 @@ class Processor(object):
         @type rank:     None or int
         """
 
-        raise_unimplemented(self.data_upload)
+        # The range.
+        if rank != None:
+            rank_list = [rank]
+        else:
+            rank_list = range(1, self.processor_size()+1)
+
+        # Create the command list.
+        queue = []
+        for i in rank_list:
+            # Create and append the command.
+            command = Slave_storage_command()
+
+            # Add the data to the command.
+            command.add(name, value)
+
+            # Add the command to the queue.
+            queue.append(command)
+
+        # Run the queue of data transfer commands.
+        self.run_command_queue(queue)
 
 
     def get_intro_string(self):
