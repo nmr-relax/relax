@@ -82,7 +82,6 @@ class Mpi4py_processor(Multi_processor):
                         break
 
 
-
     def abort(self):
         MPI.COMM_WORLD.Abort()
 
