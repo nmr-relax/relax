@@ -31,7 +31,7 @@ import sys
 from float import isNaN
 
 
-def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, dot=False, comma=True, file=sys.stdout):
+def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, dot=False, comma=True, file=None):
     """Nicely print out the Frame Order matrix of the 2nd degree.
 
     @param daeg:        The 3D, rank-4 Frame Order matrix.
@@ -53,6 +53,10 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
     # Default name.
     if not name:
         name = 'Frame Order matrix, 2nd degree'
+
+    # No file given, so send to STDOUT.
+    if file == None:
+        file = sys.stdout
 
     # Header and first row start.
     file.write("\n%s:\n" % name)
