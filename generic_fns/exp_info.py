@@ -50,7 +50,7 @@ SOFTWARE = {}
 SOFTWARE['relax'] = Software_store()
 SOFTWARE['relax'].name = "relax"
 SOFTWARE['relax'].authors = "The relax development team"
-SOFTWARE['relax'].url = "http://nmr-relax.com"
+SOFTWARE['relax'].url = "http://www.nmr-relax.com"
 SOFTWARE['relax'].tasks = ["data processing"]
 
 # NMRPipe software and citation.
