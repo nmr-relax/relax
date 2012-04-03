@@ -134,10 +134,11 @@ import sys as _sys
 import traceback as _traceback
 
 # Multi-processor module imports.
-from api import Result_command, Slave_command
-from memo import Memo
-from misc import import_module as _import_module
-from misc import Verbosity as _Verbosity; _verbosity = _Verbosity()
+from multi.memo import Memo
+from multi.misc import import_module as _import_module
+from multi.misc import Verbosity as _Verbosity; _verbosity = _Verbosity()
+from multi.result_commands import Result_command
+from multi.slave_commands import Slave_command
 
 
 #FIXME error checking for if module required not found.
@@ -195,6 +196,64 @@ def load_multiprocessor(processor_name, callback, processor_size, verbosity=1):
 
     # Return the Processor instance.
     return object
+
+
+def fetch_data(name=None):
+    """API function for obtaining data from the Processor instance's data store.
+
+    This is for fetching data from the data store of the Processor instance.  If run on the master, then the master's data store will be accessed.  If run on the slave, then the slave's data store will be accessed.
+
+
+    @attention:     No inter-processor communications are performed.
+
+    @keyword name:  The name of the data structure to fetch.
+    @type name:     str
+    @return:        The value of the associated data structure.
+    @rtype:         anything
+    """
+
+    # Load the Processor_box.
+    processor_box = Processor_box()
+
+    # Forward the call to the processor instance.
+    return processor_box.processor.fetch_data(name=name)
+
+
+def fetch_data_store():
+    """API function for obtaining the data store object from the Processor instance.
+
+    If run on the master, then the master's data store will be returned.  If run on the slave, then the slave's data store will be returned.
+
+
+    @attention:     No inter-processor communications are performed.
+
+    @return:        The data store of the processor (of the same rank as the calling code).
+    @rtype:         class instance
+    """
+
+    # Load the Processor_box.
+    processor_box = Processor_box()
+
+    # Return the data store.
+    return processor_box.processor.data_store
+
+
+def send_data_to_slaves(name=None, value=None):
+    """API function for sending data from the master to all slaves processors.
+
+    @attention:     Inter-processor communications are performed.
+
+    @keyword name:  The name of the data structure to store.
+    @type name:     str
+    @keyword value: The data structure.
+    @type value:    anything
+    """
+
+    # Load the Processor_box.
+    processor_box = Processor_box()
+
+    # Forward the call to the processor instance.
+    processor_box.processor.send_data_to_slaves(name=name, value=value)
 
 
 

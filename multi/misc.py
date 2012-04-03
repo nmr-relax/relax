@@ -149,6 +149,86 @@ class Capturing_exception(Exception):
 
 
 
+class Result(object):
+    """A basic result object returned from a slave processor via return_object.
+
+    This a very basic result and shouldn't be overridden unless you are also modifying the
+    process_result method in all the processors in the framework (i.e. currently for implementors
+    only). Most users should override Result_command.
+
+    This result basically acts as storage for the following fields completed, memo_id,
+    processor_rank.
+
+    Results should only be created on slave processors.
+
+    @see:   multi.processor.return_object.
+    @see:   multi.processor.process_result.
+    @see:   multi.processor.Result_command.
+    """
+
+    def __init__(self, processor, completed):
+        """Initialise a result.
+
+        This object is designed for subclassing and __init__ should be called via the super()
+        function.
+
+        @see:   multi.processor.Processor.
+
+        @note:  The requirement for the user to know about completed will hopefully disappear with
+                some slight of hand in the Slave_command and it may even disappear completely.
+
+        @param processor:   Processor the processor instance we are running in.
+        @type processor:    Processor instance
+        @param completed:   A flag used in batching result returns to indicate that the sequence of
+                            batched result commands has completed, the flag should be set by
+                            slave_commands. The value should be the value passed to a Slave_commands
+                            run method if it is the final result being returned otherwise it should
+                            be False.
+        @type completed:    bool
+        """
+
+        #TODO: assert on slave if processor_size > 1
+        #TODO: check if a completed command will add a noticeable overhead (I doubt it will)
+        self.completed = completed
+        """A flag used in batching result returns to indicate that the sequence has completed.
+
+        This is an optimisation to prevent the sending an extra batched result queue completion
+        result being sent, it may be an over early optimisation."""
+        self.memo_id = None
+        """The memo_id of the Slave_command currently being processed on this processor.
+
+        This value is set by the return_object method to the current Slave_commands memo_id."""
+        self.rank = processor.rank()
+        """The rank of the current processor, used in command scheduling on the master processor."""
+
+
+
+# TODO: make this a result_command
+class Result_string(Result):
+    """A simple result from a slave containing a result.
+
+    The processor will print this string via sys.stdout.
+
+    @note:  This may become a result_command so as to simplify things in the end.
+    """
+
+    #TODO: correct order of parameters should be string, processor, completed
+    def __init__(self, processor, string, completed):
+        """Initialiser.
+
+        @todo:  Check inherited parameters are documented.
+
+        @param string:  A string to return the master processor for output to STDOUT (note the
+                        master may split the string into components for STDOUT and STDERR depending
+                        on the prefix string. This class is not really designed for subclassing.
+        @type string:   str
+        """
+
+        super(Result_string, self).__init__(processor=processor, completed=completed)
+        self.string = string
+
+
+
 class Verbosity(object):
     """A special singleton structure for changing the verbosity level on the fly."""
 

@@ -101,10 +101,16 @@ The following are yet to be implemented:
 # Python module imports.
 import time, datetime, math, sys
 
-# relax module imports.
-from multi.api import Null_result_command
-from multi.misc import raise_unimplemented, Verbosity; verbosity = Verbosity()
+# multi module imports.
+from multi.misc import Capturing_exception, raise_unimplemented, Verbosity; verbosity = Verbosity()
+from multi.result_queue import Threaded_result_queue
 from multi.processor_io import Redirect_text
+from multi.result_commands import Batched_result_command, Null_result_command, Result_exception
+from multi.slave_commands import Slave_storage_command
+
+
+class Data_store:
+    """A special Processor specific data storage container."""
 
 
 class Processor(object):
@@ -164,30 +170,32 @@ class Processor(object):
         self.NULL_RESULT = Null_result_command(processor=self)
         """Empty result command used by commands which do not return a result (a singleton?)."""
 
+        # Initialise the processor specific data store.
+        self.data_store = Data_store()
+        """The processor data store."""
 
         self._processor_size = processor_size
         """Number of slave processors available in this processor."""
+
+        self.threaded_result_processing = True
+        """Flag for the handling of result processing via self.run_command_queue()."""
 
 
     def abort(self):
         """Shutdown the multi processor in exceptional conditions - designed for overriding.
 
-        This method is called after an exception from the master or slave has been raised and
-        processed and is responsible for the shutdown of the multi processor fabric and terminating
-        the application. The functions should be called as the last thing that
-        Application_callback.handle_exception does.
+        This method is called after an exception from the master or slave has been raised and processed and is responsible for the shutdown of the multi processor fabric and terminating the application. The functions should be called as the last thing that Application_callback.handle_exception does.
 
-        As an example of the methods use see Mpi4py_processor.abort which calls
-        MPI.COMM_WORLD.Abort() to cleanly shutdown the mpi framework and remove dangling processes.
+        As an example of the methods use see Mpi4py_processor.abort which calls MPI.COMM_WORLD.Abort() to cleanly shutdown the mpi framework and remove dangling processes.
 
-        The default action is to call sys.exit()
+        The default action is to call the special self.exit() method.
 
         @see:   multi.processor.Application_callback.
         @see:   multi.mpi4py_processor.Mpi4py_processor.abort().
         @see:   mpi4py.MPI.COMM_WORLD.Abort().
         """
 
-        sys.exit()
+        self.exit()
 
 
     def add_to_queue(self, command, memo=None):
@@ -208,9 +216,42 @@ class Processor(object):
         raise_unimplemented(self.add_to_queue)
 
 
-    # FIXME is this used?
-#    def exit(self):
-#        raise_unimplemented(self.exit)
+    def assert_on_master(self):
+        """Make sure that this is the master processor and not a slave.
+
+        @raises Exception:  If not on the master processor.
+        """
+
+        raise_unimplemented(self.assert_on_master)
+
+
+    def exit(self, status=0):
+        """Exit the processor with the given status.
+
+        This default method allows the program to drop off the end and terminate as it normally would - i.e. this method does nothing.
+
+        @keyword status:    The program exit status.
+        @type status:       int
+        """
+
+
+    def fetch_data(self, name=None):
+        """Fetch the data structure of the given name from the data store.
+
+        This can be run on the master or slave processors.
+
+
+        @keyword name:  The name of the data structure to fetch.
+        @type name:     str
+        @return:        The value of the associated data structure.
+        @rtype:         anything
+        """
+
+        # Get the object.
+        obj = getattr(self.data_store, name)
+
+        # Return the value.
+        return obj
 
 
     def get_intro_string(self):
@@ -302,6 +343,33 @@ class Processor(object):
         time_delta_str = time_delta.__str__()
         (time_delta_str, millis) = time_delta_str.split('.', 1)
         return time_delta_str
+
+
+    def master_queue_command(self, command, dest):
+        """Slave to master processor data transfer - send the result command from the slave.
+
+        This is invoked by the slave processor.
+
+
+        @param command: The results command to send to the master.
+        @type command:  Results_command instance
+        @param dest:    The destination processor's rank.
+        @type dest:     int
+        """
+
+        raise_unimplemented(self.master_queue_command)
+
+
+    def master_receive_result(self):
+        """Slave to master processor data transfer - receive the result command from the slave.
+
+        This is invoked by the master processor.
+
+        @return:        The result command sent by the slave.
+        @rtype:         Result_command instance
+        """
+
+        raise_unimplemented(self.master_receive_result)
 
 
     def post_run(self):
@@ -397,14 +465,84 @@ class Processor(object):
     def run(self):
         """Run the processor - an abstract method.
 
-        This function runs the processor main loop and is called after all processor setup has been
-        completed. It does remote execution setup and teardown round either side of a call to
-        Application_callback.init_master.
+        This function runs the processor main loop and is called after all processor setup has been completed.  It does remote execution setup and teardown (via self.pre_run() and self.post_run()) round either side of a call to Application_callback.init_master.
 
         @see:   multi.processor.Application_callback.
         """
 
-        raise_unimplemented(self.run)
+        # Execute any setup code needed for the specific processor fabrics.
+        self.pre_run()
+
+        # Execution of the master processor.
+        if self.on_master():
+            # Execute the program's run() method, as specified by the Application_callback.
+            try:
+                self.callback.init_master(self)
+
+            # Allow sys.exit() calls.
+            except SystemExit:
+                # Allow the processor fabric to clean up.
+                self.exit()
+
+                # Continue with the sys.exit().
+                raise
+
+            # Handle all errors nicely.
+            except Exception, e:
+                self.callback.handle_exception(self, e)
+
+        # Execution of the slave processor.
+        else:
+            # Loop until the slave is asked to die via an Exit_command setting the do_quit flag.
+            while not self.do_quit:
+                # Execute the slave by catching commands, catching all exceptions.
+                try:
+                    # Fetch any commands on the queue.
+                    commands = self.slave_receive_commands()
+
+                    # Convert to a list, if needed.
+                    if not isinstance(commands, list):
+                        commands = [commands]
+
+                    # Initialise the results list.
+                    if self.batched_returns:
+                        self.result_list = []
+                    else:
+                        self.result_list = None
+
+                    # Execute each command, one by one.
+                    for i, command in enumerate(commands):
+                        # Capture the standard IO streams for the slaves.
+                        self.stdio_capture()
+
+                        # Set the completed flag if this is the last command.
+                        completed = (i == len(commands)-1)
+
+                        # Execute the calculation.
+                        command.run(self, completed)
+
+                        # Restore the IO.
+                        self.stdio_restore()
+
+                    # Process the batched results.
+                    if self.batched_returns:
+                        self.return_object(Batched_result_command(processor=self, result_commands=self.result_list, io_data=self.io_data))
+                        self.result_list = None
+
+                # Capture and process all slave exceptions.
+                except:
+                    capturing_exception = Capturing_exception(rank=self.rank(), name=self.get_name())
+                    exception_result = Result_exception(exception=capturing_exception, processor=self, completed=True)
+
+                    self.return_object(exception_result)
+                    self.result_list = None
+
+        # Execute any tear down code needed for the specific processor fabrics.
+        self.post_run()
+
+        # End of execution, so perform any exiting actions needed by the specific processor fabrics.
+        if self.on_master():
+            self.exit()
 
 
     def run_command_globally(self, command):
@@ -420,6 +558,58 @@ class Processor(object):
         self.run_command_queue(queue)
 
 
+    def run_command_queue(self, queue):
+        """Process all commands on the queue and wait for completion.
+
+        @param queue:   The command queue.
+        @type queue:    list of Command instances
+        """
+
+        # This must only be run on the master processor.
+        self.assert_on_master()
+
+        running_set = set()
+        idle_set = set([i for i in range(1, self.processor_size()+1)])
+
+        if self.threaded_result_processing:
+            result_queue = Threaded_result_queue(self)
+        else:
+            result_queue = Immediate_result_queue(self)
+
+        while len(queue) != 0:
+
+            while len(idle_set) != 0:
+                if len(queue) != 0:
+                    command = queue.pop()
+                    dest = idle_set.pop()
+                    self.master_queue_command(command=command, dest=dest)
+                    running_set.add(dest)
+                else:
+                    break
+
+            # Loop until the queue of calculations is depleted.
+            while len(running_set) != 0:
+                # Get the result.
+                result = self.master_receive_result()
+
+                # Debugging print out.
+                if verbosity.level():
+                    print('\nIdle set:    %s' % idle_set)
+                    print('Running set: %s' % running_set)
+
+                # Shift the processor rank to the idle set.
+                if result.completed:
+                    idle_set.add(result.rank)
+                    running_set.remove(result.rank)
+
+                # Add to the result queue for instant or threaded processing.
+                result_queue.put(result)
+
+        # Process the threaded results.
+        if self.threaded_result_processing:
+            result_queue.run_all()
+
+
     def run_queue(self):
         """Run the processor queue - an abstract method.
 
@@ -427,7 +617,39 @@ class Processor(object):
         thread to block until the command has completed.
         """
 
-        raise_unimplemented(self.run_queue)
+        #FIXME: need a finally here to cleanup exceptions states
+        lqueue = self.chunk_queue(self.command_queue)
+        self.run_command_queue(lqueue)
+
+        del self.command_queue[:]
+        self.memo_map.clear()
+
+
+    def send_data_to_slaves(self, name=None, value=None):
+        """Transfer the given data from the master to all slaves.
+
+        @keyword name:  The name of the data structure to store.
+        @type name:     str
+        @keyword value: The data structure.
+        @type value:    anything
+        """
+
+        # This must be the master processor!
+        self.assert_on_master()
+
+        # Create the command list.
+        for i in range(self.processor_size()):
+            # Create and append the command.
+            command = Slave_storage_command()
+
+            # Add the data to the command.
+            command.add(name, value)
+
+            # Add the command to the queue.
+            self.add_to_queue(command)
+
+        # Flush the queue.
+        self.run_queue()
 
 
     def stdio_capture(self):

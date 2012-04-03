@@ -24,7 +24,7 @@
 
 This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the molecule in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., see the python tutorial.
 
-If you have obtained this script without the program relax, please visit http://nmr-relax.com.
+If you have obtained this script without the program relax, please visit http://www.nmr-relax.com.
 
 
 References

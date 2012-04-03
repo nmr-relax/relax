@@ -28,9 +28,10 @@
 # Python module imports.
 import sys, os
 
-# relax module imports.
-from multi.api import Result_command, Result_string
+# multi module imports.
+from multi.misc import Result_string
 from multi.processor import Processor
+from multi.result_commands import Result_command
 
 
 class Uni_processor(Processor):
@@ -61,8 +62,11 @@ class Uni_processor(Processor):
             self.memo_map[memo.memo_id()] = memo
 
 
-    def exit(self):
-        sys.exit()
+    def assert_on_master(self):
+        """Make sure that this is the master processor and not a slave.
+
+        As this is the Uni-processor, the processor is always the master.  Hence this method does nothing.
+        """
 
 
     def get_intro_string(self):
@@ -81,8 +85,49 @@ class Uni_processor(Processor):
         return '%s-%s' % (os.getenv('HOSTNAME'), os.getpid())
 
 
-#    def on_master(self):
-#        return True
+    def on_master(self):
+        """For the uni-processor fabric, we are always on the master.
+
+        @return:    The flag specifying if we are on the master or slave processors.
+        @rtype:     bool
+        """
+
+        # Always master.
+        return True
+
+
+    def master_queue_command(self, command, dest):
+        """Slave to master processor data transfer - send the result command from the slave.
+
+        This mimics a slave to master data transfer initiated by a slave by holding the result command so that the matching self.master_receive_result(), which is called by the master processor, can return it.  As the master and slave processors are one and the same, the command is just held as a private class variable.
+
+
+        @param command: The results command to send to the master.
+        @type command:  Results_command instance
+        @param dest:    The destination processor's rank.
+        @type dest:     int
+        """
+
+        # Hold the result command so that the matching self.master_receive_result() can return it.
+        self._result_command_queue = command
+
+
+    def master_receive_result(self):
+        """Slave to master processor data transfer - receive the result command from the slave.
+
+        This mimics a slave to master data transfer initiated by a slave by holding the result command so that the matching self.master_receive_result(), which is called by the master processor, can return it.  As the master and slave processors are one and the same, the command is just held as a private class variable.
+
+
+        @return:        The result command sent by the slave.
+        @rtype:         Result_command instance
+        """
+
+        # Remove the command from the class namespace.
+        command = self._result_command_queue
+        del self._result_command_queue
+
+        # Return the command
+        return command
 
 
     def post_run(self):
@@ -128,15 +173,6 @@ class Uni_processor(Processor):
         else:
             message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__, result)
             raise Exception(message)
-
-
-    def run(self):
-        try:
-            self.pre_run()
-            self.callback.init_master(self)
-            self.post_run()
-        except Exception, e:
-            self.callback.handle_exception(self, e)
 
 
     def run_queue(self):

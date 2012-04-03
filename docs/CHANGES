@@ -1,3 +1,87 @@
+Version 1.3.14
+(19 March 2012, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.14
+
+    Features:
+        * An expanded system information printout (from 'relax -i').
+        * Improvements to the multi-processor implementation, including creation of a public API and a reference implementation.
+        * Overhaul of the multi-processor stream capture design - the slave IO streams are now properly redirected to the master processor and the master no longer overrides stream capture by the relax user interfaces.
+        * Numpy data structures are now supported in relax save files.
+        * Implemented the rdc.delete and pcs.delete user functions.
+        * Speed ups of a number of user functions involved in looping over atomic or spin specific data - this can be significant if a lot of structural operations are performed, or a large number of structures are required.
+        * Redesigned how spin parameters are handled in the specific analyses (which includes parameter name changes).
+
+
+    Changes:
+        * The MS Windows text wrapping width has been changed from 80 to 79 - this now fits the cmd prompt.
+        * The program intro print out and prompt UI help system is using the new Status.text_width variable to wrap text.
+        * The model-free constraint matrix A is now of numpy.int8 type - this is to decrease virtual memory usage and increase the scaling efficiency on clusters.
+        * Changed all relax website links to http://www.nmr-relax.com for consistency.
+        * The setup.py script can now be imported for the epydoc API documentation system.
+        * The extern and minfx.scipy_subset relax packages are excluded form the API documentation.
+        * Added the ability to skip scripts in the package __all__ list unit test checks.
+        * Added some code to detect the bit version of MS Windows in the information print out (to better distinguish 32 vs. 64-bit versions).
+        * Added some documentation about master processors on Linux 2.6 eating 100% of one CPU core (in the mpi4py multi-processor fabric).
+        * Added a reference implementation to the multi-processor package - this is to demonstrate to users of the package how an implementation is created via the public API.
+        * Elimination of all relax dependencies from the multi-processor package. 
+        * Added support for the memory size on MS Windows to the relax info print out.
+        * Updated the value.set user function unknown parameter error message to list the known ones.
+        * For Unix and GNU/Linux systems, the relax info printout now shows the ram and swap size.
+        * Expansion and improvement of the information printed out by 'relax --info'.
+        * Expansion of the multi-processor API documentation.
+        * Expansion of the multi-processor package documentation with a step by step usage guide - this should increase the usability of the package by clarifying how one should use it.
+        * Expansion and improvements to the multi-processor package and module docstrings.
+        * The finish button in the new analysis wizard has been renamed to "Start".
+        * Created a special Verbosity singleton for controlling the multi-processor package print outs.
+        * Future proofed the relax codebase by replacing all ''' with """ in the docstrings.
+        * Removed the unnecessary try statement in the model-free Slave_command.run() method as exception handling is correctly performed on the slave and master.
+        * Shifted the Memo object into its own module (multi package).
+        * Simplification and abstraction of the Slave_command.run() method to shift all exception handling into the package.  Therefore program code no longer needs to handle the multi-processor specific errors.
+        * Created a new module 'multi.misc' for holding miscellaneous functions used throughout the multi package.
+        * Created a public API for the multi-processor package, available via multi.__init__.
+        * The load_multiprocessor() function is no longer a static method of the Processor base class.  This function loads the correct Processor class, so doesn't need to be a method of the base class and operates cleanly and more clearly as a stand alone function.
+        * Clean up of the processor IO module (multi package).
+        * Eliminated all usage of sys.__stdout__ and sys.__stderr__ in the multi-processor package - this returns full control of IO streams to the parent program.
+        * The float arg checks now checks against all the numpy float types (float16, float32, float64, float128).
+        * Added value.write user function calls to the J(w) mapping system test script.
+        * Added some value.write user functions to the J(w) mapping sample script.
+        * Modified the J(w) mapping test data to include relaxation values of None to trigger bug #19329.
+        * Speed up for the generic_fns.relax_re.search() function.
+        * More speed ups for the Selection.__contains_mol_res_spin_containers() method.
+        * Reordered the checks in Selection.__contains_mol_res_spin_containers() - this cuts the number of function calls down by avoiding relax_re.search() calls if residue or spin numbers match.
+        * Simplified the generic_fns.relax_re.search() function - this is to minimise the number of isinstance() calls when dealing with the relax mol-res-spin sequence data.
+        * Updates for Python 3.0 using 2to3.
+        * Removal of a number of debugging print out statements.
+        * Significant speed ups of the return_spin() and return_residue() functions.
+        * Added a print out for the diffusion_tensor.init user function to inform the user of an angle unit change - this is in response to bug #19323 to make it clearer that a parameter conversion has occurred.
+        * Created a special specific API object called SPIN_PARAMS - this will be used to handle all operations to do with model parameters.  The object Param_list has methods for parameter initialisation and handling (where all info is specified such as Grace string, units, default value, etc) and for determining if a parameter exists.
+        * Mass conversion to the new GLOBAL_PARAMS and SPIN_PARAMS specific API data structures.  The parameters are now all lowercase, for example ['S2', 'te', 'Rex'] is now ['s2', 'te', 'rex'].  The follow parameters are now converted throughout relax: 'bond_length' to 'r', 'CSA' to 'csa', 'heteronucleus' to 'heteronuc_type', 'proton' to 'proton_type'.
+        * Created a new algorithm for finding the pivot of motion between different structural models - this is available through the structure.find_pivot user function.
+        * Added the validate_models() method to the structural API - this is used to check that the models are 100% consistent.
+        * Added the centroid argument to the structure.superimpose user function - this allows for the superimposition of structures assuming a pivoted motion.
+
+
+    Bugfixes:
+        * Fix for the title of the analysis selection wizard GUI element.
+        * Fix for the MemoryError during the "final" run of d'Auvergne Protocol affecting 32-bit systems (bug #19528).
+        * Epydoc docstring fixes for the API documentation.
+        * Bug fix for old numpy versions missing the float16 object.
+        * The relax prompt mode now prints the intro message to sys.stdout - this fixes this mode with the logging option or in the mpi4py multiprocessor mode.
+        * Fix for the storage of numpy data structures in the relax save files - if special structures are created by the user, these were not correctly stored.  The precision was often too low (printed at the numpy default of a precision of 8), and if one dimension had more than 1000 elements, ellipses would be stored instead (the ellipses would cause the save file to be unreadable by relax).
+        * Created the SplitIO.flush() method so that a flush() call now works with the -t and -l command line args - this simply calls the flush() methods of both streams.
+        * The relax data store __repr__() method now prints out all objects within the base object.
+        * Fix for a rare bug in the model-free analysis for when relaxation data of None is encountered.
+        * Fixes for the Dasha system test for the bug #19332 fix.
+        * Fixes for the Dasha use functions for file creation and data extraction - this should now handle relaxation data values of None, and also set the parameter values of deselected spins using the Dasha output files.
+        * Big bugfix for the value.read user function - the wrong spin ID string was being used to set the parameter value so that all spins have the same value set for the parameter(bug #19332).
+        * Bug fix for the consistency testing analysis for when relaxation data of None is encountered.
+        * The spin is now deselected if there is really less than three data points, excluding data points of None (bug #19329).
+        * Bug fix for the arg_check.is_none() function - the RelaxNoneError was not imported!
+        * Fix for the numbering of the TER record and subsequence HETATM records in the PDB file creation.  The structure.write_pdb user function now creates the correct TER record after the ATOM records, and the HETATM records are renumbered if needed.
+        * Bug fix for the compilation of the user manual.  The molecule user function class used the temporary variable i, which was causing the fetch_docstrings script to fail.
+
+
+
 Version 1.3.13
 (10 November 2011, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.13
