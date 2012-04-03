@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -104,7 +104,7 @@ def package(target, source, env):
         if dist_type == 'dmg':
             # Create the Mac OS X universal application.
             print("\n# Creating the Mac OS X universal application.\n\n")
-            cmd = 'python setup.py py2app'
+            cmd = '%s setup.py py2app' % sys.executable
             print("%s\n" % cmd)
             pipe = Popen(cmd, shell=True, stdin=PIPE, close_fds=False)
             waitpid(pipe.pid, 0)
