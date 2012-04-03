@@ -20,12 +20,17 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""SCons targets for building the relax manuals."""
 
-# Import statements.
+# Python module imports.
 from glob import glob
 from os import F_OK, access, chdir, getcwd, listdir, path, remove, rename, sep, system
+from re import search
 import sys
 
+# relax module imports.
+from status import Status; status = Status()
 from version import version
 
 
@@ -128,13 +133,13 @@ def compile_api_manual_html(target, source, env):
 
     # url
     #   The documented project's URL.
-    url = 'http://nmr-relax.com'
+    url = 'http://www.nmr-relax.com'
 
     # link
     #   HTML code for the project link in the navigation bar.  If left
     #   unspecified, the project link will be generated based on the
     #   project's name and URL.
-    #link = '<a href="http://nmr-relax.com">relax</a>'
+    #link = '<a href="http://www.nmr-relax.com">relax</a>'
 
     # top
     #   The "top" page for the documentation.  Can be a URL, the name
@@ -292,6 +297,60 @@ def compile_api_manual_html(target, source, env):
 
     # Close the file.
     css_file.close()
+
+
+    # Modify all HTML files.
+    ########################
+
+    # Print out.
+    print("\n\nModifying the <head> tag of all HTML files.\n")
+
+    # The additional head tags.
+    head_lines = []
+
+    # The Google analytics JS.
+    file = open(status.install_path + sep + 'scripts' + sep + 'google_analytics.js')
+    for line in file.readlines():
+        head_lines.append(line)
+    file.close()
+
+    # Loop over the files.
+    for file_name in listdir(status.install_path + sep + 'docs' + sep + 'api'):
+        # The full path.
+        full_path = status.install_path + sep + 'docs' + sep + 'api' + sep + file_name
+
+        # Skip all non-html files.
+        if not search('.html$', full_path):
+            continue
+
+        # Print out.
+        print(full_path)
+
+        # Open the file and read the data.
+        file = open(full_path)
+        lines = file.readlines()
+        file.close()
+
+        # Modify the original file.
+        file = open(full_path, 'w')
+
+        # Loop over the lines.
+        found = False
+        for i in range(len(lines)):
+            # Find the position of </head>.
+            if not found and search('</head>', lines[i]):
+                # Append the head lines.
+                for j in range(len(head_lines)):
+                    file.write(head_lines[j])
+
+                # The found flag.
+                found = True
+
+            # Append the old line.
+            file.write(lines[i])
+
+        # Close the file.
+        file.close()
 
     # Final print out.
     print("\n\n\n")

@@ -41,18 +41,10 @@ import sys
 import threading
 import traceback
 
-# relax module imports.
-from multi.api import Batched_result_command, Result, Result_command, Result_string, Result_exception
-from multi.misc import Capturing_exception, raise_unimplemented, Verbosity; verbosity = Verbosity()
+# multi module imports.
+from multi.misc import raise_unimplemented, Result, Result_string, Verbosity; verbosity = Verbosity()
 from multi.processor import Processor
-
-
-class Exit_queue_result_command(Result_command):
-    def __init__(self, completed=True):
-        pass
-
-RESULT_QUEUE_EXIT_COMMAND = Exit_queue_result_command()
-
+from multi.result_commands import Batched_result_command, Result_command, Result_exception
 
 
 class Multi_processor(Processor):
@@ -71,8 +63,6 @@ class Multi_processor(Processor):
         self.batched_returns = True
         self.result_list = None
 
-        self.threaded_result_processing = True
-
 
     #TODO: move up a level
     def add_to_queue(self, command, memo=None):
@@ -80,13 +70,6 @@ class Multi_processor(Processor):
         if memo != None:
             command.set_memo_id(memo)
             self.memo_map[memo.memo_id()] = memo
-
-
-    #TODO: move up a level
-    def assert_on_master(self):
-        if self.on_slave():
-            msg = 'running on slave when expected master with MPI.rank == 0, rank was %d'% self.rank()
-            raise Exception(msg)
 
 
     #TODO: move up a level
@@ -106,18 +89,6 @@ class Multi_processor(Processor):
             for i, elem in enumerate(lqueue):
                 result[i].append(elem)
         return result
-
-
-    def create_slaves(self, processor_size):
-        pass
-
-
-    def master_queue_command(self, command, dest):
-        raise_unimplemented(self.master_queue_command)
-
-
-    def master_recieve_result(self):
-        raise_unimplemented(self.master_recieve_result)
 
 
     # FIXME move to lower level
@@ -189,186 +160,8 @@ class Multi_processor(Processor):
         raise_unimplemented(self.slave_queue_result)
 
 
-    #TODO: move up a level and add virtual send and recieve
-    def run(self):
-        self.pre_run()
-        if self.on_master():
-            try:
-                self.create_slaves(self.processor_size())
-                self.callback.init_master(self)
-
-            except Exception, e:
-                self.callback.handle_exception(self, e)
-
-        else:
-            while not self.do_quit:
-                try:
-                    commands = self.slave_recieve_commands()
-                    if not isinstance(commands, list):
-                        commands = [commands]
-                    last_command = len(commands)-1
-
-                    if self.batched_returns:
-                        self.result_list = []
-                    else:
-                        self.result_list = None
-
-                    for i, command in enumerate(commands):
-                        # Capture the standard IO streams for the slaves.
-                        self.stdio_capture()
-
-                        # Execute the calculation.
-                        completed = (i == last_command)
-                        command.run(self, completed)
-
-                        # Restore the IO.
-                        self.stdio_restore()
-
-                    if self.batched_returns:
-                        self.return_object(Batched_result_command(processor=self, result_commands=self.result_list, io_data=self.io_data))
-                        self.result_list = None
-
-                except:
-                    capturing_exception = Capturing_exception(rank=self.rank(), name=self.get_name())
-                    exception_result = Result_exception(exception=capturing_exception, processor=self, completed=True)
-
-                    self.return_object(exception_result)
-                    self.result_list = None
-
-        self.post_run()
-        if self.on_master():
-            # note this a modified exit that kills all MPI processors
-            sys.exit()
-
-
-    #TODO: move up a level add virtaul send and revieve functions
-    def run_command_queue(self, queue):
-            self.assert_on_master()
-
-            running_set = set()
-            idle_set = set([i for i in range(1, self.processor_size()+1)])
-
-            if self.threaded_result_processing:
-                result_queue = Threaded_result_queue(self)
-            else:
-                result_queue = Immediate_result_queue(self)
-
-            while len(queue) != 0:
-
-                while len(idle_set) != 0:
-                    if len(queue) != 0:
-                        command = queue.pop()
-                        dest = idle_set.pop()
-                        self.master_queue_command(command=command, dest=dest)
-                        running_set.add(dest)
-                    else:
-                        break
-
-                # Loop until the queue of calculations is depleted.
-                while len(running_set) != 0:
-                    # Get the result.
-                    result = self.master_recieve_result()
-
-                    # Debugging print out.
-                    if verbosity.level():
-                        print('\nIdle set:    %s' % idle_set)
-                        print('Running set: %s' % running_set)
-
-                    # Shift the processor rank to the idle set.
-                    if result.completed:
-                        idle_set.add(result.rank)
-                        running_set.remove(result.rank)
-
-                    # Add to the result queue for instant or threaded processing.
-                    result_queue.put(result)
-
-            # Process the threaded results.
-            if self.threaded_result_processing:
-                result_queue.run_all()
-
-
-    #TODO: move up a level
-    def run_queue(self):
-        #FIXME: need a finally here to cleanup exceptions states
-         lqueue = self.chunk_queue(self.command_queue)
-         self.run_command_queue(lqueue)
-
-         del self.command_queue[:]
-         self.memo_map.clear()
-
-
-    def slave_recieve_commands(self):
-        raise_unimplemented(self.slave_recieve_commands)
-
-
-
-#FIXME: move up a level or more
-class Result_queue(object):
-    def __init__(self, processor):
-        self.processor = processor
-
-
-    def put(self, job):
-        if isinstance(job, Result_exception) :
-            self.processor.process_result(job)
-
-
-    def run_all(self):
-        raise_unimplemented(self.run_all)
-
-
-
-#FIXME: move up a level or more
-class Immediate_result_queue(Result_queue):
-    def put(self, job):
-        super(Immediate_result_queue, self).put(job)
-        try:
-            self.processor.process_result(job)
-        except:
-            traceback.print_exc(file=sys.stdout)
-            # FIXME: this doesn't work because this isn't the main thread so sys.exit fails...
-            self.processor.abort()
-
-
-    def run_all(self):
-        pass
-
-
-
-class Threaded_result_queue(Result_queue):
-    def __init__(self, processor):
-        super(Threaded_result_queue, self).__init__(processor)
-        self.queue = Queue.Queue()
-        self.sleep_time = 0.05
-        self.processor = processor
-        self.running = 1
-        # FIXME: syntax error here produces exception but no quit
-        self.thread1 = threading.Thread(target=self.workerThread)
-        self.thread1.setDaemon(1)
-        self.thread1.start()
-
-
-    def put(self, job):
-        super(Threaded_result_queue, self).put(job)
-        self.queue.put_nowait(job)
-
-
-    def run_all(self):
-        self.queue.put_nowait(RESULT_QUEUE_EXIT_COMMAND)
-        self.thread1.join()
-
-
-    def workerThread(self):
-            try:
-                while True:
-                    job = self.queue.get()
-                    if job == RESULT_QUEUE_EXIT_COMMAND:
-                        break
-                    self.processor.process_result(job)
-            except:
-                traceback.print_exc(file=sys.stdout)
-                # FIXME: this doesn't work because this isn't the main thread so sys.exit fails...
-                self.processor.abort()
+    def slave_receive_commands(self):
+        raise_unimplemented(self.slave_receive_commands)
 
 
 

@@ -24,7 +24,7 @@
 from copy import deepcopy
 from math import pi
 from minfx.grid import grid_split
-from numpy import float64, array, dot, zeros
+from numpy import array, dot, float64, int8, zeros
 from numpy.linalg import inv
 from re import match, search
 import sys
@@ -971,7 +971,7 @@ class Mf_minimise:
                     i = i + 1
 
         # Convert to numpy data structures.
-        A = array(A, float64)
+        A = array(A, int8)
         b = array(b, float64)
 
         return A, b

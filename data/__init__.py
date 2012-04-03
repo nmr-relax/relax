@@ -380,7 +380,7 @@ class Relax_data_store(dict):
         xmldoc = xml.dom.minidom.Document()
 
         # Create the top level element, including the relax URL.
-        top_element = xmldoc.createElementNS('http://nmr-relax.com', 'relax')
+        top_element = xmldoc.createElementNS('http://www.nmr-relax.com', 'relax')
 
         # Append the element.
         xmldoc.appendChild(top_element)

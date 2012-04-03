@@ -153,13 +153,13 @@ class Relax:
         # Show the version number and exit.
         if self.mode == 'version':
             print(('relax ' + version))
-            sys.exit()
+            return
 
         # Show the relax info and exit.
         if self.mode == 'info':
             info = Info_box()
             print(info.sys_info())
-            sys.exit()
+            return
 
         # Logging.
         if self.log_file:
@@ -180,7 +180,7 @@ class Relax:
             # Dependency check.
             if not dep_check.wx_module:
                 sys.stderr.write("Please install the wx Python module to access the relax GUI.\n\n")
-                sys.exit()
+                return
 
             # Set the GUI flag in the status object.
             status.show_gui = True

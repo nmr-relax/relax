@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -51,7 +51,7 @@ class Analysis_wizard:
         wx.BeginBusyCursor()
 
         # Set up the wizard.
-        self.wizard = Wiz_window(size_x=850, size_y=700, title='Set parameter values')
+        self.wizard = Wiz_window(size_x=850, size_y=700, title='Analysis selection wizard')
 
         # Change the finish button.
         self.wizard.TEXT_FINISH = " Start"

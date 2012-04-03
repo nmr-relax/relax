@@ -40,4 +40,4 @@ class Test___init__(PackageTestCase):
         self.package_path = sys.path[0] + sep + 'multi'
 
         # Blacklisted scripts.
-        self.blacklist = ['test_implementation.py']
+        self.blacklist = ['test_implementation.py', 'test_implementation2.py']
