@@ -91,7 +91,7 @@ $ rsync --delete -av --progress --no-perms --rsh="ssh" . bugman@download.gna.org
 
 
 
-* Modify the http://nmr-relax.com download page to point to the newest version of relax.  Update the MD5 checksums and file sizes on the download page.  Commit the updates.
+* Modify the http://www.nmr-relax.com download page to point to the newest version of relax.  Update the MD5 checksums and file sizes on the download page.  Commit the updates.
 
 
 
@@ -99,15 +99,15 @@ $ rsync --delete -av --progress --no-perms --rsh="ssh" . bugman@download.gna.org
 
 $ scons user_manual_html
 
-Replace the old manual with the new in the http://nmr-relax.com SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new manual.
+Replace the old manual with the new in the http://www.nmr-relax.com/manual SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new manual.
 
 
 
-* Modifiy http://www.nmr-relax.com/api/index.html for the new version number and create the API documentation for the current version with the command:
+* Create the API documentation for the current version with the command:
 
 $ scons api_manual_html
 
-Replace the old API documentation in the http://nmr-relax.com SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new files.
+Replace the old API documentation in the http://www.nmr-relax.com/api SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new files.
 
 
 
@@ -121,4 +121,4 @@ On the relax-announce mailing list, write a detailed and full description of the
 
 For the news item, firstly cut and paste the mailing list message.  Item references such as bug #7641, task #3122, etc. are automatically converted into links.  Create three sections using the Savane markup (recipe #236).  Call these = Description =, = Download =, and = Full list of changes =.  For the last section, use the subtitles == Features == ,  == Changes == , and  == Bugfixes ==.  The items in this section start with '* ' to create an unnumbered list.  Strip all leading whitespace from the full list of changes and remove all the links to the trackers (as these will be automatically created).
 
-For freshmeat (http://freshmeat.net), go to the nmr-relax project page at http://freshmeat.net/projects/nmr-relax.  Click on 'All releases' in the 'Recent releases' section, then on 'Submit new release'.  If this is the first release of a new minor number 'x.x.0', a branch will need to be created first by clicking on 'add branch'.  Add the version number, a brief and concise summary of the release, select the release focus category, and update the Tar/BZ2 and Zip URLs.
+For Freecode (http://freecode.com, formally Freshmeat), go to the nmr-relax project page at http://freecode.com/projects/nmr-relax.  Click on 'All releases' in the 'Recent releases' section, then on 'Submit new release'.  If this is the first release of a new minor number 'x.x.0', a branch will need to be created first by clicking on 'add branch'.  Add the version number, a brief and concise summary of the release, select the release focus category, and update the Tar/BZ2 and Zip URLs.

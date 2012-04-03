@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -775,6 +775,6 @@ class Main(wx.Frame):
             pipe = ''
 
         # Set the status.
-        wx.CallAfter(self.status_bar.SetStatusText, "(C) 2001-2011 the relax development team", 0)
+        wx.CallAfter(self.status_bar.SetStatusText, "(C) 2001-2012 the relax development team", 0)
         wx.CallAfter(self.status_bar.SetStatusText, "Current data pipe:", 1)
         wx.CallAfter(self.status_bar.SetStatusText, pipe, 2)

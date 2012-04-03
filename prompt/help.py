@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,9 +20,16 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The prompt UI help system."""
+
 # Python module imports.
 import pydoc
 import sys
+from textwrap import wrap
+
+# relax module imports.
+from status import Status; status = Status()
 
 
 # Generic string printed out for function classes.
@@ -39,15 +46,23 @@ period at the end of class name and hit the tab key, or type 'dir(class_name)'.
 
 class _Helper:
     text = """\
-For assistance in using a function, simply type 'help(function)'.  All functions can be viewed by
-hitting the [TAB] key.  In addition to functions, if 'help(object)' is typed, the help for the
-python object is returned.  This system is similar to the help function built into the python
-interpreter, which has been renamed to help_python, with the interactive component removed.  For the
-interactive python help system, type 'help_python()'.
+For assistance in using a function, simply type 'help(function)'.  All functions can be viewed by hitting the [TAB] key.  In addition to functions, if 'help(object)' is typed, the help for the python object is returned.  This system is similar to the help function built into the python interpreter, which has been renamed to help_python, with the interactive component removed.  For the interactive python help system, type 'help_python()'.
     """
 
     def __repr__(self):
-        return self.text
+        """String representation of the object.
+
+        @return:    The help description.
+        @rtype:     str
+        """
+
+        # Wrap the text.
+        string = ''
+        for line in wrap(self.text, status.text_width):
+            string += line + '\n'
+
+        # Return the wrapped text.
+        return string
 
 
     def __call__(self, *args, **kwds):
