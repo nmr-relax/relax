@@ -57,7 +57,7 @@ def mac_setup():
     NAME = 'relax'
     VERSION = version_full()
     OPTIONS = {
-        'argv_emulation': True,
+        'argv_emulation': False,
         'iconfile': status.install_path + sep + 'graphics' + sep + 'ulysses_shadowless_trans_128x128.icns',
         'packages': 'wx',
         'site_packages': True,

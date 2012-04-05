@@ -79,12 +79,21 @@ def start(mode=None, profile_flag=False):
     # Normal relax operation.
     relax = Relax()
 
-    # Process the command line arguments.
-    relax.arguments()
-
-    # Override the mode.
+    # Override normal operation.
     if mode:
+        # Override the mode.
         relax.mode = mode
+
+        # Some defaults.
+        relax.script_file = None
+        relax.log_file = None
+        relax.tee_file = None
+        relax.multiprocessor_type = 'uni'
+        relax.n_processors = 1
+
+    # Process the command line arguments.
+    else:
+        relax.arguments()
 
     # Set up the multi-processor elements.
     callbacks = Application_callback(master=relax)
