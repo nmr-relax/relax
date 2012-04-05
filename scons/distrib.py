@@ -111,7 +111,7 @@ def package(target, source, env):
 
             # Create the dmg image.
             print("\n\n# Creating the DMG image.\n\n")
-            cmd = 'hdiutil create -fs HFS+ -volname "relax" -srcfolder dist/relax.app %s' % file
+            cmd = 'hdiutil create -ov -fs HFS+ -volname "relax" -srcfolder dist/relax.app %s' % file
             print("%s\n" % cmd)
             pipe = Popen(cmd, shell=True, stdin=PIPE, close_fds=False)
             waitpid(pipe.pid, 0)
