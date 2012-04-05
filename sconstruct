@@ -516,7 +516,7 @@ class Main:
         else:
             cflags = '-I' + py_include_fullpath + ' -I' + numpy_path
         if env['PLATFORM'] == 'darwin':
-            for arch in ['i386', 'x86_64', 'ppc', 'ppc64']:
+            for arch in ['i386', 'x86_64', 'ppc']:
                 cflags = '%s -arch %s' % (cflags, arch)
 
         # Python library path.
