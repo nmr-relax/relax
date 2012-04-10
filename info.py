@@ -141,6 +141,31 @@ class Info_box(object):
         return string
 
 
+    def format_max_width(self, data):
+        """Return the text formatting width for the given data.
+
+        @param data:    The list of things to print out.
+        @type data:     list
+        @return:        The maximum width of the elements in the list.
+        @rtype:         int
+        """
+
+        # Init.
+        width = 0
+
+        # Loop over the data.
+        for i in range(len(data)):
+            # The string representation size.
+            size = len(repr(data[i]))
+
+            # Find the max size.
+            if size > width:
+                width = size
+
+        # Return the max width.
+        return width
+
+
     def intro_text(self):
         """Create the introductory string for STDOUT printing.
 
@@ -200,106 +225,158 @@ class Info_box(object):
 
         # Init.
         text = ''
+        package = []
+        status = []
+        version = []
+        path = []
 
         # Intro.
         text = text + ("\nPython packages (most are optional):\n\n")
 
         # Header.
-        format1 = "%-20s %-15s "
-        format2 = "%-15s %-15s\n"
-        text = text + format1 % ("Package", "Installed")
-        text = text + format2 % ("Version", "Path")
+        package.append("Package")
+        status.append("Installed")
+        version.append("Version")
+        path.append("Path")
 
         # minfx.
-        text = text + format1 % ('minfx', True)
-        text = text + format2 % ('Unknown', dep_check.minfx.__path__[0])
+        package.append('minfx')
+        status.append(True)
+        version.append('Unknown')
+        path.append(dep_check.minfx.__path__[0])
 
         # bmrblib.
-        text = text + format1 % ('bmrblib', dep_check.bmrblib_module)
+        package.append('bmrblib')
+        status.append(dep_check.bmrblib_module)
         try:
-            text = text + format2 % ('Unknown', dep_check.bmrblib.__path__[0])
+            version.append('Unknown')
+            path.append(dep_check.bmrblib.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # numpy.
-        text = text + format1 % ('numpy', True)
+        package.append('numpy')
+        status.append(True)
         try:
-            text = text + format2 % (dep_check.numpy.version.version, dep_check.numpy.__path__[0])
+            version.append(dep_check.numpy.version.version)
+            path.append(dep_check.numpy.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # scipy.
-        text = text + format1 % ('scipy', dep_check.scipy_module)
+        package.append('scipy')
+        status.append(dep_check.scipy_module)
         try:
-            text = text + format2 % (dep_check.scipy.version.version, dep_check.scipy.__path__[0])
+            version.append(dep_check.scipy.version.version)
+            path.append(dep_check.scipy.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # wxPython.
-        text = text + format1 % ('wxPython', dep_check.wx_module)
+        package.append('wxPython')
+        status.append(dep_check.wx_module)
         try:
-            text = text + format2 % (dep_check.wx.__version__, dep_check.wx.__path__[0])
+            version.append(dep_check.wx.version())
+            path.append(dep_check.wx.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # mpi4py.
-        text = text + format1 % ('mpi4py', dep_check.mpi4py_module)
+        package.append('mpi4py')
+        status.append(dep_check.mpi4py_module)
         try:
-            text = text + format2 % (dep_check.mpi4py.__version__, dep_check.mpi4py.__path__[0])
+            version.append(dep_check.mpi4py.__version__)
+            path.append(dep_check.mpi4py.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # epydoc.
-        text = text + format1 % ('epydoc', dep_check.epydoc_module)
+        package.append('epydoc')
+        status.append(dep_check.epydoc_module)
         try:
-            text = text + format2 % (dep_check.epydoc.__version__, dep_check.epydoc.__path__[0])
+            version.append(dep_check.epydoc.__version__)
+            path.append(dep_check.epydoc.__path__[0])
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # optparse.
-        text = text + format1 % ('optparse', True)
+        package.append('optparse')
+        status.append(True)
         try:
-            text = text + format2 % (dep_check.optparse.__version__, dep_check.optparse.__file__)
+            version.append(dep_check.optparse.__version__)
+            path.append(dep_check.optparse.__file__)
         except:
-            text = text + '\n'
+            version.append('')
+            path.append('')
 
         # readline.
-        text = text + format1 % ('readline', dep_check.readline_module)
+        package.append('readline')
+        status.append(dep_check.readline_module)
+        version.append('')
         try:
-            text = text + format2 % ('', dep_check.readline.__file__)
+            path.append(dep_check.readline.__file__)
         except:
-            text = text + '\n'
+            path.append('')
 
         # profile.
-        text = text + format1 % ('profile', dep_check.profile_module)
+        package.append('profile')
+        status.append(dep_check.profile_module)
+        version.append('')
         try:
-            text = text + format2 % ('', dep_check.profile.__file__)
+            path.append(dep_check.profile.__file__)
         except:
-            text = text + '\n'
+            path.append('')
 
         # BZ2.
-        text = text + format1 % ('bz2', dep_check.bz2_module)
+        package.append('bz2')
+        status.append(dep_check.bz2_module)
+        version.append('')
         try:
-            text = text + format2 % ('', dep_check.bz2.__file__)
+            path.append(dep_check.bz2.__file__)
         except:
-            text = text + '\n'
+            path.append('')
 
         # gzip.
-        text = text + format1 % ('gzip', dep_check.gzip_module)
+        package.append('gzip')
+        status.append(dep_check.gzip_module)
+        version.append('')
         try:
-            text = text + format2 % ('', dep_check.gzip.__file__)
+            path.append(dep_check.gzip.__file__)
         except:
-            text = text + '\n'
+            path.append('')
 
         # devnull.
-        text = text + format1 % ('os.devnull', dep_check.devnull_import)
+        package.append('os.devnull')
+        status.append(dep_check.devnull_import)
+        version.append('')
         try:
-            text = text + format2 % ('', dep_check.os.__file__)
+            path.append(dep_check.os.__file__)
         except:
-            text = text + '\n'
+            path.append('')
 
+        # Format the data.
+        fmt_package = "%%-%ss" % (self.format_max_width(package) + 2)
+        fmt_status = "%%-%ss" % (self.format_max_width(status) + 2)
+        fmt_version = "%%-%ss" % (self.format_max_width(version) + 2)
+        fmt_path = "%%-%ss" % (self.format_max_width(path) + 2)
+
+        # Add the text.
+        for i in range(len(package)):
+            text += fmt_package % package[i]
+            text += fmt_status % status[i]
+            text += fmt_version % version[i]
+            text += fmt_path % path[i]
+            text += '\n'
+        
         # Return the info string.
         return text
+
 
 
     def ram_info(self, format="    %-25s%s\n"):
