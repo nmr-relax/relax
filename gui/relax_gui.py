@@ -28,6 +28,7 @@
 import os
 from os import F_OK, access, getcwd, mkdir, sep
 import platform
+from re import search
 import sys
 from textwrap import wrap
 from thread import start_new_thread
@@ -101,7 +102,7 @@ class Main(wx.Frame):
         self.SetIcons(relax_icons)
 
         # Set up the Mac OS X task bar icon.
-        if 'darwin' in sys.platform:
+        if 'darwin' in sys.platform and not search('gtk2', wx.version()):
             self.taskbar_icon = Relax_task_bar_icon(self)
 
         # Initialise some variables for the GUI.
