@@ -1,0 +1,105 @@
+This is a set of instructions on how to set up a 3-way (i386, pcc, x86_64) Python development framework for Mac OS X.  This requires Xcode to be installed.
+
+
+# Python.
+
+Unpack Python 2.7, and then run:
+
+$ ./configure --prefix=$HOME --enable-universalsdk=/Developer/SDKs/MacOSX10.5.sdk --with-universal-archs=3-way --enable-framework=$HOME/Library/Frameworks
+$ make
+$ make install
+
+This will put the Python installation into ~/Library/Frameworks/Python.framework/Versions/2.7/ and the binaries will be symlinked in ~/bin.  Therefore add ~/bin to the system path by adding the following to .bash_profile:
+
+PATH=$PATH:$HOME/bin
+export PATH
+
+
+
+# Numpy.
+
+Unpack numpy, and then run:
+
+$ python2.7 setup.py install
+
+This should take the deployment target platform, the architectures, etc. from the Python install.
+
+
+
+# Scipy.
+
+Install the appropriate GNU fortran version to add to Xcode (for example gfortran-42-5664.pkg from http://r.research.att.com/tools/).  Xcode does not come with a Fortran compiler and the fink version will not be able to create Universal 3-way binaries.
+#Install SuiteSparse via Fink.  Modify ./scipy/sparse/linalg/dsolve/umfpack/umfpack.i to point to these header files.  Then run:
+
+$ PATH=/usr/local/bin/:$PATH ~/bin/python2.7 setup.py install
+
+The PATH option is needed if gfortran is located in both /usr/local/bin/ and /sw/bin/.
+
+
+
+# Mpi4py.
+
+The deployment target platform, SDK root, and the architectures need to be set explicitly with environmental variables:
+
+$ export MACOSX_DEPLOYMENT_TARGET='10.5'
+$ export SDKROOT='/Developer/SDKs/MacOSX10.5.sdk'
+$ export ARCHFLAGS='-arch i386 -arch x86_64 -arch ppc'
+
+This is probably because mpicc is dumber than gcc!  Make sure that there is no 'build' directory prior to compilation.  Finally, run:
+
+$ python2.7 setup.py install
+
+
+
+# wxPython 2.8.
+
+Download and unpack the latest source release.  Create a build directory inside the unpacked sources and configure with:
+
+$ mkdir bld
+$ cd bld
+$ export arch_flags="-arch ppc -arch i386"
+$ ../configure --prefix=$HOME \
+             --with-mac \
+             --with-opengl \
+             --enable-debug \
+             --enable-debug_gdb \
+             --enable-geometry \
+             --enable-graphics_ctx \
+             --enable-sound --with-sdl \
+             --enable-mediactrl \
+             --enable-display \
+             --enable-monolithic \
+             --enable-unicode \
+             --with-libjpeg=builtin \
+             --with-libpng=builtin \
+             --with-libtiff=builtin \
+             --with-zlib=builtin \
+             --enable-universalsdk=/Developer/SDKs/MacOSX10.5.sdk \
+             --enable-framework=$HOME/Library/Frameworks \
+             CFLAGS='$arch_flags' \
+             CXXFLAGS='$arch_flags' \
+             CPPFLAGS='$arch_flags' \
+             LDFLAGS='$arch_flags' \
+             OBJCFLAGS='$arch_flags' \
+             OBJCXXFLAGS='$arch_flags'
+
+Create an executable file in the 'bld' directory called '.make'.  Add the following text to the file:
+
+make $* \
+    && make -C contrib/src/gizmos $* \
+    && make -C contrib/src/stc $*
+
+
+
+# wxPython 2.9.
+
+Download and unpack the latest source release.  Add the line:
+
+cross_compiling=yes
+
+to the 'configure' script at about line 1497.
+
+In the base directory, type:
+
+$ cd wxPython
+$ python2.7 build-wxpython.py --build_dir=../bld --osx_cocoa --mac-universal-binary --prefix=$HOME --unicode --install
