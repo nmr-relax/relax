@@ -152,8 +152,12 @@ class Mol_res_spin_tree(wx.Window):
         # The python data.
         self.info = self.tree.GetItemPyData(item)
 
+        # Bring up the default menu.
+        if self.info == None:
+            self.menu_default()
+
         # Bring up the root menu.
-        if self.info == 'root':
+        elif self.info == 'root':
             self.menu_root()
 
         # Bring up the molecule menu.
@@ -353,6 +357,27 @@ class Mol_res_spin_tree(wx.Window):
 
         # Return the associated python data.
         return self.tree.GetItemPyData(item)
+
+
+    def menu_default(self):
+        """The right click root menu."""
+
+        # The menu.
+        menu = wx.Menu()
+
+        # The load spins entry.
+        item = build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="Load spins", icon=paths.icon_16x16.spin)
+        menu.AppendItem(item)
+        if status.exec_lock.locked():
+            item.Enable(False)
+
+        # The menu actions.
+        self.Bind(wx.EVT_MENU, self.gui.spin_viewer.load_spins_wizard, id=self.MENU_ROOT_LOAD_SPINS)
+
+        # Show the menu.
+        if status.show_gui:
+            self.PopupMenu(menu)
+            menu.Destroy()
 
 
     def menu_molecule(self):
