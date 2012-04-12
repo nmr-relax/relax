@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2007-2011 Edward d'Auvergne                             #
+# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -1141,20 +1141,25 @@ def replicated(spectrum_ids=None):
     if not hasattr(cdp, 'replicates'):
         cdp.replicates = []
 
-    # Check if the spectrum id is already in the list.
+    # Check if the spectrum IDs are already in the list.
+    found = False
     for i in xrange(len(cdp.replicates)):
-        found = False
+        # Loop over all elements of the first.
         for j in xrange(len(spectrum_ids)):
             if spectrum_ids[j] in cdp.replicates[i]:
                 found = True
-                spectrum_ids.pop(j)
 
-        # Add the remaining replicates to the list and quit this function.
+        # One of the spectrum IDs already have a replicate specified.
         if found:
-            cdp.replicates[i] = cdp.replicates[i] + spectrum_ids
+            # Add the remaining replicates to the list and quit this function.
+            for j in xrange(len(spectrum_ids)):
+                if spectrum_ids[j] not in cdp.replicates[i]:
+                    cdp.replicates[i].append(spectrum_ids[j])
+
+            # Nothing more to do.
             return
 
-    # Set the replicates.
+    # A new set of replicates.
     cdp.replicates.append(spectrum_ids)
 
 
