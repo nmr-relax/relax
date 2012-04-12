@@ -1039,7 +1039,7 @@ class Wiz_window(wx.Dialog):
     TEXT_APPLY = " Apply"
     TEXT_BACK = " Back"
     TEXT_CANCEL = " Cancel"
-    TEXT_FINISH = " Apply"
+    TEXT_FINISH = " Finish"
     TEXT_NEXT = " Next"
     TEXT_OK = " OK"
     TEXT_SKIP = " Skip"
