@@ -14,6 +14,8 @@ This will put the Python installation into ~/Library/Frameworks/Python.framework
 PATH=$PATH:$HOME/bin
 export PATH
 
+Check the Python Framework 3-way architecture using the scripts/framework_bin_test script.  The Tk module might fail as the 10.5 Mac SDK could be only i386 and ppc build.  Then a custom Tcl/Tk build will be required (e.g. at http://cran.r-project.org/bin/macosx/tools/) and the tkinter module build by hand, changing the -isysroot flag to / at the last step.
+
 
 
 # Numpy.
@@ -57,7 +59,7 @@ Download and unpack the latest source release.  Create a build directory inside 
 
 $ mkdir bld
 $ cd bld
-$ export arch_flags="-arch ppc -arch i386"
+#$ export arch_flags="-arch i386 -arch ppc -arch x86_64"
 $ ../configure --prefix=$HOME \
              --with-mac \
              --with-opengl \
@@ -70,18 +72,19 @@ $ ../configure --prefix=$HOME \
              --enable-display \
              --enable-monolithic \
              --enable-unicode \
+             --enable-universal_binary \
              --with-libjpeg=builtin \
              --with-libpng=builtin \
              --with-libtiff=builtin \
              --with-zlib=builtin \
-             --enable-universalsdk=/Developer/SDKs/MacOSX10.5.sdk \
-             --enable-framework=$HOME/Library/Frameworks \
-             CFLAGS='$arch_flags' \
-             CXXFLAGS='$arch_flags' \
-             CPPFLAGS='$arch_flags' \
-             LDFLAGS='$arch_flags' \
-             OBJCFLAGS='$arch_flags' \
-             OBJCXXFLAGS='$arch_flags'
+             --with-macosx-sdk=/Developer/SDKs/MacOSX10.5.sdk \
+             #--enable-framework=$HOME/Library/Frameworks \
+             #CFLAGS='$arch_flags' \
+             #CXXFLAGS='$arch_flags' \
+             #CPPFLAGS='$arch_flags' \
+             #LDFLAGS='$arch_flags' \
+             #OBJCFLAGS='$arch_flags' \
+             #OBJCXXFLAGS='$arch_flags'
 
 Create an executable file in the 'bld' directory called '.make'.  Add the following text to the file:
 
