@@ -82,6 +82,23 @@ class Main(wx.Frame):
     def __init__(self, parent=None, id=-1, title="", script=None):
         """Initialise the main relax GUI frame."""
 
+        # Store the wxPython info for os/machine/version specific hacks.
+        status.wx_info = {}
+        status.wx_info["version"] = split(wx.__version__, '.')
+        status.wx_info["minor"] = "%s.%s" % (status.wx_info["version"][0], status.wx_info["version"][1])
+        status.wx_info["os"] = sys.platform
+        status.wx_info["build"] = None
+        if search('gtk2', wx.version()):
+            status.wx_info["build"] = 'gtk'
+        elif search('cocoa', wx.version()):
+            status.wx_info["build"] = 'cocoa'
+        elif search('mac-unicode', wx.version()):
+            status.wx_info["build"] = 'carbon'
+        status.wx_info["full"] = None
+        if status.wx_info["build"]:
+            status.wx_info["full"] = "%s-%s" % (status.wx_info["os"], status.wx_info["build"])
+
+
         # The main window style.
         style = wx.DEFAULT_FRAME_STYLE
         if not status.debug:
@@ -102,7 +119,7 @@ class Main(wx.Frame):
         self.SetIcons(relax_icons)
 
         # Set up the Mac OS X task bar icon.
-        if 'darwin' in sys.platform and not search('gtk2', wx.version()):
+        if status.wx_info["os"] == 'darwin' and status.wx_info["build"] != 'gtk':
             self.taskbar_icon = Relax_task_bar_icon(self)
 
         # Initialise some variables for the GUI.
