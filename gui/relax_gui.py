@@ -101,14 +101,14 @@ class Main(wx.Frame):
 
         # The main window style.
         style = wx.DEFAULT_FRAME_STYLE
-        if not status.debug:
+        if not status.debug and status.wx_info["os"] != 'darwin':
             style = style | wx.MAXIMIZE
 
         # Execute the base class __init__ method.
         super(Main, self).__init__(parent=parent, id=id, title=title, style=style)
 
         # Force the main window to start maximised (needed for MS Windows).
-        if not status.debug:
+        if not status.debug and status.wx_info["os"] != 'darwin':
             self.Maximize()
 
         # Set up some standard interface-wide fonts.
