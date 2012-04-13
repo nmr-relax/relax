@@ -119,14 +119,15 @@ This appears to be an OpenMPI problem with late 2.6 Linux kernels.
 """
 
 
-__all__ = ['api',
-           'commands',
-           'memo',
+__all__ = ['memo',
            'misc',
            'mpi4py_processor',
            'multi_processor_base',
-           'processor_io',
            'processor',
+           'processor_io',
+           'result_commands',
+           'result_queue',
+           'slave_commands',
            'uni_processor']
 
 # Python module imports.
