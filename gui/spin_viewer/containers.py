@@ -248,7 +248,7 @@ class Molecule(Container_base):
         text_sizer.AddSpacer(30)
 
         # The info grid.
-        grid_sizer = wx.FlexGridSizer(1, 2, 5, 50)
+        grid_sizer = wx.FlexGridSizer(2, 2, 5, 50)
         grid_sizer.Add(self.create_head_text("Molecule:"), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_head_text(self.mol_name), 0, wx.ADJUST_MINSIZE, 0)
         grid_sizer.Add(self.create_head_text("Molecule ID string:"), 0, wx.ADJUST_MINSIZE, 0)
