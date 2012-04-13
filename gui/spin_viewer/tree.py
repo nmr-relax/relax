@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -149,8 +149,11 @@ class Mol_res_spin_tree(wx.Window):
         # Find the item clicked on.
         item, flags = self.tree.HitTest(pos)
 
-        # The python data.
-        self.info = self.tree.GetItemPyData(item)
+        # The python data (with catch for wxPython 2.9 behaviour).
+        if not item.IsOk():
+            self.info = None
+        else:
+            self.info = self.tree.GetItemPyData(item)
 
         # Bring up the default menu.
         if self.info == None:
