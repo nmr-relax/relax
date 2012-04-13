@@ -29,6 +29,7 @@ import os
 from os import F_OK, access, getcwd, mkdir, sep
 import platform
 from re import search
+from string import split
 import sys
 from textwrap import wrap
 from thread import start_new_thread
