@@ -53,11 +53,13 @@ class Spin_view_window(wx.Frame):
         self.gui = kwds.pop('parent')
 
         # Create GUI elements
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE | wx.MAXIMIZE
+        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        if not status.debug and status.wx_info["os"] != 'darwin':
+            kwds["style"] = kwds["style"] | wx.MAXIMIZE
         wx.Frame.__init__(self, *args, **kwds)
 
         # Force the main window to start maximised (needed for MS Windows).
-        if not status.debug:
+        if not status.debug and status.wx_info["os"] != 'darwin':
             self.Maximize()
 
         # Set up the window icon.
