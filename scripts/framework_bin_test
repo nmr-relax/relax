@@ -128,7 +128,7 @@ for (dirpath, dirnames, filenames) in walk(cwd):
                 full_type = '%s lib [i386, ppc]' % file_type
             elif arch == ['Mach-O object i386', 'Mach-O object ppc']:
                 part_type = '%s [i386, ppc]' % file_type
-                full_type = '%s obj [i386, ppc4]' % file_type
+                full_type = '%s obj [i386, ppc]' % file_type
             else:
                 full_type = '%s %s' % (file_type, arch)
                 part_type = full_type
