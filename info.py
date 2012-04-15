@@ -28,16 +28,17 @@ import ctypes
 if hasattr(ctypes, 'windll'):
     import ctypes.wintypes
 import numpy
-from os import environ, popen3
+from os import environ, popen3, waitpid
 import platform
 from string import split
+from subprocess import PIPE, Popen
 import sys
 from textwrap import wrap
 
 # relax module imports.
 import dep_check
 from status import Status; status = Status()
-from version import version
+from version import version, version_full
 
 
 class Info_box(object):
@@ -141,6 +142,79 @@ class Info_box(object):
         return string
 
 
+    def file_type(self, path):
+        """Return a string representation of the file type.
+
+        @param path:    The full path of the file to return information about.
+        @type path:     str
+        @return:        The single line file type information string.
+        @rtype:         str
+        """
+
+        # The command.
+        cmd = 'file -b %s' % path
+
+        # Execute.
+        pipe = Popen(cmd, shell=True, stdout=PIPE, close_fds=False)
+        waitpid(pipe.pid, 0)
+
+        # The STDOUT data.
+        data = pipe.stdout.readlines()
+
+        # Mac OS X 3-way binary.
+        if data[0][:-1] == 'Mach-O universal binary with 3 architectures':
+            # Arch.
+            arch = [None, None, None]
+            for i in range(3):
+                row = split(data[i+1], '\t')
+                arch[i] = row[1][:-1]
+            arch.sort()
+
+            # The full file type print out.
+            if arch == ['Mach-O 64-bit executable x86_64', 'Mach-O executable i386', 'Mach-O executable ppc']:
+                file_type = '3-way exec (i386, ppc, x86_64)'
+            elif arch == ['Mach-O 64-bit bundle x86_64', 'Mach-O bundle i386', 'Mach-O bundle ppc']:
+                file_type = '3-way bundle (i386, ppc, x86_64)'
+            elif arch == ['Mach-O 64-bit dynamically linked shared library x86_64', 'Mach-O dynamically linked shared library i386', 'Mach-O dynamically linked shared library ppc']:
+                file_type = '3-way lib (i386, ppc, x86_64)'
+            elif arch == ['Mach-O 64-bit object x86_64', 'Mach-O object i386', 'Mach-O object ppc']:
+                file_type = '3-way obj (i386, ppc, x86_64)'
+            else:
+                file_type = '3-way %s' % arch
+
+        # Mac OS X 2-way binary.
+        elif data[0][:-1] == 'Mach-O universal binary with 2 architectures':
+            # Arch.
+            arch = [None, None]
+            for i in range(2):
+                row = split(data[i+1], '\t')
+                arch[i] = row[1][:-1]
+            arch.sort()
+
+            # The full file type print out.
+            if arch == ['Mach-O executable i386', 'Mach-O executable ppc']:
+                file_type = '2-way exec (i386, ppc)'
+            elif arch == ['Mach-O bundle i386', 'Mach-O bundle ppc']:
+                file_type = '2-way bundle (i386, ppc)'
+            elif arch == ['Mach-O dynamically linked shared library i386', 'Mach-O dynamically linked shared library ppc']:
+                file_type = '2-way lib (i386, ppc)'
+            elif arch == ['Mach-O object i386', 'Mach-O object ppc']:
+                file_type = '2-way obj (i386, ppc)'
+            else:
+                file_type = '2-way %s' % arch
+
+        # Default to all info.
+        else:
+            file_type = data[0][:-1]
+            for i in range(1, len(data)):
+                row = split(data[i], '\t')
+                arch[i] = row[1][:-1]
+                file_type += " %s" % arch
+
+        # Return the string.
+        return file_type
+
+
     def format_max_width(self, data):
         """Return the text formatting width for the given data.
 
@@ -214,11 +288,9 @@ class Info_box(object):
         return intro_string
 
 
-    def package_info(self, format="    %-25s%s\n"):
+    def package_info(self):
         """Return a string for printing to STDOUT with info from the Python packages used by relax.
 
-        @keyword format:    The formatting string.
-        @type format:       str
         @return:            The info string.
         @rtype:             str
         """
@@ -231,10 +303,10 @@ class Info_box(object):
         path = []
 
         # Intro.
-        text = text + ("\nPython packages (most are optional):\n\n")
+        text = text + ("\nPython packages and modules (most are optional):\n\n")
 
         # Header.
-        package.append("Package")
+        package.append("Name")
         status.append("Installed")
         version.append("Version")
         path.append("Path")
@@ -428,6 +500,57 @@ class Info_box(object):
         return text
 
 
+    def relax_module_info(self):
+        """Return a string with info about the relax modules.
+
+        @return:            The info string.
+        @rtype:             str
+        """
+
+        # Init.
+        text = ''
+        name = []
+        status = []
+        file_type = []
+        path = []
+
+        # Intro.
+        text = text + ("\nrelax C modules:\n\n")
+
+        # Header.
+        name.append("Module")
+        status.append("Compiled")
+        file_type.append("File type")
+        path.append("Path")
+
+        # relaxation curve-fitting.
+        name.append('maths_fns.relax_fit')
+        status.append(dep_check.C_module_exp_fn)
+        if hasattr(dep_check, 'relax_fit'):
+            file_type.append(self.file_type(dep_check.relax_fit.__file__))
+            path.append(dep_check.relax_fit.__file__)
+        else:
+            file_type.append('')
+            path.append('')
+
+        # Format the data.
+        fmt_name = "%%-%ss" % (self.format_max_width(name) + 2)
+        fmt_status = "%%-%ss" % (self.format_max_width(status) + 2)
+        fmt_file_type = "%%-%ss" % (self.format_max_width(file_type) + 2)
+        fmt_path = "%%-%ss" % (self.format_max_width(path) + 2)
+
+        # Add the text.
+        for i in range(len(name)):
+            text += fmt_name % name[i]
+            text += fmt_status % status[i]
+            text += fmt_file_type % file_type[i]
+            text += fmt_path % path[i]
+            text += '\n'
+        
+        # Return the info string.
+        return text
+
+
     def sys_info(self):
         """Return a string for printing to STDOUT with info about the current relax instance.
 
@@ -436,7 +559,7 @@ class Info_box(object):
         """
 
         # Init.
-        text = self.intro_text()
+        text = ''
 
         # Formatting string.
         format  = "    %-25s%s\n"
@@ -499,11 +622,16 @@ class Info_box(object):
         text = text + (format % ("Python module path: ", sys.path))
 
         # Python packages.
-        text = text + self.package_info(format=format)
+        text = text + self.package_info()
 
-        # C modules.
-        text = text + "\nCompiled relax C modules:\n"
-        text = text + format % ("Relaxation curve fitting: ", dep_check.C_module_exp_fn)
+        # relax info:
+        text = text + "\nrelax information:\n"
+        text = text + (format % ("Version: ", version_full()))
+        if hasattr(self, "multi_processor_string"):
+            text += format % ("Processor fabric: ", self.multi_processor_string)
+
+        # relax modules.
+        text = text + self.relax_module_info()
 
         # End with an empty newline.
         text = text + ("\n")
