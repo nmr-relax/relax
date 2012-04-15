@@ -401,6 +401,7 @@ class Uf_menus:
         self.add_uf(parent_id=id, name="structure.get_pos", text="&get_pos", icon=None, fn=user_functions.structure.get_pos)
         self.add_uf(parent_id=id, name="structure.load_spins", text="&load_spins", icon=paths.icon_16x16.spin, fn=user_functions.structure.load_spins)
         self.add_uf(parent_id=id, name="structure.read_pdb", text="&read_pdb", icon=paths.icon_16x16.open, fn=user_functions.structure.read_pdb)
+        self.add_uf(parent_id=id, name="structure.read_xyz", text="&read_xyz", icon=paths.icon_16x16.open, fn=user_functions.structure.read_xyz)
         self.add_uf(parent_id=id, name="structure.vectors", text="&vectors", icon=None, fn=user_functions.structure.vectors)
         self.add_uf(parent_id=id, name="structure.write_pdb", text="&write_pdb", icon=paths.icon_16x16.save, fn=user_functions.structure.write_pdb)
 
