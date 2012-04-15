@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -242,6 +242,20 @@ class Base_struct_API:
 
         # Raise the error.
         raise RelaxImplementError
+
+
+    def empty(self):
+        """Report if the structural data structure is empty or not.
+
+        @return:    True if empty, False otherwise.
+        @rtype:     bool
+        """
+
+        # Check the ModelList structure.
+        if len(self.structural_data) == 0:
+            return True
+        else:
+            return False
 
 
     def from_xml(self, str_node, dir=None, id=None):
