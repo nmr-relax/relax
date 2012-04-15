@@ -164,8 +164,16 @@ class Relax:
 
         # Show the relax info and exit.
         if self.mode == 'info':
+            # Initialise the information box.
             info = Info_box()
+
+            # Print the program intro.
+            print(info.intro_text())
+
+            # Print the system info.
             print(info.sys_info())
+
+            # Stop execution.
             return
 
         # Logging.
