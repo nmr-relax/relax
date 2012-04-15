@@ -636,6 +636,10 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         if event.ControlDown() and event.GetKeyCode() == 70:
             self.find_open(event)
 
+        # Select all (Ctrl-A). 
+        if event.ControlDown() and event.GetKeyCode() == 65:
+            event.Skip()
+
         # Find next (Ctrl-G on Mac OS X, F3 on all others).
         if 'darwin' in sys.platform and event.ControlDown() and event.GetKeyCode() == 71:
             self.find_next(event)
