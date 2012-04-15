@@ -179,6 +179,7 @@ except ImportError, message:
 
 # Relaxation curve fitting.
 try:
+    from maths_fns import relax_fit
     from maths_fns.relax_fit import setup
     del setup
     C_module_exp_fn = True
