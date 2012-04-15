@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -40,6 +40,7 @@ from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import add_border, str_to_gui
 from gui.paths import IMAGE_PATH, icon_16x16
+from info import Info_box
 
 
 class Controller(wx.Frame):
@@ -105,6 +106,10 @@ class Controller(wx.Frame):
         # Create a timer for updating the gauges.
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.handler_timer, self.timer)
+
+        # The relax intro print out, to mimic the prompt/script interface.
+        info = Info_box()
+        print(info.intro_text())
 
         # Register functions with the observer objects.
         status.observers.pipe_alteration.register('controller', self.update_controller)
