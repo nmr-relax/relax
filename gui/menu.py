@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -54,6 +54,7 @@ class Menu:
     MENU_VIEW_PROMPT = wx.NewId()
     MENU_TOOLS_FORMAT = wx.NewId()
     MENU_TOOLS_TEST_SUITE = wx.NewId()
+    MENU_TOOLS_SYS_INFO = wx.NewId()
     MENU_HELP_MANUAL = wx.NewId()
     MENU_HELP_MAIL = wx.NewId()
     MENU_HELP_REFS = wx.NewId()
@@ -114,11 +115,13 @@ class Menu:
         # The 'Tools' menu entries.
         menu = wx.Menu()
         menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_FORMAT, text="&Free file format settings", icon=paths.icon_16x16.document_properties))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_SYS_INFO, text="System &information", icon=paths.icon_16x16.help_about))
         menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_TEST_SUITE, text="&Test suite", icon=paths.icon_16x16.uf_script))
         self.menubar.Append(menu, "&Tools")
 
         # The 'Tools' menu actions.
         self.gui.Bind(wx.EVT_MENU, self.gui.free_file_format_settings, id=self.MENU_TOOLS_FORMAT)
+        self.gui.Bind(wx.EVT_MENU, self._sys_info, id=self.MENU_TOOLS_SYS_INFO)
         self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite, id=self.MENU_TOOLS_TEST_SUITE)
 
         # The 'Help' menu entries.
@@ -199,6 +202,20 @@ class Menu:
 
         # Show the relax controller.
         self.gui.show_controller(event)
+
+
+    def _sys_info(self, event):
+        """Show the full system information using the sys_info user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The user functions.
+        user_functions = User_functions(self.gui)
+
+        # Launch the user functions.
+        user_functions.sys_info.sys_info()
 
 
     def _user_functions(self):
