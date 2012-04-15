@@ -744,6 +744,10 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             if status.show_gui:
                 self.find_dlg.Show(True)
 
+        # Otherwise show it.
+        else:
+            self.find_dlg.Show()
+
 
     def find_next(self, event):
         """Find the next instance of the text.
