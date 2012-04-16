@@ -505,7 +505,7 @@ class About_relax(About_base):
 
     # Dimensions.
     dim_x = 450
-    dim_y = 600
+    dim_y = 700
 
     # Spacer size (px).
     border = 10
