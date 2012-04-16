@@ -480,7 +480,7 @@ class Analysis_controller:
 
         # Switch to the major data pipe of that page if not the current one.
         if self._switch_flag and pipes.cdp_name() != ds.relax_gui.analyses[self._current].pipe_name:
-            self.gui.interpreter.queue('pipe.switch', ds.relax_gui.analyses[self._current].pipe_name)
+            self.gui.interpreter.apply('pipe.switch', ds.relax_gui.analyses[self._current].pipe_name)
 
         # Normal operation.
         event.Skip()
