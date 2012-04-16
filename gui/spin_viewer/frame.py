@@ -459,8 +459,26 @@ class Load_method_page(Wiz_page):
         sizer_radio = wx.BoxSizer(wx.VERTICAL)
         sizer2.Add(sizer_radio, 1, wx.ALL|wx.EXPAND, 0)
 
+        # Pre-loaded structure exists.
+        self.preload_flag = False
+        if hasattr(cdp, 'structure') and not cdp.structure.empty():
+            self.preload_flag = True
+
+        # The pre-load radio button.
+        if self.preload_flag:
+            # The button.
+            self.radio_preload = wx.RadioButton(self, -1, "From a pre-loaded structure.", style=wx.RB_GROUP)
+            sizer_radio.Add(self.radio_preload, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
+            # Spacing.
+            sizer_radio.AddSpacer(20)
+
         # The sequence radio button.
-        self.radio_seq = wx.RadioButton(self, -1, "From a file containing sequence data.", style=wx.RB_GROUP)
+        if self.preload_flag:
+            style = 0
+        else:
+            style = wx.RB_GROUP
+        self.radio_seq = wx.RadioButton(self, -1, "From a file containing sequence data.", style=style)
         sizer_radio.Add(self.radio_seq, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacing.
@@ -477,20 +495,6 @@ class Load_method_page(Wiz_page):
         self.radio_new_xyz = wx.RadioButton(self, -1, "From a new XYZ structure file.")
         sizer_radio.Add(self.radio_new_xyz, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
-        # Pre-loaded structure exists.
-        self.preload_flag = False
-        if hasattr(cdp, 'structure') and not cdp.structure.empty():
-            self.preload_flag = True
-
-        # The pre-load radio button.
-        if self.preload_flag:
-            # Spacing.
-            sizer_radio.AddSpacer(20)
-
-            # The button.
-            self.radio_preload = wx.RadioButton(self, -1, "From an already loaded structure file(s).")
-            sizer_radio.Add(self.radio_preload, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
-
         # Bind the buttons.
         self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_seq)
         self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_new_pdb)
@@ -505,7 +509,10 @@ class Load_method_page(Wiz_page):
         sizer.AddStretchSpacer()
 
         # Set the default selection.
-        self.selection = 'sequence'
+        if self.preload_flag:
+            self.selection = 'preload'
+        else:
+            self.selection = 'sequence'
 
 
     def _on_select(self, event):
