@@ -487,7 +487,7 @@ class Spectral_error_type_page(UF_page):
         sizer2.Add(sizer_radio, 1, wx.ALL|wx.EXPAND, 0)
 
         # The RMSD radio button.
-        self.radio_rmsd = wx.RadioButton(self, -1, "Baseplane RMSD.")
+        self.radio_rmsd = wx.RadioButton(self, -1, "Baseplane RMSD.", style=wx.RB_GROUP)
         sizer_radio.Add(self.radio_rmsd, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacing.
