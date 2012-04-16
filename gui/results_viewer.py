@@ -87,7 +87,7 @@ class Results_viewer(wx.Frame):
         box_centre.AddSpacer(self.border)
 
         # Add the list of results files.
-        self.add_files(box_centre, fn=None)
+        self.add_files(box_centre)
 
         # Spacer.
         box_centre.AddSpacer(self.border)
@@ -151,13 +151,11 @@ class Results_viewer(wx.Frame):
         wx.CallAfter(self.button_open.Enable, enable)
 
 
-    def add_files(self, box, fn=None):
+    def add_files(self, box):
         """Create the list of results files.
 
         @param box:     The box sizer to pack the box into.
         @type box:      wx.BoxSizer instance
-        @keyword fn:    The function to bind double click events to.
-        @type fn:       method
         @return:        The list box element.
         @rtype:         wx.ListBox element
         """
@@ -180,8 +178,7 @@ class Results_viewer(wx.Frame):
 
         # Bind events.
         self.file_list.Bind(wx.EVT_SIZE, self.resize)
-        if fn:
-            self.Bind(wx.EVT_LISTBOX_DCLICK, fn, self.file_list)
+        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.open_result_file, self.file_list)
 
 
     def build_pipe_sel(self, box):
