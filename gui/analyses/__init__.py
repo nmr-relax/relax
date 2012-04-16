@@ -191,13 +191,6 @@ class Analysis_controller:
         if hasattr(self._analyses[index], 'delete'):
             self._analyses[index].delete()
 
-        # Delete all data pipes associated with the analysis.
-        if pipes.has_pipe(ds.relax_gui.analyses[index].pipe_name):
-            pipes.delete(ds.relax_gui.analyses[index].pipe_name)
-
-        # Delete the data store object.
-        ds.relax_gui.analyses.pop(index)
-
         # Delete the tab.
         self.notebook.DeletePage(index)
 
@@ -214,6 +207,16 @@ class Analysis_controller:
 
         # Notify the observers of the change.
         status.observers.gui_analysis.notify()
+
+        # Store the pipe name.
+        pipe_name = ds.relax_gui.analyses[index].pipe_name
+
+        # Delete the data store object.
+        ds.relax_gui.analyses.pop(index)
+
+        # Delete all data pipes associated with the analysis.
+        if pipes.has_pipe(pipe_name):
+            pipes.delete(pipe_name)
 
 
     def get_page_from_name(self, name):
