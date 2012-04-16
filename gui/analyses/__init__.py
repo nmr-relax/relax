@@ -287,6 +287,10 @@ class Analysis_controller:
         @type event:    wx event
         """
 
+        # Notebook not created yet, so skip.
+        if not hasattr(self, 'notebook'):
+            return
+
         # Execution lock.
         if status.exec_lock.locked():
             return
@@ -309,6 +313,10 @@ class Analysis_controller:
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Notebook not created yet, so skip.
+        if not hasattr(self, 'notebook'):
+            return
 
         # Execution lock.
         if status.exec_lock.locked():
