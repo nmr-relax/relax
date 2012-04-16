@@ -696,6 +696,11 @@ class Main(wx.Frame):
         try:
             wx.BeginBusyCursor()
             state.save_state(self.save_file, verbosity=0, force=True)
+
+            # Sleep a little so the user sees the busy cursor and knows that a save has occurred!
+            sleep(1)
+
+        # Turn off the user feedback.
         finally:
             if wx.IsBusy():
                 wx.EndBusyCursor()
