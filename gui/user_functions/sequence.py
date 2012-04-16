@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -133,7 +133,7 @@ class Read_page(UF_page):
         """
 
         # Add a file selection.
-        self.file = self.file_selection(sizer, "The sequence file:", message="Sequence file selection", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'])
+        self.file = self.file_selection(sizer, "The sequence file:", message="Sequence file selection", style=wx.FD_OPEN, tooltip=self.uf._doc_args_dict['file'], preview=True)
 
         # The spin ID restriction.
         self.spin_id = self.spin_id_element(sizer, "Restrict data loading to certain spins:")

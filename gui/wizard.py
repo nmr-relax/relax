@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,7 +38,7 @@ from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.icons import relax_icons
-from gui.misc import add_border, bool_to_gui, gui_to_int, int_to_gui, protected_exec, str_to_gui
+from gui.misc import add_border, bool_to_gui, gui_to_int, gui_to_str, int_to_gui, open_file, protected_exec, str_to_gui
 from gui.message import Question
 from gui import paths
 
@@ -521,7 +521,7 @@ class Wiz_page(wx.Panel):
         return combo
 
 
-    def file_selection(self, sizer, desc, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None):
+    def file_selection(self, sizer, desc, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, preview=False):
         """Build the file selection element.
 
         @param sizer:       The sizer to put the input field into.
@@ -542,6 +542,8 @@ class Wiz_page(wx.Panel):
         @type padding:      int
         @keyword spacer:    The amount of spacing to add below the field in pixels.  If None, a stretchable spacer will be used.
         @type spacer:       None or int
+        @keyword preview:   A flag which if true will allow the file to be previewed.
+        @type preview:      bool
         @return:            The file selection GUI element.
         @rtype:             wx.TextCtrl
         """
@@ -566,7 +568,10 @@ class Wiz_page(wx.Panel):
         sub_sizer.AddSpacer((divider - x, 0))
 
         # The input field.
-        field = wx.TextCtrl(self, -1, '')
+        if not hasattr(self, 'file_selection_field'):
+            self.file_selection_field = []
+        self.file_selection_field.append(wx.TextCtrl(self, -1, ''))
+        field = self.file_selection_field[-1]
         field.SetMinSize((-1, self.height_element))
         field.SetFont(font.normal)
         sub_sizer.Add(field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
@@ -582,6 +587,22 @@ class Wiz_page(wx.Panel):
         button.SetMinSize((self.height_element, self.height_element))
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         self.Bind(wx.EVT_BUTTON, obj.select_event, button)
+
+        # File preview.
+        if not hasattr(self, 'file_selection_preview_button'):
+            self.file_selection_preview_button = []
+        if not preview:
+            self.file_selection_preview_button.append(None)
+        else:
+            # A little spacing.
+            sub_sizer.AddSpacer(5)
+
+            # The preview button.
+            self.file_selection_preview_button.append(wx.BitmapButton(self, -1, wx.Bitmap(paths.icon_16x16.document_preview, wx.BITMAP_TYPE_ANY)))
+            button = self.file_selection_preview_button[-1]
+            button.SetMinSize((self.height_element, self.height_element))
+            sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+            self.Bind(wx.EVT_BUTTON, self.preview_file, button)
 
         # Right padding.
         sub_sizer.AddSpacer(padding)
@@ -818,6 +839,36 @@ class Wiz_page(wx.Panel):
 
         This method is called when moving to the next page of the wizard.
         """
+
+
+    def preview_file(self, event):
+        """Preview a file.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Find the correct button.
+        button = event.GetEventObject()
+        index = None
+        for i in range(len(self.file_selection_preview_button)):
+            if button == self.file_selection_preview_button[i]:
+                index = i
+                break
+
+        # No match.
+        if index == None:
+            return
+
+        # The file name.
+        file = gui_to_str(self.file_selection_field[index].GetValue())
+
+        # No file, so do nothing.
+        if file == None:
+            return
+
+        # Open the file as text.
+        open_file(file, force_text=True)
 
 
     def spin_control(self, sizer, desc, default='', min=0, max=100, tooltip=None, divider=None, padding=0, spacer=None):
