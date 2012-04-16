@@ -631,7 +631,7 @@ class Main(wx.Frame):
             msg = "Loading a saved relax state file will cause all unsaved data to be lost.  Are you sure you would to open a save file?"
 
             # The dialog.
-            if status.show_gui and Question(msg, default=True).ShowModal() == wx.ID_NO:
+            if status.show_gui and Question(msg, default=True, size=(400, 150)).ShowModal() == wx.ID_NO:
                 return
 
         # Open the dialog.
