@@ -608,6 +608,9 @@ class Analysis_controller:
         old_sizer = self.gui.GetSizer()
         old_sizer.DeleteWindows()
 
+        # Delete the notebook.
+        del self.notebook
+
         # Recreate the start screen.
         self.gui.add_start_screen()
 
