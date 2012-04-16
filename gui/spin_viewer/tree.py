@@ -243,8 +243,8 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Ask if this should be done.
-        msg = "Are you sure you would like to delete this molecule?  This operation cannot be undone."
-        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(350, 150)).ShowModal() == wx.ID_NO:
+        msg = "Are you sure you would like to delete this molecule?  This only affects the spin data, all structural data will remain.  This operation cannot be undone."
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(400, 170)).ShowModal() == wx.ID_NO:
             return
 
         # Delete the molecule.
@@ -262,8 +262,8 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Ask if this should be done.
-        msg = "Are you sure you would like to delete this residue?  This operation cannot be undone."
-        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(350, 150)).ShowModal() == wx.ID_NO:
+        msg = "Are you sure you would like to delete this residue?  This only affects the spin data, all structural data will remain.  This operation cannot be undone."
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(400, 170)).ShowModal() == wx.ID_NO:
             return
 
         # Delete the residue.
@@ -281,8 +281,8 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Ask if this should be done.
-        msg = "Are you sure you would like to delete this spin?  This operation cannot be undone."
-        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(350, 150)).ShowModal() == wx.ID_NO:
+        msg = "Are you sure you would like to delete this spin?  This only affects the spin data, all structural data will remain.  This operation cannot be undone."
+        if status.show_gui and Question(msg, parent=self.gui.spin_viewer, default=False, size=(400, 170)).ShowModal() == wx.ID_NO:
             return
 
         # Delete the spin.
