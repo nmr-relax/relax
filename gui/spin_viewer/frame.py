@@ -460,7 +460,7 @@ class Load_method_page(Wiz_page):
         sizer2.Add(sizer_radio, 1, wx.ALL|wx.EXPAND, 0)
 
         # The sequence radio button.
-        self.radio_seq = wx.RadioButton(self, -1, "From a file containing sequence data.")
+        self.radio_seq = wx.RadioButton(self, -1, "From a file containing sequence data.", style=wx.RB_GROUP)
         sizer_radio.Add(self.radio_seq, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacing.
