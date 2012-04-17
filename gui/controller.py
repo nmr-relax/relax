@@ -1056,6 +1056,16 @@ class Redirect_text(object):
         wx.CallAfter(self.control.write)
 
 
+    def isatty(self):
+        """Answer that this is not a TTY.
+
+        @return:    False, as this is not a TTY.
+        @rtype:     bool
+        """
+
+        return False
+
+
     def write(self, string):
         """Simulate the file object write method.
 

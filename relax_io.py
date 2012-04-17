@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -1010,6 +1010,17 @@ class SplitIO:
         # Call the streams' methods.
         self.stream1.flush()
         self.stream2.flush()
+
+
+    def isatty(self):
+        """Check that both streams are TTYs.
+
+        @return:    True, only if both streams are TTYs.
+        @rtype:     bool
+        """
+
+        # Check both streams.
+        return self.stream1.isatty() & self.stream2.isatty()
 
 
     def split(self, stream1, stream2):
