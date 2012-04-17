@@ -364,7 +364,6 @@ class Create_page(UF_page, Mol_res_spin):
 
         # The residue info.
         res_num, res_name = self._get_res_info()
-        print "%s, %s" % (`res_num`, `res_name`)
 
         # The spin number.
         spin_num = gui_to_int(self.spin_num.GetValue())
