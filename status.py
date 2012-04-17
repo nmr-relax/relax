@@ -441,13 +441,15 @@ class Observer(object):
         @type key:      str
         """
 
-        # Does not exist.
-        if key not in self._keys:
-            raise RelaxError("The key '%s' does not exist." % key)
-
         # Debugging.
         if self._status.debug:
             sys.stdout.write("debug> Observer: '%s' unregistering '%s'.\n" % (self._name, key))
+
+        # Does not exist, so return (allow multiple code paths to unregister methods).
+        if key not in self._keys:
+            if self._status.debug:
+                sys.stdout.write("debug> The key '%s' does not exist." % key)
+            return
 
         # Remove the method from the dictionary of callbacks.
         self._callback.pop(key)
