@@ -227,9 +227,9 @@ class Exec_info:
         self.ps3 = '\n%s' % self.ps1
 
         # Coloured text.
-        self.ps1_colour = "%s%s%s" % (ansi.relax_promt, self.ps1, ansi.end)
-        self.ps2_colour = "%s%s%s" % (ansi.relax_promt, self.ps2, ansi.end)
-        self.ps3_colour = "\n%s%s%s" % (ansi.relax_promt, self.ps1, ansi.end)
+        self.ps1_colour = "%s%s%s" % (ansi.relax_prompt, self.ps1, ansi.end)
+        self.ps2_colour = "%s%s%s" % (ansi.relax_prompt, self.ps2, ansi.end)
+        self.ps3_colour = "\n%s%s%s" % (ansi.relax_prompt, self.ps1, ansi.end)
 
 
 
