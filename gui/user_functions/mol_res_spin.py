@@ -87,7 +87,7 @@ class Mol_res_spin:
             res_num, res_name = split(res)
 
             # Convert.
-            if res_name == '':
+            if res_name in ['', 'None']:
                 res_name = None
             if res_num == '':
                 res_num = None
@@ -193,8 +193,14 @@ class Mol_res_spin:
         # Clear the text.
         self.res.SetValue(str_to_gui(''))
 
+        # The molecule ID.
+        mol = gui_to_str(self.mol.GetValue())
+        if mol:
+            mol_id = generate_spin_id(mol)
+        else:
+            mol_id = None
+
         # The list of residue names.
-        mol_id = generate_spin_id(str(self.mol.GetValue()))
         if cdp_name():
             for res in residue_loop(mol_id):
                 self.res.Append(str_to_gui("%s %s" % (res.num, res.name)))
