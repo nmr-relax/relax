@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,6 +24,7 @@
 """Package for the automatic and custom analysis GUI elements."""
 
 # Python module imports.
+import inspect
 import sys
 import wx
 from types import ListType
@@ -173,22 +174,24 @@ class Analysis_controller:
         status.observers.gui_analysis.notify()
 
 
-    def delete_analysis(self, index, debug=True):
+    def delete_analysis(self, index):
         """Delete the analysis tab and data store corresponding to the index.
 
-        The order of these operations is very important due to the notification of observer objects and the updates, synchronisations, etc. that follow.
+        The order of these operations is very important due to the notification of observer objects and the updates, synchronisations, etc. that follow.  If the program debugging mode is on, then print outs at each stage will occur to allow the following of the code and observer object notifications.
 
 
         @param index:   The index of the analysis to delete.
         @type index:    int
-        @keyword debug: The debugging flag which if True results in print outs at each stage to allow the following of the code and observer object notifications.
-        @type debug:    bool
         """
 
-        # Print out.
-        if debug:
+        # Debugging set up.
+        if status.debug:
+            fn_name = sys._getframe().f_code.co_name
+            mod_name = inspect.getmodule(inspect.stack()[1][0]).__name__
+            class_name = self.__class__.__name__
+            full_name = "%s.%s.%s" % (mod_name, class_name, fn_name)
             print("\n\n")
-            print("debug> Deleting the analysis at index %s." % index)
+            print("debug> %s:  Deleting the analysis at index %s." % (full_name, index))
 
         # Decrement the number of analyses.
         self._num_analyses -= 1
@@ -196,35 +199,35 @@ class Analysis_controller:
         # Shift the current page back one if necessary.
         if self._current > index:
             self._current -= 1
-            if debug:
-                print("debug> Switching the current analysis to index %s." % self._current)
+            if status.debug:
+                print("debug> %s:  Switching the current analysis to index %s." % (full_name, self._current))
 
         # Execute the analysis delete method, if it exists.
         if hasattr(self._analyses[index], 'delete'):
-            if debug:
-                print("debug> Executing the analysis specific delete() method.")
+            if status.debug:
+                print("debug> %s:  Executing the analysis specific delete() method." % full_name)
             self._analyses[index].delete()
 
         # Delete the tab.
-        if debug:
-            print("debug> Deleting the notebook page.")
+        if status.debug:
+            print("debug> %s:  Deleting the notebook page." % full_name)
         self.notebook.DeletePage(index)
 
         # Delete the tab object.
-        if debug:
-            print("debug> Deleting the analysis GUI object.")
+        if status.debug:
+            print("debug> %s:  Deleting the analysis GUI object." % full_name)
         self._analyses.pop(index)
 
         # The current page has been deleted, so switch one back (if possible).
         if index == self._current and self._current != 0:
-            if debug:
-                print("debug> Switching to page %s." % self._current-1)
+            if status.debug:
+                print("debug> %s:  Switching to page %s." % (full_name, self._current-1))
             self.switch_page(self._current-1)
 
         # No more analyses, so in the initial state.
         if self._num_analyses == 0:
-            if debug:
-                print("debug> Setting the initial state.")
+            if status.debug:
+                print("debug> %s:  Setting the initial state." % full_name)
             self.set_init_state()
 
         # Notify the observers of the change.
@@ -234,14 +237,14 @@ class Analysis_controller:
         pipe_name = ds.relax_gui.analyses[index].pipe_name
 
         # Delete the data store object.
-        if debug:
-            print("debug> Deleting the data store object.")
+        if status.debug:
+            print("debug> %s:  Deleting the data store object." % full_name)
         ds.relax_gui.analyses.pop(index)
 
         # Delete all data pipes associated with the analysis.
         if pipes.has_pipe(pipe_name):
-            if debug:
-                print("debug> Deleting the data pipe '%s'." % pipe_name)
+            if status.debug:
+                print("debug> %s:  Deleting the data pipe '%s'." % (full_name, pipe_name))
             pipes.delete(pipe_name)
 
 
