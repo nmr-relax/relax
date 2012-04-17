@@ -60,7 +60,12 @@ def format(message, category, filename, lineno, line=None):
 
     # Text colouring
     if sys.stderr.isatty():
-        message = "%s%s%s" % (ansi.relax_warning, message, ansi.end)
+        # Strip the last newline, if it exists.
+        if message[-1] == '\n':
+            message = message[:-1]
+
+        # Reformat.
+        message = "%s%s%s\n" % (ansi.relax_warning, message, ansi.end)
 
     # Return the warning message.
     return message

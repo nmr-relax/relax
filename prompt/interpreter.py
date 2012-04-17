@@ -491,12 +491,16 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         sys.stdout.write("script = " + repr(script_file) + "\n")
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         sys.stdout.write(file.read())
-        sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
+        sys.stdout.write("----------------------------------------------------------------------------------------------------")
 
         # End coloured text.
         if sys.stdout.isatty():
             sys.stdout.write(ansi.end)
 
+        # Terminating newline.
+        sys.stdout.write("\n")
+
+        # Close the script file handle.
         file.close()
 
     # The execution flag.
