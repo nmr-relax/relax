@@ -128,7 +128,7 @@ class Interpreter:
         self.__intro_string = info.intro_text()
 
         # Initialise the execution information container (info that can change during execution).
-        self._exec_info = Exec_info
+        self._exec_info = Exec_info()
 
         # The prompts (change the Python prompt, as well as the function print outs).
         sys.ps1 = self._exec_info.ps1
