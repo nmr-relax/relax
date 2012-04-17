@@ -162,15 +162,28 @@ class Analysis_controller:
     def delete_all(self):
         """Remove all analyses."""
 
+        # Debugging set up.
+        if status.debug:
+            fn_name = sys._getframe().f_code.co_name
+            mod_name = inspect.getmodule(inspect.stack()[1][0]).__name__
+            class_name = self.__class__.__name__
+            full_name = "%s.%s.%s" % (mod_name, class_name, fn_name)
+            print("\n\n")
+            print("debug> %s:  Deleting all analyses." % full_name)
+
         # Delete the current tabs.
         while self._num_analyses:
             # Flush all pending events (bug fix for MS Windows).
             wx.Yield()
 
             # Remove the last analysis, until there is nothing left.
+            if status.debug:
+                print("debug> %s:  Deleting the analysis at index %s." % (full_name, self._num_analyses-1))
             self.delete_analysis(self._num_analyses-1)
 
         # Notify the observers of the change.
+        if status.debug:
+            print("debug> %s:  All analyses now deleted." % full_name)
         status.observers.gui_analysis.notify()
 
 
