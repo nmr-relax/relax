@@ -407,6 +407,17 @@ class Base_analysis(wx.lib.scrolledpanel.ScrolledPanel):
         self.gui.show_tree(None)
 
 
+    def observer_register(self, remove=False):
+        """Register and unregister methods with the observer objects.
+
+        This is a dummy method.
+
+
+        @keyword remove:    If set to True, then the methods will be unregistered.
+        @type remove:       False
+        """
+
+
     def resize(self, event):
         """The spin editor GUI element.
 
