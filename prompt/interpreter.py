@@ -486,10 +486,20 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
                 sys.stdout.write("\n")
                 return
 
+        # Coloured text.
+        if sys.stdout.isatty():
+            sys.stdout.write("\033[32m")
+
+        # Print the script.
         sys.stdout.write("script = " + repr(script_file) + "\n")
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         sys.stdout.write(file.read())
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
+
+        # End coloured text.
+        if sys.stdout.isatty():
+            sys.stdout.write("\033[0m")
+
         file.close()
 
     # The execution flag.
