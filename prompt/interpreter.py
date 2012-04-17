@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -131,9 +131,14 @@ class Interpreter:
         self._exec_info = Exec_info()
 
         # The prompts (change the Python prompt, as well as the function print outs).
-        sys.ps1 = self._exec_info.ps1
-        sys.ps2 = self._exec_info.ps2
-        sys.ps3 = self._exec_info.ps3
+        if sys.stdout.isatty():
+            sys.ps1 = self._exec_info.ps1_colour
+            sys.ps2 = self._exec_info.ps2_colour
+            sys.ps3 = self._exec_info.ps3_colour
+        else:
+            sys.ps1 = self._exec_info.ps1
+            sys.ps2 = self._exec_info.ps2
+            sys.ps3 = self._exec_info.ps3
 
         # The function intro flag (store in the execution information container).
         self._exec_info.intro = False

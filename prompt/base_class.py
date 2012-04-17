@@ -226,10 +226,9 @@ class Exec_info:
         self.ps3 = '\n%s' % self.ps1
 
         # Coloured text.
-        if sys.stdout.isatty():
-            self.ps1 = "\033[94m%s\033[0m" % self.ps1
-            self.ps2 = "\033[94m%s\033[0m" % self.ps2
-            self.ps3 = "\n\033[94m%s\033[0m" % self.ps1
+        self.ps1_colour = "\033[94m%s\033[0m" % self.ps1
+        self.ps2_colour = "\033[94m%s\033[0m" % self.ps2
+        self.ps3_colour = "\n\033[94m%s\033[0m" % self.ps1
 
 
 
