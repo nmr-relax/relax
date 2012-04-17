@@ -52,8 +52,6 @@ import sys
 # relax modules.
 from info import Info_box
 import generic_fns
-if dep_check.wx_module:
-    import gui
 from multi import Application_callback, load_multiprocessor
 from prompt.gpl import gpl
 from prompt import interpreter
@@ -196,6 +194,9 @@ class Relax:
             if not dep_check.wx_module:
                 sys.stderr.write("Please install the wx Python module to access the relax GUI.\n\n")
                 return
+
+            # Only import the module in this mode (to improve program start up speeds).
+            import gui
 
             # Set the GUI flag in the status object.
             status.show_gui = True
