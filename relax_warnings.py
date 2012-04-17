@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -55,6 +55,10 @@ def format(message, category, filename, lineno, line=None):
             tb = tb_frame + tb
         tb = "Traceback (most recent call last):\n%s" % tb
         message = tb + message
+
+    # Text colouring
+    if status.text_colouring:
+        message = "\033[33m%s\033[0m" % message
 
     # Return the warning message.
     return message
