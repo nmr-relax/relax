@@ -239,7 +239,10 @@ def gui_to_int(string):
         return string
 
     # Convert.
-    val = eval(string)
+    try:
+        val = eval(string)
+    except:
+        val = None
 
     # Not an int!
     if not isinstance(val, int):
