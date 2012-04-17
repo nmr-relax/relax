@@ -12,7 +12,7 @@
 #                                                                             #
 # relax, a program for relaxation data analysis.                              #
 #                                                                             #
-# Copyright (C) 2001-2006  Edward d'Auvergne                                  #
+# Copyright (C) 2001-2012  Edward d'Auvergne                                  #
 # Copyright (C) 2006-2012  the relax development team                         #
 #                                                                             #
 # This program is free software; you can redistribute it and/or modify        #
@@ -58,7 +58,6 @@ from prompt import interpreter
 import relax_errors
 from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
-from test_suite.test_suite_runner import Test_suite_runner
 from version import version
 
 # Modify the environmental variables.
@@ -207,6 +206,9 @@ class Relax:
 
         # Execute the relax test suite
         elif self.mode == 'test suite':
+            # Only import the module in the test modes (to improve program start up speeds).
+            from test_suite.test_suite_runner import Test_suite_runner
+
             # Load the interpreter and turn intros on.
             self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
             self.interpreter.on()
@@ -217,6 +219,9 @@ class Relax:
 
         # Execute the relax system tests.
         elif self.mode == 'system tests':
+            # Only import the module in the test modes (to improve program start up speeds).
+            from test_suite.test_suite_runner import Test_suite_runner
+
             # Load the interpreter and turn intros on.
             self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
             self.interpreter.on()
@@ -227,12 +232,18 @@ class Relax:
 
         # Execute the relax unit tests.
         elif self.mode == 'unit tests':
+            # Only import the module in the test modes (to improve program start up speeds).
+            from test_suite.test_suite_runner import Test_suite_runner
+
             # Run the tests.
             runner = Test_suite_runner(self.tests)
             runner.run_unit_tests()
 
         # Execute the relax GUI tests.
         elif self.mode == 'GUI tests':
+            # Only import the module in the test modes (to improve program start up speeds).
+            from test_suite.test_suite_runner import Test_suite_runner
+
             # Run the tests.
             runner = Test_suite_runner(self.tests)
             runner.run_gui_tests()
