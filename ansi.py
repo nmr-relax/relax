@@ -34,7 +34,7 @@ relax_error = "\033[31m"
 relax_warning = "\033[33m"
 
 # Script print out.
-script = "\033[32m"
+script = "\033[36m"
 
 # The terminating sequence.
 end = "\033[0m"
