@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,6 +30,7 @@ from textwrap import wrap
 
 # relax module imports.
 import help
+from status import Status; status = Status()
 from string import split, strip
 
 # The width of the text.
@@ -209,11 +210,6 @@ class Basic_class:
 class Exec_info:
     """Container for execution information."""
 
-    # The hard-coded prompts (to change the Python prompt, as well as the function print outs).
-    ps1 = 'relax> '
-    ps2 = 'relax| '
-    ps3 = '\nrelax> '
-
     def __init__(self):
         """Initialise the data of this container.
 
@@ -222,6 +218,17 @@ class Exec_info:
 
         # The user function intro flag.
         self.intro = True
+
+        # The prompts (to change the Python prompt, as well as the function print outs).
+        self.ps1 = 'relax> '
+        self.ps2 = 'relax| '
+        self.ps3 = '\n%s' % self.ps1
+
+        # Coloured text.
+        if status.text_colouring:
+            self.ps1 = "\033[94m%s\033[0m" % self.ps1
+            self.ps2 = "\033[94m%s\033[0m" % self.ps2
+            self.ps3 = "\n\033[94m%s\033[0m" % self.ps1
 
 
 
