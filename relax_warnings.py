@@ -25,6 +25,7 @@
 
 # Python module imports.
 import inspect
+import sys
 import warnings
 
 # relax module imports.
@@ -57,7 +58,7 @@ def format(message, category, filename, lineno, line=None):
         message = tb + message
 
     # Text colouring
-    if status.text_colouring:
+    if sys.stderr.isatty():
         message = "\033[33m%s\033[0m" % message
 
     # Return the warning message.

@@ -32,7 +32,7 @@ except ImportError:
     bz2 = False
 from cPickle import dump
 from re import match
-from sys import stderr
+import sys
 import time
 from types import ClassType
 
@@ -77,10 +77,10 @@ def save_state():
 
     # Open the file for writing.
     if bz2:
-        stderr.write("\n\nStoring the relax state in the file '%s.bz2'.\n\n\n" % file_name)
+        sys.stderr.write("\n\nStoring the relax state in the file '%s.bz2'.\n\n\n" % file_name)
         file = BZ2File(file_name+'.bz2', 'w')
     else:
-        stderr.write("\n\nStoring the relax state in the file '%s'.\n\n\n" % file_name)
+        sys.stderr.write("\n\nStoring the relax state in the file '%s'.\n\n\n" % file_name)
         file = open(file_name, 'w')
 
     # Pickle the data class and write it to file
@@ -104,8 +104,8 @@ class BaseError(Exception):
         if status.pedantic:
             save_state()
 
-        # Modify the error message to include 'RelaxError' at the start.
-        if status.text_colouring:
+        # Modify the error message to include 'RelaxError' at the start (using coloured text if a TTY).
+        if sys.stderr.isatty():
             return ("\033[31mRelaxError: " + self.text + "\033[0m\n")
         else:
             return ("RelaxError: " + self.text + "\n")
