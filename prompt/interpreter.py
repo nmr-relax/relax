@@ -133,13 +133,9 @@ class Interpreter:
 
         # The prompts (change the Python prompt, as well as the function print outs).
         if sys.stdout.isatty():
-            sys.ps1 = self._exec_info.ps1_colour
-            sys.ps2 = self._exec_info.ps2_colour
-            sys.ps3 = self._exec_info.ps3_colour
+            self._exec_info.prompt_colour_on()
         else:
-            sys.ps1 = self._exec_info.ps1
-            sys.ps2 = self._exec_info.ps2
-            sys.ps3 = self._exec_info.ps3
+            self._exec_info.prompt_colour_off()
 
         # The function intro flag (store in the execution information container).
         self._exec_info.intro = False
