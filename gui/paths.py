@@ -175,6 +175,7 @@ class I22x22:
         self.zoom_in =              path + 'actions'    + sep + 'zoom-in.png'
         self.zoom_original =        path + 'actions'    + sep + 'zoom-original.png'
         self.zoom_out =             path + 'actions'    + sep + 'zoom-out.png'
+        self.relax_prompt =         path + 'mimetypes'  + sep + 'application-x-executable-script.png'
 
         # relax icons.
         path = ICON_RELAX_PATH + '22x22' + sep

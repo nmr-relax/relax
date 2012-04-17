@@ -784,6 +784,11 @@ class Main(wx.Frame):
         self.toolbar.AddLabelTool(self.TB_VIEW_PIPE_EDIT, "Data pipe editor", wx.Bitmap(paths.icon_22x22.pipe, wx.BITMAP_TYPE_ANY), shortHelp="Data pipe editor")
         self.Bind(wx.EVT_TOOL, self.show_pipe_editor, id=self.TB_VIEW_PIPE_EDIT)
 
+        # The relax prompt button.
+        self.TB_VIEW_PROMPT = wx.NewId()
+        self.toolbar.AddLabelTool(self.TB_VIEW_PROMPT, "relax prompt", wx.Bitmap(paths.icon_22x22.relax_prompt, wx.BITMAP_TYPE_ANY), shortHelp="The relax prompt GUI window")
+        self.Bind(wx.EVT_TOOL, self.show_prompt, id=self.TB_VIEW_PROMPT)
+
         # Build the toolbar.
         self.toolbar.Realize()
 
