@@ -36,6 +36,9 @@ import sys
 import time
 from types import ClassType
 
+# relax module imports.
+import ansi
+
 
 # Text variables.
 BIN = 'a binary number (0 or 1)'
@@ -106,9 +109,9 @@ class BaseError(Exception):
 
         # Modify the error message to include 'RelaxError' at the start (using coloured text if a TTY).
         if sys.stderr.isatty():
-            return ("\033[31mRelaxError: " + self.text + "\033[0m\n")
+            return ("%sRelaxError: %s%s\n" % (ansi.relax_error, self.text, ansi.end))
         else:
-            return ("RelaxError: " + self.text + "\n")
+            return ("RelaxError: %s\n" % self.text)
 
 
 class BaseArgError(BaseError):

@@ -29,6 +29,7 @@ import sys
 import warnings
 
 # relax module imports.
+import ansi
 from status import Status; status = Status()
 
 
@@ -59,7 +60,7 @@ def format(message, category, filename, lineno, line=None):
 
     # Text colouring
     if sys.stderr.isatty():
-        message = "\033[33m%s\033[0m" % message
+        message = "%s%s%s" % (ansi.relax_warning, message, ansi.end)
 
     # Return the warning message.
     return message

@@ -51,7 +51,6 @@ import sys
 
 # relax modules.
 from info import Info_box
-import generic_fns
 from multi import Application_callback, load_multiprocessor
 from prompt.gpl import gpl
 from prompt import interpreter
@@ -140,9 +139,6 @@ class Relax:
 
         # Get and store the PID of this process.
         self.pid = getpid()
-
-        # Setup the object containing the generic functions.
-        self.generic = generic_fns
 
 
     def run(self):

@@ -30,6 +30,7 @@ import sys
 from textwrap import wrap
 
 # relax module imports.
+import ansi
 import help
 from status import Status; status = Status()
 from string import split, strip
@@ -226,9 +227,9 @@ class Exec_info:
         self.ps3 = '\n%s' % self.ps1
 
         # Coloured text.
-        self.ps1_colour = "\033[94m%s\033[0m" % self.ps1
-        self.ps2_colour = "\033[94m%s\033[0m" % self.ps2
-        self.ps3_colour = "\n\033[94m%s\033[0m" % self.ps1
+        self.ps1_colour = "%s%s%s" % (ansi.relax_promt, self.ps1, ansi.end)
+        self.ps2_colour = "%s%s%s" % (ansi.relax_promt, self.ps2, ansi.end)
+        self.ps3_colour = "\n%s%s%s" % (ansi.relax_promt, self.ps1, ansi.end)
 
 
 
