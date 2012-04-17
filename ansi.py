@@ -33,6 +33,9 @@ relax_error = "\033[31m"
 # RelaxWarnings.
 relax_warning = "\033[33m"
 
+# Script print out.
+script = "\033[32m"
+
 # The terminating sequence.
 end = "\033[0m"
 

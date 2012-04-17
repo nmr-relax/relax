@@ -27,6 +27,7 @@
 import dep_check
 
 # Python module imports.
+import ansi
 from code import InteractiveConsole, softspace
 from os import F_OK, access, chdir, getcwd, path
 import platform
@@ -488,7 +489,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
 
         # Coloured text.
         if sys.stdout.isatty():
-            sys.stdout.write("\033[32m")
+            sys.stdout.write(ansi.script)
 
         # Print the script.
         sys.stdout.write("script = " + repr(script_file) + "\n")
@@ -498,7 +499,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
 
         # End coloured text.
         if sys.stdout.isatty():
-            sys.stdout.write("\033[0m")
+            sys.stdout.write(ansi.end)
 
         file.close()
 
