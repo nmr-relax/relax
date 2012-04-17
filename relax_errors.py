@@ -105,7 +105,10 @@ class BaseError(Exception):
             save_state()
 
         # Modify the error message to include 'RelaxError' at the start.
-        return ("RelaxError: " + self.text + "\n")
+        if status.text_colouring:
+            return ("\033[31mRelaxError: " + self.text + "\033[0m\n")
+        else:
+            return ("RelaxError: " + self.text + "\n")
 
 
 class BaseArgError(BaseError):
