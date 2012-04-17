@@ -186,6 +186,10 @@ class Relax:
 
         # Run the interpreter for the prompt or script modes.
         if self.mode == 'prompt' or self.mode == 'script':
+            # Turn on text colouring.
+            if sys.stdout == sys.__stdout__:
+                status.text_colouring = True
+
             # Run the interpreter.
             self.interpreter = interpreter.Interpreter()
             self.interpreter.run(self.script_file)

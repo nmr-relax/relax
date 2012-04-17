@@ -97,6 +97,9 @@ class Status(object):
         else:
             self.text_width = 100
 
+        # Text output colouring.
+        self.text_colouring = False
+
 
     def _setup_observers(self):
         """Set up all the observer objects."""
