@@ -31,6 +31,7 @@ from types import ListType
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from data.gui import Gui
 import dep_check
 from generic_fns import pipes
 from status import Status; status = Status()
@@ -529,6 +530,10 @@ class Analysis_controller:
         # The index.
         self._current = event.GetSelection()
 
+        # Handel calls to the reset user function!
+        if not hasattr(ds, 'relax_gui'):
+            return
+
         # Switch to the major data pipe of that page if not the current one.
         if self._switch_flag and pipes.cdp_name() != ds.relax_gui.analyses[self._current].pipe_name:
             self.gui.interpreter.apply('pipe.switch', ds.relax_gui.analyses[self._current].pipe_name)
@@ -636,7 +641,8 @@ class Analysis_controller:
             index = self._num_analyses - 1
 
             # Delete the tab.
-            self.notebook.DeletePage(index)
+            if hasattr(self, 'notebook'):
+                self.notebook.DeletePage(index)
 
             # Delete the tab object.
             self._analyses.pop(index)
@@ -660,7 +666,12 @@ class Analysis_controller:
         old_sizer.DeleteWindows()
 
         # Delete the notebook.
-        del self.notebook
+        if hasattr(self, 'notebook'):
+            del self.notebook
+
+        # Recreate the GUI data store object (needed if the reset user function is called).
+        if not hasattr(ds, 'relax_gui'):
+            ds.relax_gui = Gui()
 
         # Recreate the start screen.
         self.gui.add_start_screen()
