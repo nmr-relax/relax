@@ -171,10 +171,16 @@ class Analysis_controller:
             print("\n\n")
             print("debug> %s:  Deleting all analyses." % full_name)
 
+        # Unregister all observer objects prior to analysis deletion.  This is to prevent queued wx events being sent to dead or non-existent objects.
+        if status.debug:
+            print("debug> %s:  Unregistering all methods with the observer objects." % full_name)
+        for i in range(self._num_analyses):
+            self._analyses[i].observer_register(remove=True)
+
         # Delete the current tabs.
         while self._num_analyses:
             # Flush all pending events (bug fix for MS Windows).
-            wx.Yield()
+            #wx.Yield()
 
             # Remove the last analysis, until there is nothing left.
             if status.debug:
