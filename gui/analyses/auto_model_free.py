@@ -629,8 +629,12 @@ class Auto_model_free(Base_analysis):
 
         # Unregister.
         else:
+            # The model-free methods.
             status.observers.gui_uf.unregister(self.data.pipe_name)
             status.observers.exec_lock.unregister(self.data.pipe_name)
+
+            # The embedded objects methods.
+            self.relax_data.observer_register(remove=True)
 
 
     def results_directory(self, event):

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -102,7 +102,7 @@ class Relax_data_list:
         self.name = 'relaxation data list: %s' % id
 
         # Register the element for updating when a user function completes.
-        status.observers.gui_uf.register(self.name, self.build_element)
+        self.observer_register()
 
 
     def Enable(self, enable=True):
@@ -207,8 +207,8 @@ class Relax_data_list:
     def delete(self):
         """Unregister the class."""
 
-        # Unregister the class.
-        status.observers.gui_uf.unregister(self.name)
+        # Unregister the observer methods.
+        self.observer_register(remove=True)
 
 
     def init_element(self, sizer):
@@ -239,6 +239,22 @@ class Relax_data_list:
 
         # Add list to sizer.
         sizer.Add(self.element, 0, wx.ALL|wx.EXPAND, 0)
+
+
+    def observer_register(self, remove=False):
+        """Register and unregister methods with the observer objects.
+
+        @keyword remove:    If set to True, then the methods will be unregistered.
+        @type remove:       False
+        """
+
+        # Register.
+        if not remove:
+            status.observers.gui_uf.register(self.name, self.build_element)
+
+        # Unregister.
+        else:
+            status.observers.gui_uf.unregister(self.name)
 
 
     def on_right_click(self, event):
