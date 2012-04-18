@@ -45,12 +45,17 @@ except ImportError:
 import sys
 
 # relax module imports.
+from relax_errors import RelaxError
 from status import Status; status = Status()
 from version import version_full
 
 
 def mac_setup():
     """Mac OS X setup."""
+
+    # No setuptools!
+    if setup == None:
+        raise RelaxError("The setuptools module has not been installed!")
 
     # The relax settings.
     APP = ['relax_gui_mode.py']
