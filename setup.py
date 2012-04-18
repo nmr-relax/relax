@@ -230,9 +230,7 @@ class Setup:
         self.OPTIONS['py2app'] = {
             'argv_emulation': False,
             'iconfile': status.install_path + sep + 'graphics' + sep + 'ulysses_shadowless_trans_128x128.icns',
-            'bdist_base': "../build/bld",
-            'dist_dir': "../build/dist",
-            'packages': ['wx', 'numpy', 'scipy'],
+            'packages': 'wx',
             'site_packages': True,
             'includes': self.get_includes(),
             'excludes': ['build', 'dist'],
