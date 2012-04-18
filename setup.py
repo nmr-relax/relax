@@ -129,6 +129,7 @@ class Setup:
             rel_path = relpath(dirpath, cwd)
 
             # Loop over the files.
+            file_list = []
             for file in filenames:
                 # Skip names starting with '.'.
                 if search('^\.', file):
@@ -138,8 +139,11 @@ class Setup:
                 if file in blacklist_files:
                     continue
 
-                # Append a tuple of the destination directory and the file.
-                data_files.append((rel_path, "%s%s%s" % (rel_path, sep, file)))
+                # Append the file with path to the list.
+                file_list.append("%s%s%s" % (rel_path, sep, file))
+
+            # Append a tuple of the destination directory and the files.
+            data_files.append((rel_path, file_list))
 
         # Return the data files.
         return data_files
@@ -230,7 +234,6 @@ class Setup:
             'dist_dir': "../build/dist",
             'packages': ['wx', 'numpy', 'scipy'],
             'site_packages': True,
-            'resources': 'docs/COPYING',
             'includes': self.get_includes(),
             'excludes': ['build', 'dist'],
             'plist': {
