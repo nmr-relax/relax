@@ -36,12 +36,11 @@ hdiutil create -fs HFS+ -volname "relax" -srcfolder dist/relax.app relax.dmg
 """
 
 # Python module import.
-from os import getcwd, listdir, sep
+from os import getcwd, listdir, sep, walk
+from os.path import relpath, sep
 from re import search
-try:
-    from setuptools import setup
-except ImportError:
-    setup = None
+from setuptools import setup
+from string import replace, split
 import sys
 
 # relax module imports.
@@ -50,62 +49,198 @@ from status import Status; status = Status()
 from version import version_full
 
 
-def mac_setup():
-    """Mac OS X setup."""
+class Setup:
+    """Class containing setuptools targets for different platforms."""
 
-    # No setuptools!
-    if setup == None:
-        raise RelaxError("The setuptools module has not been installed!")
+    def __init__(self):
+        """Initialise and execute."""
 
-    # The relax settings.
-    APP = ['relax_gui_mode.py']
-    NAME = 'relax'
-    VERSION = version_full()
-    OPTIONS = {
-        'argv_emulation': False,
-        'iconfile': status.install_path + sep + 'graphics' + sep + 'ulysses_shadowless_trans_128x128.icns',
-        'packages': 'wx',
-        'site_packages': True,
-        'resources': 'docs/COPYING',
-        'plist': {
-            'CFBundleName':                 'relax',
-            'CFBundleShortVersionString':   version_full(),
-            'CFBundleGetInfoString':        'relax %s' % version_full(),
-            'CFBundleIdentifier':           'com.nmr-relax.relax'
-        }
-    }
+        # Mac OS X application.
+        if sys.argv[1] == 'py2app':
+            self.mac_setup()
 
-    # All files and directories.
-    DATA_FILES = []
-    for name in listdir(getcwd()):
-        # Skip names starting with '.'.
-        if search('^\.', name):
-            continue
+        # Unsupported platform.
+        else:
+            raise RelaxError("The setuptools build for the '%s' package is not yet supported.")
 
-        # Blacklist.
-        blacklist = [
+        # Generic setup args.
+        self.args_generic()
+
+        # Execute the setuptools setup() method to actually do something.
+        setup(
+            app=self.APP,
+            name=self.NAME,
+            version=self.VERSION,
+            data_files=self.DATA_FILES,
+            options=self.OPTIONS,
+            setup_requires=self.REQUIRES
+        )
+
+
+    def args_generic(self):
+        """Set up the arguments which are independent of the target."""
+
+        # Get a list of data files.
+        self.DATA_FILES = self.get_data_files()
+        #for i in range(len(self.DATA_FILES)):
+        #    print self.DATA_FILES[i]
+        #sys.exit(1)
+
+        # Get the includes.
+        self.INCLUDES = self.get_includes()
+        #for i in range(len(self.INCLUDES)):
+        #    print self.INCLUDES[i]
+        #sys.exit(1)
+
+
+    def get_data_files(self):
+        """Collect and return a list of data files.
+
+        @return:    The list of data files as full paths.
+        @rtype:     list of str
+        """
+
+        # Blacklisted files and directories.
+        blacklist_dir = [
             'build',
             'dist'
         ]
-        if name in blacklist:
-            continue
+        blacklist_files = [
+        ]
 
-        # Add the file.
-        DATA_FILES.append(name)
+        # All files and directories.
+        data_files = []
+        cwd = getcwd()
+        for (dirpath, dirnames, filenames) in walk(cwd):
+            # Skip .svn directories.
+            split_path = split(dirpath, sep)
+            if '.svn' in split_path:
+                continue
 
-    # Setup.
-    setup(
-        app=APP,
-        name=NAME,
-        version=VERSION,
-        data_files=DATA_FILES,
-        options={
-            'py2app': OPTIONS,
-        },
-        setup_requires=['py2app']
-    )
+            # Skip blacklisted directories.
+            skip = False
+            for dir_name in blacklist_dir:
+                if dir_name in split_path:
+                    skip = True
+            if skip:
+                continue
+
+            # The relative path.
+            rel_path = relpath(dirpath, cwd)
+
+            # Loop over the files.
+            for file in filenames:
+                # Skip names starting with '.'.
+                if search('^\.', file):
+                    continue
+
+                # Blacklist.
+                if file in blacklist_files:
+                    continue
+
+                # Append a tuple of the destination directory and the file.
+                data_files.append((rel_path, "%s%s%s" % (rel_path, sep, file)))
+
+        # Return the data files.
+        return data_files
 
 
-# Mac OS X.
-if __name__ == '__main__' and 'darwin' in sys.platform:
-    mac_setup()
+    def get_includes(self):
+        """Collect and return a list of modules to include.
+
+        @return:    The list of modules.
+        @rtype:     list of str
+        """
+
+        # Blacklisted files and directories.
+        blacklist_dir = [
+            'build',
+            'dist',
+            'bmrblib'+sep+'html_dictionary',
+            'graphics',
+            'sample_scripts',
+            'scripts',
+            'test_suite'+sep+'system_tests'+sep+'scripts',
+            'test_suite'+sep+'shared_data'
+        ]
+        blacklist_files = [
+        ]
+
+        # All files and directories.
+        includes = []
+        cwd = getcwd()
+        for (dirpath, dirnames, filenames) in walk(cwd):
+            # Skip .svn directories.
+            split_path = split(dirpath, sep)
+            if '.svn' in split_path:
+                continue
+
+            # The relative path.
+            rel_path = relpath(dirpath, cwd)
+
+            # Skip blacklisted directories.
+            skip = False
+            for dir_name in blacklist_dir:
+                if search(dir_name, rel_path):
+                    skip = True
+            if skip:
+                continue
+
+            # The module path.
+            if rel_path == '.':
+                module_path = ''
+            else:
+                module_path = replace(rel_path, sep, '.')
+                if module_path:
+                    module_path += '.'
+
+            # Loop over the files.
+            for file in filenames:
+                # Skip names starting with '.'.
+                if search('^\.', file):
+                    continue
+
+                # Skip non-Python source files.
+                if not search('\.py$', file):
+                    continue
+
+                # Blacklist.
+                if file in blacklist_files:
+                    continue
+
+                # Append a tuple of the destination directory and the file.
+                includes.append("%s%s" % (module_path, file[:-3]))
+
+        # Return the data files.
+        return includes
+
+
+    def mac_setup(self):
+        """Mac OS X setup."""
+
+        # The relax settings.
+        self.APP = ['relax_gui_mode.py']
+        self.NAME = 'relax'
+        self.VERSION = version_full()
+        self.OPTIONS = {}
+        self.OPTIONS['py2app'] = {
+            'argv_emulation': False,
+            'iconfile': status.install_path + sep + 'graphics' + sep + 'ulysses_shadowless_trans_128x128.icns',
+            'packages': 'wx',
+            'site_packages': True,
+            'resources': 'docs/COPYING',
+            'includes': self.get_includes(),
+            'excludes': ['build', 'dist'],
+            'plist': {
+                'CFBundleName':                 'relax',
+                'CFBundleShortVersionString':   version_full(),
+                'CFBundleGetInfoString':        'relax %s' % version_full(),
+                'CFBundleIdentifier':           'com.nmr-relax.relax'
+            }
+        }
+        self.REQUIRES = ['py2app']
+
+
+# Execute the main class.
+if __name__ == '__main__':
+    Setup()
