@@ -24,6 +24,8 @@
 """Module containing the status singleton object."""
 
 # Python module imports.
+from os import F_OK, access
+from os.path import sep
 import platform
 from Queue import Queue
 from re import search
@@ -53,13 +55,33 @@ class Status(object):
             self._instance.pedantic = False
             self._instance.test_mode = False
             self._instance.show_gui = False
-            self._instance.install_path = sys.path[0]
+            self._instance.install_path = self._instance._det_install_path()
 
             # Set up the singleton.
             self._instance._setup()
 
         # Already instantiated, so return the instance.
         return self._instance
+
+
+    def _det_install_path(self):
+        """Determine, with a bit of magic, the relax installation path.
+        
+        @return:    The relax installation path.  With a Mac OS X app, this will be the path to the 'Resources'.
+        @rtype:     str
+        """
+
+        # The file to search for.
+        file_to_find = 'relax_errors.py'
+
+        # Loop over the system paths, searching for the real path.
+        for path in sys.path:
+            # Found the file, so return the path.
+            if access(path + sep + file_to_find, F_OK):
+                return path
+
+        # Return the install path.
+        return install_path
 
 
     def _setup(self):
