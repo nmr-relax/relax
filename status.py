@@ -29,6 +29,7 @@ from os.path import sep
 import platform
 from Queue import Queue
 from re import search
+from string import split
 import sys
 from threading import Lock, RLock
 
@@ -66,7 +67,7 @@ class Status(object):
 
     def _det_install_path(self):
         """Determine, with a bit of magic, the relax installation path.
-        
+
         @return:    The relax installation path.  With a Mac OS X app, this will be the path to the 'Resources'.
         @rtype:     str
         """
@@ -80,8 +81,19 @@ class Status(object):
             if access(path + sep + file_to_find, F_OK):
                 return path
 
-        # Return the install path.
-        return install_path
+        # Mac OS X application support.
+        for path in sys.path:
+            # Find the Resources folder, where the relax data files are located.
+            if search('Resources', path):
+                # Nasty hack for creating the Resources path.
+                bits = split(path, 'Resources')
+                mac_path = bits[0] + 'Resources'
+
+                # Return the Mac Resources folder path.
+                return mac_path
+
+        # Return the first entry of sys.path as a fallback.
+        return sys.path[0]
 
 
     def _setup(self):

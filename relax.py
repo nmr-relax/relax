@@ -31,11 +31,6 @@
 #                                                                             #
 ###############################################################################
 
-# First of all, store the relax installation path before the site-packages mangle sys.path.
-from status import Status; status = Status()
-import sys
-status.install_path = sys.path[0]
-
 # Dependency checks.
 import dep_check
 
@@ -57,6 +52,7 @@ from prompt import interpreter
 import relax_errors
 from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
+from status import Status; status = Status()
 from version import version
 
 # Modify the environmental variables.
