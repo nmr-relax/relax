@@ -50,20 +50,24 @@ class Test_suite_runner:
         - GUI tests.
     """
 
-    def __init__(self, tests=[], from_gui=False):
+    def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui']):
         """Store the list of tests to preform.
 
         The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
 
 
-        @keyword tests:     The list of tests to preform.  If left at [], then all tests will be run.
-        @type tests:        list of str
-        @keyword from_gui:  A flag which indicates if the tests are being run from the GUI or not.
-        @type from_gui:     bool
+        @keyword tests:         The list of tests to preform.  If left at [], then all tests will be run.
+        @type tests:            list of str
+        @keyword from_gui:      A flag which indicates if the tests are being run from the GUI or not.
+        @type from_gui:         bool
+        @keyword categories:    The list of test categories to run, for example ['system', 'unit', 'gui'] for all tests.
+        @type categories:       list of str
         """
 
         # Store the args.
         self.tests = tests
+        self.from_gui = from_gui
+        self.categories = categories
 
         # A list for skipped tests.
         status.skip = []
@@ -78,15 +82,17 @@ class Test_suite_runner:
     def run_all_tests(self):
         """Execute all of the test suite test types."""
 
-
         # Execute the system/functional tests.
-        self.run_system_tests(summary=False)
+        if 'system' in self.categories:
+            self.run_system_tests(summary=False)
 
         # Execute the unit tests.
-        self.run_unit_tests(summary=False)
+        if 'unit' in self.categories:
+            self.run_unit_tests(summary=False)
 
         # Execute the GUI tests.
-        self.run_gui_tests(summary=False)
+        if 'gui' in self.categories:
+            self.run_gui_tests(summary=False)
 
         # Print out a summary of the test suite.
         self.summary()
