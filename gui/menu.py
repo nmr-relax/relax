@@ -54,6 +54,10 @@ class Menu:
     MENU_VIEW_PROMPT = wx.NewId()
     MENU_TOOLS_FORMAT = wx.NewId()
     MENU_TOOLS_TEST_SUITE = wx.NewId()
+    MENU_TOOLS_TEST_SUITE_ALL = wx.NewId()
+    MENU_TOOLS_TEST_SUITE_SYS = wx.NewId()
+    MENU_TOOLS_TEST_SUITE_UNIT = wx.NewId()
+    MENU_TOOLS_TEST_SUITE_GUI = wx.NewId()
     MENU_TOOLS_SYS_INFO = wx.NewId()
     MENU_HELP_MANUAL = wx.NewId()
     MENU_HELP_MAIL = wx.NewId()
@@ -116,13 +120,25 @@ class Menu:
         menu = wx.Menu()
         menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_FORMAT, text="&Free file format settings", icon=paths.icon_16x16.document_properties))
         menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_SYS_INFO, text="System &information", icon=paths.icon_16x16.help_about))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_TEST_SUITE, text="&Test suite", icon=paths.icon_16x16.uf_script))
+
+        # The 'Tools->Test suite" sub-menu.
+        test_suite_item = build_menu_item(menu, id=self.MENU_TOOLS_TEST_SUITE, text="&Test suite", icon=paths.icon_16x16.uf_script)
+        sub_menu = wx.Menu()
+        test_suite_item.SetSubMenu(sub_menu)
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_ALL, text="&All tests", icon=paths.icon_16x16.uf_script))
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_SYS, text="&System tests", icon=paths.icon_16x16.uf_script))
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_UNIT, text="&Unit tests", icon=paths.icon_16x16.uf_script))
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_GUI, text="&GUI tests", icon=paths.icon_16x16.uf_script))
+        menu.AppendItem(test_suite_item)
         self.menubar.Append(menu, "&Tools")
 
         # The 'Tools' menu actions.
         self.gui.Bind(wx.EVT_MENU, self.gui.free_file_format_settings, id=self.MENU_TOOLS_FORMAT)
         self.gui.Bind(wx.EVT_MENU, self._sys_info, id=self.MENU_TOOLS_SYS_INFO)
-        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite, id=self.MENU_TOOLS_TEST_SUITE)
+        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite, id=self.MENU_TOOLS_TEST_SUITE_ALL)
+        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite_sys, id=self.MENU_TOOLS_TEST_SUITE_SYS)
+        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite_unit, id=self.MENU_TOOLS_TEST_SUITE_UNIT)
+        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite_gui, id=self.MENU_TOOLS_TEST_SUITE_GUI)
 
         # The 'Help' menu entries.
         menu = wx.Menu()

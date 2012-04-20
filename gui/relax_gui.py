@@ -48,6 +48,7 @@ from generic_fns.reset import reset
 from relax_errors import RelaxError
 from relax_io import io_streams_restore
 from status import Status; status = Status()
+import test_suite.test_suite_runner
 from version import version
 
 # relaxGUI module imports.
@@ -70,7 +71,6 @@ from gui.relax_prompt import Prompt
 from gui.results_viewer import Results_viewer
 from gui.settings import Free_file_format, load_sequence
 from gui.user_functions import User_functions; user_functions = User_functions()
-import test_suite
 
 
 class Main(wx.Frame):
@@ -436,11 +436,13 @@ class Main(wx.Frame):
         open_file(file)
 
 
-    def run_test_suite(self, event):
+    def run_test_suite(self, event, categories=['system', 'unit', 'gui']):
         """Execute the full test suite.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param event:           The wx event.
+        @type event:            wx event
+        @keyword categories:    The list of test categories to run, for example ['system', 'unit', 'gui'] for all tests.
+        @type categories:       list of str
         """
 
         # Ask if this should be done.
@@ -464,7 +466,7 @@ class Main(wx.Frame):
         status.show_gui = False
 
         # Run the tests.
-        runner = test_suite.test_suite_runner.Test_suite_runner([], from_gui=True)
+        runner = test_suite.test_suite_runner.Test_suite_runner([], from_gui=True, categories=categories)
         runner.run_all_tests()
 
         # Reactive the GUI.
@@ -473,6 +475,39 @@ class Main(wx.Frame):
         # Turn off the busy cursor.
         if wx.IsBusy():
             wx.EndBusyCursor()
+
+
+    def run_test_suite_gui(self, event):
+        """Execute the GUI tests.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Forward the call.
+        self.run_test_suite(event, categories=['gui'])
+
+
+    def run_test_suite_sys(self, event):
+        """Execute the system tests.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Forward the call.
+        self.run_test_suite(event, categories=['system'])
+
+
+    def run_test_suite_unit(self, event):
+        """Execute the unit tests.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Forward the call.
+        self.run_test_suite(event, categories=['unit'])
 
 
     def show_controller(self, event):
