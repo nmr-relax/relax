@@ -87,6 +87,9 @@ def start(mode=None, profile_flag=False):
     else:
         relax.arguments()
 
+    # Store some start up info in the status object.
+    status.relax_mode = relax.mode
+
     # Set up the multi-processor elements.
     callbacks = Application_callback(master=relax)
     verbosity = 0
