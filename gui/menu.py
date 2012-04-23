@@ -126,6 +126,7 @@ class Menu:
         sub_menu = wx.Menu()
         test_suite_item.SetSubMenu(sub_menu)
         sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_ALL, text="&Full test suite", icon=paths.icon_16x16.uf_script))
+        sub_menu.AppendSeparator()
         sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_SYS, text="&System tests", icon=paths.icon_16x16.uf_script))
         sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_UNIT, text="&Unit tests", icon=paths.icon_16x16.uf_script))
         sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_GUI, text="&GUI tests", icon=paths.icon_16x16.uf_script))
