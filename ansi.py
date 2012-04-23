@@ -46,7 +46,7 @@ end = "\033[0m"
 def enable_control_chars(stream=1):
     """Helper function for determining if control characters should be printed to the IO streams.
 
-    This uses both the sys.std*.isatty() methods as well as the operating system.  Control characters are only shown on GNU/Linux and Mac OS X (or technically they are disabled on MS Windows.
+    This uses both the sys.std*.isatty() methods as well as the operating system.  Control characters are only shown on GNU/Linux and Mac OS X (or technically they are disabled on MS Windows as both cmd and the PowerShell do not support the ANSI characters).
 
 
     @keyword stream:    The stream to check.  The value of 0 corresponds to STDIN, 1 corresponds to STDOUT, and 2 corresponds to STDERR.
