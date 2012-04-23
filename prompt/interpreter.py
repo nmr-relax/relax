@@ -132,7 +132,7 @@ class Interpreter:
         self._exec_info = Exec_info()
 
         # The prompts (change the Python prompt, as well as the function print outs).
-        if sys.stdout.isatty():
+        if ansi.enable_control_chars(stream=1):
             self._exec_info.prompt_colour_on()
         else:
             self._exec_info.prompt_colour_off()
@@ -484,7 +484,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
                 return
 
         # Coloured text.
-        if sys.stdout.isatty():
+        if ansi.enable_control_chars(stream=1):
             sys.stdout.write(ansi.script)
 
         # Print the script.
@@ -494,7 +494,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         sys.stdout.write("----------------------------------------------------------------------------------------------------")
 
         # End coloured text.
-        if sys.stdout.isatty():
+        if ansi.enable_control_chars(stream=1):
             sys.stdout.write(ansi.end)
 
         # Terminating newline.

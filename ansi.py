@@ -21,8 +21,11 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing ANSI escape sequences for colour terminal output."""
+"""Module containing ANSI escape sequences and helper functions for colour terminal output."""
 
+# Python module imports.
+import ctypes
+import sys
 
 # The relax prompt.
 relax_prompt = "\033[94m"
@@ -40,3 +43,28 @@ script = "\033[36m"
 end = "\033[0m"
 
 
+def enable_control_chars(stream=1):
+    """Helper function for determining if control characters should be printed to the IO streams.
+
+    This uses both the sys.std*.isatty() methods as well as the operating system.  Control characters are only shown on GNU/Linux and Mac OS X (or technically they are disabled on MS Windows.
+
+
+    @keyword stream:    The stream to check.  The value of 0 corresponds to STDIN, 1 corresponds to STDOUT, and 2 corresponds to STDERR.
+    @type stream:       int
+    @return:            The answer of whether color and other control characters should be printed.
+    @rtype:             bool
+    """
+
+    # MS Windows, therefore always return False.
+    if hasattr(ctypes, 'windll'):
+        return False
+
+    # The STDIO streams.
+    if stream == 0:
+        return sys.stdin.isatty()
+    elif stream == 1:
+        return sys.stdout.isatty()
+    elif stream == 2:
+        return sys.stderr.isatty()
+    else:
+        return False

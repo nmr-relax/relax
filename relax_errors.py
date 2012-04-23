@@ -108,7 +108,7 @@ class BaseError(Exception):
             save_state()
 
         # Modify the error message to include 'RelaxError' at the start (using coloured text if a TTY).
-        if sys.stderr.isatty():
+        if ansi.enable_control_chars(stream=2):
             return ("%sRelaxError: %s%s\n" % (ansi.relax_error, self.text, ansi.end))
         else:
             return ("RelaxError: %s\n" % self.text)

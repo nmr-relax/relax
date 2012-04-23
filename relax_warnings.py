@@ -59,7 +59,7 @@ def format(message, category, filename, lineno, line=None):
         message = tb + message
 
     # Text colouring
-    if sys.stderr.isatty():
+    if ansi.enable_control_chars(stream=2):
         # Strip the last newline, if it exists.
         if message[-1] == '\n':
             message = message[:-1]
