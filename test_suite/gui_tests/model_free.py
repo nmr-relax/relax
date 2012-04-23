@@ -169,9 +169,10 @@ class Mf(GuiTestCase):
         self.check_exceptions()
 
         # Check the relax controller.
-        self.assertEqual(self.app.gui.controller.mc_gauge_mf.GetValue(), 100)
-        self.assertEqual(self.app.gui.controller.progress_gauge_mf.GetValue(), 100)
-        self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
+        if status.relax_mode != 'gui':
+            self.assertEqual(self.app.gui.controller.mc_gauge_mf.GetValue(), 100)
+            self.assertEqual(self.app.gui.controller.progress_gauge_mf.GetValue(), 100)
+            self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
         # Check the diffusion tensor.
         self.assertEqual(cdp.diff_tensor.type, 'sphere')

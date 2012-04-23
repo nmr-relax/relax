@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -35,13 +35,11 @@ import dep_check
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from data.gui import Gui
 from generic_fns.reset import reset
 from prompt.interpreter import Interpreter
 from status import Status; status = Status()
 
-# relax GUI imports.
-if dep_check.wx_module:
-    from gui.relax_gui import Main
 
 class GuiTestCase(TestCase):
     """The GUI specific test case."""
@@ -92,6 +90,10 @@ class GuiTestCase(TestCase):
         if not self._gui_launch:
             self.app = wx.App(redirect=False)
 
+            # relax GUI imports (here to prevent a circular import from the test suite in the GUI).
+            if dep_check.wx_module:
+                from gui.relax_gui import Main
+
             # Build the GUI.
             self.app.gui = Main(parent=None, id=-1, title="")
 
@@ -131,12 +133,34 @@ class GuiTestCase(TestCase):
             # Remove the variable.
             del self.tmpfile
 
+        # Delete all the GUI analysis tabs.
+        self.app.gui.analysis.delete_all()
+
         # Reset relax.
         reset()
 
         # Reset the observers.
         status._setup_observers()
 
+        # Destroy some GUI windows, if open.
+        windows = ['pipe_editor', 'relax_prompt', 'results_viewer', 'spin_viewer']
+        for window in windows:
+            if hasattr(self.app.gui, window):
+                # Get the object.
+                win_obj = getattr(self.app.gui, window)
+
+                # Destroy the wxWidget part.
+                win_obj.Destroy()
+
+                # Destroy the Python object part.
+                delattr(self.app.gui, window)
+
         # Destroy the GUI.
         if not self._gui_launch and hasattr(self.app, 'gui'):
             self.app.gui.Destroy()
+
+        # Recreate the GUI data object.
+        ds.relax_gui = Gui()
+
+        # Flush all wx events to make sure the GUI is ready for the next test.
+        wx.Yield()
