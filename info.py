@@ -151,6 +151,10 @@ class Info_box(object):
         @rtype:         str
         """
 
+        # MS Windows (has no 'file' command or libmagic, so return nothing).
+        if hasattr(ctypes, 'windll'):
+            return ''
+
         # The command.
         cmd = 'file -b %s' % path
 
