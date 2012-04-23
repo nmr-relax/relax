@@ -55,13 +55,16 @@ class Setup:
     def __init__(self):
         """Initialise and execute."""
 
+        # The extension.
+        extension = sys.argv[1]
+
         # Mac OS X application.
-        if sys.argv[1] == 'py2app':
+        if extension == 'py2app':
             self.mac_setup()
 
         # Unsupported platform.
         else:
-            raise RelaxError("The setuptools build for the '%s' package is not yet supported.")
+            raise RelaxError("The setuptools extension '%s' is not supported yet." % extension)
 
         # Generic setup args.
         self.args_generic()
