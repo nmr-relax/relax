@@ -453,6 +453,11 @@ class Main(wx.Frame):
         # Change the cursor to waiting.
         wx.BeginBusyCursor()
 
+        # Set a new style to stay on top, refreshing to update the style (needed for Mac OS X and MS Windows).
+        orig_style = self.controller.GetWindowStyle()
+        self.controller.SetWindowStyle(orig_style | wx.STAY_ON_TOP)
+        self.controller.Refresh()
+
         # Reset relax.
         reset()
 
@@ -475,6 +480,10 @@ class Main(wx.Frame):
         # Turn off the busy cursor.
         if wx.IsBusy():
             wx.EndBusyCursor()
+
+        # Restore the controller style.
+        self.controller.SetWindowStyle(orig_style)
+        self.controller.Refresh()
 
 
     def run_test_suite_gui(self, event):
