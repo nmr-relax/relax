@@ -292,6 +292,10 @@ class Controller(wx.Frame):
         @type event:    wx event
         """
 
+        # The test suite is running, so disable closing.
+        if self.gui.test_suite_flag:
+            return
+
         # Close the window.
         self.Hide()
 

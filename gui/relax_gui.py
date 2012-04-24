@@ -99,6 +99,8 @@ class Main(wx.Frame):
         if status.wx_info["build"]:
             status.wx_info["full"] = "%s-%s" % (status.wx_info["os"], status.wx_info["build"])
 
+        # Some internal variables.
+        self.test_suite_flag = False
 
         # The main window style.
         style = wx.DEFAULT_FRAME_STYLE
@@ -450,6 +452,9 @@ class Main(wx.Frame):
         if Question(msg, parent=self, default=False).ShowModal() == wx.ID_NO:
             return
 
+        # Set the test suite flag.
+        self.test_suite_flag = True
+
         # Change the cursor to waiting.
         wx.BeginBusyCursor()
 
@@ -488,6 +493,9 @@ class Main(wx.Frame):
         self.controller.SetWindowStyle(orig_style)
         self.controller.MakeModal(False)
         self.controller.Refresh()
+
+        # Unset the test suite flag.
+        self.test_suite_flag = False
 
 
     def run_test_suite_gui(self, event):
