@@ -342,7 +342,7 @@ class Main(wx.Frame):
 
         # Ask if the user is sure they would like to exit.
         doexit = wx.ID_YES
-        if status.show_gui:
+        if status.show_gui and not ds.is_empty():
             doexit = Question('Are you sure you would like to quit relax?  All unsaved data will be lost.', title='Exit relax', default=True).ShowModal()
 
         # Exit.
