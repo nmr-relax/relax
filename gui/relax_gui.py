@@ -458,6 +458,9 @@ class Main(wx.Frame):
         self.controller.SetWindowStyle(orig_style | wx.STAY_ON_TOP)
         self.controller.Refresh()
 
+        # Make the relax controller modal so that all other windows are deactivated (to stop users from clicking on things).
+        self.controller.MakeModal(True)
+
         # Reset relax.
         reset()
 
@@ -481,8 +484,9 @@ class Main(wx.Frame):
         if wx.IsBusy():
             wx.EndBusyCursor()
 
-        # Restore the controller style.
+        # Restore the controller.
         self.controller.SetWindowStyle(orig_style)
+        self.controller.MakeModal(False)
         self.controller.Refresh()
 
 
