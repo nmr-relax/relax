@@ -2501,7 +2501,11 @@ class Mf(SystemTestCase):
         file.close()
 
         # Read the 1.3 results file, extract the data, then close it again.
-        file = open_read_file(file_name='final_results_trunc_1.3', dir=path)
+        a, b, c = platform.python_version_tuple()
+        if int(a) >= 2 and int(b) >= 7 and int(c) >= 3:
+            file = open_read_file(file_name='final_results_trunc_1.3_new', dir=path)
+        else:
+            file = open_read_file(file_name='final_results_trunc_1.3', dir=path)
         true_lines = file.readlines()
         file.close()
 
