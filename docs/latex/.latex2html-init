@@ -67,4 +67,11 @@ $FONT_SIZE = "12pt";
 # Show the section numbers of the PDF manual.
 $SHOW_SECTION_NUMBERS = 1;
 
+# Ignore certain LaTeX commands
+&ignore_commands( <<_IGNORED_CMDS_);
+documentstyle # [] # {}
+linebreak # []
+mbox
+_IGNORED_CMDS_
+
 1;	# This must be the last line
