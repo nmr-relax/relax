@@ -2,7 +2,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -93,14 +93,17 @@ class Fetch_docstrings:
         """
 
         # Allow line breaks after the opening bracket.
-        text = replace(text, "(", "(linebreak[0]")
+        text = replace(text, "(", "(\linebreak[0]")
 
         # Allow line breaks after periods (but not in numbers).
         for char in letters:
-            text = replace(text, ".%s" % char, ".linebreak[0]%s" % char)
+            text = replace(text, ".%s" % char, ".\linebreak[0]%s" % char)
 
         # Allow line breaks after equal signs.
-        text = replace(text, "=", "=linebreak[0]")
+        text = replace(text, "=", "=\linebreak[0]")
+
+        # Remove the backslash to prevent is processing.
+        text = replace(text, "\linebreak", "linebreak")
 
         # Return the modified text.
         return text
