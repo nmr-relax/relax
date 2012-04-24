@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,6 +27,7 @@
 from relax_errors import RelaxError
 from string import split
 from unittest import TestSuite
+import wx
 
 # relax GUI test module imports.
 from model_free import Mf
@@ -56,6 +57,24 @@ class GUI_test_runner:
         @keyword runner:    A test runner such as TextTestRunner.  For an example of how to write a test runner see the python documentation for TextTestRunner in the python source.
         @type runner:       Test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
         """
+
+        # Get the wx app, if the test suite is launched from the gui.
+        self.app = wx.GetApp()
+
+        # Force the relax controller to stay on top (needed for Mac OS X and MS Windows).
+        gui_launch = False
+        if self.app != None and hasattr(self.app, 'gui'):
+            # Tests launched from the GUI.
+            gui_launch = True
+
+            # Store the original frame style.
+            orig_style = self.app.gui.controller.GetWindowStyle()
+
+            # Set a new style to stay on top.
+            self.app.gui.controller.SetWindowStyle(orig_style | wx.STAY_ON_TOP)
+
+            # Refresh to update the style.
+            self.app.gui.controller.Refresh()
 
         # Create an array of test suites (add your new TestCase classes here).
         suite_array = []
@@ -90,6 +109,14 @@ class GUI_test_runner:
 
         # Run the test suite.
         results = runner.run(full_suite)
+
+        # Restore the controller if needed.
+        if gui_launch:
+            # Reset to the original style.
+            self.app.gui.controller.SetWindowStyle(orig_style)
+
+            # Refresh to update the style.
+            self.app.gui.controller.Refresh()
 
         # Return the status of the tests.
         return results.wasSuccessful()
