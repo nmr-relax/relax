@@ -466,6 +466,16 @@ class Main(wx.Frame):
         # Make the relax controller modal so that all other windows are deactivated (to stop users from clicking on things).
         self.controller.MakeModal(True)
 
+        # Close all open windows.
+        if hasattr(self, 'spin_viewer'):
+            self.spin_viewer.Close()
+        if hasattr(self, 'pipe_editor'):
+            self.pipe_editor.Close()
+        if hasattr(self, 'results_viewer'):
+            self.results_viewer.Close()
+        if hasattr(self, 'relax_prompt'):
+            self.relax_prompt.Close()
+
         # Reset relax.
         reset()
 
