@@ -1,5 +1,5 @@
 # The title.
-$TITLE = 'relax';
+$TITLE = 'The relax user manual';
 
 # Allow images in the base relax directory to be used.
 $DVIPS = 'dvips -R0';
@@ -25,7 +25,7 @@ $ALTERNATIVE_ICONS = 'icons';
 $LOCAL_ICONS = 1;
 
 # Set the HTML version.
-$HTML_VERSION = "4.0";
+$HTML_VERSION = "4.0,math";
 
 # Additions to the head tag (Google analytics JS).
 $LATEX2HTML_META = "
@@ -63,9 +63,6 @@ $ANTI_ALIAS = 1;
 
 # Set the font size.
 $FONT_SIZE = "12pt";
-
-# Show the section numbers of the PDF manual.
-$SHOW_SECTION_NUMBERS = 1;
 
 # Ignore certain LaTeX commands
 &ignore_commands( <<_IGNORED_CMDS_);
