@@ -380,6 +380,11 @@ def compile_user_manual_html(target, source, env):
     print("Running the command:\n$ %s\n\n\n" % cmd)
     system(cmd)
 
+    # Create the proper index.html file.
+    cmd = "cp -vp %s%srelax_user_manual.html %s%s index.html" % (dir, path.sep, dir, path.sep)
+    print("Running the command:\n$ %s\n\n\n" % cmd)
+    system(cmd)
+
     # Return to the base directory.
     chdir(base_dir)
 
