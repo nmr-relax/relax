@@ -61,10 +61,16 @@ def enable_control_chars(stream=1):
 
     # The STDIO streams.
     if stream == 0:
+        if not hasattr(sys.stdin, 'isatty'):
+            return False
         return sys.stdin.isatty()
     elif stream == 1:
+        if not hasattr(sys.stdout, 'isatty'):
+            return False
         return sys.stdout.isatty()
     elif stream == 2:
+        if not hasattr(sys.stderr, 'isatty'):
+            return False
         return sys.stderr.isatty()
     else:
         return False
