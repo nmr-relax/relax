@@ -349,8 +349,13 @@ class About_base(wx.Frame):
         @type event:    wx event
         """
 
-        # Create the device context.
-        wx.BufferedPaintDC(self.window, self.buffer, wx.BUFFER_VIRTUAL_AREA)
+        ## Create the device context.
+        #wx.BufferedPaintDC(self.window, self.buffer, wx.BUFFER_VIRTUAL_AREA)
+
+        # Temporary fix for wxPython 2.9.3.1 suggested by Robin Dunn at http://groups.google.com/group/wxpython-users/browse_thread/thread/7dff3f5d7ca24985.
+        dc = wx.PaintDC(self.window)
+        self.window.PrepareDC(dc)
+        dc.DrawBitmap(self.buffer, 0, 0)
 
 
     def offset(self, val=0):
