@@ -1,3 +1,159 @@
+Version 1.3.15
+(25 April 2012, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.15
+
+    Features:
+        * Large improvements to the HTML user manual (http://www.nmr-relax.com/manual/index.html).
+        * The full test suite, including GUI tests, can now be run successfully from the GUI.
+        * The Mac OS X binary distribution file now supports Leopard, Snow Leopard and Lion as well as the PPC, i386 and x86_64 CPU architectures.
+        * The prompt and script output to a terminal is now coloured.
+        * Faster program startup by only importing the test suite and GUI packages if they are actually needed.
+        * Files selected via the GUI user functions can now be previewed.
+        * Redesign of the spin loading wizard of the spin viewer window to be more intuitive.
+        * Expansion of the system information print out.
+        * Advances in the multi-processor framework including the pre-sending of data to slaves.
+        * Support for wxPython 2.9.
+
+
+    Changes:
+        * Changed all of the maths in the HTML user manual page titles, the latexonly and htmlonly environments are now being used to produce different section titles with and without maths respectively.
+        * The latex2html configuration script now allows for more maths in the HTML user manual with the HTML_VERSION math extension.
+        * The section numbers are now removed from the HTML user manual pages to allow for more static webpages for the user functions which do not disappear as new user functions are added.
+        * The title page of the HTML user manual has been renamed to "The relax user manual".
+        * Updated the ancient COMMITTERS file which has not been changed in over 4 years!
+        * The pipe editor window is no longer centred, now matching the behaviour all other windows.
+        * All open relax windows are now closed prior to running the test suite within the GUI.
+        * Exiting the GUI now only warns about data loss only if there is data to loose.
+        * The relax controller can now not be closed while the test suite is running.
+        * During the GUI tests from the GUI, the relax controller is now modal preventing users from interfering with the tests.
+        * The relax controller now stays on top of all windows when the GUI tests are being run improving the running of the tests on Mac OS X and MS Windows.
+        * The GUI tests now work in the GUI thanks to a lot of GUI black magic.  The tests' tearDown() method now carefully deconstructs the GUI element prior to the next test being run.  In the normal 'relax --gui-test' mode, the GUI object is destroyed and recreated for each test however, when run from the GUI, the GUI object is always there and must remain intact.  The deconstruction includes deletion of each analysis tab and selective destruction of all non-main windows (excluding the controller which shows the test suite progress).  The relax data store GUI object is also reconstructed in the tearDown() method, and all wx events flushed at the very end to prevent clashes with the next GUI test.
+        * The relax mode (i.e. prompt, script, GUI, test suite, etc.) is now stored in the status object - this is used to activate and deactivate certain parts of the GUI tests within the GUI and normal test suite modes.
+        * The ds.relax_gui GUI data object is now a permanent feature of the relax data store.
+        * The 'Tools->Test suite' menu item has been converted into a sub-menu with entries for running all tests or the individual test categories.
+        * Created the _det_install_path() status singleton method for better determining the install path - this is used for the Mac OS X applications whereby the current logic of using sys.path[0] fails miserably!
+        * Prepared the multi-processor package for the import mechanisms of Python 3 - this new mechanism is present in Python 2.7 now, and the code falls back to the old method when not present.
+        * Complete redesign of the py2app setup.py script for building Mac OS X applications.  The script has been converted into a class called Setup which performs all the actions.  All files, source or otherwise, are now stated as data files to be included in relax.app/Contents/Resources.  All relax modules are specified by the py2app 'includes' option so that they are forced to all be included within the relax.app/Contents/Resources/lib/python2.X/site-packages.zip file as *.pyc files.
+        * The py2app part of the setup.py script now throws a RelaxError if the setuptools module is missing.
+        * Added the relax prompt icon to the main GUI window toolbar.
+        * Added the larger sized application-x-executable-script Oxygen icons.
+        * Created the 'ansi' module containing the terminal colouring ANSI escape sequences.
+        * The test suite is now only imported in the test modes of operation - this should speed up program initialisation.
+        * The import of the gui package now only occurs in GUI mode - this will speed up the program start up.
+        * The script print out in scripting mode is now in cyan if sys.stdout is a TTY.
+        * ANSI escape characters are now turned off forcibly when in GUI mode.
+        * The sys.std*.isatty() methods are being used to determine if text output should be coloured.
+        * All RelaxWarnings are now coloured yellow when printed to a TTY.
+        * All RelaxErrors are now coloured red when printed to a TTY.
+        * The relax prompts will be coloured blue when printed to a TTY.
+        * The GUI analyses delete_all() method now unregisters all observer methods prior to deletion.
+        * Created observer_register() for all GUI analyses for method registration and unregistration - this method allows for external calls to observer_register() to pre-remove the methods from the observer objects.
+        * Added debugging printouts to the delete_all() analysis method.
+        * More advanced debugging printouts for the delete_analysis() method.
+        * Added some heavy debugging code to the GUI analysis delete_analysis() method.
+        * Increased the size of the model-free model change warning dialog for wxPython 2.9 on GNU/Linux.
+        * The file selection wizard GUI element now has the preview button turned on by default.
+        * Double clicking on a file in the results view window now opens it.
+        * Added a file preview button for the spectrum.read_intensities user function GUI page.
+        * Added a file preview button to the file selection GUI element of the wizards.
+        * Increased the size of the incomplete set up dialogs for wxPython 2.9 on GNU/Linux.
+        * Added the document-preview.png Oxygen icons.
+        * Increased the loading state warning dialog size - this is to accommodate for larger text on wxPython 2.9 on GNU/Linux with GTK.
+        * Improved the spin data deletion messages from the spin viewer window.
+        * Increased the dialog heights for the deletion of spin data via the spin viewer window.
+        * Improved the user feedback during a state save by just sleeping a little to show the busy cursor.
+        * Modified the spin loading wizard so that preloaded structures are the default.
+        * The maths_fns.relax_fit module is now stored in the dep_check module for the info print out.
+        * Added the structure.read_xyz user function to the menus.
+        * Created the Tools->System Information menu entry, which is simply the sys_info user function front end.
+        * Created the GUI front end to the structure.read_xyz user function.
+        * The relax controller now accepts Ctrl-A to select all text.
+        * The relax controller now shows the relax intro text to mimic the prompt/scripting modes.
+        * Introduced the empty() method into the structure API to check if structural data is loaded - this will be used in the spin loading wizard of the spin viewer window.
+        * Converted the structure.read_xyz user function front end to the new design.
+        * Improved details of relax and the compiled C modules from the info print out.
+        * Created a dictionary object containing wxPython version info within the status singleton object - this is being used to construct the Mac dock icon, when the Carbon and Cocoa builds and not GTK are being used.
+        * Updated the multi-processor package __all__ list to allow the relax unit tests to pass.
+        * Added a document describing how to build a 3-way (i386, pcc, x86_64) Mac OS X Python framework.
+        * Added a script which is used to validate the binary architecture of Mac OS X Frameworks.
+        * Improved the relax info print out for the installed python packages - this now shows more information for the wxPython version, and formats the output based on maximum widths to handle different situations.
+        * Removed the ppc64 build target for the relax C modules on Mac OS X - this architecture is not supported by the recent Xcode frameworks, so it has been dropped.
+        * The scons binary_dist target on Mac OS X can now overwrite a pre-existing DMG file.
+        * Added some epydoc @attention fields to the multi-processor API.
+        * Created the fetch_data_store() multi-processor API function - this simply returns the data store of the same processor as the calling code.
+        * The 2nd test implementation's slave command now uses the fetch_data() API function - this is to obtain the invariant data pre-sent by the master to the slaves.
+        * Renamed the multi-processor API data_fetch() function to fetch_data(), and implemented it.
+        * Renamed data_upload() to send_data_to_slaves() and made it more specific.
+        * The multi-processor data_fetch() API function is now used to obtain the total_length variable.
+        * Shifted the self.threaded_result_processing flag into the base Processor class where it belongs.
+        * Clean up and completion of the TODO for the Processor.assert_on_master() method.  The Processor.assert_on_master() method has been created and calls raise_unimplemented().  The Multi_processor.assert_on_master() method has been shifted to Mpi4py_processor.assert_on_master(), as that method's error message is MPI specific.  The empty Uni_processor.assert_on_master() method has been added to allow that fabric to work.
+        * Spun out all of the results queue objects into their own module.  This completes another set of TODOs by removing these queue objects from any fabric level.  They can now be imported and used by any fabric level (Processor, Multi_processor, Mpi4py_processor, Uni_processor, etc.).
+        * Shifted the run_command_queue() and run_queue() methods from the Multi_processor to Processor class.
+        * The multi/test_implementation2.py script can now be run in uni-processor mode.
+        * The multi/test_implementation2.py script now properly uses pre-send data in the slave calculations.
+        * Partially implemented the Processor.data_update() method.
+        * Created the special command object Slave_storage_command for transferring data to slaves - this command currently has two special methods:  add(), used by the master processor to add data to the command for transfer; and clear(), used by the slave (via run()) or the master to clear out all data.
+        * Split the multi.commands module into two - the slave commands and result commands.
+        * Removed the Mpi_processor.data_upload() method as this will be performed at the Processor level.
+        * Shifted all of the processor command objects into the multi.commands module.  The other multi.api module objects have been shifted into the multi.misc module.
+        * The multi-processor package now allows sys.exit() calls within the master processor.
+        * Removed a number of sys.exit() calls from different relax modes.  The return call is used rather than sys.exit() to exit the main run() method.  These were not needed and it allows the 'version', 'info', and 'gui' modes to play better with the multi-processor package when using mpi4py.
+        * Shifted the mpi4py processor module functions broadcast_command() and ditch_all_results() into the class - these have been turned into private methods.
+        * Redesigned how the multi-processor package terminates program execution - the Processor.exit() method has been introduced to perform this action.
+        * Spelling fix for a number of the processor method names.
+        * Fully documented the Processor.run() method via comments.
+        * Eliminated the unused Set_processor_property_command multi-processor class.
+        * Eliminated the unused Get_name_command multi-processor class.
+        * Shifted the Multi_processor.run() method up a level to Processor.run() - this completes one of the TODOs, and will be needed to avoid code duplication for handling the new data_upload() and data_fetch() API methods.
+        * Eliminated the completely unused create_slaves() Processor method.
+        * The processor instances now have a data storage container - this will be used by the data_upload() and data_fetch() API methods.
+        * Implemented the mpi4py processor fabric data_upload() method.
+        * Updated the second multi-processor test implementation to use the new data_upload() API function.
+        * The multi.data_upload() API function now forwards the call to the Processor classes.
+        * Clean up of the Multi_processor.run_command_queue() method.
+
+
+    Bugfixes:
+        * Fix for the about dialogs in the GUI when combined with a scrolling window (this is only a problem for the wxPython 2.9 series).
+        * Fix for the fetch_docstrings.py script used for the user manual creation - the number of \linebreak[0] commands inserted was far too great.
+        * In generating the HTML user manual, the ignore_commands function is now being used to force latex2html to ignore \linebreak[0] commands as these were previously putting the text '[0]' throughout all the HTML pages.
+        * For the HTML user manual, the document splitting has been restored to a split depth of 5 - this had been changed to make the main chapters of the text more readable, but the user function HTML page is now far, far too long and is a massive strain on browsers.
+        * The Mf.test_write_results system test now works with the newer Python 2.7.3 version, as from this version onwards the XML of the relax save and results files will be differently formatted.
+        * Big bug fix for the installation path for the relax Mac OS X application.  The path to the application Resources folder, where all the relax data files are located, is now set to the install path.  The relax.py module was also overwriting the value set in the status singleton and now this no longer occurs.
+        * Fix for the py2app setup.py script for Mac OS X application creation - the list of data files to include with the app is now properly formatted.
+        * The relax GUI is now robust and able to withstand a call to the reset user function - this could have occurred if the user ran a script with a reset() call, or if reset() was typed at the GUI version of the relax prompt.
+        * Added isatty() methods to all of the dummy file objects within relax - this fixes a number of errors caused by the recent introduction of coloured text.
+        * Fix for the initialisation of the Exec_info class for the prompt/script output.
+        * Fix for the residue.create user function GUI front end - the unnamed molecules are now properly handled, and the gui_to_*() methods are now used for data conversion.
+        * Fix for the gui_to_int() function for when text instead of an integer is given by the user.
+        * Bug fix for the spin.create user function GUI interface for when molecules or residues are not named - unnamed molecules are now properly handled in the GUI page, and the residue name of None is properly converted into a NoneType prior to executing the back end.
+        * Big bug fix for the deletion of analyses tabs from the GUI - this affects wxGTK users on Macs and Linux.  Now the spectrum and relaxation data list GUI elements have observer_register() methods, allowing the analysis delete_all() method to unregister all analysis specific methods from the observer objects.
+        * Multiple unregistrations of observer methods are now possible without a RelaxError - this allows multiple code paths to unregister methods to allow for pre-removal of methods to avoid queued wx events in wxGTK from occurring on dead or missing objects.
+        * Bug fix for the GUI when deleting analysis tabs - the deletion of analysis tabs was previously failing in certain cases.
+        * Fix for a bug triggered by wxPython 2.9 when deleting the last analysis tab - the self.notebook object is now deleted when the set_init_state() method is called, allowing it to be properly accessed and recreated.
+        * Converted the pipe switching with GUI tab switching to synchronous to avoid rare races (triggered by wxPython 2.9).
+        * The analysis deletion buttons now do nothing if the notebook is not created yet - this avoids problems on the new wxPython 2.9 versions.
+        * Fix for the radiobutton group in the Spectral_error_type_page of the peak intensity wizard.
+        * Fix for the spin loading wizard of the spin window - the RadioButtons of the first page for selecting the spin loading method are now fixed. 
+        * Fix for the about relax window size for wxPython 2.9.
+        * Fix for the relax controller find dialog on Mac OS X with wxPython 2.9.
+        * wxPython 2.9 fix for the spin viewer window (at least for Mac OS X).
+        * The maximize calls for the spin viewer window are now turned off for Mac OS X systems (this is a fix for the fink versions of relax).
+        * Bug fix for Mac OS X - the main window is no longer started maximised (a fix for the fink version of relax).
+        * Fix for the spin viewer window for wxPython 2.9 - this is for when you right click in the tree view panel on nothing.
+        * Fix for the text on the 'finish' button of the GUI wizard - this was accidentally changed to 'apply'.
+        * Bug fix for the spectrum.replicated user function for when it is called twice with the same IDs.
+        * Bug fix for the relax GUI spin viewer window.  When right clicking on nothing in the tree view, an error would occur.  Now, instead, a special menu pops up with a single entry for loading spins.
+        * Fix for the building of the relax C modules as universal binaries on Mac OS X - the linking was not functioning correctly, and the resultant module was build only for i386.
+        * The relax Mac OS X dock icon is now turned off when using the wxGTK build of wxPython from fink - this prevents a little grey frameless window appearing with the largest of the relax Ulysses butterfly icons in the centre.
+        * Bug fix for Mac OS X - attempt at killing the Carbon.Evt.TickCount problem by removing argv emulation.
+        * Fix for the scons binary_dist target on Mac OS X systems with multiple Python versions - now the py2app program is called with the same python version as used by scons.
+        * Fix for the Processor.data_upload() method.  The self.run_command_queue() method is no longer being used.  Instead the add_to_queue() method is being used to queue up the slave commands, and the run_queue() method is being called at the end to flush the queue.
+        * Fixes and clean up of the slave to master transfer mechanism for result commands.
+        * Fix for the relax info print out on Python 2.5 or below.
+
+
+
 Version 1.3.14
 (19 March 2012, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.14
