@@ -24,7 +24,7 @@ A word of warning before reading this chapter, the topics covered here are quite
 % The function value.
 \subsection{The function value}
 
-At the simplest level all minimisation techniques require at least a function which will supply a single value for different parameter values $\theta$.  For the modelling of NMR relaxation data this function is the chi-squared equation~\eqref{eq: chi-squared} on page~\pageref{eq: chi-squared}.  For certain algorithms, such a simplex minimisation\index{minimisation techniques!simplex}, this single value suffices.
+At the simplest level all minimisation techniques require at least a function which will supply a single value for different parameter values $\theta$.  For the modelling of NMR relaxation data this function is the chi-squared equation~\eqref{eq: maths: chi-squared} on page~\pageref{eq: maths: chi-squared}.  For certain algorithms, such a simplex minimisation\index{minimisation techniques!simplex}, this single value suffices.
 
 
 % The gradient.
@@ -259,7 +259,7 @@ The dependency chain which was outlined in the model-free chapter -- that the ch
     \subsection{The chi-squared value}
 \end{htmlonly}
 
-As was presented in Equation~\eqref{eq: chi-squared} on page~\pageref{eq: chi-squared} the $\chi^2$ value is
+The $\chi^2$ value is defined as
 \begin{equation} \label{eq: maths: chi-squared}
  \chi^2(\theta) = \sum_{i=1}^n \frac{(\Ri - \Ri(\theta))^2}{\sigma_i^2},
 \end{equation}
