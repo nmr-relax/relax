@@ -30,9 +30,10 @@ Older versions of these packages may work, use them at your own risk.  If, for o
 
 
 % The precompiled verses source distribution.
-\subsection{The precompiled verses source distribution}
+\subsection{The source releases}
+\label{sect: source releases}
 
-Two types of software packages are available for download -- the precompiled and source distribution.  Currently only relaxation curve-fitting requires compilation to function and all other features of relax will be fully functional without compilation.  If relaxation curve-fitting is required but no precompiled version of relax exists for your operating system or architecture then, if a C compiler is present, the C code can be compiled into the shared objects files \texttt{*.so} which are loaded as modules into relax\index{C module compilation}.  To build these modules the Sconstruct\index{Sconstruct|textbf} system from \href{http://scons.org/}{http://scons.org/} is required.  This software only depends on Python which is essential for running relax anyway.  Once Sconstruct is installed type
+Two types of software packages are available for download -- the precompiled and source distribution.  Currently only relaxation curve-fitting requires compilation to function and all other features of relax will be fully functional without compilation.  If relaxation curve-fitting is required but no precompiled version of relax exists for your operating system or architecture then, if a C compiler is present, the C code can be compiled into the shared objects files \texttt{*.so}, \texttt{*.pyd} or \texttt{*.dylib} which are loaded as modules into relax\index{C module compilation}.  To build these modules the Scons\index{Scons|textbf} system from \href{http://scons.org/}{http://scons.org/} is required.  This software requires the Python and numpy header files.  Once Scons is installed type
 
 \example{\$ scons}
 \index{scons}
@@ -55,16 +56,16 @@ then create a symbolic link in \texttt{/usr/local/bin} by moving to that directo
 \example{\$ ln -s ../relax/relax .}
 \index{symbolic link}
 
-and finally running relax to create the byte-compiled Python \texttt{*.pyc} files to speed up the start time of relax by typing
+and finally possibly creating the byte-compiled Python \texttt{*.pyc} files to speed up the start time of relax by typing
 
-\example{\$ relax --test}
+\example{\$ python -m compileall .}
 
-Alternatively if the Sconstruct system is installed typing
+in the relax base directory.  Alternatively if the Scons system is installed, by typing as the root user
 
 \example{\$ scons install}
 \index{scons}
 
-in the relax base directory will create a directory in \texttt{/usr/local/} called \texttt{relax}, copy all the uncompressed and untarred files into this directory, create a symbolic link in \texttt{/usr/local/bin} to the file \texttt{/usr/local/relax/relax}, and then finally run relax to create the byte-compiled Python \texttt{*.pyc}.  To change the installation path to a non-standard location the Sconstruct script \texttt{sconstruct} in the base relax directory should be modified by changing the variable \texttt{INSTALL\_PATH} to point to the desired location.
+in the relax base directory, a directory in \texttt{/usr/local/} called \texttt{relax} will be created, all the uncompressed and untarred files will be copied into this directory, a symbolic link in \texttt{/usr/local/bin} to the file \texttt{/usr/local/relax/relax} will be created, and then finally the Python \texttt{*.pyc} files will be byte-compiled.  To change the installation path to a non-standard location the Scons script \texttt{sconstruct} in the base relax directory should be modified by changing the variable \texttt{INSTALL\_PATH} to point to the desired location.
 
 
 
@@ -75,29 +76,49 @@ in the relax base directory will create a directory in \texttt{/usr/local/} call
 In addition to the above dependencies, running relax on MS Windows requires a number of additional programs.  These include:
 
 \begin{description}
-\item[\href{http://projects.scipy.org/ipython/ipython/wiki/PyReadline/Intro}{pyreadline}\index{pyreadline}:]  Version 1.3 or higher (\href{http://ipython.scipy.org/dist/pyreadline-1.3.win32.exe}{download}).
-\item[\href{http://starship.python.net/crew/theller/ctypes/}{ctypes}\index{ctypes}:]  The pyreadline package requires ctypes (\href{http://prdownloads.sourceforge.net/ctypes/ctypes-1.0.0.win32-py2.4.exe?download}{download}).
+\item[\href{http://projects.scipy.org/ipython/ipython/wiki/PyReadline/Intro}{pyreadline}\index{pyreadline}:]  Version 1.3 or higher.
+\item[\href{http://starship.python.net/crew/theller/ctypes/}{ctypes}\index{ctypes}:]  The pyreadline package requires ctypes.
 \end{description}
 
-To install, simply download the pre-compiled binary distribution \texttt{relax-x.x.x.Win32.zip} or the source distribution \texttt{relax-x.x.x.src.zip} and extract the files to \texttt{C:$\backslash$Program Files$\backslash$relax-x.x.x}.  Then add this directory to the system environment path (in Windows XP, right click on `My Computer', go to `Properties', click on the `Advanced' tab, and click on the `Envirnment Variables' button.  Then double click on the `Path' system variable and add the text ``;C:$\backslash$Program Files$\backslash$relax-x.x.x'' to the end of variable value field.  The Python installation must also be located on the path (add the text ``;C:$\backslash$Program Files$\backslash$Python24'', changing the text to point to the correct directory, to the field).  To run the program from any directory inside the Windows command prompt (or dos prompt) type:
+To install, simply download the pre-compiled binary distribution \texttt{relax-x.x.x.Win32.zip} or the source distribution \texttt{relax-x.x.x.src.zip} and extract the files to \texttt{C:$\backslash$Program Files$\backslash$relax-x.x.x}.  Then add this directory to the system environment path (in Windows XP, right click on `My Computer', go to `Properties', click on the `Advanced' tab, and click on the `Envirnment Variables' button.  Then double click on the `Path' system variable and add the text ``;C:$\backslash$Program Files$\backslash$relax-x.x.x'' to the end of variable value field.  The Python installation must also be located on the path (add the text ``;C:$\backslash$Python27'', changing the text to point to the correct directory, to the field).  To run the program from any directory inside the Windows command prompt (or dos prompt) type:
 
 \example{C:$\backslash$> relax}
 
 
+Note that the pre-compiled binary distribution was built using a specific Python version and that that version may need to be installed for the modules to be loaded.  More details are given on the \href{http://www.nmr-relax.com/download.html}{download} webpage.
 
 
 % Installation on Mac OS X.
 \subsection{Installation on Mac OS X}
 \index{Mac OS X|textbf}
 
-Please write me if you know how to do this!
+There are three ways of installing relax on a Mac.  These are described at \href{http://www.nmr-relax.com/download.html}{http://www.nmr-relax.com/download.html} and are the pre-compiled relax application, the Fink or the source releases.
 
+\subsubsection{The relax application}
+
+The stand-alone relax application requires none of the dependencies listed above to be installed.  It is a universal binary compiled for the i386, x86-64 and PPC CPU architectures (fat3) using the Mac OS X 10.5 framework.  It should therefore run on Leopard, Snow Leopard, and Lion.  This very large bundle does not require system administrator access to run.
+
+\subsubsection{Fink}
+
+Certain relax versions are available for Mac OS X within the Fink project.  These can be installed for Python 2.7 with the command:
+
+\example{> fink install relax-py27}
+
+The relax releases packaged within Fink can been browsed at \href{http://pdb.finkproject.org/pdb/browse.php?name=relax}{http://pdb.finkproject.org/pdb/browse.php?name=relax}. If the desired version is not available, please download the relevant source package below or contact the fink project using the `Maintainer' email address given in the relax fink pages.
+
+Note that when installing via fink, all the dependencies will be automatically selected and installed as well.  Although automatic, when starting from scratch that there could be well over 250 source packages that need to be compiled (to set up the full GNU compilation chain and other libraries which are then required to build Python, numpy, scipy, etc.).  This may take anywhere between 2 days to over a week (don't forget to mention this fact to your poor sys-admin).
+
+The fink relax packages for different Python versions are \href{http://pdb.finkproject.org/pdb/package.php/relax-py27}{relax-py27}, \href{http://pdb.finkproject.org/pdb/package.php/relax-py26}{relax-py26}, \href{http://pdb.finkproject.org/pdb/package.php/relax-py25}{relax-py25} and \href{http://pdb.finkproject.org/pdb/package.php/relax-py24}{relax-py24}.
+
+\subsubsection{Source release}
+
+See Section~\ref{sect: source releases} on page~\pageref{sect: source releases}.
 
 
 % Installation on your OS.
 \subsection{Installation on your OS}
 
-Please write me if you know how to do this!
+For all others systems, please use the source distribution files and the Scons software to build the C modules.
 
 
 
@@ -141,7 +162,7 @@ Molmol is used for viewing the PDB structures loaded into the program and to dis
 \subsection{PyMOL}
 \index{software!PyMOL|textbf}
 
-PDB structures can also be viewed using PyMOL.  Although the mapping of parameter values onto the structure is not yet supported, this program can be used to display geometric objects generated by relax for representing physical concepts such as the diffusion tensor.
+PDB structures can also be viewed using PyMOL.  This program can also be used to display geometric objects generated by relax for representing physical concepts such as the diffusion tensor and certain cone diffusion models.
 
 
 % Dasha.
