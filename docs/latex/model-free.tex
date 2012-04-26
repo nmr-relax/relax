@@ -28,7 +28,7 @@ For the minimisation\index{minimisation} of the model-free models a chain of cal
  \chi^2(\theta) = \sum_{i=1}^n \frac{(\Ri - \Ri(\theta))^2}{\sigma_i^2},
 \end{equation}
 
-\noindent where the index $i$ is the summation index ranging over all the experimentally collected relaxation data of all residues used in the analysis; $\Ri$ belongs to the relaxation data set R for an individual residue, a collection of residues, or the entire macromolecule and includes the $\Rone$, $\Rtwo$, and NOE data at all field strengths; $\Ri(\theta)$ is the back-calculated relaxation value belonging to the set R$(\theta)$; $\theta$ is the model parameter vector which when minimised is denoted by $\hat\theta$; and $\sigma_i$ is the experimental error.
+\noindent where the index $i$ is the summation index ranging over all the experimentally collected relaxation data of all spins used in the analysis; $\Ri$ belongs to the relaxation data set R for an individual spin, a collection of spins, or the entire macromolecule and includes the $\Rone$, $\Rtwo$, and NOE data at all field strengths; $\Ri(\theta)$ is the back-calculated relaxation value belonging to the set R$(\theta)$; $\theta$ is the model parameter vector which when minimised is denoted by $\hat\theta$; and $\sigma_i$ is the experimental error.
 
 The significance of the chi-squared equation~\eqref{eq: chi-squared} is that the function returns a single value which is then minimised by the optimisation algorithm to find the model-free parameter values of the given model.
 
@@ -308,7 +308,7 @@ The optimisation of the parameters of an arbitrary model is dependent on a funct
  \chi^2(\theta) = \sum_{i=1}^n \frac{(\Ri - \Ri(\theta))^2}{\sigma_i^2},
 \end{equation}
 
-\noindent where $i$ is the summation index, $\Ri$ is the experimental relaxation data which belongs to the data set R and includes the $\Rone$, $\Rtwo$, and NOE values at all field strengths, $\Ri(\theta)$ is the back calculated relaxation data belonging to the set R$(\theta)$, and $\sigma_i$ is the experimental error.  For the optimisation of the model-free parameters while the diffusion tensor is held fixed, the summation index ranges over the relaxation data of an individual residue.  If the diffusion parameters are optimised simultaneously with the model-free parameters the summation index ranges over all relaxation data of all selected residues of the macromolecule.
+\noindent where $i$ is the summation index, $\Ri$ is the experimental relaxation data which belongs to the data set R and includes the $\Rone$, $\Rtwo$, and NOE values at all field strengths, $\Ri(\theta)$ is the back calculated relaxation data belonging to the set R$(\theta)$, and $\sigma_i$ is the experimental error.  For the optimisation of the model-free parameters while the diffusion tensor is held fixed, the summation index ranges over the relaxation data of an individual spin.  If the diffusion parameters are optimised simultaneously with the model-free parameters the summation index ranges over all relaxation data of all selected spins of the macromolecule.
 
 Given the current parameter values the model-free function provided to the algorithm will calculate the value of the model-free spectral density function $J(\omega)$ at the five frequencies which induce NMR relaxation by using Equations~\eqref{eq: J(w) model-free generic} and \eqref{eq: J(w) model-free ext generic}.  The theoretical $\Rone$, $\Rtwo$, and NOE values are then back-calculated using Equations~\eqref{eq: R1}, \eqref{eq: R2}, \eqref{eq: sigma_NOE}, and \eqref{eq: NOE}.  Finally, the chi-squared\index{chi-squared} value is calculated using Equation~\eqref{eq: chi2}.
 
@@ -411,7 +411,7 @@ The Newton search direction, used in both the line search and trust region metho
 
 The first modification uses the Cholesky factorisation of the matrix $B_k$, initialised to the true Hessian, to test for convexity (Algorithm 6.3 of \citet{NocedalWright99}).  If factorisation fails the matrix is not positive definite and a constant $\tau_k$ times the identity matrix $I$ is then added to $B_k$.  The constant originates from the Robbins norm of the Hessian $\lVert \nabla^2 f_k \rVert_F$ and is steadily increased until the factorisation is successful.  The resultant Cholesky lower triangular matrix $L$ can then be used to find the approximate Newton direction.  If $\tau_k$ is too large the convergence of this technique can approach that of the steepest descent\index{minimisation algorithm!steepest descent} algorithm.
 
-The second method is the Gill, Murray, and Wright (GMW) algorithm \citep{GMW81} which modifies the Hessian during the execution of the Cholesky factorisation $\nabla^2 f_k = LIL^T$, where $L$ is a lower triangular matrix and $D$ is a diagonal matrix.  Only a single factorisation is required.  As rows and columns are interchanged during the algorithm the technique may be slow for large problems such as the optimisation of the model-free parameters of all residues together with the diffusion tensor parameters.  The rate of convergence of the technique is quadratic.
+The second method is the Gill, Murray, and Wright (GMW) algorithm \citep{GMW81} which modifies the Hessian during the execution of the Cholesky factorisation $\nabla^2 f_k = LIL^T$, where $L$ is a lower triangular matrix and $D$ is a diagonal matrix.  Only a single factorisation is required.  As rows and columns are interchanged during the algorithm the technique may be slow for large problems such as the optimisation of the model-free parameters of all spins together with the diffusion tensor parameters.  The rate of convergence of the technique is quadratic.
 
 
 
@@ -503,7 +503,7 @@ The default setting in the program relax\index{software!relax} is to use linear 
 
 \noindent where $A$ is an $m \times n$ matrix where the rows are the transposed vectors $a_i$ of length $n$; the elements of $a_i$ are the coefficients of the model parameters; $\theta$ is the vector of model parameters of dimension $n$; $b$ is the vector of scalars of dimension $m$; $m$ is the number of constraints; and $n$ is the number of model parameters.  For model-free analysis, linear constraints are the most useful type of constraint as the correlation time $\tau_f$ can be restricted to being less than $\tau_s$ by using the inequality $\tau_s - \tau_f \geqslant 0$.
 
-In rearranging \eqref{eq: linear constraint} the linear constraint function $c(\theta)$ returns the vector $A \cdot \theta - b$.  Because of the linearity of the constraints the gradient and Hessian are greatly simplified.  The gradient $\nabla c(\theta)$ is simply the matrix $A$ and the Hessian $\nabla^2 c(\theta)$ is zero.  For the parameters specific to individual residues the linear constraints in the notation of \eqref{eq: linear constraint} are
+In rearranging \eqref{eq: linear constraint} the linear constraint function $c(\theta)$ returns the vector $A \cdot \theta - b$.  Because of the linearity of the constraints the gradient and Hessian are greatly simplified.  The gradient $\nabla c(\theta)$ is simply the matrix $A$ and the Hessian $\nabla^2 c(\theta)$ is zero.  For the parameters specific to individual spins the linear constraints in the notation of \eqref{eq: linear constraint} are
 \begin{equation}
     \begin{pmatrix}
         1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
@@ -654,7 +654,7 @@ For the parameters of the diffusion tensor the constraints utilised are
     \end{pmatrix}.
 \end{equation}
 
-\noindent  The upper limit of 200~ns on $\tau_m$ prevents the parameter from heading towards infinity when model failure occurs (see Chapter~\ref{ch: model elimination}).  This can significantly decrease the computation time.  To isolate the prolate spheroid\index{diffusion!spheroid (axially symmetric)} the constraint
+\noindent  The upper limit of 200~ns on $\tau_m$ prevents the parameter from heading towards infinity when model failure occurs (see \citet{dAuvergneGooley06}).  This can significantly decrease the computation time.  To isolate the prolate spheroid\index{diffusion!spheroid (axially symmetric)} the constraint
 \begin{equation}
     \begin{pmatrix}
          1 \\
@@ -694,7 +694,7 @@ Dependent on the model optimised, the matrix $A$ and vector $b$ are constructed 
 
 Model scaling can have a significant effect on the optimisation algorithm -- a poorly scaled model can cause certain techniques to fail.  When two parameters of the model lie on very different numeric scales the model is said to be poorly scaled.  For example in model-free analysis the order of magnitude of the order parameters is one whereas for the internal correlation times the order of magnitude is between $1e^{-12}$ to $1e^{-8}$.  Most effected are the trust region algorithms -- the multidimensional sphere of trust will either be completely ineffective against the correlation time parameters or severely restrict optimisation in the order parameter dimensions.  In model-free analysis the significant scaling disparity can even cause failure of optimisation due to amplified effects of machine precision.  Therefore the model parameters need to be scaled.
 
-This can be done by supplying the optimisation algorithm with the scaled rather than unscaled parameters.  When the chi-squared\index{chi-squared} function, gradient\index{chi-squared gradient}, and Hessian\index{chi-squared Hessian} are called the vector is then premultiplied with a diagonal matrix in which the diagonal elements are the scaling factors.  For the model-free analysis the scaling factor of one was used for the order parameter and a scaling factor of $1e^{-12}$ was used for the correlation times.  The $R_{ex}$ parameter was scaled to be the chemical exchange rate of the first field strength.  The scaling matrix for the parameters \{$S^2$, $S^2_f$, $S^2_s$, $\tau_e$, $\tau_f$, $\tau_s$, $R_{ex}$, $r$, $CSA$\} of individual residues is
+This can be done by supplying the optimisation algorithm with the scaled rather than unscaled parameters.  When the chi-squared\index{chi-squared} function, gradient\index{chi-squared gradient}, and Hessian\index{chi-squared Hessian} are called the vector is then premultiplied with a diagonal matrix in which the diagonal elements are the scaling factors.  For the model-free analysis the scaling factor of one was used for the order parameter and a scaling factor of $1e^{-12}$ was used for the correlation times.  The $R_{ex}$ parameter was scaled to be the chemical exchange rate of the first field strength.  The scaling matrix for the parameters \{$S^2$, $S^2_f$, $S^2_s$, $\tau_e$, $\tau_f$, $\tau_s$, $R_{ex}$, $r$, $CSA$\} of individual spins is
 \begin{equation}
     \begin{pmatrix}
         1 &  0 &  0 &  0 &  0 &  0 &  0 &  0 &  0 \\
@@ -737,7 +737,7 @@ This can be done by supplying the optimisation algorithm with the scaled rather 
 % Optimisation of a single model-free model.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Optimisation of a single model-free model}
+\section{Optimisation of a single model-free model}\label{sect: single mf model}
 
 
 % The sample script.
@@ -745,7 +745,7 @@ This can be done by supplying the optimisation algorithm with the scaled rather 
 
 \subsection{The sample script}
 
-The sample script which demonstrates the optimisation of model-free model $m4$ which consists of the parameters \{$S^2$, $\tau_e$, $R_{ex}$\} is \texttt{`model-free.py'}.  The text of the script is:
+The sample script which demonstrates the optimisation of model-free model $m4$ which consists of the parameters \{$S^2$, $\tau_e$, $R_{ex}$\} is \texttt{`model\_free/single\_model.py'}.  The text of the script is:
 
 \begin{exampleenv}
 \# Script for model-free analysis. \\
@@ -755,22 +755,22 @@ name = `m4' \\
 pipe.create(name, `mf') \\
  \\
 \# Load the sequence. \\
-sequence.read(`noe.500.out') \\
+sequence.read(`noe.500.out', res\_num\_col=1) \\
  \\
 \# Load the relaxation data. \\
-relax\_data.read(`R1', `600', 600.0 * 1e6, `r1.600.out') \\
-relax\_data.read(`R2', `600', 600.0 * 1e6, `r2.600.out') \\
-relax\_data.read(`NOE', `600', 600.0 * 1e6, `noe.600.out') \\
-relax\_data.read(`R1', `500', 500.0 * 1e6, `r1.500.out') \\
-relax\_data.read(`R2', `500', 500.0 * 1e6, `r2.500.out') \\
-relax\_data.read(`NOE', `500', 500.0 * 1e6, `noe.500.out') \\
+relax\_data.read(ri\_id='R1\_600',  ri\_type='R1',  frq=600.0*1e6, file='r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id='R2\_600',  ri\_type='R2',  frq=600.0*1e6, file='r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id='NOE\_600', ri\_type='NOE', frq=600.0*1e6, file='noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id='R1\_500',  ri\_type='R1',  frq=500.0*1e6, file='r1.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id='R2\_500',  ri\_type='R2',  frq=500.0*1e6, file='r2.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id='NOE\_500', ri\_type='NOE', frq=500.0*1e6, file='noe.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
  \\
 \# Setup other values. \\
 diffusion\_tensor.init(10e-9, fixed=True) \\
-value.set(1.02 * 1e-10, `bond\_length') \\
-value.set(-160 * 1e-6, `csa') \\
-value.set(`15N', `heteronucleus') \\
-value.set(`1H', `proton') \\
+value.set(1.02 * 1e-10, `r') \\
+value.set(-172 * 1e-6, `csa') \\
+value.set(`15N', `heteronuc\_type') \\
+value.set(`1H', `proton\_type') \\
  \\
 \# Select the model-free model. \\
 model\_free.select\_model(model=name) \\
@@ -795,14 +795,18 @@ state.save(`save', force=True)
 \end{exampleenv}
 
 
-% The rest.
-%~~~~~~~~~~
+% The explanation.
+%~~~~~~~~~~~~~~~~~
 
-\subsection{The rest}
+\subsection{Explanation}
 
-\textbf{\textit{Please write me!}}
+The above script consists of three major sections:
 
-Until this section is completed please look at the sample script \texttt{`model-free.py'}.
+\begin{description}
+\item[Loading of data] Firstly a data pipe called `m4' is created to hold all of the analysis data.  Then the spin system data consisting of molecule, residue, and spin information is loaded into relax from the columns of the `noe.500.out' file, assuming that only residue numbers are present and are in the first column.  The options of this \texttt{sequence.read} user function allow the molecule name, residue number, residue name, spin number, or spin name columns to be specified if desired.  The next part is to load all of the relaxation data, to set up the initial diffusion tensor and to set the CSA and bond length information as well as the spin types.  Finally the model-free model `m4' is chosen.
+\item[Optimisation] The optimisation of model-free models requires an initial grid search to find a position close to the minimum, followed by the high precision Newton optimisation together with the Method of Multipliers constraint algorithm \citep{dAuvergneGooley08a}.  Errors are propagated from the relaxation data to the model-free parameters via Monte Carlo simulations which is a multi-step process in relax (designed for flexibility and to teach how the simulations are constructed and carried out).
+\item[Data output] The last stage consists of writing out the XML formatted results file which contains all of the data in the current data pipe, as well as the XML formatted save file which contains not only the current data pipe data but all of the relax data store data.  Both files can be loaded back into relax later on.
+\end{description}
 
 
 
@@ -817,7 +821,7 @@ Until this section is completed please look at the sample script \texttt{`model-
 
 \subsection{The sample script}
 
-The sample script which demonstrates the optimisation of all model-free models from $m0$ to $m9$ of individual residues is \texttt{`mf\_multimodel.py'}.  The important parts of the script are:
+The sample script which demonstrates the optimisation of all model-free models from $m0$ to $m9$ of individual spins is \texttt{`model\_free/mf\_multimodel.py'}.  The important parts of the script are:
 
 \begin{exampleenv}
 \# Set the data pipe names (also the names of preset model-free models). \\
@@ -829,22 +833,29 @@ for name in pipes: \\
 \hspace*{4ex} pipe.create(name, `mf') \\
  \\
 \hspace*{4ex} \# Load the sequence. \\
-\hspace*{4ex} sequence.read(`noe.500.out') \\
+\hspace*{4ex} sequence.read(`noe.500.out', res\_num\_col=1) \\
+ \\
+\hspace*{4ex} \# Load a PDB file. \\
+\hspace*{4ex} structure.read\_pdb(`example.pdb') \\
+ \\
+\hspace*{4ex} \# Set the spin name and then load the NH vectors. \\
+\hspace*{4ex} spin.name(name=`N') \\
+\hspace*{4ex} structure.vectors(spin\_id=`@N', attached=`H*', ave=False) \\
  \\
 \hspace*{4ex} \# Load the relaxation data. \\
-\hspace*{4ex} relax\_data.read(`R1', `600', 600.0 * 1e6, `r1.600.out') \\
-\hspace*{4ex} relax\_data.read(`R2', `600', 600.0 * 1e6, `r2.600.out') \\
-\hspace*{4ex} relax\_data.read(`NOE', `600', 600.0 * 1e6, `noe.600.out') \\
-\hspace*{4ex} relax\_data.read(`R1', `500', 500.0 * 1e6, `r1.500.out') \\
-\hspace*{4ex} relax\_data.read(`R2', `500', 500.0 * 1e6, `r2.500.out') \\
-\hspace*{4ex} relax\_data.read(`NOE', `500', 500.0 * 1e6, `noe.500.out') \\
+\hspace*{4ex} relax\_data.read(ri\_id='R1\_600',  ri\_type='R1',  frq=600.0*1e6, file='r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+\hspace*{4ex} relax\_data.read(ri\_id='R2\_600',  ri\_type='R2',  frq=600.0*1e6, file='r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+\hspace*{4ex} relax\_data.read(ri\_id='NOE\_600', ri\_type='NOE', frq=600.0*1e6, file='noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+\hspace*{4ex} relax\_data.read(ri\_id='R1\_500',  ri\_type='R1',  frq=500.0*1e6, file='r1.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+\hspace*{4ex} relax\_data.read(ri\_id='R2\_500',  ri\_type='R2',  frq=500.0*1e6, file='r2.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
+\hspace*{4ex} relax\_data.read(ri\_id='NOE\_500', ri\_type='NOE', frq=500.0*1e6, file='noe.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
  \\
 \hspace*{4ex} \# Setup other values. \\
 \hspace*{4ex} diffusion\_tensor.init(1e-8, fixed=True) \\
-\hspace*{4ex} value.set(1.02 * 1e-10, `bond\_length') \\
-\hspace*{4ex} value.set(-160 * 1e-6, `csa') \\
-\hspace*{4ex} value.set(`15N', `heteronucleus') \\
-\hspace*{4ex} value.set(`1H', `proton') \\
+\hspace*{4ex} value.set(1.02 * 1e-10, `r') \\
+\hspace*{4ex} value.set(-172 * 1e-6, `csa') \\
+\hspace*{4ex} value.set(`15N', `heteron\_type') \\
+\hspace*{4ex} value.set(`1H', `proton\_type') \\
  \\
 \hspace*{4ex} \# Select the model-free model. \\
 \hspace*{4ex} model\_free.select\_model(model=name) \\
@@ -861,14 +872,12 @@ state.save(`save', force=True)
 \end{exampleenv}
 
 
-% The rest.
-%~~~~~~~~~~
+% The explanation.
+%~~~~~~~~~~~~~~~~~
 
-\subsection{The rest}
+\subsection{Explanation}
 
-\textbf{\textit{Please write me!}}
-
-Until this section is completed please look at the sample script \texttt{`mf\_multimodel.py'}.
+The above script is very similar in spirit to the previous single model script in section~\ref{sect: single mf model} on page~\pageref{sect: single mf model}.  The major difference is that this script loops over all of the model-free models, saving all of the results in the \texttt{`save.bz2'} file.
 
 
 
@@ -883,7 +892,7 @@ Until this section is completed please look at the sample script \texttt{`mf\_mu
 
 \subsection{The sample script}
 
-The sample script which demonstrates both model-free model elimination and model-free model selection between models from $m0$ to $m9$ is \texttt{`modsel.py'}.  The text of the script is:
+The sample script which demonstrates both model-free model elimination and model-free model selection between models from $m0$ to $m9$ is \texttt{`model\_free/modsel.py'}.  The text of the script is:
 
 \begin{exampleenv}
 \# Set the data pipe names. \\
@@ -911,33 +920,39 @@ results.write(file=`results', force=True)
 \end{exampleenv}
 
 
-% The rest.
-%~~~~~~~~~~
+% The explanation.
+%~~~~~~~~~~~~~~~~~
 
-\subsection{The rest}
+\subsection{Explanation}
 
-\textbf{\textit{Please write me!}}
+This script is designed to be used in conjunction with the \texttt{`model\_free/mf\_multimodel.py'} script in the previous section.  It will load all of the results files from the previous script and then perform the following:
 
-Until this section is completed please look at the sample script \texttt{`modsel.py'}.
+\begin{description}
+\item[Model-free model elimination]  The optimisation of model-free models performed by the previous script will fail for certain data sets together with certain models.  To ensure that these models are never selected, they are removed from the analysis (see \citet{dAuvergneGooley06}).
+\item[Model-free model selection]  The AIC model selection as described in \citet{dAuvergneGooley03} will be used to determine which model-free model best describes the relaxation data.
+\item[Data output]  Finally both a save state and result file will be created.
+\end{description}
 
+These three sample scripts describe the basic components of model-free analysis.  However a full analysis requires the construction of a much more complex iterative procedure.  The following sections will describe both the original diffusion seeded approaches as well as the new model-free protocol built into relax.
 
 
 % The methodology of Mandel et al., 1995.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{The methodology of Mandel et al., 1995}
-
-By presenting a systematic methodology for obtaining a consistent model-free description of the dynamics of the system, the manuscript of \citet{Mandel95} revolutionised the application of model-free analysis.  The full protocol is presented in Figure~\ref{fig: Mandel et al.}.
-
-All of the data analysis techniques required for this protocol can be implemented within relax.  The chi-squared distributions required for the chi-squared tests are constructed by Modelfree4 from the Monte Carlo simulations.  If the optimisation algorithms and Monte Carlo simulations built into relax are utilised, then the relax script will need to construct the chi-squared distributions from the results as this is not yet coded into relax.  The specific step-up hypothesis testing model selection of \citet{Mandel95} is available through the \texttt{model\_selection()} user function.  Coding the rest of the protocol into a script should be straightforward.
-
-
+\label{sect: Mandel 1995}
 
 % Mandel et al., 1995 figure.
 \begin{figure}
 \centerline{\includegraphics[width=0.8\textwidth, bb=0 0 436 539]{images/model_free/mandel95.eps.gz}}
-\caption[A schematic of the model-free optimisation protocol of Mandel et al., 1995]{A schematic of the model-free optimisation protocol of \citet{Mandel95}.  This specific protocol is for single field strength data.  The initial diffusion tensor estimate is calculated using the $\Rtwo/\Rone$ ratio.  The diffusion parameters of $\Diffset$ are held constant while model-free models $m1$ to $m5$ (\ref{model: m1}--\ref{model: m5}) of the set $\Mfset_i$ for each residue $i$ are optimised and 500 Monte Carlo simulations executed.  Using a web of ANOVA statistical tests, specifically $\chi^2$ and F-tests, a step-up hypothesis testing model selection procedure is used to choose the best model-free model.  These steps are repeated for all residues of the protein.  The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.  These steps are repeated until convergence of the global model.  The iterative process is repeated for both isotropic diffusion (sphere) and anisotropic diffusion (spheroid).} \label{fig: Mandel et al.}
+\caption[A schematic of the model-free optimisation protocol of Mandel et al., 1995]{A schematic of the model-free optimisation protocol of \citet{Mandel95}.  This specific protocol is for single field strength data.  The initial diffusion tensor estimate is calculated using the $\Rtwo/\Rone$ ratio.  The diffusion parameters of $\Diffset$ are held constant while model-free models $m1$ to $m5$ (\ref{model: m1}--\ref{model: m5}) of the set $\Mfset_i$ for each spin $i$ are optimised and 500 Monte Carlo simulations executed.  Using a web of ANOVA statistical tests, specifically $\chi^2$ and F-tests, a step-up hypothesis testing model selection procedure is used to choose the best model-free model.  These steps are repeated for all spins of the molecule.  The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.  These steps are repeated until convergence of the global model.  The iterative process is repeated for both isotropic diffusion (sphere) and anisotropic diffusion (spheroid).} \label{fig: Mandel et al.}
 \end{figure}
+
+By presenting a systematic methodology for obtaining a consistent model-free description of the dynamics of the system, the manuscript of \citet{Mandel95} revolutionised the application of model-free analysis.  The full protocol is presented in Figure~\ref{fig: Mandel et al.}.
+
+All of the data analysis techniques required for this protocol can be implemented within relax.  The chi-squared distributions required for the chi-squared tests are constructed by Modelfree4 from the Monte Carlo simulations.  If the optimisation algorithms and Monte Carlo simulations built into relax are utilised, then the relax script will need to construct the chi-squared distributions from the results as this is not yet coded into relax.  The specific step-up hypothesis testing model selection of \citet{Mandel95} is available through the \texttt{model\_selection} user function.  Coding the rest of the protocol into a script should be straightforward.
+
+To implement this analysis, a number of scripts would need to be written.  There is no sample script in relax for performing this analysis.  The simple sample scripts from above would need to be extended.  For example a starting script for determining the initial diffusion tensor estimates based on the R1/R2 ratio of \citet{Kay89} would have to be written.  The tensor from this script could then be feed into the \texttt{`model\_free/mf\_multimodel.py'} script, followed by the \texttt{`model\_free/modsel.py'} script, and then a third script written to optimise the diffusion tensor.  A master script could be written first run the initial diffusion tensor script, then to iteratively execute the last three scripts until convergence, and finally to select the best diffusion model (see Figure~\ref{fig: Mandel et al.}).  Alternatively, these could all be combined into one super script.
 
 
 
@@ -945,8 +960,9 @@ All of the data analysis techniques required for this protocol can be implemente
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{The diffusion seeded paradigm}
+\label{sect: diffusion seeded paradigm}
 
-Ever since the original Lipari and Szabo papers \citep{LipariSzabo82a, LipariSzabo82b}, the question of how to obtain the model-free description of the system has followed the route in which the diffusion tensor is initially estimated.  Using this rough estimate, the model-free models are optimised for each spin system $i$, the best model selected, and then the global model $\Space$ of the diffusion model $\Diffset$ with each model-free model $\Mfset_i$ is optimised.  This procedure is then repeated using the diffusion tensor parameters of $\Space$ as the initial input.  Finally the global model is selected.  The full protocol is illustrated in Figure~\ref{fig: init diff estimate}.
+Ever since the original Lipari and Szabo papers \citep{LipariSzabo82a, LipariSzabo82b}, the question of how to obtain the model-free description of the system has followed the route in which the diffusion tensor is initially estimated.  Using this rough estimate, the model-free models are optimised for each spin system $i$, the best model selected, and then the global model $\Space$ of the diffusion model $\Diffset$ with each model-free model $\Mfset_i$ is optimised.  This procedure is then repeated using the diffusion tensor parameters of $\Space$ as the initial input.  Finally the global model is selected.  The full protocol, when combined with AIC model selection \citep{dAuvergneGooley03}, is illustrated in Figure~\ref{fig: init diff estimate}.
 
 
 % The diffusion seeded paradigm figure.
@@ -955,6 +971,7 @@ Ever since the original Lipari and Szabo papers \citep{LipariSzabo82a, LipariSza
 \caption[Model-free analysis using the diffusion seeded paradigm]{A schematic of model-free analysis using the diffusion seeded paradigm -- the initial diffusion tensor estimate -- together with AIC model selection and model elimination.  The initial estimates of the parameters of $\Diffset$ are held constant while model-free models $m0$ to $m9$ (\ref{model: m0}--\ref{model: m9}) of the set $\Mfset_i$ for each spin system $i$ are optimised, model elimination applied to remove failed models, and AIC model selection used to determine the best model.  The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.  These steps are repeated until convergence of the global model.  The entire iterative process is repeated for each of the Brownian diffusion models.  Finally AIC model selection is used to determine the best description of the dynamics of the molecule by selecting between the global models $\Space$ including the sphere, oblate spheroid, prolate spheroid, and ellipsoid.  Once the solution has been found, Monte Carlo simulations can be utilised for error analysis.} \label{fig: init diff estimate}
 \end{figure}
 
+Again this protocol is not implemented in the relax sample scripts.  This would have to be implemented in exactly the same manner as described in the previous section, but using the AIC model selection build into relax.  Constructing this set of scripts, or a single master script, would be much easier than the \citet{Mandel95} protocol as Modelfree4 would not need to be used, and the handling of F-tests and chi-squared tests is avoided.
 
 
 % The new model-free optimisations protocol.
@@ -962,13 +979,308 @@ Ever since the original Lipari and Szabo papers \citep{LipariSzabo82a, LipariSza
 
 \section{The new model-free optimisation protocol}
 
-\textbf{\textit{Please write me!}}
+% The model-free models.
+%~~~~~~~~~~~~~~~~~~~~~~~
 
-Until this section is written please look at the sample script \texttt{`full\_analysis.py'}.  A description of the protocol is given at the top of the script.  The protocol is summarised in Figure~\ref{fig: new protocol}.
+\subsection{The model-free models}
 
+The study of the dynamics of a macromolecule using model-free analysis to interpret the $\Rone$ and $\Rtwo$ relaxation rates together with the steady-state heteronuclear NOE brings two distinct, yet linked physical theories into play.  The Brownian rotational diffusion of the molecule is the major contributor to relaxation.  Although having less of an influence on relaxation the internal dynamics of individual nuclei within the molecule is nevertheless significant.  The model-free description of the internal motion and the global diffusion of the entire molecule are theories which are linked due to their dependence on the same relaxation data.  The model-free models for individual spin system constructed from the original and extended model-free theories \citep{LipariSzabo82a, LipariSzabo82b, Clore90a} are assembled using parametric restrictions, the dropping of insignificant parameters, and the addition of the chemical exchange parameter $R_{ex}$.  Labelled as $m0$ to $m9$ (Models~\ref{model: m0}--\ref{model: m9} on page \pageref{model: m9}) these models are an extended list of those in \citep{Fushman97, Orekhov99b, Korzhnev01, Zhuravleva04}.
+
+
+
+% The diffusion tensor.
+%~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The diffusion tensor}
+
+
+% The ellipsoid.
+\subsubsection{The ellipsoid}
+\index{diffusion!ellipsoid (asymmetric)|textbf}
+
+The most general form of Brownian rotational diffusion of macromolecules is the diffusion of an ellipsoid, a diffusion also labelled as asymmetric or fully anisotropic.  This diffusion tensor can be fully specified by the geometric parameters $\Diff_x$, $\Diff_y$, and $\Diff_z$, the eigenvalues of the tensor, as well as three orientational parameters, the Euler angles\index{Euler angles} $\alpha$, $\beta$, and $\gamma$.  The diffusion equation for an ellipsoid was derived using the reasoning of \citet{Einstein05} in the two papers of \citet{Perrin34} and \citet{Perrin36}.  Following this, \citet{Favro60} unknowingly derived the same equations as presented in \citet{Perrin36} using a pseudo quantum mechanical approach.  Borrowing heavily from \citet{Perrin36}, \citet{Woessner62} derived the correlation function relevant for NMR relaxation of a bond vector rigidly attached to an ellipsoid.  However these equations are not fully simplified and the parameter set \{$\Diff_x$, $\Diff_y$, $\Diff_z$, $\alpha$, $\beta$, $\gamma$\}, the eigenvalues and Euler angles\index{Euler angles} defining the tensor, is not optimally constructed for minimisation.  A parameter shift to the set \{$\Diff_{iso}$, $\Diff_a$, $\Diff_r$, $\alpha$, $\beta$, $\gamma$\}, whereby the three geometric parameters are respectively the isotropic, anisotropic, and rhombic components of the diffusion tensor, drastically simplifies optimisation and is how the diffusion tensor is implemented within relax.
+
+
+% The spheroid.
+\subsubsection{The spheroid}
+\index{diffusion!spheroid (axially symmetric)|textbf}
+
+When two of the eigenvalues of the diffusion tensor are equal the molecule diffuses as a spheroid.  This is also called axially symmetric anisotropic diffusion and can be described by the two geometric parameters $\Diff_{iso}$ and $\Diff_a$ together with the polar angle $\theta$ and azimuthal angle $\phi$ which define the unique axis of the diffusion tensor.  Two classes of spheroid can be distinguished dependent on the relative values of the eigenvalues -- the prolate and oblate spheroids.  By using parametric constraints, both tensor types can be optimised within relax.
+
+
+% The sphere.
+\subsubsection{The sphere}
+\index{diffusion!sphere (isotropic)|textbf}
+
+The simplest form of diffusion occurs when all three eigenvalues are equal and the molecule diffuses as a sphere.  This isotropic rotation can be characterised by the single parameter $\Diff_{iso}$ which is related to the global correlation time by the formula $1/\tau_m = 6\Diff_{iso}$ \citep{Bloembergen48}.
+
+
+% The local tm model-free models.
+\subsubsection{The local $\tau_m$ model-free models}
+
+Not only can the diffusion tensor be optimised as a global model affecting all spins of the molecule but a set of model-free models can be constructed in which each spin is assumed to diffuse independently.  In these models a single local $\tau_m$ parameter approximates the true, multiexponential description of the Brownian rotational diffusion of the molecule.  Each spin of the macromolecule is treated independently.  Another set of model-free models which include the local $\tau_m$ parameter can be created and include $tm0$ to $tm9$ (Models~\ref{model: tm0}--\ref{model: tm9} on page \pageref{model: tm0}).  These are simply models $m0$ to $m9$ with the local $\tau_m$ parameter added.  These models are an extension of the ideas introduced in \citet{Barbato92} and \citet{Schurr94} whereby the model $tm2$, the original Lipari and Szabo model-free equation with a local $\tau_m$ parameter, is optimised to avoid issues with inaccurate diffusion tensor approximations.
+
+
+% Determination of the diffusion tensor from the local tm parameter.
+\subsubsection{Determination of the diffusion tensor from the local $\tau_m$ parameter}
+
+In \citet{Bruschweiler95} and further investigated in \citet{Lee97}, a methodology for determining the diffusion tensor from the local $\tau_m$ parameter together with the orientation of the XH bond represented by the unit vector $\mu_i$ was presented.  A local $\tau_m$ value was obtained for each spin $i$ by optimising model $tm2$.  The $\tau_{m,i}$ values were approximated using the quadric model
+\begin{equation} \label{eq: quadric}
+ (6 \tau_{m,i})^{-1} = \mu_i^T Q \mu_i,
+\end{equation}
+
+\noindent where the eigenvalues of the matrix $Q$ are defined as $Q_x = (\Diff_y + \Diff_z)/2$, $Q_y = (\Diff_x + \Diff_z)/2$, and $Q_z = (\Diff_x + \Diff_y)/2$.  The diffusion tensor is then found by linear least-squares fitting.
+
+
+
+% The universal solution.
+%~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The universal solution $\widehat\Univset$}
+
+The complex model-free problem, in which the motions of each spin are both mathematically and statistically dependent on the diffusion tensor and vice versa, was formulated using set theory in \citet{dAuvergneGooley07}.  This paper is important for understanding the entire concept of the new protocol in relax and for truly grasping the complexity of the model-free problem.  The solution $\widehat\Univset$ to the model-free problem was derived as an element of the universal set $\Univset$, the union of the diverse model-free parameter spaces $\Space$.  Each set $\Space$ was constructed from the union of the model-free models $\Mfset$ for all spins and the diffusion parameter set $\Diffset$.  A single parameter loss on a single spin shifts optimisation to a different space $\Space$.  Ever since the seminal work of \citet{Kay89} the model-free problem has been tackled by first finding an initial estimate of the diffusion tensor and then determining the model-free dynamics of the system (see Sections~\ref{sect: Mandel 1995} on page~\pageref{sect: Mandel 1995} and~\ref{sect: diffusion seeded paradigm} on page~\pageref{sect: diffusion seeded paradigm}).  This diffusion seeded paradigm is now highly evolved and much theory has emerged to improve this path to the solution $\widehat\Univset$.  The technique can, at times, suffer from a number of issues including the two minima problem of the spheroid diffusion tensor parameter space, the appearance of artificial chemical exchange \citep{Tjandra96}, the appearance of artificial nanosecond motions \citep{Schurr94}, and the hiding of internal nanosecond motions caused by the violation of the rigidity assumption \citep{Orekhov95b, Orekhov99b, Orekhov99a}.
+
+
+
+% Model-free analysis in reverse.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Model-free analysis in reverse}
 
 % New model-free optimisation protocol figure.
 \begin{figure}
 \centerline{\includegraphics[width=0.8\textwidth, bb=0 0 461 697]{images/model_free/new_protocol.eps.gz}}
 \caption[A schematic of the new model-free optimisation protocol]{A schematic of the new model-free optimisation protocol.  Initially models $tm0$ to $tm9$ (\ref{model: tm0}--\ref{model: tm9}) of the set $\Localset_i$ for each spin system $i$ are optimised, model elimination used to remove failed models, and AIC model selection used to pick the best model.  Once all the $\Localset_i$ have been determined for the system the the local $\tau_m$ parameter is removed, the model-free parameters are held fixed, and the global diffusion parameters of $\Diffset$ are optimised.  These parameters are used as input for the central part of the schematic which follows the same procedure as that of Figure~\ref{fig: init diff estimate}.  Convergence is however precisely defined as identical models $\Space$, identical $\chi^2$ values, and identical parameters $\theta$ between two iterations.  The universal solution $\widehat\Univset$, the best description of the dynamics of the molecule, is determined using AIC model selection to select between the local $\tau_m$ models for all spins, the sphere, oblate spheroid, prolate spheroid, ellipsoid, and possibly hybrid models whereby multiple diffusion tensors have been applied to different parts of the molecule.} \label{fig: new protocol}
 \end{figure}
+
+
+A different approach was proposed in \citet{dAuvergneGooley08b} for finding the universal solution $\widehat\Univset$ of the extremely complex, convoluted model-free optimisation and modelling problem \citep{dAuvergneGooley07}, defined as
+\begin{equation} \label{eq: universal solution}
+ \widehat\Univset = \hat\theta \in \left\{ \Space: \min_{\hat\theta \in \Univset} \KL(\hat\theta) \right\},
+  \text{\quad s.t. }
+  \hat\theta = \arg \min \left\{\chi^2(\theta): \theta \in \Space \right\}.
+\end{equation}
+
+\noindent This notation says that the minimised parameter vector within the space $\Space$ which minimises the common Kullback-Leibler discrepancy\index{discrepancy!Kullback-Leibler} $\KL$ is selected from the universal set $\Univset$ as the universal solution $\widehat\Univset$.  The discrepancy of \citet{KullbackLeibler51} is a measure of how well the model fits the data, in this case how well the global model $\Space$ of the diffusion tensor together with the model-free models of all residues fits the relaxation data.  This selection is subject to the condition that $\hat\theta$ is the argument or specific parameter vector which minimises the chi-squared\index{chi-squared} function $\chi^2(\theta)$ such that $\theta$ is an element of the space $\Space$.  Whereas the minimisation of the continuous chi-squared\index{chi-squared} function within the single space $\Space$ belongs to the mathematical field of optimisation \citep{NocedalWright99}, the selection of the universe $\Space$ which minimises the discrepancy\index{discrepancy} belongs to the statistical field of model selection \citep{Akaike73,Schwarz78,LinhartZucchini86,Zucchini00,dAuvergneGooley03}.
+
+This new model-free optimisation protocol incorporates the ideas of the local $\tau_m$ model-free model \citep{Barbato92, Schurr94} and the optimisation of the diffusion tensor using information from these models, analogously to the linear least-squares fitting of the quadric model \citep{Bruschweiler95, Lee97}.  The protocol also follows the lead of the model-free optimisation protocol presented in \citet{Butterwick04} whereby the diffusion seeded paradigm was reversed.  Rather than starting with an initial estimation of the global diffusion tensor from the set $\Diffset$ the protocol starts with the model-free parameters from $\Mfset$.
+
+The first step of the \citet{Butterwick04} protocol is the reduced spectral density mapping of \citet{Farrow95}.  As $R_{ex}$ has been eliminated from the analysis, three model-free models corresponding to $tm1$, $tm2$, and $tm5$ (Models~\ref{model: tm1}, \ref{model: tm2}, and \ref{model: tm5} on page~\pageref{model: tm1}) are employed.  The model-free parameters are optimised using the reduced spectral density values and the best model is selected using F-tests.  The spherical, spheroidal, and ellipsoidal diffusion tensors are obtained by linear least-squares fitting of the quadric model of Equation~\eqref{eq: quadric} using the local $\tau_m$ values \citep{Bruschweiler95, Lee97}.  The best diffusion model is selected via F-tests and refined by iterative elimination of spins systems with high chi-squared values.  This tensor is used to calculate local $\tau_m$ values for each spin system, approximating the multiexponential sum of the Brownian rotational diffusion correlation function with a single exponential, using the quadric model of Equation~\eqref{eq: quadric}.  In the final step of the protocol these $\tau_m$ values are fixed and $m1$, $m2$, and $m5$ (Models~\ref{model: m1}, \ref{model: m2}, and \ref{model: m5} on page~\pageref{model: m1}) are optimised and the best model-free model selected using F-tests.
+
+The new model-free protocol built into relax utilises the core foundation of the \citet{Butterwick04} protocol yet its divergent implementation is designed to solve the universal equation of \citet{dAuvergneGooley07} to find $\widehat\Univset$ (Equation~\ref{eq: universal solution}).  Models $tm0$ to $tm9$ (\ref{model: tm0}--\ref{model: tm9} on page \pageref{model: tm0}) in which no global diffusion parameters exist are employed to significantly collapse the complexity of the problem.  Model-free minimisation \citep{dAuvergneGooley08a}, model elimination \citep{dAuvergneGooley06}, and then AIC\index{model selection!AIC} model selection \citep{Akaike73, dAuvergneGooley03} can be carried out in the absence of the influence of global parameters.  By removing the local $\tau_m$ parameter and holding the model-free parameter values constant these models can then be used to optimise the diffusion parameters of $\Diffset$.  Model-free optimisation, model elimination, AIC model selection, and optimisation of the global model $\Space$ is iterated until convergence.  The iterations allow for sliding between different universes $\Space$ to enable the collapse of model complexity, to refine the diffusion tensor, and to find the solution within the universal set $\Univset$.  The last step is the AIC model selection between the different diffusion models.  Because the AIC criterion approximates the Kullback-Leibler discrepancy \citep{KullbackLeibler51}, central to the universal solution of Equation~\eqref{eq: universal solution}, it was chosen for all three model selection steps over BIC model selection \citep{Schwarz78, dAuvergneGooley03, Chen04}.  The new protocol avoids the problem of under-fitting\index{under-fitting} whereby artificial motions appear, avoids the problems involved in finding the initial diffusion tensor within $\Diffset$, and avoids the problem of hidden internal nanosecond motions and the inability to slide between universes to get to $\widehat\Univset$ (see \citet{dAuvergneGooley07} for more details).  The full protocol is summarised in Figure~\ref{fig: new protocol}.
+
+
+
+% The sample script.
+%~~~~~~~~~~~~~~~~~~~
+
+\subsection{The sample script}
+
+The sample script for performing this new analysis is \texttt{`model\_free/dauvergne\_protocol.py'}.  The full script is given below as the docstring at the start explains the practical implementation of the protocol:
+
+\begin{exampleenv}
+"""Script for black-box model-free analysis. \\
+ \\
+This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the molecule in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., see the python tutorial. \\
+ \\
+If you have obtained this script without the program relax, please visit http://www.nmr-relax.com. \\
+ \\
+ \\
+References \\
+========== \\
+ \\
+The model-free optimisation methodology herein is that of: \\
+ \\
+    d'Auvergne, E. J. and Gooley, P. R. (2008b). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133 \\
+ \\
+Other references for features of this script include model-free model selection using Akaike's Information Criterion: \\
+ \\
+    d'Auvergne, E. J. and Gooley, P. R. (2003). The use of model selection in the model-free analysis of protein dynamics. J. Biomol. NMR, 25(1), 25-39. \\
+ \\
+The elimination of failed model-free models and Monte Carlo simulations: \\
+ \\
+    d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135. \\
+ \\
+Significant model-free optimisation improvements: \\
+ \\
+    d'Auvergne, E. J. and Gooley, P. R. (2008a). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-109. \\
+ \\
+Rather than searching for the lowest chi-squared value, this script searches for the model with the lowest AIC criterion.  This complex multi-universe, multi-dimensional search is formulated using set theory as the universal solution: \\
+ \\
+    d'Auvergne, E. J. and Gooley, P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. 3(7), 483-494. \\
+ \\
+The basic three references for the original and extended model-free theories are: \\
+ \\
+    Lipari, G. and Szabo, A. (1982a). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules I. Theory and range of validity. J. Am. Chem. Soc., 104(17), 4546-4559. \\
+ \\
+    Lipari, G. and Szabo, A. (1982b). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules II. Analysis of experimental results. J. Am. Chem. Soc., 104(17), 4559-4570. \\
+ \\
+    Clore, G. M., Szabo, A., Bax, A., Kay, L. E., Driscoll, P. C., and Gronenborn, A.M. (1990). Deviations from the simple 2-parameter model-free approach to the interpretation of N-15 nuclear magnetic-relaxation of proteins. J. Am. Chem. Soc., 112(12), 4989-4991. \\
+ \\
+ \\
+How to use this script \\
+====================== \\
+ \\
+The value of the variable DIFF\_MODEL will determine the behaviour of this script.  The five diffusion models used in this script are: \\
+ \\
+    Model I   (MI)   - Local tm. \\
+    Model II  (MII)  - Sphere. \\
+    Model III (MIII) - Prolate spheroid. \\
+    Model IV  (MIV)  - Oblate spheroid. \\
+    Model V   (MV)   - Ellipsoid. \\
+ \\
+Model I must be optimised prior to any of the other diffusion models, while the Models II to V can be optimised in any order.  To select the various models, set the variable DIFF\_MODEL to the following strings: \\
+ \\
+    MI   - `local\_tm' \\
+    MII  - `sphere' \\
+    MIII - `prolate' \\
+    MIV  - `oblate' \\
+    MV   - `ellipsoid' \\
+ \\
+This approach has the advantage of eliminating the need for an initial estimate of a global diffusion tensor and removing all the problems associated with the initial estimate. \\
+ \\
+It is important that the number of parameters in a model does not exceed the number of relaxation data sets for that spin.  If this is the case, the list of models in the MF\_MODELS and LOCAL\_TM\_MODELS variables will need to be trimmed. \\
+ \\
+ \\
+Model I - Local tm \\
+~~~~~~~~~~~~~~~~~~ \\
+ \\
+This will optimise the diffusion model whereby all spin of the molecule have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each spin is fitted to the multiple model-free models separately, where the parameter tm is included in each model. \\
+ \\
+AIC model selection is used to select the models for each spin. \\
+ \\
+ \\
+Model II - Sphere \\
+~~~~~~~~~~~~~~~~~ \\
+ \\
+This will optimise the isotropic diffusion model.  Multiple steps are required, an initial optimisation of the diffusion tensor, followed by a repetitive optimisation until convergence of the diffusion tensor.  Each of these steps requires this script to be rerun. For the initial optimisation, which will be placed in the directory `./sphere/init/', the following steps are used: \\
+ \\
+The model-free models and parameter values for each spin are set to those of diffusion model MI. \\
+ \\
+The local tm parameter is removed from the models. \\
+ \\
+The model-free parameters are fixed and a global spherical diffusion tensor is minimised. \\
+ \\
+ \\
+For the repetitive optimisation, each minimisation is named from `round\_1' onwards.  The initial `round\_1' optimisation will extract the diffusion tensor from the results file in `./sphere/init/', and the results will be placed in the directory `./sphere/round\_1/'.  Each successive round will take the diffusion tensor from the previous round.  The following steps are used: \\
+ \\
+The global diffusion tensor is fixed and the multiple model-free models are fitted to each spin. \\
+ \\
+AIC model selection is used to select the models for each spin. \\
+ \\
+All model-free and diffusion parameters are allowed to vary and a global optimisation of all parameters is carried out. \\
+ \\
+ \\
+Model III - Prolate spheroid \\
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\
+ \\
+The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da >= 0 is used.  The base directory containing all the results is `./prolate/'. \\
+ \\
+ \\
+Model IV - Oblate spheroid \\
+~~~~~~~~~~~~~~~~~~~~~~~~~~ \\
+ \\
+The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da <= 0 is used.  The base directory containing all the results is `./oblate/'. \\
+ \\
+ \\
+Model V - Ellipsoid \\
+~~~~~~~~~~~~~~~~~~~ \\
+ \\
+The methods used are identical to those of diffusion model MII, except that a fully anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The base directory is `./ellipsoid/'. \\
+ \\
+ \\
+ \\
+Final run \\
+~~~~~~~~~ \\
+ \\
+Once all the diffusion models have converged, the final run can be executed.  This is done by setting the variable DIFF\_MODEL to `final'.  This consists of two steps, diffusion tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to select between the diffusion tensor models.  Monte Carlo simulations are then run solely on this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that the model is already fully optimised (if this is not the case the final run is not yet appropriate). \\
+ \\
+The final black-box model-free results will be placed in the file `final/results'. \\
+""" \\
+ \\
+\# Python module imports. \\
+from time import asctime, localtime \\
+ \\
+\# relax module imports. \\
+from auto\_analyses.dauvergne\_protocol import dAuvergne\_protocol \\
+ \\
+ \\
+\# Analysis variables. \\
+\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\# \\
+ \\
+\# The diffusion model. \\
+DIFF\_MODEL = `local\_tm' \\
+ \\
+\# The model-free models.  Do not change these unless absolutely necessary, the protocol is likely to fail if these are changed. \\
+MF\_MODELS = [`m0', `m1', `m2', `m3', `m4', `m5', `m6', `m7', `m8', `m9'] \\
+LOCAL\_TM\_MODELS = [`tm0', `tm1', `tm2', `tm3', `tm4', `tm5', `tm6', `tm7', `tm8', `tm9'] \\
+ \\
+\# The grid search size (the number of increments per dimension). \\
+GRID\_INC = 11 \\
+ \\
+\# The optimisation technique. \\
+MIN\_ALGOR = `newton' \\
+ \\
+\# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis. \\
+MC\_NUM = 500 \\
+ \\
+\# Automatic looping over all rounds until convergence (must be a boolean value of True or False). \\
+CONV\_LOOP = True \\
+ \\
+ \\
+ \\
+\# Set up the data pipe. \\
+\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\# \\
+ \\
+\# The following sequence of user function calls can be changed as needed. \\
+ \\
+\# Create the data pipe. \\
+name = ``mf (\%s)'' \% asctime(localtime()) \\
+pipe.create(name, `mf') \\
+ \\
+\# Load the sequence. \\
+sequence.read(file=`noe.500.out', dir=None, mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None) \\
+ \\
+\# Name the spins. \\
+spin.name(name=`N') \\
+ \\
+\# Load the PDB file. \\
+structure.read\_pdb(`1f3y.pdb') \\
+structure.vectors(attached=`H') \\
+ \\
+\# Load the relaxation data. \\
+relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=599.719*1e6, file=`r1.600.out',  mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=599.719*1e6, file=`r2.600.out',  mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=599.719*1e6, file=`noe.600.out', mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R1\_500',  ri\_type=`R1',  frq=500.208*1e6, file=`r1.500.out',  mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`R2\_500',  ri\_type=`R2',  frq=500.208*1e6, file=`r2.500.out',  mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
+relax\_data.read(ri\_id=`NOE\_500', ri\_type=`NOE', frq=500.208*1e6, file=`noe.500.out', mol\_name\_col=None, res\_num\_col=1, res\_name\_col=2, spin\_num\_col=None, spin\_name\_col=None, data\_col=3, error\_col=4) \\
+ \\
+\# Deselect spins to be excluded (including unresolved and specifically excluded spins). \\
+deselect.read(file=`unresolved', dir=None, spin\_id\_col=None, mol\_name\_col=None, res\_num\_col=1, res\_name\_col=None, spin\_num\_col=None, spin\_name\_col=None, sep=None, spin\_id=None, boolean=`AND', change\_all=False) \\
+deselect.read(file=`exclude', spin\_id\_col=1) \\
+ \\
+\# Set the bond length, CSA values, heteronucleus type, and proton type. \\
+value.set(1.02 * 1e-10, `r') \\
+value.set(-172 * 1e-6, `csa') \\
+value.set(`15N', `heteronuc\_type') \\
+value.set(`1H', `proton\_type') \\
+ \\
+ \\
+ \\
+\# Execution. \\
+\#\#\#\#\#\#\#\#\#\#\#\# \\
+ \\
+\# Do not change! \\
+dAuvergne\_protocol(pipe\_name=name, diff\_model=DIFF\_MODEL, mf\_models=MF\_MODELS, local\_tm\_models=LOCAL\_TM\_MODELS, grid\_inc=GRID\_INC, min\_algor=MIN\_ALGOR, mc\_sim\_num=MC\_NUM, conv\_loop=CONV\_LOOP) \\
+\end{exampleenv}
+
+
+% The explanation.
+%~~~~~~~~~~~~~~~~~
+
+\subsection{Explanation}
+
+The initialisation of data in this script is almost identical to that of the sample script for a single model free model in section~\ref{sect: single mf model} on page~\pageref{sect: single mf model}.  Once the data is set up, then the data pipe as well as a number of user defined variables are passed into the \texttt{`dAuvergne\_protocol'} class.  This script needs to be executed multiple times for each of the diffusion models.
+
+For a full analysis of a protein system, the analysis may require between one to two weeks to complete.  The analysis is performed as described in the previous sections and summarised in Figure~\ref{fig: new protocol}.  If you are curious, the implementation is within a very large relax script found at \texttt{`auto\_analyses/dauvergne\_protocol.py'} (which must never be changed).  This auto-analyses script hides all of the complexity of the analysis from the sample script.
