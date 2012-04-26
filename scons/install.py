@@ -112,8 +112,11 @@ def install(target, source, env):
     ###############
 
     # Run relax to create the *.pyc files.
-    print("\nRunning relax to create the byte-compiled *.pyc files.")
-    system(env['SYMLINK'] + " --test")
+    print("\nCreating the byte-compiled *.pyc files.")
+    python_path = sys.prefix + path.sep + 'bin' + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
+    cmd = "cd %s; %s -m compileall ." % (env['RELAX_PATH'], python_path)
+    print(cmd)
+    system(cmd)
 
     # Final print out.
     print("\n\n\n")
