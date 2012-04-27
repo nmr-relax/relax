@@ -32,6 +32,7 @@ import wx.stc
 
 # relax module imports.
 from generic_fns.pipes import cdp_name
+from relax_io import SplitIO
 from status import Status; status = Status()
 
 # relax GUI module imports.
@@ -96,9 +97,23 @@ class Controller(wx.Frame):
         self.log_panel = LogCtrl(self.main_panel, self, log_queue=self.log_queue, id=-1)
         sizer.Add(self.log_panel, 1, wx.EXPAND|wx.ALL, 0)
 
-        # IO redirection.
-        sys.stdout = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stdout, stream=0)
-        sys.stderr = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stderr, stream=1)
+        # IO redirection for STDOUT (with splitting if logging or teeing modes are set).
+        out = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stdout, stream=0)
+        if sys.stdout == sys.__stdout__:
+            sys.stdout = out
+        else:
+            split_stdout = SplitIO()
+            split_stdout.split(sys.stdout, out)
+            sys.stdout = split_stdout
+
+        # IO redirection for STDERR (with splitting if logging or teeing modes are set).
+        err = Redirect_text(self.log_panel, self.log_queue, orig_io=sys.stderr, stream=1)
+        if sys.stderr == sys.__stderr__:
+            sys.stderr = err
+        else:
+            split_stderr = SplitIO()
+            split_stderr.split(sys.stderr, err)
+            sys.stderr = split_stderr
 
         # Initial update of the controller.
         self.update_controller()
