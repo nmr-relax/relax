@@ -979,6 +979,7 @@ Again this protocol is not implemented in the relax sample scripts.  This would 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{The new model-free optimisation protocol}
+\label{sect: new model-free protocol}
 
 % The model-free models.
 %~~~~~~~~~~~~~~~~~~~~~~~
@@ -1285,3 +1286,34 @@ dAuvergne\_protocol(pipe\_name=name, diff\_model=DIFF\_MODEL, mf\_models=MF\_MOD
 The initialisation of data in this script is almost identical to that of the sample script for a single model free model in section~\ref{sect: single mf model} on page~\pageref{sect: single mf model}.  Once the data is set up, then the data pipe as well as a number of user defined variables are passed into the \texttt{`dAuvergne\_protocol'} class.  This script needs to be executed multiple times for each of the diffusion models.
 
 For a full analysis of a protein system, the analysis may require between one to two weeks to complete.  The analysis is performed as described in the previous sections and summarised in Figure~\ref{fig: new protocol}.  If you are curious, the implementation is within a very large relax script found at \texttt{`auto\_analyses/dauvergne\_protocol.py'} (which must never be changed).  This auto-analyses script hides all of the complexity of the analysis from the sample script.
+
+
+
+% GUI.
+%%%%%%
+
+\section{The GUI auto-analysis}
+
+% Model-free analysis screenshot
+\begin{figure}
+\centerline{\includegraphics[width=\textwidth, bb=14 14 1065 768]{graphics/screenshots/analysis_mf.eps.gz}}
+\caption[GUI screenshot -- Model-free analysis]{Screenshot of the relax GUI interface -- the automated model-free analysis.  The analysis is fully automated via a new model-free protocol as described in detail in Chapter~\ref{ch: model-free}.  Clicking on the `About' button in the bottom left hand corner will give a full description of the protocol.  For using this interface or any of the modern-day model-free protocols, data from at least two magnetic field strengths must be without question collected.}\label{fig: screenshot: model-free analysis}
+\end{figure}
+
+From the analysis wizard (Figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}), the automated model-free analysis can be selected.  This analysis will use the new model-free protocol described in Section~\ref{sect: new model-free protocol} on page~\pageref{sect: new model-free protocol}.  Once the analysis is initialised, the screen should look like Figure~\ref{fig: screenshot: model-free analysis}.  The `About' button in the bottom left will bring up a window with the same description as given in the sample script.  After reading this chapter, the use of this GUI analysis should be self explanatory (if not, then please consider filing a bug report at \href{https://gna.org/bugs/?func=additem\&group=relax}{https://gna.org/bugs/?func=additem\&group=relax} or a support request at \href{https://gna.org/support/?func=additem\&group=relax}{https://gna.org/support/?func=additem\&group=relax}).  The GUI is designed to be robust -- you should be able to set up all the input data and parameters in any order, with relax giving warning is something is missing.  The analysis will only execute once everything is correctly set up.  If this is not the case, rather than starting the analysis, clicking on the `Execute relax' button will warn about the incorrect set up, describing what the problem is.
+
+If the `Protocol mode' field is left to the `Fully automated' setting then, after clicking on `Execute relax', the calculation can be left for one to two weeks to complete.  It is highly recommended to check the log messages in the relax controller window, at least at the start of the analysis, to make sure that all the data is being read correctly and everything is set up as desired.  All warnings should be carefully checked as these can indicate a fatal problem.  If you would like to log all the messages into a file, relax can be run with:
+
+\example{\$ relax -g --log my.log}
+
+Note that the size of this log file could end up being in the gigabyte range for a model-free analysis.  To speed up the calculations, if you have access to multiple cores and/or hyper-threading, the GUI can be run using Gary Thompson's multi-processor framework.  For example on a dual-CPU with dual-core system, four calculations can be run simultaneously.  In this case, the GUI can be launched with:
+
+\example{\$ mpirun -np 5 /usr/local/bin/relax --multi=`mpi4py' --gui}
+
+This assumes that OpenMPI and the Python mpi4py module have been installed on your system.  If this is successful, you should only see a single relax GUI window (and not five windows) and in the relax controller, you should see text similar to:
+
+\example{Processor fabric:  MPI 2.1 running via mpi4py with 4 slave processors \& 1 master.  Using Open MPI 1.4.3.}
+
+If you are using a different MPI implementation, please see the documentation of that implementation to see how to launch a program in MPI mode.
+
+Upon completion of the analysis, the save and results files for the final result will be located in the \texttt{`final'} directory within the selected results directory.  The results files will consist of text files for each of the spin specific model-free parameters, 2D Grace plots of the model-free parameters, PyMOL and MOLMOL macros for superimposing the model-free parameter values onto the 3D structure of the molecule, and a PDB representation of the final diffusion tensor.  Further visualisations of the results are possible via the \texttt{`User functions'} menu entry.  For example to generate a 2D plot of order parameters for one of the other diffusion tensor results, the pipe editor window can be used to switch data pipes to the other diffusion models and then the \texttt{`User functions->grace->write'} menu item can be selected to create the plot.
