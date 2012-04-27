@@ -507,8 +507,54 @@ relax> R
 
 
 
+% The multi-processor framework.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The multi-processor framework}
+\index{multi-processor framework}
+
+
+
+% Introduction.
+%~~~~~~~~~~~~~~
+
+\subsection{Introduction}
+
+Thanks to Gary Thompson's multi-processor framework, relax can be run on multi-core/multi-CPU systems or on clusters to speed up calculations.  As most analyses are relatively quick and would not benefit from the multi-processor framework, only the model-free and frame order analyses have currently been parallelised to run within this framework.  To use the multi-processor framework, the following should be installed:
+
+\begin{description}
+\item[\href{http://www.open-mpi.org/}{OpenMPI}\index{OpenMPI}:]  This is the most commonly used Message Passing Interface (MPI)\index{MPI} protocol software.  The rest of this manual will assume that this is the implementation in use.  If another implementation is used, please see the specific documentation for that software for how to set up a program to run via MPI.
+\item[\href{http://mpi4py.scipy.org/}{mpi4py}\index{mpi4py}:]  This dependency is essential for running in MPI mode in relax.  If you would like to use another Python implementation to access the MPI protocol, please consider becoming a relax developer.
+\end{description}
+
+
+
+% Usage.
+%~~~~~~~
+
+\subsection{Usage}
+
+If you have access to a 256 node cluster and can run calculations on all nodes, assuming that the \texttt{`dauvergne\_protocol.py'} automated model-free analysis sample script will be used (after modification for the system under study), relax can be executed by typing:
+
+\example{\$ mpirun -np 257 /usr/local/bin/relax --multi=`mpi4py' dauvergne\_protocol.py}
+
+Note that the argument \texttt{`-np'} value is one more than the number of slaves you would like to run.  You should then see the following text in the initial relax print out:
+
+\example{Processor fabric:  MPI 2.1 running via mpi4py with 256 slave processors \& 1 master.  Using Open MPI 1.4.3.}
+
+
+
+% Further details.
+%~~~~~~~~~~~~~~~~~
+
+\subsection{Further details}
+
+For a full description of the multi-processor framework and how to use it, please see Gary Thompson's official announcement on the \href{https://mail.gna.org/public/relax-devel/2007-05/msg00000.html}{relax-devel mailing list}.
+
+
+
 % Usage of the name relax.
-%~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Usage of the name relax}
 
